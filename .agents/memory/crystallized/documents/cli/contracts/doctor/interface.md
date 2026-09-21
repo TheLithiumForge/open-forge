@@ -738,39 +738,39 @@ current catalogue titles.
 
 ### Recovery data
 
-| Kind                            | Severity | Lane           | Title                                                   | Message                                                                            | Action                         |
-| ------------------------------- | -------- | -------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------ |
-| recovery.bundle-recognized | info | informational | Recovery bundle is kept | `A recovery bundle from an earlier command is kept at <path>.` | `open-forge cleanup` |
-| recovery.draft-recognized       | warning  | informational  | Incomplete recovery draft found                         | `An unfinished recovery draft is at <path>. A command did not finish.`             | `open-forge cleanup --dry-run` |
-| recovery.bundle-collision | error | blocked-repair | Recovery bundle is damaged | `The recovery bundle at <path> is damaged: <reason>. It was left in place.` | `open-forge cleanup --dry-run` |
-| recovery.provenance-unavailable | error    | blocked-repair | Recovery origin could not be verified                   | `The recovery bundle at <path> cannot be verified, so cleanup will not delete it.` | none                           |
+| Kind                            | Severity | Lane           | Title                                 | Message                                                                            | Action                         |
+| ------------------------------- | -------- | -------------- | ------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------ |
+| recovery.bundle-recognized      | info     | informational  | Recovery bundle is kept               | `A recovery bundle from an earlier command is kept at <path>.`                     | `open-forge cleanup`           |
+| recovery.draft-recognized       | warning  | informational  | Incomplete recovery draft found       | `An unfinished recovery draft is at <path>. A command did not finish.`             | `open-forge cleanup --dry-run` |
+| recovery.bundle-collision       | error    | blocked-repair | Recovery bundle is damaged            | `The recovery bundle at <path> is damaged: <reason>. It was left in place.`        | `open-forge cleanup --dry-run` |
+| recovery.provenance-unavailable | error    | blocked-repair | Recovery origin could not be verified | `The recovery bundle at <path> cannot be verified, so cleanup will not delete it.` | none                           |
 
 ### Routes and Entries
 
-| Kind                              | Severity | Lane               | Title                                                                        | Message                                                                                             | Action                                             |
-| --------------------------------- | -------- | ------------------ | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| route.entrypoint-missing          | warning  | manual-decision    | Route entrypoint is missing                                                  | `<folder> is routed but has no entrypoint file.`                                                    | `open-forge route init <id>`                       |
-| route.entrypoint-duplicate        | error    | blocked-repair     | Route has several entrypoints                                                | `<folder> has more than one entrypoint: <names>.`                                                   | edit by hand                                       |
-| route.escape                      | error    | blocked-repair     | Route leaves its allowed boundary                                            | `The entry <text> in <path>:l:c points outside <folder>.`                                           | edit by hand                                       |
-| route.unreachable                 | warning  | manual-decision    | Route cannot be reached                                                      | `<path> is routed but no parent lists it.`                                                          | `open-forge index`                                 |
-| route.detached                    | warning  | manual-decision    | Source is outside the loaded routes                                          | `<folder> looks like a route but no Loader entry or parent reaches it.`                             | edit by hand                                       |
-| route.metadata-required-missing   | warning  | manual-decision    | Required route metadata is missing                                           | `<path> has no <description \| tags> in its frontmatter.`                                           | `open-forge route update <id> --description "..."` |
-| route.title-invalid               | warning  | manual-decision    | Route title is invalid                                                       | `<path> has no level-1 heading.`                                                                    | edit by hand                                       |
-| route.axioms-invalid              | info     | manual-decision    | Route Axioms are invalid                                                     | `<path> has no Axioms section, or its Axioms section is malformed.`                                 | edit by hand                                       |
-| route.generated-region-stale | warning | targeted-operation | Entries section is stale | `The Entries section of <path> does not match its routed files.` | `open-forge index` |
-| route.generated-region-missing | warning | targeted-operation | Entries section is missing | `<path> has no Entries section.` | `open-forge index` |
-| route.generated-region-malformed | error | blocked-repair | Entries section is malformed | `The Entries section of <path> could not be read as a list.` | edit by hand |
-| route.generated-region-misplaced | warning | manual-decision | Entries section is not last | `The Entries section of <path> is followed by another section.` | edit by hand |
-| route.generated-region-duplicate | error | blocked-repair | More than one Entries section | `<path> has more than one Entries section.` | edit by hand |
-| route.generated-entry-missing | warning | targeted-operation | Entry is missing | `<path> does not list <child>.` | `open-forge index` |
-| route.generated-entry-extra | warning | targeted-operation | Entry has no file | `<path> lists <child>, which does not exist.` | `open-forge index` |
-| route.generated-entry-order | warning | targeted-operation | Entries are out of order | `The entries in <path> are not in the expected order.` | `open-forge index` |
-| route.generated-entry-path | warning | targeted-operation | Entry path is wrong | `The entry for <child> in <path> points to <wrong path>.` | `open-forge index` |
-| route.generated-entry-description | warning | targeted-operation | Entry description is stale | `The entry for <child> in <path> has an old description.` | `open-forge index` |
-| route.generated-entry-tags | warning | targeted-operation | Entry tags are stale | `The entry for <child> in <path> has old tags.` | `open-forge index` |
-| route.overwrite-orphan            | warning  | manual-decision    | Overwrite has no base file                                                   | `<name>.overwrite.md has no <name>.md beside it.`                                                   | edit by hand                                       |
-| route.overwrite-independent-index | warning  | targeted-operation | Overwrite is listed independently                                            | `<path> lists <name>.overwrite.md as its own entry. Overwrite files are read with their base file.` | `open-forge index`                                 |
-| route.compatibility-conflict      | error    | blocked-repair     | Route names conflict                                                         | `<folder> can be reached by two route names: <names>.`                                              | edit by hand                                       |
+| Kind                              | Severity | Lane               | Title                               | Message                                                                                             | Action                                             |
+| --------------------------------- | -------- | ------------------ | ----------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| route.entrypoint-missing          | warning  | manual-decision    | Route entrypoint is missing         | `<folder> is routed but has no entrypoint file.`                                                    | `open-forge route init <id>`                       |
+| route.entrypoint-duplicate        | error    | blocked-repair     | Route has several entrypoints       | `<folder> has more than one entrypoint: <names>.`                                                   | edit by hand                                       |
+| route.escape                      | error    | blocked-repair     | Route leaves its allowed boundary   | `The entry <text> in <path>:l:c points outside <folder>.`                                           | edit by hand                                       |
+| route.unreachable                 | warning  | manual-decision    | Route cannot be reached             | `<path> is routed but no parent lists it.`                                                          | `open-forge index`                                 |
+| route.detached                    | warning  | manual-decision    | Source is outside the loaded routes | `<folder> looks like a route but no Loader entry or parent reaches it.`                             | edit by hand                                       |
+| route.metadata-required-missing   | warning  | manual-decision    | Required route metadata is missing  | `<path> has no <description \| tags> in its frontmatter.`                                           | `open-forge route update <id> --description "..."` |
+| route.title-invalid               | warning  | manual-decision    | Route title is invalid              | `<path> has no level-1 heading.`                                                                    | edit by hand                                       |
+| route.axioms-invalid              | info     | manual-decision    | Route Axioms are invalid            | `<path> has no Axioms section, or its Axioms section is malformed.`                                 | edit by hand                                       |
+| route.generated-region-stale      | warning  | targeted-operation | Entries section is stale            | `The Entries section of <path> does not match its routed files.`                                    | targeted Index advice below                        |
+| route.generated-region-missing    | warning  | targeted-operation | Entries section is missing          | `<path> has no Entries section.`                                                                    | targeted Index advice below                        |
+| route.generated-region-malformed  | error    | blocked-repair     | Entries section is malformed        | `The Entries section of <path> could not be read as a list.`                                        | edit by hand                                       |
+| route.generated-region-misplaced  | warning  | manual-decision    | Entries section is not last         | `The Entries section of <path> is followed by another section.`                                     | edit by hand                                       |
+| route.generated-region-duplicate  | error    | blocked-repair     | More than one Entries section       | `<path> has more than one Entries section.`                                                         | edit by hand                                       |
+| route.generated-entry-missing     | warning  | targeted-operation | Entry is missing                    | `<path> does not list <child>.`                                                                     | targeted Index advice below                        |
+| route.generated-entry-extra       | warning  | targeted-operation | Entry has no file                   | `<path> lists <child>, which does not exist.`                                                       | targeted Index advice below                        |
+| route.generated-entry-order       | warning  | targeted-operation | Entries are out of order            | `The entries in <path> are not in the expected order.`                                              | targeted Index advice below                        |
+| route.generated-entry-path        | warning  | targeted-operation | Entry path is wrong                 | `The entry for <child> in <path> points to <wrong path>.`                                           | targeted Index advice below                        |
+| route.generated-entry-description | warning  | targeted-operation | Entry description is stale          | `The entry for <child> in <path> has an old description.`                                           | targeted Index advice below                        |
+| route.generated-entry-tags        | warning  | targeted-operation | Entry tags are stale                | `The entry for <child> in <path> has old tags.`                                                     | targeted Index advice below                        |
+| route.overwrite-orphan            | warning  | manual-decision    | Overwrite has no base file          | `<name>.overwrite.md has no <name>.md beside it.`                                                   | edit by hand                                       |
+| route.overwrite-independent-index | warning  | targeted-operation | Overwrite is listed independently   | `<path> lists <name>.overwrite.md as its own entry. Overwrite files are read with their base file.` | targeted Index advice below                        |
+| route.compatibility-conflict      | error    | blocked-repair     | Route names conflict                | `<folder> can be reached by two route names: <names>.`                                              | edit by hand                                       |
 
 ### Links
 
@@ -798,56 +798,56 @@ Counts on this category: `linksChecked`, `linksValid`,
 
 ### Framework files
 
-| Kind                                     | Severity | Lane               | Title                                                                           | Message                                                                                                | Action                            |
-| ---------------------------------------- | -------- | ------------------ | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------- |
-| framework.install-absent                 | info     | informational      | Framework is not installed                                                      | `Open Forge is not installed in this workspace.`                                                       | `open-forge install --dry-run`    |
-| framework.ownership-observation | info | informational | No ownership record | family `ownership-observation` (`Framework files`) | none |
-| framework.managed-missing | warning | targeted-operation | Framework file is missing | `<path> is missing. It was installed by the Framework.` | `open-forge update` |
-| framework.managed-changed | warning | targeted-operation | Framework file changed | `<path> changed since it was installed.` | `open-forge update` |
-| framework.lifecycle-evidence-unavailable | warning | blocked-repair | Ownership record cannot be read | `.agents/open-forge.lock.json could not be read: <reason>.` | none |
-| framework.bridge-boundary | error | blocked-repair | Open Forge section in AGENTS.md needs review | `The Open Forge section in <AGENTS.md \ | CLAUDE.md> is missing or changed.` |
-| framework.root-region-boundary | error | blocked-repair | Open Forge section boundary is unclear | `The Open Forge section in <file> has no clear start or end.` | edit by hand |
-| framework.ownership-conflict             | warning  | manual-decision    | Framework file ownership conflicts                                              | `<path> is claimed by the Framework and by <other>.`                                                   | fix by hand                       |
-| framework.partial-lifecycle | error | blocked-repair | Framework update did not finish | `Some Framework files are current and others are not, so an update did not finish.` | `open-forge update` |
-| framework.partial-recovery               | error    | blocked-repair     | Framework recovery is incomplete                                                | `The recovery bundle at <path> was partly applied: some files match the old content and some the new.` | `open-forge doctor --detail full` |
-| framework.distributed-payload-defect | error | manual-decision | Bundled Framework is invalid | family `payload-invalid` | reinstall the CLI |
+| Kind                                     | Severity | Lane               | Title                                        | Message                                                                                                | Action                             |
+| ---------------------------------------- | -------- | ------------------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| framework.install-absent                 | info     | informational      | Framework is not installed                   | `Open Forge is not installed in this workspace.`                                                       | `open-forge install --dry-run`     |
+| framework.ownership-observation          | info     | informational      | No ownership record                          | family `ownership-observation` (`Framework files`)                                                     | none                               |
+| framework.managed-missing                | warning  | targeted-operation | Framework file is missing                    | `<path> is missing. It was installed by the Framework.`                                                | `open-forge update`                |
+| framework.managed-changed                | warning  | targeted-operation | Framework file changed                       | `<path> changed since it was installed.`                                                               | `open-forge update`                |
+| framework.lifecycle-evidence-unavailable | warning  | blocked-repair     | Ownership record cannot be read              | `.agents/open-forge.lock.json could not be read: <reason>.`                                            | none                               |
+| framework.bridge-boundary                | error    | blocked-repair     | Open Forge section in AGENTS.md needs review | `The Open Forge section in <AGENTS.md \                                                                | CLAUDE.md> is missing or changed.` |
+| framework.root-region-boundary           | error    | blocked-repair     | Open Forge section boundary is unclear       | `The Open Forge section in <file> has no clear start or end.`                                          | edit by hand                       |
+| framework.ownership-conflict             | warning  | manual-decision    | Framework file ownership conflicts           | `<path> is claimed by the Framework and by <other>.`                                                   | fix by hand                        |
+| framework.partial-lifecycle              | error    | blocked-repair     | Framework update did not finish              | `Some Framework files are current and others are not, so an update did not finish.`                    | `open-forge update`                |
+| framework.partial-recovery               | error    | blocked-repair     | Framework recovery is incomplete             | `The recovery bundle at <path> was partly applied: some files match the old content and some the new.` | `open-forge doctor --detail full`  |
+| framework.distributed-payload-defect     | error    | manual-decision    | Bundled Framework is invalid                 | family `payload-invalid`                                                                               | reinstall the CLI                  |
 
 ### Extensions
 
-| Kind                              | Severity | Lane               | Title                                                                                    | Message                                                                                                           | Action                                      |
-| --------------------------------- | -------- | ------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| extension.ownership-observation   | info     | informational      | No ownership record                                                                      | family `ownership-observation` (`installed Extensions`)                                                           | none                                        |
-| extension.manifest-missing        | warning  | manual-decision    | Extension manifest is missing                                                            | `The package at <path> has no extension.json.`                                                                    | fix by hand                                 |
-| extension.manifest-malformed      | error    | blocked-repair     | Extension manifest is invalid                                                            | `<path>/extension.json could not be read: <reason>. Expected keys: id, name, description, version, dependencies.` | fix by hand                                 |
-| extension.duplicate-id            | error    | blocked-repair     | Extension ID is duplicated                                                               | `Two packages in <source> have the ID <id>.`                                                                      | fix by hand                                 |
-| extension.unknown-id              | warning  | manual-decision    | Extension ID is unknown                                                                  | `The ownership record names <id>, which is not in the bundled Extensions or the recorded source.`                 | `open-forge extension list`                 |
-| extension.version-invalid         | warning  | manual-decision    | Extension version is invalid                                                             | `<id> has an invalid version: <value>.`                                                                           | fix by hand                                 |
-| extension.managed-missing | warning | targeted-operation | Extension file is missing | `<path> is missing. It was installed by <id>.` | `open-forge extension update <id>` |
-| extension.managed-changed | warning | targeted-operation | Extension file changed | `<path> changed since it was installed by <id>.` | `open-forge extension update <id>` |
-| extension.dependency-missing      | warning  | manual-decision    | Required Extension dependency is missing                                                 | `<id> requires <dependency>, which is not installed.`                                                             | `open-forge extension install <dependency>` |
-| extension.dependency-cycle        | error    | blocked-repair     | Extension dependencies form a cycle                                                      | `<a> requires <b>, which requires <a>.`                                                                           | fix by hand                                 |
-| extension.dependency-incompatible | warning  | manual-decision    | Extension dependency version is incompatible                                             | `<id> requires <dependency> <range>, but <version> is installed.`                                                 | fix by hand                                 |
-| extension.source-unavailable      | info     | informational      | Extension source cannot be read                                                          | `The source of <id>, <path>, cannot be read, so its files were not compared.`                                     | none                                        |
-| extension.catalogue-unavailable | error | blocked-repair | Package folder cannot be read | `The package folder <path> cannot be read.` | none |
-| extension.partial-lifecycle | error | blocked-repair | Extension update did not finish | `Some files of <id> are current and others are not.` | `open-forge extension update <id>` |
-| extension.ownership-collision     | warning  | manual-decision    | Extension file ownership conflicts                                                       | `<path> is claimed by <id> and by <other>.`                                                                       | fix by hand                                 |
-| extension.bridge-registration | warning | manual-decision | Extension entry is missing from its parent | `<parent> does not list <path>, which <id> installed.` | `open-forge index` |
+| Kind                              | Severity | Lane               | Title                                        | Message                                                                                                           | Action                                      |
+| --------------------------------- | -------- | ------------------ | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| extension.ownership-observation   | info     | informational      | No ownership record                          | family `ownership-observation` (`installed Extensions`)                                                           | none                                        |
+| extension.manifest-missing        | warning  | manual-decision    | Extension manifest is missing                | `The package at <path> has no extension.json.`                                                                    | fix by hand                                 |
+| extension.manifest-malformed      | error    | blocked-repair     | Extension manifest is invalid                | `<path>/extension.json could not be read: <reason>. Expected keys: id, name, description, version, dependencies.` | fix by hand                                 |
+| extension.duplicate-id            | error    | blocked-repair     | Extension ID is duplicated                   | `Two packages in <source> have the ID <id>.`                                                                      | fix by hand                                 |
+| extension.unknown-id              | warning  | manual-decision    | Extension ID is unknown                      | `The ownership record names <id>, which is not in the bundled Extensions or the recorded source.`                 | `open-forge extension list`                 |
+| extension.version-invalid         | warning  | manual-decision    | Extension version is invalid                 | `<id> has an invalid version: <value>.`                                                                           | fix by hand                                 |
+| extension.managed-missing         | warning  | targeted-operation | Extension file is missing                    | `<path> is missing. It was installed by <id>.`                                                                    | `open-forge extension update <id>`          |
+| extension.managed-changed         | warning  | targeted-operation | Extension file changed                       | `<path> changed since it was installed by <id>.`                                                                  | `open-forge extension update <id>`          |
+| extension.dependency-missing      | warning  | manual-decision    | Required Extension dependency is missing     | `<id> requires <dependency>, which is not installed.`                                                             | `open-forge extension install <dependency>` |
+| extension.dependency-cycle        | error    | blocked-repair     | Extension dependencies form a cycle          | `<a> requires <b>, which requires <a>.`                                                                           | fix by hand                                 |
+| extension.dependency-incompatible | warning  | manual-decision    | Extension dependency version is incompatible | `<id> requires <dependency> <range>, but <version> is installed.`                                                 | fix by hand                                 |
+| extension.source-unavailable      | info     | informational      | Extension source cannot be read              | `The source of <id>, <path>, cannot be read, so its files were not compared.`                                     | none                                        |
+| extension.catalogue-unavailable   | error    | blocked-repair     | Package folder cannot be read                | `The package folder <path> cannot be read.`                                                                       | none                                        |
+| extension.partial-lifecycle       | error    | blocked-repair     | Extension update did not finish              | `Some files of <id> are current and others are not.`                                                              | `open-forge extension update <id>`          |
+| extension.ownership-collision     | warning  | manual-decision    | Extension file ownership conflicts           | `<path> is claimed by <id> and by <other>.`                                                                       | fix by hand                                 |
+| extension.bridge-registration     | warning  | manual-decision    | Extension entry is missing from its parent   | `<parent> does not list <path>, which <id> installed.`                                                            | `open-forge index`                          |
 
 ### Libraries (reported under Workspace)
 
-| Kind                                | Severity | Lane            | Title                                                              | Message                                                                    | Action                            |
-| ----------------------------------- | -------- | --------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------- | --------------------------------- |
-| library.ownership-observation       | info     | informational   | No ownership record                                                | family `ownership-observation` (`Libraries`)                               | none                              |
-| library.source-root-invalid | error | blocked-repair | Library source folder is invalid | `The source folder of <id>, <path>, is not a folder inside the workspace.` | `open-forge library inspect <id>` |
-| library.source-root-aliased         | error    | blocked-repair  | Library source root has an ambiguous path                          | `The source folder of <id>, <path>, resolves to an ambiguous location.`    | none                              |
-| library.inventory-incomplete        | warning  | informational   | Library source scan is incomplete                                  | `The source folder of <id> could not be scanned completely: <reason>.`     | `open-forge library inspect <id>` |
-| library.projection-missing          | warning  | manual-decision | Registered Library link is missing                                 | `<path>, a link of <id>, is missing.`                                      | `open-forge library sync <id>`    |
-| library.projection-dangling         | error    | blocked-repair  | Library link target is missing                                     | `<path> links to <target>, which does not exist.`                          | `open-forge library inspect <id>` |
-| library.projection-retargeted       | error    | blocked-repair  | Library link target changed                                        | `<path> no longer links to <expected>; it links to <actual>.`              | `open-forge library inspect <id>` |
-| library.path-collision              | warning  | manual-decision | Library destination is occupied                                    | `<path> is used by <id> and by <other>.`                                   | fix by hand                       |
-| library.link-capability-unsupported | error    | blocked-repair  | Required Library links are unsupported                             | `This system cannot create the file links the <id> Library needs.`         | none                              |
-| library.extension-collision         | warning  | manual-decision | Library and Extension paths conflict                               | `<path> is claimed by the <id> Library and the <id> Extension.`            | fix by hand                       |
-| library.recovery-safe-exact         | info     | safe-exact      | Verified Library recovery is available                             | `A verified recovery step for <id> can restore <path>.`                    | `open-forge repair --automatic`   |
+| Kind                                | Severity | Lane            | Title                                     | Message                                                                    | Action                            |
+| ----------------------------------- | -------- | --------------- | ----------------------------------------- | -------------------------------------------------------------------------- | --------------------------------- |
+| library.ownership-observation       | info     | informational   | No ownership record                       | family `ownership-observation` (`Libraries`)                               | none                              |
+| library.source-root-invalid         | error    | blocked-repair  | Library source folder is invalid          | `The source folder of <id>, <path>, is not a folder inside the workspace.` | `open-forge library inspect <id>` |
+| library.source-root-aliased         | error    | blocked-repair  | Library source root has an ambiguous path | `The source folder of <id>, <path>, resolves to an ambiguous location.`    | none                              |
+| library.inventory-incomplete        | warning  | informational   | Library source scan is incomplete         | `The source folder of <id> could not be scanned completely: <reason>.`     | `open-forge library inspect <id>` |
+| library.projection-missing          | warning  | manual-decision | Registered Library link is missing        | `<path>, a link of <id>, is missing.`                                      | `open-forge library sync <id>`    |
+| library.projection-dangling         | error    | blocked-repair  | Library link target is missing            | `<path> links to <target>, which does not exist.`                          | `open-forge library inspect <id>` |
+| library.projection-retargeted       | error    | blocked-repair  | Library link target changed               | `<path> no longer links to <expected>; it links to <actual>.`              | `open-forge library inspect <id>` |
+| library.path-collision              | warning  | manual-decision | Library destination is occupied           | `<path> is used by <id> and by <other>.`                                   | fix by hand                       |
+| library.link-capability-unsupported | error    | blocked-repair  | Required Library links are unsupported    | `This system cannot create the file links the <id> Library needs.`         | none                              |
+| library.extension-collision         | warning  | manual-decision | Library and Extension paths conflict      | `<path> is claimed by the <id> Library and the <id> Extension.`            | fix by hand                       |
+| library.recovery-safe-exact         | info     | safe-exact      | Verified Library recovery is available    | `A verified recovery step for <id> can restore <path>.`                    | `open-forge repair --automatic`   |
 
 ## Scenarios
 
@@ -966,7 +966,6 @@ Conformance evidence must cover:
 - [CLI Source References Interface Contract](../shared/source-references/interface.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
 
-
 ## Executable Wording References
 
 Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
@@ -974,3 +973,26 @@ Exact wording is owned by the linked typed factories. Selection, output coordina
 CLI help syntax: [`doctor.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Doctor/DoctorText.cs).
 
 <!-- @OpenForgeTextRef doctor.help.syntax -->
+
+## Targeted generated-navigation advice
+
+A missing generated entry names its expected destination, never the diagnostic
+sentinel `absent`. The actual/expected evidence still records absence faithfully.
+Generated-region, generated-entry and independent-overwrite findings identify
+the catalogue containing the incorrect Entries and target that catalogue with
+`open-forge index <path>`. They do not append a contradictory default Index
+suggestion. This works for an explicitly selectable detached Skill catalogue
+without making that catalogue part of default rooted traversal.
+
+For a workspace-relative path using only ASCII letters, digits, slash, period,
+underscore, hyphen and ordinary spaces, the advice is a copyable command. Quote
+the entire argument with double quotes when it contains spaces. For a path
+beginning with hyphen or containing another character, show this sentence:
+`Run open-forge index with <path> as its source argument, using your shell's quoting rules.`
+Keep the exact path. This fallback does not reject, rename or stop supporting it.
+
+The command explanation is `Refresh the generated Entries in this catalogue.`
+The report's Next action prefers a copyable command and otherwise retains the
+explicit sentence instruction. Finding kinds, resolution lanes, status, exits,
+JSON shape and read-only effects are unchanged. Other findings retain their
+existing fallback behavior.

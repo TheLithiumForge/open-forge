@@ -72,12 +72,26 @@ public sealed class ExtensionManifestFileReaderIntegrationTests
         {
             Assert.Equal(ExtensionSourceFailureKind.PackageInvalid, failure.FailureKind);
             Assert.StartsWith("The Extension manifest is invalid: ", failure.Cause);
+
+            var expectedDetailKind = scenario switch
+            {
+                "encoding" => ExtensionSourceFailureDetailKind.InvalidEncoding,
+                "syntax" or "required" or "identity" => ExtensionSourceFailureDetailKind.InvalidManifest,
+                _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario),
+            };
+            var detail = Assert.IsType<ExtensionSourceFailureDetail>(failure.FailureDetail);
+            Assert.Equal(path, detail.Path);
+            Assert.Equal(expectedDetailKind, detail.Kind);
         }
         if (scenario == "encoding")
         {
             Assert.Equal(
                 "The Extension manifest is invalid: Unable to translate bytes [FF] at index 0 from specified code page to Unicode.",
                 failure.Cause);
+        }
+        else if (scenario == "dependency")
+        {
+            Assert.Null(failure.FailureDetail);
         }
         Assert.Equal(before, source.SnapshotHashes());
     }
@@ -118,6 +132,37 @@ public sealed class ExtensionManifestFileReaderIntegrationTests
         {
             Assert.Equal("Extension source inspection was interrupted.", failure.Cause);
         }
+        Assert.Equal(before, source.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "File manifest reader classifies a real Windows sharing denial as file in use"), Trait("Feature", "extension-manifest"), Trait("Evidence", "Integration")]
+    public static async Task ClassifiesWindowsSharingDenial()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            Assert.Skip("This evidence requires Windows file sharing.");
+            return;
+        }
+
+        using var source = TemporaryWorkspace.Create("manifest-file-sharing");
+        var path = source.CreateFile("extension.json", ValidManifest);
+        var before = source.SnapshotHashes();
+        ExtensionManifestFileReadOutcome outcome;
+        using (File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+        {
+            outcome = await ReadAsync(path, TestContext.Current.CancellationToken);
+        }
+
+        var failure = Assert.IsType<ExtensionManifestFileReadFailure>(outcome).Result;
+        Assert.Equal(ExtensionSourceReadState.Unavailable, failure.State);
+        Assert.Equal(ExtensionSourceFailureKind.None, failure.FailureKind);
+        Assert.Equal(path, failure.Identity);
+        Assert.Null(failure.Kind);
+        var detail = Assert.IsType<ExtensionSourceFailureDetail>(failure.FailureDetail);
+        Assert.Equal(path, detail.Path);
+        Assert.Equal(ExtensionSourceFailureDetailKind.FileInUse, detail.Kind);
+        Assert.False(string.IsNullOrWhiteSpace(failure.Cause));
         Assert.Equal(before, source.SnapshotHashes());
     }
 

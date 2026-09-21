@@ -8,17 +8,21 @@ open-forge:
 
 ## Task state
 
-- State: **Open, not started. Contains one live regression.** Raised by the
+- State: **Open; representative correction passed focused and complete managed/native gates.** Raised by the
   maintainer on 2026-09-16.
 - Owner: Root.
+
+The 2026-09-21 [error packet](beta-follow-ups/task39-errors.md) records the current caller inventory, reproduced manifest-subject loss and proposed worker boundaries. Historical counts below are dated evidence, not a current defect count. E1 and E2 passed focused and complete managed/native gates under the [execution record](beta-follow-ups/execution.md). The wider command-family audit remains open.
+
 - Trigger: the maintainer read a before/after from the cause-bounding work and
-  observed that the new message names no path — *"what purpose does an error
-  serve if not fixing the issue"*.
+  observed that the new message names no path — _"what purpose does an error
+  serve if not fixing the issue"_.
 
-## 1. Live regression — bounded causes destroyed the actionable detail
+## 1. Original regression evidence — bounded causes destroyed the actionable detail
 
-**This is self-inflicted, introduced on 2026-09-16, and it is the first thing to
-fix.** The work that removed leaked .NET internals over-corrected: it replaced
+The regression was introduced on 2026-09-16. The manifest-error example below
+is corrected by E1/E2; other command families still need their own inventory.
+The original work that removed leaked .NET internals over-corrected: it replaced
 whole causes with generic phrases instead of replacing only the internal part.
 
 ```text
@@ -52,10 +56,10 @@ So the damage is uneven, and predictably so:
 
 Across the integration capture corpus on 2026-09-16:
 
-| | Lines |
-| --- | --- |
-| Generic reason **with** a path alongside | 32 |
-| Generic reason **with no path at all** | **114** |
+|                                          | Lines   |
+| ---------------------------------------- | ------- |
+| Generic reason **with** a path alongside | 32      |
+| Generic reason **with no path at all**   | **114** |
 
 Worst observed, all currently shipping:
 
@@ -79,7 +83,7 @@ path at all** fell from **114 to 12**.
 
 The rule is now recorded in
 [CLI design guidance](../../../../guidance/cli-design.md) under
-*Build Failures From Your Own Facts*.
+_Build Failures From Your Own Facts_.
 
 **What is left for this Task**: the remaining 12 lines, where the platform
 quoted no path and the caller supplied no prefix. Those cannot be fixed by
@@ -115,7 +119,7 @@ guess where the useful half of a string ends will keep making this mistake.
 G4 converted all 28 commands, but "converted" was verified, not "improved".
 Confirm per command, from the captures, that the current output answers the
 question its catalogue says the command exists to answer. Record any command
-whose output is merely *different* rather than better.
+whose output is merely _different_ rather than better.
 
 ## 3. What legacy remains?
 

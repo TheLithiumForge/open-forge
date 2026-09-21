@@ -63,9 +63,9 @@ The following structural constraints realize the [Open Forge Principles](../prin
 
 ## Shipped Framework
 
-Open Forge ships a standard Framework rather than an empty routing library. Its `routes` embody the useful starting environment developed through dogfooding while remaining ordinary files that users may reshape.
+Open Forge ships a minimal Core and Memory state structure rather than an empty routing library. Optional Extensions add deeper roles while remaining ordinary files that users may reshape.
 
-The standard structure is conceptually:
+The Core structure is conceptually:
 
 ```text
 AGENTS.md
@@ -73,27 +73,36 @@ provider bridge files when supported
 .agents/
   loader.md
   directives/
+    _directives.md
   guidance/
+    _guidance.md
   patterns/
+    _patterns.md
   skills/
+    _skills.md
   templates/
-  workflows/
+    _templates.md
   maps/
+    _maps.md
   memory/
+    _memory.md
     working/
-      checkpoints/
-      handoffs/
+      _working.md
     emerging/
-      analysis/
-      ideas/
-      observations/
+      _emerging.md
     crystallized/
-      decisions/
-      documents/
+      _crystallized.md
     archived/
+      _archived.md
 ```
 
-The canonical workspace `entry` and loader form the entry boundary. Core `route` categories provide the shared primitive vocabulary. Memory supplies the standard state model and starter `routes` used to preserve continuity and evolution.
+The canonical workspace `entry` and loader form the entry boundary. Core `route` categories provide the shared primitive vocabulary. Core Memory supplies the four state entrypoints used to preserve continuity and evolution. It does not include deeper role routes or a separate Workflows root.
+
+Optional Extensions add deeper Memory routes when a workspace needs them:
+
+- The optional [Planning Extension](../../../../../src/extensions/planning/extension.json) supplies [Decisions](../../../../../src/extensions/planning/content/.agents/memory/crystallized/decisions/_decisions.md), [Analysis](../../../../../src/extensions/planning/content/.agents/memory/emerging/analysis/_analysis.md), [Ideas](../../../../../src/extensions/planning/content/.agents/memory/emerging/ideas/_ideas.md), and [Checkpoints](../../../../../src/extensions/planning/content/.agents/memory/working/checkpoints/_checkpoints.md).
+- The optional [Project Documents Extension](../../../../../src/extensions/project-documents/extension.json) supplies [Documents](../../../../../src/extensions/project-documents/content/.agents/memory/crystallized/documents/_documents.md).
+- The optional [Orchestration Extension](../../../../../src/extensions/orchestration/extension.json) supplies [Observations](../../../../../src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md) and [Handoffs](../../../../../src/extensions/orchestration/content/.agents/memory/working/handoffs/_handoffs.md).
 
 This tree is the distributed product shape, not an untouchable taxonomy. A user may add scopes, add or remove `routes`, replace framework files, use only a subset of the primitives, or reorganize local material through valid `route` chains. Removing a standard `route` removes that capability from the local profile; it does not make the remaining Framework invalid. Validation checks the structure that exists rather than demanding that deleted defaults reappear.
 
@@ -122,17 +131,16 @@ Core mechanics are:
 - The loader and `entrypoint` contract
 - Authority, inheritance, loading, tag, and overwrite semantics
 
-The seven Core primitives are:
+The six Core primitives are:
 
 - Directives
 - Guidance
 - Patterns
 - Skills
 - Templates
-- Workflows
 - Map `routes`
 
-These primitives are distinct because they answer different questions. Their default `entrypoints` and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [templates](../../../../templates/_templates.md), [workflows](../../../../skills/use-workflow/references/open-forge/_open-forge.md), and [maps](../../../../maps/_maps.md) `routes`.
+These primitives are distinct because they answer different questions. Their default `entrypoints` and current local contents are exposed by the [directives](../../../../directives/_directives.md), [guidance](../../../../guidance/_guidance.md), [patterns](../../../../patterns/_patterns.md), [skills](../../../../skills/_skills.md), [templates](../../../../templates/_templates.md), and [maps](../../../../maps/_maps.md) `routes`. Repeatable workflow recipes are selected through the native [`use-workflow` Skill](../../../../../src/extensions/workflows/content/.agents/skills/use-workflow/SKILL.md), not through a separate Core primitive or root route.
 
 ### Routing
 
@@ -177,7 +185,7 @@ Core primitives give reusable content distinct application semantics instead of 
 
 The [Core primitive model](primitives/model.md) defines the complete role vocabulary, selection questions, authority boundaries, relationships, recursive scope, admission threshold, and why Core has no separate Rules primitive.
 
-Every shipped primitive has a focused conceptual contract under [Core Primitives](primitives/_primitives.md): Directives, Guidance, Patterns, Skills, Templates, Workflows, and Map. These documents deepen each role's meaning, boundaries, lifecycle, and relationships without becoming parallel runtime instructions.
+Every shipped primitive has a focused conceptual contract under [Core Primitives](primitives/_primitives.md): Directives, Guidance, Patterns, Skills, Templates, and Map. These documents deepen each role's meaning, boundaries, lifecycle, and relationships without becoming parallel runtime instructions. Workflow recipes remain a Skill-based relationship rather than a seventh Core primitive.
 
 Installed category `entrypoints` own the complete compact operational and file requirements that users and agents receive. Maintenance contracts own canonical sources, alignment obligations, distribution details, and verification.
 
@@ -187,11 +195,11 @@ Installed category `entrypoints` own the complete compact operational and file r
 
 Memory state and scope are independent. State describes how recorded material should currently be treated. Scope describes the person, project, component, discipline, repository, collection, or other subject to which it applies. The `route` path expresses both dimensions without a centralized registry.
 
-Memory loading follows state purpose. Working and Crystallized navigation enter baseline context, Emerging learning is revisited at applicable continuity boundaries, and Archived history remains on demand. Individual records still load by relevance unless their own tags give them a baseline or continuity role.
+Memory loading follows state purpose. Core Working and Crystallized navigation enter baseline context, the Core Emerging `entrypoint` is revisited at applicable continuity boundaries, and Archived history remains on demand. Optional Extension routes are selected separately; their `Extension` classification does not add automatic loading or continuity. Individual records still load by relevance unless their own tags give them a baseline or continuity role.
 
 The detailed current contracts are separated by responsibility:
 
-- The [Memory model](memory/model.md) defines purpose, authority boundaries, state and scope composition, recursive growth, capture thresholds, and shipped defaults
+- The [Memory model](memory/model.md) defines purpose, authority boundaries, state and scope composition, recursive growth, capture thresholds, and Core state defaults
 - The [Working](memory/working.md), [Emerging](memory/emerging.md), [Crystallized](memory/crystallized.md), and [Archived](memory/archived.md) contracts define what makes each standard state valid
 - The [transition contract](memory/transitions.md) defines capture, direct movement, consolidation, promotion, supersession, archival, restoration, and relationship updates
 - The [accepted-state contract](truth.md) defines framework-wide acceptance, #Contextual and #CurrentTruth treatment, and #Evergreen synchronization
@@ -239,7 +247,7 @@ This relationship model is intentionally sufficient for future graph, semantic, 
 
 The [scope and inheritance contract](routing/scope.md) defines the complete recursive customization model. In summary, each `root route` exists only where the loader exposes it, while ordinary routed `slugs` may narrow any meaning that follows below that root. Scoping does not reorder `route` segments recognized by a declared manager or recreate a `root route`.
 
-The `root routes` compose through explicit links by default. A Workflow may use a Skill or Pattern without physically containing a second Core tree.
+The `root routes` compose through explicit links by default. A workflow recipe may use a Skill or Pattern without physically containing a second Core tree.
 
 Users may add roots or deeper `routes`, replace standard `routes`, and remove defaults that provide no local value. Generic routing remains available to every valid `entrypoint` tree. A `route` receives its behavior from explicit `entrypoints`, loaded ancestors, and accepted local contracts.
 

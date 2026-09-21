@@ -55,6 +55,44 @@ public sealed class ExtensionSourceIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Real Extension source retains the failed manifest path through package and catalogue results"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Integration")]
+    public async Task RealSourceRetainsManifestFailureDetailThroughWrappers()
+    {
+        using var workspace = TemporaryWorkspace.Create("extension-target");
+        using var package = TemporaryWorkspace.Create("extension-invalid-package");
+        var packageManifest = package.CreateFile("extension.json", "{");
+        var reader = new ExtensionSourceReader(new PhysicalPathResolver());
+        var packageBefore = package.SnapshotHashes();
+
+        var packageResult = await reader.ReadAsync(Workspace(workspace), package.Path, CancellationToken.None);
+
+        Assert.Equal(ExtensionSourceReadState.Invalid, packageResult.State);
+        Assert.Equal(package.Path, packageResult.Identity);
+        Assert.Equal(ExtensionSourceFailureKind.PackageInvalid, packageResult.FailureKind);
+        var packageDetail = Assert.IsType<ExtensionSourceFailureDetail>(packageResult.FailureDetail);
+        Assert.Equal(packageManifest, packageDetail.Path);
+        Assert.Equal(ExtensionSourceFailureDetailKind.InvalidManifest, packageDetail.Kind);
+        Assert.Empty(packageResult.Packages);
+        Assert.Equal(packageBefore, package.SnapshotHashes());
+
+        using var catalogue = TemporaryWorkspace.Create("extension-invalid-catalogue");
+        var catalogueManifest = catalogue.CreateFile("broken/extension.json", "{");
+        var catalogueBefore = catalogue.SnapshotHashes();
+
+        var catalogueResult = await reader.ReadAsync(Workspace(workspace), catalogue.Path, CancellationToken.None);
+
+        Assert.Equal(ExtensionSourceReadState.Invalid, catalogueResult.State);
+        Assert.Equal(catalogue.Path, catalogueResult.Identity);
+        Assert.NotEqual(catalogueResult.Identity, catalogueManifest);
+        Assert.Equal(ExtensionSourceFailureKind.PackageInvalid, catalogueResult.FailureKind);
+        var catalogueDetail = Assert.IsType<ExtensionSourceFailureDetail>(catalogueResult.FailureDetail);
+        Assert.Equal(catalogueManifest, catalogueDetail.Path);
+        Assert.Equal(ExtensionSourceFailureDetailKind.InvalidManifest, catalogueDetail.Kind);
+        Assert.Empty(catalogueResult.Packages);
+        Assert.Equal(catalogueBefore, catalogue.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Real Extension source blocks a physical alias of the selected workspace"), Trait("Feature", "extension-discovery"), Trait("Evidence", "Integration")]
     public async Task RealSourceBlocksPhysicalWorkspaceAlias()
     {

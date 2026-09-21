@@ -1,6 +1,6 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
-using OpenForge.Cli.Core.Commands.Shared;
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Actions;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -144,13 +144,7 @@ internal static class RouteDoctorInspector
     private static DoctorFinding? CreateGeneratedFinding(
         DoctorGeneratedNavigationTargetObservation observation)
     {
-        var action = new DoctorNextAction
-        {
-            Kind = DoctorNextActionKind.AcceptedOperation,
-            Operation = DoctorNextOperation.Index,
-            Command = CommandLines.Index,
-            Reason = "Index owns deterministic generated-navigation projection.",
-        };
+        var action = DoctorIndexAction.ForPath(observation.Path);
         var descriptor = observation.State switch
         {
             OperationalGeneratedNavigationState.Current or OperationalGeneratedNavigationState.NotApplicable => null,

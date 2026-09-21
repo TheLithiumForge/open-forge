@@ -9,13 +9,13 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/working/checkpoints/_checkpoints.md`](../../../../../../../../../src/open-forge/.agents/memory/working/checkpoints/_checkpoints.md) is the canonical installed Checkpoints `entrypoint`. The repository [Checkpoints `entrypoint`](../../../../../../../working/checkpoints/_checkpoints.md) dogfoods the same authored contract and may add local generated `Entries`.
+[`src/extensions/planning/content/.agents/memory/working/checkpoints/_checkpoints.md`](../../../../../../../../../src/extensions/planning/content/.agents/memory/working/checkpoints/_checkpoints.md) is the canonical installed source for the optional Planning Extension's Checkpoints `entrypoint`. The repository [Checkpoints `entrypoint`](../../../../../../../working/checkpoints/_checkpoints.md) dogfoods the same authored contract and may add local generated `Entries`.
 
 The [Working state contract](../../../../../framework/memory/working.md) defines Checkpoints as current state for one active workstream that any future reader can use. The [transition contract](../../../../../framework/memory/transitions.md) owns durable-outcome integration and expiration.
 
 ## Contract
 
-- Frontmatter preserves #LoadNow, #Memory, #Working, #Checkpoint, and #Contextual classification
+- Frontmatter uses #Extension, #Memory, #Working, #Checkpoint, and #Contextual to classify this optional Planning route
 - A Checkpoint records the current state, current step, and next steps for one active workstream and is updated as the work changes
 - It carries #Active and #KeepInMind only while active and is refreshed after important state changes and context restoration
 - It records the current goal, state, and current step, accepted decisions, evidence, unresolved questions, next steps, and durable sources when they help the work resume
@@ -25,4 +25,4 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 
 ## Verification
 
-- Installation and route tests verify Checkpoints loading, indexing, classification, active-status wording, recursive scope, and preservation of user-owned legacy Sessions
+- Core-only installation verifies that the optional Checkpoints route is absent; Planning installation verifies that it installs, indexes, retains its full source classification and active-status wording, supports recursive scope, and preserves user-owned legacy Sessions

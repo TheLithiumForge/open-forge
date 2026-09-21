@@ -1,7 +1,7 @@
-Cannot list Extensions: the content is not valid JSON.
+Available Extensions could not be listed from <extension-source>/toolkit/extension.json.
 Workspace: <workspace>
   Error  <extension-source>  Extension source is invalid [extension-list.source-invalid]
-         <extension-source> is not an Extension package or package folder: the content is not valid JSON. Expected extension.json with id, name, description, version, dependencies.
+         <extension-source>/toolkit/extension.json is not a valid Extension manifest.
          Cause: The Extension manifest is invalid: 'm' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 2.
   Info  .agents/open-forge.lock.json  Ownership record is unavailable [extension-list.ownership-observation]
          No ownership record exists, so installed packages cannot be listed from it.
@@ -10,4 +10,6 @@ Source: <extension-source>
 Installed  (no ownership record, so installed packages cannot be listed)
 
 Available (from <extension-source>)  unavailable
-  available packages: the content is not valid JSON.
+  available packages: <extension-source>/toolkit/extension.json is not a valid Extension manifest.
+  Check the manifest's required fields and values, then retry.
+Next: Check the manifest's required fields and values, then retry.

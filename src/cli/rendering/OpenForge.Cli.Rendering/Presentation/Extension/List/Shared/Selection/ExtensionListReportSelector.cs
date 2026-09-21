@@ -245,7 +245,14 @@ internal static class ExtensionListReportSelector
         ExtensionListResult result,
         ExtensionListFinding finding,
         string? subjectPath)
-        => finding.Code switch
+    {
+        if (finding.FailureDetail is { } detail
+            && finding.Code is (ExtensionListFindingCode.SourceUnavailable or ExtensionListFindingCode.SourceInvalid))
+        {
+            return ExtensionListWording.SourceFailureMessage(detail);
+        }
+
+        return finding.Code switch
         {
             ExtensionListFindingCode.InvalidInput => ExtensionListWording.InvalidInput(finding.Cause),
             ExtensionListFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(subjectPath ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheWorkspace()),
@@ -275,6 +282,7 @@ internal static class ExtensionListReportSelector
             ExtensionListFindingCode.Interrupted => ExtensionListWording.Interrupted(),
             _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The Extension List finding code is not defined."),
         };
+    }
 
     private static IReadOnlyList<CliEvidence> Evidence(ExtensionListFinding finding)
     {
@@ -297,6 +305,14 @@ internal static class ExtensionListReportSelector
 
     private static CliNextAction? Next(ExtensionListResult result)
     {
+        var sourceFailure = result.Findings.FirstOrDefault(finding =>
+            finding.Code is (ExtensionListFindingCode.SourceUnavailable or ExtensionListFindingCode.SourceInvalid)
+            && finding.FailureDetail is not null);
+        if (sourceFailure?.FailureDetail is { } detail)
+        {
+            return ExtensionListWording.SourceFailureNext(detail);
+        }
+
         var installedOwner = result.Findings
             .Where(finding => finding.Owner is not null && IsInstalledFinding(finding.Code))
             .Select(finding => finding.Owner)
@@ -366,8 +382,14 @@ internal static class ExtensionListReportSelector
                 label,
                 Value: null,
                 UnavailableReason: findings.FirstOrDefault(findingPredicate) is { } finding
-                    ? CliFindingWording.CauseSentence(finding.Cause)
+                    ? CoverageReason(finding)
                     : fallbackReason);
+
+    private static string CoverageReason(ExtensionListFinding finding)
+        => finding.FailureDetail is { } detail
+            && finding.Code is (ExtensionListFindingCode.SourceUnavailable or ExtensionListFindingCode.SourceInvalid)
+            ? ExtensionListWording.SourceFailureMessage(detail)
+            : CliFindingWording.CauseSentence(finding.Cause);
 
     private static bool IsInstalledCoverageFinding(ExtensionListFinding finding)
         => finding.Code == ExtensionListFindingCode.OwnershipObservation
@@ -386,6 +408,15 @@ internal static class ExtensionListReportSelector
 
     private static string Headline(ExtensionListResult result)
     {
+        var sourceFailure = result.Findings.FirstOrDefault(value =>
+            value.Status == result.Status
+            && value.Code is (ExtensionListFindingCode.SourceUnavailable or ExtensionListFindingCode.SourceInvalid)
+            && value.FailureDetail is not null);
+        if (result.Selection.Available && sourceFailure?.FailureDetail is { } detail)
+        {
+            return ExtensionListWording.SourceFailureHeadline(detail.Path);
+        }
+
         var finding = result.Findings.FirstOrDefault(value => value.Status == result.Status);
         return result.Status switch
         {

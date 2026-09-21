@@ -147,6 +147,21 @@ internal static class ExtensionListWording
     internal static string SourceInvalid(string path, string reason)
         => global::OpenForge.Cli.OutputText.Extension.List.ExtensionListPhrases.FormatIsNotAnExtensionPackageOrPackageFolder($"{path}", $"{TrimPeriod(reason)}", $"{ExpectedManifest}");
 
+    internal static string SourceFailureHeadline(string path)
+        => global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.SourceFailureHeadline(path);
+
+    internal static string SourceFailureMessage(ExtensionListSourceFailureDetail detail)
+        => ReadSourceFailureWording(detail).Message;
+
+    internal static CliNextAction SourceFailureNext(ExtensionListSourceFailureDetail detail)
+    {
+        var wording = ReadSourceFailureWording(detail);
+        return new CliNextAction(wording.Next, wording.Next)
+        {
+            Kind = CliNextActionKind.Sentence,
+        };
+    }
+
     internal static string SourceBlocked(string path, string reason)
         => global::OpenForge.Cli.OutputText.Extension.List.ExtensionListPhrases.FormatCannotBeUsedAsASource($"{path}", $"{BlockedReason(reason)}");
 
@@ -191,6 +206,32 @@ internal static class ExtensionListWording
     internal static string WarningHeadline() => global::OpenForge.Cli.OutputText.Extension.List.ExtensionListText.MessageExtensionListCompletedWithWarnings();
 
     internal static string CancelledHeadline() => Interrupted();
+
+    private static SourceFailureWording ReadSourceFailureWording(ExtensionListSourceFailureDetail detail)
+    {
+        ArgumentNullException.ThrowIfNull(detail);
+        return detail.Kind switch
+        {
+            ExtensionListSourceFailureDetailKind.InvalidManifest => new(
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestInvalid(detail.Path),
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestInvalidNext()),
+            ExtensionListSourceFailureDetailKind.InvalidEncoding => new(
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestEncodingInvalid(detail.Path),
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestEncodingInvalidNext()),
+            ExtensionListSourceFailureDetailKind.AccessDenied => new(
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestAccessDenied(detail.Path),
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestAccessDeniedNext()),
+            ExtensionListSourceFailureDetailKind.FileInUse => new(
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestInUse(detail.Path),
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestInUseNext()),
+            ExtensionListSourceFailureDetailKind.InputOutput => new(
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestIoFailed(detail.Path),
+                global::OpenForge.Cli.OutputText.Extension.List.ExtensionListWording.ManifestIoFailedNext()),
+            _ => throw new ArgumentOutOfRangeException(nameof(detail), detail.Kind, "The Extension source failure detail kind is not defined."),
+        };
+    }
+
+    private sealed record SourceFailureWording(string Message, string Next);
 
     private static string Plural(int count, string singular) => CliText.Plural(count, singular);
 

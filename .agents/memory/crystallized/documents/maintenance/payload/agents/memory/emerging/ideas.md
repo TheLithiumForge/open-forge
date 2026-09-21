@@ -9,17 +9,17 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/emerging/ideas/_ideas.md`](../../../../../../../../../src/open-forge/.agents/memory/emerging/ideas/_ideas.md) is the canonical installed Ideas `entrypoint`. The repository [Ideas `entrypoint`](../../../../../../../emerging/ideas/_ideas.md) dogfoods the same authored contract and adds repository candidates through generated `Entries`.
+[`src/extensions/planning/content/.agents/memory/emerging/ideas/_ideas.md`](../../../../../../../../../src/extensions/planning/content/.agents/memory/emerging/ideas/_ideas.md) is the canonical installed source for the optional Planning Extension's Ideas `entrypoint`. The repository [Ideas `entrypoint`](../../../../../../../emerging/ideas/_ideas.md) dogfoods the same authored contract and adds repository candidates through generated `Entries`.
 
 The [Emerging state contract](../../../../../framework/memory/emerging.md) defines Ideas as future possibilities, experiments, questions, and options whose outcomes are not accepted.
 
 ## Contract
 
-- Frontmatter preserves #LoadNow, #Memory, #Idea, #Exploration, #OrganicGrowth, #Contextual, and #Candidate classification
+- Frontmatter uses #Extension, #Memory, #Idea, #Exploration, #OrganicGrowth, #Contextual, and #Candidate to classify this optional Planning route
 - Ideas remain available when work explores possibilities, plans future work, or revisits postponed options
 - Each Idea preserves enough problem, opportunity, or motivation to make later reconsideration meaningful
 - Explicit user requests to preserve or explore an idea are sufficient for capture without implying acceptance
 
 ## Verification
 
-- Installation and `route` tests verify Ideas loading, indexing, classification, and recursive child routing
+- Core-only installation verifies that the optional Ideas route is absent; Planning installation verifies that it installs, indexes, retains its full source classification, and supports recursive child routing

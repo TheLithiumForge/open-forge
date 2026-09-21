@@ -154,6 +154,118 @@ public sealed class DoctorWorkspaceRouteMappingTests
     }
 
     [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Doctor identifies missing generated entries by expected destination")]
+    [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
+    public void GeneratedEntryMappingsUseExpectedIdentityOnlyForMissingComparisons()
+    {
+        const string cataloguePath = ".agents/skills/use-workflow/references/_references.md";
+        var extraLocation = new SourceLocation(
+            line: 4,
+            column: 2,
+            byteOffset: 30,
+            byteLength: 12);
+        var observation = DoctorGeneratedNavigationTargetObservation.Available(
+            cataloguePath,
+            OperationalGeneratedNavigationState.Changed,
+            new DoctorGeneratedNavigationContent(
+                SourceGeneratedEntriesFacts.Complete([]),
+                [],
+                [
+                    new RouteGeneratedEntryComparison(
+                        RouteGeneratedEntryComparisonKind.Missing,
+                        expected: "beta-probe.md",
+                        actual: null,
+                        location: null),
+                    new RouteGeneratedEntryComparison(
+                        RouteGeneratedEntryComparisonKind.Extra,
+                        expected: null,
+                        actual: "stale.md",
+                        location: extraLocation),
+                ]));
+
+        var findings = RouteGeneratedEntryDoctorInspector.Inspect([observation]).ToArray();
+
+        var missing = Assert.Single(
+            findings,
+            finding => finding.Kind == DoctorFindingKind.RouteGeneratedEntryMissing);
+        Assert.Equal(DoctorSubjectKind.GeneratedRegion, missing.Subject.Kind);
+        Assert.Equal(cataloguePath, missing.Subject.Path);
+        Assert.Equal(cataloguePath, missing.Provenance.Path);
+        Assert.Equal("beta-probe.md", missing.Subject.Identifier);
+        Assert.Collection(
+            missing.Evidence,
+            evidence =>
+            {
+                var comparison = Assert.IsType<DoctorComparisonEvidence>(evidence);
+                Assert.Equal("beta-probe.md", comparison.Expected);
+                Assert.Equal("absent", comparison.Actual);
+            },
+            evidence =>
+            {
+                var authored = Assert.IsType<DoctorAuthoredValueEvidence>(evidence);
+                Assert.Equal("absent", authored.Value);
+                Assert.Null(authored.Location);
+            });
+
+        var extra = Assert.Single(
+            findings,
+            finding => finding.Kind == DoctorFindingKind.RouteGeneratedEntryExtra);
+        Assert.Equal(cataloguePath, extra.Subject.Path);
+        Assert.Equal("stale.md", extra.Subject.Identifier);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Doctor targets generated-navigation actions at their owning catalogue")]
+    [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
+    public void GeneratedNavigationActionsUseCataloguePathForEveryTargetedObservation()
+    {
+        const string cataloguePath = ".agents/catalogue/_catalogue.md";
+        const string childPath = ".agents/catalogue/child.md";
+        const string overwritePath = ".agents/catalogue/child.overwrite.md";
+        var location = new SourceLocation(
+            line: 7,
+            column: 3,
+            byteOffset: 50,
+            byteLength: 14);
+        var generatedObservation = DoctorGeneratedNavigationTargetObservation.Available(
+            cataloguePath,
+            OperationalGeneratedNavigationState.Changed,
+            new DoctorGeneratedNavigationContent(
+                SourceGeneratedEntriesFacts.Complete([]),
+                [],
+                [new RouteGeneratedEntryComparison(
+                    RouteGeneratedEntryComparisonKind.Missing,
+                    expected: childPath,
+                    actual: null,
+                    location: null)]));
+
+        var region = Assert.Single(
+            RouteDoctorInspector.Inspect(
+                View([], [], generatedNavigation: [generatedObservation])).Findings,
+            finding => finding.Kind == DoctorFindingKind.RouteGeneratedRegionStale);
+        var entry = Assert.Single(
+            RouteGeneratedEntryDoctorInspector.Inspect([generatedObservation]),
+            finding => finding.Kind == DoctorFindingKind.RouteGeneratedEntryMissing);
+        var overwrite = Assert.Single(
+            RouteShapeDoctorInspector.Inspect(
+                [RouteShapeObservation.OverwriteIndependentIndex(
+                    cataloguePath,
+                    overwritePath,
+                    childPath,
+                    location)]),
+            finding => finding.Kind == DoctorFindingKind.RouteOverwriteIndependentIndex);
+
+        AssertIndexAction(region, cataloguePath);
+        AssertIndexAction(entry, cataloguePath);
+        AssertIndexAction(overwrite, cataloguePath);
+        Assert.Equal(childPath, entry.Subject.Identifier);
+        Assert.Equal(overwritePath, overwrite.Evidence
+            .OfType<DoctorComparisonEvidence>()
+            .Select(evidence => evidence.Actual)
+            .Single());
+    }
+
+    [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Readable malformed metadata retains complete route coverage and reports an error")]
     [InlineData((int)GeneratedNavigationRegionUnavailableReason.MetadataInvalid)]
     [InlineData((int)GeneratedNavigationRegionUnavailableReason.MetadataUnavailable)]
@@ -360,4 +472,13 @@ public sealed class DoctorWorkspaceRouteMappingTests
             new DoctorGeneratedNavigationUnavailability(
                 reason,
                 "The generated region is unavailable."));
+
+    private static void AssertIndexAction(DoctorFinding finding, string cataloguePath)
+    {
+        Assert.Equal(DoctorResolutionLane.TargetedOperation, finding.Resolution);
+        var action = Assert.Single(finding.Actions);
+        Assert.Equal(DoctorNextActionKind.AcceptedOperation, action.Kind);
+        Assert.Equal(DoctorNextOperation.Index, action.Operation);
+        Assert.Equal($"open-forge index {cataloguePath}", action.Command);
+    }
 }

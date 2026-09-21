@@ -6,12 +6,29 @@ open-forge:
 
 # Replacement CLI Development Plan
 
-The maintainer selected [Task 38's migration plan](tasks/task38/plan.md) on
+## Current selection
+
+The maintainer approved the specified corrections for actionable errors, documentation left
+stale by the Core reduction, and rechecking Skill-resource navigation. The
+[beta specification packet](tasks/beta-follow-ups/_beta-follow-ups.md) defines
+their parallel ownership, evidence and implementation gates. The
+[execution record](tasks/beta-follow-ups/execution.md) records completion of D1–D6,
+E1–E2 and N1–N3, independent review and all six passing Windows managed/native
+test modes. Broader error-family corrections require frozen expectations;
+historical upgrade qualification and automatic Skill-resource traversal remain
+separate follow-ups. No other backlog item is activated.
+
+## Completed migration context
+
+The maintainer selected [Task 38's migration](tasks/task38/_task38.md) on
 2026-09-19 for the project split, test boundaries and later output-text
-extraction. That plan owns the selected work's sequence and checkpoints;
+extraction. Its completion record retains the outcome;
 structural stages 0–4 are accepted and committed locally, G5 is accepted, and
-approved G6 is accepted in [Task45](tasks/task45/_task45.md) with retained baseline exceptions. The Task 30/31 sequence below is retained
-context, not a second instruction to dispatch overlapping work.
+approved G6 is accepted in [Task45](tasks/task45/_task45.md). The
+[subsequent qualification](tasks/task45/beta-baseline-acceptance.md) resolves
+all four former failures; platform exclusions remain explicitly recorded.
+The Task 30/31 sequence below is retained context, not a second instruction
+to dispatch overlapping work.
 
 ## Retained Task 30/31 Context
 

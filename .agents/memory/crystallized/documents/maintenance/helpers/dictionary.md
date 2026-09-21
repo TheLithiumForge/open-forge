@@ -67,22 +67,27 @@ The [typed authority terminology Decision](../../../decisions/framework/authorit
 
 ## Core And Its Primitives
 
-| Term           | Meaning                                                                                     | Use                                                                                               |
-| -------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `Framework`    | Complete Open Forge operating model installed in a workspace.                               | Use for the whole system, not one route or primitive.                                             |
-| `Core`         | Base routing and loading mechanics, workspace orientation, and reusable agent-facing roles. | Name the exact primitive when its behavior matters.                                               |
-| `primitive`    | Reusable Core role that gives selected content a specific purpose.                          | The current primitives are Directives, Guidance, Patterns, Skills, Templates, Workflows, and Map. |
-| `Axiom`        | Required inherited rule in the Loader or a loaded entrypoint.                               | Only the Loader and recognized entrypoints define active `Axioms`.                                |
-| `Instructions` | Required rules in a direct Directive file.                                                  | Use the exact heading when the Directive file contract requires it.                               |
-| `Directive`    | Required behavior for a selected scope.                                                     | Use for binding rules, not adaptable advice.                                                      |
-| `Guidance`     | Advice for a recurring choice or situation.                                                 | It can be adapted when the context justifies it.                                                  |
-| `Pattern`      | Reusable default shape for code, files, APIs, documents, or other work.                     | Use for inspectable structure, not a procedure.                                                   |
-| `Skill`        | Specialized capability exposed through a native `SKILL.md` package.                         | Use when a capability performs the work.                                                          |
-| `Template`     | Copy-ready source used to start an independently owned artifact.                            | Say `copy and adapt` in ordinary instructions when the lifecycle distinction is not needed.       |
-| `Workflow`     | Repeatable Markdown recipe for reaching a defined goal.                                     | Use for a procedure, not a reusable shape.                                                        |
-| `Map route`    | Coarse link to an important local or external destination.                                  | It points to the source; it does not replace it.                                                  |
+| Term           | Meaning                                                                                     | Use                                                                                         |
+| -------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `Framework`    | Complete Open Forge operating model installed in a workspace.                               | Use for the whole system, not one route or primitive.                                       |
+| `Core`         | Base routing and loading mechanics, workspace orientation, and reusable agent-facing roles. | Name the exact primitive when its behavior matters.                                         |
+| `primitive`    | Reusable Core role that gives selected content a specific purpose.                          | The current primitives are Directives, Guidance, Patterns, Skills, Templates, and Map.      |
+| `Axiom`        | Required inherited rule in the Loader or a loaded entrypoint.                               | Only the Loader and recognized entrypoints define active `Axioms`.                          |
+| `Instructions` | Required rules in a direct Directive file.                                                  | Use the exact heading when the Directive file contract requires it.                         |
+| `Directive`    | Required behavior for a selected scope.                                                     | Use for binding rules, not adaptable advice.                                                |
+| `Guidance`     | Advice for a recurring choice or situation.                                                 | It can be adapted when the context justifies it.                                            |
+| `Pattern`      | Reusable default shape for code, files, APIs, documents, or other work.                     | Use for inspectable structure, not a procedure.                                             |
+| `Skill`        | Specialized capability exposed through a native `SKILL.md` package.                         | Use when a capability performs the work.                                                    |
+| `Template`     | Copy-ready source used to start an independently owned artifact.                            | Say `copy and adapt` in ordinary instructions when the lifecycle distinction is not needed. |
+| `Map route`    | Coarse link to an important local or external destination.                                  | It points to the source; it does not replace it.                                            |
 
 The [Core primitive model](../../framework/primitives/model.md) defines the complete roles and boundaries.
+
+## Workflow Recipes
+
+| Term       | Meaning                                                 | Use                                                                                                      |
+| ---------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `Workflow` | Repeatable Markdown recipe for reaching a defined goal. | Use for a repeatable procedure selected through a Skill, not a specialized capability or reusable shape. |
 
 ## Memory
 

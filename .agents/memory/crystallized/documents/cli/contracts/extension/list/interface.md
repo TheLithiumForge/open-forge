@@ -128,6 +128,30 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 | failed                  | unexpected error                                                              | `Extension list stopped because of an unexpected error: <reason>.`                                                                         |    1 | stderr |
 | cancelled               | Ctrl+C                                                                        | `Extension list was cancelled.`                                                                                                            |  130 | stderr |
 
+### Selected manifest failures
+
+When the selected package or catalogue cannot be read because one manifest
+fails, keep the selected source identity and name the exact failed manifest in
+the error. When Available is selected, the headline is
+`Available Extensions could not be listed from <path>.` Installed-only selection
+keeps its existing headline; the precise finding and recovery instruction remain.
+The finding and available-packages explanation use these known facts:
+
+| Reason            | Message                                                           | Next instruction                                             |
+| ----------------- | ----------------------------------------------------------------- | ------------------------------------------------------------ |
+| Invalid manifest  | `<path> is not a valid Extension manifest.`                       | Check the manifest's required fields and values, then retry. |
+| Invalid UTF-8     | `<path> is not valid UTF-8.`                                      | Save the manifest as UTF-8, then retry.                      |
+| Access denied     | `<path> could not be read: permission was denied.`                | Check read access to the named file, then retry.             |
+| File in use       | `<path> could not be read because it is in use.`                  | Close the program holding the file, then retry.              |
+| Other I/O failure | `<path> could not be read because a filesystem operation failed.` | Check that the file is accessible, then retry.               |
+
+These instructions are sentence actions, not executable commands. Invalid
+manifest includes required-field/value failures, not only invalid JSON syntax.
+Do not infer a sharing failure from arbitrary I/O errors. Keep raw diagnostic
+causes at their existing full/debug surfaces. Existing codes, statuses, selected
+source fields, streams, JSON schema and read-only behavior remain unchanged.
+Failures without these manifest facts retain their existing messages.
+
 ### Text by level
 
 `minimal`:
@@ -213,16 +237,16 @@ The findings catalogue below is the command's finite error and warning vocabular
 
 ### Findings catalogue
 
-| Code                                 | Severity | Family                | Message                                                                                                                                      | Next |
-| ------------------------------------ | -------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
-| extension-list.invalid-input         | error    | invalid-input         |                                                                                                                                              |      |
-| extension-list.workspace-unavailable | error    | workspace-unavailable |                                                                                                                                              |      |
-| extension-list.source-invalid        | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/List/Shared/Wording/ExtensionListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-list.source-invalid`). | none |
-| extension-list.source-blocked        | error    | local                 | `<path> cannot be used as a source: <it is inside the workspace \| it resolves to an unsafe location>.`                                      | none |
-| extension-list.source-unavailable    | warning  | local                 | [`extension.list.label.source-unavailable`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/List/ExtensionListText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/List/Shared/Wording/ExtensionListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-list.source-unavailable`).                                                                            | none |
-| extension-list.ownership-observation | info     | ownership-observation |                                                                                                                                              |      |
-| extension-list.operation-failed      | error    | operation-failed      |                                                                                                                                              |      |
-| extension-list.interrupted           | error    | cancelled |                                                                                                                                              |      |
+| Code                                 | Severity | Family                | Message                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Next                                                                                      |
+| ------------------------------------ | -------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| extension-list.invalid-input         | error    | invalid-input         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                                                           |
+| extension-list.workspace-unavailable | error    | workspace-unavailable |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                                                           |
+| extension-list.source-invalid        | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/List/Shared/Wording/ExtensionListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-list.source-invalid`).                                                                                                                                                            | the matching manifest instruction above when manifest facts are available; otherwise none |
+| extension-list.source-blocked        | error    | local                 | `<path> cannot be used as a source: <it is inside the workspace \| it resolves to an unsafe location>.`                                                                                                                                                                                                                                                                                                                                                                                                               | none                                                                                      |
+| extension-list.source-unavailable    | warning  | local                 | [`extension.list.label.source-unavailable`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/List/ExtensionListText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Extension/List/Shared/Wording/ExtensionListWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`extension-list.source-unavailable`). | the matching manifest instruction above when manifest facts are available; otherwise none |
+| extension-list.ownership-observation | info     | ownership-observation |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                                                           |
+| extension-list.operation-failed      | error    | operation-failed      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                                                           |
+| extension-list.interrupted           | error    | cancelled             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                                                                           |
 
 Row notes for installed packages come from the lock and target checks:
 `source missing` (the recorded source cannot be read), `files changed`,
@@ -261,11 +285,6 @@ effect. The [Shared Result
 Coordinates](../../shared/result-coordinates/interface.md) define the exact JSON
 result schema and exit mapping. Gate 5 must prove source-generated serialization, fixed Markdig where
 used, real `System.IO`, Native AOT, isolated tests, and package journeys.
-
-
-
-
-
 
 ## Executable Wording References
 

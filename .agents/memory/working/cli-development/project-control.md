@@ -12,12 +12,12 @@ boundary. Historical receipts and retired queue state are preserved in the
 
 ## Active task ledger
 
-| ID  | Task                                                                             | State  | Current boundary                                        | Owner                   |
-| --- | -------------------------------------------------------------------------------- | ------ | ------------------------------------------------------- | ----------------------- |
-| 30  | [CLI Experience Remediation](tasks/task30-cli-experience-remediation.md)         | Active | G1/B1/G4 complete; Phase 5-D is next                   | Root, direct sequential |
-| 31  | [Implementation Duplication Removal](tasks/task31-implementation-duplication.md) | Open   | M1/M2/M3/M4 complete; M5 waits for stable structure     | Root, direct sequential |
-| 38  | [Project And Test Split](tasks/task38-project-and-test-split.md) | Complete | G0–G4 accepted; implementation committed locally; preserved task/history edits remain | Root, Astra high overseer and direct stage coordinator |
-| 45  | [End-to-end observability](tasks/task45-end-to-end-observability.md) | Complete for approved scope | G5/G6 accepted; post-G6 correction resolves all four failures;17platform skips and C17-07 deferment remain | Root, Astra high coordinator |
+| ID  | Task                                                                             | State                       | Current boundary                                                                                           | Owner                                                  |
+| --- | -------------------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| 30  | [CLI Experience Remediation](tasks/task30-cli-experience-remediation.md)         | Active                      | G1/B1/G4 complete; Phase 5-D is next                                                                       | Root, direct sequential                                |
+| 31  | [Implementation Duplication Removal](tasks/task31-implementation-duplication.md) | Open                        | M1/M2/M3/M4 complete; M5 waits for stable structure                                                        | Root, direct sequential                                |
+| 38  | [Project And Test Split](tasks/task38-project-and-test-split.md)                 | Complete                    | G0–G4 accepted; implementation committed locally; preserved task/history edits remain                      | Root, Astra high overseer and direct stage coordinator |
+| 45  | [End-to-end observability](tasks/task45-end-to-end-observability.md)             | Complete for approved scope | G5/G6 accepted; post-G6 correction resolves all four failures;17platform skips and C17-07 deferment remain | Root, Astra high coordinator                           |
 
 The maintainer selected Task 38 planning on 2026-09-19 and structural execution
 on 2026-09-20. Its
@@ -42,6 +42,15 @@ Tasks 28 and 29 and earlier completed records remain historical evidence.
   but it is not active context.
 
 ## Current next action
+
+The maintainer approved the specified implementation for Task 39 actionable errors,
+Tasks 42/43 stale documentation, and Tasks 46/47 Skill-resource navigation.
+The [beta specification packet](tasks/beta-follow-ups/_beta-follow-ups.md) owns
+their sequencing and file reservations. The [execution record](tasks/beta-follow-ups/execution.md)
+records accepted D1–D6, E1–E2 and N1–N3, completed review and all six passing
+Windows managed/native test modes. The broader error audit, upgrade qualification
+and automatic Skill-resource traversal remain open. The dedicated
+feature branch is intended for later squash integration into `develop`.
 
 Task38 structural migration and Task45 approved journey qualification are complete. The [baseline-failure follow-up](tasks/task45/beta-baseline-acceptance.md) qualifies zero remaining test failures. Additional beta tasks require selection from the current task queue. Do not execute the older sequence below
 as a competing migration plan. Reconcile Task 31 M5 once through G0.

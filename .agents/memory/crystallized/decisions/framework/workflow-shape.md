@@ -6,6 +6,15 @@ open-forge:
 
 # Workflow Shape
 
+## Current applicability
+
+The recipe and selection rationale below remains useful. Task 43 subsequently
+moved Workflow support into the optional native Use Workflow Skill; Workflow is
+not a separate Core primitive or Loader root. The [current Workflow document](../../documents/framework/primitives/workflows.md)
+and [maintenance contract](../../documents/maintenance/payload/agents/workflows.md)
+define that installed arrangement. Historical references below do not restore
+the retired root or imply automatic loading of Skill resources.
+
 ## Context
 
 Earlier Workflow experiments proved useful distinctions between goals, dependencies, iteration, containment, and completion. They also accumulated eight mandatory sections, fixed modes, phase tags, selection ceremony, and reporting requirements that capable agents largely ignored or repeated mechanically.
@@ -54,7 +63,7 @@ Descriptions and topical tags already provide pre-load selection. Fixed modes an
 ## Authoritative Sources
 
 - [Current Workflow contract](../../documents/framework/primitives/workflows.md)
-- [Installed Workflows entrypoint](../../../../skills/use-workflow/references/open-forge/_open-forge.md)
+- [Installed Workflow Support Skill](../../../../../src/extensions/workflows/content/.agents/skills/use-workflow/SKILL.md)
 - [Workflows maintenance contract](../../documents/maintenance/payload/agents/workflows.md)
 
 ## Historical Context

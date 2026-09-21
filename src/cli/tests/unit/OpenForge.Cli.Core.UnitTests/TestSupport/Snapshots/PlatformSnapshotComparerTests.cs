@@ -6,6 +6,20 @@ namespace OpenForge.Cli.Core.UnitTests.TestSupport.Snapshots;
 public sealed class PlatformSnapshotComparerTests
 {
     [Fact, Trait("Boundary", "Output")]
+    public void ManifestSharingAdaptsOnlyTypedAdviceOnNonWindows()
+    {
+        const string windows = "manifest.json could not be read because it is in use.\nClose the program holding the file, then retry.\nRaw OS evidence.";
+        const string unix = "manifest.json could not be read because a filesystem operation failed.\nCheck that the file is accessible, then retry.\nRaw OS evidence.";
+
+        Assert.Equal(windows, PlatformSnapshotComparer.AdaptExpected(windows, "windows", false, manifestSharing: true));
+        foreach (var platform in new[] { "linux", "macos" })
+        {
+            Assert.Equal(windows, PlatformSnapshotComparer.AdaptExpected(windows, platform, false));
+            Assert.Equal(unix, PlatformSnapshotComparer.AdaptExpected(windows, platform, false, manifestSharing: true));
+        }
+    }
+
+    [Fact, Trait("Boundary", "Output")]
     public void ExpectedPathsAdaptWithoutRewritingLiteralContent()
     {
         const string windows = """{"path":"<workspace>\\shared\\note.md","literal":"literal\\marker"}""";

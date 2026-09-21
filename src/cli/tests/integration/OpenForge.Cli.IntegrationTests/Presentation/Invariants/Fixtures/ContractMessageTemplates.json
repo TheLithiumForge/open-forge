@@ -345,13 +345,18 @@
     {
       "code": "extension-list.source-invalid",
       "forms": [
-        "<path> is not an Extension package or package folder: <reason>. Expected extension.json with id, name, description, version, dependencies."
+        "<path> is not an Extension package or package folder: <reason>. Expected extension.json with id, name, description, version, dependencies.",
+        "<path> is not a valid Extension manifest.",
+        "<path> is not valid UTF-8."
       ]
     },
     {
       "code": "extension-list.source-unavailable",
       "forms": [
-        "<path> could not be read, so available packages are not listed."
+        "<path> could not be read, so available packages are not listed.",
+        "<path> could not be read: permission was denied.",
+        "<path> could not be read because it is in use.",
+        "<path> could not be read because a filesystem operation failed."
       ]
     },
     {

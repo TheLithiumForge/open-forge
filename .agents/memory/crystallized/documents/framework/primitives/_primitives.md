@@ -1,12 +1,14 @@
 ---
 open-forge:
-  description: Current roles and relationships of the reusable Core `routes` that constrain, advise, shape, perform, seed, coordinate, and orient work
+  description: Current roles and relationships of the reusable Core `routes` that constrain, advise, shape, perform, seed, and orient work
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, Core, Primitive]
 ---
 
 # Core Primitives
 
-Core primitives are distinct reusable content roles. A primitive's kind determines how selected material should be interpreted; routing determines when it becomes visible.
+Core primitives are six distinct reusable content roles. A primitive's kind determines how selected material should be interpreted; routing determines when it becomes visible.
+
+Workflow recipes remain documented alongside these roles for conceptual clarity, but the native Use Workflow Skill selects and follows them. The retained Workflow document describes that Skill-based recipe relationship; it is not a seventh primitive or a separate `root route`.
 
 ## Axioms
 
@@ -24,4 +26,4 @@ Core primitives are distinct reusable content roles. A primitive's kind determin
 - [Current Pattern role, admission and lifetime test, continuing structural reference, example validity, scope, and related Core roles](patterns.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Pattern #Structure #Scope
 - [Current Skill role, native runtime boundary, routed discovery, resource ownership, scope, and composition with other Core primitives](skills.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Skill #Capability #Interoperability
 - [Current Template role, instantiation, ownership transfer, specialization, update boundary, and relationship with continuing Core contracts](templates.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Template #Ownership #Instantiation
-- [Current Workflow role, minimal recipe contract, explicit relationships, composition, and `route` boundaries](workflows.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Core #Workflow #Goal #Composition
+- [Current Workflow recipe definition, explicit relationships, composition, and Skill selection boundaries](workflows.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Workflow #Goal #Composition #Skill

@@ -320,11 +320,13 @@ internal static class DoctorWording
     internal static IReadOnlyList<CliNextAction> Actions(DoctorFinding finding)
     {
         var actions = finding.Actions
-            .Where(action => action.Command is not null)
-            .Select(action => new CliNextAction(action.Command!, action.Reason))
+            .Where(action => action.Command is not null || action.Operation == DoctorNextOperation.Index)
+            .Select(action => RenderAction(finding, action))
             .ToList();
         var fallback = FallbackAction(finding);
-        if (fallback is not null && !actions.Any(action => string.Equals(action.Command, fallback.Command, StringComparison.Ordinal)))
+        if (fallback is not null
+            && (!IsGeneratedNavigationFinding(finding.Kind) || !HasExplicitIndexAction(finding))
+            && !actions.Any(action => string.Equals(action.Command, fallback.Command, StringComparison.Ordinal)))
         {
             actions.Add(fallback);
         }
@@ -569,6 +571,21 @@ internal static class DoctorWording
     private static string ExtensionBridgeRegistration(DoctorFinding finding)
         => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatDoesNotListWhichInstalled($"{finding.Provenance.Path ?? "the parent"}", $"{Path(finding)}", $"{ExtensionId(finding)}");
 
+    private static CliNextAction RenderAction(DoctorFinding finding, DoctorNextAction action)
+    {
+        if (action.Operation != DoctorNextOperation.Index)
+        {
+            return new CliNextAction(action.Command!, action.Reason);
+        }
+
+        if (action.Command is { } command)
+        {
+            return Action(command, global::OpenForge.Cli.OutputText.Doctor.DoctorNavigationText.IndexReason());
+        }
+
+        return Sentence(global::OpenForge.Cli.OutputText.Doctor.DoctorNavigationText.IndexManual(Path(finding)));
+    }
+
     private static string Fragment(string? value, string fallback)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -662,6 +679,23 @@ internal static class DoctorWording
             _ => null,
         };
     }
+
+    private static bool HasExplicitIndexAction(DoctorFinding finding)
+        => finding.Actions.Any(action => action.Operation == DoctorNextOperation.Index);
+
+    private static bool IsGeneratedNavigationFinding(DoctorFindingKind kind)
+        => kind is DoctorFindingKind.RouteGeneratedRegionStale
+            or DoctorFindingKind.RouteGeneratedRegionMissing
+            or DoctorFindingKind.RouteGeneratedRegionMalformed
+            or DoctorFindingKind.RouteGeneratedRegionMisplaced
+            or DoctorFindingKind.RouteGeneratedRegionDuplicate
+            or DoctorFindingKind.RouteGeneratedEntryMissing
+            or DoctorFindingKind.RouteGeneratedEntryExtra
+            or DoctorFindingKind.RouteGeneratedEntryOrder
+            or DoctorFindingKind.RouteGeneratedEntryPath
+            or DoctorFindingKind.RouteGeneratedEntryDescription
+            or DoctorFindingKind.RouteGeneratedEntryTags
+            or DoctorFindingKind.RouteOverwriteIndependentIndex;
 
     private static CliNextAction Action(string command, string reason)
         => new(command, reason);

@@ -9,13 +9,13 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/working/handoffs/_handoffs.md`](../../../../../../../../../src/open-forge/.agents/memory/working/handoffs/_handoffs.md) is the canonical installed Handoffs `entrypoint`. The repository [Handoffs `entrypoint`](../../../../../../../archived/cli-development/handoffs/_handoffs.md) dogfoods the same authored contract and may add local generated `Entries`.
+[`src/extensions/orchestration/content/.agents/memory/working/handoffs/_handoffs.md`](../../../../../../../../../src/extensions/orchestration/content/.agents/memory/working/handoffs/_handoffs.md) is the canonical installed Handoffs `entrypoint` supplied by the Orchestration Extension. The repository [Handoffs `entrypoint`](../../../../../../../../../.agents/memory/working/handoffs/_handoffs.md) dogfoods the same authored contract and may add local generated `Entries`.
 
 The [Working state contract](../../../../../framework/memory/working.md) defines Handoffs as sealed boundary snapshots within temporary Working Memory.
 
 ## Contract
 
-- Frontmatter preserves #LoadNow, #Memory, #Handoff, #AgentCommunication, and #Contextual classification
+- Frontmatter preserves #Extension, #Memory, #Handoff, #AgentCommunication, and #Contextual classification
 - A Handoff is created and sealed only when an actual transfer or explicitly planned resumption needs a stable boundary snapshot while the active Checkpoint may continue to change
 - Routine pauses, ordinary closeout, and possible future interruptions do not create a Handoff
 - The intended reader or resumed work remains clear from the route, description, or content
@@ -27,4 +27,4 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 
 ## Verification
 
-- Installation and `route` tests verify Handoffs loading, indexing, classification, and recursive child routing
+- Installation and `route` tests verify that Core alone does not provide Handoffs and that the Orchestration Extension supplies their loading, indexing, classification, and recursive child routing

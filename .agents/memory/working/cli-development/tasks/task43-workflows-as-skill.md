@@ -8,8 +8,10 @@ open-forge:
 
 ## Task state
 
-- State: **Open, not started.** Raised by the maintainer on 2026-09-17.
+- State: **Native Skill extraction and documentation aligned; historical upgrade evidence remains unqualified.** Raised by the maintainer on 2026-09-17.
 - Owner: Root.
+
+The 2026-09-21 [documentation packet](beta-follow-ups/task42-43-documentation.md) maps the shipped native Skill, catalogue and template and specifies stale-contract repairs. The earlier problem statement below is historical context. No additional routing behavior is approved by this update.
 
 ## The problem
 

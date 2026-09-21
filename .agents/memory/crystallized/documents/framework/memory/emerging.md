@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current Emerging Memory purpose, candidate authority, capture threshold, evidence, consolidation, promotion, and shipped candidate roles
+  description: Current Emerging Memory purpose, candidate authority, capture threshold, evidence, consolidation, promotion, and optional candidate roles
   responsibility: Define what makes unsettled but potentially reusable material valid before acceptance or another final destination is known
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Emerging, Candidate]
 ---
@@ -9,7 +9,7 @@ open-forge:
 
 ## State Contract
 
-[Emerging Memory](../../../../emerging/_emerging.md) contains useful material whose validity, acceptance, knowledge role, or final destination remains unsettled.
+[Emerging Memory](../../../../../../src/open-forge/.agents/memory/emerging/_emerging.md) contains useful material whose validity, acceptance, knowledge role, or final destination remains unsettled.
 
 Emerging material is contextual until accepted within its scope. Keep its source, scope, evidence, and uncertainty visible. Recording, repetition, validation, or movement alone does not establish acceptance.
 
@@ -21,15 +21,15 @@ Before creating a parallel record, later agents search for matching scope and me
 
 Emerging material is refined, combined, promoted, archived, rejected, or pruned as its meaning becomes clearer.
 
-## Shipped Roles
+## Optional Roles
 
-The standard `routes` provide distinct starting roles:
+Optional Extensions provide distinct starting roles:
 
-- [Analysis](../../../../emerging/analysis/_analysis.md) preserves structured reasoning, investigation, and comparison
-- [Ideas](../../../../emerging/ideas/_ideas.md) preserves possibilities, experiments, and open questions
-- [Observations](../../../../emerging/observations/_observations.md) preserves concrete occurrences or patterns noticed in evidence that may become reusable learning
+- [Analysis](../../../../../../src/extensions/planning/content/.agents/memory/emerging/analysis/_analysis.md) from the Planning Extension preserves structured reasoning, investigation, and comparison
+- [Ideas](../../../../../../src/extensions/planning/content/.agents/memory/emerging/ideas/_ideas.md) from the Planning Extension preserves possibilities, experiments, and open questions
+- [Observations](../../../../../../src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md) from the Orchestration Extension preserves concrete occurrences or patterns noticed in evidence that may become reusable learning
 
-These roles improve initial placement and discovery. They are customizable child `routes` within Emerging, not additional Memory states.
+These Extension routes improve placement and discovery when installed. They are not Core defaults or additional Memory states. The Core Emerging `entrypoint` retains #KeepInMind; the optional Observations route has no automatic continuity tag.
 
 ## Related Current Sources
 

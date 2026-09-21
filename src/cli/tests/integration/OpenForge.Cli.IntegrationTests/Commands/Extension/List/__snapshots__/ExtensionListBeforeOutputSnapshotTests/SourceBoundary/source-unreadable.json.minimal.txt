@@ -9,7 +9,7 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "Extension list could not be read completely.",
+    "headline": "Available Extensions could not be listed from <extension-source>\\toolkit\\extension.json.",
     "kind": "incomplete"
   },
   "findings": [
@@ -17,7 +17,7 @@
       "severity": "warning",
       "code": "extension-list.source-unavailable",
       "title": "Extension source is unavailable",
-      "message": "<extension-source> could not be read, so available packages are not listed.",
+      "message": "<extension-source>\\toolkit\\extension.json could not be read because it is in use.",
       "subject": {
         "kind": "source",
         "path": null,
@@ -38,7 +38,7 @@
   "limitations": [
     {
       "what": "available packages",
-      "why": "<extension-source>\\toolkit\\extension.json: the file is in use by another process.",
+      "why": "<extension-source>\\toolkit\\extension.json could not be read because it is in use.",
       "subject": null
     }
   ],
@@ -51,5 +51,9 @@
     "available": []
   },
   "recovery": null,
-  "next": null
+  "next": {
+    "kind": "sentence",
+    "command": "Close the program holding the file, then retry.",
+    "reason": "Close the program holding the file, then retry."
+  }
 }

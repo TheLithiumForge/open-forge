@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
-using OpenForge.Cli.Core.Commands.Shared;
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Actions;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
@@ -51,7 +51,7 @@ internal static class RouteShapeDoctorInspector
                             string.Join("|", observation.RelatedPaths)),
                     ]),
                 RouteShapeObservationKind.OverwriteIndependentIndex => Create(
-                    IndexWarning(),
+                    IndexWarning(observation.Path),
                     observation.Path,
                     [
                         new DoctorComparisonEvidence(
@@ -72,18 +72,12 @@ internal static class RouteShapeDoctorInspector
         }
     }
 
-    private static DoctorFindingDescriptor IndexWarning()
+    private static DoctorFindingDescriptor IndexWarning(string path)
         => DoctorDomainSupport.Warning(
             DoctorFindingKind.RouteOverwriteIndependentIndex,
             "An overwrite companion appears as an independent generated entry.",
             DoctorResolutionLane.TargetedOperation,
-            new DoctorNextAction
-            {
-                Kind = DoctorNextActionKind.AcceptedOperation,
-                Operation = DoctorNextOperation.Index,
-                Command = CommandLines.Index,
-                Reason = "Index owns deterministic generated-navigation projection.",
-            });
+            DoctorIndexAction.ForPath(path));
 
     private static DoctorFinding Create(
         DoctorFindingDescriptor descriptor,

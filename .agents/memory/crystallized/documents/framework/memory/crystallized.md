@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current Crystallized Memory purpose, accepted authority, consolidation, replacement history, and shipped Decisions and Documents roles
+  description: Current Crystallized Memory purpose, accepted authority, consolidation, replacement history, and optional Decisions and Documents roles
   responsibility: Define what makes accepted durable Memory valid without claiming that every authoritative result belongs in Memory
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Crystallized, Authority, Consolidation]
 ---
@@ -9,7 +9,7 @@ open-forge:
 
 ## State Contract
 
-[Crystallized Memory](../../../_crystallized.md) contains accepted durable state within its stated scope.
+[Crystallized Memory](../../../../../../src/open-forge/.agents/memory/crystallized/_crystallized.md) contains accepted durable state within its stated scope.
 
 It keeps one coherent current representation for each distinct question and scope. When accepted state changes, agents update, split, merge, or reshape the existing authoritative source rather than creating a competing current copy.
 
@@ -17,12 +17,12 @@ Other accepted results may live in matching #Core `routes`, source code, declare
 
 ## Rationale And Current Records
 
-The standard `routes` provide two distinct accepted roles:
+Optional Extensions provide two distinct accepted roles:
 
-- [Decisions](../../../decisions/_decisions.md) preserve accepted rationale for important choices
-- [Documents](../../_documents.md) integrate coherent current records or route to systems that hold them
+- [Decisions](../../../../../../src/extensions/planning/content/.agents/memory/crystallized/decisions/_decisions.md) from the Planning Extension preserve accepted rationale for important choices
+- [Documents](../../../../../../src/extensions/project-documents/content/.agents/memory/crystallized/documents/_documents.md) from the Project Documents Extension integrate coherent current records or route to systems that hold them
 
-Decisions and Documents follow the universal [route-scope contract](../routing/scope.md). Their selected `route` chain determines their subject without changing either role.
+These optional Decisions and Documents `routes` follow the universal [route-scope contract](../routing/scope.md). Their selected `route` chain determines their subject without changing either role.
 
 Overlapping Decisions are consolidated, reshaped, or linked when their accepted rationale is compatible. Material divergence or competing accepted rationale is discussed instead of being merged silently. Rationale behind a replaced choice is archived or linked when it remains useful.
 
@@ -30,7 +30,7 @@ Documents explain accepted current meaning well enough to use without reconstruc
 
 Copy-ready creation sources belong in [Templates](../primitives/templates.md), not in the Documents `route`.
 
-Decisions and Documents are useful customizable child roles, not additional Memory states.
+Decisions and Documents are optional customizable child roles supplied by Extensions, not additional Memory states.
 
 ## Related Current Sources
 

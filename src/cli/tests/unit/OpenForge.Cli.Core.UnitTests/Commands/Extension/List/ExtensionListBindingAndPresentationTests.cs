@@ -8,11 +8,13 @@ using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Presentation.Extension.List;
 using OpenForge.Cli.Core.Presentation.Extension.List.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.List;
 
@@ -144,6 +146,246 @@ public sealed class ExtensionListBindingAndPresentationTests
             {
                 Assert.DoesNotContain("none", text, StringComparison.Ordinal);
             }
+        }
+    }
+
+    [Theory(DisplayName = "Extension List projects typed selected-source failures consistently across detail levels"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    [InlineData((int)ExtensionSourceFailureDetailKind.InvalidManifest, (int)ExtensionSourceReadState.Invalid, (int)CliSemanticStatus.Invalid, (int)ExtensionListFindingCode.SourceInvalid, "is not a valid Extension manifest.", "Check the manifest's required fields and values, then retry.")]
+    [InlineData((int)ExtensionSourceFailureDetailKind.InvalidEncoding, (int)ExtensionSourceReadState.Invalid, (int)CliSemanticStatus.Invalid, (int)ExtensionListFindingCode.SourceInvalid, "is not valid UTF-8.", "Save the manifest as UTF-8, then retry.")]
+    [InlineData((int)ExtensionSourceFailureDetailKind.AccessDenied, (int)ExtensionSourceReadState.Unavailable, (int)CliSemanticStatus.Incomplete, (int)ExtensionListFindingCode.SourceUnavailable, "could not be read: permission was denied.", "Check read access to the named file, then retry.")]
+    [InlineData((int)ExtensionSourceFailureDetailKind.FileInUse, (int)ExtensionSourceReadState.Unavailable, (int)CliSemanticStatus.Incomplete, (int)ExtensionListFindingCode.SourceUnavailable, "could not be read because it is in use.", "Close the program holding the file, then retry.")]
+    [InlineData((int)ExtensionSourceFailureDetailKind.InputOutput, (int)ExtensionSourceReadState.Unavailable, (int)CliSemanticStatus.Incomplete, (int)ExtensionListFindingCode.SourceUnavailable, "could not be read because a filesystem operation failed.", "Check that the file is accessible, then retry.")]
+    public void TypedSelectedSourceFailureKeepsFactsAndEvidenceStable(
+        int detailKindValue,
+        int sourceStateValue,
+        int expectedStatusValue,
+        int expectedFindingCodeValue,
+        string expectedMessageSuffix,
+        string expectedAdvice)
+    {
+        var detailKind = (ExtensionSourceFailureDetailKind)detailKindValue;
+        var sourceState = (ExtensionSourceReadState)sourceStateValue;
+        var expectedStatus = (CliSemanticStatus)expectedStatusValue;
+        var expectedFindingCode = (ExtensionListFindingCode)expectedFindingCodeValue;
+        var sourceIdentity = Path.Combine(WorkspaceRoot, "catalogue");
+        var manifestPath = Path.Combine(sourceIdentity, "toolkit", "extension.json");
+        var rawCause = $"The reader reported a raw cause for {detailKind}.";
+        var request = new ExtensionListRequest
+        {
+            Workspace = new CliWorkspace(
+                lexicalRoot: WorkspaceRoot,
+                physicalRoot: WorkspaceRoot,
+                selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            Selection = ExtensionListSelection.Create(installedFlag: true, availableFlag: true),
+            ExplicitSource = sourceIdentity,
+        };
+        var detail = new ExtensionSourceFailureDetail(manifestPath, detailKind);
+        var source = new ExtensionSourceReadResult(
+            state: sourceState,
+            kind: ExtensionSourceKind.Catalogue,
+            identity: sourceIdentity,
+            packages: [],
+            cause: rawCause,
+            failureKind: sourceState == ExtensionSourceReadState.Invalid
+                ? ExtensionSourceFailureKind.PackageInvalid
+                : ExtensionSourceFailureKind.Unavailable)
+        {
+            FailureDetail = detail,
+        };
+        var lifecycle = WorkspaceOwnershipRead.Absent(Path.Combine(WorkspaceRoot, ".agents", "open-forge.lock.json"));
+        var result = ExtensionListResultBuilder.Build(request, source, lifecycle);
+
+        Assert.Equal(sourceIdentity, result.Source?.Identity);
+        var finding = Assert.Single(result.Findings, value => value.Code == expectedFindingCode);
+        Assert.Equal(sourceIdentity, finding.Subject);
+        Assert.Null(finding.Path);
+        Assert.Equal(manifestPath, finding.FailureDetail?.Path);
+
+        var expectedMessage = $"{manifestPath} {expectedMessageSuffix}";
+        var expectedHeadline = $"Available Extensions could not be listed from {manifestPath}.";
+        var expectedStatusName = CliStatusDefinitions.Read(expectedStatus).MachineName;
+        var expectedFindingMachineCode = ExtensionListDefinitions.ReadFindingCode(expectedFindingCode);
+        foreach (var detailLevel in new[] { CliDetail.Minimal, CliDetail.Standard, CliDetail.Full, CliDetail.Debug })
+        {
+            var selected = CliReportSelection.Select(
+                result,
+                new CliSelection(detailLevel),
+                ExtensionListPresentation.Rendering);
+            var report = selected.Report;
+            Assert.Equal(expectedStatus, report.Status);
+            Assert.Equal(expectedHeadline, report.Headline.Sentence);
+            Assert.Equal(
+                expectedStatus == CliSemanticStatus.Invalid ? CliHeadlineKind.CannotStart : CliHeadlineKind.Incomplete,
+                report.Headline.Kind);
+            var projectedFinding = Assert.Single(report.Findings, value => value.Code == expectedFindingMachineCode);
+            Assert.Equal(expectedMessage, projectedFinding.Message);
+            var availableCount = Assert.Single(report.Counts, value => value.Name == "available");
+            Assert.Null(availableCount.Value);
+            Assert.Equal(expectedMessage, availableCount.UnavailableReason);
+            Assert.NotNull(report.Next);
+            Assert.Equal(CliNextActionKind.Sentence, report.Next!.Kind);
+            Assert.Equal(expectedAdvice, report.Next.Command);
+            Assert.Equal(expectedAdvice, report.Next.Reason);
+
+            var text = RenderText(result, detailLevel);
+            Assert.Contains(expectedHeadline, text, StringComparison.Ordinal);
+            Assert.Contains(expectedMessage, text, StringComparison.Ordinal);
+            Assert.Contains(expectedAdvice, text, StringComparison.Ordinal);
+            if (detailLevel >= CliDetail.Full)
+            {
+                Assert.Contains(rawCause, text, StringComparison.Ordinal);
+            }
+            else
+            {
+                Assert.DoesNotContain(rawCause, text, StringComparison.Ordinal);
+            }
+
+            var json = RenderJson(result, detailLevel);
+            Assert.DoesNotContain("failureDetail", json, StringComparison.Ordinal);
+            Assert.DoesNotContain("failure-detail", json, StringComparison.Ordinal);
+            if (detailLevel >= CliDetail.Full)
+            {
+                Assert.Contains(rawCause, json, StringComparison.Ordinal);
+            }
+            else
+            {
+                Assert.DoesNotContain(rawCause, json, StringComparison.Ordinal);
+            }
+
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+            Assert.Equal(expectedStatusName, root.GetProperty("status").GetString());
+            Assert.Equal(expectedHeadline, root.GetProperty("summary").GetProperty("headline").GetString());
+            var jsonFinding = Assert.Single(root.GetProperty("findings").EnumerateArray(), value => value.GetProperty("code").GetString() == expectedFindingMachineCode);
+            Assert.Equal(expectedMessage, jsonFinding.GetProperty("message").GetString());
+            var next = root.GetProperty("next");
+            Assert.Equal("sentence", next.GetProperty("kind").GetString());
+            Assert.Equal(expectedAdvice, next.GetProperty("command").GetString());
+            Assert.Equal(expectedAdvice, next.GetProperty("reason").GetString());
+        }
+    }
+
+    [Fact(DisplayName = "Extension List retains semantic source causes without typed detail"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void UntypedSemanticSourceFailureRetainsExistingProjection()
+    {
+        var request = new ExtensionListRequest
+        {
+            Workspace = new CliWorkspace(
+                lexicalRoot: WorkspaceRoot,
+                physicalRoot: WorkspaceRoot,
+                selectedBy: CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            Selection = ExtensionListSelection.Create(installedFlag: true, availableFlag: true),
+            ExplicitSource = "catalogue",
+        };
+        var rawCause = "The selected source has a dependency conflict.";
+        var result = ExtensionListResultBuilder.Build(
+            request,
+            new ExtensionSourceReadResult(
+                state: ExtensionSourceReadState.Invalid,
+                kind: ExtensionSourceKind.Catalogue,
+                identity: "catalogue",
+                packages: [],
+                cause: rawCause,
+                failureKind: ExtensionSourceFailureKind.DependencyConflict),
+            WorkspaceOwnershipRead.Absent(Path.Combine(WorkspaceRoot, ".agents", "open-forge.lock.json")));
+
+        var selected = CliReportSelection.Select(
+            result,
+            new CliSelection(CliDetail.Standard),
+            ExtensionListPresentation.Rendering);
+        var finding = Assert.Single(result.Findings, value => value.Code == ExtensionListFindingCode.SourceInvalid);
+        Assert.Null(finding.FailureDetail);
+        var projected = Assert.Single(selected.Report.Findings, value => value.Code == finding.MachineCode);
+        Assert.Contains(rawCause, projected.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain("is not a valid Extension manifest.", projected.Message, StringComparison.Ordinal);
+        Assert.Null(selected.Report.Next);
+    }
+
+    [Theory(DisplayName = "Extension List selects manifest advice before installed inspection only when typed detail applies"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void SelectedSourceDetailControlsAdviceBeforeInstalledInspection(bool typedFailure)
+    {
+        var result = new ExtensionListResult(
+            status: CliSemanticStatus.Invalid,
+            workspace: null,
+            selection: ExtensionListSelection.Create(installedFlag: true, availableFlag: true),
+            source: null,
+            lifecycleTrust: ExtensionListOwnershipTrust.Incomplete,
+            installedCoverage: ExtensionListCoverage.Incomplete,
+            availableCoverage: ExtensionListCoverage.Incomplete,
+            installed: [],
+            available: [],
+            findings:
+            [
+                new ExtensionListFinding(
+                    ExtensionListFindingCode.SourceInvalid,
+                    CliSemanticStatus.Invalid,
+                    "catalogue",
+                    "The selected source could not be read.")
+                {
+                    FailureDetail = typedFailure
+                        ? new("catalogue/extension.json", ExtensionListSourceFailureDetailKind.InvalidManifest)
+                        : null,
+                },
+                new ExtensionListFinding(
+                    ExtensionListFindingCode.InstalledSourceMissing,
+                    CliSemanticStatus.Attention,
+                    "toolkit",
+                    "The recorded source is missing.")
+                {
+                    Owner = "toolkit",
+                    Path = "missing-source",
+                },
+            ],
+            next: null);
+
+        var selected = CliReportSelection.Select(
+            result,
+            new CliSelection(CliDetail.Standard),
+            ExtensionListPresentation.Rendering);
+
+        Assert.NotNull(selected.Report.Next);
+        Assert.Equal(typedFailure
+            ? "Check the manifest's required fields and values, then retry."
+            : "open-forge extension inspect toolkit", selected.Report.Next!.Command);
+        Assert.Equal(typedFailure ? CliNextActionKind.Sentence : CliNextActionKind.Command, selected.Report.Next.Kind);
+    }
+
+    [Theory(DisplayName = "Installed-only failures do not claim an unselected Available section"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    [InlineData((int)ExtensionSourceReadState.Invalid, (int)ExtensionSourceFailureDetailKind.InvalidManifest, (int)CliSemanticStatus.Invalid)]
+    [InlineData((int)ExtensionSourceReadState.Unavailable, (int)ExtensionSourceFailureDetailKind.FileInUse, (int)CliSemanticStatus.Attention)]
+    public void InstalledOnlyTypedFailuresPreserveSelection(int stateValue, int kindValue, int statusValue)
+    {
+        var sourcePath = Path.Combine(WorkspaceRoot, "catalogue");
+        var manifestPath = Path.Combine(sourcePath, "extension.json");
+        var request = new ExtensionListRequest
+        {
+            Workspace = new CliWorkspace(WorkspaceRoot, WorkspaceRoot, CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            Selection = ExtensionListSelection.Create(installedFlag: true, availableFlag: false),
+            ExplicitSource = sourcePath,
+        };
+        var source = new ExtensionSourceReadResult(
+            (ExtensionSourceReadState)stateValue,
+            ExtensionSourceKind.Catalogue,
+            sourcePath,
+            [],
+            "The selected manifest could not be read.")
+        {
+            FailureDetail = new(manifestPath, (ExtensionSourceFailureDetailKind)kindValue),
+        };
+        var lifecycle = WorkspaceOwnershipRead.Absent(Path.Combine(WorkspaceRoot, ".agents", "open-forge.lock.json"));
+        var result = ExtensionListResultBuilder.Build(request, source, lifecycle);
+
+        foreach (var detail in new[] { CliDetail.Minimal, CliDetail.Standard, CliDetail.Full, CliDetail.Debug })
+        {
+            var selected = CliReportSelection.Select(result, new(detail), ExtensionListPresentation.Rendering);
+            Assert.Equal((CliSemanticStatus)statusValue, selected.Report.Status);
+            Assert.DoesNotContain("Available", RenderText(result, detail), StringComparison.Ordinal);
+            using var document = JsonDocument.Parse(RenderJson(result, detail));
+            Assert.DoesNotContain("Available", document.RootElement.GetProperty("summary").GetProperty("headline").GetString(), StringComparison.Ordinal);
+            Assert.Contains(selected.Report.Findings, finding => finding.Message.Contains(manifestPath, StringComparison.Ordinal));
+            Assert.Equal(CliNextActionKind.Sentence, selected.Report.Next?.Kind);
         }
     }
 

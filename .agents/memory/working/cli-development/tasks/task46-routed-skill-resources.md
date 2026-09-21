@@ -8,8 +8,11 @@ open-forge:
 
 ## Task state
 
-- State: **Open, not started.** Raised by the maintainer on 2026-09-18.
+- State: **Rechecked; fresh-install report superseded, broader routing choice remains open.** Raised by the maintainer on 2026-09-18.
 - Owner: Root.
+
+The 2026-09-21 [navigation recheck](beta-follow-ups/task46-47-navigation.md) found zero Doctor findings after installing Core and all bundled Extensions. The thirteen-warning report below is historical and no longer reproduces. The packet separates the surviving catalogue-advice defect from the broader resource-routing decision.
+
 - Caused by [Task 43](task43-workflows-as-skill.md) landing: the Workflow
   Support Extension puts real routed content inside a native Skill directory,
   and the routing model has no answer for it.

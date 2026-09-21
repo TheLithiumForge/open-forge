@@ -242,4 +242,6 @@ internal sealed record ExtensionSourceReadResult
     internal string? Cause { get; }
 
     internal ExtensionSourceFailureKind FailureKind { get; }
+
+    internal ExtensionSourceFailureDetail? FailureDetail { get; init; }
 }

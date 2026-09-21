@@ -180,6 +180,83 @@ public sealed class ExtensionListApplicationIntegrationTests
     }
 
     [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Extension List explains a real invalid manifest without changing source bytes"), Trait("Feature", "extension-list"), Trait("Evidence", "Integration")]
+    public async Task ComposedListReportsTypedManifestFailureWithoutWrites()
+    {
+        using var workspace = TemporaryWorkspace.Create("extension-list-typed-invalid-manifest");
+        using var source = ExtensionInstallCatalogue.Create("extension-list-typed-invalid-source");
+        source.AddPackage("toolkit", [], (".agents/toolkit.md", "# Toolkit\n"));
+        source.ReplaceManifest("toolkit", "{ malformed");
+        var manifestPath = Path.Combine(source.PackagePath("toolkit"), "extension.json");
+        var beforeWorkspace = workspace.SnapshotHashes();
+        var beforeSource = source.Snapshot();
+        const string expectedHeadline = "Available Extensions could not be listed from";
+        const string expectedMessage = "is not a valid Extension manifest.";
+        const string expectedAdvice = "Check the manifest's required fields and values, then retry.";
+        const string rawCausePrefix = "The Extension manifest is invalid:";
+        var expectedFindingCode = ExtensionListDefinitions.ReadFindingCode(ExtensionListFindingCode.SourceInvalid);
+
+        foreach (var detail in new[] { "minimal", "standard", "full", "debug" })
+        {
+            var text = await CliHostCapture.RunAsync(
+                ["extension", "list", "--workspace", workspace.Path, "--source", source.Path, "--detail=" + detail],
+                workspace.Path);
+
+            Assert.Equal(4, text.ExitCode);
+            Assert.Equal(string.Empty, text.Output);
+            Assert.Contains($"{expectedHeadline} {manifestPath}.", text.Error, StringComparison.Ordinal);
+            Assert.Contains($"{manifestPath} {expectedMessage}", text.Error, StringComparison.Ordinal);
+            Assert.Contains(expectedAdvice, text.Error, StringComparison.Ordinal);
+            if (detail is "full" or "debug")
+            {
+                Assert.Contains(rawCausePrefix, text.Error, StringComparison.Ordinal);
+            }
+            else
+            {
+                Assert.DoesNotContain(rawCausePrefix, text.Error, StringComparison.Ordinal);
+            }
+
+            var json = await CliHostCapture.RunAsync(
+                ["extension", "list", "--workspace", workspace.Path, "--source", source.Path, "--format=json", "--detail=" + detail],
+                workspace.Path);
+
+            Assert.Equal(4, json.ExitCode);
+            using var document = JsonDocument.Parse(json.Output);
+            var root = document.RootElement;
+            Assert.Equal("invalid-input", root.GetProperty("status").GetString());
+            Assert.Equal($"{expectedHeadline} {manifestPath}.", root.GetProperty("summary").GetProperty("headline").GetString());
+            Assert.Equal("cannot-start", root.GetProperty("summary").GetProperty("kind").GetString());
+            var finding = Assert.Single(root.GetProperty("findings").EnumerateArray(), value => value.GetProperty("code").GetString() == expectedFindingCode);
+            Assert.Equal($"{manifestPath} {expectedMessage}", finding.GetProperty("message").GetString());
+            var next = root.GetProperty("next");
+            Assert.Equal("sentence", next.GetProperty("kind").GetString());
+            Assert.Equal(expectedAdvice, next.GetProperty("command").GetString());
+            Assert.Equal(expectedAdvice, next.GetProperty("reason").GetString());
+            Assert.DoesNotContain("failureDetail", json.Output, StringComparison.Ordinal);
+            if (detail is "full" or "debug")
+            {
+                Assert.Contains(rawCausePrefix, json.Output, StringComparison.Ordinal);
+            }
+            else
+            {
+                Assert.DoesNotContain(rawCausePrefix, json.Output, StringComparison.Ordinal);
+            }
+
+            if (detail == "debug")
+            {
+                Assert.Contains(rawCausePrefix, json.Error, StringComparison.Ordinal);
+            }
+            else
+            {
+                Assert.DoesNotContain(rawCausePrefix, json.Error, StringComparison.Ordinal);
+            }
+        }
+
+        Assert.Equal(beforeWorkspace, workspace.SnapshotHashes());
+        Assert.Equal(beforeSource, source.Snapshot());
+    }
+
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Composed Extension List reads lock ownership and ignores malformed leftover state"), Trait("Feature", "extension-list"), Trait("Evidence", "Integration")]
     public async Task ComposedJsonIgnoresMalformedLeftoverState()
     {

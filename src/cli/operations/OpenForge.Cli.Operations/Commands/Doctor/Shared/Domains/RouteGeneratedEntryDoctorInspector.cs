@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
-using OpenForge.Cli.Core.Commands.Shared;
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Actions;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 
@@ -20,12 +20,7 @@ internal static class RouteGeneratedEntryDoctorInspector
 
             foreach (var comparison in observation.Content.EntryComparisons)
             {
-                yield return Create(
-                    observation.Path,
-                    ReadKind(comparison.Kind),
-                    comparison.Expected ?? "absent",
-                    comparison.Actual ?? "absent",
-                    comparison.Location);
+                yield return Create(observation.Path, comparison);
             }
         }
     }
@@ -42,40 +37,38 @@ internal static class RouteGeneratedEntryDoctorInspector
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The generated-entry comparison kind is not defined."),
         };
 
-    private static DoctorFinding Create(
-        string path,
-        DoctorFindingKind kind,
-        string expected,
-        string actual,
-        Framework.Sources.Models.Locations.SourceLocation? location)
-        => DoctorDomainSupport.Create(
+    private static DoctorFinding Create(string path, RouteGeneratedEntryComparison comparison)
+    {
+        var expected = comparison.Expected ?? "absent";
+        var actual = comparison.Actual ?? "absent";
+        var identifier = comparison.Kind is RouteGeneratedEntryComparisonKind.Missing
+            ? comparison.Expected ?? throw new InvalidOperationException(
+                "A missing generated-entry comparison requires an expected destination.")
+            : actual;
+
+        return DoctorDomainSupport.Create(
             DoctorDomainSupport.Warning(
-                kind,
+                ReadKind(comparison.Kind),
                 "A generated entry differs from the exact current route projection.",
                 DoctorResolutionLane.TargetedOperation,
-                new DoctorNextAction
-                {
-                    Kind = DoctorNextActionKind.AcceptedOperation,
-                    Operation = DoctorNextOperation.Index,
-                    Command = CommandLines.Index,
-                    Reason = "Index owns deterministic generated-navigation projection.",
-                }),
+                DoctorIndexAction.ForPath(path)),
             new DoctorSubject
             {
                 Kind = DoctorSubjectKind.GeneratedRegion,
                 Path = path,
-                Identifier = actual,
-                Location = location,
+                Identifier = identifier,
+                Location = comparison.Location,
             },
             new DoctorProvenance
             {
                 Domain = DoctorDomainKind.RoutesMetadataOverwritesGeneratedNavigation,
                 Source = DoctorProvenanceSource.GeneratedNavigation,
                 Path = path,
-                Location = location,
+                Location = comparison.Location,
             },
             [
                 new DoctorComparisonEvidence(expected, actual),
-                new DoctorAuthoredValueEvidence(actual, location),
+                new DoctorAuthoredValueEvidence(actual, comparison.Location),
             ]);
+    }
 }

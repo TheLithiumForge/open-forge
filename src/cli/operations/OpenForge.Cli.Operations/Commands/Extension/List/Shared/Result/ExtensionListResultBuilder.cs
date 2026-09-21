@@ -134,9 +134,20 @@ internal static class ExtensionListResultBuilder
         };
         if (finding is not null)
         {
-            findings.Add(finding);
+            findings.Add(finding with { FailureDetail = ProjectFailureDetail(source.FailureDetail) });
         }
     }
+
+    private static ExtensionListSourceFailureDetail? ProjectFailureDetail(ExtensionSourceFailureDetail? detail)
+        => detail is null ? null : new(detail.Path, detail.Kind switch
+        {
+            ExtensionSourceFailureDetailKind.InvalidManifest => ExtensionListSourceFailureDetailKind.InvalidManifest,
+            ExtensionSourceFailureDetailKind.InvalidEncoding => ExtensionListSourceFailureDetailKind.InvalidEncoding,
+            ExtensionSourceFailureDetailKind.AccessDenied => ExtensionListSourceFailureDetailKind.AccessDenied,
+            ExtensionSourceFailureDetailKind.FileInUse => ExtensionListSourceFailureDetailKind.FileInUse,
+            ExtensionSourceFailureDetailKind.InputOutput => ExtensionListSourceFailureDetailKind.InputOutput,
+            _ => throw new ArgumentOutOfRangeException(nameof(detail), detail.Kind, "The Extension source failure detail kind is not defined."),
+        });
 
     internal static ExtensionListSource ProjectSource(ExtensionSourceReadResult source)
         => new()

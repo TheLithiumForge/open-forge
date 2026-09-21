@@ -9,13 +9,13 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/emerging/observations/_observations.md`](../../../../../../../../../src/open-forge/.agents/memory/emerging/observations/_observations.md) is the canonical installed Observations `entrypoint`. The repository [Observations `entrypoint`](../../../../../../../emerging/observations/_observations.md) dogfoods the same authored contract and adds repository observations through generated `Entries`.
+[`src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md`](../../../../../../../../../src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md) is the canonical installed Observations `entrypoint` supplied by the Orchestration Extension. The repository [Observations `entrypoint`](../../../../../../../emerging/observations/_observations.md) dogfoods the same authored contract and adds repository observations through generated `Entries`.
 
 The [Emerging state contract](../../../../../framework/memory/emerging.md) defines the observation capture threshold and recurrence boundary. The [transition contract](../../../../../framework/memory/transitions.md#capture-and-consolidation) owns consolidation and promotion.
 
 ## Contract
 
-- Frontmatter preserves #KeepInMind, #Memory, #Observation, #AgentLearning, #OrganicGrowth, #Contextual, and #Candidate classification
+- Frontmatter preserves #Extension, #Memory, #Observation, #AgentLearning, #OrganicGrowth, #Contextual, and #Candidate classification
 - Concrete occurrences or patterns noticed in evidence are saved before handoff or closeout when they may matter later
 - One useful, surprising, or costly occurrence may justify capture
 - Later occurrences extend an existing Observation when scope and meaning align
@@ -25,4 +25,4 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Verification
 
-- Source/payload parity plus installation and index coverage verify Observations classification and generated navigation. Source review verifies target-sensitive #KeepInMind wording; the frozen MVP does not test or implement that behavior.
+- Source/payload parity plus installation and index coverage verify Observations classification and generated navigation. Installation coverage distinguishes Core alone from the Orchestration Extension; source review confirms the on-demand Extension classification. The frozen MVP does not test or implement that behavior.

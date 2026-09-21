@@ -51,9 +51,16 @@ The primitive questions below mirror the [Core primitive model](../../framework/
 | [Pattern](../../../../../patterns/_patterns.md)                            | What reusable inspectable shape is the established default?                                        |
 | [Skill](../../../../../skills/_skills.md)                                  | What specialized capability can perform this work?                                                 |
 | [Template](../../../../../templates/_templates.md)                         | What copy-ready source can start this artifact?                                                    |
-| [Workflow](../../../../../skills/use-workflow/references/open-forge/_open-forge.md)                         | How should this defined goal be pursued and completed?                                             |
 | [Map `route`](../../../../../maps/_maps.md)                                | Where does relevant local or external truth live?                                                  |
 | [Core primitive decision](../../../decisions/framework/core-primitives.md) | Why does Core use distinct reusable roles instead of one generic content bucket?                   |
+
+## Skill-Selected Workflow Recipes
+
+A Workflow recipe is a repeatable procedure, not a Core primitive. The native [Use Workflow Skill](../../../../../skills/use-workflow/SKILL.md) selects and follows it when its goal fits. Keep selection distinct from execution: the Skill and active runtime govern discovery and invocation, while the recipe defines its `Goal`, `Steps`, and `Completion`.
+
+| File or concept                                            | Primary question                                                                      |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [Workflow recipe](../../framework/primitives/workflows.md) | When selected through a Skill, how should this defined goal be pursued and completed? |
 
 ## Selection Rule
 

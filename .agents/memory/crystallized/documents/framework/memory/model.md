@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current Memory purpose, authority boundary, independent state and scope dimensions, recursive growth, capture threshold, and shipped defaults
+  description: Current Memory purpose, authority boundary, independent state and scope dimensions, recursive growth, capture threshold, and Core state defaults
   responsibility: Define what Memory records, how its state and scope compose, and where its authority ends
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, MemoryModel, Scope, OrganicGrowth]
 ---
@@ -42,9 +42,9 @@ Place a scope immediately before the first Memory `route` it should narrow:
 - `memory/crystallized/mobile-app/documents/` when the `mobile-app` scope may contain several Crystallized roles
 - `memory/crystallized/documents/mobile-app/` when `mobile-app` narrows Documents only
 
-The same placement rule applies around Working roles such as Checkpoints and Handoffs, Emerging roles such as Analysis, Ideas, and Observations, and local scopes within Archived.
+The same placement rule applies around optional Working roles such as Checkpoints and Handoffs, optional Emerging roles such as Analysis, Ideas, and Observations, and local scopes within Archived.
 
-Memory uses the [universal scope contract](../routing/scope.md) rather than defining another scoping mechanism. When a path retains Memory `routes` managed by Open Forge, their state and role segments keep the order declared by the installed source. Scoping therefore does not turn one state into a child of another or move Documents before Crystallized.
+Memory uses the [universal scope contract](../routing/scope.md) rather than defining another scoping mechanism. When a path retains Memory `routes` supplied by an optional Extension, their state and role segments keep the order declared by the installed source. Scoping therefore does not turn one state into a child of another or move Documents before Crystallized.
 
 The same mechanism can serve one person, one repository, many interacting projects, a shared multi-repository source of truth, or recursively nested scopes. Additional branches do not need to enter active context until their `route` or relationship is selected.
 
@@ -63,12 +63,12 @@ The states are semantic contracts, not quality scores or required maturity stage
 
 Memory loading follows the role each state plays:
 
-- The Memory `root route` enters baseline context so every task can preserve durable state correctly
-- Working and Crystallized `entrypoints` enter baseline context so active resumability and accepted current records are discoverable
-- Emerging and Observations use target-sensitive #KeepInMind so candidate learning is revisited at applicable continuity boundaries
+- The Core Memory `root route` enters baseline context so every task can preserve durable state correctly
+- Core Working and Crystallized `entrypoints` enter baseline context so active resumability and accepted current records are discoverable
+- The Core Emerging `entrypoint` retains #KeepInMind so candidate learning is revisited at applicable continuity boundaries. Optional Extension routes are selected separately, and the Orchestration Observations route has no automatic continuity tag
 - Archived remains on demand because historical context should enter active work only when its `route` is relevant
 
-The eagerly visible files are compact `entrypoints` and their generated navigation. Individual records remain selected by relevance unless their own tags explicitly give them a baseline or continuity role.
+The eagerly visible Core files are compact `entrypoints` and their generated navigation. Optional Extension routes and individual records remain selected by relevance unless their own tags explicitly give them a baseline or continuity role.
 
 ## Recorded-State Threshold
 
@@ -90,16 +90,16 @@ Ordinary conversation, duplicated facts, and raw activity without plausible futu
 
 The self-growing structure lets people and agents add useful records and routed scopes as work produces knowledge. Each addition is deliberate and must meet the [recorded-state threshold](#recorded-state-threshold).
 
-The installed states are stable semantic defaults beneath the Memory `root route`. Workspaces may add direct files or any number of routed scopes anywhere below that root. The [placement examples](#state-and-scope) show whether a subject narrows several states, one state, or one role.
+The four installed states are stable semantic defaults beneath the Memory `root route`. Workspaces may add direct files or any number of routed scopes anywhere below that root. The [placement examples](#state-and-scope) show whether a subject narrows several states, one state, or one role.
 
-The Framework ships starter `routes` because most workspaces benefit from them:
+The Core ships the four state entrypoints. Optional Extensions supply deeper role `routes`:
 
-- Working includes Checkpoints and Handoffs
-- Emerging includes Analysis, Ideas, and Observations
-- Crystallized includes Decisions and Documents
-- Archived begins without requiring a mirror of every active `route`
+- Planning supplies [Analysis](../../../../../../src/extensions/planning/content/.agents/memory/emerging/analysis/_analysis.md), [Ideas](../../../../../../src/extensions/planning/content/.agents/memory/emerging/ideas/_ideas.md), [Decisions](../../../../../../src/extensions/planning/content/.agents/memory/crystallized/decisions/_decisions.md), and [Checkpoints](../../../../../../src/extensions/planning/content/.agents/memory/working/checkpoints/_checkpoints.md).
+- Project Documents supplies [Documents](../../../../../../src/extensions/project-documents/content/.agents/memory/crystallized/documents/_documents.md).
+- Orchestration supplies [Observations](../../../../../../src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md) and [Handoffs](../../../../../../src/extensions/orchestration/content/.agents/memory/working/handoffs/_handoffs.md).
+- Archived begins without requiring a mirror of every active `route`.
 
-These standard `routes` are useful defaults, not an untouchable taxonomy. A workspace may remove, replace, reorganize, or supplement them. Any Memory `routes` still managed by Open Forge retain their declared order.
+These optional `routes` are useful defaults within their Extensions, not an untouchable taxonomy. A workspace may remove, replace, reorganize, or supplement them. Any Memory `routes` supplied by an Extension retain their declared order.
 
 Backlogs, tasks, project status, and similar planning roles may be added where they have clear local meaning. They are not standard Memory `routes` because many workspaces already delegate live planning to another authoritative system.
 
@@ -113,11 +113,11 @@ Those defaults describe state, not an authority shortcut. The [accepted-state co
 
 ## Installed Sources
 
-- [Memory entrypoint](../../../../_memory.md)
-- [Working Memory](../../../../working/_working.md)
-- [Emerging Memory](../../../../emerging/_emerging.md)
-- [Crystallized Memory](../../../_crystallized.md)
-- [Archived Memory](../../../../archived/_archived.md)
+- [Core Memory entrypoint](../../../../../../src/open-forge/.agents/memory/_memory.md)
+- [Core Working Memory](../../../../../../src/open-forge/.agents/memory/working/_working.md)
+- [Core Emerging Memory](../../../../../../src/open-forge/.agents/memory/emerging/_emerging.md)
+- [Core Crystallized Memory](../../../../../../src/open-forge/.agents/memory/crystallized/_crystallized.md)
+- [Core Archived Memory](../../../../../../src/open-forge/.agents/memory/archived/_archived.md)
 - [Memory runtime maintenance](../../maintenance/payload/agents/memory/_memory.md)
 
 ## Decisions And Rationale

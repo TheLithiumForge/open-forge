@@ -6,6 +6,15 @@ open-forge:
 
 # Routing Surfaces
 
+## Current applicability
+
+The recipe and selection rationale below remains useful. Task 43 subsequently
+moved Workflow support into the optional native Use Workflow Skill; Workflow is
+not a separate Core primitive or Loader root. The [current Workflow document](../../documents/framework/primitives/workflows.md)
+and [maintenance contract](../../documents/maintenance/payload/agents/workflows.md)
+define that installed arrangement. Historical references below do not restore
+the retired root or imply automatic loading of Skill resources.
+
 ## Context
 
 Agents need enough information to select or skip a route before paying to read its body. Earlier designs mixed selection wording, execution instructions, dependencies, and applicability inside the same body, making routing expensive and sometimes asking the same question twice.

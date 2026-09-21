@@ -102,7 +102,11 @@ public static class CommandOutputSnapshot
                 Format = SnapshotFormat.Text,
                 Update = update ? SnapshotUpdate.All : SnapshotUpdate.Verify,
                 Comparison = OutputComparison,
-                Comparer = new PlatformSnapshotComparer(capture.Key.StartsWith("lock-held.", StringComparison.Ordinal)),
+                Comparer = new PlatformSnapshotComparer(
+                    capture.Key.StartsWith("lock-held.", StringComparison.Ordinal),
+                    manifestSharing: Path.GetFileNameWithoutExtension(sourceFile) == "ExtensionListBeforeOutputSnapshotTests"
+                        && testName == "SourceBoundary"
+                        && capture.Key.StartsWith("source-unreadable.", StringComparison.Ordinal)),
             });
         }
         scope.Complete();

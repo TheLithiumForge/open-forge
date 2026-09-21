@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current maintenance contracts for the installable Working Memory entrypoint and its Checkpoints and Handoffs routes
+  description: Current maintenance contract for the Core Working Memory entrypoint and its optional Extension-provided Checkpoints and Handoffs routes
   responsibility: Preserve active resume state, expected expiration, durable-result extraction, standard nested roles, recursive scope, and source alignment
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Working]
 ---
@@ -20,13 +20,13 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 - An explicitly accepted temporary choice may remain in Working when its source, scope, and expected expiration are clear
 - Active material stays small, current, and easy to replace or reread
 - Useful results are saved before stale Working Memory is archived or cleared
-- Checkpoints and Handoffs remain the two standard #LoadNow child `routes` with distinct active-state and transfer roles
+- Checkpoints and Handoffs retain their distinct active-state and transfer roles within Working Memory. Their routes are provided by optional Extensions and remain linked through the maintenance `Entries`.
 - Recursive scopes may add plans, history, backlogs, or other temporary roles without changing Working state semantics
 - The installed parent contains no workspace-specific active state
 
 ## Verification
 
-- Installation and `route` tests verify Working, Checkpoints, and Handoffs loading, indexing, classification, recursive scope, and legacy user-owned Sessions preservation
+- Core installation and `route` tests verify Working loading and classification plus legacy user-owned Sessions preservation. Selected Extension installation tests verify the optional Checkpoints and Handoffs routes, indexing, classification, and recursive scope.
 
 ## Entries
 

@@ -29,9 +29,9 @@ Place native packages at `.agents/skills/{skill-name}/SKILL.md` or beneath any n
 
 ## Composition
 
-A Workflow may invoke a Skill to perform part of its goal. Guidance may help decide whether the Skill fits, Patterns may shape its outputs, and Directives remain binding while it runs.
+A selected Workflow recipe may invoke a Skill to perform part of its goal. Guidance may help decide whether the Skill fits, Patterns may shape its outputs, and Directives remain binding while it runs.
 
-A Skill can include a procedure, but that does not make it a Workflow. The distinction is the primary role: a Skill supplies a reusable capability, while a Workflow coordinates a repeatable goal and may compose several capabilities.
+A Skill can include a procedure, but that does not make it a Workflow recipe. The distinction is the primary role: a Skill supplies a reusable capability, while a Workflow recipe coordinates a repeatable goal and may compose several capabilities. The native [Use Workflow Skill](../../../../../skills/use-workflow/SKILL.md) selects and follows Workflow recipes when a goal-based method fits; the recipe supplies the repeatable steps, while the Skill supplies the native discovery and execution boundary.
 
 ## Examples And Boundaries
 
@@ -42,7 +42,7 @@ Useful Skills include:
 - generating or validating a particular artifact type
 - using scripts and references that form one bounded capability
 
-A Markdown recipe that coordinates a project goal is a Workflow. General advice without a bounded executable capability is Guidance. A reusable inspectable output shape is a Pattern.
+A Markdown recipe that coordinates a project goal is a Workflow recipe selected through a Skill. General advice without a bounded executable capability is Guidance. A reusable inspectable output shape is a Pattern.
 
 ## Related Current Sources
 

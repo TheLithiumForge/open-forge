@@ -8,9 +8,11 @@ open-forge:
 
 ## Task state
 
-- State: **Open, not started.** Raised by the maintainer on 2026-09-17 as a beta
+- State: **Extraction and documentation aligned; historical upgrade evidence remains unqualified.** Raised by the maintainer on 2026-09-17 as a beta
   priority, because it changes what a user receives on `install`.
 - Owner: Root.
+
+The 2026-09-21 [documentation packet](beta-follow-ups/task42-43-documentation.md) maps the seven extracted Memory roles to their current Extensions. The earlier decision record below is retained; do not repeat the payload move or infer that historical upgrade requirements are verified.
 
 ## The decision
 
@@ -59,16 +61,16 @@ describe files Core no longer ships, and their source links are broken on
 purpose rather than repointed — a broken link is honest signal that the contract
 is stale, and repointing it would hide that.
 
-| Contract | What changed under it |
-| --- | --- |
+| Contract                           | What changed under it                                                   |
+| ---------------------------------- | ----------------------------------------------------------------------- |
 | `memory/crystallized/decisions.md` | Now owned by `planning`; classification is `#Extension`, not `#LoadNow` |
-| `memory/crystallized/documents.md` | Now owned by `project-documents`; same classification change |
-| `memory/emerging/analysis.md` | Now owned by `planning`; same classification change |
-| `memory/emerging/ideas.md` | Now owned by `planning`; same classification change |
-| `memory/emerging/observations.md` | Now owned by `orchestration`; same classification change |
-| `memory/working/checkpoints.md` | Now owned by `planning`; same classification change |
-| `memory/working/handoffs.md` | Now owned by `orchestration`; same classification change |
-| `workflows.md` | The payload route is retired outright; there is no current source |
+| `memory/crystallized/documents.md` | Now owned by `project-documents`; same classification change            |
+| `memory/emerging/analysis.md`      | Now owned by `planning`; same classification change                     |
+| `memory/emerging/ideas.md`         | Now owned by `planning`; same classification change                     |
+| `memory/emerging/observations.md`  | Now owned by `orchestration`; same classification change                |
+| `memory/working/checkpoints.md`    | Now owned by `planning`; same classification change                     |
+| `memory/working/handoffs.md`       | Now owned by `orchestration`; same classification change                |
+| `workflows.md`                     | The payload route is retired outright; there is no current source       |
 
 Each `## Contract` section still asserts the old `#LoadNow` classification, so
 reconciling them is a content decision, not a link fix. Settle it here, because

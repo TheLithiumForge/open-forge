@@ -6,7 +6,9 @@ open-forge:
 
 # Open CLI Tasks
 
-Task 38 planning is the selected work as of 2026-09-19. Its
+The current selection is analysis and specifications for Tasks 39, 42/43 and
+46/47 in the [beta packet](beta-follow-ups/_beta-follow-ups.md). No product
+mutation wave is released. Task 38 is complete; its
 [migration packet](task38/_task38.md) owns the accepted structural sequence;
 structural stages 0–4 and G5 are accepted. The maintainer approved F01–F26
 for stages 5–6; Task45 now owns [accepted G6 evidence](task45/_task45.md) and the [flow report](task45/g6-flow-report.md).
@@ -27,7 +29,8 @@ polished and there are no stupid bugs.** Architecture work is explicitly second
 priority, however much it wants doing.
 
 Read this ordering before picking up unrelated beta work. The later Task 38
-selection above governs the current migration; it does not cancel the beta goals.
+selection is retained as completed history; the current beta specification
+selection above does not cancel these goals.
 
 **Blocking beta — a user sees this**
 
@@ -36,14 +39,12 @@ selection above governs the current migration; it does not cancel the beta goals
    partly informed by what this finds.
 2. [39 Output audit](task39-output-audit.md) — holds a live regression.
 3. [42 Minimal core](task42-minimal-core.md) and
-   [43 Workflows as a skill](task43-workflows-as-skill.md) — both change what a
-   fresh install contains, so they must land before people install. Settle them
-   together; they overlap on the workflows route.
+   [43 Workflows as a skill](task43-workflows-as-skill.md) — extraction is present in the shipped payload; stale documentation and
+   upgrade-evidence reconciliation remain. See the current beta packet.
 4. [46 Routed Skill resources](task46-routed-skill-resources.md) and
-   [47 Entrypoint reachability](task47-entrypoint-reachability.md) — both fall
-   out of 43 landing. Installing any first-party Extension currently makes
-   `doctor` exit 2 with thirteen warnings, so a beta user sees a broken
-   workspace the moment they install one. Settle them together.
+   [47 Entrypoint reachability](task47-entrypoint-reachability.md) — the current scratch recheck finds a healthy fresh install. Stale Skill
+   catalogue repair advice and missing-entry naming still need correction;
+   the beta packet supersedes the older thirteen-warning report.
 5. [44 Template and core file content](task44-template-content.md) — the prose a
    user reads most, and it depends on 42 deciding which files survive.
 6. [37 Wording review](task37-wording-review-against-proposals.md) — held by the
@@ -53,7 +54,7 @@ selection above governs the current migration; it does not cancel the beta goals
 8. [34 Interpolated value markup](task34-interpolated-value-markup.md) — small,
    visible, cheap.
 
-**Beta safety net — nothing watches this yet**
+**Beta safety net — approved journeys implemented; coverage follow-ups remain**
 
 9. [45 End-to-end observability](task45-end-to-end-observability.md)
 10. [40 Capture coverage](task40-capture-coverage.md)
@@ -78,6 +79,8 @@ this; its remaining phases feed 32, 37 and 39.
 
 ## Entries
 
+- [Remaining beta product work and delivery verification after the completed migration](beta-follow-ups.md) - #Memory #Working #Backlog #CLI #Beta #Contextual
+- [Specifications for actionable errors, stale documentation and Skill-resource navigation](beta-follow-ups/_beta-follow-ups.md) - #Memory #Working #Plan #CLI #Contextual
 - [Candidate follow-up tasks distilled from the reviewed CLI analyses; not active execution authority](potential/_potential.md) - #Memory #Working #CLI #Task #Potential #Contextual
 - [Open Task 30 for CLI experience remediation, with actionable phase state and evidence carried from Emerging Analysis](task30-cli-experience-remediation.md) - #Memory #Working #CLI #Task #Remediation #Contextual #Active
 - [Task 30 G4 execution packet for the CLI output revamp, with the accepted decisions, the shared rules, the command matrix, the lane order, and one subtask per foundation and per command](task30-g4/_task30-g4.md) - #Memory #Working #CLI #Task #Plan #G4 #Presentation #Contextual #Active

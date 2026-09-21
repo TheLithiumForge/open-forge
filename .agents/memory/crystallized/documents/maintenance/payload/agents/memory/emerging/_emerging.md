@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current maintenance contracts for the installable Emerging Memory entrypoint and its Analysis, Ideas, and Observations routes
+  description: Current maintenance contract for the Core Emerging Memory entrypoint and its optional Extension-provided Analysis, Ideas, and Observations routes
   responsibility: Preserve candidate authority, capture threshold, uncertainty, consolidation, standard nested roles, continuity loading, and source alignment
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Emerging, Candidate]
 ---
@@ -21,12 +21,12 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 - Emerging material remains contextual until acceptance is established within its scope
 - Repeated or stale material is revisited for consolidation, promotion, archival, or pruning
 - Accepted outcomes move to the route or system that should define them. Useful reasoning from rejected or replaced candidates is archived; material without future value is pruned
-- Analysis, Ideas, and Observations remain the three standard nested roles with distinct candidate meanings
+- Analysis, Ideas, and Observations retain their distinct candidate roles within Emerging Memory. Their routes are provided by optional Extensions and remain linked through the maintenance `Entries`.
 - The authored source stays compact enough for #KeepInMind use and contains no workspace-specific candidate records
 
 ## Verification
 
-- Loading and installation closure tests verify #KeepInMind traversal, child `routes`, generated navigation, and scoped Emerging behavior
+- Core installation closure tests verify Emerging #KeepInMind traversal and behavior. Selected Extension installation tests verify the optional Analysis, Ideas, and Observations routes, generated navigation, and scoped behavior.
 
 ## Entries
 

@@ -9,13 +9,13 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/crystallized/documents/_documents.md`](../../../../../../../../../src/open-forge/.agents/memory/crystallized/documents/_documents.md) is the canonical installed Documents `entrypoint`. The repository [Documents `entrypoint`](../../../../../_documents.md) dogfoods the same authored contract and adds repository current documents through generated `Entries`.
+[`src/extensions/project-documents/content/.agents/memory/crystallized/documents/_documents.md`](../../../../../../../../../src/extensions/project-documents/content/.agents/memory/crystallized/documents/_documents.md) is the canonical installed Documents `entrypoint` supplied by the Project Documents Extension. The repository [Documents `entrypoint`](../../../../../_documents.md) dogfoods the same authored contract and adds repository current documents through generated `Entries`.
 
 The [Crystallized state contract](../../../../../framework/memory/crystallized.md) defines Documents as a shipped Crystallized role. The [accepted-state relationship contract](../../../../../framework/truth.md#current-views-decisions-and-history) defines how current documents integrate accepted meaning.
 
 ## Contract
 
-- Frontmatter preserves #LoadNow, #Memory, #Document, #Record, and #CurrentTruth classification
+- Frontmatter preserves #Extension, #Memory, #Document, #Record, and #CurrentTruth classification
 - Documents explain accepted current knowledge that needs one coherent view, or link to the system that contains it
 - A document that assigns a subject to another authoritative source follows that source for its detail
 - A routed destination still defines its own detail. The containing document does not become a competing copy
@@ -24,4 +24,4 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Verification
 
-- Installation and `route` tests verify Documents loading, indexing, classification, and managed reconciliation through scopes
+- Installation and `route` tests verify that Core alone does not provide Documents and that the Project Documents Extension supplies its loading, indexing, classification, and managed reconciliation through scopes

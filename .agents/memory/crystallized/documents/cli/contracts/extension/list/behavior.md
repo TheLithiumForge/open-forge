@@ -56,6 +56,13 @@ deterministic inventory and hash proof. That proof identifies distributed source
 assets; it is not evidence of a selected workspace's current installation or of
 a proven runtime implementation.
 
+A failed selected manifest read retains two identities: the requested package or
+catalogue and the exact attempted manifest. Preserve its typed failure reason
+through source wrapping and finding construction. Rendering consumes those facts
+without parsing native exception messages or performing additional reads. This
+internal detail is not a new public JSON field and does not change read-state,
+source selection, dependency-conflict handling, early exits or cancellation.
+
 ## Ownership Facts
 
 Read installed facts only from `.agents/open-forge.lock.json` in the selected

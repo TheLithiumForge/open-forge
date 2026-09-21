@@ -86,7 +86,7 @@ Management applies only to files a manager explicitly owns or safely identifies.
 
 Users own every installed file and may edit, replace, move, or remove `routes`. Missing defaults are not restored unless the requested lifecycle operation explicitly requests restoration or replacement.
 
-A familiar `slug` beneath another `route` does not recreate a `root route`. For example, `workflows/frontend/skills/` remains below Workflows even though `skills` is also the `slug` of a `root route`. The `root routes` compose through explicit links rather than physical nesting.
+A familiar `slug` beneath another `route` does not recreate a `root route`. For example, `skills/frontend/patterns/` remains below Skills even though `patterns` is also the `slug` of a `root route`. The nested `patterns` scope does not gain the Patterns contract. The `root routes` compose through explicit links rather than physical nesting.
 
 ## Combining Selected Scopes
 

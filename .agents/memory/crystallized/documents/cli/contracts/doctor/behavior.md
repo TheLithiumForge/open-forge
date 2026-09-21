@@ -775,3 +775,13 @@ severities, resolution lanes, counts, proposals, actions, or the stored finding
 order. Distinct locations and subject identities remain distinct even when their
 human path text is identical. Candidate selection is never inferred by rendering.
 The Interface defines the readable labels and detail-level boundary.
+
+## Generated-navigation action identity
+
+Build targeted Index advice from the known owning catalogue path in generated
+region and entry observations. For an independent overwrite entry, the shape
+observation's path is the containing catalogue; its related overwrite path is
+not the repair target. A missing-entry finding uses the expected destination as
+its identifier while preserving actual/expected evidence. Formatting and manual
+quoting fallback follow the Interface. Neither advice construction nor Rendering
+reads the filesystem or broadens Index selection.

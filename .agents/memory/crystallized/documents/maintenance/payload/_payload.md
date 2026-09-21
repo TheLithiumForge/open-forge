@@ -1,13 +1,13 @@
 ---
 open-forge:
-  description: Current maintenance boundary and contracts for reviewed Open Forge installation files
+  description: Current maintenance boundary and contracts for reviewed Core and Extension installation files
   responsibility: Define the source, repository counterpart, related contracts, and proportionate verification for each reviewed installable file without becoming runtime context
   tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload]
 ---
 
 # Payload Maintenance
 
-This route contains repository Maintenance contracts for reviewed files under [`src/open-forge/`](../../../../../../src/open-forge/) and follows the installable source structure as those files are reviewed and maintained.
+This route contains repository Maintenance contracts for reviewed Core and Extension installation files under [`src/open-forge/`](../../../../../../src/open-forge/) and [`src/extensions/`](../../../../../../src/extensions/). It follows each installable source structure as files are reviewed and maintained.
 
 Users do not receive this Maintenance route. The [Framework distribution contract](../../framework/architecture.md#distribution-and-dogfood) defines what must remain complete in installed files, while the [routed Markdown contract](../../framework/markdown/routes.md) defines generated Entries and their authored sources.
 
@@ -25,4 +25,4 @@ Users do not receive this Maintenance route. The [Framework distribution contrac
 
 - [Current maintenance contract for the canonical installed AGENTS.md entry block](AGENTS.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Entry
 - [Current maintenance contract for the Claude Code bridge to the canonical AGENTS.md entry and Open Forge loader](CLAUDE.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Bridge #ClaudeCode
-- [Current maintenance contracts for reviewed files under the installable Open Forge .agents runtime](agents/_agents.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework
+- [Current maintenance contracts for reviewed Core and Extension installation files under the Open Forge runtime](agents/_agents.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload #Framework

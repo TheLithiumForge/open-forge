@@ -1,45 +1,35 @@
 ---
 open-forge:
-  description: Current maintenance contract for the installable Workflows entrypoint and recipe shape
-  responsibility: Preserve Workflow selection, recipe validation, cross-primitive composition, source alignment, and `route` boundaries
-  tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Core, Workflow]
+  description: Current maintenance contract for the optional Workflow Support Skill and its recipe catalogue
+  responsibility: Preserve Workflow selection, recipe validation, composition, stopping rules, source alignment, and `route` boundaries
+  tags: [Memory, Document, CurrentTruth, Evergreen, Maintenance, Governance, Payload, Extension, Workflow]
 ---
 
-# Workflows Category Maintenance Contract
+# Workflow Support Skill Maintenance Contract
 
 ## Source
 
-[`src/open-forge/.agents/workflows/_workflows.md`](../../../../../../../src/open-forge/.agents/workflows/_workflows.md) is the canonical installed Workflows `entrypoint`. The repository [Workflows `entrypoint`](../../../../../../skills/use-workflow/references/open-forge/_open-forge.md) dogfoods the same authored contract and may add local generated `entries`.
+The optional Workflow Support package provides these separate installed sources:
 
-An adjacent [workspace overwrite](../../../../../../skills/use-workflow/references/open-forge/_open-forge.md) adds the accepted local condition: change a Workflow only when evidence shows that its risk profile no longer fits.
+- Native Skill: [`src/extensions/workflows/content/.agents/skills/use-workflow/SKILL.md`](../../../../../../../src/extensions/workflows/content/.agents/skills/use-workflow/SKILL.md)
+- Reference catalogue: [`src/extensions/workflows/content/.agents/skills/use-workflow/references/_references.md`](../../../../../../../src/extensions/workflows/content/.agents/skills/use-workflow/references/_references.md)
 
-The [current Workflow contract](../../../framework/primitives/workflows.md) defines recipe structure, selection, composition, and relationships with other Core primitives.
+The repository counterparts are [`.agents/skills/use-workflow/SKILL.md`](../../../../../../../.agents/skills/use-workflow/SKILL.md) and [`.agents/skills/use-workflow/references/_references.md`](../../../../../../../.agents/skills/use-workflow/references/_references.md). Keep each counterpart aligned with its packaged source where shared authored content is intended.
+
+The optional [catalogue Template](../../../../../../../src/extensions/workflows/content/.agents/templates/workflows/_workflows.md) provides starting content for a method. Its instructions explicitly avoid introducing a new root primitive.
 
 ## Contract
 
-- Frontmatter uses #LoadNow, #Core, and #Workflow so Workflow selection enters baseline context
-- The entrypoint keeps the complete compact runtime and manual authoring rules
-- Visible descriptions, tags, route meaning, and user direction select a candidate before loading. `Goal` confirms the fit after loading
-- The smallest Workflow that resolves an important missing decision or execution risk is preferred. Installed Workflows never become mandatory stages, and users do not need to name them
-- When a Workflow significantly changes the interaction, the agent explains the approach in one natural sentence without making internal route details part of the interaction
-- The authored rules prevent normal agent behavior from becoming ceremonial Workflows
-- A complete Workflow has one non-empty level-2 `Goal`, `Steps`, and `Completion` section in that order
-- Recipe-specific headings remain valid without becoming Framework schema
-- Organizational entrypoints remain valid without recipe sections. Using any standard recipe section requires the complete recipe shape
-- Workflow scopes inherit the Workflow role and may nest recursively
-- Other Core `root routes` remain separate and enter recipes through Steps, handoffs, or ordinary links
-- A child with a familiar primitive `slug` beneath Workflows does not receive that primitive's runtime or managed tooling behavior
-- The installable source begins with no opinionated Workflow recipes
-
-## Optional Recipes And Local Profiles
-
-The [Extension catalogue](../../../../../../../src/extensions/README.md) identifies installable recipes and their package dependencies. Core retains the compact category contract. Local workflows may preserve accepted repository-specific execution profiles without making their agents, model choices, budgets, or tooling portable defaults.
-
-Keep each recipe explicit about selection, required inputs, sequence, stopping or recovery conditions, and observable completion. An incomplete investigation or withheld integration must remain visible as such. Check that related recipes link to their defining method instead of duplicating it.
+- Native Skill metadata uses `name` and `description`. The recipe catalogue carries its own `Extension` and `Workflow` metadata and explicit selection rules.
+- Workflow selection is optional. Read the catalogue to identify a method from its descriptions and scopes, honor an explicit selection or opt-out, load only the relevant scope entrypoints and selected recipe, and check the recipe's `Goal` before proceeding. Work directly when no installed method adds value.
+- A complete recipe has one non-empty level-2 `Goal`, `Steps`, and `Completion` section, in that order. `Goal` states when the method fits and the outcome it serves. `Steps` states the method, including dependencies and conditional work. `Completion` states what establishes the result or an honest blocked boundary. Extra sections remain optional, and an entrypoint may organize recipes without being a recipe.
+- A selected recipe may compose existing Skills, tools, and agents through its `Steps`. Workflow Support does not supply the runtime for those capabilities, and recipe sources remain separate from the sources they compose.
+- Execute required steps. Keep optional steps optional. Resolve missing capabilities before the step that needs them; use a substitute only when it is permitted and preserves the requirement. Otherwise report the blocked step and continue only independent authorized work. Do not restart completed work or recurse into the same unchanged request.
+- Check `Completion` against the actual result and report unmet conditions or unavailable evidence. Finishing a recipe does not authorize new scope, accept its output, or authorize commits, merges, publication, or contact with remotes.
+- The Skill and its catalogue define workflow selection. The Skill mechanism does not make its resources loader-reachable ordinary routes, establish a Core Workflow route, or create baseline loading behavior.
 
 ## Verification
 
-- Workflow validation tests cover required section level and order, recipe-specific headings, organizational `entrypoints`, direct Workflow files, and `root route` boundaries
-- Core installation and route tests verify baseline loading, indexing, and recursive Workflow categories
-- Package verification assembles declared dependencies, checks links at installed destinations, validates recipe sections and generated indexes, and checks local parity where shared content is intended
-- Review specialized and experimental recipes individually. Record why each is revised, retained locally, or promoted; do not infer effectiveness from its existence
+- Package verification inspects the installed Workflow Support package and its declared dependency composition, including the [`extension.json`](../../../../../../../src/extensions/workflows/extension.json) manifest, the native Skill, the separate catalogue, and any contributed recipe scopes. It checks relative resource links and local parity where shared content is intended.
+- Validate each present recipe's `Goal`, `Steps`, and `Completion` sections, their order, explicit dependencies, selection rules, stopping conditions, and completion boundary. Do not claim that Core installs a workflow route or baseline workflow loading.
+- Review specialized and experimental recipes individually. Record why each is revised, retained locally, or promoted; do not infer effectiveness from its existence.

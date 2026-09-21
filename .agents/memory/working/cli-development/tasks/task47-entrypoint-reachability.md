@@ -8,8 +8,11 @@ open-forge:
 
 ## Task state
 
-- State: **Open, not started.** Raised by the maintainer on 2026-09-18.
+- State: **Targeted Doctor corrections pass the published journey; broader indexing choice remains open.** Raised by the maintainer on 2026-09-18.
 - Owner: Root.
+
+The 2026-09-21 [navigation packet](beta-follow-ups/task46-47-navigation.md) reproduces a stale detached Skill catalogue after default Index and successful repair through explicit selection. The implemented correction provides truthful targeted advice and correct missing-entry identity; automatic traversal remains a separate choice.
+
 - Shares a root cause with [Task 46](task46-routed-skill-resources.md). Settle
   them together; 46 decides whether a Skill can host a route, 47 decides what
   navigation does once it can.
@@ -61,7 +64,7 @@ and the chain stops there. Any fix aimed at the naming would miss it.
   true or stop being printed.
 - `doctor` distinguishes "looks like a route but no Loader entry or parent
   reaches it" from "is routed but no parent lists it" and offers `Fix it by
-  hand` for the first. Check that split still earns its keep once reachability
+hand` for the first. Check that split still earns its keep once reachability
   is decided.
 
 ## Boundaries

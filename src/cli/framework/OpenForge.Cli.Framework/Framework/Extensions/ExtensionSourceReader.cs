@@ -224,7 +224,10 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
                         lexicalSource,
                         packages.Concat(packageResult.Result.Packages),
                         packageResult.Result.Cause,
-                        packageResult.Result.FailureKind);
+                        packageResult.Result.FailureKind)
+                    {
+                        FailureDetail = packageResult.Result.FailureDetail,
+                    };
                 default:
                     throw new InvalidOperationException("The Extension package read outcome is not defined.");
             }
@@ -258,7 +261,10 @@ internal sealed class ExtensionSourceReader(PhysicalPathResolver physicalPathRes
                 lexicalPackage,
                 failure.Result.Packages,
                 failure.Result.Cause,
-                failure.Result.FailureKind),
+                failure.Result.FailureKind)
+            {
+                FailureDetail = failure.Result.FailureDetail,
+            },
             _ => throw new InvalidOperationException("The Extension manifest read outcome is not defined."),
         };
     }

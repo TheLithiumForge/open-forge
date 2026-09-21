@@ -130,6 +130,8 @@ internal sealed record ExtensionListFinding
     internal string? Path { get; init; }
 
     internal string? Owner { get; init; }
+
+    internal ExtensionListSourceFailureDetail? FailureDetail { get; init; }
 }
 
 internal sealed record ExtensionListInstalledFile

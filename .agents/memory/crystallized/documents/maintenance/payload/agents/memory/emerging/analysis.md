@@ -9,17 +9,17 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/emerging/analysis/_analysis.md`](../../../../../../../../../src/open-forge/.agents/memory/emerging/analysis/_analysis.md) is the canonical installed Analysis `entrypoint`. The repository [Analysis `entrypoint`](../../../../../../../emerging/analysis/_analysis.md) dogfoods the same authored contract and may add local generated `Entries`.
+[`src/extensions/planning/content/.agents/memory/emerging/analysis/_analysis.md`](../../../../../../../../../src/extensions/planning/content/.agents/memory/emerging/analysis/_analysis.md) is the canonical installed source for the optional Planning Extension's Analysis `entrypoint`. The repository [Analysis `entrypoint`](../../../../../../../emerging/analysis/_analysis.md) dogfoods the same authored contract and may add local generated `Entries`.
 
 The [Emerging state contract](../../../../../framework/memory/emerging.md) defines Analysis as structured reasoning whose acceptance or final destination remains unsettled.
 
 ## Contract
 
-- Frontmatter preserves #LoadNow, #Memory, #Analysis, #Reasoning, #Contextual, and #Candidate classification
+- Frontmatter uses #Extension, #Memory, #Analysis, #Reasoning, #Contextual, and #Candidate to classify this optional Planning route
 - Analysis keeps its question, evidence, assumptions, limits, and current conclusion visible
 - Assumptions are rechecked before later work relies on the analysis
 - Analysis remains contextual until a separate acceptance source establishes a durable result
 
 ## Verification
 
-- Installation and `route` tests verify Analysis loading, indexing, classification, and recursive child routing
+- Core-only installation verifies that the optional Analysis route is absent; Planning installation verifies that it installs, indexes, retains its full source classification, and supports recursive child routing

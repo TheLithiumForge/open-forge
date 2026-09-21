@@ -9,7 +9,7 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "Cannot list Extensions: the content is not valid JSON.",
+    "headline": "Available Extensions could not be listed from <extension-source>\\toolkit\\extension.json.",
     "kind": "cannot-start"
   },
   "findings": [
@@ -17,7 +17,7 @@
       "severity": "error",
       "code": "extension-list.source-invalid",
       "title": "Extension source is invalid",
-      "message": "<extension-source> is not an Extension package or package folder: the content is not valid JSON. Expected extension.json with id, name, description, version, dependencies.",
+      "message": "<extension-source>\\toolkit\\extension.json is not a valid Extension manifest.",
       "subject": {
         "kind": "source",
         "path": null,
@@ -39,7 +39,7 @@
   "limitations": [
     {
       "what": "available packages",
-      "why": "the content is not valid JSON.",
+      "why": "<extension-source>\\toolkit\\extension.json is not a valid Extension manifest.",
       "subject": null
     }
   ],
@@ -52,5 +52,9 @@
     "available": []
   },
   "recovery": null,
-  "next": null
+  "next": {
+    "kind": "sentence",
+    "command": "Check the manifest's required fields and values, then retry.",
+    "reason": "Check the manifest's required fields and values, then retry."
+  }
 }

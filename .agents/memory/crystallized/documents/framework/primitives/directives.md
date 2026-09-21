@@ -35,9 +35,9 @@ When active Directives conflict or cannot be followed, the exact sources and sco
 
 ## Relationships And Boundaries
 
-A Directive may require use of a Pattern, Skill, Template, Workflow, Map route, or another result. The linked primitive retains its own meaning; the Directive owns only the requirement.
+A Directive may require use of a Pattern, Skill, Template, Workflow, Map route, or another result. The linked primitive or recipe retains its own meaning; the Directive owns only the requirement.
 
-Optional advice belongs in Guidance. A reusable inspectable shape belongs in a Pattern. A bounded capability belongs in a Skill. A repeatable goal belongs in a Workflow.
+Optional advice belongs in Guidance. A reusable inspectable shape belongs in a Pattern. A bounded capability belongs in a Skill. A repeatable goal belongs in a workflow recipe selected through the native `use-workflow` Skill.
 
 Examples of suitable Directives include a mandatory security check, a prohibited dependency, or a required review boundary. A preferred architectural approach with legitimate contextual exceptions belongs in Guidance. A description of already accepted product state belongs in its current document.
 

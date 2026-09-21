@@ -370,6 +370,7 @@ internal static class DoctorReportSelector
                 global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatPreviewThatSafeToApply($"{safe}", $"{Plural(safe, "repair")}", $"{(safe == 1 ? "is" : "are")}"));
         }
 
+        CliNextAction? targetedSentence = null;
         foreach (var domain in DomainOrder)
         {
             var finding = findings.FirstOrDefault(value => value.Provenance.Domain == domain
@@ -379,11 +380,31 @@ internal static class DoctorReportSelector
                 continue;
             }
 
-            var action = DoctorWording.Actions(finding).FirstOrDefault(value => value.Kind == CliNextActionKind.Command);
+            if (finding.Actions.Any(value => value.Operation == DoctorNextOperation.Index && value.Command is null))
+            {
+                finding = findings.FirstOrDefault(value => value.Provenance.Domain == domain
+                    && value.Resolution == DoctorResolutionLane.TargetedOperation
+                    && value.Actions.Any(action => action.Operation == DoctorNextOperation.Index && action.Command is not null))
+                    ?? finding;
+            }
+
+            var actions = DoctorWording.Actions(finding);
+            var action = actions.FirstOrDefault(value => value.Kind == CliNextActionKind.Command);
             if (action is not null)
             {
                 return action;
             }
+
+            if (targetedSentence is null
+                && finding.Actions.Any(value => value.Operation == DoctorNextOperation.Index && value.Command is null))
+            {
+                targetedSentence = actions.FirstOrDefault(value => value.Kind == CliNextActionKind.Sentence);
+            }
+        }
+
+        if (targetedSentence is not null)
+        {
+            return targetedSentence;
         }
 
         if (findings.Any(finding => finding.Resolution == DoctorResolutionLane.GuidedChoice))

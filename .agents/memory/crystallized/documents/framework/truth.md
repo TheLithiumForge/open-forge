@@ -66,7 +66,9 @@ When accepted direction changes current state:
 
 The current authoritative source states the accepted concept well enough to use on its own. A linked decision explains why when useful rationale exists. This is limited overlap at distinct entry boundaries, not competing authority.
 
-The [Memory transition contract](memory/transitions.md#integration-and-closeout) defines reconciliation across durable outcomes, temporary continuation state, and unsettled reusable findings. The [Core primitive model](primitives/model.md) defines the distinct questions answered by Directives, Patterns, Guidance, Skills, Templates, Workflows, and Map `routes`.
+The [Memory transition contract](memory/transitions.md#integration-and-closeout) defines reconciliation across durable outcomes, temporary continuation state, and unsettled reusable findings. The [Core primitive model](primitives/model.md) defines the distinct questions answered by Directives, Guidance, Patterns, Skills, Templates, and Map `routes`. Workflow recipes remain useful procedures selected and followed through the native Skill mechanism; they are not a separate Core primitive.
+
+Selection remains distinct from execution. A native Skill selects a Workflow recipe when its goal fits; following its Steps is execution under the Skill's native contract, active Directives, and current user direction.
 
 ## Current Views, Decisions, And History
 
