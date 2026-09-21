@@ -71,6 +71,11 @@ jobs:
           package-manager-cache: false
       - name: Isolate SDK selection
         run: printf 'DOTNET_INSTALL_DIR=%s/dotnet\nDOTNET_ROOT=%s/dotnet\n' "$RUNNER_TEMP" "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Use a physical short temporary root on macOS
+        if: runner.os == 'macOS'
+        run: |
+          temporary_root="$(cd "$RUNNER_TEMP" && pwd -P)"
+          printf 'TMPDIR=%s/\n' "$temporary_root" >> "$GITHUB_ENV"
       - uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: "10.0.111"
@@ -127,5 +132,6 @@ jobs:
           path: |
             artifacts/delivery/logs/${{ matrix.rid }}
             artifacts/delivery/${{ matrix.rid }}/reports
+            artifacts/command-output-snapshots
           if-no-files-found: ignore
           retention-days: 7

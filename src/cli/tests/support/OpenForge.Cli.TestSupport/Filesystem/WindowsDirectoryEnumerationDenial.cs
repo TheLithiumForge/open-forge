@@ -53,6 +53,7 @@ public sealed class WindowsDirectoryEnumerationDenial : IDisposable
         var original = directory.GetAccessControl(AccessControlSections.Access);
         var denied = new DirectorySecurity();
         denied.SetSecurityDescriptorBinaryForm(original.GetSecurityDescriptorBinaryForm(), AccessControlSections.Access);
+        denied.SetAccessRuleProtection(isProtected: true, preserveInheritance: true);
         using var identity = WindowsIdentity.GetCurrent();
         var user = identity.User
             ?? throw new InvalidOperationException("The fixture requires a current Windows user identity.");
@@ -74,9 +75,16 @@ public sealed class WindowsDirectoryEnumerationDenial : IDisposable
 
             throw new InvalidOperationException("The fixture did not deny directory enumeration.");
         }
-        catch
+        catch (Exception failure)
         {
-            scope.Dispose();
+            try
+            {
+                scope.Dispose();
+            }
+            catch (Exception restorationFailure)
+            {
+                throw new AggregateException("The denial fixture and its restoration both failed.", failure, restorationFailure);
+            }
             throw;
         }
     }
@@ -88,15 +96,7 @@ public sealed class WindowsDirectoryEnumerationDenial : IDisposable
             return;
         }
 
-        var restore = new DirectorySecurity();
-        restore.SetSecurityDescriptorBinaryForm(_original.GetSecurityDescriptorBinaryForm(), AccessControlSections.Access);
-        _directory.SetAccessControl(restore);
-        var restored = _directory.GetAccessControl(AccessControlSections.Access);
-        if (restored.GetSecurityDescriptorSddlForm(AccessControlSections.Access)
-            != _original.GetSecurityDescriptorSddlForm(AccessControlSections.Access))
-        {
-            throw new InvalidOperationException("The fixture directory access rules were not restored exactly.");
-        }
+        WindowsDirectoryAccessRules.Restore(_directory, _original.GetSecurityDescriptorBinaryForm());
 
         _disposed = true;
     }

@@ -202,6 +202,8 @@ internal sealed class SourceDocumentReader
         return directCause.Contains("0x80070005", StringComparison.OrdinalIgnoreCase)
             || directCause.Contains("0x80070020", StringComparison.OrdinalIgnoreCase)
             || (OperatingSystem.IsLinux()
-                && directCause.Contains("0x0000000B", StringComparison.OrdinalIgnoreCase));
+                && directCause.Contains("0x0000000B", StringComparison.OrdinalIgnoreCase))
+            || (OperatingSystem.IsMacOS()
+                && directCause.Contains("0x00000023", StringComparison.OrdinalIgnoreCase));
     }
 }

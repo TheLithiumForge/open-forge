@@ -186,6 +186,16 @@ and the exact held-lock error code for that OS. Received output is never rewritt
 by this comparison, so failure artifacts preserve platform evidence. Windows-only
 cleanup deletion snapshots belong to their own explicitly excluded test.
 
+macOS jobs use the physical runner temporary directory. This keeps test roots
+outside the system `/var` alias and leaves room for Unix-domain socket paths.
+Recovery and lock safety checks continue to reject symlinked storage chains.
+Diagnostic uploads include received snapshot files when comparisons fail.
+
+Windows denial fixtures protect their temporary DACL while the denial is active.
+Restoration verifies ordered access-rule bytes and inheritance protection; an
+OS-added auto-inheritance bookkeeping flag is not treated as a permission change.
+The real access-denial probes and required Windows scenarios remain mandatory.
+
 ## Maintain the scripts
 
 [commands.ts](commands.ts) defines commands, options, usage, guidance and examples.

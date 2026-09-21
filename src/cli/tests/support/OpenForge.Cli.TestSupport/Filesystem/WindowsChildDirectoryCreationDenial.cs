@@ -9,14 +9,12 @@ public sealed class WindowsChildDirectoryCreationDenial : IDisposable
 {
     private readonly DirectoryInfo _catalogue;
     private readonly byte[] _original;
-    private readonly string _originalSddl;
     private bool _disposed;
 
     private WindowsChildDirectoryCreationDenial(DirectoryInfo catalogue, DirectorySecurity original)
     {
         _catalogue = catalogue;
         _original = original.GetSecurityDescriptorBinaryForm();
-        _originalSddl = original.GetSecurityDescriptorSddlForm(AccessControlSections.Access);
     }
 
     public static WindowsChildDirectoryCreationDenial Create(string ownedRoot, string cataloguePath)
@@ -60,6 +58,7 @@ public sealed class WindowsChildDirectoryCreationDenial : IDisposable
         var original = catalogue.GetAccessControl(AccessControlSections.Access);
         var denied = new DirectorySecurity();
         denied.SetSecurityDescriptorBinaryForm(original.GetSecurityDescriptorBinaryForm(), AccessControlSections.Access);
+        denied.SetAccessRuleProtection(isProtected: true, preserveInheritance: true);
         using var identity = WindowsIdentity.GetCurrent();
         var user = identity.User
             ?? throw new InvalidOperationException("The fixture requires a current Windows user identity.");
@@ -72,9 +71,16 @@ public sealed class WindowsChildDirectoryCreationDenial : IDisposable
             catalogue.SetAccessControl(denied);
             return scope;
         }
-        catch
+        catch (Exception failure)
         {
-            scope.Dispose();
+            try
+            {
+                scope.Dispose();
+            }
+            catch (Exception restorationFailure)
+            {
+                throw new AggregateException("The denial fixture and its restoration both failed.", failure, restorationFailure);
+            }
             throw;
         }
     }
@@ -86,14 +92,7 @@ public sealed class WindowsChildDirectoryCreationDenial : IDisposable
             return;
         }
 
-        var restore = new DirectorySecurity();
-        restore.SetSecurityDescriptorBinaryForm(_original, AccessControlSections.Access);
-        _catalogue.SetAccessControl(restore);
-        if (_catalogue.GetAccessControl(AccessControlSections.Access).GetSecurityDescriptorSddlForm(AccessControlSections.Access)
-            != _originalSddl)
-        {
-            throw new InvalidOperationException("The fixture catalogue access rules were not restored exactly.");
-        }
+        WindowsDirectoryAccessRules.Restore(_catalogue, _original);
 
         _disposed = true;
     }
