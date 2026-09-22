@@ -6,9 +6,11 @@ open-forge:
 
 # Open CLI Tasks
 
-The current selection is analysis and specifications for Tasks 39, 42/43 and
-46/47 in the [beta packet](beta-follow-ups/_beta-follow-ups.md). No product
-mutation wave is released. Task 38 is complete; its
+The current selection is a [lossless source wording proposal](../../src-wording-proposal.md),
+whose eight replacements are now applied under maintainer authorization. The [default Skill indexing follow-up](task47-default-skill-indexing.md)
+is recorded for later specification. The approved beta corrections are complete
+and squash-integrated into `develop`; their [execution record](beta-follow-ups/execution.md)
+retains the evidence. Task 38 is complete; its
 [migration packet](task38/_task38.md) owns the accepted structural sequence;
 structural stages 0–4 and G5 are accepted. The maintainer approved F01–F26
 for stages 5–6; Task45 now owns [accepted G6 evidence](task45/_task45.md) and the [flow report](task45/g6-flow-report.md).
@@ -37,13 +39,12 @@ selection above does not cancel these goals.
 1. [41 Beta journey scenarios](task41-beta-journey-scenarios.md) — nothing else
    is measurable until we know what a user actually does. Everything below is
    partly informed by what this finds.
-2. [39 Output audit](task39-output-audit.md) — holds a live regression.
+2. [39 Output audit](task39-output-audit.md) — representative manifest errors corrected; broader command-family audit remains.
 3. [42 Minimal core](task42-minimal-core.md) and
-   [43 Workflows as a skill](task43-workflows-as-skill.md) — extraction is present in the shipped payload; stale documentation and
-   upgrade-evidence reconciliation remain. See the current beta packet.
+   [43 Workflows as a skill](task43-workflows-as-skill.md) — extraction is present in the shipped payload; documentation is aligned; historical upgrade-evidence reconciliation remains.
 4. [46 Routed Skill resources](task46-routed-skill-resources.md) and
-   [47 Entrypoint reachability](task47-entrypoint-reachability.md) — the current scratch recheck finds a healthy fresh install. Stale Skill
-   catalogue repair advice and missing-entry naming still need correction;
+   [47 Entrypoint reachability](task47-entrypoint-reachability.md) — the current scratch recheck finds a healthy fresh install. Skill
+   catalogue repair advice and missing-entry naming are corrected;
    the beta packet supersedes the older thirteen-warning report.
 5. [44 Template and core file content](task44-template-content.md) — the prose a
    user reads most, and it depends on 42 deciding which files survive.
@@ -78,6 +79,8 @@ breaks, which is why they sit above the architecture work rather than with it.
 this; its remaining phases feed 32, 37 and 39.
 
 ## Entries
+
+- [Default Index reachability through native Skills and their routed resource catalogues](task47-default-skill-indexing.md) - #Memory #Working #CLI #Task #Skill #Index #Contextual
 
 - [Remaining beta product work and delivery verification after the completed migration](beta-follow-ups.md) - #Memory #Working #Backlog #CLI #Beta #Contextual
 - [Specifications for actionable errors, stale documentation and Skill-resource navigation](beta-follow-ups/_beta-follow-ups.md) - #Memory #Working #Plan #CLI #Contextual

@@ -13,7 +13,7 @@ Choose a method when it helps. Once selected, follow its required steps and comp
 2. Load only the relevant scope entrypoints and the selected recipe. Check its `Goal` before proceeding. If several methods fit, prefer the smallest one that addresses the actual uncertainty or execution risk.
 3. Work directly when no installed recipe adds value. A missing or deliberately removed recipe is not permission to reinstall it.
 
-Do not read every recipe to choose one. The catalogue is navigation, not a list of stages to execute. Following a linked recipe requires that recipe's applicable scope context, not its unrelated siblings.
+Do not read every recipe to choose one. The catalogue is navigation, not a list of stages to execute.
 
 ## Follow The Recipe
 

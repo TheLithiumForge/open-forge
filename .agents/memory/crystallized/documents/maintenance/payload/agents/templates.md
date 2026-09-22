@@ -16,7 +16,7 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 ## Contract
 
 - Templates are copy-ready starting files. After copying and adapting one, the destination is maintained independently.
-- The entrypoint explains when to choose a Template, how the result becomes independent, how continuing requirements differ from starting content, and how customization and restoration work.
+- The entrypoint explains when to choose a Template, how the result becomes independent, how continuing requirements differ from starting content, and how customization works. Restoration follows the inherited Loader rule: removed defaults stay removed unless the user asks to restore them.
 - Every Template makes its selection information visible before use: its route description and removable `{...}` instructions state the need and primary question or result.
 - Template prose is never hidden in HTML comments. Exact Open Forge control-marker comments contain no instructions and remain the only first-party exception.
 - Templates are on-demand. The entrypoint uses #Core and #Template without a load-policy tag so its description remains visible while its Axioms load only when the route is selected.

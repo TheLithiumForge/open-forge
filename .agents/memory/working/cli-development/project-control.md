@@ -43,17 +43,15 @@ Tasks 28 and 29 and earlier completed records remain historical evidence.
 
 ## Current next action
 
-The maintainer approved the specified implementation for Task 39 actionable errors,
-Tasks 42/43 stale documentation, and Tasks 46/47 Skill-resource navigation.
-The [beta specification packet](tasks/beta-follow-ups/_beta-follow-ups.md) owns
-their sequencing and file reservations. The [execution record](tasks/beta-follow-ups/execution.md)
-records accepted D1–D6, E1–E2 and N1–N3, completed review and all six passing
-Windows managed/native test modes. The broader error audit, upgrade qualification
-and automatic Skill-resource traversal remain open. The dedicated
-feature branch is intended for later squash integration into `develop`.
+The selected work is the [lossless source wording proposal](../src-wording-proposal.md)
+on a separate branch. The maintainer authorized applying its eight replacements; source and
+workspace counterparts are now aligned for review. The requested [default Skill indexing task](tasks/task47-default-skill-indexing.md)
+is recorded under Task 47; no traversal implementation is released.
 
-Task38 structural migration and Task45 approved journey qualification are complete. The [baseline-failure follow-up](tasks/task45/beta-baseline-acceptance.md) qualifies zero remaining test failures. Additional beta tasks require selection from the current task queue. Do not execute the older sequence below
-as a competing migration plan. Reconcile Task 31 M5 once through G0.
+The beta correction slices D1–D6, E1–E2 and N1–N3 are complete and squash-integrated
+into `develop`; their [execution record](tasks/beta-follow-ups/execution.md)
+retains the verification. Task 38 migration and Task 45 approved journeys remain
+complete. Do not dispatch older sequences as competing current work.
 
 ## Retained Task 30 And 31 State
 

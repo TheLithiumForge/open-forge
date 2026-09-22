@@ -8,15 +8,17 @@ open-forge:
 
 ## Current selection
 
-The maintainer approved the specified corrections for actionable errors, documentation left
-stale by the Core reduction, and rechecking Skill-resource navigation. The
-[beta specification packet](tasks/beta-follow-ups/_beta-follow-ups.md) defines
-their parallel ownership, evidence and implementation gates. The
-[execution record](tasks/beta-follow-ups/execution.md) records completion of D1–D6,
-E1–E2 and N1–N3, independent review and all six passing Windows managed/native
-test modes. Broader error-family corrections require frozen expectations;
-historical upgrade qualification and automatic Skill-resource traversal remain
-separate follow-ups. No other backlog item is activated.
+The maintainer requested the [lossless source wording proposal](../src-wording-proposal.md)
+on 2026-09-22. The maintainer subsequently authorized all eight replacements; they are
+applied to source and matching workspace copies for review. The [default Skill indexing follow-up](tasks/task47-default-skill-indexing.md)
+is recorded for later specification under Task 47, with Task 46 sharing the
+native metadata and topology boundary.
+
+The previous D1–D6, E1–E2 and N1–N3 corrections are complete and squash-integrated
+into `develop`. Their [execution record](tasks/beta-follow-ups/execution.md)
+retains the independent review and six passing Windows managed/native modes.
+Broader error-family corrections and historical upgrade qualification remain
+separate follow-ups. Other backlog work is not activated.
 
 ## Completed migration context
 

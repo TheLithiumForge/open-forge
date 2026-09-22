@@ -17,6 +17,10 @@ The 2026-09-21 [navigation recheck](beta-follow-ups/task46-47-navigation.md) fou
   Support Extension puts real routed content inside a native Skill directory,
   and the routing model has no answer for it.
 
+The maintainer requested [default Skill indexing](task47-default-skill-indexing.md)
+on 2026-09-22. That Task 47 follow-up must resolve shared native metadata and
+resource topology with this Task; it does not reopen the fixed Doctor advice.
+
 ## The problem
 
 A Skill is native. Its resources are not supposed to be Open Forge routes — and

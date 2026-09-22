@@ -8,10 +8,10 @@ open-forge:
 
 ## Task state
 
-- State: **Targeted Doctor corrections pass the published journey; broader indexing choice remains open.** Raised by the maintainer on 2026-09-18.
+- State: **Targeted Doctor corrections pass the published journey; default Skill indexing follow-up recorded.** Raised by the maintainer on 2026-09-18.
 - Owner: Root.
 
-The 2026-09-21 [navigation packet](beta-follow-ups/task46-47-navigation.md) reproduces a stale detached Skill catalogue after default Index and successful repair through explicit selection. The implemented correction provides truthful targeted advice and correct missing-entry identity; automatic traversal remains a separate choice.
+The 2026-09-21 [navigation packet](beta-follow-ups/task46-47-navigation.md) reproduces a stale detached Skill catalogue after default Index and successful repair through explicit selection. The implemented correction provides truthful targeted advice and correct missing-entry identity; the maintainer requested the separate [default Skill indexing follow-up](task47-default-skill-indexing.md) on 2026-09-22. Its traversal contract is not yet frozen.
 
 - Shares a root cause with [Task 46](task46-routed-skill-resources.md). Settle
   them together; 46 decides whether a Skill can host a route, 47 decides what
@@ -51,7 +51,7 @@ So the forms work. What fails is the **host**: nothing below
 `.agents/skills/<name>/` is reachable, because `SKILL.md` is not an entrypoint
 and the chain stops there. Any fix aimed at the naming would miss it.
 
-## What to settle
+## Earlier questions (2026-09-18)
 
 - When a route exists but no loaded parent reaches it, is that a `doctor`
   warning, an `index` responsibility, or both? Today it is a warning that
@@ -66,6 +66,10 @@ and the chain stops there. Any fix aimed at the naming would miss it.
   reaches it" from "is routed but no parent lists it" and offers `Fix it by
 hand` for the first. Check that split still earns its keep once reachability
   is decided.
+
+The targeted-advice defect above is now fixed. The new follow-up owns the
+remaining default-traversal design and supersedes the earlier open choice about
+whether to pursue it.
 
 ## Boundaries
 

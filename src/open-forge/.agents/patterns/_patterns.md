@@ -16,8 +16,7 @@ Patterns define reusable default shapes that make related work consistent, easy 
 
 - Check `Entries` when the work creates, changes, or reviews something with a visible structure.
 - Each Pattern defines a concrete shape for code, files, naming, placement, boundaries, APIs, documents, or another inspectable result.
-- Create or update a Pattern only when an accepted shape should guide future related work.
-- Structure alone does not justify a Pattern. Do not promote one-off work, temporary transitions, or unsettled candidates on that basis.
+- Create or update a Pattern only when an accepted shape should guide future related work. Structure alone does not justify promoting one-off work, temporary transitions, or unsettled candidates into a Pattern.
 
 ### Shape And Application
 

@@ -63,8 +63,8 @@ below are deliberately not presented as current measurements.
       fresh installs. Superseded reports are marked; Doctor now names the expected
       missing destination and advertises the owning catalogue's targeted Index.
       A published journey follows that advice successfully without changing recipe
-      or Skill bytes. Automatic traversal of detached Skill resources remains a
-      separate decision; default Index scope is unchanged.
+      or Skill bytes. The maintainer requested the [default Skill indexing follow-up](task47-default-skill-indexing.md);
+      its traversal contract remains to be specified. Default Index scope is unchanged.
 - [ ] **Make more real failures visible to automated checks.**
       [Task 40](task40-capture-coverage.md) covers missing output captures. Recount
       against the current contracts and test tree, prioritize actionable blocking

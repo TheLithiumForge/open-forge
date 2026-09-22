@@ -25,6 +25,9 @@ Working Memory holds temporary context for continuing or resuming active work.
 
 ## Entries
 
+- [Proposed lossless source wording improvements with inheritance evidence and protected repetition](src-wording-proposal.md) - #Memory #Working #Proposal #Wording #Framework #Contextual
+- [Source prose inventory and review coverage for the wording proposal](src-wording-inventory.md) - #Memory #Working #Evidence #Wording #Contextual
+
 - [Task 49 extension dependency audit, collaboration extraction, and forgiving CLI scenario review](extension-experience-review.md) - #Memory #Working #Task #Contextual #Active
 - [Observed CLI flow results and reproducible gaps from the 2026-09-19 review](cli-experience-run.md) - #Memory #Working #CLI #RunRecord #Evidence #Contextual
 - [Existing E2E coverage against all 26 flows and 438 scenario identities](cli-experience-coverage/_cli-experience-coverage.md) - #Memory #Working #CLI #Testing #Evidence #Contextual

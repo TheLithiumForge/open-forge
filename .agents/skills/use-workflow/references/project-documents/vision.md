@@ -8,9 +8,9 @@ open-forge:
 
 ## Goal
 
-Produce a candidate or accepted Vision that makes the subject's purpose, core value, first useful version, boundaries, and success clear. Use existing sources when they already own the answer; a new document is optional.
+Produce a candidate or accepted Vision that makes the subject's purpose, core value, first useful version, boundaries, and success clear.
 
-[Document Templates](../../../../templates/documents/_documents.md) provide optional starting files. Use existing defining sources when they already answer the question; the Documents category is a convention, not a required destination.
+Use existing defining sources when they already answer the question. A new document is optional, and the Documents category is a convention, not a required destination. [Document Templates](../../../../templates/documents/_documents.md) provide optional starting files.
 
 ## Steps
 

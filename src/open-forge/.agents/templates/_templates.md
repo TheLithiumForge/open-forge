@@ -24,7 +24,7 @@ Templates are reusable starting files. Copy and adapt a Template, then maintain 
 
 - State the need and primary question each Template answers in its description and source instructions.
 - Treat generic Templates as fallbacks. Add a specialized Template only when it provides meaningfully different starting content.
-- Users may edit, replace, scope, or remove Templates. Removed defaults stay removed unless the user asks to restore them.
+- Users may edit, replace, scope, or remove Templates.
 
 ## Entries
 
