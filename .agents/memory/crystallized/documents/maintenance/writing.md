@@ -15,9 +15,9 @@ This standard does not define Markdown syntax, component behavior, code identifi
 
 ## Choose The Voice
 
-Use this standard's direct, precise voice for Framework rules, contracts, technical reference text, and maintenance explanations. Use [Project Voice](project-voice.md) for READMEs and public introductions: welcoming, natural, and quietly proud of the project. Choose by the purpose of the passage, including within a single document.
+Use this standard's direct, precise voice for Framework rules, contracts, technical reference text, and maintenance explanations. Use [Project Voice](project-voice.md) for READMEs and public introductions: the maintainer's own engineering voice, concrete and plainly excited about the ideas. Choose by the purpose of the passage, including within a single document.
 
-Both voices follow the shared requirements below for clarity, correctness, terminology, source boundaries, and lossless rewriting. Introductions may use a more varied rhythm and sentence structure; they do not need to turn every explanation into a direct instruction.
+Both voices follow the shared requirements below for clarity, correctness, terminology, source boundaries, and lossless rewriting. Introductions may use a more varied rhythm and sentence structure. They do not need to turn every explanation into a direct instruction.
 
 ## Values
 
@@ -169,7 +169,7 @@ Explain an unfamiliar Open Forge term at its first useful appearance in each sta
 
 - Prefer active voice and concrete verbs when they make the relationship clearer. Use passive voice when the result deserves the focus or the actor is immaterial.
 - Prefer separate sentences to stacked qualifications.
-- Prefer periods to semicolons.
+- Don't use semicolons. Use a period, or join the clauses with a comma and a conjunction.
 - Use commas, parentheses, colons, or separate sentences instead of em dashes.
 - End complete sentences with terminal punctuation.
 - Do not punctuate true fragments such as headings, labels, table cells, frontmatter descriptions, generated entry labels, or fragment-only list items.

@@ -1,13 +1,12 @@
 # Open Forge CLI
 
-The Open Forge CLI helps you find context, inspect routes, maintain navigation,
-and manage Framework files. It makes repeated operations easier to run and review.
+The Open Forge CLI helps you find context, inspect routes, keep generated
+navigation correct, and manage Framework files. It's an accelerant, not a
+requirement: the Framework is complete in plain files, and you can read, edit,
+and follow its rules without the CLI. The commands automate the work around
+those files. The files still define what the Framework means.
 
-The Framework remains complete in plain files. You can read, edit, and use its
-rules without the CLI. Commands automate the work around those files; the
-files still define Framework meaning.
-
-Run this first when you need the exact options for the executable you have:
+To see the exact options of the executable you have, start here:
 
 ```sh
 open-forge --help
@@ -26,8 +25,8 @@ open-forge <command> [command options] [global options]
 ```
 
 Use `open-forge --help` to see commands and `open-forge <command> --help`
-for arguments, options, and examples. Help wraps to the terminal width;
-redirected help uses 80 columns. Long source references stay intact.
+for arguments, options, and examples. Help wraps to the terminal width.
+Redirected help uses 80 columns. Long source references stay intact.
 
 The CLI works against the current directory unless `--workspace` selects one
 explicit directory. A source reference is either an automatic source ID, such
@@ -37,10 +36,10 @@ covered in [Source references](#source-references).
 
 The CLI separates observation from change. Commands such as `status`,
 `context`, `find`, `references`, `route list`, and `route inspect` read the
-workspace. Commands that can change files expose `--dry-run` when a complete
-preview is useful. A dry run forms and reports the operation's plan without
-changing files. An operation still needs sufficient evidence to determine
-which files it may manage.
+workspace. Commands that can change files offer `--dry-run` when a complete
+preview is useful. A dry run builds and reports the operation's plan without
+changing any files. Either way, the operation needs enough evidence to tell
+which files it may manage, and it reports a boundary rather than guessing.
 
 ## Global options
 
@@ -49,9 +48,9 @@ them.
 
 | Option                                        | Meaning                                                                                                                                                          |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--workspace <path>`                          | Use one exact directory instead of the current directory. Relative paths resolve from the process current directory; the CLI does not search parent directories. |
-| `--format <text\|json>`                       | Select human text or one schema-3 JSON result. The default is `text`; JSON always goes to standard output.                                                       |
-| `--detail <minimal\|standard\|full\|debug>`   | Select result detail. The default is `minimal`; `debug` adds bounded diagnostics on standard error.                                                              |
+| `--workspace <path>`                          | Use one exact directory instead of the current directory. Relative paths resolve from the process current directory. The CLI does not search parent directories. |
+| `--format <text\|json>`                       | Select human text or one schema-3 JSON result. The default is `text`. JSON always goes to standard output.                                                       |
+| `--detail <minimal\|standard\|full\|debug>`   | Select result detail. The default is `minimal`. `debug` adds bounded diagnostics on standard error.                                                              |
 | `--detail-filter <error\|warning\|info\|all>` | Repeat to select listed finding severities. Counts, effects, status, and exit are unchanged.                                                                     |
 | `--help`                                      | Show help for the selected command path and exit.                                                                                                                |
 | `--version`                                   | Show the executable version and exit.                                                                                                                            |
@@ -62,9 +61,9 @@ global options may accompany them, but command operands and command-specific
 options remain invalid in a terminal invocation.
 
 The detail levels are cumulative. `minimal` leads with the result, subject or
-path, cause, and supported action; `standard` adds reasons and per-finding
-actions; `full` adds evidence, candidates, provenance, hashes, and finding
-codes; `debug` adds bounded diagnostics on standard error. Changed, restored,
+path, cause, and supported action. `standard` adds reasons and per-finding
+actions. `full` adds evidence, candidates, provenance, hashes, and finding
+codes. `debug` adds bounded diagnostics on standard error. Changed, restored,
 deleted, kept, and rewritten paths remain visible at every level. A dry run
 ends with `No files were changed.` and a verified no-op says `Nothing to do.`
 
@@ -87,14 +86,14 @@ content, and preview diffs stay plain. There is no colour option to configure.
 
 Mutating commands that need confirmation show their already-built minimal plan
 on standard error and ask the command-specific question. Install and Update use
-`Apply these changes? [y/N]`; Update includes the eligible prune deletion count
+`Apply these changes? [y/N]`. Update includes the eligible prune deletion count
 when `--prune` is supplied. Library Attach, Sync, and Detach use the same
 confirmation boundary and expose `--automatic` to bypass only that question.
 
 Permission prompts list the affected path and scope. A directory grant means
 everything beneath that directory. `--allow-path <path>` supplies the same
 grant noninteractively. Explicit grants and interactive Always answers are
-published only after final confirmation; a declined, exhausted, or cancelled
+published only after final confirmation. A declined, exhausted, or cancelled
 prompt leaves files and settings unchanged and returns `cancelled` with exit
 `130`. JSON, redirected operation, `--automatic`, and dry-run never prompt.
 
@@ -113,11 +112,11 @@ code:
 | `blocked`                 |       `5` | A workspace, ownership, safety, or authority boundary prevents the operation.          |
 | `cancelled`               |     `130` | The operation ended before completion, usually because input or cancellation ended it. |
 
-The status is more useful than a Boolean success value. For example, a route
-inspection can complete while reporting a structural observation, whereas a
-mutation that cannot establish trusted lifecycle facts is blocked. Use the
-suggested next action in the result, then rerun the command from a fresh
-workspace observation.
+The status says more than a plain success or failure. For example, a route
+inspection can complete while reporting a structural observation, while a
+change that can't establish trusted lifecycle facts is blocked. Follow the
+suggested next action in the result, then run the command again so it starts
+from the workspace's current state.
 
 ## Read the workspace
 
@@ -161,8 +160,14 @@ Useful options are:
   the requested positive depth or through the complete reachable link set.
 
 Use the returned file identities to inspect what the command included. The
-[loader](../src/open-forge/.agents/loader.md) defines Framework loading and scope;
-command output does not change those rules.
+[loader](../src/open-forge/.agents/loader.md) defines Framework loading and scope.
+Command output does not change those rules.
+
+`LoadNow` and `KeepInMind` both load through exposed entries of already-loaded
+parents. Selecting an on-demand scope activates its applicable child loading
+rules. Tagged files inside other inactive scopes stay excluded. `KeepInMind`
+adds refresh instructions while the scope remains active. The CLI resolves each
+invocation independently and does not track an agent session.
 
 ### `find`
 
@@ -202,7 +207,7 @@ open-forge references memory/crystallized/documents --direction=in \
 ```
 
 `--direction=in|out|both` selects the report. `--include` and `--exclude`
-limit an incoming scan; they do not apply to an outgoing-only request.
+limit an incoming scan. They do not apply to an outgoing-only request.
 
 ### Routes
 
@@ -212,7 +217,7 @@ source-reference grammar described below unless their target has a narrower
 shape.
 
 `route list` shows routed sources and descendants at a structural depth. The
-default depth is `1`; use `all` to include the complete routed descendant set.
+default depth is `1`. Use `all` to include the complete routed descendant set.
 
 ```sh
 open-forge route list
@@ -254,7 +259,7 @@ The body contains the source's authored explanation.
 `description` helps a reader decide whether to open a source. An optional
 `responsibility` helps an editor decide what belongs in it by stating what the
 file defines. It does not create authority or loading behavior. Tags are bare
-values in frontmatter, without `#`; they must be valid and useful for
+values in frontmatter, without `#`. They must be valid and useful for
 classification, loading, routing, or search. A tag starts with a letter and
 then contains letters or digits, with single internal hyphens allowed. It may
 not end with a hyphen or contain two adjacent hyphens.
@@ -297,7 +302,7 @@ running a command that depends on the new path.
 `route create <file-target>` creates one ordinary routed Markdown file below an
 existing routable parent. It requires a nonblank description and at least one
 unique canonical tag. A responsibility is optional. `--template` copies the
-body of one existing routed Template as starting content; the new source gets
+body of one existing routed Template as starting content. The new source gets
 its own metadata and does not retain Template ownership.
 
 ```sh
@@ -311,7 +316,7 @@ open-forge route create memory/crystallized/documents/project-alpha/architecture
 
 The target is an ordinary Markdown file below an existing route. It is not a
 directory, entrypoint, overwrite companion, Loader, or general external path.
-The command never overwrites an existing target; use `route update` for an
+The command never overwrites an existing target. Use `route update` for an
 existing source.
 
 ### Update one routed source
@@ -331,14 +336,14 @@ The options are patches, not inferred replacements:
 
 - `--description` replaces the description.
 - Repeated `--tag=<tag>` values replace the complete ordered tag list.
-- `--responsibility <text>` sets the responsibility; `--responsibility ""`
+- `--responsibility <text>` sets the responsibility. `--responsibility ""`
   removes it.
 - `--template <template-reference>` completes an eligible frontmatter-only
   body. If the target already has authored body content, the CLI preserves it
   and reports the applicable warning status rather than overwriting it.
 
 At least one metadata or Template operation is required. The selected Template
-contributes body content only; its frontmatter and continuing lifecycle do not
+contributes body content only. Its frontmatter and continuing lifecycle do not
 transfer to the destination.
 
 ### Move or remove a route
@@ -399,8 +404,8 @@ apply a proposal.
 
 ### `repair`
 
-`repair` applies selected bounded local-reference repairs and accepted Workspace
-Library residual recovery. Preview it first:
+`repair` applies the local-reference repairs you select and finishes accepted
+recovery of leftover Workspace Library state. Preview it first:
 
 ```sh
 open-forge repair --dry-run
@@ -410,12 +415,6 @@ open-forge repair --automatic --dry-run
 `--automatic` selects every current safe-exact repair without prompting. An
 explicit relink can select one source occurrence, expected destination, and
 target path:
-
-`LoadNow` and `KeepInMind` both load through exposed entries of already-loaded
-parents. Selecting an on-demand scope activates its applicable child loading
-rules; tagged files inside other inactive scopes stay excluded. `KeepInMind`
-adds refresh instructions while the scope remains active. The CLI resolves each
-invocation independently and does not track an agent session.
 
 ```text
 open-forge repair --relink <source-location> <expected-destination> <target-path>
@@ -457,14 +456,14 @@ open-forge update --force --prune --dry-run
 Normal update replaces changed owned files and restores missing ones when the
 current ownership facts authorize the effect. It reports every replaced,
 restored, deleted, and retained path. Retired managed content is retained unless
-`--prune` is supplied; `--force` and `--prune` remain separate named boundaries,
+`--prune` is supplied. `--force` and `--prune` remain separate named boundaries,
 and `--automatic` implies neither one. When the plan needs a recovery bundle to
 protect existing bytes, Update retains it after successful verification and
 reports its exact path. When an ordinary `.git`
-directory is present, it also advises `git diff`; otherwise it points to the
+directory is present, it also advises `git diff`. Otherwise it points to the
 bundle for previous content. Explicit Cleanup removes retained recovery data.
 
-Ownership state is recorded in `.agents/open-forge.lock.json`; authored settings
+Ownership state is recorded in `.agents/open-forge.lock.json`. Authored settings
 are in `.agents/open-forge.json`. Framework and Extension records share the lock
 but remain independent command domains.
 
@@ -484,12 +483,12 @@ open-forge remove team-knowledge --kind library --automatic
 open-forge remove guidance/old-note --kind route --automatic
 ```
 
-A file selection removes that file; a directory selection removes its complete
+A file selection removes that file. A directory selection removes its complete
 tree. Routed leaves also include their adjacent overwrite and update supported
 incoming links and generated navigation. Naming an entrypoint file does not
 silently delete its folder: select the directory or use `--kind route` for the
-whole category. Removing a Library detaches its local links and registration;
-its source files stay untouched. An individual owned Library link can also be
+whole category. Removing a Library detaches its local links and registration.
+Its source files stay untouched. An individual owned Library link can also be
 removed by path while retaining the registration.
 
 The existing `route remove`, `extension remove` and `library detach` commands
@@ -509,7 +508,7 @@ Removal records exclusions in `.agents/open-forge.json`:
 
 Paths use `/`, with no trailing slash or wildcard. Excluded existing files stay
 untouched. Force, prune and automatic mode do not bypass exclusions. Unknown
-settings keys are preserved when the CLI writes the settings; JSON comments
+settings keys are preserved when the CLI writes the settings. JSON comments
 need not survive. Deleting a file by hand does not infer an exclusion.
 
 ```json
@@ -558,7 +557,7 @@ state rules:
 - [Update contract](../.agents/memory/crystallized/documents/cli/contracts/update/_update.md)
 - [Cleanup contract](../.agents/memory/crystallized/documents/cli/contracts/cleanup/_cleanup.md)
 
-## Extension Operations
+## Extension operations
 
 Extensions are optional packages of routed Framework content and supporting
 capabilities. The command group is:
@@ -587,15 +586,15 @@ open-forge extension remove development-toolkit --dry-run
 ```
 
 The `--source` value is one exact local package or catalogue path. An install
-or update source is read-only and must be separate from the target workspace;
-dependencies resolve offline within that selected source. A manual installation
+or update source is read-only and must be separate from the target workspace.
+Dependencies resolve offline within that selected source. A manual installation
 is also valid: copy reviewed package content into the workspace, rebuild the
 affected `Entries`, and review the assembled diff. Manual copying does not
 create managed lifecycle state.
 
 See [Extension packages](extensions.md) for package structure and examples.
 
-## Workspace Libraries
+## Workspace libraries
 
 Workspace Libraries let a workspace register a contained source root and
 project it into another workspace location through relative file links.
@@ -615,7 +614,7 @@ open-forge library <operation>
 Add `--dry-run` to `attach`, `sync`, or `detach` to inspect the complete plan
 before writing. `attach --to` selects the workspace-relative projection
 directory and defaults to the workspace root. A Library ID is a management
-identity; it is not a source ID.
+identity. It is not a source ID.
 Use `doctor` when a record, source root, link capability, permission, or
 projection is blocked.
 
@@ -630,7 +629,7 @@ Existing `.agents` sources accept one of these forms:
 ```
 
 The first two examples address the same default route. The third shows quoting
-for a custom scope whose folder name contains a space; create that scope before
+for a custom scope whose folder name contains a space. Create that scope before
 selecting it.
 
 ```sh
@@ -654,7 +653,7 @@ form when an ID has more than one candidate. The CLI does not use fuzzy,
 case-correcting, or likely-intent matching.
 
 An adjacent `{name}.overwrite.md` file shares its base source's ID and route.
-The base is read first and the overwrite second; the overwrite is not an
+The base is read first and the overwrite second. The overwrite is not an
 independent source. An orphan overwrite is broken evidence rather than a valid
 standalone source.
 
@@ -685,6 +684,6 @@ for operations that need more detail:
 - [Extension commands](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md)
 - [Workspace Libraries](../.agents/memory/crystallized/documents/cli/contracts/library/_library.md)
 
-The Framework remains usable when no executable is present. Plain Markdown is
-the durable interface; the CLI makes common inspection and maintenance tasks
-faster, repeatable, and easier to review.
+The Framework stays usable when no executable is present. Plain Markdown is
+the durable interface. The CLI makes common inspection and maintenance tasks
+faster, more repeatable, and easier to review.

@@ -2,7 +2,7 @@
 
 Use this guide to build the CLI locally, contribute to the Framework, and check a change before review. For everyday use, start with the [README](../README.md) or [CLI guide](cli.md).
 
-## Enter The Workspace
+## Enter the workspace
 
 Read `AGENTS.md` and `.agents/loader.md`, then select the scopes relevant to your change. The [Sources Of Truth map](../.agents/maps/sources-of-truth.md) helps locate the file that defines each affected question.
 
@@ -18,7 +18,7 @@ Read `AGENTS.md` and `.agents/loader.md`, then select the scopes relevant to you
 
 Keep changes in their defining sources. Generated output and a machine's installed CLI do not establish what a worktree contains.
 
-## Build And Test
+## Build and test
 
 The [delivery CLI guide](../scripts/delivery/README.md) is the quick reference
 for setup, stage selection, target-specific packaging and publication. The CLI
@@ -41,14 +41,14 @@ npx forge dist --no-restore --plan
 
 The command catalog is scripts/delivery/commands.ts. It defines each command's
 implementation, description and supported options. Focused task modules own
-execution; dist-plan.ts declares the pipeline and routes flags to their stages.
+execution, and dist-plan.ts declares the pipeline and routes flags to their stages.
 Use either the unified CLI or an alias such as npm run build.
 Small TypeScript scripts coordinate native tests and packaging. Standard npm
 and .NET commands own version increments, restore, compilation and uploads. Repository tooling uses Node and npm, including its tests.
 
 Package scripts invoke workspace tools directly: `tsc`, `eslint`, and `prettier`.
-`tsc` uses TypeScript 7. The `@typescript/native` npm alias supplies that compiler;
-the `typescript` alias supplies Microsoft's TypeScript 6 API package for ESLint.
+`tsc` uses TypeScript 7. The `@typescript/native` npm alias supplies that compiler.
+The `typescript` alias supplies Microsoft's TypeScript 6 API package for ESLint.
 This follows the supported [side-by-side installation](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/).
 `npm run build:launcher` compiles only the thin npm launcher. Delivery and local
 linking use that same command when they need emitted JavaScript.
@@ -61,7 +61,7 @@ remain separate under `scripts/agent-tooling/`.
 
 One root `tsconfig.json` checks all repository TypeScript, including tests. The
 launcher's emitting configuration includes only its runtime sources. Tests
-remain independently runnable through their package commands; compiler
+remain independently runnable through their package commands. Compiler
 configuration does not determine which test tier executes.
 
 The replacement C# implementation follows the current [CLI
@@ -88,8 +88,8 @@ npm run cli:dev -- --help
 
 `setup` installs locked npm dependencies and restores .NET dependencies.
 `npm run build` and `npm test` let `dotnet build` restore incrementally and use
-Release configuration. Native builds restore once during that managed build;
-subsequent native publications reuse the restored dependencies.
+Release configuration. Native builds restore once during that managed build.
+Subsequent native publications reuse the restored dependencies.
 Use `-- --no-restore` after an explicit restore, or `-- --offline` to restore
 only from cached dependencies. These options are mutually exclusive. The test command
 builds the managed solution and runs its Unit, Integration and public-process
@@ -124,10 +124,10 @@ EndToEnd project for one supported target RID and use the corresponding
 
 When all dependencies are already cached, `npm run setup -- --offline` or
 `npm run restore -- --offline` prepares the workspace without contacting package
-feeds. Offline .NET restore does not perform a fresh vulnerability audit; a
+feeds. Offline .NET restore does not perform a fresh vulnerability audit. A
 normal connected restore is required for that evidence.
 
-### Build A Copyable Native Package
+### Build a copyable native package
 
 Run the same preparation, checks and native journey used by CI on the host you
 want to support:
@@ -165,7 +165,7 @@ six matching hosts. See [.NET cross-compilation](https://learn.microsoft.com/en-
 are six execution modes on one host: managed unit and integration tests, managed
 public tests against the managed CLI, native integration and public tests, and
 managed public tests against the native CLI. Integration tests therefore run
-in two modes and public tests in three; this does not run other OS targets.
+in two modes and public tests in three. This does not run other OS targets.
 
 By default, `pack` requires
 their successful qualification, creates the portable archive and current-host
@@ -184,25 +184,25 @@ npm run dist -- --skip-tests --plan          # inspect without executing
 
 `--skip-tests` bypasses .NET qualification and the npm installation/invocation
 test. It does not bypass source, artifact-hash or license checks. The native
-build still compiles the test executables. Packages record `tested: false`;
-native publication and complete release collection reject them. To qualify
+build still compiles the test executables. Packages record `tested: false`.
+Native publication and complete release collection reject them. To qualify
 later, run `npm run test:built` and `npm run pack` without the flag.
 
 Stages print START/PASS/FAIL with their names. A failed .NET suite reports its
-name, log location and the end of its failure output; later stages stop.
+name, log location and the end of its failure output. Later stages stop.
 
 Copy the `open-forge-<version>-<RID>.tar.gz` archive and its checksums to a
 supported machine with the same OS and architecture. Extract it, then run
 `./open-forge --help` or `./open-forge.exe --help` on Windows. The native
 executable needs neither Node nor an installed .NET runtime. The npm launcher
-requires Node. Native operating-system requirements still apply; matching the
+requires Node. Native operating-system requirements still apply. Matching the
 architecture alone does not make an older unsupported OS compatible.
 
 Builds and tests also use the normal `artifacts/bin`, `artifacts/obj`, and
 `artifacts/publish` directories. Run these commands sequentially in one worktree.
 Generated archives and reports are build artifacts, not authored source.
 
-### Build And Publish The Wrapper Separately
+### Build and publish the wrapper separately
 
 The wrapper needs Node/npm dependencies but no .NET SDK or native artifacts:
 
@@ -227,14 +227,14 @@ Both publishers validate the existing tarball against its source, version,
 hash and license. The dry run is entirely local and does not invoke npm publish
 or inspect credentials. Removing `--dry-run` explicitly uploads that one public
 npm package using the configured registry and account. An actual upload requires
-committed matching source; a dirty trial can still preview its selection.
+committed matching source. A dirty trial can still preview its selection.
 Before any upload, the shared publisher queries npm for each selected exact
-version. Existing versions print a warning and are skipped; missing versions
+version. Existing versions print a warning and are skipped. Missing versions
 are published. Authentication, network and unexpected lookup errors stop the
 run before uploads. Rerun the same command after an interrupted publication.
 The release checks every selected native package and the wrapper first and publishes remaining
-native packages before the wrapper. Existing versions keep their npm tags;
-skipping checks availability, not whether remote bytes match a local rebuild.
+native packages before the wrapper. Existing versions keep their npm tags.
+Skipping checks availability, not whether remote bytes match a local rebuild.
 Dry runs remain offline and cannot report which versions already exist.
 
 Both commands require a tag, and prerelease versions cannot use `latest`.
@@ -245,10 +245,10 @@ wrapper once. No publisher needs all native tarballs locally. The wrapper's
 optional dependencies do need to exist in the registry for their platforms to
 work. A release is complete for its recorded selection when every listed native
 package and its wrapper are published.
-The platform package alone contains no npm command mapping; the main package
+The platform package alone contains no npm command mapping. The main package
 provides the `open-forge` command.
 
-### Select Targets For One Version
+### Select targets for one version
 
 Choose the wrapper’s exact dependencies when packing it:
 
@@ -275,13 +275,13 @@ npx forge publish:release --tag preview --dry-run
 
 The input contains each selected host’s `package-<RID>` directory. Collection
 requires their tested packages and matching wrapper dependencies. It records
-the selection in `release.json`; publication uses that exact graph and uploads
+the selection in `release.json`. Publication uses that exact graph and uploads
 the wrapper last. Omitted target artifacts are neither required nor uploaded.
 Changing selection requires repacking, but not rebuilding native executables.
 Without `--targets`, packaging and collection select all six. The existing
 Actions workflows continue to build and release all six by default.
 
-### Clean Generated Outputs
+### Clean generated outputs
 
 `npm run clean` removes owned .NET outputs and current/legacy delivery output
 directories. It preserves source, `node_modules`, dependency caches, the offline
@@ -293,11 +293,11 @@ their selected target's publish and delivery directories, while tests and packs
 replace their current reports and packages. Old runs are no longer archived
 automatically. Failure diagnostics remain until the next run or explicit clean.
 Run build, test, pack, link and clean commands sequentially in one worktree.
-After clean, build/test/dist restore by default; do not pass `--no-restore` until
+After clean, build/test/dist restore by default. Do not pass `--no-restore` until
 restoration has completed again. Directory.Build.props centralizes outputs but
 does not own cleanup of TypeScript-created packages and reports.
 
-### Change The Product Version
+### Change the product version
 
 The root `package.json` owns the product version. Use one command to calculate
 the next version and update the .NET version:
@@ -312,8 +312,8 @@ npm run version:bump -- 0.1.0-beta.1
 
 These are alternative examples. The command uses npm's normal version handling,
 which updates package.json and its lockfile. Its version lifecycle hook projects
-that value to one property in Directory.Build.props for direct .NET/IDE builds;
-the informational version derives from it. Staging generates all seven npm
+that value to one property in Directory.Build.props for direct .NET/IDE builds.
+The informational version derives from it. Staging generates all seven npm
 manifests and their exact dependency versions from the selected version and
 platform definitions, so no per-platform manifests need editing. It creates no
 commit, Git tag, or release. Review and commit the resulting diff normally.
@@ -322,16 +322,16 @@ property before using direct dotnet or IDE builds.
 
 Builds use the committed product version by default. For a development artifact
 identified by the current commit, use `npm run build:native -- --sha`.
-For example, `0.1.0-beta.1` becomes `0.1.0-beta.1.sha-<commit>` in the artifacts;
-the tracked version stays unchanged. Packaging reads the built version. Changing
+For example, `0.1.0-beta.1` becomes `0.1.0-beta.1.sha-<commit>` in the artifacts.
+The tracked version stays unchanged. Packaging reads the built version. Changing
 the version afterward requires a new build and test run.
 
-### CI And Releases
+### CI and releases
 
 `build.yml` runs `setup` and `verify` once for shared checks. Its single native
 matrix covers Linux, macOS and Windows on x64 and ARM64. Each runner uses
 `setup` followed by explicit `build:native -- --no-restore`, `test:built` and
-`pack` steps on the same machine. These are the stages shown by `dist --plan`;
+`pack` steps on the same machine. These are the stages shown by `dist --plan`.
 CI passes one shared RID and never supplies `--skip-tests`. GitHub shows the
 failed stage directly and retains separate build/test/pack logs.
 The explicit matrix RID is an assertion that the host matches the target.
@@ -356,7 +356,7 @@ not release anything.
 For the default complete release, all six platform packages must be prepared before publication begins. npm
 publishes the platform packages before the main package that references them.
 GitHub receives one release containing the portable archives and checksums.
-Prereleases use a prerelease channel; stable releases use `latest`. Selecting
+Prereleases use a prerelease channel. Stable releases use `latest`. Selecting
 `all` requests both destinations, but there is no transaction across GitHub and
 npm. A failed publication must be inspected before retrying its remaining work.
 
@@ -368,15 +368,15 @@ and `publish:wrapper` commands upload individual packages independently.
 `publish:release -- --tag <channel>` consumes the collected release and uses the
 same package validation and publication code, with all native packages before
 the wrapper. `--dry-run` previews the complete npm publication locally. It needs
-no .NET SDK, native test output or matching target host; all packages are
+no .NET SDK, native test output or matching target host. All packages are
 validated before any upload begins.
 
-### Link The Native CLI Locally
+### Link the native CLI locally
 
 The npm tooling under `scripts/delivery/npm/` can prepare the native
 package for the current host on Linux (glibc), macOS, or Windows, on x64 or
 ARM64. The accepted distribution contains all six target packages. Package
-layout and packing are implemented; five matching-host runtime receipts remain
+layout and packing are implemented. Five matching-host runtime receipts remain
 unproven. See [CLI Distribution](../.agents/memory/crystallized/documents/cli/distribution.md).
 
 The root link command publishes the current host in Release mode without
@@ -420,13 +420,13 @@ PATH bridge only after resolving and revalidating its exact target.
 
 The public command name is `open-forge`.
 
-## Framework And Extension Changes
+## Framework and Extension changes
 
 Treat the shipped Markdown as the product a workspace will read. Keep it understandable without repository-only explanations or the CLI. When shared meaning changes, update the defining source and its current maintenance explanation, then align the repository's own copy while preserving intentional local specialization.
 
 Check the affected questions, rules, frontmatter, links, generated `Entries`, and installed relationships. A wording edit must preserve conditions, authority, scope, and requirement strength. Extension checks should inspect the assembled result with its dependencies, as described in the [Extension guide](extensions.md#check-the-assembled-result).
 
-Use proportionate verification. With a current artifact available, `index --dry-run` can expose navigation drift and `doctor` can check structure without applying changes. These commands support review; they do not decide whether a sentence preserves its meaning.
+Use proportionate verification. With a current artifact available, `index --dry-run` can expose navigation drift and `doctor` can check structure without applying changes. These commands support review. They do not decide whether a sentence preserves its meaning.
 
 Review the final diff and check whitespace:
 
@@ -435,11 +435,13 @@ git diff --check
 git diff
 ```
 
-## Measure Context Size
+## Measure context size
 
 Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. Use [tiktoken](https://github.com/openai/tiktoken) with two named reference encodings:
 
-The following measurements predate the optional-content extraction and are historical, not counts for the current payload. The current base has 14 Markdown files, with 11 selected at startup through `AGENTS.md`; fresh token totals have not been measured.
+The following measurements predate the optional-content extraction and are historical, not counts for the current payload. The current base has 14 Markdown files, with 11 selected at startup through `AGENTS.md`. Fresh tiktoken totals have not been measured.
+
+The README quotes the CLI's own estimate, the same one `open-forge status` reports: each file's character count divided by four and rounded up, then summed. For the current base, that gives about 5.7k tokens for the 11 startup files and about 6.4k tokens for all 14. Installed Extensions and your own content add to both numbers.
 
 | Historical source set   | Files | `o200k_base` tokens | `cl100k_base` tokens |
 | ----------------------- | ----: | ------------------: | -------------------: |
@@ -452,9 +454,9 @@ Count each file's raw UTF-8 text independently with `len(encoding.encode(text))`
 
 Recalculate after changing the shipped files or their loading policy. Report the tokenizer, included source set, and final source revision with the verification record. Keep Core, Memory, and the complete Framework distinct when describing the result.
 
-## Documentation Voice
+## Documentation voice
 
-Use [Project Voice](../.agents/memory/crystallized/documents/maintenance/project-voice.md) for READMEs and introductions: natural, welcoming, and quietly proud of what the project offers. Give rules and reference text the precise, conversational voice described in the [Writing Standard](../.agents/memory/crystallized/documents/maintenance/writing.md). Both share the same accuracy and terminology requirements. Choose the voice for the passage's purpose, so an inviting introduction can lead into exact setup instructions.
+Use [Project Voice](../.agents/memory/crystallized/documents/maintenance/project-voice.md) for READMEs and introductions: direct, concrete, and written like an engineer sharing ideas they're excited about. Give rules and reference text the precise, conversational voice described in the [Writing Standard](../.agents/memory/crystallized/documents/maintenance/writing.md). Both share the same accuracy and terminology requirements. Choose the voice for the passage's purpose, so an opinionated introduction can lead into exact setup instructions.
 
 The README should quickly explain what Open Forge is, why it helps, how to start, and where to learn more. Public guides explain use in more detail. Current repository documents preserve the complete accepted subjects, and maintenance files explain how their sources stay aligned. Link between them instead of maintaining competing detailed explanations.
 
