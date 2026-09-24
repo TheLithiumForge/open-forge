@@ -80,8 +80,6 @@ this; its remaining phases feed 32, 37 and 39.
 
 ## Entries
 
-- [Hosted build qualification and publication of the first public beta](task51-beta-release.md) - #Memory #Working #CLI #Task #Beta #Release #Contextual #Active
-
 - [Completed root remove command and persistent removal intent across files, routes, packages and libraries](task50-unified-remove.md) - #Memory #Working #CLI #Task #Remove #Complete
 
 - [Default Index reachability through native Skills and their routed resource catalogues](task47-default-skill-indexing.md) - #Memory #Working #CLI #Task #Skill #Index #Contextual

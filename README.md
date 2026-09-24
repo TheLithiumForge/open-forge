@@ -19,7 +19,7 @@ The routes are listed from least to most setup.
 Needs Node.js 22.18 or later.
 
 ```sh
-npm install -g @thelithiumforge/open-forge
+npm install -g @thelithiumforge/open-forge@beta
 ```
 
 #### From a GitHub release

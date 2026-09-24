@@ -11,6 +11,7 @@ Task records. The active Task route contains only Task 30 and Task 31.
 
 ## Entries
 
+- [Hosted build qualification and publication of the first public beta](task51-beta-release.md) - #Memory #Archived #CLI #Task #Beta #Release #Contextual #Historical #Complete
 - [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Archived #Contextual #Historical #CLI #Task #Program #Architecture #Development
 - [Audit the current replacement CLI Architecture authority and route misplaced detail to narrower sources without changing accepted meaning](cli-architecture-authority-audit.md) - #Memory #Archived #Contextual #Historical #Complete #CLI #Task #Architecture #Audit #Authority #Documentation
 - [Apply the accepted CLI Architecture authority audit without changing product behavior or requirement strength](cli-architecture-authority-remediation.md) - #Memory #Archived #Contextual #Historical #Complete #CLI #Task #Architecture #Authority #Documentation #Remediation

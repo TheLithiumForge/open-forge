@@ -11,8 +11,8 @@ open-forge:
 
 This document defines the accepted public package graph, platform horizon,
 package identities, staging and packing boundary, checksum ownership, proof
-boundary, and complete-publication rule for the non-shipping replacement
-CLI. It does not claim that every accepted target is implemented or released.
+boundary, and complete-publication rule for the CLI. Release qualification and
+publication are recorded separately from package-graph design below.
 
 [Task 7](../../../archived/cli-development/tasks/delivery/01-npm-packages.md)
 defines package-graph realization, npm release, and explicit local-linking work.
@@ -42,37 +42,36 @@ uses the same release or development version. The main package alone owns the
 manifest, license, and native executable.
 
 The maintainer accepted ARM64 alongside x64 on Linux, macOS, and Windows on
-2026-09-09. This defines the available target graph, not completed implementation
-or native proof. Additional operating systems, architectures, RIDs, libc variants,
+2026-09-09. Qualification of that graph is recorded below. Additional operating
+systems, architectures, RIDs, libc variants,
 channels, or support-floor claims require a new maintainer decision.
 
 ## Current Implementation And Delivery State
 
-Task 7's previous x64 platform-expansion horizon is complete at phase 4/4,
-milestone 7/7. Its accepted lane is `a2942781` with tree `fe36fc3f`, and its
-squash integration is `e19d429e` with the same tree. That historical implementation
-staged and packed the three x64 packages. Its installed-launcher journey was
-run on Linux; macOS and Windows have stage-and-pack evidence only.
+The maintainer authorized hosted pipeline fixes and public beta publication on
+2026-09-24. Version `0.9.0-beta.1` uses source
+`89438d39015aee71f21e6d2d5a67427f7ab7e520`.
+[Build 35942428820](https://github.com/TheLithiumForge/open-forge/actions/runs/35942428820)
+passed shared checks, managed and Native AOT suites, and installed npm package
+journeys on Linux, macOS and Windows, each on x64 and ARM64. The earlier
+Linux-only qualification boundary is superseded by these matching-host results.
 
-Task 7's ARM64 expansion is complete and integrated at `7eeeb19d`,
-with exact accepted tree `c222861a`.
-Task 13 owns six-target CI implementation and delivery qualification.
-Its Task record owns the current evidence state.
-The six-target package graph is now implemented with staging and packing
-evidence for all six targets. Final local acceptance also proves the actual
-stamped Linux x64 native package journey and complete managed/Linux native
-suites. The user accepted Linux execution plus static inspection of the other
-platform jobs for local completion on 2026-09-10. The other five matching-host journeys
-remain unexecuted. This boundary permits local integration, not a shipping
-release. Remote Git/GitHub operations, hosted runs and publication are prohibited
-under the current direction. On 2026-09-12 the maintainer explicitly authorized
-refreshing the current native global link. The simplified link command passed
-and exposed the exact Linux native version/hash qualified by Task 13. That
-receipt does not authorize unrelated installation changes or publication.
+The [GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.1)
+contains all six portable archives and `SHA256SUMS`. Published archive digests
+match the checksum manifest. Task 7 and Task 13 retain the earlier implementation
+history and its more limited local evidence.
 
-The replacement remains non-shipping until the complete retained command set,
-accepted package graph and native target set, documentation, and release evidence
-are accepted together.
+[npm publication](https://github.com/TheLithiumForge/open-forge/actions/runs/35945963855)
+published all seven packages at `0.9.0-beta.1`. Their public exact-version records
+and `beta` tags agree, and the main package lists all six native packages at that
+exact version. Use `npm install -g @thelithiumforge/open-forge@beta` to select
+the beta channel.
+
+Fresh public npm installs by exact version and by `@beta` passed Framework and
+Core Templates installation, `status`, and `doctor` on Windows x64. The native
+executable matches the qualified build and GitHub download byte for byte.
+The [beta release record](../../../archived/cli-development/tasks/task51-beta-release.md)
+retains the fixes, publication runs and verification details.
 
 ## Main Launcher Boundary
 
@@ -138,9 +137,8 @@ and package-owned journeys. Task 13 owns native build and smoke, packed
 installation and invocation, checksums, and bounded artifact collection on a
 matching native host for each accepted target. It separately consumes the
 Architecture's managed and Native AOT test evidence. Emulation or cross-build
-success cannot substitute for native execution. Local acceptance follows the
-explicit maintainer boundary recorded above. A future separately authorized
-release must distinguish the available platform proof from static inspection.
+success cannot substitute for native execution. Release qualification must
+distinguish matching-host runtime evidence from static inspection.
 
 Local packaging can explicitly bypass tests with pack --skip-tests, or build
 and package through dist --skip-tests. Source and artifact identity checks stay
@@ -174,7 +172,7 @@ publication begins. A supplied build run must be successful, from the expected
 repository/workflow, and match the selected source commit and version; otherwise
 the reusable build workflow produces the candidate once.
 
-The accepted Actions trial uses only build.yml and release.yml. Build's one
+The Actions release uses only build.yml and release.yml. Build's one
 six-host matrix calls setup and the explicit build:native, test:built and pack
 stages declared by the local dist pipeline;
 verify runs once in a shared-check job. Each host builds, tests and packages

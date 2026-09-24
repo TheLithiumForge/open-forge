@@ -43,9 +43,9 @@ Tasks 28 and 29 and earlier completed records remain historical evidence.
 
 ## Current next action
 
-Task 51, [Public beta release](tasks/task51-beta-release.md), is active. The
-maintainer authorized pipeline corrections on `develop`, pushes, and publication
-to GitHub and npm after hosted qualification. Task 50, [Unified
+Task 51, [Public beta release](../../archived/cli-development/tasks/task51-beta-release.md),
+is complete. Version `0.9.0-beta.1` is published on GitHub and npm, with all six
+native hosts qualified and fresh public npm installation verified. Task 50, [Unified
 Remove](tasks/task50-unified-remove.md), was squash-integrated into `develop` at
 `a887e7304`; its record retains the implementation and local verification evidence.
 

@@ -360,9 +360,18 @@ Prereleases use a prerelease channel. Stable releases use `latest`. Selecting
 `all` requests both destinations, but there is no transaction across GitHub and
 npm. A failed publication must be inspected before retrying its remaining work.
 
-The workflow must be available on the repository's default branch for manual
-dispatch. Configure the required publication credentials only when enabling
-releases. Local build/test/package commands do not publish, create GitHub
+Put the workflow on the default branch to expose GitHub's **Run workflow**
+button. The first beta used REST dispatch of the registered workflow at its
+version tag while that button was unavailable. Its
+[release record](../.agents/memory/archived/cli-development/tasks/task51-beta-release.md)
+retains the setup and successful run. When retrying publication, keep the
+qualified source ref and build run and select only the unfinished destination.
+
+Configure `NPM_TOKEN` as a repository Actions secret. Its npm granular token
+needs package publishing access to `@thelithiumforge` and Bypass 2FA enabled.
+Organization-management access alone does not grant package publishing access.
+See [npm's token instructions](https://docs.npmjs.com/creating-and-viewing-access-tokens/).
+Local build/test/package commands do not publish, create GitHub
 releases, or require publication credentials. The explicit `publish:native`
 and `publish:wrapper` commands upload individual packages independently.
 `publish:release -- --tag <channel>` consumes the collected release and uses the
@@ -376,8 +385,9 @@ validated before any upload begins.
 The npm tooling under `scripts/delivery/npm/` can prepare the native
 package for the current host on Linux (glibc), macOS, or Windows, on x64 or
 ARM64. The accepted distribution contains all six target packages. Package
-layout and packing are implemented. Five matching-host runtime receipts remain
-unproven. See [CLI Distribution](../.agents/memory/crystallized/documents/cli/distribution.md).
+layout, packing, native execution and installed-launcher journeys are qualified
+on all six matching hosts for `0.9.0-beta.1`.
+See [CLI Distribution](../.agents/memory/crystallized/documents/cli/distribution.md).
 
 The root link command publishes the current host in Release mode without
 restoring, stages the product version with the full Git commit SHA, and links
