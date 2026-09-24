@@ -36,6 +36,7 @@ Route map for this repository's important authoritative sources and representati
 - [shared local and CI commands](../../package.json) - #Build
 - [build output; never edit it by hand.](../../artifacts/) - #Build #Generated
 - [current repository workflow for changing, verifying, building, packaging, and releasing Open Forge.](../../docs/development.md) - #Documentation #Development
+- [current public documentation site, with getting started, concepts, and a file-by-file reference for every first-party Extension; it also publishes the CLI, Extension, and development guides.](../../src/docusaurus/) - #Evergreen #Documentation #Site
 - [current user and author contract for choosing, installing, creating, updating, and removing Extensions.](../../docs/extensions.md) - #CurrentTruth #Evergreen #Documentation #Extension
 
 The retired MVP remains available in Git history at `c4428a90`. All 28 native

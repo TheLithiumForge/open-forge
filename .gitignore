@@ -21,3 +21,8 @@ apm_modules/
 **/bin/
 **/obj/
 **/artifacts/
+
+# Docusaurus documentation site output and caches
+src/docusaurus/build/
+src/docusaurus/.docusaurus/
+src/docusaurus/.cache-loader/

@@ -1,0 +1,84 @@
+name: Documentation
+
+# Builds the Docusaurus site on every change to its sources and publishes it to
+# GitHub Pages whenever those changes reach main. One-time setup: in the
+# repository settings, set Pages > Build and deployment > Source to
+# "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/docusaurus/**"
+      - "docs/cli.md"
+      - "docs/extensions.md"
+      - "docs/development.md"
+      - ".github/workflows/docs.yml"
+  pull_request:
+    paths:
+      - "src/docusaurus/**"
+      - "docs/cli.md"
+      - "docs/extensions.md"
+      - "docs/development.md"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  PUBLISH: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: read
+    defaults:
+      run:
+        working-directory: src/docusaurus
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "24.19.0"
+          package-manager-cache: false
+      - name: Read the Pages address
+        id: pages
+        if: env.PUBLISH == 'true'
+        uses: actions/configure-pages@v6.0.0
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+        env:
+          DOCS_SITE_ORIGIN: ${{ steps.pages.outputs.origin }}
+          DOCS_SITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+      - name: Upload the site for Pages
+        if: env.PUBLISH == 'true'
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: src/docusaurus/build
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5.0.1

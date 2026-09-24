@@ -473,3 +473,20 @@ The README should quickly explain what Open Forge is, why it helps, how to start
 Keep category questions synchronized between the README and their defining files. A description helps a reader decide whether to open a file. An optional responsibility helps an editor decide what belongs in it.
 
 Follow the [Writing Directive](../.agents/directives/public-facing-writing.md) and [Dictionary](../.agents/memory/crystallized/documents/maintenance/helpers/dictionary.md). The Framework itself must remain understandable without these repository documents.
+
+## Documentation site
+
+The public documentation site is a Docusaurus project in `src/docusaurus/`. Its own pages, covering getting started, concepts, and a file-by-file reference for every first-party Extension, live in `src/docusaurus/docs/`. The site also publishes this guide, the [CLI guide](cli.md), and the [Extension guide](extensions.md) directly from `docs/`, so each guide keeps one source. At build time, a relative link that leaves the published pages becomes a link to the file on GitHub.
+
+The site has its own `package.json` and lockfile, separate from the repository tooling. From `src/docusaurus/`:
+
+```sh
+npm ci
+npm start
+```
+
+`npm start` serves the site with live reload. `npm run build` writes the static site to `src/docusaurus/build/` and fails on broken links or anchors. `npm run typecheck` checks the site's TypeScript.
+
+The [Documentation workflow](../.github/workflows/docs.yml) builds the site for pull requests that touch it and publishes it to GitHub Pages whenever those changes reach `main`. The repository's Pages settings must use GitHub Actions as the build source. GitHub serves a project repository's site below its name, so the default address is `https://thelithiumforge.github.io/open-forge/`. The workflow reads the actual address from the Pages settings, so adding a custom domain moves the site to `/` without a configuration change. Local builds always use the default address.
+
+The site's pages explain shipped behavior, so they need the same care as the README. When a Framework or Extension change alters what a page describes, such as an installed file, a loading tag, or a package dependency, update the page in the same change.

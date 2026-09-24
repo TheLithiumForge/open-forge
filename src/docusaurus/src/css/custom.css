@@ -1,0 +1,139 @@
+/*
+ * Open Forge theme: a dark neon orange on warm near-black, with a deeper
+ * ember orange in light mode so links keep readable contrast on white.
+ */
+
+:root {
+  --forge-neon: #ff6b1f;
+  --forge-ember: #d9480f;
+  --forge-amber: #ffb347;
+  --forge-glow: rgba(255, 107, 31, 0.35);
+  --forge-grid-line: rgba(217, 72, 15, 0.08);
+  --forge-card-border: rgba(217, 72, 15, 0.18);
+  --forge-card-background: #ffffff;
+
+  --ifm-color-primary: #d9480f;
+  --ifm-color-primary-dark: #c3410e;
+  --ifm-color-primary-darker: #b83d0d;
+  --ifm-color-primary-darkest: #98320a;
+  --ifm-color-primary-light: #ef4f11;
+  --ifm-color-primary-lighter: #f0591d;
+  --ifm-color-primary-lightest: #f27645;
+  --ifm-link-color: var(--ifm-color-primary-dark);
+
+  --ifm-background-color: #fffcfa;
+  --ifm-background-surface-color: #fff6f0;
+  --ifm-font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ifm-font-family-monospace: ui-monospace, "Cascadia Code", "JetBrains Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --ifm-heading-font-weight: 700;
+  --ifm-code-font-size: 90%;
+  --ifm-navbar-shadow: none;
+  --ifm-toc-border-color: rgba(217, 72, 15, 0.14);
+  --docusaurus-highlighted-code-line-bg: rgba(217, 72, 15, 0.12);
+}
+
+[data-theme="dark"] {
+  --forge-glow: rgba(255, 107, 31, 0.45);
+  --forge-grid-line: rgba(255, 107, 31, 0.07);
+  --forge-card-border: rgba(255, 107, 31, 0.2);
+  --forge-card-background: #16120f;
+
+  --ifm-color-primary: #ff6b1f;
+  --ifm-color-primary-dark: #ff5b06;
+  --ifm-color-primary-darker: #f55400;
+  --ifm-color-primary-darkest: #ca4500;
+  --ifm-color-primary-light: #ff7b38;
+  --ifm-color-primary-lighter: #ff8445;
+  --ifm-color-primary-lightest: #ff9e6b;
+  --ifm-link-color: var(--ifm-color-primary-light);
+
+  --ifm-background-color: #0e0c0b;
+  --ifm-background-surface-color: #141110;
+  --ifm-navbar-background-color: rgba(14, 12, 11, 0.86);
+  --ifm-footer-background-color: #0a0908;
+  --ifm-color-emphasis-100: #1b1715;
+  --ifm-color-emphasis-200: #26201d;
+  --ifm-toc-border-color: rgba(255, 107, 31, 0.16);
+  --docusaurus-highlighted-code-line-bg: rgba(255, 107, 31, 0.14);
+}
+
+::selection {
+  background: var(--forge-glow);
+}
+
+/* Navigation */
+
+.navbar {
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--ifm-color-primary) 30%, var(--forge-amber) 50%, var(--ifm-color-primary) 70%, transparent) 1;
+}
+
+.navbar__title {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.footer--dark {
+  border-top: 1px solid var(--forge-card-border);
+}
+
+.footer__title {
+  color: var(--ifm-color-primary-lighter);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+}
+
+/* Content */
+
+.markdown h1,
+.markdown h2 {
+  letter-spacing: -0.015em;
+}
+
+.markdown header h1::after {
+  display: block;
+  width: 3rem;
+  height: 3px;
+  margin-top: 0.6rem;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--ifm-color-primary), var(--forge-amber));
+  box-shadow: 0 0 12px var(--forge-glow);
+  content: "";
+}
+
+.markdown table {
+  display: table;
+  width: 100%;
+}
+
+.markdown th {
+  background: var(--ifm-background-surface-color);
+  border-bottom: 2px solid var(--ifm-color-primary);
+}
+
+code {
+  border: 1px solid var(--forge-card-border);
+}
+
+pre code {
+  border: none;
+}
+
+.theme-code-block {
+  border: 1px solid var(--forge-card-border);
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  box-shadow: inset 3px 0 0 var(--ifm-color-primary);
+}
+
+[data-theme="dark"] .button--primary {
+  box-shadow: 0 0 22px var(--forge-glow);
+  color: #140a04;
+}
+
+[data-theme="dark"] .button--primary:hover {
+  box-shadow: 0 0 32px var(--forge-glow);
+}

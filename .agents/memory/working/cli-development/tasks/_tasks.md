@@ -78,11 +78,31 @@ breaks, which is why they sit above the architecture work rather than with it.
 [Task 30](task30-cli-experience-remediation.md) stays open underneath all of
 this; its remaining phases feed 32, 37 and 39.
 
+## 1.0 polish
+
+Recorded on 2026-09-25, after the public beta. The maintainer selected the
+documentation site for implementation and asked for the others as tasks.
+
+1. [52 Documentation site](task52-documentation-site.md) — integrated into
+   local `develop`. The maintainer merges to `main` and enables Pages.
+2. [53 Loading and scoping audit](task53-loading-and-scoping-audit.md) —
+   recorded, not started.
+3. [54 Tag trimming](task54-tag-trimming.md) — recorded, not started. It runs
+   after or alongside 53 because both edit the same frontmatter.
+4. [55 Alternative root](task55-alternative-root.md) — recorded, not started.
+   An investigation into roots such as `.apm`. Decide it before 1.0 fixes the
+   layout, because a root change breaks installed workspaces.
+
 ## Entries
 
 - [Completed root remove command and persistent removal intent across files, routes, packages and libraries](task50-unified-remove.md) - #Memory #Working #CLI #Task #Remove #Complete
 
 - [Default Index reachability through native Skills and their routed resource catalogues](task47-default-skill-indexing.md) - #Memory #Working #CLI #Task #Skill #Index #Contextual
+
+- [Task 52 Docusaurus documentation site with getting started, concepts, a file-by-file Extension reference, and GitHub Pages publication](task52-documentation-site.md) - #Memory #Working #Task #Documentation #Site #Docusaurus #Contextual #Active
+- [Open Task 53 to audit every LoadNow and KeepInMind entry and the default scoping before 1.0, so startup context holds only what omission would cost more than reading](task53-loading-and-scoping-audit.md) - #Memory #Working #Task #Framework #Loading #Scope #Release #Contextual #Active
+- [Open Task 54 to trim tags that add no selection, search, or loading value before 1.0, in shipped files first and then in this workspace](task54-tag-trimming.md) - #Memory #Working #Task #Framework #Tags #Release #Contextual #Active
+- [Open Task 55 to investigate running Open Forge under another root such as .apm, so users can also use APM frontmatter, packaging, and compilation](task55-alternative-root.md) - #Memory #Working #Task #Framework #Root #APM #Investigation #Release #Contextual #Active
 
 - [Remaining beta product work and delivery verification after the completed migration](beta-follow-ups.md) - #Memory #Working #Backlog #CLI #Beta #Contextual
 - [Specifications for actionable errors, stale documentation and Skill-resource navigation](beta-follow-ups/_beta-follow-ups.md) - #Memory #Working #Plan #CLI #Contextual

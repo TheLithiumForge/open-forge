@@ -271,6 +271,7 @@ Some limits to know before you adopt it:
 
 ## Go deeper
 
+- [Documentation site](https://thelithiumforge.github.io/open-forge/): getting started, concepts, and a file-by-file tour of every Extension.
 - [CLI guide](docs/cli.md): everyday commands and maintenance.
 - [Extension guide](docs/extensions.md): packages, dependencies, and customization.
 - [Development guide](docs/development.md): local setup, contributions, and verification.

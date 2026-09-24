@@ -39,7 +39,7 @@ const typeOnlyModuleRestrictions = [
 
 export default typescriptEslint.config(
   {
-    ignores: ["artifacts/**", "coverage/**", "dist/**", "node_modules/**", ".agents/memory/archived/**", ".temp/**"],
+    ignores: ["artifacts/**", "coverage/**", "dist/**", "node_modules/**", ".agents/memory/archived/**", ".temp/**", "src/docusaurus/build/**", "src/docusaurus/.docusaurus/**"],
   },
   {
     files: authoredSourceFiles,
