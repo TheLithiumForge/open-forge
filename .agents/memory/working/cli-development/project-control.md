@@ -43,10 +43,11 @@ Tasks 28 and 29 and earlier completed records remain historical evidence.
 
 ## Current next action
 
-Task 50, [Unified Remove](tasks/task50-unified-remove.md), is complete on the local
-`codex/unified-remove` branch. Its record contains the accepted specification,
-resolved reviews, six passing managed/native modes and final native command journey.
-It has not been pushed or merged; earlier selections below remain separate context.
+Task 51, [Public beta release](tasks/task51-beta-release.md), is active. The
+maintainer authorized pipeline corrections on `develop`, pushes, and publication
+to GitHub and npm after hosted qualification. Task 50, [Unified
+Remove](tasks/task50-unified-remove.md), was squash-integrated into `develop` at
+`a887e7304`; its record retains the implementation and local verification evidence.
 
 The selected work is the [lossless source wording proposal](../src-wording-proposal.md)
 on a separate branch. The maintainer authorized applying its eight replacements; source and

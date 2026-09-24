@@ -15,7 +15,6 @@ import {
   ExpectedMainPackageName,
   ExpectedOptionalDependencies,
   ExpectedPlatforms,
-  FixtureGitSha,
   FixtureNativeBytes,
   FixtureVersion,
   UnsupportedRuntime,
@@ -35,7 +34,7 @@ for (const platform of ExpectedPlatforms) {
       const artifactsRoot = join(temporaryRoot, "artifacts");
       const nativeArtifact = join(temporaryRoot, "native-fixture");
       writeFileSync(nativeArtifact, FixtureNativeBytes);
-      const completion = spawnSync(process.execPath, [managerPath, "stage", artifactsRoot, platform.runtime, nativeArtifact, "local", FixtureGitSha], {
+      const completion = spawnSync(process.execPath, [managerPath, "stage", artifactsRoot, platform.runtime, nativeArtifact, "release", FixtureVersion], {
         cwd: repositoryRoot,
         env: npm.environment,
         encoding: "utf8",
@@ -109,7 +108,7 @@ test("Integration: unsupported package runtime fails before creating stage outpu
     const artifactsRoot = join(temporaryRoot, "artifacts");
     const nativeArtifact = join(temporaryRoot, "native-fixture");
     writeFileSync(nativeArtifact, FixtureNativeBytes);
-    const completion = spawnSync(process.execPath, [managerPath, "stage", artifactsRoot, UnsupportedRuntime, nativeArtifact, "local", FixtureGitSha], {
+    const completion = spawnSync(process.execPath, [managerPath, "stage", artifactsRoot, UnsupportedRuntime, nativeArtifact, "release", FixtureVersion], {
       cwd: repositoryRoot,
       encoding: "utf8",
       shell: false,
