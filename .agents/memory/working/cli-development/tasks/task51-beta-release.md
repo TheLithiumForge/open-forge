@@ -103,3 +103,18 @@ Focused local evidence on Windows x64, Release managed Integration:
 The earlier candidate also passed macOS Intel, so every Unix platform has now
 completed its full managed/native and installed-package gates. A new Build must
 qualify all six targets together at the corrected source revision.
+
+The full local Integration run then found one additional corpus invariant:
+text snapshots require forward-slash paths. The diagnostic templates now use
+that form; their local comparer converts only placeholder-owned path separators
+before expansion. The received output remains untouched. The superseded hosted
+run was cancelled before qualification rather than published.
+
+The corrected full managed Integration run passed: 2,479 passed, 17 expected
+Windows platform exclusions, zero failures among 2,496 discovered tests.
+Command: the Release Integration executable with `--parallel collections
+--minimum-expected-tests 2400 --fail-warns on --fail-skips off --no-ansi
+--progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json
+--results-directory artifacts/beta-release/local-managed-integration-portable`.
+The delivery `qualifyReport` validator accepted its CTRF report for `win32`.
+Both short-root and long-root focused reruns passed after the separator correction.

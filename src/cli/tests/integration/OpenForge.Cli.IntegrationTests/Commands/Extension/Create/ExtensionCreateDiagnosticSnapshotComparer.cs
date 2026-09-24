@@ -1,16 +1,19 @@
 using TheLithium.Imprint;
+using System.Text.RegularExpressions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Create;
 
 // Expand the owned coordinate before applying the diagnostic's promised bound.
 // Normalizing after rendering cannot recover a path cut off midway by that bound.
 // Received output remains untouched, including the exact truncation point.
-internal sealed class ExtensionCreateDiagnosticSnapshotComparer(string cataloguePath) : ISnapshotComparer
+internal sealed partial class ExtensionCreateDiagnosticSnapshotComparer(string cataloguePath) : ISnapshotComparer
 {
     public SnapshotComparisonResult Compare(
         string expected, string received, SnapshotFormat format, ResolvedSnapshotComparison options)
     {
-        var expanded = expected.Replace("<extension-source>", cataloguePath, StringComparison.Ordinal)
+        var physicalPaths = SourcePath().Replace(expected,
+            match => match.Value.Replace('/', Path.DirectorySeparatorChar));
+        var expanded = physicalPaths.Replace("<extension-source>", cataloguePath, StringComparison.Ordinal)
             .ReplaceLineEndings("\n");
         var bounded = string.Join('\n', expanded.Split('\n').Select(line =>
             line.Length > 240 ? line[..237] + "..." : line));
@@ -19,4 +22,7 @@ internal sealed class ExtensionCreateDiagnosticSnapshotComparer(string catalogue
             : new SnapshotComparisonResult(false,
                 "Diagnostic differs from the fixture-expanded, 240-character-bounded expectation; see the unchanged received artifact.");
     }
+
+    [GeneratedRegex("""<extension-source>/[^\s"':,;]*""", RegexOptions.CultureInvariant)]
+    private static partial Regex SourcePath();
 }
