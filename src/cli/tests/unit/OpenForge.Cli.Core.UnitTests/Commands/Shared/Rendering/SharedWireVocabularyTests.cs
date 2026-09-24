@@ -20,7 +20,7 @@ public sealed class SharedWireVocabularyTests
     public void RecoveryNamesAreComplete()
     {
         Assert.Equal(
-            ["framework", "extension", "index", "route", "repair", "library"],
+            ["framework", "extension", "index", "route", "repair", "library", "workspace"],
             Enum.GetValues<RecoveryBundleProducer>().Select(RecoveryWireVocabulary.Producer));
         Assert.Equal(
             ["install", "index", "create", "init", "move", "update", "remove", "repair", "attach", "sync", "detach"],

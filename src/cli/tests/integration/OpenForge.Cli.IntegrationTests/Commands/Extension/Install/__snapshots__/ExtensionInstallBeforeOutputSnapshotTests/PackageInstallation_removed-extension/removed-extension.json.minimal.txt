@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install toolkit: Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension install.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-install.removed-extension",
+      "title": "Extension is excluded by workspace settings",
+      "message": "Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension install",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "toolkit",
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension install.",
+          "reason": "This Extension ID is present in removedExtensions."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [],
+    "permissions": {
+      "decision": "not-evaluated",
+      "required": [],
+      "missing": [],
+      "saved": false
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "sentence",
+    "command": "Remove the selected Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension install.",
+    "reason": "Workspace removal settings currently exclude the requested install."
+  }
+}

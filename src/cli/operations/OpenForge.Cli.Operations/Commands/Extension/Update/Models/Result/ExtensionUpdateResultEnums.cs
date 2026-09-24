@@ -38,6 +38,12 @@ internal enum ExtensionUpdateFindingCode
     RecoveryFailed,
     OperationFailed,
     Interrupted,
+    SettingsInvalid,
+    SettingsUnavailable,
+    RemovedExtension,
+    BulkExcluded,
+    PathExcluded,
+    ExcludedAncestor,
 }
 
 internal enum ExtensionUpdateSourceKind

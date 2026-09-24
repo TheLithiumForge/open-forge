@@ -278,10 +278,9 @@ public sealed class RouteRemovePlanningIntegrationTests
     }
 
     [Trait("Boundary", "Host")]
-    [Theory(DisplayName = "Route Remove reports unknown ownership and refuses claimed content before effects"),
-     InlineData("missing", "complete", "route-remove.ownership-unavailable"),
-     InlineData("framework-region-claim", "blocked", "route-remove.ownership-claimed"),
-     InlineData("framework-claim", "blocked", "route-remove.ownership-claimed")]
+    [Theory(DisplayName = "Route Remove refuses selected content with a case-aliased managed claim")]
+    [InlineData("framework-region-claim", "blocked", "route-remove.target-changed")]
+    [InlineData("framework-claim", "blocked", "route-remove.target-changed")]
     [Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task OwnershipBoundariesAreWriteFree(
         string scenario,
@@ -289,14 +288,9 @@ public sealed class RouteRemovePlanningIntegrationTests
         string expectedCode)
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create($"route-remove-ownership-{scenario}");
-        if (scenario == "missing")
-        {
-            workspace.RemoveLifecycle();
-        }
-        else
-        {
-            workspace.SeedFrameworkClaim(RouteRemoveIntegrationWorkspace.LeafPath.ToUpperInvariant(), region: scenario == "framework-region-claim");
-        }
+        workspace.SeedFrameworkClaim(
+            RouteRemoveIntegrationWorkspace.LeafPath.ToUpperInvariant(),
+            region: scenario == "framework-region-claim");
 
         var before = workspace.SnapshotHashes();
         var output = new StringWriter();

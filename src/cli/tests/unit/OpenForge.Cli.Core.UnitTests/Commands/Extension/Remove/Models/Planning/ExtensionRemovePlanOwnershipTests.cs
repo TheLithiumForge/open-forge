@@ -6,6 +6,8 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Remove.Models.Planning;
 
@@ -105,6 +107,8 @@ public sealed class ExtensionRemovePlanOwnershipTests
             Input = new ExtensionRemovePlanInput
             {
                 Request = new ExtensionRemoveRequest(workspace, ExtensionRemoveMode.Apply, ["toolkit"], true, false),
+                SettingsObservation = WorkspaceSettingsRead.Absent(Path.Combine(root, ".agents", "open-forge.json")),
+                RemovalSelection = new WorkspaceRemovalSelection { Extensions = ["toolkit"] },
                 Selection = new ExtensionRemoveSelection(ExtensionRemoveSelectionKind.ExplicitIds, ["toolkit"]),
                 Dependencies = new ExtensionRemoveDependencyPlan(
                     [new ExtensionRemovePackageFact("toolkit", true, []), new ExtensionRemovePackageFact("other", false, [])],

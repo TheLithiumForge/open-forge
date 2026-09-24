@@ -1,5 +1,5 @@
 status=blocked
 packages=1
-effects=12
+effects=2
 findings=1
 IOException (0x80070020): The filesystem operation failed.

@@ -21,6 +21,20 @@ relationships, parser and filesystem boundaries, and cross-cutting implementatio
 structure. This behavior does not duplicate those mechanics or
 claim their Gate 5 proof.
 
+## Persistent Exclusions
+
+Read the [removal settings](../../remove/interface.md#keep-removed-and-restore)
+before forming the complete installation plan. Invalid or unavailable settings block before permission approval; a missing settings file means no saved exclusions. An explicitly selected package or
+required dependency in `removedExtensions` blocks the request, including when
+that dependency is already installed. Check the complete dependency closure
+before narrowing the set of packages needing changes.
+
+Exclude canonical file, directory and category destinations from content,
+generated-region and new-ownership planning. Preserve existing excluded bytes
+and claims. If selected content needs a missing excluded ancestor, report the
+structural blocker instead of restoring it. Force and automatic mode do not
+clear exclusions. Revalidate the exact settings observation under the lease.
+
 ## Ownership Source
 
 The generated `.agents/open-forge.lock.json` is the only ownership input and
@@ -386,6 +400,12 @@ first target effect; unknown, malformed, mismatched, or colliding bundles block.
 The persistent reusable zero-byte external workspace lock is held with one
 read/write `FileShare.None` handle; it never receives metadata writes, deletion,
 or truncation.
+
+Verified final recovery bundles retained by earlier operations do not block a
+fresh Install plan. Preserve them unchanged and derive current target state from
+the workspace, not those bundles. Incomplete drafts and malformed, unsupported
+or unavailable candidates still block. Preparation must independently protect
+the new operation's exact bundle identity.
 
 Dry-run uses the same request, facts, intended state, plan, and preflight as
 application. It shows the complete selected closure, effects, preserved and

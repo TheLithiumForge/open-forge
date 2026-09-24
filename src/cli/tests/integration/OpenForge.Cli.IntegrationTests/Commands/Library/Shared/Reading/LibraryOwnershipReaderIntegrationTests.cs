@@ -1,9 +1,14 @@
+using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Library.Attach;
+using OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Detach;
+using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Inspect;
 using OpenForge.Cli.Core.Commands.Library.List;
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
+using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Effects;
 using OpenForge.Cli.Core.Commands.Library.Sync;
+using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
@@ -15,25 +20,12 @@ public sealed class LibraryOwnershipReaderIntegrationTests
 {
     [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Library ownership boundaries never fall back to legacy claims or delete matching links")]
-    [InlineData("absent", false), InlineData("absent", true)]
     [InlineData("invalid", false), InlineData("invalid", true)]
     [InlineData("unavailable", false), InlineData("unavailable", true)]
-    public async Task MissingOwnershipIsInformational(string condition, bool apply)
+    [InlineData("absent", false)]
+    public async Task MutationsDoNotFallBackToLegacyClaimsWhenOwnershipIsNotUsable(string condition, bool apply)
     {
-        using var workspace = new LibraryMutationWorkspace();
-        workspace.Source();
-        workspace.Link();
-        workspace.Write(".agents/open-forge.libraries.json", """
-            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/directives/review.md"]}]}
-            """);
-        if (condition == "invalid")
-        {
-            workspace.Write(LibraryMutationWorkspace.OwnershipPath, "{");
-        }
-        else if (condition == "unavailable")
-        {
-            workspace.Directory(LibraryMutationWorkspace.OwnershipPath);
-        }
+        using var workspace = LegacyFixture(condition);
         var before = workspace.Snapshot();
         var mode = apply ? LibraryMode.Apply : LibraryMode.DryRun;
 
@@ -59,21 +51,119 @@ public sealed class LibraryOwnershipReaderIntegrationTests
             _ => CliSemanticStatus.Complete,
         };
         var expectedAttachStatus = CliSemanticStatus.Blocked;
+        var expectedMutationStatus = condition == "absent"
+            ? CliSemanticStatus.Complete
+            : CliSemanticStatus.Blocked;
 
-        Assert.Equal(expectedRecordStatus, detach.Status);
-        Assert.Equal(expectedRecordStatus, sync.Status);
+        Assert.Equal(expectedMutationStatus, detach.Status);
+        Assert.Equal(expectedMutationStatus, sync.Status);
         Assert.Equal(expectedAttachStatus, attach.Status);
         Assert.Equal(expectedListStatus, list.Status);
         Assert.Equal(expectedRecordStatus, inspect.Status);
         Assert.Empty(detach.Result.Plan.Links);
         Assert.Empty(sync.Result.Plan.Links);
+        Assert.Contains(sync.Result.Findings, finding => finding.Status == expectedMutationStatus);
         Assert.Empty(list.Result.Libraries);
-        Assert.All(detach.Result.Findings, finding => Assert.Equal(expectedRecordStatus, finding.Status));
+        Assert.All(detach.Result.Findings, finding => Assert.Equal(expectedMutationStatus, finding.Status));
         Assert.NotEmpty(detach.Result.Findings);
         Assert.NotEmpty(sync.Result.Findings);
         Assert.NotEmpty(list.Result.Findings);
         Assert.NotEmpty(inspect.Result.Findings);
         Assert.Equal(before, workspace.Snapshot());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Detach records exclusion without ownership and later Sync honors it"), Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    public async Task DetachPersistsAbsentOwnershipExclusionAndLaterSyncHonorsIt()
+    {
+        using var workspace = LegacyFixture("absent");
+        var sourcePath = workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/{LibraryMutationWorkspace.Leaf}");
+        var destinationPath = workspace.Absolute(LibraryMutationWorkspace.Leaf);
+        var legacyPath = workspace.Absolute(".agents/open-forge.libraries.json");
+        var sourceBytes = File.ReadAllBytes(sourcePath);
+        var legacyBytes = File.ReadAllBytes(legacyPath);
+        var linkTarget = new FileInfo(destinationPath).LinkTarget;
+        Assert.NotNull(linkTarget);
+        var before = workspace.Snapshot();
+
+        var listBefore = await new LibraryListOperation().ExecuteAsync(
+            new() { Workspace = workspace.Workspace }, TestContext.Current.CancellationToken);
+        var inspectBefore = await new LibraryInspectOperation().ExecuteAsync(new()
+        {
+            Workspace = workspace.Workspace,
+            LibraryId = LibraryId.Create("team-knowledge"),
+        }, TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, listBefore.Status);
+        Assert.Equal(CliSemanticStatus.Complete, inspectBefore.Status);
+        Assert.Equal(before, workspace.Snapshot());
+
+        var detached = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(
+            workspace.Detach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, detached.Status);
+        Assert.Equal("create", detached.Result.Plan.SettingsChange?.Action);
+        Assert.Equal(LibraryRecordEffect.None, detached.Result.Plan.RecordEffect);
+        Assert.Empty(detached.Result.Plan.Links);
+        Assert.False(File.Exists(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
+        Assert.Equal(linkTarget, new FileInfo(destinationPath).LinkTarget);
+        Assert.Equal(sourceBytes, File.ReadAllBytes(sourcePath));
+        Assert.Equal(legacyBytes, File.ReadAllBytes(legacyPath));
+        using (var settings = JsonDocument.Parse(File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json"))))
+        {
+            Assert.Equal("team-knowledge", Assert.Single(settings.RootElement.GetProperty("removedLibraries").EnumerateArray()).GetString());
+        }
+
+        var afterDetach = workspace.Snapshot();
+        Assert.Equal(before.Count + 1, afterDetach.Count);
+        Assert.All(before, entry => Assert.Equal(entry.Value, afterDetach[entry.Key]));
+        Assert.Contains(".agents/open-forge.json", afterDetach.Keys);
+
+        var sync = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(
+            workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Blocked, sync.Status);
+        Assert.Contains(sync.Result.Findings, finding => finding.Code == LibrarySyncFindingCode.LibraryRemoved);
+        Assert.Empty(sync.Result.Plan.Links);
+        Assert.Equal(afterDetach, workspace.Snapshot());
+        Assert.Equal(linkTarget, new FileInfo(destinationPath).LinkTarget);
+        Assert.Equal(legacyBytes, File.ReadAllBytes(legacyPath));
+
+        var attach = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(
+            workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Blocked, attach.Status);
+        Assert.Contains(attach.Result.Findings, finding => finding.Code == LibraryAttachFindingCode.LibraryRemoved);
+        Assert.Equal(afterDetach, workspace.Snapshot());
+
+        var listAfter = await new LibraryListOperation().ExecuteAsync(
+            new() { Workspace = workspace.Workspace }, TestContext.Current.CancellationToken);
+        var inspectAfter = await new LibraryInspectOperation().ExecuteAsync(new()
+        {
+            Workspace = workspace.Workspace,
+            LibraryId = LibraryId.Create("team-knowledge"),
+        }, TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, listAfter.Status);
+        Assert.Equal(CliSemanticStatus.Complete, inspectAfter.Status);
+        Assert.Equal(afterDetach, workspace.Snapshot());
+    }
+
+    private static LibraryMutationWorkspace LegacyFixture(string ownershipState)
+    {
+        var workspace = new LibraryMutationWorkspace();
+        workspace.Source();
+        workspace.Link();
+        workspace.Write(".agents/open-forge.libraries.json", """
+            {"schemaVersion":1,"libraries":[{"id":"team-knowledge","sourceRoot":"shared/team-knowledge","destinationRoot":".","paths":[".agents/directives/review.md"]}]}
+            """);
+        if (ownershipState == "invalid")
+        {
+            workspace.Write(LibraryMutationWorkspace.OwnershipPath, "{");
+        }
+        else if (ownershipState == "unavailable")
+        {
+            workspace.Directory(LibraryMutationWorkspace.OwnershipPath);
+        }
+
+        return workspace;
     }
 
     [Trait("Boundary", "OS")]

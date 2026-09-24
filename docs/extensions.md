@@ -6,20 +6,26 @@ An Extension is a way to distribute files. Routed content keeps its destination'
 
 ## Choose A Package
 
-The [first-party catalogue](../src/extensions/README.md) offers six packages that add content:
+The [first-party catalogue](../src/extensions/README.md) describes every package and its dependencies.
 
-| Package             | What it helps you do                                                                                     |
-| ------------------- | -------------------------------------------------------------------------------------------------------- |
-| `collaboration` | Explore directions with Adaptive Collaboration and a Brainstorming starter |
-| `workflows`         | Select and follow installed methods through the native `use-workflow` Skill, its catalogue, and a starter |
-| `project-documents` | Maintain current project knowledge with a Documents convention, five starters, Vision, and Architecture   |
-| `planning`          | Explore, decide, and organize work with Ideas, Analysis, Decisions, Checkpoints, Work Records, and starters |
-| `development`       | Implement, debug, and review changes using your project's rules and tools                                 |
-| `orchestration`     | Coordinate related tasks, capture execution learning with Observations, and transfer work through Handoffs  |
+| Package ID | Name | Use it to |
+| --- | --- | --- |
+| `core-templates` | Core Templates | Create directives, guidance, patterns, skills, templates, maps, and memory records from adaptable starting files. |
+| `collaboration` | Collaboration | Explore ideas, compare alternatives, and clarify decisions through discussion and a brainstorming template. |
+| `project-documents` | Project Documents | Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements. |
+| `planning` | Planning | Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and checkpoints. |
+| `scenarios` | Flows and Scenarios | Describe user journeys and expected outcomes, organize scenarios, and record what happened when they were tried. |
+| `observations-and-handoffs` | Observations and Handoffs | Save useful observations and prepare a clear snapshot for another person, agent, or session to resume work. |
+| `development` | Development | Implement changes, investigate defects, and review results using the project's existing tools and conventions. |
+| `orchestration` | Task Coordination | Coordinate related tasks, assign responsibilities, manage dependencies, and verify combined results. |
+| `development-toolkit` | Development Toolkit | Install Project Documents, Planning, Flows and Scenarios, and Development together. |
+| `workflows` | Workflow Support | Find and follow installed workflows, or create your own using the supplied template. |
 
-Workflow Support keeps the stable ID `workflows`. Project Documents, Planning, and Development each depend on it, so it installs once. Orchestration depends on Planning and Development.
+Core Templates is a useful first optional selection when you want to author workspace content. It adds no extension dependencies and remains outside Development Toolkit. Choose a specialized starter when one already fits the work.
 
-The seventh package, `development-toolkit`, selects Project Documents, Planning, and Development through dependencies. It contributes no files of its own. Collaboration is a separate optional choice with no dependencies. Orchestration is deliberately excluded from the Toolkit: multi-agent coordination is a stronger methodological choice and stays explicit.
+Project Documents, Planning, and Development each depend on Workflow Support. Task Coordination retains the ID `orchestration` and depends on Development, Observations and Handoffs, and Planning. Workflow Support installs once through those dependencies.
+
+Development Toolkit contains dependencies only. It includes Flows and Scenarios directly, preserving the starters previously supplied through Planning. Core Templates, Collaboration, Observations and Handoffs, and Task Coordination remain separate choices. Neither Flows and Scenarios nor Observations and Handoffs requires other extensions.
 
 Methods live beneath `.agents/skills/use-workflow/references/`, grouped by the package that supplies them. That tree is reached through the Skill rather than from the loader roots, so rebuild its Entries with an explicit selection:
 
@@ -101,9 +107,36 @@ To remove a package, first inspect the plan:
 open-forge extension remove orchestration --dry-run
 ```
 
-Removal releases its trusted ownership. It retains shared files, deletes safe unchanged files whose final owner is removed, and normally preserves changed files as unmanaged content. `--prune` also selects eligible changed files for deletion. The operation protects packages still needed by retained dependents and does not require the original source catalogue.
+Removal releases its trusted ownership and retains files still owned by another package. It deletes eligible files whose final owner is removed, including edited files, so review the preview and preserve customizations you need. Retained dependents block removal. The original source catalogue is not required.
+
+The selected IDs are recorded in `removedExtensions` in `.agents/open-forge.json`, so later installation, updates and dependency resolution keep them removed. To reinstall a package, explicitly clear its ID and any covering path exclusions, then install it. The root command `open-forge remove orchestration --kind extension` provides the same package operation.
 
 The [CLI guide](cli.md#extension-operations) covers the command surface. When an operation reports an incomplete change or retained recovery files, follow its reported next action. Managed changes preserve recovery evidence where required; they do not promise automatic rollback.
+
+## Moving From The Earlier Package Layout
+
+Revision `0.4.0` separates two sets of files from their former packages:
+
+| Former package | New package | Installed-path change |
+| --- | --- | --- |
+| Planning | Flows and Scenarios (`scenarios`) | Four starters move from `templates/planning/` to `templates/scenarios/`. |
+| Orchestration | Observations and Handoffs (`observations-and-handoffs`) | Memory category paths stay the same. Their starters move from `templates/orchestration/` to `templates/observations-and-handoffs/`. |
+
+Orchestration's display name becomes Task Coordination; its ID remains `orchestration`. Existing user records and copies made from Templates keep their own content and locations.
+
+Fresh installations use the new layout directly. Existing installations need a reviewed ownership transition. Installing a new package over a path still owned by the former package can report a conflict, even when the bytes match. Adding a dependency does not transfer ownership.
+
+1. Inspect installed packages and preview the affected updates. Record the packages you want to keep and preserve local edits before removing anything.
+2. Preserve records beneath categories that will be removed. Removal may refuse to delete their required entrypoint. Where the current scope permits it, use a reviewed `route move` to hold an unmanaged record under another suitable parent in the same Memory state, then restore it after installation. Keep an independent backup and preserve any scoped rules it needs. A move must not silently change its meaning.
+3. Preview removal of the affected old packages, their installed dependents, and the shared dependencies being replaced. The verified path replaces the complete old dependency set. For the old Toolkit plus Orchestration, that set is `development-toolkit`, `orchestration`, `planning`, `development`, `project-documents`, and `workflows`. Select only installed packages, account for other dependents, and preserve needed edits before applying. Removal can delete edited files; it has no `--prune` flag.
+4. Inspect retained files and reported recovery bundles. Reconcile edited or retained paths explicitly; never delete user records or rewrite ownership files to force adoption. After checking the preserved work and completed removal, preview `cleanup --dry-run` and apply `cleanup` for recognized recovery data when safe. A retained bundle can block reinstallation.
+5. Clear the `removedExtensions` entries for packages you intend to reinstall, including their dependencies, and any covering path exclusions. Preview and install the desired packages from the new catalogue. Restore held records and deliberate customizations, update links to moved starters, rebuild affected Entries, and run Doctor.
+
+Normal update may retain retired starter paths. Review these before removing them. Do not leave two independently changing copies of the same starter. Updating or removing a starter never updates or removes the artifacts created from it.
+
+Retaining and updating the shared Workflow Support catalogue during this transition has produced an install block claiming the catalogue changed after planning. That partial transition is not a qualified migration path. The complete replacement sequence above was checked with an independently authored Handoff retained byte-for-byte. Workspaces with further edits or dependents still need their own plan review.
+
+This is a manual migration boundary, not a promise of automatic conversion. Review actual ownership and reported plans for the installed revision.
 
 ## Customize Installed Content
 

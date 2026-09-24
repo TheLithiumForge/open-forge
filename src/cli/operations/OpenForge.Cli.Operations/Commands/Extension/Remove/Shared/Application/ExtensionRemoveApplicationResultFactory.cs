@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 
@@ -15,18 +16,20 @@ internal static class ExtensionRemoveApplicationResultFactory
         ExtensionRemoveResult planned,
         ExtensionRemoveFindingCode code,
         string cause,
-        ExtensionRemoveRecovery? recovery = null)
+        ExtensionRemoveRecovery? recovery = null,
+        ExtensionRemoveEffectOutcome settingsOutcome = ExtensionRemoveEffectOutcome.NotStarted)
         => Result(
             plan,
             planned,
-            [],
+            NotStartedEffects(plan),
             Lifecycle(plan, ExtensionRemoveLifecycleOutcome.NotStarted),
             recovery ?? new ExtensionRemoveRecovery(
                 ExtensionRemoveRecoveryState.NotCreated,
                 [],
                 residualPath: null),
             NotRequestedVerification(),
-            [.. planned.Findings, new ExtensionRemoveFinding(code, cause)]);
+            [.. planned.Findings, new ExtensionRemoveFinding(code, cause)],
+            settingsOutcome);
 
     internal static ExtensionRemoveResult AfterPreparation(
         ExtensionRemovePlan plan,
@@ -37,7 +40,8 @@ internal static class ExtensionRemoveApplicationResultFactory
         string cause,
         string? target = null,
         ExtensionRemoveLifecycleOutcome lifecycleOutcome = ExtensionRemoveLifecycleOutcome.NotStarted,
-        ExtensionRemoveVerification? verification = null)
+        ExtensionRemoveVerification? verification = null,
+        ExtensionRemoveEffectOutcome settingsOutcome = ExtensionRemoveEffectOutcome.NotStarted)
         => Result(
             plan,
             planned,
@@ -45,7 +49,8 @@ internal static class ExtensionRemoveApplicationResultFactory
             Lifecycle(plan, lifecycleOutcome),
             RecoveryAfterFailure(preparation),
             verification ?? NotRequestedVerification(),
-            [.. planned.Findings, new ExtensionRemoveFinding(code, cause, target)]);
+            [.. planned.Findings, new ExtensionRemoveFinding(code, cause, target)],
+            settingsOutcome);
 
     internal static ExtensionRemoveResult Result(
         ExtensionRemovePlan plan,
@@ -54,7 +59,8 @@ internal static class ExtensionRemoveApplicationResultFactory
         ExtensionRemoveLifecycle lifecycle,
         ExtensionRemoveRecovery recovery,
         ExtensionRemoveVerification verification,
-        IReadOnlyList<ExtensionRemoveFinding> findings)
+        IReadOnlyList<ExtensionRemoveFinding> findings,
+        ExtensionRemoveEffectOutcome settingsOutcome = ExtensionRemoveEffectOutcome.NotStarted)
         => ExtensionRemoveResultFactory.Create(
             plan.Request,
             plan.Selection,
@@ -65,7 +71,10 @@ internal static class ExtensionRemoveApplicationResultFactory
             lifecycle,
             recovery,
             verification,
-            findings) with
+            findings,
+            plan.SettingsEffect is { } settingsEffect
+                ? WithOutcome(settingsEffect, settingsOutcome)
+                : null) with
         { Permissions = planned.Permissions };
 
     internal static ExtensionRemoveLifecycle Lifecycle(
@@ -119,6 +128,10 @@ internal static class ExtensionRemoveApplicationResultFactory
         => receipt.EffectState == FilesystemEffectState.Applied
             && receipt.VerificationState == FilesystemVerificationState.Verified;
 
+    internal static bool IsVerified(DirectoryCreationReceipt receipt)
+        => receipt.EffectState == FilesystemEffectState.Applied
+            && receipt.VerificationState == FilesystemVerificationState.Verified;
+
     internal static ExtensionRemoveEffect WithOutcome(
         ExtensionRemoveEffect effect,
         ExtensionRemoveEffectOutcome outcome)
@@ -130,6 +143,12 @@ internal static class ExtensionRemoveApplicationResultFactory
             outcome,
             ReadResidual(outcome));
 
+    internal static IReadOnlyList<ExtensionRemoveEffect> NotStartedEffects(
+        ExtensionRemovePlan plan)
+        => [.. plan.Effects.Select(effect => WithOutcome(
+            effect.Result,
+            ExtensionRemoveEffectOutcome.NotStarted))];
+
     internal static ExtensionRemoveEffectOutcome ReadOutcome(FileChangeReceipt receipt)
         => receipt.EffectState switch
         {
@@ -139,6 +158,20 @@ internal static class ExtensionRemoveApplicationResultFactory
             FilesystemEffectState.Applied => ExtensionRemoveEffectOutcome.Verified,
             FilesystemEffectState.Unknown => ExtensionRemoveEffectOutcome.CompletionUnknown,
             _ => throw new ArgumentOutOfRangeException(nameof(receipt), receipt.EffectState, "The filesystem receipt state is not defined."),
+        };
+
+    internal static ExtensionRemoveEffectOutcome ReadOutcome(DirectoryCreationReceipt receipt)
+        => receipt.EffectState switch
+        {
+            FilesystemEffectState.NotStarted => ExtensionRemoveEffectOutcome.NotStarted,
+            FilesystemEffectState.Applied when receipt.VerificationState == FilesystemVerificationState.Failed
+                => ExtensionRemoveEffectOutcome.VerificationFailed,
+            FilesystemEffectState.Applied => ExtensionRemoveEffectOutcome.Verified,
+            FilesystemEffectState.Unknown => ExtensionRemoveEffectOutcome.CompletionUnknown,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(receipt),
+                receipt.EffectState,
+                "The directory creation receipt state is not defined."),
         };
 
     internal static ExtensionRemoveFindingCode ReadFinding(FileChangeReceipt receipt)
@@ -152,6 +185,22 @@ internal static class ExtensionRemoveApplicationResultFactory
                 => ExtensionRemoveFindingCode.VerificationFailed,
             null => ExtensionRemoveFindingCode.WriteFailed,
             _ => throw new ArgumentOutOfRangeException(nameof(receipt), receipt.NotStartedReason, "The filesystem receipt state is not defined."),
+        };
+
+    internal static ExtensionRemoveFindingCode ReadFinding(DirectoryCreationReceipt receipt)
+        => receipt.NotStartedReason switch
+        {
+            FilesystemNotStartedReason.Cancelled => ExtensionRemoveFindingCode.Interrupted,
+            FilesystemNotStartedReason.TargetChanged => ExtensionRemoveFindingCode.TargetChanged,
+            FilesystemNotStartedReason.ApplicationFailed => ExtensionRemoveFindingCode.WriteFailed,
+            FilesystemNotStartedReason.ContractRejected => ExtensionRemoveFindingCode.OperationFailed,
+            null when receipt.VerificationState == FilesystemVerificationState.Failed
+                => ExtensionRemoveFindingCode.VerificationFailed,
+            null => ExtensionRemoveFindingCode.WriteFailed,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(receipt),
+                receipt.NotStartedReason,
+                "The directory creation receipt reason is not defined."),
         };
 
     internal static ExtensionRemoveLifecycleOutcome ReadLifecycleOutcome(

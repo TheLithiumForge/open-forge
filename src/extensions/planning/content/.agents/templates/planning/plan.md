@@ -6,9 +6,11 @@ open-forge:
 
 # {Work} Plan
 
-<!-- TEMPLATE: Keep a short plan in the Task. Use this only when the sequence needs independent maintenance.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Keep a short plan in the Task. Use this only when the sequence needs independent maintenance.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Outcome Source
 
@@ -32,4 +34,6 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 **Recovery or reversal:** {What protects the current system if adoption fails; omit when immaterial.}
 
-<!-- Revise remaining steps when evidence changes the plan. Preserve completed evidence in its owning source. -->
+{
+Revise remaining steps when evidence changes the plan. Preserve completed evidence in its owning source.
+}

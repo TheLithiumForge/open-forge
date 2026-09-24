@@ -1,4 +1,4 @@
 status=completed
 packages=1
-effects=1
+effects=2
 findings=0

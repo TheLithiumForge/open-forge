@@ -24,6 +24,7 @@ internal static partial class RouteRemoveRecoveryLifecycle
         RouteRemovePlan plan,
         RouteRemoveFindingCode code,
         CliSemanticStatus status,
-        string cause)
-        => new(code, status, plan.Preview.Source.Path, cause);
+        string cause,
+        string? target = null)
+        => new(code, status, target ?? plan.Preview.Source.Path, cause);
 }

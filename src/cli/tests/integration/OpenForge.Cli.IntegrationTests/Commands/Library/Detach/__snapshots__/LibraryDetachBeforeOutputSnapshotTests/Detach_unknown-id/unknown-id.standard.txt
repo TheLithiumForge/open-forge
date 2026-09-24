@@ -1,8 +1,4 @@
-Cannot detach unknown: No Library has the ID unknown.
+Recorded removal intent for Library unknown.
 Workspace: <workspace>
-  Error  unknown  Library ID is unknown
-         No Library has the ID unknown.
-         open-forge library list
-         Choose a registered Library ID.
-  Choose a registered Library ID.
-Next: open-forge library list
+  .agents/open-forge.json  settings updated
+  .agents/open-forge.json  settings updated

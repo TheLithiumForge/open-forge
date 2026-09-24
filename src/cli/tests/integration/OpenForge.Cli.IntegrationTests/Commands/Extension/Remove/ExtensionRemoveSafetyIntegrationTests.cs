@@ -108,7 +108,21 @@ public sealed class ExtensionRemoveSafetyIntegrationTests
             document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-remove.workspace-lock-unavailable");
-        Assert.Empty(result.GetProperty("effects").EnumerateArray());
+        var effects = result.GetProperty("effects").EnumerateArray().ToArray();
+        Assert.Equal("not-started", Assert.Single(effects, effect =>
+            effect.GetProperty("path").GetString() == ".agents/open-forge.json"
+            && effect.GetProperty("action").GetString() == "record-exclusion")
+            .GetProperty("outcome").GetString());
+        Assert.Equal("not-started", Assert.Single(effects, effect =>
+            effect.GetProperty("path").GetString() == ".agents/toolkit.md"
+            && effect.GetProperty("action").GetString() == "delete")
+            .GetProperty("outcome").GetString());
+        var counts = document.RootElement.GetProperty("counts");
+        Assert.Equal(0, counts.GetProperty("packagesRemoved").GetInt32());
+        Assert.Equal(0, counts.GetProperty("filesDeleted").GetInt32());
+        Assert.Equal(0, counts.GetProperty("filesKept").GetInt32());
+        Assert.Equal(0, counts.GetProperty("filesReleased").GetInt32());
+        Assert.Equal(0, counts.GetProperty("sectionsUpdated").GetInt32());
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
     }

@@ -116,7 +116,7 @@ retained command set and its executable proof are available.
 - [Global CLI Flags Behavior Contract](../shared/global-flags/behavior.md)
 - [CLI Source References Behavior Contract](../shared/source-references/behavior.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
-- [Routing Loading And Continuity](../../../framework/routing/loading.md)
+- [Loading And Refreshing Context](../../../framework/routing/loading.md)
 - [Routing Model](../../../framework/routing/model.md)
 - [Route Scope And Inheritance](../../../framework/routing/scope.md)
 - [Routing Paths And Identity](../../../framework/routing/paths.md)

@@ -302,7 +302,7 @@ All 24 supplied flows were retained. Eleven were improved: F03, F05, F09, F10, F
 | [C17-02](scenarios/commands/c17-route-remove.md#c17-02) | Leaf with detached links | Worth retaining as an independently checked user outcome: Remove the source and detach safe link markup while preserving Team notes as authored text. |
 | [C17-03](scenarios/commands/c17-route-remove.md#c17-03) | Category removed | Worth retaining as an independently checked user outcome: Remove the selected category, list the actual effects and handle incoming references under the safe-detach rules. |
 | [C17-04](scenarios/commands/c17-route-remove.md#c17-04) | Dry run | Worth retaining as an independently checked user outcome: Show the removal and link changes in future tense, ending with No files were changed. |
-| [C17-06](scenarios/commands/c17-route-remove.md#c17-06) | Managed source | Worth retaining as an independently checked user outcome: Explain why this command cannot remove managed content. |
+| [C17-06](scenarios/commands/c17-route-remove.md#c17-06) | Managed source | Remove the explicitly selected managed route, record its exclusion, and release matching claims. |
 | [C17-08](scenarios/commands/c17-route-remove.md#c17-08) | Ambiguous source prompt | Worth retaining as an independently checked user outcome: Remove only the explicitly selected source after the required confirmation. |
 | [C17-09](scenarios/commands/c17-route-remove.md#c17-09) | Reference scan incomplete | Worth retaining as an independently checked user outcome: Explain why safe detachment cannot be checked and make no removal. |
 | [C17-10](scenarios/commands/c17-route-remove.md#c17-10) | Lock held | Worth retaining as an independently checked user outcome: Explain contention and preserve every source and link. |
@@ -425,7 +425,7 @@ All 24 supplied flows were retained. Eleven were improved: F03, F05, F09, F10, F
 | [C26-08](scenarios/commands/c26-library-attach.md#c26-08) | Destination collision | Worth retaining as an independently checked user outcome: Explain the occupied leaf and preserve it; do not adopt an unregistered link. |
 | [C26-09](scenarios/commands/c26-library-attach.md#c26-09) | Dry run | Worth retaining as an independently checked user outcome: Show proposed links, directories and permission scope without creating or saving them. |
 | [C26-11](scenarios/commands/c26-library-attach.md#c26-11) | Lock held | Worth retaining as an independently checked user outcome: Explain contention and preserve source, destination and ownership. |
-| [C26-12](scenarios/commands/c26-library-attach.md#c26-12) | Record invalid | Worth retaining as an independently checked user outcome: Verify the explicitly requested safe link effects, then the ownership publication. |
+| [C26-12](scenarios/commands/c26-library-attach.md#c26-12) | Record invalid | Block Attach on invalid required ownership before link or record effects. |
 | [C26-13](scenarios/commands/c26-library-attach.md#c26-13) | Interrupted partial | Worth retaining as an independently checked user outcome: State completed and remaining links and whether registration/permission publication actually occurred. |
 | [C26-14](scenarios/commands/c26-library-attach.md#c26-14) | Invalid input | Worth retaining as an independently checked user outcome: Explain the ID problem without creating links or a registration. |
 | [C27-01](scenarios/commands/c27-library-sync.md#c27-01) | Up to date | Worth retaining as an independently checked user outcome: Say team is up to date and nothing needs doing. |
@@ -471,4 +471,3 @@ All 24 supplied flows were retained. Eleven were improved: F03, F05, F09, F10, F
 | [X28](scenarios/experience.md#x28) | Tell a zero result from an unknown or not-requested result | Worth retaining as an independently checked user outcome: Zero is used only for a completed empty set of the stated kind. |
 | [X29](scenarios/experience.md#x29) | Report verified content separately from failed ownership publication | Worth retaining as an independently checked user outcome: Best-effort ownership publication must not erase verified content effects or invent saved registrations. |
 | [X30](scenarios/experience.md#x30) | Do not claim a local edit when only the intended source changed | Worth retaining as an independently checked user outcome: A current content difference is not proof that a user changed a file since installation. |
-

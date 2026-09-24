@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 
@@ -25,6 +26,8 @@ internal sealed record LibraryDetachPlanningInput : ILibraryMutationObservation
 
 
     public required WorkspaceOwnershipRead Ownership { get; init; }
+
+    public required WorkspaceSettingsRead Settings { get; init; }
 
     public required ImmutableArray<PlannedFileChange> GeneratedRegionChanges { get; init; }
 

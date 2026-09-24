@@ -21,6 +21,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -202,6 +203,7 @@ internal static class LibraryMutationCompletionProjection
         GeneratedRegions = [],
         RecordEffect = LibraryRecordEffect.None,
         RecordExpected = null,
+        SettingsChange = null,
     };
 
     internal static LibraryMutationPlanView Plan(LibraryMutationPlanProjectionInput input)
@@ -241,6 +243,17 @@ internal static class LibraryMutationCompletionProjection
                 _ => throw new ArgumentOutOfRangeException(nameof(input), input.Effects?.OwnershipChange?.Kind, "The record effect is not defined."),
             },
             RecordExpected = input.Effects?.OwnershipChange is { } record ? Expected(record.Expectation) : null,
+            SettingsChange = input.SettingsChange is { } settings ? new LibrarySettingsChangeEffectView
+            {
+                Path = WorkspaceSettingsDefinitions.RelativePath,
+                Action = settings.Kind switch
+                {
+                    PlannedFileChangeKind.Create => "create",
+                    PlannedFileChangeKind.Replace => "replace",
+                    _ => throw new ArgumentOutOfRangeException(nameof(input), settings.Kind, "The Library settings effect kind is not defined."),
+                },
+                Expected = Expected(settings.Expectation),
+            } : null,
         };
 
     internal static LibraryMutationApplication Application(

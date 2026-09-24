@@ -1,5 +1,6 @@
 Would remove the toolkit Extension.
 Workspace: <workspace>
+  .agents/open-forge.json                       would record the removal in workspace settings
   .agents/toolkit.md                            would delete
   .agents/directives/_directives.md             unchanged
   .agents/guidance/_guidance.md                 unchanged

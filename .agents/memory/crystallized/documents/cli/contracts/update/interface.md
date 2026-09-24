@@ -133,6 +133,7 @@ sections remain. No stored baseline, policy or workspace binding survives.
 | Edited owned current content   | Replace after recovery preparation           | Same                                          |
 | Missing owned current target   | Restore                                      | Same                                          |
 | Safe absent new payload target | Create and record actual effect              | Same                                          |
+| Missing ordinary payload parent in an installed Framework | Plan and create the directory before its selected content | Same |
 | Present retired whole file     | Preserve with a warning; result is `completed-with-warnings` | Delete only inside the shared safety boundary |
 | Absent retired path            | No deletion or recreation                    | May release obsolete receipt; no deletion     |
 | Region-only receipt            | Rewrite named region; preserve outside bytes | Never delete the host                         |
@@ -141,7 +142,18 @@ Current states use `same`, `changed`, `missing` and `format-only` from fresh
 current/intended comparison. Exact bytes support recovery and expected-state
 checks. Source alignment comes from current payloads and may be null for retired
 targets. `removedCategories` prevents reinstating named `.agents/<category>/`
-payload roots while preserving existing content outside selected effects.
+payload roots. `removedFiles` excludes exact canonical workspace-relative file
+destinations from whole-file and generated-region effects, including root managed
+hosts. It has no glob or recursive-directory semantics. `removedDirectories`
+covers each listed directory and all descendants, including future files. Excluded ownership facts
+are not rewritten, and removing an entry explicitly permits a later restoration.
+
+When a readable Framework registration establishes an installed workspace,
+restoration includes the ordinary missing directories needed by selected current
+payloads. Directory creation appears in the same preview and result as file
+effects. It does not bypass exclusions, no-follow checks or expected-state
+revalidation. An empty `.agents` directory without Framework registration does
+not authorize this behavior.
 
 Mutation still holds the actual external OS lock described in the
 [mutation design](../../technical-designs/mutation-and-recovery.md).
@@ -191,9 +203,10 @@ authority only for the exact trusted retired Framework path and does not infer
 ownership from its presence. A shared or competing owner, route dependency,
 unknown path, or unsafe host blocks deletion.
 
-There is no root Framework remove or uninstall operation in this accepted
-surface. Manual guidance must never recommend deleting `.agents` wholesale. A
-future Framework uninstall requires a separate product and safety review.
+The root Remove command can remove selected Framework content; it does not
+uninstall the entire Framework. The `.agents` container remains protected.
+Manual guidance must never recommend deleting `.agents` wholesale. A future
+Framework uninstall requires a separate product and safety review.
 
 ## Recovery Boundary
 

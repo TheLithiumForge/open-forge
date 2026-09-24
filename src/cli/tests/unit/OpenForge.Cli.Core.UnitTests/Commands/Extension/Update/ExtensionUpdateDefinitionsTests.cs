@@ -115,6 +115,12 @@ public sealed class ExtensionUpdateDefinitionsTests
             ("extension-update.recovery-failed", CliSemanticStatus.Failed),
             ("extension-update.operation-failed", CliSemanticStatus.Failed),
             ("extension-update.interrupted", CliSemanticStatus.Interrupted),
+            ("extension-update.settings-invalid", CliSemanticStatus.Blocked),
+            ("extension-update.settings-unavailable", CliSemanticStatus.Incomplete),
+            ("extension-update.removed-extension", CliSemanticStatus.Blocked),
+            ("extension-update.bulk-excluded", CliSemanticStatus.Attention),
+            ("extension-update.path-excluded", CliSemanticStatus.Complete),
+            ("extension-update.excluded-ancestor", CliSemanticStatus.Blocked),
         ],
             ExtensionUpdateDefinitions.FindingCodes.Select(code => (
                 ExtensionUpdateDefinitions.ReadMachineName(code),

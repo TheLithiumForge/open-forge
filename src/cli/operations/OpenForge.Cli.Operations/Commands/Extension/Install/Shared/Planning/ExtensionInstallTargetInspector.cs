@@ -12,6 +12,7 @@ using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
@@ -194,6 +195,8 @@ internal sealed class ExtensionInstallTargetInspector
 
             var intendedPaths = package.Payload
                 .Select(RequiredTargetPath)
+                .Concat(installed.Paths.Where(path => WorkspaceRemovals.IsPathRemoved(path, input.Settings)))
+                .Distinct(StringComparer.Ordinal)
                 .Order(StringComparer.Ordinal)
                 .ToArray();
             if (!installed.Dependencies.SequenceEqual(package.Dependencies.Order(StringComparer.Ordinal))
@@ -216,7 +219,12 @@ internal sealed class ExtensionInstallTargetInspector
                 .Select(package => new ExtensionOwnership(
                 package.Id, package.Version, sourceIdentity,
                 [.. package.Dependencies.Order(StringComparer.Ordinal)],
-                [.. package.Payload.Select(RequiredTargetPath).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)],
+                [.. package.Payload.Select(RequiredTargetPath)
+                    .Concat(currentPackages.TryGetValue(package.Id, out var prior)
+                        ? prior.Paths.Where(path => WorkspaceRemovals.IsPathRemoved(path, input.Settings))
+                        : [])
+                    .Distinct(StringComparer.Ordinal)
+                    .Order(StringComparer.Ordinal)],
                 input.Ownership.Document.Extensions.FirstOrDefault(current => current.Id == package.Id)?.Regions ?? [])))
             .OrderBy(package => package.Id, StringComparer.Ordinal)
             .ToImmutableArray();

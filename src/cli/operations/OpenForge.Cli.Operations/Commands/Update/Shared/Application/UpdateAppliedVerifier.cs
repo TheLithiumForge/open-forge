@@ -51,6 +51,7 @@ internal sealed class UpdateAppliedVerifier(UpdatePlanBuilder planBuilder)
         if (current.Execution is not { } verified
             || verified.Build.Plan is not { IsEffectFree: true }
             || verified.Effects.Count != 0
+            || verified.DirectoryCreations.Count != 0
             || applied.OwnershipChange is not null && (verified.OwnershipRead.Snapshot is not { } snapshot
                 || !snapshot.Bytes.AsSpan().SequenceEqual(applied.OwnershipChange.IntendedBytes.AsSpan()))
             || applied.OwnershipChange is null && (applied.OwnershipRead.State != verified.OwnershipRead.State

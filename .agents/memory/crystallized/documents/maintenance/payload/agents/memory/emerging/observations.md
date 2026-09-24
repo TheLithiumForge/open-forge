@@ -9,7 +9,7 @@ open-forge:
 
 ## Source
 
-[`src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md`](../../../../../../../../../src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md) is the canonical installed Observations `entrypoint` supplied by the Orchestration Extension. The repository [Observations `entrypoint`](../../../../../../../emerging/observations/_observations.md) dogfoods the same authored contract and adds repository observations through generated `Entries`.
+[`src/extensions/observations-and-handoffs/content/.agents/memory/emerging/observations/_observations.md`](../../../../../../../../../src/extensions/observations-and-handoffs/content/.agents/memory/emerging/observations/_observations.md) is the canonical installed Observations `entrypoint` supplied by the Observations and Handoffs Extension. The repository [Observations `entrypoint`](../../../../../../../emerging/observations/_observations.md) dogfoods the same authored contract and adds repository observations through generated `Entries`.
 
 The [Emerging state contract](../../../../../framework/memory/emerging.md) defines the observation capture threshold and recurrence boundary. The [transition contract](../../../../../framework/memory/transitions.md#capture-and-consolidation) owns consolidation and promotion.
 
@@ -25,4 +25,4 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Verification
 
-- Source/payload parity plus installation and index coverage verify Observations classification and generated navigation. Installation coverage distinguishes Core alone from the Orchestration Extension; source review confirms the on-demand Extension classification. The frozen MVP does not test or implement that behavior.
+- Source/payload parity plus installation and index coverage verify Observations classification and generated navigation. Installation coverage distinguishes Core alone from the Observations and Handoffs Extension; source review confirms the on-demand Extension classification. The frozen MVP does not test or implement that behavior.

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "command": "library detach",
-  "status": "invalid-input",
+  "status": "completed",
   "detail": "minimal",
   "filter": null,
   "workspace": {
@@ -9,36 +9,23 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "Cannot detach unknown: No Library has the ID unknown.",
-    "kind": "cannot-start"
+    "headline": "Recorded removal intent for Library unknown.",
+    "kind": "done"
   },
-  "findings": [
+  "findings": [],
+  "effects": [
     {
-      "severity": "error",
-      "code": "library-detach.unknown-id",
-      "title": "Library ID is unknown",
-      "message": "No Library has the ID unknown.",
-      "subject": {
-        "kind": "identifier",
-        "path": null,
-        "id": "unknown",
-        "location": null
-      },
-      "category": null,
-      "actions": [
-        {
-          "kind": "command",
-          "command": "open-forge library list",
-          "reason": "Choose a registered Library ID."
-        }
-      ]
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
     }
   ],
-  "effects": [],
   "counts": {
     "linksRemoved": 0,
-    "sectionsUpdated": 0,
-    "errors": 1
+    "sectionsUpdated": 0
   },
   "limitations": [],
   "data": {
@@ -50,19 +37,22 @@
     "permissions": {
       "required": [],
       "missing": [],
-      "decision": "not-evaluated",
-      "action": "none",
-      "outcome": "not-requested"
+      "decision": "not-required",
+      "action": "create",
+      "outcome": "verified"
     },
-    "effects": []
+    "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "kind": "setting",
+        "action": "create",
+        "outcome": "done"
+      }
+    ]
   },
   "recovery": {
-    "path": null,
-    "disposition": "not-required"
+    "path": "<recovery-bundle>",
+    "disposition": "removed"
   },
-  "next": {
-    "kind": "command",
-    "command": "open-forge library list",
-    "reason": "Choose a registered Library ID."
-  }
+  "next": null
 }

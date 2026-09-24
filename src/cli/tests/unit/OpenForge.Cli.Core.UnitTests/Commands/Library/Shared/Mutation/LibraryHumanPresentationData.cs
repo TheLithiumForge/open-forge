@@ -29,6 +29,7 @@ internal static class LibraryHumanPresentationData
             GeneratedRegions = [],
             RecordEffect = LibraryRecordEffect.Replace,
             RecordExpected = new() { Kind = LibraryExpectedStateKind.OrdinaryFile, Length = 123, Sha256 = "record-before-hash", RawRelativeTarget = null },
+            SettingsChange = null,
         };
     }
 

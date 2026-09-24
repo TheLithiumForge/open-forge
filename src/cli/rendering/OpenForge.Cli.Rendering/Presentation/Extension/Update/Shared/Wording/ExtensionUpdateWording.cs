@@ -160,6 +160,12 @@ internal static class ExtensionUpdateWording
         ExtensionUpdateFindingCode.RecoveryFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryFailed(),
         ExtensionUpdateFindingCode.OperationFailed => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionUpdateFailed(),
         ExtensionUpdateFindingCode.Interrupted => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionUpdateWasCancelled(),
+        ExtensionUpdateFindingCode.SettingsInvalid => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleWorkspaceSettingsAreInvalid(),
+        ExtensionUpdateFindingCode.SettingsUnavailable => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleWorkspaceSettingsAreUnavailable(),
+        ExtensionUpdateFindingCode.RemovedExtension => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionIsExcludedByWorkspaceSettings(),
+        ExtensionUpdateFindingCode.BulkExcluded => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleBulkUpdateSkippedAnExcludedExtension(),
+        ExtensionUpdateFindingCode.PathExcluded => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionPathIsExcluded(),
+        ExtensionUpdateFindingCode.ExcludedAncestor => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleRequiredParentIsExcluded(),
         _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The Extension Update finding code is not defined."),
     };
 
@@ -210,6 +216,12 @@ internal static class ExtensionUpdateWording
             ExtensionUpdateFindingCode.RecoveryFailed => CliFindingWording.RecoveryFailed(),
             ExtensionUpdateFindingCode.OperationFailed => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.TitleExtensionUpdate(), finding.Cause),
             ExtensionUpdateFindingCode.Interrupted => Cancelled(),
+            ExtensionUpdateFindingCode.SettingsInvalid
+                or ExtensionUpdateFindingCode.SettingsUnavailable
+                or ExtensionUpdateFindingCode.RemovedExtension
+                or ExtensionUpdateFindingCode.BulkExcluded
+                or ExtensionUpdateFindingCode.PathExcluded
+                or ExtensionUpdateFindingCode.ExcludedAncestor => finding.Cause,
             _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The Extension Update finding code is not defined."),
         };
 

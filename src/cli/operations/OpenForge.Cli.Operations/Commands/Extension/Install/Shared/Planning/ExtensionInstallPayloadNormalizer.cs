@@ -4,26 +4,26 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
 internal static class ExtensionInstallPayloadNormalizer
 {
     internal static ExtensionInstallPayloadNormalization Normalize(
-        IReadOnlyList<ExtensionPackageFact> packages)
+        IReadOnlyList<ExtensionPackageFact> packages,
+        WorkspaceSettingsDocument settings)
     {
+        ArgumentNullException.ThrowIfNull(packages);
+        ArgumentNullException.ThrowIfNull(settings);
         var entries = new List<ExtensionInstallNormalizedPayload>();
+        var excludedPaths = new List<string>();
         foreach (var package in packages)
         {
             foreach (var file in package.Payload)
             {
                 var target = file.TargetPath ?? file.Path;
-                var availabilityFinding = ReadAvailabilityFinding(file, target);
-                if (availabilityFinding is not null)
-                {
-                    return Stop(availabilityFinding);
-                }
-
                 if (!PortableWorkspacePath.TryNormalize(file.TargetPath, out var normalized)
                     || !ExtensionDestinationPolicy.IsAllowed(normalized))
                 {
@@ -31,6 +31,18 @@ internal static class ExtensionInstallPayloadNormalizer
                         "The Extension destination is not an eligible workspace file.", target);
                 }
                 var portableKey = PortableWorkspacePath.CreatePortableKey(normalized);
+
+                if (WorkspaceRemovals.IsPathRemoved(normalized, settings))
+                {
+                    excludedPaths.Add(normalized);
+                    continue;
+                }
+
+                var availabilityFinding = ReadAvailabilityFinding(file, target);
+                if (availabilityFinding is not null)
+                {
+                    return Stop(availabilityFinding);
+                }
 
                 entries.Add(new ExtensionInstallNormalizedPayload(package.Id, file, normalized, portableKey));
             }
@@ -80,7 +92,10 @@ internal static class ExtensionInstallPayloadNormalizer
                         Bytes = entry.File.Bytes,
                     }))],
             })).ToArray();
-        return new ExtensionInstallPayloadNormalization(normalizedPackages, finding: null);
+        return new ExtensionInstallPayloadNormalization(
+            normalizedPackages,
+            finding: null,
+            excludedPaths);
     }
 
     private static ExtensionInstallFinding? ReadAvailabilityFinding(

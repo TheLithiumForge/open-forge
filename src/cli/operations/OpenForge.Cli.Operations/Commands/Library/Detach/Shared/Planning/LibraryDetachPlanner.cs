@@ -12,6 +12,10 @@ using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Library.Detach.Shared.Planning;
@@ -26,18 +30,36 @@ internal static class LibraryDetachPlanner
         cancellationToken.ThrowIfCancellationRequested();
 
         var findings = ImmutableArray.CreateBuilder<LibraryDetachFinding>();
-        if (input.Record.State != LibraryRegistrationReadState.Malformed
-            && input.Record.OwnershipObservation is { } observation)
+        if (input.Settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
+        {
+            Add(findings,
+                input.Settings.State == WorkspaceSettingsReadState.Invalid
+                    ? LibraryDetachFindingCode.PermissionInvalid
+                    : LibraryDetachFindingCode.PermissionUnavailable,
+                CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value,
+                input.Settings.LogicalPath,
+                input.Settings.Cause ?? "Workspace settings are not available for a safe Library operation.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
+        if (input.Ownership.State is WorkspaceOwnershipReadState.Invalid or WorkspaceOwnershipReadState.Unavailable)
+        {
+            Add(findings,
+                input.Ownership.State == WorkspaceOwnershipReadState.Invalid
+                    ? LibraryDetachFindingCode.RecordInvalid
+                    : LibraryDetachFindingCode.RecordUnavailable,
+                CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value,
+                input.Ownership.LogicalPath,
+                input.Ownership.Cause ?? "The workspace ownership lock is not available for a safe Library operation.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
+        if (input.Record.OwnershipObservation is { } observation)
         {
             Add(findings, LibraryDetachFindingCode.OwnershipObservation, CliSemanticStatus.Complete,
                 input.Request.LibraryId.Value, path: null, observation);
-            return Empty(input, LibraryPlanState.Complete, findings);
         }
         var selected = ReadRecord(input, findings, out var record);
-        if (selected is null && findings.Any(finding => finding.Code == LibraryDetachFindingCode.UnknownId))
-        {
-            return Empty(input, LibraryPlanState.Blocked, findings);
-        }
 
         if (input.GeneratedNavigationIssue is { } navigationIssue)
         {
@@ -52,6 +74,17 @@ internal static class LibraryDetachPlanner
                 input.Request.LibraryId.Value,
                 navigationIssue.Path,
                 navigationIssue.Cause);
+        }
+        foreach (var change in input.GeneratedRegionChanges)
+        {
+            var path = Path.GetRelativePath(input.Request.Workspace.LexicalRoot, change.LogicalPath)
+                .Replace(Path.DirectorySeparatorChar, '/');
+            if (WorkspaceRemovals.IsPathRemoved(path, input.Settings.Document))
+            {
+                Add(findings, LibraryDetachFindingCode.GeneratedNavigationBlocked, CliSemanticStatus.Blocked,
+                    input.Request.LibraryId.Value, path,
+                    "Generated navigation or one of its required ancestors is excluded by workspace settings.");
+            }
         }
 
         var destinations = selected is null ? [] : LibraryPathIdentity.Mappings(selected)
@@ -71,7 +104,8 @@ internal static class LibraryDetachPlanner
 
         var boundary = LibraryMutationPlanningPolicy.EvaluateConsumerBoundary(
             input.ConsumerBoundary,
-            allowMissingAncestors: false);
+            allowMissingAncestors: false,
+            allowMissingConsumerRoot: input.Settings.State == WorkspaceSettingsReadState.Absent);
         if (boundary.State != LibraryPlanState.Complete)
         {
             Add(findings, LibraryDetachFindingCode.ConsumerBlocked,
@@ -92,28 +126,31 @@ internal static class LibraryDetachPlanner
         }
 
         var state = PlanState(findings);
-        if (state != LibraryPlanState.Complete
-            || selected is null
-            || record is null)
+        if (state != LibraryPlanState.Complete)
         {
             return Empty(input, state, findings);
         }
 
-        var remaining = record.Libraries.Where(library => library.Id != selected.Id).ToImmutableArray();
-        LibraryRegistrationSet? intendedRecord = remaining.Length == 0 ? null : LibraryRegistrationSet.Create(remaining);
-        var ownershipChange = LibraryMutationPlanningPolicy.CreateOwnershipChange(
-            input.Ownership,
-            [.. (intendedRecord?.Libraries ?? []).Select(library => new LibraryOwnership(
-                library.Id.Value,
-                library.SourceRoot.Value,
-                library.DestinationRoot.Value,
-                [.. library.Paths.Select(path => path.Value)]))]);
+        LibraryRegistrationSet? intendedRecord = record;
+        PlannedFileChange? ownershipChange = null;
+        if (selected is not null && record is not null)
+        {
+            var remaining = record.Libraries.Where(library => library.Id != selected.Id).ToImmutableArray();
+            intendedRecord = remaining.Length == 0 ? null : LibraryRegistrationSet.Create(remaining);
+            ownershipChange = LibraryMutationPlanningPolicy.CreateOwnershipChange(
+                input.Ownership,
+                [.. (intendedRecord?.Libraries ?? []).Select(library => new LibraryOwnership(
+                    library.Id.Value,
+                    library.SourceRoot.Value,
+                    library.DestinationRoot.Value,
+                    [.. library.Paths.Select(path => path.Value)]))]);
+        }
         return new LibraryDetachPlan
         {
             Permissions = null,
             Input = input,
             State = LibraryPlanState.Complete,
-            Directories = [],
+            Directories = boundary.Directories,
             Links = links,
             GeneratedRegions = OrderGenerated(input.GeneratedRegionChanges),
             OwnershipChange = ownershipChange,
@@ -132,14 +169,12 @@ internal static class LibraryDetachPlanner
             && input.Record.Record is { } completeRecord)
         {
             record = completeRecord;
-            var selected = completeRecord.Libraries.FirstOrDefault(library => library.Id == input.Request.LibraryId);
-            if (selected is null)
-            {
-                Add(findings, LibraryDetachFindingCode.UnknownId, CliSemanticStatus.Invalid,
-                    input.Request.LibraryId.Value, path: null, "The Library ID is not registered.");
-            }
+            return completeRecord.Libraries.FirstOrDefault(library => library.Id == input.Request.LibraryId);
+        }
 
-            return selected;
+        if (input.Record.State == LibraryRegistrationReadState.Missing)
+        {
+            return null;
         }
 
         var (code, status, cause) = input.Record.State switch
@@ -156,10 +191,7 @@ internal static class LibraryDetachPlanner
                 LibraryDetachFindingCode.RecordBlocked,
                 CliSemanticStatus.Blocked,
                 input.Record.Cause ?? "The Library record is unsafe."),
-            LibraryRegistrationReadState.Missing => (
-                LibraryDetachFindingCode.UnknownId,
-                CliSemanticStatus.Invalid,
-                "The Library ID is not registered."),
+            LibraryRegistrationReadState.Missing => throw new InvalidOperationException("A missing Library record was handled above."),
             _ => (
                 LibraryDetachFindingCode.RecordBlocked,
                 CliSemanticStatus.Blocked,

@@ -23,9 +23,9 @@ internal enum WorkspaceOwnershipReadState
 /// absent, unintelligible, or unreadable file yields no recorded ownership, so a
 /// caller always has a document to act on and reports the state separately.
 ///
-/// Lock trouble is a finding, never a reason to refuse a command. A command that
-/// finds the lock missing or stale rebuilds what it can, does its work, and says
-/// so.
+/// A missing lock is known empty. Invalid or unavailable ownership cannot prove
+/// that a path is unowned. Each command applies its accepted safety policy;
+/// removal blocks when required ownership cannot be established.
 ///
 /// <see cref="Snapshot"/> carries the exact bytes and resolved physical path the
 /// mutation layer needs to plan a replacement.
@@ -54,8 +54,8 @@ internal sealed record WorkspaceOwnershipRead(
             Cause: null);
 
     /// <summary>
-    /// Whether the recorded ownership can be acted on as written. False means the
-    /// caller should rebuild best-effort and report, not stop.
+    /// Whether a present record can be acted on as written. Callers distinguish
+    /// known empty absence from invalid or unavailable observations separately.
     /// </summary>
     internal bool IsTrustworthy => State is WorkspaceOwnershipReadState.Complete;
 }

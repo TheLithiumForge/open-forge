@@ -15,6 +15,11 @@ bodies while forming the source/topology input and performs no filesystem
 effect. Commands retain selection, finding, status, write policy, application,
 and result meaning.
 
+Framework `removedFiles` selection happens before projection. An excluded
+concrete destination is not passed as a payload host or current generated-region
+host, so projection cannot rewrite bytes in that file. Other selected hosts may
+still project their own navigation from the remaining intended source topology.
+
 ## Callable Surface
 
 The intended-membership formation overload is exactly:

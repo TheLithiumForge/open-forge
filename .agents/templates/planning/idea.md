@@ -6,9 +6,11 @@ open-forge:
 
 # {Possibility Worth Exploring}
 
-<!-- TEMPLATE: Use for a possibility worth revisiting, not an approved task or commitment.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Use for a possibility worth revisiting, not an approved task or commitment.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Opportunity
 

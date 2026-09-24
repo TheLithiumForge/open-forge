@@ -22,7 +22,7 @@ public sealed class LibraryDetachBeforeOutputSnapshotTests
     [InlineData("detached", (int)CliSemanticStatus.Complete)]
     [InlineData("detached-no-links", (int)CliSemanticStatus.Complete)]
     [InlineData("dry-run", (int)CliSemanticStatus.Complete)]
-    [InlineData("unknown-id", (int)CliSemanticStatus.Invalid)]
+    [InlineData("unknown-id", (int)CliSemanticStatus.Complete)]
     [InlineData("registered-link-gone", (int)CliSemanticStatus.Attention)]
     [InlineData("changed-occupant", (int)CliSemanticStatus.Attention)]
     [InlineData("destination-protected", (int)CliSemanticStatus.Blocked)]
@@ -92,10 +92,12 @@ public sealed class LibraryDetachBeforeOutputSnapshotTests
             Assert.Empty(result.Result.Plan.Links);
             Assert.Equal(
                 before
-                    .Where(pair => !string.Equals(pair.Key, LibraryMutationWorkspace.RecordPath, StringComparison.Ordinal))
+                .Where(pair => !string.Equals(pair.Key, LibraryMutationWorkspace.RecordPath, StringComparison.Ordinal))
+                    .Where(pair => !string.Equals(pair.Key, ".agents/open-forge.json", StringComparison.Ordinal))
                     .ToArray(),
                 after
                     .Where(pair => !string.Equals(pair.Key, LibraryMutationWorkspace.RecordPath, StringComparison.Ordinal))
+                    .Where(pair => !string.Equals(pair.Key, ".agents/open-forge.json", StringComparison.Ordinal))
                     .ToArray());
             if (situation == "registered-link-gone")
             {
@@ -110,6 +112,21 @@ public sealed class LibraryDetachBeforeOutputSnapshotTests
 
             using var ownership = JsonDocument.Parse(File.ReadAllText(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
             Assert.Empty(ownership.RootElement.GetProperty("libraries").EnumerateArray());
+            using var settings = JsonDocument.Parse(File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json")));
+            Assert.Equal("team-knowledge", Assert.Single(settings.RootElement.GetProperty("removedLibraries").EnumerateArray()).GetString());
+        }
+        else if (situation == "unknown-id")
+        {
+            Assert.NotNull(new FileInfo(workspace.Absolute(target)).LinkTarget);
+            Assert.Equal(before[LibraryMutationWorkspace.RecordPath], workspace.Snapshot()[LibraryMutationWorkspace.RecordPath]);
+            using var settings = JsonDocument.Parse(File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json")));
+            Assert.Equal("unknown", Assert.Single(settings.RootElement.GetProperty("removedLibraries").EnumerateArray()).GetString());
+        }
+        else if (situation == "no-ownership-record")
+        {
+            Assert.False(File.Exists(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
+            using var settings = JsonDocument.Parse(File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json")));
+            Assert.Equal("team-knowledge", Assert.Single(settings.RootElement.GetProperty("removedLibraries").EnumerateArray()).GetString());
         }
         else Assert.Equal(before, workspace.Snapshot());
         if (situation == "write-failed-partial")

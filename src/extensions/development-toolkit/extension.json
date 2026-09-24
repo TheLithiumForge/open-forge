@@ -1,11 +1,12 @@
 {
   "id": "development-toolkit",
   "name": "Development Toolkit",
-  "description": "Project knowledge, planning, and development methods in one optional selection",
-  "version": "0.3.0",
+  "description": "Install Project Documents, Planning, Flows and Scenarios, and Development together",
+  "version": "0.4.0",
   "dependencies": [
     "development",
     "planning",
-    "project-documents"
+    "project-documents",
+    "scenarios"
   ]
 }

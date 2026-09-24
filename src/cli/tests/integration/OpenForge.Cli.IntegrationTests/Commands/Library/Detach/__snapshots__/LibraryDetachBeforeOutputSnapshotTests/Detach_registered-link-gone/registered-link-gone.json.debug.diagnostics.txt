@@ -1,7 +1,7 @@
 status=completed-with-warnings
 mode=apply
 id=team-knowledge
-effects=1
+effects=2
 links=0
 sections=0
 registration-removed=True

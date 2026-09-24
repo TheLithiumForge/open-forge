@@ -28,11 +28,12 @@ internal static class UpdateReportSelector
         var unchanged = Unchanged(result, effects);
         var entries = Entries(result);
         var keptFiles = result.Findings.Count(finding => IsCode(finding, "RetiredContentPreserved"));
-        var changedFiles = effects.Length;
-        var replacedFiles = effects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Replace && !effect.IsRestore);
-        var restoredFiles = effects.Count(effect => effect.IsRestore);
-        var createdFiles = effects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Create);
-        var deletedFiles = effects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Delete);
+        var fileEffects = effects.Where(effect => !effect.IsDirectory).ToArray();
+        var changedFiles = fileEffects.Length;
+        var replacedFiles = fileEffects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Replace && !effect.IsRestore);
+        var restoredFiles = fileEffects.Count(effect => effect.IsRestore);
+        var createdFiles = fileEffects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Create);
+        var deletedFiles = fileEffects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Delete);
         var updatedSections = entries.Length;
         var completedChanges = effects.Count(effect => effect.ResultOutcome == UpdatePhysicalEffectOutcome.Verified);
         var suppressInterruptedFinding = result.Status == CliSemanticStatus.Interrupted && completedChanges == 0;
@@ -142,6 +143,7 @@ internal static class UpdateReportSelector
             ResultResidual = effect.Residual,
             IsRestore = isRestore,
             IsSection = isSection,
+            IsDirectory = effect.Kind == UpdatePhysicalEffectKind.Directory,
             Reason = Reason(effect, comparison),
         };
     }
@@ -166,6 +168,11 @@ internal static class UpdateReportSelector
 
     private static string? Reason(UpdatePhysicalEffect effect, UpdateComparison? comparison)
     {
+        if (effect.Kind == UpdatePhysicalEffectKind.Directory)
+        {
+            return null;
+        }
+
         var change = effect.Changes.FirstOrDefault();
         if (change?.Action == UpdateLogicalChangeAction.Restore
             || comparison?.CurrentState == UpdateComparisonCurrentState.Missing)
@@ -290,6 +297,23 @@ internal static class UpdateReportSelector
 
     private static string RowWording(UpdateDataEffect effect, bool preview)
     {
+        if (effect.IsDirectory)
+        {
+            var directoryAction = preview
+                ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelCreate()
+                : effect.ResultOutcome switch
+                {
+                    UpdatePhysicalEffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
+                    UpdatePhysicalEffectOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
+                    UpdatePhysicalEffectOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFailed(),
+                    UpdatePhysicalEffectOutcome.Planned => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelCreate(),
+                    UpdatePhysicalEffectOutcome.Verified => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelCreated(),
+                    _ => throw new ArgumentOutOfRangeException(nameof(effect)),
+                };
+            var directoryLabel = global::OpenForge.Cli.OutputText.Shared.SharedText.LabelDirectory();
+            return $"{directoryAction} {directoryLabel}";
+        }
+
         var action = preview
             ? effect.ResultAction switch
             {
@@ -569,7 +593,12 @@ internal static class UpdateReportSelector
         => new()
         {
             Path = effect.Path,
-            Kind = effect.IsSection ? CliEffectKind.Section : CliEffectKind.File,
+            Kind = effect switch
+            {
+                { IsDirectory: true } => CliEffectKind.Directory,
+                { IsSection: true } => CliEffectKind.Section,
+                _ => CliEffectKind.File,
+            },
             Action = effect.IsRestore
                 ? CliEffectAction.Restored
                 : effect.ResultAction switch

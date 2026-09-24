@@ -140,6 +140,17 @@ internal enum RouteRemoveRecoveryState
     Unknown,
 }
 
+internal enum RouteRemovePersistenceOutcome
+{
+    NotEstablished,
+    Planned,
+    Applied,
+    Unchanged,
+    NotStarted,
+    Failed,
+    Unknown,
+}
+
 internal enum RouteRemoveVerificationState
 {
     NotRequested,
@@ -181,4 +192,6 @@ internal enum RouteRemoveFindingCode
     RecoveryFailed,
     OperationFailed,
     Interrupted,
+    SettingsUnavailable,
+    ProtectedTarget,
 }

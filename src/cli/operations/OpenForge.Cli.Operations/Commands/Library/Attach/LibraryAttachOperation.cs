@@ -29,6 +29,10 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -111,7 +115,8 @@ internal sealed class LibraryAttachOperation
         var permissions = await _permissions.DetermineAsync(new LibraryPermissionRequest
         {
             Workspace = request.Workspace,
-            Library = selected,
+            LibraryId = request.LibraryId,
+            SettingsObservation = observations.Settings,
             Targets = targets,
             ExplicitGrantPaths = request.Allow,
             AllowPrompt = request.AllowPrompt && !request.Automatic && request.Mode != LibraryMode.DryRun,
@@ -173,6 +178,10 @@ internal sealed class LibraryAttachOperation
             resolver,
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
+        var settings = await WorkspaceSettingsReader.ReadAsync(
+            resolver,
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
         var record = LibraryRegistrationReader.Read(ownership);
         var sourceObservation = LibrarySourceRootReader.Read(
             resolver,
@@ -191,7 +200,11 @@ internal sealed class LibraryAttachOperation
                 ExcludedPaths = [],
                 UnavailablePaths = [],
             };
-        var entries = source.Inventory?.Entries ?? [];
+        var entries = (source.Inventory?.Entries ?? []).Where(entry =>
+        {
+            var destination = LibraryPathIdentity.Map(request.SourceRoot, request.DestinationRoot, entry.SourcePath).DestinationPath.Value;
+            return !WorkspaceRemovals.IsPathRemoved(destination, settings.Document);
+        }).ToImmutableArray();
         var mappings = LibraryMutationOperationSupport.ObserveMappings(
                 resolver,
                 new LibraryMappingSetRequest
@@ -211,9 +224,22 @@ internal sealed class LibraryAttachOperation
                     SelectedLibrary = LibraryRegistration.Create(request.LibraryId, request.SourceRoot, request.DestinationRoot, [.. entries.Select(entry => entry.SourcePath)]),
                     CurrentRecord = record.Record,
                     IntendedEntries = entries,
+                    Settings = settings.Document,
                 },
                 cancellationToken).ConfigureAwait(false)
             : new LibraryGeneratedNavigationRead([], Issue: null);
+        if (navigation.Issue is null && navigation.Changes.FirstOrDefault(change =>
+                WorkspaceRemovals.IsPathRemoved(
+                    Path.GetRelativePath(request.Workspace.LexicalRoot, change.LogicalPath)
+                        .Replace(Path.DirectorySeparatorChar, '/'),
+                    settings.Document)) is { } excludedHost)
+        {
+            navigation = new LibraryGeneratedNavigationRead([], new LibraryGeneratedNavigationIssue(
+                LibraryGeneratedNavigationIssueState.Blocked,
+                Path.GetRelativePath(request.Workspace.LexicalRoot, excludedHost.LogicalPath)
+                    .Replace(Path.DirectorySeparatorChar, '/'),
+                "Generated navigation is excluded by workspace settings and cannot be changed safely."));
+        }
 
         var ancestors = LibraryMutationOperationSupport.ReadAncestors(
             request.Workspace,
@@ -227,6 +253,7 @@ internal sealed class LibraryAttachOperation
             Source = source,
             Mappings = mappings,
             Ownership = ownership,
+            Settings = settings,
             GeneratedRegionChanges = navigation.Changes,
             GeneratedNavigationIssue = navigation.Issue,
         };

@@ -85,11 +85,35 @@ internal sealed class RouteRemovePlanBuilder(
             });
         }
 
+        var navigationPlan = navigation.Plan
+            ?? throw new InvalidOperationException("Successful Route Remove navigation planning requires its plan.");
+        var persistence = RouteRemovePersistencePlanner.Build(facts);
+        if (persistence.Finding is { } persistenceFinding)
+        {
+            var formation = RouteRemoveBoundary.Start(request) with
+            {
+                Source = resolved.Source,
+                Subject = new RouteRemoveSubject { Kind = resolved.Kind },
+                Ownership = RouteRemoveOwnershipProjector.Project(facts.Ownership, resolved),
+                References = referencePlan.References,
+                GeneratedNavigation = navigationPlan.GeneratedNavigation,
+            };
+            return new RouteRemovePlanBuild(
+                plan: null,
+                RouteRemoveBoundary.Stop(
+                    formation,
+                    persistenceFinding.Code,
+                    persistenceFinding.Status,
+                    persistenceFinding.Target,
+                    persistenceFinding.Cause));
+        }
+
         var projection = RouteRemoveEffectPlanner.Build(
             facts,
             referencePlan,
-            navigation.Plan
-                ?? throw new InvalidOperationException("Successful Route Remove navigation planning requires its plan."));
+            navigationPlan,
+            persistence.Plan
+                ?? throw new InvalidOperationException("Successful Route Remove persistence planning requires its plan."));
         var plan = RouteRemovePlanProjector.Build(projection, facts);
         return new RouteRemovePlanBuild(plan, plan.Preview);
     }
@@ -100,6 +124,17 @@ internal sealed class RouteRemovePlanBuilder(
     {
         ArgumentNullException.ThrowIfNull(plan);
         return _absencePlanner.BuildPostRemoveAsync(
+            RouteRemoveAbsenceScope.FromPlan(plan),
+            plan,
+            cancellationToken);
+    }
+
+    internal ValueTask<RouteRemovePlanBuild> BuildContentAbsenceAsync(
+        RouteRemovePlan plan,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+        return _absencePlanner.BuildPostContentAsync(
             RouteRemoveAbsenceScope.FromPlan(plan),
             plan,
             cancellationToken);

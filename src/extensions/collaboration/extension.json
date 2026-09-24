@@ -1,7 +1,7 @@
 {
   "id": "collaboration",
   "name": "Collaboration",
-  "description": "Explore choices and match collaboration depth to the decision",
-  "version": "0.3.0",
+  "description": "Explore ideas, compare alternatives, and clarify decisions through discussion and a brainstorming template",
+  "version": "0.4.0",
   "dependencies": []
 }

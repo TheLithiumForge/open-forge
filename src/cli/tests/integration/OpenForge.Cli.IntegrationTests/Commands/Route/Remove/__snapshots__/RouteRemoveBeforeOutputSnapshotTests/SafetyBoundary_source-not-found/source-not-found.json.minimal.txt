@@ -29,7 +29,18 @@
       "path": ".agents/missing/_missing.md"
     },
     "removed": [],
-    "detachedLinks": []
+    "detachedLinks": [],
+    "settings": {
+      "outcome": "not-established",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [],
+      "directories": []
+    },
+    "ownershipRelease": {
+      "outcome": "not-established",
+      "claims": []
+    }
   },
   "recovery": null,
   "next": null

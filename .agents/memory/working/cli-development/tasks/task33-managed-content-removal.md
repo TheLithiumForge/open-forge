@@ -8,6 +8,11 @@ open-forge:
 
 ## Task state
 
+[Task 50](task50-unified-remove.md) now implements this requirement through the
+unified root command under the maintainer's 2026-09-23 authorization. Its current
+specification resolves the command shape, settings exclusions and explicit-file
+ownership release. The questions below retain their earlier investigation context.
+
 - State: **Open, not started. The central decision is made.** Raised by the
   maintainer on 2026-09-16 while checking the "almost all files are removable on
   demand" promise, and ruled the same day.

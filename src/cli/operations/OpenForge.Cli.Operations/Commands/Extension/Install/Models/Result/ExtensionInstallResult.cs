@@ -48,6 +48,11 @@ internal enum ExtensionInstallFindingCode
     OperationFailed,
     Interrupted,
     MetadataProjectionSkipped,
+    SettingsInvalid,
+    SettingsUnavailable,
+    RemovedExtension,
+    PathExcluded,
+    ExcludedAncestor,
 }
 
 internal enum ExtensionInstallSelectionKind

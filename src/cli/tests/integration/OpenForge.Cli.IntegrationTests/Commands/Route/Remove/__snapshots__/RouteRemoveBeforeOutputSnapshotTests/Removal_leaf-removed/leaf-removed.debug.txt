@@ -2,6 +2,8 @@ Removed .agents/guidance/old guide.md
 Workspace: <workspace>
   Removed .agents/guidance/old guide.overwrite.md
   Entry removed from .agents/guidance/_guidance.md
+  Recorded persistent route removal for file .agents/guidance/old guide.md, file .agents/guidance/old guide.overwrite.md in .agents/open-forge.json.
+  No managed content ownership claims needed release.
     Before: <sha256>
     After: <sha256>
     Before: <sha256>

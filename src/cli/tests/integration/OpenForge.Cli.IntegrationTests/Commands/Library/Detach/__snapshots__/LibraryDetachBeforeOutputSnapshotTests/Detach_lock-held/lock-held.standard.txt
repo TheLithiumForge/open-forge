@@ -4,7 +4,9 @@ Workspace: <workspace>
          Another Open Forge command holds the workspace lock. Nothing was changed.
          open-forge doctor
          Inspect the reported Library state.
+  .agents/open-forge.json       settings updated
   .agents/directives/review.md  not started
   .agents/open-forge.lock.json  not started
+  .agents/open-forge.json  settings updated
   Inspect the reported Library state.
 Next: open-forge doctor

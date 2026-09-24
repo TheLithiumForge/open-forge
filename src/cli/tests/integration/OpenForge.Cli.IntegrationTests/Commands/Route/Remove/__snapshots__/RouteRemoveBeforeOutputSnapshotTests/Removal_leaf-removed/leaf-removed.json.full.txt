@@ -64,6 +64,20 @@
       ".agents/guidance/old guide.overwrite.md"
     ],
     "detachedLinks": [],
+    "settings": {
+      "outcome": "applied",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [
+        ".agents/guidance/old guide.md",
+        ".agents/guidance/old guide.overwrite.md"
+      ],
+      "directories": []
+    },
+    "ownershipRelease": {
+      "outcome": "unchanged",
+      "claims": []
+    },
     "scan": {
       "filesScanned": 11,
       "occurrences": 1

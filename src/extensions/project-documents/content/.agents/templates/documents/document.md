@@ -6,9 +6,11 @@ open-forge:
 
 # {Subject}
 
-<!-- TEMPLATE: Use for a subject with a useful current answer. Put a draft in a candidate route until accepted.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Use for a subject with a useful current answer. Put a draft in a candidate route until accepted.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Summary
 
@@ -30,4 +32,6 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 {Link to the sources that own related detail and say what each defines. Link to Decisions for useful rationale rather than retelling their full history.}
 
-<!-- Add maintenance triggers when this is an Evergreen source. Do not add an expiry or schedule merely to fill a field. -->
+{
+Add maintenance triggers when this is an Evergreen source. Do not add an expiry or schedule merely to fill a field.
+}

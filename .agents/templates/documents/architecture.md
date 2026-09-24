@@ -6,9 +6,11 @@ open-forge:
 
 # {Subject} Architecture
 
-<!-- TEMPLATE: Describe a coherent current or explicitly proposed architecture. Use only views needed for this subject; narrower components may have their own sources.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Describe a coherent current or explicitly proposed architecture. Use only views needed for this subject; narrower components may have their own sources.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Overview And Scope
 

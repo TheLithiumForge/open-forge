@@ -101,7 +101,8 @@ internal static class RouteRemoveOperationFactory
         return new RouteRemoveEffectApplication(
             new FileChangeApplier(revalidator, validator),
             new DirectoryDeletionApplier(revalidator, validator),
-            validator);
+            validator,
+            resolver);
     }
 
     internal static RouteRemoveAppliedVerifier CreateAppliedVerifier()
@@ -112,7 +113,23 @@ internal static class RouteRemoveOperationFactory
             new RouteRemovePostRemoveObserver(
                 planBuilder,
                 new RouteRemovePostRemoveVerifier()),
-            validator);
+            validator,
+            new PhysicalPathResolver());
+    }
+
+    internal static RouteRemoveApplicationCompletion CreateApplicationCompletion()
+    {
+        var resolver = new PhysicalPathResolver();
+        var validator = new FileExpectationValidator(resolver);
+        var planBuilder = CreatePlanBuilder();
+        return new RouteRemoveApplicationCompletion(
+            new RouteRemoveAppliedVerifier(
+                new RouteRemovePostRemoveObserver(
+                    planBuilder,
+                    new RouteRemovePostRemoveVerifier()),
+                validator,
+                resolver),
+            CreateOwnershipPublisher(validator));
     }
 
     private static RouteRemovePlanBuilder CreatePlanBuilder(
@@ -197,13 +214,24 @@ internal static class RouteRemoveOperationFactory
             new RouteRemovePostRemoveObserver(
                 planBuilder,
                 new RouteRemovePostRemoveVerifier()),
-            expectationValidator);
+            expectationValidator,
+            new PhysicalPathResolver());
         return new RouteRemoveApplicationOperation(
             CreateLockManager(lockStoreRoot),
             new RouteRemovePlanRevalidator(planBuilder),
             CreateEffectApplication(expectationValidator),
-            new RouteRemoveApplicationCompletion(appliedVerifier));
+            new RouteRemoveApplicationCompletion(
+                appliedVerifier,
+                CreateOwnershipPublisher(expectationValidator)));
     }
+
+    private static RouteRemoveOwnershipPublisher CreateOwnershipPublisher(
+        FileExpectationValidator expectationValidator)
+        => new(
+            new FileChangeApplier(
+                new MutationRevalidator(expectationValidator),
+                expectationValidator),
+            expectationValidator);
 
     private static RouteRemoveEffectApplication CreateEffectApplication(
         FileExpectationValidator expectationValidator)
@@ -212,7 +240,8 @@ internal static class RouteRemoveOperationFactory
         return new RouteRemoveEffectApplication(
             new FileChangeApplier(revalidator, expectationValidator),
             new DirectoryDeletionApplier(revalidator, expectationValidator),
-            expectationValidator);
+            expectationValidator,
+            new PhysicalPathResolver());
     }
 
     private static WorkspaceLockManager CreateLockManager(

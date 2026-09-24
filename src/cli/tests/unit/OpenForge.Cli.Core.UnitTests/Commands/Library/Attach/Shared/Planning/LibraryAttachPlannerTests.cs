@@ -68,7 +68,7 @@ public sealed class LibraryAttachPlannerTests
 
     [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
-    public void UnreadableOwnershipDoesNotGateVerifiedNewLinks()
+    public void UnreadableOwnershipBlocksNewLinks()
     {
         var ownership = LibraryMutationPlanningData.WorkspaceOwnership() with
         {
@@ -82,10 +82,11 @@ public sealed class LibraryAttachPlannerTests
             Record = LibraryRegistrationReader.Read(ownership),
         };
         var plan = LibraryAttachPlanner.Plan(input, TestContext.Current.CancellationToken);
-        Assert.Equal(LibraryPlanState.Complete, plan.State);
-        Assert.Single(plan.Links);
+        Assert.Equal(LibraryPlanState.Blocked, plan.State);
+        Assert.Empty(plan.Links);
         Assert.Null(plan.OwnershipChange);
-        Assert.Contains(plan.Findings, finding => finding.Status == CliSemanticStatus.Complete);
+        Assert.Contains(plan.Findings, finding => finding.Code == LibraryAttachFindingCode.RecordUnavailable
+            && finding.Status == CliSemanticStatus.Blocked);
     }
 
     [Trait("Boundary", "Processing")]
@@ -159,7 +160,7 @@ public sealed class LibraryAttachPlannerTests
 
     [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
-    public void MalformedOwnershipWithReadableLockPlansVerifiedNewKnowledge()
+    public void MalformedOwnershipBlocksNewKnowledge()
     {
         var ownership = LibraryMutationPlanningData.WorkspaceOwnership() with
         {
@@ -174,17 +175,13 @@ public sealed class LibraryAttachPlannerTests
             Record = LibraryRegistrationReader.Read(ownership),
         };
         var plan = LibraryAttachPlanner.Plan(input, TestContext.Current.CancellationToken);
-        Assert.Equal(LibraryPlanState.Complete, plan.State);
-        Assert.Single(plan.Links);
+        Assert.Equal(LibraryPlanState.Blocked, plan.State);
+        Assert.Empty(plan.Links);
         Assert.Empty(plan.GeneratedRegions);
-        Assert.Equal(PlannedFileChangeKind.Replace, Assert.IsType<PlannedFileChange>(plan.OwnershipChange).Kind);
-        var registration = Assert.Single(Assert.IsType<LibraryRegistrationSet>(plan.IntendedRecord).Libraries);
-        Assert.Equal(LibraryMutationPlanningData.Id, registration.Id.Value);
-        Assert.Equal([LibraryMutationPlanningData.Leaf], registration.Paths.Select(path => path.Value));
-        Assert.Contains(plan.Findings, finding =>
-            finding.Code == LibraryAttachFindingCode.OwnershipObservation
-            && finding.Status == CliSemanticStatus.Complete);
-        Assert.DoesNotContain(plan.Findings, finding => finding.Code == LibraryAttachFindingCode.RecordInvalid);
+        Assert.Null(plan.OwnershipChange);
+        Assert.Null(plan.IntendedRecord);
+        Assert.Contains(plan.Findings, finding => finding.Code == LibraryAttachFindingCode.RecordInvalid
+            && finding.Status == CliSemanticStatus.Blocked);
     }
 
     [Trait("Boundary", "Processing")]
@@ -214,12 +211,8 @@ public sealed class LibraryAttachPlannerTests
         Assert.Null(plan.OwnershipChange);
         Assert.Null(plan.IntendedRecord);
         Assert.Contains(plan.Findings, finding =>
-            finding.Code == LibraryAttachFindingCode.DestinationCollision
+            finding.Code == LibraryAttachFindingCode.RecordInvalid
             && finding.Status == CliSemanticStatus.Blocked);
-        Assert.Contains(plan.Findings, finding =>
-            finding.Code == LibraryAttachFindingCode.OwnershipObservation
-            && finding.Status == CliSemanticStatus.Complete);
-        Assert.DoesNotContain(plan.Findings, finding => finding.Code == LibraryAttachFindingCode.RecordInvalid);
     }
 
     [Trait("Boundary", "Processing")]

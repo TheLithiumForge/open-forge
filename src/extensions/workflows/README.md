@@ -1,6 +1,6 @@
 # Workflow Support
 
-Select and follow an installed method through one native `use-workflow` Skill. Recipes remain separate procedures that can coordinate several existing Skills, tools, and agents.
+Find and follow installed workflows, or create your own using the supplied template. The native `use-workflow` Skill selects a method; each workflow can use the workspace's existing Skills, tools, and agents.
 
 ## What You Get
 
@@ -18,7 +18,7 @@ Select and follow an installed method through one native `use-workflow` Skill. R
 
 ## A Small Shared Entry
 
-This package owns the selector and the common catalogue, not every recipe. Planning, Project Documents, Development, and Orchestration own their respective recipe scopes and contribute complete files. Generated Entries expose the assembled selection without merging authored instructions.
+This package owns the selector and the common catalogue, not every recipe. Planning, Project Documents, Development, and Task Coordination own their respective recipe scopes and contribute complete files. Generated Entries expose the assembled selection without merging authored instructions.
 
 Installing Workflow Support alone provides the authoring convention and selector, with no shipped task recipe. Work directly when no installed method fits. Installation does not make workflows mandatory.
 

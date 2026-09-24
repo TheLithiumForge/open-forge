@@ -7,8 +7,7 @@ open-forge:
 
 # library sync Interface Contract
 
-Unavailable ownership is reported as `library-sync.ownership-observation`
-with `completed` status. This finding grants no ownership or mutation permission.
+A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
 
 ## Status And Authority
 
@@ -35,8 +34,9 @@ The sole generated state publication is `.agents/open-forge.lock.json`.
 The existing public record-effect and publication fields describe that lock
 write. Its Libraries section contains validated registration identities and
 source-relative paths; other ownership sections are preserved. No retired
-record is read, written, converted, or deleted. An unavailable lock write is
-skipped without blocking otherwise safe effects, and reports no publication.
+record is read, written, converted, or deleted. A planned lock publication is
+required for successful completion. If publication fails after earlier effects,
+the result reports the partial state and retains recovery evidence.
 Recovery protects the exact prior lock bytes before any effects; the planned
 lock publication remains last after verified link and generated-region effects.
 
@@ -91,7 +91,7 @@ requested library.
 
 | Operand or flag     | Role                                      | Accepted value                                  | Omission and repetition                                                                                         |
 | ------------------- | ----------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID in readable ownership is invalid; unavailable ownership is informational. |
+| `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID in readable ownership is invalid; unavailable required ownership blocks effects. |
 | `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.                                    |
 | `--automatic`      | Confirmation policy                       | Boolean flag with no value                      | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
 | Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                                                     |
@@ -121,10 +121,10 @@ The shared codec reads understood fields without requiring exact member sets,
 member order, or a matching schema version. Typed portable roots, eligible source
 suffixes, and unambiguous destinations remain required before using a claim.
 
-An absent, unreadable, nonordinary, malformed, or uninterpretable lock produces
-an informational ownership observation with `completed` status, no selected
-Library, and no effects. It never falls back to the old record or infers ownership
-from matching links. An unknown ID in a readable lock remains `invalid-input`.
+A missing lock supplies no registrations. Invalid or unavailable required
+ownership blocks synchronization before effects. Sync never falls back to the
+old record or infers ownership from matching links. An unknown ID in a readable
+lock remains `invalid-input`.
 Exact relative-link targets derive from both recorded roots and each suffix.
 The lock stores no target bytes or comparison hashes.
 
@@ -231,9 +231,9 @@ The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPath
 in `.agents/open-forge.json` after safe planning and before permission evaluation.
 It persists in non-interactive execution; `--dry-run` never writes it. A refused
 explicit write is reported and prevents content application. Eligible interactive
-approval offers always, once or cancel. Once changes no settings. Unknown or
-malformed settings withhold external grants while implicit `.agents/` admission
-remains independent; an always choice cannot overwrite malformed settings.
+approval offers always, once or cancel. Once adds no persistent permission grant.
+Invalid or unavailable required settings block the request, including destinations
+inside `.agents/`.
 
 This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
 for the union of complete current mapped inventory and registered destinations, including unchanged links and retirements. `.agents/**` leaves remain implicit.
@@ -248,7 +248,7 @@ source trees, ancestry, ownership and collision checks still apply per leaf.
 
 Human prompt-capable application can approve the displayed scopes once or always; explicit `--allow-path` can persist shared grants without a prompt. JSON,
 redirected execution and dry-run never prompt; missing or declined approval is
-`blocked` and cancellation is `cancelled`, without effects. Invalid or unsafe settings supply no external grants. A refused always approval reports its existing permission finding; implicit paths require no grant.
+`blocked` and cancellation is `cancelled`, without effects. Invalid or unavailable settings block planning before approval because removal exclusions cannot be determined safely. Missing settings supply no saved exclusions or external grants; implicit paths require no grant.
 
 `result.permissions` appears after `plan` and before `application`. It uses the
 shared destination-string, scope and receipt coordinates exactly. Required
@@ -424,6 +424,8 @@ The finding catalogue is:
 | library-sync.invalid-input                   | error    | invalid-input              |                                                                                                                     |                                   |
 | library-sync.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.confirmation-required`).                                                     | `open-forge library sync --automatic` |
 | library-sync.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.invalid-id`).                                                                                | `open-forge library list`         |
+| library-sync.library-removed | error | local | The selected Library ID is excluded by workspace settings. | Remove the named ID from `removedLibraries` in `.agents/open-forge.json`, then rerun the command. |
+| library-sync.path-excluded | info | local | The mapped destination is excluded and remains untouched. | none |
 | library-sync.unknown-id                      | error    | unknown-id                 |                                                                                                                     | `open-forge library list`         |
 | library-sync.ownership-observation           | info     | ownership-observation      |                                                                                                                     |                                   |
 | library-sync.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.record-invalid`).                                         | `open-forge doctor`               |

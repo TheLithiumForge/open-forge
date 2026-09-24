@@ -378,6 +378,7 @@ internal static class LibraryAttachReportSelector
         if (finding.Code is LibraryAttachFindingCode.InvalidInput
             or LibraryAttachFindingCode.InvalidId
             or LibraryAttachFindingCode.DuplicateId
+            or LibraryAttachFindingCode.LibraryRemoved
             or LibraryAttachFindingCode.ConfirmationRequired)
         {
             return new CliSubject(CliSubjectKind.Identifier, Id: id);
@@ -441,6 +442,9 @@ internal static class LibraryAttachReportSelector
                 => LibraryAttachWording.InvalidId(finding.LibraryId),
             LibraryAttachFindingCode.DuplicateId
                 => LibraryAttachWording.DuplicateId(id),
+            LibraryAttachFindingCode.LibraryRemoved
+                or LibraryAttachFindingCode.PathExcluded
+                => TrimSentence(finding.Cause),
             LibraryAttachFindingCode.SourceRootInvalid
                 => LibraryAttachWording.SourceRootInvalid(finding.Path ?? source),
             LibraryAttachFindingCode.SourceRootUnavailable
@@ -552,6 +556,15 @@ internal static class LibraryAttachReportSelector
 
         var first = result.Result.Findings.FirstOrDefault(finding => finding.Status == result.Status)
             ?? result.Result.Findings.FirstOrDefault();
+        if (first?.Code == LibraryAttachFindingCode.LibraryRemoved)
+        {
+            return new CliNextAction(
+                LibraryAttachWording.RemoveExcludedLibraryNext(first.LibraryId ?? result.Result.Identity.LibraryId ?? "the supplied ID"),
+                LibraryAttachWording.WorkspaceSettingsNextReason())
+            {
+                Kind = CliNextActionKind.Sentence,
+            };
+        }
         return first is null ? null : Action(result, first, progress);
     }
 
@@ -598,13 +611,13 @@ internal static class LibraryAttachReportSelector
         }
 
         var permissions = payload.Permissions;
-        if (permissions.Action is not ("none" or ""))
+        if (payload.Plan.SettingsChange is { } settingsChange)
         {
             effects.Add(new CliEffect
             {
-                Path = ".agents/open-forge.json",
+                Path = settingsChange.Path,
                 Kind = CliEffectKind.Setting,
-                Action = permissions.Action == "replace" ? CliEffectAction.Rewritten : CliEffectAction.Created,
+                Action = settingsChange.Action == "replace" ? CliEffectAction.Rewritten : CliEffectAction.Created,
                 Outcome = PermissionOutcome(result, permissions),
             });
         }

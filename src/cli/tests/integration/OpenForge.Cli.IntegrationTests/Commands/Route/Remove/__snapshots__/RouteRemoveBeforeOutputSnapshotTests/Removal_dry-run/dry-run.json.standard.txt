@@ -72,7 +72,21 @@
         "before": "Prefix [Old guide](.agents/guidance/old%20guide.md#part) suffix.",
         "after": "Prefix Old guide suffix."
       }
-    ]
+    ],
+    "settings": {
+      "outcome": "planned",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [
+        ".agents/guidance/old guide.md",
+        ".agents/guidance/old guide.overwrite.md"
+      ],
+      "directories": []
+    },
+    "ownershipRelease": {
+      "outcome": "unchanged",
+      "claims": []
+    }
   },
   "recovery": null,
   "next": null

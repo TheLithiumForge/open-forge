@@ -8,10 +8,13 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Completion;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using static OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application.ExtensionRemoveApplicationResultFactory;
 using static OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application.ExtensionRemovePlanComparer;
@@ -23,12 +26,14 @@ internal sealed class ExtensionRemoveApplicationOperation(
     ExtensionRemovePlanner planner,
     MutationRevalidator revalidator,
     ExtensionPermissionOperation permissions,
+    DirectoryCreationApplier directoryApplier,
     FileChangeApplier fileApplier)
 {
     private readonly ExtensionPermissionOperation _permissions = permissions;
     private readonly WorkspaceLockManager _lockManager = lockManager;
     private readonly ExtensionRemovePlanner _planner = planner;
     private readonly MutationRevalidator _revalidator = revalidator;
+    private readonly DirectoryCreationApplier _directoryApplier = directoryApplier;
     private readonly FileChangeApplier _fileApplier = fileApplier;
 
     internal async ValueTask<ExtensionRemoveResult> ExecuteAsync(
@@ -97,13 +102,34 @@ internal sealed class ExtensionRemoveApplicationOperation(
     }
 
     internal static IReadOnlyList<PlannedFileChange> ReadChanges(ExtensionRemovePlan plan)
-        => [.. plan.Effects
+    {
+        IEnumerable<PlannedFileChange> settingsChanges = plan.SettingsChange is { } settingsChange
+            ? [settingsChange]
+            : Array.Empty<PlannedFileChange>();
+        return [.. settingsChanges.Concat(plan.Effects
             .Select(effect => effect.FileChange)
             .Where(change => change is not null)
             .Cast<PlannedFileChange>()
             .Append(plan.OwnershipChange)
             .Where(change => change is not null)
-            .Cast<PlannedFileChange>()];
+            .Cast<PlannedFileChange>())];
+    }
+
+    internal static IReadOnlyList<PlannedDirectoryCreation> ReadDirectoryCreations(
+        ExtensionRemovePlan plan)
+        => [.. plan.Effects
+            .Select(effect => effect.DirectoryCreation)
+            .Where(creation => creation is not null)
+            .Cast<PlannedDirectoryCreation>()];
+
+    private static IReadOnlyList<PlannedFileChange> ReadChanges(ExtensionRemoveExecutionPlan execution)
+    {
+        IEnumerable<PlannedFileChange> settingsChanges = execution.SettingsChange is { } settingsChange
+            ? [settingsChange]
+            : Array.Empty<PlannedFileChange>();
+        return [.. settingsChanges.Concat(ReadChanges(execution.Content)
+            .Where(change => change != execution.Content.SettingsChange))];
+    }
 
     private async ValueTask<ExtensionRemoveResult> ExecuteUnderLeaseAsync(
         ExtensionRemoveExecutionPlan execution,
@@ -148,10 +174,16 @@ internal sealed class ExtensionRemoveApplicationOperation(
         MutationValidationResult validation;
         try
         {
-            validation = await _revalidator.ValidateAsync(
-                lease,
-                ReadChanges(plan),
-                cancellationToken).ConfigureAwait(false);
+            validation = execution.DirectoryCreations.IsEmpty
+                ? await _revalidator.ValidateAsync(
+                    lease,
+                    ReadChanges(execution),
+                    cancellationToken).ConfigureAwait(false)
+                : await _revalidator.ValidateAsync(
+                    lease,
+                    execution.DirectoryCreations,
+                    ReadChanges(execution),
+                    cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -236,27 +268,6 @@ internal sealed class ExtensionRemoveApplicationOperation(
         }
 
         var preparation = preparationResult.Preparation;
-        try
-        {
-            var permission = await _permissions.ApplyAsync(lease, execution.Permission, preparation, cancellationToken).ConfigureAwait(false);
-            planned = planned with { Permissions = permission.Result };
-            if (permission.Failure is { } failure)
-            {
-                return BeforeEffects(plan, planned, ExtensionRemoveDefinitions.ReadPermissionFinding(failure),
-                    "The consumer permission write was not verified.", RecoveryAfterFailure(preparation));
-            }
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            return BeforeEffects(plan, planned, ExtensionRemoveFindingCode.Interrupted,
-                "Extension permission application was interrupted.", RecoveryAfterFailure(preparation));
-        }
-        catch (Exception)
-        {
-            planned = planned with { Permissions = planned.Permissions with { Outcome = WorkspacePermissionOutcome.CompletionUnknown } };
-            return BeforeEffects(plan, planned, ExtensionRemoveFindingCode.PermissionWriteFailed,
-                "Consumer permission write completion could not be determined.", RecoveryAfterFailure(preparation));
-        }
         var effects = plan.Effects
             .Select(effect => WithOutcome(effect.Result, ExtensionRemoveEffectOutcome.NotStarted))
             .ToArray();
@@ -264,19 +275,100 @@ internal sealed class ExtensionRemoveApplicationOperation(
             ? ExtensionRemoveLifecycleOutcome.AlreadyCurrent
             : ExtensionRemoveLifecycleOutcome.NotStarted;
         var verificationState = NotRequestedVerification();
-        var applicationStage = ExtensionRemoveApplicationStage.TargetEffect;
+        var applicationStage = ExtensionRemoveApplicationStage.Directory;
         var currentEffectIndex = -1;
         var checkIndex = 0;
+        var settingsOutcome = ExtensionRemoveEffectOutcome.NotStarted;
         try
         {
+            foreach (var effectIndex in Enumerable.Range(0, plan.Effects.Count)
+                .Where(index => plan.Effects[index].DirectoryCreation is not null))
+            {
+                currentEffectIndex = effectIndex;
+                applicationStage = ExtensionRemoveApplicationStage.Directory;
+                var effect = plan.Effects[effectIndex];
+                var creation = effect.DirectoryCreation
+                    ?? throw new InvalidOperationException(
+                        "A workspace settings directory effect requires one typed directory creation.");
+                var receipt = await _directoryApplier.ApplyAsync(
+                    lease,
+                    creation,
+                    validation.Checks[checkIndex++],
+                    cancellationToken).ConfigureAwait(false);
+                if (!IsVerified(receipt))
+                {
+                    effects[effectIndex] = WithOutcome(effect.Result, ReadOutcome(receipt));
+                    return AfterPreparation(
+                        plan,
+                        planned,
+                        effects,
+                        preparation,
+                        ReadFinding(receipt),
+                        receipt.Cause ?? "The workspace settings directory could not be created and verified.",
+                        effect.Result.Path,
+                        settingsOutcome: settingsOutcome);
+                }
+
+                effects[effectIndex] = WithOutcome(
+                    effect.Result,
+                    ExtensionRemoveEffectOutcome.Verified);
+            }
+
+            if (execution.SettingsChange is { } settingsChange)
+            {
+                applicationStage = ExtensionRemoveApplicationStage.Settings;
+                var receipt = await _fileApplier.ApplyAsync(
+                    lease,
+                    settingsChange,
+                    validation.Checks[checkIndex++],
+                    preparation,
+                    cancellationToken).ConfigureAwait(false);
+                settingsOutcome = ReadOutcome(receipt);
+                if (execution.Permission.Change is not null)
+                {
+                    planned = planned with
+                    {
+                        Permissions = planned.Permissions with
+                        {
+                            Outcome = WorkspacePermissionReceiptProjection.ReadOutcome(receipt),
+                        },
+                    };
+                }
+
+                if (!IsVerified(receipt))
+                {
+                    return AfterPreparation(
+                        plan,
+                        planned,
+                        effects,
+                        preparation,
+                        execution.Permission.Change is null
+                            ? ReadFinding(receipt)
+                            : ExtensionRemoveFindingCode.PermissionWriteFailed,
+                        "The removal settings could not be written and verified.",
+                        WorkspaceSettingsDefinitions.RelativePath,
+                        settingsOutcome: settingsOutcome);
+                }
+
+                if (plan.SettingsEffect is not null)
+                {
+                    settingsOutcome = ExtensionRemoveEffectOutcome.Verified;
+                }
+            }
+
             for (var effectIndex = 0; effectIndex < plan.Effects.Count; effectIndex++)
             {
                 currentEffectIndex = effectIndex;
                 applicationStage = ExtensionRemoveApplicationStage.TargetEffect;
                 var effect = plan.Effects[effectIndex];
+                if (effect.DirectoryCreation is not null)
+                {
+                    continue;
+                }
+
                 var change = effect.FileChange
                     ?? throw new InvalidOperationException(
-                        "Every Extension Remove target effect requires one typed file change.");
+                        "Every Extension Remove file effect requires one typed file change.");
                 var receipt = await _fileApplier.ApplyAsync(
                     lease,
                     change,
@@ -300,7 +392,8 @@ internal sealed class ExtensionRemoveApplicationOperation(
                         preparation,
                         ReadFinding(receipt),
                         receipt.Cause ?? "An Extension Remove target could not be applied and verified.",
-                        effect.Result.Path);
+                        effect.Result.Path,
+                        settingsOutcome: settingsOutcome);
                 }
 
                 effects[effectIndex] = WithOutcome(
@@ -331,7 +424,8 @@ internal sealed class ExtensionRemoveApplicationOperation(
                             ?? "The workspace ownership lock could not be applied and verified.",
                         WorkspaceOwnershipDefinitions.RelativePath,
                         lifecycleOutcome,
-                        verificationState);
+                        verificationState,
+                        settingsOutcome);
                 }
             }
 
@@ -356,7 +450,8 @@ internal sealed class ExtensionRemoveApplicationOperation(
                     "Final Extension Remove topology or lifecycle verification did not match the plan.",
                     target: null,
                     lifecycleOutcome,
-                    FailedVerification());
+                    FailedVerification(),
+                    settingsOutcome);
             }
 
             verificationState = Verified();
@@ -375,7 +470,8 @@ internal sealed class ExtensionRemoveApplicationOperation(
                 Lifecycle(plan, lifecycleOutcome),
                 cleanup.Recovery,
                 verificationState,
-                finalFindings);
+                finalFindings,
+                settingsOutcome);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -384,7 +480,18 @@ internal sealed class ExtensionRemoveApplicationOperation(
                 applicationStage,
                 currentEffectIndex,
                 lifecycleOutcome,
-                verificationState);
+                verificationState,
+                settingsOutcome);
+            if (execution.Permission.Change is not null)
+            {
+                planned = planned with
+                {
+                    Permissions = planned.Permissions with
+                    {
+                        Outcome = ReadPermissionOutcome(progress.Settings),
+                    },
+                };
+            }
             var recovery = applicationStage == ExtensionRemoveApplicationStage.Cleanup
                 ? RecoveryAfterCleanupEscape(preparation)
                 : RecoveryAfterFailure(preparation);
@@ -397,7 +504,8 @@ internal sealed class ExtensionRemoveApplicationOperation(
                 progress.Verification,
                 [.. planned.Findings.Append(new ExtensionRemoveFinding(
                     ExtensionRemoveFindingCode.Interrupted,
-                    "Extension Remove application was interrupted."))]);
+                    "Extension Remove application was interrupted."))],
+                progress.Settings);
         }
         catch (Exception)
         {
@@ -406,7 +514,18 @@ internal sealed class ExtensionRemoveApplicationOperation(
                 applicationStage,
                 currentEffectIndex,
                 lifecycleOutcome,
-                verificationState);
+                verificationState,
+                settingsOutcome);
+            if (execution.Permission.Change is not null)
+            {
+                planned = planned with
+                {
+                    Permissions = planned.Permissions with
+                    {
+                        Outcome = ReadPermissionOutcome(progress.Settings),
+                    },
+                };
+            }
             var recovery = applicationStage == ExtensionRemoveApplicationStage.Cleanup
                 ? RecoveryAfterCleanupEscape(preparation)
                 : RecoveryAfterFailure(preparation);
@@ -419,21 +538,37 @@ internal sealed class ExtensionRemoveApplicationOperation(
                 progress.Verification,
                 [.. planned.Findings.Append(new ExtensionRemoveFinding(
                     ExtensionRemoveFindingCode.OperationFailed,
-                    "Extension Remove application failed unexpectedly."))]);
+                    "Extension Remove application failed unexpectedly."))],
+                progress.Settings);
         }
     }
 
     private static (
         ExtensionRemoveLifecycleOutcome Lifecycle,
-        ExtensionRemoveVerification Verification) ReadEscapedProgress(
+        ExtensionRemoveVerification Verification,
+        ExtensionRemoveEffectOutcome Settings) ReadEscapedProgress(
         ExtensionRemoveEffect[] effects,
         ExtensionRemoveApplicationStage stage,
         int currentEffectIndex,
         ExtensionRemoveLifecycleOutcome lifecycle,
-        ExtensionRemoveVerification verification)
+        ExtensionRemoveVerification verification,
+        ExtensionRemoveEffectOutcome settings)
     {
         switch (stage)
         {
+            case ExtensionRemoveApplicationStage.Directory when currentEffectIndex >= 0:
+                effects[currentEffectIndex] = WithOutcome(
+                    effects[currentEffectIndex],
+                    ExtensionRemoveEffectOutcome.CompletionUnknown);
+                break;
+
+            case ExtensionRemoveApplicationStage.Directory:
+                break;
+
+            case ExtensionRemoveApplicationStage.Settings:
+                settings = ExtensionRemoveEffectOutcome.CompletionUnknown;
+                break;
+
             case ExtensionRemoveApplicationStage.TargetEffect when currentEffectIndex >= 0:
                 effects[currentEffectIndex] = WithOutcome(
                     effects[currentEffectIndex],
@@ -455,8 +590,23 @@ internal sealed class ExtensionRemoveApplicationOperation(
                 throw new ArgumentOutOfRangeException(nameof(stage), stage, "The application stage is not defined.");
         }
 
-        return (lifecycle, verification);
+        return (lifecycle, verification, settings);
     }
+
+    private static WorkspacePermissionOutcome ReadPermissionOutcome(
+        ExtensionRemoveEffectOutcome outcome)
+        => outcome switch
+        {
+            ExtensionRemoveEffectOutcome.Planned => WorkspacePermissionOutcome.Planned,
+            ExtensionRemoveEffectOutcome.NotStarted => WorkspacePermissionOutcome.NotStarted,
+            ExtensionRemoveEffectOutcome.Verified => WorkspacePermissionOutcome.Verified,
+            ExtensionRemoveEffectOutcome.VerificationFailed => WorkspacePermissionOutcome.VerificationFailed,
+            ExtensionRemoveEffectOutcome.CompletionUnknown => WorkspacePermissionOutcome.CompletionUnknown,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(outcome),
+                outcome,
+                "The Extension Remove settings effect outcome is not defined."),
+        };
 
     private static ExtensionRemoveFindingCode ReadPreparationFindingCode(
         RecoveryBundlePreparationState state)

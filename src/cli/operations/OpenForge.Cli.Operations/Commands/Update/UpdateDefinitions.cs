@@ -140,6 +140,14 @@ internal static class UpdateDefinitions
             _ => Undefined(nameof(value), value),
         };
 
+    internal static string ReadMachineName(UpdatePhysicalEffectKind value)
+        => value switch
+        {
+            UpdatePhysicalEffectKind.File => "file",
+            UpdatePhysicalEffectKind.Directory => "directory",
+            _ => Undefined(nameof(value), value),
+        };
+
     internal static string ReadMachineName(UpdatePhysicalEffectOutcome value)
         => value switch
         {

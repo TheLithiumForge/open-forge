@@ -18,12 +18,12 @@ Workspace: <workspace>
          Rebuild the Entries section.
 Startup context
   Shipped by this CLI:   11 files, about 5.7k tokens
-  This workspace:        11 files, about 5.4k tokens
+  This workspace:        11 files, about 5.5k tokens
   May load again later:  1 file, about 0.3k tokens
 Added since shipped: about -0.2k tokens
 All routed files: 13 files, about 6.1k tokens (startup is 89%)
 Routes: 7 root categories, 10 Entries sections current
 Framework files: 13 current
-13 routed files, 11 startup files, 5449 startup tokens, 1 may-load-again files, 289 may-load-again tokens, 6109 all routed tokens, 89.18808315599934522835161238 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 13 current Framework files, 1 changed Framework files, 4 warnings.
+13 routed files, 11 startup files, 5468 startup tokens, 1 may-load-again files, 289 may-load-again tokens, 6119 all routed tokens, 89.35692106553358391894100343 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 13 current Framework files, 1 changed Framework files, 4 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

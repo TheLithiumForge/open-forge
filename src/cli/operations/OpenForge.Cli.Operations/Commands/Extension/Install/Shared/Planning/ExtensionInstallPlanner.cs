@@ -17,6 +17,8 @@ using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
@@ -67,10 +69,32 @@ internal sealed class ExtensionInstallPlanner
         }
 
         var sourceFact = ExtensionInstallResultFactory.Source(source);
+        var settingsObservation = await WorkspaceSettingsReader.ReadAsync(
+            _physicalPathResolver,
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+        if (settingsObservation.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
+        {
+            return Stop(ExtensionInstallResultFactory.Boundary(
+                request,
+                ExtensionInstallResultFactory.Evidence(sourceFact),
+                new ExtensionInstallFinding(
+                    settingsObservation.State == WorkspaceSettingsReadState.Invalid
+                        ? ExtensionInstallFindingCode.SettingsInvalid
+                        : ExtensionInstallFindingCode.SettingsUnavailable,
+                    settingsObservation.Cause
+                        ?? "Workspace removal settings are unavailable; no Extension plan was built.",
+                    settingsObservation.LogicalPath)));
+        }
+
         ExtensionInstallSelectionResolution resolution;
         try
         {
-            resolution = await _selectionResolver.ResolveAsync(request, sourceResolution, cancellationToken)
+            resolution = await _selectionResolver.ResolveAsync(
+                    request,
+                    sourceResolution,
+                    settingsObservation.Document,
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -126,7 +150,8 @@ internal sealed class ExtensionInstallPlanner
             request,
             resolution.Packages,
             cancellationToken,
-            resolution.Ownership).ConfigureAwait(false);
+            resolution.Ownership,
+            settingsObservation.Document).ConfigureAwait(false);
         if (foundationObservation.Finding is not null)
         {
             return Stop(ExtensionInstallResultFactory.Boundary(
@@ -149,6 +174,7 @@ internal sealed class ExtensionInstallPlanner
                     .ToHashSet(StringComparer.Ordinal),
                 Ownership = foundation.Ownership,
                 FrameworkOwnership = foundation.FrameworkOwnership,
+                Settings = settingsObservation.Document,
                 ProtectedAuthoredPaths = foundation.Topology.ProtectedPaths,
                 InitialForceEligiblePaths = foundation.Topology.InitialForceEligiblePaths,
                 Topology = foundation.Topology,
@@ -174,6 +200,7 @@ internal sealed class ExtensionInstallPlanner
                 Topology = foundation.Topology,
                 TargetState = targetState,
                 Ownership = foundation.Ownership,
+                Settings = settingsObservation.Document,
             },
             cancellationToken).ConfigureAwait(false);
         if (effectPlan.Finding is not null)
@@ -184,6 +211,11 @@ internal sealed class ExtensionInstallPlanner
                 effectPlan.Finding));
         }
 
+        var topologyFindings = foundation.TopologyFindings.Concat(resolution.ExcludedPaths.Select(path =>
+            new ExtensionInstallFinding(
+                ExtensionInstallFindingCode.PathExcluded,
+                $"'{path}' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.",
+                path))).ToArray();
         var facts = ExtensionInstallResultFactory.PlanFacts(
             new ExtensionInstallPlannedFactsInput
             {
@@ -200,6 +232,7 @@ internal sealed class ExtensionInstallPlanner
         var plan = ExtensionInstallPlan.Create(new ExtensionInstallPlanInput
         {
             Request = request,
+            SettingsObservation = settingsObservation,
             SourceRead = source,
             SourceSignature = ExtensionInstallFoundationReader.SourceSignature(source),
             InferredRootId = sourceResolution.InferredRootId,
@@ -211,7 +244,7 @@ internal sealed class ExtensionInstallPlanner
             Ownership = foundation.Ownership,
             IntendedExtensions = targetState.IntendedExtensions,
             Topology = foundation.Topology,
-            TopologyFindings = foundation.TopologyFindings,
+            TopologyFindings = topologyFindings,
             ForceEligiblePaths = targetState.EligibleOccupants,
             Facts = facts,
             Effects = effectPlan.Effects,

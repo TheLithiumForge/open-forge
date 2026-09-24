@@ -30,6 +30,10 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
@@ -116,7 +120,8 @@ internal sealed class LibrarySyncOperation
         var permissions = await _permissions.DetermineAsync(new LibraryPermissionRequest
         {
             Workspace = request.Workspace,
-            Library = selected,
+            LibraryId = request.LibraryId,
+            SettingsObservation = observations.Settings,
             Targets = targets,
             ExplicitGrantPaths = request.Allow,
             AllowPrompt = request.AllowPrompt && !request.Automatic && request.Mode != LibraryMode.DryRun,
@@ -178,13 +183,24 @@ internal sealed class LibrarySyncOperation
             resolver,
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
+        var settings = await WorkspaceSettingsReader.ReadAsync(
+            resolver,
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
         var record = LibraryRegistrationReader.Read(ownership);
         var selected = record.Record?.Libraries.FirstOrDefault(library => library.Id == request.LibraryId);
         var source = selected is null
             ? NotObservedSource(request.Workspace)
             : await ReadSourceAsync(resolver, request.Workspace, selected.SourceRoot, cancellationToken).ConfigureAwait(false);
-        var entries = source.Inventory?.Entries ?? [];
-        var paths = (selected?.Paths ?? [])
+        var entries = (source.Inventory?.Entries ?? []).Where(entry => selected is not null
+            && !WorkspaceRemovals.IsPathRemoved(
+                LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, entry.SourcePath).DestinationPath.Value,
+                settings.Document)).ToImmutableArray();
+        var activeRegisteredPaths = (selected?.Paths ?? []).Where(path => selected is not null
+            && !WorkspaceRemovals.IsPathRemoved(
+                LibraryPathIdentity.Map(selected.SourceRoot, selected.DestinationRoot, path).DestinationPath.Value,
+                settings.Document)).ToImmutableArray();
+        var paths = activeRegisteredPaths
             .Concat(entries.Select(entry => entry.SourcePath))
             .DistinctBy(path => path.Value, StringComparer.Ordinal)
             .OrderBy(path => path.Value, StringComparer.Ordinal)
@@ -201,6 +217,11 @@ internal sealed class LibrarySyncOperation
                     Paths = [.. paths],
                 },
                 cancellationToken);
+        var navigationRecord = selected is null || record.Record is null
+            ? record.Record
+            : LibraryRegistrationSet.Create([.. record.Record.Libraries.Select(library => library.Id == selected.Id
+                ? LibraryRegistration.Create(library.Id, library.SourceRoot, library.DestinationRoot, [.. activeRegisteredPaths])
+                : library)]);
         var navigation = record.State == LibraryRegistrationReadState.Complete
             && selected is not null
             && source.Inventory?.State == LibraryInventoryState.Complete
@@ -208,12 +229,26 @@ internal sealed class LibrarySyncOperation
                 new LibraryGeneratedNavigationRequest
                 {
                     Workspace = request.Workspace,
-                    SelectedLibrary = selected,
-                    CurrentRecord = record.Record,
+                    SelectedLibrary = LibraryRegistration.Create(selected.Id, selected.SourceRoot, selected.DestinationRoot, [.. activeRegisteredPaths]),
+                    CurrentRecord = navigationRecord,
                     IntendedEntries = entries,
+                    Settings = settings.Document,
                 },
                 cancellationToken).ConfigureAwait(false)
             : new LibraryGeneratedNavigationRead([], Issue: null);
+
+        if (navigation.Issue is null && navigation.Changes.FirstOrDefault(change =>
+                WorkspaceRemovals.IsPathRemoved(
+                    Path.GetRelativePath(request.Workspace.LexicalRoot, change.LogicalPath)
+                        .Replace(Path.DirectorySeparatorChar, '/'),
+                    settings.Document)) is { } excludedHost)
+        {
+            navigation = new LibraryGeneratedNavigationRead([], new LibraryGeneratedNavigationIssue(
+                LibraryGeneratedNavigationIssueState.Blocked,
+                Path.GetRelativePath(request.Workspace.LexicalRoot, excludedHost.LogicalPath)
+                    .Replace(Path.DirectorySeparatorChar, '/'),
+                "Generated navigation is excluded by workspace settings and cannot be changed safely."));
+        }
 
         return new LibrarySyncPlanningInput
         {
@@ -228,6 +263,7 @@ internal sealed class LibrarySyncOperation
             Source = source,
             Mappings = mappings,
             Ownership = ownership,
+            Settings = settings,
             GeneratedRegionChanges = navigation.Changes,
             GeneratedNavigationIssue = navigation.Issue,
         };

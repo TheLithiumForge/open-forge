@@ -47,14 +47,14 @@ which files it may manage.
 These options keep the same spelling and meaning on every command that accepts
 them.
 
-| Option | Meaning |
-| --- | --- |
-| `--workspace <path>` | Use one exact directory instead of the current directory. Relative paths resolve from the process current directory; the CLI does not search parent directories. |
-| `--format <text\|json>` | Select human text or one schema-3 JSON result. The default is `text`; JSON always goes to standard output. |
-| `--detail <minimal\|standard\|full\|debug>` | Select result detail. The default is `minimal`; `debug` adds bounded diagnostics on standard error. |
-| `--detail-filter <error\|warning\|info\|all>` | Repeat to select listed finding severities. Counts, effects, status, and exit are unchanged. |
-| `--help` | Show help for the selected command path and exit. |
-| `--version` | Show the executable version and exit. |
+| Option                                        | Meaning                                                                                                                                                          |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--workspace <path>`                          | Use one exact directory instead of the current directory. Relative paths resolve from the process current directory; the CLI does not search parent directories. |
+| `--format <text\|json>`                       | Select human text or one schema-3 JSON result. The default is `text`; JSON always goes to standard output.                                                       |
+| `--detail <minimal\|standard\|full\|debug>`   | Select result detail. The default is `minimal`; `debug` adds bounded diagnostics on standard error.                                                              |
+| `--detail-filter <error\|warning\|info\|all>` | Repeat to select listed finding severities. Counts, effects, status, and exit are unchanged.                                                                     |
+| `--help`                                      | Show help for the selected command path and exit.                                                                                                                |
+| `--version`                                   | Show the executable version and exit.                                                                                                                            |
 
 `--help` and `--version` are terminal modes. They do not resolve a workspace
 or run a domain operation, and they cannot be used together. Other well-formed
@@ -103,15 +103,15 @@ prompt leaves files and settings unchanged and returns `cancelled` with exit
 Every operation reports one status and the corresponding process exit
 code:
 
-| Status        | Exit code | Meaning                                                                                |
-| ------------- | --------: | -------------------------------------------------------------------------------------- |
-| `completed`   |       `0` | The requested operation or verified no-op completed.                                   |
-| `failed`      |       `1` | The operation began or could not finish and reported a failure.                        |
-| `completed-with-warnings` | `2` | The requested result is usable, but a reported warning needs review. |
-| `incomplete`  |       `3` | Some required facts were unavailable, so the result is not complete.                   |
-| `invalid-input` |     `4` | The command input does not follow its grammar or metadata rules.                     |
-| `blocked`     |       `5` | A workspace, ownership, safety, or authority boundary prevents the operation.          |
-| `cancelled`   |     `130` | The operation ended before completion, usually because input or cancellation ended it. |
+| Status                    | Exit code | Meaning                                                                                |
+| ------------------------- | --------: | -------------------------------------------------------------------------------------- |
+| `completed`               |       `0` | The requested operation or verified no-op completed.                                   |
+| `failed`                  |       `1` | The operation began or could not finish and reported a failure.                        |
+| `completed-with-warnings` |       `2` | The requested result is usable, but a reported warning needs review.                   |
+| `incomplete`              |       `3` | Some required facts were unavailable, so the result is not complete.                   |
+| `invalid-input`           |       `4` | The command input does not follow its grammar or metadata rules.                       |
+| `blocked`                 |       `5` | A workspace, ownership, safety, or authority boundary prevents the operation.          |
+| `cancelled`               |     `130` | The operation ended before completion, usually because input or cancellation ended it. |
 
 The status is more useful than a Boolean success value. For example, a route
 inspection can complete while reporting a structural observation, whereas a
@@ -353,16 +353,17 @@ open-forge route move \
   --dry-run
 ```
 
-`route remove` removes one eligible unmanaged routed source or complete
-category. It does not release managed ownership.
+`route remove` removes one eligible routed source or complete category, releases
+its file ownership and records the removal choice. The root [`remove`](#remove-and-keep-removed)
+command also handles ordinary files, directories, packages and Libraries.
 
 ```sh
 open-forge route remove memory/crystallized/documents/project-alpha/service-architecture --dry-run
 ```
 
-Both commands can be blocked by ambiguous routes, managed ownership, changed
-targets, unsafe generated regions, or incomplete evidence. Read the plan and
-resolve the named boundary before applying the operation.
+Both commands can be blocked by ambiguous routes, changed targets, unsafe
+generated regions or incomplete evidence. `route move` still refuses managed
+content. Read the plan and resolve the named boundary before applying it.
 
 ## Generated navigation and repair
 
@@ -457,14 +458,84 @@ Normal update replaces changed owned files and restores missing ones when the
 current ownership facts authorize the effect. It reports every replaced,
 restored, deleted, and retained path. Retired managed content is retained unless
 `--prune` is supplied; `--force` and `--prune` remain separate named boundaries,
-and `--automatic` implies neither one. When `.git` is present, the result says
-that previous content is available through `git diff`; without `.git`, the
-pre-effect recovery bundle is transient and is removed after successful
-verification, so no durable previous-content pointer is promised.
+and `--automatic` implies neither one. When the plan needs a recovery bundle to
+protect existing bytes, Update retains it after successful verification and
+reports its exact path. When an ordinary `.git`
+directory is present, it also advises `git diff`; otherwise it points to the
+bundle for previous content. Explicit Cleanup removes retained recovery data.
 
 Ownership state is recorded in `.agents/open-forge.lock.json`; authored settings
 are in `.agents/open-forge.json`. Framework and Extension records share the lock
 but remain independent command domains.
+
+### Remove and keep removed
+
+Use `remove` when content should stay removed through later Open Forge installs,
+updates and Library synchronization. It accepts one workspace-relative path by
+default. Use `--kind` for a route reference, package ID or Library ID. The workspace
+root (`.` or `./`) cannot be removed.
+
+```sh
+open-forge remove .agents/templates --dry-run
+open-forge remove .agents/guidance/old-note.md --automatic
+open-forge remove docs/obsolete.txt --automatic
+open-forge remove planning --kind extension --automatic
+open-forge remove team-knowledge --kind library --automatic
+open-forge remove guidance/old-note --kind route --automatic
+```
+
+A file selection removes that file; a directory selection removes its complete
+tree. Routed leaves also include their adjacent overwrite and update supported
+incoming links and generated navigation. Naming an entrypoint file does not
+silently delete its folder: select the directory or use `--kind route` for the
+whole category. Removing a Library detaches its local links and registration;
+its source files stay untouched. An individual owned Library link can also be
+removed by path while retaining the registration.
+
+The existing `route remove`, `extension remove` and `library detach` commands
+remain available and record the same removal intent. Package removal retains
+files still owned by another package. Explicit file removal removes that file
+for every manager and releases its matching ownership claims.
+
+Removal records exclusions in `.agents/open-forge.json`:
+
+| Setting              | Keeps removed                                            |
+| -------------------- | -------------------------------------------------------- |
+| `removedCategories`  | Root categories under `.agents`                          |
+| `removedFiles`       | Exact workspace-relative file destinations               |
+| `removedDirectories` | Directories and every descendant, including future files |
+| `removedExtensions`  | Packages, including requests through dependencies        |
+| `removedLibraries`   | Local Library registrations                              |
+
+Paths use `/`, with no trailing slash or wildcard. Excluded existing files stay
+untouched. Force, prune and automatic mode do not bypass exclusions. Unknown
+settings keys are preserved when the CLI writes the settings; JSON comments
+need not survive. Deleting a file by hand does not infer an exclusion.
+
+```json
+{
+  "schemaVersion": 1,
+  "removedCategories": ["skills"],
+  "removedFiles": [".agents/patterns/_patterns.md", "AGENTS.md"],
+  "removedDirectories": ["docs/obsolete"],
+  "removedExtensions": ["planning"],
+  "removedLibraries": ["team-knowledge"]
+}
+```
+
+To restore managed content, remove every applicable exclusion from that file and
+run the relevant install, update, attach or sync command. Use `update` to restore
+a removed Core category in an installed Framework. For individual Library
+links whose registration remains, use `library sync <id>`. Use `library attach`
+when the registration was removed. Recreate ordinary user files
+from your own source or backup. Clearing an exclusion does not recover deleted
+bytes. A required excluded dependency or missing excluded ancestor is reported
+rather than silently restored.
+
+Review `--dry-run` before applying a removal. Protected controls, Git metadata,
+Library source trees and unsafe links remain protected even with `--automatic`.
+The [Remove contract](../.agents/memory/crystallized/documents/cli/contracts/remove/_remove.md)
+defines the complete selection and recovery boundary.
 
 ### Cleanup
 
@@ -503,7 +574,7 @@ open-forge extension <operation>
 | `extension create [<stable-id>]`     | Create a package scaffold. Use `--path <catalogue-path>`, `--name <text>`, `--description <text>`, `--package-version <text>`, repeat `--dependency <stable-id>` as needed, and add `--automatic` or `--dry-run` when appropriate. |
 | `extension install [<stable-id>...]` | Install selected packages. Use `--source`, `--all`, `--force`, `--automatic`, or `--dry-run`.                                                                                                                                      |
 | `extension update [<stable-id>...]`  | Reconcile selected managed packages. Use `--source`, `--all`, `--force`, `--prune`, `--automatic`, or `--dry-run`.                                                                                                                 |
-| `extension remove [<stable-id>...]`  | Release selected package ownership and remove only eligible content. Use `--prune`, `--automatic`, or `--dry-run`.                                                                                                                 |
+| `extension remove [<stable-id>...]`  | Uninstall selected packages and record their removal. Use `--automatic` or `--dry-run`.                                                                                                                                            |
 
 For example:
 
@@ -539,7 +610,7 @@ open-forge library <operation>
 | `library inspect` | `open-forge library inspect <library-id>`                                                    | Inspect one complete Library inventory and projection.                      |
 | `library attach`  | `open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>]` | Register one contained source root and create its relative-link projection. |
 | `library sync`    | `open-forge library sync <library-id>`                                                       | Reconcile one registered projection from its complete source inventory.     |
-| `library detach`  | `open-forge library detach <library-id>`                                                     | Remove one exact projection while preserving its source.                    |
+| `library detach`  | `open-forge library detach <library-id>`                                                     | Remove one local registration and its links while preserving its source.    |
 
 Add `--dry-run` to `attach`, `sync`, or `detach` to inspect the complete plan
 before writing. `attach --to` selects the workspace-relative projection

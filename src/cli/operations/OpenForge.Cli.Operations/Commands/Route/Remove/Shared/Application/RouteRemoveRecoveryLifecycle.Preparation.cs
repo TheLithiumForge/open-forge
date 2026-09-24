@@ -31,9 +31,10 @@ internal static partial class RouteRemoveRecoveryLifecycle
             return FromCatalogue(input.Plan, catalogue);
         }
 
-        if (!catalogue.Candidates.IsEmpty)
+        var blockingCandidate = catalogue.Candidates.FirstOrDefault(candidate => !IsVerifiedFinal(candidate));
+        if (blockingCandidate is not null)
         {
-            return Conflict(input.Plan, catalogue.Candidates[0].Path);
+            return Conflict(input.Plan, blockingCandidate.Path);
         }
 
         return await PrepareBundleAsync(input, cancellationToken).ConfigureAwait(false);
@@ -98,7 +99,8 @@ internal static partial class RouteRemoveRecoveryLifecycle
                 plan,
                 RouteRemoveFindingCode.RecoveryConflict,
                 CliSemanticStatus.Blocked,
-                "An existing recovery candidate conflicts with this Route Remove application."));
+                "An existing recovery candidate conflicts with this Route Remove application.",
+                path));
 
     private static RouteRemoveRecoveryPreparationResult FromCatalogue(
         RouteRemovePlan plan,
@@ -165,7 +167,8 @@ internal static partial class RouteRemoveRecoveryLifecycle
                 plan,
                 RouteRemoveFindingCode.RecoveryConflict,
                 CliSemanticStatus.Blocked,
-                stored.Cause ?? "Route Remove recovery preparation is blocked."));
+                stored.Cause ?? "Route Remove recovery preparation is blocked.",
+                stored.ResidualPath));
 
     private static RouteRemoveRecoveryPreparationResult InterruptedPreparation(
         RouteRemovePlan plan,
@@ -207,6 +210,11 @@ internal static partial class RouteRemoveRecoveryLifecycle
             Recovery = Recovery(plan, recoveryState, residualPath: null),
             Finding = null,
         };
+
+    private static bool IsVerifiedFinal(RecoveryBundleCandidateSnapshot candidate)
+        => candidate.Kind == RecoveryBundleCandidateKind.Final
+            && candidate.Integrity == RecoveryBundleIntegrity.Verified
+            && candidate.Verified is not null;
 
     private static RouteRemoveRecoveryPreparationResult StopPreparation(
         RouteRemovePlan plan,

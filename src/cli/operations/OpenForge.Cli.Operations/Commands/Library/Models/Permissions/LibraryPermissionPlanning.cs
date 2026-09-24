@@ -1,7 +1,8 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
-using OpenForge.Cli.Core.Framework.Libraries.Models.Observation;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
@@ -28,8 +29,10 @@ internal sealed record LibraryPermissionTarget(string DestinationPath, LibraryPe
 internal sealed record LibraryPermissionRequest
 {
     public required CliWorkspace Workspace { get; init; }
-    public required LibraryRegistration Library { get; init; }
+    public required LibraryId LibraryId { get; init; }
+    public required WorkspaceSettingsRead SettingsObservation { get; init; }
     public required ImmutableArray<LibraryPermissionTarget> Targets { get; init; }
+    public WorkspaceRemovalSelection? RemovalSelection { get; init; }
 
     /// <summary>Paths supplied by the caller as explicit grants.</summary>
     public ImmutableArray<string> ExplicitGrantPaths { get; init; } = [];

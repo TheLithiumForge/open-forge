@@ -43,6 +43,11 @@ Tasks 28 and 29 and earlier completed records remain historical evidence.
 
 ## Current next action
 
+Task 50, [Unified Remove](tasks/task50-unified-remove.md), is complete on the local
+`codex/unified-remove` branch. Its record contains the accepted specification,
+resolved reviews, six passing managed/native modes and final native command journey.
+It has not been pushed or merged; earlier selections below remain separate context.
+
 The selected work is the [lossless source wording proposal](../src-wording-proposal.md)
 on a separate branch. The maintainer authorized applying its eight replacements; source and
 workspace counterparts are now aligned for review. The requested [default Skill indexing task](tasks/task47-default-skill-indexing.md)

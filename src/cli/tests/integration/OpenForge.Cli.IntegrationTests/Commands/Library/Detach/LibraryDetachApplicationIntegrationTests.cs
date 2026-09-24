@@ -149,6 +149,7 @@ public sealed class LibraryDetachApplicationIntegrationTests
             Mappings = LibraryMutationApplicationData.Mapping(workspace, linked: true),
             ConsumerBoundary = LibraryMutationApplicationData.Boundary(workspace),
             Ownership = LibraryMutationApplicationData.WorkspaceOwnership(workspace),
+            Settings = OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceSettingsRead.Absent(workspace.Absolute(OpenForge.Cli.Core.Framework.Settings.WorkspaceSettingsDefinitions.RelativePath)),
             GeneratedRegionChanges = [],
         };
 

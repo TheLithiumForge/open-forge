@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove;
@@ -66,13 +67,20 @@ internal sealed class ExtensionRemoveOperation(
         }
 
         var changes = ExtensionRemoveApplicationOperation.ReadChanges(plan);
+        var directories = ExtensionRemoveApplicationOperation.ReadDirectoryCreations(plan);
         MutationValidationResult preflight;
         try
         {
-            preflight = await _preflight.ValidateAsync(
-                request.Workspace,
-                changes,
-                cancellationToken).ConfigureAwait(false);
+            preflight = directories.Count == 0
+                ? await _preflight.ValidateAsync(
+                    request.Workspace,
+                    changes,
+                    cancellationToken).ConfigureAwait(false)
+                : await _preflight.ValidateAsync(
+                    request.Workspace,
+                    directories,
+                    changes,
+                    cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -133,7 +141,17 @@ internal sealed class ExtensionRemoveOperation(
                 cause) with
             { Permissions = permission.Result };
         }
-        var execution = new ExtensionRemoveExecutionPlan(plan, permission);
+        if (permission.Observation is { } permissionObservation
+            && !plan.SettingsObservation.MatchesObservation(permissionObservation))
+        {
+            return ExtensionRemoveResultFactory.PlanBoundary(
+                plan,
+                build.Result with { Permissions = permission.Result },
+                ExtensionRemoveFindingCode.TargetChanged,
+                "Workspace settings changed after Extension Remove planning.");
+        }
+
+        var execution = ExtensionRemoveExecutionPlanComposer.Compose(plan, permission);
         var planned = build.Result with { Permissions = permission.Result };
         if (request.IsDryRun || execution.IsNoOp)
         {

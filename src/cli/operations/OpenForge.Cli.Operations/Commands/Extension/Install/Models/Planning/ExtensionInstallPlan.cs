@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 
@@ -25,6 +26,7 @@ internal sealed record ExtensionInstallPlannedEffect
 internal sealed record ExtensionInstallPlanInput
 {
     internal required ExtensionInstallRequest Request { get; init; }
+    internal required WorkspaceSettingsRead SettingsObservation { get; init; }
     internal required ExtensionSourceReadResult SourceRead { get; init; }
     internal required string SourceSignature { get; init; }
     internal required string? InferredRootId { get; init; }
@@ -49,6 +51,7 @@ internal sealed class ExtensionInstallPlan
     private ExtensionInstallPlan(ExtensionInstallPlanInput input)
     {
         Request = input.Request;
+        SettingsObservation = input.SettingsObservation;
         SourceRead = input.SourceRead;
         SourceSignature = input.SourceSignature;
         InferredRootId = input.InferredRootId;
@@ -92,6 +95,7 @@ internal sealed class ExtensionInstallPlan
     }
 
     internal ExtensionInstallRequest Request { get; }
+    internal WorkspaceSettingsRead SettingsObservation { get; }
     internal ExtensionSourceReadResult SourceRead { get; }
     internal string SourceSignature { get; }
     internal string? InferredRootId { get; }
@@ -225,11 +229,15 @@ internal sealed record ExtensionInstallSelectionResolution
     internal ExtensionInstallSelectionResolution(
         ExtensionInstallSelection? selection,
         IEnumerable<ExtensionPackageFact> packages,
-        ExtensionInstallFinding? finding)
+        ExtensionInstallFinding? finding,
+        IEnumerable<string>? excludedPaths = null)
     {
         Selection = selection;
         Packages = SnapshotPackages(packages, nameof(packages));
         Finding = finding;
+        ExcludedPaths = new ReadOnlyCollection<string>([.. (excludedPaths ?? [])
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)]);
     }
 
     internal ExtensionInstallSelection? Selection { get; }
@@ -237,6 +245,8 @@ internal sealed record ExtensionInstallSelectionResolution
     internal IReadOnlyList<ExtensionPackageFact> Packages { get; }
 
     internal ExtensionInstallFinding? Finding { get; }
+
+    internal IReadOnlyList<string> ExcludedPaths { get; }
 
     /// <summary>The ownership observation acquired before interactive selection.</summary>
     internal WorkspaceOwnershipRead? Ownership { get; init; }
@@ -277,17 +287,23 @@ internal sealed record ExtensionInstallPayloadNormalization
 {
     internal ExtensionInstallPayloadNormalization(
         IEnumerable<ExtensionPackageFact> packages,
-        ExtensionInstallFinding? finding)
+        ExtensionInstallFinding? finding,
+        IEnumerable<string>? excludedPaths = null)
     {
         Packages = ExtensionInstallSelectionResolution.SnapshotPackages(
             packages,
             nameof(packages));
         Finding = finding;
+        ExcludedPaths = new ReadOnlyCollection<string>([.. (excludedPaths ?? [])
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)]);
     }
 
     internal IReadOnlyList<ExtensionPackageFact> Packages { get; }
 
     internal ExtensionInstallFinding? Finding { get; }
+
+    internal IReadOnlyList<string> ExcludedPaths { get; }
 }
 
 internal sealed record ExtensionInstallSourceResolution(
@@ -386,6 +402,7 @@ internal sealed record ExtensionInstallTargetInspectionInput
     internal IReadOnlySet<string> MutationPackageIds { get; init; }
         = new HashSet<string>(StringComparer.Ordinal);
     internal required WorkspaceOwnershipRead Ownership { get; init; }
+    internal required OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument Settings { get; init; }
     internal required FrameworkOwnership? FrameworkOwnership { get; init; }
     internal required IReadOnlySet<string> ProtectedAuthoredPaths { get; init; }
     internal required IReadOnlySet<string> InitialForceEligiblePaths { get; init; }
@@ -400,6 +417,7 @@ internal sealed record ExtensionInstallEffectPlanningInput
     internal required ExtensionInstallTopology Topology { get; init; }
     internal required ExtensionInstallTargetState TargetState { get; init; }
     internal required WorkspaceOwnershipRead Ownership { get; init; }
+    internal required OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument Settings { get; init; }
 }
 
 internal sealed class ExtensionInstallEffectPlan

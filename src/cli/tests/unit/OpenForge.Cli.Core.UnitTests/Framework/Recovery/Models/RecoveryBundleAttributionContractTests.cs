@@ -87,7 +87,50 @@ public sealed class RecoveryBundleAttributionContractTests
         Assert.Empty(decoded.Entries);
     }
 
-    private static (RecoveryBundleInput Input, RecoveryEntry Entry) ManifestInput()
+    [Trait("Feature", "unified-remove"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Recovery attribution admits Workspace Remove and rejects other Workspace operations")]
+    public void WorkspaceProducerIsScopedToRemove()
+    {
+        var root = Path.GetFullPath(Path.Combine(Path.GetTempPath(), $"open-forge-workspace-remove-{Guid.NewGuid():N}"));
+        var workspace = new CliWorkspace(root, root, CliWorkspaceSelectionMethod.ExplicitWorkspace);
+
+        var attribution = RecoveryBundleAttribution.Create(
+            RecoveryBundleProducer.Workspace,
+            RecoveryBundleOperation.Remove,
+            workspace);
+
+        Assert.Equal(RecoveryBundleProducer.Workspace, attribution.Producer);
+        Assert.Equal(RecoveryBundleOperation.Remove, attribution.Operation);
+        Assert.Throws<ArgumentException>(() => RecoveryBundleAttribution.Create(
+            RecoveryBundleProducer.Workspace,
+            RecoveryBundleOperation.Update,
+            workspace));
+    }
+
+    [Trait("Feature", "unified-remove"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Recovery schema v1 round-trips the Workspace Remove attribution")]
+    public void WorkspaceRemoveAttributionUsesItsStableWireName()
+    {
+        var (input, entry) = ManifestInput(
+            RecoveryBundleProducer.Workspace,
+            RecoveryBundleOperation.Remove,
+            "remove");
+
+        var payload = RecoveryBundleManifestCodec.Serialize(input, [entry]);
+        var serialized = Encoding.UTF8.GetString(payload);
+        var decoded = RecoveryBundleManifestCodec.Decode(payload);
+
+        Assert.Contains("\"producer\":\"workspace\"", serialized, StringComparison.Ordinal);
+        Assert.Equal(RecoveryBundleManifestState.Valid, decoded.State);
+        Assert.Equal(RecoveryBundleProducer.Workspace, decoded.Attribution?.Producer);
+        Assert.Equal(RecoveryBundleOperation.Remove, decoded.Attribution?.Operation);
+        Assert.Single(decoded.Entries);
+    }
+
+    private static (RecoveryBundleInput Input, RecoveryEntry Entry) ManifestInput(
+        RecoveryBundleProducer producer = RecoveryBundleProducer.Index,
+        RecoveryBundleOperation operation = RecoveryBundleOperation.Index,
+        string command = "index")
     {
         var root = Path.GetFullPath(Path.Combine(
             Path.GetTempPath(),
@@ -100,10 +143,10 @@ public sealed class RecoveryBundleAttributionContractTests
         var before = FileStateSnapshot.File(path, path, "before"u8);
         var input = RecoveryBundleInput.Create(
             workspace,
-            command: "index",
+            command,
             attribution: RecoveryBundleAttribution.Create(
-                RecoveryBundleProducer.Index,
-                RecoveryBundleOperation.Index,
+                producer,
+                operation,
                 workspace),
             operationId: Guid.NewGuid(),
             targets:

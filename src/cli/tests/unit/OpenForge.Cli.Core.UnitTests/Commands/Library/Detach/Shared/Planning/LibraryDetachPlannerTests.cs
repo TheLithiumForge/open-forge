@@ -278,7 +278,7 @@ public sealed class LibraryDetachPlannerTests
     [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData(true), InlineData(false)]
-    public void UnknownIdAndMissingRecordAreInvalidWithoutAnyEffect(bool completeRecord)
+    public void UnregisteredIdCanBePlannedWithoutProjectionEffects(bool completeRecord)
     {
         var input = LibraryMutationPlanningData.Detach(LibraryMutationPlanningData.Leaf);
         input = completeRecord
@@ -290,10 +290,8 @@ public sealed class LibraryDetachPlannerTests
 
         var plan = LibraryDetachPlanner.Plan(input, TestContext.Current.CancellationToken);
 
-        Assert.Equal(LibraryPlanState.Blocked, plan.State);
-        var finding = Assert.Single(plan.Findings);
-        Assert.Equal(LibraryDetachFindingCode.UnknownId, finding.Code);
-        Assert.Equal(CliSemanticStatus.Invalid, finding.Status);
+        Assert.Equal(LibraryPlanState.Complete, plan.State);
+        Assert.Empty(plan.Findings);
         Assert.Empty(plan.Directories);
         Assert.Empty(plan.Links);
         Assert.Empty(plan.GeneratedRegions);

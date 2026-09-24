@@ -7,8 +7,7 @@ open-forge:
 
 # library detach Behavior Contract
 
-Unavailable ownership is reported as `library-detach.ownership-observation`
-with `completed` status. This finding grants no ownership or mutation permission.
+A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
 
 ## Status And Boundary
 
@@ -37,8 +36,9 @@ The sole generated state publication is `.agents/open-forge.lock.json`.
 The existing public record-effect and publication fields describe that lock
 write. Its Libraries section contains validated registration identities and
 source-relative paths; other ownership sections are preserved. No retired
-record is read, written, converted, or deleted. An unavailable lock write is
-skipped without blocking otherwise safe effects, and reports no publication.
+record is read, written, converted, or deleted. A planned lock publication is
+required for successful completion. If publication fails after earlier effects,
+the result reports the partial state and retains recovery evidence.
 Recovery protects the exact prior lock bytes before any effects; the planned
 lock publication remains last after verified link and generated-region effects.
 
@@ -78,8 +78,16 @@ without following it.
 
 For unchanged consumer bytes and explicit input, resolution, mapping facts,
 generated projection, record bytes, plan, and result are deterministic. A
-successful repeated detach has no inferred no-op: once the record is absent,
-the unknown ID is `invalid-input`.
+valid ID is recorded in `removedLibraries` even when no registration exists.
+An absent, already excluded ID is a verified no-op. An exclusion records the
+user's intent; it does not prove that an earlier detach succeeded.
+
+Persist and verify the ID exclusion before deleting links, then publish the
+registration removal after link and navigation verification. Settings, links and
+ownership share one recovery boundary. If a permission grant is also saved,
+combine it with the exclusion in one settings effect. Attach and Sync honor ID
+and destination-path exclusions. Restore by explicitly clearing the relevant
+exclusions and attaching the library again. The source tree remains untouched.
 
 ## Request, Workspace, And Record Resolution
 
@@ -94,9 +102,9 @@ path are resolved within that workspace. The resolver never searches for a
 source root, substitutes a Git root, or accepts an external destination.
 
 The record is read from `.agents/open-forge.lock.json` through the common
-ownership reader. Unavailable or uninterpretable claims yield a complete
-ownership observation with no selected Library and no effects. A requested ID
-absent from a readable lock remains invalid. Typed portable roots and paths and
+ownership reader. Unavailable or uninterpretable claims prevent effects. A
+proven-absent lock is known empty, and a valid requested ID absent from a readable
+lock still permits recording its removal exclusion. Typed portable roots and paths and
 unambiguous mapped destinations remain required before selection.
 
 The selected `sourceRoot` is validated as a normalized portable
@@ -200,7 +208,8 @@ Explicit non-dry-run `--allow-path` edits the shared authored settings after saf
 planning and before admission; failure is reported and stops content application.
 It is a separate authored edit and remains if later content fails. Interactive
 always approval declares a settings effect covered by the operation's recovery
-bundle. Once approves only this operation and writes no settings; cancel applies
+bundle. Once approves only this operation without saving a permission grant;
+the removal exclusion is still saved. Cancel applies
 nothing. The shared contract owns the exact reader, authoring and receipt rules.
 
 Derive required external leaves from every registered destination selected for exact-link deletion, using shared destination admission. The [Interface](interface.md#consumer-permission)
@@ -298,7 +307,7 @@ structured envelope, and public output remain authoritative.
 
 Conformance must prove, at the cheapest boundary that directly owns each fact:
 
-- exact parser and shared-flag behavior, ID grammar, unknown-ID invalidity,
+- exact parser and shared-flag behavior, ID grammar, unregistered-ID exclusions,
   and no source-root operand;
 - normalized lock publication and registration properties, sorting, duplicate and malformed-record
   handling, selected-record resolution, and final-registration removal;

@@ -66,11 +66,11 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
         Assert.Empty(plan.GeneratedRegions);
         var link = Assert.Single(plan.Links);
         var recordChange = Assert.IsType<PlannedFileChange>(plan.OwnershipChange);
-        var selected = Assert.Single(Assert.IsType<LibraryRegistrationSet>(plan.IntendedRecord).Libraries);
         var permission = await workspace.Permissions.DetermineAsync(new LibraryPermissionRequest
         {
             Workspace = workspace.Workspace,
-            Library = selected,
+            LibraryId = request.LibraryId,
+            SettingsObservation = observations.Settings,
             Targets = [new LibraryPermissionTarget(link.DestinationPath.Value, LibraryPermissionTargetUse.Live)
                 { Effect = LibraryPermissionEffect.CreateLink }],
             AllowPrompt = false,
@@ -181,6 +181,7 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
                 [.. inventory.Entries.Select(entry => entry.SourcePath)]),
             CurrentRecord = record.Record,
             IntendedEntries = inventory.Entries,
+            Settings = OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument.Empty,
         }, cancellation);
         Assert.Null(navigation.Issue);
         var ancestors = LibraryMutationOperationSupport.ReadAncestors(workspace.Workspace,
@@ -198,6 +199,7 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
             Source = source,
             Mappings = mappings,
             Ownership = ownership,
+            Settings = OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceSettingsRead.Absent(workspace.Absolute(OpenForge.Cli.Core.Framework.Settings.WorkspaceSettingsDefinitions.RelativePath)),
             GeneratedRegionChanges = navigation.Changes,
             GeneratedNavigationIssue = navigation.Issue,
         };
@@ -213,6 +215,7 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
     [InlineData("duplicate-id", (int)CliSemanticStatus.Blocked)]
     [InlineData("source-missing", (int)CliSemanticStatus.Invalid)]
     [InlineData("destination-collision", (int)CliSemanticStatus.Blocked)]
+    [InlineData("removed-library-id", (int)CliSemanticStatus.Blocked)]
     [InlineData("dry-run", (int)CliSemanticStatus.Complete)]
     [InlineData("lock-held", (int)CliSemanticStatus.Blocked)]
     public async Task Attach(string situation, int status)
@@ -224,6 +227,7 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
         workspace.Directory(outside ? "docs" : ".agents/directives");
         if (situation != "empty-source") workspace.Source(target);
         if (situation == "duplicate-id") workspace.Record();
+        if (situation == "removed-library-id") workspace.Write(".agents/open-forge.json", "{\"removedLibraries\":[\"team-knowledge\"]}");
         if (situation == "destination-collision") workspace.Write(target, "local occupant\n");
         artifacts.OwnLink(target);
         var prompted = situation == "permission-prompt";

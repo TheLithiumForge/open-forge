@@ -1,3 +1,4 @@
+using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Models;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
@@ -8,6 +9,8 @@ using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 using OpenForge.Cli.IntegrationTests.TestSupport;
@@ -28,7 +31,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         using var output = new StringWriter();
         var operation = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt: true));
         var before = workspace.Snapshot();
-        var request = Request(workspace, allowPrompt: true) with
+        var request = (await RequestAsync(workspace, allowPrompt: true)) with
         {
             Targets =
             [
@@ -70,7 +73,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         using var output = new StringWriter();
         var operation = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(TextReader.Null, output, canPrompt: false));
         var before = workspace.Snapshot();
-        var request = Request(workspace, allowPrompt: false) with
+        var request = (await RequestAsync(workspace, allowPrompt: false)) with
         {
             Targets = [new("docs/retired.md", LibraryPermissionTargetUse.Retired) { Effect = LibraryPermissionEffect.RemoveLink }],
         };
@@ -96,7 +99,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         using var output = new StringWriter();
         var operation = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt: false));
         var before = workspace.Snapshot();
-        var stage = await operation.DetermineAsync(Request(workspace, allowPrompt: false) with
+        var stage = await operation.DetermineAsync((await RequestAsync(workspace, allowPrompt: false)) with
         {
             Targets = [],
             ExplicitGrantPaths = ["docs", "docs/empty-target.md"],
@@ -121,7 +124,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         var operation = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt: true));
         var before = workspace.Snapshot();
 
-        var stage = await operation.DetermineAsync(Request(workspace, allowPrompt: true), TestContext.Current.CancellationToken);
+        var stage = await operation.DetermineAsync(await RequestAsync(workspace, allowPrompt: true), TestContext.Current.CancellationToken);
 
         Assert.Equal(LibraryPermissionFailure.Declined, stage.Failure);
         Assert.Empty(Assert.IsType<LibraryPermissionApproval>(stage.Approval).ApprovedScopes);
@@ -140,7 +143,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         var operation = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt));
         var before = workspace.Snapshot();
 
-        var stage = await operation.DetermineAsync(Request(workspace, allowPrompt), TestContext.Current.CancellationToken);
+        var stage = await operation.DetermineAsync(await RequestAsync(workspace, allowPrompt), TestContext.Current.CancellationToken);
 
         Assert.Equal(LibraryPermissionFailure.Required, stage.Failure);
         Assert.Equal("always", input.ReadLine());
@@ -150,9 +153,9 @@ public sealed class LibraryPermissionOperationIntegrationTests
 
     [Trait("Boundary", "OS")]
     [Theory]
-    [InlineData("team-knowledge", "shared/team-knowledge")]
-    [InlineData("other", "shared/changed-source")]
-    public static async Task SharedGrantIgnoresLibraryIdentityAndSource(string id, string source)
+    [InlineData("team-knowledge")]
+    [InlineData("other")]
+    public static async Task SharedGrantIgnoresLibraryIdentity(string id)
     {
         using var workspace = new LibraryMutationWorkspace();
         workspace.Write(PermissionPath, """{"allowInstallPaths":["docs"]}""");
@@ -161,10 +164,9 @@ public sealed class LibraryPermissionOperationIntegrationTests
         using var output = new StringWriter();
         var operation = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt: true));
         var before = workspace.Snapshot();
-        var request = Request(workspace, allowPrompt: true) with
+        var request = (await RequestAsync(workspace, allowPrompt: true)) with
         {
-            Library = LibraryRegistration.Create(LibraryId.Create(id), WorkspaceRelativeDirectory.Create(source),
-                LibraryDestinationRoot.Create("docs"), [SourceRelativeEligiblePath.Create("a.md")]),
+            LibraryId = LibraryId.Create(id),
         };
         var stage = await operation.DetermineAsync(request, TestContext.Current.CancellationToken);
         Assert.Null(stage.Failure);
@@ -207,6 +209,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
             Approval = null,
             Result = WorkspacePermissionResult.NotEvaluated,
             Change = null,
+            GrantChange = null,
             RecoveryTarget = null,
             Failure = null,
         };
@@ -233,10 +236,74 @@ public sealed class LibraryPermissionOperationIntegrationTests
 
     [Trait("Boundary", "OS")]
     [Fact]
+    public static async Task UnderLeaseRemovalChangeInvalidatesObservationEvenWithoutGrantOrPlannedWrite()
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        using var locks = WorkspaceLockTestStore.Create("library-removal-revalidation");
+        workspace.Write(PermissionPath, "{\"removedLibraries\":[]}");
+        var observation = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, TestContext.Current.CancellationToken);
+        var stage = new LibraryPermissionStage
+        {
+            Observation = observation,
+            Approval = null,
+            Result = WorkspacePermissionResult.NotEvaluated,
+            Change = null,
+            GrantChange = null,
+            RecoveryTarget = null,
+            Failure = null,
+        };
+        await using var lease = Assert.IsType<WorkspaceLockLease>((await locks.AcquireAsync(
+            new WorkspaceLockRequest(workspace.Workspace, "library sync", Guid.NewGuid()), TestContext.Current.CancellationToken)).Lease);
+
+        workspace.Replace(PermissionPath, "{\"removedLibraries\":[\"team-knowledge\"]}");
+        var before = workspace.Snapshot();
+
+        var unchanged = await LibraryPermissionOperation.RevalidateAsync(lease, stage, TestContext.Current.CancellationToken);
+
+        Assert.False(unchanged);
+        Assert.Null(stage.Change);
+        Assert.Null(stage.GrantChange);
+        Assert.Equal(before, workspace.Snapshot());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact]
+    public static async Task AlwaysGrantAndLibraryRemovalUseOneChangeFromExactOriginalSnapshot()
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        const string original = "{\"unknown\":{\"keep\":true},\"allowInstallPaths\":[],\"removedLibraries\":[]}";
+        workspace.Write(PermissionPath, original);
+        var originalBytes = File.ReadAllBytes(workspace.Absolute(PermissionPath));
+        using var input = new StringReader("always\nsentinel\n");
+        using var output = new StringWriter();
+        var operation = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt: true));
+        var request = (await RequestAsync(workspace, allowPrompt: true)) with
+        {
+            Targets = [new("docs/retired.md", LibraryPermissionTargetUse.Retired) { Effect = LibraryPermissionEffect.RemoveLink }],
+            RemovalSelection = new WorkspaceRemovalSelection { Libraries = ["team-knowledge"] },
+        };
+
+        var stage = await operation.DetermineAsync(request, TestContext.Current.CancellationToken);
+
+        Assert.Null(stage.Failure);
+        Assert.Equal(WorkspacePermissionDecision.Approved, stage.Result.Decision);
+        Assert.NotNull(stage.GrantChange);
+        var change = Assert.IsType<PlannedFileChange>(stage.Change);
+        Assert.Equal(originalBytes, stage.RecoveryTarget?.Before.Bytes.ToArray());
+        using var intended = JsonDocument.Parse(change.IntendedBytes.ToArray());
+        Assert.True(intended.RootElement.GetProperty("unknown").GetProperty("keep").GetBoolean());
+        Assert.Equal("docs/retired.md", Assert.Single(intended.RootElement.GetProperty("allowInstallPaths").EnumerateArray()).GetString());
+        Assert.Equal("team-knowledge", Assert.Single(intended.RootElement.GetProperty("removedLibraries").EnumerateArray()).GetString());
+        Assert.Equal("sentinel", input.ReadLine());
+        Assert.Equal(originalBytes, File.ReadAllBytes(workspace.Absolute(PermissionPath)));
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact]
     public async Task UndefinedTargetUseCannotBecomeAnAutomaticDirectoryProposal()
     {
         using var workspace = new LibraryMutationWorkspace();
-        var request = Request(workspace, allowPrompt: false) with
+        var request = (await RequestAsync(workspace, allowPrompt: false)) with
         {
             Targets = [new("docs/a.md", (LibraryPermissionTargetUse)int.MaxValue) { Effect = LibraryPermissionEffect.CreateLink }],
         };
@@ -257,7 +324,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         using var output = new StringWriter();
         var operation = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt: true));
         var before = workspace.Snapshot();
-        var stage = await operation.DetermineAsync(Request(workspace, allowPrompt: true), TestContext.Current.CancellationToken);
+        var stage = await operation.DetermineAsync(await RequestAsync(workspace, allowPrompt: true), TestContext.Current.CancellationToken);
         Assert.Equal(approved ? WorkspacePermissionDecision.Approved : WorkspacePermissionDecision.Declined, stage.Result.Decision);
         Assert.Equal(persistent, stage.Change is not null);
         Assert.Equal(persistent, stage.RecoveryTarget is not null);
@@ -297,7 +364,7 @@ public sealed class LibraryPermissionOperationIntegrationTests
         else
         {
             var operation = new LibraryPermissionOperation(LibraryPermissionTestPrompt.Create(input, output, canPrompt: true));
-            var stage = await operation.DetermineAsync(Request(workspace, allowPrompt: true), TestContext.Current.CancellationToken);
+            var stage = await operation.DetermineAsync(await RequestAsync(workspace, allowPrompt: true), TestContext.Current.CancellationToken);
             Assert.NotNull(stage.Change);
             Assert.NotNull(stage.RecoveryTarget);
             var result = await LibraryPermissionOperation.ApplyAsync(lease, stage, recovery: null, TestContext.Current.CancellationToken);
@@ -307,13 +374,12 @@ public sealed class LibraryPermissionOperationIntegrationTests
         Assert.Equal(before, workspace.Snapshot());
     }
 
-    private static LibraryPermissionRequest Request(LibraryMutationWorkspace workspace, bool allowPrompt)
+    private static async ValueTask<LibraryPermissionRequest> RequestAsync(LibraryMutationWorkspace workspace, bool allowPrompt)
         => new()
         {
             Workspace = workspace.Workspace,
-            Library = LibraryRegistration.Create(LibraryId.Create("team-knowledge"),
-                WorkspaceRelativeDirectory.Create(LibraryMutationWorkspace.SourceRoot),
-                LibraryDestinationRoot.Create("docs"), [SourceRelativeEligiblePath.Create("a.md")]),
+            LibraryId = LibraryId.Create("team-knowledge"),
+            SettingsObservation = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, TestContext.Current.CancellationToken),
             Targets = [new("docs/a.md", LibraryPermissionTargetUse.Live) { Effect = LibraryPermissionEffect.CreateLink }],
             AllowPrompt = allowPrompt,
         };

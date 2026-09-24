@@ -191,6 +191,7 @@ admissible combinations are:
 | Availability    | `producer`  | `operation` | `subject.kind` | Existing or accepted command identity |
 | --------------- | ----------- | ----------- | -------------- | ------------------------------------- |
 | Current writer  | `framework` | `install`   | `workspace`    | `install`                             |
+| Current writer  | `workspace` | `remove`    | `workspace`    | `remove`                              |
 | Current writer  | `extension` | `install`   | `workspace`    | `extension install`                   |
 | Current writer  | `index`     | `index`     | `workspace`    | `index`                               |
 | Current writer  | `route`     | `create`    | `workspace`    | `route create`                        |
@@ -208,7 +209,10 @@ admissible combinations are:
 
 The command identity in this table is the already accepted command identity
 associated with the fixed writer tuple; it never supplies or substitutes for a
-typed attribution value. Cleanup has no row because its narrow deletion
+typed attribution value. Root `remove` uses the `workspace` producer for ordinary
+path removal. Its route, Extension and Library selections retain their existing
+domain writer tuples. No other operation is valid for the `workspace` producer.
+Cleanup has no row because its narrow deletion
 operation never writes a recovery bundle.
 
 Every admissible tuple uses the selected `CliWorkspace.PhysicalRoot` as its

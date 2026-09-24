@@ -11,7 +11,7 @@ This route contains the detailed command contracts for the accepted replacement
 CLI. Gate 2 command definition, Gate 3 Architecture, and current-source
 reconciliation are complete. These contracts define accepted behavior and do
 not duplicate current executable state. The replacement remains non-shipping.
-All 28 retained commands are implemented and locally accepted. Complete
+The command set includes root `remove` alongside the retained commands. Complete
 six-target delivery evidence, final acceptance, and release remain pending.
 The active [CLI
 Development](../../../../working/cli-development/_cli-development.md) route
@@ -38,10 +38,10 @@ Libraries Technical Design](../technical-designs/workspace-libraries.md) defines
 the common record, inventory, projection, and recovery realization.
 
 The grouped [`route`](route/_route.md) family includes the accepted structural
-`route move` and `route remove` leaves. Each accepts one eligible ordinary
-unmanaged logical leaf or one complete ordinary unmanaged category and keeps
-its Interface and Behavior contracts in the operation-local scope. These
-commands are implemented and locally accepted; they do not ship yet.
+`route move` and `route remove` leaves. Each keeps its Interface and Behavior
+contracts in the operation-local scope. Move selects an eligible ordinary
+unmanaged leaf or category. Remove also supports managed content, releases its
+claims and records persistent removal intent under its local safety rules.
 
 The direct root [`cleanup`](cleanup/_cleanup.md) command is retained as an
 operand-free operation over the current recognized external recovery-bundle and
@@ -61,6 +61,8 @@ active development records track execution without replacing these contracts.
 - inherited - No local axioms; loaded ancestor axioms remain active.
 
 ## Entries
+
+- [Remove one workspace path, route, Extension or Library and preserve the removal choice](remove/_remove.md) - #Memory #Document #CLI #Contract #Remove #CurrentTruth
 
 - [Route the accepted non-shipping root cleanup contracts for lease-validated recovery-bundle and draft deletion](cleanup/_cleanup.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Mutation #Recovery #Safety #CurrentTruth
 - [Current Crystallized contract set for stateless ordered context resolution, projection, and explicit link expansion](context/_context.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #CurrentTruth

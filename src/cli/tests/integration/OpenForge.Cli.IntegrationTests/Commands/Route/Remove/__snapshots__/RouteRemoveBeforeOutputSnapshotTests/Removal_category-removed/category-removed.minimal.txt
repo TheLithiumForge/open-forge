@@ -4,6 +4,8 @@ Removed the route guidance/topics  (4 files)
   Removed .agents/guidance/topics/child.md
   Removed .agents/guidance/topics/notes.md
   Entry removed from .agents/guidance/_guidance.md
+  Recorded persistent route removal for directory .agents/guidance/topics in .agents/open-forge.json.
+  No managed content ownership claims needed release.
   Detached 1 link that pointed at it; the link text was kept:
   Detached 1 link that pointed at it; the link text was kept:
     .agents/guidance/old guide.overwrite.md:1:21

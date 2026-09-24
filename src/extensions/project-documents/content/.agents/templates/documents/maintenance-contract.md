@@ -6,9 +6,11 @@ open-forge:
 
 # {Surface} Maintenance Contract
 
-<!-- TEMPLATE: Use when a source has stable maintenance obligations worth defining separately. Do not invent a governance layer for a trivial file.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Use when a source has stable maintenance obligations worth defining separately. Do not invent a governance layer for a trivial file.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Source
 

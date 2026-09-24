@@ -15,21 +15,21 @@
   "findings": [],
   "effects": [],
   "counts": {
-    "routedFiles": 50,
+    "routedFiles": 51,
     "startupFiles": 11,
-    "startupTokens": 5980,
+    "startupTokens": 6000,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 371,
-    "allTokens": 22448,
-    "startupShare": 26.639344262295081967213114754,
+    "allTokens": 22757,
+    "startupShare": 26.362218218570110295733180999,
     "rootCategories": 7,
-    "entriesSectionsCurrent": 24,
+    "entriesSectionsCurrent": 25,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
     "frameworkFilesCurrent": 14,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
-    "extensionsInstalled": 5,
+    "extensionsInstalled": 6,
     "librariesRegistered": 0,
     "libraryLinksCurrent": 0,
     "libraryLinksMissing": 0,
@@ -48,15 +48,15 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 22704,
-          "bytes": 22704,
-          "tokens": 5676
+          "characters": 22781,
+          "bytes": 22781,
+          "tokens": 5696
         },
         "current": {
           "files": 11,
-          "characters": 23920,
-          "bytes": 23920,
-          "tokens": 5980
+          "characters": 23997,
+          "bytes": 23997,
+          "tokens": 6000
         },
         "difference": {
           "files": 0,
@@ -72,33 +72,37 @@
         }
       },
       "allRouted": {
-        "files": 50,
-        "characters": 89792,
-        "bytes": 89792,
-        "tokens": 22448
+        "files": 51,
+        "characters": 91028,
+        "bytes": 91028,
+        "tokens": 22757
       },
-      "startupShare": 26.639344262295081967213114754
+      "startupShare": 26.362218218570110295733180999
     },
     "extensions": [
       {
         "id": "development",
-        "version": "0.3.0"
+        "version": "0.4.0"
       },
       {
         "id": "development-toolkit",
-        "version": "0.3.0"
+        "version": "0.4.0"
       },
       {
         "id": "planning",
-        "version": "0.3.0"
+        "version": "0.4.0"
       },
       {
         "id": "project-documents",
-        "version": "0.3.0"
+        "version": "0.4.0"
+      },
+      {
+        "id": "scenarios",
+        "version": "0.4.0"
       },
       {
         "id": "workflows",
-        "version": "0.3.0"
+        "version": "0.4.0"
       }
     ],
     "libraries": []

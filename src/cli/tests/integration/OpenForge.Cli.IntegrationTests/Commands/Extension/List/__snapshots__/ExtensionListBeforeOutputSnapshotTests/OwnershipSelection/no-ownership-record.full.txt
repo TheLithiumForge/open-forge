@@ -6,17 +6,20 @@ Source: embedded catalogue
 Installed  (no ownership record, so installed packages cannot be listed)
 
 Available (bundled with this CLI)
-  collaboration        0.3.0  Explore choices and match collaboration depth to the decision
-  development          0.3.0  Implement changes, investigate defects, and review results with the workspace's existing tools                       (2 packages)
+  collaboration              0.4.0  Explore ideas, compare alternatives, and clarify decisions through discussion and a brainstorming template
+  core-templates             0.4.0  Create directives, guidance, patterns, skills, templates, maps, and memory records from adaptable starting files
+  development                0.4.0  Implement changes, investigate defects, and review results using the project's existing tools and conventions       (2 packages)
     needs: workflows
-  development-toolkit  0.3.0  Project knowledge, planning, and development methods in one optional selection                                       (5 packages)
-    needs: development, planning, project-documents
-  orchestration        0.3.0  Coordinate related tasks, capture useful execution learning, and transfer work safely                                (4 packages)
-    needs: development, planning
-  planning             0.3.0  Explore possibilities, preserve accepted choices, and organize work with optional records and a planning method      (2 packages)
+  development-toolkit        0.4.0  Install Project Documents, Planning, Flows and Scenarios, and Development together                                  (6 packages)
+    needs: development, planning, project-documents, scenarios
+  observations-and-handoffs  0.4.0  Save useful observations and prepare a clear snapshot for another person, agent, or session to resume work
+  orchestration              0.4.0  Coordinate related tasks, assign responsibilities, manage dependencies, and verify combined results                 (5 packages)
+    needs: development, observations-and-handoffs, planning
+  planning                   0.4.0  Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and checkpoints       (2 packages)
     needs: workflows
-  project-documents    0.3.0  Maintain current project knowledge with a Documents convention, five templates, and Vision and Architecture methods  (2 packages)
+  project-documents          0.4.0  Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements  (2 packages)
     needs: workflows
-  workflows            0.3.0  Select and follow scoped methods through one native use-workflow Skill
+  scenarios                  0.4.0  Describe user journeys and expected outcomes, organize scenarios, and record what happened when they were tried
+  workflows                  0.4.0  Find and follow installed workflows, or create your own using the supplied template
   Install one of the available Extensions.
 Next: open-forge extension install <id>

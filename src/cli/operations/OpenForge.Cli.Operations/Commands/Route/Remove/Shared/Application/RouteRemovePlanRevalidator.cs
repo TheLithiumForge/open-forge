@@ -62,6 +62,13 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
         => expected.Request == actual.Request
             && SubjectMatches(expected.Projection.Subject, actual.Projection.Subject)
             && OwnershipMatches(expected, actual)
+            && expected.Projection.Settings.MatchesObservation(actual.Projection.Settings)
+            && RemovalSelectionMatches(expected.Projection.RemovalSelection, actual.Projection.RemovalSelection)
+            && expected.Projection.ContentPathsToRelease.SequenceEqual(
+                actual.Projection.ContentPathsToRelease, StringComparer.Ordinal)
+            && expected.Projection.ClaimsToRelease.SequenceEqual(actual.Projection.ClaimsToRelease)
+            && OptionalFileChangesMatch(expected.Projection.SettingsChange, actual.Projection.SettingsChange)
+            && OptionalFileChangesMatch(expected.Projection.OwnershipChange, actual.Projection.OwnershipChange)
             && ReferencesMatch(expected.Projection.References, actual.Projection.References)
             && NavigationMatches(expected.Projection.Navigation, actual.Projection.Navigation)
             && PreviewMatches(expected.Preview, actual.Preview)
@@ -212,7 +219,37 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
             && expected.Recovery.ProtectedPaths.SequenceEqual(actual.Recovery.ProtectedPaths)
             && expected.Recovery.ResidualPath == actual.Recovery.ResidualPath
             && expected.Verification == actual.Verification
+            && PersistenceMatches(expected.Persistence, actual.Persistence)
             && expected.Findings.SequenceEqual(actual.Findings);
+
+    private static bool PersistenceMatches(
+        RouteRemovePersistence expected,
+        RouteRemovePersistence actual)
+        => expected.Settings.Outcome == actual.Settings.Outcome
+            && expected.Settings.Path == actual.Settings.Path
+            && expected.Settings.Categories.SequenceEqual(actual.Settings.Categories, StringComparer.Ordinal)
+            && expected.Settings.Files.SequenceEqual(actual.Settings.Files, StringComparer.Ordinal)
+            && expected.Settings.Directories.SequenceEqual(actual.Settings.Directories, StringComparer.Ordinal)
+            && expected.Ownership.Outcome == actual.Ownership.Outcome
+            && expected.Ownership.Claims.SequenceEqual(actual.Ownership.Claims);
+
+    private static bool RemovalSelectionMatches(
+        OpenForge.Cli.Core.Framework.Settings.Models.Mutation.WorkspaceRemovalSelection expected,
+        OpenForge.Cli.Core.Framework.Settings.Models.Mutation.WorkspaceRemovalSelection actual)
+        => expected.Categories.SequenceEqual(actual.Categories, StringComparer.Ordinal)
+            && expected.Files.SequenceEqual(actual.Files, StringComparer.Ordinal)
+            && expected.Directories.SequenceEqual(actual.Directories, StringComparer.Ordinal)
+            && expected.Extensions.SequenceEqual(actual.Extensions, StringComparer.Ordinal)
+            && expected.Libraries.SequenceEqual(actual.Libraries, StringComparer.Ordinal);
+
+    private static bool OptionalFileChangesMatch(
+        PlannedFileChange? expected,
+        PlannedFileChange? actual)
+        => expected is null && actual is null
+            || expected is not null && actual is not null
+                && expected.Kind == actual.Kind
+                && expected.Expectation == actual.Expectation
+                && expected.IntendedBytes.AsSpan().SequenceEqual(actual.IntendedBytes.AsSpan());
 
     private static bool FileChangesMatch(
         IReadOnlyList<PlannedFileChange> expected,
@@ -235,7 +272,8 @@ internal sealed class RouteRemovePlanRevalidator(RouteRemovePlanBuilder planBuil
                     pair.Second.Change.IntendedBytes.AsSpan())
                 && pair.First.Before.Expectation == pair.Second.Before.Expectation
                 && pair.First.Before.HasBytes == pair.Second.Before.HasBytes
-                && pair.First.Before.Bytes.AsSpan().SequenceEqual(pair.Second.Before.Bytes.AsSpan()));
+                && pair.First.Before.Bytes.AsSpan().SequenceEqual(pair.Second.Before.Bytes.AsSpan())
+                && pair.First.RequiresRecovery == pair.Second.RequiresRecovery);
 
     private static RouteRemovePlanRevalidation Interrupted()
         => new(

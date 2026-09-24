@@ -58,4 +58,20 @@ internal static class RouteRemovePhrases
     // @OpenForgeText route.remove.phrase.the-link-at-cannot-be-detached-safely
     internal static string FormatTheLinkAtCannotBeDetachedSafely(string pathText, string lineText, string columnText, string sentenceText)
         => $"The link at {pathText}:{lineText}:{columnText} cannot be detached safely: {sentenceText}.";
+
+    // @OpenForgeText route.remove.phrase.removal-intent-outcome
+    internal static string FormatRemovalIntentOutcome(string outcomeText, string targetsText, string settingsPathText)
+        => $"{outcomeText} persistent route removal for {targetsText} in {settingsPathText}.";
+
+    // @OpenForgeText route.remove.phrase.ownership-release-outcome
+    internal static string FormatOwnershipReleaseOutcome(string outcomeText, string countText, string pluralText)
+        => $"{outcomeText} {countText} managed content ownership {pluralText}.";
+
+    // @OpenForgeText route.remove.phrase.ownership-claim
+    internal static string FormatOwnershipClaim(string managerText, string ownerText, string pathText)
+        => $"{managerText} owner {ownerText}: {pathText}";
+
+    // @OpenForgeText route.remove.phrase.no-managed-content-ownership-to-release
+    internal static string FormatNoManagedContentOwnershipToRelease()
+        => "No managed content ownership claims needed release.";
 }

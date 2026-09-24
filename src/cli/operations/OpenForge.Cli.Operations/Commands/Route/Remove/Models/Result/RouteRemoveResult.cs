@@ -26,6 +26,7 @@ internal sealed record RouteRemoveResult : ICliCommandResult
         Effects = formation.Effects;
         UnchangedPaths = formation.UnchangedPaths;
         Recovery = formation.Recovery;
+        Persistence = formation.Persistence;
         Verification = formation.Verification;
         Findings = formation.Findings;
         Status = status;
@@ -63,6 +64,8 @@ internal sealed record RouteRemoveResult : ICliCommandResult
     internal ImmutableArray<string> UnchangedPaths { get; }
 
     internal RouteRemoveRecovery Recovery { get; }
+
+    internal RouteRemovePersistence Persistence { get; }
 
     internal RouteRemoveVerificationState Verification { get; }
 

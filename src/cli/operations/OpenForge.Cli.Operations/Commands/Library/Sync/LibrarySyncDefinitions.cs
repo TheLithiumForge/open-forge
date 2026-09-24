@@ -50,6 +50,8 @@ internal static class LibrarySyncDefinitions
             LibrarySyncFindingCode.DestinationCollision => "library-sync.destination-collision",
             LibrarySyncFindingCode.RetiredLinkMissing => "library-sync.retired-link-missing",
             LibrarySyncFindingCode.RegisteredLinkRestored => "library-sync.registered-link-restored",
+            LibrarySyncFindingCode.LibraryRemoved => "library-sync.library-removed",
+            LibrarySyncFindingCode.PathExcluded => "library-sync.path-excluded",
             LibrarySyncFindingCode.ConfirmationRequired => "library-sync.confirmation-required",
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The Library finding code is not defined."),
         };

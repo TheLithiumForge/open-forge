@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
+using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
@@ -35,10 +37,50 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
         FrameworkPayload payload,
         CancellationToken cancellationToken)
     {
-        var settings = await WorkspaceSettingsReader.ReadAsync(physicalPathResolver, request.Workspace, cancellationToken).ConfigureAwait(false);
-        var payloadAssets = payload.Assets
+        var settingsRead = await WorkspaceSettingsReader.ReadAsync(
+                physicalPathResolver,
+                request.Workspace,
+                cancellationToken)
+            .ConfigureAwait(false);
+        if (settingsRead.State == WorkspaceSettingsReadState.Invalid)
+        {
+            return Blocked(
+                settingsRead.Cause ?? "The authored workspace settings are invalid.",
+                InstallFindingCode.InvalidInput);
+        }
+
+        if (settingsRead.State == WorkspaceSettingsReadState.Unavailable)
+        {
+            return Incomplete(
+                settingsRead.Cause ?? "The authored workspace settings are unavailable.",
+                InstallFindingCode.LifecycleUnavailable);
+        }
+
+        if (settingsRead.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(settingsRead),
+                settingsRead.State,
+                "The workspace settings read state is not defined.");
+        }
+
+        var settings = settingsRead.Document;
+        var selectedPayloadAssets = payload.Assets
             .Where(asset => asset.Path.StartsWith(".agents/", StringComparison.Ordinal)
-                && FrameworkPayloadSelection.IncludesPath(asset.Path, settings.Document.RemovedCategories))
+                && FrameworkPayloadSelection.IncludesPath(asset.Path, settings))
+            .ToArray();
+        if (ReadMissingExcludedDirectoryAncestor(
+                request.Workspace.PhysicalRoot,
+                settings.RemovedFiles,
+                selectedPayloadAssets.Select(asset => asset.Path))
+            is { } missingAncestor)
+        {
+            return Blocked(
+                $"The excluded Framework path '{missingAncestor}' is required as a directory by another payload destination.",
+                InstallFindingCode.TargetUnsafe);
+        }
+
+        var payloadAssets = selectedPayloadAssets
             .ToDictionary(asset => asset.Path, StringComparer.Ordinal);
         SourceCatalogue catalogue;
         try
@@ -84,6 +126,14 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
             {
                 return Blocked(
                     "The intended Framework topology contains an ambiguous route, alias, or target collision.");
+            }
+
+            if (FrameworkPayloadSelection.FindMissingRequiredAncestor(payload, settings, formation)
+                is { } missingRouteAncestor)
+            {
+                return Blocked(
+                    $"The excluded Framework entrypoint '{missingRouteAncestor}' is missing and required to reach another payload route.",
+                    InstallFindingCode.TargetUnsafe);
             }
 
             var documents = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -188,17 +238,24 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
             var rootClaude = payload.Find(FrameworkPayloadAsset.RootClaudePath)
                 ?? throw new InvalidDataException(
                     $"The embedded Framework payload is missing {FrameworkPayloadAsset.RootClaudePath}.");
+            var managedBlockBytes = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+            if (FrameworkPayloadSelection.IncludesPath(FrameworkPayloadAsset.RootAgentPath, settings))
+            {
+                managedBlockBytes.Add(FrameworkPayloadAsset.RootAgentPath, rootAgent.Bytes.ToArray());
+            }
+
+            if (FrameworkPayloadSelection.IncludesPath(FrameworkPayloadAsset.RootClaudePath, settings))
+            {
+                managedBlockBytes.Add(FrameworkPayloadAsset.RootClaudePath, rootClaude.Bytes.ToArray());
+            }
+
             return new InstallIntendedStateBuild
             {
                 State = InstallIntendedStateBuildState.Complete,
                 IntendedState = new InstallIntendedState
                 {
                     TargetBytes = targetBytes,
-                    ManagedBlockBytes = new Dictionary<string, byte[]>(StringComparer.Ordinal)
-                    {
-                        [FrameworkPayloadAsset.RootAgentPath] = rootAgent.Bytes.ToArray(),
-                        [FrameworkPayloadAsset.RootClaudePath] = rootClaude.Bytes.ToArray(),
-                    },
+                    ManagedBlockBytes = managedBlockBytes,
                     GeneratedRegionPaths = projection.Regions
                         .Select(region => region.CanonicalPath)
                         .ToHashSet(StringComparer.Ordinal),
@@ -207,6 +264,7 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                         .ToArray(),
                 },
                 Cause = null,
+                FindingCode = null,
             };
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -296,6 +354,31 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
         }
     }
 
+    private static string? ReadMissingExcludedDirectoryAncestor(
+        string physicalWorkspaceRoot,
+        IEnumerable<string> excludedPaths,
+        IEnumerable<string> selectedTargetPaths)
+    {
+        var targets = selectedTargetPaths.ToArray();
+        foreach (var excludedPath in excludedPaths)
+        {
+            if (!targets.Any(path => path.StartsWith($"{excludedPath}/", StringComparison.Ordinal)))
+            {
+                continue;
+            }
+
+            var physicalPath = Path.Combine(
+                physicalWorkspaceRoot,
+                excludedPath.Replace('/', Path.DirectorySeparatorChar));
+            if (!Directory.Exists(physicalPath))
+            {
+                return excludedPath;
+            }
+        }
+
+        return null;
+    }
+
     private static InstallIntendedStateBuild? ReadCatalogueBoundary(
         SourceCatalogue catalogue)
     {
@@ -316,20 +399,26 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                 "Current authored source catalogue facts are unsafe or ambiguous for intended navigation projection.");
     }
 
-    private static InstallIntendedStateBuild Blocked(string cause)
+    private static InstallIntendedStateBuild Blocked(
+        string cause,
+        InstallFindingCode findingCode = InstallFindingCode.GeneratedRegionUnsafe)
         => new()
         {
             State = InstallIntendedStateBuildState.Blocked,
             IntendedState = null,
             Cause = cause,
+            FindingCode = findingCode,
         };
 
-    private static InstallIntendedStateBuild Incomplete(string cause)
+    private static InstallIntendedStateBuild Incomplete(
+        string cause,
+        InstallFindingCode findingCode = InstallFindingCode.ProjectionUnavailable)
         => new()
         {
             State = InstallIntendedStateBuildState.Incomplete,
             IntendedState = null,
             Cause = cause,
+            FindingCode = findingCode,
         };
 
     private static InstallIntendedStateBuild Cancelled()
@@ -338,5 +427,6 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
             State = InstallIntendedStateBuildState.Cancelled,
             IntendedState = null,
             Cause = null,
+            FindingCode = InstallFindingCode.Interrupted,
         };
 }

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
@@ -35,6 +36,41 @@ internal static class WorkspaceSettingsChangePlanner
         return snapshot.Bytes.AsSpan().SequenceEqual(intended.Span)
             ? null
             : PlannedFileChange.Replace(snapshot.Expectation, intended.ToArray());
+    }
+
+    internal static PlannedFileChange? PlanRemovals(
+        WorkspaceSettingsRead observation,
+        WorkspaceRemovalSelection selection)
+    {
+        if (observation.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete)
+            || observation.Snapshot is not { } snapshot)
+        {
+            throw new InvalidOperationException("Recording removals requires safely observed authored settings.");
+        }
+
+        var expectedSnapshotKind = observation.State switch
+        {
+            WorkspaceSettingsReadState.Absent => FileExpectationKind.Missing,
+            WorkspaceSettingsReadState.Complete => FileExpectationKind.File,
+            _ => throw new InvalidOperationException("Recording removals requires safely observed authored settings."),
+        };
+        if (snapshot.Kind != expectedSnapshotKind)
+        {
+            throw new InvalidOperationException("The settings snapshot does not match its observation state.");
+        }
+
+        var intended = WorkspaceSettingsCodec.AddRemovals(snapshot.Bytes.ToArray(), selection);
+        if (intended is null)
+        {
+            return null;
+        }
+
+        return snapshot.Kind switch
+        {
+            FileExpectationKind.Missing => PlannedFileChange.Create(snapshot.Expectation, intended),
+            FileExpectationKind.File => PlannedFileChange.Replace(snapshot.Expectation, intended),
+            _ => throw new InvalidOperationException("Recording removals requires a missing or ordinary settings file."),
+        };
     }
 
     internal static (WorkspacePermissionAction Action, RecoveryBundleTarget? RecoveryTarget) ReadActionAndRecovery(

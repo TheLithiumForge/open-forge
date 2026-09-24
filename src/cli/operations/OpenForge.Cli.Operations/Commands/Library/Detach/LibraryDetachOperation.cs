@@ -27,6 +27,11 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
@@ -97,19 +102,20 @@ internal sealed class LibraryDetachOperation
                 cancellationToken).ConfigureAwait(false),
         };
         var plan = LibraryDetachPlanner.Plan(observations, cancellationToken);
-        if (plan.State != LibraryPlanState.Complete || observations.Record.OwnershipObservation is not null)
+        if (plan.State != LibraryPlanState.Complete)
         {
             return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
         }
-        var selected = observations.Record.Record?.Libraries.Single(library => library.Id == request.LibraryId)
-            ?? throw new InvalidOperationException("A complete Library detach plan requires its selected Library.");
-        var targets = LibraryPathIdentity.Mappings(selected).Select(mapping =>
+        var selected = observations.Record.Record?.Libraries.SingleOrDefault(library => library.Id == request.LibraryId);
+        ImmutableArray<LibraryPermissionTarget> targets = selected is null ? [] : LibraryPathIdentity.Mappings(selected).Select(mapping =>
             new LibraryPermissionTarget(mapping.DestinationPath.Value, LibraryPermissionTargetUse.Retired) { Effect = LibraryPermissionEffect.RemoveLink }).ToImmutableArray();
         var permissions = await _permissions.DetermineAsync(new LibraryPermissionRequest
         {
             Workspace = request.Workspace,
-            Library = selected,
+            LibraryId = request.LibraryId,
+            SettingsObservation = observations.Settings,
             Targets = targets,
+            RemovalSelection = new WorkspaceRemovalSelection { Libraries = [request.LibraryId.Value] },
             ExplicitGrantPaths = request.Allow,
             AllowPrompt = request.AllowPrompt && !request.Automatic && request.Mode != LibraryMode.DryRun,
         }, cancellationToken).ConfigureAwait(false);
@@ -118,7 +124,7 @@ internal sealed class LibraryDetachOperation
             Permissions = permissions,
             State = permissions.Failure is null ? plan.State : LibraryPlanState.Blocked,
         };
-        if (request.Mode == LibraryMode.DryRun || permissions.Failure is not null)
+        if (request.Mode == LibraryMode.DryRun || permissions.Failure is not null || !HasEffects(plan))
         {
             return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
         }
@@ -171,6 +177,10 @@ internal sealed class LibraryDetachOperation
             resolver,
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
+        var settings = await WorkspaceSettingsReader.ReadAsync(
+            resolver,
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
         var record = LibraryRegistrationReader.Read(ownership);
         var selected = record.Record?.Libraries.FirstOrDefault(library => library.Id == request.LibraryId);
         var mappings = selected is null
@@ -193,9 +203,23 @@ internal sealed class LibraryDetachOperation
                     SelectedLibrary = selected,
                     CurrentRecord = record.Record,
                     IntendedEntries = [],
+                    Settings = settings.Document,
                 },
                 cancellationToken).ConfigureAwait(false)
             : new LibraryGeneratedNavigationRead([], Issue: null);
+
+        if (navigation.Issue is null && navigation.Changes.FirstOrDefault(change =>
+                WorkspaceRemovals.IsPathRemoved(
+                    Path.GetRelativePath(request.Workspace.LexicalRoot, change.LogicalPath)
+                        .Replace(Path.DirectorySeparatorChar, '/'),
+                    settings.Document)) is { } excludedHost)
+        {
+            navigation = new LibraryGeneratedNavigationRead([], new LibraryGeneratedNavigationIssue(
+                LibraryGeneratedNavigationIssueState.Blocked,
+                Path.GetRelativePath(request.Workspace.LexicalRoot, excludedHost.LogicalPath)
+                    .Replace(Path.DirectorySeparatorChar, '/'),
+                "Generated navigation is excluded by workspace settings and cannot be changed safely."));
+        }
 
         var paths = mappings.Select(observation => observation.Mapping.DestinationPath.Value);
         return new LibraryDetachPlanningInput
@@ -210,6 +234,7 @@ internal sealed class LibraryDetachOperation
             Record = record,
             Mappings = mappings,
             Ownership = ownership,
+            Settings = settings,
             GeneratedRegionChanges = navigation.Changes,
             GeneratedNavigationIssue = navigation.Issue,
         };
@@ -334,6 +359,13 @@ internal sealed class LibraryDetachOperation
 
     private static bool Matches(LibraryDetachPlan expected, LibraryDetachPlan actual)
         => LibraryMutationOperationSupport.PlansMatch(expected.Effects, actual.Effects);
+
+    private static bool HasEffects(LibraryDetachPlan plan)
+        => plan.Directories.Length > 0
+            || plan.Links.Length > 0
+            || plan.GeneratedRegions.Length > 0
+            || plan.OwnershipChange is not null
+            || plan.Permissions?.Change is not null;
 
     private static LibraryDetachCompletionInput Complete(
         LibraryDetachRequest request,

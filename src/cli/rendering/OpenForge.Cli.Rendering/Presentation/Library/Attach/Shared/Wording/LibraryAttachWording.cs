@@ -16,6 +16,12 @@ internal static class LibraryAttachWording
     internal static string WouldRegister(string id, string source)
         => global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachWording.WouldRegister(id, source);
 
+    internal static string RemoveExcludedLibraryNext(string id)
+        => global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachWording.RemoveExcludedLibraryNext(id);
+
+    internal static string WorkspaceSettingsNextReason()
+        => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.MessageUpdateSettingsBeforeRerunningLibraryCommand();
+
     internal static string Incomplete(string id, string limitation)
         => global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachPhrases.FormatTheLibraryCouldNotBeAttachedNothingWasChanged($"{id}", $"{TrimSentence(limitation)}");
 
@@ -202,6 +208,8 @@ internal static class LibraryAttachWording
         LibraryAttachFindingCode.InvalidInput => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleInvalidInput(),
         LibraryAttachFindingCode.InvalidId => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleInvalidLibraryId(),
         LibraryAttachFindingCode.DuplicateId => global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.TitleLibraryIdIsAlreadyRegistered(),
+        LibraryAttachFindingCode.LibraryRemoved => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleLibraryIdIsExcluded(),
+        LibraryAttachFindingCode.PathExcluded => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleDestinationIsExcluded(),
         LibraryAttachFindingCode.SourceRootInvalid => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleSourceFolderIsInvalid(),
         LibraryAttachFindingCode.SourceRootUnavailable => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleSourceFolderIsUnavailable(),
         LibraryAttachFindingCode.SourceRootBlocked => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleSourceFolderIsUnsafe(),
@@ -266,6 +274,8 @@ internal static class LibraryAttachWording
         LibraryAttachFindingCode.OperationFailed => "library-attach.operation-failed",
         LibraryAttachFindingCode.Interrupted => "library-attach.interrupted",
         LibraryAttachFindingCode.DuplicateId => "library-attach.duplicate-id",
+        LibraryAttachFindingCode.LibraryRemoved => "library-attach.library-removed",
+        LibraryAttachFindingCode.PathExcluded => "library-attach.path-excluded",
         LibraryAttachFindingCode.SourceRootInvalid => "library-attach.source-root-invalid",
         LibraryAttachFindingCode.SourceRootUnavailable => "library-attach.source-root-unavailable",
         LibraryAttachFindingCode.SourceRootBlocked => "library-attach.source-root-blocked",

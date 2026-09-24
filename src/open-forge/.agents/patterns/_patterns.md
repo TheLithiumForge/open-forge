@@ -22,8 +22,8 @@ Patterns define reusable default shapes that make related work consistent, easy 
 
 - Keep each Pattern focused on one reusable shape.
 - Use examples that are valid for their APIs, formats, and tools. Label intentionally incomplete examples as schematic.
-- Treat an applicable Pattern as the default shape in its scope. Depart from it only for a deliberate reason, and explain the departure before work depends on it.
-- Use existing authority for an exception to an agreed shape. If that authority is missing, ask the user before proceeding.
+- Treat an applicable Pattern as the default shape in its scope. A justified adaptation is allowed within the authority already granted for the work. Explain material departures before other work depends on them.
+- When a Directive, Axiom, or accepted requirement makes a shape mandatory, follow that requirement. Ask only when a departure needs authority that has not been granted.
 
 ## Entries
 

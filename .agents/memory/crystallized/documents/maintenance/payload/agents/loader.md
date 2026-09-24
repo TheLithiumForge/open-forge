@@ -33,10 +33,10 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - Platform constraints and runtime safety bound every action. Clear user direction sets task goals, priorities, important choices, and accepted changes. A declared external source remains authoritative for the facts assigned to it.
 - Explanation and planning match the request. Unless the user asks for deeper analysis, the first response gives the current understanding, one recommendation, and no more than one unresolved important choice.
 - The agent continues when accepted direction or a stated reversible assumption makes progress safe. It states assumptions and stops when uncertainty, conflict, or an authority boundary could significantly change the work.
-- Only the loader and recognized loaded `entrypoints` define active `Axioms`. Child routes inherit ancestor Axioms. A child entrypoint adds only rules for its narrower scope.
+- Only the loader and recognized loaded `entrypoints` define active `Axioms`. Child routes inherit ancestor Axioms and add only rules specific to their narrower scope. Authored scopes without local rules use the inherited marker; missing or empty local sections remain valid input.
 - Clear direction is not reconfirmed. A request to act allows routine, reversible, in-scope choices needed to complete the task. The user decides unresolved choices that could significantly change the result, scope, risk, cost, external effects, or ability to undo the work.
 - Apparent #CurrentTruth conflicts are investigated before either source changes. Accepted changes update the source that defines current state and keep useful prior context.
-- Loaded Axioms and Directives apply within their scope. Accepted workspace-specific content replaces corresponding Open Forge defaults for the same role, within its accepted scope. Unresolved conflicts are reported.
+- Loaded Axioms and Directive Instructions apply within their scope. Editing or replacing a default, or adding its overwrite companion, changes that source. A separate file does not gain precedence over other active rules. Unresolved conflicts are reported.
 - Narrower selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another and report conflicts instead of silently overriding one another.
 
 ### Routing And Loading
@@ -48,16 +48,16 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - Any number of routed `slugs` may narrow a route below its root. A slug may appear before, between, or after deeper route segments and narrows everything that follows it.
 - A scope contains only the routes useful there. It does not need to copy another scope or the installed defaults.
 - Specialized material uses the narrowest useful scope. Workspace-wide placement is reserved for material that applies across the workspace
-- Each scoped entrypoint keeps content on demand by default. #LoadNow is justified only when omission costs more than reading on each parent load. #KeepInMind also requires a continuity need for refreshing exposed content while its scope remains active. Scope alone implies no loading tag
+- Each scoped entrypoint keeps content on demand by default. #LoadNow is justified only when omission costs more than reading on each parent load. #KeepInMind also requires a need to read exposed content again at the defined refresh points. Scope alone implies no loading tag
 - Selection uses visible paths, descriptions, tags, ancestor routes, and explicit links. It follows relevant branches recursively, keeps separately selected scopes as separate chains, and rechecks them after an important task change. It does not load file bodies only to discover routes.
 - Scoping preserves deeper `route` order and meaning. Manager-declared `route` segments retain their order through every scope.
 - A familiar `slug` or tag alone creates neither root behavior nor managed status.
 - Each declared manager identifies the `route` shapes it recognizes and changes only files it owns or safely identifies.
-- Users may add, move, replace, or remove `routes`. Any `route` outside a manager's declared shapes remains generically routable, and removed defaults stay absent unless restoration is explicitly requested.
+- Users may add, move, replace, or remove `routes`. Any `route` outside a manager's declared shapes remains generically routable. Record intentional removal of managed files in the manager's exclusions before updating; excluded defaults stay absent until restoration is explicitly requested.
 - Generated `Entries` remain navigation metadata. Detailed meaning comes from the routed destination or the authoritative source it identifies.
 - Loading and tags change visibility, timing, or classification without creating authority.
 - The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Its #Memory definition identifies self-growing Markdown state without moving Memory mechanics into the loader. Undefined tags remain routing and search signals.
-- #LoadNow and #KeepInMind operate through loaded parent routes for both entrypoints and other files. Neither activates an unselected ancestor or scope. Read exposed continuity content when its parent loads, then refresh it at the defined boundaries while its scope remains active. Base files precede their adjacent overwrites, and entrypoints apply their child loading rules in listed order.
+- #LoadNow and #KeepInMind operate through loaded parent routes for both entrypoints and other files. Neither activates an unselected ancestor or scope. Read the tagged context when its parent loads, then refresh it at the defined boundaries while its scope remains active. Base files precede their adjacent overwrites, and entrypoints apply their child loading rules in listed order.
 - Every recovered result retains the authority and scope established by its `route` and content.
 - A user-owned `{name}.overwrite.md` is not an independent `route` and loads immediately after its base.
 - It is interpreted as part of the base source, within that source's role and scope, and inherits its route and loading behavior. It is neither indexed nor selected independently. Its precedence applies only to corresponding base content and does not override unrelated authority.

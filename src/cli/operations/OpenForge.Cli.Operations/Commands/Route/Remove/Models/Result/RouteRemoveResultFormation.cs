@@ -28,6 +28,8 @@ internal sealed record RouteRemoveResultFormation
 
     public required RouteRemoveRecovery Recovery { get; init; }
 
+    public RouteRemovePersistence Persistence { get; init; } = RouteRemovePersistence.NotEstablished;
+
     public required RouteRemoveVerificationState Verification { get; init; }
 
     public ImmutableArray<RouteRemoveFinding> Findings { get; init; } = [];

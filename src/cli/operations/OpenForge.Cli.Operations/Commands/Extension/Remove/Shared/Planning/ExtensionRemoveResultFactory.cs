@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Selection;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 
@@ -18,7 +19,8 @@ internal static class ExtensionRemoveResultFactory
         ExtensionRemoveLifecycle lifecycle,
         ExtensionRemoveRecovery recovery,
         ExtensionRemoveVerification verification,
-        IReadOnlyList<ExtensionRemoveFinding> findings)
+        IReadOnlyList<ExtensionRemoveFinding> findings,
+        ExtensionRemoveEffect? settingsEffect = null)
         => new(new ExtensionRemoveResultFormation
         {
             Workspace = request.Workspace,
@@ -30,7 +32,7 @@ internal static class ExtensionRemoveResultFactory
                 Dependencies = dependencies,
                 Paths = paths,
                 GeneratedNavigation = navigation,
-                Effects = effects,
+                Effects = settingsEffect is null ? effects : [.. effects, settingsEffect],
                 Lifecycle = lifecycle,
                 Recovery = recovery,
                 Verification = verification,
@@ -78,8 +80,12 @@ internal static class ExtensionRemoveResultFactory
             plan.Dependencies,
             planned.Paths,
             planned.GeneratedNavigation,
-            [],
-            planned.Lifecycle,
+            ExtensionRemoveApplicationResultFactory.NotStartedEffects(plan),
+            ExtensionRemoveApplicationResultFactory.Lifecycle(
+                plan,
+                plan.OwnershipChange is null
+                    ? ExtensionRemoveLifecycleOutcome.AlreadyCurrent
+                    : ExtensionRemoveLifecycleOutcome.NotStarted),
             recovery ?? new ExtensionRemoveRecovery(
                 ExtensionRemoveRecoveryState.NotCreated,
                 [],
@@ -88,7 +94,12 @@ internal static class ExtensionRemoveResultFactory
                 ExtensionRemoveVerificationState.NotRequested,
                 ExtensionRemoveVerificationState.NotRequested,
                 ExtensionRemoveVerificationState.NotRequested),
-            planned.Findings.Append(new ExtensionRemoveFinding(code, cause)).ToArray());
+            planned.Findings.Append(new ExtensionRemoveFinding(code, cause)).ToArray(),
+            plan.SettingsEffect is { } settingsEffect
+                ? ExtensionRemoveApplicationResultFactory.WithOutcome(
+                    settingsEffect,
+                    ExtensionRemoveEffectOutcome.NotStarted)
+                : null);
 
     private static ExtensionRemoveLifecycleTrust ReadTrust(
         IReadOnlyList<ExtensionRemoveFinding> findings)

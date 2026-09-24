@@ -101,4 +101,32 @@ public sealed class RouteRemoveRevalidationIntegrationTests
         Assert.False(string.IsNullOrWhiteSpace(revalidation.Cause));
         Assert.Equal(beforeRevalidation, workspace.SnapshotHashes());
     }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route Remove revalidates exact settings bytes while holding the workspace lease"),
+     Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
+    public async Task ChangedSettingsBlocksApplicationWithoutWrites()
+    {
+        using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-settings-race");
+        var build = await RouteRemoveOperationFactory.CreatePlanBuilder().BuildAsync(
+            new RouteRemoveRequest(
+                workspace.Workspace,
+                RouteRemoveIntegrationWorkspace.LeafId,
+                RouteRemoveMode.Apply),
+            TestContext.Current.CancellationToken);
+        var original = Assert.IsType<RouteRemovePlan>(build.Plan);
+        await using var lease = await workspace.AcquireLeaseAsync(Guid.NewGuid());
+
+        workspace.WriteText(".agents/open-forge.json", "{\"allowInstallPaths\":[\"docs\"]}\n");
+        var beforeRevalidation = workspace.SnapshotHashes();
+
+        var revalidation = await RouteRemoveOperationFactory.CreatePlanRevalidator().RevalidateAsync(
+            original,
+            lease,
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(RouteRemovePlanRevalidationState.Changed, revalidation.State);
+        Assert.False(string.IsNullOrWhiteSpace(revalidation.Cause));
+        Assert.Equal(beforeRevalidation, workspace.SnapshotHashes());
+    }
 }

@@ -116,7 +116,20 @@
         "path": "notes.md",
         "location": "1:1"
       }
-    ]
+    ],
+    "settings": {
+      "outcome": "applied",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [],
+      "directories": [
+        ".agents/guidance/topics"
+      ]
+    },
+    "ownershipRelease": {
+      "outcome": "unchanged",
+      "claims": []
+    }
   },
   "recovery": null,
   "next": null

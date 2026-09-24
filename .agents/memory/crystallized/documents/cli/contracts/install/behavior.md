@@ -509,10 +509,17 @@ A conforming implementation must demonstrate:
   `System.IO`, Native AOT, OS locking, isolated tests, and package journeys;
 - no runtime implementation or shipping claim.
 
-## Deliberately Removed Root Categories
+## Deliberately Removed Framework Destinations
 
-Read `removedCategories` from authored settings. A category such as `skills`
-excludes embedded targets beneath `.agents/skills/` from installation and generated
-navigation. Do not recreate those files, change settings, or infer new ownership
+Read `removedCategories`, `removedFiles` and `removedDirectories` from authored settings. A category
+such as `skills` excludes embedded targets beneath `.agents/skills/`. Each
+`removedFiles` entry is one exact canonical workspace-relative file destination;
+it has no glob or recursive-directory meaning. A `removedDirectories` entry
+excludes that canonical directory and all descendants, including future files.
+The concrete destination is
+excluded from whole-file and generated-region planning, including root managed
+hosts. Do not recreate excluded files, change settings, or infer new ownership
 for them. Existing user content and prior receipts outside actual selected effects
-remain preserved. Required loader and root host anchors are not categories.
+remain preserved. If an excluded missing entrypoint makes another selected route
+unreachable, report a structural blocker instead of recreating it. Required loader
+and root host anchors are otherwise not categories.

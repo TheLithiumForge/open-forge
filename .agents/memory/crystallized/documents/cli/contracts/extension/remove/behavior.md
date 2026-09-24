@@ -28,7 +28,8 @@ Explicit non-dry-run `--allow-path` edits the shared authored settings after saf
 planning and before admission; failure is reported and stops content application.
 It is a separate authored edit and remains if later content fails. Interactive
 always approval declares a settings effect covered by the operation's recovery
-bundle. Once approves only this operation and writes no settings; cancel applies
+bundle. Once approves only this operation without saving a permission grant;
+the removal exclusion is still saved. Cancel applies
 nothing. The shared contract owns the exact reader, authoring and receipt rules.
 
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
@@ -86,8 +87,9 @@ changed-content policy question.
 
 Read Extension identities, dependencies, paths, and regions from
 `.agents/open-forge.lock.json`. A proven-absent ownership source, or a valid
-readable lock with no selected record, is known-empty and may form the existing
-complete no-op. A malformed or unavailable ownership source/record is unknown:
+readable lock with no selected record, is known-empty. Record each valid selected
+ID in `removedExtensions` even when it is not installed. Already absent and
+excluded IDs can form a no-op. A malformed or unavailable ownership source/record is unknown:
 return `incomplete` before dependency or path planning, with the explicit
 ownership-record subject and raw cause, and perform no effects, writes, recovery,
 or publication. Never fall back to legacy claims or treat unknown as empty.
@@ -102,9 +104,17 @@ path receipts remain separate. A Library path is source-relative: map it under
 its `destinationRoot` using the existing Library mapping rules before comparing
 workspace destinations. An uninterpretable mapping yields an ownership
 observation and no effects. Preserve unrelated lock sections when publishing
-Extension release after verified target effects. The lock is the only state
-publication. Its exact prior bytes enter the same verified recovery bundle
+Extension release after verified target effects. Persist and verify the selected
+IDs in `.agents/open-forge.json` before content changes. When a permission grant
+is also saved, combine both settings changes against the original observation.
+Settings and lock prior states enter the same verified recovery bundle
 before deletion. Earlier state files remain untouched.
+
+Install and Update honor `removedExtensions`, including dependency selection.
+They also preserve excluded paths and directories without reclaiming or rewriting
+them. Restore a package by explicitly clearing its ID and any covering path
+exclusions, then installing it again. Removal never clears an exclusion.
+When removal updates navigation, existing excluded hosts keep their exact bytes.
 
 ## Current Identity And Removal Classification
 

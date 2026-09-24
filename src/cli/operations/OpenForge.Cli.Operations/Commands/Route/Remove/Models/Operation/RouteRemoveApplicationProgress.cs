@@ -9,6 +9,14 @@ internal sealed record RouteRemoveApplicationProgress
 {
     public ImmutableArray<RouteRemoveApplicationReceipt> Receipts { get; init; } = [];
 
+    public RouteRemoveFileChangeReceipt? SettingsReceipt { get; init; }
+
+    public RouteRemoveFileChangeReceipt? OwnershipReceipt { get; init; }
+
+    public RouteRemovePersistenceOutcome? SettingsOutcome { get; init; }
+
+    public RouteRemovePersistenceOutcome? OwnershipOutcome { get; init; }
+
     public required RouteRemoveRecovery Recovery { get; init; }
 
     public required RouteRemoveVerificationState Verification { get; init; }

@@ -86,6 +86,17 @@ internal static class LibrarySyncReportSelector
         var includeTargets = detail >= CliDetail.Standard;
         var effects = new List<LibrarySyncDataEffect>();
 
+        if (payload.Plan.SettingsChange is { } settingsChange)
+        {
+            effects.Add(new LibrarySyncDataEffect
+            {
+                Path = settingsChange.Path,
+                Action = settingsChange.Action,
+                Outcome = SettingsOutcome(payload.Permissions.Outcome),
+                IsSettings = true,
+            });
+        }
+
         foreach (var directory in payload.Plan.Directories.OrderBy(effect => effect.Path, StringComparer.Ordinal))
         {
             effects.Add(new LibrarySyncDataEffect
@@ -145,11 +156,15 @@ internal static class LibrarySyncReportSelector
                         ? CliEffectKind.Section
                         : effect.IsLink
                             ? CliEffectKind.Link
-                            : CliEffectKind.Directory,
+                            : effect.IsSettings
+                                ? CliEffectKind.Setting
+                                : CliEffectKind.Directory,
                 Action = effect.Action switch
                 {
                     "add" => CliEffectAction.Created,
                     "remove" => CliEffectAction.Deleted,
+                    "create" => CliEffectAction.Created,
+                    "replace" => CliEffectAction.Rewritten,
                     "update" when effect.IsRecord => RecordAction(result.Result.Plan.RecordEffect),
                     "update" => CliEffectAction.Rewritten,
                     _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Action, "The Library Sync effect action is not defined."),
@@ -179,6 +194,12 @@ internal static class LibrarySyncReportSelector
     private static string Outcome(LibrarySyncResult result, string path)
     {
         var payload = result.Result;
+        if (string.Equals(path, ".agents/open-forge.json", StringComparison.Ordinal))
+        {
+            return payload.Identity.Mode == LibraryMode.DryRun
+                ? "planned"
+                : SettingsOutcome(payload.Permissions.Outcome);
+        }
         if (payload.Identity.Mode == LibraryMode.DryRun && payload.Plan.State == LibraryPlanState.Complete)
         {
             return "planned";
@@ -204,6 +225,17 @@ internal static class LibrarySyncReportSelector
 
         return "not-started";
     }
+
+    private static string SettingsOutcome(string outcome)
+        => outcome switch
+        {
+            "planned" => "planned",
+            "verified" => "done",
+            "not-started" or "not-requested" => "not-started",
+            "verification-failed" => "failed",
+            "completion-unknown" => "unknown",
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The Library settings outcome is not defined."),
+        };
 
     private static LibrarySyncDataPermissions Permissions(LibraryPermissionView permissions)
         => new()
@@ -258,6 +290,10 @@ internal static class LibrarySyncReportSelector
         states.AddRange(plan.Directories.Select(directory => Expected(directory.Path, directory.Expected)));
         states.AddRange(plan.Links.Select(link => Expected(link.Path, link.Expected)));
         states.AddRange(plan.GeneratedRegions.Select(region => Expected(region.Path, region.Expected)));
+        if (plan.SettingsChange is { } settingsChange)
+        {
+            states.Add(Expected(settingsChange.Path, settingsChange.Expected));
+        }
         if (plan.RecordExpected is { } record)
         {
             states.Add(Expected(".agents/open-forge.lock.json", record));
@@ -391,6 +427,13 @@ internal static class LibrarySyncReportSelector
         var lines = new List<string>();
         if (detail >= CliDetail.Standard)
         {
+            if (result.Result.Plan.SettingsChange is { } settingsChange)
+            {
+                lines.Add(LibrarySyncWording.SettingsChange(
+                    settingsChange.Action,
+                    result.Result.Permissions.Outcome,
+                    result.Result.Identity.Mode == LibraryMode.DryRun));
+            }
             var unchanged = counts.First(count => count.Name == "linksUnchanged").Value;
             if (unchanged is > 0)
             {
@@ -458,9 +501,12 @@ internal static class LibrarySyncReportSelector
         var added = Count(counts, "linksAdded");
         var removed = Count(counts, "linksRemoved");
         var unchanged = Count(counts, "linksUnchanged");
-        var hasChanges = data.Effects.Any(effect => effect.IsLink || effect.IsSection || effect.IsRecord);
+        var hasChanges = data.Effects.Any(effect => effect.IsLink || effect.IsSection || effect.IsRecord || effect.IsSettings);
         return result.Status switch
         {
+            CliSemanticStatus.Complete when !hasChanges
+                && result.Result.Findings.Any(finding => finding.Code == LibrarySyncFindingCode.PathExcluded)
+                => new(LibrarySyncWording.ExcludedDestinationsUntouched(id), CliHeadlineKind.NothingToDo),
             CliSemanticStatus.Complete when result.Result.Findings.Any(finding => finding.Code == LibrarySyncFindingCode.OwnershipObservation)
                 => new(LibrarySyncWording.NoOwnership(id), CliHeadlineKind.NothingToDo),
             CliSemanticStatus.Complete when !hasChanges
@@ -507,10 +553,10 @@ internal static class LibrarySyncReportSelector
         LibrarySyncFinding finding,
         string id)
     {
-        var subject = finding.Path ?? finding.LibraryId ?? id;
         var kind = finding.Code is LibrarySyncFindingCode.InvalidInput
             or LibrarySyncFindingCode.InvalidId
             or LibrarySyncFindingCode.UnknownId
+            or LibrarySyncFindingCode.LibraryRemoved
             ? CliSubjectKind.Identifier
             : finding.Code is LibrarySyncFindingCode.SourceRootInvalid
                 or LibrarySyncFindingCode.SourceRootUnavailable
@@ -518,6 +564,9 @@ internal static class LibrarySyncReportSelector
                 or LibrarySyncFindingCode.InventoryIncomplete
                 ? CliSubjectKind.Directory
                 : CliSubjectKind.File;
+        var subject = kind == CliSubjectKind.Identifier
+            ? finding.LibraryId ?? id
+            : finding.Path ?? finding.LibraryId ?? id;
         var action = Action(result, finding, id);
         return new CliFinding
         {
@@ -653,6 +702,15 @@ internal static class LibrarySyncReportSelector
 
         var finding = result.Result.Findings.FirstOrDefault(finding => finding.Status == result.Status)
             ?? result.Result.Findings.FirstOrDefault();
+        if (finding?.Code == LibrarySyncFindingCode.LibraryRemoved)
+        {
+            return new CliNextAction(
+                LibrarySyncWording.RemoveExcludedLibraryNext(finding.LibraryId ?? id),
+                LibrarySyncWording.WorkspaceSettingsNextReason())
+            {
+                Kind = CliNextActionKind.Sentence,
+            };
+        }
         return finding is null ? null : Action(result, finding, id);
     }
 

@@ -1,0 +1,5 @@
+status=blocked
+packages=0
+effects=0
+findings=1
+Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension install.

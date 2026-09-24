@@ -1,4 +1,5 @@
 Library detach stopped after 1 of 1 links were removed.
 Workspace: <workspace>
+  .agents/open-forge.json       settings updated
   .agents/directives/review.md  link removed
 Next: open-forge library detach team-knowledge --detail debug

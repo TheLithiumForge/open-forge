@@ -20,4 +20,31 @@ internal sealed class RouteRemovePostRemoveObserver(
             .ConfigureAwait(false);
         return _verifier.Verify(plan, observation);
     }
+
+    internal async ValueTask<RouteRemovePostRemoveVerification> VerifyContentAbsenceAsync(
+        RouteRemovePlan plan,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+        RouteRemovePlanBuild observation;
+        try
+        {
+            observation = await _planBuilder.BuildContentAbsenceAsync(plan, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return new RouteRemovePostRemoveVerification(
+                RouteRemovePostRemoveVerificationState.Interrupted,
+                "Route Remove pre-publication absence verification was interrupted.");
+        }
+        catch (Exception)
+        {
+            return new RouteRemovePostRemoveVerification(
+                RouteRemovePostRemoveVerificationState.Failed,
+                "Route Remove pre-publication absence verification failed unexpectedly.");
+        }
+
+        return _verifier.VerifyContentAbsence(plan, observation);
+    }
 }

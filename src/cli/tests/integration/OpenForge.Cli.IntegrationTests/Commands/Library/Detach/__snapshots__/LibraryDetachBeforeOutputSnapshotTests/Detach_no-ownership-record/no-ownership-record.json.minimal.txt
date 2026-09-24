@@ -9,11 +9,20 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "No ownership record exists, so team-knowledge cannot be detached. Nothing was changed.",
+    "headline": "Recorded removal intent for Library team-knowledge.",
     "kind": "done"
   },
   "findings": [],
-  "effects": [],
+  "effects": [
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    }
+  ],
   "counts": {
     "linksRemoved": 0,
     "sectionsUpdated": 0,
@@ -29,15 +38,22 @@
     "permissions": {
       "required": [],
       "missing": [],
-      "decision": "not-evaluated",
-      "action": "none",
-      "outcome": "not-requested"
+      "decision": "not-required",
+      "action": "create",
+      "outcome": "verified"
     },
-    "effects": []
+    "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "kind": "setting",
+        "action": "create",
+        "outcome": "done"
+      }
+    ]
   },
   "recovery": {
-    "path": null,
-    "disposition": "not-required"
+    "path": "<recovery-bundle>",
+    "disposition": "removed"
   },
   "next": null
 }

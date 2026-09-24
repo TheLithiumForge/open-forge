@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Remove;
 
@@ -111,6 +113,11 @@ public sealed class RouteRemovePlanningProjectionTests
         {
             Subject = null!,
             Ownership = null!,
+            Settings = WorkspaceSettingsRead.Absent(Path.Combine(
+                RouteRemoveTestData.Workspace().LexicalRoot,
+                ".agents",
+                "open-forge.json")),
+            RemovalSelection = new WorkspaceRemovalSelection(),
             References = null!,
             Navigation = null!,
             FileChanges = fileChanges.IsDefault ? [] : fileChanges,

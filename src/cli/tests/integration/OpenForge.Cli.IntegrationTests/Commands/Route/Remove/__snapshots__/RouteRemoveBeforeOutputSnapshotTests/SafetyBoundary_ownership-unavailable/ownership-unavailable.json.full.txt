@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 3,
+  "command": "route remove",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot remove guidance/old guide: .agents/open-forge.lock.json could not be read completely.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-remove.ownership-unavailable",
+      "title": "Ownership record is unavailable",
+      "message": ".agents/open-forge.lock.json could not be read completely.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesRemoved": 0,
+    "sectionsUpdated": 0,
+    "linksDetached": 0,
+    "filesScanned": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "subject": "file",
+    "source": {
+      "id": "guidance/old guide",
+      "path": ".agents/guidance/old guide.md"
+    },
+    "removed": [],
+    "detachedLinks": [],
+    "settings": {
+      "outcome": "not-established",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [],
+      "directories": []
+    },
+    "ownershipRelease": {
+      "outcome": "not-established",
+      "claims": []
+    },
+    "scan": {
+      "filesScanned": 0,
+      "occurrences": 0
+    }
+  },
+  "recovery": null,
+  "next": null
+}

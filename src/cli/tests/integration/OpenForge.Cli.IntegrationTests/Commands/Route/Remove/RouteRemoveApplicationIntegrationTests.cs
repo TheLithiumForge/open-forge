@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
 
@@ -43,6 +44,12 @@ public sealed class RouteRemoveApplicationIntegrationTests
             workspace.ReadText(RouteRemoveIntegrationWorkspace.ParentPath),
             StringComparison.Ordinal);
         Assert.Equal(lifecycleBefore, workspace.ReadBytes(RouteRemoveIntegrationWorkspace.OwnershipPath));
+        Assert.Equal(
+            new[] { RouteRemoveIntegrationWorkspace.LeafPath, RouteRemoveIntegrationWorkspace.LeafOverwritePath }.Order(StringComparer.Ordinal),
+            workspace.ReadSettings().RemovedFiles.Order(StringComparer.Ordinal));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(RouteRemoveIntegrationWorkspace.LeafPath, workspace.ReadSettings()));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(RouteRemoveIntegrationWorkspace.LeafOverwritePath, workspace.ReadSettings()));
+        Assert.Contains("Recorded persistent route removal", output.ToString(), StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Host")]
@@ -51,6 +58,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
     public async Task CategoryApplicationRemovesEveryContainedItem()
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-category-apply");
+        workspace.SeedFrameworkClaim(RouteRemoveIntegrationWorkspace.CategoryChildPath);
         var resourceBefore = workspace.ReadBytes(RouteRemoveIntegrationWorkspace.CategoryResourcePath);
         var output = new StringWriter();
         var error = new StringWriter();
@@ -73,7 +81,65 @@ public sealed class RouteRemoveApplicationIntegrationTests
             "Topics",
             workspace.ReadText(RouteRemoveIntegrationWorkspace.ParentPath),
             StringComparison.Ordinal);
+        Assert.Contains(
+            ".agents/guidance/topics",
+            workspace.ReadSettings().RemovedDirectories,
+            StringComparer.Ordinal);
+        Assert.False(FrameworkPayloadSelection.IncludesPath(".agents/guidance/topics/notes.md", workspace.ReadSettings()));
+        Assert.Empty(workspace.ReadOwnership().Framework!.Paths);
         Assert.Equal(4, resourceBefore.Length);
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Route Remove persists a root-category exclusion and releases managed Extension content"),
+     Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
+    public async Task RootCategoryRemovalExcludesAndReleasesManagedExtensionContent()
+    {
+        using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-root-category-managed");
+        workspace.SeedExtensionClaim(RouteRemoveIntegrationWorkspace.LoaderCategoryChildPath);
+        var output = new StringWriter();
+        var error = new StringWriter();
+
+        var completion = await workspace.RunAsync(
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LoaderCategoryId, "--automatic"],
+            output,
+            error);
+
+        Assert.Equal(0, completion.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, completion.Status);
+        Assert.Equal(string.Empty, error.ToString());
+        Assert.Contains("loader-topics", workspace.ReadSettings().RemovedCategories, StringComparer.Ordinal);
+        Assert.Contains(".agents/loader-topics", workspace.ReadSettings().RemovedDirectories, StringComparer.Ordinal);
+        Assert.False(FrameworkPayloadSelection.IncludesPath(RouteRemoveIntegrationWorkspace.LoaderCategoryChildPath, workspace.ReadSettings()));
+        var extension = Assert.Single(workspace.ReadOwnership().Extensions);
+        Assert.Equal("toolkit", extension.Id);
+        Assert.Empty(extension.Paths);
+        Assert.Contains("Released 1 managed content ownership claim", output.ToString(), StringComparison.Ordinal);
+        Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LoaderCategoryChildPath)));
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Route Remove releases a multiply-owned selected Extension path from every owner"),
+     Trait("Feature", "route-remove"), Trait("Evidence", "IntegrationSafety")]
+    public async Task LeafRemovalReleasesEveryOwnerOfTheSelectedPath()
+    {
+        using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-multiple-extension-owners");
+        workspace.SeedMultiplyOwnedExtensionClaim(RouteRemoveIntegrationWorkspace.LeafPath);
+        var output = new StringWriter();
+        var error = new StringWriter();
+
+        var completion = await workspace.RunAsync(
+            ["route", "remove", RouteRemoveIntegrationWorkspace.LeafId, "--automatic"],
+            output,
+            error);
+
+        Assert.Equal(0, completion.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, completion.Status);
+        Assert.Equal(string.Empty, error.ToString());
+        Assert.Equal(2, workspace.ReadOwnership().Extensions.Length);
+        Assert.All(workspace.ReadOwnership().Extensions, extension => Assert.Empty(extension.Paths));
+        Assert.Contains(".agents/guidance/old guide.md", workspace.ReadSettings().RemovedFiles, StringComparer.Ordinal);
+        Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.LeafPath)));
     }
 
     [Trait("Boundary", "Host")]
@@ -305,8 +371,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         const string lateReference = "[Late old guide](.agents/guidance/old%20guide.md#part)\n";
         workspace.WriteText("late.md", lateReference);
 
-        var completion = await new RouteRemoveApplicationCompletion(
-            RouteRemoveOperationFactory.CreateAppliedVerifier()).CompleteAsync(
+        var completion = await RouteRemoveOperationFactory.CreateApplicationCompletion().CompleteAsync(
                 new RouteRemoveHeldApplication(plan, operationId, lease),
                 prepared,
                 progress,
@@ -364,8 +429,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
             workspace.ReadText(RouteRemoveIntegrationWorkspace.ParentPath),
             StringComparison.Ordinal);
 
-        var completion = await new RouteRemoveApplicationCompletion(
-            RouteRemoveOperationFactory.CreateAppliedVerifier()).CompleteAsync(
+        var completion = await RouteRemoveOperationFactory.CreateApplicationCompletion().CompleteAsync(
                 new RouteRemoveHeldApplication(plan, operationId, lease),
                 prepared,
                 progress,
@@ -413,8 +477,7 @@ public sealed class RouteRemoveApplicationIntegrationTests
         const string lateText = "[Retained topics](.agents/guidance/topics/_topics.md)\n";
         workspace.WriteText(latePath, lateText);
 
-        var completion = await new RouteRemoveApplicationCompletion(
-            RouteRemoveOperationFactory.CreateAppliedVerifier()).CompleteAsync(
+        var completion = await RouteRemoveOperationFactory.CreateApplicationCompletion().CompleteAsync(
                 new RouteRemoveHeldApplication(plan, operationId, lease),
                 prepared,
                 progress,

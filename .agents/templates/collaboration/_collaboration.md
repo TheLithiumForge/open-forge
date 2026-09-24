@@ -6,12 +6,15 @@ open-forge:
 
 # Collaboration Templates
 
+## What choice needs exploration?
+
+Preserve a comparison only when it needs to survive the conversation. The `Brainstorming` template keeps proposals and recommendations distinct from an accepted choice.
+
+A saved brainstorm fits in an existing candidate scope. Read [Adaptive Collaboration](../../guidance/adaptive-collaboration.md) when broader advice would help. A brainstorm does not require a `Task` or `Plan`.
+
 ## Axioms
 
-- Use a separate record only when exploration needs to survive the conversation.
-- Keep proposed options and recommendations distinct from accepted direction. Save unsettled work in an existing candidate scope.
-- Remove sections that do not help the decision.
-- Follow [Adaptive Collaboration](../../guidance/adaptive-collaboration.md) when its advice fits. A brainstorm does not require a Task or Plan.
+- inherited - No local axioms; loaded ancestor axioms remain active.
 
 ## Entries
 

@@ -13,6 +13,8 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
@@ -26,7 +28,8 @@ internal sealed class ExtensionInstallFoundationReader(
         ExtensionInstallRequest request,
         IReadOnlyList<ExtensionPackageFact> packages,
         CancellationToken cancellationToken,
-        WorkspaceOwnershipRead? ownershipObservation = null)
+        WorkspaceOwnershipRead? ownershipObservation = null,
+        WorkspaceSettingsDocument? settings = null)
     {
         var payloadRead = EmbeddedFrameworkPayloadReader.Read();
         if (payloadRead.State != FrameworkPayloadReadState.Available
@@ -56,7 +59,11 @@ internal sealed class ExtensionInstallFoundationReader(
         ExtensionInstallTopologyBuild topologyBuild;
         try
         {
-            topologyBuild = await _topologyBuilder.BuildWithFindingsAsync(request, packages, cancellationToken)
+            topologyBuild = await _topologyBuilder.BuildWithFindingsAsync(
+                    request,
+                    packages,
+                    settings ?? OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument.Empty,
+                    cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -90,8 +97,9 @@ internal sealed class ExtensionInstallFoundationReader(
         var recovery = await RecoveryBundleCatalogue.ReadAsync(
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
+        var blockingCandidate = recovery.Candidates.FirstOrDefault(candidate => !IsVerifiedFinal(candidate));
         if (recovery.State != RecoveryBundleCatalogueState.Available
-            || recovery.Candidates.Length > 0)
+            || blockingCandidate is not null)
         {
             return Stop(
                 recovery.State switch
@@ -104,7 +112,10 @@ internal sealed class ExtensionInstallFoundationReader(
                         recovery.State,
                         "The recovery catalogue state is not defined."),
                 },
-                recovery.Cause ?? "Recognized recovery residuals block Extension Install.");
+                blockingCandidate?.Cause
+                    ?? recovery.Cause
+                    ?? "Recognized recovery residuals block Extension Install.",
+                blockingCandidate?.Path);
         }
 
         return new ExtensionInstallFoundationObservation(
@@ -125,6 +136,11 @@ internal sealed class ExtensionInstallFoundationReader(
     private static ExtensionInstallFoundationObservation Stop(
         ExtensionInstallFinding finding)
         => new(Foundation: null, finding);
+
+    private static bool IsVerifiedFinal(RecoveryBundleCandidateSnapshot candidate)
+        => candidate.Kind == RecoveryBundleCandidateKind.Final
+            && candidate.Integrity == RecoveryBundleIntegrity.Verified
+            && candidate.Verified is not null;
 
     internal static string SourceSignature(ExtensionSourceReadResult source)
     {

@@ -181,8 +181,8 @@ public sealed class F15IndependentWorkJourneyTests
         AssertExtensionRegistration(workspace, ToolkitId, ToolkitTargetPath, catalogue.Path);
     }
 
-    [Fact(DisplayName = "F15 attaches safely from malformed ownership with explicit source and destination"), Trait("Feature", "ownership-authority"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
-    public async Task ExplicitAttachPublishesOnlyNewKnowledgeFromMalformedOwnership()
+    [Fact(DisplayName = "F15 blocks attach without effects when ownership is malformed"), Trait("Feature", "ownership-authority"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
+    public async Task MalformedOwnershipBlocksAttachWithoutEffects()
     {
         using var workspace = PublishedJourneyWorkspace.Create("f15-malformed-attach");
         await InstallFrameworkAsync(workspace);
@@ -196,8 +196,9 @@ public sealed class F15IndependentWorkJourneyTests
         workspace.WriteText(TeamRoutePath, TeamRoute);
         workspace.WriteText($"{SourceRoot}/a.md", TeamSource("a"));
         workspace.WriteText($"{SourceRoot}/b.md", TeamSource("b"));
-        workspace.WriteBytes(OwnershipPath, Encoding.UTF8.GetBytes("{ malformed ownership record"));
-        var sourceSnapshot = workspace.SnapshotState();
+        var malformedOwnership = Encoding.UTF8.GetBytes("{ malformed ownership record");
+        workspace.WriteBytes(OwnershipPath, malformedOwnership);
+        var workspaceBefore = workspace.SnapshotState();
         var sourceBytes = new Dictionary<string, byte[]>(StringComparer.Ordinal)
         {
             ["a.md"] = File.ReadAllBytes(workspace.Combine($"{SourceRoot}/a.md")),
@@ -209,17 +210,16 @@ public sealed class F15IndependentWorkJourneyTests
             "--to", DestinationRoot,
             "--automatic");
 
-        Assert.Equal(0, attach.ExitCode);
-        Assert.Equal(string.Empty, attach.StandardError);
-        Assert.Contains("team", attach.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("ownership", attach.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        AssertLibraryRegistration(workspace, "team", SourceRoot, DestinationRoot, ["a.md", "b.md"]);
-        AssertRelativeFileLink(workspace, "a.md");
-        AssertRelativeFileLink(workspace, "b.md");
-        AssertOrdinaryDestinationParents(workspace);
+        Assert.Equal(5, attach.ExitCode);
+        Assert.Equal(string.Empty, attach.StandardOutput);
+        Assert.Contains(OwnershipPath, attach.StandardError, StringComparison.Ordinal);
+        Assert.Contains("invalid", attach.StandardError, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(malformedOwnership, File.ReadAllBytes(workspace.Combine(OwnershipPath)));
+        AssertNoEntry(workspace, $"{DestinationRoot}/a.md");
+        AssertNoEntry(workspace, $"{DestinationRoot}/b.md");
         Assert.Equal(sourceBytes["a.md"], File.ReadAllBytes(workspace.Combine($"{SourceRoot}/a.md")));
         Assert.Equal(sourceBytes["b.md"], File.ReadAllBytes(workspace.Combine($"{SourceRoot}/b.md")));
-        Assert.False(sourceSnapshot.SequenceEqual(workspace.SnapshotState()));
+        Assert.Equal(workspaceBefore, workspace.SnapshotState());
     }
 
     private static async Task InstallFrameworkAsync(PublishedJourneyWorkspace workspace)

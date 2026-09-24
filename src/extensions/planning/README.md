@@ -12,7 +12,7 @@ Turn an outcome into work that can be understood, carried out, and resumed. Keep
 | [Analysis](content/.agents/memory/emerging/analysis/_analysis.md) | Keep evidence, assumptions, and reasoning inspectable. |
 | [Decisions](content/.agents/memory/crystallized/decisions/_decisions.md) | Record what was accepted, why, and where it applies. |
 | [Checkpoints](content/.agents/memory/working/checkpoints/_checkpoints.md) | Hold the current state, step, and next steps of one active workstream. |
-| [Eleven Templates](content/.agents/templates/planning/_planning.md) | Task, Plan, Backlog, Checkpoint, Idea, Analysis, Decision, User Flow, Scenario, Scenario Collection, and Run Record. |
+| [Seven Templates](content/.agents/templates/planning/_planning.md) | Task, Plan, Backlog, Checkpoint, Idea, Analysis, and Decision. |
 
 **Direct dependencies:** [Workflow Support](../workflows/README.md)
 
@@ -24,7 +24,9 @@ Turn an outcome into work that can be understood, carried out, and resumed. Keep
 
 Ideas, Analysis, and Decisions are independent record conventions, not an enforced pipeline. A clear request can go straight to work. An investigation can remain an Analysis without creating a Task. A Decision records an accepted choice, not a mandatory approval meeting.
 
-The record categories load on demand. Their installed paths remain under Emerging or Crystallized Memory; distributing them with Planning does not narrow their meaning to planning. Planning does not require Project Documents or Orchestration.
+The record categories load on demand. Their installed paths remain under Emerging or Crystallized Memory; distributing them with Planning does not narrow their meaning to planning. Planning does not require Project Documents or Task Coordination.
+
+The separate [Flows and Scenarios](../scenarios/README.md) package supplies User Flow, Scenario, Scenario Collection, and Run Record starters for planning and checking experiences. Planning does not require it.
 
 ## Install And Customize
 

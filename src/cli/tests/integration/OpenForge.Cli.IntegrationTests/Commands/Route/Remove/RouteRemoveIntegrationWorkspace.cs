@@ -12,6 +12,8 @@ using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
@@ -61,14 +63,14 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
 
     internal string Path => temporary.Path;
 
-    internal static RouteRemoveIntegrationWorkspace Create(string purpose)
+    internal static RouteRemoveIntegrationWorkspace Create(string purpose, bool seedOwnership = true)
     {
         var temporary = TemporaryWorkspace.Create(purpose);
         var lockStore = WorkspaceLockTestStore.Create($"{purpose}-lock-store");
         try
         {
             var workspace = new RouteRemoveIntegrationWorkspace(temporary, lockStore);
-            workspace.SeedOrdinaryWorkspace();
+            workspace.SeedOrdinaryWorkspace(seedOwnership);
             return workspace;
         }
         catch
@@ -124,6 +126,9 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
         }
     }
 
+    internal void CreateDirectory(string relativePath)
+        => temporary.CreateDirectory(relativePath);
+
     internal void RemoveLifecycle()
         => DeleteFile(OwnershipPath);
 
@@ -159,6 +164,41 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
         };
         WriteBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(document));
     }
+
+    internal void SeedMultiplyOwnedExtensionClaim(string path)
+    {
+        var document = WorkspaceOwnershipDocument.Empty with
+        {
+            Framework = new(new("framework", null), [], []),
+            Extensions =
+            [
+                new("toolkit-a", "1.0.0", null, [], [path], []),
+                new("toolkit-b", "2.0.0", null, [], [path], []),
+            ],
+        };
+        WriteBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(document));
+    }
+
+    internal void SeedLibrarySource(string sourceRoot)
+    {
+        var document = WorkspaceOwnershipDocument.Empty with
+        {
+            Framework = new(new("framework", null), [], []),
+            Libraries = [new("team-notes", sourceRoot, ".agents/team-notes", [])],
+        };
+        WriteBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(document));
+    }
+
+    internal bool TryCreateDirectorySymbolicLink(string linkPath, string targetPath)
+        => temporary.TryCreateDirectorySymbolicLink(linkPath, targetPath, out _);
+
+    internal WorkspaceOwnershipDocument ReadOwnership()
+        => WorkspaceOwnershipCodec.Read(ReadBytes(OwnershipPath)).Document
+            ?? throw new InvalidOperationException("The integration ownership record did not decode.");
+
+    internal WorkspaceSettingsDocument ReadSettings()
+        => WorkspaceSettingsCodec.Read(ReadBytes(".agents/open-forge.json")).Document
+            ?? throw new InvalidOperationException("The integration settings record did not decode.");
 
     internal void AssertNoLockInfrastructure()
         => Assert.False(lockStore.InfrastructureExists);
@@ -219,6 +259,10 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
         try
         {
             DeleteRecoveryArtifacts();
+            // Route Remove may create authored settings during execution. It was
+            // not created through TemporaryWorkspace and is therefore removed
+            // before the fixture's ownership-checked cleanup pass.
+            DeleteFile(".agents/open-forge.json");
         }
         finally
         {
@@ -228,7 +272,7 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
         }
     }
 
-    private void SeedOrdinaryWorkspace()
+    private void SeedOrdinaryWorkspace(bool seedOwnership)
     {
         WriteText(
             LoaderPath,
@@ -276,10 +320,13 @@ internal sealed class RouteRemoveIntegrationWorkspace : IDisposable
         WriteText(
             "notes.md",
             "[Topics](.agents/guidance/topics/_topics.md) remains.\n");
-        WriteBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with
+        if (seedOwnership)
         {
-            Framework = new(new("framework", null), [], []),
-        }));
+            WriteBytes(OwnershipPath, WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with
+            {
+                Framework = new(new("framework", null), [], []),
+            }));
+        }
     }
 
     private void DeleteRecoveryArtifacts()

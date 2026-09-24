@@ -19,6 +19,12 @@ internal enum UpdatePhysicalEffectAction
     Delete,
 }
 
+internal enum UpdatePhysicalEffectKind
+{
+    File,
+    Directory,
+}
+
 internal enum UpdatePhysicalEffectOutcome
 {
     Planned,
@@ -136,6 +142,17 @@ internal sealed record UpdatePhysicalEffect
         IEnumerable<UpdateLogicalChange> changes,
         UpdatePhysicalEffectOutcome outcome,
         UpdatePhysicalEffectResidual residual)
+        : this(path, UpdatePhysicalEffectKind.File, action, changes, outcome, residual)
+    {
+    }
+
+    internal UpdatePhysicalEffect(
+        string path,
+        UpdatePhysicalEffectKind kind,
+        UpdatePhysicalEffectAction action,
+        IEnumerable<UpdateLogicalChange> changes,
+        UpdatePhysicalEffectOutcome outcome,
+        UpdatePhysicalEffectResidual residual)
     {
         if (string.IsNullOrWhiteSpace(path)
             || !UpdateValueSyntax.IsCanonicalRelative(path))
@@ -145,6 +162,10 @@ internal sealed record UpdatePhysicalEffect
                 nameof(path));
         }
         ArgumentNullException.ThrowIfNull(changes);
+        if (!Enum.IsDefined(kind))
+        {
+            throw new ArgumentOutOfRangeException(nameof(kind), kind, "The physical effect kind is not defined.");
+        }
         if (!Enum.IsDefined(action))
         {
             throw new ArgumentOutOfRangeException(nameof(action), action, "The physical effect action is not defined.");
@@ -163,9 +184,16 @@ internal sealed record UpdatePhysicalEffect
                 "Physical effects cannot contain null logical changes.",
                 nameof(changes)))
             .ToArray();
-        if (materialized.Length == 0)
+        if (kind == UpdatePhysicalEffectKind.File && materialized.Length == 0)
         {
             throw new ArgumentException("Physical effects require one logical change.", nameof(changes));
+        }
+        if (kind == UpdatePhysicalEffectKind.Directory
+            && (action != UpdatePhysicalEffectAction.Create || materialized.Length != 0))
+        {
+            throw new ArgumentException(
+                "A directory physical effect requires a create action and no file logical changes.",
+                nameof(changes));
         }
 
         var identities = new HashSet<(
@@ -190,6 +218,7 @@ internal sealed record UpdatePhysicalEffect
             .ToArray();
 
         Path = path;
+        Kind = kind;
         Action = action;
         Changes = new ReadOnlyCollection<UpdateLogicalChange>(ordered);
         Outcome = outcome;
@@ -198,6 +227,8 @@ internal sealed record UpdatePhysicalEffect
 
     internal string Path { get; }
 
+    internal UpdatePhysicalEffectKind Kind { get; }
+
     internal UpdatePhysicalEffectAction Action { get; }
 
     internal IReadOnlyList<UpdateLogicalChange> Changes { get; }
@@ -205,4 +236,16 @@ internal sealed record UpdatePhysicalEffect
     internal UpdatePhysicalEffectOutcome Outcome { get; }
 
     internal UpdatePhysicalEffectResidual Residual { get; }
+
+    internal static UpdatePhysicalEffect Directory(
+        string path,
+        UpdatePhysicalEffectOutcome outcome,
+        UpdatePhysicalEffectResidual residual)
+        => new(
+            path,
+            UpdatePhysicalEffectKind.Directory,
+            UpdatePhysicalEffectAction.Create,
+            [],
+            outcome,
+            residual);
 }

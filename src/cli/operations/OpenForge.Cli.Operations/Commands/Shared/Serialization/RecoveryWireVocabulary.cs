@@ -19,6 +19,7 @@ internal static class RecoveryWireVocabulary
             RecoveryBundleProducer.Route => "route",
             RecoveryBundleProducer.Repair => "repair",
             RecoveryBundleProducer.Library => "library",
+            RecoveryBundleProducer.Workspace => "workspace",
             _ => Undefined(nameof(value), value),
         };
 

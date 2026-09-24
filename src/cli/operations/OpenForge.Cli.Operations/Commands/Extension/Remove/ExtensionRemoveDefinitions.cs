@@ -63,6 +63,9 @@ internal static class ExtensionRemoveDefinitions
             ExtensionRemoveFindingCode.LifecycleUnavailable => "extension-remove.lifecycle-unavailable",
             ExtensionRemoveFindingCode.LifecycleBlocked => "extension-remove.lifecycle-blocked",
             ExtensionRemoveFindingCode.DependencyBlocked => "extension-remove.dependency-blocked",
+            ExtensionRemoveFindingCode.SettingsInvalid => "extension-remove.settings-invalid",
+            ExtensionRemoveFindingCode.SettingsUnavailable => "extension-remove.settings-unavailable",
+            ExtensionRemoveFindingCode.PathExcluded => "extension-remove.path-excluded",
             ExtensionRemoveFindingCode.OwnershipConflict => "extension-remove.ownership-conflict",
             ExtensionRemoveFindingCode.PermissionRequired => "extension-remove.permission-required",
             ExtensionRemoveFindingCode.PermissionDeclined => "extension-remove.permission-declined",
@@ -93,7 +96,8 @@ internal static class ExtensionRemoveDefinitions
     internal static CliSemanticStatus ReadStatus(ExtensionRemoveFindingCode code)
         => code switch
         {
-            ExtensionRemoveFindingCode.OwnershipObservation => CliSemanticStatus.Complete,
+            ExtensionRemoveFindingCode.OwnershipObservation
+                or ExtensionRemoveFindingCode.PathExcluded => CliSemanticStatus.Complete,
             ExtensionRemoveFindingCode.InvalidInput
                 or ExtensionRemoveFindingCode.SelectionRequired
                 or ExtensionRemoveFindingCode.InteractionEnded
@@ -102,10 +106,12 @@ internal static class ExtensionRemoveDefinitions
                 or ExtensionRemoveFindingCode.LifecycleUnavailable
                 or ExtensionRemoveFindingCode.ProjectionUnavailable
                 or ExtensionRemoveFindingCode.RecoveryUnavailable
+                or ExtensionRemoveFindingCode.SettingsUnavailable
                 or ExtensionRemoveFindingCode.PermissionsUnavailable => CliSemanticStatus.Incomplete,
             ExtensionRemoveFindingCode.FrameworkUnsafe
                 or ExtensionRemoveFindingCode.LifecycleBlocked
                 or ExtensionRemoveFindingCode.DependencyBlocked
+                or ExtensionRemoveFindingCode.SettingsInvalid
                 or ExtensionRemoveFindingCode.OwnershipConflict
                 or ExtensionRemoveFindingCode.PermissionRequired
                 or ExtensionRemoveFindingCode.PermissionDeclined
@@ -172,6 +178,8 @@ internal static class ExtensionRemoveDefinitions
             ExtensionRemoveEffectKind.PackageFile => "package-file",
             ExtensionRemoveEffectKind.GeneratedRegion => "generated-region",
             ExtensionRemoveEffectKind.Lifecycle => "lifecycle",
+            ExtensionRemoveEffectKind.Settings => "settings",
+            ExtensionRemoveEffectKind.Directory => "directory",
             _ => Undefined(nameof(kind), kind),
         };
 
@@ -181,6 +189,8 @@ internal static class ExtensionRemoveDefinitions
             ExtensionRemoveEffectAction.ReleaseOwnership => "release-ownership",
             ExtensionRemoveEffectAction.Delete => "delete",
             ExtensionRemoveEffectAction.Retain => "retain",
+            ExtensionRemoveEffectAction.RecordExclusion => "record-exclusion",
+            ExtensionRemoveEffectAction.Create => "create",
             _ => Undefined(nameof(action), action),
         };
 
@@ -301,6 +311,9 @@ internal static class ExtensionRemoveDefinitions
                     : selectionRequired
                     ? "List the installed Extensions, then rerun the request with an explicit selection."
                     : "Correct the named Extension Remove input, then rerun the request."),
+            CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete when findings.Any(finding =>
+                finding.Code is ExtensionRemoveFindingCode.SettingsInvalid
+                    or ExtensionRemoveFindingCode.SettingsUnavailable) => ReadSettingsNextAction(findings),
             CliSemanticStatus.Attention when findings.Any(finding =>
                 finding.Code == ExtensionRemoveFindingCode.RecoveryArtifactRetained) => new CliNextAction(
                 CommandLines.Cleanup,
@@ -314,6 +327,29 @@ internal static class ExtensionRemoveDefinitions
                 nameof(status),
                 status,
                 "The Extension Remove status is not defined."),
+        };
+    }
+
+    private static CliNextAction ReadSettingsNextAction(
+        IReadOnlyList<ExtensionRemoveFinding> findings)
+    {
+        var finding = findings.First(value => value.Code is
+            ExtensionRemoveFindingCode.SettingsInvalid
+                or ExtensionRemoveFindingCode.SettingsUnavailable);
+        return finding.Code switch
+        {
+            ExtensionRemoveFindingCode.SettingsInvalid => new CliNextAction(
+                "Correct .agents/open-forge.json, then rerun the removal.",
+                "Correct workspace settings before removing an Extension.")
+            { Kind = CliNextActionKind.Sentence },
+            ExtensionRemoveFindingCode.SettingsUnavailable => new CliNextAction(
+                "Restore access to .agents/open-forge.json, then rerun the removal.",
+                "The removal requires readable and writable workspace settings.")
+            { Kind = CliNextActionKind.Sentence },
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(findings),
+                finding.Code,
+                "The settings finding is not defined."),
         };
     }
 

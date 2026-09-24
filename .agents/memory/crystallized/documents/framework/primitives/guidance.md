@@ -17,7 +17,7 @@ It is useful when a preferred approach and its reasoning can improve future deci
 
 Selected Guidance informs judgment. It does not bind behavior and does not silently outrank current facts, accepted direction, or a more authoritative source.
 
-A deliberate adaptation is valid when its reason remains visible. Repeated adaptations may reveal that the Guidance needs refinement, a narrower scope, or a separate alternative. When behavior must be mandatory, the requirement belongs in a Directive or another applicable Axiom.
+A deliberate adaptation is valid. Explain its reason when the difference matters to the result. Repeated adaptations may reveal that the Guidance needs refinement, a narrower scope, or a separate alternative. When behavior must be mandatory, the requirement belongs in a Directive or another applicable Axiom.
 
 ## Scope
 
@@ -39,13 +39,7 @@ A decision preserves why an important choice was accepted. Guidance generalizes 
 
 ## Optional Adaptive Collaboration
 
-The optional Collaboration Extension supplies Guidance for adapting exploration, questions, detail, convergence, and review to the current user and decision.
-
-At convergence, Adaptive Collaboration separates settled and unsettled material, then identifies the question each accepted part answers, where it applies, and its expected lifetime. Related outcomes may require several linked sources, but acceptance alone does not make them durable or reusable. Classification remains agent work unless material ambiguity requires user judgment.
-
-After broad, consequential, difficult-to-reverse work or changes spanning several durable knowledge roles, it may offer an independent review when a fresh perspective could materially reduce omissions, excessive promotion, duplication, contradiction, or risk. The offer states its focus and additional model tokens. Unless standing direction already authorizes the expense, the user decides whether it runs.
-
-When context isolation is available, the reviewer starts without the implementing context. It receives the accepted goal, applicable rules, workspace, and resulting changes, then discovers relevant sources independently. Without context isolation, the check is an adversarial second pass rather than an independent review. Either form remains read-only unless changes receive separate authority.
+The optional Collaboration Extension supplies [Adaptive Collaboration](../../../../../guidance/adaptive-collaboration.md) for exploration, questions, decisions, and proportionate review. That source defines its method; Guidance itself adds no review stage or approval requirement.
 
 ## Examples And Boundaries
 

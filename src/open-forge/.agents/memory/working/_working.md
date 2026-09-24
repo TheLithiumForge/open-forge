@@ -15,7 +15,7 @@ Working Memory holds temporary context for continuing or resuming active work.
 ### Use And Status
 
 - Check `Entries` before deciding that no Working Memory applies.
-- Save what helps work resume. Saving it here does not establish acceptance.
+- Save the temporary context needed to resume unfinished work.
 - An explicitly accepted temporary choice may remain here when its source, scope, and expected expiration are clear.
 
 ### Maintenance

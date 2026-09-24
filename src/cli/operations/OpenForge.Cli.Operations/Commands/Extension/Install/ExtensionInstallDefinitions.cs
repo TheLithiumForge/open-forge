@@ -106,6 +106,11 @@ internal static class ExtensionInstallDefinitions
             ExtensionInstallFindingCode.RecoveryFailed => "extension-install.recovery-failed",
             ExtensionInstallFindingCode.OperationFailed => "extension-install.operation-failed",
             ExtensionInstallFindingCode.Interrupted => "extension-install.interrupted",
+            ExtensionInstallFindingCode.SettingsInvalid => "extension-install.settings-invalid",
+            ExtensionInstallFindingCode.SettingsUnavailable => "extension-install.settings-unavailable",
+            ExtensionInstallFindingCode.RemovedExtension => "extension-install.removed-extension",
+            ExtensionInstallFindingCode.PathExcluded => "extension-install.path-excluded",
+            ExtensionInstallFindingCode.ExcludedAncestor => "extension-install.excluded-ancestor",
             _ => throw Undefined(nameof(code), code),
         };
 
@@ -121,7 +126,8 @@ internal static class ExtensionInstallDefinitions
                 or ExtensionInstallFindingCode.LifecycleUnavailable
                 or ExtensionInstallFindingCode.ProjectionUnavailable
                 or ExtensionInstallFindingCode.RecoveryUnavailable
-                or ExtensionInstallFindingCode.PermissionsUnavailable => CliSemanticStatus.Incomplete,
+                or ExtensionInstallFindingCode.PermissionsUnavailable
+                or ExtensionInstallFindingCode.SettingsUnavailable => CliSemanticStatus.Incomplete,
             ExtensionInstallFindingCode.SourceInvalid => CliSemanticStatus.Invalid,
             ExtensionInstallFindingCode.FrameworkUnsafe
                 or ExtensionInstallFindingCode.LifecycleBlocked
@@ -137,11 +143,16 @@ internal static class ExtensionInstallDefinitions
                 or ExtensionInstallFindingCode.GeneratedRegionUnsafe
                 or ExtensionInstallFindingCode.WorkspaceLockUnavailable
                 or ExtensionInstallFindingCode.TargetChanged
-                or ExtensionInstallFindingCode.RecoveryConflict => CliSemanticStatus.Blocked,
+                or ExtensionInstallFindingCode.RecoveryConflict
+                or ExtensionInstallFindingCode.SettingsInvalid
+                or ExtensionInstallFindingCode.RemovedExtension
+                or ExtensionInstallFindingCode.ExcludedAncestor => CliSemanticStatus.Blocked,
+            ExtensionInstallFindingCode.PathExcluded => CliSemanticStatus.Complete,
             ExtensionInstallFindingCode.LifecycleObservation
                 or ExtensionInstallFindingCode.MetadataProjectionSkipped
                 or ExtensionInstallFindingCode.PackageContentMissing
-                or ExtensionInstallFindingCode.RecoveryArtifactRetained => CliSemanticStatus.Attention,
+                or ExtensionInstallFindingCode.RecoveryArtifactRetained
+                => CliSemanticStatus.Attention,
             ExtensionInstallFindingCode.WriteFailed
                 or ExtensionInstallFindingCode.TopologyVerificationFailed
                 or ExtensionInstallFindingCode.LifecyclePublicationFailed
@@ -284,6 +295,10 @@ internal static class ExtensionInstallDefinitions
             finding.Code == ExtensionInstallFindingCode.SelectionRequired);
         var confirmation = findings.FirstOrDefault(finding =>
             finding.Code == ExtensionInstallFindingCode.ConfirmationRequired);
+        var removal = findings.FirstOrDefault(finding => finding.Code is
+            ExtensionInstallFindingCode.RemovedExtension
+                or ExtensionInstallFindingCode.PathExcluded
+                or ExtensionInstallFindingCode.ExcludedAncestor);
         return status switch
         {
             CliSemanticStatus.Complete => null,
@@ -305,6 +320,13 @@ internal static class ExtensionInstallDefinitions
                 ForceCommand(request ?? throw new InvalidOperationException(
                     "An initial-force finding requires the normalized Extension Install request.")),
                 "Rerun the same exact Extension Install request with force authority."),
+            CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete when findings.Any(finding =>
+                finding.Code is ExtensionInstallFindingCode.SettingsInvalid
+                    or ExtensionInstallFindingCode.SettingsUnavailable) => new CliNextAction(
+                "Correct .agents/open-forge.json, then rerun extension install.",
+                "Repair the workspace settings file before installing.")
+                    { Kind = CliNextActionKind.Sentence },
+            CliSemanticStatus.Blocked or CliSemanticStatus.Attention when removal is not null => ReadRemovalNextAction(removal.Code),
             CliSemanticStatus.Attention when findings.Any(finding =>
                 finding.Code == ExtensionInstallFindingCode.RecoveryArtifactRetained) => new CliNextAction(
                     CommandLines.Cleanup,
@@ -316,6 +338,22 @@ internal static class ExtensionInstallDefinitions
                 or CliSemanticStatus.Interrupted => null,
             _ => throw Undefined(nameof(status), status),
         };
+    }
+
+    private static CliNextAction ReadRemovalNextAction(ExtensionInstallFindingCode code)
+    {
+        var instruction = code switch
+        {
+            ExtensionInstallFindingCode.RemovedExtension
+                => "Remove the selected Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension install.",
+            ExtensionInstallFindingCode.PathExcluded or ExtensionInstallFindingCode.ExcludedAncestor
+                => "Remove the matching entry from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.",
+            _ => throw Undefined(nameof(code), code),
+        };
+        return new CliNextAction(
+            instruction,
+            "Workspace removal settings currently exclude the requested install.")
+        { Kind = CliNextActionKind.Sentence };
     }
 
     private static string ForceCommand(ExtensionInstallRequest request)

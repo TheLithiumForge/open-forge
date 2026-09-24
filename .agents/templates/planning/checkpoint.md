@@ -6,9 +6,11 @@ open-forge:
 
 # {Workstream} Checkpoint
 
-<!-- TEMPLATE: Use one live Checkpoint when durable sources alone are insufficient to resume. Keep short state inside the Task when enough.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Use one live Checkpoint when durable sources alone are insufficient to resume. Keep short state inside the Task when enough.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Goal And Sources
 
@@ -38,6 +40,8 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 **Then:** {Link to the Plan or short remaining sequence.}
 
-<!-- Add Active and KeepInMind only while this record supports active work.
+{
+Add Active and KeepInMind only while this record supports active work.
 Refresh after meaningful state changes and context restoration. At closeout, preserve durable outcomes elsewhere, remove active loading tags, then archive or prune.
-A Handoff is a separate sealed transfer snapshot, not a routine copy of this live record. -->
+A Handoff is a separate sealed transfer snapshot, not a routine copy of this live record.
+}

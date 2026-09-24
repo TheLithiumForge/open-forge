@@ -3,17 +3,23 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 
 internal sealed partial class RouteRemoveEffectApplication(
     FileChangeApplier fileChangeApplier,
     DirectoryDeletionApplier directoryDeletionApplier,
-    FileExpectationValidator expectationValidator)
+    FileExpectationValidator expectationValidator,
+    PhysicalPathResolver physicalPathResolver)
 {
     private readonly FileChangeApplier _fileChangeApplier = fileChangeApplier;
     private readonly DirectoryDeletionApplier _directoryDeletionApplier = directoryDeletionApplier;
     private readonly FileExpectationValidator _expectationValidator = expectationValidator;
+    private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
 
     internal async ValueTask<RouteRemoveApplicationProgress> ApplyAsync(
         RouteRemoveEffectApplicationInput input,
@@ -32,6 +38,8 @@ internal sealed partial class RouteRemoveEffectApplication(
             : null;
         try
         {
+            stop = await ApplyAndVerifySettingsAsync(input, progress, stop, preparation, cancellationToken)
+                .ConfigureAwait(false);
             stop = await ApplyFilesAsync(input, progress, stop, preparation, cancellationToken)
                 .ConfigureAwait(false);
             stop = await ApplyDeletionsAsync(input, progress, stop, cancellationToken)

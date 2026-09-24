@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Install.Models.Planning;
@@ -137,6 +138,7 @@ public sealed class ExtensionInstallPlanOwnershipTests
         return new ExtensionInstallPlanInput
         {
             Request = new ExtensionInstallRequest(workspace, ExtensionInstallMode.DryRun, ["toolkit"], false, null, false, true, false),
+            SettingsObservation = WorkspaceSettingsRead.Absent(Path.Combine(root, ".agents", "open-forge.json")),
             SourceRead = new ExtensionSourceReadResult(ExtensionSourceReadState.Complete, ExtensionSourceKind.EmbeddedCatalogue, "embedded catalogue", [package], null),
             SourceSignature = "c581f9a147032eff59736cf45cbdee8708213aa0b4630f49c437a6130d75e3af",
             InferredRootId = null,

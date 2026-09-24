@@ -69,6 +69,16 @@ internal static class RouteRemoveReportSelector
             .Where(effect => effect.Kind == RouteRemoveEffectKind.GeneratedRegion)
             .Select(GeneratedRow));
 
+        if (result.Persistence.Settings.Outcome != RouteRemovePersistenceOutcome.NotEstablished)
+        {
+            rows.Add(RouteRemoveWording.PersistenceSettings(result.Persistence.Settings));
+        }
+
+        if (result.Persistence.Ownership.Outcome != RouteRemovePersistenceOutcome.NotEstablished)
+        {
+            rows.Add(RouteRemoveWording.PersistenceOwnership(result.Persistence.Ownership));
+        }
+
         var details = new List<string>();
         foreach (var group in DetachmentGroups(result))
         {
@@ -108,6 +118,12 @@ internal static class RouteRemoveReportSelector
             details.Add(RouteRemoveWording.Recovery(removedEffects.Length, recovery));
         }
 
+        if (detail >= CliDetail.Full)
+        {
+            details.AddRange(result.Persistence.Ownership.Claims.Select(claim =>
+                $"  {RouteRemoveWording.OwnershipClaim(claim)}"));
+        }
+
         return new RouteRemoveData
         {
             Mode = ModeName(result.Mode),
@@ -118,6 +134,24 @@ internal static class RouteRemoveReportSelector
                 Path = result.Source.Path,
             },
             Removed = removedEffects.Select(effect => effect.Path).ToArray(),
+            Settings = new RouteRemoveDataSettingsRemoval
+            {
+                Outcome = CliReportVocabulary.Name(result.Persistence.Settings.Outcome),
+                Path = result.Persistence.Settings.Path,
+                Categories = result.Persistence.Settings.Categories,
+                Files = result.Persistence.Settings.Files,
+                Directories = result.Persistence.Settings.Directories,
+            },
+            OwnershipRelease = new RouteRemoveDataOwnershipRelease
+            {
+                Outcome = CliReportVocabulary.Name(result.Persistence.Ownership.Outcome),
+                Claims = result.Persistence.Ownership.Claims.Select(claim => new RouteRemoveDataOwnershipClaim
+                {
+                    Path = claim.Path,
+                    Manager = claim.Manager == RouteRemoveOwnershipManager.Framework ? "framework" : "extension",
+                    Owner = claim.Owner,
+                }).ToArray(),
+            },
             DetachedLinks = result.References.Detachments
                 .Select(detachment => new RouteRemoveDataDetachedLink
                 {
@@ -209,9 +243,7 @@ internal static class RouteRemoveReportSelector
         var subject = Subject(result, finding);
         return new CliFinding
         {
-            Severity = finding.Code == RouteRemoveFindingCode.OwnershipUnavailable
-                ? CliSeverity.Warning
-                : CliReportVocabulary.Severity(finding.Status),
+            Severity = CliReportVocabulary.Severity(finding.Status),
             Code = RouteRemoveWording.FindingCode(finding.Code),
             Title = RouteRemoveWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
@@ -237,7 +269,8 @@ internal static class RouteRemoveReportSelector
                 or RouteRemoveFindingCode.RouteAmbiguous
                 or RouteRemoveFindingCode.IdentityCollision
                 or RouteRemoveFindingCode.OverwriteAmbiguous => CliSubjectKind.Identifier,
-            RouteRemoveFindingCode.CategoryUnsafe => CliSubjectKind.Directory,
+            RouteRemoveFindingCode.CategoryUnsafe
+                or RouteRemoveFindingCode.ProtectedTarget => CliSubjectKind.Directory,
             _ => CliSubjectKind.File,
         };
         var location = finding.LocationView is { } sourceLocation
@@ -287,6 +320,10 @@ internal static class RouteRemoveReportSelector
                 => CliFindingWording.CauseSentence(finding.Cause),
             RouteRemoveFindingCode.OwnershipUnavailable
                 => CliFindingWording.LifecycleUnavailable(),
+            RouteRemoveFindingCode.SettingsUnavailable
+                => CliFindingWording.CauseSentence(finding.Cause),
+            RouteRemoveFindingCode.ProtectedTarget
+                => CliFindingWording.CauseSentence(finding.Cause),
             RouteRemoveFindingCode.OwnershipClaimed
                 => OwnershipClaimed(result, finding),
             RouteRemoveFindingCode.ReferenceUnsafe

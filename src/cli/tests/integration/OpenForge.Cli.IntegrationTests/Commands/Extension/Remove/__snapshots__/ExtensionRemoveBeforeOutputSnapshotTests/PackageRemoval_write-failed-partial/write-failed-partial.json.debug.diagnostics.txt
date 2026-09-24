@@ -1,5 +1,5 @@
 status=failed
 packages=1
-effects=14
+effects=3
 findings=1
 IOException (0x80070020): The filesystem operation failed.

@@ -147,6 +147,9 @@ internal sealed record UpdateDataEffect
     internal bool IsSection { get; init; }
 
     [JsonIgnore]
+    internal bool IsDirectory { get; init; }
+
+    [JsonIgnore]
     internal string? Reason { get; init; }
 }
 

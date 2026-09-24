@@ -150,8 +150,24 @@ authority.
 Ordinary Update replaces edited owned Framework content, restores missing owned
 current targets, creates safe absent current targets and projects affected
 navigation. Semantic equality preserves current formatting. `removedCategories`
-excludes payloads beneath each named root category from reinstatement; existing
-content and receipts outside selected effects remain.
+excludes payloads beneath each named root category from reinstatement.
+`removedFiles` excludes exact canonical workspace-relative file destinations
+from whole-file and generated-region planning, including root managed hosts. The
+list is not glob or recursive-directory syntax. `removedDirectories` excludes
+each canonical directory and all its descendants, including future files.
+Force, prune, and automatic mode
+do not bypass it. Existing content and receipts outside selected effects remain.
+Removing an entry explicitly allows a later Update to restore that destination.
+
+For an already installed Framework with a readable registration, that restoration
+includes ordinary missing parent directories required by the selected current
+payload. Plan each directory creation, show it in preview and results, and
+revalidate its absence and contained ancestors under the same lease before
+creating it. A directory is not created when an exclusion covers it. Links,
+aliases, conflicting files and other unsafe ancestors block the plan. An empty
+`.agents` directory without Framework registration does not authorize this
+restoration behavior. Schema or release metadata alone does not invalidate an
+otherwise readable registration.
 
 Whole-file receipts authorize whole-file effects. Region receipts authorize
 only the named block, preserving outside host bytes. Existing unowned content
@@ -303,6 +319,6 @@ publication was skipped. It still verifies an effect-free intended projection,
 the same raw ownership read state and expectation, and every applied content
 effect. When a lock write was planned, its exact intended bytes must verify.
 
-Update plans no directory creation. A missing parent required by a file creation
-or restoration stops the entire plan at target safety before writes. A missing
-retired path requires neither parent creation nor deletion.
+Directory creation follows the installed-Framework and exclusion boundaries in
+[Normal Plan](#normal-plan). A missing retired path requires neither parent
+creation nor deletion.

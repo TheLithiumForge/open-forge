@@ -7,8 +7,18 @@ open-forge:
 
 # library sync Behavior Contract
 
-Unavailable ownership is reported as `library-sync.ownership-observation`
-with `completed` status. This finding grants no ownership or mutation permission.
+A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
+
+## Persistent Exclusions
+
+Apply the [removal settings](../../remove/interface.md#keep-removed-and-restore)
+to the selected Library ID and each concrete consumer destination. An excluded
+ID blocks synchronization. Excluded paths are not restored, changed, pruned or
+newly claimed; existing excluded bytes and claims remain intact. In particular,
+removing one owned link through root `remove` releases only that mapping and
+records its destination, so synchronization leaves it absent while other links
+continue to update. Do not recreate required missing excluded ancestors.
+Revalidate the exact settings observation under the workspace lease.
 
 ## Status And Boundary
 
@@ -38,8 +48,9 @@ The sole generated state publication is `.agents/open-forge.lock.json`.
 The existing public record-effect and publication fields describe that lock
 write. Its Libraries section contains validated registration identities and
 source-relative paths; other ownership sections are preserved. No retired
-record is read, written, converted, or deleted. An unavailable lock write is
-skipped without blocking otherwise safe effects, and reports no publication.
+record is read, written, converted, or deleted. A planned lock publication is
+required for successful completion. If publication fails after earlier effects,
+the result reports the partial state and retains recovery evidence.
 Recovery protects the exact prior lock bytes before any effects; the planned
 lock publication remains last after verified link and generated-region effects.
 

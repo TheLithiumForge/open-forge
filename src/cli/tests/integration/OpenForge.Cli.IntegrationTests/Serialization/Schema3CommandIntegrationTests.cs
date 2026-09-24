@@ -27,6 +27,7 @@ public sealed class Schema3CommandIntegrationTests
     [InlineData("route update", 4, "invalid-input")]
     [InlineData("route move", 4, "invalid-input")]
     [InlineData("route remove", 4, "invalid-input")]
+    [InlineData("remove", 5, "blocked")]
     [InlineData("extension list", 5, "blocked")]
     [InlineData("extension inspect", 5, "blocked")]
     [InlineData("extension create", 4, "invalid-input")]
@@ -86,6 +87,7 @@ public sealed class Schema3CommandIntegrationTests
         string[] operands = command switch
         {
             "references" or "route list" or "route inspect" or "route remove" => ["root"],
+            "remove" => [],
             "route create" => ["docs/example.md", "--description", "Example", "--tag", "Docs"],
             "route init" => ["docs"],
             "route update" => ["root", "--description", "Updated description"],

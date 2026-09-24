@@ -28,10 +28,54 @@
     },
     "removedCategories": {
       "type": "array",
-      "description": "Root categories deliberately deleted from this workspace. Install and update do not reinstate them.",
+      "description": "Canonical root category names under .agents that were deliberately removed. Install and update do not reinstate them.",
       "items": {
         "type": "string",
         "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "removedFiles": {
+      "type": "array",
+      "description": "Exact canonical workspace-relative file paths deliberately removed from this workspace. Install and update do not restore or modify these destinations. Paths use forward slashes and cannot name the workspace root, Git metadata, settings, or ownership controls. Globs and recursive directory semantics are not supported. Remove an entry explicitly to allow a later install or update to restore that destination.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "One canonical workspace-relative file path using forward slashes."
+      },
+      "uniqueItems": true
+    },
+    "removedDirectories": {
+      "type": "array",
+      "description": "Canonical workspace-relative directories deliberately removed from this workspace. Each entry excludes the directory itself and every descendant, including files created later. Install and update do not restore or modify those destinations. The workspace root, Git metadata, settings, and ownership controls are reserved. Remove an entry explicitly to allow a later install or update to restore that directory.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "One canonical workspace-relative directory path using forward slashes, without a trailing slash."
+      },
+      "uniqueItems": true
+    },
+    "removedExtensions": {
+      "type": "array",
+      "description": "Stable Extension IDs deliberately removed from this workspace. Install, update, and dependency resolution do not reinstall an excluded Extension. Remove an entry explicitly to allow a later install or update.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "description": "One stable Extension ID."
+      },
+      "uniqueItems": true
+    },
+    "removedLibraries": {
+      "type": "array",
+      "description": "Stable local Library IDs deliberately detached from this workspace. Attach and sync do not restore an excluded Library. Remove an entry explicitly to allow a later attach or sync.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "description": "One stable local Library ID."
       },
       "uniqueItems": true
     }
@@ -40,7 +84,11 @@
     {
       "schemaVersion": 1,
       "allowInstallPaths": ["docs/agents", "tools/agent-notes.md"],
-      "removedCategories": ["skills"]
+      "removedCategories": ["skills"],
+      "removedFiles": [".agents/patterns/_patterns.md", "AGENTS.md"],
+      "removedDirectories": ["docs/obsolete"],
+      "removedExtensions": ["planning"],
+      "removedLibraries": ["team-knowledge"]
     }
   ]
 }

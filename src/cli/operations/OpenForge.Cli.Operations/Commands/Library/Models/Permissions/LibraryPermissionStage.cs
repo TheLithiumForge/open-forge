@@ -18,10 +18,11 @@ internal enum LibraryPermissionFailure
 
 internal sealed record LibraryPermissionStage
 {
-    public required WorkspaceSettingsRead? Observation { get; init; }
+    public required WorkspaceSettingsRead Observation { get; init; }
     public required LibraryPermissionApproval? Approval { get; init; }
     public required WorkspacePermissionResult Result { get; init; }
     public required PlannedFileChange? Change { get; init; }
+    public required PlannedFileChange? GrantChange { get; init; }
     public required RecoveryBundleTarget? RecoveryTarget { get; init; }
     public required LibraryPermissionFailure? Failure { get; init; }
 }

@@ -268,30 +268,50 @@ public sealed class F14DestinationConsentJourneyTests
         consumer.LockStore.AssertNoRecoveryArtifacts(consumer.Path);
     }
 
-    [Fact(DisplayName = "F14 keeps implicit .agents admission separate from malformed external settings"),
+    [Fact(DisplayName = "F14 implicitly admits internal targets with valid settings and blocks malformed settings without effects"),
      Trait("Feature", Feature), Trait("Evidence", "EndToEnd"), Trait("Journey", "F14"),
      Trait("Scenarios", "X14")]
-    public async Task MalformedExternalSettingsDoNotBlockAnInternalOnlyPackage()
+    public async Task InternalOnlyPackageUsesImplicitAdmissionAndMalformedSettingsBlockWithoutMutation()
     {
-        using var consumer = PublishedJourneyWorkspace.Create("e2e-f14-consent-malformed-internal-consumer");
-        using var catalogue = PublishedJourneyWorkspace.Create("e2e-f14-consent-malformed-internal-catalogue");
+        using var admittedConsumer = PublishedJourneyWorkspace.Create("e2e-f14-consent-internal-admitted-consumer");
+        using var malformedConsumer = PublishedJourneyWorkspace.Create("e2e-f14-consent-malformed-internal-consumer");
+        using var catalogue = PublishedJourneyWorkspace.Create("e2e-f14-consent-internal-catalogue");
         WritePackage(catalogue, "internal", "1.0.0", InternalTarget, Encoding.UTF8.GetBytes(InternalBytes));
 
-        consumer.ExpectCoreInstall();
-        consumer.ExpectFiles(InternalTarget, SettingsPath);
-        await InstallFrameworkAsync(consumer);
-        consumer.WriteText(SettingsPath, MalformedSettings);
+        admittedConsumer.ExpectCoreInstall();
+        admittedConsumer.ExpectFiles(InternalTarget, SettingsPath);
+        await InstallFrameworkAsync(admittedConsumer);
+        admittedConsumer.WriteText(SettingsPath, EmptyGrant);
         var sourceBefore = catalogue.SnapshotState();
 
-        var installed = await consumer.RunAsync(
+        var installed = await admittedConsumer.RunAsync(
             "extension", "install", "internal", "--source", catalogue.Path, "--automatic");
         AssertCompleted(installed);
-        AssertFileBytes(consumer, InternalTarget, Encoding.UTF8.GetBytes(InternalBytes));
-        Assert.Equal(MalformedSettings, File.ReadAllText(consumer.Combine(SettingsPath)));
-        AssertExtensionRecord(consumer, "internal", "1.0.0", InternalTarget);
+        AssertFileBytes(admittedConsumer, InternalTarget, Encoding.UTF8.GetBytes(InternalBytes));
+        Assert.Equal(EmptyGrant, File.ReadAllText(admittedConsumer.Combine(SettingsPath)));
+        AssertExtensionRecord(admittedConsumer, "internal", "1.0.0", InternalTarget);
         AssertSourceUnchanged(catalogue, sourceBefore);
-        consumer.LockStore.AssertPersistentZeroByteLock(consumer.Path);
-        consumer.LockStore.AssertNoRecoveryArtifacts(consumer.Path);
+        admittedConsumer.LockStore.AssertPersistentZeroByteLock(admittedConsumer.Path);
+        admittedConsumer.LockStore.AssertNoRecoveryArtifacts(admittedConsumer.Path);
+
+        malformedConsumer.ExpectCoreInstall();
+        malformedConsumer.ExpectFiles(InternalTarget, SettingsPath);
+        await InstallFrameworkAsync(malformedConsumer);
+        malformedConsumer.WriteText(SettingsPath, MalformedSettings);
+        var malformedState = malformedConsumer.SnapshotState();
+
+        var blocked = await malformedConsumer.RunAsync(
+            "extension", "install", "internal", "--source", catalogue.Path, "--automatic");
+        Assert.Equal(5, blocked.ExitCode);
+        Assert.Empty(blocked.StandardOutput);
+        Assert.Contains(SettingsPath, blocked.StandardError, StringComparison.Ordinal);
+        Assert.Equal(malformedState, malformedConsumer.SnapshotState());
+        Assert.Equal(MalformedSettings, File.ReadAllText(malformedConsumer.Combine(SettingsPath)));
+        AssertMissingFile(malformedConsumer, InternalTarget);
+        AssertNoExtensionRecord(malformedConsumer, "internal");
+        AssertSourceUnchanged(catalogue, sourceBefore);
+        malformedConsumer.LockStore.AssertPersistentZeroByteLock(malformedConsumer.Path);
+        malformedConsumer.LockStore.AssertNoRecoveryArtifacts(malformedConsumer.Path);
     }
 
     private static async Task InstallFrameworkAsync(PublishedJourneyWorkspace workspace)

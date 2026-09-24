@@ -7,7 +7,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 
 namespace OpenForge.Cli.Core.Framework.Ownership;
 
-internal sealed class WorkspaceOwnershipStore
+internal sealed partial class WorkspaceOwnershipStore
 {
     internal OwnershipWritePlanResult PlanFrameworkOwnership(
         WorkspaceOwnershipRead current,

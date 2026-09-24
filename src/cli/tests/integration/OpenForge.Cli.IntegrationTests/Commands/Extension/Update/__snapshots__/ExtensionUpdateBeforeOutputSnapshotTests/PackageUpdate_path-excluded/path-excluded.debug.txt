@@ -1,0 +1,14 @@
+The toolkit Extension is up to date. Nothing to do.
+Workspace: <workspace>
+  Info  .agents/toolkit.md  Extension path is excluded [extension-update.path-excluded]
+         '.agents/toolkit.md' is excluded by workspace removal settings and was left unchanged.
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension update.
+         Workspace removal settings currently exclude this Extension path.
+         cause: '.agents/toolkit.md' is excluded by workspace removal settings and was left unchanged.
+         read from <extension-source>
+  Source: <extension-source>
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was needed.

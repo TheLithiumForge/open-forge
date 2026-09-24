@@ -102,7 +102,7 @@ Optional Extensions add deeper Memory routes when a workspace needs them:
 
 - The optional [Planning Extension](../../../../../src/extensions/planning/extension.json) supplies [Decisions](../../../../../src/extensions/planning/content/.agents/memory/crystallized/decisions/_decisions.md), [Analysis](../../../../../src/extensions/planning/content/.agents/memory/emerging/analysis/_analysis.md), [Ideas](../../../../../src/extensions/planning/content/.agents/memory/emerging/ideas/_ideas.md), and [Checkpoints](../../../../../src/extensions/planning/content/.agents/memory/working/checkpoints/_checkpoints.md).
 - The optional [Project Documents Extension](../../../../../src/extensions/project-documents/extension.json) supplies [Documents](../../../../../src/extensions/project-documents/content/.agents/memory/crystallized/documents/_documents.md).
-- The optional [Orchestration Extension](../../../../../src/extensions/orchestration/extension.json) supplies [Observations](../../../../../src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md) and [Handoffs](../../../../../src/extensions/orchestration/content/.agents/memory/working/handoffs/_handoffs.md).
+- The optional [Observations and Handoffs Extension](../../../../../src/extensions/observations-and-handoffs/extension.json) supplies [Observations](../../../../../src/extensions/observations-and-handoffs/content/.agents/memory/emerging/observations/_observations.md) and [Handoffs](../../../../../src/extensions/observations-and-handoffs/content/.agents/memory/working/handoffs/_handoffs.md).
 
 This tree is the distributed product shape, not an untouchable taxonomy. A user may add scopes, add or remove `routes`, replace framework files, use only a subset of the primitives, or reorganize local material through valid `route` chains. Removing a standard `route` removes that capability from the local profile; it does not make the remaining Framework invalid. Validation checks the structure that exists rather than demanding that deleted defaults reappear.
 
@@ -169,7 +169,7 @@ The operating rules are:
 1. Platform constraints and runtime safety bound every action
 2. Clear current user direction governs goals, priorities, consequential tradeoffs, and accepted changes within its scope
 3. A declared external source of truth is authoritative for the facts delegated to it
-4. Loaded `Axioms`, including those supplied by Directives, govern Framework interpretation and applicable behavior
+4. Loaded `Axioms` and Directive `Instructions` govern Framework interpretation and applicable behavior
 5. A selected authoritative source governs the accepted state of its subject
 6. Narrower selected material of the same non-directive kind is preferred when it safely specializes broader material
 7. Loaded directives add constraints to ancestor directives rather than silently replacing them
@@ -263,7 +263,7 @@ The [overwrite contract](routing/overwrites.md) defines companion identity, inhe
 
 These are clarity preferences rather than limits on ownership. Users own the installed files and may choose the representation that remains easiest for their workspace to understand.
 
-An installer or updater preserves existing user content by default. Missing standard routes are not assumed to be accidental. Completion, upgrade, replacement, and explicit restoration are distinct intents even if the future CLI exposes their final mechanics differently.
+Installers and updaters respect recorded exclusions for intentionally removed defaults. A missing managed file without an exclusion may be restored by an update; absence alone does not record the user's intent. The CLI stores removed categories and exact file paths in `.agents/open-forge.json`. Excluding a file does not delete it or authorize changing its existing content.
 
 ## Generated And Deterministic State
 
@@ -322,7 +322,7 @@ The [system dependency direction](../architecture.md#authority-and-dependency-di
 
 When a lower-level contract accepts input from several sources, it states the requirement for any writer instead of naming a particular workflow, Extension, package, module, or tool as the actor. Each higher-level authoritative source explains its own participation.
 
-This repository's root `.agents/` tree dogfoods the Framework and adds local routes for Open Forge development. Shared behavior should match the installable source. Deliberate repository-only differences remain visibly local. The current repository-local template set is one such evaluation boundary: the shared source ships its route contract, while concrete templates remain local until reviewed.
+This repository's root `.agents/` tree dogfoods the Framework and adds local routes for Open Forge development. Shared behavior should match the installable source. Deliberate repository-only differences remain visibly local. Repository-only templates remain local evaluation material. The optional Core Templates and specialized packages supply the packaged portable starters; the first-party catalogue defines their distribution.
 
 Current documents and maintenance contracts govern the design and review of source files. Source files are authoritative for their exact installed wording. Build output and generated indexes are derived from those authoritative sources.
 

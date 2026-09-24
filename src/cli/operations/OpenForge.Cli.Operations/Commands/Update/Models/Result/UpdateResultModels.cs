@@ -359,9 +359,14 @@ internal sealed record UpdateResult : ICliCommandResult
         {
             throw new ArgumentException("Update effect paths must be canonical workspace-relative paths.");
         }
-        if (effect.Changes.Count == 0)
+        if (effect.Kind == UpdatePhysicalEffectKind.File && effect.Changes.Count == 0)
         {
             throw new ArgumentException("Update effects require logical changes.");
+        }
+        if (effect.Kind == UpdatePhysicalEffectKind.Directory
+            && (effect.Action != UpdatePhysicalEffectAction.Create || effect.Changes.Count != 0))
+        {
+            throw new ArgumentException("Update directory effects require a create action and no file logical changes.");
         }
 
         var identities = new HashSet<(
@@ -384,6 +389,7 @@ internal sealed record UpdateResult : ICliCommandResult
             prior = change;
         }
 
+        UpdateDefinitions.ReadMachineName(effect.Kind);
         UpdateDefinitions.ReadMachineName(effect.Action);
         UpdateDefinitions.ReadMachineName(effect.Outcome);
         UpdateDefinitions.ReadMachineName(effect.Residual);

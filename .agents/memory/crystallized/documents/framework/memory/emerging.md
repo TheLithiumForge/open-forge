@@ -27,9 +27,9 @@ Optional Extensions provide distinct starting roles:
 
 - [Analysis](../../../../../../src/extensions/planning/content/.agents/memory/emerging/analysis/_analysis.md) from the Planning Extension preserves structured reasoning, investigation, and comparison
 - [Ideas](../../../../../../src/extensions/planning/content/.agents/memory/emerging/ideas/_ideas.md) from the Planning Extension preserves possibilities, experiments, and open questions
-- [Observations](../../../../../../src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md) from the Orchestration Extension preserves concrete occurrences or patterns noticed in evidence that may become reusable learning
+- [Observations](../../../../../../src/extensions/observations-and-handoffs/content/.agents/memory/emerging/observations/_observations.md) from the Observations and Handoffs Extension preserves concrete occurrences or patterns noticed in evidence that may become reusable learning
 
-These Extension routes improve placement and discovery when installed. They are not Core defaults or additional Memory states. The Core Emerging `entrypoint` retains #KeepInMind; the optional Observations route has no automatic continuity tag.
+These Extension routes improve placement and discovery when installed. They are not Core defaults or additional Memory states. The Core Emerging `entrypoint` retains #KeepInMind; the optional Observations route has no automatic refresh tag.
 
 ## Related Current Sources
 

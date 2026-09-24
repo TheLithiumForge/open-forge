@@ -6,9 +6,11 @@ open-forge:
 
 # {Workflow Name}
 
-<!-- TEMPLATE: Use when a repeatable method adds value beyond ordinary work. Place the recipe in a relevant Use Workflow reference scope and update its catalogue.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Use when a repeatable method adds value beyond ordinary work. Place the recipe in a relevant Use Workflow reference scope and update its catalogue.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Goal
 
@@ -28,5 +30,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 - {Observable outcome and the evidence that establishes it.}
 - {What remains explicit when a capability, approval, or required check is unavailable.}
 
-<!-- The recipe cannot grant permissions or invent runtime capabilities. Keep tool-specific invocation in the native capability that owns it.
-Do not add a second SKILL.md merely because this recipe has several steps. -->
+{
+The recipe cannot grant permissions or invent runtime capabilities. Keep tool-specific invocation in the native capability that owns it.
+Do not add a second SKILL.md merely because this recipe has several steps.
+}

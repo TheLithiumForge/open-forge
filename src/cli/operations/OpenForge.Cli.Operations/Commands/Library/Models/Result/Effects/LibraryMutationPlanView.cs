@@ -20,4 +20,13 @@ internal sealed record LibraryMutationPlanView
     public required LibraryRecordEffect RecordEffect { get; init; }
     public required LibraryExpectedState? RecordExpected { get; init; }
 
+    public required LibrarySettingsChangeEffectView? SettingsChange { get; init; }
+
+}
+
+internal sealed record LibrarySettingsChangeEffectView
+{
+    public required string Path { get; init; }
+    public required string Action { get; init; }
+    public required LibraryExpectedState Expected { get; init; }
 }

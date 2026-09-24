@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Presentation.Extension.Update.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
@@ -65,6 +66,7 @@ public sealed class ExtensionUpdatePlanOwnershipIntegrationTests
         var accepted = ExtensionUpdatePlan.Create(new ExtensionUpdatePlanInput
         {
             Request = baseline.Request,
+            SettingsObservation = baseline.SettingsObservation,
             SourceRead = baseline.SourceRead,
             SourceSignature = baseline.SourceSignature,
             Selection = baseline.Selection,

@@ -54,7 +54,7 @@ public sealed class LibraryDetachInputIntegrationTests
     [Trait("Boundary", "Host")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(true), InlineData(false)]
-    public static async Task UnknownIdIsInvalidAndMissingOwnershipIsAnObservation(bool completeRecord)
+    public static async Task UnregisteredIdPlansRemovalIntentAndMissingOwnershipRemainsAnObservation(bool completeRecord)
     {
         using var workspace = new LibraryMutationWorkspace();
         if (completeRecord)
@@ -65,31 +65,17 @@ public sealed class LibraryDetachInputIntegrationTests
         var before = workspace.Snapshot();
         var libraryId = completeRecord ? "other-library" : "team-knowledge";
 
-        var result = await CliHostCapture.RunAsync(["library", "detach", libraryId], workspace.Path);
+        var result = await CliHostCapture.RunAsync(["library", "detach", libraryId, "--dry-run"], workspace.Path);
 
-        Assert.Equal(completeRecord ? 4 : 0, result.ExitCode);
-        if (completeRecord)
-        {
-            Assert.Equal(string.Empty, result.Output);
-            Assert.Contains(
-                "Cannot detach other-library: No Library has the ID other-library.",
-                result.Error,
-                StringComparison.Ordinal);
-        }
-        else
-        {
-            Assert.Equal(string.Empty, result.Error);
-            Assert.Contains(
-                "No ownership record exists, so team-knowledge cannot be detached. Nothing was changed.",
-                result.Output,
-                StringComparison.Ordinal);
-        }
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.Error);
+        Assert.Contains($"Would record removal intent for Library {libraryId}.", result.Output, StringComparison.Ordinal);
         Assert.Equal(before, workspace.Snapshot());
     }
 
     [Trait("Boundary", "Host")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
-    public async Task RepeatedDetachIsInvalidAndHasNoFurtherEffect()
+    public async Task RepeatedDetachIsANoOpAndHasNoFurtherEffect()
     {
         using var workspace = new LibraryMutationWorkspace();
         workspace.Source();
@@ -103,12 +89,8 @@ public sealed class LibraryDetachInputIntegrationTests
 
         var repeated = await CliHostCapture.RunAsync(["library", "detach", "team-knowledge"], workspace.Path);
 
-        Assert.Equal(4, repeated.ExitCode);
-        Assert.Equal(string.Empty, repeated.Output);
-        Assert.Contains(
-            "Cannot detach team-knowledge: No Library has the ID team-knowledge.",
-            repeated.Error,
-            StringComparison.Ordinal);
+        Assert.Equal(0, repeated.ExitCode);
+        Assert.Equal(string.Empty, repeated.Error);
         Assert.Equal(beforeRepeat, workspace.Snapshot());
     }
 

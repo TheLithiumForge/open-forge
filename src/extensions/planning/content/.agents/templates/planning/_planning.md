@@ -6,17 +6,21 @@ open-forge:
 
 # Planning Templates
 
+## What possibility, decision, or work needs a record?
+
+Use one record where possible. Add separate records only when their questions need independent maintenance.
+
+An `Idea` preserves a possibility. An `Analysis` investigates it. A `Decision` records an accepted choice. These are independent options, not required stages.
+
+Use a `Task` when one record can hold the outcome, short plan, and state. Use the current conversation when no durable record is needed.
+
+A separate `Plan` holds the sequence. A `Backlog` holds selection context. A `Checkpoint` holds additional live resumption state. Link other records to those answers.
+
 ## Axioms
 
-- Choose the question that needs a record: an Idea preserves a possibility, Analysis investigates it, and a Decision records an accepted choice. These are independent options, not required stages.
-- Start with a Task when one record can hold the outcome, short plan, and state. Use the current conversation when no durable record is needed.
-- A separate Plan owns the sequence; a Backlog owns selection context; a Checkpoint owns additional live resumption state. Other records link to those answers.
-- Follow the [Work Records Pattern](../../patterns/work-records.md) for work-record relationships. Existing task systems and suitable workspace formats remain in use.
-- Choose the destination by the record's status and scope, not by this package's name. Analysis and Ideas are candidates; a Decision needs an identifiable source of acceptance.
-- Adapt headings and remove unhelpful fields. Replace source metadata and prompts; preserve important unknowns explicitly instead of inventing data.
-- No Template requires a status system, ID scheme, estimate, hierarchy, or approval stage that the workspace has not chosen.
-
-- A User Flow connects scenarios through real resulting state. A Scenario defines an expected outcome; a Scenario Collection groups cases. A Run Record preserves observations separately. These records can describe products, services, or other work without creating an execution plan.
+- When work records need relationships, read and follow the [Work Records Pattern](../../patterns/work-records.md). Preserve existing task systems and suitable workspace formats.
+- An `Analysis` or `Idea` remains a candidate record. A `Decision` needs an identifiable source of acceptance.
+- These Templates do not require a status system, ID scheme, estimate, hierarchy, or approval stage that the workspace has not chosen.
 
 ## Entries
 
@@ -27,8 +31,3 @@ open-forge:
 - [Preserve a useful possibility with its motivation, uncertainties, and smallest worthwhile experiment](idea.md) - #Extension #Template #Memory #Idea
 - [Maintain a separate sequence only when its steps and dependencies need their own source](plan.md) - #Extension #Template #Planning #Plan #Memory
 - [Keep one task's outcome, short plan, and current state together](task.md) - #Extension #Template #Planning #Task #Memory
-
-- [Record what happened during one run without replacing the intended expectation](run-record.md) - #Extension #Template #Planning #RunRecord
-- [Define one starting situation, the actions a person takes, and the result they should get](scenario.md) - #Extension #Template #Planning #Scenario
-- [Group related scenarios without creating another copy of their contracts](scenario-collection.md) - #Extension #Template #Planning #ScenarioCollection
-- [Connect scenarios from a person's starting state to a meaningful goal](user-flow.md) - #Extension #Template #Planning #UserFlow

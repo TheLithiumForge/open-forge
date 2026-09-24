@@ -13,6 +13,9 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Library.Attach.Shared.Planning;
@@ -27,6 +30,49 @@ internal static class LibraryAttachPlanner
         cancellationToken.ThrowIfCancellationRequested();
 
         var findings = ImmutableArray.CreateBuilder<LibraryAttachFinding>();
+        if (input.Settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
+        {
+            Add(findings,
+                input.Settings.State == WorkspaceSettingsReadState.Invalid
+                    ? LibraryAttachFindingCode.PermissionInvalid
+                    : LibraryAttachFindingCode.PermissionUnavailable,
+                CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value,
+                input.Settings.LogicalPath,
+                input.Settings.Cause ?? "Workspace settings are not available for a safe Library operation.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
+        if (input.Ownership.State is WorkspaceOwnershipReadState.Invalid or WorkspaceOwnershipReadState.Unavailable)
+        {
+            Add(findings,
+                input.Ownership.State == WorkspaceOwnershipReadState.Invalid
+                    ? LibraryAttachFindingCode.RecordInvalid
+                    : LibraryAttachFindingCode.RecordUnavailable,
+                CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value,
+                input.Ownership.LogicalPath,
+                input.Ownership.Cause ?? "The workspace ownership lock is not available for a safe Library operation.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
+        if (WorkspaceRemovals.IsLibraryRemoved(input.Request.LibraryId.Value, input.Settings.Document))
+        {
+            Add(findings, LibraryAttachFindingCode.LibraryRemoved, CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value, input.Settings.LogicalPath,
+                "This Library ID is excluded by workspace settings.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
+
+        foreach (var change in input.GeneratedRegionChanges)
+        {
+            var path = Path.GetRelativePath(input.Request.Workspace.LexicalRoot, change.LogicalPath)
+                .Replace(Path.DirectorySeparatorChar, '/');
+            if (WorkspaceRemovals.IsPathRemoved(path, input.Settings.Document))
+            {
+                Add(findings, LibraryAttachFindingCode.GeneratedNavigationBlocked, CliSemanticStatus.Blocked,
+                    input.Request.LibraryId.Value, path,
+                    "Generated navigation or one of its required ancestors is excluded by workspace settings.");
+            }
+        }
         if (input.GeneratedNavigationIssue is { } navigationIssue)
         {
             Add(
@@ -43,9 +89,7 @@ internal static class LibraryAttachPlanner
         }
 
         var currentRecord = input.Record.Record;
-        var canRebuildInvalidOwnership = input.Ownership.State == WorkspaceOwnershipReadState.Invalid
-            && input.Ownership.Snapshot is { Kind: FileExpectationKind.File, HasBytes: true };
-        if (input.Record.State == LibraryRegistrationReadState.Malformed && !canRebuildInvalidOwnership)
+        if (input.Record.State == LibraryRegistrationReadState.Malformed)
         {
             Add(
                 findings,
@@ -204,7 +248,23 @@ internal static class LibraryAttachPlanner
                 inventory.Cause ?? "The Library inventory is incomplete.");
         }
 
-        return inventory.Entries;
+        var active = ImmutableArray.CreateBuilder<EligibleSourceFile>();
+        foreach (var entry in inventory.Entries)
+        {
+            var destination = LibraryPathIdentity.Map(
+                input.Request.SourceRoot,
+                input.Request.DestinationRoot,
+                entry.SourcePath).DestinationPath.Value;
+            if (WorkspaceRemovals.IsPathRemoved(destination, input.Settings.Document))
+            {
+                Add(findings, LibraryAttachFindingCode.PathExcluded, CliSemanticStatus.Complete,
+                    input.Request.LibraryId.Value, destination,
+                    "The mapped destination is excluded by workspace settings and was kept untouched.");
+                continue;
+            }
+            active.Add(entry);
+        }
+        return active.ToImmutable();
     }
 
     private static ImmutableArray<RelativeFileLinkEffect> EvaluateMappings(

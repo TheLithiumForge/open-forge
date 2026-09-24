@@ -37,6 +37,14 @@
   ],
   "effects": [
     {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/open-forge.lock.json",
       "kind": "record",
       "action": "detached",
@@ -61,10 +69,16 @@
       "required": [],
       "missing": [],
       "decision": "not-required",
-      "action": "none",
-      "outcome": "not-requested"
+      "action": "create",
+      "outcome": "verified"
     },
     "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "kind": "setting",
+        "action": "create",
+        "outcome": "done"
+      },
       {
         "path": ".agents/open-forge.lock.json",
         "kind": "record",

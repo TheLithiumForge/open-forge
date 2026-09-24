@@ -41,7 +41,7 @@ Scenarios: [C17-07](../scenarios/commands/c17-route-remove.md#c17-07).
 
 ### Managed source
 
-Use the applicable management operation, not a force bypass.
+Explicit Route removal records the exclusion and releases matching content claims while preserving package registrations and unrelated claims. Later updates respect the exclusion.
 
 Scenarios: [C17-06](../scenarios/commands/c17-route-remove.md#c17-06).
 

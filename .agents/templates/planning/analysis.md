@@ -6,9 +6,11 @@ open-forge:
 
 # {Question} Analysis
 
-<!-- TEMPLATE: Use when reasoning must remain inspectable or resumable. A conclusion is not acceptance.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Use when reasoning must remain inspectable or resumable. A conclusion is not acceptance.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Question
 
@@ -40,5 +42,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 **Acceptance needed:** {Who or what can accept a resulting direction, when relevant.}
 
-<!-- If handed off for execution, retain an identifiable version used at that boundary.
-Later execution findings belong in the active working record; exploratory analysis may remain open. -->
+{
+If handed off for execution, retain an identifiable version used at that boundary.
+Later execution findings belong in the active working record; exploratory analysis may remain open.
+}

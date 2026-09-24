@@ -167,6 +167,11 @@ internal static class ExtensionInstallWording
         ExtensionInstallFindingCode.RecoveryFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryFailed(),
         ExtensionInstallFindingCode.OperationFailed => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleExtensionInstallFailed(),
         ExtensionInstallFindingCode.Interrupted => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleExtensionInstallWasCancelled(),
+        ExtensionInstallFindingCode.SettingsInvalid => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleWorkspaceSettingsAreInvalid(),
+        ExtensionInstallFindingCode.SettingsUnavailable => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleWorkspaceSettingsAreUnavailable(),
+        ExtensionInstallFindingCode.RemovedExtension => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleExtensionIsExcludedByWorkspaceSettings(),
+        ExtensionInstallFindingCode.PathExcluded => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleExtensionPathIsExcluded(),
+        ExtensionInstallFindingCode.ExcludedAncestor => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleRequiredParentIsExcluded(),
         _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The Extension Install finding code is not defined."),
     };
 

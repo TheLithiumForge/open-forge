@@ -9,8 +9,8 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "No files are recorded for toolkit, so there is nothing to remove.",
-    "kind": "nothing-to-do"
+    "headline": "Removed the toolkit Extension.",
+    "kind": "done"
   },
   "findings": [],
   "effects": [],
@@ -34,15 +34,32 @@
     "permissions": {
       "required": [],
       "missing": [],
-      "decision": "not-evaluated",
+      "decision": "not-required",
       "action": "none",
       "outcome": "not-requested"
     },
-    "effects": [],
+    "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "verified",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      }
+    ],
     "removalOrder": [
       "toolkit"
     ]
   },
-  "recovery": null,
-  "next": null
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge cleanup",
+    "reason": "after reviewing the bundle"
+  }
 }

@@ -6,7 +6,8 @@ namespace OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 internal sealed record ExtensionRemoveTopologyBuild(
     ExtensionRemoveTopology Topology,
     IReadOnlyList<ExtensionRemoveGeneratedRegion> Regions,
-    IReadOnlyList<ExtensionRemoveGeneratedChange> Changes);
+    IReadOnlyList<ExtensionRemoveGeneratedChange> Changes,
+    IReadOnlyList<string> ExcludedPaths);
 
 internal sealed record ExtensionRemoveGeneratedChange(
     string Path,

@@ -9,7 +9,7 @@ open-forge:
 
 ## Source
 
-[`src/extensions/orchestration/content/.agents/memory/working/handoffs/_handoffs.md`](../../../../../../../../../src/extensions/orchestration/content/.agents/memory/working/handoffs/_handoffs.md) is the canonical installed Handoffs `entrypoint` supplied by the Orchestration Extension. The repository [Handoffs `entrypoint`](../../../../../../../../../.agents/memory/working/handoffs/_handoffs.md) dogfoods the same authored contract and may add local generated `Entries`.
+[`src/extensions/observations-and-handoffs/content/.agents/memory/working/handoffs/_handoffs.md`](../../../../../../../../../src/extensions/observations-and-handoffs/content/.agents/memory/working/handoffs/_handoffs.md) is the canonical installed Handoffs `entrypoint` supplied by the Observations and Handoffs Extension. The repository [Handoffs `entrypoint`](../../../../../../../../../.agents/memory/working/handoffs/_handoffs.md) dogfoods the same authored contract and may add local generated `Entries`.
 
 The [Working state contract](../../../../../framework/memory/working.md) defines Handoffs as sealed boundary snapshots within temporary Working Memory.
 
@@ -27,4 +27,4 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 
 ## Verification
 
-- Installation and `route` tests verify that Core alone does not provide Handoffs and that the Orchestration Extension supplies their loading, indexing, classification, and recursive child routing
+- Installation and `route` tests verify that Core alone does not provide Handoffs and that the Observations and Handoffs Extension supplies their loading, indexing, classification, and recursive child routing

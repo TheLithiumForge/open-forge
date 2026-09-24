@@ -48,6 +48,18 @@ internal static class ExtensionInstallText
     internal static string MessagePreviewReplacingTheExistingFileBeforeRerunningTheInstallation()
         => "Preview replacing the existing file before rerunning the installation.";
 
+    // @OpenForgeText extension.install.message.repair-workspace-settings-then-rerun-install
+    internal static string MessageRepairWorkspaceSettingsThenRerunInstall()
+        => "Repair .agents/open-forge.json, then rerun extension install.";
+
+    // @OpenForgeText extension.install.message.remove-extension-from-removed-extensions-then-rerun-install
+    internal static string MessageRemoveExtensionFromRemovedExtensionsThenRerunInstall()
+        => "Remove the Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension install.";
+
+    // @OpenForgeText extension.install.message.remove-matching-path-from-workspace-removal-settings-then-rerun-install
+    internal static string MessageRemoveMatchingPathFromWorkspaceRemovalSettingsThenRerunInstall()
+        => "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.";
+
     // @OpenForgeText extension.install.label.the-required-extension-install-facts-are-unavailable
     internal static string LabelTheRequiredExtensionInstallFactsAreUnavailable()
         => "the required Extension install facts are unavailable";
@@ -127,6 +139,26 @@ internal static class ExtensionInstallText
     // @OpenForgeText extension.install.title.extension-install-was-cancelled
     internal static string TitleExtensionInstallWasCancelled()
         => "Extension install was cancelled";
+
+    // @OpenForgeText extension.install.title.workspace-settings-are-invalid
+    internal static string TitleWorkspaceSettingsAreInvalid()
+        => "Workspace settings are invalid";
+
+    // @OpenForgeText extension.install.title.workspace-settings-are-unavailable
+    internal static string TitleWorkspaceSettingsAreUnavailable()
+        => "Workspace settings are unavailable";
+
+    // @OpenForgeText extension.install.title.extension-is-excluded-by-workspace-settings
+    internal static string TitleExtensionIsExcludedByWorkspaceSettings()
+        => "Extension is excluded by workspace settings";
+
+    // @OpenForgeText extension.install.title.extension-path-is-excluded
+    internal static string TitleExtensionPathIsExcluded()
+        => "Extension path is excluded";
+
+    // @OpenForgeText extension.install.title.required-parent-is-excluded
+    internal static string TitleRequiredParentIsExcluded()
+        => "Required parent is excluded";
 
     // @OpenForgeText extension.install.label.selected
     internal static string LabelSelected()

@@ -16,6 +16,111 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Sync;
 public sealed class LibrarySyncOperationIntegrationTests
 {
     [Trait("Boundary", "OS")]
+    [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    public static async Task ExcludedMappedDestinationsAndFutureChildrenStayUntouched()
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        workspace.Source("private/review.md");
+        workspace.Source("private/future/child.md");
+        workspace.Source("public/active.md");
+        workspace.RecordAt("docs", "private/review.md", "private/retired.md");
+        workspace.Directory("docs/private");
+        workspace.Write("docs/private/review.md", "Local review bytes.");
+        workspace.Write("docs/private/retired.md", "Local retired bytes.");
+        workspace.Write(".agents/open-forge.json", "{\"allowInstallPaths\":[\"docs/public\"],\"removedDirectories\":[\"docs/private\"]}");
+        var reviewBytes = File.ReadAllBytes(workspace.Absolute("docs/private/review.md"));
+        var retiredBytes = File.ReadAllBytes(workspace.Absolute("docs/private/retired.md"));
+        var sourceBytes = File.ReadAllBytes(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/private/future/child.md"));
+
+        try
+        {
+            var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(
+                workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Equal(LibraryApplicationState.Applied, result.Result.Application.State);
+            Assert.Equal("docs/public/active.md", Assert.Single(result.Result.Plan.Links).Path);
+            Assert.DoesNotContain(result.Result.Plan.Links, link => link.Path.StartsWith("private/", StringComparison.Ordinal));
+            Assert.DoesNotContain(result.Result.Plan.Directories, directory => directory.Path.StartsWith("docs/private/", StringComparison.Ordinal));
+            Assert.Contains(result.Result.Findings, finding => finding.Code == LibrarySyncFindingCode.PathExcluded);
+            Assert.All(result.Result.Findings.Where(finding => finding.Code == LibrarySyncFindingCode.PathExcluded),
+                finding => Assert.Equal(CliSemanticStatus.Complete, finding.Status));
+            Assert.Equal("Local review bytes.", File.ReadAllText(workspace.Absolute("docs/private/review.md")));
+            Assert.Equal("Local retired bytes.", File.ReadAllText(workspace.Absolute("docs/private/retired.md")));
+            Assert.Equal(reviewBytes, File.ReadAllBytes(workspace.Absolute("docs/private/review.md")));
+            Assert.Equal(retiredBytes, File.ReadAllBytes(workspace.Absolute("docs/private/retired.md")));
+            Assert.True(System.IO.Directory.Exists(workspace.Absolute("docs/private")));
+            Assert.False(System.IO.Directory.Exists(workspace.Absolute("docs/private/future")));
+            Assert.False(File.Exists(workspace.Absolute("docs/private/future/child.md")));
+            Assert.Null(new FileInfo(workspace.Absolute("docs/private/review.md")).LinkTarget);
+            Assert.Null(new FileInfo(workspace.Absolute("docs/private/retired.md")).LinkTarget);
+            Assert.Equal(sourceBytes, File.ReadAllBytes(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/private/future/child.md")));
+            var registration = Assert.Single(Assert.IsType<LibraryRegistrationsDocument>(result.Result.Record.Intended).Libraries);
+            Assert.Equal(["private/retired.md", "private/review.md", "public/active.md"], registration.Paths);
+        }
+        finally
+        {
+            var linkPath = workspace.Absolute("docs/public/active.md");
+            if (new FileInfo(linkPath).LinkTarget is not null)
+            {
+                File.Delete(linkPath);
+            }
+            var publicDirectory = workspace.Absolute("docs/public");
+            if (System.IO.Directory.Exists(publicDirectory)
+                && !System.IO.Directory.EnumerateFileSystemEntries(publicDirectory).Any())
+            {
+                System.IO.Directory.Delete(publicDirectory);
+            }
+        }
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    public static async Task ExcludedOwnedLinksAndTheirRecordedPathsAreNotPruned()
+    {
+        const string current = "private/review.md";
+        const string retired = "private/retired.md";
+        const string destinationRoot = "docs";
+        using var workspace = new LibraryMutationWorkspace();
+        workspace.Source(current);
+        workspace.Directory("docs/private");
+        workspace.Write(".agents/open-forge.json", "{\"removedDirectories\":[\"docs/private\"]}");
+        var currentDestination = workspace.Absolute("docs/private/review.md");
+        var retiredDestination = workspace.Absolute("docs/private/retired.md");
+        var currentSource = workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/{current}");
+        var retiredSource = workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/{retired}");
+        var destinationParent = System.IO.Path.GetDirectoryName(currentDestination)
+            ?? throw new InvalidOperationException("The destination parent was not available.");
+        var currentTarget = System.IO.Path.GetRelativePath(destinationParent, currentSource).Replace('\\', '/');
+        var retiredTarget = System.IO.Path.GetRelativePath(destinationParent, retiredSource).Replace('\\', '/');
+        workspace.Link("docs/private/review.md", currentTarget);
+        workspace.Link("docs/private/retired.md", retiredTarget);
+        workspace.RecordAt(destinationRoot, current, retired);
+        var before = workspace.Snapshot();
+        var ownershipBytes = File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.RecordPath));
+        var sourceBytes = File.ReadAllBytes(currentSource);
+
+        var result = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(
+            workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Empty(result.Result.Plan.Links);
+        Assert.Equal(2, result.Result.Findings.Count(finding => finding.Code == LibrarySyncFindingCode.PathExcluded));
+        Assert.All(result.Result.Findings.Where(finding => finding.Code == LibrarySyncFindingCode.PathExcluded),
+            finding => Assert.Equal(CliSemanticStatus.Complete, finding.Status));
+        var intended = Assert.IsType<LibraryRegistrationsDocument>(result.Result.Record.Intended);
+        Assert.Equal(
+            new[] { retired, current }.Order(StringComparer.Ordinal),
+            Assert.Single(intended.Libraries).Paths);
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(ownershipBytes, File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
+        Assert.Equal(currentTarget, new FileInfo(currentDestination).LinkTarget);
+        Assert.Equal(retiredTarget, new FileInfo(retiredDestination).LinkTarget);
+        Assert.Equal(sourceBytes, File.ReadAllBytes(currentSource));
+        Assert.False(File.Exists(retiredSource));
+    }
+
+    [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData("file"), InlineData("directory"), InlineData("different-link"), InlineData("absolute-link")]
     public static async Task EveryNonExactOccupantRefusesAllEffects(string occupant)

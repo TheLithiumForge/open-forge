@@ -20,7 +20,7 @@ technology-neutral operation behind this public surface. The shared
 contracts retain their shared meanings rather than being redefined here.
 
 The current [Routing Model](../../../../framework/routing/model.md),
-[Routing Loading And Continuity](../../../../framework/routing/loading.md),
+[Loading And Refreshing Context](../../../../framework/routing/loading.md),
 [Route Scope And Inheritance](../../../../framework/routing/scope.md),
 and [Overwrite Customization](../../../../framework/routing/overwrites.md)
 documents define the Framework meaning inspected by this command. The
@@ -729,7 +729,7 @@ Route inspect was cancelled.
 - [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 - [Routing Model](../../../../framework/routing/model.md)
-- [Routing Loading And Continuity](../../../../framework/routing/loading.md)
+- [Loading And Refreshing Context](../../../../framework/routing/loading.md)
 - [Route Scope And Inheritance](../../../../framework/routing/scope.md)
 - [Routing Paths And Identity](../../../../framework/routing/paths.md)
 - [Overwrite Customization](../../../../framework/routing/overwrites.md)

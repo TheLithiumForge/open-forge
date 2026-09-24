@@ -2,6 +2,8 @@ using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using OpenForge.Cli.Composition;
+using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Update;
@@ -14,6 +16,8 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.IntegrationTests.Commands.Install;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 
@@ -51,6 +55,7 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
         """;
 
     private readonly InstallOperationWorkspace _installWorkspace;
+    private readonly List<string> _testCleanupPaths = [];
     private bool _disposed;
 
     private UpdateIntegrationWorkspace(InstallOperationWorkspace installWorkspace)
@@ -127,6 +132,27 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
             .ExecuteAsync(request, TestContext.Current.CancellationToken);
     }
 
+    internal async Task<CliProcessCompletion> RunRootAsync(IReadOnlyList<string> arguments)
+    {
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+        var application = CliCompositionRoot.Create(
+            new CliProcessIdentity("open-forge", "update-integration"),
+            new CliCompositionInputs
+            {
+                StandardInput = TextReader.Null,
+                PromptOutput = TextWriter.Null,
+                StandardInputRedirected = true,
+                PromptOutputRedirected = true,
+                LockStoreRoot = LockStoreRoot,
+            });
+        return await application.RunAsync(
+            arguments.ToArray(),
+            new CliProcessEnvironment(Workspace.LexicalRoot),
+            new CliOutputWriters(output, error),
+            TestContext.Current.CancellationToken);
+    }
+
     internal IReadOnlyDictionary<string, string> SnapshotHashes()
         => _installWorkspace.SnapshotHashes();
 
@@ -150,6 +176,9 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 
     internal bool Exists(string relativePath)
         => _installWorkspace.Exists(relativePath);
+
+    internal void RegisterTestCleanupPath(string relativePath)
+        => _testCleanupPaths.Add(_installWorkspace.Combine(relativePath));
 
     internal bool RecoveryDirectoryExists()
         => _installWorkspace.RecoveryDirectoryExists();
@@ -366,6 +395,11 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
             return;
         }
 
+        foreach (var path in _testCleanupPaths)
+        {
+            RemoveTestEntry(path);
+        }
+
         DeleteHistoricalTargetIfPresent();
         _installWorkspace.Dispose();
         _disposed = true;
@@ -383,6 +417,42 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
         if ((attributes & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
         {
             throw new InvalidOperationException("The historical Update target is not an ordinary file.");
+        }
+
+        File.Delete(path);
+    }
+
+    private static void RemoveTestEntry(string path)
+    {
+        if (!File.Exists(path) && !Directory.Exists(path))
+        {
+            return;
+        }
+
+        var attributes = File.GetAttributes(path);
+        if ((attributes & FileAttributes.ReparsePoint) != 0)
+        {
+            if ((attributes & FileAttributes.Directory) != 0)
+            {
+                Directory.Delete(path, recursive: false);
+            }
+            else
+            {
+                File.Delete(path);
+            }
+
+            return;
+        }
+
+        if ((attributes & FileAttributes.Directory) != 0)
+        {
+            foreach (var child in Directory.EnumerateFileSystemEntries(path).ToArray())
+            {
+                RemoveTestEntry(child);
+            }
+
+            Directory.Delete(path, recursive: false);
+            return;
         }
 
         File.Delete(path);

@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 
@@ -73,6 +74,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
             AdmittedExclusions = admittedExclusions,
             PlannedPaths = plannedPaths,
             SelectedIds = selectedIds,
+            Settings = input.Settings,
             IntendedOwners = intendedOwners,
             IntendedProvenance = intendedProvenance,
             Current = current,
@@ -83,6 +85,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
             var directoryBoundary = await PlanDirectoriesAsync(
                 request,
                 path,
+                input.Settings,
                 directories,
                 cancellationToken).ConfigureAwait(false);
             if (directoryBoundary is not null)
@@ -129,6 +132,11 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                      pair => pair.Key,
                      StringComparer.Ordinal))
         {
+            if (WorkspaceRemovals.IsPathRemoved(generated.Key, stage.Settings))
+            {
+                continue;
+            }
+
             var snapshot = await ObserveAsync(request, generated.Key, cancellationToken)
                 .ConfigureAwait(false);
             if (snapshot is null || snapshot.Kind != FileExpectationKind.File)
@@ -269,6 +277,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
     private async ValueTask<ExtensionUpdateFinding?> PlanDirectoriesAsync(
         ExtensionUpdateRequest request,
         string relativePath,
+        OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument settings,
         Dictionary<string, PlannedDirectoryCreation> directories,
         CancellationToken cancellationToken)
     {
@@ -291,6 +300,14 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
 
                 if (snapshot.Kind == FileExpectationKind.Missing)
                 {
+                    if (WorkspaceRemovals.IsPathRemoved(canonical, settings))
+                    {
+                        return new ExtensionUpdateFinding(
+                            ExtensionUpdateFindingCode.ExcludedAncestor,
+                            $"Required parent '{canonical}' is excluded and missing. Restore it in .agents/open-forge.json before updating this Extension.",
+                            canonical);
+                    }
+
                     directories.Add(
                         canonical,
                         PlannedDirectoryCreation.Create(snapshot.Expectation));
@@ -334,6 +351,15 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                     ExtensionUpdateFindingCode.TargetUnsafe,
                     "A managed Extension target is unsafe or unavailable.",
                     input.Path));
+        }
+
+        if (WorkspaceRemovals.IsPathRemoved(input.Path, stage.Settings))
+        {
+            findings.Add(new ExtensionUpdateFinding(
+                ExtensionUpdateFindingCode.PathExcluded,
+                $"'{input.Path}' is excluded by workspace removal settings and was left unchanged.",
+                input.Path));
+            return null;
         }
 
         var intendedBytes = input.SourceFile is null ? null : input.Topology.IntendedTargetBytes[input.Path];
@@ -605,6 +631,8 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         internal required HashSet<string> PlannedPaths { get; init; }
 
         internal required IReadOnlySet<string> SelectedIds { get; init; }
+
+        internal required OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument Settings { get; init; }
 
         internal required IReadOnlyDictionary<string, HashSet<string>> IntendedOwners { get; init; }
 

@@ -1,0 +1,9 @@
+Cannot attach team-knowledge: This Library ID is excluded by workspace settings.
+Workspace: <workspace>
+  Error  team-knowledge  Library ID is excluded [library-attach.library-removed]
+         This Library ID is excluded by workspace settings
+  Permission evaluation: permission was not evaluated. Required paths: none. Missing paths: none. No grant was saved.
+  Verification: verification has not started; 0 of 0 links created; the Library was not recorded
+  No recovery data was requested.
+  Update workspace settings before rerunning this command.
+Next: Remove Library ID 'team-knowledge' from removedLibraries in .agents/open-forge.json, then rerun open-forge library attach.

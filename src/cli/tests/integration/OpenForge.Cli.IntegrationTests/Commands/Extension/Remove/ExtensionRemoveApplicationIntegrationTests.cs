@@ -28,6 +28,13 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
             [],
             (".agents/toolkit.md", Document("Toolkit")));
         await InstallAsync(workspace, source);
+        var settingsPath = workspace.Combine(".agents/open-forge.json");
+        const string priorSettings = "{\"schemaVersion\":1,\"future\":{\"keep\":true}}";
+        await File.WriteAllTextAsync(settingsPath, priorSettings, TestContext.Current.CancellationToken);
+        var priorSettingsBytes = await File.ReadAllBytesAsync(settingsPath, TestContext.Current.CancellationToken);
+        var priorLockBytes = await File.ReadAllBytesAsync(
+            workspace.Combine(".agents/open-forge.lock.json"),
+            TestContext.Current.CancellationToken);
         var frameworkBefore = workspace.ReadFrameworkOwnership();
         var sourceBefore = source.Snapshot();
         var unownedBefore = workspace.ReadText("workspace-note.md");
@@ -54,6 +61,11 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
             effect => effect.GetProperty("path").GetString() == ".agents/toolkit.md"
                 && effect.GetProperty("action").GetString() == "delete"
                 && effect.GetProperty("outcome").GetString() == "verified");
+        Assert.Contains(
+            result.GetProperty("effects").EnumerateArray(),
+            effect => effect.GetProperty("path").GetString() == ".agents/open-forge.json"
+                && effect.GetProperty("action").GetString() == "record-exclusion"
+                && effect.GetProperty("outcome").GetString() == "verified");
         Assert.Equal("verified", result.GetProperty("verification").GetProperty("extensionRecord").GetString());
         Assert.Equal("retained", result.GetProperty("recovery").GetProperty("state").GetString());
         Assert.All(
@@ -61,12 +73,150 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
             verification => Assert.Equal("verified", verification.Value.GetString()));
         Assert.Empty(root.GetProperty("findings").EnumerateArray());
         Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
+        using (var settings = JsonDocument.Parse(await File.ReadAllBytesAsync(
+            settingsPath,
+            TestContext.Current.CancellationToken)))
+        {
+            Assert.True(settings.RootElement.GetProperty("future").GetProperty("keep").GetBoolean());
+            Assert.Equal(["toolkit"], settings.RootElement.GetProperty("removedExtensions")
+                .EnumerateArray().Select(value => value.GetString()));
+        }
+        var recoveryPath = Assert.IsType<string>(result.GetProperty("recovery").GetProperty("path").GetString());
+        var recovered = await RecoveryBundleReader.ReadFinalAsync(
+            workspace.Workspace,
+            recoveryPath,
+            TestContext.Current.CancellationToken);
+        var entries = Assert.IsType<RecoveryBundleVerifiedRead>(recovered.Verified).Entries;
+        AssertPriorBytes(recoveryPath,
+            entries.Single(entry => entry.TargetPath == ".agents/open-forge.json").PriorPayload,
+            priorSettingsBytes);
+        AssertPriorBytes(recoveryPath,
+            entries.Single(entry => entry.TargetPath == ".agents/open-forge.lock.json").PriorPayload,
+            priorLockBytes);
         Assert.Equal(unownedBefore, workspace.ReadText("workspace-note.md"));
         Assert.True(JsonNode.DeepEquals(
             JsonNode.Parse(frameworkBefore.GetRawText()),
             JsonNode.Parse(workspace.ReadFrameworkOwnership().GetRawText())));
         Assert.Empty(workspace.ReadExtensionOwnership().EnumerateArray());
         Assert.Equal(sourceBefore, source.Snapshot());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Extension Remove records an absent ID once and then returns an effect-free no-op"), Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
+    public async Task AbsentIdIsPersistedAndRepeatedRequestIsNoOp()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-remove-absent-id");
+        await workspace.SeedFrameworkAsync();
+        var first = await workspace.RunAsync(["extension", "remove", "not-installed", "--automatic", "--format", "json"]);
+
+        Assert.Equal(0, first.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, first.Status);
+        using (var document = JsonDocument.Parse(first.StandardOutput))
+        {
+            var result = document.RootElement.GetProperty("data");
+            Assert.Contains(result.GetProperty("effects").EnumerateArray(), effect =>
+                effect.GetProperty("path").GetString() == ".agents/open-forge.json"
+                && effect.GetProperty("action").GetString() == "record-exclusion");
+        }
+        using (var settings = JsonDocument.Parse(workspace.ReadText(".agents/open-forge.json")))
+        {
+            Assert.Equal(["not-installed"], settings.RootElement.GetProperty("removedExtensions")
+                .EnumerateArray().Select(value => value.GetString()));
+        }
+
+        var cleanup = await workspace.RunAsync(["cleanup", "--format", "json"]);
+        Assert.Equal(0, cleanup.ExitCode);
+        var beforeRepeat = workspace.Snapshot();
+        var repeated = await workspace.RunAsync(["extension", "remove", "not-installed", "--automatic", "--format", "json"]);
+
+        Assert.Equal(0, repeated.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, repeated.Status);
+        using var repeatedDocument = JsonDocument.Parse(repeated.StandardOutput);
+        Assert.Empty(repeatedDocument.RootElement.GetProperty("data").GetProperty("effects").EnumerateArray());
+        Assert.Equal(beforeRepeat, workspace.Snapshot());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(
+        DisplayName = "Extension Remove creates only settings storage for an absent ID in a plain workspace"),
+     Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
+    public async Task PlainWorkspaceAbsentIdCreatesSettingsDirectoryAndThenNoOps()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create(
+            "extension-remove-plain-workspace-absent-id");
+        Assert.False(Directory.Exists(workspace.Combine(".agents")));
+        var beforeDryRun = workspace.Snapshot();
+
+        var dryRun = await workspace.RunAsync(
+        [
+            "extension", "remove", "unused-package",
+            "--automatic", "--dry-run", "--format", "json",
+        ]);
+
+        Assert.Equal(0, dryRun.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, dryRun.Status);
+        Assert.Equal(beforeDryRun, workspace.Snapshot());
+        Assert.False(Directory.Exists(workspace.Combine(".agents")));
+        using (var dryRunDocument = JsonDocument.Parse(dryRun.StandardOutput))
+        {
+            var effects = dryRunDocument.RootElement.GetProperty("data")
+                .GetProperty("effects").EnumerateArray().ToArray();
+            Assert.Contains(effects, effect => effect.GetProperty("path").GetString() == ".agents"
+                && effect.GetProperty("action").GetString() == "create"
+                && effect.GetProperty("outcome").GetString() == "planned");
+            Assert.Contains(effects, effect => effect.GetProperty("path").GetString() == ".agents/open-forge.json"
+                && effect.GetProperty("action").GetString() == "record-exclusion"
+                && effect.GetProperty("outcome").GetString() == "planned");
+        }
+
+        var applied = await workspace.RunAsync(
+        [
+            "extension", "remove", "unused-package",
+            "--automatic", "--format", "json",
+        ]);
+
+        Assert.Equal(0, applied.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, applied.Status);
+        Assert.True(Directory.Exists(workspace.Combine(".agents")));
+        Assert.False(File.Exists(workspace.Combine(".agents/open-forge.lock.json")));
+        Assert.False(File.Exists(workspace.Combine(".agents/open-forge.lifecycle.json")));
+        Assert.False(File.Exists(workspace.Combine(".agents/loader.md")));
+        Assert.Equal(
+            ["open-forge.json"],
+            Directory.EnumerateFiles(workspace.Combine(".agents"))
+                .Select(Path.GetFileName)
+                .Order(StringComparer.Ordinal));
+        using (var appliedDocument = JsonDocument.Parse(applied.StandardOutput))
+        {
+            var effects = appliedDocument.RootElement.GetProperty("data")
+                .GetProperty("effects").EnumerateArray().ToArray();
+            Assert.Contains(effects, effect => effect.GetProperty("path").GetString() == ".agents"
+                && effect.GetProperty("action").GetString() == "create"
+                && effect.GetProperty("outcome").GetString() == "verified");
+            Assert.Contains(effects, effect => effect.GetProperty("path").GetString() == ".agents/open-forge.json"
+                && effect.GetProperty("action").GetString() == "record-exclusion"
+                && effect.GetProperty("outcome").GetString() == "verified");
+        }
+        using (var settings = JsonDocument.Parse(workspace.ReadText(".agents/open-forge.json")))
+        {
+            Assert.Equal(["unused-package"], settings.RootElement.GetProperty("removedExtensions")
+                .EnumerateArray().Select(value => value.GetString()));
+        }
+
+        var cleanup = await workspace.RunAsync(["cleanup", "--format", "json"]);
+        Assert.Equal(0, cleanup.ExitCode);
+        var beforeRepeat = workspace.Snapshot();
+        var repeated = await workspace.RunAsync(
+        [
+            "extension", "remove", "unused-package",
+            "--automatic", "--format", "json",
+        ]);
+
+        Assert.Equal(0, repeated.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, repeated.Status);
+        using var repeatedDocument = JsonDocument.Parse(repeated.StandardOutput);
+        Assert.Empty(repeatedDocument.RootElement.GetProperty("data").GetProperty("effects").EnumerateArray());
+        Assert.Equal(beforeRepeat, workspace.Snapshot());
     }
 
     [Trait("Boundary", "OS")]
@@ -238,7 +388,7 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
         Assert.Contains(
             result.GetProperty("effects").EnumerateArray(),
             effect => effect.GetProperty("action").GetString() == "updated"
-                && effect.GetProperty("outcome").GetString() == "changed");
+                && effect.GetProperty("outcome").GetString() == "verified");
         Assert.False(File.Exists(workspace.Combine(target)));
         Assert.DoesNotContain("toolkit/_toolkit.md", workspace.ReadText(".agents/loader.md"), StringComparison.Ordinal);
         Assert.Equal(sourceBefore, source.Snapshot());
@@ -321,4 +471,14 @@ public sealed class ExtensionRemoveApplicationIntegrationTests
             heading,
             ["Extension"],
             $"# {heading}\n");
+
+    private static void AssertPriorBytes(string bundlePath, string? priorPayload, byte[] expected)
+    {
+        Assert.NotNull(priorPayload);
+        using var archive = ZipFile.OpenRead(bundlePath);
+        using var stream = Assert.IsType<ZipArchiveEntry>(archive.GetEntry(priorPayload)).Open();
+        using var buffer = new MemoryStream();
+        stream.CopyTo(buffer);
+        Assert.Equal(expected, buffer.ToArray());
+    }
 }

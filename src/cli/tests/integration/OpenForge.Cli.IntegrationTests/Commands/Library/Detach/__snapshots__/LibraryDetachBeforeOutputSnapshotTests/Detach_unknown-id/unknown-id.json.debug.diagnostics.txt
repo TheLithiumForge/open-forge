@@ -1,8 +1,8 @@
-status=invalid-input
+status=completed
 mode=apply
 id=unknown
-effects=0
+effects=1
 links=0
 sections=0
 registration-removed=False
-findings=1
+findings=0

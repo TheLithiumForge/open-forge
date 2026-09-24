@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
@@ -6,9 +7,15 @@ using OpenForge.Cli.Core.Commands.Route.Shared.Navigation;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
@@ -29,19 +36,27 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
     internal async ValueTask<RouteRemovePlanBuild> BuildAsync(
         RouteRemoveAbsenceScope scope,
         CancellationToken cancellationToken)
-        => await BuildAsync(scope, postRemovePlan: null, cancellationToken)
+        => await BuildAsync(scope, postRemovePlan: null, allowPlannedClaims: false, cancellationToken)
             .ConfigureAwait(false);
 
     internal async ValueTask<RouteRemovePlanBuild> BuildPostRemoveAsync(
         RouteRemoveAbsenceScope scope,
         RouteRemovePlan plan,
         CancellationToken cancellationToken)
-        => await BuildAsync(scope, plan, cancellationToken)
+        => await BuildAsync(scope, plan, allowPlannedClaims: false, cancellationToken)
+            .ConfigureAwait(false);
+
+    internal async ValueTask<RouteRemovePlanBuild> BuildPostContentAsync(
+        RouteRemoveAbsenceScope scope,
+        RouteRemovePlan plan,
+        CancellationToken cancellationToken)
+        => await BuildAsync(scope, plan, allowPlannedClaims: true, cancellationToken)
             .ConfigureAwait(false);
 
     private async ValueTask<RouteRemovePlanBuild> BuildAsync(
         RouteRemoveAbsenceScope scope,
         RouteRemovePlan? postRemovePlan,
+        bool allowPlannedClaims,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scope);
@@ -111,29 +126,83 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
             }
         }
 
+        var settings = await WorkspaceSettingsReader.ReadAsync(
+            _physicalPathResolver,
+            scope.Request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+        if (settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete)
+            || settings.Snapshot is null)
+        {
+            return Stop(
+                formation,
+                RouteRemoveFindingCode.SettingsUnavailable,
+                CliSemanticStatus.Blocked,
+                WorkspaceSettingsDefinitions.RelativePath,
+                settings.Cause ?? "The required workspace settings are unavailable or invalid.");
+        }
+
         var ownership = await WorkspaceOwnershipReader.ReadAsync(
             _physicalPathResolver, scope.Request.Workspace,
             cancellationToken).ConfigureAwait(false);
         var projectedOwnership = RouteRemoveOwnershipProjector.Project(ownership, scope);
         formation = formation with { Ownership = projectedOwnership };
-        if (!RouteOwnershipEvidence.IsEstablished(ownership))
+        if (!RouteRemovePersistencePlanner.IsOwnershipTrusted(ownership))
         {
             return Stop(
                 formation,
                 RouteRemoveFindingCode.OwnershipUnavailable,
-                CliSemanticStatus.Complete,
+                CliSemanticStatus.Blocked,
                 scope.IntendedPath,
-                RouteOwnershipEvidence.Cause(ownership));
+                ownership.Cause ?? "The required workspace ownership record is unavailable or is not canonical.");
+        }
+
+        if (allowPlannedClaims
+            && postRemovePlan is not null
+            && !MatchesOwnershipObservation(postRemovePlan.Projection.Ownership, ownership))
+        {
+            return Stop(
+                formation,
+                RouteRemoveFindingCode.TargetChanged,
+                CliSemanticStatus.Blocked,
+                ownership.LogicalPath,
+                "The ownership lock changed before selected content claims could be released.");
         }
 
         if (projectedOwnership.State == RouteRemoveOwnershipState.Claimed)
         {
-            return Stop(
-                formation,
-                RouteRemoveFindingCode.OwnershipClaimed,
-                CliSemanticStatus.Blocked,
-                scope.IntendedPath,
-                "Lifecycle ownership still claims the requested category boundary.");
+            var expectedClaims = postRemovePlan?.Preview.Persistence.Ownership.Claims ?? [];
+            if (!allowPlannedClaims || postRemovePlan is null
+                || !projectedOwnership.Claims.SequenceEqual(expectedClaims))
+            {
+                return Stop(
+                    formation,
+                    RouteRemoveFindingCode.OwnershipClaimed,
+                    CliSemanticStatus.Blocked,
+                    scope.IntendedPath,
+                    "Lifecycle ownership claims the requested category boundary beyond the accepted removal plan.");
+            }
+        }
+
+        var hasRemovalIntent = postRemovePlan is not null
+            ? postRemovePlan.Projection.RemovalSelection.Files
+                .Concat(postRemovePlan.Projection.RemovalSelection.Directories)
+                .DefaultIfEmpty(scope.IntendedPath)
+                .All(path => WorkspaceRemovals.IsPathRemoved(path, settings.Document))
+            : new[]
+                {
+                    scope.IntendedPath,
+                    scope.CategoryRoot,
+                    scope.LeafPath,
+                    scope.LeafOverwritePath,
+                }
+                .Distinct(StringComparer.Ordinal)
+                .Any(path => WorkspaceRemovals.IsPathRemoved(path, settings.Document));
+        if (hasRemovalIntent)
+        {
+            formation = formation with
+            {
+                Persistence = PersistedRemoval(scope, settings, projectedOwnership, postRemovePlan, allowPlannedClaims),
+            };
         }
 
         var exposure = await _exposureReader.ReadAsync(
@@ -276,6 +345,92 @@ internal sealed class RouteRemoveCategoryAbsencePlanner(
                 nameof(canonicalPath),
                 resolution.State,
                 "The physical path state is not defined."),
+        };
+    }
+
+    private static bool MatchesOwnershipObservation(
+        WorkspaceOwnershipRead expected,
+        WorkspaceOwnershipRead actual)
+    {
+        if (expected.State != actual.State)
+        {
+            return false;
+        }
+
+        if (expected.Snapshot is not { } before)
+        {
+            return actual.Snapshot is null;
+        }
+
+        return actual.Snapshot is { } after
+            && before.Expectation == after.Expectation
+            && before.Bytes.AsSpan().SequenceEqual(after.Bytes.AsSpan());
+    }
+
+    private static RouteRemovePersistence PersistedRemoval(
+        RouteRemoveAbsenceScope scope,
+        WorkspaceSettingsRead settings,
+        RouteRemoveOwnership ownership,
+        RouteRemovePlan? postRemovePlan,
+        bool allowPlannedClaims)
+    {
+        if (postRemovePlan is { } plan)
+        {
+            var planned = plan.Preview.Persistence;
+            return planned with
+            {
+                Settings = planned.Settings with
+                {
+                    Outcome = plan.Projection.SettingsChange is null
+                        ? RouteRemovePersistenceOutcome.Unchanged
+                        : RouteRemovePersistenceOutcome.Applied,
+                },
+                Ownership = planned.Ownership with
+                {
+                    Outcome = plan.Projection.OwnershipChange is null
+                        ? RouteRemovePersistenceOutcome.Unchanged
+                        : allowPlannedClaims
+                            ? RouteRemovePersistenceOutcome.Planned
+                            : RouteRemovePersistenceOutcome.Applied,
+                },
+            };
+        }
+
+        var exactPaths = new HashSet<string>(StringComparer.Ordinal)
+        {
+            scope.IntendedPath,
+            scope.CategoryRoot,
+            scope.LeafPath,
+            scope.LeafOverwritePath,
+        };
+        var categories = settings.Document.RemovedCategories
+            .Where(category => string.Equals(
+                scope.CategoryRoot,
+                $"{SourceLogicalPath.AgentsRoot}/{category}",
+                StringComparison.Ordinal))
+            .ToImmutableArray();
+        var files = settings.Document.RemovedFiles
+            .Where(exactPaths.Contains)
+            .ToImmutableArray();
+        var directories = settings.Document.RemovedDirectories
+            .Where(exactPaths.Contains)
+            .ToImmutableArray();
+
+        return new RouteRemovePersistence
+        {
+            Settings = new RouteRemoveSettingsRemoval
+            {
+                Outcome = RouteRemovePersistenceOutcome.Unchanged,
+                Path = WorkspaceSettingsDefinitions.RelativePath,
+                Categories = categories,
+                Files = files,
+                Directories = directories,
+            },
+            Ownership = new RouteRemoveOwnershipRelease
+            {
+                Outcome = RouteRemovePersistenceOutcome.Unchanged,
+                Claims = ownership.Claims,
+            },
         };
     }
 

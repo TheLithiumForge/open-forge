@@ -4,6 +4,8 @@ Workspace: <workspace>
          .agents/directives/review.md is an ordinary file, so its bytes were kept.
          open-forge library inspect team-knowledge
          Inspect the Library before changing it.
+  .agents/open-forge.json  settings updated
   .agents/open-forge.lock.json  registration removed
+  .agents/open-forge.json  settings updated
   Inspect the Library before changing it.
 Next: open-forge library inspect team-knowledge

@@ -43,4 +43,8 @@ internal static class ExtensionRemovePhrases
     // @OpenForgeText extension.remove.phrase.remains-installed-and-is-no-longer-needed-by
     internal static string FormatRemainsInstalledAndIsNoLongerNeededBy(string dependencyText, string idText)
         => $"{dependencyText} remains installed and is no longer needed by {idText}.";
+
+    // @OpenForgeText extension.remove.phrase.generated-navigation-path-excluded
+    internal static string FormatGeneratedNavigationPathExcluded(string pathText)
+        => $"Generated navigation at '{pathText}' is excluded by workspace removal settings and was left unchanged.";
 }

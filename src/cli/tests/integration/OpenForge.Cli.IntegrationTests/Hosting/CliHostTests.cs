@@ -8,7 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Hosting;
 public sealed class CliHostTests
 {
     [Trait("Boundary", "Host")]
-    [Theory(DisplayName = "CLI root and root help expose the accepted route command family")]
+    [Theory(DisplayName = "CLI root and root help expose the accepted command surface")]
     [Trait("Feature", "cli-host"), Trait("Evidence", "Integration")]
     [InlineData(false)]
     [InlineData(true)]
@@ -30,6 +30,7 @@ public sealed class CliHostTests
         Assert.Contains("Getting started:", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("route list", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("open-forge route --help", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("remove <target>", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("--format", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("--detail", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("--detail-filter", standardOutput.ToString(), StringComparison.Ordinal);

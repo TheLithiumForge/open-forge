@@ -72,6 +72,9 @@ public sealed class RouteRemoveFiniteContractTests
             ["not-required", "not-created", "removed", "retained", "unknown"],
             Enum.GetValues<RouteRemoveRecoveryState>().Select(RouteRemoveDefinitions.ReadMachineName));
         Assert.Equal(
+            ["not-established", "planned", "applied", "unchanged", "not-started", "failed", "unknown"],
+            Enum.GetValues<RouteRemovePersistenceOutcome>().Select(RouteRemoveDefinitions.ReadMachineName));
+        Assert.Equal(
             ["not-requested", "verified", "failed", "unknown"],
             Enum.GetValues<RouteRemoveVerificationState>().Select(RouteRemoveDefinitions.ReadMachineName));
         Assert.Equal(
@@ -107,6 +110,8 @@ public sealed class RouteRemoveFiniteContractTests
                 "route-remove.recovery-failed",
                 "route-remove.operation-failed",
                 "route-remove.interrupted",
+                "route-remove.settings-unavailable",
+                "route-remove.protected-target",
             ],
             Enum.GetValues<RouteRemoveFindingCode>().Select(RouteRemoveDefinitions.ReadMachineName));
     }
@@ -158,6 +163,8 @@ public sealed class RouteRemoveFiniteContractTests
             () => RouteRemoveDefinitions.ReadMachineName((RouteRemoveRecoveryState)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(
             () => RouteRemoveDefinitions.ReadMachineName((RouteRemoveVerificationState)int.MaxValue));
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => RouteRemoveDefinitions.ReadMachineName((RouteRemovePersistenceOutcome)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(
             () => RouteRemoveDefinitions.ReadMachineName((RouteRemoveFindingCode)int.MaxValue));
     }

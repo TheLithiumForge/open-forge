@@ -25,7 +25,10 @@ internal static class RouteSourceDoctorInspector
                     source.Structure.Title.Location);
             }
 
-            if (source.Structure.Axioms.State is RouteAxiomsState.Missing or RouteAxiomsState.Invalid)
+            var axiomsState = source.Structure.Axioms.State;
+            var loaderRequiresLocalAxioms = source.Source.Base.Form == SourceDocumentForm.Loader
+                && (axiomsState is RouteAxiomsState.Missing or RouteAxiomsState.Empty);
+            if (axiomsState == RouteAxiomsState.Invalid || loaderRequiresLocalAxioms)
             {
                 yield return Create(
                     DoctorDomainSupport.Warning(

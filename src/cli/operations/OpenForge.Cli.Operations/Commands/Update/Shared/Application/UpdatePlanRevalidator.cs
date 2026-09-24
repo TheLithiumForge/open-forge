@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
@@ -33,13 +34,17 @@ internal sealed class UpdatePlanRevalidator(
 
         var changes = Changes(expected);
         IReadOnlyList<FileExpectationValidationResult> checks = [];
-        if (changes.Count != 0)
+        if (expected.DirectoryCreations.Count != 0 || changes.Count != 0)
         {
             MutationValidationResult validation;
             try
             {
                 validation = await _mutationRevalidator
-                    .ValidateAsync(lease, changes, cancellationToken)
+                    .ValidateAsync(
+                        lease,
+                        expected.DirectoryCreations,
+                        changes,
+                        cancellationToken)
                     .ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -97,6 +102,11 @@ internal sealed class UpdatePlanRevalidator(
             .Concat(execution.OwnershipChange is { } ownership ? [ownership] : [])
             .ToArray();
 
+    private static bool DirectoryCreationsMatch(
+        IReadOnlyList<PlannedDirectoryCreation> expected,
+        IReadOnlyList<PlannedDirectoryCreation> actual)
+        => expected.SequenceEqual(actual);
+
     private static bool Matches(UpdatePlanExecution expected, UpdatePlanExecution actual)
         => expected.OwnershipRead.State == actual.OwnershipRead.State
             && expected.OwnershipRead.Snapshot?.Expectation == actual.OwnershipRead.Snapshot?.Expectation
@@ -124,6 +134,7 @@ internal sealed class UpdatePlanRevalidator(
             && expected.Effects.Zip(actual.Effects).All(pair =>
                 EffectMatches(pair.First.ResultEffect, pair.Second.ResultEffect)
                 && ChangeMatches(pair.First.FileChange, pair.Second.FileChange))
+            && DirectoryCreationsMatch(expected.DirectoryCreations, actual.DirectoryCreations)
             && ChangeMatches(expected.OwnershipChange, actual.OwnershipChange);
 
     private static bool SourceMatches(UpdatePlanExecution expected, UpdatePlanExecution actual)
@@ -167,6 +178,7 @@ internal sealed class UpdatePlanRevalidator(
 
     private static bool EffectMatches(UpdatePhysicalEffect expected, UpdatePhysicalEffect actual)
         => expected.Path == actual.Path
+            && expected.Kind == actual.Kind
             && expected.Action == actual.Action
             && expected.Outcome == actual.Outcome
             && expected.Residual == actual.Residual

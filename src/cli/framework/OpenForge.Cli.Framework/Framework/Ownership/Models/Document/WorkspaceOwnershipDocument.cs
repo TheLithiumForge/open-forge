@@ -5,8 +5,8 @@ namespace OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 /// <summary>
 /// One path the CLI created, or one region it generated inside a file somebody
 /// else authored. The distinction matters at removal: a path may be deleted, a
-/// region may only be rewritten, and the file holding it is never the tool's to
-/// delete.
+/// region claim alone authorizes only that region to be rewritten. Deleting its
+/// host requires a separate explicit whole-file removal request.
 /// </summary>
 internal sealed record OwnedRegion(string Path, string Region);
 
@@ -53,8 +53,8 @@ internal sealed record WorkspaceOwnershipDocument(
     /// <summary>
     /// No recorded ownership. An absent, unreadable, or unintelligible lock reads
     /// as this, so a caller always has a document to act on and reports the state
-    /// separately. Nothing is owned, so nothing is deleted — the lock fails toward
-    /// a missed deletion rather than an over-deletion.
+    /// separately. The empty value supplies no deletion authority; the read state
+    /// distinguishes known empty absence from ownership that could not be read.
     /// </summary>
     internal static readonly WorkspaceOwnershipDocument Empty = new(
         WorkspaceOwnershipDefinitions.SchemaVersion,

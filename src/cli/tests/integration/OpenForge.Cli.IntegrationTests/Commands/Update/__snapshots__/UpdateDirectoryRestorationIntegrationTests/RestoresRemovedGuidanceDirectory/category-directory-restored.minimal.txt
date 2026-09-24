@@ -1,0 +1,6 @@
+Updated 2 Framework files.
+Workspace: <workspace>
+  .agents/guidance               created directory
+  .agents/guidance/_guidance.md  created (it was missing)
+  .agents/loader.md              replaced (you had changed it and this release changes it)
+Next: open-forge doctor

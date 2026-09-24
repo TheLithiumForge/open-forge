@@ -19,6 +19,12 @@ internal static class LibraryDetachWording
     internal static string DetachedNoLinks(string id)
         => global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachWording.DetachedNoLinks(id);
 
+    internal static string RemovalRecorded(string id)
+        => global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachWording.RemovalRecorded(id);
+
+    internal static string WouldRecordRemoval(string id)
+        => global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachWording.WouldRecordRemoval(id);
+
     internal static string WouldDetach(string id, int links, string destination)
         => global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachPhrases.FormatWouldDetachRemoveUnder(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{id}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{links}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(links, "link", "links")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{destination}"));
 
@@ -144,6 +150,9 @@ internal static class LibraryDetachWording
 
     internal static string LockRow(bool dryRun)
         => dryRun ? global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachText.LabelRegistrationWouldBeRemoved() : global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachText.LabelRegistrationRemoved();
+
+    internal static string SettingsRow(bool dryRun)
+        => dryRun ? global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachText.LabelSettingsWouldBeUpdated() : global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachText.LabelSettingsUpdated();
 
     internal static string ExpectedState(string path, string kind, long? length, string? sha256, string? target)
         => global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachPhrases.FormatExpectedLengthSha256Target($"{path}", $"{kind}", $"{Value(length)}", $"{Value(sha256)}", $"{Value(target)}");

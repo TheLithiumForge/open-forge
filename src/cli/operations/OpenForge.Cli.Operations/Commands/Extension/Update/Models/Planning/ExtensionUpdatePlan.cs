@@ -13,6 +13,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 
@@ -49,6 +50,8 @@ internal sealed record ExtensionUpdateTopology
     internal required IReadOnlyDictionary<string, IReadOnlyList<GeneratedNavigationEntry>> GeneratedEntries { get; init; }
 
     internal required IReadOnlySet<string> ProtectedPaths { get; init; }
+
+    internal IReadOnlyList<string> ExcludedPaths { get; init; } = [];
 }
 
 internal sealed record ExtensionUpdatePlanningPlan
@@ -80,6 +83,8 @@ internal sealed record ExtensionUpdatePlannedEffect
 internal sealed record ExtensionUpdatePlanInput
 {
     internal required ExtensionUpdateRequest Request { get; init; }
+
+    internal required WorkspaceSettingsRead SettingsObservation { get; init; }
 
     internal required ExtensionSourceReadResult SourceRead { get; init; }
 
@@ -122,6 +127,7 @@ internal sealed class ExtensionUpdatePlan
     private ExtensionUpdatePlan(ExtensionUpdatePlanInput input)
     {
         Request = input.Request;
+        SettingsObservation = input.SettingsObservation;
         SourceRead = input.SourceRead;
         SourceSignature = input.SourceSignature;
         Selection = new ExtensionUpdateSelection(
@@ -163,6 +169,8 @@ internal sealed class ExtensionUpdatePlan
     }
 
     internal ExtensionUpdateRequest Request { get; }
+
+    internal WorkspaceSettingsRead SettingsObservation { get; }
 
     internal ExtensionSourceReadResult SourceRead { get; }
 

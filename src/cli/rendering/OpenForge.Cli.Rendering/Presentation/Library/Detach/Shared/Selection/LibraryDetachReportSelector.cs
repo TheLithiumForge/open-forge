@@ -88,6 +88,7 @@ internal static class LibraryDetachReportSelector
         var destination = result.Result.Identity.DestinationRoot ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheDestinationFolder();
         var source = result.Result.Identity.SourceRoot ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheSourceFolder();
         if (result.Status == CliSemanticStatus.Complete
+            && result.Result.Plan.SettingsChange is null
             && result.Result.Findings.Any(finding => finding.Code == LibraryDetachFindingCode.OwnershipObservation))
         {
             return new(LibraryDetachWording.NoOwnership(id), CliHeadlineKind.Done);
@@ -95,6 +96,10 @@ internal static class LibraryDetachReportSelector
 
         if (result.Status == CliSemanticStatus.Complete && result.Result.Identity.Mode == LibraryMode.DryRun)
         {
+            if (linkCount == 0 && result.Result.Plan.SettingsChange is not null)
+            {
+                return new(LibraryDetachWording.WouldRecordRemoval(id), CliHeadlineKind.Preview);
+            }
             return new(LibraryDetachWording.WouldDetach(id, linkCount, destination), CliHeadlineKind.Preview);
         }
 
@@ -104,9 +109,14 @@ internal static class LibraryDetachReportSelector
             return new(LibraryDetachWording.WouldDetach(id, linkCount, destination), CliHeadlineKind.Warnings);
         }
 
-        if (result.Status == CliSemanticStatus.Complete && linkCount == 0)
+        if (result.Status == CliSemanticStatus.Complete && linkCount == 0 && result.Result.Plan.SettingsChange is null)
         {
             return new(LibraryDetachWording.DetachedNoLinks(id), CliHeadlineKind.NothingToDo);
+        }
+
+        if (result.Status == CliSemanticStatus.Complete && linkCount == 0 && result.Result.Plan.SettingsChange is not null)
+        {
+            return new(LibraryDetachWording.RemovalRecorded(id), CliHeadlineKind.Done);
         }
 
         return result.Status switch
@@ -352,6 +362,15 @@ internal static class LibraryDetachReportSelector
     {
         var plan = result.Result.Plan;
         var planned = new List<PlannedEffect>();
+        if (plan.SettingsChange is { } settingsChange)
+        {
+            planned.Add(new PlannedEffect(
+                settingsChange.Path,
+                "setting",
+                settingsChange.Action,
+                null,
+                settingsChange.Expected));
+        }
         planned.AddRange(plan.Links.Select(link => new PlannedEffect(
             link.Path,
             "link",
@@ -386,6 +405,7 @@ internal static class LibraryDetachReportSelector
                 "link" => LinkText(outcome, dryRun),
                 "section" => SectionText(effect.Path, outcome, dryRun),
                 "record" => RecordText(outcome, dryRun),
+                "setting" => SettingsText(outcome, dryRun),
                 _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Kind, "The Library detach effect kind is not defined."),
             };
             projected.Add(new ProjectedEffect
@@ -439,6 +459,16 @@ internal static class LibraryDetachReportSelector
             _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
         };
 
+    private static string SettingsText(EffectOutcome outcome, bool dryRun)
+        => outcome switch
+        {
+            EffectOutcome.Planned or EffectOutcome.Done => LibraryDetachWording.SettingsRow(dryRun),
+            EffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
+            EffectOutcome.Unknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
+            EffectOutcome.Failed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFailed(),
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
+        };
+
     private static CliEffect SharedEffect(PlannedEffect effect, EffectOutcome outcome)
         => new()
         {
@@ -448,6 +478,7 @@ internal static class LibraryDetachReportSelector
                 "link" => CliEffectKind.Link,
                 "section" => CliEffectKind.Section,
                 "record" => CliEffectKind.Record,
+                "setting" => CliEffectKind.Setting,
                 _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Kind, "The Library detach effect kind is not defined."),
             },
             Action = effect.Kind switch
@@ -455,6 +486,7 @@ internal static class LibraryDetachReportSelector
                 "link" => CliEffectAction.Deleted,
                 "section" => CliEffectAction.Rewritten,
                 "record" => CliEffectAction.Detached,
+                "setting" => effect.Action == "create" ? CliEffectAction.Created : CliEffectAction.Rewritten,
                 _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Kind, "The Library detach effect kind is not defined."),
             },
             Outcome = outcome switch
@@ -474,6 +506,20 @@ internal static class LibraryDetachReportSelector
         int index,
         int lastObserved)
     {
+        if (string.Equals(path, ".agents/open-forge.json", StringComparison.Ordinal))
+        {
+            return result.Result.Identity.Mode == LibraryMode.DryRun
+                ? EffectOutcome.Planned
+                : result.Result.Permissions.Outcome switch
+                {
+                    "verified" => EffectOutcome.Done,
+                    "not-started" or "not-requested" => EffectOutcome.NotStarted,
+                    "verification-failed" => EffectOutcome.Failed,
+                    "completion-unknown" => EffectOutcome.Unknown,
+                    "planned" => EffectOutcome.Planned,
+                    _ => throw new ArgumentOutOfRangeException(nameof(result), result.Result.Permissions.Outcome, "The Library settings outcome is not defined."),
+                };
+        }
         if (result.Result.Identity.Mode == LibraryMode.DryRun)
         {
             return EffectOutcome.Planned;
@@ -542,7 +588,7 @@ internal static class LibraryDetachReportSelector
             || partial && effects.Any(effect => effect.Data.Kind == "link" && effect.Outcome is EffectOutcome.Done or EffectOutcome.Unknown);
         return showLinks
             ? effects
-                .Where(effect => effect.Data.Kind == "link")
+                .Where(effect => effect.Data.Kind is "link" or "setting")
                 .Select(effect => new LibraryDetachDataTextRow(effect.Data.Path, effect.Data.Text))
                 .ToArray()
             : [];
@@ -556,6 +602,7 @@ internal static class LibraryDetachReportSelector
         var lines = new List<string>();
         var sections = effects.Where(effect => effect.Data.Kind == "section").ToArray();
         var records = effects.Where(effect => effect.Data.Kind == "record").ToArray();
+        var settings = effects.Where(effect => effect.Data.Kind == "setting").ToArray();
         if (detail == CliDetail.Minimal)
         {
             lines.AddRange(sections
@@ -566,6 +613,7 @@ internal static class LibraryDetachReportSelector
         {
             lines.AddRange(sections.Select(effect => effect.Data.Text));
             lines.AddRange(records.Select(effect => $".agents/open-forge.lock.json  {effect.Data.Text}"));
+            lines.AddRange(settings.Select(effect => $".agents/open-forge.json  {effect.Data.Text}"));
         }
 
         if (detail >= CliDetail.Full)
@@ -602,6 +650,10 @@ internal static class LibraryDetachReportSelector
         if (plan.RecordExpected is { } record)
         {
             values.Add(Expected(".agents/open-forge.lock.json", record));
+        }
+        if (plan.SettingsChange is { } settingsChange)
+        {
+            values.Add(Expected(settingsChange.Path, settingsChange.Expected));
         }
 
         return values;

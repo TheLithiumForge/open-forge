@@ -14,6 +14,7 @@ internal sealed record LibraryMutationApplicationRequest
 {
     public required LibraryPermissionStage? Permissions { get; init; }
     public required WorkspaceLockLease Lease { get; init; }
+    public ImmutableArray<PlannedDirectoryCreation> SettingsParentDirectories { get; init; } = [];
     public required ImmutableArray<PlannedDirectoryCreation> Directories { get; init; }
     public required ImmutableArray<RelativeFileLinkEffect> Links { get; init; }
     public required ImmutableArray<PlannedFileChange> GeneratedRegions { get; init; }

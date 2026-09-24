@@ -8,6 +8,14 @@ internal static class LibraryDetachWording
     internal static string DetachedNoLinks(string id)
         => $"Detached {id}. It had no links.";
 
+    // @OpenForgeText library.detach.wording.removal-intent-was-recorded
+    internal static string RemovalRecorded(string id)
+        => $"Recorded removal intent for Library {id}.";
+
+    // @OpenForgeText library.detach.wording.would-record-removal-intent
+    internal static string WouldRecordRemoval(string id)
+        => $"Would record removal intent for Library {id}.";
+
     // @OpenForgeText library.detach.wording.no-ownership-record-exists-so-cannot-be-detached-nothing-was-changed
     internal static string NoOwnership(string id)
         => $"No ownership record exists, so {id} cannot be detached. Nothing was changed.";

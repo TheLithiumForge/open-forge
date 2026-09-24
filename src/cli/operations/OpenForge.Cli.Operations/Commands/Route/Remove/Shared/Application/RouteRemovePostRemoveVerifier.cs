@@ -9,6 +9,17 @@ internal sealed class RouteRemovePostRemoveVerifier
     internal RouteRemovePostRemoveVerification Verify(
         RouteRemovePlan plan,
         RouteRemovePlanBuild observation)
+        => VerifyCore(plan, observation, allowPlannedClaims: false);
+
+    internal RouteRemovePostRemoveVerification VerifyContentAbsence(
+        RouteRemovePlan plan,
+        RouteRemovePlanBuild observation)
+        => VerifyCore(plan, observation, allowPlannedClaims: true);
+
+    private static RouteRemovePostRemoveVerification VerifyCore(
+        RouteRemovePlan plan,
+        RouteRemovePlanBuild observation,
+        bool allowPlannedClaims)
     {
         ArgumentNullException.ThrowIfNull(plan);
         ArgumentNullException.ThrowIfNull(observation);
@@ -36,12 +47,19 @@ internal sealed class RouteRemovePostRemoveVerifier
             return Failed("The final Route Remove absence observation changed its accepted subject identity.");
         }
 
-        if (formation.Ownership.State != RouteRemoveOwnershipState.Unmanaged
+        var plannedClaims = plan.Preview.Persistence.Ownership.Claims;
+        var expectedOwnershipState = allowPlannedClaims && !plannedClaims.IsEmpty
+            ? RouteRemoveOwnershipState.Claimed
+            : RouteRemoveOwnershipState.Unmanaged;
+        if (formation.Ownership.State != expectedOwnershipState
             || formation.Ownership.Framework != RouteRemoveOwnershipTrust.Trusted
             || formation.Ownership.Extensions != RouteRemoveOwnershipTrust.Trusted
-            || !formation.Ownership.Claims.IsEmpty)
+            || allowPlannedClaims && !formation.Ownership.Claims.SequenceEqual(plannedClaims)
+            || !allowPlannedClaims && !formation.Ownership.Claims.IsEmpty)
         {
-            return Failed("The final Route Remove absence observation did not establish unclaimed ownership.");
+            return Failed(allowPlannedClaims
+                ? "The pre-publication Route Remove absence observation changed the accepted ownership claims."
+                : "The final Route Remove absence observation did not establish unclaimed ownership.");
         }
 
         var expectedOccurrenceCount = plan.Projection.References.References.OccurrenceCount

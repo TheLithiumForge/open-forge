@@ -539,7 +539,7 @@ command-local Technical Design is needed for `route inspect`.
 - [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 - [Routing Model](../../../../framework/routing/model.md)
-- [Routing Loading And Continuity](../../../../framework/routing/loading.md)
+- [Loading And Refreshing Context](../../../../framework/routing/loading.md)
 - [Route Scope And Inheritance](../../../../framework/routing/scope.md)
 - [Routing Paths And Identity](../../../../framework/routing/paths.md)
 - [Overwrite Customization](../../../../framework/routing/overwrites.md)

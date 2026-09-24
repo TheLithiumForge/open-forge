@@ -1,2 +1,4 @@
-No ownership record exists, so team-knowledge cannot be detached. Nothing was changed.
+Recorded removal intent for Library team-knowledge.
 Workspace: <workspace>
+  .agents/open-forge.json  settings updated
+  .agents/open-forge.json  settings updated

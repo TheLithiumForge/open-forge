@@ -2,6 +2,7 @@ Removed the toolkit Extension. base remains installed and is no longer needed by
   Warning  base  Dependency remains installed
          base remains installed and is no longer needed by toolkit.
          open-forge extension remove base
-  .agents/toolkit.md  deleted
+  .agents/open-forge.json  recorded the removal in workspace settings
+  .agents/toolkit.md       deleted
   The deleted files are kept in a recovery bundle at <recovery-bundle>.
 Next: open-forge extension remove base

@@ -1,7 +1,7 @@
 status=failed
 mode=apply
 id=team-knowledge
-effects=2
+effects=3
 links=1
 sections=0
 registration-removed=False

@@ -13,6 +13,7 @@ internal sealed class PublishedRouteRemoveWorkspace : IDisposable
 
     internal const string ParentPath = ".agents/guidance/_guidance.md";
     internal const string LifecyclePath = ".agents/open-forge.lock.json";
+    private const string SettingsPath = ".agents/open-forge.json";
 
     private readonly TemporaryWorkspace temporary;
     private readonly PublishedWorkspaceLockStore lockStore;
@@ -93,6 +94,7 @@ internal sealed class PublishedRouteRemoveWorkspace : IDisposable
         try
         {
             _ = lockStore.RemoveRecoveryArtifacts(Path);
+            DeleteReservedSettingsFile(temporary);
             PublishedRouteMoveSetup.DeleteArtifacts(temporary);
         }
         finally
@@ -106,6 +108,54 @@ internal sealed class PublishedRouteRemoveWorkspace : IDisposable
                 temporary.Dispose();
                 disposed = true;
             }
+        }
+    }
+
+    private static void DeleteReservedSettingsFile(TemporaryWorkspace owner)
+    {
+        var agentsPath = owner.Combine(".agents");
+        var agentsAttributes = GetAttributesIfPresent(agentsPath);
+        if (agentsAttributes is null)
+        {
+            return;
+        }
+
+        if ((agentsAttributes.Value & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device))
+            != FileAttributes.Directory)
+        {
+            throw new InvalidOperationException(
+                "The published Route Remove settings parent is not an ordinary directory.");
+        }
+
+        var settingsPath = owner.Combine(SettingsPath);
+        var settingsAttributes = GetAttributesIfPresent(settingsPath);
+        if (settingsAttributes is null)
+        {
+            return;
+        }
+
+        if ((settingsAttributes.Value & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
+        {
+            throw new InvalidOperationException(
+                "The published Route Remove settings output is not an ordinary file.");
+        }
+
+        File.Delete(settingsPath);
+    }
+
+    private static FileAttributes? GetAttributesIfPresent(string path)
+    {
+        try
+        {
+            return File.GetAttributes(path);
+        }
+        catch (FileNotFoundException)
+        {
+            return null;
+        }
+        catch (DirectoryNotFoundException)
+        {
+            return null;
         }
     }
 }

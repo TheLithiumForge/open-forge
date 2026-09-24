@@ -80,6 +80,14 @@ internal static class LibraryDetachText
     internal static string LabelRegistrationRemoved()
         => "registration removed";
 
+    // @OpenForgeText library.detach.label.settings-would-be-updated
+    internal static string LabelSettingsWouldBeUpdated()
+        => "settings would be updated";
+
+    // @OpenForgeText library.detach.label.settings-updated
+    internal static string LabelSettingsUpdated()
+        => "settings updated";
+
     // @OpenForgeText library.detach.label.no-residual-effects
     internal static string LabelNoResidualEffects()
         => "no residual effects";

@@ -68,6 +68,15 @@
     },
     "effects": [
       {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "verified",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
         "path": ".agents/toolkit.md",
         "action": "delete",
         "outcome": "verified",
@@ -212,6 +221,7 @@
     "recovery": {
       "state": "retained",
       "protectedPaths": [
+        ".agents/open-forge.json",
         ".agents/toolkit.md",
         ".agents/open-forge.lock.json"
       ],

@@ -7,8 +7,7 @@ open-forge:
 
 # library attach Interface Contract
 
-Unavailable ownership is reported as `library-attach.ownership-observation`
-with `completed` status. This finding grants no ownership or mutation permission.
+A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
 
 ## Status And Authority
 
@@ -35,14 +34,10 @@ The existing public record-effect and publication fields describe that lock
 write. Its Libraries section contains validated registration identities and
 source-relative paths; other ownership sections are preserved. No retired
 record is read, written, converted, or deleted. A missing ownership lock may be
-created after the explicit attach effects verify. If the whole lock is a
-readable ordinary malformed file, Attach may replace that unusable snapshot
-with only the newly verified claim; no prior claim is inferred, deleted, or
-updated from malformed bytes. An unreadable, aliased, nonordinary, or otherwise
-unavailable publication remains unavailable and causes no link,
-generated-region, permission, or record effect. Missing or unknown ownership
-observations remain present on a successful new attach and are not
-presented as a valid empty record. Recovery protects the exact prior lock bytes
+created after the explicit attach effects verify. Invalid or unavailable
+required ownership prevents link, generated-region, permission and record
+effects. A missing-lock observation may remain present on a successful new
+attach. Recovery protects the exact prior lock bytes
 before any effect; the planned lock publication remains last after verified
 link and generated-region effects.
 
@@ -58,10 +53,9 @@ never copied, moved, deleted, or written through by this operation.
 Attach is one complete mutation for one library. It establishes the source
 root, inventories every eligible file, detects every destination collision,
 forms any permitted generated-region changes, and publishes the consumer
-record as one plan. A readable ordinary malformed ownership lock is an
-observation, not a source of old claims: explicit source and destination
-inputs may produce only the new claim after the same inventory, mapping,
-permission, and safety checks. Attach never applies a safe subset after a
+record as one plan. A missing ownership lock is known empty. A malformed or
+unavailable required ownership lock blocks the request even with explicit source
+and destination inputs. Attach never applies a safe subset after a
 collision, incomplete source inventory, unsafe boundary, or other preflight
 blocker, and it never infers, deletes, or updates an old claim.
 
@@ -209,28 +203,11 @@ remain required before using a claim. The destination root may be `.`; a source
 root may not. Link identity derives from the two roots and each source suffix.
 Permissions remain separate from ownership.
 
-An absent, unreadable, nonordinary, malformed, or uninterpretable ownership lock
-provides no usable registrations and yields a truthful ownership observation.
-It is never reported as a valid empty record: the record state remains `missing`,
-`unavailable`, or `invalid-input`, with unavailable counts and no selected paths.
-List returns no registrations; Inspect, Sync, and Detach select nothing and do
-not invent an unknown-ID error. Their `ownership-observation` finding explains
-why. A valid readable lock with no matching requested ID still yields `invalid-input`
-for those selected-record operations.
-
-Attach is the narrow exception for explicit new knowledge. A missing lock, or a
-whole lock that is a readable ordinary malformed file, may receive a newly
-verified claim from the explicit source and destination after complete source,
-mapping, ancestor, alias, permission, and safety checks. The malformed bytes do
-not supply prior claims and are not reconciled. The resulting `completed`
-result remains Complete0 and retains the ownership observation.
-An unreadable, aliased, nonordinary, or otherwise unavailable publication has
-no effects. Read-only operations never reconstruct or write a lock. Matching
-files, matching links, legacy records, and unusable old bytes create no claims.
-
-A successful attach from a readable invalid ownership file keeps Complete0
-while rendering that ownership observation as a visible warning at minimal
-detail. This warning does not imply that prior ownership was reconstructed.
+A missing lock supplies no registrations. Attach may create a new claim after
+complete source, mapping, ancestor, alias, permission and safety checks.
+Invalid or unavailable required ownership blocks the request before effects;
+Attach does not replace malformed ownership with a newly inferred inventory.
+Matching files, matching links and legacy records create no claims.
 
 ## Consumer Permission
 
@@ -238,9 +215,9 @@ The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPath
 in `.agents/open-forge.json` after safe planning and before permission evaluation.
 It persists in non-interactive execution; `--dry-run` never writes it. A refused
 explicit write is reported and prevents content application. Eligible interactive
-approval offers always, once or cancel. Once changes no settings. Unknown or
-malformed settings withhold external grants while implicit `.agents/` admission
-remains independent; an always choice cannot overwrite malformed settings.
+approval offers always, once or cancel. Once adds no persistent permission grant.
+Invalid or unavailable required settings block the request, including destinations
+inside `.agents/`.
 
 This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
 for the complete eligible mapped inventory. `.agents/**` leaves remain implicit.
@@ -255,7 +232,7 @@ source trees, ancestry, ownership and collision checks still apply per leaf.
 
 Human prompt-capable application can approve the displayed scopes once or always; explicit `--allow-path` can persist shared grants without a prompt. JSON,
 redirected execution and dry-run never prompt; missing or declined approval is
-`blocked` and cancellation is `cancelled`, without effects. Invalid or unsafe settings supply no external grants. A refused always approval reports its existing permission finding; implicit paths require no grant.
+`blocked` and cancellation is `cancelled`, without effects. Invalid or unavailable settings block planning before approval because removal exclusions cannot be determined safely. Missing settings supply no saved exclusions or external grants; implicit paths require no grant.
 
 `result.permissions` appears after `plan` and before `application`. It uses the
 shared destination-string, scope and receipt coordinates exactly. Required
@@ -279,9 +256,8 @@ record bytes, ordered plan, expected-state facts, and effect-free preflight as
 application. It reports every projected path, generated-region change, record
 change, and blocker, then writes nothing. It creates no directories, links,
 record, generated navigation, recovery artifact, or lock. It performs no lease
-or recovery capability probe. Any missing, unknown, or malformed ownership
-observation remains visible in the dry-run result; the preview never turns an
-observation into an unqualified success headline.
+or recovery capability probe. Missing ownership is known empty; invalid or
+unavailable required ownership remains a blocker in the dry-run result.
 
 Omitting `--dry-run` selects application. Application completes preflight and
 all collision checks before acquiring one workspace lease for the effectful
@@ -406,7 +382,7 @@ projection.
 
 | Status                  | When                                                                          | Headline                                                                                     | Exit | Stream |
 | ----------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ---: | ------ |
-| completed               | registered and linked, including a new claim formed from a missing or readable ordinary malformed ownership observation | `Registered the <id> Library from <source>.`                         |    0 | stdout |
+| completed               | registered and linked, including a new claim formed when the ownership lock was absent | `Registered the <id> Library from <source>.`                         |    0 | stdout |
 | completed               | registered, source empty                                                      | `Registered the <id> Library from <source>. It has no eligible files yet.`                   |    0 | stdout |
 | completed (dry run)     | planned                                                                       | `Would register the <id> Library from <source>.`                                             |    0 | stdout |
 | completed-with-warnings | recovery bundle retained                                                      | + family row                                                                                 |    2 | stdout |
@@ -440,6 +416,8 @@ The finding catalogue is:
 | library-attach.invalid-input                   | error    | invalid-input              |                                                                                 |                                   |
 | library-attach.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.confirmation-required`).              | `open-forge library attach --automatic` |
 | library-attach.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.invalid-id`). | none                              |
+| library-attach.library-removed | error | local | The selected Library ID is excluded by workspace settings. | Remove the named ID from `removedLibraries` in `.agents/open-forge.json`, then rerun the command. |
+| library-attach.path-excluded | info | local | The mapped destination is excluded and remains untouched. | none |
 | library-attach.duplicate-id                    | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.duplicate-id`).                             | `open-forge library inspect <id>` |
 | library-attach.source-root-invalid             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-invalid`).                                | none                              |
 | library-attach.source-root-unavailable         | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-unavailable`).                                                      | none                              |

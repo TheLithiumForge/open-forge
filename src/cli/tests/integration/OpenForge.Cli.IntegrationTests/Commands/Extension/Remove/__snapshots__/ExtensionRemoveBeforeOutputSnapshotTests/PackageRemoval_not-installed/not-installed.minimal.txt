@@ -1,1 +1,4 @@
-No files are recorded for toolkit, so there is nothing to remove.
+Removed the toolkit Extension.
+  .agents/open-forge.json  recorded the removal in workspace settings
+  The deleted files are kept in a recovery bundle at <recovery-bundle>.
+Next: open-forge cleanup  (after reviewing the bundle)

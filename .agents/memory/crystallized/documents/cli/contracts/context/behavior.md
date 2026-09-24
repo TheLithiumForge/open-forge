@@ -451,7 +451,7 @@ suite, schema, exit mapping, or packaged implementation already exists.
 - [Historical CLI Decision Agenda](../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Historical CLI Release Plan](../../../../../archived/cli-release/release-plan-2026-08-21.md)
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
-- [Routing Loading And Continuity](../../../framework/routing/loading.md)
+- [Loading And Refreshing Context](../../../framework/routing/loading.md)
 - [Routing Model](../../../framework/routing/model.md)
 - [Route Scope And Inheritance](../../../framework/routing/scope.md)
 - [Routing Paths And Identity](../../../framework/routing/paths.md)

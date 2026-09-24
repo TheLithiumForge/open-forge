@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Application;
 
@@ -14,10 +15,70 @@ internal static class RouteRemoveApplicationResultProjector
         => plan.Preview with
         {
             Effects = [.. plan.Preview.Effects.Select(effect => ProjectEffect(plan, progress, effect))],
+            Persistence = ProjectPersistence(plan, progress),
             Recovery = progress.Recovery,
             Verification = progress.Verification,
             Findings = [.. plan.Preview.Findings, .. progress.Findings],
         };
+
+    private static RouteRemovePersistence ProjectPersistence(
+        RouteRemovePlan plan,
+        RouteRemoveApplicationProgress progress)
+    {
+        var planned = plan.Preview.Persistence;
+        return planned with
+        {
+            Settings = planned.Settings with
+            {
+                Outcome = ReadPersistenceOutcome(
+                    plan.Projection.SettingsChange,
+                    progress.SettingsReceipt,
+                    progress.SettingsOutcome,
+                    progress.Verification),
+            },
+            Ownership = planned.Ownership with
+            {
+                Outcome = ReadPersistenceOutcome(
+                    plan.Projection.OwnershipChange,
+                    progress.OwnershipReceipt,
+                    progress.OwnershipOutcome,
+                    progress.Verification),
+            },
+        };
+    }
+
+    private static RouteRemovePersistenceOutcome ReadPersistenceOutcome(
+        PlannedFileChange? change,
+        RouteRemoveFileChangeReceipt? receipt,
+        RouteRemovePersistenceOutcome? verifiedOutcome,
+        RouteRemoveVerificationState verification)
+    {
+        if (change is null)
+        {
+            return RouteRemovePersistenceOutcome.Unchanged;
+        }
+
+        if (verifiedOutcome is { } known)
+        {
+            return known;
+        }
+
+        if (receipt is null)
+        {
+            return verification == RouteRemoveVerificationState.Unknown
+                ? RouteRemovePersistenceOutcome.Unknown
+                : RouteRemovePersistenceOutcome.NotStarted;
+        }
+
+        return (receipt.Receipt.EffectState, receipt.Receipt.VerificationState) switch
+        {
+            (FilesystemEffectState.Applied, FilesystemVerificationState.Verified) => RouteRemovePersistenceOutcome.Applied,
+            (FilesystemEffectState.Applied, FilesystemVerificationState.Failed) => RouteRemovePersistenceOutcome.Failed,
+            (FilesystemEffectState.Unknown, _) => RouteRemovePersistenceOutcome.Unknown,
+            (FilesystemEffectState.NotStarted, _) => RouteRemovePersistenceOutcome.NotStarted,
+            _ => RouteRemovePersistenceOutcome.Unknown,
+        };
+    }
 
     private static RouteRemoveEffect ProjectEffect(
         RouteRemovePlan plan,

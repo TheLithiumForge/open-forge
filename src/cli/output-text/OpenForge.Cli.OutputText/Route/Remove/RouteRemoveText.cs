@@ -92,6 +92,14 @@ internal static class RouteRemoveText
     internal static string TitleRouteRemoveWasCancelled()
         => "Route remove was cancelled";
 
+    // @OpenForgeText route.remove.title.removal-settings-are-unavailable
+    internal static string TitleRemovalSettingsAreUnavailable()
+        => "Removal settings are unavailable";
+
+    // @OpenForgeText route.remove.title.route-target-is-protected
+    internal static string TitleRouteTargetIsProtected()
+        => "Route target is protected";
+
     // @OpenForgeText route.remove.label.remove
     internal static string LabelRemove()
         => "remove";
@@ -102,7 +110,7 @@ internal static class RouteRemoveText
 
     // @OpenForgeText route.remove.help.write-policy
     internal static string HelpWritePolicy()
-        => "Omit --dry-run to apply the complete locked and revalidated deletion, reference-detachment, and generated-navigation plan. --dry-run previews that same plan without writing files. --automatic applies the plan without asking for confirmation.";
+        => "Omit --dry-run to apply the complete locked and revalidated removal, persistent exclusion, ownership-release, reference-detachment, and generated-navigation plan. --dry-run previews that same plan without writing. --automatic applies the plan without asking for confirmation.";
 
     // @OpenForgeText route.remove.help.examples
     internal static string HelpExamples()
@@ -110,5 +118,5 @@ internal static class RouteRemoveText
 
     // @OpenForgeText route.remove.help.notes
     internal static string HelpNotes()
-        => "Route Remove never removes lifecycle-managed content, follows remote links, prompts when --automatic is omitted, or invokes another command as a subprocess.";
+        => "Route Remove records the selected file or directory exclusion and releases its Framework or Extension content claims after verified removal. It never follows links, prompts when --automatic is omitted, or invokes another command as a subprocess.";
 }

@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
@@ -52,6 +53,14 @@ internal sealed class ExtensionInstallEffectPlanner(
                         "A complete Extension directory observation requires its snapshot.");
                 if (snapshot.Kind == FileExpectationKind.Missing)
                 {
+                    if (WorkspaceRemovals.IsPathRemoved(canonical, input.Settings))
+                    {
+                        return Stop(
+                            ExtensionInstallFindingCode.ExcludedAncestor,
+                            $"Required parent '{canonical}' is excluded and missing. Restore it in .agents/open-forge.json before installing this Extension.",
+                            canonical);
+                    }
+
                     _ = createdDirectories.Add(canonical);
                 }
                 else if (snapshot.Kind != FileExpectationKind.Directory)
@@ -92,6 +101,10 @@ internal sealed class ExtensionInstallEffectPlanner(
                 var path = file.TargetPath
                     ?? throw new InvalidDataException(
                         "A planned Extension package file requires its normalized target path.");
+                if (WorkspaceRemovals.IsPathRemoved(path, input.Settings))
+                {
+                    continue;
+                }
                 if (!plannedPaths.Add(path))
                 {
                     continue;
@@ -132,6 +145,11 @@ internal sealed class ExtensionInstallEffectPlanner(
                      pair => pair.Key,
                      StringComparer.Ordinal))
         {
+            if (WorkspaceRemovals.IsPathRemoved(generated.Key, input.Settings))
+            {
+                continue;
+            }
+
             var observation = await ObserveAsync(input.Request, generated.Key, cancellationToken)
                 .ConfigureAwait(false);
             if (observation.Finding is not null

@@ -8,6 +8,11 @@ open-forge:
 
 ## Task state
 
+The maintainer explicitly authorized specification and implementation of the
+unified command on 2026-09-23. [Task 50](task50-unified-remove.md) carries that
+decision and delivery. The open questions below are retained investigation
+context, not a competing current implementation plan.
+
 - State: **Open, not started. Exploration, not implementation.** Raised by the
   maintainer on 2026-09-16 as a set of use cases they expect to hit later.
 - Owner: Root.

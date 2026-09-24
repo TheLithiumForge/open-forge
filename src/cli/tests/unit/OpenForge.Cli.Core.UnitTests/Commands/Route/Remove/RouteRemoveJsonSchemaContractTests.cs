@@ -26,7 +26,7 @@ public sealed class RouteRemoveJsonSchemaContractTests
         AssertPropertyOrder(root,
             "schemaVersion", "command", "status", "detail", "filter", "workspace", "summary",
             "findings", "effects", "counts", "limitations", "data", "recovery", "next");
-        AssertPropertyOrder(data, "mode", "subject", "source", "removed", "detachedLinks");
+        AssertPropertyOrder(data, "mode", "subject", "source", "removed", "detachedLinks", "settings", "ownershipRelease");
         AssertPropertyOrder(source, "id", "path");
         AssertPropertyOrder(detachedLink, "path", "location");
         AssertPropertyOrder(root.GetProperty("counts"), "filesRemoved", "sectionsUpdated", "linksDetached", "filesScanned", "errors");
@@ -36,6 +36,13 @@ public sealed class RouteRemoveJsonSchemaContractTests
         Assert.Equal("blocked", root.GetProperty("status").GetString());
         Assert.Equal("apply", data.GetProperty("mode").GetString());
         Assert.Equal("file", data.GetProperty("subject").GetString());
+        var settings = data.GetProperty("settings");
+        AssertPropertyOrder(settings, "outcome", "path", "categories", "files", "directories");
+        Assert.Equal("not-established", settings.GetProperty("outcome").GetString());
+        Assert.Equal(".agents/open-forge.json", settings.GetProperty("path").GetString());
+        var ownership = data.GetProperty("ownershipRelease");
+        AssertPropertyOrder(ownership, "outcome", "claims");
+        Assert.Equal("not-established", ownership.GetProperty("outcome").GetString());
         Assert.Equal("3:5", detachedLink.GetProperty("location").GetString());
         Assert.False(detachedLink.TryGetProperty("before", out _));
         Assert.False(detachedLink.TryGetProperty("after", out _));
@@ -59,7 +66,7 @@ public sealed class RouteRemoveJsonSchemaContractTests
         var data = root.GetProperty("data");
         var effect = root.GetProperty("effects")[0];
 
-        AssertPropertyOrder(data, "mode", "subject", "source", "removed", "detachedLinks", "scan");
+        AssertPropertyOrder(data, "mode", "subject", "source", "removed", "detachedLinks", "settings", "ownershipRelease", "scan");
         AssertPropertyOrder(data.GetProperty("scan"), "filesScanned", "occurrences");
         Assert.True(effect.TryGetProperty("before", out _));
         Assert.True(effect.TryGetProperty("after", out _));
@@ -67,10 +74,50 @@ public sealed class RouteRemoveJsonSchemaContractTests
         Assert.Equal(1, data.GetProperty("scan").GetProperty("occurrences").GetInt32());
     }
 
-    private static string Render(CliDetail detail)
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Route Remove JSON preserves persistence outcome machine names"),
+     Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
+    [InlineData(RouteRemovePersistenceOutcome.NotEstablished, "not-established")]
+    [InlineData(RouteRemovePersistenceOutcome.Planned, "planned")]
+    [InlineData(RouteRemovePersistenceOutcome.Applied, "applied")]
+    [InlineData(RouteRemovePersistenceOutcome.Unchanged, "unchanged")]
+    [InlineData(RouteRemovePersistenceOutcome.NotStarted, "not-started")]
+    [InlineData(RouteRemovePersistenceOutcome.Failed, "failed")]
+    [InlineData(RouteRemovePersistenceOutcome.Unknown, "unknown")]
+    public void JsonKeepsPersistenceOutcomeMachineNames(
+        object outcomeValue,
+        string expected)
+    {
+        var outcome = Assert.IsType<RouteRemovePersistenceOutcome>(outcomeValue);
+        using var document = JsonDocument.Parse(Render(CliDetail.Minimal, outcome));
+        var data = document.RootElement.GetProperty("data");
+
+        Assert.Equal(expected, data.GetProperty("settings").GetProperty("outcome").GetString());
+        Assert.Equal(expected, data.GetProperty("ownershipRelease").GetProperty("outcome").GetString());
+    }
+
+    private static string Render(
+        CliDetail detail,
+        RouteRemovePersistenceOutcome persistenceOutcome = RouteRemovePersistenceOutcome.NotEstablished)
     {
         var formation = RouteRemoveTestData.Formation() with
         {
+            Persistence = new RouteRemovePersistence
+            {
+                Settings = new RouteRemoveSettingsRemoval
+                {
+                    Outcome = persistenceOutcome,
+                    Path = ".agents/open-forge.json",
+                    Categories = [],
+                    Files = [],
+                    Directories = [],
+                },
+                Ownership = new RouteRemoveOwnershipRelease
+                {
+                    Outcome = persistenceOutcome,
+                    Claims = [],
+                },
+            },
             Findings =
             [
                 new RouteRemoveFinding(

@@ -51,7 +51,7 @@ Agents may suggest any durable change. They may apply it directly when clear dir
 
 ## Applying Accepted Change
 
-Acceptance does not determine durability, reusable shape, or binding behavior. Before creating durable knowledge from accepted direction, determine what must survive the task, what changes accepted current meaning, whether rationale will matter later, whether behavior is mandatory, and whether an inspectable shape should guide future related results. If none apply, create no new durable knowledge artifact.
+Acceptance alone does not require a record. Preserve an outcome when future work needs its accepted result, reasoning, required behavior, or reusable shape. The [Memory capture rules](memory/model.md#recorded-state-threshold) determine whether it needs to survive the conversation.
 
 When accepted direction changes current state:
 

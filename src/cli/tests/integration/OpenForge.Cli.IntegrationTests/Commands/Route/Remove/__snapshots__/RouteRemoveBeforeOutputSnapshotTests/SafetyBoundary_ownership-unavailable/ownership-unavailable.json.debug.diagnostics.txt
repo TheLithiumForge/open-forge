@@ -1,0 +1,9 @@
+status=blocked
+mode=apply
+source=guidance/old guide
+subject=file
+effects=0
+removed=0
+detached=0
+findings=1
+'i' is an invalid start of a property name. Expected a '"'. Path: $ | LineNumber: 0 | BytePositionInLine: 2.

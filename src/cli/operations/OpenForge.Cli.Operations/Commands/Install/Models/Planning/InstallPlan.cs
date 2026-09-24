@@ -190,6 +190,8 @@ internal sealed record InstallIntendedStateBuild
     public required InstallIntendedState? IntendedState { get; init; }
 
     public required string? Cause { get; init; }
+
+    public InstallFindingCode? FindingCode { get; init; }
 }
 
 internal sealed record InstallPlanContext

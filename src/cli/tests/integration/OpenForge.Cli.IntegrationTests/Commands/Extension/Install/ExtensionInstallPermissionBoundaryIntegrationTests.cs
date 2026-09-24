@@ -41,12 +41,21 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         var before = workspace.Snapshot();
         try
         {
-            var run = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path],
+            var run = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--format", "json"],
                 "always\n", standardInputRedirected: false, promptOutputRedirected: false);
 
             Assert.Equal(5, run.ExitCode);
-            Assert.Null(run.RemainingInput);
-            Assert.Contains("always, once, cancel:", run.StandardError, StringComparison.Ordinal);
+            Assert.Equal("always", run.RemainingInput);
+            Assert.DoesNotContain("always, once, cancel:", run.StandardError, StringComparison.Ordinal);
+            Assert.DoesNotContain("[a] Allow always", run.StandardError, StringComparison.Ordinal);
+            using var document = JsonDocument.Parse(run.StandardOutput);
+            Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+                finding.GetProperty("code").GetString() == "extension-install.settings-invalid");
+            var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
+            Assert.Contains("settings", finding.GetProperty("title").GetString(), StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("valid JSON", finding.GetProperty("message").GetString(), StringComparison.OrdinalIgnoreCase);
+            Assert.Equal("Correct .agents/open-forge.json, then rerun extension install.",
+                document.RootElement.GetProperty("next").GetProperty("command").GetString());
             Assert.Equal(before, workspace.Snapshot());
         }
         finally

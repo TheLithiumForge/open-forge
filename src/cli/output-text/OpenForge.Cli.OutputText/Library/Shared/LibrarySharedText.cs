@@ -16,6 +16,14 @@ internal static class LibrarySharedText
     internal static string MessageInspectTheReportedLibraryState()
         => "Inspect the reported Library state.";
 
+    // @OpenForgeText library.shared.title.library-id-is-excluded
+    internal static string TitleLibraryIdIsExcluded()
+        => "Library ID is excluded";
+
+    // @OpenForgeText library.shared.title.destination-is-excluded
+    internal static string TitleDestinationIsExcluded()
+        => "Destination is excluded";
+
     // @OpenForgeText library.shared.message.this-system-cannot-create-the-file-links-libraries-need
     internal static string MessageThisSystemCannotCreateTheFileLinksLibrariesNeed()
         => "This system cannot create the file links Libraries need.";
@@ -115,6 +123,10 @@ internal static class LibrarySharedText
     // @OpenForgeText library.shared.title.library-id-is-unknown
     internal static string TitleLibraryIdIsUnknown()
         => "Library ID is unknown";
+
+    // @OpenForgeText library.shared.message.update-settings-before-rerunning-library-command
+    internal static string MessageUpdateSettingsBeforeRerunningLibraryCommand()
+        => "Update workspace settings before rerunning this command.";
 
     // @OpenForgeText library.shared.title.registered-link-is-missing
     internal static string TitleRegisteredLinkIsMissing()

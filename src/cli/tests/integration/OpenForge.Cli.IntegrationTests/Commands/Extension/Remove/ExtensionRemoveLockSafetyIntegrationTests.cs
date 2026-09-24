@@ -15,6 +15,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
+using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Presentation.Extension.Remove.Shared.Wording;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
@@ -86,49 +87,70 @@ public sealed class ExtensionRemoveLockSafetyIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Extension Remove never falls back to legacy claims when its lock is missing or malformed")]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task UnavailableLockCannotDeleteLegacyOwnedFiles(bool malformed)
+    [Fact(DisplayName = "Extension Remove records settings-only intent when ownership is known absent")]
+    public async Task AbsentLockAllowsSettingsOnlyIntentAndLeavesLegacyFiles()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("remove-unavailable-lock");
         using var source = ExtensionInstallCatalogue.Create("remove-unavailable-lock-source");
         await InstallAsync(workspace, source);
-        if (malformed)
-        {
-            workspace.ReplaceText(LockPath, "{");
-        }
-        else
-        {
-            File.Delete(workspace.Combine(LockPath));
-        }
+        File.Delete(workspace.Combine(LockPath));
+        var legacyBytes = File.ReadAllBytes(workspace.Combine(Target));
+        var sourceBefore = source.Snapshot();
         var before = workspace.Snapshot();
 
         var run = await RemoveAsync(workspace);
 
-        Assert.Equal(malformed ? 3 : 0, run.ExitCode);
-        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(0, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.True(File.Exists(workspace.Combine(Target)));
+        Assert.Equal(legacyBytes, File.ReadAllBytes(workspace.Combine(Target)));
+        Assert.False(File.Exists(workspace.Combine(LockPath)));
         using var document = JsonDocument.Parse(run.StandardOutput);
-        var findings = document.RootElement.GetProperty("findings")
-            .EnumerateArray()
-            .Select(finding => finding.GetProperty("code").GetString())
-            .ToArray();
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
+        var result = document.RootElement.GetProperty("data");
+        Assert.Contains(result.GetProperty("effects").EnumerateArray(), effect =>
+            effect.GetProperty("path").GetString() == ".agents/open-forge.json"
+            && effect.GetProperty("action").GetString() == "record-exclusion"
+            && effect.GetProperty("outcome").GetString() == "verified");
+        Assert.DoesNotContain(result.GetProperty("effects").EnumerateArray(),
+            effect => effect.GetProperty("path").GetString() == LockPath);
+        using var settings = JsonDocument.Parse(workspace.ReadText(".agents/open-forge.json"));
+        Assert.Equal(["toolkit"], settings.RootElement.GetProperty("removedExtensions")
+            .EnumerateArray().Select(value => value.GetString()));
         Assert.Equal(
-            malformed,
-            findings.Contains("extension-remove.lifecycle-unavailable", StringComparer.Ordinal));
-        Assert.DoesNotContain("extension-remove.ownership-observation", findings);
+            UnchangedWorkspace(before),
+            UnchangedWorkspace(workspace.Snapshot()));
+        Assert.Equal(sourceBefore, source.Snapshot());
+    }
 
-        if (malformed)
-        {
-            var human = await workspace.RunAsync([
-                "extension", "remove", "toolkit", "--automatic", "--detail", "minimal"]);
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Extension Remove blocks malformed ownership before settings or legacy file effects")]
+    public async Task MalformedLockBlocksWithoutSettingsOrFileEffects()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("remove-malformed-lock");
+        using var source = ExtensionInstallCatalogue.Create("remove-malformed-lock-source");
+        await InstallAsync(workspace, source);
+        workspace.ReplaceText(LockPath, "{");
+        var before = workspace.Snapshot();
+        var legacyBytes = File.ReadAllBytes(workspace.Combine(Target));
 
-            Assert.Equal(3, human.ExitCode);
-            Assert.Contains("The ownership record is unavailable:", human.StandardOutput, StringComparison.Ordinal);
-            Assert.Empty(human.StandardError);
-            Assert.Equal(before, workspace.Snapshot());
-        }
+        var run = await RemoveAsync(workspace);
+
+        Assert.Equal(3, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Incomplete, run.Status);
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(legacyBytes, File.ReadAllBytes(workspace.Combine(Target)));
+        Assert.True(File.Exists(workspace.Combine(LockPath)));
+        Assert.Contains("extension-remove.lifecycle-unavailable", run.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("extension-remove.ownership-observation", run.StandardOutput, StringComparison.Ordinal);
+
+        var human = await workspace.RunAsync([
+            "extension", "remove", "toolkit", "--automatic", "--detail", "minimal"]);
+
+        Assert.Equal(3, human.ExitCode);
+        Assert.Contains("The ownership record is unavailable:", human.StandardOutput, StringComparison.Ordinal);
+        Assert.Empty(human.StandardError);
+        Assert.Equal(before, workspace.Snapshot());
     }
 
     [Trait("Boundary", "OS")]
@@ -168,7 +190,12 @@ public sealed class ExtensionRemoveLockSafetyIntegrationTests
         Assert.DoesNotContain(result.GetProperty("effects").EnumerateArray(),
             effect => effect.GetProperty("path").GetString() == Target
                 && effect.GetProperty("action").GetString() == "delete");
-        Assert.Equal("release-ownership", Assert.Single(result.GetProperty("effects").EnumerateArray()).GetProperty("action").GetString());
+        var effects = result.GetProperty("effects").EnumerateArray().ToArray();
+        Assert.Contains(effects, effect => effect.GetProperty("path").GetString() == Target
+            && effect.GetProperty("action").GetString() == "release-ownership");
+        Assert.Contains(effects, effect => effect.GetProperty("path").GetString() == ".agents/open-forge.json"
+            && effect.GetProperty("action").GetString() == "record-exclusion"
+            && effect.GetProperty("outcome").GetString() == "verified");
         Assert.Equal(note, workspace.ReadText("workspace-note.md"));
         Assert.False(File.Exists(workspace.Combine(Target)));
     }
@@ -191,7 +218,8 @@ public sealed class ExtensionRemoveLockSafetyIntegrationTests
             workspace.Workspace, ExtensionRemoveMode.Apply, ["toolkit"], automatic: true, allowInteraction: false),
             TestContext.Current.CancellationToken);
         var plan = Assert.IsType<ExtensionRemovePlan>(build.Plan);
-        var execution = new ExtensionRemoveExecutionPlan(plan,
+        var execution = ExtensionRemoveExecutionPlanComposer.Compose(
+            plan,
             new ExtensionPermissionStage(null, WorkspacePermissionResult.NotEvaluated, null, null, null));
         using var store = WorkspaceLockTestStore.Create("remove-recovery-order-locks");
         var acquired = await store.AcquireAsync(new WorkspaceLockRequest(
@@ -233,6 +261,11 @@ public sealed class ExtensionRemoveLockSafetyIntegrationTests
 
     private static Task<ExtensionInstallRun> RemoveAsync(ExtensionInstallIntegrationWorkspace workspace)
         => workspace.RunAsync(["extension", "remove", "toolkit", "--automatic", "--format", "json"]);
+
+    private static KeyValuePair<string, string>[] UnchangedWorkspace(
+        IReadOnlyDictionary<string, string> snapshot)
+        => [.. snapshot.Where(item => item.Key != "file:.agents/open-forge.json"
+            && !item.Key.StartsWith("recovery-", StringComparison.Ordinal))];
 
     private static async Task InstallAsync(ExtensionInstallIntegrationWorkspace workspace, ExtensionInstallCatalogue source)
     {

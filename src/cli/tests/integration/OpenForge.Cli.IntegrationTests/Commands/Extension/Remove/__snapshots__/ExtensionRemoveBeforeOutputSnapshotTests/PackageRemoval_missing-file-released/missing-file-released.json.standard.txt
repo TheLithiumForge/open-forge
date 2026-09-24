@@ -40,9 +40,18 @@
     },
     "effects": [
       {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "verified",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
         "path": ".agents/toolkit.md",
         "action": "release-ownership",
-        "outcome": "release-ownership",
+        "outcome": "verified",
         "owner": "toolkit",
         "keptFor": [],
         "ownersBefore": [

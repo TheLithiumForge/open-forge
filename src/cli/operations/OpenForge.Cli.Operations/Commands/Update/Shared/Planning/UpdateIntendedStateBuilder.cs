@@ -54,9 +54,9 @@ internal sealed class UpdateIntendedStateBuilder(
             .Concat(framework?.Regions.Select(region => new UpdateOwnedTarget(region.Path, region.Region,
                 region.Region == "entries" ? null
                     : FrameworkSourceAlignment.ReadAsset(request.Workspace, region.Path, payload)?.Path)) ?? [])
-            .Where(target => FrameworkPayloadSelection.IncludesPath(target.Path, settings.RemovedCategories))
+            .Where(target => FrameworkPayloadSelection.IncludesPath(target.Path, settings))
             .Distinct().ToArray();
-        var selectedAssets = payload.Assets.Where(asset => FrameworkPayloadSelection.IncludesPath(asset.Path, settings.RemovedCategories)).ToArray();
+        var selectedAssets = payload.Assets.Where(asset => FrameworkPayloadSelection.IncludesPath(asset.Path, settings)).ToArray();
         if (targets.Any(target => !IsAdmittedTarget(request, settings, target.Path)
             || target.Region is not (null or "entries" or WorkspaceOwnershipDefinitions.ManagedBlockRegion)
             || target.Region == WorkspaceOwnershipDefinitions.ManagedBlockRegion
@@ -93,7 +93,7 @@ internal sealed class UpdateIntendedStateBuilder(
         targets = targets.Where(target => target.Region != "entries" || !retiredWholeHosts.Contains(target.Path)).ToArray();
         var generatedHosts = targets.Where(target => target.Region == "entries").Select(target => target.Path).ToHashSet(StringComparer.Ordinal);
         var navigation = await _navigationPlanner
-            .BuildAsync(request, mappedAssets, retiredTargetPaths, generatedHosts, cancellationToken)
+            .BuildAsync(request, payload, settings, mappedAssets, retiredTargetPaths, generatedHosts, cancellationToken)
             .ConfigureAwait(false);
         if (navigation.Finding is { } navigationFinding)
         {
@@ -220,15 +220,6 @@ internal sealed class UpdateIntendedStateBuilder(
                     ? projected
                     : asset.Bytes.ToArray(),
                 snapshot));
-        }
-
-        var missingParent = observations.FirstOrDefault(observation => observation.Snapshot.Kind == FileExpectationKind.Missing
-            && observation.IntendedDocumentBytes is not null
-            && !Directory.Exists(Path.GetDirectoryName(observation.Snapshot.LogicalPath)));
-        if (missingParent is not null)
-        {
-            return Blocked(UpdateFindingCode.TargetUnsafe, missingParent.Comparison.RelativePath,
-                "A required Update destination parent directory is missing; no effects were planned.");
         }
 
         return Complete(observations, navigation.ProjectionInputs);

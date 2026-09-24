@@ -57,6 +57,8 @@ public sealed class ExtensionInstallBeforeOutputSnapshotTests
     [InlineData("with-force", (int)CliSemanticStatus.Complete)]
     [InlineData("already-installed", (int)CliSemanticStatus.Complete)]
     [InlineData("changed-since-install", (int)CliSemanticStatus.Blocked)]
+    [InlineData("removed-extension", (int)CliSemanticStatus.Blocked)]
+    [InlineData("path-excluded", (int)CliSemanticStatus.Complete)]
     [InlineData("no-content-directory", (int)CliSemanticStatus.Attention)]
     [InlineData("dry-run", (int)CliSemanticStatus.Complete)]
     [InlineData("source-unreadable", (int)CliSemanticStatus.Incomplete)]
@@ -69,6 +71,20 @@ public sealed class ExtensionInstallBeforeOutputSnapshotTests
         using var source = ExtensionInstallCatalogue.Create("extension-install-output-source");
         source.AddPackage("toolkit", situation == "with-dependencies" ? ["base"] : [],
             situation == "no-content-directory" ? [] : [(".agents/toolkit.md", "# Toolkit\n")]);
+        if (situation == "removed-extension")
+        {
+            await File.WriteAllTextAsync(
+                workspace.Combine(".agents/open-forge.json"),
+                "{\"schemaVersion\":1,\"removedExtensions\":[\"toolkit\"]}",
+                TestContext.Current.CancellationToken);
+        }
+        else if (situation == "path-excluded")
+        {
+            await File.WriteAllTextAsync(
+                workspace.Combine(".agents/open-forge.json"),
+                "{\"schemaVersion\":1,\"removedFiles\":[\".agents/toolkit.md\"]}",
+                TestContext.Current.CancellationToken);
+        }
         if (situation is "with-dependencies" or "select-from-source-prompt" or "no-selection-non-interactive")
             source.AddPackage("base", [], (".agents/base.md", "# Base\n"));
         var prompted = situation == "select-from-source-prompt";
@@ -103,6 +119,19 @@ public sealed class ExtensionInstallBeforeOutputSnapshotTests
         Assert.Equal((CliSemanticStatus)status, result.Status);
         if (situation is "single-package" or "with-dependencies" or "select-from-source-prompt" or "with-force")
             Assert.Equal("# Toolkit\n", workspace.ReadText(".agents/toolkit.md"));
+        else if (situation == "removed-extension")
+            Assert.Equal(before, workspace.Snapshot());
+        else if (situation == "path-excluded")
+        {
+            Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
+            Assert.Contains(result.Findings, finding => finding.Code == ExtensionInstallFindingCode.PathExcluded);
+            Assert.DoesNotContain(result.Findings, finding => finding.Code == ExtensionInstallFindingCode.PackageContentMissing);
+            Assert.DoesNotContain(
+                ".agents/toolkit.md",
+                workspace.ReadExtensionOwnership().EnumerateArray()
+                    .SelectMany(extension => extension.GetProperty("paths").EnumerateArray())
+                    .Select(value => value.GetString()));
+        }
         else if (situation != "no-content-directory") Assert.Equal(before, workspace.Snapshot());
         Assert.Equal(sourceBefore, source.Snapshot());
         if (prompted) Assert.NotEmpty(scripted.Output.ToString());

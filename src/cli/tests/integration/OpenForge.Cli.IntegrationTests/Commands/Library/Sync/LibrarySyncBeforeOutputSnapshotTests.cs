@@ -53,6 +53,8 @@ public sealed class LibrarySyncBeforeOutputSnapshotTests
     [InlineData("registered-link-gone", (int)CliSemanticStatus.Attention)]
     [InlineData("permission-required", (int)CliSemanticStatus.Blocked)]
     [InlineData("no-ownership-record", (int)CliSemanticStatus.Complete)]
+    [InlineData("removed-library-id", (int)CliSemanticStatus.Blocked)]
+    [InlineData("excluded-destination", (int)CliSemanticStatus.Complete)]
     [InlineData("lock-held", (int)CliSemanticStatus.Blocked)]
     [InlineData("cancelled", (int)CliSemanticStatus.Interrupted)]
     [InlineData("write-failed-partial", (int)CliSemanticStatus.Failed)]
@@ -67,6 +69,8 @@ public sealed class LibrarySyncBeforeOutputSnapshotTests
         workspace.Directory(situation == "permission-required" ? "docs" : ".agents/directives");
         if (situation is not ("links-removed" or "both")) workspace.Source(target);
         if (situation != "no-ownership-record") workspace.Record(situation is "links-added" or "write-failed-partial" ? [] : [target]);
+        if (situation == "removed-library-id") workspace.Write(".agents/open-forge.json", "{\"removedLibraries\":[\"team-knowledge\"]}");
+        else if (situation == "excluded-destination") workspace.Write(".agents/open-forge.json", "{\"removedFiles\":[\".agents/directives/review.md\"]}");
         if (situation == "changed-occupant") workspace.Write(target, "local changed occupant\n");
         else if (situation is not ("links-added" or "registered-link-gone" or "no-ownership-record" or "write-failed-partial")) workspace.Link(target);
         if (situation is "both" or "dry-run" or "lock-held") workspace.Source(added);

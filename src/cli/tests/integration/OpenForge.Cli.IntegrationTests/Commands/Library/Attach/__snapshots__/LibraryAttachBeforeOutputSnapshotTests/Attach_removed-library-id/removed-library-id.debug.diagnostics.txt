@@ -1,0 +1,13 @@
+status=blocked
+mode=apply
+library=team-knowledge
+source-files=1
+links=0
+created=0
+sections=0
+grants=False
+recorded=False
+recovery=not run
+verification=not started
+findings=1
+This Library ID is excluded by workspace settings.

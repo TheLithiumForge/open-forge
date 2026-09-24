@@ -7,8 +7,18 @@ open-forge:
 
 # library attach Behavior Contract
 
-Unavailable ownership is reported as `library-attach.ownership-observation`
-with `completed` status. This finding grants no ownership or mutation permission.
+A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
+
+## Persistent Exclusions
+
+Apply the [removal settings](../../remove/interface.md#keep-removed-and-restore)
+to the selected Library ID and concrete consumer destination paths. An excluded
+ID blocks attachment. File, directory and category exclusions omit destination
+links, generated changes and new mapping claims without changing source files.
+Preserve existing excluded bytes and claims. A missing excluded ancestor required
+by selected content is a blocker, not permission to recreate it. Revalidate the
+exact settings observation under the workspace lease. Restoration requires
+explicitly clearing every relevant exclusion before attachment.
 
 ## Status And Boundary
 
@@ -38,10 +48,8 @@ The existing public record-effect and publication fields describe that lock
 write. Its Libraries section contains validated registration identities and
 source-relative paths; other ownership sections are preserved. No retired
 record is read, written, converted, or deleted. A missing lock may be created
-after the explicit attach effects verify. A readable ordinary malformed lock
-may be replaced only with the newly verified claim; no old claim is inferred,
-deleted, or updated from malformed bytes. An unreadable, aliased, nonordinary,
-or otherwise unavailable publication causes no effect. Recovery protects the
+after the explicit attach effects verify. Invalid or unavailable required
+ownership blocks the request before effects. Recovery protects the
 exact prior lock bytes before any effect; the planned lock publication remains
 last after verified link and generated-region effects.
 
@@ -68,12 +76,10 @@ validated library ID, source root, workspace, and flags
 No persistent effect begins until the source boundary, complete inventory,
 ownership observation, duplicate-ID fact, every destination, generated-region
 boundary, intended record, ordered plan, and preflight are complete. A whole
-readable ordinary malformed ownership lock is not a source of old claims: with
-explicit source and destination inputs it may be replaced only by the newly
-verified claim after all the same source, mapping, ancestor, alias, permission,
-and safety checks. An unreadable, aliased, nonordinary, or otherwise unavailable
-publication prevents every effect. Any invalid source or record input outside
-that narrow malformed-file case, duplicate, collision, incomplete source fact,
+readable ordinary malformed ownership lock blocks the request, even with explicit
+source and destination inputs. An unreadable, aliased, nonordinary, or otherwise
+unavailable publication also prevents every effect. Any invalid source or record
+input, duplicate, collision, incomplete source fact,
 unsafe identity, or other blocker prevents every effect. Attach never creates a
 safe subset and never treats source content, matching bytes, matching links, or
 legacy records as destination authority.
@@ -145,27 +151,12 @@ remain required before using a claim. The destination root may be `.`; a source
 root may not. Link identity derives from the two roots and each source suffix.
 Permissions remain separate from ownership.
 
-An absent, unreadable, nonordinary, malformed, or uninterpretable ownership lock
-provides no usable registrations and yields a truthful ownership observation.
-It is never reported as a valid empty record for read-only or selected-record
-operations: the record state remains `missing`, `unavailable`, or
-`invalid-input`, with unavailable counts and no selected paths. List returns no
-registrations; Inspect, Sync, and Detach select nothing and do not invent an
-unknown-ID error. Their `ownership-observation` finding explains why. A valid
-readable lock with no matching requested ID still yields `invalid-input` for
-those selected-record operations. Attach has only the narrow new-claim
-exception in the next paragraph.
-
-Attach may form a new claim from its explicit source and destination only when
-the ownership snapshot is absent or is a readable ordinary malformed file with
-readable bytes, and only after complete source inventory, destination and
-ancestor checks, alias checks, permission admission, and all other safety
-preflight. A malformed snapshot is replaced by the new verified claim; its
-unknown old claims are neither inferred nor reconciled. The successful result is
-Complete0 with the ownership observation retained. An unreadable,
-aliased, nonordinary, or otherwise unavailable publication has no effects.
-Read-only operations never reconstruct or write a lock. Matching files,
-matching links, and old or legacy records create no claims.
+A missing lock is known empty. Attach may form a new claim from its explicit
+source and destination after complete source inventory, destination and
+ancestor checks, alias checks, permission admission and all other safety checks.
+Invalid or unavailable required ownership blocks the request before effects.
+A missing-lock observation may remain present on successful attachment.
+Matching files, matching links and legacy records create no claims.
 
 An already registered ID blocks Attach even when all other facts match.
 
@@ -203,9 +194,8 @@ route or generated region is created.
 
 Attach forms the intended versioned record by inserting the new sorted library
 record and its complete sorted path list. For a valid readable ownership record,
-other claims are preserved; for a readable ordinary malformed ownership file,
-the intended publication contains only the newly verified claim and does not
-pretend to reconcile unknown old claims. The intended record contains no
+other claims are preserved. An absent lock starts with no claims; an invalid or
+unavailable required lock prevents planning a publication. The intended record contains no
 expected-link property, source bytes, absolute path, Git fact, collection,
 per-file remapping, glob, dependency, or exclusion metadata. The resulting record is
 the final consumer publication and is not an early ownership marker.
@@ -237,14 +227,9 @@ whole.
 It reports all links, parent directories, generated regions, record bytes, and
 blockers, then stops before acquiring a workspace lease or probing recovery
 capability. It performs no filesystem or application-data effect. A planned
-change alone does not create `completed-with-warnings`. Missing, unknown, or
-malformed ownership observations remain in the typed preview; dry-run never
-silently converts them into a stronger ownership claim or an unqualified
-success headline.
-
-A successful attach from a readable invalid ownership file keeps Complete0
-while rendering that ownership observation as a visible warning at minimal
-detail. This warning does not imply that prior ownership was reconstructed.
+change alone does not create `completed-with-warnings`. Missing ownership is
+known empty. Invalid or unavailable required ownership remains a blocker in the
+typed preview, just as it does during application.
 
 ## Consumer Permission
 
@@ -356,9 +341,8 @@ Conformance must prove, at the cheapest boundary that directly owns each fact:
 - existing generated-region projection, heading and authored-byte preservation,
   no route or Loader creation, and consumer destination identity;
 - normalized lock creation/replacement, no extra fields, sorting,
-  truthful missing/unknown ownership observations, the narrow readable-ordinary
-  malformed-lock publication of only a newly verified claim, no effects for an
-  unreadable/aliased/nonordinary publication, registered-ID collision blocking,
+  known-empty missing ownership, no effects for malformed or unavailable required
+  ownership or an unreadable/aliased/nonordinary publication, registered-ID collision blocking,
   no adoption from matching links or legacy records, and record-publication-last
   ordering;
 - immutable dry-run/application plan parity, no dry-run lease or recovery

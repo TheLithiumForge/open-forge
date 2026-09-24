@@ -1,0 +1,4 @@
+Cannot remove guidance/old guide: .agents/open-forge.lock.json could not be read completely.
+Workspace: <workspace>
+  Error  <workspace>/.agents/open-forge.lock.json  Ownership record is unavailable
+         .agents/open-forge.lock.json could not be read completely.

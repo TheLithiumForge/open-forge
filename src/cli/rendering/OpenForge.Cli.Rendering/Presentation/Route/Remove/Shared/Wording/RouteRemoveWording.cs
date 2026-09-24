@@ -7,6 +7,65 @@ namespace OpenForge.Cli.Core.Presentation.Route.Remove.Shared.Wording;
 
 internal static class RouteRemoveWording
 {
+    internal static string PersistenceSettings(RouteRemoveSettingsRemoval settings)
+    {
+        var targets = settings.Categories.Select(category => $"category .agents/{category}")
+            .Concat(settings.Files.Select(path => $"file {path}"))
+            .Concat(settings.Directories.Select(path => $"directory {path}"));
+        var targetText = string.Join(", ", targets);
+        if (targetText.Length == 0)
+        {
+            targetText = "the selected route";
+        }
+
+        var outcome = settings.Outcome switch
+        {
+            RouteRemovePersistenceOutcome.NotEstablished => "Not established",
+            RouteRemovePersistenceOutcome.Planned => "Would record",
+            RouteRemovePersistenceOutcome.Applied => "Recorded",
+            RouteRemovePersistenceOutcome.Unchanged => "Already recorded",
+            RouteRemovePersistenceOutcome.NotStarted => "Did not record",
+            RouteRemovePersistenceOutcome.Failed => "Could not verify",
+            RouteRemovePersistenceOutcome.Unknown => "Could not determine",
+            _ => throw new ArgumentOutOfRangeException(nameof(settings), settings.Outcome, "The persistence outcome is not defined."),
+        };
+        return global::OpenForge.Cli.OutputText.Route.Remove.RouteRemovePhrases.FormatRemovalIntentOutcome(
+            outcome,
+            targetText,
+            settings.Path);
+    }
+
+    internal static string PersistenceOwnership(RouteRemoveOwnershipRelease ownership)
+    {
+        if (ownership.Outcome == RouteRemovePersistenceOutcome.Unchanged && ownership.Claims.IsEmpty)
+        {
+            return global::OpenForge.Cli.OutputText.Route.Remove.RouteRemovePhrases.FormatNoManagedContentOwnershipToRelease();
+        }
+
+        var outcome = ownership.Outcome switch
+        {
+            RouteRemovePersistenceOutcome.NotEstablished => "Did not establish",
+            RouteRemovePersistenceOutcome.Planned => "Would release",
+            RouteRemovePersistenceOutcome.Applied => "Released",
+            RouteRemovePersistenceOutcome.Unchanged => "Left unchanged",
+            RouteRemovePersistenceOutcome.NotStarted => "Did not release",
+            RouteRemovePersistenceOutcome.Failed => "Could not verify release of",
+            RouteRemovePersistenceOutcome.Unknown => "Could not determine release of",
+            _ => throw new ArgumentOutOfRangeException(nameof(ownership), ownership.Outcome, "The persistence outcome is not defined."),
+        };
+        var count = ownership.Claims.Length;
+        return global::OpenForge.Cli.OutputText.Route.Remove.RouteRemovePhrases.FormatOwnershipReleaseOutcome(
+            outcome,
+            count.ToString(CultureInfo.InvariantCulture),
+            count == 1 ? "claim" : "claims");
+    }
+
+    internal static string OwnershipClaim(RouteRemoveOwnershipClaim claim)
+        => global::OpenForge.Cli.OutputText.Route.Remove.RouteRemovePhrases.FormatOwnershipClaim(
+            claim.Manager == RouteRemoveOwnershipManager.Framework ? "Framework" : "Extension",
+            claim.Owner,
+            claim.Path);
+
     internal static string Removed(string path) => global::OpenForge.Cli.OutputText.Route.Remove.RouteRemoveWording.Removed(path);
 
     internal static string RemovedRoute(string id, int count)
@@ -115,6 +174,8 @@ internal static class RouteRemoveWording
         RouteRemoveFindingCode.OverwriteAmbiguous => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleOverwriteIsAmbiguous(),
         RouteRemoveFindingCode.CategoryUnsafe => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleCategoryIsUnsafe(),
         RouteRemoveFindingCode.OwnershipUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleOwnershipRecordIsUnavailable(),
+        RouteRemoveFindingCode.SettingsUnavailable => global::OpenForge.Cli.OutputText.Route.Remove.RouteRemoveText.TitleRemovalSettingsAreUnavailable(),
+        RouteRemoveFindingCode.ProtectedTarget => global::OpenForge.Cli.OutputText.Route.Remove.RouteRemoveText.TitleRouteTargetIsProtected(),
         RouteRemoveFindingCode.OwnershipClaimed => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleSourceIsManaged(),
         RouteRemoveFindingCode.ReferenceUnsafe => global::OpenForge.Cli.OutputText.Route.Remove.RouteRemoveText.TitleLinkCannotBeDetachedSafely(),
         RouteRemoveFindingCode.GeneratedRegionUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionIsUnsafe(),

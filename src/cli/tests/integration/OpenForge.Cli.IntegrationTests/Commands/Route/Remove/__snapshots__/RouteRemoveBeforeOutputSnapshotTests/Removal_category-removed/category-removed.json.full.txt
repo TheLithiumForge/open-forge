@@ -139,6 +139,19 @@
         "after": "Topics remains."
       }
     ],
+    "settings": {
+      "outcome": "applied",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [],
+      "directories": [
+        ".agents/guidance/topics"
+      ]
+    },
+    "ownershipRelease": {
+      "outcome": "unchanged",
+      "claims": []
+    },
     "scan": {
       "filesScanned": 11,
       "occurrences": 3

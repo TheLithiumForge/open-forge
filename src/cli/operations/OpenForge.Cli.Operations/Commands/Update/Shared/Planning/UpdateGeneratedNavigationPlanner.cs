@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
@@ -33,6 +34,8 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
 
     internal async ValueTask<UpdateGeneratedNavigationBuild> BuildAsync(
         UpdateRequest request,
+        FrameworkPayload payload,
+        WorkspaceSettingsDocument settings,
         IReadOnlyList<FrameworkPayloadAsset> selectedAssets,
         IReadOnlySet<string> retiredTargetPaths,
         IReadOnlySet<string> generatedHosts,
@@ -88,6 +91,15 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
             {
                 return Blocked(
                     "The intended Update topology contains an ambiguous route, alias, or target collision.");
+            }
+
+            if (FrameworkPayloadSelection.FindMissingRequiredAncestor(payload, settings, formation)
+                is { } missingRouteAncestor)
+            {
+                return Blocked(
+                    UpdateFindingCode.TargetUnsafe,
+                    missingRouteAncestor,
+                    $"The excluded Framework entrypoint '{missingRouteAncestor}' is missing and required to reach another payload route.");
             }
 
             var documents = payloadAssets.Values.ToDictionary(
@@ -274,13 +286,16 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
     }
 
     private static UpdateGeneratedNavigationBuild Blocked(string cause)
+        => Blocked(UpdateFindingCode.GeneratedRegionUnsafe, target: null, cause);
+
+    private static UpdateGeneratedNavigationBuild Blocked(
+        UpdateFindingCode code,
+        string? target,
+        string cause)
         => new(
             TargetBytes: new Dictionary<string, byte[]>(StringComparer.Ordinal),
             ProjectionInputs: [],
-            new UpdateFinding(
-                UpdateFindingCode.GeneratedRegionUnsafe,
-                target: null,
-                cause));
+            new UpdateFinding(code, target, cause));
 
     private static UpdateGeneratedNavigationBuild Incomplete(string? target, string cause)
         => new(

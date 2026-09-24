@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Presentation.Extension.Remove.Shared.Wording;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
@@ -39,6 +40,11 @@ public sealed class ExtensionRemovePlanOwnershipIntegrationTests
         var accepted = ExtensionRemovePlan.Create(new ExtensionRemovePlanInput
         {
             Request = baseline.Request,
+            SettingsObservation = baseline.SettingsObservation,
+            RemovalSelection = baseline.RemovalSelection,
+            SettingsChange = baseline.SettingsChange,
+            SettingsRecoveryTarget = baseline.SettingsRecoveryTarget,
+            SettingsEffect = baseline.SettingsEffect,
             Selection = baseline.Selection,
             Dependencies = baseline.Dependencies,
             Planning = baseline.Planning with { Decisions = decisions },

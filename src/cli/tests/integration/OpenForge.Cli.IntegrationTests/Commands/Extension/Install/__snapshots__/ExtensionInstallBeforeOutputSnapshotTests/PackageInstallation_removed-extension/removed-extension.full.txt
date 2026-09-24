@@ -1,0 +1,12 @@
+Cannot install toolkit: Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension install.
+Workspace: <workspace>
+  Error  toolkit  Extension is excluded by workspace settings [extension-install.removed-extension]
+         Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension install
+         Remove the Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension install.
+         This Extension ID is present in removedExtensions.
+  Source: <extension-source> (catalogue)
+  Entries sections unchanged: none
+  Verification: targets not checked; Entries not checked; Extension record not checked; Framework record not checked
+  Recovery: not-required.
+  Workspace removal settings currently exclude the requested install.
+Next: Remove the selected Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension install.

@@ -5,7 +5,10 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Selection;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 
@@ -52,6 +55,8 @@ internal sealed record ExtensionRemovePlannedEffect
 {
     internal required ExtensionRemoveEffect Result { get; init; }
 
+    internal PlannedDirectoryCreation? DirectoryCreation { get; init; }
+
     internal PlannedFileChange? FileChange { get; init; }
 
     internal RecoveryBundleTarget? RecoveryTarget { get; init; }
@@ -76,6 +81,16 @@ internal sealed record ExtensionRemovePlanInput
     internal PlannedFileChange? OwnershipChange { get; init; }
 
     internal RecoveryBundleTarget? OwnershipRecoveryTarget { get; init; }
+
+    internal required WorkspaceSettingsRead SettingsObservation { get; init; }
+
+    internal required WorkspaceRemovalSelection RemovalSelection { get; init; }
+
+    internal PlannedFileChange? SettingsChange { get; init; }
+
+    internal RecoveryBundleTarget? SettingsRecoveryTarget { get; init; }
+
+    internal ExtensionRemoveEffect? SettingsEffect { get; init; }
 }
 
 internal sealed class ExtensionRemovePlan
@@ -89,6 +104,8 @@ internal sealed class ExtensionRemovePlan
         ArgumentNullException.ThrowIfNull(input.Planning);
         ArgumentNullException.ThrowIfNull(input.Topology);
         ArgumentNullException.ThrowIfNull(input.Effects);
+        ArgumentNullException.ThrowIfNull(input.SettingsObservation);
+        ArgumentNullException.ThrowIfNull(input.RemovalSelection);
         if (input.Request.RequestedIds.Count > 0
             && !input.Request.RequestedIds
                 .OrderBy(id => id, StringComparer.Ordinal)
@@ -155,6 +172,11 @@ internal sealed class ExtensionRemovePlan
             .ToArray());
         OwnershipChange = input.OwnershipChange;
         OwnershipRecoveryTarget = input.OwnershipRecoveryTarget;
+        SettingsObservation = input.SettingsObservation;
+        RemovalSelection = input.RemovalSelection;
+        SettingsChange = input.SettingsChange;
+        SettingsRecoveryTarget = input.SettingsRecoveryTarget;
+        SettingsEffect = input.SettingsEffect;
     }
 
     internal static ExtensionRemovePlan Create(ExtensionRemovePlanInput input)
@@ -178,8 +200,19 @@ internal sealed class ExtensionRemovePlan
 
     internal RecoveryBundleTarget? OwnershipRecoveryTarget { get; }
 
+    internal WorkspaceSettingsRead SettingsObservation { get; }
+
+    internal WorkspaceRemovalSelection RemovalSelection { get; }
+
+    internal PlannedFileChange? SettingsChange { get; }
+
+    internal RecoveryBundleTarget? SettingsRecoveryTarget { get; }
+
+    internal ExtensionRemoveEffect? SettingsEffect { get; }
+
     internal bool IsNoOp => Effects.Count == 0
-        && OwnershipChange is null;
+        && OwnershipChange is null
+        && SettingsChange is null;
 
 
 }

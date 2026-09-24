@@ -15,8 +15,8 @@ public sealed class F26BundledExtensionsJourneyTests
     private const string CollaborationEntrypointPath = ".agents/templates/collaboration/_collaboration.md";
     private const string TemplatesEntrypointPath = ".agents/templates/_templates.md";
     private const string PlanningEntrypointPath = ".agents/templates/planning/_planning.md";
-    private const string PlanningUserFlowPath = ".agents/templates/planning/user-flow.md";
-    private const string PlanningScenarioPath = ".agents/templates/planning/scenario.md";
+    private const string PlanningPlanPath = ".agents/templates/planning/plan.md";
+    private const string PlanningTaskPath = ".agents/templates/planning/task.md";
     private const string WorkflowReferencesEntrypointPath = ".agents/skills/use-workflow/references/_references.md";
     private const string WorkflowEntrypointPath = ".agents/templates/workflows/_workflows.md";
 
@@ -46,11 +46,7 @@ public sealed class F26BundledExtensionsJourneyTests
         ".agents/templates/planning/decision.md",
         ".agents/templates/planning/idea.md",
         ".agents/templates/planning/plan.md",
-        ".agents/templates/planning/run-record.md",
-        ".agents/templates/planning/scenario-collection.md",
-        ".agents/templates/planning/scenario.md",
         ".agents/templates/planning/task.md",
-        ".agents/templates/planning/user-flow.md",
     ];
 
     private static readonly string[] WorkflowsPayloadPaths =
@@ -69,11 +65,7 @@ public sealed class F26BundledExtensionsJourneyTests
         "decision.md",
         "idea.md",
         "plan.md",
-        "run-record.md",
-        "scenario-collection.md",
-        "scenario.md",
         "task.md",
-        "user-flow.md",
     ];
 
     [Fact(DisplayName = "F26 selects bundled Collaboration and Planning content and removes only Collaboration")]
@@ -113,7 +105,7 @@ public sealed class F26BundledExtensionsJourneyTests
             workspace,
             new ExtensionClaimExpectation(
                 "collaboration",
-                "0.3.0",
+                "0.4.0",
                 [],
                 CollaborationPayloadPaths));
         AssertGeneratedEntries(workspace, containsCollaboration: true, containsPlanning: false, containsWorkflows: false);
@@ -138,9 +130,9 @@ public sealed class F26BundledExtensionsJourneyTests
                 .Concat(WorkflowsPayloadPaths));
         AssertExtensionClaims(
             workspace,
-            new ExtensionClaimExpectation("collaboration", "0.3.0", [], CollaborationPayloadPaths),
-            new ExtensionClaimExpectation("planning", "0.3.0", ["workflows"], PlanningPayloadPaths),
-            new ExtensionClaimExpectation("workflows", "0.3.0", [], WorkflowsPayloadPaths));
+            new ExtensionClaimExpectation("collaboration", "0.4.0", [], CollaborationPayloadPaths),
+            new ExtensionClaimExpectation("planning", "0.4.0", ["workflows"], PlanningPayloadPaths),
+            new ExtensionClaimExpectation("workflows", "0.4.0", [], WorkflowsPayloadPaths));
         AssertGeneratedEntries(workspace, containsCollaboration: true, containsPlanning: true, containsWorkflows: true);
         AssertNonExtensionRootPropertiesUnchanged(workspace, baselineLockProperties);
         Assert.Equal(userNoteBytes, File.ReadAllBytes(workspace.Combine(UserNotePath)));
@@ -158,9 +150,9 @@ public sealed class F26BundledExtensionsJourneyTests
         AssertSuccessfulJsonResult(installedFacts, "extension list");
         AssertInstalledFacts(
             installedFacts.StandardOutput,
-            new ExtensionClaimExpectation("collaboration", "0.3.0", [], CollaborationPayloadPaths),
-            new ExtensionClaimExpectation("planning", "0.3.0", ["workflows"], PlanningPayloadPaths),
-            new ExtensionClaimExpectation("workflows", "0.3.0", [], WorkflowsPayloadPaths));
+            new ExtensionClaimExpectation("collaboration", "0.4.0", [], CollaborationPayloadPaths),
+            new ExtensionClaimExpectation("planning", "0.4.0", ["workflows"], PlanningPayloadPaths),
+            new ExtensionClaimExpectation("workflows", "0.4.0", [], WorkflowsPayloadPaths));
         Assert.Equal(beforeListFacts, workspace.SnapshotState());
 
         var availableFacts = await workspace.RunAsync(
@@ -171,12 +163,12 @@ public sealed class F26BundledExtensionsJourneyTests
 
         await AssertContextRetrievalAsync(
             workspace,
-            PlanningUserFlowPath,
-            "## Flow");
+            PlanningPlanPath,
+            "## Steps And Dependencies");
         await AssertContextRetrievalAsync(
             workspace,
-            PlanningScenarioPath,
-            "## Expected result");
+            PlanningTaskPath,
+            "## Outcome");
 
         var collaborationPreimages = CollaborationPayloadPaths.ToDictionary(
             path => path,
@@ -186,15 +178,18 @@ public sealed class F26BundledExtensionsJourneyTests
             "extension", "remove", "collaboration", "--automatic");
         AssertSuccessfulHumanResult(remove);
         Assert.Contains("collaboration", remove.StandardOutput, StringComparison.OrdinalIgnoreCase);
+        using var removalSettings = JsonDocument.Parse(File.ReadAllBytes(workspace.Combine(".agents/open-forge.json")));
+        Assert.Equal("collaboration", Assert.Single(removalSettings.RootElement
+            .GetProperty("removedExtensions").EnumerateArray()).GetString());
         AssertRuntimeFiles(
             workspace,
-            new[] { UserNotePath }
+            new[] { UserNotePath, ".agents/open-forge.json" }
                 .Concat(PlanningPayloadPaths)
                 .Concat(WorkflowsPayloadPaths));
         AssertExtensionClaims(
             workspace,
-            new ExtensionClaimExpectation("planning", "0.3.0", ["workflows"], PlanningPayloadPaths),
-            new ExtensionClaimExpectation("workflows", "0.3.0", [], WorkflowsPayloadPaths));
+            new ExtensionClaimExpectation("planning", "0.4.0", ["workflows"], PlanningPayloadPaths),
+            new ExtensionClaimExpectation("workflows", "0.4.0", [], WorkflowsPayloadPaths));
         AssertGeneratedEntriesAfterCollaborationRemoval(workspace);
         AssertNonExtensionRootPropertiesUnchanged(workspace, baselineLockProperties);
         Assert.Equal(userNoteBytes, File.ReadAllBytes(workspace.Combine(UserNotePath)));
@@ -552,7 +547,7 @@ public sealed class F26BundledExtensionsJourneyTests
         var planning = Assert.Single(
             available,
             item => item.GetProperty("id").GetString() == "planning");
-        Assert.Equal("0.3.0", planning.GetProperty("version").GetString());
+        Assert.Equal("0.4.0", planning.GetProperty("version").GetString());
         Assert.Equal(
             ["workflows"],
             planning.GetProperty("dependencies")
@@ -563,7 +558,7 @@ public sealed class F26BundledExtensionsJourneyTests
         var workflows = Assert.Single(
             available,
             item => item.GetProperty("id").GetString() == "workflows");
-        Assert.Equal("0.3.0", workflows.GetProperty("version").GetString());
+        Assert.Equal("0.4.0", workflows.GetProperty("version").GetString());
         Assert.Equal("Workflow Support", workflows.GetProperty("name").GetString());
         Assert.Empty(workflows.GetProperty("dependencies").EnumerateArray());
     }

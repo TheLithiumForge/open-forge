@@ -1,6 +1,9 @@
-No ownership record exists, so team-knowledge cannot be detached. Nothing was changed.
+Recorded removal intent for Library team-knowledge.
 Workspace: <workspace>
   Info  team-knowledge  Ownership record is missing [library-detach.ownership-observation]
          No ownership record exists, so team-knowledge cannot be detached.
-  Verification: was not requested; registration was not published.
-  Recovery: no recovery bundle was required; no residual effects.
+  .agents/open-forge.json  settings updated
+  .agents/open-forge.json  settings updated
+  Expected .agents/open-forge.json: missing; length unavailable; SHA-256 unavailable; target unavailable
+  Verification: all changed targets were verified; registration was not published.
+  Recovery: bundle removed; no residual effects.

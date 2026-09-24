@@ -8,6 +8,9 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Application;
 
@@ -32,6 +35,19 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
             return Stop(
                 ExtensionInstallFindingCode.TargetChanged,
                 "The Extension Install lease no longer matches the selected workspace.");
+        }
+
+        var currentSettings = await WorkspaceSettingsReader.ReadAsync(
+            new OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.PhysicalPathResolver(),
+            plan.Request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+        if (currentSettings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable
+            || !plan.SettingsObservation.MatchesObservation(currentSettings))
+        {
+            return Stop(
+                ExtensionInstallFindingCode.TargetChanged,
+                "Workspace removal settings changed or became unavailable after Extension Install planning.",
+                plan.SettingsObservation.LogicalPath);
         }
 
         var sourceResolution = await _sourceResolver.ReadAsync(plan.Request, cancellationToken)
@@ -76,10 +92,22 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
                 "The selected dependency closure changed after planning.");
         }
 
+        var normalized = ExtensionInstallPayloadNormalizer.Normalize(
+            validationPackages,
+            currentSettings.Document);
+        if (normalized.Finding is not null)
+        {
+            return Stop(
+                ExtensionInstallFindingCode.TargetChanged,
+                "The selected Extension payload no longer matches its removal settings.",
+                normalized.Finding.Target);
+        }
+
         var observation = await _foundationReader.ReadAsync(
             plan.Request,
-            validationPackages,
-            cancellationToken).ConfigureAwait(false);
+            normalized.Packages,
+            cancellationToken,
+            settings: currentSettings.Document).ConfigureAwait(false);
         if (observation.Finding is { } foundationFinding)
         {
             return Stop(
@@ -93,7 +121,12 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
         var current = observation.Foundation
             ?? throw new InvalidOperationException(
                 "Complete Extension Install revalidation requires foundation facts.");
-        if (!MatchesPlan(plan, current))
+        var currentTopologyFindings = current.TopologyFindings.Concat(
+            normalized.ExcludedPaths.Select(path => new ExtensionInstallFinding(
+                ExtensionInstallFindingCode.PathExcluded,
+                $"'{path}' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.",
+                path)));
+        if (!MatchesPlan(plan, current, currentTopologyFindings))
         {
             return Stop(
                 ExtensionInstallFindingCode.TargetChanged,
@@ -193,7 +226,8 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
 
     private static bool MatchesPlan(
         ExtensionInstallPlan plan,
-        ExtensionInstallFoundation current)
+        ExtensionInstallFoundation current,
+        IEnumerable<ExtensionInstallFinding> currentTopologyFindings)
         => string.Equals(
                 plan.FrameworkPayload.InventoryFingerprint,
                 current.FrameworkPayload.InventoryFingerprint,
@@ -201,7 +235,7 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
             && plan.Ownership.State == current.Ownership.State
             && plan.Ownership.Snapshot?.Expectation == current.Ownership.Snapshot?.Expectation
             && TopologyEquals(plan.Topology, current.Topology)
-            && FindingsEqual(plan.TopologyFindings, current.TopologyFindings);
+            && FindingsEqual(plan.TopologyFindings, currentTopologyFindings);
 
     internal static bool TopologyEquals(
         ExtensionInstallTopology expected,
@@ -214,7 +248,7 @@ internal sealed class ExtensionInstallApplicationPreconditionValidator(
 
     private static bool FindingsEqual(
         IReadOnlyList<ExtensionInstallFinding> expected,
-        IReadOnlyList<ExtensionInstallFinding> actual)
+        IEnumerable<ExtensionInstallFinding> actual)
         => expected
             .OrderBy(finding => finding.Code)
             .ThenBy(finding => finding.Target is null ? 0 : 1)

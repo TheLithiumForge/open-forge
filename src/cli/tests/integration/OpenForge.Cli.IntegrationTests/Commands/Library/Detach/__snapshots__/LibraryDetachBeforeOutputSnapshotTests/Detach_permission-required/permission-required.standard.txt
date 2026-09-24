@@ -4,7 +4,9 @@ Workspace: <workspace>
          Cannot detach: it writes outside .agents and no grant allows that.
          open-forge library detach team-knowledge --allow-path docs/review.md --automatic
          Grant the destination path, then rerun the detach request.
-  docs/review.md  not started
+  .agents/open-forge.json  settings updated
+  docs/review.md           not started
   .agents/open-forge.lock.json  not started
+  .agents/open-forge.json  settings updated
   Grant the destination path, then rerun the detach request.
 Next: open-forge library detach team-knowledge --allow-path docs/review.md --automatic

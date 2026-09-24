@@ -34,7 +34,7 @@
   ],
   "effects": [],
   "counts": {
-    "packagesRemoved": 1,
+    "packagesRemoved": 0,
     "filesDeleted": 0,
     "filesKept": 0,
     "filesReleased": 0,

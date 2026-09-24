@@ -55,6 +55,10 @@ public sealed class ExtensionRemovePlanningIntegrationTests
             value => value.GetProperty("path").GetString() == ".agents/toolkit.md");
         Assert.Equal("delete", effect.GetProperty("action").GetString());
         Assert.Equal("planned", effect.GetProperty("outcome").GetString());
+        Assert.Contains(result.GetProperty("effects").EnumerateArray(), value =>
+            value.GetProperty("path").GetString() == ".agents/open-forge.json"
+            && value.GetProperty("action").GetString() == "record-exclusion"
+            && value.GetProperty("outcome").GetString() == "planned");
         Assert.Equal(
             [],
             effect.GetProperty("keptFor").EnumerateArray().Select(value => value.GetString()));
@@ -145,6 +149,7 @@ public sealed class ExtensionRemovePlanningIntegrationTests
             document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-remove.dependency-blocked");
+        Assert.False(File.Exists(workspace.Combine(".agents/open-forge.json")));
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
     }

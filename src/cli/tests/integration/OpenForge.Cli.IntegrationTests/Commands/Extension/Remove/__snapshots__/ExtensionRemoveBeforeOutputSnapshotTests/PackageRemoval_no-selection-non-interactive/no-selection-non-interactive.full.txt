@@ -4,7 +4,7 @@ Workspace: <workspace>
          Extension remove needs to know which packages. Pass their IDs or --all.
          open-forge extension list
          List the installed Extensions, then rerun the request with an explicit selection.
-  .agents/open-forge.lock.json  updated
+  .agents/open-forge.lock.json  unchanged
   Entries sections unchanged: none
   Verification: targets not checked; Entries not checked; Extension record not checked
   Recovery: not-required.

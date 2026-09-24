@@ -40,6 +40,13 @@
     },
     "effects": [
       {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "verified",
+        "owner": null,
+        "keptFor": []
+      },
+      {
         "path": ".agents/toolkit.md",
         "action": "retain-shared",
         "outcome": "retain-shared",

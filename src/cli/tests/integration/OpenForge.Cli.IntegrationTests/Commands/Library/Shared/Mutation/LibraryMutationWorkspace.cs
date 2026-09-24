@@ -164,6 +164,18 @@ internal sealed class LibraryMutationWorkspace : IDisposable
 
     public void Dispose()
     {
+        var settingsPath = Absolute(".agents/open-forge.json");
+        if (File.Exists(settingsPath))
+        {
+            var settingsAttributes = File.GetAttributes(settingsPath);
+            if ((settingsAttributes & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)
+            {
+                throw new InvalidOperationException("The Library settings cleanup target is not an ordinary file.");
+            }
+
+            File.Delete(settingsPath);
+        }
+
         var ownershipPath = Absolute(OwnershipPath);
         if (File.Exists(ownershipPath))
         {

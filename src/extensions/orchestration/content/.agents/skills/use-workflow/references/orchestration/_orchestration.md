@@ -4,7 +4,7 @@ open-forge:
   tags: [Extension, Workflow, Orchestration]
 ---
 
-# Orchestration
+# Task Coordination
 
 ## Axioms
 

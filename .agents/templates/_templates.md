@@ -16,7 +16,7 @@ Templates are reusable starting files. Copy and adapt a Template, then maintain 
 
 - Check `Entries` when copy-ready starting content would help with a new artifact.
 - Choose the most relevant Template. Copy and adapt only what the destination needs.
-- Replace metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships. Remove Template and package-provenance tags from independently maintained copies. Rebase relative links for the destination.
+- Replace metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships. Remove Template unless the result is another Template. Remove package tags that do not describe the destination. Rebase relative links for the destination.
 - Later Template changes do not update existing copies.
 - If the new artifact needs continuing guidance or requirements, link the source that defines them. The Template provides only starting content.
 
@@ -28,11 +28,12 @@ Templates are reusable starting files. Copy and adapt a Template, then maintain 
 
 ## Entries
 
-- [Explore a choice before committing to a direction](collaboration/_collaboration.md) - #Extension #Template #Collaboration
-
 - [Copy-ready starting files for CLI documents, including command-local contract sets](cli/_cli.md) - #Template #CLI #Command #Contract #Interface #Behavior #TechnicalDesign
+- [Explore a choice before committing to a direction](collaboration/_collaboration.md) - #Extension #Template #Collaboration
+- [Start a Directive, Guidance, Pattern, Skill, Template, Map, or Memory record](core/_core.md) - #Extension #Template
 - [Start one current explanation, Vision, Architecture, Principles, or Maintenance Contract](documents/_documents.md) - #Extension #Template #Document
 - [Workspace-owned starting structures for this project's Memory records](memory/_memory.md) - #Template #Memory
-- [Preserve useful execution evidence or prepare a fixed snapshot for an actual transfer](orchestration/_orchestration.md) - #Extension #Template #Orchestration #Memory
+- [Preserve useful execution evidence or prepare a fixed snapshot for an actual transfer](observations-and-handoffs/_observations-and-handoffs.md) - #Extension #Template #Memory #Observation #Handoff
 - [Choose a starter for a possibility, investigation, accepted choice, or active work](planning/_planning.md) - #Extension #Template #Planning #Memory
+- [Plan user flows and expected outcomes, group scenarios, and record actual runs](scenarios/_scenarios.md) - #Extension #Template #UserFlow #Scenario #ScenarioCollection #RunRecord
 - [Create a method for the Use Workflow Skill without defining a new harness capability](workflows/_workflows.md) - #Extension #Template #Workflow

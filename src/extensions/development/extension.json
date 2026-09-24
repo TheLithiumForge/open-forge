@@ -1,8 +1,8 @@
 {
   "id": "development",
   "name": "Development",
-  "description": "Implement changes, investigate defects, and review results with the workspace's existing tools",
-  "version": "0.3.0",
+  "description": "Implement changes, investigate defects, and review results using the project's existing tools and conventions",
+  "version": "0.4.0",
   "dependencies": [
     "workflows"
   ]

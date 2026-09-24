@@ -80,6 +80,8 @@ this; its remaining phases feed 32, 37 and 39.
 
 ## Entries
 
+- [Completed root remove command and persistent removal intent across files, routes, packages and libraries](task50-unified-remove.md) - #Memory #Working #CLI #Task #Remove #Complete
+
 - [Default Index reachability through native Skills and their routed resource catalogues](task47-default-skill-indexing.md) - #Memory #Working #CLI #Task #Skill #Index #Contextual
 
 - [Remaining beta product work and delivery verification after the completed migration](beta-follow-ups.md) - #Memory #Working #Backlog #CLI #Beta #Contextual

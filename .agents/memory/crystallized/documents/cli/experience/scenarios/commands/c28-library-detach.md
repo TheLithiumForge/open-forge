@@ -241,7 +241,7 @@ Verify source independence does not bypass permission and --automatic does not g
 
 **Situation:** No ownership record
 
-**Disposition:** Added. Worth retaining as an independently checked user outcome: Report a completed ownership observation, select no claim, and keep unavailable counts unknown.
+**Disposition:** Updated for persistent removal. Record the selected ID without inferring link ownership.
 
 ### Starting point
 
@@ -257,16 +257,20 @@ open-forge library detach team --automatic
 
 ### Expected result
 
-Report a completed ownership observation, select no claim, and keep unavailable counts unknown. Distinguish a missing, unreadable or unusable record from a valid empty record; do not invent an unknown-ID error. Preserve every file.
+Record `team` in `removedLibraries` and complete the settings-only removal. The
+absent lock supplies no link ownership: preserve every source and destination,
+including exact-looking links. Do not create a registration or ownership lock.
 
 
 
 ### Verification
 
-Independently establish the record state and unchanged workspace. Verify no source inventory or selected Library was fabricated; a separate valid-record unknown-ID case must remain invalid-input.
+Independently establish lock absence, the new ID exclusion and unchanged source
+and link identities. Repeat and verify a no-op. A separate valid empty lock also
+permits this exclusion; neither case authorizes link deletion.
 
 
-Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
+Revision note: Updated for the accepted Task 50 persistent-removal contract.
 
 ## C28-10
 
@@ -302,7 +306,7 @@ Verify live ownership and no partial detach.
 
 **Situation:** Record invalid
 
-**Disposition:** Added. Worth retaining as an independently checked user outcome: Report a completed ownership observation, select no claim, and keep unavailable counts unknown.
+**Disposition:** Added. Preserve all state when ownership cannot be interpreted.
 
 ### Starting point
 
@@ -318,16 +322,20 @@ open-forge library detach team --automatic
 
 ### Expected result
 
-Report a completed ownership observation, select no claim, and keep unavailable counts unknown. Distinguish a missing, unreadable or unusable record from a valid empty record; do not invent an unknown-ID error. Preserve every file.
+Report the unusable ownership boundary, select no claim and perform no effects.
+Preserve content, links, settings and the malformed lock. Do not treat unknown
+ownership as the known-empty state of a proven-absent lock.
 
 
 
 ### Verification
 
-Independently establish the record state and unchanged workspace. Verify no source inventory or selected Library was fabricated; a separate valid-record unknown-ID case must remain invalid-input.
+Independently establish the malformed record and unchanged workspace. Verify no
+registration, link deletion or removal exclusion was fabricated. A separate
+valid-record unregistered-ID case permits only its settings exclusion.
 
 
-Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
+Revision note: Updated for the accepted Task 50 persistent-removal contract.
 
 ## C28-12
 

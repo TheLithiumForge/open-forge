@@ -10,10 +10,19 @@ using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
@@ -22,6 +31,7 @@ internal sealed class ExtensionRemovePlanner
 {
     private readonly ExtensionRemoveSelectionResolver _selectionResolver;
     private readonly PhysicalPathResolver _physicalPathResolver;
+    private readonly FileExpectationValidator _expectationValidator;
     private readonly ExtensionRemovePathInspector _pathInspector;
     private readonly ExtensionRemoveTopologyBuilder _topologyBuilder = new();
     private readonly WorkspaceOwnershipStore _ownershipStore = new();
@@ -33,6 +43,7 @@ internal sealed class ExtensionRemovePlanner
     {
         ArgumentNullException.ThrowIfNull(selectionPrompt);
         _physicalPathResolver = physicalPathResolver;
+        _expectationValidator = new FileExpectationValidator(physicalPathResolver);
         _selectionResolver = new ExtensionRemoveSelectionResolver(selectionPrompt, selectionQuestion);
         _pathInspector = new ExtensionRemovePathInspector(physicalPathResolver);
     }
@@ -129,9 +140,96 @@ internal sealed class ExtensionRemovePlanner
                 blocker.DependencyId);
         }
 
+        var settings = await WorkspaceSettingsReader.ReadAsync(
+            _physicalPathResolver,
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+        if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
+        {
+            return Stop(
+                request,
+                settings.State == WorkspaceSettingsReadState.Invalid
+                    ? ExtensionRemoveFindingCode.SettingsInvalid
+                    : ExtensionRemoveFindingCode.SettingsUnavailable,
+                settings.Cause ?? ".agents/open-forge.json could not be safely observed.",
+                selection,
+                dependencies,
+                settings.LogicalPath);
+        }
+
+        var removalSelection = new WorkspaceRemovalSelection
+        {
+            Extensions = [.. selection.Ids],
+        };
+        var settingsChange = WorkspaceSettingsChangePlanner.PlanRemovals(settings, removalSelection);
+        var settingsRecoveryTarget = CreateSettingsRecoveryTarget(settings, settingsChange);
+        var settingsEffect = settingsChange is null
+            ? null
+            : new ExtensionRemoveEffect(
+                WorkspaceSettingsDefinitions.RelativePath,
+                packageId: null,
+                ExtensionRemoveEffectKind.Settings,
+                ExtensionRemoveEffectAction.RecordExclusion,
+                ExtensionRemoveEffectOutcome.Planned,
+                ExtensionRemoveEffectResidual.None);
+
+        var settingsDirectoryEffects = new List<ExtensionRemovePlannedEffect>();
+        if (settingsChange?.Kind == PlannedFileChangeKind.Create)
+        {
+            var directoryPath = Path.Combine(request.Workspace.LexicalRoot, ".agents");
+            FileExpectationValidationResult directoryObservation;
+            try
+            {
+                directoryObservation = await _expectationValidator.ValidateAsync(
+                    request.Workspace,
+                    FileExpectation.Missing(directoryPath),
+                    cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return Stop(
+                    request,
+                    ExtensionRemoveFindingCode.Interrupted,
+                    "Workspace settings directory observation was interrupted.",
+                    selection,
+                    dependencies,
+                    ".agents");
+            }
+
+            if (directoryObservation.State == FileExpectationValidationState.Matched)
+            {
+                settingsDirectoryEffects.Add(new ExtensionRemovePlannedEffect
+                {
+                    Result = new ExtensionRemoveEffect(
+                        ".agents",
+                        packageId: null,
+                        ExtensionRemoveEffectKind.Directory,
+                        ExtensionRemoveEffectAction.Create,
+                        ExtensionRemoveEffectOutcome.Planned,
+                        ExtensionRemoveEffectResidual.None),
+                    DirectoryCreation = PlannedDirectoryCreation.Create(directoryObservation.Expectation),
+                });
+            }
+            else if (directoryObservation.State != FileExpectationValidationState.Mismatched
+                || directoryObservation.Actual?.Kind != FileExpectationKind.Directory)
+            {
+                return Stop(
+                    request,
+                    directoryObservation.State == FileExpectationValidationState.Cancelled
+                        ? ExtensionRemoveFindingCode.Interrupted
+                        : ExtensionRemoveFindingCode.SettingsUnavailable,
+                    directoryObservation.Cause
+                        ?? "The workspace settings directory is not a safe ordinary directory or a proven missing path.",
+                    selection,
+                    dependencies,
+                    ".agents");
+            }
+        }
+
         var installedIds = current.Select(package => package.Id)
             .ToHashSet(StringComparer.Ordinal);
-        if (selection.Ids.All(id => !installedIds.Contains(id)))
+        if (selection.Ids.All(id => !installedIds.Contains(id))
+            && settingsChange is null)
         {
             IReadOnlyList<ExtensionRemoveFinding> lockFindings = workspaceOwnership.IsTrustworthy
                 ? Array.Empty<ExtensionRemoveFinding>()
@@ -159,7 +257,8 @@ internal sealed class ExtensionRemovePlanner
                     [],
                     residualPath: null),
                 Verified(),
-                lockFindings);
+                lockFindings,
+                settingsEffect);
             if (request.AllowPath.IsEmpty)
             {
                 return new ExtensionRemovePlanBuild
@@ -187,11 +286,71 @@ internal sealed class ExtensionRemovePlanner
                 Effects = [],
                 OwnershipChange = null,
                 OwnershipRecoveryTarget = null,
+                SettingsObservation = settings,
+                RemovalSelection = removalSelection,
+                SettingsChange = null,
+                SettingsRecoveryTarget = null,
+                SettingsEffect = null,
             });
             return new ExtensionRemovePlanBuild
             {
                 Plan = permissionOnlyPlan,
                 Result = result,
+            };
+        }
+
+        if (selection.Ids.All(id => !installedIds.Contains(id)))
+        {
+            var recoveryRead = await ReadRecoveryAsync(request, allowedRecovery, cancellationToken)
+                .ConfigureAwait(false);
+            if (recoveryRead.Boundary is not null)
+            {
+                return recoveryRead.Boundary;
+            }
+
+            var settingsOnlyPlan = ExtensionRemovePlan.Create(new ExtensionRemovePlanInput
+            {
+                Request = request,
+                Selection = selection,
+                Dependencies = dependencies,
+                Planning = new ExtensionRemovePlanningPlan { Decisions = [] },
+                Topology = new ExtensionRemoveTopology
+                {
+                    IntendedTargetBytes = new Dictionary<string, byte[]>(StringComparer.Ordinal),
+                    GeneratedEntries = new Dictionary<string, IReadOnlyList<GeneratedNavigationEntry>>(StringComparer.Ordinal),
+                    ProtectedPaths = new HashSet<string>(StringComparer.Ordinal),
+                },
+                Effects = settingsDirectoryEffects,
+                OwnershipChange = null,
+                OwnershipRecoveryTarget = null,
+                SettingsObservation = settings,
+                RemovalSelection = removalSelection,
+                SettingsChange = settingsChange,
+                SettingsRecoveryTarget = settingsRecoveryTarget,
+                SettingsEffect = settingsEffect,
+            });
+            return new ExtensionRemovePlanBuild
+            {
+                Plan = settingsOnlyPlan,
+                Result = ExtensionRemoveResultFactory.Create(
+                    request,
+                    selection,
+                    dependencies,
+                    [],
+                    new ExtensionRemoveGeneratedNavigation([]),
+                    settingsDirectoryEffects.Select(effect => effect.Result).ToArray(),
+                    Lifecycle(
+                        ExtensionRemoveLifecycleAction.Preserve,
+                        ExtensionRemoveLifecycleOutcome.AlreadyCurrent),
+                    new ExtensionRemoveRecovery(
+                        settingsRecoveryTarget is null
+                            ? ExtensionRemoveRecoveryState.NotRequired
+                            : ExtensionRemoveRecoveryState.NotCreated,
+                        settingsEffect is null ? [] : [WorkspaceSettingsDefinitions.RelativePath],
+                        residualPath: null),
+                    Planned(),
+                    [],
+                    settingsEffect),
             };
         }
 
@@ -248,6 +407,7 @@ internal sealed class ExtensionRemovePlanner
         {
             topologyBuild = await _topologyBuilder.BuildAsync(
                 request.Workspace,
+                settings.Document,
                 pathPlans
                     .Where(path => path.Action is ExtensionRemovePathAction.Delete
                         or ExtensionRemovePathAction.ReleaseOwnership)
@@ -285,7 +445,13 @@ internal sealed class ExtensionRemovePlanner
                 dependencies);
         }
 
-        var effects = ExtensionRemovePlanAssembler.BuildEffects(observations, pathPlans, topologyBuild);
+        var effects = new List<ExtensionRemovePlannedEffect>(settingsDirectoryEffects);
+        findings.AddRange(topologyBuild.ExcludedPaths.Select(path =>
+            new ExtensionRemoveFinding(
+                ExtensionRemoveFindingCode.PathExcluded,
+                "Workspace removal settings exclude this generated-navigation path.",
+                path)));
+        effects.AddRange(ExtensionRemovePlanAssembler.BuildEffects(observations, pathPlans, topologyBuild));
         var ownershipPlan = _ownershipStore.PlanExtensionOwnership(
             workspaceOwnership,
             [.. current.Where(extension => !selected.Contains(extension.Id))]);
@@ -317,9 +483,15 @@ internal sealed class ExtensionRemovePlanner
             Effects = effects,
             OwnershipChange = ownershipPlan.Change,
             OwnershipRecoveryTarget = ownershipRecovery,
+            SettingsObservation = settings,
+            RemovalSelection = removalSelection,
+            SettingsChange = settingsChange,
+            SettingsRecoveryTarget = settingsRecoveryTarget,
+            SettingsEffect = settingsEffect,
         });
         var hasRecovery = effects.Any(effect => effect.RecoveryTarget is not null)
-            || ownershipRecovery is not null;
+            || ownershipRecovery is not null
+            || settingsRecoveryTarget is not null;
         return new ExtensionRemovePlanBuild
         {
             Plan = plan,
@@ -344,8 +516,26 @@ internal sealed class ExtensionRemovePlanner
                     [],
                     residualPath: null),
                 Planned(),
-                findings),
+                findings,
+                settingsEffect),
         };
+    }
+
+    private static RecoveryBundleTarget? CreateSettingsRecoveryTarget(
+        WorkspaceSettingsRead observation,
+        PlannedFileChange? change)
+    {
+        if (change is null)
+        {
+            return null;
+        }
+
+        var before = observation.Snapshot
+            ?? throw new InvalidOperationException(
+                "A planned removal settings change requires an exact prior settings snapshot.");
+        return change.Kind == PlannedFileChangeKind.Create
+            ? RecoveryBundleTarget.CreateReversible(change, before)
+            : RecoveryBundleTarget.Create(change, before);
     }
 
     private static ExtensionRemovePlanBuild UnknownOwnershipBoundary(

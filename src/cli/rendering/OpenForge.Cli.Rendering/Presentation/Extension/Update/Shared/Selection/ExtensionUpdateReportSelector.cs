@@ -617,7 +617,8 @@ internal static class ExtensionUpdateReportSelector
                 or ExtensionUpdateFindingCode.GeneratedRegionUnsafe
                 or ExtensionUpdateFindingCode.TargetChanged
                 or ExtensionUpdateFindingCode.TopologyVerificationFailed => CliSubjectKind.File,
-            _ when finding.Target is not null && finding.Target.Contains('/', StringComparison.Ordinal) => CliSubjectKind.File,
+            _ when finding.Target is { } target
+                && (target.Contains('/', StringComparison.Ordinal) || Path.IsPathRooted(target)) => CliSubjectKind.File,
             _ => CliSubjectKind.Identifier,
         };
         var subject = kind == CliSubjectKind.Source
@@ -654,6 +655,34 @@ internal static class ExtensionUpdateReportSelector
             {
                 new CliNextAction("open-forge cleanup", global::OpenForge.Cli.OutputText.Shared.SharedText.MessageReviewAndRemoveTheReportedRecoveryBundle()),
             },
+            ExtensionUpdateFindingCode.SettingsInvalid or ExtensionUpdateFindingCode.SettingsUnavailable => new[]
+            {
+                new CliNextAction(
+                    global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageRepairSettingsThenRerunUpdate(),
+                    "Repair workspace settings before updating an Extension.")
+                { Kind = CliNextActionKind.Sentence },
+            },
+            ExtensionUpdateFindingCode.RemovedExtension => new[]
+            {
+                new CliNextAction(
+                    global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageRemoveExtensionFromSettingsThenRerunUpdate(),
+                    "Workspace removal settings currently exclude this Extension.")
+                { Kind = CliNextActionKind.Sentence },
+            },
+            ExtensionUpdateFindingCode.BulkExcluded => new[]
+            {
+                new CliNextAction(
+                    global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageRemoveExtensionFromSettingsThenRerunUpdate(),
+                    "Workspace removal settings excluded this Extension from the bulk update.")
+                { Kind = CliNextActionKind.Sentence },
+            },
+            ExtensionUpdateFindingCode.PathExcluded or ExtensionUpdateFindingCode.ExcludedAncestor => new[]
+            {
+                new CliNextAction(
+                    global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageRemovePathFromSettingsThenRerunUpdate(),
+                    "Workspace removal settings currently exclude this Extension path.")
+                { Kind = CliNextActionKind.Sentence },
+            },
             _ => [],
         };
         return new CliFinding
@@ -670,19 +699,33 @@ internal static class ExtensionUpdateReportSelector
                 kind,
                 kind is CliSubjectKind.File or CliSubjectKind.Source ? subject : null,
                 kind == CliSubjectKind.Identifier ? subject : null),
-            Resolution = finding.Status == CliSemanticStatus.Attention
-                ? CliResolution.Informational
-                : actions.Length > 0
-                    ? CliResolution.TargetedOperation
-                    : finding.Status is CliSemanticStatus.Blocked or CliSemanticStatus.Failed
-                        ? CliResolution.ManualDecision
-                        : null,
+            Resolution = FindingResolution(finding, actions),
             Actions = actions,
             Evidence = [new CliEvidence("cause", finding.Cause)],
             Provenance = result.Source is { } source
                 ? new CliProvenance(source.Identity, source.Path)
                 : null,
         };
+    }
+
+    private static CliResolution? FindingResolution(
+        ExtensionUpdateFinding finding,
+        IReadOnlyList<CliNextAction> actions)
+    {
+        if (finding.Code == ExtensionUpdateFindingCode.PathExcluded
+            || finding.Status == CliSemanticStatus.Attention)
+        {
+            return CliResolution.Informational;
+        }
+
+        if (actions.Any(action => action.Kind == CliNextActionKind.Command))
+        {
+            return CliResolution.TargetedOperation;
+        }
+
+        return finding.Status is CliSemanticStatus.Blocked or CliSemanticStatus.Failed
+            ? CliResolution.ManualDecision
+            : null;
     }
 
     private static CliNextAction? Next(

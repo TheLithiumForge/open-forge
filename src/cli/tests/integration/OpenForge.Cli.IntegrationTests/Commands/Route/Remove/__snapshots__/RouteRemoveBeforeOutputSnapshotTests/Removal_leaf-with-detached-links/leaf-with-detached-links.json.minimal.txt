@@ -70,7 +70,21 @@
         "path": "README.md",
         "location": "1:8"
       }
-    ]
+    ],
+    "settings": {
+      "outcome": "applied",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [
+        ".agents/guidance/old guide.md",
+        ".agents/guidance/old guide.overwrite.md"
+      ],
+      "directories": []
+    },
+    "ownershipRelease": {
+      "outcome": "unchanged",
+      "claims": []
+    }
   },
   "recovery": null,
   "next": null

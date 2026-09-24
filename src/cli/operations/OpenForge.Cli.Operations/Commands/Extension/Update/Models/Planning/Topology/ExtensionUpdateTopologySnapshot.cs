@@ -23,6 +23,7 @@ internal sealed class ExtensionUpdateTopologySnapshot
                 },
                 StringComparer.Ordinal));
         ProtectedPaths = topology.ProtectedPaths.ToImmutableHashSet(StringComparer.Ordinal);
+        ExcludedPaths = topology.ExcludedPaths.ToImmutableArray();
     }
 
     internal IReadOnlyDictionary<string, ImmutableArray<byte>> IntendedTargetBytes { get; }
@@ -34,6 +35,8 @@ internal sealed class ExtensionUpdateTopologySnapshot
     internal IReadOnlyDictionary<string, IReadOnlyList<GeneratedNavigationEntry>> GeneratedEntries { get; }
 
     internal IReadOnlySet<string> ProtectedPaths { get; }
+
+    internal IReadOnlyList<string> ExcludedPaths { get; }
 
     private static IReadOnlyDictionary<string, ImmutableArray<byte>> SnapshotBytes(IReadOnlyDictionary<string, byte[]> values)
         => new ReadOnlyDictionary<string, ImmutableArray<byte>>(values.ToDictionary(

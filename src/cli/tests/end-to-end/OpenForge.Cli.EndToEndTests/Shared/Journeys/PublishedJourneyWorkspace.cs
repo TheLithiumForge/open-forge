@@ -12,6 +12,7 @@ internal sealed class PublishedJourneyWorkspace : IDisposable
     private const string AgentsPath = "AGENTS.md";
     private const string ClaudePath = "CLAUDE.md";
     private const string OwnershipPath = ".agents/open-forge.lock.json";
+    private const string SettingsPath = ".agents/open-forge.json";
     private static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
         ? StringComparer.OrdinalIgnoreCase
         : StringComparer.Ordinal;
@@ -122,6 +123,11 @@ internal sealed class PublishedJourneyWorkspace : IDisposable
     internal Task<ProcessRunResult> RunAsync(params string[] arguments)
     {
         ArgumentNullException.ThrowIfNull(arguments);
+        if (RecordsRemovalSettings(arguments))
+        {
+            ExpectFiles(SettingsPath);
+        }
+
         return PublishedJourneyProcess.RunAsync(
             Target,
             Path,
@@ -224,6 +230,29 @@ internal sealed class PublishedJourneyWorkspace : IDisposable
         {
             _reservedParentDirectories.Add(parent);
         }
+    }
+
+    private static bool RecordsRemovalSettings(IReadOnlyList<string> arguments)
+    {
+        if (arguments.Count == 0)
+        {
+            return false;
+        }
+
+        if (arguments[0] == "remove")
+        {
+            return true;
+        }
+
+        if (arguments.Count < 2)
+        {
+            return false;
+        }
+
+        return (arguments[0], arguments[1]) is
+            ("route", "remove")
+            or ("extension", "remove")
+            or ("library", "detach");
     }
 
     private void ValidateFileDestination(string path)

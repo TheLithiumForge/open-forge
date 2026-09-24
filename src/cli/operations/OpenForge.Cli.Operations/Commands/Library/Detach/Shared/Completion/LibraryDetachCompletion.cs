@@ -84,6 +84,7 @@ internal static class LibraryDetachCompletion
                     Workspace = input.Request.Workspace,
                     State = planState,
                     Effects = plan?.Effects,
+                    SettingsChange = plan?.Permissions?.Change,
                 }),
                 Application = application,
                 Findings = [.. findings],

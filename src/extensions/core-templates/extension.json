@@ -1,0 +1,7 @@
+{
+  "id": "core-templates",
+  "name": "Core Templates",
+  "description": "Create directives, guidance, patterns, skills, templates, maps, and memory records from adaptable starting files",
+  "version": "0.4.0",
+  "dependencies": []
+}

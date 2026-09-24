@@ -30,7 +30,8 @@ internal static class LibraryMutationApplicationRunner
             throw new ArgumentException("Library application requires a live same-workspace lease.", nameof(input));
         }
 
-        if (input.Directories.IsDefault
+        if (input.SettingsParentDirectories.IsDefault
+            || input.Directories.IsDefault
             || input.Links.IsDefault
             || input.GeneratedRegions.IsDefault
             || input.ProtectedSourceRoots.IsDefault)
@@ -78,11 +79,12 @@ internal static class LibraryMutationApplicationRunner
         var fileChanges = input.GeneratedRegions
             .Concat(input.OwnershipChange is null ? [] : [input.OwnershipChange])
             .ToImmutableArray();
-        MutationValidationResult fileValidation = input.Directories.Length == 0 && fileChanges.Length == 0
+        var plannedDirectories = input.SettingsParentDirectories.Concat(input.Directories).ToImmutableArray();
+        MutationValidationResult fileValidation = plannedDirectories.Length == 0 && fileChanges.Length == 0
             ? MutationValidationResult.Valid()
             : await revalidator.ValidateAsync(
                 input.Lease,
-                input.Directories,
+                plannedDirectories,
                 fileChanges,
                 cancellationToken).ConfigureAwait(false);
         if (fileValidation.State != MutationValidationState.Valid)
@@ -98,7 +100,7 @@ internal static class LibraryMutationApplicationRunner
         }
 
         var linkChecks = ImmutableArray.CreateBuilder<RelativeFileLinkValidationResult>(input.Links.Length);
-        var linkPreflight = new LibraryLinkPreflight(input.Lease, input.Directories);
+        var linkPreflight = new LibraryLinkPreflight(input.Lease, plannedDirectories);
         foreach (var link in input.Links)
         {
             var check = await linkPreflight.ValidateAsync(
@@ -129,8 +131,25 @@ internal static class LibraryMutationApplicationRunner
         LibraryUnexpectedFailureFact? unexpected = null;
         var checkIndex = 0;
 
+        for (var index = 0; index < input.SettingsParentDirectories.Length && cancellation is null && unexpected is null; index++)
+        {
+            var creation = input.SettingsParentDirectories[index];
+            attempted.Add(Relative(input.Lease, creation.LogicalPath));
+            var receipt = await directoryApplier.ApplyAsync(
+                input.Lease,
+                creation,
+                fileValidation.Checks[checkIndex++],
+                cancellationToken).ConfigureAwait(false);
+            directoryReceipts.Add(receipt);
+            if (!Verified(receipt.EffectState, receipt.VerificationState))
+            {
+                ReadStop(receipt.NotStartedReason, receipt.Cause, out cancellation, out unexpected);
+                break;
+            }
+        }
+
         LibraryPermissionApplication? permissionApplication = null;
-        if (input.Permissions is { } permissionStage)
+        if (cancellation is null && unexpected is null && input.Permissions is { } permissionStage)
         {
             if (permissionStage.Change is { } permissionChange)
             {
@@ -302,6 +321,7 @@ internal static class LibraryMutationApplicationRunner
     private static bool ProtectsSources(LibraryMutationApplicationRequest input)
     {
         var targets = input.Directories.Select(value => Relative(input.Lease, value.LogicalPath).Value)
+            .Concat(input.SettingsParentDirectories.Select(value => Relative(input.Lease, value.LogicalPath).Value))
             .Concat(input.Links.Select(value => value.DestinationPath.Value))
             .Concat(input.GeneratedRegions.Select(value => Relative(input.Lease, value.LogicalPath).Value))
             .Concat(input.OwnershipChange is { } ownership ? [Relative(input.Lease, ownership.LogicalPath).Value] : [])

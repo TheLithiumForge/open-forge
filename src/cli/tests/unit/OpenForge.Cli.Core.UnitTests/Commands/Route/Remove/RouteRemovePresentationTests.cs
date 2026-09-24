@@ -133,4 +133,48 @@ public sealed class RouteRemovePresentationTests
         Assert.Single(result.GeneratedNavigation.Regions);
         Assert.Equal(2, result.Effects.Length);
     }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Route Remove reports planned settings exclusions and ownership release separately from subject effects"),
+     Trait("Feature", "route-remove"), Trait("Evidence", "UnitBehavior")]
+    public void PlannedPersistenceIsTypedAndTruthful()
+    {
+        var formation = RouteRemoveTestData.Formation() with
+        {
+            Persistence = new RouteRemovePersistence
+            {
+                Settings = new RouteRemoveSettingsRemoval
+                {
+                    Outcome = RouteRemovePersistenceOutcome.Planned,
+                    Path = ".agents/open-forge.json",
+                    Files = [RouteRemoveTestData.LeafPath, RouteRemoveTestData.OverwritePath],
+                },
+                Ownership = new RouteRemoveOwnershipRelease
+                {
+                    Outcome = RouteRemovePersistenceOutcome.Planned,
+                    Claims =
+                    [
+                        new RouteRemoveOwnershipClaim
+                        {
+                            Path = RouteRemoveTestData.LeafPath,
+                            Manager = RouteRemoveOwnershipManager.Extension,
+                            Owner = "toolkit",
+                        },
+                    ],
+                },
+            },
+        };
+        var result = new RouteRemoveResult(formation, CliSemanticStatus.Complete, null);
+
+        var text = CliRenderingStage.Render(
+            new CliPresentationRequest<RouteRemoveResult>(result,
+                new CliPresentation(CliFormat.Text, CliDetail.Full, null)),
+            RouteRemovePresentation.Rendering).PrimaryContent;
+
+        Assert.Contains("Would record persistent route removal", text, StringComparison.Ordinal);
+        Assert.Contains("Would release 1 managed content ownership claim", text, StringComparison.Ordinal);
+        Assert.Contains($"Extension owner toolkit: {RouteRemoveTestData.LeafPath}", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("open-forge.json", result.Effects.Select(effect => effect.Path));
+        Assert.DoesNotContain("lock.json", result.Effects.Select(effect => effect.Path));
+    }
 }

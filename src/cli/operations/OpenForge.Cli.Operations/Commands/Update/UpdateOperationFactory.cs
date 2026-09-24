@@ -32,6 +32,7 @@ internal static class UpdateOperationFactory
                     : new WorkspaceLockManager(lockStoreRoot),
                 new UpdatePlanRevalidator(planBuilder, mutationRevalidator),
                 new UpdateEffectApplication(
+                    new DirectoryCreationApplier(mutationRevalidator, validator),
                     new FileChangeApplier(mutationRevalidator, validator)),
                 new UpdateAppliedVerifier(planBuilder)));
     }

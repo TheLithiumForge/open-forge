@@ -22,8 +22,8 @@ The [current Patterns document](../../../framework/primitives/patterns.md) defin
 - One-off work, temporary transitions, and unsettled candidates do not become Patterns only because they have structure
 - A Pattern stays focused on one reusable shape
 - Concrete examples remain valid against their APIs, formats, and tools. Intentionally incomplete examples identify themselves as schematic
-- An applicable Pattern remains the default shape while a deliberate alternative stays possible. Explain the departure before dependent work. An exception to an agreed shape requires existing authority or a user decision before proceeding
-- Binding shape requirements use a Directive or another active Axiom rather than silently changing Pattern authority
+- An applicable Pattern remains the default shape. Deliberate adaptations are allowed within granted authority; explain material departures before dependent work. A mandatory shape requires authority for its exception
+- Binding shape requirements come from a Directive, an active Axiom, or an accepted requirement rather than Pattern classification alone
 - Child routes may narrow or preserve positive scope through the ordinary routing contract
 - The installable source begins with no opinionated Pattern files
 

@@ -56,6 +56,8 @@ public sealed class ExtensionUpdateBeforeOutputSnapshotTests
     [InlineData("new-version-with-new-files", (int)CliSemanticStatus.Complete)]
     [InlineData("retired-kept", (int)CliSemanticStatus.Attention)]
     [InlineData("retired-pruned", (int)CliSemanticStatus.Complete)]
+    [InlineData("removed-extension", (int)CliSemanticStatus.Blocked)]
+    [InlineData("path-excluded", (int)CliSemanticStatus.Complete)]
     [InlineData("all-packages", (int)CliSemanticStatus.Complete)]
     [InlineData("no-selection-non-interactive", (int)CliSemanticStatus.Invalid)]
     [InlineData("ownership-unknown", (int)CliSemanticStatus.Attention)]
@@ -78,8 +80,22 @@ public sealed class ExtensionUpdateBeforeOutputSnapshotTests
             source.AddPackage("base", [], (".agents/base.md", "# Base v1\n"));
         var installed = await workspace.RunAsync(["extension", "install", "--all", "--source", source.Path, "--automatic"]);
         Assert.Equal(0, installed.ExitCode);
+        if (situation == "removed-extension")
+        {
+            await File.WriteAllTextAsync(
+                workspace.Combine(".agents/open-forge.json"),
+                "{\"schemaVersion\":1,\"removedExtensions\":[\"toolkit\"]}",
+                TestContext.Current.CancellationToken);
+        }
+        else if (situation == "path-excluded")
+        {
+            await File.WriteAllTextAsync(
+                workspace.Combine(".agents/open-forge.json"),
+                "{\"schemaVersion\":1,\"removedFiles\":[\".agents/toolkit.md\"]}",
+                TestContext.Current.CancellationToken);
+        }
         if (situation is "retired-kept" or "retired-pruned") source.RemovePayload("toolkit", ".agents/toolkit.md");
-        if (situation is "files-replaced" or "dry-run" or "all-packages" or "lock-held" or "write-failed-partial") source.ReplacePayload("toolkit", ".agents/toolkit.md", "# Toolkit v2\n");
+        if (situation is "files-replaced" or "dry-run" or "all-packages" or "lock-held" or "write-failed-partial" or "path-excluded") source.ReplacePayload("toolkit", ".agents/toolkit.md", "# Toolkit v2\n");
         if (situation == "write-failed-partial") source.ReplacePayload("toolkit", ".agents/aaa.md", "# Earlier v2\n");
         if (situation == "all-packages") source.ReplacePayload("base", ".agents/base.md", "# Base v2\n");
         if (situation == "new-version-with-new-files")
@@ -116,9 +132,10 @@ public sealed class ExtensionUpdateBeforeOutputSnapshotTests
                     automatic: true, allowInteraction: false), cancellation.Token);
         }
         Assert.Equal((CliSemanticStatus)status, result.Status);
-        if (situation is "up-to-date" or "dry-run" or "source-unreadable" or "lock-held" or "cancelled" or "no-selection-non-interactive" or "ownership-unknown" or "permission-required")
+        if (situation is "up-to-date" or "dry-run" or "source-unreadable" or "lock-held" or "cancelled" or "no-selection-non-interactive" or "ownership-unknown" or "permission-required" or "removed-extension")
             Assert.Equal(before, workspace.Snapshot());
         if (situation is "files-replaced" or "all-packages") Assert.Equal("# Toolkit v2\n", workspace.ReadText(".agents/toolkit.md"));
+        if (situation == "path-excluded") Assert.Equal("# Toolkit v1\n", workspace.ReadText(".agents/toolkit.md"));
         if (situation == "retired-pruned") Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
         if (situation == "retired-kept") Assert.True(File.Exists(workspace.Combine(".agents/toolkit.md")));
         if (situation == "write-failed-partial")

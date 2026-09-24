@@ -18,8 +18,8 @@ defines the deterministic, technology-neutral operation behind that interface.
 This entrypoint does not duplicate either contract and no Route Technical Design
 is needed for this operation.
 
-The command accepts one eligible ordinary unmanaged logical leaf or one eligible
-ordinary unmanaged category. A category is selected through one recognized
+The command accepts one eligible ordinary logical leaf or one eligible ordinary
+category, including Framework- or Extension-managed content. A category is selected through one recognized
 entrypoint source reference and is processed as one complete operation, not as a
 batch of leaf removals.
 
@@ -43,4 +43,4 @@ second source of command meaning or selected-category authority.
 ## Entries
 
 - [Accepted current technology-neutral resolution, effects, safety, recovery, and conformance for `route remove`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Remove #Behavior #Mutation #Reference #Safety #Recovery #CurrentTruth
-- [Accepted current public interface for removing one eligible unmanaged routed leaf or complete routed category](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Remove #Interface #Mutation #Reference #Safety #CurrentTruth
+- [Accepted current public interface for removing one routed leaf or complete routed category and remembering the removal](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Route #Remove #Interface #Mutation #Reference #Safety #CurrentTruth

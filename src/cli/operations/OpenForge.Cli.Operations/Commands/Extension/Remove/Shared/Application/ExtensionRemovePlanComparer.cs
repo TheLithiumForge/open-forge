@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Application;
 
@@ -10,7 +11,12 @@ internal static class ExtensionRemovePlanComparer
     internal static bool Matches(ExtensionRemovePlan expected, ExtensionRemovePlan actual)
         => expected.Selection.SelectedBy == actual.Selection.SelectedBy
             && expected.Selection.Ids.SequenceEqual(actual.Selection.Ids, StringComparer.Ordinal)
+            && expected.SettingsObservation.MatchesObservation(actual.SettingsObservation)
+            && expected.RemovalSelection.Extensions.SequenceEqual(
+                actual.RemovalSelection.Extensions,
+                StringComparer.Ordinal)
             && DependencyEquals(expected.Dependencies, actual.Dependencies)
+            && DirectoryCreationsEqual(expected, actual)
             && expected.Planning.Decisions.Select(DecisionKey)
                 .SequenceEqual(actual.Planning.Decisions.Select(DecisionKey), StringComparer.Ordinal)
             && LibraryBoundariesEqual(expected, actual)
@@ -18,6 +24,17 @@ internal static class ExtensionRemovePlanComparer
             && ChangesEqual(
                 ExtensionRemoveApplicationOperation.ReadChanges(expected),
                 ExtensionRemoveApplicationOperation.ReadChanges(actual));
+
+    private static bool DirectoryCreationsEqual(
+        ExtensionRemovePlan expected,
+        ExtensionRemovePlan actual)
+    {
+        var expectedCreations = ExtensionRemoveApplicationOperation.ReadDirectoryCreations(expected);
+        var actualCreations = ExtensionRemoveApplicationOperation.ReadDirectoryCreations(actual);
+        return expectedCreations.Count == actualCreations.Count
+            && expectedCreations.Select(creation => creation.Expectation)
+                .SequenceEqual(actualCreations.Select(creation => creation.Expectation));
+    }
 
     private static bool LibraryBoundariesEqual(ExtensionRemovePlan expected, ExtensionRemovePlan actual)
     {

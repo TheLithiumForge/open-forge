@@ -65,10 +65,10 @@ Memory loading follows the role each state plays:
 
 - The Core Memory `root route` enters baseline context so every task can preserve durable state correctly
 - Core Working and Crystallized `entrypoints` enter baseline context so active resumability and accepted current records are discoverable
-- The Core Emerging `entrypoint` retains #KeepInMind so candidate learning is revisited at applicable continuity boundaries. Optional Extension routes are selected separately, and the Orchestration Observations route has no automatic continuity tag
+- The Core Emerging `entrypoint` retains #KeepInMind so candidate learning is revisited at the defined refresh points. Optional Extension routes are selected separately, and the optional Observations route has no automatic refresh tag
 - Archived remains on demand because historical context should enter active work only when its `route` is relevant
 
-The eagerly visible Core files are compact `entrypoints` and their generated navigation. Optional Extension routes and individual records remain selected by relevance unless their own tags explicitly give them a baseline or continuity role.
+The eagerly visible Core files are compact `entrypoints` and their generated navigation. Optional Extension routes and individual records remain selected by relevance unless their own tags explicitly give them an immediate or repeated loading requirement.
 
 ## Recorded-State Threshold
 
@@ -96,7 +96,7 @@ The Core ships the four state entrypoints. Optional Extensions supply deeper rol
 
 - Planning supplies [Analysis](../../../../../../src/extensions/planning/content/.agents/memory/emerging/analysis/_analysis.md), [Ideas](../../../../../../src/extensions/planning/content/.agents/memory/emerging/ideas/_ideas.md), [Decisions](../../../../../../src/extensions/planning/content/.agents/memory/crystallized/decisions/_decisions.md), and [Checkpoints](../../../../../../src/extensions/planning/content/.agents/memory/working/checkpoints/_checkpoints.md).
 - Project Documents supplies [Documents](../../../../../../src/extensions/project-documents/content/.agents/memory/crystallized/documents/_documents.md).
-- Orchestration supplies [Observations](../../../../../../src/extensions/orchestration/content/.agents/memory/emerging/observations/_observations.md) and [Handoffs](../../../../../../src/extensions/orchestration/content/.agents/memory/working/handoffs/_handoffs.md).
+- Observations and Handoffs supplies [Observations](../../../../../../src/extensions/observations-and-handoffs/content/.agents/memory/emerging/observations/_observations.md) and [Handoffs](../../../../../../src/extensions/observations-and-handoffs/content/.agents/memory/working/handoffs/_handoffs.md).
 - Archived begins without requiring a mirror of every active `route`.
 
 These optional `routes` are useful defaults within their Extensions, not an untouchable taxonomy. A workspace may remove, replace, reorganize, or supplement them. Any Memory `routes` supplied by an Extension retain their declared order.

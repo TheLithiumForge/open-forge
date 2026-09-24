@@ -21,7 +21,7 @@ public sealed class LibraryPermissionPresentationTests
         var leaf = "docs/a.md";
         var stage = new LibraryPermissionStage
         {
-            Observation = null,
+            Observation = OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceSettingsRead.Absent(Path.GetFullPath(".agents/open-forge.json")),
             Approval = new()
             {
                 Leaves = new([leaf], [leaf], WorkspacePermissionDecision.Approved),
@@ -30,6 +30,7 @@ public sealed class LibraryPermissionPresentationTests
             },
             Result = new([leaf], [leaf], WorkspacePermissionDecision.Approved, WorkspacePermissionAction.Replace, (WorkspacePermissionOutcome)outcome),
             Change = null,
+            GrantChange = null,
             RecoveryTarget = null,
             Failure = null,
         };
@@ -93,7 +94,7 @@ public sealed class LibraryPermissionPresentationTests
         var scope = new LibraryPermissionScope(kind, "docs");
         return new()
         {
-            Observation = null,
+            Observation = OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceSettingsRead.Absent(Path.GetFullPath(".agents/open-forge.json")),
             Approval = new()
             {
                 Leaves = new([leaf], [leaf], WorkspacePermissionDecision.Approved),
@@ -102,6 +103,7 @@ public sealed class LibraryPermissionPresentationTests
             },
             Result = new([leaf], [leaf], WorkspacePermissionDecision.Approved, WorkspacePermissionAction.Create, WorkspacePermissionOutcome.Planned),
             Change = null,
+            GrantChange = null,
             RecoveryTarget = null,
             Failure = null,
         };

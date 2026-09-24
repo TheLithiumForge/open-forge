@@ -9,10 +9,17 @@ namespace OpenForge.Cli.Core.Framework.Settings.Models.Document;
 internal sealed record WorkspaceSettingsDocument(
     int SchemaVersion,
     ImmutableArray<string> AllowInstallPaths,
-    ImmutableArray<string> RemovedCategories)
+    ImmutableArray<string> RemovedCategories,
+    ImmutableArray<string> RemovedFiles)
 {
+    internal ImmutableArray<string> RemovedDirectories { get; init; } = [];
+
+    internal ImmutableArray<string> RemovedExtensions { get; init; } = [];
+
+    internal ImmutableArray<string> RemovedLibraries { get; init; } = [];
+
     internal static readonly WorkspaceSettingsDocument Empty =
-        new(WorkspaceSettingsDefinitions.SchemaVersion, [], []);
+        new(WorkspaceSettingsDefinitions.SchemaVersion, [], [], []);
 
     /// <summary>
     /// Whether this release understands the declared shape. A file that declares

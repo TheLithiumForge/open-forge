@@ -11,5 +11,5 @@ Open Forge is installed, but 2 files need attention.
   Warning  .agents/maps/_maps.md  Entries section is stale
          The Entries section of .agents/maps/_maps.md is stale.
          open-forge index
-  Startup reads 11 of 13 routed files, about 5.4k tokens.
+  Startup reads 11 of 13 routed files, about 5.5k tokens.
 Next: open-forge update

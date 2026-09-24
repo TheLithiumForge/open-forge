@@ -6,9 +6,11 @@ open-forge:
 
 # {Subject} Principles
 
-<!-- TEMPLATE: Use when several decisions share stable reasoning. Principles guide judgment; they do not replace scoped rules or specifications.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Use when several decisions share stable reasoning. Principles guide judgment; they do not replace scoped rules or specifications.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Scope
 
@@ -26,7 +28,9 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 **Tradeoff:** {What may be sacrificed or when another principle takes precedence.}
 
-<!-- Repeat the block only for principles with a distinct job. Avoid slogans that fit every possible decision. -->
+{
+Repeat the block only for principles with a distinct job. Avoid slogans that fit every possible decision.
+}
 
 ## Tensions And Ordering
 

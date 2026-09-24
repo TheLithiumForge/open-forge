@@ -20,6 +20,14 @@ internal sealed partial class RouteRemoveEffectApplication
         private readonly ImmutableArray<RouteRemoveApplicationReceipt>.Builder _receipts =
             ImmutableArray.CreateBuilder<RouteRemoveApplicationReceipt>(receiptCount);
         private RouteRemoveApplicationReceipt? _pending;
+        private RouteRemoveFileChangeReceipt? _settingsReceipt;
+        private RouteRemovePersistenceOutcome? _settingsOutcome;
+
+        internal void SetSettingsReceipt(FileChangeReceipt receipt)
+            => _settingsReceipt = new RouteRemoveFileChangeReceipt(receipt);
+
+        internal void SetSettingsOutcome(RouteRemovePersistenceOutcome outcome)
+            => _settingsOutcome = outcome;
 
         internal void Enter(PlannedFileChange change)
             => _pending = new RouteRemoveFileChangeReceipt(CompletionUnknown(plan, change));
@@ -51,7 +59,14 @@ internal sealed partial class RouteRemoveEffectApplication
         }
 
         internal RouteRemoveApplicationProgress Form(ApplicationStop? stop)
-            => FormProgress(plan, preparation, _receipts, stop);
+            => FormProgress(plan, preparation, _receipts, stop) with
+            {
+                SettingsReceipt = _settingsReceipt,
+                SettingsOutcome = _settingsOutcome,
+                OwnershipOutcome = plan.Projection.OwnershipChange is null
+                    ? RouteRemovePersistenceOutcome.Unchanged
+                    : RouteRemovePersistenceOutcome.NotStarted,
+            };
 
         internal RouteRemoveApplicationProgress CloseUnexpected(bool interrupted)
         {
@@ -63,7 +78,17 @@ internal sealed partial class RouteRemoveEffectApplication
 
             var stop = Unexpected(plan, interrupted);
             AppendRemaining(stop);
-            return FormProgress(plan, preparation, _receipts, stop);
+            return FormProgress(plan, preparation, _receipts, stop) with
+            {
+                SettingsReceipt = _settingsReceipt,
+                SettingsOutcome = _settingsOutcome
+                    ?? (_settingsReceipt is null
+                        ? null
+                        : RouteRemovePersistenceOutcome.Unknown),
+                OwnershipOutcome = plan.Projection.OwnershipChange is null
+                    ? RouteRemovePersistenceOutcome.Unchanged
+                    : RouteRemovePersistenceOutcome.NotStarted,
+            };
         }
 
         private void AppendRemaining(ApplicationStop stop)

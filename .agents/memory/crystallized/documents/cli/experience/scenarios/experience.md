@@ -499,7 +499,7 @@ Fixture: `OWNERSHIP-VARIANTS`.
 
 ### Expected result
 
-**Reviewed target:** Keep absent, unreadable, malformed and unusable ownership distinct from known empty or known different-ID records. Continue safe read-only information and explicit safe create/install/attach work when its real targets and authority are known. Claim-dependent sync, detach or deletion makes no guessed selection. Never reconstruct ownership from matching files, overwrite conflicts or erase unrelated known claims.
+**Reviewed target:** Keep absent, unreadable, malformed and unusable ownership distinct from known empty or known different-ID records. Continue safe read-only information and explicit safe create/install/attach work when its real targets and authority are known. For Library Attach, an absent lock is known empty; invalid or unavailable required ownership blocks before effects even with explicit source and destination. Claim-dependent sync, detach or deletion makes no guessed selection. Never reconstruct ownership from matching files, overwrite conflicts or erase unrelated known claims.
 
 ### What the person sees
 

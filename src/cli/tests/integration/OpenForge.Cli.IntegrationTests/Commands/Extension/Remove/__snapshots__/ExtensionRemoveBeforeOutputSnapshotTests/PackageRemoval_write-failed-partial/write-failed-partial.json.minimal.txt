@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Extension remove stopped after 1 of 2 changes.",
+    "headline": "Extension remove stopped after 2 of 3 changes.",
     "kind": "failed"
   },
   "findings": [
@@ -30,8 +30,8 @@
   ],
   "effects": [],
   "counts": {
-    "packagesRemoved": 1,
-    "filesDeleted": 2,
+    "packagesRemoved": 0,
+    "filesDeleted": 1,
     "filesKept": 0,
     "filesReleased": 0,
     "sectionsUpdated": 0,
@@ -55,6 +55,13 @@
       "outcome": "not-requested"
     },
     "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "verified",
+        "owner": null,
+        "keptFor": []
+      },
       {
         "path": ".agents/aaa.md",
         "action": "delete",

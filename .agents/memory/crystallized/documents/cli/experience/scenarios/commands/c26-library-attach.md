@@ -330,11 +330,11 @@ Prove live contention and no newly created parent directories.
 
 **Situation:** Record invalid
 
-**Disposition:** Added. Worth retaining as an independently checked user outcome: Verify the explicitly requested safe link effects, then the ownership publication.
+**Disposition:** Added. Block Attach on invalid required ownership before link or record effects.
 
 ### Starting point
 
-The generated ownership lock is malformed, but the explicit source and unoccupied destination are otherwise safe. Use an unoccupied, safely admitted destination and a complete source. The fixture permits a usable ownership publication after content verification.
+The generated ownership lock is malformed, while the explicit source is complete and the unoccupied destination is safely admitted. A separate absent-lock fixture proves that missing ownership is known empty.
 
 Fixture: `LIB-UNATTACHED`. fixture recipe; ownership state must be independently verified.
 
@@ -346,16 +346,16 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 
 ### Expected result
 
-Verify the explicitly requested safe link effects, then the ownership publication. Unknown prior claims alone do not block attach. Count only independently observed effects and retain the prior-ownership observation.
+Block Attach before any effect. Preserve the malformed lock and explain the required correction. An absent lock does not block an otherwise safe Attach.
 
 
 
 ### Verification
 
-Observe the links and resulting claim independently. Pair with X29 for publication failure and with the occupied-destination case for preservation; do not treat either as the successful-publication fixture.
+Verify exact lock and source bytes remain unchanged, no destination links or registration are created, and no settings are changed. Independently verify that the absent-lock case creates only the requested links and new claim.
 
 
-Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
+Revision note: Task 50 distinguishes an absent lock from invalid required ownership; the Attach contract defines this boundary.
 
 ## C26-13
 

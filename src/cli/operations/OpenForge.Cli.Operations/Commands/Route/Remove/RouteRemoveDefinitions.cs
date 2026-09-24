@@ -17,7 +17,7 @@ internal static class RouteRemoveDefinitions
 
     internal static readonly CliSyntaxDefinition RemoveCommand = new(
         "remove",
-        "Remove one eligible routed source or complete category without releasing managed ownership.");
+        "Remove one routed source or category, record the removal, and release selected content ownership.");
 
     internal static readonly CliSyntaxDefinition SourceReference = new(
         "source-reference",
@@ -234,6 +234,19 @@ internal static class RouteRemoveDefinitions
             _ => Undefined(nameof(state), state),
         };
 
+    internal static string ReadMachineName(RouteRemovePersistenceOutcome outcome)
+        => outcome switch
+        {
+            RouteRemovePersistenceOutcome.NotEstablished => "not-established",
+            RouteRemovePersistenceOutcome.Planned => "planned",
+            RouteRemovePersistenceOutcome.Applied => "applied",
+            RouteRemovePersistenceOutcome.Unchanged => "unchanged",
+            RouteRemovePersistenceOutcome.NotStarted => "not-started",
+            RouteRemovePersistenceOutcome.Failed => "failed",
+            RouteRemovePersistenceOutcome.Unknown => "unknown",
+            _ => Undefined(nameof(outcome), outcome),
+        };
+
     internal static string ReadMachineName(RouteRemoveFindingCode code)
         => code switch
         {
@@ -268,6 +281,8 @@ internal static class RouteRemoveDefinitions
             RouteRemoveFindingCode.RecoveryFailed => RouteRemoveFindingCodes.RecoveryFailed,
             RouteRemoveFindingCode.OperationFailed => RouteRemoveFindingCodes.OperationFailed,
             RouteRemoveFindingCode.Interrupted => RouteRemoveFindingCodes.Interrupted,
+            RouteRemoveFindingCode.SettingsUnavailable => RouteRemoveFindingCodes.SettingsUnavailable,
+            RouteRemoveFindingCode.ProtectedTarget => RouteRemoveFindingCodes.ProtectedTarget,
             _ => Undefined(nameof(code), code),
         };
 
@@ -312,6 +327,8 @@ internal static class RouteRemoveFindingCodes
     internal const string RecoveryFailed = "route-remove.recovery-failed";
     internal const string OperationFailed = "route-remove.operation-failed";
     internal const string Interrupted = "route-remove.interrupted";
+    internal const string SettingsUnavailable = "route-remove.settings-unavailable";
+    internal const string ProtectedTarget = "route-remove.protected-target";
 }
 
 internal static class RouteRemoveNextActions

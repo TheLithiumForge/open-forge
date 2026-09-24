@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
@@ -29,6 +31,7 @@ internal sealed class ExtensionInstallSelectionResolver
     internal async ValueTask<ExtensionInstallSelectionResolution> ResolveAsync(
         ExtensionInstallRequest request,
         ExtensionInstallSourceResolution sourceResolution,
+        WorkspaceSettingsDocument settings,
         CancellationToken cancellationToken)
     {
         var ownership = await ReadOwnershipAsync(request, cancellationToken).ConfigureAwait(false);
@@ -48,6 +51,24 @@ internal sealed class ExtensionInstallSelectionResolver
         var selected = selection.Selection
             ?? throw new InvalidOperationException(
                 "A successful Extension selection requires its fact.");
+        var removedRoot = selected.RootIds
+            .Where(id => WorkspaceRemovals.IsExtensionRemoved(id, settings))
+            .Order(StringComparer.Ordinal)
+            .FirstOrDefault();
+        if (removedRoot is not null)
+        {
+            return new ExtensionInstallSelectionResolution(
+                selected,
+                [],
+                new ExtensionInstallFinding(
+                    ExtensionInstallFindingCode.RemovedExtension,
+                    $"Extension '{removedRoot}' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension install.",
+                    removedRoot))
+            {
+                Ownership = ownership,
+            };
+        }
+
         var closure = _dependencyClosureResolver.Resolve(
             sourceResolution.Source.Packages,
             selected.RootIds);
@@ -62,7 +83,25 @@ internal sealed class ExtensionInstallSelectionResolver
             };
         }
 
-        var normalization = ExtensionInstallPayloadNormalizer.Normalize(closure.Packages);
+        var removedPackage = closure.Packages
+            .Where(package => WorkspaceRemovals.IsExtensionRemoved(package.Id, settings))
+            .OrderBy(package => package.Id, StringComparer.Ordinal)
+            .FirstOrDefault();
+        if (removedPackage is not null)
+        {
+            return new ExtensionInstallSelectionResolution(
+                selected,
+                closure.Packages,
+                new ExtensionInstallFinding(
+                    ExtensionInstallFindingCode.RemovedExtension,
+                    $"Extension '{removedPackage.Id}' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension install.",
+                    removedPackage.Id))
+            {
+                Ownership = ownership,
+            };
+        }
+
+        var normalization = ExtensionInstallPayloadNormalizer.Normalize(closure.Packages, settings);
         if (normalization.Finding is not null)
         {
             return new ExtensionInstallSelectionResolution(
@@ -77,7 +116,8 @@ internal sealed class ExtensionInstallSelectionResolver
         return new ExtensionInstallSelectionResolution(
             selected,
             normalization.Packages,
-            finding: null)
+            finding: null,
+            normalization.ExcludedPaths)
         {
             Ownership = ownership,
         };

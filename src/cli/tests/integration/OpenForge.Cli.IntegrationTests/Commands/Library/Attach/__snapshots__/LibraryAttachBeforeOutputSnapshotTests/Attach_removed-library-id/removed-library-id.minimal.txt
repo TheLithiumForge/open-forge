@@ -1,0 +1,3 @@
+Cannot attach team-knowledge: This Library ID is excluded by workspace settings.
+Workspace: <workspace>
+Next: Remove Library ID 'team-knowledge' from removedLibraries in .agents/open-forge.json, then rerun open-forge library attach.

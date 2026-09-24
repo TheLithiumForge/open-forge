@@ -1,0 +1,10 @@
+Updated 2 Framework files.
+Workspace: <workspace>
+  .agents/guidance               created directory
+  .agents/guidance/_guidance.md  created (it was missing)
+  .agents/loader.md              replaced (you had changed it and this release changes it)
+  .agents/loader.md              Entries section updated
+  .agents/open-forge.lock.json   updated
+  12 files unchanged
+  Review previous content in the recovery bundle at <recovery-bundle>.
+Next: open-forge doctor

@@ -15,6 +15,15 @@ internal static class LibrarySyncWording
     internal static string UpToDate(string id)
         => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncWording.UpToDate(id);
 
+    internal static string ExcludedDestinationsUntouched(string id)
+        => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncWording.ExcludedDestinationsUntouched(id);
+
+    internal static string RemoveExcludedLibraryNext(string id)
+        => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.RemoveExcludedLibraryNext(id);
+
+    internal static string WorkspaceSettingsNextReason()
+        => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.MessageUpdateSettingsBeforeRerunningLibraryCommand();
+
     internal static string Synchronized(string id, int added, int removed, int unchanged)
     {
         var parts = new List<string>();
@@ -72,6 +81,28 @@ internal static class LibrarySyncWording
 
     internal static string Blocked(string id, string reason)
         => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncPhrases.FormatCannotSynchronizeNothingWasChanged($"{id}", $"{TrimSentence(reason)}");
+
+    internal static string SettingsChange(string action, string outcome, bool dryRun)
+    {
+        if (action is not ("create" or "replace"))
+        {
+            throw new ArgumentOutOfRangeException(nameof(action), action, "The Library settings action is not defined.");
+        }
+
+        if (dryRun || outcome == "planned")
+        {
+            return global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.MessageSettingsWouldBeUpdated();
+        }
+
+        return outcome switch
+        {
+            "verified" => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.MessageSettingsWereUpdated(),
+            "not-started" or "not-requested" => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.MessageSettingsWereNotUpdated(),
+            "verification-failed" => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.MessageSettingsUpdateFailed(),
+            "completion-unknown" => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.MessageSettingsUpdateFinalStateIsUnknown(),
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The Library settings outcome is not defined."),
+        };
+    }
 
     internal static string Failed(int completed, int total)
         => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncWording.Failed(completed, total);
@@ -223,6 +254,8 @@ internal static class LibrarySyncWording
         LibrarySyncFindingCode.DestinationCollision => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.TitleDestinationIsOccupied(),
         LibrarySyncFindingCode.RetiredLinkMissing => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleRegisteredLinkIsMissing(),
         LibrarySyncFindingCode.RegisteredLinkRestored => global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.TitleRegisteredLinkWasRestored(),
+        LibrarySyncFindingCode.LibraryRemoved => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleLibraryIdIsExcluded(),
+        LibrarySyncFindingCode.PathExcluded => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleDestinationIsExcluded(),
         LibrarySyncFindingCode.ConfirmationRequired => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleConfirmationIsRequired(),
         _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The Library Sync finding code is not defined."),
     };
@@ -241,6 +274,8 @@ internal static class LibrarySyncWording
             or LibrarySyncFindingCode.RegisteredLinkRestored
             or LibrarySyncFindingCode.ConsumerBlocked => "local",
         LibrarySyncFindingCode.UnknownId => "unknown-id",
+        LibrarySyncFindingCode.LibraryRemoved => "workspace-settings",
+        LibrarySyncFindingCode.PathExcluded => "workspace-settings",
         LibrarySyncFindingCode.OwnershipObservation => "ownership-observation",
         LibrarySyncFindingCode.RecordUnavailable => "lifecycle-unavailable",
         LibrarySyncFindingCode.RecordBlocked => "lifecycle-blocked",

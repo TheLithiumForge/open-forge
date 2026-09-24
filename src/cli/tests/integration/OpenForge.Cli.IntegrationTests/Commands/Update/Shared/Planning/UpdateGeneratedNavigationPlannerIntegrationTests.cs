@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Update.Shared.Planning;
 
@@ -37,6 +38,8 @@ public sealed class UpdateGeneratedNavigationPlannerIntegrationTests
 
             var build = await new UpdateGeneratedNavigationPlanner(new PhysicalPathResolver()).BuildAsync(
                 workspace.Request(UpdateMode.DryRun),
+                payload,
+                WorkspaceSettingsDocument.Empty,
                 payload.Assets,
                 new HashSet<string>(StringComparer.Ordinal),
                 new HashSet<string>(StringComparer.Ordinal),

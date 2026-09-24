@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 
@@ -27,6 +28,8 @@ internal sealed record RouteRemoveCategoryInventory
     public required RouteRemoveResolvedSubject Subject { get; init; }
 
     public required WorkspaceOwnershipRead Ownership { get; init; }
+
+    public required WorkspaceSettingsRead Settings { get; init; }
 
     public ImmutableArray<RouteRemoveInventoryItem> Items { get; init; } = [];
 }

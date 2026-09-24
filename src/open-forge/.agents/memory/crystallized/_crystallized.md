@@ -13,11 +13,7 @@ Crystallized Memory holds accepted knowledge that should remain current within i
 ## Axioms
 
 - Check `Entries` before deciding that no Crystallized Memory applies.
-- Treat material as Crystallized only when acceptance is established within its scope by:
-  - Clear user direction.
-  - Delegated authority.
-  - A requested action that clearly requires the choice.
-  - A declared external authority for the relevant facts.
+- Keep only accepted current knowledge here, using the loader's acceptance rules within the record's scope.
 - Tags, repetition, and agent confidence do not establish acceptance.
 - Update, split, merge, or reshape existing Crystallized Memory instead of creating a competing current version.
 - Archive or link material that is no longer current. Keep enough context to understand the change.

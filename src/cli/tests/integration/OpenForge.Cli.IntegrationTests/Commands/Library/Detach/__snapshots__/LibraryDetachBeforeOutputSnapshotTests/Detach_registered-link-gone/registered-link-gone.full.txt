@@ -5,7 +5,10 @@ Workspace: <workspace>
          use open-forge library inspect team-knowledge
          open-forge library inspect team-knowledge
          Inspect the Library before changing it.
+  .agents/open-forge.json  settings updated
   .agents/open-forge.lock.json  registration removed
+  .agents/open-forge.json  settings updated
+  Expected .agents/open-forge.json: missing; length unavailable; SHA-256 unavailable; target unavailable
   Expected .agents/open-forge.lock.json: ordinary-file; length unavailable; SHA-256 <sha256>; target unavailable
   Verification: all changed targets were verified; registration was published and verified.
   Recovery: bundle removed; no residual effects.

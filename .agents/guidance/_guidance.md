@@ -14,7 +14,7 @@ Guidance recommends approaches for recurring situations and explains when they f
 
 - Check `Entries` when the work involves a recurring situation or choice that may have Guidance.
 - Each Guidance file explains the situation, recommended approach, reasons, and tradeoffs.
-- Apply Guidance when it fits the work. When another approach fits better, explain why.
+- Apply Guidance when it fits the work. Adapt it when another approach fits better, and explain the reason when the difference matters to the result.
 
 ## Entries
 

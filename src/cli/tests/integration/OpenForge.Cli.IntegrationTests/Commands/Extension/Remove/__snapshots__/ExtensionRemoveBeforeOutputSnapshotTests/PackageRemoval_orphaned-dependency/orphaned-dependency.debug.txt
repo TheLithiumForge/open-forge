@@ -4,6 +4,7 @@ Workspace: <workspace>
          base remains installed and is no longer needed by toolkit.
          open-forge extension remove base
          Remove the unused dependency when it is no longer needed.
+  .agents/open-forge.json                       recorded the removal in workspace settings
   .agents/toolkit.md                            deleted
   .agents/directives/_directives.md             unchanged
   .agents/guidance/_guidance.md                 unchanged
@@ -22,7 +23,7 @@ Workspace: <workspace>
   .agents/open-forge.lock.json  updated
   Entries sections unchanged: .agents/directives/_directives.md, .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md, .agents/memory/_memory.md, .agents/memory/archived/_archived.md, .agents/memory/crystallized/_crystallized.md, .agents/memory/emerging/_emerging.md, .agents/memory/working/_working.md, .agents/patterns/_patterns.md, .agents/skills/_skills.md, .agents/templates/_templates.md
   Verification: targets verified; Entries verified; Extension record verified
-  Recovery: retained at <recovery-bundle>; 2 protected paths.
+  Recovery: retained at <recovery-bundle>; 3 protected paths.
   The deleted files are kept in a recovery bundle at <recovery-bundle>.
   Remove the unused dependency when it is no longer needed.
 Next: open-forge extension remove base

@@ -110,6 +110,12 @@ internal static class ExtensionUpdateDefinitions
             ExtensionUpdateFindingCode.RecoveryFailed => "extension-update.recovery-failed",
             ExtensionUpdateFindingCode.OperationFailed => "extension-update.operation-failed",
             ExtensionUpdateFindingCode.Interrupted => "extension-update.interrupted",
+            ExtensionUpdateFindingCode.SettingsInvalid => "extension-update.settings-invalid",
+            ExtensionUpdateFindingCode.SettingsUnavailable => "extension-update.settings-unavailable",
+            ExtensionUpdateFindingCode.RemovedExtension => "extension-update.removed-extension",
+            ExtensionUpdateFindingCode.BulkExcluded => "extension-update.bulk-excluded",
+            ExtensionUpdateFindingCode.PathExcluded => "extension-update.path-excluded",
+            ExtensionUpdateFindingCode.ExcludedAncestor => "extension-update.excluded-ancestor",
             _ => Undefined(nameof(code), code),
         };
 
@@ -126,7 +132,8 @@ internal static class ExtensionUpdateDefinitions
                 or ExtensionUpdateFindingCode.LifecycleUnavailable
                 or ExtensionUpdateFindingCode.ProjectionUnavailable
                 or ExtensionUpdateFindingCode.RecoveryUnavailable
-                or ExtensionUpdateFindingCode.PermissionsUnavailable => CliSemanticStatus.Incomplete,
+                or ExtensionUpdateFindingCode.PermissionsUnavailable
+                or ExtensionUpdateFindingCode.SettingsUnavailable => CliSemanticStatus.Incomplete,
             ExtensionUpdateFindingCode.FrameworkUnsafe
                 or ExtensionUpdateFindingCode.SourceOverlap
                 or ExtensionUpdateFindingCode.SourceIdentityConflict
@@ -140,10 +147,16 @@ internal static class ExtensionUpdateDefinitions
                 or ExtensionUpdateFindingCode.GeneratedRegionUnsafe
                 or ExtensionUpdateFindingCode.WorkspaceLockUnavailable
                 or ExtensionUpdateFindingCode.TargetChanged
-                or ExtensionUpdateFindingCode.RecoveryConflict => CliSemanticStatus.Blocked,
+                or ExtensionUpdateFindingCode.RecoveryConflict
+                or ExtensionUpdateFindingCode.SettingsInvalid
+                or ExtensionUpdateFindingCode.RemovedExtension
+                or ExtensionUpdateFindingCode.ExcludedAncestor => CliSemanticStatus.Blocked,
+            ExtensionUpdateFindingCode.PathExcluded => CliSemanticStatus.Complete,
             ExtensionUpdateFindingCode.LifecycleObservation
                 or ExtensionUpdateFindingCode.RecoveryArtifactRetained
-                or ExtensionUpdateFindingCode.ManagedDivergence => CliSemanticStatus.Attention,
+                or ExtensionUpdateFindingCode.ManagedDivergence
+                or ExtensionUpdateFindingCode.BulkExcluded
+                => CliSemanticStatus.Attention,
             ExtensionUpdateFindingCode.WriteFailed
                 or ExtensionUpdateFindingCode.TopologyVerificationFailed
                 or ExtensionUpdateFindingCode.LifecyclePublicationFailed
@@ -378,6 +391,13 @@ internal static class ExtensionUpdateDefinitions
             finding.Code == ExtensionUpdateFindingCode.ConfirmationRequired);
         var selectionRequired = findings.Any(finding =>
             finding.Code == ExtensionUpdateFindingCode.SelectionRequired);
+        var exclusions = findings.Any(finding => finding.Code is
+            ExtensionUpdateFindingCode.SettingsInvalid
+                or ExtensionUpdateFindingCode.SettingsUnavailable
+                or ExtensionUpdateFindingCode.RemovedExtension
+                or ExtensionUpdateFindingCode.BulkExcluded
+                or ExtensionUpdateFindingCode.PathExcluded
+                or ExtensionUpdateFindingCode.ExcludedAncestor);
         return status switch
         {
             CliSemanticStatus.Complete => null,
@@ -392,6 +412,10 @@ internal static class ExtensionUpdateDefinitions
                     : selectionRequired
                     ? "List the installed Extensions, then rerun the request with an explicit selection."
                     : "Correct the named Extension Update input, then rerun the request."),
+            CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete or CliSemanticStatus.Attention when exclusions => new CliNextAction(
+                "Repair .agents/open-forge.json or remove the relevant exclusion there, then rerun extension update.",
+                "Workspace removal settings currently exclude the requested update.")
+            { Kind = CliNextActionKind.Sentence },
             CliSemanticStatus.Attention when findings.Any(finding =>
                 finding.Code == ExtensionUpdateFindingCode.RecoveryArtifactRetained) => new CliNextAction(
                 CommandLines.Cleanup,

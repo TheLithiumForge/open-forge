@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 3,
+  "command": "library sync",
+  "status": "blocked",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot synchronize team-knowledge: This Library ID is excluded by workspace settings. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "library-sync.library-removed",
+      "title": "Library ID is excluded",
+      "message": "This Library ID is excluded by workspace settings",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "team-knowledge",
+        "location": null
+      },
+      "category": "workspace-settings",
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksAdded": 0,
+    "linksRemoved": 0,
+    "linksUnchanged": 1,
+    "sectionsUpdated": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "id": "team-knowledge",
+    "sourceFolder": "shared/team-knowledge",
+    "destinationFolder": ".",
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "proposedScopes": [],
+      "approvedScopes": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [],
+    "unchanged": [
+      ".agents/directives/review.md"
+    ],
+    "inventory": {
+      "rootState": "available",
+      "inventoryState": "complete",
+      "eligiblePaths": [
+        {
+          "sourcePath": ".agents/directives/review.md",
+          "destinationPath": ".agents/directives/review.md",
+          "sourceId": "directives/review"
+        }
+      ],
+      "excludedPaths": [],
+      "unavailablePaths": [],
+      "lexicalRoot": "<workspace>\\shared\\team-knowledge",
+      "physicalRoot": "<workspace>\\shared\\team-knowledge",
+      "lexicallyContained": true,
+      "physicallyContained": true
+    },
+    "expectedStates": [],
+    "verification": {
+      "state": "not-started",
+      "recordPublication": "not-started",
+      "publishedLast": null
+    },
+    "recovery": {
+      "state": "not-requested",
+      "path": null,
+      "residuals": []
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "Remove Library ID 'team-knowledge' from removedLibraries in .agents/open-forge.json, then rerun open-forge library sync.",
+    "reason": "Update workspace settings before rerunning this command."
+  }
+}

@@ -30,7 +30,7 @@
   ],
   "effects": [],
   "counts": {
-    "packagesRemoved": 1,
+    "packagesRemoved": 0,
     "filesDeleted": 0,
     "filesKept": 0,
     "filesReleased": 0,
@@ -54,7 +54,22 @@
       "action": "none",
       "outcome": "not-requested"
     },
-    "effects": []
+    "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "not-started",
+        "owner": null,
+        "keptFor": []
+      },
+      {
+        "path": ".agents/toolkit.md",
+        "action": "delete",
+        "outcome": "not-started",
+        "owner": "toolkit",
+        "keptFor": []
+      }
+    ]
   },
   "recovery": null,
   "next": null

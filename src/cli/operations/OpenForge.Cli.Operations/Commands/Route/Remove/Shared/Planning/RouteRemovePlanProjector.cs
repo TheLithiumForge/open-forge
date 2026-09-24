@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 
@@ -71,10 +72,33 @@ internal static class RouteRemovePlanProjector
                     .Order(StringComparer.Ordinal)
                     .ToImmutableArray(),
             },
+            Persistence = Persistence(input),
             Verification = RouteRemoveVerificationState.NotRequested,
         };
         return new RouteRemovePlan { Request = request, Preview = preview, Projection = input };
     }
+
+    private static RouteRemovePersistence Persistence(RouteRemovePlanProjectionInput input)
+        => new()
+        {
+            Settings = new RouteRemoveSettingsRemoval
+            {
+                Outcome = input.SettingsChange is null
+                    ? RouteRemovePersistenceOutcome.Unchanged
+                    : RouteRemovePersistenceOutcome.Planned,
+                Path = WorkspaceSettingsDefinitions.RelativePath,
+                Categories = input.RemovalSelection.Categories,
+                Files = input.RemovalSelection.Files,
+                Directories = input.RemovalSelection.Directories,
+            },
+            Ownership = new RouteRemoveOwnershipRelease
+            {
+                Outcome = input.OwnershipChange is null
+                    ? RouteRemovePersistenceOutcome.Unchanged
+                    : RouteRemovePersistenceOutcome.Planned,
+                Claims = input.ClaimsToRelease,
+            },
+        };
 
     private static ImmutableArray<RouteRemoveEffect> BuildEffects(RouteRemovePlanProjectionInput input)
     {

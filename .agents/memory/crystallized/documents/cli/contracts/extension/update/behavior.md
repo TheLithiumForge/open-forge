@@ -22,6 +22,17 @@ Architecture](../../../architecture.md) defines the cross-cutting implementation
 boundary; this behavior does not duplicate those mechanics
 or claim their Gate 5 proof.
 
+## Persistent Exclusions
+
+Apply the [removal settings](../../remove/interface.md#keep-removed-and-restore)
+to package selection and concrete destinations. Explicitly selected excluded
+package IDs are blocked; bulk updates skip them. An excluded required dependency
+blocks its parent. Preserve existing excluded files and claims, and omit excluded
+destinations from replacement, prune, generated-region and new-ownership effects.
+Do not recreate a missing excluded ancestor needed by selected content. Force
+and automatic mode do not clear exclusions. Revalidate the exact settings
+observation under the workspace lease.
+
 ## Ownership Source
 
 `.agents/open-forge.lock.json` is the sole ownership input and publication target.
@@ -328,6 +339,13 @@ retained bundle. No Git executable or cleanliness check is required.
 Never restore, roll back, compensate, infer current target state from recovery,
 or create a journal or persisted plan. A final ZIP may remain after abrupt
 termination without a crash or power-loss guarantee.
+
+Verified final bundles from earlier operations may coexist with the current
+operation's bundle. Preserve that history unchanged. Once current preparation
+exists, exactly one catalogue candidate must match its identity; other verified
+final bundles do not invalidate it. Incomplete drafts and malformed, unsupported
+or unavailable candidates still block the fresh plan. Recovery history never
+supplies current target state or ownership.
 
 Explicit Cleanup owns exact named final and draft deletion under its separate
 lease-bound contract. Unknown or differently named artifacts remain untouched.

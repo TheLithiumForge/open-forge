@@ -1,0 +1,7 @@
+{
+  "id": "scenarios",
+  "name": "Flows and Scenarios",
+  "description": "Describe user journeys and expected outcomes, organize scenarios, and record what happened when they were tried",
+  "version": "0.4.0",
+  "dependencies": []
+}

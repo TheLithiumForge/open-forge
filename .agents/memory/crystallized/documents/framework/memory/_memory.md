@@ -6,7 +6,7 @@ open-forge:
 
 # Memory Architecture
 
-Memory Architecture defines the self-growing recorded-state model that preserves continuity, coordination, accepted records, candidate learning, and useful history without turning stored context into automatic truth or behavior.
+Memory Architecture defines the self-growing recorded-state model that preserves context needed to resume work, coordination, accepted records, candidate learning, and useful history without turning stored context into automatic truth or behavior.
 
 ## Axioms
 

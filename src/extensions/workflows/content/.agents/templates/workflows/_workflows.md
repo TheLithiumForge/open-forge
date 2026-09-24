@@ -6,12 +6,14 @@ open-forge:
 
 # Workflow Templates
 
+## What repeatable method would help?
+
+The optional Workflow Support package supplies recipes for the Use Workflow Skill. It does not add a `Workflow` primitive to `Core`. Each recipe composes existing capabilities and defines an observable result.
+
 ## Axioms
 
-- This Template belongs to the optional Workflows package. It does not establish a root Workflow primitive.
-- Follow the [workflow catalogue's recipe convention](../../skills/use-workflow/references/_references.md). Keep one complete method in each recipe, with explicit dependencies and completion conditions.
-- Source tags describe a Template. Replace them with truthful recipe metadata and update the selected reference scope's Entries after copying.
-- Keep a recipe on demand unless every use of its parent scope genuinely requires it. Add only the capability dependencies the method needs.
+- Before adding a recipe, read and follow the [workflow catalogue's recipe convention](../../skills/use-workflow/references/_references.md). Keep one complete method in each recipe, with explicit dependencies and completion conditions.
+- Add only the capability dependencies the method needs.
 
 ## Entries
 

@@ -6,9 +6,11 @@ open-forge:
 
 # {Accepted Choice}
 
-<!-- TEMPLATE: Use for an accepted choice worth remembering. Keep unaccepted proposals in a candidate route.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Use for an accepted choice worth remembering. Keep unaccepted proposals in a candidate route.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Decision
 
@@ -40,5 +42,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 {Link to the source or sources that define the current result. Keep specifications there instead of maintaining another copy here.}
 
-<!-- Add relationships only when meaningful: replaces, narrows, depends on, or is superseded by.
-Describe the relationship beside the link. -->
+{
+Add relationships only when meaningful: replaces, narrows, depends on, or is superseded by.
+Describe the relationship beside the link.
+}

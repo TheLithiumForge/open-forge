@@ -45,6 +45,9 @@ public sealed class ExtensionRemoveDefinitionsTests
             ("extension-remove.lifecycle-unavailable", CliSemanticStatus.Incomplete),
             ("extension-remove.lifecycle-blocked", CliSemanticStatus.Blocked),
             ("extension-remove.dependency-blocked", CliSemanticStatus.Blocked),
+            ("extension-remove.settings-invalid", CliSemanticStatus.Blocked),
+            ("extension-remove.settings-unavailable", CliSemanticStatus.Incomplete),
+            ("extension-remove.path-excluded", CliSemanticStatus.Complete),
             ("extension-remove.ownership-conflict", CliSemanticStatus.Blocked),
             ("extension-remove.permission-required", CliSemanticStatus.Blocked),
             ("extension-remove.permission-declined", CliSemanticStatus.Blocked),
@@ -110,6 +113,8 @@ public sealed class ExtensionRemoveDefinitionsTests
             (ExtensionRemoveEffectKind.PackageFile, "package-file"),
             (ExtensionRemoveEffectKind.GeneratedRegion, "generated-region"),
             (ExtensionRemoveEffectKind.Lifecycle, "lifecycle"),
+            (ExtensionRemoveEffectKind.Settings, "settings"),
+            (ExtensionRemoveEffectKind.Directory, "directory"),
         ],
             Enum.GetValues<ExtensionRemoveEffectKind>().Select(value =>
                 (value, ExtensionRemoveDefinitions.ReadMachineName(value))));
@@ -118,6 +123,8 @@ public sealed class ExtensionRemoveDefinitionsTests
             (ExtensionRemoveEffectAction.ReleaseOwnership, "release-ownership"),
             (ExtensionRemoveEffectAction.Delete, "delete"),
             (ExtensionRemoveEffectAction.Retain, "retain"),
+            (ExtensionRemoveEffectAction.RecordExclusion, "record-exclusion"),
+            (ExtensionRemoveEffectAction.Create, "create"),
         ],
             Enum.GetValues<ExtensionRemoveEffectAction>().Select(value =>
                 (value, ExtensionRemoveDefinitions.ReadMachineName(value))));
@@ -232,6 +239,16 @@ public sealed class ExtensionRemoveDefinitionsTests
                 CliSemanticStatus.Attention,
                 [retainedRecovery])).Command);
         Assert.Null(ExtensionRemoveDefinitions.ReadNextAction(CliSemanticStatus.Incomplete, []));
+        var invalidSettingsNext = Assert.IsType<CliNextAction>(ExtensionRemoveDefinitions.ReadNextAction(
+            CliSemanticStatus.Blocked,
+            [new ExtensionRemoveFinding(ExtensionRemoveFindingCode.SettingsInvalid, "Invalid settings.")]));
+        Assert.Equal("Correct .agents/open-forge.json, then rerun the removal.", invalidSettingsNext.Command);
+        Assert.Equal(CliNextActionKind.Sentence, invalidSettingsNext.Kind);
+        var unavailableSettingsNext = Assert.IsType<CliNextAction>(ExtensionRemoveDefinitions.ReadNextAction(
+            CliSemanticStatus.Incomplete,
+            [new ExtensionRemoveFinding(ExtensionRemoveFindingCode.SettingsUnavailable, "Unavailable settings.")]));
+        Assert.Equal("Restore access to .agents/open-forge.json, then rerun the removal.", unavailableSettingsNext.Command);
+        Assert.Equal(CliNextActionKind.Sentence, unavailableSettingsNext.Kind);
         Assert.Null(ExtensionRemoveDefinitions.ReadNextAction(CliSemanticStatus.Blocked, []));
         Assert.Null(ExtensionRemoveDefinitions.ReadNextAction(CliSemanticStatus.Failed, []));
         Assert.Null(ExtensionRemoveDefinitions.ReadNextAction(CliSemanticStatus.Interrupted, []));

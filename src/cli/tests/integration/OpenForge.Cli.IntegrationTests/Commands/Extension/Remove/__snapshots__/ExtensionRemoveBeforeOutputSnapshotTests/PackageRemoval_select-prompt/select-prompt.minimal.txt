@@ -1,4 +1,5 @@
 Removed the toolkit Extension.
-  .agents/toolkit.md  deleted
+  .agents/open-forge.json  recorded the removal in workspace settings
+  .agents/toolkit.md       deleted
   The deleted files are kept in a recovery bundle at <recovery-bundle>.
 Next: open-forge cleanup  (after reviewing the bundle)

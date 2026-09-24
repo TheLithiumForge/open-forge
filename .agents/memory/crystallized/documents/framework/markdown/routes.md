@@ -36,7 +36,7 @@ The category's primary question appears as an ordinary level-2 heading immediate
 
 Category meaning and `Axioms` appear before `Entries`. The [routing model](../routing/model.md) defines when a folder is routable and what an entrypoint exposes. The [scope and inheritance contract](../routing/scope.md) defines the meaning of local, missing, and sentinel Axioms.
 
-When an entrypoint explicitly declares that it adds no local Axioms, the canonical form is:
+For a newly authored entrypoint that adds no local Axioms, use this canonical form:
 
 ```md
 ## Axioms
@@ -44,7 +44,7 @@ When an entrypoint explicitly declares that it adds no local Axioms, the canonic
 - inherited - No local axioms; loaded ancestor axioms remain active.
 ```
 
-An entrypoint may instead omit `Axioms` or leave the section empty. `none` is not a valid Axioms sentinel because loaded ancestor Axioms always remain active.
+For compatibility, readers also accept an entrypoint that omits `Axioms` or leaves the section empty. Both forms add no local Axioms and leave loaded ancestor Axioms active; they are accepted input, not the preferred authoring form. `none` is not a valid Axioms sentinel because loaded ancestor Axioms always remain active.
 
 The frozen MVP does not yet enforce this metadata-integrity target. It may synthesize a fallback description and tags when generating an entry. The [MVP Architecture](../../cli/mvp-architecture.md#metadata-and-overwrite-integrity) records that temporary limitation without changing this canonical form.
 

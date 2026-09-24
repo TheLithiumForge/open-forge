@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "The toolkit Extension is up to date. Nothing to do.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "extension-update.path-excluded",
+      "title": "Extension path is excluded",
+      "message": "'.agents/toolkit.md' is excluded by workspace removal settings and was left unchanged.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/toolkit.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension update.",
+          "reason": "Workspace removal settings currently exclude this Extension path."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "'.agents/toolkit.md' is excluded by workspace removal settings and was left unchanged."
+        }
+      ],
+      "provenance": {
+        "source": "<extension-source>",
+        "path": "<extension-source>",
+        "location": null
+      }
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesUpdated": 1,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 0,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "source": {
+      "kind": "catalogue",
+      "path": "<extension-source>"
+    },
+    "packages": [
+      {
+        "id": "toolkit",
+        "from": "1.0.0",
+        "to": "1.0.0"
+      }
+    ],
+    "previousContent": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "unchanged": [],
+    "sections": [],
+    "dependencies": [
+      {
+        "id": "toolkit",
+        "requires": []
+      }
+    ],
+    "effects": []
+  },
+  "recovery": null,
+  "next": null
+}

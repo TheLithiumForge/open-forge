@@ -30,6 +30,17 @@
     },
     "removed": [],
     "detachedLinks": [],
+    "settings": {
+      "outcome": "not-established",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [],
+      "directories": []
+    },
+    "ownershipRelease": {
+      "outcome": "not-established",
+      "claims": []
+    },
     "scan": {
       "filesScanned": 11,
       "occurrences": 3

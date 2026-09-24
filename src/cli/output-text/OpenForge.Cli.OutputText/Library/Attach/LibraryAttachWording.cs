@@ -16,6 +16,10 @@ internal static class LibraryAttachWording
     internal static string WouldRegister(string id, string source)
         => $"Would register the {id} Library from {source}.";
 
+    // @OpenForgeText library.attach.wording.remove-library-id-from-removed-libraries-and-rerun
+    internal static string RemoveExcludedLibraryNext(string id)
+        => $"Remove Library ID '{id}' from removedLibraries in .agents/open-forge.json, then rerun open-forge library attach.";
+
     // @OpenForgeText library.attach.wording.library-attach-stopped-after-of-links-were-created
     internal static string Failed(int created, int total)
         => string.Create(CultureInfo.InvariantCulture,

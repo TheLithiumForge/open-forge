@@ -37,5 +37,7 @@ internal enum LibrarySyncFindingCode
     DestinationCollision,
     RetiredLinkMissing,
     RegisteredLinkRestored,
+    LibraryRemoved,
+    PathExcluded,
     ConfirmationRequired,
 }

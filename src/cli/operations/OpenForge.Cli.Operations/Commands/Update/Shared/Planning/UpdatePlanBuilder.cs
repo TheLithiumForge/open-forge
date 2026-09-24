@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
@@ -13,6 +14,11 @@ using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
@@ -108,6 +114,44 @@ internal sealed class UpdatePlanBuilder
                 cancellationToken)
             .ConfigureAwait(false);
         var settings = await WorkspaceSettingsReader.ReadAsync(_physicalPathResolver, request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (settings.State == WorkspaceSettingsReadState.Invalid)
+        {
+            return Boundary(UpdatePlanResultFactory.Boundary(
+                request,
+                UpdatePlanResultFactory.Source(payload),
+                [],
+                new UpdateFinding(
+                    UpdateFindingCode.InvalidInput,
+                    settings.LogicalPath,
+                    settings.Cause ?? "The authored workspace settings are invalid."),
+                UpdatePlanResultFactory.UnstartedLifecycle(
+                    UpdateLifecycleTrust.NotRequested,
+                    UpdateLifecycleCoverage.Blocked)));
+        }
+
+        if (settings.State == WorkspaceSettingsReadState.Unavailable)
+        {
+            return Boundary(UpdatePlanResultFactory.Boundary(
+                request,
+                UpdatePlanResultFactory.Source(payload),
+                [],
+                new UpdateFinding(
+                    UpdateFindingCode.LifecycleUnavailable,
+                    settings.LogicalPath,
+                    settings.Cause ?? "The authored workspace settings are unavailable."),
+                UpdatePlanResultFactory.UnstartedLifecycle(
+                    UpdateLifecycleTrust.NotRequested,
+                    UpdateLifecycleCoverage.Incomplete)));
+        }
+
+        if (settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(settings),
+                settings.State,
+                "The workspace settings read state is not defined.");
+        }
+
         var intended = await _intendedStateBuilder
             .BuildAsync(request, payload, ownership, settings.Document, cancellationToken)
             .ConfigureAwait(false);
@@ -153,6 +197,25 @@ internal sealed class UpdatePlanBuilder
         }
 
         var effects = UpdatePhysicalEffectPlanner.Plan(plan, observations);
+        var directoryCreations = PlanRequiredDirectories(
+            request,
+            ownership,
+            settings.Document,
+            effects,
+            out var directoryFinding);
+        if (directoryFinding is not null)
+        {
+            var preview = UpdatePlanResultFactory.Boundary(
+                request,
+                UpdatePlanResultFactory.Source(payload),
+                observations.Select(value => value.Comparison).ToArray(),
+                directoryFinding,
+                UpdatePlanResultFactory.UnstartedLifecycle(
+                    UpdateLifecycleTrust.Trusted,
+                    UpdateLifecycleCoverage.Blocked));
+            return new UpdatePlanResolution(new UpdatePlanBuild(plan, preview), Execution: null);
+        }
+
         var ownershipPlan = effects.Count == 0 && ownership.Document.Framework is null
             ? OwnershipWritePlanResult.Skipped("No verified Framework writes established ownership.")
             : _ownershipStore.PlanFrameworkOwnership(ownership, BuildOwnership(ownership, observations, plan));
@@ -164,6 +227,7 @@ internal sealed class UpdatePlanBuilder
             Intended = intended,
             Plan = plan,
             Effects = effects,
+            DirectoryCreations = directoryCreations,
             OwnershipChange = ownershipChange,
             OwnershipState = ownershipPlan.State,
             Findings = findings,
@@ -180,8 +244,123 @@ internal sealed class UpdatePlanBuilder
                 observations,
                 intended.ProjectionInputs,
                 effects,
+                directoryCreations,
                 ownershipChange));
     }
+
+    private IReadOnlyList<PlannedDirectoryCreation> PlanRequiredDirectories(
+        UpdateRequest request,
+        WorkspaceOwnershipRead ownership,
+        WorkspaceSettingsDocument settings,
+        IReadOnlyList<UpdatePlannedEffect> effects,
+        out UpdateFinding? finding)
+    {
+        finding = null;
+        var mayRestoreRegisteredFramework = ownership.State == WorkspaceOwnershipReadState.Complete
+            && ownership.Document.Framework is not null;
+        var missing = new HashSet<string>(OperatingSystem.IsWindows()
+            ? StringComparer.OrdinalIgnoreCase
+            : StringComparer.Ordinal);
+
+        foreach (var effect in effects.Where(effect => effect.FileChange.Kind == PlannedFileChangeKind.Create))
+        {
+            var parent = Path.GetDirectoryName(effect.FileChange.LogicalPath);
+            if (parent is null)
+            {
+                finding = UnsafeDirectory(effect.ResultEffect.Path, "A required Update destination has no parent directory.");
+                return [];
+            }
+
+            while (!PathComparer.Equals(parent, request.Workspace.LexicalRoot))
+            {
+                if (!PhysicalContainment.Contains(request.Workspace.LexicalRoot, parent))
+                {
+                    finding = UnsafeDirectory(effect.ResultEffect.Path, "A required Update destination parent leaves the workspace.");
+                    return [];
+                }
+
+                var relative = Path.GetRelativePath(request.Workspace.LexicalRoot, parent)
+                    .Replace(Path.DirectorySeparatorChar, '/')
+                    .Replace(Path.AltDirectorySeparatorChar, '/');
+                if (!FrameworkPayloadSelection.IncludesPath(relative, settings))
+                {
+                    finding = UnsafeDirectory(relative, "A required Update destination parent is covered by a removal exclusion.");
+                    return [];
+                }
+
+                var resolution = _physicalPathResolver.ResolveCandidate(
+                    request.Workspace.LexicalRoot,
+                    request.Workspace.PhysicalRoot,
+                    parent);
+                if (resolution.State == PhysicalPathState.Missing)
+                {
+                    if (!mayRestoreRegisteredFramework)
+                    {
+                        finding = UnsafeDirectory(
+                            effect.ResultEffect.Path,
+                            "A required Update destination parent directory is missing; no effects were planned.");
+                        return [];
+                    }
+
+                    missing.Add(parent);
+                    parent = Path.GetDirectoryName(parent);
+                    if (parent is null)
+                    {
+                        finding = UnsafeDirectory(effect.ResultEffect.Path, "A required Update destination parent is unavailable.");
+                        return [];
+                    }
+
+                    continue;
+                }
+
+                if (resolution.State != PhysicalPathState.Contained
+                    || !IsOrdinaryDirectory(resolution.GetContainedPhysicalPath()))
+                {
+                    finding = UnsafeDirectory(
+                        relative,
+                        "A required Update destination parent is not an ordinary contained directory.");
+                    return [];
+                }
+
+                break;
+            }
+        }
+
+        return missing
+            .OrderBy(path => path.Count(character => character == Path.DirectorySeparatorChar))
+            .ThenBy(path => path, OperatingSystem.IsWindows()
+                ? StringComparer.OrdinalIgnoreCase
+                : StringComparer.Ordinal)
+            .Select(path => PlannedDirectoryCreation.Create(FileExpectation.Missing(path)))
+            .ToArray();
+    }
+
+    private static UpdateFinding UnsafeDirectory(string target, string cause)
+        => new(UpdateFindingCode.TargetUnsafe, target, cause);
+
+    private static bool IsOrdinaryDirectory(string path)
+    {
+        try
+        {
+            var attributes = File.GetAttributes(path);
+            return (attributes & FileAttributes.Directory) != 0
+                && (attributes & (FileAttributes.Device | FileAttributes.ReparsePoint)) == 0;
+        }
+        catch (Exception exception) when (exception is FileNotFoundException
+            or DirectoryNotFoundException
+            or UnauthorizedAccessException
+            or IOException
+            or NotSupportedException
+            or PlatformNotSupportedException
+            or ArgumentException)
+        {
+            return false;
+        }
+    }
+
+    private static StringComparer PathComparer => OperatingSystem.IsWindows()
+        ? StringComparer.OrdinalIgnoreCase
+        : StringComparer.Ordinal;
 
     private static FrameworkOwnership BuildOwnership(
         WorkspaceOwnershipRead ownership,

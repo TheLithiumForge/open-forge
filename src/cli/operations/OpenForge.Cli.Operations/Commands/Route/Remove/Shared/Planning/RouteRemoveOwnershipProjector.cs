@@ -68,7 +68,10 @@ internal static class RouteRemoveOwnershipProjector
         WorkspaceOwnershipRead ownership,
         ImmutableArray<OwnedPath> claims)
     {
-        if (!RouteOwnershipEvidence.IsEstablished(ownership)) return RouteRemoveOwnershipState.NotEstablished;
+        if (!RouteRemovePersistencePlanner.IsOwnershipTrusted(ownership))
+        {
+            return RouteRemoveOwnershipState.NotEstablished;
+        }
 
         return claims.IsEmpty
             ? RouteRemoveOwnershipState.Unmanaged
@@ -91,5 +94,7 @@ internal static class RouteRemoveOwnershipProjector
     }
 
     private static RouteRemoveOwnershipTrust ReadTrust(WorkspaceOwnershipRead ownership)
-        => RouteOwnershipEvidence.IsEstablished(ownership) ? RouteRemoveOwnershipTrust.Trusted : RouteRemoveOwnershipTrust.NotEstablished;
+        => RouteRemovePersistencePlanner.IsOwnershipTrusted(ownership)
+            ? RouteRemoveOwnershipTrust.Trusted
+            : RouteRemoveOwnershipTrust.NotEstablished;
 }

@@ -20,7 +20,8 @@ internal sealed partial class RouteRemoveEffectApplication
             var check = await ValidateAsync(input.Plan, change.Expectation, cancellationToken)
                 .ConfigureAwait(false);
             RecoveryBundlePreparation? changePreparation = null;
-            if (change.Kind != PlannedFileChangeKind.Create)
+            if (change.Kind != PlannedFileChangeKind.Create
+                || Equals(change, input.Plan.Projection.SettingsChange))
             {
                 changePreparation = preparation;
             }

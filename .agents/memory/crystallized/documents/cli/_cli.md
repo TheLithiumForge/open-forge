@@ -8,7 +8,7 @@ open-forge:
 # CLI
 
 The replacement command contracts and top-down C# Architecture are current.
-All 28 retained commands are implemented and locally accepted under `src/cli/`.
+The command set includes the root `remove` command alongside the retained commands.
 The CLI remains unreleased while complete six-target delivery evidence and final
 acceptance are pending. The active [CLI
 Development](../../../working/cli-development/_cli-development.md) route records

@@ -13,6 +13,10 @@ using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Library.Sync.Shared.Planning;
@@ -27,6 +31,37 @@ internal static class LibrarySyncPlanner
         cancellationToken.ThrowIfCancellationRequested();
 
         var findings = ImmutableArray.CreateBuilder<LibrarySyncFinding>();
+        if (input.Settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
+        {
+            Add(findings,
+                input.Settings.State == WorkspaceSettingsReadState.Invalid
+                    ? LibrarySyncFindingCode.PermissionInvalid
+                    : LibrarySyncFindingCode.PermissionUnavailable,
+                CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value,
+                input.Settings.LogicalPath,
+                input.Settings.Cause ?? "Workspace settings are not available for a safe Library operation.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
+        if (input.Ownership.State is WorkspaceOwnershipReadState.Invalid or WorkspaceOwnershipReadState.Unavailable)
+        {
+            Add(findings,
+                input.Ownership.State == WorkspaceOwnershipReadState.Invalid
+                    ? LibrarySyncFindingCode.RecordInvalid
+                    : LibrarySyncFindingCode.RecordUnavailable,
+                CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value,
+                input.Ownership.LogicalPath,
+                input.Ownership.Cause ?? "The workspace ownership lock is not available for a safe Library operation.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
+        if (WorkspaceRemovals.IsLibraryRemoved(input.Request.LibraryId.Value, input.Settings.Document))
+        {
+            Add(findings, LibrarySyncFindingCode.LibraryRemoved, CliSemanticStatus.Blocked,
+                input.Request.LibraryId.Value, input.Settings.LogicalPath,
+                "This Library ID is excluded by workspace settings.");
+            return Empty(input, LibraryPlanState.Blocked, findings);
+        }
         if (input.Record.State != LibraryRegistrationReadState.Malformed
             && input.Record.OwnershipObservation is { } observation)
         {
@@ -54,10 +89,39 @@ internal static class LibrarySyncPlanner
                 navigationIssue.Path,
                 navigationIssue.Cause);
         }
+        foreach (var change in input.GeneratedRegionChanges)
+        {
+            var path = Path.GetRelativePath(input.Request.Workspace.LexicalRoot, change.LogicalPath)
+                .Replace(Path.DirectorySeparatorChar, '/');
+            if (WorkspaceRemovals.IsPathRemoved(path, input.Settings.Document))
+            {
+                Add(findings, LibrarySyncFindingCode.GeneratedNavigationBlocked, CliSemanticStatus.Blocked,
+                    input.Request.LibraryId.Value, path,
+                    "Generated navigation or one of its required ancestors is excluded by workspace settings.");
+            }
+        }
 
         var entries = ReadSource(input, selected, findings);
         var currentPaths = entries.Select(entry => entry.SourcePath.Value).ToHashSet(StringComparer.Ordinal);
-        var registeredPaths = selected?.Paths.Select(path => path.Value).ToHashSet(StringComparer.Ordinal)
+        var excludedRegisteredPaths = new HashSet<string>(StringComparer.Ordinal);
+        if (selected is { } registeredLibrary)
+        {
+            foreach (var path in registeredLibrary.Paths)
+            {
+                var destination = LibraryPathIdentity.Map(
+                    registeredLibrary.SourceRoot,
+                    registeredLibrary.DestinationRoot,
+                    path).DestinationPath.Value;
+                if (WorkspaceRemovals.IsPathRemoved(destination, input.Settings.Document))
+                {
+                    excludedRegisteredPaths.Add(path.Value);
+                    AddPathExcluded(findings, input.Request.LibraryId.Value, destination,
+                        "The excluded registered destination and its ownership claim were kept untouched.");
+                }
+            }
+        }
+        var registeredPaths = selected?.Paths.Where(path => !excludedRegisteredPaths.Contains(path.Value))
+                .Select(path => path.Value).ToHashSet(StringComparer.Ordinal)
             ?? new HashSet<string>(StringComparer.Ordinal);
         var projection = selected is null ? null : LibraryRegistration.Create(selected.Id, selected.SourceRoot, selected.DestinationRoot,
             [.. currentPaths.Union(registeredPaths).Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create)]);
@@ -116,7 +180,7 @@ internal static class LibrarySyncPlanner
         var replacement = LibraryRegistration.Create(
             selected.Id,
             selected.SourceRoot, selected.DestinationRoot,
-            [.. entries.Select(entry => entry.SourcePath)]);
+            [.. currentPaths.Union(excludedRegisteredPaths).Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create)]);
         var intendedRecord = LibraryRegistrationSet.Create(
             [.. record.Libraries
                 .Select(library => library.Id == selected.Id ? replacement : library)
@@ -256,7 +320,22 @@ internal static class LibrarySyncPlanner
                 inventory.Cause ?? "The Library inventory is incomplete.");
         }
 
-        return inventory.Entries;
+        var active = ImmutableArray.CreateBuilder<EligibleSourceFile>();
+        foreach (var entry in inventory.Entries)
+        {
+            var destination = LibraryPathIdentity.Map(
+                selected.SourceRoot,
+                selected.DestinationRoot,
+                entry.SourcePath).DestinationPath.Value;
+            if (WorkspaceRemovals.IsPathRemoved(destination, input.Settings.Document))
+            {
+                AddPathExcluded(findings, input.Request.LibraryId.Value, destination,
+                    "The mapped destination is excluded by workspace settings and was kept untouched.");
+                continue;
+            }
+            active.Add(entry);
+        }
+        return active.ToImmutable();
     }
 
     private static ImmutableArray<RelativeFileLinkEffect> EvaluateMappings(
@@ -441,4 +520,20 @@ internal static class LibrarySyncPlanner
             Path = path,
             Cause = cause,
         });
+
+    private static void AddPathExcluded(
+        ImmutableArray<LibrarySyncFinding>.Builder findings,
+        string libraryId,
+        string destination,
+        string cause)
+    {
+        if (findings.Any(finding => finding.Code == LibrarySyncFindingCode.PathExcluded
+            && string.Equals(finding.Path, destination, StringComparison.Ordinal)))
+        {
+            return;
+        }
+
+        Add(findings, LibrarySyncFindingCode.PathExcluded, CliSemanticStatus.Complete,
+            libraryId, destination, cause);
+    }
 }

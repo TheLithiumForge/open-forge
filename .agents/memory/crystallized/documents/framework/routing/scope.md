@@ -106,7 +106,7 @@ A loaded ancestor `entrypoint` establishes meaning and `Axioms` for its selected
 
 A child `entrypoint` adds only what is specific to its `route`. It does not restate ancestor `Axioms`.
 
-A missing or empty local `Axioms` section adds no local `Axioms`. An explicit `inherited` sentinel states the same result: the child adds no local rules, while every loaded ancestor `axiom` remains active.
+For a newly authored child that adds no local rules, prefer one `inherited` sentinel. A missing or empty local `Axioms` section remains accepted compatibility input with the same meaning: the child adds no local rules, while every loaded ancestor `axiom` remains active.
 
 `inherited` is the only `Axioms` sentinel. Do not combine it with substantive local `Axioms`; omit the sentinel when the child adds local rules. `none` is invalid because it can be read as cancelling inherited `Axioms`.
 

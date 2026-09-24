@@ -11,6 +11,8 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
@@ -32,33 +34,34 @@ internal sealed class RouteRemoveCategoryInventoryReader(
         var ownership = await WorkspaceOwnershipReader.ReadAsync(
             _physicalPathResolver, subject.Request.Workspace,
             cancellationToken).ConfigureAwait(false);
-        if (!RouteOwnershipEvidence.IsEstablished(ownership))
+        var settings = await WorkspaceSettingsReader.ReadAsync(
+            _physicalPathResolver,
+            subject.Request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+        if (RouteRemovePersistencePlanner.ValidateObservedState(subject, ownership, settings) is { } persistenceFinding)
         {
-            return OwnershipBoundary(subject, ownership);
+            return Stop(
+                subject,
+                ownership,
+                persistenceFinding.Code,
+                persistenceFinding.Status,
+                persistenceFinding.Cause,
+                persistenceFinding.Target);
         }
 
-        return await ReadTrustedInventoryAsync(subject, ownership, cancellationToken)
+        return await ReadTrustedInventoryAsync(subject, ownership, settings, cancellationToken)
             .ConfigureAwait(false);
     }
 
     private async ValueTask<RouteRemoveCategoryInventoryResult> ReadTrustedInventoryAsync(
         RouteRemoveResolvedSubject subject,
         WorkspaceOwnershipRead ownership,
+        WorkspaceSettingsRead settings,
         CancellationToken cancellationToken)
     {
-        if (RouteRemoveOwnershipProjector.HasSubjectClaims(ownership, subject))
-        {
-            return Stop(
-                subject,
-                ownership,
-                RouteRemoveFindingCode.OwnershipClaimed,
-                CliSemanticStatus.Blocked,
-                "The selected Route Remove subject contains lifecycle-managed paths.");
-        }
-
         if (subject.Kind == RouteRemoveSubjectKind.Leaf)
         {
-            return ReadLeaf(subject, ownership);
+            return ReadLeaf(subject, ownership, settings);
         }
 
         var read = await _filesystemReader.ReadAsync(
@@ -71,12 +74,13 @@ internal sealed class RouteRemoveCategoryInventoryReader(
                 ExposedPaths = subject.NavigationExposure.ExposedPaths,
             },
             cancellationToken).ConfigureAwait(false);
-        return ReadFilesystemResult(subject, ownership, read);
+        return ReadFilesystemResult(subject, ownership, settings, read);
     }
 
     private static RouteRemoveCategoryInventoryResult ReadFilesystemResult(
         RouteRemoveResolvedSubject subject,
         WorkspaceOwnershipRead ownership,
+        WorkspaceSettingsRead settings,
         RouteCategoryFilesystemRead read)
     {
         if (read.State == RouteCategoryFilesystemReadState.Complete)
@@ -86,6 +90,7 @@ internal sealed class RouteRemoveCategoryInventoryReader(
                 {
                     Subject = subject,
                     Ownership = ownership,
+                    Settings = settings,
                     Items = [.. read.Items.Select(ProjectItem)],
                 },
                 boundary: null);
@@ -141,12 +146,14 @@ internal sealed class RouteRemoveCategoryInventoryReader(
 
     private static RouteRemoveCategoryInventoryResult ReadLeaf(
         RouteRemoveResolvedSubject subject,
-        WorkspaceOwnershipRead ownership)
+        WorkspaceOwnershipRead ownership,
+        WorkspaceSettingsRead settings)
         => new(
             new RouteRemoveCategoryInventory
             {
                 Subject = subject,
                 Ownership = ownership,
+                Settings = settings,
                 Items = [.. subject.Layers.Select(layer => new RouteRemoveInventoryItem
                 {
                     Kind = RouteRemoveItemKind.RoutedMarkdown,
@@ -158,14 +165,6 @@ internal sealed class RouteRemoveCategoryInventoryReader(
                 })],
             },
             boundary: null);
-
-    private static RouteRemoveCategoryInventoryResult OwnershipBoundary(
-        RouteRemoveResolvedSubject subject,
-        WorkspaceOwnershipRead ownership)
-    {
-        return Stop(subject, ownership, RouteRemoveFindingCode.OwnershipUnavailable,
-            CliSemanticStatus.Complete, RouteOwnershipEvidence.Cause(ownership));
-    }
 
     private static RouteRemoveLayerKind ReadLayer(SourceLayerKind kind)
         => kind switch
@@ -183,7 +182,8 @@ internal sealed class RouteRemoveCategoryInventoryReader(
         WorkspaceOwnershipRead ownership,
         RouteRemoveFindingCode code,
         CliSemanticStatus status,
-        string cause)
+        string cause,
+        string? target = null)
     {
         var formation = RouteRemoveBoundary.Start(subject.Request) with
         {
@@ -197,7 +197,7 @@ internal sealed class RouteRemoveCategoryInventoryReader(
                 formation,
                 code,
                 status,
-                subject.SelectedSource.Identity.CanonicalBasePath,
+                target ?? subject.SelectedSource.Identity.CanonicalBasePath,
                 cause));
     }
 

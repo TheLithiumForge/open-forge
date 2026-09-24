@@ -35,6 +35,10 @@ using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
@@ -101,6 +105,22 @@ internal sealed class ExtensionUpdatePlanner
         RecoveryBundlePreparation? allowedRecovery,
         CancellationToken cancellationToken)
     {
+        var settingsObservation = await WorkspaceSettingsReader.ReadAsync(
+            _physicalPathResolver,
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+        if (settingsObservation.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
+        {
+            return Stop(
+                request,
+                new ExtensionUpdateFinding(
+                    settingsObservation.State == WorkspaceSettingsReadState.Invalid
+                        ? ExtensionUpdateFindingCode.SettingsInvalid
+                        : ExtensionUpdateFindingCode.SettingsUnavailable,
+                    settingsObservation.Cause ?? "Workspace removal settings are unavailable; no Extension Update plan was built.",
+                    settingsObservation.LogicalPath));
+        }
+
         var ownership = await WorkspaceOwnershipReader.ReadAsync(
             _physicalPathResolver,
             request.Workspace,
@@ -134,31 +154,38 @@ internal sealed class ExtensionUpdatePlanner
                 "Extension Update recovery inspection failed unexpectedly.");
         }
 
-        var recoveryIsExpected = recovery.State == RecoveryBundleCatalogueState.Available
-            && (allowedRecovery is null
-                ? recovery.Candidates.Length == 0
-                : recovery.Candidates.Length == 1
-                    && RecoveryBundleIdentity.Matches(recovery.Candidates[0], allowedRecovery));
-        if (!recoveryIsExpected && (recovery.State != RecoveryBundleCatalogueState.Available || allowedRecovery is not null))
+        var recoveryIsExpected = IsExpectedRecovery(recovery, allowedRecovery);
+        if (!recoveryIsExpected)
         {
-            ExtensionUpdateFindingCode recoveryFinding;
-            if (recovery.State == RecoveryBundleCatalogueState.Cancelled)
+            var recoveryFinding = recovery.State switch
             {
-                recoveryFinding = ExtensionUpdateFindingCode.Interrupted;
-            }
-            else if (recovery.State == RecoveryBundleCatalogueState.Available)
+                RecoveryBundleCatalogueState.Cancelled => ExtensionUpdateFindingCode.Interrupted,
+                RecoveryBundleCatalogueState.Available => ExtensionUpdateFindingCode.RecoveryConflict,
+                RecoveryBundleCatalogueState.Unavailable => ExtensionUpdateFindingCode.RecoveryUnavailable,
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(recovery),
+                    recovery.State,
+                    "The recovery catalogue state is not defined."),
+            };
+            var blockingCandidate = recovery.Candidates.FirstOrDefault(candidate => !IsVerifiedFinal(candidate));
+            var recoveryTarget = blockingCandidate?.Path;
+            if (blockingCandidate is null && allowedRecovery is not null)
             {
-                recoveryFinding = ExtensionUpdateFindingCode.RecoveryConflict;
+                recoveryTarget = recovery.Candidates.FirstOrDefault(candidate =>
+                    RecoveryBundleIdentity.Matches(candidate, allowedRecovery))?.Path;
+                if (recoveryTarget is null)
+                {
+                    recoveryTarget = allowedRecovery.BundlePath;
+                }
             }
-            else
-            {
-                recoveryFinding = ExtensionUpdateFindingCode.RecoveryUnavailable;
-            }
-
             return Stop(
                 request,
-                recoveryFinding,
-                recovery.Cause ?? "Recognized recovery residuals block Extension Update.");
+                new ExtensionUpdateFinding(
+                    recoveryFinding,
+                    blockingCandidate?.Cause
+                        ?? recovery.Cause
+                        ?? "Recognized recovery residuals block Extension Update.",
+                    recoveryTarget));
         }
 
         var source = await _sourceReader.ReadAsync(
@@ -285,6 +312,9 @@ internal sealed class ExtensionUpdatePlanner
                 or ExtensionUpdateSelectionKind.InteractiveAll
                 ? selectedIds
                 : null);
+        var bulkSelection = selectionKind is ExtensionUpdateSelectionKind.ExplicitAll
+            or ExtensionUpdateSelectionKind.InteractiveAll;
+        var policyFindings = new List<ExtensionUpdateFinding>();
         var installed = ownership.Document.Extensions.Select(package => package.Id)
             .ToHashSet(StringComparer.Ordinal);
         var absentInstalled = selectedIds.FirstOrDefault(id => !installed.Contains(id));
@@ -299,6 +329,52 @@ internal sealed class ExtensionUpdatePlanner
                 selection,
                 SourceFact(source));
         }
+
+        var permittedRoots = new List<string>();
+        foreach (var rootId in selectedIds)
+        {
+            var rootClosure = ResolveClosure(source.Packages, [rootId]);
+            string? removedId = null;
+            if (WorkspaceRemovals.IsExtensionRemoved(rootId, settingsObservation.Document))
+            {
+                removedId = rootId;
+            }
+            else if (rootClosure.Cause is null)
+            {
+                removedId = rootClosure.Packages.FirstOrDefault(package =>
+                    WorkspaceRemovals.IsExtensionRemoved(package.Id, settingsObservation.Document))?.Id;
+            }
+
+            if (removedId is null && rootClosure.Cause is not null)
+            {
+                permittedRoots.Add(rootId);
+                continue;
+            }
+
+            if (removedId is null)
+            {
+                permittedRoots.Add(rootId);
+                continue;
+            }
+
+            if (!bulkSelection)
+            {
+                return Stop(
+                    request,
+                    new ExtensionUpdateFinding(
+                        ExtensionUpdateFindingCode.RemovedExtension,
+                        $"Extension '{removedId}' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension update.",
+                        removedId),
+                    selection,
+                    SourceFact(source));
+            }
+
+            policyFindings.Add(new ExtensionUpdateFinding(
+                ExtensionUpdateFindingCode.BulkExcluded,
+                $"Bulk update skipped '{rootId}' because Extension '{removedId}' is excluded by removedExtensions in .agents/open-forge.json.",
+                rootId));
+        }
+        selectedIds = [.. permittedRoots.Order(StringComparer.Ordinal)];
 
         var closure = ResolveClosure(source.Packages, selectedIds);
         if (closure.Cause is not null)
@@ -327,9 +403,17 @@ internal sealed class ExtensionUpdatePlanner
                 SourceFact(source));
         }
 
-        var selectedSet = closure.Packages.Select(package => package.Id)
+        var (packages, excludedPayloadPaths) = FilterExcludedPayload(
+            closure.Packages,
+            settingsObservation.Document);
+        policyFindings.AddRange(excludedPayloadPaths.Select(path => new ExtensionUpdateFinding(
+            ExtensionUpdateFindingCode.PathExcluded,
+            $"'{path}' is excluded by workspace removal settings and will be left unchanged. Edit .agents/open-forge.json to restore it before updating this Extension.",
+            path)));
+
+        var selectedSet = packages.Select(package => package.Id)
             .ToHashSet(StringComparer.Ordinal);
-        var libraryTargets = closure.Packages.SelectMany(package => package.Payload)
+        var libraryTargets = packages.SelectMany(package => package.Payload)
             .Select(file => file.TargetPath)
             .OfType<string>()
             .Concat(ownership.Document.Extensions
@@ -342,7 +426,7 @@ internal sealed class ExtensionUpdatePlanner
                 "The Extension destination is not an eligible workspace file.", unsafeTarget), selection, SourceFact(source));
         }
         var managedPaths = ownership.Document.Extensions.SelectMany(extension => extension.Paths).ToArray();
-        var alias = closure.Packages.SelectMany(package => package.Payload).Select(file => file.TargetPath).OfType<string>()
+        var alias = packages.SelectMany(package => package.Payload).Select(file => file.TargetPath).OfType<string>()
             .FirstOrDefault(target => managedPaths.Any(path => path != target
                 && PortableWorkspacePath.CreatePortableKey(path) == PortableWorkspacePath.CreatePortableKey(target)));
         if (alias is not null)
@@ -363,10 +447,11 @@ internal sealed class ExtensionUpdatePlanner
             new TopologyBuildInput
             {
                 Request = request,
-                Packages = closure.Packages,
+                Packages = packages,
                 Ownership = ownership.Document,
                 Selection = selection,
                 Source = source,
+                Settings = settingsObservation.Document,
                 Admission = new ExtensionUpdateTopologyAdmission(
                     new Dictionary<string, byte[]>(StringComparer.Ordinal),
                     new HashSet<string>(StringComparer.Ordinal)),
@@ -400,10 +485,11 @@ internal sealed class ExtensionUpdatePlanner
             new ExtensionUpdateReconciliationInput
             {
                 Request = request,
-                Packages = closure.Packages,
+                Packages = packages,
                 Ownership = ownership.Document,
                 Topology = topology,
                 SourceIdentity = source.Identity,
+                Settings = settingsObservation.Document,
             },
             cancellationToken).ConfigureAwait(false);
         if (reconciliation.Finding is null
@@ -414,10 +500,11 @@ internal sealed class ExtensionUpdatePlanner
                 new TopologyBuildInput
                 {
                     Request = request,
-                    Packages = closure.Packages,
+                    Packages = packages,
                     Ownership = ownership.Document,
                     Selection = selection,
                     Source = source,
+                    Settings = settingsObservation.Document,
                     Admission = new ExtensionUpdateTopologyAdmission(
                         reconciliation.AdmittedOverrides,
                         reconciliation.AdmittedExclusions),
@@ -443,7 +530,11 @@ internal sealed class ExtensionUpdatePlanner
         }
         var installedById = ownership.Document.Extensions
             .ToDictionary(package => package.Id, StringComparer.Ordinal);
-        var packageFacts = closure.Packages.Select(package => new ExtensionUpdatePackage(
+        policyFindings.AddRange(topology.ExcludedPaths.Select(path => new ExtensionUpdateFinding(
+            ExtensionUpdateFindingCode.PathExcluded,
+            $"Generated navigation at '{path}' is excluded by workspace removal settings and will be left unchanged.",
+            path)));
+        var packageFacts = packages.Select(package => new ExtensionUpdatePackage(
             package.Id,
             selectedIds.Contains(package.Id, StringComparer.Ordinal),
             package.Dependencies.Order(StringComparer.Ordinal),
@@ -528,16 +619,17 @@ internal sealed class ExtensionUpdatePlanner
         var plan = ExtensionUpdatePlan.Create(new ExtensionUpdatePlanInput
         {
             Request = request,
+            SettingsObservation = settingsObservation,
             SourceRead = source,
             SourceSignature = ReadSourceSignature(source),
             Selection = selection,
-            Packages = closure.Packages,
+            Packages = packages,
             FrameworkPayload = frameworkPayload,
             Ownership = ownership,
             IntendedOwnership = reconciliation.IntendedOwnership,
             Topology = topology,
             Facts = facts,
-            Findings = reconciliation.Findings,
+            Findings = MergeFindings(reconciliation.Findings, policyFindings),
             Effects = reconciliation.Effects,
             DirectoryCreations = reconciliation.DirectoryCreations,
             OwnershipChange = ownershipPlan.Change,
@@ -612,7 +704,8 @@ internal sealed class ExtensionUpdatePlanner
                 ? input.Ownership.Extensions
                 .Where(package => selectedIds.Contains(package.Id))
                 .SelectMany(package => package.Paths)
-                .Where(path => !intendedPaths.Contains(path))
+                .Where(path => !intendedPaths.Contains(path)
+                    && !WorkspaceRemovals.IsPathRemoved(path, input.Settings))
                 .ToHashSet(StringComparer.Ordinal)
                 : new HashSet<string>(StringComparer.Ordinal);
             var topology = await _topologyBuilder.BuildAsync(
@@ -620,7 +713,8 @@ internal sealed class ExtensionUpdatePlanner
                     request,
                     input.Packages,
                     retiredPaths,
-                    input.Admission),
+                    input.Admission,
+                    input.Settings),
                 cancellationToken)
                 .ConfigureAwait(false);
             return new TopologyBuild(topology, Boundary: null);
@@ -679,6 +773,75 @@ internal sealed class ExtensionUpdatePlanner
         }
         return packages.All(package => Visit(package.Id));
     }
+
+    private static bool IsExpectedRecovery(
+        RecoveryBundleCatalogueResult catalogue,
+        RecoveryBundlePreparation? allowed)
+    {
+        if (catalogue.State != RecoveryBundleCatalogueState.Available
+            || !catalogue.Candidates.All(IsVerifiedFinal))
+        {
+            return false;
+        }
+
+        if (allowed is null)
+        {
+            return true;
+        }
+
+        return catalogue.Candidates.Count(candidate => RecoveryBundleIdentity.Matches(candidate, allowed)) == 1;
+    }
+
+    private static bool IsVerifiedFinal(RecoveryBundleCandidateSnapshot candidate)
+        => candidate.Kind == RecoveryBundleCandidateKind.Final
+            && candidate.Integrity == RecoveryBundleIntegrity.Verified
+            && candidate.Verified is not null;
+
+    private static (IReadOnlyList<ExtensionPackageFact> Packages, IReadOnlyList<string> ExcludedPaths)
+        FilterExcludedPayload(
+            IReadOnlyList<ExtensionPackageFact> packages,
+            WorkspaceSettingsDocument settings)
+    {
+        var excluded = new SortedSet<string>(StringComparer.Ordinal);
+        var filtered = packages.Select(package =>
+        {
+            var payload = new List<ExtensionPackageFileFact>();
+            foreach (var file in package.Payload)
+            {
+                if (PortableWorkspacePath.TryNormalize(file.TargetPath, out var normalized)
+                    && WorkspaceRemovals.IsPathRemoved(normalized, settings))
+                {
+                    excluded.Add(normalized);
+                    continue;
+                }
+
+                payload.Add(file);
+            }
+
+            return ExtensionPackageFact.Create(
+                new ExtensionPackageManifestFact
+                {
+                    Id = package.Id,
+                    Name = package.Name,
+                    Description = package.Description,
+                    Version = package.Version,
+                    Dependencies = [.. package.Dependencies],
+                },
+                new ExtensionPackageContentsFact
+                {
+                    ManifestPath = package.ManifestPath,
+                    Payload = payload,
+                });
+        }).ToArray();
+        return (filtered, [.. excluded]);
+    }
+
+    private static IReadOnlyList<ExtensionUpdateFinding> MergeFindings(
+        IEnumerable<ExtensionUpdateFinding> findings,
+        IEnumerable<ExtensionUpdateFinding> policyFindings)
+        => [.. findings.Concat(policyFindings)
+            .GroupBy(finding => (finding.Code, finding.Target))
+            .Select(group => group.First())];
 
     private static Closure ResolveClosure(
         IReadOnlyList<ExtensionPackageFact> universe,
@@ -842,6 +1005,8 @@ internal sealed class ExtensionUpdatePlanner
         internal required ExtensionUpdateSelection Selection { get; init; }
 
         internal required ExtensionSourceReadResult Source { get; init; }
+
+        internal required WorkspaceSettingsDocument Settings { get; init; }
 
         internal required ExtensionUpdateTopologyAdmission Admission { get; init; }
     }

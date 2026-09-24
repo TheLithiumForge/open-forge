@@ -35,5 +35,8 @@ public sealed class WorkspaceSettingsReadTests
         Assert.False(before.MatchesObservation(before with { Snapshot = FileStateSnapshot.File(path, path, [1, 3]) }));
         Assert.False(before.MatchesObservation(before with { Snapshot = FileStateSnapshot.File(path + ".other", path + ".other", [1, 2]) }));
         Assert.False(before.MatchesObservation(before with { Document = before.Document with { AllowInstallPaths = ["docs"] } }));
+        Assert.False(before.MatchesObservation(before with { Document = before.Document with { RemovedDirectories = ["docs"] } }));
+        Assert.False(before.MatchesObservation(before with { Document = before.Document with { RemovedExtensions = ["planning"] } }));
+        Assert.False(before.MatchesObservation(before with { Document = before.Document with { RemovedLibraries = ["team"] } }));
     }
 }

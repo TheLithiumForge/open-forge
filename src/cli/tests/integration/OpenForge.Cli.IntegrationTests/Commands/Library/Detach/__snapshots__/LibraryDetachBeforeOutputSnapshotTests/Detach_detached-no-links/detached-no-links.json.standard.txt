@@ -9,11 +9,19 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "Detached team-knowledge. It had no links.",
-    "kind": "nothing-to-do"
+    "headline": "Recorded removal intent for Library team-knowledge.",
+    "kind": "done"
   },
   "findings": [],
   "effects": [
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
     {
       "path": ".agents/open-forge.lock.json",
       "kind": "record",
@@ -38,10 +46,16 @@
       "required": [],
       "missing": [],
       "decision": "not-required",
-      "action": "none",
-      "outcome": "not-requested"
+      "action": "create",
+      "outcome": "verified"
     },
     "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "kind": "setting",
+        "action": "create",
+        "outcome": "done"
+      },
       {
         "path": ".agents/open-forge.lock.json",
         "kind": "record",

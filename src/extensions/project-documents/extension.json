@@ -1,8 +1,8 @@
 {
   "id": "project-documents",
   "name": "Project Documents",
-  "description": "Maintain current project knowledge with a Documents convention, five templates, and Vision and Architecture methods",
-  "version": "0.3.0",
+  "description": "Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements",
+  "version": "0.4.0",
   "dependencies": [
     "workflows"
   ]

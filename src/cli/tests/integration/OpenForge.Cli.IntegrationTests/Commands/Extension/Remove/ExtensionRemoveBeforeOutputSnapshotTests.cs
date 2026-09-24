@@ -1,5 +1,7 @@
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Commands.Extension.Remove;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Presentation.Extension.Remove;
@@ -88,11 +90,23 @@ public sealed class ExtensionRemoveBeforeOutputSnapshotTests
                     ids, automatic: !prompted, allowInteraction: prompted), cancellation.Token);
         }
         Assert.Equal((CliSemanticStatus)status, result.Status);
-        if (situation is "dependent-blocks" or "no-selection-non-interactive" or "not-installed" or "dry-run" or "lock-held" or "cancelled" or "permission-required")
+        if (situation is "lock-held" or "permission-required")
+        {
+            Assert.All(result.Effects, effect => Assert.Equal(ExtensionRemoveEffectOutcome.NotStarted, effect.Outcome));
+            Assert.Equal(ExtensionRemoveLifecycleOutcome.NotStarted, result.Lifecycle.Outcome);
+        }
+
+        if (situation is "dependent-blocks" or "no-selection-non-interactive" or "dry-run" or "lock-held" or "cancelled" or "permission-required")
             Assert.Equal(before, workspace.Snapshot());
         else if (situation is "shared-file-kept" or "write-failed-partial") Assert.True(File.Exists(workspace.Combine(".agents/toolkit.md")));
         else Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
         if (situation == "orphaned-dependency") Assert.True(File.Exists(workspace.Combine(".agents/base.md")));
+        if (situation == "not-installed")
+        {
+            using var settings = JsonDocument.Parse(workspace.ReadText(".agents/open-forge.json"));
+            Assert.Equal(["toolkit"], settings.RootElement.GetProperty("removedExtensions")
+                .EnumerateArray().Select(value => value.GetString()));
+        }
         if (situation == "write-failed-partial")
         {
             Assert.False(File.Exists(workspace.Combine(".agents/aaa.md")));

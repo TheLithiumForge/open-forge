@@ -159,7 +159,7 @@ Observe whether the reviewed target is achieved. Compare affected paths, relevan
 
 **Situation:** Managed source
 
-**Disposition:** Added. Worth retaining as an independently checked user outcome: Explain why this command cannot remove managed content.
+**Disposition:** Added. Remove the explicitly selected managed route, record its persistent exclusion, and release its content claims.
 
 ### Starting point
 
@@ -175,13 +175,13 @@ open-forge route remove "$MANAGED_SOURCE" --automatic
 
 ### Expected result
 
-Explain why this command cannot remove managed content.
+Remove the explicitly selected managed route, record its persistent exclusion, and release its content claims.
 
 
 
 ### Verification
 
-Verify the source and ownership remain; automatic confirmation does not override ownership.
+Verify the selected route is absent, matching claims are released, unrelated claims and package registrations remain, and Update respects the recorded exclusion.
 
 ## C17-07
 
@@ -351,13 +351,13 @@ Verify both the chosen source and unrelated candidates remain unchanged.
 
 ## C17-13
 
-**Situation:** Ownership cannot establish an unmanaged subject
+**Situation:** Unusable ownership prevents safe route removal
 
 **Disposition:** Improved and added. The removal case accidentally executes route move.
 
 ### Starting point
 
-The subject is a readable ordinary route. Its required ownership record is missing or unusable, while paths and reference files are otherwise safe and readable.
+The subject is a readable ordinary route. Its required ownership record is unreadable or uninterpretable, while paths and reference files are otherwise safe and readable. A proven-absent record is a separate known-empty case.
 
 ### Steps
 
@@ -365,7 +365,7 @@ The subject is a readable ordinary route. Its required ownership record is missi
 
 ### Expected result
 
-**Reviewed target:** When ownership cannot establish an eligible selected removal subject, report the unavailable ownership facts, remove nothing, and preserve all source, reference, index and ownership bytes. Do not infer unmanaged status from matching files.
+**Reviewed target:** When required ownership is unavailable, report that boundary, remove nothing, and preserve source, reference, navigation, settings and ownership bytes. Do not infer claims from matching files. A proven-absent lock permits ordinary route removal with persistent exclusions; known Framework and Extension claims are released after verified content removal.
 
 ### Verification
 

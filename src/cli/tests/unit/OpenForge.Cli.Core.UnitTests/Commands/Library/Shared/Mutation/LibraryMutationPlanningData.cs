@@ -51,6 +51,7 @@ internal static class LibraryMutationPlanningData
             Mappings = [.. current.Select(path => Mapping(path, LibraryMappingObservationState.Missing))],
             ConsumerBoundary = Boundary(),
             Ownership = WorkspaceOwnership(),
+            Settings = OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceSettingsRead.Absent(Absolute(OpenForge.Cli.Core.Framework.Settings.WorkspaceSettingsDefinitions.RelativePath)),
             GeneratedRegionChanges = [],
         };
 
@@ -64,6 +65,7 @@ internal static class LibraryMutationPlanningData
                 .Select(path => Mapping(path, registered.Contains(path) ? LibraryMappingObservationState.Current : LibraryMappingObservationState.Missing))],
             ConsumerBoundary = Boundary(),
             Ownership = RegisteredOwnership(registered),
+            Settings = OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceSettingsRead.Absent(Absolute(OpenForge.Cli.Core.Framework.Settings.WorkspaceSettingsDefinitions.RelativePath)),
             GeneratedRegionChanges = [],
         };
 
@@ -75,6 +77,7 @@ internal static class LibraryMutationPlanningData
             Mappings = [.. registered.Select(path => Mapping(path, LibraryMappingObservationState.Current))],
             ConsumerBoundary = Boundary(),
             Ownership = RegisteredOwnership(registered),
+            Settings = OpenForge.Cli.Core.Framework.Settings.Models.Observation.WorkspaceSettingsRead.Absent(Absolute(OpenForge.Cli.Core.Framework.Settings.WorkspaceSettingsDefinitions.RelativePath)),
             GeneratedRegionChanges = [],
         };
 

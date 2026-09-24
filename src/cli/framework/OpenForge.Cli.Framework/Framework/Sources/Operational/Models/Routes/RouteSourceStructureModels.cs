@@ -16,6 +16,7 @@ internal enum RouteAxiomsState
 {
     Valid,
     Missing,
+    Empty,
     Invalid,
     Unavailable,
     NotApplicable,
@@ -78,6 +79,12 @@ internal sealed class RouteAxiomsObservation
     {
         ArgumentNullException.ThrowIfNull(location);
         return new(RouteAxiomsState.Valid, location);
+    }
+
+    internal static RouteAxiomsObservation Empty(SourceLocation location)
+    {
+        ArgumentNullException.ThrowIfNull(location);
+        return new(RouteAxiomsState.Empty, location);
     }
 
     internal static RouteAxiomsObservation Boundary(RouteAxiomsState state, SourceLocation? location = null)

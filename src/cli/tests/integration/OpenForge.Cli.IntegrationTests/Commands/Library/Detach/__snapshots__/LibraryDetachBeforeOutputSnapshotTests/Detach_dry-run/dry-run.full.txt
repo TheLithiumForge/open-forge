@@ -1,7 +1,10 @@
 Would detach team-knowledge: remove 1 link under ..
 Workspace: <workspace>
+  .agents/open-forge.json       settings would be updated
   .agents/directives/review.md  would remove
   .agents/open-forge.lock.json  registration would be removed
+  .agents/open-forge.json  settings would be updated
+  Expected .agents/open-forge.json: missing; length unavailable; SHA-256 unavailable; target unavailable
   Expected .agents/directives/review.md: relative-file-link; length unavailable; SHA-256 unavailable; target ../../shared/team-knowledge/.agents/directives/review.md
   Expected .agents/open-forge.lock.json: ordinary-file; length unavailable; SHA-256 <sha256>; target unavailable
   Verification: was not requested; registration was not published.

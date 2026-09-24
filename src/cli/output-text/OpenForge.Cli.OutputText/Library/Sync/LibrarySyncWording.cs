@@ -8,6 +8,10 @@ internal static class LibrarySyncWording
     internal static string UpToDate(string id)
         => $"The {id} Library is up to date. Nothing to do.";
 
+    // @OpenForgeText library.sync.wording.no-changes-excluded-destinations-left-untouched
+    internal static string ExcludedDestinationsUntouched(string id)
+        => $"No changes were made for {id}; excluded destinations were left untouched.";
+
     // @OpenForgeText library.sync.wording.no-ownership-record-exists-so-cannot-be-synchronized-nothing-was-changed
     internal static string NoOwnership(string id)
         => $"No ownership record exists, so {id} cannot be synchronized. Nothing was changed.";

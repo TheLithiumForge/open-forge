@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Update.Models.Planning;
@@ -41,6 +42,7 @@ internal sealed record UpdatePlanExecution(
     IReadOnlyList<UpdateComparisonObservation> Observations,
     IReadOnlyList<FileStateSnapshot> ProjectionInputs,
     IReadOnlyList<UpdatePlannedEffect> Effects,
+    IReadOnlyList<PlannedDirectoryCreation> DirectoryCreations,
     PlannedFileChange? OwnershipChange);
 
 internal sealed record UpdatePlanResolution(

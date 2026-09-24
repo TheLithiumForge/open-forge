@@ -152,6 +152,42 @@ internal static class ExtensionUpdateText
     internal static string TitleExtensionUpdateWasCancelled()
         => "Extension update was cancelled";
 
+    // @OpenForgeText extension.update.title.workspace-settings-are-invalid
+    internal static string TitleWorkspaceSettingsAreInvalid()
+        => "Workspace settings are invalid";
+
+    // @OpenForgeText extension.update.title.workspace-settings-are-unavailable
+    internal static string TitleWorkspaceSettingsAreUnavailable()
+        => "Workspace settings are unavailable";
+
+    // @OpenForgeText extension.update.title.extension-is-excluded-by-workspace-settings
+    internal static string TitleExtensionIsExcludedByWorkspaceSettings()
+        => "Extension is excluded by workspace settings";
+
+    // @OpenForgeText extension.update.title.bulk-update-skipped-an-excluded-extension
+    internal static string TitleBulkUpdateSkippedAnExcludedExtension()
+        => "Bulk update skipped an excluded Extension";
+
+    // @OpenForgeText extension.update.title.extension-path-is-excluded
+    internal static string TitleExtensionPathIsExcluded()
+        => "Extension path is excluded";
+
+    // @OpenForgeText extension.update.title.required-parent-is-excluded
+    internal static string TitleRequiredParentIsExcluded()
+        => "Required parent is excluded";
+
+    // @OpenForgeText extension.update.message.repair-settings-then-rerun-update
+    internal static string MessageRepairSettingsThenRerunUpdate()
+        => "Repair .agents/open-forge.json or remove the relevant exclusion there, then rerun extension update.";
+
+    // @OpenForgeText extension.update.message.remove-extension-from-settings-then-rerun-update
+    internal static string MessageRemoveExtensionFromSettingsThenRerunUpdate()
+        => "Remove the Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension update.";
+
+    // @OpenForgeText extension.update.message.remove-path-from-settings-then-rerun-update
+    internal static string MessageRemovePathFromSettingsThenRerunUpdate()
+        => "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension update.";
+
     // @OpenForgeText extension.update.title.extension-update
     internal static string TitleExtensionUpdate()
         => "Extension update";

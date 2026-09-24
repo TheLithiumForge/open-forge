@@ -50,18 +50,12 @@ public sealed class ExtensionInstallPermissionIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Theory]
-    [InlineData(false), InlineData(true)]
-    public static async Task AllowOnceAppliesWithoutWritingAbsentOrMalformedSettings(bool malformed)
+    [Fact]
+    public static async Task AllowOnceAppliesWithoutWritingAbsentSettings()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-once");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        const string invalid = "{ malformed authored settings";
-        if (malformed)
-        {
-            workspace.CreateOccupant(PermissionFixture.PermissionPath, invalid);
-        }
         workspace.CreateOccupant(".agents/open-forge.permissions.json", "malformed retired file");
         try
         {
@@ -70,14 +64,51 @@ public sealed class ExtensionInstallPermissionIntegrationTests
             Assert.True(run.ExitCode == 0, run.StandardOutput + run.StandardError);
             Assert.Equal("sentinel", run.RemainingInput);
             Assert.Equal("content bytes\n", File.ReadAllText(workspace.Combine(PermissionFixture.ExternalPath)));
-            Assert.Equal(malformed, File.Exists(workspace.Combine(PermissionFixture.PermissionPath)));
-            if (malformed)
-            {
-                Assert.Equal(invalid, workspace.ReadText(PermissionFixture.PermissionPath));
-            }
+            Assert.False(File.Exists(workspace.Combine(PermissionFixture.PermissionPath)));
             Assert.Equal("malformed retired file", workspace.ReadText(".agents/open-forge.permissions.json"));
             var repeated = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic", "--format", "json"]);
             Assert.Equal(5, repeated.ExitCode);
+        }
+        finally
+        {
+            PermissionFixture.DeleteExternalOutput(workspace);
+        }
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact]
+    public static async Task MalformedRequiredSettingsBlockBeforeAllowOnceApproval()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-once-malformed-settings");
+        await workspace.SeedFrameworkAsync();
+        using var source = PermissionFixture.CreatePackage();
+        const string invalid = "{ malformed authored settings";
+        workspace.CreateOccupant(PermissionFixture.PermissionPath, invalid);
+        var before = workspace.Snapshot();
+        var sourceBefore = source.SnapshotHashes();
+        try
+        {
+            var run = await workspace.RunAsync(
+                ["extension", "install", "team", "--source", source.Path, "--format", "json"],
+                "once\nyes\nsentinel\n",
+                standardInputRedirected: false,
+                promptOutputRedirected: false);
+
+            Assert.Equal(5, run.ExitCode);
+            Assert.Equal(CliSemanticStatus.Blocked, run.Status);
+            Assert.Equal("once", run.RemainingInput);
+            Assert.DoesNotContain("always, once, cancel:", run.StandardError, StringComparison.Ordinal);
+            using var document = JsonDocument.Parse(run.StandardOutput);
+            var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
+            Assert.Equal("extension-install.settings-invalid", finding.GetProperty("code").GetString());
+            Assert.Contains("settings", finding.GetProperty("title").GetString(), StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("valid JSON", finding.GetProperty("message").GetString(), StringComparison.OrdinalIgnoreCase);
+            Assert.Equal("Correct .agents/open-forge.json, then rerun extension install.",
+                document.RootElement.GetProperty("next").GetProperty("command").GetString());
+            Assert.Equal(before, workspace.Snapshot());
+            Assert.Equal(sourceBefore, source.SnapshotHashes());
+            Assert.Equal(invalid, workspace.ReadText(PermissionFixture.PermissionPath));
+            Assert.False(File.Exists(workspace.Combine(PermissionFixture.ExternalPath)));
         }
         finally
         {

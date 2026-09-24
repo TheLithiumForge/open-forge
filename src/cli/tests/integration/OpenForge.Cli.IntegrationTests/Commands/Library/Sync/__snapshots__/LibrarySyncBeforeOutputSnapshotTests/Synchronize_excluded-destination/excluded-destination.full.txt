@@ -1,0 +1,8 @@
+No changes were made for team-knowledge; excluded destinations were left untouched.
+Workspace: <workspace>
+workspace-settings
+  Info  .agents/directives/review.md  Destination is excluded [library-sync.path-excluded]
+         The mapped destination is excluded by workspace settings and was kept untouched
+  Inventory: 1 eligible file, 0 excluded items, 0 unavailable paths.
+  Verification: not started; record publication: not started.
+  Recovery: no recovery data was requested.

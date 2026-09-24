@@ -1,0 +1,13 @@
+The toolkit Extension is already installed and matches the package. Nothing to do.
+Workspace: <workspace>
+  Info  .agents/toolkit.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/toolkit.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  updated
+  Entries sections unchanged: .agents/directives/_directives.md, .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md, .agents/memory/_memory.md, .agents/memory/archived/_archived.md, .agents/memory/crystallized/_crystallized.md, .agents/memory/emerging/_emerging.md, .agents/memory/working/_working.md, .agents/patterns/_patterns.md, .agents/skills/_skills.md, .agents/templates/_templates.md
+  Permission evaluation: decision not-required; required 0; missing 0; saved no
+  Framework fingerprint: <sha256>
+  Verification: targets verified; Entries verified; Extension record verified; Framework record verified
+  Recovery: not-required.

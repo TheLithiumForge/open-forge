@@ -9,14 +9,14 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "The result contains 5 installed packages and 7 available packages.",
+    "headline": "The result contains 6 installed packages and 10 available packages.",
     "kind": "done"
   },
   "findings": [],
   "effects": [],
   "counts": {
-    "installed": 5,
-    "available": 7
+    "installed": 6,
+    "available": 10
   },
   "limitations": [],
   "data": {
@@ -27,78 +27,104 @@
     "installed": [
       {
         "id": "development",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "note": null
       },
       {
         "id": "development-toolkit",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "note": null
       },
       {
         "id": "planning",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "note": null
       },
       {
         "id": "project-documents",
-        "version": "0.3.0",
+        "version": "0.4.0",
+        "note": null
+      },
+      {
+        "id": "scenarios",
+        "version": "0.4.0",
         "note": null
       },
       {
         "id": "workflows",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "note": null
       }
     ],
     "available": [
       {
         "id": "collaboration",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "name": "Collaboration",
-        "description": "Explore choices and match collaboration depth to the decision",
+        "description": "Explore ideas, compare alternatives, and clarify decisions through discussion and a brainstorming template",
+        "packages": 1
+      },
+      {
+        "id": "core-templates",
+        "version": "0.4.0",
+        "name": "Core Templates",
+        "description": "Create directives, guidance, patterns, skills, templates, maps, and memory records from adaptable starting files",
         "packages": 1
       },
       {
         "id": "development",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "name": "Development",
-        "description": "Implement changes, investigate defects, and review results with the workspace's existing tools",
+        "description": "Implement changes, investigate defects, and review results using the project's existing tools and conventions",
         "packages": 2
       },
       {
         "id": "development-toolkit",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "name": "Development Toolkit",
-        "description": "Project knowledge, planning, and development methods in one optional selection",
-        "packages": 5
+        "description": "Install Project Documents, Planning, Flows and Scenarios, and Development together",
+        "packages": 6
+      },
+      {
+        "id": "observations-and-handoffs",
+        "version": "0.4.0",
+        "name": "Observations and Handoffs",
+        "description": "Save useful observations and prepare a clear snapshot for another person, agent, or session to resume work",
+        "packages": 1
       },
       {
         "id": "orchestration",
-        "version": "0.3.0",
-        "name": "Orchestration",
-        "description": "Coordinate related tasks, capture useful execution learning, and transfer work safely",
-        "packages": 4
+        "version": "0.4.0",
+        "name": "Task Coordination",
+        "description": "Coordinate related tasks, assign responsibilities, manage dependencies, and verify combined results",
+        "packages": 5
       },
       {
         "id": "planning",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "name": "Planning",
-        "description": "Explore possibilities, preserve accepted choices, and organize work with optional records and a planning method",
+        "description": "Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and checkpoints",
         "packages": 2
       },
       {
         "id": "project-documents",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "name": "Project Documents",
-        "description": "Maintain current project knowledge with a Documents convention, five templates, and Vision and Architecture methods",
+        "description": "Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements",
         "packages": 2
       },
       {
+        "id": "scenarios",
+        "version": "0.4.0",
+        "name": "Flows and Scenarios",
+        "description": "Describe user journeys and expected outcomes, organize scenarios, and record what happened when they were tried",
+        "packages": 1
+      },
+      {
         "id": "workflows",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "name": "Workflow Support",
-        "description": "Select and follow scoped methods through one native use-workflow Skill",
+        "description": "Find and follow installed workflows, or create your own using the supplied template",
         "packages": 1
       }
     ]

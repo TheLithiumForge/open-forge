@@ -108,7 +108,7 @@ internal sealed class ExtensionUpdateApplicationOperation(
             return Stop(
                 execution,
                 ExtensionUpdateFindingCode.TargetChanged,
-                "Source, lifecycle, Framework, topology, ownership, or plan facts changed after planning.");
+                "Workspace settings, source, lifecycle, Framework, topology, ownership, or plan facts changed after planning.");
         }
 
         MutationValidationResult validation;
@@ -540,7 +540,8 @@ internal sealed class ExtensionUpdateApplicationOperation(
         => [.. preparation.Entries.OrderBy(entry => entry.Ordinal).Select(entry => entry.TargetPath)];
 
     private static bool Matches(ExtensionUpdatePlan expected, ExtensionUpdatePlan actual)
-        => string.Equals(expected.SourceSignature, actual.SourceSignature, StringComparison.Ordinal)
+        => expected.SettingsObservation.MatchesObservation(actual.SettingsObservation)
+            && string.Equals(expected.SourceSignature, actual.SourceSignature, StringComparison.Ordinal)
             && string.Equals(
                 expected.FrameworkPayload.InventoryFingerprint,
                 actual.FrameworkPayload.InventoryFingerprint,
@@ -553,6 +554,7 @@ internal sealed class ExtensionUpdateApplicationOperation(
             && DictionaryEquals(
                 expected.Topology.GeneratedTargetBytes,
                 actual.Topology.GeneratedTargetBytes)
+            && expected.Topology.ExcludedPaths.SequenceEqual(actual.Topology.ExcludedPaths, StringComparer.Ordinal)
             && expected.DirectoryCreations.Select(value => value.Expectation)
                 .SequenceEqual(actual.DirectoryCreations.Select(value => value.Expectation))
             && ChangesEqual(expected.AllFileChanges, actual.AllFileChanges)

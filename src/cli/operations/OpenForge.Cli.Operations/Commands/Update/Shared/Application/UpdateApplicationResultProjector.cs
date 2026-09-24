@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Application;
 
@@ -11,9 +12,28 @@ internal static class UpdateApplicationResultProjector
 {
     internal static IReadOnlyList<UpdatePhysicalEffect> Effects(
         UpdatePlanExecution execution,
-        UpdateApplicationAttempt attempt)
+        UpdateApplicationAttempt attempt,
+        bool fullyVerified = false)
     {
-        var results = new List<UpdatePhysicalEffect>(execution.Effects.Count);
+        var results = new List<UpdatePhysicalEffect>(
+            execution.DirectoryCreations.Count + execution.Effects.Count);
+        for (var index = 0; index < execution.DirectoryCreations.Count; index++)
+        {
+            var creation = execution.DirectoryCreations[index];
+            var receipt = index < attempt.DirectoryReceipts.Count
+                ? attempt.DirectoryReceipts[index]
+                : null;
+            var relativePath = Path.GetRelativePath(
+                    execution.Request.Workspace.LexicalRoot,
+                    creation.LogicalPath)
+                .Replace(Path.DirectorySeparatorChar, '/')
+                .Replace(Path.AltDirectorySeparatorChar, '/');
+            results.Add(UpdatePhysicalEffect.Directory(
+                relativePath,
+                ReadOutcome(receipt),
+                ReadResidual(receipt, fullyVerified)));
+        }
+
         for (var index = 0; index < execution.Effects.Count; index++)
         {
             var planned = execution.Effects[index].ResultEffect;
@@ -22,6 +42,7 @@ internal static class UpdateApplicationResultProjector
                 : null;
             results.Add(new UpdatePhysicalEffect(
                 planned.Path,
+                planned.Kind,
                 planned.Action,
                 planned.Changes,
                 ReadOutcome(receipt),
@@ -91,6 +112,24 @@ internal static class UpdateApplicationResultProjector
             _ => UpdatePhysicalEffectOutcome.NotStarted,
         };
 
+    private static UpdatePhysicalEffectOutcome ReadOutcome(DirectoryCreationReceipt? receipt)
+        => receipt switch
+        {
+            null => UpdatePhysicalEffectOutcome.NotStarted,
+            {
+                EffectState: FilesystemEffectState.Applied,
+                VerificationState: FilesystemVerificationState.Verified,
+            } => UpdatePhysicalEffectOutcome.Verified,
+            {
+                EffectState: FilesystemEffectState.Applied,
+                VerificationState: FilesystemVerificationState.Failed,
+            } => UpdatePhysicalEffectOutcome.VerificationFailed,
+            {
+                EffectState: FilesystemEffectState.Unknown,
+            } => UpdatePhysicalEffectOutcome.CompletionUnknown,
+            _ => UpdatePhysicalEffectOutcome.NotStarted,
+        };
+
     private static UpdatePhysicalEffectResidual ReadResidual(FileChangeReceipt? receipt)
         => receipt switch
         {
@@ -107,4 +146,31 @@ internal static class UpdateApplicationResultProjector
                 UpdatePhysicalEffectResidual.Retained,
             _ => UpdatePhysicalEffectResidual.None,
         };
+
+    private static UpdatePhysicalEffectResidual ReadResidual(
+        DirectoryCreationReceipt? receipt,
+        bool fullyVerified)
+    {
+        if (receipt is null)
+        {
+            return UpdatePhysicalEffectResidual.None;
+        }
+
+        if (receipt.EffectState == FilesystemEffectState.Unknown
+            || receipt.VerificationState == FilesystemVerificationState.Failed)
+        {
+            return receipt.After switch
+            {
+                { Kind: FileExpectationKind.Missing } => UpdatePhysicalEffectResidual.None,
+                { Kind: FileExpectationKind.File or FileExpectationKind.Directory } => UpdatePhysicalEffectResidual.Retained,
+                _ => UpdatePhysicalEffectResidual.Unknown,
+            };
+        }
+
+        return receipt.EffectState == FilesystemEffectState.Applied
+            && receipt.VerificationState == FilesystemVerificationState.Verified
+            && !fullyVerified
+                ? UpdatePhysicalEffectResidual.Retained
+                : UpdatePhysicalEffectResidual.None;
+    }
 }

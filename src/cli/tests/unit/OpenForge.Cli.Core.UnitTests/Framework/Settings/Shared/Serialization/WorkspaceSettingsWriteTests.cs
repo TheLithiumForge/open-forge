@@ -50,6 +50,7 @@ public sealed class WorkspaceSettingsWriteTests
         const string existing = """
             {"$schema":"https://example.invalid/s.json",
              "removedCategories":["templates"],
+             "removedFiles":[".agents/memory/_memory.md"],
              "rules":{"reference.cycle":"off"},
              "allowInstallPaths":["tools"],
              "future":{"nested":[1,2,{"deep":true}]}}
@@ -68,6 +69,7 @@ public sealed class WorkspaceSettingsWriteTests
         var result = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes(text));
         Assert.Equal(["tools", "docs"], result.Document!.AllowInstallPaths);
         Assert.Equal(["templates"], result.Document.RemovedCategories);
+        Assert.Equal([".agents/memory/_memory.md"], result.Document.RemovedFiles);
     }
 
     [Trait("Boundary", "Output")]

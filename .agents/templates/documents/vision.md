@@ -6,9 +6,11 @@ open-forge:
 
 # {Subject} Vision
 
-<!-- TEMPLATE: Use for a stable direction worth preserving. This is not a roadmap or feature catalogue; keep proposed and accepted direction distinct.
-Replace {prompts}; remove this comment and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying. -->
+{
+Use for a stable direction worth preserving. This is not a roadmap or feature catalogue; keep proposed and accepted direction distinct.
+Replace {prompts}; remove this source guidance and sections that add no value.
+Set metadata for the destination, not this Template. Rebase links after copying.
+}
 
 ## Vision
 

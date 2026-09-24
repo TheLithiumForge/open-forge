@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.UnitTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.Core.Presentation.Shared.Prompts;
@@ -104,6 +105,11 @@ public sealed class ExtensionInstallContractTests
             ("extension-install.operation-failed", CliSemanticStatus.Failed),
             ("extension-install.interrupted", CliSemanticStatus.Interrupted),
             ("extension-install.metadata-projection-skipped", CliSemanticStatus.Attention),
+            ("extension-install.settings-invalid", CliSemanticStatus.Blocked),
+            ("extension-install.settings-unavailable", CliSemanticStatus.Incomplete),
+            ("extension-install.removed-extension", CliSemanticStatus.Blocked),
+            ("extension-install.path-excluded", CliSemanticStatus.Complete),
+            ("extension-install.excluded-ancestor", CliSemanticStatus.Blocked),
         ],
             ExtensionInstallDefinitions.FindingCodes.Select(code => (
                 ExtensionInstallDefinitions.ReadMachineName(code),
@@ -213,7 +219,9 @@ public sealed class ExtensionInstallContractTests
                 Payload = [file],
             });
 
-        var result = ExtensionInstallPayloadNormalizer.Normalize([package]);
+        var result = ExtensionInstallPayloadNormalizer.Normalize(
+            [package],
+            WorkspaceSettingsDocument.Empty);
 
         Assert.Empty(result.Packages);
         var finding = Assert.IsType<ExtensionInstallFinding>(result.Finding);

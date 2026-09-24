@@ -6,14 +6,15 @@ open-forge:
 
 # Document Templates
 
+## What current explanation does the project need?
+
+Choose a starter by the question it answers. Use the general `Document` for a current explanation, `Vision` for purpose, `Architecture` for structure, `Principles` for enduring tradeoffs, and `Maintenance Contract` for a maintained source's responsibilities.
+
+Create separate documents only when their questions need separate answers. A small project may answer several together.
+
 ## Axioms
 
-- Use the general Document starter for a current explanation. Choose Vision for purpose, Architecture for structure, Principles for enduring tradeoffs, or Maintenance Contract for a maintained source's responsibilities.
-- Choose only the documents whose questions need separate answers. A small project may keep several answers together.
-- Keep existing project documentation where it belongs. These Templates do not require moving it into Memory or creating a second current source.
-- Put unsettled drafts in an appropriate candidate scope. Establish acceptance before treating them as current knowledge; a Template name or tag is not acceptance.
-- Replace source metadata and prompts, rebase links, and remove instructions and sections that add no value. The finished document must work without its Template.
-- Keep each current answer in one source. Link to related specifications and rationale instead of copying them.
+- Using these Templates does not require moving existing project documentation into `Memory`.
 
 ## Entries
 

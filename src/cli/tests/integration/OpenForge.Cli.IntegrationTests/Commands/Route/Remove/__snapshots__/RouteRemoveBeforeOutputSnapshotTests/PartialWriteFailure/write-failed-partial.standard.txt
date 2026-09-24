@@ -5,6 +5,8 @@ Workspace: <workspace>
   .agents/guidance/old guide.md  not started
   .agents/guidance/old guide.overwrite.md  not started
   Entry removed from .agents/guidance/_guidance.md
+  Recorded persistent route removal for file .agents/guidance/old guide.md, file .agents/guidance/old guide.overwrite.md in .agents/open-forge.json.
+  No managed content ownership claims needed release.
   Detached 1 link that pointed at it; the link text was kept:
     README.md:1:8
     [Old guide](.agents/guidance/old%20guide.md#part) -> Old guide

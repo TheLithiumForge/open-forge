@@ -10,7 +10,7 @@ open-forge:
 
 Memory Templates provide starting structures suited to a record's question and current role. They help create the record in the route that matches that role.
 
-This route is workspace-owned. The first-party starters for Ideas, Analysis, Decisions, Observations, and Handoffs now live in the Planning and Orchestration Template scopes; only this project's own structures remain here.
+This route is workspace-owned. The first-party starters for Ideas, Analysis, Decisions, Observations, and Handoffs now live in the Planning and Observations and Handoffs Template scopes; only this project's own structures remain here.
 
 ## Axioms
 

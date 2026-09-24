@@ -60,22 +60,26 @@ Detach derives source identity from records without requiring source existence.
 `.agents/open-forge.lock.json` read into immutable typed registrations. IDs retain
 the 1–128 lowercase ASCII stable-ID grammar. Roots and source-relative paths
 retain portable validation; mapped destinations must be unambiguous. Projection
-canonicalizes ordinal ID and path order. Unknown members or schema versions do
-not gate an operation. An absent, unreadable, nonordinary, malformed or
-uninterpretable lock supplies no usable registrations and an informational
-ownership observation. Actual source and mapped destination checks remain
-mandatory before effects.
+canonicalizes ordinal ID and path order. Read-only commands may report an
+ownership observation when the lock cannot supply usable registrations.
+For attach, sync and detach, a missing lock is known empty; invalid or unavailable
+required ownership blocks effects. Actual source and mapped destination checks
+remain mandatory before effects.
 
 There is one ownership publication and one public state-file outcome, naming
 the lock. Its exact snapshot supplies prior recovery bytes and revalidation.
-Publication follows verified effects, preserves unrelated owners, and is
-best-effort. Final detach removes the selected registration while retaining
-other owners. No old Library record is read, written, converted or deleted.
+Publication follows verified effects and preserves unrelated owners. A required
+publication failure reports the partial state and retains recovery evidence.
+Final detach removes the selected registration while retaining other owners.
+No old Library record is read, written, converted or deleted.
 
 Library claims contain no expected link target, source bytes, hashes, timestamps,
 Git facts, dependencies, globs, or per-file remapping. Exact link identity derives
 from source root, destination root, and source-relative suffix. Permission stays
-in the authored workspace settings.
+in the authored workspace settings. Detach also records the selected ID in
+`removedLibraries` before deleting links. Attach and sync honor both Library-ID
+and mapped destination-path exclusions. Clearing all covering exclusions permits
+the corresponding ordinary command to restore managed content.
 
 ## Inventory And Mapping Facts
 

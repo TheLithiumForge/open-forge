@@ -15,7 +15,7 @@ public sealed class F01InstallReadinessJourneyTests
     private const string ManagedStart = "<!-- open-forge:start -->";
     private const string ManagedEnd = "<!-- open-forge:end -->";
     private const string OccupiedPath = ".agents/guidance/_guidance.md";
-    private const string ExpectedGuidancePayloadSha256 = "bdc7726b1674376c9fc5b3dfd1c598c3127a407b4f69861a60de8561fd1d2c73";
+    private const string ExpectedGuidancePayloadSha256 = "47f5fe9f6b5d4bd59c7818664181bac5e912f5ed0eb85ae8c34cbf6b5297b664";
     private const string ExpectedManagedRegion =
         "<!-- open-forge:start -->\n\n"
         + "# Open Forge\n\n"

@@ -93,7 +93,7 @@ internal static class WorkspaceOwnershipReader
     /// The bytes could not be read, so there is no trustworthy description of
     /// what is on disk and no safe basis for replacing it. The snapshot is null,
     /// and a writer skips the lock rather than overwriting content it cannot
-    /// describe. The command itself still proceeds.
+    /// describe. The command decides whether its other effects can proceed.
     /// </summary>
     private static WorkspaceOwnershipRead Failure(string logicalPath, string cause)
         => new(

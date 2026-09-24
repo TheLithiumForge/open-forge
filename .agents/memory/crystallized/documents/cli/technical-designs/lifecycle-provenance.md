@@ -16,6 +16,14 @@ missing, stale or unreadable ownership is reported without treating it as an
 integrity gate. Old state files are unrelated user content, with no migration,
 legacy reader or automatic deletion.
 
+Framework Install and Update selection also reads the authored `removedFiles`
+list. Its canonical workspace-relative paths match concrete Framework
+destinations exactly, so a scoped copy sharing an embedded source remains
+eligible unless its own destination is listed. An excluded existing destination
+is omitted from comparison and write planning, leaving both its bytes and its
+ownership facts unchanged. Missing excluded destinations remain missing until a
+person removes the entry; absence alone never changes settings.
+
 ## Stored Ownership
 
 Framework ownership stores source ID and optional descriptive version, whole

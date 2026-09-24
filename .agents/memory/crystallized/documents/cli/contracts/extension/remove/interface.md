@@ -27,9 +27,11 @@ The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPath
 in `.agents/open-forge.json` after safe planning and before permission evaluation.
 It persists in non-interactive execution; `--dry-run` never writes it. A refused
 explicit write is reported and prevents content application. Eligible interactive
-approval offers always, once or cancel. Once changes no settings. Unknown or
-malformed settings withhold external grants while implicit `.agents/` admission
-remains independent; an always choice cannot overwrite malformed settings.
+approval offers always, once or cancel. Once saves no permission grant; removal
+still records its persistent exclusion. Invalid or unavailable settings block planning before permission approval,
+because removal exclusions cannot be determined safely. A missing settings file
+means no saved exclusions or external grants. Implicit `.agents/` destinations
+still require no permission grant.
 
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
 [Behavior](../../shared/workspace-permissions/behavior.md). Require shared allow-list admission for every selected owned external path, including
@@ -76,6 +78,14 @@ is implicit, and existing reserved-path and physical-containment checks remain.
 Package source bytes are not required and are never removed. Framework-owned,
 Library-owned, unowned, reserved, and route-unsafe content is protected.
 
+Record every valid selected package ID in `removedExtensions` in
+`.agents/open-forge.json`, including an ID that is not currently installed.
+Verify that settings effect before content changes and publish ownership release
+last. Subsequent install/update operations honor the ID, including when another
+package requests it as a dependency. To restore, explicitly clear the ID and any
+covering path exclusions, then install the package. An absent, already excluded
+package needs no new effect.
+
 ## Syntax
 
 ```text
@@ -85,7 +95,8 @@ open-forge extension remove [<stable-id>...] [--automatic] [--dry-run] [global f
 Explicit managed stable-ID operands are required for direct, JSON, and other
 non-interactive application. Argumentless human `remove` may open a finite
 wizard to select managed IDs. There is no `--source`, `--all`, `--force`, package
-path, semver selector, `--yes`, or Framework remove/uninstall command.
+path, semver selector, or `--yes` option on this command. Use root `remove` to
+select an ordinary path or managed route directly.
 
 Shared flags are `--workspace <path>`, `--format json`, `--detail <minimal|standard|full|debug>`,
 `--detail debug`, `--help`, and `--version`; their full grammar and terminal behavior
@@ -100,8 +111,9 @@ route, generated-navigation, physical identity, and exact bytes from current fil
 Remove may proceed without a healthy current Framework only when those complete
 trusted Extension facts can still be established, including route-host and
 cross-section preservation facts. A truly absent ownership claim (or a valid
-readable lock with no record for the selected ID) remains the existing complete
-no-op. A malformed or unavailable ownership record is not absence: it is
+readable lock with no record for the selected ID) permits a settings-only
+exclusion. It is a no-op when the ID is already excluded. A malformed or
+unavailable ownership record is not absence: it is
 `incomplete`, performs no managed mutation, and preserves the exact
 ownership-record subject and raw cause. Other missing required facts remain
 `incomplete` or `blocked` and perform no managed mutation.
@@ -117,8 +129,8 @@ mutation. The lock is concurrency safety, not lifecycle authority, history, or
 recovery evidence.
 
 A proven-absent ownership source, or a valid readable ownership lock with no
-record for the selected ID, supplies no claims and authorizes no deletion. It
-is a complete no-op, not proof of an earlier successful removal. A malformed or
+record for the selected ID, supplies no claims and authorizes no deletion. Its
+exclusion does not prove an earlier successful removal. A malformed or
 unavailable ownership source/record is `incomplete` instead: do not treat it as
 empty, infer claims from payload bytes or legacy state, or perform dependency
 inference, deletion, release, recovery, or publication. The minimal finding
@@ -372,6 +384,9 @@ The findings catalogue below is the command's finite error and warning vocabular
 
 | Code                                          | Severity | Family                       | Message                                                                                        | Next                                           |
 | --------------------------------------------- | -------- | ---------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| extension-remove.settings-invalid | error | local | Removal intent cannot be recorded in invalid settings. | Correct the named settings before retrying. |
+| extension-remove.settings-unavailable | warning | local | Required workspace settings cannot be observed. | Restore access before retrying. |
+| extension-remove.path-excluded | info | local | An excluded generated navigation host was left unchanged. | Clear all covering exclusions before explicitly rebuilding its navigation. |
 | extension-remove.invalid-input                | error    | invalid-input                | includes `<id> is listed twice.`                                                               |                                                |
 | extension-remove.selection-required           | error    | selection-required           |                                                                                                | `open-forge extension list --installed`        |
 | extension-remove.interaction-ended            | error    | interaction-ended            |                                                                                                |                                                |

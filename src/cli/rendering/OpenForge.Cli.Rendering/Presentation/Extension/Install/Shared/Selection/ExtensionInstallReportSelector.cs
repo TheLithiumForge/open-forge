@@ -261,7 +261,9 @@ internal static class ExtensionInstallReportSelector
                 or ExtensionInstallFindingCode.TopologyVerificationFailed
                 or ExtensionInstallFindingCode.LifecyclePublicationFailed
                 or ExtensionInstallFindingCode.VerificationFailed
-                or ExtensionInstallFindingCode.RecoveryFailed => CliSubjectKind.File,
+                or ExtensionInstallFindingCode.RecoveryFailed
+                or ExtensionInstallFindingCode.PathExcluded
+                or ExtensionInstallFindingCode.ExcludedAncestor => CliSubjectKind.File,
             _ => CliSubjectKind.Identifier,
         };
         return kind switch
@@ -287,7 +289,8 @@ internal static class ExtensionInstallReportSelector
             ExtensionInstallFindingCode.ManagedDivergence
                 or ExtensionInstallFindingCode.PackageContentsChanged => CliResolution.TargetedOperation,
             ExtensionInstallFindingCode.LifecycleObservation
-                or ExtensionInstallFindingCode.RecoveryArtifactRetained => CliResolution.Informational,
+                or ExtensionInstallFindingCode.RecoveryArtifactRetained
+                or ExtensionInstallFindingCode.PathExcluded => CliResolution.Informational,
             _ => null,
         };
 
@@ -314,6 +317,18 @@ internal static class ExtensionInstallReportSelector
                     ExtensionInstallWording.PermissionNext(primaryId, path),
                     ExtensionInstallWording.PermissionAlternative(path)),
             ExtensionInstallFindingCode.RecoveryArtifactRetained when result.Next is { } recovery => recovery,
+            ExtensionInstallFindingCode.SettingsInvalid or ExtensionInstallFindingCode.SettingsUnavailable => new CliNextAction(
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.MessageRepairWorkspaceSettingsThenRerunInstall(),
+                "The installer requires readable workspace settings.")
+            { Kind = CliNextActionKind.Sentence },
+            ExtensionInstallFindingCode.RemovedExtension => new CliNextAction(
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.MessageRemoveExtensionFromRemovedExtensionsThenRerunInstall(),
+                "This Extension ID is present in removedExtensions.")
+            { Kind = CliNextActionKind.Sentence },
+            ExtensionInstallFindingCode.PathExcluded or ExtensionInstallFindingCode.ExcludedAncestor => new CliNextAction(
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.MessageRemoveMatchingPathFromWorkspaceRemovalSettingsThenRerunInstall(),
+                "Workspace removal settings exclude this payload path.")
+            { Kind = CliNextActionKind.Sentence },
             _ => null,
         };
 
@@ -391,6 +406,11 @@ internal static class ExtensionInstallReportSelector
                 global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleExtensionInstall(),
                 Sentence(finding.Cause)),
             ExtensionInstallFindingCode.Interrupted => ExtensionInstallWording.Cancelled(),
+            ExtensionInstallFindingCode.SettingsInvalid
+                or ExtensionInstallFindingCode.SettingsUnavailable
+                or ExtensionInstallFindingCode.RemovedExtension
+                or ExtensionInstallFindingCode.PathExcluded
+                or ExtensionInstallFindingCode.ExcludedAncestor => Sentence(finding.Cause),
             _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code,
                 "The Extension Install finding code is not defined."),
         };

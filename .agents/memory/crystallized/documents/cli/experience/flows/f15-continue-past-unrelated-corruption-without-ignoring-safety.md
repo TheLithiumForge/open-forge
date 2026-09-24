@@ -38,9 +38,9 @@ Distinguish unavailable claims from known empty registrations.
 
 Scenarios: [X13](../scenarios/experience.md#x13).
 
-### Safe explicit attach with no old claims
+### Explicit attach with missing or invalid ownership
 
-Use the explicit physical safety and publication rules; the owning command’s output contract supplies the outcome and wording.
+A missing lock is known empty and permits an otherwise safe Attach. Invalid or unavailable required ownership blocks before effects; preserve its bytes and report the correction needed.
 
 Scenarios: [C26-12](../scenarios/commands/c26-library-attach.md#c26-12).
 
@@ -51,4 +51,3 @@ Tolerance is based on relevance and authority, not on treating every damaged fil
 ## Verification
 
 Observe the resulting files and links independently of printed output. Record actions, stdout, stderr, exit, preserved bytes, and separate outcome/state/communication verdicts in a run record. Carry real state between steps; fork only at an explicit alternative.
-

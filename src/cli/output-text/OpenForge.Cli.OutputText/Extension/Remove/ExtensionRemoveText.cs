@@ -12,6 +12,22 @@ internal static class ExtensionRemoveText
     internal static string LabelWasAlreadyGoneItsOwnershipWasReleased()
         => "was already gone; its ownership was released";
 
+    // @OpenForgeText extension.remove.label.would-release-ownership
+    internal static string LabelWouldReleaseOwnership()
+        => "would release ownership of the already-gone file";
+
+    // @OpenForgeText extension.remove.label.workspace-settings-removal-recorded
+    internal static string SettingsEffect(bool planned)
+        => planned
+            ? "would record the removal in workspace settings"
+            : "recorded the removal in workspace settings";
+
+    // @OpenForgeText extension.remove.label.workspace-settings-directory
+    internal static string DirectoryEffect(bool planned)
+        => planned
+            ? "would create the workspace settings directory"
+            : "created the workspace settings directory";
+
     // @OpenForgeText extension.remove.help.syntax
     internal static string HelpSyntax()
         => "open-forge extension remove [<stable-id>...] [--automatic] [--dry-run] [--allow-path <path>] [global options]";
@@ -67,6 +83,34 @@ internal static class ExtensionRemoveText
     // @OpenForgeText extension.remove.title.dependency-blocks-removal
     internal static string TitleDependencyBlocksRemoval()
         => "Dependency blocks removal";
+
+    // @OpenForgeText extension.remove.title.settings-are-invalid
+    internal static string TitleSettingsAreInvalid()
+        => "Workspace settings are invalid";
+
+    // @OpenForgeText extension.remove.title.settings-are-unavailable
+    internal static string TitleSettingsAreUnavailable()
+        => "Workspace settings are unavailable";
+
+    // @OpenForgeText extension.remove.title.generated-navigation-path-excluded
+    internal static string TitleGeneratedNavigationPathExcluded()
+        => "Generated navigation was left unchanged";
+
+    // @OpenForgeText extension.remove.message.clear-covering-exclusions-then-run-index
+    internal static string MessageClearCoveringExclusionsThenRunIndex()
+        => "To regenerate this navigation, remove all exclusions covering this path from removedCategories, removedFiles, and removedDirectories in .agents/open-forge.json, then run open-forge index.";
+
+    // @OpenForgeText extension.remove.message.generated-navigation-path-excluded
+    internal static string MessageGeneratedNavigationPathExcluded(string path)
+        => ExtensionRemovePhrases.FormatGeneratedNavigationPathExcluded(path);
+
+    // @OpenForgeText extension.remove.message.fix-invalid-settings
+    internal static string MessageFixInvalidSettings()
+        => "Correct .agents/open-forge.json, then rerun the removal.";
+
+    // @OpenForgeText extension.remove.message.settings-unavailable
+    internal static string MessageSettingsUnavailable()
+        => "Restore access to .agents/open-forge.json, then rerun the removal.";
 
     // @OpenForgeText extension.remove.title.removal-verification-failed
     internal static string TitleRemovalVerificationFailed()

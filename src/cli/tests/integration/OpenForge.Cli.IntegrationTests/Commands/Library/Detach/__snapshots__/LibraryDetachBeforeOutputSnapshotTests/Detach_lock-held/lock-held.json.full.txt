@@ -40,6 +40,16 @@
   ],
   "effects": [
     {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/directives/review.md",
       "kind": "link",
       "action": "deleted",
@@ -76,10 +86,16 @@
       "required": [],
       "missing": [],
       "decision": "not-required",
-      "action": "none",
-      "outcome": "not-requested"
+      "action": "create",
+      "outcome": "planned"
     },
     "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "kind": "setting",
+        "action": "create",
+        "outcome": "planned"
+      },
       {
         "path": ".agents/directives/review.md",
         "kind": "link",
@@ -107,6 +123,13 @@
         "kind": "ordinary-file",
         "length": null,
         "sha256": "<sha256>",
+        "rawRelativeTarget": null
+      },
+      {
+        "path": ".agents/open-forge.json",
+        "kind": "missing",
+        "length": null,
+        "sha256": null,
         "rawRelativeTarget": null
       }
     ],

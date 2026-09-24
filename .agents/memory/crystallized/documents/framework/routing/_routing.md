@@ -10,11 +10,11 @@ This scope separates how `routes` expose relevant destinations, how their placem
 
 ## Axioms
 
-- `inherited` - No local `Axioms`; loaded ancestor `Axioms` remain active.
+- inherited - No local axioms; loaded ancestor axioms remain active.
 
 ## Entries
 
-- [Current loading contract for baseline context, selected `routes`, #LoadNow traversal, #KeepInMind continuity, refresh boundaries, and deterministic assistance](loading.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Routing #Loading #LoadNow #KeepInMind #Continuity
+- [When selected routes load, when #KeepInMind files are read again, and how tools assist without choosing relevance](loading.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Routing #Loading #LoadNow #KeepInMind #Continuity
 - [Current Open Forge model for `entrypoints`, `entries`, top-down selection, direct-child navigation, routed destinations, and relevance-scaled context](model.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Routing #Entrypoint #Selection #Context
 - [Current user-owned overwrite purpose, selection boundary, inherited route behavior, precedence, generated boundary, ownership, and lifecycle](overwrites.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Routing #Overwrite #Customization #Ownership
 - [Current path contract for containing-file-relative Markdown destinations, concrete `slugs`, logical workspace identity, and deterministic containment](paths.md) - #Memory #Document #CurrentTruth #Evergreen #Framework #Routing #Paths #Workspace #CLI #Containment

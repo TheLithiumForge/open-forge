@@ -38,7 +38,7 @@ remains technology-neutral within those accepted boundaries.
 ## Operation Invariants
 
 `route remove` performs one complete structural removal for one eligible ordinary
-unmanaged logical leaf or one eligible ordinary unmanaged category. For
+logical leaf or category, including Framework- or Extension-managed content. For
 unchanged workspace bytes and explicit input, it resolves the same subject,
 forms the same complete incoming-reference detachment and generated-navigation
 plan, and produces the same semantic result.
@@ -54,8 +54,13 @@ The operation satisfies these invariants:
 - Every category item passes complete containment, identity, ownership,
   lifecycle, collision, reference, and recovery classification before the plan
   is complete.
-- Positive trusted unmanaged proof covers every selected logical source or
-  resource. Absence of one receipt never substitutes for a complete inventory.
+- Complete ownership evidence covers every selected logical source or resource.
+  The plan releases all Framework and Extension claims to deleted paths while
+  preserving package registrations and unrelated claims.
+- Canonical exclusions are persisted and verified in `.agents/open-forge.json`
+  before content effects, using the same lease and recovery boundary. Category
+  directories cover future descendants; root categories also record their
+  category name. Exclusions never substitute for physical absence evidence.
 - The complete supported-workspace-Markdown reference pass covers sources inside
   and outside `.agents`. Every supported incoming link to the removed subject is
   detached, or the complete operation is refused.
@@ -153,8 +158,9 @@ For a leaf, current facts include:
 - no-follow final-leaf fact for the source, its overwrite companion, and each
   resolved effect target;
 - lexical and physical containment and exact physical identity;
-- complete interpretable lock ownership inventory and the proof that neither the
-  base nor overwrite is claimed;
+- complete interpretable ownership inventory and the intended release of all
+  Framework and Extension claims to the base and overwrite;
+- settings observation and the exact persistent exclusions needed;
 - complete supported-workspace-Markdown catalogue coverage for incoming
   references;
 - old exposing parent and Loader projection facts when applicable;
@@ -173,8 +179,8 @@ the physically contained tree, plus:
   binary resource, ordinary support file, base/overwrite pair, and other regular
   contained item;
 - complete containment and physical-identity proof for each item;
-- lifecycle and positive unmanaged proof for each selected logical source or
-  resource;
+- lifecycle ownership and intended claim release for each selected logical
+  source or resource;
 - complete incoming-reference classification for every external source that may
   point to any category item;
 - expected-state and recovery evidence for every planned effect; and
@@ -195,25 +201,25 @@ this rule.
 
 ### Ownership inventory
 
-The command reads Framework and Extension ownership from the forgiving
-`.agents/open-forge.lock.json` reader. A complete interpretable inventory must
-establish that none of the selected logical sources or resources is claimed
-before a mutation plan can form. Both whole-file and region receipts protect
-their hosts, including portable case aliases. One claim protects the whole
-selected category; the operation never skips a claimed member.
+Read `.agents/open-forge.lock.json` and identify every Framework and Extension
+whole-file and region claim to the selected paths. Explicit route removal deletes
+the selected physical content and releases all matching claims. Preserve package
+identity, version, dependencies and every unrelated claim. Do not treat a shared
+file as retained merely because several packages own it: the user selected the
+file or its complete category. Package removal has a separate retention policy.
 
-Missing, unreadable or uninterpretable ownership does not infer unmanaged state.
-It produces `ownership-unavailable` with complete informational status, no plan
-or effects, and ownership shown as not-established. The summary explicitly says
-that no route changed. Schema/release metadata and stale content hashes are not
-gates. Actual ownership, physical safety, route and reference conflicts remain
-blocking boundaries. The exact lock expectation is revalidated before and after
-mutation. No legacy record is read, migrated or deleted; these commands neither
-adopt current content nor release or rewrite ownership.
+A missing lock is known empty; unknown ownership prevents mutation.
+Portable aliases must resolve to one
+canonical path or block; exact string comparison must not leave another spelling
+of a deleted claim. Schema/release metadata and stale content hashes alone do
+not prohibit explicit removal. Library links remain outside ordinary Route
+Remove's no-follow boundary.
 
-Path names, routing tags, generated lines, matching bytes and prior command
-results cannot independently establish unmanaged status. Framework-aware Route
-Init's region receipts remain positive ownership even in a user-authored host.
+Revalidate the exact settings and ownership observations under the lease. Include
+their planned changes in the operation's recovery coverage. Apply and verify the
+settings exclusion before deleting content; publish the intended ownership
+release only after the complete content and navigation postconditions pass.
+No legacy record is read, migrated or deleted.
 
 ### Reference coverage
 
@@ -240,7 +246,7 @@ For each contained item, the resolver establishes:
 1. lexical and physical containment below the selected category root;
 2. one stable physical identity without unsafe aliases;
 3. one source or resource classification;
-4. lifecycle ownership and the positive unmanaged result;
+4. lifecycle ownership and the intended claim release;
 5. reference-detachment and generated-projection consequences; and
 6. expected-state and recovery evidence for any planned effect.
 
@@ -315,7 +321,8 @@ workspace state:
 - every reference inside the selected subject disappears with that subject;
 - affected generated interiors match the authoritative post-remove projection;
 - no stale generated entry continues to expose the removed subject; and
-- all unrelated authored sources and bytes remain unchanged.
+- settings contain the required exclusions, ownership no longer claims deleted
+  content, and all unrelated authored sources and bytes remain unchanged.
 
 The planner compares this intended state with current bytes and classifies each
 path as changed, unchanged, or a conflict. It does not rewrite unchanged
@@ -333,7 +340,7 @@ The status selector applies the Interface meanings:
   after verified effects is `completed-with-warnings`.
 - Safe but unfinished catalogue or reference coverage is `incomplete` and has no
   effects.
-- Complete safe proof that the requested target is absent is `completed` with
+- Complete safe proof that the requested target is absent and already excluded is `completed` with
   no effects, workspace writes, lock or recovery preparation, or finding.
 - An invalid or unknown missing source without complete absence proof is
   `invalid-input`; incomplete acquisition or scan remains `incomplete`, and
@@ -354,9 +361,11 @@ cancelled retain their event meaning.
 
 The complete plan contains all effects before the first persistent effect:
 
+- the settings exclusion, applied and verified before content changes;
 - directory and file removal needed for the leaf pair or category tree;
-- complete-file replacements for every required incoming-link detachment; and
-- old parent and applicable Loader generated-region replacements.
+- complete-file replacements for every required incoming-link detachment;
+- old parent and applicable Loader generated-region replacements; and
+- ownership release, published after verified content and navigation effects.
 
 Initial preflight rechecks the no-follow final-leaf fact for every ordinary
 effect target before any effect is admitted. A present link, reparse point, or
@@ -440,8 +449,9 @@ findings, no workspace writes, no lock infrastructure, no recovery preparation,
 and no mutation path. The source value is the resolved source ID when available,
 otherwise the requested identity. If the source is missing but one of these
 proofs is unavailable, invalid, incomplete, or blocked, result formation keeps
-that applicable status. It never uses a receipt, tombstone, journal, or history
-record to claim that a previous remove caused the absence.
+that applicable status. Exclusions record future manager behavior, not proof that
+a previous remove caused the absence. A verified absent subject without its
+required exclusion still needs the settings change before it becomes a no-op.
 
 ## Revalidation, Verification, And Recovery
 
@@ -454,6 +464,12 @@ delete or replacement, it repeats the final-leaf observation. A changed fact or
 a present link, reparse point, or special leaf prevents stale intent from
 writing, following, or deleting.
 
+Verified final recovery bundles from earlier operations may remain. Before
+preparing this operation's bundle, require an available catalogue whose existing
+candidates are all fully verified finals. Draft, malformed or otherwise
+unverified candidates block application and identify their actual recovery path.
+Preserve earlier bundles byte-for-byte. The exact current preparation remains
+separate, and successful cleanup may delete only that operation's bundle.
 Application verifies each selected removed path, each incoming-link detachment,
 and each generated region. Final verification rebuilds the complete intended
 route, reference, and generated facts from the post-remove workspace and verifies
@@ -463,7 +479,7 @@ detachment's visible-label result, and every affected generated projection.
 Before post-verification deletion begins, if application or verification fails
 after an effect begins, no new effect is started and no earlier effect is
 restored, reversed, or compensated. The actual residual draft or final path is
-reported; a valid final remains when preparation completed. Recovery provenance does not classify current target state. An
+reported; a valid final remains when preparation completed. Recovery evidence does not establish current target state. An
 unexpected concurrent edit is preserved and reported as residual state. After
 all effects and final verification, delete only the positively recognized bundle
 created by this operation. `Deleted`/`Removed` permits normal completion.
@@ -507,10 +523,12 @@ A conforming implementation must additionally prove:
   hidden category inference;
 - leaf base/overwrite pairing, category root selection, complete physical
   inventory, and rejection of Loader/workspace-root, native, unsupported,
-  orphan, ambiguous, and lifecycle-managed subjects;
-- complete positive unmanaged proof from the Framework ownership and all
-  applicable Extension claims, including every missing, malformed, conflicting,
-  stale, and incomplete inventory boundary;
+  orphan and ambiguous subjects;
+- complete ownership observation and release of Framework and Extension claims,
+  including shared files, region claims, preserved registrations, and missing,
+  malformed, conflicting, stale and incomplete inventory boundaries;
+- settings-first persistent exclusions, category future descendants, repeat
+  no-op after verified removal, and restoration only after explicit unlisting;
 - complete supported-workspace-Markdown enumeration inside and outside `.agents`,
   base/overwrite layer coverage, exact incoming-link resolution, visible-label
   detachment, surrounding-prose preservation, and external URL preservation;

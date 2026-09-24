@@ -21,8 +21,9 @@ internal enum WorkspaceSettingsReadState
 /// <summary>
 /// One reading of the authored settings. <see cref="Document"/> is never null:
 /// an absent, invalid, or unreadable file yields the defaults, so a consumer
-/// always has settings to act on and reports the state separately. Settings
-/// trouble is a finding, never a reason to refuse a command.
+/// always has settings to inspect and reports the state separately. A consumer
+/// that requires removal intent must block on invalid or unavailable settings;
+/// other consumers choose their own policy.
 /// </summary>
 internal sealed record WorkspaceSettingsRead(
     WorkspaceSettingsReadState State,
@@ -35,6 +36,12 @@ internal sealed record WorkspaceSettingsRead(
     internal bool MatchesObservation(WorkspaceSettingsRead current)
         => State == current.State
             && Document.AllowInstallPaths.SequenceEqual(current.Document.AllowInstallPaths, StringComparer.Ordinal)
+            && Document.RemovedCategories.SequenceEqual(current.Document.RemovedCategories, StringComparer.Ordinal)
+            && Document.RemovedFiles.SequenceEqual(current.Document.RemovedFiles, StringComparer.Ordinal)
+            && Document.RemovedDirectories.SequenceEqual(current.Document.RemovedDirectories, StringComparer.Ordinal)
+            && Document.RemovedExtensions.SequenceEqual(current.Document.RemovedExtensions, StringComparer.Ordinal)
+            && Document.RemovedLibraries.SequenceEqual(current.Document.RemovedLibraries, StringComparer.Ordinal)
+            && Document.SchemaVersion == current.Document.SchemaVersion
             && MatchesSnapshot(current);
 
     private bool MatchesSnapshot(WorkspaceSettingsRead current)

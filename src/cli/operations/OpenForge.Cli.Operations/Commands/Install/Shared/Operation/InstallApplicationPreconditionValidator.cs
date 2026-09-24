@@ -118,15 +118,15 @@ internal sealed class InstallApplicationPreconditionValidator(
                 MutationValidationResult.Blocked(
                     current.Cause
                         ?? "Volatile authored source and topology facts are unavailable for Install revalidation."),
-                InstallFindingCode.ProjectionUnavailable),
+                current.FindingCode ?? InstallFindingCode.ProjectionUnavailable),
             InstallIntendedStateBuildState.Blocked => InstallApplicationPreconditionResult.Boundary(
                 MutationValidationResult.Blocked(
                     current.Cause
                         ?? "Volatile authored source or topology facts are unsafe for Install revalidation."),
-                InstallFindingCode.GeneratedRegionUnsafe),
+                current.FindingCode ?? InstallFindingCode.GeneratedRegionUnsafe),
             InstallIntendedStateBuildState.Cancelled => InstallApplicationPreconditionResult.Boundary(
                 MutationValidationResult.Cancelled(),
-                InstallFindingCode.Interrupted),
+                current.FindingCode ?? InstallFindingCode.Interrupted),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(current),
                 current.State,

@@ -56,6 +56,17 @@
     },
     "removed": [],
     "detachedLinks": [],
+    "settings": {
+      "outcome": "not-established",
+      "path": ".agents/open-forge.json",
+      "categories": [],
+      "files": [],
+      "directories": []
+    },
+    "ownershipRelease": {
+      "outcome": "not-established",
+      "claims": []
+    },
     "scan": {
       "filesScanned": 0,
       "occurrences": 0

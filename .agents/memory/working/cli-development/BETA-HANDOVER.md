@@ -40,8 +40,8 @@ Define **scenarios** and **journeys**, per command, with the expected output at
 each detail level; use them to find and fix defects; then turn the settled ones
 into end-to-end tests.
 
-- [Scenario template](../../../templates/planning/scenario.md) and
-  [User Flow template](../../../templates/planning/user-flow.md) — copy-ready, in
+- [Scenario template](../../../templates/scenarios/scenario.md) and
+  [User Flow template](../../../templates/scenarios/user-flow.md) — copy-ready, in
   the Templates route, written for any subject rather than for this CLI
 - [A worked scenario, from a real defect](tasks/task41/scenario-example.md)
 - [The journeys to define, as a backlog](tasks/task41/journeys-a-c.md), and

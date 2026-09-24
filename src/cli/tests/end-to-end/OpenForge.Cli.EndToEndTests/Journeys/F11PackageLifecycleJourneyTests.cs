@@ -106,7 +106,7 @@ public sealed class F11PackageLifecycleJourneyTests
         AssertMissingFile(consumer, BaseTarget);
         AssertNoExtensionRecord(consumer, "base");
         Assert.Equal(unrelatedBytes, File.ReadAllBytes(consumer.Combine("unrelated-user.md")));
-        AssertRetainedRecoveryEvidence(consumer, priorToolkitBytes);
+        AssertRetainedRecoveryEvidence(consumer, priorToolkitBytes, expectSettingsCreation: true);
         AssertSourceUnchanged(catalogue, sourceTwo);
     }
 
@@ -510,7 +510,8 @@ public sealed class F11PackageLifecycleJourneyTests
     private static void AssertRetainedRecoveryEvidence(
         PublishedJourneyWorkspace workspace,
         byte[] priorToolkitBytes,
-        byte[]? priorRetiredBytes = null)
+        byte[]? priorRetiredBytes = null,
+        bool expectSettingsCreation = false)
     {
         AssertPersistentLifecycleEvidence(workspace);
 
@@ -534,6 +535,7 @@ public sealed class F11PackageLifecycleJourneyTests
         }
 
         var matchedPreimages = new HashSet<string>(StringComparer.Ordinal);
+        var foundSettingsCreation = false;
         var workspaceKey = PublishedWorkspaceLockStore.RecoveryWorkspaceKey(workspace.Path);
         foreach (var artifact in artifacts)
         {
@@ -563,6 +565,16 @@ public sealed class F11PackageLifecycleJourneyTests
                 var logicalPath = entry.GetProperty("logicalPath").GetString();
                 Assert.False(string.IsNullOrWhiteSpace(logicalPath));
                 var priorPayload = entry.GetProperty("priorPayload").GetString();
+                if (entry.GetProperty("prior").GetProperty("kind").GetString() == "missing")
+                {
+                    Assert.Equal(".agents/open-forge.json", logicalPath);
+                    Assert.Equal("ordinary-create", entry.GetProperty("kind").GetString());
+                    Assert.Equal("ordinary-file", entry.GetProperty("intended").GetProperty("kind").GetString());
+                    Assert.Null(priorPayload);
+                    foundSettingsCreation = true;
+                    continue;
+                }
+
                 Assert.False(string.IsNullOrWhiteSpace(priorPayload));
                 var payloadEntry = archive.GetEntry(priorPayload!);
                 Assert.NotNull(payloadEntry);
@@ -582,6 +594,7 @@ public sealed class F11PackageLifecycleJourneyTests
             }
         }
 
+        Assert.Equal(expectSettingsCreation, foundSettingsCreation);
         Assert.Contains(ToolkitTarget, matchedPreimages);
         if (priorRetiredBytes is not null)
         {

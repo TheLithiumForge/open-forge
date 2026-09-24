@@ -33,4 +33,9 @@ internal static class WorkspaceSettingsDefinitions
     internal const string SchemaVersionProperty = "schemaVersion";
     internal const string AllowInstallPathsProperty = "allowInstallPaths";
     internal const string RemovedCategoriesProperty = "removedCategories";
+    internal const string RemovedFilesProperty = "removedFiles";
+    internal const string RemovedDirectoriesProperty = "removedDirectories";
+    internal const string RemovedExtensionsProperty = "removedExtensions";
+    internal const string RemovedLibrariesProperty = "removedLibraries";
+    internal const string GitMetadataDirectoryName = ".git";
 }

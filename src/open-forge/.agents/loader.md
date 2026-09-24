@@ -8,7 +8,7 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 - `entry` - One generated route line under `Entries`, describing a destination rather than containing its contents.
 - `description` - Short text that helps a reader decide whether to open a file.
 - `responsibility` - Optional sentence stating what a file defines, so an editor can decide what belongs there. It creates no authority or loading behavior.
-- `axiom` - Required rule under `Axioms` in this loader or a recognized loaded entrypoint.
+- `axiom` - Required rule under `Axioms` in this loader or a recognized loaded entrypoint, inherited by selected descendants.
 
 ## Axioms
 
@@ -18,11 +18,9 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 
 - Respect platform constraints and runtime safety in every action.
 - Follow clear user direction when it is safe and allowed. It sets goals, priorities, important choices, and accepted changes. Do not ask the user to confirm it again.
-- A request to act allows the routine, reversible, in-scope choices needed to complete it.
+- A request to act allows the routine, reversible, in-scope choices needed to complete it. State assumptions that affect the result, and continue when accepted direction or a reversible assumption is enough.
 - Use the request and accepted context to resolve unclear choices. When an unresolved choice could significantly change the result, scope, risk, cost, external effects, or ability to undo the work, keep it #Contextual and ask before relying on it.
 - Match explanation and planning to the request. Unless deeper analysis is requested, begin with the current understanding, one recommendation, and at most one important open choice.
-- Continue safe, in-scope work when accepted direction or a stated reversible assumption is enough. Do not stop only to ask whether to continue.
-- State assumptions so they can be corrected. Stop when uncertainty, conflict, or an authority boundary could significantly change the work.
 
 #### Sources And Acceptance
 
@@ -35,9 +33,11 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 
 #### How Rules Combine
 
-- Only this loader and recognized loaded entrypoints define active Axioms. A loaded child route inherits its ancestors' Axioms. A child entrypoint adds rules only for its narrower scope.
-- Follow loaded Axioms and Directives within their scope. Accepted workspace-specific content replaces corresponding Open Forge defaults only for the same role and within its accepted scope.
-- Selected non-binding material may specialize broader material of the same kind. Loaded binding instructions add to one another, not silently override one another. Report unresolved conflicts.
+- Only this loader and recognized loaded entrypoints define active Axioms. A loaded child inherits its ancestors' rules and adds only requirements specific to its narrower scope. Do not repeat inherited rules.
+- When authoring an entrypoint with no local rules, use `## Axioms` with one entry: `- inherited - No local axioms; loaded ancestor axioms remain active.` Existing missing or empty local sections also add no rules. Never combine the inherited marker with local rules.
+- Follow loaded Axioms and Directive Instructions within their scope. Adding a child instruction does not cancel an active ancestor rule. Report unresolved conflicts.
+- Customize a default by editing or replacing its source, or by adding its overwrite companion. This changes that source's content; it does not grant a separate file precedence over other active rules.
+- Selected non-binding material may specialize broader material of the same kind within its accepted scope.
 
 ### Routing
 
@@ -47,7 +47,7 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 - `root route` - Route exposed directly by this loader.
 - `scope` - Part of a route that narrows where the following content applies.
 - `slug` - Concrete folder name in a route path.
-- `managed route` - Route whose declared manager may update known files as a lifecycle action. Management does not create runtime authority.
+- `managed route` - Route whose declared manager may install, update, or remove identified files. Management does not create runtime authority.
 
 #### Rules
 
@@ -63,10 +63,10 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 
 #### Management And Customization
 
-- Management affects file lifecycle, not runtime meaning or authority.
+- Management determines which files an installer or updater may change. It does not determine their meaning or authority.
 - Each manager defines the route shapes it recognizes, preserves their segment order through scopes, and changes only files it owns or can safely identify for the requested lifecycle operation.
 - Users may add, move, replace, or remove routes. A familiar slug or tag does not create root behavior or managed status. Other valid routes remain routable.
-- Removed defaults stay removed unless the user asks to restore them.
+- Removed defaults stay removed unless the user asks to restore them. For managed files, record intentional removals in the manager's exclusions before updating.
 - Generated `Entries` provide navigation, not authority.
 
 #### Overwrites
@@ -87,11 +87,11 @@ For example, a C# scope may contain a #LoadNow design file and an on-demand Wind
 #### Defined Tags
 
 - #LoadNow - Read the linked file, in listed order, when a loaded parent exposes it. If it is an entrypoint, apply its child loading rules.
-- #KeepInMind - Read exposed continuity context when its parent loads, then refresh it while its scope remains active.
+- #KeepInMind - Read the tagged context when its parent loads, then refresh it while its scope remains active.
   - Timing: Refresh at task start or resume, after context restoration, and before handoff or closeout.
   - Order: Read the tagged file and its adjacent overwrite. For an entrypoint, apply its child loading rules in listed order.
   - Boundaries: Refresh only active scopes. Do not open file bodies just to discover tagged files.
-  - Recheck: Recheck during work only when the active continuity set may have changed.
+  - Recheck: Recheck during work only when the tagged files in active scopes may have changed.
 - #Core - Base routing and loading, workspace orientation, and reusable agent-facing roles.
 - #Memory - Self-growing Markdown state for active work, coordination, accepted knowledge, candidates, and history.
 - #Extension - Optional packaged routes, capabilities, integrations, and support files.
@@ -106,7 +106,7 @@ For example, a C# scope may contain a #LoadNow design file and an on-demand Wind
 - Keep optional content on demand. Follow any stronger loading rule defined by its category.
 - Use #LoadNow only when the content is needed whenever its parent loads and missing it would cost more than reading it each time.
 - Narrow the scope before making specialized content mandatory. Do not mark a broad parent #LoadNow merely to expose an important descendant.
-- Use #KeepInMind only when exposed content also needs refreshing for continuity while its scope remains active. It is not an importance label.
+- Use #KeepInMind only when work needs the content read again at the defined refresh points. It is not an importance label.
 
 ### CLI
 

@@ -42,9 +42,10 @@ The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPath
 in `.agents/open-forge.json` after safe planning and before permission evaluation.
 It persists in non-interactive execution; `--dry-run` never writes it. A refused
 explicit write is reported and prevents content application. Eligible interactive
-approval offers always, once or cancel. Once changes no settings. Unknown or
-malformed settings withhold external grants while implicit `.agents/` admission
-remains independent; an always choice cannot overwrite malformed settings.
+approval offers always, once or cancel. Once changes no settings. Invalid or unavailable settings block planning before permission approval,
+because removal exclusions cannot be determined safely. A missing settings file
+means no saved exclusions or external grants. Implicit `.agents/` destinations
+still require no permission grant.
 
 Consume the [Workspace Permissions Interface](../../shared/workspace-permissions/interface.md) and
 [Behavior](../../shared/workspace-permissions/behavior.md). Require shared allow-list admission for intended external targets and previously owned
@@ -472,6 +473,12 @@ The findings catalogue below is the command's finite error and warning vocabular
 
 | Code                                          | Severity | Family                       | Message                                                                                        | Next                                                 |
 | --------------------------------------------- | -------- | ---------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| extension-update.settings-invalid | error | local | Required workspace settings are invalid. | Correct the named settings before retrying. |
+| extension-update.settings-unavailable | warning | local | Required workspace settings cannot be observed. | Restore access before retrying. |
+| extension-update.removed-extension | error | local | A selected package or dependency is excluded. | Clear its removal entry only when restoration is intended. |
+| extension-update.bulk-excluded | warning | local | Bulk selection skips an excluded package. | none |
+| extension-update.path-excluded | info | local | An excluded destination remains untouched. | none |
+| extension-update.excluded-ancestor | error | local | Selected content requires a missing excluded ancestor. | Clear all covering exclusions only when restoration is intended. |
 | extension-update.invalid-input                | error    | invalid-input                | includes `Explicit Extension IDs and --all cannot be combined.`                                |                                                      |
 | extension-update.selection-required           | error    | selection-required           |                                                                                                | `open-forge extension list --installed`              |
 | extension-update.interaction-ended            | error    | interaction-ended            |                                                                                                |                                                      |

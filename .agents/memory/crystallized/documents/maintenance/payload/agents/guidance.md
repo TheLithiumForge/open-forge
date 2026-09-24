@@ -18,7 +18,7 @@ The [current Guidance document](../../../framework/primitives/guidance.md) defin
 - Frontmatter uses #LoadNow, #Core, and #Guidance so the category and its selection rule enter baseline context
 - The entrypoint directs agents to check for Guidance when a recurring situation or choice may have an established approach
 - Routed Guidance explains its situation, recommended approach, reasons, and tradeoffs
-- Guidance remains advice. When another approach fits better, the reason stays visible
+- Guidance remains advice. Explain an adaptation when the difference matters to the result
 - Child routes may narrow or preserve positive scope through the ordinary routing contract
 - Core ships the Guidance category. The optional Collaboration Extension owns Adaptive Collaboration at its existing installed path and a Brainstorming Template; it adds no Memory category or dependency on Planning
 - Adaptive Collaboration keeps the first response conversational unless deep analysis was requested, works through one important open choice at a time, and offers deeper detail before supplying it automatically

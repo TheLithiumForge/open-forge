@@ -31,6 +31,8 @@ internal enum LibraryAttachFindingCode
     OperationFailed,
     Interrupted,
     DuplicateId,
+    LibraryRemoved,
+    PathExcluded,
     SourceRootInvalid,
     SourceRootUnavailable,
     SourceRootBlocked,

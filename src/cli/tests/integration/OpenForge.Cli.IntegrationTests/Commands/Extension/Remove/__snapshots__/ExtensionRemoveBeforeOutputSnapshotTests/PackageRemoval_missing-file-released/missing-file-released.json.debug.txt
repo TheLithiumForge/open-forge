@@ -40,9 +40,18 @@
     },
     "effects": [
       {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "verified",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
         "path": ".agents/toolkit.md",
         "action": "release-ownership",
-        "outcome": "release-ownership",
+        "outcome": "verified",
         "owner": "toolkit",
         "keptFor": [],
         "ownersBefore": [
@@ -184,6 +193,7 @@
     "recovery": {
       "state": "retained",
       "protectedPaths": [
+        ".agents/open-forge.json",
         ".agents/open-forge.lock.json"
       ],
       "path": "<recovery-bundle>"

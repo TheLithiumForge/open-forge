@@ -1,0 +1,12 @@
+status=completed
+mode=apply
+force=false
+prune=false
+automatic=true
+effects=3
+unchanged=12
+sections=1
+recovery=retained
+verification=verified
+findings=0
+next=present

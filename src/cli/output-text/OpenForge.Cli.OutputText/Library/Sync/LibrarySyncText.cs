@@ -8,6 +8,26 @@ internal static class LibrarySyncText
     internal static string MessageLibrarySyncWasCancelledNothingWasChanged()
         => "Library sync was cancelled. Nothing was changed.";
 
+    // @OpenForgeText library.sync.message.settings-would-be-updated
+    internal static string MessageSettingsWouldBeUpdated()
+        => ".agents/open-forge.json would be updated.";
+
+    // @OpenForgeText library.sync.message.settings-were-updated
+    internal static string MessageSettingsWereUpdated()
+        => ".agents/open-forge.json was updated.";
+
+    // @OpenForgeText library.sync.message.settings-were-not-updated
+    internal static string MessageSettingsWereNotUpdated()
+        => ".agents/open-forge.json was not updated.";
+
+    // @OpenForgeText library.sync.message.settings-update-failed
+    internal static string MessageSettingsUpdateFailed()
+        => ".agents/open-forge.json update failed.";
+
+    // @OpenForgeText library.sync.message.settings-update-final-state-is-unknown
+    internal static string MessageSettingsUpdateFinalStateIsUnknown()
+        => ".agents/open-forge.json final state is unknown.";
+
     // @OpenForgeText library.sync.help.syntax
     internal static string HelpSyntax()
         => "open-forge library sync <library-id> [--dry-run] [--automatic] [--allow-path <path>] [global options]";
@@ -51,6 +71,10 @@ internal static class LibrarySyncText
     // @OpenForgeText library.sync.label.the-synchronization-is-blocked
     internal static string LabelTheSynchronizationIsBlocked()
         => "the synchronization is blocked";
+
+    // @OpenForgeText library.sync.wording.remove-library-id-from-removed-libraries-and-rerun
+    internal static string RemoveExcludedLibraryNext(string id)
+        => $"Remove Library ID '{id}' from removedLibraries in .agents/open-forge.json, then rerun open-forge library sync.";
 
     // @OpenForgeText library.sync.title.add
     internal static string TitleAdd()

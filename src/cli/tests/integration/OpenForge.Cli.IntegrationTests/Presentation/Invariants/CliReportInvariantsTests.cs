@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection;
@@ -1001,25 +1002,24 @@ public sealed class CliReportInvariantsTests
     private static IReadOnlySet<string> ReadCatalogueCodes()
     {
         var codes = new HashSet<string>(StringComparer.Ordinal);
-        var catalogueRoot = Path.Combine(RepositoryRoot(), ".agents", "memory", "working", "cli-development", "tasks", "task30-g4");
-        foreach (var file in Directory.EnumerateFiles(catalogueRoot, "*.md", SearchOption.TopDirectoryOnly))
+        var catalogueRoot = Path.Combine(
+            RepositoryRoot(), ".agents", "memory", "crystallized", "documents", "cli", "contracts");
+        var parser = new MarkdownDocumentParser();
+        foreach (var file in Directory.EnumerateFiles(catalogueRoot, "interface.md", SearchOption.AllDirectories))
         {
-            var inCatalogue = false;
-            foreach (var line in File.ReadLines(file))
+            var document = parser.Parse(File.ReadAllText(file));
+            foreach (var section in document.Sections)
             {
-                if (line.StartsWith("## Findings catalogue", StringComparison.Ordinal))
+                if (section.Heading.VisibleText is not ("Findings catalogue" or "Errors And Boundaries"))
                 {
-                    inCatalogue = true;
                     continue;
                 }
 
-                if (inCatalogue && line.StartsWith("## ", StringComparison.Ordinal))
+                var text = document.Source[section.Span.Start..section.Span.End];
+                foreach (Match match in CatalogueCodePattern.Matches(text))
                 {
-                    inCatalogue = false;
+                    codes.Add(match.Value);
                 }
-
-                if (!inCatalogue) continue;
-                foreach (Match match in CatalogueCodePattern.Matches(line)) codes.Add(match.Value);
             }
         }
 

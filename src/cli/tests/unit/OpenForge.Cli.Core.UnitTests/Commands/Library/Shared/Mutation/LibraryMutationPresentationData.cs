@@ -30,7 +30,7 @@ internal static class LibraryMutationPresentationData
     internal static LibraryMutationProjection Projection()
         => new() { State = LibraryPlanState.NotStarted, Mappings = [], Collisions = [], Ownership = [] };
     internal static LibraryMutationPlanView Plan()
-        => new() { State = LibraryPlanState.NotStarted, Directories = [], Links = [], GeneratedRegions = [], RecordEffect = LibraryRecordEffect.None, RecordExpected = null };
+        => new() { State = LibraryPlanState.NotStarted, Directories = [], Links = [], GeneratedRegions = [], RecordEffect = LibraryRecordEffect.None, RecordExpected = null, SettingsChange = null };
     internal static LibraryMutationApplication Application()
         => new()
         {

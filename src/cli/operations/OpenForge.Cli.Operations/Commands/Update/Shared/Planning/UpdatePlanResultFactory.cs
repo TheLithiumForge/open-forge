@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 
@@ -66,7 +67,13 @@ internal static class UpdatePlanResultFactory
         var source = Source(completion.Payload);
         var comparisons = observations.Select(value => value.Comparison).ToArray();
         var generatedNavigation = Navigation(observations);
-        var resultEffects = effects.Select(value => value.ResultEffect).ToArray();
+        var directoryEffects = completion.DirectoryCreations.Select(creation =>
+            UpdatePhysicalEffect.Directory(
+                Path.GetRelativePath(request.Workspace.LexicalRoot, creation.LogicalPath)
+                    .Replace(Path.DirectorySeparatorChar, '/'),
+                UpdatePhysicalEffectOutcome.Planned,
+                UpdatePhysicalEffectResidual.None));
+        var resultEffects = directoryEffects.Concat(effects.Select(value => value.ResultEffect)).ToArray();
         var lifecycle = new UpdateLifecycle
         {
             Trust = UpdateLifecycleTrust.Trusted,

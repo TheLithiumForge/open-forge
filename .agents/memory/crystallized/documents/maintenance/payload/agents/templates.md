@@ -29,9 +29,26 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 ### Distribution And Dogfood
 
 - The standard Framework ships only the Templates category contract.
-- The optional [Project Documents](../../../../../../../src/extensions/project-documents/content/.agents/templates/documents/), [Collaboration](../../../../../../../src/extensions/collaboration/content/.agents/templates/collaboration/), [Orchestration](../../../../../../../src/extensions/orchestration/content/.agents/templates/orchestration/), [Workflow Support](../../../../../../../src/extensions/workflows/content/.agents/templates/workflows/), and [Planning](../../../../../../../src/extensions/planning/content/.agents/templates/planning/) payloads are canonical for their respective packaged Templates. Development Toolkit includes Project Documents and Planning through dependencies; the other packages remain separately selectable.
+- The optional [Project Documents](../../../../../../../src/extensions/project-documents/content/.agents/templates/documents/), [Collaboration](../../../../../../../src/extensions/collaboration/content/.agents/templates/collaboration/), [Observations and Handoffs](../../../../../../../src/extensions/observations-and-handoffs/content/.agents/templates/observations-and-handoffs/), [Workflow Support](../../../../../../../src/extensions/workflows/content/.agents/templates/workflows/), and [Planning](../../../../../../../src/extensions/planning/content/.agents/templates/planning/) payloads are canonical for their respective packaged Templates. The optional [Core Templates](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/) and [Flows and Scenarios](../../../../../../../src/extensions/scenarios/content/.agents/templates/scenarios/) packages provide their own starter subtrees. Development Toolkit includes Project Documents, Planning, and Flows and Scenarios through dependencies; the other Template packages remain separately selectable.
 - Repository-local copies of packaged leaf Templates remain aligned through automated parity verification. Repository-only Templates remain dogfood candidates rather than installable defaults.
 - Promoting another dogfood Template into the package requires its own review of generic value, authority boundary, portability, and source verification.
+
+### Core Templates
+
+The optional [Core Templates package](../../../../../../../src/extensions/core-templates/README.md) owns `templates/core/` and has no extension dependencies. It supplies seven on-demand starters, not new root routes or a required authoring workflow.
+
+| Source | Maintenance boundary |
+| --- | --- |
+| [Catalogue](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/_core.md) | Explain each role, destination-specific metadata, and the native Skill exception. |
+| [Directive](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/directive.md) | Retain one substantive Instructions section and explain destination LoadNow classification. |
+| [Guidance](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/guidance.md) | Preserve the situation, recommended approach, reasons, and tradeoffs. |
+| [Pattern](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/pattern.md) | Define an inspectable shape, a valid or explicitly schematic example, and meaningful variations. |
+| [Skill](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/skill.md) | Keep a routed Template wrapper around a complete native SKILL.md starter. Only the fenced file is instantiated; native discovery remains the active runtime's responsibility. |
+| [Template](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/template.md) | Distinguish instructions for the Template author from removable prompts retained for its future reader. A result that is itself a Template keeps that classification. |
+| [Map](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/map.md) | Keep destinations, their purpose, and selection conditions explicit without copying their facts. |
+| [Memory](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/memory.md) | Select state by meaning, preserve source and uncertainty, and avoid requiring an optional record category. |
+
+Package source files are canonical. Their counterparts under `.agents/templates/core/` retain the same authored content. Verify ordinary body copying, destination metadata, native Skill extraction, package links, and independent copies surviving package update/removal. A structural pass does not establish improved agent behavior or native runtime activation.
 
 ### Routing And Installation
 

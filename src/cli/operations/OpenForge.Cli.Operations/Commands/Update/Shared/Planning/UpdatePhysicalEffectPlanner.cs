@@ -36,6 +36,7 @@ internal static class UpdatePhysicalEffectPlanner
             var physicalAction = ReadPhysicalAction(decisions);
             var result = new UpdatePhysicalEffect(
                 group.Key,
+                UpdatePhysicalEffectKind.File,
                 physicalAction,
                 logical,
                 UpdatePhysicalEffectOutcome.Planned,

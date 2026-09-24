@@ -49,6 +49,8 @@ internal static class LibraryAttachDefinitions
             LibraryAttachFindingCode.SourceRootBlocked => "library-attach.source-root-blocked",
             LibraryAttachFindingCode.InventoryIncomplete => "library-attach.inventory-incomplete",
             LibraryAttachFindingCode.DestinationCollision => "library-attach.destination-collision",
+            LibraryAttachFindingCode.LibraryRemoved => "library-attach.library-removed",
+            LibraryAttachFindingCode.PathExcluded => "library-attach.path-excluded",
             LibraryAttachFindingCode.ConfirmationRequired => "library-attach.confirmation-required",
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The Library finding code is not defined."),
         };

@@ -10,9 +10,11 @@ open-forge:
 
 The user explicitly accepted the focused package split and removal of Experience Design during Task 28. The [first-party catalogue](../../../../../src/extensions/README.md) defines the resulting package inventory and contents.
 
-Project Documents, Memory Starters, Planning, Development, and Orchestration are independently selectable packages. Development Toolkit remains a convenience bundle of the first four. Orchestration depends only on Planning and Development. Review stays with Development to avoid an additional package boundary for one related Workflow.
+The current catalogue has independently selectable Core Templates, Collaboration, Project Documents, Planning, Flows and Scenarios, Observations and Handoffs, Development, Task Coordination, and Workflow Support packages. Development Toolkit selects Project Documents, Planning, Flows and Scenarios, and Development. Task Coordination keeps the ID `orchestration` and depends on Development, Observations and Handoffs, and Planning. Review stays with Development to avoid another package boundary for one related workflow.
 
-Each retained payload file keeps its installed path and content. Each Template subtree has one package responsible for its entrypoint and files. Shared content is supplied through dependencies. The bundle owns no payload files.
+The maintainer accepted this beta refinement on 2026-09-23 after reviewing the package boundaries and descriptions. Core Templates supplies one starter per Core category plus Memory, with a native Skill file inside its routed starter. It remains optional and outside the Toolkit. Scenario starters leave Planning so they can serve both experience design and verification independently. Observations and Handoffs leave Task Coordination so they can be used without development methods. Package names and descriptions say what is supplied or what work they help with.
+
+Memory category paths remain stable. Scenario starters move to `templates/scenarios/`; Observation and Handoff starters move to `templates/observations-and-handoffs/`. Existing user records and independently maintained Template copies retain their content and locations. The original Task 28 split kept all retained payload paths and wording; the later beta refinement changes the starter paths and makes their source instructions visible. Each Template subtree has one package responsible for its entrypoint and files. Shared content is supplied through dependencies. The bundle owns no payload files.
 
 ## Rationale
 

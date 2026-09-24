@@ -40,6 +40,15 @@
     },
     "effects": [
       {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "planned",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
         "path": ".agents/toolkit.md",
         "action": "delete",
         "outcome": "planned",

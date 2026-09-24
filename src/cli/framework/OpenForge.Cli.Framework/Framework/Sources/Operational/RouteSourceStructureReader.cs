@@ -10,6 +10,8 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 
 internal static class RouteSourceStructureReader
 {
+    private const string AxiomsSectionName = "Axioms";
+
     internal static RouteSourceStructureObservation ReadStructure(
         MarkdownDocumentFacts? document,
         SourceDocumentForm form,
@@ -110,19 +112,41 @@ internal static class RouteSourceStructureReader
             return RouteAxiomsObservation.Boundary(RouteAxiomsState.Unavailable);
         }
 
-        var sections = MarkdownSemanticSectionReader.Find(document.Source, body, document.Headings, "Axioms");
+        var sections = MarkdownSemanticSectionReader.Find(
+            document.Source,
+            body,
+            document.Headings,
+            AxiomsSectionName);
+        var primaryTitle = document.Headings.FirstOrDefault(heading => heading.Level == 1);
+        var recognizedHeadings = sections.Select(section => section.Heading).ToHashSet();
+        var malformedHeading = document.Headings.FirstOrDefault(heading =>
+            heading.IsTopLevel
+            && heading != primaryTitle
+            && string.Equals(heading.VisibleText, AxiomsSectionName, StringComparison.OrdinalIgnoreCase)
+            && !recognizedHeadings.Contains(heading));
         if (sections.Count == 0)
         {
+            if (malformedHeading is not null)
+            {
+                return RouteAxiomsObservation.Boundary(
+                    RouteAxiomsState.Invalid,
+                    locations.Map(malformedHeading.Span.Start, malformedHeading.Span.Length));
+            }
+
             return RouteAxiomsObservation.Boundary(RouteAxiomsState.Missing);
         }
 
         var section = sections[0];
         var location = locations.Map(section.Heading.Span.Start, section.Heading.Span.Length);
-        if (sections.Count != 1
-            || section.Span.End <= section.Heading.Span.End
-            || string.IsNullOrWhiteSpace(document.Source[section.Heading.Span.End..section.Span.End]))
+        if (sections.Count != 1 || malformedHeading is not null)
         {
             return RouteAxiomsObservation.Boundary(RouteAxiomsState.Invalid, location);
+        }
+
+        if (section.Span.End <= section.Heading.Span.End
+            || string.IsNullOrWhiteSpace(document.Source[section.Heading.Span.End..section.Span.End]))
+        {
+            return RouteAxiomsObservation.Empty(location);
         }
 
         return RouteAxiomsObservation.Valid(location);

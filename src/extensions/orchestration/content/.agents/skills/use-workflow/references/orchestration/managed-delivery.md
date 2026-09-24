@@ -10,7 +10,7 @@ open-forge:
 
 Deliver related tasks with clear responsibilities, resumable state, and verified integration within the user's authority. Use this method when dependencies or multiple contributors make coordination useful. One person or agent may perform every responsibility; independent small work can use [Development](../development/development.md) directly.
 
-[Orchestration Templates](../../../../templates/orchestration/_orchestration.md) offer an Observation for reusable evidence and a Handoff for an actual transfer. Use existing workspace formats when suitable; neither record is required for every task.
+[Observation and Handoff Templates](../../../../templates/observations-and-handoffs/_observations-and-handoffs.md) offer an Observation for reusable evidence and a Handoff for an actual transfer. Use existing workspace formats when suitable; neither record is required for every task.
 
 ## Steps
 

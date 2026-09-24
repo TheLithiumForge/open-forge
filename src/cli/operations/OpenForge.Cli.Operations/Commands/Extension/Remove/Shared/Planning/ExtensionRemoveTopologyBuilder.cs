@@ -12,6 +12,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
@@ -27,6 +29,7 @@ internal sealed class ExtensionRemoveTopologyBuilder
 
     internal async ValueTask<ExtensionRemoveTopologyBuild> BuildAsync(
         CliWorkspace workspace,
+        WorkspaceSettingsDocument settings,
         IReadOnlySet<string> removedPaths,
         CancellationToken cancellationToken)
     {
@@ -126,6 +129,7 @@ internal sealed class ExtensionRemoveTopologyBuilder
 
         var changes = new List<ExtensionRemoveGeneratedChange>();
         var resultRegions = new List<ExtensionRemoveGeneratedRegion>();
+        var excludedPaths = new List<string>();
         var intendedBytes = new Dictionary<string, byte[]>(StringComparer.Ordinal);
         var generatedEntries = new Dictionary<string, IReadOnlyList<GeneratedNavigationEntry>>(
             StringComparer.Ordinal);
@@ -136,6 +140,12 @@ internal sealed class ExtensionRemoveTopologyBuilder
             var change = region.Change
                 ?? throw new InvalidDataException(
                     "An available generated region requires its bounded change.");
+            if (WorkspaceRemovals.IsPathRemoved(region.CanonicalPath, settings))
+            {
+                excludedPaths.Add(region.CanonicalPath);
+                continue;
+            }
+
             var changed = !change.IsUnchanged;
             resultRegions.Add(new ExtensionRemoveGeneratedRegion(
                 region.CanonicalPath,
@@ -168,7 +178,8 @@ internal sealed class ExtensionRemoveTopologyBuilder
                     .ToHashSet(StringComparer.Ordinal),
             },
             resultRegions,
-            changes);
+            changes,
+            excludedPaths.Order(StringComparer.Ordinal).ToArray());
     }
 
     private static ExtensionRemoveTopologyBuild Unchanged(SourceCatalogue catalogue)
@@ -181,6 +192,7 @@ internal sealed class ExtensionRemoveTopologyBuilder
                     .Select(candidate => candidate.CanonicalPath)
                     .ToHashSet(StringComparer.Ordinal),
             },
+            [],
             [],
             []);
 }

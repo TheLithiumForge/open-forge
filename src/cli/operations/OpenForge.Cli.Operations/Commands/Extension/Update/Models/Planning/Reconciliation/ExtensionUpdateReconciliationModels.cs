@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning.Reconciliation;
 
@@ -18,6 +19,8 @@ internal sealed class ExtensionUpdateReconciliationInput
     internal required ExtensionUpdateTopology Topology { get; init; }
 
     internal required string SourceIdentity { get; init; }
+
+    internal required WorkspaceSettingsDocument Settings { get; init; }
 }
 
 internal sealed record ExtensionUpdateReconciliation(

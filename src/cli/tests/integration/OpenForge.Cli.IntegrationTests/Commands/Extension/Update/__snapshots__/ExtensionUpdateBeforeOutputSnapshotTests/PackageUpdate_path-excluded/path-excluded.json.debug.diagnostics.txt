@@ -1,0 +1,5 @@
+status=completed
+packages=1
+effects=0
+findings=1
+'.agents/toolkit.md' is excluded by workspace removal settings and was left unchanged.

@@ -12,7 +12,8 @@ internal static class RouteRemoveEffectPlanner
     internal static RouteRemovePlanProjectionInput Build(
         RouteRemoveCategoryInventory inventory,
         RouteRemoveReferencePlan references,
-        RouteRemoveNavigationPlan navigation)
+        RouteRemoveNavigationPlan navigation,
+        RouteRemovePersistencePlan persistence)
     {
         var projected = references.FileChanges.Concat(navigation.FileChanges)
             .GroupBy(change => change.LogicalPath, StringComparer.Ordinal)
@@ -46,12 +47,44 @@ internal static class RouteRemoveEffectPlanner
         {
             Subject = inventory.Subject,
             Ownership = inventory.Ownership,
+            Settings = persistence.Settings,
+            RemovalSelection = persistence.Selection,
+            ContentPathsToRelease = persistence.ContentPathsToRelease,
+            ClaimsToRelease = persistence.ClaimsToRelease,
+            SettingsChange = persistence.SettingsChange,
+            OwnershipChange = persistence.OwnershipChange,
             References = references,
             Navigation = navigation,
             FileChanges = fileChanges,
             DirectoryDeletions = directories,
-            RecoveryTargets = BuildRecoveryTargets(inventory, references, navigation, fileChanges),
+            RecoveryTargets = BuildPersistenceRecoveryTargets(
+                inventory,
+                references,
+                navigation,
+                fileChanges,
+                persistence),
         };
+    }
+
+    private static ImmutableArray<RecoveryBundleTarget> BuildPersistenceRecoveryTargets(
+        RouteRemoveCategoryInventory inventory,
+        RouteRemoveReferencePlan references,
+        RouteRemoveNavigationPlan navigation,
+        ImmutableArray<PlannedFileChange> changes,
+        RouteRemovePersistencePlan persistence)
+    {
+        var targets = BuildRecoveryTargets(inventory, references, navigation, changes).ToBuilder();
+        if (persistence.SettingsRecoveryTarget is { } settingsRecovery)
+        {
+            targets.Add(settingsRecovery);
+        }
+
+        if (persistence.OwnershipRecoveryTarget is { } ownershipRecovery)
+        {
+            targets.Add(ownershipRecovery);
+        }
+
+        return targets.ToImmutable();
     }
 
     private static PlannedFileChange ComposeChange(

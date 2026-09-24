@@ -1,22 +1,26 @@
 Workspace: <workspace>
 Installed
-  development          0.3.0
+  development          0.4.0
     4 files
     Recorded source: embedded catalogue
     The installed files match their recorded sources.
-  development-toolkit  0.3.0
+  development-toolkit  0.4.0
     0 files
     Recorded source: embedded catalogue
     The installed files match their recorded sources.
-  planning             0.3.0
-    19 files
+  planning             0.4.0
+    15 files
     Recorded source: embedded catalogue
     The installed files match their recorded sources.
-  project-documents    0.3.0
+  project-documents    0.4.0
     10 files
     Recorded source: embedded catalogue
     The installed files match their recorded sources.
-  workflows            0.3.0
+  scenarios            0.4.0
+    5 files
+    Recorded source: embedded catalogue
+    The installed files match their recorded sources.
+  workflows            0.4.0
     4 files
     Recorded source: embedded catalogue
     The installed files match their recorded sources.

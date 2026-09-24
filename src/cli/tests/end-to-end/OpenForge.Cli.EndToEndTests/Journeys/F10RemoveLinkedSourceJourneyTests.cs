@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
@@ -60,6 +61,7 @@ public sealed class F10RemoveLinkedSourceJourneyTests
         var expectedAfterApply = new HashSet<string>(beforePreview.Keys, StringComparer.Ordinal);
         Assert.True(expectedAfterApply.Remove(SourcePath));
         Assert.True(expectedAfterApply.Remove(SourceOverwritePath));
+        Assert.True(expectedAfterApply.Add(".agents/open-forge.json"));
         Assert.Equal(
             expectedAfterApply.Order(StringComparer.Ordinal),
             workspace.SnapshotState().Keys.Order(StringComparer.Ordinal));
@@ -108,30 +110,43 @@ public sealed class F10RemoveLinkedSourceJourneyTests
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
     }
 
-    [Fact(DisplayName = "F10 blocks removal of the installed Framework-owned route and preserves ownership"),
+    [Fact(DisplayName = "F10 removes an installed Framework route and persists its exclusion across Update"),
         Trait("Feature", "remove-route-preserve-meaning"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F10"),
         Trait("Scenarios", "C17-06")]
-    public async Task ManagedRouteCannotBeRemovedByAutomaticConfirmation()
+    public async Task ManagedRouteRemovalReleasesItsClaimAndPreventsRestoration()
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = await CreateManagedWorkspaceAsync("e2e-f10-managed");
-        var before = workspace.SnapshotState();
         const string ManagedRoutePath = ".agents/guidance/_guidance.md";
-        var managedSourceBefore = ReadBytes(workspace, ManagedRoutePath);
-        var ownershipBefore = ReadBytes(workspace, ".agents/open-forge.lock.json");
+        var unrelatedBefore = ReadBytes(workspace, ".agents/patterns/_patterns.md");
+        using var ownershipBefore = JsonDocument.Parse(ReadBytes(workspace, ".agents/open-forge.lock.json"));
+        var priorClaims = ownershipBefore.RootElement.GetProperty("framework").GetProperty("paths")
+            .EnumerateArray().Select(path => path.GetString()).ToArray();
+        Assert.Contains(ManagedRoutePath, priorClaims);
 
         var result = await workspace.RunAsync(
             "route", "remove", ManagedRoutePath, "--automatic");
 
-        Assert.Equal(5, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.NotEmpty(result.StandardError);
-        Assert.Contains(ManagedRoutePath, result.StandardError, StringComparison.Ordinal);
-        Assert.Contains("the Framework", result.StandardError, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("open-forge update", result.StandardError, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(before, workspace.SnapshotState());
-        Assert.Equal(managedSourceBefore, ReadBytes(workspace, ManagedRoutePath));
-        Assert.Equal(ownershipBefore, ReadBytes(workspace, ".agents/open-forge.lock.json"));
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        Assert.False(File.Exists(workspace.Combine(ManagedRoutePath)));
+        Assert.DoesNotContain("guidance/_guidance.md", ReadText(workspace, ".agents/loader.md"), StringComparison.Ordinal);
+        using var settings = JsonDocument.Parse(ReadBytes(workspace, ".agents/open-forge.json"));
+        Assert.Contains(settings.RootElement.GetProperty("removedCategories").EnumerateArray(),
+            category => category.GetString() == "guidance");
+        Assert.Contains(settings.RootElement.GetProperty("removedDirectories").EnumerateArray(),
+            directory => directory.GetString() == ".agents/guidance");
+        using var ownershipAfter = JsonDocument.Parse(ReadBytes(workspace, ".agents/open-forge.lock.json"));
+        Assert.Equal(priorClaims.Where(path => path != ManagedRoutePath),
+            ownershipAfter.RootElement.GetProperty("framework").GetProperty("paths")
+                .EnumerateArray().Select(path => path.GetString()));
+        Assert.Equal(unrelatedBefore, ReadBytes(workspace, ".agents/patterns/_patterns.md"));
+
+        var update = await workspace.RunAsync("update", "--automatic");
+        Assert.Equal(0, update.ExitCode);
+        Assert.Equal(string.Empty, update.StandardError);
+        Assert.False(File.Exists(workspace.Combine(ManagedRoutePath)));
+        Assert.Equal(unrelatedBefore, ReadBytes(workspace, ".agents/patterns/_patterns.md"));
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
     }

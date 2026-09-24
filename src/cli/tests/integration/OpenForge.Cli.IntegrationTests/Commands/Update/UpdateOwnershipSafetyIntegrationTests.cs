@@ -32,6 +32,8 @@ public sealed class UpdateOwnershipSafetyIntegrationTests
     {
         using var workspace = UpdateIntegrationWorkspace.Create("update-missing-parents");
         workspace.CreateDirectory(".agents");
+        Assert.False(workspace.Exists(".agents/open-forge.json"));
+        Assert.False(workspace.Exists(UpdateIntegrationWorkspace.OwnershipPath));
         var before = workspace.SnapshotHashes();
         var result = await workspace.ExecuteAsync(workspace.Request());
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
@@ -48,7 +50,14 @@ public sealed class UpdateOwnershipSafetyIntegrationTests
         using var workspace = UpdateIntegrationWorkspace.Create("update-stale-boundary");
         if (target == ".git/config") workspace.CreateDirectory(".git");
         var overwrite = target.EndsWith(".overwrite.md", StringComparison.Ordinal);
-        if (target is not ".agents/open-forge.lock.json" && !overwrite) workspace.WriteText(target, "user content\n");
+        if (target is not ".agents/open-forge.lock.json" && !overwrite)
+        {
+            workspace.WriteText(
+                target,
+                target == ".agents/open-forge.json"
+                    ? "{\"note\":\"user content\"}\n"
+                    : "user content\n");
+        }
         await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
         if (overwrite)
         {

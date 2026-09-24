@@ -1,5 +1,6 @@
 Removed the toolkit Extension.
 Workspace: <workspace>
+  .agents/open-forge.json                       recorded the removal in workspace settings
   .agents/toolkit.md                            deleted
   .agents/directives/_directives.md             unchanged
   .agents/guidance/_guidance.md                 unchanged

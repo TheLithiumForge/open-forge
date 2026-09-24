@@ -17,7 +17,8 @@ internal static class LibraryMutationPlanningPolicy
 {
     internal static LibraryConsumerBoundaryEvaluation EvaluateConsumerBoundary(
         LibraryConsumerBoundaryFacts facts,
-        bool allowMissingAncestors)
+        bool allowMissingAncestors,
+        bool allowMissingConsumerRoot = false)
     {
         ArgumentNullException.ThrowIfNull(facts);
         var workspace = facts.Request.Workspace;
@@ -29,13 +30,17 @@ internal static class LibraryMutationPlanningPolicy
         }
 
         var rootPath = Path.Combine(workspace.LexicalRoot, ".agents");
-        var root = EvaluateDirectory(facts.ConsumerRoot, rootPath, allowMissing: false);
+        var root = EvaluateDirectory(facts.ConsumerRoot, rootPath, allowMissingConsumerRoot);
         if (root.State != LibraryPlanState.Complete)
         {
             return root;
         }
 
         var directories = ImmutableArray.CreateBuilder<PlannedDirectoryCreation>();
+        if (facts.ConsumerRoot.Leaf.State == NoFollowLeafState.Missing)
+        {
+            directories.Add(PlannedDirectoryCreation.Create(FileExpectation.Missing(rootPath)));
+        }
         var observedPaths = new HashSet<string>(PhysicalIdentityTracker.PathComparer);
         for (var index = 0; index < facts.Request.RequiredAncestorPaths.Length; index++)
         {

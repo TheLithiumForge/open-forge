@@ -180,13 +180,13 @@ public sealed class RouteRemoveInteractionApplicationIntegrationTests
     }
 
     [Trait("Boundary", "Host")]
-    [Fact(DisplayName = "Route Remove preserves downstream ownership safety after a selected physical source"),
+    [Fact(DisplayName = "Route Remove preserves ownership safety after a selected physical source"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
     public async Task SelectedPhysicalSourceRemainsBlockedByOwnershipSafety()
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-interaction-blocked");
         workspace.SeedIdentityCollision();
-        workspace.SeedFrameworkClaim(RouteRemoveIntegrationWorkspace.LeafPath);
+        workspace.WriteText(RouteRemoveIntegrationWorkspace.OwnershipPath, "{ invalid ownership json");
         var before = workspace.SnapshotHashes();
 
         var run = await RunAsync(

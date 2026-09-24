@@ -2,20 +2,13 @@ Cannot remove toolkit: The requested Extension destinations require shared permi
 Workspace: <workspace>
   Error  toolkit  Permission is required [extension-remove.permission-required]
          The requested Extension destinations require shared permission in .agents/open-forge.json; use --allow-path <path> to record a grant.
-  .agents/directives/_directives.md             unchanged
-  .agents/guidance/_guidance.md                 unchanged
-  .agents/loader.md                             unchanged
-  .agents/maps/_maps.md                         unchanged
-  .agents/memory/_memory.md                     unchanged
-  .agents/memory/archived/_archived.md          unchanged
-  .agents/memory/crystallized/_crystallized.md  unchanged
-  .agents/memory/emerging/_emerging.md          unchanged
-  .agents/memory/working/_working.md            unchanged
-  .agents/patterns/_patterns.md                 unchanged
-  .agents/skills/_skills.md                     unchanged
-  .agents/templates/_templates.md               unchanged
+  .agents/open-forge.json  not started
+  .agents/toolkit.md       not started
+  workspace-note.md        not started
+    owners before: toolkit; owners after: none
+    owners before: toolkit; owners after: none
   Removal order: toolkit
-  .agents/open-forge.lock.json  updated
+  .agents/open-forge.lock.json  not started
   Entries sections unchanged: .agents/directives/_directives.md, .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md, .agents/memory/_memory.md, .agents/memory/archived/_archived.md, .agents/memory/crystallized/_crystallized.md, .agents/memory/emerging/_emerging.md, .agents/memory/working/_working.md, .agents/patterns/_patterns.md, .agents/skills/_skills.md, .agents/templates/_templates.md
   Verification: targets not checked; Entries not checked; Extension record not checked
   Recovery: not-created.

@@ -1,0 +1,3 @@
+Cannot install toolkit: Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension install.
+Workspace: <workspace>
+Next: Remove the selected Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension install.

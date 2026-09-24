@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted current public interface for removing one eligible unmanaged routed leaf or complete routed category
+  description: Accepted current public interface for removing one routed leaf or complete routed category and remembering the removal
   responsibility: Define what `route remove` accepts, removes, reports, rejects, and leaves unchanged
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Route, Remove, Interface, Mutation, Reference, Safety, CurrentTruth]
 ---
@@ -41,8 +41,9 @@ boundaries below.
 
 ## Purpose And Operation Boundary
 
-`route remove` removes one eligible ordinary unmanaged logical leaf or one
-eligible ordinary unmanaged category. It removes the complete selected physical
+`route remove` removes one eligible ordinary logical leaf or one
+eligible ordinary category, including Framework- or Extension-managed content.
+It removes the complete selected physical
 subject, updates affected generated navigation in the same operation, and
 detaches every supported incoming authored Markdown link from outside the
 removed subject by replacing that link with its visible label as plain authored
@@ -62,7 +63,7 @@ plan, one recovery boundary, and one final verification boundary. It is never a
 series of independently committed leaf removals and never exposes a generic
 batch or saved-plan surface.
 
-The command is stateless and deterministic for unchanged workspace bytes and
+The command is deterministic for unchanged workspace bytes and
 explicit input. A repeated remove is a verified no-op only when exact intended
 absence is independently established with complete trusted ownership, topology,
 reference, and generated-projection evidence, with no orphan companion, residual
@@ -70,8 +71,15 @@ incoming reference, or stale generated region. Otherwise a missing, invalid,
 incomplete, or blocked result is returned as applicable; absence alone does not
 prove that an earlier remove succeeded. A proven absent target completes with no
 effects, workspace writes, lock or recovery preparation, or finding, and uses
-the source-specific headline `Nothing to do for <source>.`. The operation creates no receipt,
-tombstone, journal, saved plan, or history used to manufacture provenance.
+the source-specific headline `Nothing to do for <source>.`. Persistent exclusions
+record what managers must leave removed; they do not prove current absence or
+successful completion. A missing exclusion is a settings effect, not a no-op.
+
+Leaf removal records exact file paths, including an existing overwrite. Category
+removal records its directory, covering future descendants; a root category also
+records its category name. These authored settings are verified before content
+changes. Restore content by clearing all covering exclusions from
+`.agents/open-forge.json` and explicitly running its installer or updater.
 
 ## Syntax
 
@@ -189,6 +197,9 @@ complete subject. The command does not flatten, reorder, or independently
 commit descendants. The Loader itself and any item whose physical identity
 cannot remain contained are outside this boundary.
 
+A nested `.git` directory or worktree-pointer file blocks removal of the whole
+category. Ordinary files such as `.gitignore` do not trigger this guard.
+
 ## Final-Leaf Safety Boundary
 
 Every file leaf that `route remove` would change or remove, including the
@@ -207,27 +218,30 @@ never resolves a final filesystem leaf and then deletes its physical source
 target. The guard concerns each final component addressed by the remove plan;
 ordinary directory-ancestry rules remain defined by the filesystem contract.
 
-## Positive Unmanaged Proof
+## Ownership And Persistent Removal
 
-The command reads Framework and Extension ownership from the forgiving
-`.agents/open-forge.lock.json` reader. A complete interpretable inventory must
-establish that none of the selected logical sources or resources is claimed
-before a mutation plan can form. Both whole-file and region receipts protect
-their hosts, including portable case aliases. One claim protects the whole
-selected category; the operation never skips a claimed member.
+The command reads ownership from `.agents/open-forge.lock.json`. A complete,
+interpretable inventory identifies every Framework and Extension claim to the
+selected files and generated regions. Explicit route removal releases all such
+claims to the deleted paths, even when several packages share a file. Package
+registrations and unrelated claims remain intact. Removing an Extension by ID
+retains files shared with another owner under its separate lifecycle contract.
 
-Missing, unreadable or uninterpretable ownership does not infer unmanaged state.
-It produces `ownership-unavailable` with complete informational status, no plan
-or effects, and ownership shown as not-established. The summary explicitly says
-that no route changed. Schema/release metadata and stale content hashes are not
-gates. Actual ownership, physical safety, route and reference conflicts remain
-blocking boundaries. The exact lock expectation is revalidated before and after
-mutation. No legacy record is read, migrated or deleted; these commands neither
-adopt current content nor release or rewrite ownership.
+A missing lock is known empty and supplies no claims. Unreadable or
+uninterpretable ownership cannot authorize removal.
+It produces `ownership-unavailable` with blocked status, no plan or effects,
+and ownership shown as not-established. The summary explicitly says that no
+route changed. Schema/release metadata and stale content hashes do not establish
+or invalidate an otherwise interpretable claim. Physical safety, unknown
+ownership, route and reference conflicts remain
+blocking boundaries. Settings and the exact lock expectation are revalidated
+under the workspace lease. The intended ownership release is published only
+after content and navigation effects have been verified. No legacy record is
+read, migrated or deleted.
 
 Path names, routing tags, generated lines, matching bytes and prior command
-results cannot independently establish unmanaged status. Framework-aware Route
-Init's region receipts remain positive ownership even in a user-authored host.
+results do not establish ownership. Library projections remain outside this
+operation; select an individual owned link with root `remove --kind path`.
 
 ## Complete Reference Pass And Detachment
 
@@ -288,7 +302,7 @@ Remove follows one complete typed mutation flow:
 ```text
 validated source
   -> complete leaf or category inventory
-  -> trusted unmanaged proof
+  -> complete ownership and persistent-exclusion plan
   -> complete reference catalogue and intended detachments
   -> post-remove route and generated projection
   -> one ordered complete mutation plan
@@ -473,7 +487,7 @@ workspace write or recovery bundle.
 | completed-with-warnings | recovery bundle retained after success                                   | + family row                                                       |    2 | stdout |
 | incomplete              | catalogue, scan or record unreadable                                     | `<id> could not be removed: <limitation>. Nothing was changed.`    |    3 | stdout |
 | invalid-input           | bad source, the Loader, an overwrite file, or missing source without complete absence proof | `Cannot remove <ref>: <problem>.`                 |    4 | stderr |
-| blocked                 | managed source, a link that cannot be detached safely, unsafe path, lock | `Cannot remove <id>: <reason>.`                                    |    5 | stderr |
+| blocked                 | unavailable required ownership, a link that cannot be detached safely, unsafe path, lock | `Cannot remove <id>: <reason>.`                                    |    5 | stderr |
 | failed                  | after effects                                                            | `Route remove stopped after <n> of <m> changes.`                   |    1 | stderr |
 | cancelled               | prompt cancelled, Ctrl+C                                                 | `Route remove was cancelled. Nothing was changed.`                 |  130 | stderr |
 
@@ -511,7 +525,9 @@ The finding catalogue is:
 | route-remove.workspace-lock-unavailable    | error    | workspace-lock-unavailable  |                                                                                                    |                                                          |
 | route-remove.target-changed                | error    | target-changed              |                                                                                                    |                                                          |
 | route-remove.recovery-conflict             | error    | recovery-conflict           |                                                                                                    |                                                          |
-| route-remove.ownership-unavailable         | warning  | lifecycle-unavailable       |                                                                                                    |                                                          |
+| route-remove.ownership-unavailable | error | lifecycle-unavailable | Required ownership could not be established; no route changed. | Repair the ownership record, then rerun. |
+| route-remove.settings-unavailable | error | local | Required workspace settings could not be established; no route changed. | Repair the settings, then rerun. |
+| route-remove.protected-target | error | local | The selected route overlaps protected control state or a registered Library source. | Select an unprotected route. |
 | route-remove.inspection-incomplete         | warning  | inspection-incomplete       |                                                                                                    |                                                          |
 | route-remove.category-inventory-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.category-inventory-incomplete`).                   | `open-forge doctor`                                      |
 | route-remove.reference-coverage-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.reference-coverage-incomplete`).             | `open-forge doctor`                                      |
@@ -534,7 +550,7 @@ action when available. Counts are:
 
 `leaf-removed`, `leaf-with-detached-links`, `category-removed`, `dry-run`,
 `source-not-found` (proven absence -> completed no-op; otherwise refusal),
-`managed-source` (blocked), `unsafe-link-detach`
+`managed-source` (removed with persistent exclusion and claim release), `unsafe-link-detach`
 (blocked), `ambiguous-source-prompt`, `reference-scan-incomplete`, `lock-held`,
 `write-failed-partial`, `cancelled`.
 
@@ -582,9 +598,10 @@ Cannot remove guidance/old guide: The source is not a source ID or a path under 
 ### blocked
 
 ~~~text
-Cannot remove guidance/old guide: .agents/guidance/old guide.md is managed by the Framework, so Route Remove cannot remove it.
+Cannot remove guidance/old guide: .agents/open-forge.lock.json could not be read completely.
 Workspace: <workspace>
-Next: open-forge update
+  Error  <workspace>/.agents/open-forge.lock.json  Ownership record is unavailable
+         .agents/open-forge.lock.json could not be read completely.
 ~~~
 
 ### failed

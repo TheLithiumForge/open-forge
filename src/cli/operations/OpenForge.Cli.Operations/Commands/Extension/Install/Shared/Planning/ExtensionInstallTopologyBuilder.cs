@@ -19,6 +19,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
@@ -34,12 +36,14 @@ internal sealed class ExtensionInstallTopologyBuilder
     internal async ValueTask<ExtensionInstallTopology> BuildAsync(
         ExtensionInstallRequest request,
         IReadOnlyList<ExtensionPackageFact> packages,
+        WorkspaceSettingsDocument settings,
         CancellationToken cancellationToken)
-        => (await BuildWithFindingsAsync(request, packages, cancellationToken).ConfigureAwait(false)).Topology;
+        => (await BuildWithFindingsAsync(request, packages, settings, cancellationToken).ConfigureAwait(false)).Topology;
 
     internal async ValueTask<ExtensionInstallTopologyBuild> BuildWithFindingsAsync(
         ExtensionInstallRequest request,
         IReadOnlyList<ExtensionPackageFact> packages,
+        WorkspaceSettingsDocument settings,
         CancellationToken cancellationToken)
     {
         var catalogue = await _catalogueReader.ReadAsync(
@@ -106,7 +110,7 @@ internal sealed class ExtensionInstallTopologyBuilder
                     _markdownParser.Parse(documents[source.Identity.CanonicalBasePath]),
                     source.Base.Form)))
             .ToArray();
-        var regionInputs = intendedSources
+        var candidateRegionInputs = intendedSources
             .Where(source => source.Base.Form == SourceDocumentForm.Loader
                 || SourceFormClassifier.IsEntrypoint(source.Base.Form))
             .Select(source => new
@@ -115,6 +119,19 @@ internal sealed class ExtensionInstallTopologyBuilder
                 Document = _markdownParser.Parse(documents[source.Identity.CanonicalBasePath]),
             })
             .Where(value => value.Document.GeneratedRegion.State == MarkdownGeneratedRegionState.Complete)
+            .ToArray();
+        var excludedHosts = candidateRegionInputs
+            .Where(value => WorkspaceRemovals.IsPathRemoved(
+                value.Source.Identity.CanonicalBasePath,
+                settings))
+            .Select(value => value.Source.Identity.CanonicalBasePath)
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        var regionInputs = candidateRegionInputs
+            .Where(value => !WorkspaceRemovals.IsPathRemoved(
+                value.Source.Identity.CanonicalBasePath,
+                settings))
             .Select(value => new GeneratedNavigationRegionInput(value.Source, value.Document))
             .ToArray();
         var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
@@ -151,6 +168,7 @@ internal sealed class ExtensionInstallTopologyBuilder
 
         var generated = new Dictionary<string, byte[]>(StringComparer.Ordinal);
         var regions = new List<ExtensionInstallGeneratedRegion>();
+        var excludedHostPaths = new HashSet<string>(excludedHosts, StringComparer.Ordinal);
         foreach (var region in projection.Regions
                      .Where(value => value.State == GeneratedNavigationRegionState.Available)
                      .OrderBy(value => value.CanonicalPath, StringComparer.Ordinal))
@@ -158,6 +176,12 @@ internal sealed class ExtensionInstallTopologyBuilder
             var change = region.Change
                 ?? throw new InvalidDataException(
                     "An available generated region requires its bounded change.");
+            if (WorkspaceRemovals.IsPathRemoved(region.CanonicalPath, settings))
+            {
+                _ = excludedHostPaths.Add(region.CanonicalPath);
+                continue;
+            }
+
             regions.Add(new ExtensionInstallGeneratedRegion(
                 region.CanonicalPath,
                 change.IsUnchanged
@@ -186,6 +210,11 @@ internal sealed class ExtensionInstallTopologyBuilder
                 .Select(path => new ExtensionInstallFinding(
                     ExtensionInstallFindingCode.MetadataProjectionSkipped,
                     value.Region.Cause ?? "The authored source metadata is malformed.",
+                    path)))
+            .Concat(excludedHostPaths.Order(StringComparer.Ordinal)
+                .Select(path => new ExtensionInstallFinding(
+                    ExtensionInstallFindingCode.PathExcluded,
+                    $"Generated navigation at '{path}' is excluded by workspace removal settings and was left unchanged.",
                     path)))
             .ToArray();
         return new ExtensionInstallTopologyBuild(

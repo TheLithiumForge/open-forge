@@ -19,8 +19,8 @@ public sealed class RouteRemoveOwnershipOutputSnapshotTests
     {
         var text = Render(CliFormat.Text, CliDetail.Minimal);
 
-        Assert.StartsWith("Nothing to do for guidance/old guide.", text, StringComparison.Ordinal);
-        Assert.Contains("Ownership record is unavailable", text, StringComparison.Ordinal);
+        Assert.StartsWith("Cannot remove guidance/old guide:", text, StringComparison.Ordinal);
+        Assert.Contains("could not be read completely", text, StringComparison.Ordinal);
         Assert.Contains("No files were changed.", text, StringComparison.Ordinal);
         Assert.DoesNotContain("Status:", text, StringComparison.Ordinal);
     }
@@ -31,8 +31,8 @@ public sealed class RouteRemoveOwnershipOutputSnapshotTests
     {
         var text = Render(CliFormat.Text, CliDetail.Standard);
 
-        Assert.StartsWith("Nothing to do for guidance/old guide.", text, StringComparison.Ordinal);
-        Assert.Contains("Ownership record is unavailable", text, StringComparison.Ordinal);
+        Assert.StartsWith("Cannot remove guidance/old guide:", text, StringComparison.Ordinal);
+        Assert.Contains("could not be read completely", text, StringComparison.Ordinal);
         Assert.Contains("No files were changed.", text, StringComparison.Ordinal);
         Assert.DoesNotContain("Status:", text, StringComparison.Ordinal);
     }
@@ -47,7 +47,7 @@ public sealed class RouteRemoveOwnershipOutputSnapshotTests
 
         Assert.Equal(3, root.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("route remove", root.GetProperty("command").GetString());
-        Assert.Equal("completed", root.GetProperty("status").GetString());
+        Assert.Equal("blocked", root.GetProperty("status").GetString());
         Assert.Equal("minimal", root.GetProperty("detail").GetString());
         Assert.Equal("file", data.GetProperty("subject").GetString());
         Assert.Empty(data.GetProperty("removed").EnumerateArray());
@@ -66,7 +66,7 @@ public sealed class RouteRemoveOwnershipOutputSnapshotTests
         var finding = Assert.Single(root.GetProperty("findings").EnumerateArray());
 
         Assert.Equal("standard", root.GetProperty("detail").GetString());
-        Assert.Equal("warning", finding.GetProperty("severity").GetString());
+        Assert.Equal("error", finding.GetProperty("severity").GetString());
         Assert.Equal("route-remove.ownership-unavailable", finding.GetProperty("code").GetString());
         Assert.Equal("Ownership record is unavailable", finding.GetProperty("title").GetString());
         Assert.DoesNotContain("lifecycle", finding.GetProperty("message").GetString(), StringComparison.OrdinalIgnoreCase);
@@ -88,7 +88,7 @@ public sealed class RouteRemoveOwnershipOutputSnapshotTests
             },
         };
         var result = new RouteRemoveResultBuilder().Build(RouteRemoveBoundary.Stop(formation,
-            RouteRemoveFindingCode.OwnershipUnavailable, CliSemanticStatus.Complete,
+            RouteRemoveFindingCode.OwnershipUnavailable, CliSemanticStatus.Blocked,
             RouteRemoveTestData.LeafPath, "The ownership lock does not establish a complete inventory; no unmanaged state was inferred."));
         var request = new CliPresentationRequest<RouteRemoveResult>(result, new(format, view, null));
         return CliRenderingStage.Render(request, RouteRemovePresentation.Rendering).PrimaryContent;

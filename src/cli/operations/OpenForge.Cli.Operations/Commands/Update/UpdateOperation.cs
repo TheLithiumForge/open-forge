@@ -58,6 +58,7 @@ internal sealed class UpdateOperation
         if (resolution.Execution is not { } execution
             || request.IsDryRun
             || (execution.Effects.Count == 0
+                && execution.DirectoryCreations.Count == 0
                 && execution.OwnershipChange is null))
         {
             return resolution.Build.Preview;

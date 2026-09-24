@@ -47,7 +47,7 @@ Scenarios: [X26](../scenarios/experience.md#x26).
 
 ### Malformed settings
 
-Do not overwrite them to satisfy always approval; implicit .agents admission remains distinct.
+Do not overwrite them to satisfy always approval. Internal .agents destinations need no external grant, but Extension Install must still read valid removal settings before writing package content. Malformed required settings block both internal and external installs.
 
 Scenarios: [X14](../scenarios/experience.md#x14).
 

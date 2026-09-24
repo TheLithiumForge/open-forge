@@ -1,0 +1,9 @@
+Would update 2 Framework files.
+Workspace: <workspace>
+  .agents/guidance               create directory
+  .agents/guidance/_guidance.md  create
+  .agents/loader.md              replace (you have changed it; a recovery bundle is written first)
+  .agents/loader.md              Entries section updated
+  .agents/open-forge.lock.json   updated
+  12 files unchanged
+No files were changed.

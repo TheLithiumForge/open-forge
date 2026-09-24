@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 3,
+  "command": "update",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would update 2 Framework files.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/guidance",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": "it was missing",
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": "you had changed it and this release changes it",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "filesReplaced": 1,
+    "filesRestored": 0,
+    "filesCreated": 1,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 12,
+    "sectionsUpdated": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "previousContent": null,
+    "lockPath": ".agents/open-forge.lock.json",
+    "unchanged": [
+      {
+        "path": ".agents/directives/_directives.md"
+      },
+      {
+        "path": ".agents/maps/_maps.md"
+      },
+      {
+        "path": ".agents/memory/_memory.md"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md"
+      },
+      {
+        "path": ".agents/memory/working/_working.md"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md"
+      },
+      {
+        "path": ".agents/skills/_skills.md"
+      },
+      {
+        "path": ".agents/templates/_templates.md"
+      },
+      {
+        "path": "AGENTS.md"
+      },
+      {
+        "path": "CLAUDE.md"
+      }
+    ],
+    "entriesSections": [
+      {
+        "path": ".agents/loader.md",
+        "state": "changed"
+      }
+    ],
+    "effects": [
+      {
+        "path": ".agents/guidance",
+        "relation": {
+          "current": "unknown",
+          "shipped": "unknown"
+        },
+        "source": {
+          "id": "framework",
+          "version": null,
+          "fingerprint": "<sha256>"
+        },
+        "verification": "not-requested"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "after": "<sha256>",
+        "sourceAssetPath": ".agents/guidance/_guidance.md",
+        "relation": {
+          "current": "missing",
+          "shipped": "new"
+        },
+        "source": {
+          "id": "framework",
+          "version": null,
+          "fingerprint": "<sha256>"
+        },
+        "verification": "not-requested"
+      },
+      {
+        "path": ".agents/loader.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "relation": {
+          "current": "changed",
+          "shipped": "changed"
+        },
+        "source": {
+          "id": "framework",
+          "version": null,
+          "fingerprint": "<sha256>"
+        },
+        "verification": "not-requested"
+      }
+    ],
+    "verification": "not-requested"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

@@ -84,7 +84,7 @@ public sealed class RouteRemoveBeforeOutputSnapshotTests
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Route remove output preserves ownership, reference and execution refusals without effects")]
     [InlineData("source-not-found", (int)CliSemanticStatus.Complete)]
-    [InlineData("managed-source", (int)CliSemanticStatus.Blocked)]
+    [InlineData("ownership-unavailable", (int)CliSemanticStatus.Blocked)]
     [InlineData("unsafe-link-detach", (int)CliSemanticStatus.Blocked)]
     [InlineData("reference-scan-incomplete", (int)CliSemanticStatus.Incomplete)]
     [InlineData("lock-held", (int)CliSemanticStatus.Blocked)]
@@ -92,7 +92,7 @@ public sealed class RouteRemoveBeforeOutputSnapshotTests
     public async Task SafetyBoundary(string situation, int status)
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-output-boundary");
-        if (situation == "managed-source") workspace.SeedFrameworkClaim(RouteRemoveIntegrationWorkspace.LeafPath);
+        if (situation == "ownership-unavailable") workspace.WriteText(RouteRemoveIntegrationWorkspace.OwnershipPath, "{ invalid ownership json");
         if (situation == "unsafe-link-detach") workspace.WriteText("outside.md", "Before [Readable guide][target], after.\n\n[target]: .agents/guidance/old%20guide.md\n");
         if (situation == "reference-scan-incomplete") workspace.SeedInvalidUtf8();
         var before = workspace.SnapshotHashes();

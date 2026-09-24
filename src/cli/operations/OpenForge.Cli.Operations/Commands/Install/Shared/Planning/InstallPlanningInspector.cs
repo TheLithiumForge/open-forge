@@ -212,12 +212,12 @@ internal sealed class InstallPlanningInspector
         {
             InstallIntendedStateBuildState.Incomplete => Boundary(
                 InstallManagementState.Incomplete,
-                InstallFindingCode.ProjectionUnavailable,
+                result.FindingCode ?? InstallFindingCode.ProjectionUnavailable,
                 result.Cause ?? "The intended Framework projection is unavailable.",
                 payload: payload),
             InstallIntendedStateBuildState.Blocked => Boundary(
                 InstallManagementState.Blocked,
-                InstallFindingCode.GeneratedRegionUnsafe,
+                result.FindingCode ?? InstallFindingCode.GeneratedRegionUnsafe,
                 result.Cause ?? "The intended Framework projection is unsafe.",
                 payload: payload),
             InstallIntendedStateBuildState.Cancelled => Boundary(

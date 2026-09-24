@@ -192,3 +192,43 @@ internal sealed record RouteRemoveRecovery
 
     public string? ResidualPath { get; init; }
 }
+
+internal sealed record RouteRemoveSettingsRemoval
+{
+    public required RouteRemovePersistenceOutcome Outcome { get; init; }
+
+    public required string Path { get; init; }
+
+    public ImmutableArray<string> Categories { get; init; } = [];
+
+    public ImmutableArray<string> Files { get; init; } = [];
+
+    public ImmutableArray<string> Directories { get; init; } = [];
+}
+
+internal sealed record RouteRemoveOwnershipRelease
+{
+    public required RouteRemovePersistenceOutcome Outcome { get; init; }
+
+    public ImmutableArray<RouteRemoveOwnershipClaim> Claims { get; init; } = [];
+}
+
+internal sealed record RouteRemovePersistence
+{
+    public static RouteRemovePersistence NotEstablished { get; } = new()
+    {
+        Settings = new RouteRemoveSettingsRemoval
+        {
+            Outcome = RouteRemovePersistenceOutcome.NotEstablished,
+            Path = global::OpenForge.Cli.Core.Framework.Settings.WorkspaceSettingsDefinitions.RelativePath,
+        },
+        Ownership = new RouteRemoveOwnershipRelease
+        {
+            Outcome = RouteRemovePersistenceOutcome.NotEstablished,
+        },
+    };
+
+    public required RouteRemoveSettingsRemoval Settings { get; init; }
+
+    public required RouteRemoveOwnershipRelease Ownership { get; init; }
+}

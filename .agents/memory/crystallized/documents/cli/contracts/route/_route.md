@@ -22,9 +22,10 @@ Technical Design is needed.
 The `route` group performs no domain operation. Group help exposes the leaf
 operations `inspect`, `list`, `init`, `create`, `update`, `move`, and `remove`.
 Each child entrypoint routes to its Interface and Behavior Contracts. The
-structural `move` and `remove` leaves accept one eligible ordinary unmanaged
-logical leaf or one complete ordinary unmanaged category; their local contracts
-define the exact boundaries. Generated `Entries` provide navigation only.
+structural `move` leaf accepts one eligible ordinary unmanaged logical leaf or
+category. `remove` also accepts Framework- and Extension-managed content and
+records persistent exclusions. Their local contracts define the exact boundaries.
+Generated `Entries` provide navigation only.
 
 ## Axioms
 

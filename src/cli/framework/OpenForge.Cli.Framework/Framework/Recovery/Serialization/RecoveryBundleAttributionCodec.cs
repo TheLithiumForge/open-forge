@@ -16,6 +16,7 @@ internal static class RecoveryBundleAttributionCodec
             [RecoveryBundleProducer.Route] = "route",
             [RecoveryBundleProducer.Repair] = "repair",
             [RecoveryBundleProducer.Library] = "library",
+            [RecoveryBundleProducer.Workspace] = "workspace",
         }.ToFrozenDictionary();
     private static readonly FrozenDictionary<string, RecoveryBundleProducer> WireProducer =
         ProducerWire.ToFrozenDictionary(pair => pair.Value, pair => pair.Key, StringComparer.Ordinal);

@@ -147,6 +147,7 @@ public sealed class ExtensionInstallTargetPolicyIntegrationTests
                 {
                     Request = request,
                     Packages = [package],
+                    Settings = OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument.Empty,
                     Ownership = WorkspaceOwnershipRead.Absent(Path.Combine(root, ".agents/open-forge.lock.json")) with
                     {
                         Document = WorkspaceOwnershipDocument.Empty with

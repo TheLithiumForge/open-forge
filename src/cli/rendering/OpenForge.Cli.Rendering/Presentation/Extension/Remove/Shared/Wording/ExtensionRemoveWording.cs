@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
 
@@ -56,20 +57,85 @@ internal static class ExtensionRemoveWording
 
     internal static string Cancelled() => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageExtensionRemoveWasCancelledNothingWasChanged();
 
-    internal static string DeleteRow(string path, bool dryRun) => dryRun ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelWouldDelete() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelDeleted();
+    internal static string DeleteRow(ExtensionRemoveEffectOutcome outcome)
+        => ReadMutationOutcome(
+            outcome,
+            global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelWouldDelete(),
+            global::OpenForge.Cli.OutputText.Shared.SharedText.LabelDeleted());
 
     internal static string KeepRow(IReadOnlyList<string> owners)
         => owners.Count == 0 ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelKeptStillOwnedByNone() : global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemovePhrases.FormatKeptStillOwnedBy($"{string.Join(", ", owners)}");
 
-    internal static string ReleaseRow() => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelWasAlreadyGoneItsOwnershipWasReleased();
+    internal static string ReleaseRow(ExtensionRemoveEffectOutcome outcome)
+        => outcome switch
+        {
+            ExtensionRemoveEffectOutcome.Planned => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelWouldReleaseOwnership(),
+            ExtensionRemoveEffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
+            ExtensionRemoveEffectOutcome.Verified => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelWasAlreadyGoneItsOwnershipWasReleased(),
+            ExtensionRemoveEffectOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelVerificationFailed(),
+            ExtensionRemoveEffectOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The Extension Remove effect outcome is not defined."),
+        };
 
-    internal static string EntriesUpdated(string path) => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveWording.EntriesUpdated(path);
+    internal static string SettingsEffect(ExtensionRemoveEffectOutcome outcome)
+        => ReadMutationOutcome(
+            outcome,
+            global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.SettingsEffect(planned: true),
+            global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.SettingsEffect(planned: false));
+
+    internal static string DirectoryEffect(ExtensionRemoveEffectOutcome outcome)
+        => ReadMutationOutcome(
+            outcome,
+            global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.DirectoryEffect(planned: true),
+            global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.DirectoryEffect(planned: false));
+
+    internal static string EntriesUpdate(string path, ExtensionRemoveEffectOutcome outcome)
+        => outcome switch
+        {
+            ExtensionRemoveEffectOutcome.Planned => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelWouldUpdate(),
+            ExtensionRemoveEffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
+            ExtensionRemoveEffectOutcome.Verified => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveWording.EntriesUpdated(path),
+            ExtensionRemoveEffectOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelVerificationFailed(),
+            ExtensionRemoveEffectOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The Extension Remove effect outcome is not defined."),
+        };
 
     internal static string Recovery(string path) => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveWording.Recovery(path);
 
     internal static string NextCleanup() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelAfterReviewingTheBundle();
 
-    internal static string Lock(bool dryRun) => dryRun ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelWouldUpdate() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdated();
+    internal static string Lock(ExtensionRemoveLifecycle lifecycle)
+    {
+        if (lifecycle.Action == ExtensionRemoveLifecycleAction.Preserve)
+        {
+            return global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelUnchanged();
+        }
+
+        return lifecycle.Outcome switch
+        {
+            ExtensionRemoveLifecycleOutcome.Planned => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelWouldUpdate(),
+            ExtensionRemoveLifecycleOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
+            ExtensionRemoveLifecycleOutcome.Verified => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdated(),
+            ExtensionRemoveLifecycleOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelVerificationFailed(),
+            ExtensionRemoveLifecycleOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
+            ExtensionRemoveLifecycleOutcome.AlreadyCurrent or ExtensionRemoveLifecycleOutcome.NotRequested => global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelUnchanged(),
+            _ => throw new ArgumentOutOfRangeException(nameof(lifecycle), lifecycle.Outcome, "The Extension Remove lifecycle outcome is not defined."),
+        };
+    }
+
+    private static string ReadMutationOutcome(
+        ExtensionRemoveEffectOutcome outcome,
+        string planned,
+        string verified)
+        => outcome switch
+        {
+            ExtensionRemoveEffectOutcome.Planned => planned,
+            ExtensionRemoveEffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
+            ExtensionRemoveEffectOutcome.Verified => verified,
+            ExtensionRemoveEffectOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelVerificationFailed(),
+            ExtensionRemoveEffectOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The Extension Remove effect outcome is not defined."),
+        };
 
     internal static string Owners(IReadOnlyList<string> owners)
         => owners.Count == 0 ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNone() : string.Join(", ", owners);
@@ -96,6 +162,9 @@ internal static class ExtensionRemoveWording
         ExtensionRemoveFindingCode.OwnershipObservation => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleOwnershipRecordIsUnavailable(),
         ExtensionRemoveFindingCode.LifecycleObservation => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleDependencyRemainsInstalled(),
         ExtensionRemoveFindingCode.DependencyBlocked => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleDependencyBlocksRemoval(),
+        ExtensionRemoveFindingCode.SettingsInvalid => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleSettingsAreInvalid(),
+        ExtensionRemoveFindingCode.SettingsUnavailable => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleSettingsAreUnavailable(),
+        ExtensionRemoveFindingCode.PathExcluded => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleGeneratedNavigationPathExcluded(),
         ExtensionRemoveFindingCode.FrameworkUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleFrameworkIsUnavailable(),
         ExtensionRemoveFindingCode.FrameworkUnsafe => global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.TitleFrameworkIsUnsafe(),
         ExtensionRemoveFindingCode.LifecycleUnavailable => global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.TitleExtensionRecordIsUnavailable(),
@@ -138,6 +207,11 @@ internal static class ExtensionRemoveWording
                 : finding.Cause,
             ExtensionRemoveFindingCode.DependencyBlocked
                 => DependencyBlockedReason(finding.Cause, finding.Cause),
+            ExtensionRemoveFindingCode.SettingsInvalid => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageFixInvalidSettings(),
+            ExtensionRemoveFindingCode.SettingsUnavailable => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageSettingsUnavailable(),
+            ExtensionRemoveFindingCode.PathExcluded => finding.Target is { } path
+                ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageGeneratedNavigationPathExcluded(path)
+                : finding.Cause,
             ExtensionRemoveFindingCode.WorkspaceLockUnavailable => LockUnavailable(),
             ExtensionRemoveFindingCode.WriteFailed => CliFindingWording.CauseSentence(finding.Cause),
             ExtensionRemoveFindingCode.Interrupted => Cancelled(),

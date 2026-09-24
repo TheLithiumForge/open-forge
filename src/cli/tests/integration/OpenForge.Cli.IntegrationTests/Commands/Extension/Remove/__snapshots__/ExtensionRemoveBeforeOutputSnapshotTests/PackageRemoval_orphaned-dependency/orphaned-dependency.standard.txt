@@ -4,6 +4,7 @@ Workspace: <workspace>
          base remains installed and is no longer needed by toolkit.
          open-forge extension remove base
          Remove the unused dependency when it is no longer needed.
+  .agents/open-forge.json                       recorded the removal in workspace settings
   .agents/toolkit.md                            deleted
   .agents/directives/_directives.md             unchanged
   .agents/guidance/_guidance.md                 unchanged

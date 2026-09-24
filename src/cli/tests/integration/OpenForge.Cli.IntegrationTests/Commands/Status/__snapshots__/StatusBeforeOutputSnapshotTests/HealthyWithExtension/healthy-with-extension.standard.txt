@@ -5,12 +5,13 @@ Startup context
   This workspace:        11 files, about 6.0k tokens
   May load again later:  1 file, about 0.4k tokens
 Added since shipped: about 0.3k tokens
-All routed files: 50 files, about 22.4k tokens (startup is 27%)
-Routes: 7 root categories, 24 Entries sections current
+All routed files: 51 files, about 22.8k tokens (startup is 26%)
+Routes: 7 root categories, 25 Entries sections current
 Framework files: 14 current
-Extensions: development 0.3.0 (4 files current)
-Extensions: development-toolkit 0.3.0
-Extensions: planning 0.3.0 (19 files current)
-Extensions: project-documents 0.3.0 (10 files current)
-Extensions: workflows 0.3.0 (4 files current)
-50 routed files, 11 startup files, 5980 startup tokens, 1 may-load-again files, 371 may-load-again tokens, 22448 all routed tokens, 26.639344262295081967213114754 startup share, 7 root categories, 24 current Entries sections, 14 current Framework files, 5 installed Extensions.
+Extensions: development 0.4.0 (4 files current)
+Extensions: development-toolkit 0.4.0
+Extensions: planning 0.4.0 (15 files current)
+Extensions: project-documents 0.4.0 (10 files current)
+Extensions: scenarios 0.4.0 (5 files current)
+Extensions: workflows 0.4.0 (4 files current)
+51 routed files, 11 startup files, 6000 startup tokens, 1 may-load-again files, 371 may-load-again tokens, 22757 all routed tokens, 26.362218218570110295733180999 startup share, 7 root categories, 25 current Entries sections, 14 current Framework files, 6 installed Extensions.

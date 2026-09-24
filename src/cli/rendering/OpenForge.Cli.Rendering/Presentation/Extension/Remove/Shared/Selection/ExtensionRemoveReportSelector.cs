@@ -26,20 +26,35 @@ internal static class ExtensionRemoveReportSelector
             ?? result.Findings.FirstOrDefault(finding => finding.Target is not null)?.Target
             ?? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelTheSelected();
         var effects = result.Effects.ToLookup(effect => effect.Path, StringComparer.Ordinal);
+        var hasPathEffects = result.Effects.Any(effect => effect.Kind is ExtensionRemoveEffectKind.PackageFile
+            or ExtensionRemoveEffectKind.GeneratedRegion);
         var includePathRows = result.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention
-            || result.Effects.Count > 0;
+            || hasPathEffects;
         var rows = !includePathRows
             ? []
             : result.Paths
-                .Select(path => ProjectPath(path, effects[path.Path], selection.Detail))
+                .Select(path => ProjectPath(result, path, effects[path.Path], selection.Detail))
                 .ToList();
-        if (result.GeneratedNavigation is { } navigation)
+        if (result.GeneratedNavigation is { } navigation
+            && (result.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention
+                || result.Effects.Any(effect => effect.Kind == ExtensionRemoveEffectKind.GeneratedRegion)))
         {
             rows.AddRange(navigation.Regions
                 .Where(region => selection.Detail >= CliDetail.Standard
                     || region.State != ExtensionRemoveGeneratedRegionState.Unchanged)
-                .Select(region => ProjectNavigation(region.Path, region.State, selection.Detail)));
+                .Select(region => ProjectNavigation(result, region.Path, region.State, selection.Detail)));
         }
+
+        rows.InsertRange(
+            0,
+            result.Effects
+                .Where(effect => effect.Kind == ExtensionRemoveEffectKind.Settings)
+                .Select(effect => ProjectSettings(effect, selection.Detail)));
+        rows.InsertRange(
+            0,
+            result.Effects
+                .Where(effect => effect.Kind == ExtensionRemoveEffectKind.Directory)
+                .Select(effect => ProjectDirectory(effect, selection.Detail)));
 
         var unchanged = result.GeneratedNavigation?.Regions
             .Where(region => region.State == ExtensionRemoveGeneratedRegionState.Unchanged)
@@ -79,7 +94,7 @@ internal static class ExtensionRemoveReportSelector
             Recovery = result.Recovery.ResidualPath is { } recovery
                 ? new CliRecovery(recovery, CliRecoveryDisposition.Retained)
                 : null,
-            Next = Next(result),
+            Next = Next(result, primaryId),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? new[]
                 {
@@ -93,18 +108,18 @@ internal static class ExtensionRemoveReportSelector
     }
 
     private static ExtensionRemoveProjectedRow ProjectPath(
+        ExtensionRemoveResult result,
         ExtensionRemovePathPlan path,
         IEnumerable<ExtensionRemoveEffect> effects,
         CliDetail detail)
     {
         var effect = effects.FirstOrDefault();
+        var outcome = effect?.Outcome ?? ReadUnpairedPathOutcome(result, path);
         var text = path.Action switch
         {
-            ExtensionRemovePathAction.Delete => ExtensionRemoveWording.DeleteRow(
-                path.Path,
-                effect?.Outcome == ExtensionRemoveEffectOutcome.Planned),
+            ExtensionRemovePathAction.Delete => ExtensionRemoveWording.DeleteRow(outcome),
             ExtensionRemovePathAction.RetainShared => ExtensionRemoveWording.KeepRow(path.RemainingOwnerIds),
-            ExtensionRemovePathAction.ReleaseOwnership => ExtensionRemoveWording.ReleaseRow(),
+            ExtensionRemovePathAction.ReleaseOwnership => ExtensionRemoveWording.ReleaseRow(outcome),
             _ => throw new ArgumentOutOfRangeException(nameof(path), path.Action, "The Extension Remove path action is not defined."),
         };
         return new ExtensionRemoveProjectedRow
@@ -113,7 +128,7 @@ internal static class ExtensionRemoveReportSelector
             {
                 Path = path.Path,
                 Action = EnumName(path.Action),
-                Outcome = effect is { } observed ? EnumName(observed.Outcome) : EnumName(path.Action),
+                Outcome = ReadPathOutcomeName(path, effect, outcome),
                 Owner = path.SelectedOwnerIds.FirstOrDefault(),
                 KeptFor = path.RemainingOwnerIds.ToArray(),
                 OwnersBefore = detail >= CliDetail.Standard ? path.SelectedOwnerIds.ToArray() : null,
@@ -126,27 +141,125 @@ internal static class ExtensionRemoveReportSelector
         };
     }
 
+    private static ExtensionRemoveEffectOutcome ReadUnpairedPathOutcome(
+        ExtensionRemoveResult result,
+        ExtensionRemovePathPlan path)
+    {
+        if (result.Mode == ExtensionRemoveMode.DryRun)
+        {
+            return ExtensionRemoveEffectOutcome.Planned;
+        }
+
+        if (path.Action == ExtensionRemovePathAction.ReleaseOwnership)
+        {
+            return result.Lifecycle.Outcome switch
+            {
+                ExtensionRemoveLifecycleOutcome.Planned => ExtensionRemoveEffectOutcome.Planned,
+                ExtensionRemoveLifecycleOutcome.NotStarted => ExtensionRemoveEffectOutcome.NotStarted,
+                ExtensionRemoveLifecycleOutcome.Verified or ExtensionRemoveLifecycleOutcome.AlreadyCurrent
+                    => ExtensionRemoveEffectOutcome.Verified,
+                ExtensionRemoveLifecycleOutcome.VerificationFailed => ExtensionRemoveEffectOutcome.VerificationFailed,
+                ExtensionRemoveLifecycleOutcome.CompletionUnknown => ExtensionRemoveEffectOutcome.CompletionUnknown,
+                ExtensionRemoveLifecycleOutcome.NotRequested => ExtensionRemoveEffectOutcome.NotStarted,
+                _ => throw new ArgumentOutOfRangeException(nameof(result), result.Lifecycle.Outcome, "The Extension Remove lifecycle outcome is not defined."),
+            };
+        }
+
+        if (result.Status is CliSemanticStatus.Blocked
+            or CliSemanticStatus.Invalid
+            or CliSemanticStatus.Incomplete
+            or CliSemanticStatus.Failed
+            or CliSemanticStatus.Interrupted)
+        {
+            return ExtensionRemoveEffectOutcome.NotStarted;
+        }
+
+        return ExtensionRemoveEffectOutcome.Verified;
+    }
+
+    private static string ReadPathOutcomeName(
+        ExtensionRemovePathPlan path,
+        ExtensionRemoveEffect? effect,
+        ExtensionRemoveEffectOutcome outcome)
+    {
+        if (effect is not null || path.Action != ExtensionRemovePathAction.RetainShared)
+        {
+            return EnumName(outcome);
+        }
+
+        return EnumName(path.Action);
+    }
+
     private static ExtensionRemoveProjectedRow ProjectNavigation(
+        ExtensionRemoveResult result,
         string path,
         ExtensionRemoveGeneratedRegionState state,
         CliDetail detail)
     {
         var unchanged = state == ExtensionRemoveGeneratedRegionState.Unchanged;
+        var effect = result.Effects.FirstOrDefault(candidate =>
+            candidate.Kind == ExtensionRemoveEffectKind.GeneratedRegion
+                && string.Equals(candidate.Path, path, StringComparison.Ordinal));
+        var outcome = effect?.Outcome ?? (result.Mode == ExtensionRemoveMode.DryRun
+            ? ExtensionRemoveEffectOutcome.Planned
+            : ExtensionRemoveEffectOutcome.Verified);
         return new ExtensionRemoveProjectedRow
         {
             Data = new ExtensionRemoveDataEffect
             {
                 Path = path,
                 Action = unchanged ? "unchanged" : "updated",
-                Outcome = EnumName(state),
+                Outcome = unchanged ? EnumName(state) : EnumName(outcome),
                 Owner = null,
                 KeptFor = [],
                 OwnersBefore = detail >= CliDetail.Standard ? [] : null,
                 OwnersAfter = detail >= CliDetail.Standard ? [] : null,
-                Text = unchanged ? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelUnchanged() : ExtensionRemoveWording.EntriesUpdated(path),
+                Text = unchanged
+                    ? global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.LabelUnchanged()
+                    : ExtensionRemoveWording.EntriesUpdate(path, outcome),
             },
         };
     }
+
+    private static ExtensionRemoveProjectedRow ProjectSettings(
+        ExtensionRemoveEffect effect,
+        CliDetail detail)
+        => new()
+        {
+            Data = new ExtensionRemoveDataEffect
+            {
+                Path = effect.Path,
+                Action = EnumName(effect.Action),
+                Outcome = EnumName(effect.Outcome),
+                Owner = null,
+                KeptFor = [],
+                OwnersBefore = detail >= CliDetail.Standard ? [] : null,
+                OwnersAfter = detail >= CliDetail.Standard ? [] : null,
+                Text = ExtensionRemoveWording.SettingsEffect(
+                    effect.Outcome),
+                Detail = null,
+            },
+        };
+
+    private static ExtensionRemoveProjectedRow ProjectDirectory(
+        ExtensionRemoveEffect effect,
+        CliDetail detail)
+        => new()
+        {
+            Data = new ExtensionRemoveDataEffect
+            {
+                Path = effect.Path,
+                Action = EnumName(effect.Action),
+                Outcome = EnumName(effect.Outcome),
+                Owner = null,
+                KeptFor = [],
+                OwnersBefore = detail >= CliDetail.Standard ? [] : null,
+                OwnersAfter = detail >= CliDetail.Standard ? [] : null,
+                Text = ExtensionRemoveWording.DirectoryEffect(
+                    effect.Outcome),
+                Detail = null,
+            },
+        };
 
     private static CliHeadline Headline(ExtensionRemoveResult result, string id)
     {
@@ -212,6 +325,14 @@ internal static class ExtensionRemoveReportSelector
         var action = finding.Code switch
         {
             ExtensionRemoveFindingCode.SelectionRequired => new CliNextAction("open-forge extension list", global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.MessageListTheInstalledExtensionsThenRerunTheRequestWithAnExplicitSelection()),
+            ExtensionRemoveFindingCode.SettingsInvalid or ExtensionRemoveFindingCode.SettingsUnavailable => new CliNextAction(
+                ExtensionRemoveWording.FindingMessage(finding, id),
+                ExtensionRemoveWording.FindingMessage(finding, id))
+            { Kind = CliNextActionKind.Sentence },
+            ExtensionRemoveFindingCode.PathExcluded => new CliNextAction(
+                global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageClearCoveringExclusionsThenRunIndex(),
+                global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageClearCoveringExclusionsThenRunIndex())
+            { Kind = CliNextActionKind.Sentence },
             ExtensionRemoveFindingCode.LifecycleObservation when finding.Target is { } dependency => new CliNextAction($"open-forge extension remove {dependency}", global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageRemoveTheUnusedDependencyWhenItIsNoLongerNeeded()),
             ExtensionRemoveFindingCode.RecoveryArtifactRetained => new CliNextAction("open-forge cleanup", global::OpenForge.Cli.OutputText.Shared.SharedText.MessageReviewAndRemoveTheReportedRecoveryBundle()),
             _ => null,
@@ -223,13 +344,26 @@ internal static class ExtensionRemoveReportSelector
             Title = ExtensionRemoveWording.FindingTitle(finding.Code),
             Message = ExtensionRemoveWording.FindingMessage(finding, id),
             Subject = new CliSubject(kind, kind == CliSubjectKind.File ? subject : null, kind == CliSubjectKind.Identifier ? subject : null),
-            Resolution = finding.Status == CliSemanticStatus.Attention ? CliResolution.Informational : null,
+            Resolution = finding.Status == CliSemanticStatus.Attention
+                || finding.Code == ExtensionRemoveFindingCode.PathExcluded
+                ? CliResolution.Informational
+                : null,
             Actions = action is null ? [] : [action],
         };
     }
 
-    private static CliNextAction? Next(ExtensionRemoveResult result)
+    private static CliNextAction? Next(ExtensionRemoveResult result, string primaryId)
     {
+        var settingsFinding = result.Findings.FirstOrDefault(finding =>
+            finding.Code is ExtensionRemoveFindingCode.SettingsInvalid
+                or ExtensionRemoveFindingCode.SettingsUnavailable);
+        if (settingsFinding is not null)
+        {
+            var instruction = ExtensionRemoveWording.FindingMessage(settingsFinding, primaryId);
+            return new CliNextAction(instruction, instruction)
+            { Kind = CliNextActionKind.Sentence };
+        }
+
         if (result.Recovery.ResidualPath is not null)
         {
             if (result.Status != CliSemanticStatus.Attention
@@ -258,12 +392,34 @@ internal static class ExtensionRemoveReportSelector
         IReadOnlyList<ExtensionRemoveProjectedRow> rows)
         =>
         [
-            new CliCount("packagesRemoved", global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelPackagesRemoved(), result.Selection?.Ids.Count ?? 0),
-            new CliCount("filesDeleted", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFilesDeleted(), rows.Count(row => row.Data.Action == "delete")),
+            new CliCount("packagesRemoved", global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelPackagesRemoved(), ReadRemovedPackageCount(result)),
+            new CliCount("filesDeleted", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFilesDeleted(), rows.Count(row => row.Data.Action == "delete"
+                && row.Data.Outcome is "planned" or "verified")),
             new CliCount("filesKept", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFilesKept(), rows.Count(row => row.Data.Action == "retain-shared")),
-            new CliCount("filesReleased", global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelFilesReleased(), rows.Count(row => row.Data.Action == "release-ownership")),
-            new CliCount("sectionsUpdated", global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionsUpdated(), rows.Count(row => row.Data.Action == "updated")),
+            new CliCount("filesReleased", global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.LabelFilesReleased(), rows.Count(row => row.Data.Action == "release-ownership"
+                && row.Data.Outcome is "planned" or "verified")),
+            new CliCount("sectionsUpdated", global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionsUpdated(), rows.Count(row => row.Data.Action == "updated"
+                && row.Data.Outcome is "planned" or "verified")),
         ];
+
+    private static int ReadRemovedPackageCount(ExtensionRemoveResult result)
+    {
+        if (result.Selection is null)
+        {
+            return 0;
+        }
+
+        var removalCompleted = result.Lifecycle.Action == ExtensionRemoveLifecycleAction.Publish
+            ? result.Lifecycle.Outcome == ExtensionRemoveLifecycleOutcome.Verified
+            : result.Effects.Any(effect => effect.Kind == ExtensionRemoveEffectKind.Settings
+                && effect.Outcome == ExtensionRemoveEffectOutcome.Verified);
+        var removalPlanned = result.Mode == ExtensionRemoveMode.DryRun
+            && (result.Lifecycle.Action == ExtensionRemoveLifecycleAction.Publish
+                ? result.Lifecycle.Outcome == ExtensionRemoveLifecycleOutcome.Planned
+                : result.Effects.Any(effect => effect.Kind == ExtensionRemoveEffectKind.Settings
+                    && effect.Outcome == ExtensionRemoveEffectOutcome.Planned));
+        return removalCompleted || removalPlanned ? result.Selection.Ids.Count : 0;
+    }
 
     private static ExtensionRemoveDataPermissions Permissions(ExtensionRemoveResult result)
         => new()
@@ -305,7 +461,7 @@ internal static class ExtensionRemoveReportSelector
                 details.Add(global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemovePhrases.FormatRemovalOrder($"{string.Join(", ", dependencies.RemovalOrder)}"));
             }
 
-            details.Add($".agents/open-forge.lock.json  {ExtensionRemoveWording.Lock(result.Mode == ExtensionRemoveMode.DryRun)}");
+            details.Add($".agents/open-forge.lock.json  {ExtensionRemoveWording.Lock(result.Lifecycle)}");
         }
         if (full)
         {

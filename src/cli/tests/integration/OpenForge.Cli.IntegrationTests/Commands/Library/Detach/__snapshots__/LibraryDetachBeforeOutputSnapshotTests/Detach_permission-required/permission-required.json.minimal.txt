@@ -36,6 +36,14 @@
   ],
   "effects": [
     {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": "docs/review.md",
       "kind": "link",
       "action": "deleted",
@@ -72,10 +80,16 @@
         "docs/review.md"
       ],
       "decision": "required",
-      "action": "none",
-      "outcome": "not-requested"
+      "action": "create",
+      "outcome": "planned"
     },
     "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "kind": "setting",
+        "action": "create",
+        "outcome": "planned"
+      },
       {
         "path": "docs/review.md",
         "kind": "link",

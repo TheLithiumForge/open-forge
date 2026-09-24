@@ -1,0 +1,17 @@
+Cannot update toolkit: Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension update.
+Workspace: <workspace>
+  Error  toolkit  Extension is excluded by workspace settings [extension-update.removed-extension]
+         Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension update.
+         fix by hand
+         Remove the Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension update.
+         Workspace removal settings currently exclude this Extension.
+         cause: Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension update.
+         read from <extension-source>
+  Source: <extension-source>
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+  No verification was needed.
+  No recovery bundle was needed.
+  Workspace removal settings currently exclude the requested update.
+Next: Repair .agents/open-forge.json or remove the relevant exclusion there, then rerun extension update.

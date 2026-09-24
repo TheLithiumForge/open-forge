@@ -19,6 +19,7 @@ using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Library.Shared.Planning;
 
@@ -91,6 +92,13 @@ internal static class LibraryGeneratedNavigationReader
                         ? intendedFormation.Ambiguities[0].Subject
                         : intendedFormation.IntendedTargetCollisions[0].TargetPath,
                     "The intended Library projection has an unsafe or ambiguous generated-navigation topology.");
+            }
+
+            if (ReadMissingExcludedRequiredHost(intendedFormation, selectedPhysicalPaths.Keys, request.Settings) is { } excludedHost)
+            {
+                return Blocked(
+                    excludedHost,
+                    "A selected Library destination requires a generated-navigation host that is missing and excluded by workspace settings.");
             }
 
             var affectedPaths = ReadAffectedRegionPaths(observedFormation, intendedFormation);
@@ -192,6 +200,40 @@ internal static class LibraryGeneratedNavigationReader
         return new SourceLogicalSource(
             new SourceLogicalIdentity(id, path),
             new SourceLayer(path, physicalPath, form, SourceLayerKind.Base));
+    }
+
+    private static string? ReadMissingExcludedRequiredHost(
+        GeneratedNavigationFormation intendedFormation,
+        IEnumerable<string> selectedPaths,
+        OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument settings)
+    {
+        foreach (var path in selectedPaths.Order(StringComparer.Ordinal))
+        {
+            if (!SourceFormClassifier.TryClassify(path, out var form)
+                || form == SourceDocumentForm.Loader
+                || SourceFormClassifier.IsEntrypoint(form))
+            {
+                continue;
+            }
+
+            var parent = SourceLogicalPath.ReadParent(path);
+            if (parent == SourceLogicalPath.AgentsRoot
+                || intendedFormation.Sources.Any(source =>
+                    SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath) == parent
+                    && SourceFormClassifier.IsEntrypoint(source.Base.Form)))
+            {
+                continue;
+            }
+
+            var parentName = SourceLogicalPath.ReadFileName(parent);
+            var hostPath = SourceLogicalPath.Combine(parent, $"_{parentName}.md");
+            if (WorkspaceRemovals.IsPathRemoved(hostPath, settings))
+            {
+                return hostPath;
+            }
+        }
+
+        return null;
     }
 
     private static IReadOnlyList<string> ReadAffectedRegionPaths(

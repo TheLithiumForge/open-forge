@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Extension remove stopped after 1 of 2 changes.",
+    "headline": "Extension remove stopped after 2 of 3 changes.",
     "kind": "failed"
   },
   "findings": [
@@ -31,8 +31,8 @@
   ],
   "effects": [],
   "counts": {
-    "packagesRemoved": 1,
-    "filesDeleted": 2,
+    "packagesRemoved": 0,
+    "filesDeleted": 1,
     "filesKept": 0,
     "filesReleased": 0,
     "sectionsUpdated": 0,
@@ -57,6 +57,15 @@
     },
     "effects": [
       {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "verified",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
         "path": ".agents/aaa.md",
         "action": "delete",
         "outcome": "verified",
@@ -76,114 +85,6 @@
         "ownersBefore": [
           "toolkit"
         ],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/directives/_directives.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/guidance/_guidance.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/loader.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/maps/_maps.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/memory/_memory.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/memory/archived/_archived.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/memory/crystallized/_crystallized.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/memory/emerging/_emerging.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/memory/working/_working.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/patterns/_patterns.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/skills/_skills.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
-        "ownersAfter": []
-      },
-      {
-        "path": ".agents/templates/_templates.md",
-        "action": "unchanged",
-        "outcome": "unchanged",
-        "owner": null,
-        "keptFor": [],
-        "ownersBefore": [],
         "ownersAfter": []
       }
     ],

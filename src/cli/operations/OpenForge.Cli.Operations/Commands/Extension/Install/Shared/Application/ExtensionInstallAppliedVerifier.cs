@@ -128,6 +128,7 @@ internal sealed class ExtensionInstallAppliedVerifier(
             currentBuild = await _topologyBuilder.BuildWithFindingsAsync(
                 plan.Request,
                 plan.ValidationPackages,
+                plan.SettingsObservation.Document,
                 cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -141,10 +142,20 @@ internal sealed class ExtensionInstallAppliedVerifier(
             return TargetTopologyVerification.Failed(exception.Message, targetsVerified: true);
         }
 
+        var currentFindings = currentBuild.Findings.ToList();
+        foreach (var plannedExclusion in plan.TopologyFindings.Where(
+                     finding => finding.Code == ExtensionInstallFindingCode.PathExcluded))
+        {
+            if (!currentFindings.Contains(plannedExclusion))
+            {
+                currentFindings.Add(plannedExclusion);
+            }
+        }
+
         if (ExtensionInstallApplicationPreconditionValidator.AppliedTopologyEquals(
                 plan.Topology,
                 currentBuild.Topology)
-            && FindingsEqual(plan.TopologyFindings, currentBuild.Findings))
+            && FindingsEqual(plan.TopologyFindings, currentFindings))
         {
             return TargetTopologyVerification.Verified();
         }

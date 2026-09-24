@@ -193,7 +193,7 @@ internal sealed class UpdateApplicationOperation(
                 Finding: null);
         return UpdateResultBuilder.Create(
             execution,
-            UpdateApplicationResultProjector.Effects(execution, attempt),
+            UpdateApplicationResultProjector.Effects(execution, attempt, fullyVerified: true),
             UpdateApplicationResultProjector.Lifecycle(execution, attempt),
             cleanup.Recovery,
             UpdateVerificationState.Verified,

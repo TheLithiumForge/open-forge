@@ -14,6 +14,10 @@ internal sealed record RouteRemoveData
 
     public required IReadOnlyList<RouteRemoveDataDetachedLink> DetachedLinks { get; init; }
 
+    public required RouteRemoveDataSettingsRemoval Settings { get; init; }
+
+    public required RouteRemoveDataOwnershipRelease OwnershipRelease { get; init; }
+
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public RouteRemoveDataScan? Scan { get; init; }
 
@@ -52,4 +56,33 @@ internal sealed record RouteRemoveDataScan
     public required int FilesScanned { get; init; }
 
     public required int Occurrences { get; init; }
+}
+
+internal sealed record RouteRemoveDataSettingsRemoval
+{
+    public required string Outcome { get; init; }
+
+    public required string Path { get; init; }
+
+    public required IReadOnlyList<string> Categories { get; init; }
+
+    public required IReadOnlyList<string> Files { get; init; }
+
+    public required IReadOnlyList<string> Directories { get; init; }
+}
+
+internal sealed record RouteRemoveDataOwnershipRelease
+{
+    public required string Outcome { get; init; }
+
+    public required IReadOnlyList<RouteRemoveDataOwnershipClaim> Claims { get; init; }
+}
+
+internal sealed record RouteRemoveDataOwnershipClaim
+{
+    public required string Path { get; init; }
+
+    public required string Manager { get; init; }
+
+    public required string Owner { get; init; }
 }

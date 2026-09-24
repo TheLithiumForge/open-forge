@@ -1,0 +1,2 @@
+Cannot synchronize team-knowledge: This Library ID is excluded by workspace settings. Nothing was changed.
+Next: Remove Library ID 'team-knowledge' from removedLibraries in .agents/open-forge.json, then rerun open-forge library sync.

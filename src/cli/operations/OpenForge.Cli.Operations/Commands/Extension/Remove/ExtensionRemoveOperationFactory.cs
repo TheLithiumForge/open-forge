@@ -37,6 +37,7 @@ internal static class ExtensionRemoveOperationFactory
                 planner,
                 revalidator,
                 permissions,
+                new DirectoryCreationApplier(revalidator, validator),
                 new FileChangeApplier(revalidator, validator)),
             interaction);
     }

@@ -6,7 +6,7 @@ open-forge:
 
 # Worked example
 
-Historical worked example from the earlier Scenario template. The current [Scenario Collection template](../../../../../templates/planning/scenario-collection.md) replaces that starting shape.
+Historical worked example from the earlier Scenario template. The current [Scenario Collection template](../../../../../templates/scenarios/scenario-collection.md) replaces that starting shape.
 
 Filled from a defect found on 2026-09-17, so the shape is shown on something
 real rather than on an invented happy path. Expected output here is what the

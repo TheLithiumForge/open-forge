@@ -7,8 +7,7 @@ open-forge:
 
 # library detach Interface Contract
 
-Unavailable ownership is reported as `library-detach.ownership-observation`
-with `completed` status. This finding grants no ownership or mutation permission.
+A missing ownership lock is known empty. Invalid or unavailable required ownership blocks the request before any effects.
 
 ## Status And Authority
 
@@ -34,8 +33,9 @@ The sole generated state publication is `.agents/open-forge.lock.json`.
 The existing public record-effect and publication fields describe that lock
 write. Its Libraries section contains validated registration identities and
 source-relative paths; other ownership sections are preserved. No retired
-record is read, written, converted, or deleted. An unavailable lock write is
-skipped without blocking otherwise safe effects, and reports no publication.
+record is read, written, converted, or deleted. A planned lock publication is
+required for successful completion. If publication fails after earlier effects,
+the result reports the partial state and retains recovery evidence.
 Recovery protects the exact prior lock bytes before any effects; the planned
 lock publication remains last after verified link and generated-region effects.
 
@@ -65,6 +65,12 @@ occupant, unavailable fact, or required permission failure blocks the request.
 Only an exact registered link, including an exact dangling link, supplies a
 deletable projection identity.
 
+Removal also records the Library ID in `removedLibraries` in
+`.agents/open-forge.json`. Verify this settings change before link deletion and
+publish registration removal last. A valid unregistered ID can be excluded;
+an absent, already excluded ID is a no-op. Restore by explicitly clearing the ID
+and any covering destination exclusions, then attaching the library again.
+
 ## Syntax
 
 ```text
@@ -88,7 +94,7 @@ copy mode, saved plan, partial selector, or generic mutation dispatcher.
 
 | Operand or flag     | Role                                      | Accepted value                                  | Omission and repetition                                                                                        |
 | ------------------- | ----------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID is invalid; a successful prior detach does not establish a repeat no-op. |
+| `<library-id>`      | Select one library management identity | One value matching the library-ID grammar below | Required and singleton. An unregistered ID records the exclusion; an absent, already excluded ID is a no-op. |
 | `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.                                   |
 | `--automatic`      | Confirmation policy                       | Boolean flag with no value                      | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
 | Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                                                    |
@@ -117,10 +123,11 @@ The shared codec reads understood fields without requiring exact member sets,
 member order, or a matching schema version. Typed portable roots, eligible source
 suffixes, and unambiguous destinations remain required before using a claim.
 
-An absent, unreadable, nonordinary, malformed, or uninterpretable lock produces
-an informational ownership observation with `completed` status, no selected
-Library, and no effects. It never falls back to the old record or infers ownership
-from matching links. An unknown ID in a readable lock remains `invalid-input`.
+An absent lock is known empty and supplies no registration or link deletion
+authority. Unreadable, nonordinary, malformed or uninterpretable ownership
+prevents effects. The command never falls back to the old record or infers ownership
+from matching links. A valid unregistered ID can still be excluded from future
+attachment through `removedLibraries` in `.agents/open-forge.json`.
 Exact relative-link targets derive from both recorded roots and each suffix.
 The lock stores no target bytes or comparison hashes.
 
@@ -141,7 +148,7 @@ Root-level leaf destinations use the workspace root as their parent.
 
 Detach removes only exact registered relative file symlinks. Every existing
 parent must be a real ordinary directory with no linked or reparse ancestry;
-a missing parent blocks the request. Detach creates no parents or links. Local
+a missing destination parent blocks the request. Detach creates no destination parents or links. Local
 siblings and destination directories remain untouched.
 
 Validate recorded path grammar and destination protection without resolving or
@@ -214,9 +221,11 @@ The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPath
 in `.agents/open-forge.json` after safe planning and before permission evaluation.
 It persists in non-interactive execution; `--dry-run` never writes it. A refused
 explicit write is reported and prevents content application. Eligible interactive
-approval offers always, once or cancel. Once changes no settings. Unknown or
-malformed settings withhold external grants while implicit `.agents/` admission
-remains independent; an always choice cannot overwrite malformed settings.
+approval offers always, once or cancel. Once saves no permission grant; removal
+still records its persistent exclusion. Invalid or unavailable settings block planning before permission approval,
+because removal exclusions cannot be determined safely. A missing settings file
+means no saved exclusions or external grants. Implicit `.agents/` destinations
+still require no permission grant.
 
 This command selects [Workspace Permissions](../../shared/workspace-permissions/interface.md)
 for every registered destination in the detach plan, including a positively
@@ -233,7 +242,7 @@ source trees, ancestry, ownership and collision checks still apply per leaf.
 
 Human prompt-capable application can approve the displayed scopes once or always; explicit `--allow-path` can persist shared grants without a prompt. JSON,
 redirected execution and dry-run never prompt; missing or declined approval is
-`blocked` and cancellation is `cancelled`, without effects. Invalid or unsafe settings supply no external grants. A refused always approval reports its existing permission finding; implicit paths require no grant.
+`blocked` and cancellation is `cancelled`, without effects. Invalid or unavailable settings block planning before approval because removal exclusions cannot be determined safely. Missing settings supply no saved exclusions or external grants; implicit paths require no grant.
 
 `result.permissions` appears after `plan` and before `application`. It uses the
 shared destination-string, scope and receipt coordinates exactly. Required
@@ -360,13 +369,15 @@ projection.
 | Status                  | When                                                   | Headline                                                                                    | Exit | Stream |
 | ----------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ---: | ------ |
 | completed               | detached                                               | `Detached <id>: removed <N> links under <destination>. Source files in <source> were kept.` |    0 | stdout |
-| completed               | registration with no links                             | `Detached <id>. It had no links.`                                                           |    0 | stdout |
+| completed               | zero links, removal already recorded and ownership readable | `Detached <id>. It had no links.`                                                        |    0 | stdout |
+| completed               | zero links and new removal intent                      | `Recorded removal intent for Library <id>.`                                                 |    0 | stdout |
 | completed (dry run)     | planned without a retained missing/changed-ordinary warning | `Would detach <id>: remove <N> links under <destination>.`                              |    0 | stdout |
-| completed               | no ownership record                                    | `No ownership record exists, so <id> cannot be detached. Nothing was changed.`              |    0 | stdout |
+| completed (dry run)     | zero links and new removal intent                      | `Would record removal intent for Library <id>.`                                             |    0 | stdout |
+| completed               | no ownership record and ID already excluded            | `No ownership record exists, so <id> cannot be detached. Nothing was changed.`                |    0 | stdout |
 | completed-with-warnings | positively missing or changed ordinary destination retained; or recovery bundle retained | `Detached <id>: removed <N> links under <destination>.` + warning rows; retained bytes are named |    2 | stdout |
 | completed-with-warnings (dry run) | positively missing or changed ordinary destination observed | `Would detach <id>: remove <N> links under <destination>.` + warning rows; no writes |    2 | stdout |
 | incomplete              | record, Entries or recovery unreadable                 | `<id> could not be detached: <limitation>. Nothing was changed.`                            |    3 | stdout |
-| invalid-input           | bad or unknown ID, extra operand, required final confirmation unavailable without `--automatic` | `Cannot detach <ref>: <problem>.`                                                           |    4 | stderr |
+| invalid-input           | malformed ID, extra operand, required final confirmation unavailable without `--automatic` | `Cannot detach <ref>: <problem>.`                                                           |    4 | stderr |
 | blocked                 | alternate/different link, directory, alias, unsafe or unknown state, separately owned/conflicting occupant, permission, lock | `Cannot detach <id>: <reason>. Nothing was changed.`                                        |    5 | stderr |
 | failed                  | after effects                                          | `Library detach stopped after <n> of <m> links were removed.`                               |    1 | stderr |
 | cancelled               | prompt cancelled, Ctrl+C                               | `Library detach was cancelled. Nothing was changed.`                                        |  130 | stderr |
@@ -409,6 +420,7 @@ The finding catalogue is:
 | library-detach.record-blocked                  | error    | lifecycle-blocked          |                                                                                                         |                                   |
 | library-detach.registered-link-missing         | warning  | local                      | The registered destination is positively absent; no bytes were removed, safe exact links may still be removed, and registration may be released. | `open-forge library inspect <id>` |
 | library-detach.mapping-blocked                 | error    | local                      | `<path> is <an ordinary file \| a folder \| a different link> and is not the link the Library created.` Ordinary-file drift is an `Attention2` retained-destination warning; other kinds block. | `open-forge library inspect <id>` |
+| library-detach.destination-protected | error | local | `<path> is protected, owned by the source, or registered to another Library.` | `open-forge library list` |
 | library-detach.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.mapping-unavailable`).                                                  | `open-forge doctor`               |
 | library-detach.link-capability-unavailable     | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.link-capability-unavailable`).                                               | none                              |
 | library-detach.consumer-blocked                | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.consumer-blocked`).                                      | none                              |
@@ -436,7 +448,7 @@ action when available. Counts are:
 
 ## Scenarios
 
-`detached`, `detached-no-links`, `dry-run`, `unknown-id` (invalid),
+`detached`, `detached-no-links`, `dry-run`, unregistered-ID exclusion,
 `registered-link-gone` (completed-with-warnings, `Attention2`),
 `changed-occupant` (ordinary file: completed-with-warnings, `Attention2`; unsafe
 or alternate occupant: blocked),
@@ -472,10 +484,7 @@ team-knowledge could not be detached: <limitation>. Nothing was changed.
 
 ### invalid-input
 
-~~~text
-Cannot detach unknown: No Library has the ID unknown.
-Next: open-forge library list
-~~~
+Malformed Library IDs are invalid input. A valid unregistered ID records an exclusion without deleting content.
 
 ### blocked
 

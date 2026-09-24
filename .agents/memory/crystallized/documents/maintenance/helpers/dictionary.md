@@ -28,7 +28,7 @@ The dictionary helps maintainers choose consistent words. It does not replace th
 | `scope`               | Part of a route that narrows where the following content applies.                   | Use for applicability, not ownership or authority.                                         |
 | `root route`          | Route exposed directly by the Loader.                                               | A familiar folder name or tag does not create another root route.                          |
 | `slug`                | Concrete folder name in a route path.                                               | Use when the path spelling matters. Use `scope` when its narrowing effect matters.         |
-| `managed route`       | Route whose declared manager may update known files as a lifecycle action.          | Management does not create runtime authority.                                              |
+| `managed route`       | Route whose declared manager may install, update, or remove identified files.       | Management does not create runtime authority.                                              |
 | `overwrite companion` | User-owned `{name}.overwrite.md` file loaded after `{name}.md`.                     | It shares the base file's route and is not indexed separately.                             |
 
 Relative to the Directives entrypoint, `public-facing-writing.md` is a sibling file, `open-forge/_open-forge.md` is a child entrypoint, and `open-forge/framework/deliberate-framework-change.md` is a descendant. Avoid `non-entrypoint` when the exact relationship is known.

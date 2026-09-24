@@ -16,6 +16,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install;
@@ -292,9 +293,26 @@ internal sealed class ExtensionInstallOperation(
     private static IReadOnlyList<ExtensionInstallFinding> ReadContentFindings(ExtensionInstallPlan plan)
         => [.. plan.Packages
             .Where(package => package.Payload.Count == 0 && package.Dependencies.Count == 0)
+            .Where(package => !WasEntirePayloadExcluded(plan, package.Id))
             .Select(package => new ExtensionInstallFinding(
                 ExtensionInstallFindingCode.PackageContentMissing,
                 $"Extension package '{package.Id}' delivered no files. Package payload belongs under "
                     + $"'{ExtensionPackageLayout.ContentDirectoryName}/' beside the manifest.",
                 package.Id))];
+
+    private static bool WasEntirePayloadExcluded(
+        ExtensionInstallPlan plan,
+        string packageId)
+    {
+        var sourcePackage = plan.SourceRead.Packages.FirstOrDefault(package =>
+            string.Equals(package.Id, packageId, StringComparison.Ordinal));
+        if (sourcePackage is null || sourcePackage.Payload.Count == 0)
+        {
+            return false;
+        }
+
+        return sourcePackage.Payload.All(file => WorkspaceRemovals.IsPathRemoved(
+            file.TargetPath ?? file.Path,
+            plan.SettingsObservation.Document));
+    }
 }

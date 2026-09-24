@@ -18,6 +18,7 @@ using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 
@@ -49,6 +50,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
         var packageBytes = input.Packages
             .SelectMany(package => package.Payload)
+            .Where(file => !IsExcluded(file.TargetPath ?? file.Path, input.Settings))
             .Select(ReadPayload)
             .GroupBy(payload => payload.PortableKey, StringComparer.Ordinal)
             .Select(ReadSharedPayload)
@@ -61,7 +63,10 @@ internal sealed class ExtensionUpdateTopologyBuilder
 
         foreach (var pair in input.Admission.Overrides)
         {
-            packageBytes[pair.Key] = [.. pair.Value];
+            if (!WorkspaceRemovals.IsPathRemoved(pair.Key, input.Settings))
+            {
+                packageBytes[pair.Key] = [.. pair.Value];
+            }
         }
         if (catalogue.Issues.Any(issue => issue.Code != SourceCatalogueIssueCode.RootMissing
             && !(issue.Code == SourceCatalogueIssueCode.IdentityUnavailable
@@ -109,7 +114,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
                     _markdownParser.Parse(documents[source.Identity.CanonicalBasePath]),
                     source.Base.Form)))
             .ToArray();
-        var regionInputs = intendedSources
+        var candidateRegionInputs = intendedSources
             .Where(source => source.Base.Form == SourceDocumentForm.Loader
                 || SourceFormClassifier.IsEntrypoint(source.Base.Form))
             .Select(source => new
@@ -119,6 +124,19 @@ internal sealed class ExtensionUpdateTopologyBuilder
             })
             .Where(value => value.Document.GeneratedRegion.State
                 == MarkdownGeneratedRegionState.Complete)
+            .ToArray();
+        var excludedHosts = candidateRegionInputs
+            .Where(value => WorkspaceRemovals.IsPathRemoved(
+                value.Source.Identity.CanonicalBasePath,
+                input.Settings))
+            .Select(value => value.Source.Identity.CanonicalBasePath)
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        var regionInputs = candidateRegionInputs
+            .Where(value => !WorkspaceRemovals.IsPathRemoved(
+                value.Source.Identity.CanonicalBasePath,
+                input.Settings))
             .Select(value => new GeneratedNavigationRegionInput(value.Source, value.Document))
             .ToArray();
         var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
@@ -154,6 +172,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
         var generatedEntries = new Dictionary<string, IReadOnlyList<GeneratedNavigationEntry>>(
             StringComparer.Ordinal);
         var regions = new List<ExtensionUpdateGeneratedRegion>();
+        var excludedHostPaths = new HashSet<string>(excludedHosts, StringComparer.Ordinal);
         foreach (var region in projection.Regions
                      .Where(value => value.State == GeneratedNavigationRegionState.Available
                          && !omittedRegions.Contains(value.CanonicalPath))
@@ -162,6 +181,12 @@ internal sealed class ExtensionUpdateTopologyBuilder
             var change = region.Change
                 ?? throw new InvalidDataException(
                     "An available generated region requires its bounded change.");
+            if (WorkspaceRemovals.IsPathRemoved(region.CanonicalPath, input.Settings))
+            {
+                _ = excludedHostPaths.Add(region.CanonicalPath);
+                continue;
+            }
+
             regions.Add(new ExtensionUpdateGeneratedRegion(
                 region.CanonicalPath,
                 change.IsUnchanged
@@ -187,7 +212,18 @@ internal sealed class ExtensionUpdateTopologyBuilder
             ProtectedPaths = catalogue.Candidates
                 .Select(candidate => candidate.CanonicalPath)
                 .ToHashSet(StringComparer.Ordinal),
+            ExcludedPaths = excludedHostPaths.Order(StringComparer.Ordinal).ToArray(),
         };
+    }
+
+    private static bool IsExcluded(string path, OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument settings)
+    {
+        if (!PortableWorkspacePath.TryNormalize(path, out var normalized))
+        {
+            return false;
+        }
+
+        return WorkspaceRemovals.IsPathRemoved(normalized, settings);
     }
 
     private static PayloadBytes ReadPayload(ExtensionPackageFileFact file)

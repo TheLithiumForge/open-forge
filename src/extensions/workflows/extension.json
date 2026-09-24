@@ -1,7 +1,7 @@
 {
   "id": "workflows",
   "name": "Workflow Support",
-  "description": "Select and follow scoped methods through one native use-workflow Skill",
-  "version": "0.3.0",
+  "description": "Find and follow installed workflows, or create your own using the supplied template",
+  "version": "0.4.0",
   "dependencies": []
 }

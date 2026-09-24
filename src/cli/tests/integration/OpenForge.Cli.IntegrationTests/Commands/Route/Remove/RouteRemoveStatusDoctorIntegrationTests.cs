@@ -112,7 +112,7 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
     public async Task BlockedApplicationRetainsDoctorDomainCoverage()
     {
         using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-status-doctor-blocked");
-        workspace.SeedFrameworkClaim(RouteRemoveIntegrationWorkspace.LeafPath);
+        workspace.WriteText(RouteRemoveIntegrationWorkspace.OwnershipPath, "{ invalid ownership json");
         var output = new StringWriter();
         var error = new StringWriter();
         var completion = await workspace.RunAsync(
@@ -122,7 +122,7 @@ public sealed class RouteRemoveStatusDoctorIntegrationTests
 
         Assert.Equal(5, completion.ExitCode);
         Assert.Equal(CliSemanticStatus.Blocked, completion.Status);
-        Assert.Contains("route-remove.ownership-claimed", error.ToString(), StringComparison.Ordinal);
+        Assert.Contains("route-remove.ownership-unavailable", error.ToString(), StringComparison.Ordinal);
         Assert.Equal(string.Empty, output.ToString());
 
         var doctorOutput = new StringWriter();

@@ -1,15 +1,15 @@
 ---
 open-forge:
-  description: "Current loading contract for baseline context, selected `routes`, #LoadNow traversal, #KeepInMind continuity, refresh boundaries, and deterministic assistance"
+  description: "When selected routes load, when #KeepInMind files are read again, and how tools assist without choosing relevance"
   responsibility: Define when routed Open Forge context is read, retained, and refreshed without confusing visibility with authority
   tags: [Memory, Document, CurrentTruth, Evergreen, Framework, Routing, Loading, LoadNow, KeepInMind, Continuity]
 ---
 
-# Routing Loading And Continuity
+# Loading And Refreshing Context
 
 ## Scope
 
-This document is authoritative for the loading model that turns visible `routes` into baseline, continuity, and selected context.
+This document is authoritative for the loading model that turns visible `routes` into baseline context, context that needs refreshing, and selected context.
 
 The [loader](../../../../../loader.md#defined-tags) remains authoritative for the exact reserved tag wording installed in a workspace. This document explains the complete current model and its relationships. Component sources decide which of their own `routes` deliberately carry a load-policy tag.
 
@@ -24,7 +24,7 @@ Open Forge uses three context classes:
 | Context    | Purpose                                                                            |
 | ---------- | ---------------------------------------------------------------------------------- |
 | Baseline   | Small universal and immediate context needed to enter and navigate the environment |
-| Continuity | Follow-ups and resumability context refreshed while their scope remains active     |
+| Refreshed  | Context read again at defined points while its scope remains active                |
 | Selected   | On-demand context chosen for the current goal                                      |
 
 The shipped root `entrypoints` and compact route maps deliberately pay a small baseline cost so agents can discover the Framework and its standard roles. That cost should not grow with local specialization. Put specialized content in narrow scopes and let each scope choose on-demand, #LoadNow, or #KeepInMind loading according to the thresholds below.
@@ -41,19 +41,19 @@ Use #LoadNow only for context whose omission is more costly than its baseline at
 
 ## #KeepInMind
 
-#KeepInMind identifies continuity content exposed by loaded parent routes. Tagged entrypoints and other tagged files use the same scope and parent-loading boundaries as #LoadNow. Neither tag activates an otherwise unselected ancestor or scope.
+#KeepInMind identifies context that needs refreshing after its parent route loads. Tagged entrypoints and other tagged files use the same scope and parent-loading boundaries as #LoadNow. Neither tag activates an otherwise unselected ancestor or scope.
 
 Read a tagged entry when its parent loads, then read its adjacent overwrite when present. For an entrypoint, apply its visible child loading rules in listed order. Explicitly selecting an on-demand route establishes its parent chain and exposes the applicable loading rules within that scope.
 
-Refresh the applicable continuity content while its scope remains active:
+Refresh the applicable tagged files while their scope remains active:
 
 - At task start or resume
 - After detected context restoration
 - Before handoff
 - Before closeout
-- During work when the active continuity set may have changed
+- During work when tagged files in active scopes may have changed
 
-After restoration, recover the active route chains from the current task context before refreshing their continuity content. A refresh does not reactivate an unrelated scope. Do not load file bodies merely to discover tagged content.
+After restoration, recover the active route chains from the current task context before refreshing their tagged files. A refresh does not reactivate an unrelated scope. Do not load file bodies merely to discover tagged content.
 
 Each result retains the meaning and authority established by its source. #KeepInMind does not promote candidate material or make every follow-up binding.
 
@@ -80,7 +80,7 @@ The effective order is:
 2. Apply #LoadNow and initial #KeepInMind reading through loaded parents in generated entry order
 3. Select other relevant `routes` and apply their child loading rules as the parent chains become active
 4. Follow explicit relationships and dependencies
-5. Refresh applicable #KeepInMind content at the required boundaries while its scope remains active
+5. Refresh applicable #KeepInMind content at the defined points while its scope remains active
 
 When a base file has a user-owned `{name}.overwrite.md` companion, read it immediately after the base. The [overwrite contract](overwrites.md) owns its inherited `route`, scope, loading behavior, precedence, and independent-selection boundary.
 

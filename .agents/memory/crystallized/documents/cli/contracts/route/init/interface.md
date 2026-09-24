@@ -739,7 +739,7 @@ Next: open-forge route init
 - [Markdown Compatibility Boundary](../../../../framework/markdown/compatibility.md)
 - [Canonical Markdown Syntax](../../../../framework/markdown/syntax.md)
 - [Routing Model](../../../../framework/routing/model.md)
-- [Routing Loading And Continuity](../../../../framework/routing/loading.md)
+- [Loading And Refreshing Context](../../../../framework/routing/loading.md)
 - [Route Scope And Inheritance](../../../../framework/routing/scope.md)
 - [Routing Paths And Identity](../../../../framework/routing/paths.md)
 - [Overwrite Customization](../../../../framework/routing/overwrites.md)

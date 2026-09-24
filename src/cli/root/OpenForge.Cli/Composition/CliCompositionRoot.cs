@@ -24,6 +24,7 @@ using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Composition;
@@ -90,6 +91,7 @@ internal static class CliCompositionRoot
             interaction,
             inputs.LockStoreRoot);
         var library = CliLibraryComposer.Compose(interaction);
+        var rootRemove = CliRootRemoveComposer.Compose(interaction, inputs.LockStoreRoot);
         var tree = CliCommandTree.Create(
             CreateRootHelp(),
             [route.Branch, extension.Branch, library.Branch],
@@ -122,8 +124,9 @@ internal static class CliCompositionRoot
                 library.AttachBinding,
                 library.SyncBinding,
                 library.DetachBinding,
+                rootRemove,
             ],
-            rootLeaves: standalone.RootLeaves);
+            rootLeaves: [.. standalone.RootLeaves, new CliRootLeaf(rootRemove.Command)]);
         return new CliCoreApplication(
             process,
             tree,

@@ -5,6 +5,8 @@ internal enum ExtensionRemoveEffectKind
     PackageFile,
     GeneratedRegion,
     Lifecycle,
+    Settings,
+    Directory,
 }
 
 internal enum ExtensionRemoveEffectAction
@@ -12,6 +14,8 @@ internal enum ExtensionRemoveEffectAction
     ReleaseOwnership,
     Delete,
     Retain,
+    RecordExclusion,
+    Create,
 }
 
 internal enum ExtensionRemoveEffectOutcome

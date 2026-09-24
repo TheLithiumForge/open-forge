@@ -1,8 +1,8 @@
 {
   "id": "planning",
   "name": "Planning",
-  "description": "Explore possibilities, preserve accepted choices, and organize work with optional records and a planning method",
-  "version": "0.3.0",
+  "description": "Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and checkpoints",
+  "version": "0.4.0",
   "dependencies": [
     "workflows"
   ]
