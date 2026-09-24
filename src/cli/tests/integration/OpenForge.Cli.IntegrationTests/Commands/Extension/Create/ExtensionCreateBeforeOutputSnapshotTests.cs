@@ -106,8 +106,10 @@ public sealed class ExtensionCreateBeforeOutputSnapshotTests
             Assert.Equal(plan.ManifestBytes.ToArray(), File.ReadAllBytes(Path.Combine(destination, "extension.json")));
             Assert.False(Directory.Exists(Path.Combine(destination, "content")));
             Assert.Single(result.AppliedEffects);
-            Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.ApplicationFailed);
-            Renderers.MatchDetails(result, "write-failed-partial", extensionSourcePath: cataloguePath);
+            var failure = Assert.Single(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.ApplicationFailed);
+            Assert.Equal($"Access to the path '{Path.Combine(destination, "content", ".agents")}' is denied.", failure.Cause);
+            Renderers.MatchDetails(result, "write-failed-partial", extensionSourcePath: cataloguePath,
+                diagnosticComparer: new ExtensionCreateDiagnosticSnapshotComparer(cataloguePath));
         }
         finally
         {

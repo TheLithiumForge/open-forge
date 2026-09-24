@@ -67,7 +67,8 @@ public static class CommandOutputSnapshot
     public static void MatchDetailSnapshot(
         IReadOnlyDictionary<string, string> captures,
         [CallerFilePath] string sourceFile = "",
-        [CallerMemberName] string testName = "")
+        [CallerMemberName] string testName = "",
+        ISnapshotComparer? diagnosticComparer = null)
     {
         ArgumentNullException.ThrowIfNull(captures);
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceFile);
@@ -97,12 +98,17 @@ public static class CommandOutputSnapshot
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(capture.Key);
             ArgumentNullException.ThrowIfNull(capture.Value);
+            var hasDiagnosticTemplate = capture.Key.EndsWith(".diagnostics", StringComparison.Ordinal)
+                && diagnosticComparer is not null;
             capture.Value.AssertSnapshot(capture.Key, new SnapshotOptions
             {
                 Format = SnapshotFormat.Text,
-                Update = update ? SnapshotUpdate.All : SnapshotUpdate.Verify,
+                // These expectations are templates, not normalized captures. Updating them
+                // from received bytes would persist a real temporary path and lose the template.
+                Update = update && !hasDiagnosticTemplate ? SnapshotUpdate.All : SnapshotUpdate.Verify,
                 Comparison = OutputComparison,
-                Comparer = new PlatformSnapshotComparer(
+                Comparer = hasDiagnosticTemplate
+                    ? diagnosticComparer : new PlatformSnapshotComparer(
                     capture.Key.StartsWith("lock-held.", StringComparison.Ordinal),
                     manifestSharing: Path.GetFileNameWithoutExtension(sourceFile) == "ExtensionListBeforeOutputSnapshotTests"
                         && testName == "SourceBoundary"

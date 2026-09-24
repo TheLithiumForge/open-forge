@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Hosting;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using OpenForge.Cli.TestSupport.Snapshots;
+using TheLithium.Imprint;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 
@@ -81,7 +82,8 @@ internal sealed class CommandOutputRenderers<TResult>(
         string? extensionSourcePath = null,
         [CallerFilePath] string sourceFile = "",
         [CallerMemberName] string testName = "",
-        IDictionary<string, string>? snapshotCollector = null)
+        IDictionary<string, string>? snapshotCollector = null,
+        ISnapshotComparer? diagnosticComparer = null)
     {
         var textOutputs = new Dictionary<CliDetail, CliRenderedOutput>();
         var jsonOutputs = new Dictionary<CliDetail, CliRenderedOutput>();
@@ -115,7 +117,7 @@ internal sealed class CommandOutputRenderers<TResult>(
             {
                 snapshots.Add(
                     $"{situation}.{detailName}.diagnostics",
-                    CommandOutputNormalization.Normalize(
+                    diagnosticComparer is not null ? textDiagnostics : CommandOutputNormalization.Normalize(
                         textDiagnostics,
                         workspacePath,
                         CliBuildVersion.InformationalVersion,
@@ -133,7 +135,7 @@ internal sealed class CommandOutputRenderers<TResult>(
             {
                 snapshots.Add(
                     $"{situation}{CommandOutputSnapshot.JsonContentNameSegment}{detailName}.diagnostics",
-                    CommandOutputNormalization.Normalize(
+                    diagnosticComparer is not null ? jsonDiagnostics : CommandOutputNormalization.Normalize(
                         jsonDiagnostics,
                         workspacePath,
                         CliBuildVersion.InformationalVersion,
@@ -155,7 +157,7 @@ internal sealed class CommandOutputRenderers<TResult>(
         CommandOutputDetailComparison.AssertFullDebugJson(fullJson.PrimaryContent, debugJson.PrimaryContent);
         if (snapshotCollector is null)
         {
-            CommandOutputSnapshot.MatchDetailSnapshot(snapshots, sourceFile, testName);
+            CommandOutputSnapshot.MatchDetailSnapshot(snapshots, sourceFile, testName, diagnosticComparer);
         }
         else
         {

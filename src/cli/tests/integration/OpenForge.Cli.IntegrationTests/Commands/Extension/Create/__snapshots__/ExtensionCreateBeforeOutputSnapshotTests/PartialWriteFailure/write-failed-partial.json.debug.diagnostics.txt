@@ -6,4 +6,4 @@ package=<extension-source>\toolkit
 intended=2
 applied=1
 findings=1
-finding=extension-create.application-failed:subject=<extension-source>\toolkit\content\.agents\:cause=Access to the path '<temp>\ope...
+finding=extension-create.application-failed:subject=<extension-source>\toolkit\content\.agents\:cause=Access to the path '<extension-source>\toolkit\content\.agents' is denied.

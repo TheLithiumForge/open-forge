@@ -66,3 +66,40 @@ No test, expected result, skip rule, product code, dependency or supported
 platform changes. Hosted managed/native execution on both Windows architectures
 is the decisive verification; local non-elevated execution cannot prove this
 runner-specific correction.
+
+## Portable Windows diagnostic evidence
+
+Run [35939237027](https://github.com/TheLithiumForge/open-forge/actions/runs/35939237027)
+confirmed the permission correction on both Windows architectures. Their only
+remaining Integration failure was the partial Extension Create diagnostic:
+its 240-character limit cut the runner's longer temporary path before snapshot
+normalization could identify it. The existing capture contained a local-length
+fragment (`<temp>/ope...`). A short temporary root also changed the expected
+fragment, so changing CI's root alone could not make this evidence portable.
+
+The two diagnostic snapshots now retain complete expected text with the owned
+source placeholder. A comparer local to Extension Create expands that coordinate
+before applying the independently stated 240-character bound, then compares the
+unchanged received diagnostic. The test also checks the complete underlying
+denied-path cause. Primary snapshots, filesystem effects, permission assertions,
+and the shared normalizer's rejection of ambiguous fragments remain intact.
+No production output or skip rule changes.
+
+Focused local evidence on Windows x64, Release managed Integration:
+
+- `dotnet build src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-restore --nologo -v quiet`: passed, no warnings.
+- `artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.exe --filter-class '*ExtensionCreateBeforeOutputSnapshotTests' --no-ansi --progress off`: 11 passed, none failed or skipped.
+- The fully qualified `PartialWriteFailure` method passed separately with both
+  short and long owned temporary roots supplied through `TEMP`/`TMP`.
+- `npm run check:dotnet` and `npm run format:delivery:check`: passed.
+- The focused case also passed with `OPENFORGE_SNAPSHOT_UPDATE=1`; before/after
+  hashes confirmed that every expectation retained exactly the same bytes.
+  Local toolchain: .NET SDK 10.0.101, Node 26.3.1, npm 11.16.0. Hosted
+  qualification uses the workflow's pinned SDK and Node versions.
+- Read-only review confirmed exact comparison and identified update-mode path
+  leakage as a risk. Template comparisons now remain in verify mode during
+  snapshot updates, preventing raw machine paths from replacing the templates.
+
+The earlier candidate also passed macOS Intel, so every Unix platform has now
+completed its full managed/native and installed-package gates. A new Build must
+qualify all six targets together at the corrected source revision.
