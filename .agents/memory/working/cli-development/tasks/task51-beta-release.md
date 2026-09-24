@@ -44,3 +44,25 @@ version tests cover stable and beta SHA qualification separately.
 No publication has occurred at this checkpoint. The default branch is `main`
 and does not yet expose the Release workflow for manual dispatch. A matching
 version-tag push can invoke the workflow from the qualified candidate.
+
+## Windows pipeline correction
+
+Candidate `7b99c9fe0` passed shared checks, Linux x64/ARM64 and macOS ARM64.
+Both Windows jobs failed the same four Integration cases because directory ACL
+denials were ineffective. The existing assertions caught the missing fixture
+condition rather than accepting false permission evidence.
+
+Run [35938703904](https://github.com/TheLithiumForge/open-forge/actions/runs/35938703904)
+tested an owned directory deny rule under PowerShell on both Windows runners;
+both probes passed. The test stages used Git Bash. Its
+[MSYS runtime](https://github.com/msys2/msys2-runtime/blob/master/winsup/cygwin/sec_helper.cc)
+enables backup/restore privileges at startup for administrative tokens, allowing
+descendants to bypass file ACLs.
+
+Windows test and package stages now use PowerShell and explicitly propagate
+the native command exit code after writing the log. Unix stages retain Bash.
+The diagnostic probe is removed after establishing the shell difference.
+No test, expected result, skip rule, product code, dependency or supported
+platform changes. Hosted managed/native execution on both Windows architectures
+is the decisive verification; local non-elevated execution cannot prove this
+runner-specific correction.

@@ -80,38 +80,6 @@ jobs:
         with:
           dotnet-version: "10.0.111"
           architecture: ${{ matrix.architecture }}
-      - name: Verify Windows directory permission denial
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          whoami /priv
-          $directory = [System.IO.Directory]::CreateTempSubdirectory('open-forge-acl-probe-')
-          $access = [System.Security.AccessControl.AccessControlSections]::Access
-          $original = [System.IO.FileSystemAclExtensions]::GetAccessControl($directory, $access)
-          $fixture = Join-Path $directory.FullName 'fixture.txt'
-          [System.IO.File]::WriteAllText($fixture, 'owned permission probe')
-          try {
-            $denied = [System.Security.AccessControl.DirectorySecurity]::new()
-            $denied.SetSecurityDescriptorBinaryForm($original.GetSecurityDescriptorBinaryForm(), $access)
-            $denied.SetAccessRuleProtection($true, $true)
-            $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-            $rule = [System.Security.AccessControl.FileSystemAccessRule]::new($identity.User, 'ListDirectory', 'None', 'None', 'Deny')
-            $denied.AddAccessRule($rule)
-            [System.IO.FileSystemAclExtensions]::SetAccessControl($directory, $denied)
-            $actual = [System.IO.FileSystemAclExtensions]::GetAccessControl($directory, $access)
-            Write-Output "Intended DACL: $($denied.GetSecurityDescriptorSddlForm($access))"
-            Write-Output "Observed DACL: $($actual.GetSecurityDescriptorSddlForm($access))"
-            $wasDenied = $false
-            try { [System.IO.Directory]::GetFileSystemEntries($directory.FullName) | Out-Null }
-            catch [System.UnauthorizedAccessException] { $wasDenied = $true }
-            if (!$wasDenied) { throw 'The hosted Windows process bypassed the directory enumeration deny rule.' }
-          } finally {
-            $restore = [System.Security.AccessControl.DirectorySecurity]::new()
-            $restore.SetSecurityDescriptorBinaryForm($original.GetSecurityDescriptorBinaryForm(), $access)
-            [System.IO.FileSystemAclExtensions]::SetAccessControl($directory, $restore)
-            [System.IO.File]::Delete($fixture)
-            [System.IO.Directory]::Delete($directory.FullName)
-          }
       - run: npm run setup
       - name: Show delivery plan
         run: npm run dist -- --rid "$RID" --no-restore --plan
@@ -144,9 +112,25 @@ jobs:
           if-no-files-found: error
           retention-days: 14
       - name: Test managed and native suites
+        if: runner.os != 'Windows'
         run: npm run test:built -- --rid "$RID" 2>&1 | tee "artifacts/delivery/logs/$RID/test.log"
+      # Git Bash enables backup/restore privileges for elevated Windows users,
+      # which bypasses the ACL denials exercised by the filesystem tests.
+      - name: Test managed and native suites on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          npm run test:built -- --rid $env:RID 2>&1 | Tee-Object -FilePath "artifacts/delivery/logs/$env:RID/test.log"
+          exit $LASTEXITCODE
       - name: Pack and test npm installation
+        if: runner.os != 'Windows'
         run: npm run pack -- --rid "$RID" 2>&1 | tee "artifacts/delivery/logs/$RID/pack.log"
+      - name: Pack and test npm installation on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          npm run pack -- --rid $env:RID 2>&1 | Tee-Object -FilePath "artifacts/delivery/logs/$env:RID/pack.log"
+          exit $LASTEXITCODE
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: package-${{ matrix.rid }}
