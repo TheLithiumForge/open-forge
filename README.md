@@ -8,6 +8,8 @@ The base is 14 files and about 6.4k tokens, of which about 5.7k load at startup 
 
 ## Get started
 
+Full documentation here: https://thelithiumforge.github.io/open-forge/
+
 Setup has two steps: install the CLI, then use it to install the Framework into your project. The CLI is optional. If you'd rather not use it, skip to [installing the Framework manually](#manually-from-a-clone).
 
 ### Install the CLI
