@@ -452,7 +452,7 @@ unsafe boundary as skippable.
 
 ### Prompts
 
-Per [04](../../../../../../working/cli-development/tasks/task30-g4/04-interaction-system.md): multi-select when the source has several
+Per [04](../../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md): multi-select when the source has several
 packages and no ID was given; Permission for paths outside `.agents`; Confirm
 for existing files (`Replace the 1 existing file listed above? [y/N]`); plan
 review; `Apply these changes? [y/N]`.

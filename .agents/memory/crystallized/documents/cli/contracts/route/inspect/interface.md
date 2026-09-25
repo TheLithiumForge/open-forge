@@ -628,7 +628,7 @@ action when available. Counts are:
 Prompt rules from the catalogue:
 
 When an ID matches several files in a terminal: Select among the paths (see
-[04 interaction system](../../../../../../working/cli-development/tasks/task30-g4/04-interaction-system.md)). The result then carries the warning row above.
+[04 interaction system](../../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md)). The result then carries the warning row above.
 
 ## Representative Transcripts
 

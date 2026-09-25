@@ -13,7 +13,7 @@ open-forge:
   folder-scoped Library proposal and optional destination mapping on 2026-09-08.
 - Permanent mapping: Task 25 “Workspace Library Destination Projections” in the
   [project control ledger](../project-control.md).
-- Sources: [Workspace Libraries idea](../../../emerging/ideas/workspace-libraries.md),
+- Sources: [Workspace Libraries idea](../../ideas/workspace-libraries.md),
   [Extensions Evolution idea](../../../emerging/ideas/extensions-overhaul.md),
   and the accepted first-release design at the immutable contract tip recorded
   in [Task 23](workspace-libraries.md).

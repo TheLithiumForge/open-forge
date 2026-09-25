@@ -14,22 +14,22 @@ open-forge:
 - Authority: maintainer decisions recorded in this Task and its active
   subtasks. Recommendations in Emerging Analysis are not acceptance.
 - Current next step: continue with the planned Phase 5 diagnosis and
-  interoperability boundary. The [G4 packet](task30-g4/_task30-g4.md) is
+  interoperability boundary. The [G4 packet](../../../archived/cli-development/tasks/task30-g4/_task30-g4.md) is
   complete: its accepted decisions C1–C18, shared rules, six lanes, 28 command
   subtasks, verification and documentation propagation are recorded. [B1 heading-based
-  Entries](task30/07-b1-heading-entries.md) completed automatic old-guard migration,
+  Entries](../../../archived/cli-development/tasks/task30/07-b1-heading-entries.md) completed automatic old-guard migration,
   reviewed snapshots, same-commit contracts and managed/native qualification.
   Safe M1 is complete and qualified in that native integration wave. A1–A6 and
-  [P1](task30/06p-p1-shared-permissions.md) completed the accepted state/permission
+  [P1](../../../archived/cli-development/tasks/task30/06p-p1-shared-permissions.md) completed the accepted state/permission
   migration; their receipts own the deletion-safety evidence and resolved review
   findings. Structural items 2, 4 and 5 remain deferred. The [plan](../plan.md)
-  owns the order and the [progression report](task30/progression-report.md)
+  owns the order and the [progression report](../../../archived/cli-development/tasks/task30/progression-report.md)
   gives the full handoff.
-- Review follow-ups: [SG-R1 and SG-R2](task30/review-second-gate-pre-g4.md#accepted-disposition-and-follow-ups)
+- Review follow-ups: [SG-R1 and SG-R2](../../../archived/cli-development/tasks/task30/review-second-gate-pre-g4.md#accepted-disposition-and-follow-ups)
   are resolved: SG-R1 contracts match current code, and the maintainer retired
   SG-R2's legacy-receipt notice requirement. The reviewed implementation was
   integrated locally at `e40492aa`. The bounded
-  [G4 preparation record](task30/phase-4b-g4.md#preparation-reconciliation)
+  [G4 preparation record](../../../archived/cli-development/tasks/task30/phase-4b-g4.md#preparation-reconciliation)
   preserves obsolete assumptions without rewriting historical proposals.
 - Continuation authority: the maintainer authorized consecutive pre-G4 slices
   on 2026-09-13 when implementation divergences can be resolved from the accepted
@@ -73,16 +73,16 @@ sequence to execute in.
 
 | Order | Phase | State                                                                                                    | Execution slices                                                                                                                                                                                                                                       | Task-owned route                                                                   |
 | ----- | ----- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| done  | 0–3   | Complete                                                                                                 | —                                                                                                                                                                                                                                                      | [Completed baseline](task30/phase-0-3.md)                                          |
-| done  | 3.5   | Complete for the carried refactoring slice; Task 31 remains open for its own work                        | —                                                                                                                                                                                                                                                      | [Completed baseline](task30/phase-0-3.md)                                          |
-| 1     | 4a    | Complete — A1–A6 and P1 qualified                                                                        | [01](task30/01-a1-ownership-store.md) [02](task30/02-a2-extension-writers.md) [03](task30/03-a3-library-writers.md) [04](task30/04-a4-extension-readers.md) [05](task30/05-a5-status-doctor-library-readers.md) [06](task30/06-a6-delete-lifecycle.md) | [State model and diagnosis](task30/phase-4a-g1.md)                                 |
-| 2     | 4a-S  | **B1 complete** — items 2, 4 and 5 deferred                                                              | [07](task30/07-b1-heading-entries.md) for items 1 and 3; items 2, 4 and 5 deferred                                                                                                                                                                     | [Structural follow-up](task30/phase-4a-structural.md)                              |
-| 3     | 4b    | **Complete** — G4 rendering, interaction, command lanes, verification and documentation propagation green | [G4 packet](task30-g4/_task30-g4.md): 01 snapshots, 02 naming, 03 rendering system, 04 interaction, 05 index region, 10–37 one per command in six lanes, 40 verification, 41 documentation propagation | [Presentation revamp](task30/phase-4b-g4.md) |
+| done  | 0–3   | Complete                                                                                                 | —                                                                                                                                                                                                                                                      | [Completed baseline](../../../archived/cli-development/tasks/task30/phase-0-3.md)                                          |
+| done  | 3.5   | Complete for the carried refactoring slice; Task 31 remains open for its own work                        | —                                                                                                                                                                                                                                                      | [Completed baseline](../../../archived/cli-development/tasks/task30/phase-0-3.md)                                          |
+| 1     | 4a    | Complete — A1–A6 and P1 qualified                                                                        | [01](../../../archived/cli-development/tasks/task30/01-a1-ownership-store.md) [02](../../../archived/cli-development/tasks/task30/02-a2-extension-writers.md) [03](../../../archived/cli-development/tasks/task30/03-a3-library-writers.md) [04](../../../archived/cli-development/tasks/task30/04-a4-extension-readers.md) [05](../../../archived/cli-development/tasks/task30/05-a5-status-doctor-library-readers.md) [06](../../../archived/cli-development/tasks/task30/06-a6-delete-lifecycle.md) | [State model and diagnosis](../../../archived/cli-development/tasks/task30/phase-4a-g1.md)                                 |
+| 2     | 4a-S  | **B1 complete** — items 2, 4 and 5 deferred                                                              | [07](../../../archived/cli-development/tasks/task30/07-b1-heading-entries.md) for items 1 and 3; items 2, 4 and 5 deferred                                                                                                                                                                     | [Structural follow-up](task30/phase-4a-structural.md)                              |
+| 3     | 4b    | **Complete** — G4 rendering, interaction, command lanes, verification and documentation propagation green | [G4 packet](../../../archived/cli-development/tasks/task30-g4/_task30-g4.md): 01 snapshots, 02 naming, 03 rendering system, 04 interaction, 05 index region, 10–37 one per command in six lanes, 40 verification, 41 documentation propagation | [Presentation revamp](../../../archived/cli-development/tasks/task30/phase-4b-g4.md) |
 | 4     | 5-D   | **Specified, not started** — four slices, current state measured                                       | [50](task30/phase-5-diagnosis-and-interoperability.md) ownership, [51](task30/phase-5-diagnosis-and-interoperability.md) truthful findings, [52](task30/phase-5-diagnosis-and-interoperability.md) interoperability inputs, [53](task30/phase-5-diagnosis-and-interoperability.md) one normalizer                                                                                                                                                                                                                                      | [Diagnosis and interoperability](task30/phase-5-diagnosis-and-interoperability.md) |
 | 5     | 5–8   | **Mostly absorbed** — only phase 6 (document ownership) remains distinct                                 | measure whether any statement is duplicated and drifting; close if not                                                                                                                                                                                                                                      | [Interaction, content, and scenarios](task30/phase-5-8.md)                         |
 | 6     | 7-S   | **Specified, not started** — three slices, current state measured                                        | 70 coverage matrix, 71 dirty and relocated journeys, 72 normalization audit                                                                                                                                                                                                                                      | [Scenario evidence](task30/phase-7-scenarios.md)                                   |
 
-Task 31's [slice 08](task31/08-m1-enumerated-extractions.md) runs independently
+Task 31's [slice 08](../../../archived/cli-development/tasks/task31/08-m1-enumerated-extractions.md) runs independently
 of this order and blocks nothing.
 
 ## Completed phase 4a — G1 state model
@@ -104,7 +104,7 @@ The current actionable model is:
   gate, and it fails toward a missed deletion. `extension remove` no longer
   distinguishes changed from unchanged content, and `baselineFingerprint` leaves
   public output entirely. The validation evidence and the three accepted
-  refinements are in the [G1 subtask](task30/phase-4a-g1.md).
+  refinements are in the [G1 subtask](../../../archived/cli-development/tasks/task30/phase-4a-g1.md).
 
 The following are not reopened in this Task: the maintainer's rejection of a
 fingerprint-chain change detector, the no-git-cleanliness gate, and the choice
@@ -120,7 +120,7 @@ full because they record what was observed and why the disposition was chosen.
   deferred on a Framework decision. `.prettierignore` is the whole containment
   until then, and that is deliberate rather than provisional.
 - **Settled — fixed and covered.** Decision C16 and
-  [05 Index Entries region](task30-g4/05-index-entries-region.md) are merged.
+  [05 Index Entries region](../../../archived/cli-development/tasks/task30-g4/05-index-entries-region.md) are merged.
   `IndexEntriesPreservationTests` pins the reported scenario with the theory
   "Status and Update agree about authored Entries prose before and after Index",
   so the `status`/`update` disagreement is closed as well.
@@ -162,7 +162,7 @@ full because they record what was observed and why the disposition was chosen.
   [G4 output proposal](task30/phase-4b-g4-output-proposal-fable.md#part-5--discoveries-and-deviations)
   and are not presentation questions. The maintainer decided on 2026-09-14
   that `index` rewrites only the list of entries and nothing before or after
-  it (decision C16); [05 Index Entries region](task30-g4/05-index-entries-region.md)
+  it (decision C16); [05 Index Entries region](../../../archived/cli-development/tasks/task30-g4/05-index-entries-region.md)
   owns the fix and gives `status` and `update` the same boundary.
 
 ## Execution rules

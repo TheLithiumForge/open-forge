@@ -8,7 +8,7 @@ open-forge:
 
 ## Status
 
-Items 1 and 3 are complete in [B1](07-b1-heading-entries.md), with passing
+Items 1 and 3 are complete in [B1](../../../../archived/cli-development/tasks/task30/07-b1-heading-entries.md), with passing
 managed/native qualification and reviewed same-commit contracts. The accepted direction migrates Entries to headings
 and automatically removes retired guards inside those sections. Items 2, 4 and 5
 remain deferred pending Framework decisions; B1 does not implement them. The

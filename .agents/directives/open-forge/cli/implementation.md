@@ -155,7 +155,7 @@ open-forge:
   re-evaluation condition. Surface the exception to the maintainer before relying
   on it. Document it publicly when callers can observe or depend on it.
 - Record unusual inputs and edge cases in the active Task or the [active G4 task
-  record](../../../memory/working/cli-development/tasks/task30-g4/_task30-g4.md)
+  record](../../../memory/archived/cli-development/tasks/task30-g4/_task30-g4.md)
   before deciding their disposition. An edge case is evidence for triage, not an
   automatic blocker, defect, or requirement to add special handling. Classify
   its reproducibility, impact, affected surface, governing contract, and

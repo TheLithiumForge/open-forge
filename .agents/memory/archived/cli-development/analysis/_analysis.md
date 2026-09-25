@@ -21,4 +21,4 @@ future sealed CLI provenance after an explicit lifecycle decision.
 
 ## Entries
 
-- none - No entries - #Empty
+- [Decision-ready audit of replacement CLI Architecture placement, provenance, references, and proposed narrower authority boundaries](2026-09-02_cli-architecture-authority-audit.md) - #Memory #Analysis #Contextual #CLI #Architecture #Authority #Audit #Documentation #CSharp #NativeAOT #Package #Archived #Historical

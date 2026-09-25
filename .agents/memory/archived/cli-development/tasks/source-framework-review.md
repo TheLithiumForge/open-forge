@@ -138,7 +138,7 @@ The [original review notes](../../framework-review/review-followup-instructions.
 
 The latest user direction is preserved in the repository's Framework change instructions and [Extension architecture](../../../crystallized/documents/extensions/architecture.md#reusable-content-and-project-context). Generic methods and starting shapes use selected project sources for actual facts, technologies, commands, conventions, required evidence, and accepted decisions. They do not import this repository's task bureaucracy into other projects.
 
-The [content review](../../framework-review/reviews/extension-generalization.md) records the changed and retained sources, new planning Templates, static checks, and limits. Shared Template and Pattern copies are aligned. Existing local Workflow profiles and specialized Task/Plan Templates remain intact. The [Experience Design analysis](../../../emerging/analysis/framework-review/experience-design-value.md) records the separate distribution recommendation and the absence of measured comparison evidence.
+The [content review](../../framework-review/reviews/extension-generalization.md) records the changed and retained sources, new planning Templates, static checks, and limits. Shared Template and Pattern copies are aligned. Existing local Workflow profiles and specialized Task/Plan Templates remain intact. The [Experience Design analysis](../../framework-review/analysis/experience-design-value.md) records the separate distribution recommendation and the absence of measured comparison evidence.
 
 ## Branch Logic Review Follow-Up
 

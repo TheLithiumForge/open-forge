@@ -8,7 +8,7 @@ open-forge:
 
 **Who:** A maintainer whose project contains old or damaged files unrelated to the current action.
 
-**Execution:** See the separate [run record](../../../../../working/cli-experience-run.md). Inclusion records a reviewed user outcome, not a passing implementation.
+**Execution:** See the separate [run record](../../../../../archived/beta-preparation/cli-experience-run.md). Inclusion records a reviewed user outcome, not a passing implementation.
 
 ## Review adjustment
 

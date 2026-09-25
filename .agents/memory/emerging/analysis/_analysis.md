@@ -20,7 +20,5 @@ Analysis preserves useful reasoning, investigation, or comparison that is not ac
 
 ## Entries
 
-- [Decision-ready audit of replacement CLI Architecture placement, provenance, references, and proposed narrower authority boundaries](2026-09-02_cli-architecture-authority-audit.md) - #Memory #Analysis #Contextual #Candidate #CLI #Architecture #Authority #Audit #Documentation #CSharp #NativeAOT #Package
 - [Retrospective separating the original Framework design, the accepted CLI contracts, and what agents actually built, to learn what to design differently](cli-design-retrospective/_cli-design-retrospective.md) - #Memory #Analysis #Contextual #Candidate #CLI #Framework #Retrospective #Process #Design
 - [Hands-on audit of the CLI experience layer covering interoperability, interaction, presentation, and per-command output design](cli-experience-audit/_cli-experience-audit.md) - #Memory #Analysis #Contextual #Candidate #CLI #Experience #Presentation #Interaction #Interoperability #Audit
-- [Analysis of proposed Framework review methods and Extension capabilities](framework-review/_framework-review.md) - #Memory #Analysis #Contextual #Candidate #Framework #Review

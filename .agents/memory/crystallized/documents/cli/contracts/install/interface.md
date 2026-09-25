@@ -467,7 +467,7 @@ words.
 In a terminal without `--automatic`: plan review at `minimal` on stderr, then
 `Apply these changes? [y/N]`. When existing files would be replaced under
 `--force`, the question reads `Replace the 2 existing files listed above?
-[y/N]`. See [04](../../../../../working/cli-development/tasks/task30-g4/04-interaction-system.md).
+[y/N]`. See [04](../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md).
 
 ### Representative transcripts by status
 

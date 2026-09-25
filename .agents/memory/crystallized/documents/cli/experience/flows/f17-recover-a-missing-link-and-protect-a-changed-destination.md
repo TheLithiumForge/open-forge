@@ -8,7 +8,7 @@ open-forge:
 
 **Who:** A maintainer who manually moved or edited linked destination files.
 
-**Execution:** See the separate [run record](../../../../../working/cli-experience-run.md). Inclusion records a reviewed user outcome, not a passing implementation.
+**Execution:** See the separate [run record](../../../../../archived/beta-preparation/cli-experience-run.md). Inclusion records a reviewed user outcome, not a passing implementation.
 
 ## Review adjustment
 

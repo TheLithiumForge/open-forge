@@ -358,7 +358,7 @@ frontmatter`) and, after the rows, the search details: filters, require,
 regions searched, source set, `21 of 21 sources inspected`.
 
 `--content` parts print after the rows through the shared
-`ContentPartsTextRenderer` from [17](../../../../../working/cli-development/tasks/task30-g4/17-context.md), with the same delimiter
+`ContentPartsTextRenderer` from [17](../../../../../archived/cli-development/tasks/task30-g4/17-context.md), with the same delimiter
 form, at every level.
 
 ### Representative transcripts by status

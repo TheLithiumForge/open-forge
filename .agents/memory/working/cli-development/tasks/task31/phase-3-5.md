@@ -25,11 +25,11 @@ is 18 pre-existing unit failures of 3,365 and 297 disposable captures.
 - M2 is complete: cross-family work already accepted by the prior Task record
   remains complete and is not reopened here.
 - M4 is complete: constants were moved/composed by owner scope; its rule is
-  recorded in the [constant subtask](phase-constants.md).
+  recorded in the [constant subtask](../../../../archived/cli-development/tasks/task31/phase-constants.md).
 
 ## Closed Enumeration And Stopped Work
 
-- [M1's enumerated closeout](08-m1-enumerated-extractions.md) is complete:
+- [M1's enumerated closeout](../../../../archived/cli-development/tasks/task31/08-m1-enumerated-extractions.md) is complete:
   three identical mappings have one owner each; the Library validator group
   was retired because its request/plan/observation types have no shared shape.
   The four convention checks meet their gates, and 24 published outputs have

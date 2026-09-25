@@ -1,18 +1,18 @@
 ---
 open-forge:
-  description: Historical replacement-CLI Task records preserved after the active route was reduced to Task 30 and Task 31
+  description: Historical replacement-CLI Task records preserved after completion, supersession, or cancellation
   tags: [Memory, Archived, Contextual, Historical, CLI, Task]
 ---
 
 # Archived CLI Tasks
 
 This folder retains completed, superseded, cancelled, and formerly planned CLI
-Task records. The active Task route contains only Task 30 and Task 31.
+Task records. Open and unstarted Tasks stay in the Working Memory Task route.
 
 ## Entries
 
-- [Hosted build qualification and publication of the first public beta](task51-beta-release.md) - #Memory #Archived #CLI #Task #Beta #Release #Contextual #Historical #Complete
 - [Parent outcome, scope, authority, and acceptance for the complete replacement CLI program](00-cli-development.md) - #Memory #Archived #Contextual #Historical #CLI #Task #Program #Architecture #Development
+- [Completed beta correction execution record and documentation packet retained after integration](beta-follow-ups/_beta-follow-ups.md) - #Memory #Archived #Contextual #Historical #CLI #Task #Beta
 - [Audit the current replacement CLI Architecture authority and route misplaced detail to narrower sources without changing accepted meaning](cli-architecture-authority-audit.md) - #Memory #Archived #Contextual #Historical #Complete #CLI #Task #Architecture #Audit #Authority #Documentation
 - [Apply the accepted CLI Architecture authority audit without changing product behavior or requirement strength](cli-architecture-authority-remediation.md) - #Memory #Archived #Contextual #Historical #Complete #CLI #Task #Architecture #Authority #Documentation #Remediation
 - [Review proposed human output examples for all 28 CLI commands before approving presentation changes](cli-command-output-examples.md) - #Memory #Archived #Contextual #Historical #CLI #Task #Presentation #Examples
@@ -58,6 +58,15 @@ Task records. The active Task route contains only Task 30 and Task 31.
 - [Align CLI context loading, route inspection, and context measurements with scoped KeepInMind behavior](scoped-continuity-loading.md) - #Memory #Archived #Contextual #Historical #CLI #Task #Loading #Continuity #Testing
 - [Add the interaction, Framework distribution, lifecycle provenance, and directory-create prerequisites for the next command wave](shared-foundations/_shared-foundations.md) - #Memory #Archived #Contextual #Historical #CLI #Task #Foundation #Shell #Framework #Lifecycle
 - [Prepare Framework, Extension, and public documentation for release and reconcile current non-CLI agent context](source-framework-review.md) - #Memory #Archived #Contextual #Historical #Task #Framework #Extension #Release #Writing #Review
+- [Task 30 G4 execution packet for the CLI output revamp, with the accepted decisions, the shared rules, the command matrix, the lane order, and one subtask per foundation and per command](task30-g4/_task30-g4.md) - #Memory #CLI #Task #Plan #G4 #Presentation #Contextual #Archived #Historical
+- [Completed Task 30 G1, B1, and G4 execution packets, evidence, and reviews retained after the phases closed](task30/_task30.md) - #Memory #Archived #Contextual #Historical #CLI #Task
+- [Completed Task 31 M1, M3, and M4 subtasks retained after the steps closed](task31/_task31.md) - #Memory #Archived #Contextual #Historical #CLI #Task
+- [Completed Task 38 outcome for the library split, observable test boundaries, and typed output text](task38-project-and-test-split.md) - #Memory #CLI #Task #Architecture #Projects #Testing #Complete #Archived #Historical #Contextual
+- [Completed CLI project and test migration](task38/_task38.md) - #Memory #CLI #Architecture #Complete #Archived #Historical #Contextual
+- [Completed Task 45 that made the end-to-end suite legible and turned the approved beta journeys into reproducible tests](task45-end-to-end-observability.md) - #Memory #CLI #Task #Testing #Observability #EndToEnd #Complete #Archived #Historical #Contextual
+- [Approved journey qualification and remaining platform coverage](task45/_task45.md) - #Memory #CLI #Testing #Complete #Archived #Historical #Contextual
+- [Deliver one root remove command with explicit targets and persistent exclusions across content managers](task50-unified-remove.md) - #Memory #CLI #Task #Remove #Complete #Archived #Historical #Contextual
+- [Hosted build qualification and publication of the first public beta](task51-beta-release.md) - #Memory #Archived #CLI #Task #Beta #Release #Contextual #Historical #Complete
 - [Hierarchical implementation Tasks for the complete greenfield replacement CLI](tasks-pre-cleanup.md) - #Memory #Archived #Contextual #Historical #CLI #Task #Architecture #Development
 - [Audit symbolic constants, generated-region authority, and composable active-test foundations across the replacement CLI](test-architecture-and-constants.md) - #Memory #Archived #Contextual #Historical #CLI #Task #Testing #Architecture #Constants #Fixtures #Snapshot
 - [Execute the accepted Workspace Libraries contracts through bounded preparation, implementation, evidence, and integration](workspace-libraries.md) - #Memory #Archived #Contextual #Historical #CLI #Task #Workspace #Library

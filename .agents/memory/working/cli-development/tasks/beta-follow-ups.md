@@ -15,7 +15,7 @@ Tasks retain their identity and define their own scope.
 
 Stages 0–6 are complete for the approved scope: five libraries, separate test
 projects, typed output wording, and 82 journey cases across 26 flows. See
-[Task 38](task38/_task38.md) and [Task 45](task45/_task45.md).
+[Task 38](../../../archived/cli-development/tasks/task38/_task38.md) and [Task 45](../../../archived/cli-development/tasks/task45/_task45.md).
 The four former baseline failures were corrected. Do not reopen that migration.
 
 This follow-up uses a dedicated feature branch based on `develop`, intended for
@@ -23,7 +23,7 @@ a later reviewed squash into `develop`. No release or publication is selected.
 
 The maintainer subsequently approved the specified corrections for actionable errors, stale
 documentation and Skill-resource navigation. The [selected specification packet](beta-follow-ups/_beta-follow-ups.md)
-records investigated behavior, independent worker ownership and the [live execution](beta-follow-ups/execution.md). It does not activate the other backlog items.
+records investigated behavior, independent worker ownership and the [live execution](../../../archived/cli-development/tasks/beta-follow-ups/execution.md). It does not activate the other backlog items.
 
 Older Task headers and counts sometimes predate completed changes. Reproduce a
 reported gap against current source before assigning a fix. Historical counts

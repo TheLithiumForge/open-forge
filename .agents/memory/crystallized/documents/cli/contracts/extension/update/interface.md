@@ -457,7 +457,7 @@ The status and exit mapping above are unchanged by detail or format. Root effect
 
 ### Effects wording
 
-As [13](../../../../../../working/cli-development/tasks/task30-g4/13-update.md), with `(new content in this version)` and `no longer
+As [13](../../../../../../archived/cli-development/tasks/task30-g4/13-update.md), with `(new content in this version)` and `no longer
 part of the package`.
 
 ### Counts and limitations

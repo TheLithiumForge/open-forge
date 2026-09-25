@@ -6,7 +6,7 @@ open-forge:
 
 # Framework Review
 
-The [Task 28 record](../cli-development/tasks/source-framework-review.md) defines current work and its authority. This scope retains the discussion and review evidence needed to assess the branch. All entries are on demand. Deferred [diagram and review ideas](../../emerging/ideas/framework-review/_framework-review.md) and their [review-method analysis](../../emerging/analysis/framework-review/_framework-review.md) live in Emerging Memory. Accepted Framework meaning stays in its defining current sources.
+The [Task 28 record](../cli-development/tasks/source-framework-review.md) defines current work and its authority. This scope retains the discussion and review evidence needed to assess the branch. All entries are on demand. Deferred [diagram and review ideas](../../emerging/ideas/framework-review/_framework-review.md) and their [review-method analysis](analysis/_analysis.md) live in Emerging Memory. Accepted Framework meaning stays in its defining current sources.
 
 ## Axioms
 

@@ -267,7 +267,7 @@ contracts (`f3529ee`), selection (`9a62995`), and filesystem inventory
 [Plan](../../working/cli-development/plan.md), [Task index](../../working/cli-development/tasks/_tasks.md),
 [Route Discovery](../../archived/cli-development/tasks/route-discovery/_route-discovery.md),
 [route-list acceptance Task](../../archived/cli-development/tasks/route-discovery/done/route-list-acceptance.md),
-and [Checkpoint](../../working/checkpoints/cli-development.md) carry the active
+and [Checkpoint](../../archived/cli-development/checkpoint-beta.md) carry the active
 structure and evidence. The current topology and presentation acceptance work is
 also recorded there as verified. The maintainer authorized route-list closeout
 after the local evidence; the coherent closeout commit and any squash integration
@@ -314,7 +314,7 @@ The current flow is materially better in these dimensions:
   keeps unresolved breadth visible with stable IDs and closure conditions. The
   earlier flow discovered the physical escape only after passing local gates.
 - **Honest acceptance status:** The current [Plan](../../working/cli-development/plan.md),
-  [Checkpoint](../../working/checkpoints/cli-development.md), and [route-list
+  [Checkpoint](../../archived/cli-development/checkpoint-beta.md), and [route-list
   acceptance Task](../../archived/cli-development/tasks/route-discovery/done/route-list-acceptance.md)
   distinguish green local evidence from Git integration. The maintainer
   authorized route-list closeout after the local evidence, and the two
@@ -330,7 +330,7 @@ The current flow is worse in two operational dimensions:
   a 57-file Task set, completed-Task routing, and generated Entries require more
   preparation and clerical maintenance than the earlier implementation path.
   That cost is visible in the current [Task index](../../working/cli-development/tasks/_tasks.md)
-  and [Checkpoint](../../working/checkpoints/cli-development.md); it has not been
+  and [Checkpoint](../../archived/cli-development/checkpoint-beta.md); it has not been
   converted into a speed or token measure.
 - **Branch and closeout ergonomics:** The current route-list presentation work has
   local evidence, and the maintainer authorized closeout after that evidence. The

@@ -9,7 +9,7 @@ open-forge:
 ## Status
 
 Unaccepted. This proposal merges three independent proposals for the
-[G4 view layer](phase-4b-g4.md):
+[G4 view layer](../../../../archived/cli-development/tasks/task30/phase-4b-g4.md):
 
 - [astra](phase-4b-g4-output-proposal-astra.md): a report-only specification
   from contracts and source, with a status coverage matrix and a 28-row

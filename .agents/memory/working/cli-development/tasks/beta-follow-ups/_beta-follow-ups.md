@@ -11,7 +11,7 @@ open-forge:
 The maintainer selected analysis and specifications for three items in the
 [beta backlog](../beta-follow-ups.md): actionable errors, stale documentation
 after the Core reduction, and rechecking Skill-resource navigation. This packet
-was approved for implementation on 2026-09-21. The [execution record](execution.md) owns live checkpoints. Task 39, Tasks 42/43 and Tasks 46/47 retain their
+was approved for implementation on 2026-09-21. The [execution record](../../../../archived/cli-development/tasks/beta-follow-ups/execution.md) owns live checkpoints. Task 39, Tasks 42/43 and Tasks 46/47 retain their
 existing identities. The installed Planning workflow was used for this analysis.
 
 The baseline is the completed migration and latest platform correction on
@@ -20,6 +20,8 @@ for later squash integration. Existing task-list edits are preserved.
 
 D1–D6, E1–E2 and N1–N3 are complete and verified in the linked execution record.
 E3–E9 remain forecast work requiring exact producer mappings and expectations.
+The completed execution record and the Tasks 42/43 documentation packet moved to
+[Archived beta follow-ups](../../../../archived/cli-development/tasks/beta-follow-ups/_beta-follow-ups.md) on 2026-09-25.
 
 ## Execution boundary
 
@@ -118,8 +120,5 @@ its owned hunks, preserving all pre-existing and sibling work.
 
 ## Entries
 
-- [Task 39 error facts, dependencies and worker boundaries](task39-errors.md) - #Memory #Working #Plan #CLI #Contextual
-- [Tasks 42/43 source-aligned documentation repairs](task42-43-documentation.md) - #Memory #Working #Plan #CLI #Contextual
-- [Tasks 46/47 reproduced navigation behavior and bounded correction packets](task46-47-navigation.md) - #Memory #Working #Plan #CLI #Contextual
-
-- [Accepted correction execution and live checkpoints](execution.md) - #Memory #Working #CLI #Plan #Contextual #Active
+- [Task 39 typed failure facts, representative Extension slice and parallel migration boundaries](task39-errors.md) - #Memory #Working #Plan #CLI #Contextual
+- [Reproduced Skill-resource navigation behavior and the bounded Doctor corrections it exposes](task46-47-navigation.md) - #Memory #Working #Plan #CLI #Contextual

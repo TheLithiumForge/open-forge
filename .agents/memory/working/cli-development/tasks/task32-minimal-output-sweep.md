@@ -12,8 +12,8 @@ open-forge:
   decisions are implemented.
 - Owner: Root.
 - Trigger: the maintainer's ruling on
-  [40 — verification](task30-g4/40-verification.md) divergence 6 and
-  [30 — extension install](task30-g4/30-extension-install.md), recorded
+  [40 — verification](../../../archived/cli-development/tasks/task30-g4/40-verification.md) divergence 6 and
+  [30 — extension install](../../../archived/cli-development/tasks/task30-g4/30-extension-install.md), recorded
   2026-09-16. Both were settled in favour of the shared presentation rule for
   now, with this sweep queued to revisit the underlying question.
 
@@ -24,7 +24,7 @@ rules, and both were questioned by the command catalogues that had to carry
 them:
 
 - The `Workspace:` echo, required by accepted decision **C12** in
-  [the G4 packet](task30-g4/_task30-g4.md#accepted-decisions).
+  [the G4 packet](../../../archived/cli-development/tasks/task30-g4/_task30-g4.md#accepted-decisions).
 - The `Next:` action line.
 
 `index` at `all-current` and `update` at `up-to-date` both print a `Workspace:`
@@ -66,7 +66,7 @@ of the time.
 - A recorded decision for the `Workspace:` echo and for `Next:` at `minimal`,
   with the reasoning and the situations each applies to.
 - If the rule changes, C12 and the shared presentation rules in
-  [00 — conventions](task30-g4/00-conventions.md) are amended, every affected
+  [00 — conventions](../../../archived/cli-development/tasks/task30-g4/00-conventions.md) are amended, every affected
   catalogue's `Text by level` examples agree with the code, and every capture is
   regenerated and reviewed.
 - If the rule stands, the two catalogues whose examples omitted the echo are

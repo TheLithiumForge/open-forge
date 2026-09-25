@@ -599,7 +599,7 @@ sentence), and recovery facts in words.
 
 ### Prompts
 
-Per [04](../../../../../working/cli-development/tasks/task30-g4/04-interaction-system.md): summary line, `Apply the <N> repairs that
+Per [04](../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md): summary line, `Apply the <N> repairs that
 are safe? [y/N]`, then for each authored guided link a Select among possible targets
 with `skip` as the last row, then plan review, then `Apply these changes?
 [y/N]`. The old typed words (`select`, `skip`, `back`, `cancel`) and the

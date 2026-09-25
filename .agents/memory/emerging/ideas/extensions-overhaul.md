@@ -51,7 +51,7 @@ Those proposals do not establish accepted direction. Consult the [CLI-v2 archive
 
 The current replacement CLI deliberately restricts Extension installation to
 strict descendants of `.agents/`; `.apm/` and every other manager root are
-rejected. [Workspace Libraries](workspace-libraries.md) is the separate accepted
+rejected. [Workspace Libraries](../../archived/ideas/workspace-libraries.md) is the separate accepted
 first-release design for live projection into ordinary `.agents/**` paths. It
 does not add non-`.agents` destinations and does not change the Extension
 boundary. Permanent Task 25 preserves a later Library-specific destination
@@ -91,7 +91,7 @@ manager's meaning or ownership.
 
 ### Centralized Framework Content And Loader Bridges
 
-[Workspace Libraries](workspace-libraries.md) is the contextual candidate for
+[Workspace Libraries](../../archived/ideas/workspace-libraries.md) is the contextual candidate for
 projecting live shared files from one contained source root into ordinary
 `.agents/**` paths. It keeps one Framework Loader and treats projection as a
 lifecycle distinct from Extension installation. It is accepted contextual input

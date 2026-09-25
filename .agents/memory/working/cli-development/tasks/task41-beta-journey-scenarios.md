@@ -29,7 +29,7 @@ exited zero.
 
 ## Current Follow-Up
 
-The maintainer's 2026-09-19 request is being carried by [Task 49](../../extension-experience-review.md). Its [reviewed flow and scenario collection](../../../crystallized/documents/cli/experience/_experience.md) consolidates the supplied experience pack under the forgiving CLI direction. The older journey lists below remain prior backlog and provenance, not a second current specification. Validation of the new flow list precedes new test implementation.
+The maintainer's 2026-09-19 request is being carried by [Task 49](../../../archived/beta-preparation/extension-experience-review.md). Its [reviewed flow and scenario collection](../../../crystallized/documents/cli/experience/_experience.md) consolidates the supplied experience pack under the forgiving CLI direction. The older journey lists below remain prior backlog and provenance, not a second current specification. Validation of the new flow list precedes new test implementation.
 
 ## The scenarios
 
@@ -38,8 +38,8 @@ The maintainer's 2026-09-19 request is being carried by [Task 49](../../extensio
 On 2026-09-20 the maintainer said: “You may commit and start stage 5 after you
 tell me at each jurney entails in simple human words like, user installs then ...
 Then ... Expects ... Ty”. Astra explained F01–F26 as user actions and expected
-outcomes, then started Task45 S5.01. The [plain-language list](task45/journeys-in-plain-language.md)
-and [source-bound roster](task45/_task45.md) preserve that scope.
+outcomes, then started Task45 S5.01. The [plain-language list](../../../archived/cli-development/tasks/task45/journeys-in-plain-language.md)
+and [source-bound roster](../../../archived/cli-development/tasks/task45/_task45.md) preserve that scope.
 This opens preparation of the explained journeys; it does not automatically
 adopt every source-pack case or settle missing exact expectations. Deferred
 cases stay deferred. Executable packets must bind their exact cases, desired
@@ -52,7 +52,7 @@ The subsequent maintainer instruction is explicit: “All scenarios seem
 appropriate, we might need even more but we can devise them later on. So for
 now let's proceed with step 5 and 6. Ty”. It approves the current explained
 F01–F26 set and its selected linked scenarios/alternatives for execution and
-necessary behavior changes. [The approval manifest](task45/_task45.md)
+necessary behavior changes. [The approval manifest](../../../archived/cli-development/tasks/task45/_task45.md)
 binds exact flow source hashes and scenario IDs. Earlier stage6-withheld
 statements above are historical and superseded. Additional invented scenarios
 and previously deferred source-pack permutations remain outside this wave.
@@ -78,7 +78,7 @@ defects from taste.
 
 **Later: turn the survivors into end-to-end tests.** Once a scenario's expected
 behaviour is settled, it becomes reproducible. That is
-[Task 45](task45-end-to-end-observability.md), and it depends on this task
+[Task 45](../../../archived/cli-development/tasks/task45-end-to-end-observability.md), and it depends on this task
 having defined the scenarios first.
 
 The scenarios stay after the tests exist. They are the readable statement of

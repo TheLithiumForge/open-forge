@@ -8,7 +8,7 @@ open-forge:
 
 ## Task state
 
-[Task 50](task50-unified-remove.md) now implements this requirement through the
+[Task 50](../../../archived/cli-development/tasks/task50-unified-remove.md) now implements this requirement through the
 unified root command under the maintainer's 2026-09-23 authorization. Its current
 specification resolves the command shape, settings exclusions and explicit-file
 ownership release. The questions below retain their earlier investigation context.

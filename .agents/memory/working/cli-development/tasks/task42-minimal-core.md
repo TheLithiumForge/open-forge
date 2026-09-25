@@ -12,7 +12,7 @@ open-forge:
   priority, because it changes what a user receives on `install`.
 - Owner: Root.
 
-The 2026-09-21 [documentation packet](beta-follow-ups/task42-43-documentation.md) maps the seven extracted Memory roles to their current Extensions. The earlier decision record below is retained; do not repeat the payload move or infer that historical upgrade requirements are verified.
+The 2026-09-21 [documentation packet](../../../archived/cli-development/tasks/beta-follow-ups/task42-43-documentation.md) maps the seven extracted Memory roles to their current Extensions. The earlier decision record below is retained; do not repeat the payload move or infer that historical upgrade requirements are verified.
 
 ## The decision
 

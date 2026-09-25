@@ -214,7 +214,7 @@ API subsets and intra-assembly ownership. Transitive references and friend acces
 must be addressed deliberately; a project reference alone does not prove every
 layer rule. Exact visibility and callable seams are frozen before file moves.
 
-[Task 38](../../../working/cli-development/tasks/task38-project-and-test-split.md)
+[Task 38](../../../archived/cli-development/tasks/task38-project-and-test-split.md)
 owns the behavior-preserving migration and its execution gates. Its packet also
 records the still-conditional scenario continuation. No unreviewed scenario or
 new filesystem abstraction is accepted merely by accepting this project graph.

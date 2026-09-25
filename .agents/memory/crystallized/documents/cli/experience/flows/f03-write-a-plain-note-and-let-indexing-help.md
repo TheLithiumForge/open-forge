@@ -8,7 +8,7 @@ open-forge:
 
 **Who:** A maintainer who creates Markdown directly and forgot the metadata convention.
 
-**Execution:** See the separate [run record](../../../../../working/cli-experience-run.md). Inclusion records a reviewed user outcome, not a passing implementation.
+**Execution:** See the separate [run record](../../../../../archived/beta-preparation/cli-experience-run.md). Inclusion records a reviewed user outcome, not a passing implementation.
 
 ## Review adjustment
 

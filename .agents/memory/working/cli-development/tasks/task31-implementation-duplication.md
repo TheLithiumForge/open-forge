@@ -19,7 +19,7 @@ open-forge:
   [inventory](task31/phase-structure-inventory.md) dispositions all 294 current
   one-file Core folders as 289 Keep, 3 Collapse and 2 Needs a decision, and
   finds one genuine oversized-file seam in `CleanupResultFacts.cs`.
-  [M1's closeout](task31/08-m1-enumerated-extractions.md) extracted three groups,
+  [M1's closeout](../../../archived/cli-development/tasks/task31/08-m1-enumerated-extractions.md) extracted three groups,
   conditionally retired the Library validator group, preserved human/wire
   vocabulary separation and deferred Library finding abstraction. Its four
   convention checks and 24-output zero-diff characterization passed.
@@ -38,8 +38,8 @@ constants sit with the scope that owns them.
 | ------------------------- | --------------------------------------------------------------------- | ---------------------------------------------- |
 | M1 — family-level methods | Complete for accepted enumeration; excluded contracts remain separate | [Phase 3.5](task31/phase-3-5.md)               |
 | M2 — cross-family methods | Complete; behavior-preserving                                         | [Phase 3.5](task31/phase-3-5.md)               |
-| M3 — one text escaper     | Complete in Task 30 G4's rendering-system work; behavior-changing       | [Escaper boundary](task31/phase-escaper.md)    |
-| M4 — constant placement   | Complete; behavior-preserving                                         | [Constant rule](task31/phase-constants.md)     |
+| M3 — one text escaper     | Complete in Task 30 G4's rendering-system work; behavior-changing       | [Escaper boundary](../../../archived/cli-development/tasks/task31/phase-escaper.md)    |
+| M4 — constant placement   | Complete; behavior-preserving                                         | [Constant rule](../../../archived/cli-development/tasks/task31/phase-constants.md)     |
 | M5 — structure cleanup    | Inventory recorded; application not started                           | [Structure cleanup](task31/phase-structure.md) |
 
 ## Actionable boundaries

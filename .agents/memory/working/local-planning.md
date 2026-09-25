@@ -183,7 +183,7 @@ meaning rather than byte-for-byte preservation: accepted requirements,
 conditions, exceptions, limits, rationale, provenance, and unresolved risk must
 not be lost merely because the record is split or transformed. Determine which
 detail may be safely removed and what evidence proves that extraction was
-complete. Use the [CLI authority audit](../emerging/analysis/2026-09-02_cli-architecture-authority-audit.md)
+complete. Use the [CLI authority audit](../archived/cli-development/analysis/2026-09-02_cli-architecture-authority-audit.md)
 as prior analysis; no active archival review task existed.
 
 ### 4. Authors-Findings Retention Rule

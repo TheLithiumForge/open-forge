@@ -6,8 +6,8 @@ open-forge:
 
 # CLI Development
 
-This route records the selected Task 38 migration and retained Task 30/31 state,
-with other open tasks available on demand. Completed CLI work, old plans,
+This route records the current selection, open Task state, and the Tasks
+recorded for 1.0 polish, with other open tasks available on demand. Completed CLI work, old plans,
 handoffs and coordination history live in
 [Archived CLI Development](../../archived/cli-development/_cli-development.md).
 
@@ -36,8 +36,6 @@ Emerging analyses are not rewritten into a second execution plan.
 
 ## Entries
 
-- [Jumpstart for a fresh chat taking over beta preparation, with the state, the order, the traps that defeated earlier agents, and the decisions still open](BETA-HANDOVER.md) - #Memory #Working #CLI #Handover #Beta #KeepInMind #Contextual #Active
-- [Current migration selection and retained Task 30/31 sequence](plan.md) - #LoadNow #Memory #Working #CLI #Plan #Contextual #Active
+- [Current selection and order of open work after the public beta](plan.md) - #LoadNow #Memory #Working #CLI #Plan #Contextual #Active
 - [Current CLI task selection and retained task ownership](project-control.md) - #LoadNow #Memory #Working #CLI #Task #Contextual #Active
 - [Open CLI tasks, the selected migration and on-demand follow-ups](tasks/_tasks.md) - #Memory #Working #CLI #Task #Contextual #Active
-- [Accepted project migration, Sol-led Luna swarm batches and shared-worktree handover](tasks/task38/_task38.md) - #Memory #Working #CLI #Plan #Contextual #Active

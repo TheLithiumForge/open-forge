@@ -18,7 +18,7 @@ This contract defines the root interface and persistent removal meaning. Existin
 [`extension remove`](../extension/remove/_remove.md) and
 [`library detach`](../library/detach/_detach.md) remain available and use the same
 removal settings. Their target-specific behavior still applies where this contract
-does not extend it. [Task 50](../../../../../working/cli-development/tasks/task50-unified-remove.md)
+does not extend it. [Task 50](../../../../../archived/cli-development/tasks/task50-unified-remove.md)
 records implementation and verification state.
 
 ## Syntax

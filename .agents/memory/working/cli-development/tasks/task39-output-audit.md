@@ -12,7 +12,7 @@ open-forge:
   maintainer on 2026-09-16.
 - Owner: Root.
 
-The 2026-09-21 [error packet](beta-follow-ups/task39-errors.md) records the current caller inventory, reproduced manifest-subject loss and proposed worker boundaries. Historical counts below are dated evidence, not a current defect count. E1 and E2 passed focused and complete managed/native gates under the [execution record](beta-follow-ups/execution.md). The wider command-family audit remains open.
+The 2026-09-21 [error packet](beta-follow-ups/task39-errors.md) records the current caller inventory, reproduced manifest-subject loss and proposed worker boundaries. Historical counts below are dated evidence, not a current defect count. E1 and E2 passed focused and complete managed/native gates under the [execution record](../../../archived/cli-development/tasks/beta-follow-ups/execution.md). The wider command-family audit remains open.
 
 - Trigger: the maintainer read a before/after from the cause-bounding work and
   observed that the new message names no path — _"what purpose does an error

@@ -8,7 +8,7 @@ open-forge:
 
 ## Status
 
-This is an unaccepted design proposal for the [G4 view layer](phase-4b-g4.md).
+This is an unaccepted design proposal for the [G4 view layer](../../../../archived/cli-development/tasks/task30/phase-4b-g4.md).
 Nothing in it is approved. It changes no renderer, escaper, contract, test or
 document. "Approved" below means the maintainer has said so explicitly.
 
@@ -40,9 +40,9 @@ Evidence boundary:
 
 ## Sources used
 
-- Task records: [G4](phase-4b-g4.md), [second-gate review](review-second-gate-pre-g4.md),
-  [G1](phase-4a-g1.md), [structural follow-up](phase-4a-structural.md),
-  [Task 31 M3](../task31/phase-escaper.md), [phase 7 scenarios](phase-7-scenarios.md).
+- Task records: [G4](../../../../archived/cli-development/tasks/task30/phase-4b-g4.md), [second-gate review](../../../../archived/cli-development/tasks/task30/review-second-gate-pre-g4.md),
+  [G1](../../../../archived/cli-development/tasks/task30/phase-4a-g1.md), [structural follow-up](phase-4a-structural.md),
+  [Task 31 M3](../../../../archived/cli-development/tasks/task31/phase-escaper.md), [phase 7 scenarios](phase-7-scenarios.md).
 - Contracts: [shared operation contract](../../../../crystallized/documents/cli/shared-operation-contract.md),
   [result coordinates](../../../../crystallized/documents/cli/contracts/shared/result-coordinates/interface.md),
   [global flags](../../../../crystallized/documents/cli/contracts/shared/global-flags/interface.md),

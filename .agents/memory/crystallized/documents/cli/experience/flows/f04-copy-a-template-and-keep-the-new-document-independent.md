@@ -8,7 +8,7 @@ open-forge:
 
 **Who:** A maintainer starting a reusable scenario or project note.
 
-**Execution:** See the separate [run record](../../../../../working/cli-experience-run.md). Inclusion records a reviewed user outcome, not a passing implementation.
+**Execution:** See the separate [run record](../../../../../archived/beta-preparation/cli-experience-run.md). Inclusion records a reviewed user outcome, not a passing implementation.
 
 ## Starting point
 

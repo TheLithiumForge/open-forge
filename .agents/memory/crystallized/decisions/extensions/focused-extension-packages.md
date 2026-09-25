@@ -22,7 +22,7 @@ Project documentation, Memory starters, planning, development, and coordinated d
 
 These are distribution boundaries. The [Extension architecture](../../documents/extensions/architecture.md) continues to define composition; installed routes and native consumers define meaning. No new Framework category, mandatory record collection, fixed agent hierarchy, or APM dependency follows from this split.
 
-The Experience Design Skill and its three references are removed from the shipped catalogue and the matching repository copies. Its general review reminders did not have demonstrated added value sufficient to justify continued first-party distribution. The [assessment](../../../emerging/analysis/framework-review/experience-design-value.md) records that reasoning and its limits. This is not a measured finding that every agent already covers those concerns, or a rejection of prose Skills. A future focused capability can be proposed when actual work establishes a useful gap.
+The Experience Design Skill and its three references are removed from the shipped catalogue and the matching repository copies. Its general review reminders did not have demonstrated added value sufficient to justify continued first-party distribution. The [assessment](../../../archived/framework-review/analysis/experience-design-value.md) records that reasoning and its limits. This is not a measured finding that every agent already covers those concerns, or a rejection of prose Skills. A future focused capability can be proposed when actual work establishes a useful gap.
 
 ## Delivery Boundary
 

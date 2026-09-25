@@ -157,7 +157,7 @@ touches the user profile. Phase D then qualified for all six suites, and
 unconditionally — there is no longer a per-suite choice.
 
 Evidence, from
-[40 verification](../task30-g4/40-verification.md): managed unit 3,179/0/0,
+[40 verification](../../../../archived/cli-development/tasks/task30-g4/40-verification.md): managed unit 3,179/0/0,
 integration 2,219 total/0 failed/17 skipped, end-to-end 163/0/0; and the Native
 AOT gate green with native integration 2,219/0/17 and native end-to-end 163/0/0,
 identical to managed. Full end-to-end runs in about 2 minutes parallel against

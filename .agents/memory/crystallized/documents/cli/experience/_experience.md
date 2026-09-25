@@ -22,7 +22,7 @@ Write expectations before observing a run. Check actual state independently of t
 
 Adapted from the maintainer-supplied Open Forge experience v2 pack: 24 flows and 438 scenario cases. Its own README states that all cases were unrun proposals. This repository's assessment replaces any blanket adoption of that pack. Stable source IDs remain available for traceability.
 
-Actual observations belong to the separate [2026-09-19 run record](../../../../working/cli-experience-run.md). That record does not redefine expected behavior.
+Actual observations belong to the separate [2026-09-19 run record](../../../../archived/beta-preparation/cli-experience-run.md). That record does not redefine expected behavior.
 
 ## Entries
 

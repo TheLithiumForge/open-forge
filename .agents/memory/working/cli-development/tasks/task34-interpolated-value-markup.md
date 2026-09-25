@@ -143,7 +143,7 @@ marker rather than assuming it does.
   marker, in text and in JSON alike.
 - The rule is recorded as a **standing authoring rule** where future work will
   meet it — the shared presentation rules in
-  [00 — conventions](task30-g4/00-conventions.md) and the relevant Directive —
+  [00 — conventions](../../../archived/cli-development/tasks/task30-g4/00-conventions.md) and the relevant Directive —
   so new messages follow it without being told.
 - Every affected catalogue `message` column matches what is rendered.
 - All four gates green.

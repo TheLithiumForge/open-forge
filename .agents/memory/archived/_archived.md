@@ -23,6 +23,7 @@ Archived Memory keeps useful history without making it current authority.
 ## Entries
 
 - [Superseded pre-reset Open Forge architecture preserved for historical context](architecture_old.md) - #Memory #Archived #Contextual #Historical #Architecture #Framework
+- [Beta preparation reviews, audits, and applied proposals retained after the public beta release](beta-preparation/_beta-preparation.md) - #Memory #Archived #Contextual #Historical #Beta
 - [Historical CLI working state, completed Tasks, plans, handoffs, and coordination retained outside the active route](cli-development/_cli-development.md) - #Memory #Archived #Contextual #Historical #CLI #Task
 - [Historical CLI release audits, migration, and review material kept outside current program authority](cli-release/_cli-release.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Review
 - [Historical CLI-v2 designs, decisions, governance, plans, and implementation records kept only as raw input for the new CLI](cli-v2/_cli-v2.md) - #Memory #Archived #Contextual #Historical #CLI #CLIv2 #RawData

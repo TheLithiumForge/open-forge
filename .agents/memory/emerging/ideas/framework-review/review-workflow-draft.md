@@ -8,7 +8,7 @@ open-forge:
 
 This candidate was retained at the user's request for later refinement. Parts of the idea have since informed the shipped Review Workflow. This exact draft remains proposed content and does not define the installed method. Extension refinement is deferred; [Task 28](../../../archived/cli-development/tasks/source-framework-review.md) records the accepted boundary.
 
-The [evidence assessment](../../analysis/framework-review/e01-dogfood-evidence.md) preserves its motivation and limits. The [original patch](review-workflow-proposal.diff) is supporting draft text.
+The [evidence assessment](../../../archived/framework-review/analysis/e01-dogfood-evidence.md) preserves its motivation and limits. The [original patch](review-workflow-proposal.diff) is supporting draft text.
 
 ## Candidate File
 

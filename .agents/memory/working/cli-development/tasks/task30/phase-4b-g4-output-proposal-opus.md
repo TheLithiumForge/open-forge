@@ -9,7 +9,7 @@ open-forge:
 ## Status
 
 **Nothing here is accepted.** This is the design packet the
-[G4 subtask](phase-4b-g4.md) asks for, written so the maintainer can approve or
+[G4 subtask](../../../../archived/cli-development/tasks/task30/phase-4b-g4.md) asks for, written so the maintainer can approve or
 reject each rule and transcript individually. No production file, contract, or
 test was changed while writing it. `doctor` was not run.
 
@@ -30,14 +30,14 @@ Loader and its `#LoadNow` Directives; the
 [global flags](../../../../crystallized/documents/cli/contracts/shared/global-flags/interface.md)
 and [result coordinates](../../../../crystallized/documents/cli/contracts/shared/result-coordinates/interface.md)
 contracts; the [Doctor interface contract](../../../../crystallized/documents/cli/contracts/doctor/interface.md);
-the [G4 subtask](phase-4b-g4.md), [second-gate review](review-second-gate-pre-g4.md)
-and [Task 31 M3](../task31/phase-escaper.md); the shell presentation layer; every
+the [G4 subtask](../../../../archived/cli-development/tasks/task30/phase-4b-g4.md), [second-gate review](../../../../archived/cli-development/tasks/task30/review-second-gate-pre-g4.md)
+and [Task 31 M3](../../../../archived/cli-development/tasks/task31/phase-escaper.md); the shell presentation layer; every
 human renderer named below; the eight escapers; and the committed output
 snapshots.
 
 Three Emerging records already settled the shape of the presentation surface, and
 this proposal restates rather than reinvents it. Their obsolete premises listed in
-[G4 preparation](phase-4b-g4.md#preparation-reconciliation) are not reused.
+[G4 preparation](../../../../archived/cli-development/tasks/task30/phase-4b-g4.md#preparation-reconciliation) are not reused.
 
 | Source                                                                                                                                   | What it already established                                                                                                       |
 | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -196,7 +196,7 @@ string containing a tab, a quote, a backslash, an emoji, and a lone surrogate:
 That is JSON string syntax printed to a terminal. The user sees `\"` where the
 file contains `"`.
 
-This is [Task 31 M3](../task31/phase-escaper.md). Eight escapers exist and give
+This is [Task 31 M3](../../../../archived/cli-development/tasks/task31/phase-escaper.md). Eight escapers exist and give
 five different answers:
 
 | Owner                                                                      | Behavior                                                          |

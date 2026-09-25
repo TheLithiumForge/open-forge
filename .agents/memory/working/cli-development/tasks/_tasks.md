@@ -6,16 +6,10 @@ open-forge:
 
 # Open CLI Tasks
 
-The current selection is a [lossless source wording proposal](../../src-wording-proposal.md),
-whose eight replacements are now applied under maintainer authorization. The [default Skill indexing follow-up](task47-default-skill-indexing.md)
-is recorded for later specification. The approved beta corrections are complete
-and squash-integrated into `develop`; their [execution record](beta-follow-ups/execution.md)
-retains the evidence. Task 38 is complete; its
-[migration packet](task38/_task38.md) owns the accepted structural sequence;
-structural stages 0–4 and G5 are accepted. The maintainer approved F01–F26
-for stages 5–6; Task45 now owns [accepted G6 evidence](task45/_task45.md) and the [flow report](task45/g6-flow-report.md).
-The other open tasks remain available on demand. Completed and superseded
-Task records are preserved under
+The current selection is 1.0 polish, listed below. Open and unstarted Tasks stay
+here. Completed Tasks and their packets moved to Archived Memory on
+2026-09-25, as listed under [Archived on 2026-09-25](#archived-on-2026-09-25).
+Older completed and superseded records are preserved under
 [Archived CLI Development](../../../archived/cli-development/_cli-development.md).
 
 Read the parent Task before a phase subtask. A subtask carries actionable
@@ -57,7 +51,7 @@ selection above does not cancel these goals.
 
 **Beta safety net — approved journeys implemented; coverage follow-ups remain**
 
-9. [45 End-to-end observability](task45-end-to-end-observability.md)
+9. [45 End-to-end observability](../../../archived/cli-development/tasks/task45-end-to-end-observability.md)
 10. [40 Capture coverage](task40-capture-coverage.md)
 
 Neither changes what a user sees. Both decide whether we would find out when it
@@ -69,7 +63,7 @@ breaks, which is why they sit above the architecture work rather than with it.
     the Core reduction left every nested managed route inside an Extension, and
     the scaffold cannot see them. Carries the route-init coverage that had to be
     dropped.
-12. [38 Project and test split](task38-project-and-test-split.md)
+12. [38 Project and test split](../../../archived/cli-development/tasks/task38-project-and-test-split.md)
 13. [31 Implementation duplication](task31-implementation-duplication.md)
 14. [33 Managed content removal](task33-managed-content-removal.md)
 15. [35 Removal and suppression model](task35-removal-and-suppression-model.md)
@@ -93,22 +87,24 @@ documentation site for implementation and asked for the others as tasks.
    An investigation into roots such as `.apm`. Decide it before 1.0 fixes the
    layout, because a root change breaks installed workspaces.
 
+## Archived on 2026-09-25
+
+These completed records moved to [Archived CLI Tasks](../../../archived/cli-development/tasks/_tasks.md).
+Their links from open Tasks now point there.
+
+- [Task 38, Project and Test Split](../../../archived/cli-development/tasks/task38-project-and-test-split.md), with its [migration packet](../../../archived/cli-development/tasks/task38/_task38.md)
+- [Task 45, End-to-end observability](../../../archived/cli-development/tasks/task45-end-to-end-observability.md), with its [G6 evidence](../../../archived/cli-development/tasks/task45/_task45.md)
+- [Task 50, Unified Remove](../../../archived/cli-development/tasks/task50-unified-remove.md)
+- The completed [Task 30 G1, B1, and G4 packets](../../../archived/cli-development/tasks/task30/_task30.md) and the [G4 execution packet](../../../archived/cli-development/tasks/task30-g4/_task30-g4.md)
+- The completed [Task 31 M1, M3, and M4 subtasks](../../../archived/cli-development/tasks/task31/_task31.md)
+- The completed [beta correction execution record](../../../archived/cli-development/tasks/beta-follow-ups/_beta-follow-ups.md)
+
 ## Entries
 
-- [Completed root remove command and persistent removal intent across files, routes, packages and libraries](task50-unified-remove.md) - #Memory #Working #CLI #Task #Remove #Complete
-
-- [Default Index reachability through native Skills and their routed resource catalogues](task47-default-skill-indexing.md) - #Memory #Working #CLI #Task #Skill #Index #Contextual
-
-- [Task 52 Docusaurus documentation site with getting started, concepts, a file-by-file Extension reference, and GitHub Pages publication](task52-documentation-site.md) - #Memory #Working #Task #Documentation #Site #Docusaurus #Contextual #Active
-- [Open Task 53 to audit every LoadNow and KeepInMind entry and the default scoping before 1.0, so startup context holds only what omission would cost more than reading](task53-loading-and-scoping-audit.md) - #Memory #Working #Task #Framework #Loading #Scope #Release #Contextual #Active
-- [Open Task 54 to trim tags that add no selection, search, or loading value before 1.0, in shipped files first and then in this workspace](task54-tag-trimming.md) - #Memory #Working #Task #Framework #Tags #Release #Contextual #Active
-- [Open Task 55 to investigate running Open Forge under another root such as .apm, so users can also use APM frontmatter, packaging, and compilation](task55-alternative-root.md) - #Memory #Working #Task #Framework #Root #APM #Investigation #Release #Contextual #Active
-
-- [Remaining beta product work and delivery verification after the completed migration](beta-follow-ups.md) - #Memory #Working #Backlog #CLI #Beta #Contextual
-- [Specifications for actionable errors, stale documentation and Skill-resource navigation](beta-follow-ups/_beta-follow-ups.md) - #Memory #Working #Plan #CLI #Contextual
+- [Remaining beta product work and delivery verification after the CLI migration](beta-follow-ups.md) - #Memory #Working #Backlog #CLI #Beta #Contextual
+- [Specifications for actionable errors, stale Core documentation and Skill navigation follow-ups](beta-follow-ups/_beta-follow-ups.md) - #Memory #Working #Plan #CLI #Contextual
 - [Candidate follow-up tasks distilled from the reviewed CLI analyses; not active execution authority](potential/_potential.md) - #Memory #Working #CLI #Task #Potential #Contextual
 - [Open Task 30 for CLI experience remediation, with actionable phase state and evidence carried from Emerging Analysis](task30-cli-experience-remediation.md) - #Memory #Working #CLI #Task #Remediation #Contextual #Active
-- [Task 30 G4 execution packet for the CLI output revamp, with the accepted decisions, the shared rules, the command matrix, the lane order, and one subtask per foundation and per command](task30-g4/_task30-g4.md) - #Memory #Working #CLI #Task #Plan #G4 #Presentation #Contextual #Active
 - [Task 30 phase subtasks carrying actionable evidence from the Emerging CLI analyses](task30/_task30.md) - #Memory #Working #CLI #Task #Subtask #Contextual #Active
 - [Open Task 31 for removing duplicated CLI implementation while preserving command-local contracts](task31-implementation-duplication.md) - #Memory #Working #CLI #Task #Duplication #Refactoring #Contextual #Active
 - [Task 31 phase subtasks carrying duplication measurements, refactoring boundaries, and acceptance evidence](task31/_task31.md) - #Memory #Working #CLI #Task #Subtask #Contextual #Active
@@ -118,15 +114,17 @@ documentation site for implementation and asked for the others as tasks.
 - [Open Task 35 to explore a unified removal and suppression model across Routes, Extensions and Libraries, pinning current behaviour with characterization tests before any design is chosen](task35-removal-and-suppression-model.md) - #Memory #Working #CLI #Task #Exploration #Removal #Ownership #Lifecycle #Contextual #Active
 - [Open Task 36 to design partial file merging by Extensions and to replace the comment guards in authored Markdown with a boundary an agent still reads as an instruction](task36-extension-merge-and-guards.md) - #Memory #Working #CLI #Task #Extensions #Markers #Authoring #Contextual #Active
 - [Open Task 37 to compare every shipped CLI sentence against the unaccepted G4 output proposals and adopt, merge or reject each on its merits](task37-wording-review-against-proposals.md) - #Memory #Working #CLI #Task #Wording #Review #Contextual #Active
-- [Task 38 outcome for four libraries, observable test boundaries and typed output text](task38-project-and-test-split.md) - #Memory #Working #CLI #Task #Architecture #Projects #Testing #Contextual #Active
-- [Task 38 step plans, Sol-led Luna swarm batches and shared-worktree handover](task38/_task38.md) - #Memory #Working #CLI #Plan #Contextual #Active
 - [Open Task 39 to audit every CLI output for actionability, confirm the G4 conversion actually improved each command, and find remaining legacy and evidence gaps](task39-output-audit.md) - #Memory #Working #CLI #Task #Output #Audit #Regression #Contextual #Active
 - [Open Task 40 to close the gap between the accepted finding vocabulary and the situations any capture actually exercises, so the output invariants guard more than a quarter of what the CLI can print](task40-capture-coverage.md) - #Memory #Working #CLI #Task #Capture #Coverage #Evidence #Contextual #Active
 - [Open Task 41 to define the user journeys a beta must survive, run them by hand or by agent, and turn the findings into the polish list before release](task41-beta-journey-scenarios.md) - #Memory #Working #CLI #Task #Scenario #Beta #Release #Contextual #Active
 - [Open Task 42 to shrink the installed core to what every workspace needs, moving deeper routes into Extensions a user opts into](task42-minimal-core.md) - #Memory #Working #CLI #Task #Core #Extensions #Routing #Beta #Contextual #Active
 - [Open Task 43 to narrow Workflows and express them through the skill mechanism, so they stop overlapping with Skills and can be selected when they become relevant](task43-workflows-as-skill.md) - #Memory #Working #CLI #Task #Workflows #Skills #Framework #Beta #Contextual #Active
 - [Open Task 44 to fix what the installed templates and core files say, since they are the first Open Forge prose a beta user reads](task44-template-content.md) - #Memory #Working #CLI #Task #Templates #Wording #Beta #Contextual #Active
-- [Open Task 45 to make the end-to-end suite legible about what it covers, then turn the settled beta journey scenarios into reproducible tests](task45-end-to-end-observability.md) - #Memory #Working #CLI #Task #Testing #Observability #EndToEnd #Contextual #Complete
 - [Open Task 46 to let a native Skill's resources be used as routes and to read route metadata from the native SKILL.md frontmatter instead of demanding an Open Forge block](task46-routed-skill-resources.md) - #Memory #Working #CLI #Task #Skills #Routing #Metadata #Beta #Contextual #Active
+- [Task 47 follow-up to make default Index reach routed resources through native Skills](task47-default-skill-indexing.md) - #Memory #Working #CLI #Task #Skill #Index #Contextual
 - [Open Task 47 to make index and route navigation reach every recognized entrypoint form from the loader, so a catalogue does not need to be named by hand to stay current](task47-entrypoint-reachability.md) - #Memory #Working #CLI #Task #Routing #Navigation #Index #Beta #Contextual #Active
 - [Open Task 48 to extend Framework route scaffolding and scope insertion to routes an Extension created, so scoping is a property of the routing model rather than of whatever Core happens to ship](task48-scoping-for-extension-routes.md) - #Memory #Working #CLI #Task #Routing #Scopes #Extensions #RouteInit #Contextual #Active
+- [Task 52 Docusaurus documentation site with getting started, concepts, a file-by-file Extension reference, and GitHub Pages publication](task52-documentation-site.md) - #Memory #Working #Task #Documentation #Site #Docusaurus #Contextual #Active
+- [Open Task 53 to audit every LoadNow and KeepInMind entry and the default scoping before 1.0, so startup context holds only what omission would cost more than reading](task53-loading-and-scoping-audit.md) - #Memory #Working #Task #Framework #Loading #Scope #Release #Contextual #Active
+- [Open Task 54 to trim tags that add no selection, search, or loading value before 1.0, in shipped files first and then in this workspace](task54-tag-trimming.md) - #Memory #Working #Task #Framework #Tags #Release #Contextual #Active
+- [Open Task 55 to investigate running Open Forge under another root such as .apm, so users can also use APM frontmatter, packaging, and compilation](task55-alternative-root.md) - #Memory #Working #Task #Framework #Root #APM #Investigation #Release #Contextual #Active

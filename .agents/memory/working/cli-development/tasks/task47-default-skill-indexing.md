@@ -17,7 +17,7 @@ that Skill without requiring the user to name the catalogue manually.
 This selects a future capability for specification. The present instruction is
 to record the task, not implement it. The exact traversal and write contract
 must be settled before mutation or new scenario expectations are approved.
-The current work is the separate [lossless wording proposal](../../src-wording-proposal.md).
+The current work is the separate [lossless wording proposal](../../../archived/beta-preparation/src-wording-proposal.md).
 
 ## Current evidence
 

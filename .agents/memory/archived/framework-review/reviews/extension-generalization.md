@@ -35,6 +35,6 @@ Static verification checks exact source application, package dependency closures
 
 Existing source tags, the base Framework, package manifests, and the Experience Design Skill are unchanged. No CLI implementation, contracts, tests, build, execution, package installation, or runtime qualification is included. Package redistribution and the Skill removal decision remain separate from these completed content improvements.
 
-[Task 28](../../cli-development/tasks/source-framework-review.md) defines current progress. The [package proposal](../../../emerging/analysis/framework-review/extension-package-proposal.md) and [Experience Design assessment](../../../emerging/analysis/framework-review/experience-design-value.md) remain candidate distribution analysis.
+[Task 28](../../cli-development/tasks/source-framework-review.md) defines current progress. The [package proposal](../analysis/extension-package-proposal.md) and [Experience Design assessment](../analysis/experience-design-value.md) remain candidate distribution analysis.
 
 This record describes the content pass before redistribution. Its Planning Templates link follows their current source location; the later [split review](extension-package-split.md) records package moves and Skill removal.

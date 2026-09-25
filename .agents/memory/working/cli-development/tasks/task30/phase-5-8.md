@@ -16,7 +16,7 @@ things it pointed at have since been done or given their own owners.
 
 | Its phase | Where it went |
 | --- | --- |
-| **5** — interaction, help and error paths | Delivered by G4's [04 interaction system](../task30-g4/04-interaction-system.md) and the accepted C1–C18 decisions. Its error-path half continues in [phase 5-D](phase-5-diagnosis-and-interoperability.md). |
+| **5** — interaction, help and error paths | Delivered by G4's [04 interaction system](../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md) and the accepted C1–C18 decisions. Its error-path half continues in [phase 5-D](phase-5-diagnosis-and-interoperability.md). |
 | **6** — content and taxonomy ownership | **Still open. The only distinct remainder.** |
 | **7** — scenario coverage | Owned by [phase 7 scenarios](phase-7-scenarios.md), now specified. |
 | **7/8** — test project architecture and parallel execution | [Complete](phase-7-8-test-architecture.md). |
@@ -40,7 +40,7 @@ manufacture a restructure to justify its own existence.
 
 Note the overlap: [Task 37](../task37-wording-review-against-proposals.md) owns
 sentence-level wording decisions, and G4's
-[41 documentation propagation](../task30-g4/41-documentation-propagation.md)
+[41 documentation propagation](../../../../archived/cli-development/tasks/task30-g4/41-documentation-propagation.md)
 already propagated the accepted changes across 120 files. Phase 6 owns only the
 question of who owns what, not the wording itself.
 

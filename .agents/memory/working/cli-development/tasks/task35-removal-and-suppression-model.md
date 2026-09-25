@@ -9,7 +9,7 @@ open-forge:
 ## Task state
 
 The maintainer explicitly authorized specification and implementation of the
-unified command on 2026-09-23. [Task 50](task50-unified-remove.md) carries that
+unified command on 2026-09-23. [Task 50](../../../archived/cli-development/tasks/task50-unified-remove.md) carries that
 decision and delivery. The open questions below are retained investigation
 context, not a competing current implementation plan.
 
@@ -72,7 +72,7 @@ The moment a suppression model exists, that situation splits in two:
 So this Task may revise that ruling. That is expected, and is not a reversal of
 a mistake: it is the same situation becoming distinguishable for the first time.
 Whoever picks this up should read
-[36 — library sync](task30-g4/36-library-sync.md) divergences 1, 6 and 7 first.
+[36 — library sync](../../../archived/cli-development/tasks/task30-g4/36-library-sync.md) divergences 1, 6 and 7 first.
 
 ## Step 1 — pin the current behaviour with tests
 

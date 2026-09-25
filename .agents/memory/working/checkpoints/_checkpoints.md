@@ -30,4 +30,4 @@ A Checkpoint records the current state, current step, and next steps for one act
 
 ## Entries
 
-- [Current resumption state for the two open replacement-CLI Tasks](cli-development.md) - #Memory #Working #Checkpoint #Active #KeepInMind #CLI #Contextual
+- none - No entries - #Empty

@@ -115,7 +115,7 @@ integrated producer baseline.
 ## Expected Outcome
 
 Apply all twelve accepted `T9-ARCH-*` findings from the
-[CLI Architecture Authority Audit](../../../emerging/analysis/2026-09-02_cli-architecture-authority-audit.md).
+[CLI Architecture Authority Audit](../analysis/2026-09-02_cli-architecture-authority-audit.md).
 The resulting Architecture contains cross-cutting system structure and
 invariants. Decisions preserve accepted rationale. Shared and command contracts
 own observable meaning. Technical designs own exact realization. Delivery,
