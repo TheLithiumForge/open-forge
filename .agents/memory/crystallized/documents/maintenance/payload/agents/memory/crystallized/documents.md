@@ -21,6 +21,8 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 - A routed destination still defines its own detail. The containing document does not become a competing copy
 - Copy-ready creation sources belong in [Templates](../../../../../framework/primitives/templates.md), while Documents retain accepted current content
 - Existing current documents are reshaped when accepted meaning changes instead of accumulating parallel current views
+- Documents are arranged top-down: top-level Documents give the overview and summarize the narrower Documents they link to, and each narrower Document explains its own part and links back up
+- A change to a narrower Document also updates the summaries above it that no longer match. This top-down arrangement is the Extension's convention, not a Core requirement: Core only requires that detail live in the narrowest defining source and that accepted changes reach it
 
 ## Verification
 

@@ -8,7 +8,8 @@
     "build": "docusaurus build",
     "serve": "docusaurus serve",
     "clear": "docusaurus clear",
-    "typecheck": "tsc --project tsconfig.json"
+    "typecheck": "tsc --project tsconfig.json",
+    "diagram": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/framework-map/build.ts"
   },
   "engines": {
     "node": ">=22.18.0"

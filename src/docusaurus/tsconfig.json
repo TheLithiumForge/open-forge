@@ -17,8 +17,9 @@
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "verbatimModuleSyntax": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["docusaurus.config.ts", "sidebars.ts", "sidebars-guides.ts", "src"],
+  "include": ["docusaurus.config.ts", "sidebars.ts", "sidebars-guides.ts", "src", "scripts"],
   "exclude": [".docusaurus", "build", "node_modules"]
 }

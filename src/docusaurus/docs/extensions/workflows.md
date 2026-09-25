@@ -10,7 +10,13 @@ Find and follow installed workflows, or write your own. This package supplies th
 - **Package ID:** `workflows`
 - **Depends on:** Nothing
 - **Needed by:** [Planning](planning.md), [Project Documents](project-documents.md), [Development](development.md), and through them [Task Coordination](orchestration.md)
-- **Loads at startup:** Nothing. The Skill is discovered by your harness, and recipes load when selected.
+- **Loads at startup:** Only the Skill's one-line entry, through the Skills list. Your harness discovers the Skill itself, and recipes load when selected.
+
+## Why it exists
+
+Repeatable methods, such as reviewing or debugging, are useful, but they aren't rules and most tasks don't need them. Making them a Core category would put them in front of every task and blur them with Skills.
+
+So they live behind one native Skill, `use-workflow`, and a catalogue. Your harness finds the Skill when a method is actually wanted, and the agent opens only the recipe that fits. Other packages add their recipes to the same catalogue, so there's one way in instead of one per package.
 
 ## What it installs
 

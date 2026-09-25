@@ -11,6 +11,12 @@ Describe the experience you want people to have, then keep an honest record of w
 - **Depends on:** Nothing
 - **Loads at startup:** Nothing. Templates are on demand.
 
+## Why it exists
+
+Writing down what should happen before anyone tries it is the cheapest way to notice what went wrong, whether you're designing an experience or checking a build. Keeping expected and observed results in separate records stops a run from quietly rewriting the requirement.
+
+These starters used to ship with Planning. They moved into their own package so experience design and verification can use them without a planning method. The [demos](../demos/index.md) use the same idea for their checks.
+
 ## What it installs
 
 ```text

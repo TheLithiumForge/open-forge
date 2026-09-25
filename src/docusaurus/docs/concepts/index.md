@@ -3,9 +3,13 @@ title: Concepts
 description: How Open Forge works, from the idea behind it to the files that carry it.
 ---
 
+import FrameworkMap from "@site/src/components/framework-map/FrameworkMap";
+
 # Concepts
 
 Open Forge is built on one idea: give agents a map of the workspace, not the whole workspace. Everything else follows from making that map cheap to read and easy to grow.
+
+<FrameworkMap />
 
 ## Adaptive Context Engineering
 
@@ -42,7 +46,7 @@ AI made code cheap to write, and review became the bottleneck. The framework you
 
 It's small on purpose too. Big predefined methodologies assume everyone works the same way, and nobody does. Open Forge gives you a handful of rules and a structure that scales, then leaves the rest to you.
 
-:::info The files are the source of truth
+:::info[The files are the source of truth]
 
 This site helps you get acquainted. The rules an agent follows live in the installed files themselves, starting with [`loader.md`](../../../open-forge/.agents/loader.md). When this site and your installed files disagree, the files win.
 

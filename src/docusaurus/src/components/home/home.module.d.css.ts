@@ -11,11 +11,16 @@ interface HomeStyles {
   readonly hero: string;
   readonly heroGlow: string;
   readonly heroGrid: string;
+  readonly highlight: string;
   readonly install: string;
   readonly lead: string;
+  readonly pathGrid: string;
+  readonly pathLinks: string;
+  readonly pathPoints: string;
   readonly prompt: string;
   readonly section: string;
   readonly sectionAlt: string;
+  readonly sectionLead: string;
   readonly sectionTitle: string;
   readonly split: string;
   readonly stat: string;

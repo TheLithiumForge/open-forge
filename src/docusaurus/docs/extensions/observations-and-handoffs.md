@@ -12,6 +12,12 @@ Save an observation worth revisiting, or give the next person, agent, or session
 - **Needed by:** [Task Coordination](orchestration.md)
 - **Loads at startup:** Only the two category entry lines, through Working and Emerging Memory.
 
+## Why it exists
+
+Some things are worth remembering after seeing them once: a surprising failure, or a workaround that took an hour to find. Observations keep them without claiming more than the evidence shows.
+
+Handoffs exist because resuming from memory, or from a live checkpoint that has changed since, loses state. Both used to ship with Task Coordination. They moved into their own package because solo work needs them too.
+
 ## What it installs
 
 ```text

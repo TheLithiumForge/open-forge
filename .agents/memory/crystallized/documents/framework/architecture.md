@@ -80,6 +80,8 @@ provider bridge files when supported
     _patterns.md
   skills/
     _skills.md
+    open-forge-cli/
+      SKILL.md
   templates/
     _templates.md
   maps/
@@ -96,7 +98,7 @@ provider bridge files when supported
       _archived.md
 ```
 
-The canonical workspace `entry` and loader form the entry boundary. Core `route` categories provide the shared primitive vocabulary. Core Memory supplies the four state entrypoints used to preserve continuity and evolution. It does not include deeper role routes or a separate Workflows root.
+The canonical workspace `entry` and loader form the entry boundary. Core `route` categories provide the shared primitive vocabulary. The one shipped Skill, `open-forge-cli`, teaches an agent to use the optional CLI and loads only when selected. Core Memory supplies the four state entrypoints used to preserve continuity and evolution. It does not include deeper role routes or a separate Workflows root.
 
 Optional Extensions add deeper Memory routes when a workspace needs them:
 

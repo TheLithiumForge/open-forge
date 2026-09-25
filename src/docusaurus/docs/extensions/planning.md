@@ -11,6 +11,18 @@ Turn an outcome into work that can be understood, carried out, and resumed. Keep
 - **Depends on:** [Workflow Support](workflows.md)
 - **Loads at startup:** Only the one-line entries for its Memory categories and Pattern, through their already-loaded parents. The contents stay on demand.
 
+:::tip[Start with Decisions]
+
+Early feedback singled out Decisions as one of the most valuable parts of the Extensions. They preserve why something was chosen, which matters most when a codebase outlives the people and conversations behind it. See [Highlights](../highlights.md#decisions-keep-the-why).
+
+:::
+
+## Why it exists
+
+When work spans days, people, or agents, two things get lost first: where things stand, and why they are the way they are. Checkpoints keep the first and Decisions keep the second. Ideas and Analysis hold possibilities and reasoning without mistaking them for commitments. A Decision records the change, and the documents it affects are updated to say what's true now, as [the document flow](document-flow.md) explains.
+
+The Work Records Pattern gives each fact one home, so a task, a plan, and a checkpoint don't drift into three competing versions of the truth. None of it replaces your issue tracker. When you already have a task source, Planning uses it.
+
 ## What it installs
 
 ```text

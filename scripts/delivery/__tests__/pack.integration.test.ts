@@ -23,9 +23,10 @@ test("skip-tests packs an unqualified build without execution, preserves integri
   };
   write("package.json", JSON.stringify({ version, private: true }));
   write("LICENSE", "owned fixture license\n");
+  write("README.md", "# Fixture readme\n");
   const git = (args: string[]) => execFileSync("git", args, { cwd: root, stdio: "pipe" });
   git(["init", "--quiet"]);
-  git(["add", "package.json", "LICENSE"]);
+  git(["add", "package.json", "LICENSE", "README.md"]);
   git(["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "Fixture"]);
   const rid = hostRuntime();
   const delivery = deliveryDirectory(rid);

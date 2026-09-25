@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import Layout from "@theme/Layout";
 import Hero from "@site/src/components/home/Hero";
+import HowItFits from "@site/src/components/home/HowItFits";
+import StartingPoint from "@site/src/components/home/StartingPoint";
 import Features from "@site/src/components/home/Features";
 import BaseFramework from "@site/src/components/home/BaseFramework";
 
@@ -12,6 +14,8 @@ export default function Home(): ReactNode {
     >
       <Hero />
       <main>
+        <HowItFits />
+        <StartingPoint />
         <Features />
         <BaseFramework />
       </main>

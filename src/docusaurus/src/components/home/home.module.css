@@ -189,6 +189,49 @@
   font-size: 0.85rem;
 }
 
+.sectionLead {
+  max-width: 52rem;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 1.05rem;
+}
+
+.pathGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.pathGrid .card p {
+  flex: none;
+}
+
+.pathPoints {
+  flex: 1;
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+}
+
+.pathPoints li {
+  margin-bottom: 0.3rem;
+}
+
+.pathLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  font-weight: 600;
+}
+
+.highlight {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--ifm-color-primary);
+  border-radius: 0 12px 12px 0;
+  background: var(--forge-card-background);
+}
+
 @media (max-width: 996px) {
   .hero {
     padding: 4.5rem 0 3.5rem;

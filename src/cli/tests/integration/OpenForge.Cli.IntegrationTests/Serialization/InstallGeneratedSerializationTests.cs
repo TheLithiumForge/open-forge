@@ -16,8 +16,8 @@ namespace OpenForge.Cli.IntegrationTests.Serialization;
 
 public sealed class InstallGeneratedSerializationTests
 {
-    // 12 directories (including .agents), 12 payload files, 2 host regions, and the ownership record.
-    private const int FreshInstallEffectCount = 27;
+    // 13 directories (including .agents), 13 payload files, 2 host regions, and the ownership record.
+    private const int FreshInstallEffectCount = 29;
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Install JSON uses generated native data metadata with the complete envelope"), Trait("Feature", "install-presentation"), Trait("Evidence", "Integration")]

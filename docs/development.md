@@ -449,9 +449,9 @@ git diff
 
 Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. Use [tiktoken](https://github.com/openai/tiktoken) with two named reference encodings:
 
-The following measurements predate the optional-content extraction and are historical, not counts for the current payload. The current base has 14 Markdown files, with 11 selected at startup through `AGENTS.md`. Fresh tiktoken totals have not been measured.
+The following measurements predate the optional-content extraction and are historical, not counts for the current payload. The current base has 15 Markdown files, with 11 selected at startup through `AGENTS.md`. Fresh tiktoken totals have not been measured.
 
-The README quotes the CLI's own estimate, the same one `open-forge status` reports: each file's character count divided by four and rounded up, then summed. For the current base, that gives about 5.7k tokens for the 11 startup files and about 6.4k tokens for all 14. Installed Extensions and your own content add to both numbers.
+The README quotes the CLI's own estimate, the same one `open-forge status` reports: each file's character count divided by four and rounded up, then summed. For the current base, that gives about 5.8k tokens for the 11 startup files and about 7.9k tokens for all 15. The `open-forge-cli` Skill accounts for about 1.4k of the total, and only its one-line entry loads at startup. Installed Extensions and your own content add to both numbers.
 
 | Historical source set   | Files | `o200k_base` tokens | `cl100k_base` tokens |
 | ----------------------- | ----: | ------------------: | -------------------: |
@@ -485,8 +485,12 @@ npm ci
 npm start
 ```
 
+The framework diagram has one data source, `src/components/framework-map/framework-map-data.ts`. The site renders it directly, and `npm run diagram` regenerates the light and dark SVGs that the README shows. Run it after changing the data.
+
 `npm start` serves the site with live reload. `npm run build` writes the static site to `src/docusaurus/build/` and fails on broken links or anchors. `npm run typecheck` checks the site's TypeScript.
 
 The [Documentation workflow](../.github/workflows/docs.yml) builds the site for pull requests that touch it and publishes it to GitHub Pages whenever those changes reach `main`. The repository's Pages settings must use GitHub Actions as the build source. GitHub serves a project repository's site below its name, so the default address is `https://thelithiumforge.github.io/open-forge/`. The workflow reads the actual address from the Pages settings, so adding a custom domain moves the site to `/` without a configuration change. Local builds always use the default address.
 
-The site's pages explain shipped behavior, so they need the same care as the README. When a Framework or Extension change alters what a page describes, such as an installed file, a loading tag, or a package dependency, update the page in the same change.
+The [demos](../demos/) sit beside the site: small projects with seed requests at four levels of detail and a checklist for the result. The brownfield app runs its own tests with `npm test` from its `app/` folder.
+
+The site's pages explain shipped behavior, so they need the same care as the README. When a Framework or Extension change alters what a page or a demo describes, such as an installed file, a loading tag, a package name, or an install command, update it in the same change.

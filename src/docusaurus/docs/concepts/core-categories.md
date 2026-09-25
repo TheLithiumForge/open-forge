@@ -44,7 +44,7 @@ A Pattern is the default shape in its scope. A justified departure is allowed, a
 
 **Specialized capabilities.** A Skill is a native capability package entered through a `SKILL.md` file. The `SKILL.md` defines how to use the Skill and its resources, and your agent runtime controls how Skills are discovered, activated, and executed.
 
-Open Forge routes to Skills so agents can find them. It doesn't replace your harness's own Skill mechanism. Repeatable step-by-step methods live behind one Skill, `use-workflow`, supplied by the [Workflow Support](../extensions/workflows.md) Extension.
+Open Forge routes to Skills so agents can find them. It doesn't replace your harness's own Skill mechanism. The base ships one Skill, `open-forge-cli`, which teaches an agent when and how to use the [CLI](../cli/index.md). Only its one-line entry loads at startup. Repeatable step-by-step methods live behind another Skill, `use-workflow`, supplied by the [Workflow Support](../extensions/workflows.md) Extension.
 
 ## Templates
 

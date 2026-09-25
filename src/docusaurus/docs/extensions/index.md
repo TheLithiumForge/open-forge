@@ -9,6 +9,18 @@ Extensions are optional packages of workspace content: advice, reusable shapes, 
 
 An Extension is a way to ship files. Routed files take on the meaning of the route they're installed into. Native files, such as a `SKILL.md`, follow the tool that uses them. Packaging adds no authority, and installing a package doesn't make its methods mandatory.
 
+## Why Extensions exist
+
+The base Framework carries only what every workspace needs: routing, loading, the content roles, and a place to remember things. Methods for planning, documenting, developing, or coordinating agents are useful, but not everyone wants them, and everything in the base is something every workspace installs and every task has in view. So they ship as packages you choose.
+
+Three rules shape the catalogue:
+
+- **A package has to earn its place.** It ships because it helps an agent do something it wouldn't reliably do on its own: a method that changes the outcome, a record that keeps what would otherwise be lost, or a starter that makes the right shape obvious. Generic reminders a capable agent already follows don't make the cut, which is why an earlier Experience Design Skill was dropped from the catalogue.
+- **Packages follow how people choose.** Things you'd want on their own ship on their own, so you can take Decisions without task coordination, or scenarios without a planning method. The Development Toolkit exists so the common set is still one install.
+- **Packaging adds no authority.** An installed file means what its route says. The package is only how it arrived, and you can edit or remove any file like your own.
+
+Each package page below starts with why the package exists, then lists every file it installs.
+
 ## Choose by need
 
 | Package                                                   | ID                          | Use it to                                                                                            | Depends on                                       |
@@ -24,7 +36,7 @@ An Extension is a way to ship files. Routed files take on the meaning of the rou
 | [Task Coordination](orchestration.md)                     | `orchestration`             | Coordinate related tasks, dependencies, and the combined result                                      | Development, Observations and Handoffs, Planning |
 | [Development Toolkit](development-toolkit.md)             | `development-toolkit`       | Install Project Documents, Planning, Flows and Scenarios, and Development together                   | Those four                                       |
 
-**Not sure where to start?** Core Templates is a good first pick if you want to write your own workspace content. Development Toolkit covers the common document, planning, scenario, and development set. Task Coordination stays a separate choice, because coordinating many agents is a bigger commitment to one way of working.
+**Not sure where to start?** If you work on an existing codebase, start with [Planning](planning.md) for its Decisions: they keep the reasons behind changes, which is what gets lost first. Core Templates is a good first pick if you want to write your own workspace content. Development Toolkit covers the common document, planning, scenario, and development set. Task Coordination stays a separate choice, because coordinating many agents is a bigger commitment to one way of working.
 
 ## How they fit together
 
@@ -44,6 +56,8 @@ development-toolkit       -> development, planning, project-documents, scenarios
 ```
 
 Workflow Support installs once, however many packages need it.
+
+Project Documents and Planning also work together. Decisions record changes, and Documents are kept top-down, from an overview of the whole to the detail of each part. [The document flow](document-flow.md) explains it.
 
 ## Where their files land
 

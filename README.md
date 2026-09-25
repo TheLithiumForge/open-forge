@@ -4,7 +4,16 @@ Open Forge is a small Markdown framework for working with AI agents, built aroun
 
 An agent doesn't need to know everything, but it does need to know where everything is. Open Forge gives your workspace a loader and one short entrypoint per folder. An agent starts from the task, follows the routes that matter, and skips the rest. A useful correction, a workflow that saves you time, or a decision you don't want to explain again gets a place in that structure. Scopes keep each piece within reach without bringing the whole collection into every task.
 
-The base is 14 files and about 6.4k tokens, of which about 5.7k load at startup ([how it's measured](docs/development.md#measure-context-size)). From there, make it yours: keep your favorite tools, add your own ideas, and change the parts that don't fit. The CLI makes maintenance faster, but the files work on their own.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="src/docusaurus/static/img/framework-map-dark.svg">
+    <img alt="How Open Forge fits together: AGENTS.md points to the loader, which routes to Core, six roles for how work gets done, and Memory, four states for what's worth remembering." src="src/docusaurus/static/img/framework-map-light.svg" width="900">
+  </picture>
+</p>
+
+Everything in the workspace answers one of two questions. **Core** says how work should be done: a rule must be followed, advice can be adapted, a Template is copied and then yours. **Memory** keeps what's worth remembering, and says how far to trust it: current work, unconfirmed findings, accepted knowledge, and history each get their own place.
+
+The base is 15 files and about 7.9k tokens, of which about 5.8k load at startup ([how it's measured](docs/development.md#measure-context-size)). From there, make it yours: keep your favorite tools, add your own ideas, and change the parts that don't fit. The CLI makes maintenance faster, but the files work on their own.
 
 ## Get started
 
@@ -72,6 +81,8 @@ Whichever route you took, review the result with `git diff` and commit it. That'
 
 Now give your agent a real task. It starts at `AGENTS.md`, reads the loader, follows the routes relevant to the task, and works within their rules. You don't need a spec up front. Start with the request and add detail as the work calls for it.
 
+Adding it to an existing codebase? Point a Map at the docs you already have, and record Decisions from your next change on. You can't decide what was already decided before you arrived, but every change from now on can keep its reasons. The [new or existing project guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/greenfield-and-brownfield) covers both cases, and the [demos](demos/) let you try each one.
+
 ## What you get
 
 ```text
@@ -83,6 +94,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
   guidance/_guidance.md           <- advice for recurring choices
   patterns/_patterns.md           <- reusable shapes for code, files, and documents
   skills/_skills.md               <- native SKILL.md capabilities
+  skills/open-forge-cli/SKILL.md  <- how to use the CLI, loaded when needed
   templates/_templates.md         <- copy-ready starting files
   maps/_maps.md                   <- pointers to important local and external sources
   memory/
@@ -93,7 +105,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
     archived/_archived.md         <- history that no longer governs current work
 ```
 
-Each entrypoint says what its category is for and the rules for using it, then lists what's inside. Apart from Memory's four states, every category starts empty. The routing matters more than the number of files. The content comes from your work.
+Each entrypoint says what its category is for and the rules for using it, then lists what's inside. Apart from Memory's four states and one Skill that teaches agents the CLI, every category starts empty. The routing matters more than the number of files. The content comes from your work.
 
 Startup loads the shared routing and Memory context. Everything more specialized is selected when a task needs it. The numbers above cover the base. Installed Extensions and your own content add to them.
 
@@ -220,19 +232,21 @@ Each routed folder has an **entrypoint**, normally `_{folder-name}.md`, with sho
 
 The CLI is an accelerant, not a requirement. Everything it does, you can do by editing files. It speeds up the repetitive parts, such as finding context, keeping navigation correct, and updating the Framework, and it shows planned changes before it writes them.
 
-| Command                                      | Use it to                                         |
-| -------------------------------------------- | ------------------------------------------------- |
-| `open-forge context`                         | Read the startup context                          |
-| `open-forge route list`                      | Explore the available routes                      |
-| `open-forge find --tag=Decision`             | Find decision records                             |
-| `open-forge route init memory/project-alpha` | Create a routed scope                             |
-| `open-forge index`                           | Rebuild generated navigation after edits          |
-| `open-forge status`                          | See the current workspace and maintenance state   |
-| `open-forge doctor`                          | Check workspace structure without changing it     |
-| `open-forge update --dry-run`                | Preview a Framework update                        |
-| `open-forge remove <path> --dry-run`         | Preview a removal that later updates will respect |
+| When you want to                       | Run                                                | Because                                                                  |
+| -------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------ |
+| See what your agent will load          | `open-forge context`                               | You can check that a new rule reaches the agent before blaming the model |
+| Find what the workspace already knows  | `open-forge find --tag=Decision`                   | Reusing a decision beats making it again                                 |
+| Add a scope or a record                | `open-forge route init`, `open-forge route create` | Frontmatter and navigation are right from the start                      |
+| Rebuild navigation after editing files | `open-forge index`                                 | Entries are how agents find things, so stale ones hide knowledge         |
+| Check that everything still fits       | `open-forge status`, `open-forge doctor`           | Broken links and stale navigation show up before an agent trips on them  |
+| Pick up a new Framework version        | `open-forge update --dry-run`                      | Every file it would replace is listed, so your edits aren't lost quietly |
+| Remove a default for good              | `open-forge remove <path> --dry-run`               | Later updates respect the removal                                        |
 
-Commands that change files offer `--dry-run` where a full preview is useful, so you can see the plan before anything is written. Run `open-forge --help` or read the [CLI guide](docs/cli.md) for everything else.
+Commands that change files offer `--dry-run`, so you see the plan before anything is written.
+
+Your agent can use it too. The loader lists the main commands, and the base ships an `open-forge-cli` Skill that teaches an agent which command fits which job and how to use it safely. The Skill loads only when a task needs it, so harnesses without native Skill support still get the command list from the loader.
+
+[Working with the CLI](https://thelithiumforge.github.io/open-forge/docs/cli) walks through these flows and when each one helps, and the [CLI reference](docs/cli.md) covers every command and option.
 
 ### Without the CLI
 
@@ -256,11 +270,32 @@ Extensions are optional packages of content you can install and then adapt. The 
 | Task Coordination         | Coordinating related tasks, their dependencies, and the combined result                |
 | Workflow Support          | Finding and following installed workflows through the `use-workflow` Skill             |
 
-**Development Toolkit** installs Project Documents, Planning, Flows and Scenarios, and Development together. Core Templates is a good first choice if you want to write your own workspace content. Task Coordination stays a separate choice, because coordinating many agents is a bigger commitment to one way of working.
+Every package had to earn its place by doing something a capable agent wouldn't reliably do on its own: a method that changes the outcome, a record that keeps what would otherwise be lost, or a starter that makes the right shape obvious. The packages are split the way people choose them, so you install what helps and nothing else.
+
+Not sure where to start? On an existing codebase, start with **Planning** for its Decisions, which keep the reasons behind changes. To write your own rules, start with **Core Templates**. **Development Toolkit** installs Project Documents, Planning, Flows and Scenarios, and Development together. Task Coordination stays a separate choice, because coordinating many agents is a bigger commitment to one way of working.
 
 An Extension is a way to ship files. Routed files take on the meaning of the route they're installed into. Native files, such as a `SKILL.md`, follow the tool that uses them. Packaging adds no authority.
 
-The [Extension guide](docs/extensions.md) covers installing a package, copying its files by hand, and creating your own.
+The [Extensions section of the site](https://thelithiumforge.github.io/open-forge/docs/extensions) explains what every package installs and why, and the [Extension guide](docs/extensions.md) covers installing a package, copying its files by hand, and creating your own.
+
+### The document flow
+
+Project Documents and Planning together add an opinionated flow for project knowledge. A Decision records a change: what was chosen, and why. When you accept it, the documents it affects are updated to say what's true now. The document links to the Decision for the reason, and the Decision links to the document for the result.
+
+Documents are kept top-down:
+
+```text
+Vision                        why it exists, for whom, what the first version does
+└─ Architecture               the parts, what each owns, the rules they all keep
+   └─ component docs, scenarios   exact behavior and expected results
+      └─ code and tests
+
+Decisions sit beside the stack and link to the level that holds their result.
+```
+
+Top-level documents give an overview of the whole and summarize the narrower documents they link to. Each narrower document explains its own part in more detail and links back up. When a change lands in the detail, the summaries above it are updated too, so the top always gives the current picture. The current answer is one read away, and the reason behind it is one link away.
+
+This flow is the Extensions' opinion, not Core's. Core only asks that detail live in the narrowest source that defines it, and Memory's states work the same without it. [The document flow](https://thelithiumforge.github.io/open-forge/docs/extensions/document-flow) walks through an example.
 
 ## What Open Forge doesn't do
 
@@ -274,6 +309,7 @@ Some limits to know before you adopt it:
 ## Go deeper
 
 - [Documentation site](https://thelithiumforge.github.io/open-forge/): getting started, concepts, and a file-by-file tour of every Extension.
+- [Demos](demos/): try Open Forge on a new project and on a half-built one, with checks for the result.
 - [CLI guide](docs/cli.md): everyday commands and maintenance.
 - [Extension guide](docs/extensions.md): packages, dependencies, and customization.
 - [Development guide](docs/development.md): local setup, contributions, and verification.

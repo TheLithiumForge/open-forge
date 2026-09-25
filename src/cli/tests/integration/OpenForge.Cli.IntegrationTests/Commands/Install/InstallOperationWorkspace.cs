@@ -31,6 +31,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
         ".agents/memory/working/_working.md",
         ".agents/patterns/_patterns.md",
         ".agents/skills/_skills.md",
+        ".agents/skills/open-forge-cli/SKILL.md",
         ".agents/templates/_templates.md",
     ];
 

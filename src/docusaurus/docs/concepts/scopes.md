@@ -52,7 +52,7 @@ A scope's own entrypoint decides what loads once the scope is selected:
 
 For example, a C# scope may contain a `#LoadNow` design file and an on-demand Windows scope. Selecting C# loads its design rules, not Windows. A `#LoadNow` file under Windows loads only after Windows is selected.
 
-:::tip Narrow first, then make it mandatory
+:::tip[Narrow first, then make it mandatory]
 
 Don't mark a broad parent `#LoadNow` just to expose something important deep inside it. Put the content in the narrowest scope that fully describes where it applies, then make it `#LoadNow` there.
 

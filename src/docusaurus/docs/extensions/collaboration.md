@@ -11,6 +11,12 @@ Explore an uncertain direction with concrete alternatives, useful questions, and
 - **Depends on:** Nothing
 - **Loads at startup:** Nothing. The Guidance appears in the Guidance entries and is read when relevant.
 
+## Why it exists
+
+The most expensive time to find out you built the wrong thing is after building it. This Guidance has the agent lead with its understanding and a recommendation, ask about one important choice at a time, and give you something concrete to react to, instead of charging ahead or burying you in questions.
+
+The Brainstorming Template is for the comparisons worth keeping. Collaboration stays separate from Planning because exploring isn't a required step before work.
+
 ## What it installs
 
 ```text

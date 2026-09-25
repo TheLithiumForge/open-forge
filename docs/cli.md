@@ -6,6 +6,10 @@ requirement: the Framework is complete in plain files, and you can read, edit,
 and follow its rules without the CLI. The commands automate the work around
 those files. The files still define what the Framework means.
 
+This guide is the reference: every command and its options. For which command
+helps with which job, and the everyday flows that tie them together, start with
+[Working with the CLI](https://thelithiumforge.github.io/open-forge/docs/cli).
+
 To see the exact options of the executable you have, start here:
 
 ```sh

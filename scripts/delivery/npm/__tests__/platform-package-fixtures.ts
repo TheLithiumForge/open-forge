@@ -1,7 +1,9 @@
 export const ExpectedMainPackageName = "@thelithiumforge/open-forge";
 export const ExpectedMainDirectory = "open-forge";
 export const ExpectedLauncherPath = "bin/open-forge.js";
-export const ExpectedMainFiles = ["LICENSE", "bin/open-forge.js", "package-model.js", "package.json"];
+export const ExpectedMainFiles = ["LICENSE", "README.md", "bin/open-forge.js", "package-model.js", "package.json"];
+export const ExpectedHomepage = "https://thelithiumforge.github.io/open-forge/";
+export const ExpectedRepository = { type: "git", url: "git+https://github.com/TheLithiumForge/open-forge.git" };
 export const FixtureVersion = "2.3.4-beta.5";
 export const UnsupportedRuntime = "linux-musl-arm64";
 export const FixtureNativeBytes = Buffer.from("Open Forge inert package layout fixture. Never execute.\n", "utf8");

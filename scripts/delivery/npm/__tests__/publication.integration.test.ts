@@ -18,9 +18,10 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
     const version = "0.0.0";
     writeFileSync(join(root, "package.json"), JSON.stringify({ version }));
     writeFileSync(join(root, "LICENSE"), "MIT fixture license\n");
+    writeFileSync(join(root, "README.md"), "# Fixture readme\n");
     const git = (args: string[]) => execFileSync("git", args, { cwd: root, stdio: "pipe" });
     git(["init", "--quiet"]);
-    git(["add", "package.json", "LICENSE"]);
+    git(["add", "package.json", "LICENSE", "README.md"]);
     git(["-c", "user.name=Publication Fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "Fixture"]);
     const directory = join(root, "artifacts/delivery/wrapper");
     const build = join(directory, "build");
@@ -32,7 +33,7 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
     const npm = new IsolatedNpm(join(root, "scratch"));
     const packed = npm.pack(stage, join(directory, "packages"));
     recordWrapper(root, packed.path, version, targets);
-    assert.deepEqual(packed.files, ["LICENSE", "bin/open-forge.js", "package-model.js", "package.json"]);
+    assert.deepEqual(packed.files, ["LICENSE", "README.md", "bin/open-forge.js", "package-model.js", "package.json"]);
     const publication = readPublication(root, "wrapper");
     assert.equal(publication.name, "@thelithiumforge/open-forge");
     assert.equal(publication.tarball, packed.path);

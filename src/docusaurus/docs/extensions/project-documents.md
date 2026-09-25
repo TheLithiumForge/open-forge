@@ -11,6 +11,12 @@ Keep understandable, current project knowledge without duplicating it. Keep docu
 - **Depends on:** [Workflow Support](workflows.md)
 - **Loads at startup:** Only the Documents entry line, through Crystallized Memory. Documents themselves load when relevant.
 
+## Why it exists
+
+Knowledge scattered across decisions, chats, and code comments has to be pieced together every time someone needs it. A Document explains one subject as it is now, in one place. Documents stack from an overview at the top down to the detail, and each links to the Decisions that shaped it. [The document flow](document-flow.md) shows how they fit together.
+
+The Vision and Architecture workflows add one discipline that matters for both: a proposal stays a proposal until you accept it. Your existing documentation can stay where it is. This package offers a convention, not a new home you have to migrate to.
+
 ## What it installs
 
 ```text
@@ -34,6 +40,8 @@ Keep understandable, current project knowledge without duplicating it. Keep docu
 **Kind:** Memory category (Crystallized). **Used when:** work needs accepted current knowledge.
 
 A Document is one coherent, current explanation of a subject, written so readers don't have to piece its meaning together from Decisions. When a Document names another source as authoritative, it follows that source instead of duplicating it.
+
+Documents are kept top-down. Top-level Documents give an overview of the whole and summarize each narrower Document they link to. A narrower Document explains its own part in more detail, links back up, and links to the Decisions behind its part. When accepted knowledge changes a narrower Document, the summaries above it are updated too. [The document flow](document-flow.md) shows it with an example.
 
 ### The Vision recipe: `vision.md`
 

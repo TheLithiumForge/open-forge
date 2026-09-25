@@ -69,7 +69,7 @@ Whichever route you took, review the result with `git diff` and commit it. That'
 
 Installing and updating are things you do when maintaining the workspace. Agents don't repeat them at startup.
 
-:::tip Read the files once
+:::tip[Read the files once]
 
 The installed files are short, and they become instructions your agents follow. Read them once now, and again after each update. They're also yours: add, adapt, replace, or remove the defaults as your needs change.
 

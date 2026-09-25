@@ -15,6 +15,10 @@ Install the common set for software work in one step. This package has no files 
 open-forge extension install development-toolkit --dry-run
 ```
 
+## Why it exists
+
+Most software projects want the same four packages. The Toolkit makes that one install. It owns no files of its own: it only selects the four. While it's installed, its packages can't be removed on their own, so if you want only some of them, install those individually instead.
+
 ## What you get
 
 | Package                                   | Contribution                                                                                           |

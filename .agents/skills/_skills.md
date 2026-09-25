@@ -18,4 +18,5 @@ A Skill is a native capability package entered through `SKILL.md`. That file def
 
 ## Entries
 
+- [Use the open-forge CLI to see what loads, find sources, keep links and Entries correct, and preview workspace changes. Use when the command is available and the task needs Open Forge context, navigation, diagnosis, or changes to many workspace files.](open-forge-cli/SKILL.md) - #Skill
 - [Select and follow an installed workflow for project vision, architecture, planning, implementation, debugging, review, or coordinated delivery. Use when the user requests a workflow or an installed recipe would materially improve the task. Recipes can combine the workspace's configured skills, tools, and agents; this skill does not supply their runtime.](use-workflow/SKILL.md) - #Skill

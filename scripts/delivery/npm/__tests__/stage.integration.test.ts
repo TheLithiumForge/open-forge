@@ -9,12 +9,14 @@ import { fileURLToPath } from "node:url";
 import { PlatformPackages } from "../../package-model.ts";
 import { IsolatedNpm } from "./isolated-npm.ts";
 import {
+  ExpectedHomepage,
   ExpectedLauncherPath,
   ExpectedMainDirectory,
   ExpectedMainFiles,
   ExpectedMainPackageName,
   ExpectedOptionalDependencies,
   ExpectedPlatforms,
+  ExpectedRepository,
   FixtureNativeBytes,
   FixtureVersion,
   UnsupportedRuntime,
@@ -25,6 +27,7 @@ const managerPath = fileURLToPath(new URL("../manage.ts", import.meta.url));
 const executablePermissions = 0o111;
 const manifestName = "package.json";
 const licenseName = "LICENSE";
+const readmeName = "README.md";
 
 for (const platform of ExpectedPlatforms) {
   test(`Integration: stage and pack the complete Open Forge ${platform.runtime} layout`, (context) => {
@@ -56,6 +59,7 @@ for (const platform of ExpectedPlatforms) {
       const licenseBytes = readFileSync(join(repositoryRoot, licenseName));
       assert.deepEqual(readFileSync(join(mainDirectory, licenseName)), licenseBytes);
       assert.deepEqual(readFileSync(join(platformDirectory, licenseName)), licenseBytes);
+      assert.deepEqual(readFileSync(join(mainDirectory, readmeName)), readFileSync(join(repositoryRoot, readmeName)));
       if (process.platform !== "win32") {
         assert.equal(statSync(join(platformDirectory, nativePath)).mode & executablePermissions, executablePermissions);
         assert.equal(statSync(join(mainDirectory, ExpectedLauncherPath)).mode & executablePermissions, executablePermissions);
@@ -78,6 +82,10 @@ for (const platform of ExpectedPlatforms) {
         for (const absent of ["private", "scripts", "dependencies", "peerDependencies"]) {
           assert.equal(Object.hasOwn(manifest, absent), false, `${absent} must be absent from the public manifest.`);
         }
+      }
+      for (const manifest of [main, native]) {
+        assert.equal(manifest["homepage"], ExpectedHomepage);
+        assert.deepEqual(manifest["repository"], ExpectedRepository);
       }
       assert.equal(Object.hasOwn(native, "bin"), false);
       assert.equal(Object.hasOwn(native, "optionalDependencies"), false);

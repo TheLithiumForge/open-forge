@@ -1,0 +1,386 @@
+.map {
+  container: framework-map / inline-size;
+  --map-line: var(--ifm-color-primary);
+  --map-memory: #a8650a;
+  margin: 1.5rem 0 2rem;
+  padding: 18px;
+  border: 1px solid var(--forge-card-border);
+  border-radius: 16px;
+  background: var(--ifm-background-surface-color);
+}
+
+/* Light gold is only readable on the dark background. */
+:global([data-theme="dark"]) .map {
+  --map-memory: var(--forge-amber);
+}
+
+/* Entry row: AGENTS.md -> loader */
+
+.entry {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
+}
+
+.node {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--map-line);
+  border-radius: 10px;
+  background: var(--forge-card-background);
+  text-align: center;
+}
+
+.node code {
+  border: none;
+  background: none;
+  padding: 0;
+  font-weight: 700;
+}
+
+.node span {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+}
+
+.arrow {
+  position: relative;
+  align-self: center;
+  width: 44px;
+  height: 2px;
+  background: var(--map-line);
+}
+
+.arrow::after {
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid var(--map-line);
+  content: "";
+}
+
+.fork {
+  position: relative;
+  display: block;
+  height: 30px;
+}
+
+.loader {
+  position: relative;
+}
+
+/* The stem drops from the loader into the fork below it. */
+.loader::after {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  height: 14px;
+  border-left: 2px solid var(--map-line);
+  content: "";
+}
+
+.fork::after {
+  position: absolute;
+  left: 29%;
+  right: 20%;
+  top: 14px;
+  height: 16px;
+  border: 2px solid var(--map-line);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  content: "";
+}
+
+/* Panels */
+
+.panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: 14px;
+}
+
+.panel {
+  padding: 14px;
+  border: 1.5px solid var(--map-line);
+  border-radius: 14px;
+  background: var(--forge-card-background);
+}
+
+.core {
+  border-color: var(--map-line);
+}
+
+.memory {
+  border-color: var(--map-memory);
+}
+
+.panelTitle {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+}
+
+.panelTitle small {
+  margin-left: 6px;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.roles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.role,
+.state {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--forge-card-border);
+  border-radius: 10px;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.role strong {
+  color: var(--ifm-color-primary);
+  font-size: 0.98rem;
+}
+
+.role em {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+  font-style: normal;
+}
+
+.states {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stateItem {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.state strong {
+  color: var(--map-memory);
+  font-size: 0.98rem;
+}
+
+.tense {
+  margin-left: 4px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--forge-card-border);
+  color: var(--ifm-font-color-base);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.transition {
+  align-self: center;
+  padding: 3px 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.76rem;
+}
+
+.transition::before {
+  margin-right: 6px;
+  color: var(--map-memory);
+  content: "↓";
+}
+
+.note {
+  margin: 10px 0 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.78rem;
+}
+
+/* Loading badges */
+
+.badge {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 0 8px;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.loadStartup {
+  background: var(--ifm-color-primary);
+  color: var(--ifm-background-color);
+}
+
+.loadListed {
+  color: var(--ifm-color-primary);
+}
+
+.loadCheckpoints {
+  border-style: dashed;
+  border-color: var(--map-memory);
+  color: var(--map-memory);
+}
+
+.loadDemand {
+  border-style: dashed;
+  border-color: var(--ifm-color-emphasis-500);
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* Every task */
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  padding: 4px 12px 4px 6px;
+  border: 1px solid var(--forge-card-border);
+  border-radius: 999px;
+  background: var(--forge-card-background);
+  font-size: 0.82rem;
+  counter-increment: step;
+}
+
+.steps li::before {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  color: var(--ifm-background-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  content: counter(step);
+}
+
+.caption {
+  margin-top: 14px;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 16px;
+  margin: 0;
+}
+
+.legendItem {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.legendItem dt {
+  flex: none;
+}
+
+.legendItem dd {
+  margin: 0;
+}
+
+.childNote {
+  margin: 10px 0 0;
+  color: var(--ifm-font-color-base);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* The layout follows the diagram's own width, so it fits the wide homepage and
+   the narrower docs column alike. */
+
+@container framework-map (max-width: 999px) {
+  .panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .fork::after {
+    display: none;
+  }
+
+  .fork {
+    height: 16px;
+  }
+
+  .loader::after {
+    height: 16px;
+  }
+
+  .roles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container framework-map (max-width: 640px) {
+  .roles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .legend {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container framework-map (max-width: 460px) {
+  .entry {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .arrow {
+    width: 2px;
+    height: 22px;
+  }
+
+  .arrow::after {
+    right: -4px;
+    top: auto;
+    bottom: -1px;
+    border-top: 8px solid var(--map-line);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: none;
+  }
+
+  .roles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .map {
+    padding: 12px;
+  }
+}

@@ -86,6 +86,8 @@ A tag starts with a letter and contains letters or digits, with single internal 
 | `templates/_templates.md`              |               | No, on demand                 |
 | `memory/archived/_archived.md`         |               | No, on demand                 |
 
+Loading stops at these entrypoints. Their `Entries` are listed, but the files and folders below them stay closed until a task needs them, unless an entry is tagged `LoadNow` or `KeepInMind`.
+
 Run `open-forge context` to see the exact startup context of your own workspace.
 
 Next: [Core categories](core-categories.md).

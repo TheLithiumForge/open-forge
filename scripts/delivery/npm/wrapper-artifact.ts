@@ -6,6 +6,7 @@ import { MainPackageName, type SupportedRuntime } from "../package-model.ts";
 import { inspectPackageContents } from "../package-contents.ts";
 import { sourceIdentity } from "../source.ts";
 import { hashArtifact } from "../manifest.ts";
+import { WrapperReadme } from "./package-manifests.ts";
 import { resetOutput } from "../output.ts";
 
 import { AllTargets, readTargets, targetDependencies } from "../targets.ts";
@@ -17,7 +18,7 @@ export function recordWrapper(root: string, archive: string, version: string, ta
   assert.equal(contents.version, version);
   assert.deepEqual(
     contents.files.map((entry) => entry.path),
-    ["LICENSE", "bin/open-forge.js", "package-model.js", "package.json"],
+    ["LICENSE", WrapperReadme, "bin/open-forge.js", "package-model.js", "package.json"],
   );
   assert.deepEqual(contents.optionalDependencies, targetDependencies(version, targets));
   const bytes = readFileSync(archive);

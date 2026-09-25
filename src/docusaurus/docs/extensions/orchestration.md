@@ -11,6 +11,12 @@ Coordinate related tasks, assign responsibilities, manage dependencies, and veri
 - **Depends on:** [Development](development.md), [Observations and Handoffs](observations-and-handoffs.md), [Planning](planning.md)
 - **Loads at startup:** Nothing. The recipe loads when the `use-workflow` Skill selects it.
 
+## Why it exists
+
+Running several related tasks, or several agents at once, is a bigger commitment to one way of working than anything else in the catalogue. That's why it's a separate choice and not part of the Development Toolkit.
+
+Its value is in the things that go wrong at scale: unclear ownership, parallel changes that collide, and interrupted work nobody can resume. Its dependencies bring the methods it calls and the records it uses.
+
 ## What it installs
 
 ```text

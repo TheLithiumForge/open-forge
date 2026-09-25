@@ -53,8 +53,11 @@ the two loading tags belongs to [Task 54](task54-tag-trimming.md).
 2. **Question the payload defaults.** For each root entrypoint, decide whether
    its Axioms must be visible at startup or whether the loader's one-line entry
    is enough. Candidate questions:
-   - Guidance, Patterns, Maps, and Skills start empty in a fresh install. Does
-     reading their entrypoints at startup earn its cost before they have entries?
+   - Guidance, Patterns, and Maps start empty in a fresh install, and Skills
+     lists only the `open-forge-cli` Skill. Does reading their entrypoints at
+     startup earn its cost before they have entries?
+   - The loader's CLI section overlaps the `open-forge-cli` Skill. Should it
+     shrink now that the Skill exists? See [Task 60](task60-cli-skill.md).
    - Crystallized starts empty. Does it need `#LoadNow` before Extensions add
      Decisions or Documents?
    - Does Emerging need `#KeepInMind` in a base install without the Observations

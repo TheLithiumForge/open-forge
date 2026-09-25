@@ -49,7 +49,7 @@
 
   --ifm-background-color: #0e0c0b;
   --ifm-background-surface-color: #141110;
-  --ifm-navbar-background-color: rgba(14, 12, 11, 0.86);
+  --ifm-navbar-background-color: #0e0c0b;
   --ifm-footer-background-color: #0a0908;
   --ifm-color-emphasis-100: #1b1715;
   --ifm-color-emphasis-200: #26201d;
@@ -63,8 +63,8 @@
 
 /* Navigation */
 
+/* No backdrop-filter here: it would trap the fixed mobile sidebar inside the navbar. */
 .navbar {
-  backdrop-filter: blur(10px);
   border-bottom: 1px solid transparent;
   border-image: linear-gradient(90deg, transparent, var(--ifm-color-primary) 30%, var(--forge-amber) 50%, var(--ifm-color-primary) 70%, transparent) 1;
 }

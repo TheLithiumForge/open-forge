@@ -53,8 +53,19 @@ Candidate boundaries, none chosen:
    already seen once.
 2. **A fenced block with an info string**, for example a fence tagged
    `open-forge` with the instructions inside.
-3. Something else — the Task should propose alternatives rather than pick from
-   these two.
+3. **A pair of thematic breaks (`---`)**, proposed by the maintainer on
+   2026-09-25 for `AGENTS.md` and `CLAUDE.md`. The Open Forge section sits
+   between two `---` lines. It reads as a clearly separated section in any
+   Markdown preview, where HTML comments look like noise, and the text between
+   stays plain instructions. Check before choosing it: a `---` directly under a
+   line of text makes that line a heading, so each break needs a blank line
+   above it. A `---` on the first line of a file starts YAML frontmatter. Other
+   content may use `---` too, so the pair probably needs a heading inside, such
+   as `# Open Forge`, to identify the region. Frontmatter was also considered,
+   but a file has only one frontmatter block and harnesses don't reliably treat
+   it as instructions.
+4. Something else — the Task should propose alternatives rather than pick from
+   these.
 
 **The risk the maintainer flagged is the one to test first, and it is not a
 parsing question.** A fenced code block is valid Markdown and easy to locate

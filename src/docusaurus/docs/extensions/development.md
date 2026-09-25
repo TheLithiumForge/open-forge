@@ -12,6 +12,12 @@ Implement changes, investigate defects, and review results using your project's 
 - **Needed by:** [Task Coordination](orchestration.md), [Development Toolkit](development-toolkit.md)
 - **Loads at startup:** Nothing. Recipes load when the `use-workflow` Skill selects them.
 
+## Why it exists
+
+A capable agent can already write code. These three methods earn their place by changing how it works where mistakes are expensive: implementing in a verified slice, diagnosing before repairing so a fix follows a cause, and reviewing with evidence instead of opinion.
+
+Review stays in this package rather than getting its own, because a separate package for one closely related workflow would add a boundary without adding a real choice.
+
 ## What it installs
 
 ```text

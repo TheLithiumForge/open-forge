@@ -1,0 +1,19 @@
+{
+  "name": "expense-splitter",
+  "version": "0.3.0",
+  "description": "Split shared expenses between friends from the command line.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/cli.ts",
+    "test": "node --test \"test/*.test.ts\"",
+    "typecheck": "tsc"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "typescript": "~5.9.3"
+  }
+}

@@ -14,15 +14,19 @@ Older receipts and retired queue state are in the
 
 ## Active task ledger
 
-| ID  | Task                                                                             | State  | Current boundary                                                                            | Owner                   |
-| --- | -------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------- | ----------------------- |
-| 30  | [CLI Experience Remediation](tasks/task30-cli-experience-remediation.md)         | Active | G1/B1/G4 complete and archived; Phase 5-D is next                                           | Root, direct sequential |
-| 31  | [Implementation Duplication Removal](tasks/task31-implementation-duplication.md) | Open   | M1/M2/M3/M4 complete; M5 waits for stable structure                                         | Root, direct sequential |
-| 52  | [Documentation site](tasks/task52-documentation-site.md)                         | Active | Integrated into local `develop`; the maintainer merges to `main`, pushes, and enables Pages | Root, direct sequential |
-| 53  | [Loading and scoping audit](tasks/task53-loading-and-scoping-audit.md)           | Open   | Recorded for 1.0 polish; not started                                                        | Unassigned              |
-| 54  | [Tag trimming](tasks/task54-tag-trimming.md)                                     | Open   | Recorded for 1.0 polish; not started                                                        | Unassigned              |
-| 55  | [Alternative root](tasks/task55-alternative-root.md)                             | Open   | Recorded for 1.0 polish; investigation not started                                          | Unassigned              |
-| 56  | Memory trim                                                                      | Active | Completed work archived on `task56-memory-trim`; awaiting maintainer review                 | Root, direct sequential |
+| ID  | Task                                                                             | State    | Current boundary                                                                     | Owner                   |
+| --- | -------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------ | ----------------------- |
+| 30  | [CLI Experience Remediation](tasks/task30-cli-experience-remediation.md)         | Active   | G1/B1/G4 complete and archived; Phase 5-D is next                                    | Root, direct sequential |
+| 31  | [Implementation Duplication Removal](tasks/task31-implementation-duplication.md) | Open     | M1/M2/M3/M4 complete; M5 waits for stable structure                                  | Root, direct sequential |
+| 52  | [Documentation site](tasks/task52-documentation-site.md)                         | Active   | Integrated into local `develop` and `main`; the maintainer pushes and confirms Pages | Root, direct sequential |
+| 53  | [Loading and scoping audit](tasks/task53-loading-and-scoping-audit.md)           | Open     | Recorded for 1.0 polish; not started                                                 | Unassigned              |
+| 54  | [Tag trimming](tasks/task54-tag-trimming.md)                                     | Open     | Recorded for 1.0 polish; not started                                                 | Unassigned              |
+| 55  | [Alternative root](tasks/task55-alternative-root.md)                             | Open     | Recorded for 1.0 polish; investigation not started                                   | Unassigned              |
+| 56  | Memory trim                                                                      | Complete | Completed work archived and integrated into local `develop`                          | Root, direct sequential |
+| 57  | [Onboarding and demos](tasks/task57-onboarding-and-demos.md)                     | Complete | Integrated into local `develop` and `main`                                           | Root, direct sequential |
+| 58  | [Demo-based evaluations](tasks/task58-demo-evals.md)                             | Open     | Recorded; not started                                                                | Unassigned              |
+| 59  | [Beta 2 release](tasks/task59-beta-2-release.md)                                 | Open     | npm package fix integrated; release after the maintainer pushes                      | Maintainer              |
+| 60  | [CLI Skill in Core](tasks/task60-cli-skill.md)                                   | Open     | Skill shipped; whether the loader's CLI section shrinks stays open                   | Unassigned              |
 
 The other open Tasks in [Open CLI Tasks](tasks/_tasks.md) are available on
 demand. Task 56 has no separate record: its outcome is the archive itself, as

@@ -21,6 +21,8 @@ Maintain understandable current project knowledge without duplicating it. Keep d
 
 Use a general Document for a current explanation. Add specialized documents only when their questions need separate maintained answers. This is not a required document set.
 
+Documents are kept top-down. Top-level Documents give an overview of the whole and summarize the narrower Documents they link to. Each narrower Document explains its own part in more detail and links back up. When a Decision changes a narrower Document, the summaries above it are updated too.
+
 Drafts remain candidates until accepted. Existing documentation need not move into Memory. The optional Documents category loads on demand, and the package works without Planning or its Decision convention. Link to rationale wherever the workspace already keeps it.
 
 ## Install And Customize

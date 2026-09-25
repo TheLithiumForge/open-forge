@@ -31,7 +31,7 @@ const features: readonly Feature[] = [
   },
   {
     title: "Memory that stays honest",
-    body: "Working, Emerging, Crystallized, Archived. Temporary state, unsettled findings, and accepted knowledge never blur together.",
+    body: "Working, Emerging, Crystallized, Archived. Temporary state, unsettled findings, accepted knowledge, and history each get their own place.",
     link: "/docs/concepts/memory",
     linkLabel: "The Memory model",
   },
@@ -44,8 +44,8 @@ const features: readonly Feature[] = [
   {
     title: "A CLI that's optional",
     body: "It finds context, keeps navigation correct, and previews every change with --dry-run. Everything it does, you can do by editing files.",
-    link: "/guides/cli",
-    linkLabel: "CLI guide",
+    link: "/docs/cli",
+    linkLabel: "Working with the CLI",
   },
 ];
 

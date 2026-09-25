@@ -86,6 +86,19 @@ documentation site for implementation and asked for the others as tasks.
 4. [55 Alternative root](task55-alternative-root.md) — recorded, not started.
    An investigation into roots such as `.apm`. Decide it before 1.0 fixes the
    layout, because a root change breaks installed workspaces.
+5. [57 Onboarding and demos](task57-onboarding-and-demos.md) — the new or
+   existing project guide, the framework diagram, Highlights, the document
+   flow page, and the expense splitter demos. Complete and integrated.
+6. [58 Demo-based evaluations](task58-demo-evals.md) — recorded, not started.
+   It turns the demos into a repeatable comparison.
+7. [59 Beta 2 release](task59-beta-2-release.md) — the npm package fix is integrated.
+   Release after the maintainer pushes the documentation work.
+8. [60 CLI Skill in Core](task60-cli-skill.md) — the `open-forge-cli` Skill
+   shipped. Whether the loader's CLI section shrinks stays open.
+
+The maintainer's `---` guard idea for `AGENTS.md` and `CLAUDE.md` is recorded as
+a candidate in [Task 36](task36-extension-merge-and-guards.md), which already
+owns replacing the comment guards.
 
 ## Archived on 2026-09-25
 
@@ -128,3 +141,7 @@ Their links from open Tasks now point there.
 - [Open Task 53 to audit every LoadNow and KeepInMind entry and the default scoping before 1.0, so startup context holds only what omission would cost more than reading](task53-loading-and-scoping-audit.md) - #Memory #Working #Task #Framework #Loading #Scope #Release #Contextual #Active
 - [Open Task 54 to trim tags that add no selection, search, or loading value before 1.0, in shipped files first and then in this workspace](task54-tag-trimming.md) - #Memory #Working #Task #Framework #Tags #Release #Contextual #Active
 - [Open Task 55 to investigate running Open Forge under another root such as .apm, so users can also use APM frontmatter, packaging, and compilation](task55-alternative-root.md) - #Memory #Working #Task #Framework #Root #APM #Investigation #Release #Contextual #Active
+- [Task 57 onboarding pages, the framework diagram, Highlights, and the expense splitter demos for new and existing codebases](task57-onboarding-and-demos.md) - #Memory #Working #Task #Documentation #Site #Demo #Contextual #Active
+- [Open Task 58 to turn the demos into a repeatable evaluation comparing Open Forge with other setups, agents, and models](task58-demo-evals.md) - #Memory #Working #Task #Evaluation #Demo #Contextual #Active
+- [Open Task 59 to publish 0.9.0-beta.2 once the documentation site is merged, so the npm package shows the README, the website, and the repository](task59-beta-2-release.md) - #Memory #Working #Task #Release #Beta #Package #Contextual #Active
+- [Open Task 60 to ship a native Skill for the CLI as part of Core, and decide whether the loader's CLI section moves into it](task60-cli-skill.md) - #Memory #Working #Task #Core #Skill #CLI #Loader #Contextual #Active

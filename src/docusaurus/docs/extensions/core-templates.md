@@ -11,6 +11,12 @@ Start your own workspace instructions, advice, reusable shapes, capabilities, ma
 - **Depends on:** Nothing
 - **Loads at startup:** Nothing. Templates are always on demand.
 
+## Why it exists
+
+The first Directive or Pattern you write sets the tone for the rest, and guessing its shape is where inconsistency starts. One starter per category makes each role concrete: a Directive has an `Instructions` section, Guidance explains its tradeoffs, a Pattern shows an example.
+
+It's separate from the Development Toolkit because writing your own workspace content has nothing to do with software in particular.
+
 ## What it installs
 
 ```text

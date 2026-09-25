@@ -11,14 +11,15 @@ const installedTree = `AGENTS.md                     <- read the loader first
   guidance/_guidance.md       <- advice for recurring choices
   patterns/_patterns.md       <- reusable shapes
   skills/_skills.md           <- native SKILL.md capabilities
+  skills/open-forge-cli/      <- how to use the CLI
   templates/_templates.md     <- copy-ready starting files
   maps/_maps.md               <- pointers to important sources
   memory/                     <- working, emerging,
                                  crystallized, archived`;
 
 const stats = [
-  { value: "14", label: "Markdown files in the base" },
-  { value: "~5.7k", label: "tokens loaded at startup" },
+  { value: "15", label: "Markdown files in the base" },
+  { value: "~5.8k", label: "tokens loaded at startup" },
   { value: "0", label: "runtimes or databases to run" },
 ] as const;
 
@@ -31,8 +32,8 @@ export default function BaseFramework(): ReactNode {
             Small on purpose
           </Heading>
           <p>
-            The base is a handful of rules and a structure that scales. Apart from Memory's four states, every category starts empty. The content comes from your work: a correction
-            you keep repeating, a decision you don't want to explain again, a workflow that keeps paying off.
+            The base is a handful of rules and a structure that scales. Apart from Memory's four states and one Skill that teaches agents the CLI, every category starts empty. The
+            content comes from your work: a correction you keep repeating, a decision you don't want to explain again, a workflow that keeps paying off.
           </p>
           <dl className={styles.stats}>
             {stats.map((stat) => (
