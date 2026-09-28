@@ -5,7 +5,7 @@ Workspace: <workspace>
          use open-forge install --force --dry-run
          open-forge install --force --dry-run
          Preview replacing the occupied Framework targets.
-  Bundled Framework fingerprint: <sha256> (14 assets).
+  Bundled Framework fingerprint: <sha256> (15 assets).
   No ownership record change was requested.
   No recovery bundle was required.
   Verification was not requested.

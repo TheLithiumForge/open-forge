@@ -15,18 +15,18 @@
   "findings": [],
   "effects": [],
   "counts": {
-    "routedFiles": 51,
+    "routedFiles": 52,
     "startupFiles": 11,
-    "startupTokens": 6000,
+    "startupTokens": 6020,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 371,
-    "allTokens": 22757,
-    "startupShare": 26.362218218570110295733180999,
+    "mayLoadAgainTokens": 361,
+    "allTokens": 24036,
+    "startupShare": 25.044205446110960870379230721,
     "rootCategories": 7,
     "entriesSectionsCurrent": 25,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 14,
+    "frameworkFilesCurrent": 15,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 6,
@@ -48,36 +48,36 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 22781,
-          "bytes": 22781,
-          "tokens": 5696
+          "characters": 22833,
+          "bytes": 22833,
+          "tokens": 5709
         },
         "current": {
           "files": 11,
-          "characters": 23997,
-          "bytes": 23997,
-          "tokens": 6000
+          "characters": 24078,
+          "bytes": 24078,
+          "tokens": 6020
         },
         "difference": {
           "files": 0,
-          "characters": 1216,
-          "bytes": 1216,
-          "tokens": 304
+          "characters": 1245,
+          "bytes": 1245,
+          "tokens": 311
         },
         "mayLoadAgain": {
           "files": 1,
-          "characters": 1484,
-          "bytes": 1484,
-          "tokens": 371
+          "characters": 1442,
+          "bytes": 1442,
+          "tokens": 361
         }
       },
       "allRouted": {
-        "files": 51,
-        "characters": 91028,
-        "bytes": 91028,
-        "tokens": 22757
+        "files": 52,
+        "characters": 96142,
+        "bytes": 96142,
+        "tokens": 24036
       },
-      "startupShare": 26.362218218570110295733180999
+      "startupShare": 25.044205446110960870379230721
     },
     "extensions": [
       {

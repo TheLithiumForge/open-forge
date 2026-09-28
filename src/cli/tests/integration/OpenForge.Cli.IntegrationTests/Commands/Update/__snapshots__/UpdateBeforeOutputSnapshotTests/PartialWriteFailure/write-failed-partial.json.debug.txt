@@ -71,7 +71,7 @@
     "filesCreated": 0,
     "filesDeleted": 0,
     "filesKept": 0,
-    "filesUnchanged": 12,
+    "filesUnchanged": 13,
     "sectionsUpdated": 0,
     "errors": 1
   },
@@ -110,6 +110,9 @@
       },
       {
         "path": ".agents/skills/_skills.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/SKILL.md"
       },
       {
         "path": ".agents/templates/_templates.md"

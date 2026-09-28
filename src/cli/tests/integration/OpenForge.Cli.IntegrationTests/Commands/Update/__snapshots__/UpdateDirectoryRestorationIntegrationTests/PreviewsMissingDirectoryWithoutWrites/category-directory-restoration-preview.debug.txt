@@ -6,7 +6,7 @@ Workspace: <workspace>
   .agents/loader.md              Entries section updated
   .agents/open-forge.lock.json   updated
   .agents/loader.md              unchanged (line endings differ)
-  12 files unchanged
+  13 files unchanged
   .agents/guidance bundled Framework: id=framework; version=unavailable; fingerprint=<sha256>
   .agents/guidance/_guidance.md shipped SHA-256: <sha256>
   .agents/guidance/_guidance.md source asset: .agents/guidance/_guidance.md

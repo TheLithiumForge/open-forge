@@ -5,7 +5,7 @@ Workspace: <workspace>
          cannot be fixed automatically
          open-forge doctor
          Inspect the reported Install boundary before rerunning it.
-  Bundled Framework fingerprint: <sha256> (14 assets).
+  Bundled Framework fingerprint: <sha256> (15 assets).
   No ownership record change was requested.
   No recovery bundle was required.
   Verification was not requested.

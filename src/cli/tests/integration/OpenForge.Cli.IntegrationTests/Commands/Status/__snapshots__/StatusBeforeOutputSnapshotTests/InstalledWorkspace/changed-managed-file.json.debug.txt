@@ -45,18 +45,18 @@
   ],
   "effects": [],
   "counts": {
-    "routedFiles": 13,
+    "routedFiles": 14,
     "startupFiles": 11,
-    "startupTokens": 5704,
+    "startupTokens": 5717,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 289,
-    "allTokens": 6356,
-    "startupShare": 89.75256677550057039455568231,
+    "mayLoadAgainTokens": 278,
+    "allTokens": 7852,
+    "startupShare": 72.811793549208775113828127488,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 13,
+    "frameworkFilesCurrent": 14,
     "frameworkFilesChanged": 1,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -79,15 +79,15 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 22781,
-          "bytes": 22781,
-          "tokens": 5696
+          "characters": 22833,
+          "bytes": 22833,
+          "tokens": 5709
         },
         "current": {
           "files": 11,
-          "characters": 22816,
-          "bytes": 22816,
-          "tokens": 5704
+          "characters": 22868,
+          "bytes": 22868,
+          "tokens": 5717
         },
         "difference": {
           "files": 0,
@@ -97,26 +97,26 @@
         },
         "mayLoadAgain": {
           "files": 1,
-          "characters": 1153,
-          "bytes": 1153,
-          "tokens": 289
+          "characters": 1111,
+          "bytes": 1111,
+          "tokens": 278
         }
       },
       "allRouted": {
-        "files": 13,
-        "characters": 25421,
-        "bytes": 25421,
-        "tokens": 6356
+        "files": 14,
+        "characters": 31407,
+        "bytes": 31407,
+        "tokens": 7852
       },
-      "startupShare": 89.75256677550057039455568231,
+      "startupShare": 72.811793549208775113828127488,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
-          "bytes": 1153,
+          "bytes": 1111,
           "layers": [
             {
               "path": ".agents/memory/emerging/_emerging.md",
-              "bytes": 1153
+              "bytes": 1111
             }
           ]
         }
@@ -172,6 +172,10 @@
       },
       {
         "path": ".agents/skills/_skills.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/SKILL.md",
         "state": "current"
       },
       {

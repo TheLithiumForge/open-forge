@@ -276,7 +276,7 @@
     "entriesSectionsCurrent": null,
     "entriesSectionsStale": null,
     "entriesSectionsMissing": null,
-    "frameworkFilesCurrent": 13,
+    "frameworkFilesCurrent": 14,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -355,9 +355,9 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 22781,
-          "bytes": 22781,
-          "tokens": 5696
+          "characters": 22833,
+          "bytes": 22833,
+          "tokens": 5709
         },
         "current": {
           "files": null,
@@ -437,6 +437,10 @@
       },
       {
         "path": ".agents/skills/_skills.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/SKILL.md",
         "state": "current"
       },
       {

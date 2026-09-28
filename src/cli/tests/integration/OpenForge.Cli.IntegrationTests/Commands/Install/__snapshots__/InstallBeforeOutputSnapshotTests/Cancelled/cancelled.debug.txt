@@ -1,6 +1,6 @@
 Install was cancelled. Nothing was changed.
 Workspace: <workspace>
-  Bundled Framework fingerprint: <sha256> (14 assets).
+  Bundled Framework fingerprint: <sha256> (15 assets).
   Ownership record publication did not start.
   No recovery bundle was required.
   Verification was not requested.

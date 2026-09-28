@@ -8,9 +8,9 @@ Startup context
   Shipped by this CLI:   11 files, about 5.7k tokens
   This workspace:        11 files, about 5.7k tokens
   May load again later:  1 file, about 0.3k tokens
-All routed files: 13 files, about 6.3k tokens (startup is 90%)
+All routed files: 14 files, about 7.8k tokens (startup is 73%)
 Routes: 7 root categories, 12 Entries sections current
-Framework files: 14 current
-13 routed files, 11 startup files, 5696 startup tokens, 1 may-load-again files, 289 may-load-again tokens, 6347 all routed tokens, 89.73843850941463798944300008 startup share, 7 root categories, 12 current Entries sections, 14 current Framework files, 1 recovery bundles, 1 warnings.
+Framework files: 15 current
+14 routed files, 11 startup files, 5709 startup tokens, 1 may-load-again files, 278 may-load-again tokens, 7843 all routed tokens, 72.781461175570572485018487824 startup share, 7 root categories, 12 current Entries sections, 15 current Framework files, 1 recovery bundles, 1 warnings.
   Review and remove the recovery data.
 Next: open-forge cleanup

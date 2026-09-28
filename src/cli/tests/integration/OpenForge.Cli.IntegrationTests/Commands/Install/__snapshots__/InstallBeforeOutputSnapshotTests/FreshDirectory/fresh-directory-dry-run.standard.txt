@@ -11,11 +11,12 @@ Workspace: <workspace>
   .agents/memory/working/_working.md            would be created
   .agents/patterns/_patterns.md                 would be created
   .agents/skills/_skills.md                     would be created
+  .agents/skills/open-forge-cli/SKILL.md        would be created
   .agents/templates/_templates.md               would be created
   AGENTS.md                                     would be created with an Open Forge section
   CLAUDE.md                                     would be created with an Open Forge section
   .agents/open-forge.lock.json                  would be created
-  Would create 12 files and 11 directories under .agents, plus AGENTS.md and CLAUDE.md.
-  Would create 11 directories.
+  Would create 13 files and 12 directories under .agents, plus AGENTS.md and CLAUDE.md.
+  Would create 12 directories.
   Nothing that already exists would be changed.
 No files were changed.

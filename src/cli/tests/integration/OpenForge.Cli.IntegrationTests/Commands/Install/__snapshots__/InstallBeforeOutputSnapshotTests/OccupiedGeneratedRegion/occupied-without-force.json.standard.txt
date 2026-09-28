@@ -50,7 +50,7 @@
     "automatic": true,
     "classification": "eligible-initial-occupant",
     "footprint": {
-      "files": 12,
+      "files": 13,
       "directories": null,
       "sections": 2
     },

@@ -1,4 +1,4 @@
-Install stopped after 14 of 25 changes.
+Install stopped after 15 of 27 changes.
 Workspace: <workspace>
   Error  .agents/memory/_memory.md  Write failed [install.write-failed]
          Writing .agents/memory/_memory.md failed: filesystem access was denied.
@@ -15,6 +15,7 @@ Workspace: <workspace>
   .agents/memory/crystallized                   created
   .agents/memory/emerging                       created
   .agents/memory/working                        created
+  .agents/skills/open-forge-cli                 created
   .agents/directives/_directives.md             created; source: .agents/directives/_directives.md
   .agents/guidance/_guidance.md                 created; source: .agents/guidance/_guidance.md
   .agents/loader.md                             created; source: .agents/loader.md
@@ -26,12 +27,13 @@ Workspace: <workspace>
   .agents/memory/working/_working.md            not started; source: .agents/memory/working/_working.md
   .agents/patterns/_patterns.md                 not started; source: .agents/patterns/_patterns.md
   .agents/skills/_skills.md                     not started; source: .agents/skills/_skills.md
+  .agents/skills/open-forge-cli/SKILL.md        not started; source: .agents/skills/open-forge-cli/SKILL.md
   .agents/templates/_templates.md               not started; source: .agents/templates/_templates.md
   AGENTS.md                                     not started; source: AGENTS.md
   CLAUDE.md                                     not started; source: CLAUDE.md
   .agents/open-forge.lock.json                  not started
-  14 files and directories were created.
-  Bundled Framework fingerprint: <sha256> (14 assets).
+  15 files and directories were created.
+  Bundled Framework fingerprint: <sha256> (15 assets).
   Ownership record publication did not start.
   The recovery bundle was retained at <recovery-bundle>.
   The final verification state is unknown.

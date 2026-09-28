@@ -11,10 +11,11 @@ Workspace: <workspace>
   .agents/memory/working/_working.md            created
   .agents/patterns/_patterns.md                 created
   .agents/skills/_skills.md                     created
+  .agents/skills/open-forge-cli/SKILL.md        created
   .agents/templates/_templates.md               created
   AGENTS.md                                     created with an Open Forge section
   CLAUDE.md                                     created with an Open Forge section
   .agents/open-forge.lock.json                  created; records the files above
-  Created 11 files and 10 directories under .agents (listed in .agents/open-forge.lock.json).
+  Created 12 files and 11 directories under .agents (listed in .agents/open-forge.lock.json).
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
-  Created 10 directories.
+  Created 11 directories.

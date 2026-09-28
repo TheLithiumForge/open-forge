@@ -9,7 +9,7 @@ Workspace: <workspace>
   .agents/loader.md              not started (you had changed it and this release changes it)
   .agents/guidance/_guidance.md  unchanged (line endings differ)
   .agents/loader.md              unchanged (line endings differ)
-  12 files unchanged
+  13 files unchanged
   Recovery data: <recovery-bundle>
   .agents/guidance/_guidance.md current SHA-256: <sha256>
   .agents/guidance/_guidance.md shipped SHA-256: <sha256>

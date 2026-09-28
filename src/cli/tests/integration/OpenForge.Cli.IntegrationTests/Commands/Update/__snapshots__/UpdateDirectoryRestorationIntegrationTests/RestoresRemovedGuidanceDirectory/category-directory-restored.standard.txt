@@ -5,6 +5,6 @@ Workspace: <workspace>
   .agents/loader.md              replaced (you had changed it and this release changes it)
   .agents/loader.md              Entries section updated
   .agents/open-forge.lock.json   updated
-  12 files unchanged
+  13 files unchanged
   Review previous content in the recovery bundle at <recovery-bundle>.
 Next: open-forge doctor

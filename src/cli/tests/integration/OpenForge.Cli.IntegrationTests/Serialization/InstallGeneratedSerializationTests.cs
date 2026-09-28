@@ -50,7 +50,7 @@ public sealed class InstallGeneratedSerializationTests
         Assert.Equal("safe-absence", data.GetProperty("classification").GetString());
         Assert.Equal(InstallDefinitions.OwnershipRecordPath, data.GetProperty("lockPath").GetString());
         Assert.Equal(InstallOperationWorkspace.EmbeddedPayloadPaths.Count, data.GetProperty("footprint").GetProperty("files").GetInt32());
-        Assert.Equal(11, data.GetProperty("footprint").GetProperty("directories").GetInt32());
+        Assert.Equal(12, data.GetProperty("footprint").GetProperty("directories").GetInt32());
         Assert.Equal(2, data.GetProperty("footprint").GetProperty("sections").GetInt32());
         Assert.Equal(FreshInstallEffectCount, data.GetProperty("effects").GetArrayLength());
         Assert.False(string.IsNullOrWhiteSpace(data.GetProperty("source").GetProperty("inventoryFingerprint").GetString()));

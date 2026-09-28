@@ -135,6 +135,16 @@
       "after": null
     },
     {
+      "path": ".agents/skills/open-forge-cli",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -245,6 +255,16 @@
       "after": null
     },
     {
+      "path": ".agents/skills/open-forge-cli/SKILL.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/templates/_templates.md",
       "kind": "file",
       "action": "created",
@@ -286,8 +306,8 @@
     }
   ],
   "counts": {
-    "filesCreated": 12,
-    "directoriesCreated": 11,
+    "filesCreated": 13,
+    "directoriesCreated": 12,
     "sectionsAdded": 0,
     "filesReplaced": 0
   },
@@ -298,8 +318,8 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 12,
-      "directories": 11,
+      "files": 13,
+      "directories": 12,
       "sections": 2
     },
     "lockPath": ".agents/open-forge.lock.json",
@@ -339,6 +359,9 @@
       },
       {
         "path": ".agents/memory/working"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli"
       },
       {
         "path": ".agents/directives/_directives.md",
@@ -385,6 +408,10 @@
         "sourceAssetPath": ".agents/skills/_skills.md"
       },
       {
+        "path": ".agents/skills/open-forge-cli/SKILL.md",
+        "sourceAssetPath": ".agents/skills/open-forge-cli/SKILL.md"
+      },
+      {
         "path": ".agents/templates/_templates.md",
         "sourceAssetPath": ".agents/templates/_templates.md"
       },
@@ -402,7 +429,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 14
+      "assetCount": 15
     },
     "lifecycle": {
       "action": "publish",

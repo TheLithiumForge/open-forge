@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Install stopped after 14 of 25 changes.",
+    "headline": "Install stopped after 15 of 27 changes.",
     "kind": "failed"
   },
   "findings": [
@@ -117,6 +117,14 @@
       "owner": null
     },
     {
+      "path": ".agents/skills/open-forge-cli",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -205,6 +213,14 @@
       "owner": null
     },
     {
+      "path": ".agents/skills/open-forge-cli/SKILL.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/templates/_templates.md",
       "kind": "file",
       "action": "created",
@@ -239,7 +255,7 @@
   ],
   "counts": {
     "filesCreated": 4,
-    "directoriesCreated": 10,
+    "directoriesCreated": 11,
     "sectionsAdded": 0,
     "filesReplaced": 0,
     "errors": 1
@@ -251,8 +267,8 @@
     "automatic": true,
     "classification": "eligible-initial-occupant",
     "footprint": {
-      "files": 12,
-      "directories": 10,
+      "files": 13,
+      "directories": 11,
       "sections": 2
     },
     "lockPath": ".agents/open-forge.lock.json"
