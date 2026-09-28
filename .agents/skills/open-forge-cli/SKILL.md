@@ -17,8 +17,9 @@ The `open-forge` CLI reads and maintains the Open Forge files in this workspace.
 ## Work Safely
 
 - Preview every change with `--dry-run` and review the plan before applying it.
-- Read the status that ends each result. `completed-with-warnings` is usable but needs review. `incomplete` means required facts were missing. `blocked` means the CLI stopped at a boundary instead of guessing.
-- Follow the next step the result suggests, then run the original command again.
+- Check each result's status. The exit code reports it, and `--format json` names it. `completed-with-warnings` (exit 2) is usable but needs review. `incomplete` means required facts were missing. `blocked` means the CLI stopped at a boundary instead of guessing.
+- Commands that ask for confirmation write nothing in a noninteractive shell and return `invalid-input`. After the dry run is reviewed and the change is within the task, run the command again with `--automatic`.
+- When a result suggests a next step within the task, take it, then run the original command again.
 - Do not work around a `blocked` or `incomplete` result by editing files to force the same effect. Report it with the suggested next step.
 - Add `--detail standard` or `--detail full` for reasons and evidence. Use `--format json` when another tool reads the result.
 

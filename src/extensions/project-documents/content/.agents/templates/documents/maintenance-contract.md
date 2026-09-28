@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: "State what a maintained source owns, what must remain true, and how to verify it"
+  description: "State what a maintained source defines, what must remain true, and how to verify it"
   tags: [Extension, Template, Document, Maintenance, Governance]
 ---
 
@@ -8,17 +8,16 @@ open-forge:
 
 {
 Use when a source has stable maintenance obligations worth defining separately. Do not invent a governance layer for a trivial file.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Source
 
 **Maintained source:** {Exact path or link.}
 
-**Responsibility:** {The question or behavior this source owns.}
+**Responsibility:** {The question this source answers or the behavior it defines.}
 
-**Related surfaces:** {Counterparts, generated output, installed copies, or consumers that must stay aligned; omit when none.}
+**Related surfaces:** {Counterparts, generated output, installed copies, or consumers that must stay aligned. Omit when none.}
 
 ## Contract
 
@@ -36,4 +35,4 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 **Change sequence:** {Only necessary ordering across sources and generated or installed counterparts.}
 
-**Unavailable checks:** {Name a real verification gap and the required follow-up; do not report an intended check as passed.}
+**Unavailable checks:** {Name a real verification gap and the required follow-up. Do not report an intended check as passed.}

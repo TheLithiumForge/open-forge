@@ -15,8 +15,8 @@ Analysis preserves useful reasoning, investigation, or comparison that is not ac
 - Check `Entries` when current work needs prior reasoning.
 - State the question, evidence, assumptions, limits, and current conclusion.
 - Check that the assumptions still hold before relying on an Analysis.
-- When an Analysis is handed off for execution, preserve the version used for that handoff. Record later implementation findings and execution evidence in the active working record.
 - Revise exploratory Analysis while its question remains open. Using it to guide an experiment does not by itself seal it or establish acceptance.
+- When an Analysis is handed off for execution, preserve the version used for that handoff. Record later implementation findings and execution evidence in the active working record.
 
 ## Entries
 

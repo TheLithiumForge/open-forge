@@ -27,7 +27,7 @@ stderr and scratch files are retained locally.
 | Doctor after explicit Index                                                                                    | Exit 0, no findings                                                        |
 
 The old thirteen-warning fresh-install report in
-[Task 46](../task46-routed-skill-resources.md) is superseded by this evidence.
+[Task 46](../../../../archived/cli-development/tasks/task46-routed-skill-resources.md) is superseded by this evidence.
 The narrower navigation/action defect in
 [Task 47](../task47-entrypoint-reachability.md) survives. Doctor also prints
 `<catalogue> does not list absent.` rather than naming `beta-probe.md`.

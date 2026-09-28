@@ -22,7 +22,7 @@ At levels 1 and 2 the agent never heard the rounding rule, so a different, expli
 
 ## The knowledge
 
-Only when Open Forge is installed:
+Only when Open Forge and the Development Toolkit are installed:
 
 - The important choices, such as how money is stored and who absorbs rounding, are recorded as Decisions with their reasons.
 - A Vision or Architecture exists if you asked for one, and stayed proposed until you accepted it.

@@ -8,9 +8,9 @@ open-forge:
 
 {
 Use when accepted direction must govern agent behavior. For advice, choose Guidance.
-Place the result under the relevant Directives scope. Give it its own description and tags, including Directive and LoadNow; remove Template and Extension.
+Place the result under the relevant Directives scope. Give it its own description and tags, including #Directive and #LoadNow. Remove #Template and #Extension.
 Update the containing entrypoint's Entries. A child scope must be selected before its Directives load.
-Replace prompts and remove this source guidance. Retain exactly one non-empty Instructions section.
+Replace prompts and remove this source guidance. Keep the instructions under a non-empty Instructions heading.
 }
 
 ## Instructions

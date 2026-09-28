@@ -9,7 +9,7 @@ open-forge:
 
 ## Role
 
-A Directive is an independently routed binding instruction. Use one when behavior is mandatory in a reusable scope and no broader authoritative source already expresses that requirement. Its direct sibling file exposes exactly one substantive `## Instructions` section.
+A Directive is an independently routed binding instruction. Use one when behavior is mandatory in a reusable scope and no broader authoritative source already expresses that requirement. Its direct sibling file keeps its instructions under a substantive `## Instructions` heading.
 
 Directives let a workspace grow explicit mandatory behavior without placing every rule in the loader or treating contextual advice as binding.
 

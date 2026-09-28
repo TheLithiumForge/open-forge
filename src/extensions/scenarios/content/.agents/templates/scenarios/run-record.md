@@ -6,7 +6,7 @@ open-forge:
 
 # {Run Name}
 
-{Copy and adapt. Replace metadata, rebase links, and remove prompts and unused sections. Keep observed failures; do not rewrite the expected result merely to match them.}
+{Copy and adapt. Replace metadata, rebase links, and remove prompts and unused sections. Keep observed failures. Do not rewrite the expected result merely to match them.}
 
 ## Basis
 
@@ -22,7 +22,7 @@ open-forge:
 
 ## Independent Checks
 
-{Check the resulting work or state independently of success messages. Record what changed, what stayed intact, and whether the intended outcome was reached. For file operations, this may include content, permissions, and recovery checks; use the equivalent evidence for other subjects.}
+{Check the resulting work or state independently of success messages. Record what changed, what stayed intact, and whether the intended outcome was reached. For file operations, this may include content, permissions, and recovery checks. Use the equivalent evidence for other subjects.}
 
 ## Verdict
 

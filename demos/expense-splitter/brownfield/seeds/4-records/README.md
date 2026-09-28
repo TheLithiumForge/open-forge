@@ -2,7 +2,7 @@
 
 The most guidance. Instead of a long prompt, the decision and the expected results arrive as Open Forge records, the way they would after a planning conversation.
 
-This level needs the Planning and Project Documents Extensions. The Development Toolkit includes both. The records link to each other at their installed locations.
+This level needs two Extensions: Planning for the Decision, and Project Documents for the scenarios Document. The Development Toolkit includes both. The records link to each other at their installed locations.
 
 1. Copy `decision-uneven-split-rounding.md` into `.agents/memory/crystallized/decisions/`.
 2. Copy `percentage-split-scenarios.md` into `.agents/memory/crystallized/documents/`.

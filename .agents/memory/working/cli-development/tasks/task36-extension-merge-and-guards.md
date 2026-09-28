@@ -6,6 +6,9 @@ open-forge:
 
 # Task 36 — Extension Partial Merge And Guard Replacement
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task36-extension-merge-and-guards.md). Recommendation:
+Needs the maintainer's decision first. The review names any details in this record that are out of date.
+
 ## Task state
 
 - State: **Open, not started.** Raised by the maintainer on 2026-09-16.
@@ -32,8 +35,8 @@ What has to be decided:
   own concept.
 - **What happens on update.** If the user edits inside an Extension's
   contribution, does the update overwrite, skip, or report a divergence? This is
-  the same question [Task 33](task33-managed-content-removal.md) and
-  [Task 35](task35-removal-and-suppression-model.md) face for removal, and the
+  the same question [Task 33](../../../archived/cli-development/tasks/task33-managed-content-removal.md) and
+  [Task 35](../../../archived/cli-development/tasks/task35-removal-and-suppression-model.md) face for removal, and the
   answers should agree.
 - **What happens on removal.** Removing an Extension must remove its
   contribution without taking the authored text around it.
@@ -107,6 +110,16 @@ the content is *read*, not just how it is located:
   containment in `.prettierignore` reduced accordingly.
 - No authored text can be lost by any boundary the decision introduces, proven
   by a test that appends prose in every position around a boundary.
+
+## Folded in on 2026-09-28
+
+- **From [Task 30](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md):** the "Managed Host
+  Heading Direction" in [phase-4a-structural](../../../archived/cli-development/tasks/task30/phase-4a-structural.md)
+  asks the same question as Question 2 here. Treat them as one.
+- **Evidence against a heading-only boundary:** a `# Open Forge` region in this
+  repository's `AGENTS.md` would absorb the `## Exact Mechanical Execution
+  Exception` section that follows it, and the next update would overwrite it.
+  See the [review](../../../emerging/analysis/open-task-review/task36-extension-merge-and-guards.md).
 
 ## Axioms
 

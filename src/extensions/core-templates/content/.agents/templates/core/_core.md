@@ -8,7 +8,15 @@ open-forge:
 
 ## Which starting file fits the content you need?
 
-Choose the role before copying. A Directive requires behavior, Guidance recommends an approach, a Pattern defines a reusable shape, a Skill supplies a native capability, a Template starts an independent artifact, a Map points to useful sources, and Memory preserves useful knowledge or work state.
+Choose the role before copying.
+
+- A Directive requires behavior.
+- Guidance recommends an approach.
+- A Pattern defines a reusable shape.
+- A Skill supplies a native capability.
+- A Template starts an independent artifact.
+- A Map points to useful sources.
+- Memory preserves useful knowledge or work state.
 
 ## Axioms
 

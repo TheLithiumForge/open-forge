@@ -16,7 +16,7 @@ Emerging Memory keeps useful findings, possibilities, and reasoning that are not
 
 - At each applicable #KeepInMind refresh, check visible `Entries` and save useful candidate material before it is lost.
 - "Nothing useful to save" is a valid result. Do not turn raw activity into Memory.
-- Treat Emerging Memory as contextual until accepted within its scope. Keep uncertainty, source, and scope visible.
+- Keep uncertainty, source, and scope visible when they affect later use.
 
 ### Refinement And Transition
 

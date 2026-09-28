@@ -117,7 +117,7 @@ public sealed class F26BundledExtensionsJourneyTests
         await AssertContextRetrievalAsync(
             workspace,
             AdaptiveCollaborationPath,
-            "## Preferred Approach");
+            "## Recommended Approach");
 
         var planningInstall = await workspace.RunAsync(
             "extension", "install", "planning", "--automatic");

@@ -7,9 +7,8 @@ open-forge:
 # {Subject} Vision
 
 {
-Use for a stable direction worth preserving. This is not a roadmap or feature catalogue; keep proposed and accepted direction distinct.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Use for a stable direction worth preserving. This is not a roadmap or feature catalogue. Keep proposed and accepted direction distinct.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Vision
@@ -20,7 +19,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 **Audience:** {Who has the need and in which situation.}
 
-**Problem or opportunity:** {What is difficult, missing, or newly possible; use actual evidence when available.}
+**Problem or opportunity:** {What is difficult, missing, or newly possible. Use actual evidence when available.}
 
 **Core value:** {The benefit that must exist for this direction to matter.}
 
@@ -32,7 +31,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 ## Success
 
-{Observable outcomes that would show the promise is being realized. Distinguish an intended signal from a measured result; do not invent targets.}
+{Observable outcomes that would show the promise is being realized. Distinguish an intended signal from a measured result. Do not invent targets.}
 
 ## Non-Goals
 

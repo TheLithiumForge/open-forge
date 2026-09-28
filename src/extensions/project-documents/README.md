@@ -29,5 +29,5 @@ Drafts remain candidates until accepted. Existing documentation need not move in
 
 Use the complete source catalogue so dependencies resolve together. See the [installation guide](../../../docs/extensions.md) for managed and manual setup.
 
-Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent; deleting a starter never means deleting the work created from it.
+Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent. Deleting a starter never means deleting the work created from it.
 

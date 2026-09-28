@@ -18,87 +18,56 @@ evidence and may narrow, but never broaden, its parent Task.
 The [Potential CLI Tasks](potential/_potential.md) route is a candidate queue,
 not active execution authority.
 
-## Beta ordering
+## Current order
 
-Accepted on 2026-09-17. **The bar for beta is that everything a user touches is
-polished and there are no stupid bugs.** Architecture work is explicitly second
-priority, however much it wants doing.
+Accepted on 2026-09-28 from the
+[open task review](../../../emerging/analysis/open-task-review/_open-task-review.md).
+The ordering that came before it is preserved in
+[Task ordering before 2026-09-28](../../../archived/cli-development/tasks/ordering-2026-09-25.md).
 
-Read this ordering before picking up unrelated beta work. The later Task 38
-selection is retained as completed history; the current beta specification
-selection above does not cancel these goals.
+1. **Unblock the release.** Merge [61](task61-documentation-accuracy-and-voice.md),
+   refresh the integration snapshots, and release beta 2 through
+   [59](task59-beta-2-release.md).
+2. **Do next:** [53](task53-loading-and-scoping-audit.md) and
+   [64](task64-cli-defects-and-contract-drift.md).
+   [66](task66-council-polish.md) is committed on its own branch and awaits review.
+   [67](task67-diagram-labels.md) builds on it.
+3. **Decide before 1.0:** [36](task36-extension-merge-and-guards.md),
+   [37](task37-wording-review-against-proposals.md),
+   [62](task62-glob-scoped-loading.md),
+   [63](task63-keeping-edits-through-updates.md), and
+   [65](task65-where-open-tasks-live.md).
+4. **Before 1.0:** [53](task53-loading-and-scoping-audit.md), then
+   [54](task54-tag-trimming.md), then [44](task44-template-content.md), because
+   each edits files the next reads. [32](task32-minimal-output-sweep.md),
+   [39](task39-output-audit.md), and [34](task34-interpolated-value-markup.md)
+   run alongside, with 32 and 39 before 37.
+   [47](task47-entrypoint-reachability.md) and its
+   [Skill indexing follow-up](task47-default-skill-indexing.md) also land
+   before 1.0.
+5. **After 1.0:** [40](task40-capture-coverage.md),
+   [48](task48-scoping-for-extension-routes.md), and
+   [58](task58-demo-evals.md).
 
-**Blocking beta — a user sees this**
+The remaining backlog items stay in [beta follow-ups](beta-follow-ups.md), and
+the [candidate queue](potential/_potential.md) holds work not yet selected.
 
-1. [41 Beta journey scenarios](task41-beta-journey-scenarios.md) — nothing else
-   is measurable until we know what a user actually does. Everything below is
-   partly informed by what this finds.
-2. [39 Output audit](task39-output-audit.md) — representative manifest errors corrected; broader command-family audit remains.
-3. [42 Minimal core](task42-minimal-core.md) and
-   [43 Workflows as a skill](task43-workflows-as-skill.md) — extraction is present in the shipped payload; documentation is aligned; historical upgrade-evidence reconciliation remains.
-4. [46 Routed Skill resources](task46-routed-skill-resources.md) and
-   [47 Entrypoint reachability](task47-entrypoint-reachability.md) — the current scratch recheck finds a healthy fresh install. Skill
-   catalogue repair advice and missing-entry naming are corrected;
-   the beta packet supersedes the older thirteen-warning report.
-5. [44 Template and core file content](task44-template-content.md) — the prose a
-   user reads most, and it depends on 42 deciding which files survive.
-6. [37 Wording review](task37-wording-review-against-proposals.md) — held by the
-   maintainer directly.
-7. [32 Minimal output sweep](task32-minimal-output-sweep.md) — what shows on
-   screen, and what it costs in tokens.
-8. [34 Interpolated value markup](task34-interpolated-value-markup.md) — small,
-   visible, cheap.
+## Archived on 2026-09-28
 
-**Beta safety net — approved journeys implemented; coverage follow-ups remain**
+These records moved to [Archived CLI Tasks](../../../archived/cli-development/tasks/_tasks.md)
+when the maintainer accepted the review:
 
-9. [45 End-to-end observability](../../../archived/cli-development/tasks/task45-end-to-end-observability.md)
-10. [40 Capture coverage](task40-capture-coverage.md)
-
-Neither changes what a user sees. Both decide whether we would find out when it
-breaks, which is why they sit above the architecture work rather than with it.
-
-**After beta — architecture and behaviour**
-
-11. [48 Scoping for Extension routes](task48-scoping-for-extension-routes.md) —
-    the Core reduction left every nested managed route inside an Extension, and
-    the scaffold cannot see them. Carries the route-init coverage that had to be
-    dropped.
-12. [38 Project and test split](../../../archived/cli-development/tasks/task38-project-and-test-split.md)
-13. [31 Implementation duplication](task31-implementation-duplication.md)
-14. [33 Managed content removal](task33-managed-content-removal.md)
-15. [35 Removal and suppression model](task35-removal-and-suppression-model.md)
-16. [36 Extension merge and guards](task36-extension-merge-and-guards.md)
-
-[Task 30](task30-cli-experience-remediation.md) stays open underneath all of
-this; its remaining phases feed 32, 37 and 39.
-
-## 1.0 polish
-
-Recorded on 2026-09-25, after the public beta. The maintainer selected the
-documentation site for implementation and asked for the others as tasks.
-
-1. [52 Documentation site](task52-documentation-site.md) — integrated into
-   local `develop`. The maintainer merges to `main` and enables Pages.
-2. [53 Loading and scoping audit](task53-loading-and-scoping-audit.md) —
-   recorded, not started.
-3. [54 Tag trimming](task54-tag-trimming.md) — recorded, not started. It runs
-   after or alongside 53 because both edit the same frontmatter.
-4. [55 Alternative root](task55-alternative-root.md) — recorded, not started.
-   An investigation into roots such as `.apm`. Decide it before 1.0 fixes the
-   layout, because a root change breaks installed workspaces.
-5. [57 Onboarding and demos](task57-onboarding-and-demos.md) — the new or
-   existing project guide, the framework diagram, Highlights, the document
-   flow page, and the expense splitter demos. Complete and integrated.
-6. [58 Demo-based evaluations](task58-demo-evals.md) — recorded, not started.
-   It turns the demos into a repeatable comparison.
-7. [59 Beta 2 release](task59-beta-2-release.md) — the npm package fix is integrated.
-   Release after the maintainer pushes the documentation work.
-8. [60 CLI Skill in Core](task60-cli-skill.md) — the `open-forge-cli` Skill
-   shipped. Whether the loader's CLI section shrinks stays open.
-
-The maintainer's `---` guard idea for `AGENTS.md` and `CLAUDE.md` is recorded as
-a candidate in [Task 36](task36-extension-merge-and-guards.md), which already
-owns replacing the comment guards.
+- Closed as done: [30](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md) with its phase
+  packets, [31](../../../archived/cli-development/tasks/task31-implementation-duplication.md) with its subtasks,
+  [33](../../../archived/cli-development/tasks/task33-managed-content-removal.md),
+  [35](../../../archived/cli-development/tasks/task35-removal-and-suppression-model.md),
+  [41](../../../archived/cli-development/tasks/task41-beta-journey-scenarios.md) with its journey records,
+  [42](../../../archived/cli-development/tasks/task42-minimal-core.md), [43](../../../archived/cli-development/tasks/task43-workflows-as-skill.md), and
+  [60](../../../archived/cli-development/tasks/task60-cli-skill.md).
+- Complete: [52](../../../archived/cli-development/tasks/task52-documentation-site.md) and
+  [57](../../../archived/cli-development/tasks/task57-onboarding-and-demos.md).
+- Folded: [46](../../../archived/cli-development/tasks/task46-routed-skill-resources.md) into Task 47's Skill indexing
+  follow-up, and [55](../../../archived/cli-development/tasks/task55-alternative-root.md) into Task 62.
 
 ## Archived on 2026-09-25
 
@@ -117,31 +86,24 @@ Their links from open Tasks now point there.
 - [Remaining beta product work and delivery verification after the CLI migration](beta-follow-ups.md) - #Memory #Working #Backlog #CLI #Beta #Contextual
 - [Specifications for actionable errors, stale Core documentation and Skill navigation follow-ups](beta-follow-ups/_beta-follow-ups.md) - #Memory #Working #Plan #CLI #Contextual
 - [Candidate follow-up tasks distilled from the reviewed CLI analyses; not active execution authority](potential/_potential.md) - #Memory #Working #CLI #Task #Potential #Contextual
-- [Open Task 30 for CLI experience remediation, with actionable phase state and evidence carried from Emerging Analysis](task30-cli-experience-remediation.md) - #Memory #Working #CLI #Task #Remediation #Contextual #Active
-- [Task 30 phase subtasks carrying actionable evidence from the Emerging CLI analyses](task30/_task30.md) - #Memory #Working #CLI #Task #Subtask #Contextual #Active
-- [Open Task 31 for removing duplicated CLI implementation while preserving command-local contracts](task31-implementation-duplication.md) - #Memory #Working #CLI #Task #Duplication #Refactoring #Contextual #Active
-- [Task 31 phase subtasks carrying duplication measurements, refactoring boundaries, and acceptance evidence](task31/_task31.md) - #Memory #Working #CLI #Task #Subtask #Contextual #Active
 - [Open Task 32 to review whether the Workspace echo and the Next action belong in minimal output across all 28 commands](task32-minimal-output-sweep.md) - #Memory #Working #CLI #Task #Presentation #Minimal #Contextual #Active
-- [Open Task 33 to decide whether individually removing managed Extension and Framework content is supported, and to reconcile the removability promise with what the commands actually allow](task33-managed-content-removal.md) - #Memory #Working #CLI #Task #Removal #Ownership #Extension #Contextual #Active
 - [Open Task 34 to visually distinguish command names, paths, identifiers and arguments interpolated into user-facing sentences, and to establish it as an authoring rule](task34-interpolated-value-markup.md) - #Memory #Working #CLI #Task #Presentation #Wording #Accessibility #Contextual #Active
-- [Open Task 35 to explore a unified removal and suppression model across Routes, Extensions and Libraries, pinning current behaviour with characterization tests before any design is chosen](task35-removal-and-suppression-model.md) - #Memory #Working #CLI #Task #Exploration #Removal #Ownership #Lifecycle #Contextual #Active
 - [Open Task 36 to design partial file merging by Extensions and to replace the comment guards in authored Markdown with a boundary an agent still reads as an instruction](task36-extension-merge-and-guards.md) - #Memory #Working #CLI #Task #Extensions #Markers #Authoring #Contextual #Active
 - [Open Task 37 to compare every shipped CLI sentence against the unaccepted G4 output proposals and adopt, merge or reject each on its merits](task37-wording-review-against-proposals.md) - #Memory #Working #CLI #Task #Wording #Review #Contextual #Active
 - [Open Task 39 to audit every CLI output for actionability, confirm the G4 conversion actually improved each command, and find remaining legacy and evidence gaps](task39-output-audit.md) - #Memory #Working #CLI #Task #Output #Audit #Regression #Contextual #Active
 - [Open Task 40 to close the gap between the accepted finding vocabulary and the situations any capture actually exercises, so the output invariants guard more than a quarter of what the CLI can print](task40-capture-coverage.md) - #Memory #Working #CLI #Task #Capture #Coverage #Evidence #Contextual #Active
-- [Open Task 41 to define the user journeys a beta must survive, run them by hand or by agent, and turn the findings into the polish list before release](task41-beta-journey-scenarios.md) - #Memory #Working #CLI #Task #Scenario #Beta #Release #Contextual #Active
-- [Open Task 42 to shrink the installed core to what every workspace needs, moving deeper routes into Extensions a user opts into](task42-minimal-core.md) - #Memory #Working #CLI #Task #Core #Extensions #Routing #Beta #Contextual #Active
-- [Open Task 43 to narrow Workflows and express them through the skill mechanism, so they stop overlapping with Skills and can be selected when they become relevant](task43-workflows-as-skill.md) - #Memory #Working #CLI #Task #Workflows #Skills #Framework #Beta #Contextual #Active
 - [Open Task 44 to fix what the installed templates and core files say, since they are the first Open Forge prose a beta user reads](task44-template-content.md) - #Memory #Working #CLI #Task #Templates #Wording #Beta #Contextual #Active
-- [Open Task 46 to let a native Skill's resources be used as routes and to read route metadata from the native SKILL.md frontmatter instead of demanding an Open Forge block](task46-routed-skill-resources.md) - #Memory #Working #CLI #Task #Skills #Routing #Metadata #Beta #Contextual #Active
 - [Task 47 follow-up to make default Index reach routed resources through native Skills](task47-default-skill-indexing.md) - #Memory #Working #CLI #Task #Skill #Index #Contextual
 - [Open Task 47 to make index and route navigation reach every recognized entrypoint form from the loader, so a catalogue does not need to be named by hand to stay current](task47-entrypoint-reachability.md) - #Memory #Working #CLI #Task #Routing #Navigation #Index #Beta #Contextual #Active
 - [Open Task 48 to extend Framework route scaffolding and scope insertion to routes an Extension created, so scoping is a property of the routing model rather than of whatever Core happens to ship](task48-scoping-for-extension-routes.md) - #Memory #Working #CLI #Task #Routing #Scopes #Extensions #RouteInit #Contextual #Active
-- [Task 52 Docusaurus documentation site with getting started, concepts, a file-by-file Extension reference, and GitHub Pages publication](task52-documentation-site.md) - #Memory #Working #Task #Documentation #Site #Docusaurus #Contextual #Active
 - [Open Task 53 to audit every LoadNow and KeepInMind entry and the default scoping before 1.0, so startup context holds only what omission would cost more than reading](task53-loading-and-scoping-audit.md) - #Memory #Working #Task #Framework #Loading #Scope #Release #Contextual #Active
 - [Open Task 54 to trim tags that add no selection, search, or loading value before 1.0, in shipped files first and then in this workspace](task54-tag-trimming.md) - #Memory #Working #Task #Framework #Tags #Release #Contextual #Active
-- [Open Task 55 to investigate running Open Forge under another root such as .apm, so users can also use APM frontmatter, packaging, and compilation](task55-alternative-root.md) - #Memory #Working #Task #Framework #Root #APM #Investigation #Release #Contextual #Active
-- [Task 57 onboarding pages, the framework diagram, Highlights, and the expense splitter demos for new and existing codebases](task57-onboarding-and-demos.md) - #Memory #Working #Task #Documentation #Site #Demo #Contextual #Active
 - [Open Task 58 to turn the demos into a repeatable evaluation comparing Open Forge with other setups, agents, and models](task58-demo-evals.md) - #Memory #Working #Task #Evaluation #Demo #Contextual #Active
 - [Open Task 59 to publish 0.9.0-beta.2 once the documentation site is merged, so the npm package shows the README, the website, and the repository](task59-beta-2-release.md) - #Memory #Working #Task #Release #Beta #Package #Contextual #Active
-- [Open Task 60 to ship a native Skill for the CLI as part of Core, and decide whether the loader's CLI section moves into it](task60-cli-skill.md) - #Memory #Working #Task #Core #Skill #CLI #Loader #Contextual #Active
+- [Task 61 accuracy and voice pass over the documentation site, the README, and the repository guides, with a diagram that separates Core from Extensions and startup from on-demand loading](task61-documentation-accuracy-and-voice.md) - #Memory #Working #Task #Documentation #Site #Diagram #Writing #Contextual #Active
+- [Open Task 62 to investigate an applies-to glob, like GitHub Copilot's applyTo, as a loading condition, and whether description and tags may also sit at the root of frontmatter](task62-glob-scoped-loading.md) - #Memory #Working #Task #Framework #Loading #Frontmatter #Tags #CLI #Investigation #Contextual #Active
+- [Open Task 63 to decide whether and how a direct edit to a managed file can survive updates, since removedFiles already keeps such a file untouched as an undocumented side effect](task63-keeping-edits-through-updates.md) - #Memory #Working #Task #CLI #Update #Removal #Customization #Investigation #Contextual #Active
+- [Open Task 64 to fix the CLI defects, wording errors, and contract contradictions found by the documentation review, and the leftovers of the closed removal and remediation Tasks](task64-cli-defects-and-contract-drift.md) - #Memory #Working #Task #CLI #Defect #Contract #Wording #Contextual #Active
+- [Open Task 65 to decide where long-running open Tasks should live, in Working Memory as now, in a Planning backlog, or split between them](task65-where-open-tasks-live.md) - #Memory #Working #Task #Planning #Backlog #Contextual #Active
+- [Task 66 council review of the published documentation for overclaims and polish, and of the shipped Framework and Extension files for consistency, redundancy, order, and readability](task66-council-polish.md) - #Memory #Working #Task #Documentation #Framework #Extensions #Council #Writing #Contextual #Active
+- [Task 67 council redesign of the framework diagram's labels, so what loads when and where content comes from reads at a glance and stays accurate](task67-diagram-labels.md) - #Memory #Working #Task #Documentation #Diagram #Loading #Council #Writing #Contextual #Active

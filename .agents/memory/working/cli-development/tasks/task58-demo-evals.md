@@ -6,10 +6,13 @@ open-forge:
 
 # Task 58 — Demo-based evaluations
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task58-demo-evals.md). Recommendation:
+Do after 1.0. The review names any details in this record that are out of date.
+
 ## Outcome
 
 Recorded at the maintainer's request on 2026-09-25. The demos from
-[Task 57](task57-onboarding-and-demos.md) become a repeatable evaluation: the
+[Task 57](../../../archived/cli-development/tasks/task57-onboarding-and-demos.md) become a repeatable evaluation: the
 same fixed inputs, run under different setups, scored the same way, with
 results that can be reproduced and published honestly.
 
@@ -65,5 +68,5 @@ superiority wait for results and their limits.
 **Related:** the Emerging idea on
 [documentation comprehension probes](../../../emerging/ideas/documentation-comprehension-probes.md)
 proposes known-answer questions for unfamiliar agents, which could share this
-harness. [Task 41](task41-beta-journey-scenarios.md) owns the CLI's own user
+harness. [Task 41](../../../archived/cli-development/tasks/task41-beta-journey-scenarios.md) owns the CLI's own user
 journeys, which are a different kind of check.

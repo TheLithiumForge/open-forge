@@ -9,13 +9,13 @@ Start your own workspace instructions, advice, reusable shapes, capabilities, ma
 
 - **Package ID:** `core-templates`
 - **Depends on:** Nothing
-- **Loads at startup:** Nothing. Templates are always on demand.
+- **Loads at startup:** Nothing. The Templates root [entrypoint](../concepts/routing.md#entrypoints) isn't read at startup, so these starters stay on demand.
 
 ## Why it exists
 
-The first Directive or Pattern you write sets the tone for the rest, and guessing its shape is where inconsistency starts. One starter per category makes each role concrete: a Directive has an `Instructions` section, Guidance explains its tradeoffs, a Pattern shows an example.
+Each Core category expects a particular shape. A Directive keeps its rules under an `Instructions` heading, Guidance explains its tradeoffs, and a Pattern shows an example. One starter per category gives you that shape up front, so you don't have to work it out from the category rules.
 
-It's separate from the Development Toolkit because writing your own workspace content has nothing to do with software in particular.
+It's separate from the Development Toolkit because writing your own workspace content isn't specific to software development.
 
 ## What it installs
 
@@ -39,8 +39,8 @@ It's separate from the Development Toolkit because writing your own workspace co
 | `directive.md` | [Directive](../concepts/core-categories.md#directives) | `Instructions`: the required behavior for one clearly selected scope.                                                                                                                     |
 | `guidance.md`  | [Guidance](../concepts/core-categories.md#guidance)    | `Situation`, `Recommended Approach`, `Reasons And Tradeoffs`, `Example`.                                                                                                                  |
 | `pattern.md`   | [Pattern](../concepts/core-categories.md#patterns)     | `Applies To`, `Shape`, `Example`, `Variations And Tradeoffs`.                                                                                                                             |
-| `skill.md`     | [Skill](../concepts/core-categories.md#skills)         | A fenced native `SKILL.md` with `name`, `description`, `Purpose`, and required inputs.                                                                                                    |
-| `template.md`  | [Template](../concepts/core-categories.md#templates)   | Named sections for a recurring artifact, kept only if they earn their place.                                                                                                              |
+| `skill.md`     | [Skill](../concepts/core-categories.md#skills)         | A fenced native `SKILL.md` with `name`, `description`, `Purpose`, `Required Inputs And Resources`, `Instructions`, and `Result`.                                                          |
+| `template.md`  | [Template](../concepts/core-categories.md#templates)   | Guidance for the future reader, then the sections you name for a recurring artifact. Add a section only when it helps create the artifact.                                                |
 | `map.md`       | [Map](../concepts/core-categories.md#maps)             | `Scope` and `Sources`: where each source is and when to read it.                                                                                                                          |
 | `memory.md`    | Memory record                                          | `Summary And Scope`, `Details And Sources`, `Limits And Next Use`. Use it when no specialized record type fits.                                                                           |
 
@@ -48,7 +48,7 @@ It's separate from the Development Toolkit because writing your own workspace co
 
 > Use the relevant Core Template to write this workspace rule. Keep it in the narrowest useful scope and follow the destination's loading rules.
 
-With the CLI, `route create --template` copies a Template's body into a new routed file. You supply the destination's description and tags, then replace the prompts:
+With the CLI, `route create --template` copies a Template's body into a new routed file. You supply the destination's description and tags, then replace the prompts. If a scope in the path doesn't exist yet, such as `frontend/` here, the command creates its folder and entrypoint too:
 
 ```sh
 open-forge route create directives/frontend/components \

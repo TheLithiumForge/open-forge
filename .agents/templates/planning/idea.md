@@ -8,8 +8,7 @@ open-forge:
 
 {
 Use for a possibility worth revisiting, not an approved task or commitment.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Opportunity

@@ -28,8 +28,8 @@ The audit ran against `0.0.0-dev.sha-62b0e23e` on `win-x64`, linked with
 `<workspace>\open-forge-test\`.
 
 The sequenced work these findings inform is not here. It lives in Working Memory as
-[Task 30: CLI Experience Remediation](../../../working/cli-development/tasks/task30-cli-experience-remediation.md)
-and [Task 31: Implementation Duplication Removal](../../../working/cli-development/tasks/task31-implementation-duplication.md),
+[Task 30: CLI Experience Remediation](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md)
+and [Task 31: Implementation Duplication Removal](../../../archived/cli-development/tasks/task31-implementation-duplication.md),
 which own execution order, phase state, decisions, and implementation reality.
 This scope stays evidence; those records stay the work.
 

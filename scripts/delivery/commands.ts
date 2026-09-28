@@ -111,7 +111,7 @@ export const deliveryCommands = {
     details: [
       "Requires tested pack output for this host. Uploads only its native package; the wrapper is separate.",
       "Actual upload needs committed matching source and configured npm credentials/registry. --dry-run stays offline.",
-      "Existing versions warn and skip without retagging. Prerelease versions cannot use latest.",
+      "Existing versions warn and skip without retagging. Prerelease versions cannot use latest, but become latest until the first stable release.",
     ],
     examples: ["publish:native --tag preview --dry-run"],
   },
@@ -124,7 +124,7 @@ export const deliveryCommands = {
     details: [
       "Requires dist:wrapper or pack output. Does not need native artifacts locally; uses the already-packed target selection.",
       "Actual upload needs committed matching source and configured npm credentials/registry. --dry-run stays offline.",
-      "Existing matching versions warn and skip. Different published dependencies require a new version. Prereleases cannot use latest.",
+      "Existing matching versions warn and skip. Different published dependencies require a new version. Prereleases cannot use latest, but become latest until the first stable release.",
     ],
     examples: ["publish:wrapper --tag preview --dry-run"],
   },
@@ -159,7 +159,7 @@ export const deliveryCommands = {
     details: [
       "Requires release:collect output matching the current source/version. Uses the exact selection recorded in release.json.",
       "Checks every selected package before uploads. Existing versions warn and skip; a different published wrapper graph rejects the run.",
-      "Actual upload needs committed matching source and npm credentials/registry. Uploads are not atomic; rerun to fill missing versions. Prereleases cannot use latest.",
+      "Actual upload needs committed matching source and npm credentials/registry. Uploads are not atomic; rerun to fill missing versions. Prereleases cannot use latest, but become latest until the first stable release.",
     ],
     examples: ["publish:release --tag preview --dry-run", "publish:release --from artifacts/release --tag latest --dry-run"],
   },

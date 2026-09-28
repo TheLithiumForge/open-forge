@@ -1,6 +1,6 @@
 # Open Forge Extensions
 
-Choose optional content by the work it helps you do. Core supplies routing, scope, authority, and generic Memory. Extensions add useful methods, record conventions, and starting files.
+Choose optional content by the work it helps you do. The base Framework supplies routing, scope, authority, the Core category entrypoints, and the Memory states. Extensions add useful methods, record categories, and starting files.
 
 ## Choose By Need
 
@@ -44,12 +44,12 @@ Task Coordination also installs the methods it calls and the records it uses, wi
 
 A Decision records an accepted choice wherever it is used. An Observation can come from solo work. A Scenario can help plan an experience before anyone tests it. Package selection does not narrow these roles.
 
-Each package supplies complete files and owns its own Template subtree: `core/`, `collaboration/`, `documents/`, `planning/`, `scenarios/`, `observations-and-handoffs/`, or `workflows/`. Task Coordination supplies its workflow scope. Workflow Support supplies the shared selector and catalogue. The Toolkit contains dependencies only.
+Each package supplies complete files. A package that ships Templates owns one Template subtree: `core/`, `collaboration/`, `documents/`, `planning/`, `scenarios/`, `observations-and-handoffs/`, or `workflows/`. Project Documents, Planning, Development, and Task Coordination each supply a workflow scope under the `use-workflow` Skill. Workflow Support supplies that Skill and its shared catalogue. The Toolkit contains dependencies only.
 
-Users may customize or remove content. Review dependencies, references, and user-created descendants before removing a category. Template copies belong to their destinations; removing a package does not authorize deleting them.
+Users may customize or remove content. Review dependencies, references, and user-created descendants before removing a category. Template copies belong to their destinations. Removing a package does not authorize deleting them.
 
 ## Review And Use
 
 See [installation and customization](../../docs/extensions.md), including the [package split migration](../../docs/extensions.md#moving-from-the-earlier-package-layout).
 
-The source uses `content/` exactly as supplied. Package revisions are `0.4.0`; these are source metadata, not a published compatibility guarantee. The former `memory-starters` package remains retired. Existing managed ownership requires a reviewed migration; moving a source file does not transfer ownership in an installed workspace.
+The source uses `content/` exactly as supplied. Package revisions are `0.4.0`. They are source metadata, not a published compatibility guarantee. The former `memory-starters` package remains retired. Existing managed ownership requires a reviewed migration, because moving a source file does not transfer ownership in an installed workspace.

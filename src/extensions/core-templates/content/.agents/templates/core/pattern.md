@@ -6,7 +6,7 @@ open-forge:
 
 # {Reusable Shape}
 
-{Use when an accepted shape should guide future related work. Copy into the relevant Patterns scope, replace metadata and prompts, rebase links, and remove this source guidance and unused sections. A procedure belongs in a workflow or Skill; a one-time starting file belongs in Templates.}
+{Use when an accepted shape should guide future related work. Copy into the relevant Patterns scope, replace metadata and prompts, rebase links, and remove this source guidance and unused sections. A procedure belongs in a workflow or Skill. A one-time starting file belongs in Templates.}
 
 ## Applies To
 

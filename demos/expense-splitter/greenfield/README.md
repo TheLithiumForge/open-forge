@@ -13,7 +13,7 @@ The four [seed levels](seeds/) change only how much you tell the agent up front.
    git init && git commit --allow-empty -m "Starting point"
    ```
 
-2. Install Open Forge and the Development Toolkit:
+2. Install Open Forge and the Development Toolkit. Decisions, and Documents such as a Vision or Architecture, come from the Toolkit's Extensions, not from the base install:
 
    ```sh
    open-forge install

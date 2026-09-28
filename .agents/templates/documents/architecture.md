@@ -7,14 +7,13 @@ open-forge:
 # {Subject} Architecture
 
 {
-Describe a coherent current or explicitly proposed architecture. Use only views needed for this subject; narrower components may have their own sources.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Describe a coherent current or explicitly proposed architecture. Use only views needed for this subject. Narrower components may have their own sources.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Overview And Scope
 
-{Explain the system in a short paragraph. State the question this view owns, its reader, and the boundary between current structure and any proposal.}
+{Explain the system in a short paragraph. State the question this view answers, its reader, and the boundary between current structure and any proposal.}
 
 ## Drivers
 
@@ -26,7 +25,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 | Part | Responsibility | Boundary or dependency |
 | --- | --- | --- |
-| {Component or external system} | {What it owns} | {What it relies on; what belongs elsewhere} |
+| {Component or external system} | {What it owns} | {What it relies on, and what belongs elsewhere} |
 
 ## Important Flows
 
@@ -42,4 +41,4 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 ## Related Views And Rationale
 
-{Link to narrower architecture views and what they own. Link to the Vision, Principles, external contracts, and Decisions that explain this structure without reproducing their history.}
+{Link to narrower architecture views and what they define. Link to the Vision, Principles, external contracts, and Decisions that explain this structure without reproducing their history.}

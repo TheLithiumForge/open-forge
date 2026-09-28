@@ -40,7 +40,7 @@ The optional [Core Templates package](../../../../../../../src/extensions/core-t
 | Source | Maintenance boundary |
 | --- | --- |
 | [Catalogue](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/_core.md) | Explain each role, destination-specific metadata, and the native Skill exception. |
-| [Directive](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/directive.md) | Retain one substantive Instructions section and explain destination LoadNow classification. |
+| [Directive](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/directive.md) | Keep a substantive Instructions section and explain destination LoadNow classification. |
 | [Guidance](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/guidance.md) | Preserve the situation, recommended approach, reasons, and tradeoffs. |
 | [Pattern](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/pattern.md) | Define an inspectable shape, a valid or explicitly schematic example, and meaningful variations. |
 | [Skill](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/skill.md) | Keep a routed Template wrapper around a complete native SKILL.md starter. Only the fenced file is instantiated; native discovery remains the active runtime's responsibility. |

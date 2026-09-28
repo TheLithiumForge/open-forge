@@ -8,9 +8,9 @@ open-forge:
 
 ## Goal
 
-Produce an executable plan with clear ownership of outcome, sequence, and current state, so another capable agent can proceed without guessing intent.
+Produce an executable plan that makes clear which source defines the outcome, sequence, and current state, so another capable agent can proceed without guessing intent.
 
-Use the project's established task source and record conventions. The [Work Records Pattern](../../../../patterns/work-records.md) fills structural gaps; [Planning Templates](../../../../templates/planning/_planning.md) provide optional starting files. Keep small work together. Ideas, Analysis, and Decisions are optional records for possibilities, evidence, and accepted choices, not prerequisites for a Task or Plan.
+Use the project's established task source and record conventions. The [Work Records Pattern](../../../../patterns/work-records.md) fills structural gaps. [Planning Templates](../../../../templates/planning/_planning.md) provide optional starting files. Keep small work together. Ideas, Analysis, and Decisions are optional records for possibilities, evidence, and accepted choices, not prerequisites for a Task or Plan.
 
 ## Steps
 

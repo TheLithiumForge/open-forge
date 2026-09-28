@@ -1,6 +1,6 @@
 # Workflow Support
 
-Find and follow installed workflows, or create your own using the supplied template. The native `use-workflow` Skill selects a method; each workflow can use the workspace's existing Skills, tools, and agents.
+Find and follow installed workflows, or create your own using the supplied template. The native `use-workflow` Skill selects a method. Each workflow can use the workspace's existing Skills, tools, and agents.
 
 ## What You Get
 
@@ -28,5 +28,5 @@ Open Forge routing and native harness discovery are distinct. Expose the canonic
 
 Use the complete source catalogue so dependencies resolve together. See the [installation guide](../../../docs/extensions.md) for managed and manual setup.
 
-Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent; deleting a starter never means deleting the work created from it.
+Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent. Deleting a starter never means deleting the work created from it.
 

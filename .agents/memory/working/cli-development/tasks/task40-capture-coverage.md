@@ -6,6 +6,9 @@ open-forge:
 
 # Task 40 — Capture coverage
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task40-capture-coverage.md). Recommendation:
+Do after 1.0. The review names any details in this record that are out of date.
+
 ## Task state
 
 - State: **Open, not started.** Raised by the overseer on 2026-09-17 while
@@ -77,7 +80,13 @@ that happening.
 
 ## Related
 
-[51](task30/51-truthful-findings.md) set the bar this task makes checkable.
-[73](task30/73-consequence-clauses.md) and the Extension Install recorded-package
+[51](../../../archived/cli-development/tasks/task30/51-truthful-findings.md) set the bar this task makes checkable.
+[73](../../../archived/cli-development/tasks/task30/73-consequence-clauses.md) and the Extension Install recorded-package
 split both ended with uncaptured situations. [Task 39](task39-output-audit.md)
 owns whether an output is *good*; this task owns whether it is *watched*.
+
+## Folded in on 2026-09-28
+
+- **From [Task 30](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md):** the capture
+  normalization findings F-01 to F-04 in
+  [72-normalization-audit](../../../archived/cli-development/tasks/task30/72-normalization-audit.md).

@@ -6,11 +6,14 @@ open-forge:
 
 # Task 48 — Scoping for Extension routes
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task48-scoping-for-extension-routes.md). Recommendation:
+Do after 1.0. The review names any details in this record that are out of date.
+
 ## Task state
 
 - State: **Open, not started.** Raised by the maintainer on 2026-09-19.
 - Owner: Root.
-- Caused by [Task 42](task42-minimal-core.md) reducing Core: the nested managed
+- Caused by [Task 42](../../../archived/cli-development/tasks/task42-minimal-core.md) reducing Core: the nested managed
   routes that scoping was demonstrated on now live in Extensions.
 
 ## The problem
@@ -75,5 +78,5 @@ the shape now lives.
 
 ## Boundaries
 
-Do not restore coverage by putting routes back into Core. [Task 42](task42-minimal-core.md)
+Do not restore coverage by putting routes back into Core. [Task 42](../../../archived/cli-development/tasks/task42-minimal-core.md)
 decided what Core ships, and that decision stands on its own merits.

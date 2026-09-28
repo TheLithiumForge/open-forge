@@ -4,15 +4,15 @@ open-forge:
   tags: [Extension, Template, UserFlow]
 ---
 
-# {User flow name}
+# {User Flow Name}
 
-{Copy and adapt. Remove this prompt and irrelevant sections. The result is independently maintained.}
+{Copy and adapt. Remove this prompt and irrelevant sections.}
 
-## Who and goal
+## Who And Goal
 
 {Who is acting and what they want to achieve.}
 
-## Starting point
+## Starting Point
 
 {The initial reproducible state and inputs.}
 
@@ -22,12 +22,12 @@ open-forge:
 | --- | --- | --- | --- |
 | {1} | {Action or choice} | {Scenario link} | {What actually exists or is known before the next step} |
 
-## Alternatives and recovery
+## Alternatives And Recovery
 
 {Meaningful choices, failure branches and safe continuations. Link scenarios instead
-of repeating their expected output. Do not reset the workspace silently between steps.}
+of repeating their expected output.}
 
-## Final result
+## Final Result
 
 {The accomplished goal and content that must remain intact.}
 

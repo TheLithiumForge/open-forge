@@ -23,9 +23,11 @@ A Checkpoint records the current state, current step, and next steps for one act
   - Links to durable sources.
 - Refresh the Checkpoint after an important state change and after context restoration.
 
-### Closeout
+### Transfer And Closeout
 
-- Update the Checkpoint before an actual transfer or explicitly planned resumption. When that boundary needs a fixed snapshot while the Checkpoint may continue to change, seal one using whatever transfer record the workspace has; the optional Observations and Handoffs package supplies Handoffs for exactly this. Routine pauses and ordinary closeout do not require one.
+- Update the Checkpoint before an actual transfer or explicitly planned resumption.
+- When that transfer or resumption needs a fixed snapshot while the Checkpoint may continue to change, seal one using whatever transfer record the workspace has. The optional Observations and Handoffs package supplies Handoffs for exactly this.
+- Routine pauses and ordinary closeout do not require a sealed snapshot.
 - At closeout, save durable outcomes outside the Checkpoint. When its active need ends, remove #Active and #KeepInMind, then archive or prune it.
 
 ## Entries

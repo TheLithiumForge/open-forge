@@ -6,6 +6,9 @@ open-forge:
 
 # Task 47 — Entrypoint reachability
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task47-entrypoint-reachability.md). Recommendation:
+Do before 1.0. The review names any details in this record that are out of date.
+
 ## Task state
 
 - State: **Targeted Doctor corrections pass the published journey; default Skill indexing follow-up recorded.** Raised by the maintainer on 2026-09-18.
@@ -13,7 +16,7 @@ open-forge:
 
 The 2026-09-21 [navigation packet](beta-follow-ups/task46-47-navigation.md) reproduces a stale detached Skill catalogue after default Index and successful repair through explicit selection. The implemented correction provides truthful targeted advice and correct missing-entry identity; the maintainer requested the separate [default Skill indexing follow-up](task47-default-skill-indexing.md) on 2026-09-22. Its traversal contract is not yet frozen.
 
-- Shares a root cause with [Task 46](task46-routed-skill-resources.md). Settle
+- Shares a root cause with [Task 46](../../../archived/cli-development/tasks/task46-routed-skill-resources.md). Settle
   them together; 46 decides whether a Skill can host a route, 47 decides what
   navigation does once it can.
 
@@ -76,5 +79,5 @@ whether to pursue it.
 Do not widen the default selection just to silence the warnings. The narrow
 default exists because a full `.agents/` sweep is expensive in a large
 workspace — this repository has over seven hundred Markdown files, and
-[Task 30](task30-cli-experience-remediation.md) already carries the cost
+[Task 30](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md) already carries the cost
 constraints. Decide the model first, then make the output honest about it.

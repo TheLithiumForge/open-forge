@@ -13,10 +13,17 @@ interface Path {
 const paths: readonly Path[] = [
   {
     title: "Starting something new",
-    lead: "The truth lives in your head. Don't over-plan.",
+    lead: "The requirements are still taking shape, so keep planning light.",
     points: [
-      { key: "request", content: "Start from the request, not a spec" },
-      { key: "decisions", content: "Record decisions as you make them" },
+      { key: "request", content: "Start from a request, not a full specification" },
+      {
+        key: "decisions",
+        content: (
+          <>
+            Record <Link to="/docs/extensions/planning">Decisions</Link> as you make them
+          </>
+        ),
+      },
       {
         key: "rules",
         content: (
@@ -31,18 +38,18 @@ const paths: readonly Path[] = [
   },
   {
     title: "Joining an existing codebase",
-    lead: "The code shows what happens. The why lives somewhere else.",
+    lead: "The code shows what the system does. The reasons usually live somewhere else.",
     points: [
-      { key: "map", content: "Map the docs you already have instead of moving them" },
+      { key: "map", content: "Point a Map at your existing docs instead of moving them" },
       {
         key: "decisions",
         content: (
           <>
-            Record <Link to="/docs/highlights#decisions-keep-the-why">Decisions</Link> for every change from now on
+            Record <Link to="/docs/highlights#decisions-keep-the-why">Decisions</Link> for important choices from now on
           </>
         ),
       },
-      { key: "rules", content: "Add rules only where they've bitten you" },
+      { key: "rules", content: "Add a Directive when a mistake repeats, not in advance" },
     ],
     demo: "/docs/demos/brownfield",
   },
@@ -75,7 +82,8 @@ export default function StartingPoint(): ReactNode {
           ))}
         </div>
         <aside className={styles.highlight}>
-          <strong>Keep the why.</strong> Decisions record what was chosen and why, so the reason survives the person, the chat, and the next agent that wants to "clean it up".{" "}
+          <strong>Keep the reasons.</strong> A Decision, from the Planning Extension, records what was chosen and why. The reason stays on record after the conversation ends and
+          the people involved move on, so a later agent tempted to "clean it up" can find out why first.{" "}
           <Link to="/docs/highlights#decisions-keep-the-why">See the highlights →</Link>
         </aside>
       </div>

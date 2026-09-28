@@ -78,7 +78,7 @@ Proposed clause:
 > accepted into the style directive and remains correct in general — it simply
 > does not apply here. What is genuinely wrong is smaller: four suffixes for one
 > role across nine types. See
-> [CLI Experience Remediation](../../../working/cli-development/tasks/task30-cli-experience-remediation.md).
+> [CLI Experience Remediation](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md).
 
 Nothing addresses naming by negation. The result is 65 distinct `*Human*` types
 — `DoctorEvidenceHumanRenderer`, `ExtensionUpdatePathsHumanRenderer`,

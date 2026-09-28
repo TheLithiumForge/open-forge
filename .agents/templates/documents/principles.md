@@ -7,9 +7,8 @@ open-forge:
 # {Subject} Principles
 
 {
-Use when several decisions share stable reasoning. Principles guide judgment; they do not replace scoped rules or specifications.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Use when several decisions share stable reasoning. Principles guide judgment. They do not replace scoped rules or specifications.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Scope
@@ -34,7 +33,7 @@ Repeat the block only for principles with a distinct job. Avoid slogans that fit
 
 ## Tensions And Ordering
 
-{Explain how to decide when principles conflict. Use an explicit priority only when it is accepted; otherwise name the judgment needed.}
+{Explain how to decide when principles conflict. Use an explicit priority only when it is accepted. Otherwise, name the judgment needed.}
 
 ## Change Boundary
 

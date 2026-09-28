@@ -6,6 +6,9 @@ open-forge:
 
 # Task 54 — Tag trimming for 1.0
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task54-tag-trimming.md). Recommendation:
+Do before 1.0, shipped files only. The review names any details in this record that are out of date.
+
 ## Outcome
 
 Recorded at the maintainer's request on 2026-09-25 as 1.0 polish. Every tag on

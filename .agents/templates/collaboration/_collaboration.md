@@ -10,7 +10,7 @@ open-forge:
 
 Preserve a comparison only when it needs to survive the conversation. The `Brainstorming` template keeps proposals and recommendations distinct from an accepted choice.
 
-A saved brainstorm fits in an existing candidate scope. Read [Adaptive Collaboration](../../guidance/adaptive-collaboration.md) when broader advice would help. A brainstorm does not require a `Task` or `Plan`.
+A saved brainstorm fits in an existing candidate route. Read [Adaptive Collaboration](../../guidance/adaptive-collaboration.md) when broader advice would help. A brainstorm does not require a `Task` or `Plan`.
 
 ## Axioms
 

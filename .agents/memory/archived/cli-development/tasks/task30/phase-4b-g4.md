@@ -55,7 +55,7 @@ behavior-changing renderer work.
   The historical direction to retain diagnostic kinds, JSON, and exit behavior
   must be rechecked before any grouping or deletion; presentation grouping is
   not permission to remove a public finding category.
-- Use the AOT-safe snapshot boundary in [Phase 7 scenarios](../../../../working/cli-development/tasks/task30/phase-7-scenarios.md):
+- Use the AOT-safe snapshot boundary in [Phase 7 scenarios](phase-7-scenarios.md):
   normalize only named environment-dependent paths, versions/fingerprints, and
   line endings, never counts, ordering, encoding, or diagnostic content.
 
@@ -110,14 +110,14 @@ gate on 2026-09-13 and 2026-09-14. They are sealed design evidence. The
 maintainer's review of the consolidation produced the decisions below; the
 proposals themselves are not rewritten and are not execution authority.
 
-- [astra](../../../../working/cli-development/tasks/task30/phase-4b-g4-output-proposal-astra.md): contract-and-source
+- [astra](phase-4b-g4-output-proposal-astra.md): contract-and-source
   specification with a status coverage matrix and a 28-row selection matrix.
-- [opus](../../../../working/cli-development/tasks/task30/phase-4b-g4-output-proposal-opus.md): three content classes and the
+- [opus](phase-4b-g4-output-proposal-opus.md): three content classes and the
   finding-model question as the first decision.
-- [fable](../../../../working/cli-development/tasks/task30/phase-4b-g4-output-proposal-fable.md): transcripts captured from a
+- [fable](phase-4b-g4-output-proposal-fable.md): transcripts captured from a
   build of the current tree, with two implementation discoveries recorded in
-  the [Task 30 open findings](../../../../working/cli-development/tasks/task30-cli-experience-remediation.md#open-findings).
-- [consolidated](../../../../working/cli-development/tasks/task30/phase-4b-g4-output-proposal-consolidated.md): the merged
+  the [Task 30 open findings](../task30-cli-experience-remediation.md#open-findings).
+- [consolidated](phase-4b-g4-output-proposal-consolidated.md): the merged
   rules, per-command matrix, corrected transcripts, sixteen decisions and the
   implementation handoff. It follows astra most closely and says why.
 

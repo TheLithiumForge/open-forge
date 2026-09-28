@@ -84,7 +84,7 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
     assert.equal(preview.status, 0, preview.stderr);
     assert.deepEqual(
       JSON.parse(preview.stdout),
-      publications.map((publication) => ({ ...publication, tag: "beta", dryRun: true })),
+      publications.map((publication) => ({ ...publication, tag: "beta", latestUntilStable: true, dryRun: true })),
     );
     const wrapper = publications.at(-1);
     assert.ok(wrapper);

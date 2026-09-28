@@ -43,10 +43,10 @@ into end-to-end tests.
 - [Scenario template](../../../templates/scenarios/scenario.md) and
   [User Flow template](../../../templates/scenarios/user-flow.md) — copy-ready, in
   the Templates route, written for any subject rather than for this CLI
-- [A worked scenario, from a real defect](../../working/cli-development/tasks/task41/scenario-example.md)
-- [The journeys to define, as a backlog](../../working/cli-development/tasks/task41/journeys-a-c.md), and
-  [D–F](../../working/cli-development/tasks/task41/journeys-d-f.md), [G–H](../../working/cli-development/tasks/task41/journeys-g-h.md)
-- [What the first run found](../../working/cli-development/tasks/task41/run-1.md)
+- [A worked scenario, from a real defect](tasks/task41/scenario-example.md)
+- [The journeys to define, as a backlog](tasks/task41/journeys-a-c.md), and
+  [D–F](tasks/task41/journeys-d-f.md), [G–H](tasks/task41/journeys-g-h.md)
+- [What the first run found](tasks/task41/run-1.md)
 
 **Journey** is the path, **scenario** is the unit. Scenario is the BDD word and
 already the harness's own — `ReadOutputScenario` carries one action and its
@@ -77,7 +77,7 @@ this task folder are a **backlog of what to define**, not the definitions.
 
 Three failure modes let defects reach a beta-candidate build with every gate
 green. They are recorded in full in
-[run-1.md](../../working/cli-development/tasks/task41/run-1.md); the short version:
+[run-1.md](tasks/task41/run-1.md); the short version:
 
 1. **A code was reviewed only where its sentence is true.**
    `index.metadata-incomplete` has six captures, all of a genuinely unreadable
@@ -148,4 +148,4 @@ hand, which works and is how the first eight defects were found.
    its row is now honest, but the sentence has not been reviewed.
 4. Whether `ideas`, `observations`, `documents` and `decisions` move into one
    planning Extension or a smaller one that planning depends on
-   ([Task 42](../../working/cli-development/tasks/task42-minimal-core.md)).
+   ([Task 42](tasks/task42-minimal-core.md)).

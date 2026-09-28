@@ -8,12 +8,12 @@ open-forge:
 
 {
 This file starts another Template. Use it only when the new starter provides meaningfully different content from existing Templates.
-Give the new Template a description explaining when to choose it and retain Template in its metadata. Remove Extension unless the destination is actually supplied by a package.
-Replace these author-facing prompts with the artifact's useful starting shape. Keep visible removable prompts for the future reader; do not fill in project facts on their behalf.
+Give the new Template a description explaining when to choose it and retain #Template in its metadata. Remove #Extension unless the destination is actually supplied by a package.
+Replace these author-facing prompts with the artifact's useful starting shape. Keep visible removable prompts for the future reader. Do not fill in project facts on their behalf.
 Replace the next braced paragraph with the new Template's own selection and adaptation instructions, then remove this paragraph.
 }
 
-{For the future reader: explain the need, the question this artifact answers, the destination role, and how to replace metadata and prompts. State that the copy is maintained independently and later Template changes do not update it.}
+{For the future reader: explain the need, the question this artifact answers, the destination role, and how to replace metadata and prompts.}
 
 ## {First Useful Section}
 

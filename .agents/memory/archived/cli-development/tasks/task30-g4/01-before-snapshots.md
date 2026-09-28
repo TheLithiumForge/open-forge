@@ -27,7 +27,7 @@ code. Every later G4 diff is reviewed against these files.
 
 ## References
 
-- [Phase 7 scenarios](../../../../working/cli-development/tasks/task30/phase-7-scenarios.md) for the AOT-safe snapshot
+- [Phase 7 scenarios](../task30/phase-7-scenarios.md) for the AOT-safe snapshot
   boundary and its normalization rules.
 - [Model-level snapshot testing](../../../../emerging/analysis/cli-experience-audit/model-level-snapshot-testing.md)
   for the tool shape: a string comparison anchored at `[CallerFilePath]`, an

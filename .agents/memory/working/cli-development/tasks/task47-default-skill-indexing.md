@@ -6,11 +6,14 @@ open-forge:
 
 # Task 47 follow-up — default Skill indexing
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task47-entrypoint-reachability.md). Recommendation:
+Do before 1.0. The review names any details in this record that are out of date.
+
 ## Outcome and authority
 
 Recorded at the maintainer's request on 2026-09-22 under
 [Task 47](task47-entrypoint-reachability.md), coordinated with
-[Task 46](task46-routed-skill-resources.md). The desired outcome is for default
+[Task 46](../../../archived/cli-development/tasks/task46-routed-skill-resources.md). The desired outcome is for default
 Index to reach a native `SKILL.md` and the routed resource catalogues beneath
 that Skill without requiring the user to name the catalogue manually.
 
@@ -90,3 +93,18 @@ an approved new test implementation.
 Recorded; not started. No code, source payload, snapshots or scenario tests are
 changed by this task. Next action: settle the traversal model and its exact
 expectations when this follow-up is selected for execution.
+
+## Folded in on 2026-09-28
+
+- **From [Task 46](../../../archived/cli-development/tasks/task46-routed-skill-resources.md):** can a native Skill host
+  routed resources, and on what terms? Freeze the metadata rule with it. The
+  thirteen-warning Doctor report and the metadata question are resolved.
+- **From [Task 43](../../../archived/cli-development/tasks/task43-workflows-as-skill.md):** adding a workflow recipe
+  still needs a manual `index` step.
+- **Contract conflict to settle:** the Workflow Support contract says Skill
+  resources are not reachable from the loader, while the Skills contract's
+  verification mentions loader-to-resource inheritance. This Task picks one.
+- **Possibly the same root cause:** the documentation review found that
+  `extension update` reports the `use-workflow` catalogue's `Entries` as updated
+  when the file doesn't change. See
+  [Task 64](task64-cli-defects-and-contract-drift.md).

@@ -35,9 +35,9 @@ flowchart LR
 | A6                                              | Obsolete lifecycle/Library subsystem deleted; current/intended comparisons and ordinary replace/restore behavior                           | [A6](06-a6-delete-lifecycle.md)                                                    |
 | P1                                              | Settings is the sole grant authority; all six gated commands expose `--allow-path`; always/once/cancel and under-lease revalidation proved | [P1](06p-p1-shared-permissions.md)                                                 |
 | Task 31 M1                                      | Three shared mappings implemented; conditional Library validator group retired; four convention gates met                                  | [M1](../task31/08-m1-enumerated-extractions.md)                                    |
-| Task 31 M2/M4                                   | Previously complete                                                                                                                        | [Task 31](../../../../working/cli-development/tasks/task31-implementation-duplication.md)                                 |
+| Task 31 M2/M4                                   | Previously complete                                                                                                                        | [Task 31](../task31-implementation-duplication.md)                                 |
 | B1                                              | Heading migration complete; managed/native qualification passed                                                                            | [B1](07-b1-heading-entries.md)                                                     |
-| G4, M3 and later phases                         | Not started; G4 needs maintainer attention, M3 belongs with its accepted renderer changes, M5 follows stabilized presentation structure    | [Task 30 phase map](../../../../working/cli-development/tasks/task30-cli-experience-remediation.md#phase-map)             |
+| G4, M3 and later phases                         | Not started; G4 needs maintainer attention, M3 belongs with its accepted renderer changes, M5 follows stabilized presentation structure    | [Task 30 phase map](../task30-cli-experience-remediation.md#phase-map)             |
 
 The material review findings are resolved as follows. The linked slice records
 own their full evidence and every implementation deviation, including failed
@@ -114,7 +114,7 @@ its body was preserved byte-for-byte. The first repository Index run applied
 Every changed entrypoint preserved bytes outside the generated boundary.
 
 The requested automatic-metadata work belongs to [Task 30 Phase 5 diagnosis and
-interoperability](../../../../working/cli-development/tasks/task30/phase-5-diagnosis-and-interoperability.md), after G4; no calendar
+interoperability](phase-5-diagnosis-and-interoperability.md), after G4; no calendar
 date is recorded. Its linked analysis explicitly includes missing frontmatter
 under Index's safe structural fixes, with no additional flag.
 

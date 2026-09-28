@@ -20,6 +20,6 @@ Create separate documents only when their questions need separate answers. A sma
 
 - [Explain the system model, responsibilities, dependency direction, important flows, and limits](architecture.md) - #Extension #Template #Document #Architecture
 - [Write one coherent current explanation without duplicating another source's detail](document.md) - #Extension #Template #Memory #Document
-- [State what a maintained source owns, what must remain true, and how to verify it](maintenance-contract.md) - #Extension #Template #Document #Maintenance #Governance
+- [State what a maintained source defines, what must remain true, and how to verify it](maintenance-contract.md) - #Extension #Template #Document #Maintenance #Governance
 - [Define the principles that guide unfamiliar choices and resolve tensions between them](principles.md) - #Extension #Template #Document #Principle
 - [Explain the promise, audience, first useful value, boundaries, and observable success](vision.md) - #Extension #Template #Document #Vision

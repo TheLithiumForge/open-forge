@@ -8,7 +8,7 @@ open-forge:
 
 Read once before any G4 subtask. Every subtask assumes these and does not
 repeat them. Where this file and the older
-[Task 30 slice conventions](../../../../working/cli-development/tasks/task30/00-conventions.md) differ, this file
+[Task 30 slice conventions](../task30/00-conventions.md) differ, this file
 wins for G4 subtasks. The verification commands, pass conditions, house rules
 and the known flaky test in that older file still apply.
 
@@ -51,7 +51,7 @@ question. Do not infer it. Continue with the parts that do not depend on it.
 ## Verification
 
 The commands and pass conditions in the
-[older conventions](../../../../working/cli-development/tasks/task30/00-conventions.md#verification) apply. In
+[older conventions](../task30/00-conventions.md#verification) apply. In
 addition, for output-changing subtasks:
 
 - Regenerate the snapshots for your command with `OPENFORGE_SNAPSHOT_UPDATE=1`

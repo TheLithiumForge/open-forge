@@ -6,6 +6,9 @@ open-forge:
 
 # Task 39 — Output Audit
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task39-output-audit.md). Recommendation:
+Do before 1.0. The review names any details in this record that are out of date.
+
 ## Task state
 
 - State: **Open; representative correction passed focused and complete managed/native gates.** Raised by the
@@ -165,7 +168,7 @@ was pointed at the new layout. It now enumerates every `__snapshots__` directory
 under the integration project and throws when it finds none, so an empty corpus
 cannot pass silently.
 
-[Slice 54](task30/54-snapshot-consolidation.md) still owns the remaining
+[Slice 54](../../../archived/cli-development/tasks/task30/54-snapshot-consolidation.md) still owns the remaining
 question: the naming convention, and whether anything unowned survives.
 
 ## Actionable boundary
@@ -188,6 +191,17 @@ question: the naming convention, and whether anything unowned survives.
   named.
 - A re-derived legacy inventory and a true count of uncaptured situations.
 - All four gates green.
+
+## Folded in on 2026-09-28
+
+- **From [Task 41](../../../archived/cli-development/tasks/task41-beta-journey-scenarios.md):** its H1 to H7 output
+  checks become this Task's per-command checklist, with Run 1's rule to check
+  claims against the workspace. Defect B-5, the doubled "Fix it by hand." line
+  in the Doctor captures, moves here too. See the
+  [Task 41 review](../../../emerging/analysis/open-task-review/task41-beta-journey-scenarios.md).
+- **From [Task 30](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md):** the one-code
+  questions for `context.closure-unavailable` and `references.invalid-encoding`.
+  See the [Task 30 review](../../../emerging/analysis/open-task-review/task30-cli-experience-remediation.md).
 
 ## Axioms
 

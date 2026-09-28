@@ -6,6 +6,9 @@ open-forge:
 
 # Task 59 — Beta 2 release
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task59-beta-2-release.md). Recommendation:
+Do next. The review names any details in this record that are out of date.
+
 ## Outcome
 
 Recorded at the maintainer's request on 2026-09-25. The published
@@ -43,9 +46,21 @@ maintainer's steps. This record authorizes none of them.
 
 ## Current State
 
-**Now:** package fix integrated, release not started. The integration snapshot refresh recorded in [Task 60](task60-cli-skill.md) should land before the release.
+**Now:** package fix integrated, release not started. The integration snapshot refresh recorded in [Task 60](../../../archived/cli-development/tasks/task60-cli-skill.md) should land before the release.
 
 **Check on the published page:** npm resolves relative README links and images
 against the `repository` field. The README's diagram uses a `<picture>` element
 with relative paths. If npm doesn't show it, switch its image paths to absolute
 `raw.githubusercontent.com` URLs.
+
+## Folded in on 2026-09-28
+
+- **From [Task 60](../../../archived/cli-development/tasks/task60-cli-skill.md): refresh the integration snapshots.**
+  The Install and Status snapshots still record the 14-file payload, so the
+  Build is red on `main` and `develop`. This blocks the release. Merge
+  [Task 61](task61-documentation-accuracy-and-voice.md) first, because it
+  changes the shipped Skill, so the snapshots are refreshed once. The refresh
+  needs a machine or CI run where the integration suite executes.
+- **The npm page shows the `latest` version's README.** `latest` still points at
+  `0.9.0-beta.1`, which has no README. See the
+  [review](../../../emerging/analysis/open-task-review/task59-beta-2-release.md) for the dist-tag options.

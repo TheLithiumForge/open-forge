@@ -23,7 +23,7 @@ state gets one verdict.
 
 ## The finding
 
-Recorded in the [Task 30 open findings](../../../../working/cli-development/tasks/task30-cli-experience-remediation.md#open-findings):
+Recorded in the [Task 30 open findings](../task30-cli-experience-remediation.md#open-findings):
 a line appended after the entries list of `.agents/maps/_maps.md` was deleted
 by `index`, because the heading-based section from B1 runs to the next
 heading or end of file and the whole body is replaced. `status` had called

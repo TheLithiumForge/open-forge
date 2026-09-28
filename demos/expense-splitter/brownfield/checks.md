@@ -1,6 +1,6 @@
 # Checks
 
-Use these after the agent reports the feature as done. Start each command from an empty ledger by pointing `EXPENSES_FILE` at a new file.
+Use these after the agent reports the feature as done. Run each command as `node src/cli.ts <command>` from the app folder. Start each one from an empty ledger by pointing `EXPENSES_FILE` at a new file.
 
 ## The feature works
 
@@ -28,11 +28,11 @@ These are the quiet failures. The existing tests don't catch them.
 
 ## The knowledge survived
 
-Only when Open Forge is installed:
+Only when Open Forge and the Development Toolkit are installed. The Map is part of the base Framework, and Decisions come from Planning.
 
 - A Map points to the README, the author's notes, and the tests, so later tasks can find the reasons behind the code.
 - The choice this feature made, how percentage splits round, is recorded as a Decision with its reasons.
 - The README says what's true now: it documents `--percent`, and its "Not done yet" list no longer includes percentage splits.
 - The Decision links to where the current behavior is described, such as the README and the tests, instead of being the only place it's written down.
-- No Decision claims to have decided the rules the app already had. Those were decided before you arrived.
+- No Decision claims to have decided the rules the app already had. Those were decided before you adopted Open Forge, and the Map points to their reasons.
 - Nothing was accepted on your behalf. Proposed records stayed proposed until you agreed.

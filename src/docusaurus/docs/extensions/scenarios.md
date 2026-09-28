@@ -5,17 +5,17 @@ description: Four Templates for describing user journeys and expected outcomes, 
 
 # Flows and Scenarios
 
-Describe the experience you want people to have, then keep an honest record of what happens when it's tried. These starters fit planning, exploration, and verification.
+Describe the experience you want people to have, then record what actually happens when someone tries it. This package installs four [Templates](../glossary.md#content-roles): copy-ready starting files that you copy, adapt, and then maintain on their own. They fit planning, exploration, and verification.
 
 - **Package ID:** `scenarios`
 - **Depends on:** Nothing
-- **Loads at startup:** Nothing. Templates are on demand.
+- **Loads at startup:** Nothing. The Templates root entrypoint isn't read at startup, so these starters stay on demand.
 
 ## Why it exists
 
-Writing down what should happen before anyone tries it is the cheapest way to notice what went wrong, whether you're designing an experience or checking a build. Keeping expected and observed results in separate records stops a run from quietly rewriting the requirement.
+When you write down what should happen before anyone tries it, a wrong result is easy to spot, whether you're designing an experience or checking a build. Keeping expected and observed results in separate records makes it hard for a run to quietly rewrite the requirement to match what happened.
 
-These starters used to ship with Planning. They moved into their own package so experience design and verification can use them without a planning method. The [demos](../demos/index.md) use the same idea for their checks.
+These starters used to ship with Planning. They moved into their own package so experience design and verification can use them without a planning method. The [demos](../demos/index.md) apply the same idea: each demo's checks list an action and its expected result.
 
 ## What it installs
 
@@ -43,12 +43,12 @@ These starters used to ship with Planning. They moved into their own package so 
 
 | Template                 | Use it to                                                                                 | Main sections                                                                                        |
 | ------------------------ | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `user-flow.md`           | Connect scenarios from a person's starting state to a meaningful goal                     | Who and goal, Starting point, Flow, Alternatives and recovery, Final result, Verification, Cost      |
-| `scenario.md`            | Define one starting situation, the actions a person takes, and the result they should get | Who, Goal, Starting point, Steps, Expected result, Supporting contract, Verification, Open questions |
-| `scenario-collection.md` | Group related scenarios without copying their expectations                                | Purpose, Shared context, Scenarios, Coverage boundaries                                              |
+| `user-flow.md`           | Connect scenarios from a person's starting state to a meaningful goal                     | Who And Goal, Starting Point, Flow, Alternatives And Recovery, Final Result, Verification, Cost      |
+| `scenario.md`            | Define one starting situation, the actions a person takes, and the result they should get | Who, Goal, Starting Point, Steps, Expected Result, Supporting Contract, Verification, Open Questions |
+| `scenario-collection.md` | Group related scenarios without copying their expectations                                | Purpose, Shared Context, Scenarios, Coverage Boundaries                                              |
 | `run-record.md`          | Record what happened during one run                                                       | Basis, Verified Starting State, Actions And Observations, Independent Checks, Verdict, Follow-Up     |
 
-A **Scenario** can describe something that doesn't exist yet. A **Run Record** describes an actual attempt. Neither establishes acceptance on its own. A collection groups cases, but doesn't define an order. That's what a **User Flow** is for.
+A **Scenario** can describe something that doesn't exist yet. A **Run Record** describes an actual attempt. Neither establishes acceptance on its own. A **Scenario Collection** groups cases but doesn't put them in order. A **User Flow** connects scenarios in order, passing each step's resulting state to the next.
 
 ## How to use it
 
@@ -59,4 +59,4 @@ A **Scenario** can describe something that doesn't exist yet. A **Run Record** d
 ## Good to know
 
 - These records work for products, services, or other work. They don't need an executable plan, a task tracker, a test runner, or the Planning Extension.
-- These four starters used to ship with Planning. Existing copies stay where they are, and moving the starters doesn't move or rewrite them.
+- Copies you made when these starters shipped with Planning stay where they are. Moving the starters to this package doesn't move or rewrite them. An existing installation needs a reviewed transition: see [moving from the earlier package layout](/guides/extensions#moving-from-the-earlier-package-layout).

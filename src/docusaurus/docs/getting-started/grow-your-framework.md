@@ -1,11 +1,11 @@
 ---
 title: Grow your own framework
-description: Turn a correction you keep repeating into a rule every task starts with, then scope it so it costs nothing elsewhere.
+description: Turn a correction you keep repeating into a rule every task starts with, and use scopes to keep specialized rules out of unrelated work.
 ---
 
 # Grow your own framework
 
-The base Framework is deliberately small. It becomes useful as you add what your project keeps teaching you.
+The base Framework is deliberately small. Apart from Memory's four states and the CLI Skill, its categories start empty. It becomes useful as you add what your project keeps teaching you.
 
 ## Add your first rule
 
@@ -31,22 +31,24 @@ Then run `open-forge index`, or replace the `none` placeholder under `Entries` i
 - [Run the tests before calling a change done](testing.md) - #LoadNow #Directive #Testing
 ```
 
-Directives load at startup, so every task now begins with that rule in context.
+The Directives entrypoint loads at startup, and the new entry is tagged `LoadNow`, which tells the agent to read the rule at the start of every task. Directive files must carry that tag. Without it, the agent would see only the one-line entry.
 
 ## Put it in the right place
 
 The same move works for everything your project teaches you. Pick the category by the question the content answers:
 
-| You have...                                  | Make it a...                                    | Because it answers...                                   |
-| -------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
-| A correction you keep repeating              | Directive                                       | What behavior is required in this scope?                |
-| Advice that depends on the situation         | Guidance                                        | What approach is recommended, and when does it fit?     |
-| A structure that makes mistakes easy to spot | Pattern or Template                             | What reusable shape makes related work easy to inspect? |
-| A method that keeps paying off               | Workflow recipe behind the `use-workflow` Skill | How do I reach this goal, step by step?                 |
-| A specialized capability                     | Skill                                           | Which specialized capability would help with this work? |
-| A finding or an accepted decision            | Memory                                          | What is worth remembering for later work?               |
+| You have...                                  | Make it a...                                    | Because it answers...                                                       |
+| -------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------------- |
+| A correction you keep repeating              | Directive                                       | What behavior is required in this scope?                                    |
+| Advice that depends on the situation         | Guidance                                        | What approach is recommended, and when does it fit?                         |
+| A structure that makes mistakes easy to spot | Pattern                                         | What reusable shape makes related work easy to create and inspect?          |
+| A starting file you keep recreating          | Template                                        | What starting content can be copied, adapted, and maintained independently? |
+| A source the agent should know about         | Map                                             | Where is a useful local or external source, and when should it be used?     |
+| A specialized capability                     | Skill                                           | Which specialized capability would help with this work?                     |
+| A method that keeps saving you time          | Workflow recipe behind the `use-workflow` Skill | What repeatable method would help?                                          |
+| A finding or an accepted decision            | Memory                                          | What is worth remembering for current or future work?                       |
 
-The [Core categories](../concepts/core-categories.md) page explains each one.
+The six Core categories and Memory are part of the base. Workflow recipes and the `use-workflow` Skill come from the optional [Workflow Support](../extensions/workflows.md) Extension. The [Core categories](../concepts/core-categories.md) page explains each one.
 
 ## Keep it cheap with scopes
 
@@ -64,7 +66,7 @@ Adding knowledge doesn't have to mean every task reads more. Put frontend conven
     migrations.md
 ```
 
-A task selects the branches it needs, and a task that spans both follows both on purpose. There's no fixed limit on how many scopes you add or how deep they go. The CLI can create a scope for you:
+At startup the agent sees each scope only as one entry line in `_directives.md`. A task selects the branches it needs, and a task that spans both follows both on purpose. There's no fixed limit on how many scopes you add or how deep they go. The CLI can create a scope for you:
 
 ```sh
 open-forge route init directives/frontend \
@@ -80,6 +82,6 @@ Read more in [Scopes](../concepts/scopes.md).
 
 ## Start from a template
 
-Writing each file from scratch gets old. The [Core Templates](../extensions/core-templates.md) Extension gives you one starter for each category, and the more specialized Extensions add starters for tasks, decisions, scenarios, and project documents.
+The base Templates category starts empty. The [Core Templates](../extensions/core-templates.md) Extension adds a starter for each Core category and one for Memory records. The more specialized Extensions add starters for tasks, decisions, scenarios, and project documents.
 
 **Next:** learn how it all fits together in [Concepts](../concepts/index.md).

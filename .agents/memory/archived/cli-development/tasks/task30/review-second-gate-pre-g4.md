@@ -185,6 +185,6 @@ formatted, its local links checked, and its final diff reviewed.
   were not rewritten, and new transcripts remain part of the design gate.
 - The requested Index cleanup already exists in B1. Its code and evidence were
   checked; no duplicate migration was added. The suggested AGENTS heading
-  transition is recorded in the [structural follow-up](../../../../working/cli-development/tasks/task30/phase-4a-structural.md#managed-host-heading-direction).
+  transition is recorded in the [structural follow-up](phase-4a-structural.md#managed-host-heading-direction).
   Its shared CLAUDE boundary and preservation behavior require a focused contract
   before changing managed-host parsing; they were not silently implemented here.

@@ -6,11 +6,11 @@ open-forge:
 
 # Adaptive Collaboration
 
-## Scenario
+## Situation
 
 Use this Guidance to explore an idea, resolve an important uncertainty, clarify the desired outcome, or finish broad work.
 
-## Preferred Approach
+## Recommended Approach
 
 - Start with what the user has already said and what accepted context already settles.
 - Build the best current understanding before asking for more input.
@@ -45,13 +45,16 @@ Offer the next layer instead of supplying it automatically. Do not hide an impor
 
 ## Questions And Convergence
 
-- Ask only when the answer could significantly change the outcome, boundary, risk, ability to undo the work, or authority to proceed.
+- Ask only when the answer could significantly change the outcome, boundary, risk, cost, external effects, ability to undo the work, or authority to proceed.
 - Prefer outcome language for users who should not need to design the implementation.
 - Preserve detailed constraints from experienced users. Challenge only important contradictions, hidden costs, or risks.
 - State reversible assumptions when they allow safe progress.
 - Stop exploring when the direction is ready for a decision at the level of detail the work needs.
 - At convergence, summarize what is accepted, what remains deliberately open, and the smallest safe next step.
-- For each accepted outcome, identify the question it answers, where it applies, and how long it should last. Put it in the source that answers that question. Related outcomes may need several linked sources. Acceptance alone does not make an outcome durable or reusable. Ask only when its meaning or placement remains unclear enough to change the result.
+- For each accepted outcome, identify the question it answers, where it applies, and how long it should last.
+- Put each accepted outcome in the source that answers its question. Related outcomes may need several linked sources.
+- Acceptance alone does not make an outcome durable or reusable.
+- Ask only when an outcome's meaning or placement remains unclear enough to change the result.
 
 ## Independent Review
 

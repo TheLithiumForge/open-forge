@@ -12,8 +12,8 @@ interface Feature {
 
 const features: readonly Feature[] = [
   {
-    title: "Routes, not dumps",
-    body: "A loader and one short entrypoint per folder. The agent starts from the task, follows the routes that matter, and skips the rest.",
+    title: "Routes, not bulk context",
+    body: "A loader and one short entrypoint per folder. The entrypoints point the agent to the routes a task needs, and the rest stays closed.",
     link: "/docs/concepts/routing",
     linkLabel: "How routing works",
   },
@@ -24,25 +24,25 @@ const features: readonly Feature[] = [
     linkLabel: "Make it yours",
   },
   {
-    title: "Grows without bloating",
-    body: "Frontend rules live in a frontend scope, database rules in a database scope. Adding knowledge doesn't mean every task reads more of it.",
+    title: "Grows without bloating context",
+    body: "Frontend rules live in a frontend scope, database rules in a database scope. A scope loads only when a task selects it, so new knowledge doesn't add to every task.",
     link: "/docs/concepts/scopes",
     linkLabel: "Scopes",
   },
   {
-    title: "Memory that stays honest",
-    body: "Working, Emerging, Crystallized, Archived. Temporary state, unsettled findings, accepted knowledge, and history each get their own place.",
+    title: "Memory with clear trust levels",
+    body: "Working, Emerging, Crystallized, and Archived keep temporary state, unconfirmed findings, accepted knowledge, and history apart.",
     link: "/docs/concepts/memory",
     linkLabel: "The Memory model",
   },
   {
-    title: "Extensions when you want them",
-    body: "Planning, project documents, development workflows, task coordination. Install the packages that fit and skip the rest.",
+    title: "Optional Extensions",
+    body: "Packages for planning, project documents, development workflows, and task coordination. Install the ones that fit, and leave out the rest.",
     link: "/docs/extensions",
     linkLabel: "Browse packages",
   },
   {
-    title: "A CLI that's optional",
+    title: "An optional CLI",
     body: "It finds context, keeps navigation correct, and previews every change with --dry-run. Everything it does, you can do by editing files.",
     link: "/docs/cli",
     linkLabel: "Working with the CLI",

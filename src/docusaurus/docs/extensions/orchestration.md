@@ -5,17 +5,17 @@ description: The Managed Delivery workflow for coordinating related tasks, depen
 
 # Task Coordination
 
-Coordinate related tasks, assign responsibilities, manage dependencies, and verify the combined result, using whatever people, agents, and tools your workspace has.
+Coordinate related tasks, assign responsibilities, manage dependencies, and verify the combined result, using whatever people, agents, and tools your workspace has. The package installs one [workflow](../glossary.md#content-roles) recipe, Managed Delivery.
 
 - **Package ID:** `orchestration` (the display name is Task Coordination)
 - **Depends on:** [Development](development.md), [Observations and Handoffs](observations-and-handoffs.md), [Planning](planning.md)
-- **Loads at startup:** Nothing. The recipe loads when the `use-workflow` Skill selects it.
+- **Loads at startup:** Nothing. The `use-workflow` Skill from [Workflow Support](workflows.md) opens the recipe when a task selects it.
 
 ## Why it exists
 
-Running several related tasks, or several agents at once, is a bigger commitment to one way of working than anything else in the catalogue. That's why it's a separate choice and not part of the Development Toolkit.
+Coordinating several related tasks, or several agents at once, is a different need from delivering one change. That's why it's a separate choice and not part of the Development Toolkit.
 
-Its value is in the things that go wrong at scale: unclear ownership, parallel changes that collide, and interrupted work nobody can resume. Its dependencies bring the methods it calls and the records it uses.
+It addresses problems that appear when tasks run together: unclear responsibility, parallel changes that conflict, and interrupted work that nobody can resume.
 
 ## What it installs
 
@@ -25,7 +25,7 @@ Its value is in the things that go wrong at scale: unclear ownership, parallel c
   managed-delivery.md    <- the coordination workflow
 ```
 
-Its dependencies install the methods it calls (Planning, Development) and the records it uses (Observations and Handoffs, Checkpoints).
+Its dependencies install the rest. Planning and Development supply the methods it calls, and Planning also supplies the Work Records Pattern. Observations and Handoffs supplies the Observation and Handoff records and their starters. Workflow Support installs once, through those dependencies.
 
 ## What each file is for
 
@@ -35,18 +35,18 @@ Its dependencies install the methods it calls (Planning, Development) and the re
 
 **Goal:** deliver related tasks with clear responsibilities, resumable state, and verified integration, within your authority.
 
-| Step                                | What happens                                                                                                                     |
-| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| 1. Establish the delivery boundary  | Outcome, baseline, constraints, who decides, the delivery target, and any integration or publication you're withholding.         |
-| 2. Plan the dependency graph        | Uses the [Planning](planning.md) recipe and the Work Records Pattern.                                                            |
-| 3. Assign clear responsibility      | Coordination owns shared decisions and integration. Each task owns one bounded outcome. One person or agent may hold every role. |
-| 4. Prepare executable assignments   | Each task gets its outcome, sources, allowed and protected paths, dependencies, and completion evidence.                         |
-| 5. Choose safe concurrency          | Parallel work only when dependencies, authority, and isolation (such as separate worktrees) allow it. Otherwise sequential.      |
-| 6. Execute with local continuity    | Uses the [Development](development.md) recipe within each task.                                                                  |
-| 7. Preserve and resume deliberately | Keeps interrupted work recoverable. Seals a Handoff only for a real transfer.                                                    |
-| 8. Review integration candidates    | Uses the Review recipe when fresh scrutiny adds value. Commits only when authorized.                                             |
-| 9. Integrate and verify             | In dependency order, with checks that expose interactions between tasks.                                                         |
-| 10. Report the real delivery state  | Updates the defining sources, and names any unfinished integration or acceptance boundary.                                       |
+| Step                                | What the recipe asks for                                                                                                                        |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Establish the delivery boundary  | Outcome, baseline, constraints, who decides, the delivery target, and any integration or publication you're withholding.                        |
+| 2. Plan the dependency graph        | Uses the [Planning](planning.md) recipe, and the Work Records Pattern where no suitable structure exists.                                       |
+| 3. Assign clear responsibility      | Coordination owns shared decisions, dependencies, and integration. Each task owns one bounded outcome. One person or agent may hold every role. |
+| 4. Prepare executable assignments   | Each task gets its outcome, sources, allowed and protected paths, dependencies, and completion evidence.                                        |
+| 5. Choose safe concurrency          | Parallel work only when dependencies, authority, and isolation (such as separate worktrees) allow it. Otherwise sequential.                     |
+| 6. Execute with local continuity    | Uses the [Development](development.md) recipe within each task.                                                                                 |
+| 7. Preserve and resume deliberately | Keeps interrupted work recoverable. Seals a Handoff only for a real transfer or planned resumption.                                             |
+| 8. Review integration candidates    | Uses the Review recipe when required or when fresh scrutiny adds value. Commits only when authorized.                                           |
+| 9. Integrate and verify             | When authorized, in dependency order, with checks that expose interactions between tasks.                                                       |
+| 10. Report the real delivery state  | Updates the defining sources, and names any unfinished integration or acceptance boundary.                                                      |
 
 It completes when responsibilities and state are clear, unfinished work is recoverable, completed changes have evidence, and records agree with what was delivered.
 

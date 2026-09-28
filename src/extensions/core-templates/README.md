@@ -24,10 +24,10 @@ Start your own workspace instructions, advice, reusable shapes, capabilities, ma
 
 Choose a specialized Template instead when one already fits. These starters stay on demand and add no workspace-wide work procedure.
 
-Ordinary routed files can be copied and adapted manually or started with `route create --template`. The CLI copies the body; you supply destination metadata and replace prompts yourself. Initialize missing scopes with `route init`.
+Ordinary routed files can be copied and adapted manually or started with `route create --template`. The CLI copies the body. You supply destination metadata and replace prompts yourself. Initialize missing scopes with `route init`.
 
-The Skill starter is different: copy its fenced native file into `{skill-name}/SKILL.md` under the selected Skills scope. The wrapper is a routed Template, not an installed capability. Follow the active runtime's Skill format and discovery rules; route creation does not create native Skill packages.
+The Skill starter is different: copy its fenced native file into `{skill-name}/SKILL.md` under the selected Skills scope. The wrapper is a routed Template, not an installed capability. Follow the active runtime's Skill format and discovery rules. Route creation does not create native Skill packages.
 
 ## Install And Customize
 
-See the [installation guide](../../../docs/extensions.md). Copy only what helps, replace source metadata and prompts, and rebase links. Template copies are maintained independently; package updates do not update the work created from them.
+See the [installation guide](../../../docs/extensions.md). Copy only what helps, replace source metadata and prompts, and rebase links. Template copies are maintained independently. Package updates do not update the work created from them.

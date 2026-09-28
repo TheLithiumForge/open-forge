@@ -189,7 +189,7 @@ Four patterns, each visible in more than one decision above.
 
 Layer-3 defects — the crash, the strict `SKILL.md` keys, `references` returning
 zero — are in the
-[remediation task](../../../working/cli-development/tasks/task30-cli-experience-remediation.md) and should
+[remediation task](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md) and should
 be fixed there regardless of what is decided here.
 
 The decisions above are different: fixing them changes the Framework, not the

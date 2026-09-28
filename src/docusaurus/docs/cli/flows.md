@@ -1,11 +1,13 @@
 ---
 title: Everyday flows
-description: The situations where the CLI earns its place, from setting up a workspace to finding out why an agent ignored a rule, with the commands for each and why they help.
+description: Common situations where the CLI helps, from setting up a workspace to finding out why an agent ignored a rule, with the commands for each and why they help.
 ---
 
 # Everyday flows
 
-Each flow starts from a situation you'll recognize, then gives the commands in order and what to look for. The [command reference](/guides/cli) has every option.
+Each flow starts from a common situation, then gives the commands in order and what to look for. The [command reference](/guides/cli) has every option, and the [glossary](../glossary.md) defines the terms.
+
+Some flows use files that come from Extensions, not from the base install: Documents from the Project Documents Extension, and Decisions and their Template from the Planning Extension. The first flow installs both through `development-toolkit`.
 
 ## Set up a workspace
 
@@ -19,9 +21,11 @@ open-forge extension install development-toolkit
 open-forge status
 ```
 
-**Look for:** the dry run lists every file it will create. If you already have an `AGENTS.md` or `CLAUDE.md`, it adds an Open Forge section and keeps your content. `status` confirms how much context loads at startup and that navigation is complete. Review everything with `git diff`, then commit.
+`development-toolkit` is an optional Extension. It installs Project Documents, Planning, Flows and Scenarios, and Development, plus Workflow Support, which they depend on. Skip the two `extension install` commands if you want only the base.
 
-**Why it helps:** you know exactly what landed before your agent reads a word of it, and the CLI records what it installed so later updates can tell its files apart from yours.
+**Look for:** what each dry run will create. The install preview gives a count, and `--detail standard` lists every file. If you already have an `AGENTS.md` or `CLAUDE.md`, the install adds an Open Forge section and keeps your content. `status` shows how much context loads at startup, which Extensions are installed, and whether anything needs attention. Review everything with `git status` and `git diff`, then commit.
+
+**Why it helps:** you see what will be installed before any agent reads it. The CLI also records what it installed, so later updates can tell its files apart from yours.
 
 ## Find out why an agent ignored a rule
 
@@ -32,9 +36,9 @@ open-forge context
 open-forge route inspect directives/frontend/components
 ```
 
-**Look for:** whether the file appears in the startup context at all. If it doesn't, `route inspect` says why: it may be on demand when you meant it to load at startup, or it may sit in a scope the task didn't select. A missing `LoadNow` tag or a rule placed in the wrong folder are the usual causes. Fix the tags with `route update`, then check `context` again.
+**Look for:** whether the file appears in the startup context at all. If it doesn't, `route inspect` says why: the file may be on demand when you meant it to be loaded at startup, or it may sit in a scope the task didn't select. Two common causes are a missing `LoadNow` tag and a rule placed in the wrong folder. Fix the tags with `route update`, which replaces the whole tag list and updates the parent's `Entries`. Then check `context` again.
 
-**Why it helps:** "the model didn't listen" becomes a fact you can check. Often the agent never received the rule, and that's a five-minute fix.
+**Why it helps:** "the model didn't listen" becomes something you can check. Often the rule was never set to load, which is quick to fix. The command shows what the rules select, not what a model actually read.
 
 ## Record something new
 
@@ -49,9 +53,11 @@ open-forge route create memory/crystallized/decisions/money-in-cents \
   --dry-run
 ```
 
-**Look for:** whether `find` turns up a Decision that already covers it. If one does, update that one instead of adding a competing copy. Otherwise, `route create` makes the file with correct frontmatter and adds it to its parent's `Entries`. You fill in the body.
+The Decisions category and the `decision` Template come from the Planning Extension.
 
-**Why it helps:** one current answer per question, and new files that agents can find immediately.
+**Look for:** whether `find` turns up a Decision that already covers it. If one does, update that one instead of adding a competing copy. Otherwise, `route create` makes the file with correct frontmatter, copies the Template's body into it, and adds it to its parent's `Entries`. You fill in the body.
+
+**Why it helps:** you keep one current answer per question, and the new file is listed in `Entries` right away, so agents can find it.
 
 ## Reorganize without breaking links
 
@@ -60,14 +66,17 @@ open-forge route create memory/crystallized/decisions/money-in-cents \
 ```sh
 open-forge references memory/crystallized/documents/billing --direction=in
 open-forge route init memory/crystallized/documents/payments --dry-run
+open-forge route init memory/crystallized/documents/payments
 open-forge route move memory/crystallized/documents/billing \
   .agents/memory/crystallized/documents/payments/billing.md --dry-run
 open-forge doctor
 ```
 
-**Look for:** everything that links to the file before you move it. `route init` creates the new scope, and the move plan shows which links and `Entries` it updates. `doctor` afterwards confirms nothing is left pointing at the old place. To delete instead, use `route remove`, which also remembers the removal.
+Here `billing` is a Document you wrote, inside the Documents category from the Project Documents Extension.
 
-**Why it helps:** moving files by hand breaks links silently, and an agent that follows a dead link just finds nothing.
+**Look for:** everything that links to the file before you move it. `route init` creates the new scope, which must exist before the move can be planned. The move plan shows which links and `Entries` it updates. Run the move again without `--dry-run` to apply it, then run `doctor` to confirm nothing still points at the old place. `route move` moves only files you created, not files installed by the Framework or an Extension. To delete a file instead, use `route remove`. It records the removal and turns links to the file into plain text.
+
+**Why it helps:** moving files by hand breaks links without any warning, and an agent that follows a dead link finds nothing.
 
 ## Keep the workspace healthy
 
@@ -76,17 +85,17 @@ open-forge doctor
 ```sh
 open-forge status
 open-forge doctor
-open-forge repair --dry-run
+open-forge repair --automatic --dry-run
 open-forge index --dry-run
 ```
 
-**Look for:** what `doctor` names and the next step it suggests. `repair` fixes broken local links that have one safe answer and reports the rest for you to decide. `index` rebuilds `Entries` that no longer match their files, usually after someone added or renamed files by hand.
+**Look for:** what `doctor` names and the next step it suggests. `repair --automatic` fixes broken local links that have one safe answer and reports the rest. To choose a target for those yourself, run `repair` without `--automatic` in a terminal. `index` rebuilds `Entries` that no longer match their files, usually after someone added or renamed files by hand.
 
-**Why it helps:** agents find knowledge through `Entries`. A stale list hides a file as surely as deleting it would.
+**Why it helps:** agents find files through `Entries`. A file that's missing from its parent's `Entries` is hidden from them.
 
 ## Take a Framework update
 
-**When:** a new Open Forge version is out.
+**When:** a new Open Forge version is out. `update` installs the Framework bundled with your CLI, so update the CLI first.
 
 ```sh
 git commit -am "Before Open Forge update"
@@ -96,9 +105,9 @@ git diff
 open-forge cleanup --dry-run
 ```
 
-**Look for:** every shipped file the update would replace. If you edited one of them, move your change into an [overwrite companion](../concepts/customizing.md#overwrite-companions) (`{name}.overwrite.md`), which updates never touch. After checking the result, `cleanup` removes the recovery copies the update kept.
+**Look for:** every shipped file the update would replace. That includes shipped files you edited: the update replaces them and keeps their previous content in a recovery bundle. Because you committed first, `git diff` shows those changes too. To keep a change through updates, move it into an [overwrite companion](../concepts/customizing.md#overwrite-companions) (`{name}.overwrite.md`), which updates never touch. After checking the result, `cleanup` removes the recovery copies the update kept.
 
-**Why it helps:** you get Framework improvements without losing local changes, and nothing is replaced without being listed first.
+**Why it helps:** you get Framework improvements through a plan you've reviewed, and nothing is replaced without being listed first.
 
 ## Drop what you don't use
 
@@ -111,31 +120,31 @@ open-forge remove orchestration --kind extension --dry-run
 
 **Look for:** the files that go, and the exclusion recorded in `.agents/open-forge.json`.
 
-**Why it helps:** deleting a file by hand lets the next update bring it back. A removal through the CLI is remembered.
+**Why it helps:** deleting a file by hand lets the next update bring it back. A removal through the CLI is recorded, so later updates leave it out.
 
 ## Share rules across repositories
 
 **When:** several repositories should follow the same team rules or share one knowledge base.
 
-Keep the shared files in one folder inside each repository, for example a Git submodule, laid out the way they should appear in the workspace. Then attach it:
+Keep the shared files in one folder inside each repository, for example a Git submodule, laid out the way they should appear in the workspace. Files under `.agents` need an existing scope to land in. Create one with `route init` first, such as `guidance/team`, instead of linking straight into a category the Framework installed. Then attach the folder:
 
 ```sh
 open-forge library attach team-rules vendor/team-rules --dry-run
-open-forge library sync team-rules
+open-forge library attach team-rules vendor/team-rules
 ```
 
-**Look for:** the list of links the attach creates. When the shared source changes, `library sync` brings the links up to date. `library detach` removes the links and leaves the source alone.
+**Look for:** the list of links the attach creates. Each one is a relative file link, so the files themselves stay in the shared folder. When the shared source changes, `library sync team-rules` brings the links up to date. `library detach` removes the links and leaves the source alone.
 
-**Why it helps:** one source of truth for many repositories, with nothing copied and nothing drifting apart.
+**Why it helps:** each repository links to the shared folder instead of keeping its own edited copy. When the shared source changes, `library sync` brings the links back in step.
 
 ## Automate it
 
-**When:** you want CI, or another tool, to watch the workspace.
+**When:** you want CI, or another tool, to check the workspace.
 
 ```sh
 open-forge doctor --format json
 ```
 
-**Look for:** the exit code. `0` means completed, and `2` or higher means the result needs attention, so a CI job fails when `doctor` finds a warning or worse. `--format json` returns one structured result for other tools to read.
+**Look for:** the exit code. `0` means completed. Any other code means the result needs attention, so a CI job fails when `doctor` finds a warning or an error. `--format json` returns one structured result for other tools to read.
 
-**Why it helps:** broken navigation gets caught in review, before it quietly makes an agent worse.
+**Why it helps:** a broken link or stale `Entries` fails the check before it reaches an agent.

@@ -7,9 +7,8 @@ open-forge:
 # {Accepted Choice}
 
 {
-Use for an accepted choice worth remembering. Keep unaccepted proposals in a candidate route.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Use for an accepted choice worth remembering. An unaccepted proposal isn't a Decision. Keep it in a candidate route, such as Ideas or Analysis.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Decision
@@ -18,7 +17,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 **Applies to:** {Scope and exclusions.}
 
-**Accepted by:** {User direction, delegated authority, or other applicable source; include a date or source reference when useful. Do not infer acceptance from this record.}
+**Accepted by:** {User direction, delegated authority, or other applicable source. Include a date or source reference when useful. Do not infer acceptance from this record.}
 
 ## Context And Rationale
 

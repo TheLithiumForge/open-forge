@@ -40,7 +40,7 @@ master plan for all current execution and resolve any overlap there.
 
 ### Recorded State
 
-- [Task 30 — CLI Experience Remediation](../../working/cli-development/tasks/task30-cli-experience-remediation.md)
+- [Task 30 — CLI Experience Remediation](tasks/task30-cli-experience-remediation.md)
   completed G1 through A1–A6 and P1, then
   [B1 heading-based Entries](tasks/task30/07-b1-heading-entries.md), with reviewed
   before snapshots, same-commit contracts and passing managed/native suites.
@@ -56,7 +56,7 @@ master plan for all current execution and resolve any overlap there.
   `--parallel collections`; the supported Native AOT gate was run by the
   overseer on an unsandboxed host with `vswhere` on `PATH`.
 
-- [Task 31 — Implementation Duplication Removal](../../working/cli-development/tasks/task31-implementation-duplication.md)
+- [Task 31 — Implementation Duplication Removal](tasks/task31-implementation-duplication.md)
   remains open. M1, M2, M3 and M4 are complete within their accepted
   boundaries; Route Move/Remove stays separate, and M5 waits for the stabilized
   presentation structure.
@@ -76,7 +76,7 @@ as evidence becomes available. G4 slices follow the
 [G4 conventions](tasks/task30-g4/00-conventions.md) instead, which replace the
 same-commit contract rule with a per-slice changes ledger.
 
-The earlier [00 — Slice conventions](../../working/cli-development/tasks/task30/00-conventions.md) carries
+The earlier [00 — Slice conventions](tasks/task30/00-conventions.md) carries
 that program's verification commands and pass conditions, the recurring
 composition pattern that A1 and A2 each stalled on, and the rules every slice
 shares. The plans do not repeat it.
@@ -108,7 +108,7 @@ maintainer decision; 4 to 7 execute decisions already recorded in
 Deferred out of this sequence, each needing a Framework decision first:
 the Axioms absent/empty contract, the TypeScript tooling grammar, and the
 loader/AGENTS content placement. They are recorded in
-[the structural subtask](../../working/cli-development/tasks/task30/phase-4a-structural.md) as items 2, 4
+[the structural subtask](tasks/task30/phase-4a-structural.md) as items 2, 4
 and 5.
 
 ### Previous Dependency Order To The Rerendering Revamp
@@ -127,7 +127,7 @@ is accepted.
    are retired. Before output was committed separately; contracts accompanied
    behavior.
 3. **Complete:** the two independent pre-G4 gates closed in the accepted order:
-   - **Complete:** [Task 31's safe M1 work](../../working/cli-development/tasks/task31/phase-3-5.md) extracted
+   - **Complete:** [Task 31's safe M1 work](tasks/task31/phase-3-5.md) extracted
      three identical mappings and retired its conditional Library group. Keep Route Move/Remove at
      its recorded contract stop, and do not pull lifecycle or permission code
      out of G1. M4 is already complete; M5 structure cleanup waits until G4

@@ -36,7 +36,7 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 - Only this loader and recognized loaded entrypoints define active Axioms. A loaded child inherits its ancestors' rules and adds only requirements specific to its narrower scope. Do not repeat inherited rules.
 - When authoring an entrypoint with no local rules, use `## Axioms` with one entry: `- inherited - No local axioms; loaded ancestor axioms remain active.` Existing missing or empty local sections also add no rules. Never combine the inherited marker with local rules.
 - Follow loaded Axioms and Directive Instructions within their scope. Adding a child instruction does not cancel an active ancestor rule. Report unresolved conflicts.
-- Customize a default by editing or replacing its source, or by adding its overwrite companion. This changes that source's content; it does not grant a separate file precedence over other active rules.
+- Customize a default by editing or replacing its source, or by adding its overwrite companion. This changes that source's content. It does not grant a separate file precedence over other active rules.
 - Selected non-binding material may specialize broader material of the same kind within its accepted scope.
 
 ### Routing
@@ -64,7 +64,7 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 #### Management And Customization
 
 - Management determines which files an installer or updater may change. It does not determine their meaning or authority.
-- Each manager defines the route shapes it recognizes, preserves their segment order through scopes, and changes only files it owns or can safely identify for the requested lifecycle operation.
+- Each manager defines the route shapes it recognizes. It preserves their segment order through scopes. It changes only files it owns or can safely identify for the requested lifecycle operation.
 - Users may add, move, replace, or remove routes. A familiar slug or tag does not create root behavior or managed status. Other valid routes remain routable.
 - Removed defaults stay removed unless the user asks to restore them. For managed files, record intentional removals in the manager's exclusions before updating.
 - Generated `Entries` provide navigation, not authority.
@@ -99,7 +99,7 @@ For example, a C# scope may contain a #LoadNow design file and an on-demand Wind
 - #CurrentTruth - Accepted current state within its stated scope, subject to user direction, runtime safety, platform constraints, and declared external authorities for the facts they define.
 - #Evergreen - Material that must stay aligned with accepted current state. It creates no authority or loading behavior.
   - Update affected #Evergreen sources you are allowed to edit before work depends on them and no later than closeout. Batch related updates when safe.
-  - Keep each source aligned with what it represents now. Preserve useful prior context in the appropriate Memory route and report needed updates that are blocked or not authorized.
+  - Keep each source aligned with what it represents now. Preserve useful prior context in the appropriate Memory route. Report needed updates that are blocked or not authorized.
 
 #### Choosing Loading Tags
 

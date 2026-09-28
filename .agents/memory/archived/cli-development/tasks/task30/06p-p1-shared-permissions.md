@@ -6,7 +6,7 @@ open-forge:
 
 # P1 — Shared Allow-list Closeout
 
-Read [slice conventions](../../../../working/cli-development/tasks/task30/00-conventions.md). This closes G1 steps 3a/3b omitted
+Read [slice conventions](00-conventions.md). This closes G1 steps 3a/3b omitted
 from the original numbered sequence; [A6-R8](06-a6-delete-lifecycle.md#divergences-observed)
 records the discovery. It follows the verified A6 commit and precedes B1/M1.
 

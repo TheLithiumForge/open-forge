@@ -7,9 +7,8 @@ open-forge:
 # {What Was Observed}
 
 {
-Use for evidence worth retaining. One useful occurrence is enough; extend a matching record before creating another.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Use for evidence worth retaining. One useful occurrence is enough. Extend a matching record before creating another.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## What Happened
@@ -20,7 +19,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 **Observed:** {What actually happened.}
 
-**Scope:** {Where and under which conditions; limits on generalizing it.}
+**Scope:** {Where and under which conditions, and the limits on generalizing it.}
 
 ## Evidence
 
@@ -36,15 +35,14 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 **Possible action:** {A candidate change, not an accepted instruction. Use none when no action is justified.}
 
-{
-Keep this section only if further independent occurrences exist.
-}
 ## Later Occurrences
+
+{Keep this section only if further independent occurrences exist.}
 
 | Occurrence | Evidence | What changed in our understanding |
 | --- | --- | --- |
 | {Date or distinct context} | {Source} | {Agreement, disagreement, or new limit} |
 
 {
-Repetition supports review and consolidation; it does not establish correctness or acceptance.
+Recurrence supports review and consolidation. It does not establish correctness or acceptance.
 }

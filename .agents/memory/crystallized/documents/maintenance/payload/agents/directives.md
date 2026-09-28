@@ -19,7 +19,7 @@ The [current Directive contract](../../../framework/primitives/directives.md) de
 - The entrypoint keeps the one-pass model: select a Directive route, then load and follow every sibling Directive exposed through #LoadNow
 - Sibling Directives under the root apply across the workspace. A selected child entrypoint sets the narrower scope before its sibling Directives load
 - Child Directives add to active parent Directives and report conflicts instead of creating hidden precedence
-- Every sibling Directive carries #LoadNow and has exactly one non-empty level-2 `## Instructions` section
+- Every sibling Directive carries #LoadNow and keeps its instructions under a non-empty level-2 `## Instructions` heading
 - The entrypoint defines the reusable category rules. Each sibling Directive defines its own required behavior
 
 The [routed Markdown representation](../../../framework/markdown/routes.md) defines entrypoint and generated-region syntax. Directive-specific meaning remains in the source and current Directive contract rather than in shared Markdown rules.

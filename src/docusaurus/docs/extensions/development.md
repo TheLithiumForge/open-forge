@@ -7,14 +7,16 @@ description: Development, Debugging, and Review workflow recipes that work with 
 
 Implement changes, investigate defects, and review results using your project's technologies, rules, and verification tools. No task tracker or record taxonomy is required.
 
+The package installs three [workflow](../glossary.md#content-roles) recipes. A recipe is a Markdown method with a Goal, Steps, and Completion, reached through the `use-workflow` Skill from [Workflow Support](workflows.md).
+
 - **Package ID:** `development`
 - **Depends on:** [Workflow Support](workflows.md)
 - **Needed by:** [Task Coordination](orchestration.md), [Development Toolkit](development-toolkit.md)
-- **Loads at startup:** Nothing. Recipes load when the `use-workflow` Skill selects them.
+- **Loads at startup:** Nothing. The `use-workflow` Skill opens a recipe when a task selects it.
 
 ## Why it exists
 
-A capable agent can already write code. These three methods earn their place by changing how it works where mistakes are expensive: implementing in a verified slice, diagnosing before repairing so a fix follows a cause, and reviewing with evidence instead of opinion.
+A capable agent can already write code. These three methods change how it works where mistakes are expensive: implementing in a verified slice, diagnosing before repairing so a fix follows a cause, and reviewing with evidence instead of opinion.
 
 Review stays in this package rather than getting its own, because a separate package for one closely related workflow would add a boundary without adding a real choice.
 
@@ -34,16 +36,16 @@ Review stays in this package rather than getting its own, because a separate pac
 
 **Goal:** deliver one accepted change that fits the current system, with evidence matched to its behavior and risk.
 
-| Step                               | What the agent does                                                                                                                                          |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1. Establish the boundary          | Carries forward the accepted outcome, scope, non-goals, authorization, and completion evidence. Asks only for a missing consequential decision.              |
-| 2. Resolve blocking design choices | Checks whether an unsettled product or architecture question could change the work.                                                                          |
-| 3. Inspect the actual system       | Uses your project's tools, commands, and conventions rather than familiar defaults.                                                                          |
-| 4. Define a coherent slice         | States the behavior change, what must be preserved, and how it will be verified. Uses test-first ordering when it helps.                                     |
-| 5. Implement and check             | Makes the smallest change that fits, then runs the narrowest distinguishing checks.                                                                          |
-| 6. Diagnose before repairing       | Classifies a failure (implementation, expectation, setup, environment, unrelated) before changing anything. Never weakens a valid expectation to get a pass. |
-| 7. Improve and verify              | Refactors when worth it, then reruns affected and neighboring checks.                                                                                        |
-| 8. Close the boundary              | Reports pre-existing failures, residual risk, and gaps.                                                                                                      |
+| Step                               | What the recipe asks for                                                                                                                                       |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Establish the boundary          | Carries forward the accepted outcome, scope, non-goals, authorization, and completion evidence. Asks only for a missing consequential decision or permission.  |
+| 2. Resolve blocking design choices | Checks whether an unsettled product, experience, or architecture question could change the work.                                                               |
+| 3. Inspect the actual system       | Uses your project's tools, commands, and conventions rather than familiar defaults.                                                                            |
+| 4. Define a coherent slice         | States the behavior change, what must be preserved, and how it will be verified. Uses test-first ordering when it helps.                                       |
+| 5. Implement and check             | Makes the smallest change that fits, then runs the narrowest distinguishing checks.                                                                            |
+| 6. Diagnose before repairing       | Classifies a failure (implementation, expectation, setup, environment, unrelated) before changing anything. Must not weaken a valid expectation to get a pass. |
+| 7. Improve and verify              | Refactors when the gain justifies it, then reruns affected and neighboring checks.                                                                             |
+| 8. Close the boundary              | Reports pre-existing failures, residual risk, and gaps.                                                                                                        |
 
 Completion doesn't imply permission to publish or integrate.
 
@@ -51,13 +53,13 @@ Completion doesn't imply permission to publish or integrate.
 
 **Goal:** connect an observed symptom to an evidenced cause and, when changes are authorized, a minimal verified fix.
 
-The steps: capture the discrepancy, reproduce reliably, locate where behavior first diverges, distinguish competing hypotheses with the cheapest separating check, explain the cause, correct it when authorized, and verify the changed state. An **inconclusive** diagnosis is a valid result. The agent then reports the checks performed, the remaining hypotheses, and the next discriminating check, rather than claiming a cause.
+The steps: capture the discrepancy, reproduce reliably, locate where behavior first diverges, distinguish competing hypotheses with the cheapest separating check, explain the cause, correct it when authorized, and verify the changed state. An **inconclusive** diagnosis is a valid result when the evidence doesn't establish a cause. The recipe then asks the agent to report the checks performed, the remaining hypotheses, and the next discriminating check, rather than claiming a cause.
 
 ### `review.md`
 
 **Goal:** actionable findings in priority order, or a clear no-findings result, without claiming more than the evidence supports. **Review is read-only by default.**
 
-The agent fixes the review target (baseline, changed and untracked files, claimed evidence), reads enough context, traces consequential failures first (correctness, security, data loss, regressions, broken contracts) over style, checks changes to durable knowledge, challenges each finding against counterevidence, and reports each finding with a stable ID, priority, location, evidence, consequence, and smallest credible fix.
+The recipe has the agent first record exactly what it's reviewing: the baseline, the changed and untracked files, and the claimed evidence. It reads enough context, then traces consequential failures (correctness, security, data loss, regressions, compatibility, broken contracts) before style. It checks changes to durable knowledge and challenges each finding against counterevidence. Each material finding comes with a stable ID, priority, location, evidence, consequence, and smallest credible correction.
 
 ## How to use it
 
@@ -69,5 +71,5 @@ The agent fixes the review target (baseline, changed and untracked files, claime
 
 ## Good to know
 
-- Development depends only on Workflow Support. It doesn't install Planning, Project Documents, Observations, or an agent hierarchy.
+- Development depends only on Workflow Support. It doesn't install Planning, Project Documents, Observations and Handoffs, or an agent hierarchy.
 - The three recipes stay separate methods within the shared selector Skill. They may use several configured Skills and tools, and they don't replace your harness's native behavior.

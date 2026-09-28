@@ -6,7 +6,7 @@ open-forge:
 
 # {Question To Explore}
 
-{Use when comparing directions needs a durable record. Save in an existing candidate scope. Replace metadata and prompts, rebase links, and remove unhelpful sections.}
+{Use when comparing directions needs a durable record. Save in an existing candidate route. Replace metadata and prompts, rebase links, and remove unhelpful sections.}
 
 ## Starting Point
 

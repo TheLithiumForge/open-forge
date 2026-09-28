@@ -11,6 +11,8 @@ Read `AGENTS.md` and `.agents/loader.md`, then select the scopes relevant to you
 | `src/open-forge/`       | Installable Framework files                                      |
 | `src/extensions/`       | First-party Extension packages                                   |
 | `src/cli/`              | Native CLI implementation and tests                              |
+| `src/docusaurus/`       | The documentation site                                           |
+| `demos/`                | Demo projects for trying Open Forge with an agent                |
 | `scripts/`              | Repository build, delivery, package, and agent tooling           |
 | `.agents/`              | This repository's own rules, current knowledge, and work context |
 | `docs/` and `README.md` | Public introductions and practical guides                        |
@@ -39,10 +41,10 @@ npx forge dist --help
 npx forge dist --no-restore --plan
 ```
 
-The command catalog is scripts/delivery/commands.ts. It defines each command's
+The command catalog is `scripts/delivery/commands.ts`. It defines each command's
 implementation, description and supported options. Focused task modules own
-execution, and dist-plan.ts declares the pipeline and routes flags to their stages.
-Use either the unified CLI or an alias such as npm run build.
+execution, and `dist-plan.ts` declares the pipeline and routes flags to their stages.
+Use either the unified CLI or an alias such as `npm run build`.
 Small TypeScript scripts coordinate native tests and packaging. Standard npm
 and .NET commands own version increments, restore, compilation and uploads. Repository tooling uses Node and npm, including its tests.
 
@@ -59,7 +61,9 @@ stay beside their consumers, with package preparation under `npm/` and
 release coordination under `release/`. Repository agent tools
 remain separate under `scripts/agent-tooling/`.
 
-One root `tsconfig.json` checks all repository TypeScript, including tests. The
+One root `tsconfig.json` checks the repository tooling TypeScript in `scripts/`
+and `eslint.config.ts`, including tests. The documentation site and the
+brownfield demo app have their own configurations. The
 launcher's emitting configuration includes only its runtime sources. Tests
 remain independently runnable through their package commands. Compiler
 configuration does not determine which test tier executes.
@@ -67,12 +71,16 @@ configuration does not determine which test tier executes.
 The replacement C# implementation follows the current [CLI
 Architecture](../.agents/memory/crystallized/documents/cli/architecture.md) and
 [active Plan](../.agents/memory/working/cli-development/plan.md). Source and
-projects live below `src/cli/`, divided first into `root/`, `core/`, and `tests/`.
+projects live below `src/cli/`: the executable project in `root/`, the layer
+projects in `framework/`, `shell/`, `operations/`, `rendering/`, and
+`output-text/`, and the test projects in `tests/`.
 The repository root owns `OpenForge.Cli.slnx`, `global.json`, `NuGet.Config`,
 `Directory.Build.props`, and `Directory.Packages.props`. All .NET output goes to
 the ignored root `artifacts/` directory.
 
-Install Node 24 and the stable .NET 10 SDK selected by the repository. Native
+Install Node.js 22.18 or later, as `package.json` requires. CI uses Node 24,
+but contributors need nothing newer unless a change depends on a newer API.
+Also install the stable .NET 10 SDK selected by `global.json`. Native
 publishing also needs the platform's native toolchain: Clang and development
 libraries on Linux, Xcode command-line tools on macOS, or Visual Studio Build
 Tools with the C++ workload on Windows. See the [.NET Native AOT prerequisites](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/).
@@ -87,12 +95,13 @@ npm run cli:dev -- --help
 ```
 
 `setup` installs locked npm dependencies and restores .NET dependencies.
-`npm run build` and `npm test` let `dotnet build` restore incrementally and use
-Release configuration. Native builds restore once during that managed build.
-Subsequent native publications reuse the restored dependencies.
+`npm run build` and `npm test` restore .NET dependencies first, then run
+`dotnet build` without restoring, in Release configuration. Native builds
+restore once during their managed build step. The native publications that
+follow reuse the restored dependencies.
 Use `-- --no-restore` after an explicit restore, or `-- --offline` to restore
 only from cached dependencies. These options are mutually exclusive. The test command
-builds the managed solution and runs its Unit, Integration and public-process
+builds the managed solution and runs its unit, integration and public-command
 tests. IDEs can continue using the root .NET solution directly.
 
 Use `npm run check:delivery` for delivery TypeScript, lint and formatting,
@@ -167,9 +176,10 @@ public tests against the managed CLI, native integration and public tests, and
 managed public tests against the native CLI. Integration tests therefore run
 in two modes and public tests in three. This does not run other OS targets.
 
-By default, `pack` requires
-their successful qualification, creates the portable archive and current-host
-npm packages, and checks the installed npm launcher against the native binary.
+By default, `pack` requires passing `test:built` reports for the existing
+artifacts. It creates the portable archive, the main npm package, and the
+current host's native npm package, then checks the installed npm launcher
+against the native binary.
 The commands print their output locations under `artifacts/delivery/<RID>/`.
 The current reports are in `reports/`, and the packages are in `packages/`.
 `package-path.txt` is written only after packaging succeeds.
@@ -237,7 +247,9 @@ native packages before the wrapper. Existing versions keep their npm tags.
 Skipping checks availability, not whether remote bytes match a local rebuild.
 Dry runs remain offline and cannot report which versions already exist.
 
-Both commands require a tag, and prerelease versions cannot use `latest`.
+Both commands require a tag, and prerelease versions cannot use `latest` as
+that tag. Until a package has a stable version, publishing a prerelease also
+moves `latest` to it, because the npm package page shows the `latest` version.
 Changing source or version requires rebuilding the affected distribution.
 
 Publish each native package at the synchronized version, then publish the main
@@ -250,7 +262,7 @@ provides the `open-forge` command.
 
 ### Select targets for one version
 
-Choose the wrapper’s exact dependencies when packing it:
+Choose the wrapper's exact dependencies when packing it:
 
 ```sh
 npx forge dist:wrapper --targets linux-x64,osx-x64,win-x64
@@ -273,7 +285,7 @@ npx forge release:collect artifacts/release-input artifacts/release --targets li
 npx forge publish:release --tag preview --dry-run
 ```
 
-The input contains each selected host’s `package-<RID>` directory. Collection
+The input contains each selected host's `package-<RID>` directory. Collection
 requires their tested packages and matching wrapper dependencies. It records
 the selection in `release.json`. Publication uses that exact graph and uploads
 the wrapper last. Omitted target artifacts are neither required nor uploaded.
@@ -356,7 +368,8 @@ not release anything.
 For the default complete release, all six platform packages must be prepared before publication begins. npm
 publishes the platform packages before the main package that references them.
 GitHub receives one release containing the portable archives and checksums.
-Prereleases use a prerelease channel. Stable releases use `latest`. Selecting
+Prereleases use a prerelease channel, and also become `latest` until the first
+stable release. Stable releases use `latest`. Selecting
 `all` requests both destinations, but there is no transaction across GitHub and
 npm. A failed publication must be inspected before retrying its remaining work.
 
@@ -447,11 +460,11 @@ git diff
 
 ## Measure context size
 
-Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. Use [tiktoken](https://github.com/openai/tiktoken) with two named reference encodings:
+Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. The current base has 15 Markdown files, with 11 read at startup through `AGENTS.md`.
 
-The following measurements predate the optional-content extraction and are historical, not counts for the current payload. The current base has 15 Markdown files, with 11 selected at startup through `AGENTS.md`. Fresh tiktoken totals have not been measured.
+The README quotes the CLI's own estimate, the same one `open-forge status` reports: each file's character count divided by four and rounded up, then summed. For the current base, that gives about 5.7k tokens for the 11 startup files and about 7.8k tokens for all 15. The `open-forge-cli` Skill accounts for about 1.5k of the total. At startup, only its one-line entry in the Skills entrypoint is read. Installed Extensions and your own content add to both numbers.
 
-The README quotes the CLI's own estimate, the same one `open-forge status` reports: each file's character count divided by four and rounded up, then summed. For the current base, that gives about 5.8k tokens for the 11 startup files and about 7.9k tokens for all 15. The `open-forge-cli` Skill accounts for about 1.4k of the total, and only its one-line entry loads at startup. Installed Extensions and your own content add to both numbers.
+Reference tokenizer counts use [tiktoken](https://github.com/openai/tiktoken) with two named encodings, `o200k_base` and `cl100k_base`. The counts below predate the optional-content extraction and are historical, not counts for the current payload. Fresh tiktoken totals have not been measured.
 
 | Historical source set   | Files | `o200k_base` tokens | `cl100k_base` tokens |
 | ----------------------- | ----: | ------------------: | -------------------: |
@@ -476,7 +489,7 @@ Follow the [Writing Directive](../.agents/directives/public-facing-writing.md) a
 
 ## Documentation site
 
-The public documentation site is a Docusaurus project in `src/docusaurus/`. Its own pages, covering getting started, concepts, and a file-by-file reference for every first-party Extension, live in `src/docusaurus/docs/`. The site also publishes this guide, the [CLI guide](cli.md), and the [Extension guide](extensions.md) directly from `docs/`, so each guide keeps one source. At build time, a relative link that leaves the published pages becomes a link to the file on GitHub.
+The public documentation site is a Docusaurus project in `src/docusaurus/`. Its own pages, covering getting started, concepts, the demos, and a file-by-file reference for every first-party Extension, live in `src/docusaurus/docs/`. The site also publishes this guide, the [CLI guide](cli.md), and the [Extension guide](extensions.md) directly from `docs/`, so each guide keeps one source. At build time, a relative link that leaves the published pages becomes a link to the file on GitHub.
 
 The site has its own `package.json` and lockfile, separate from the repository tooling. From `src/docusaurus/`:
 
@@ -489,8 +502,8 @@ The framework diagram has one data source, `src/components/framework-map/framewo
 
 `npm start` serves the site with live reload. `npm run build` writes the static site to `src/docusaurus/build/` and fails on broken links or anchors. `npm run typecheck` checks the site's TypeScript.
 
-The [Documentation workflow](../.github/workflows/docs.yml) builds the site for pull requests that touch it and publishes it to GitHub Pages whenever those changes reach `main`. The repository's Pages settings must use GitHub Actions as the build source. GitHub serves a project repository's site below its name, so the default address is `https://thelithiumforge.github.io/open-forge/`. The workflow reads the actual address from the Pages settings, so adding a custom domain moves the site to `/` without a configuration change. Local builds always use the default address.
+The [Documentation workflow](../.github/workflows/docs.yml) type-checks and builds the site for pull requests that touch it or the three published guides, and publishes it to GitHub Pages whenever those changes reach `main`. The repository's Pages settings must use GitHub Actions as the build source. GitHub serves a project repository's site below its name, so the default address is `https://thelithiumforge.github.io/open-forge/`. The workflow reads the actual address from the Pages settings, so adding a custom domain moves the site to `/` without a configuration change. Local builds use the default address.
 
-The [demos](../demos/) sit beside the site: small projects with seed requests at four levels of detail and a checklist for the result. The brownfield app runs its own tests with `npm test` from its `app/` folder.
+The [demos](../demos/) live in the repository's `demos/` folder, and the site's Demos pages describe them. They are small projects with seed requests at four levels of detail and a checklist for the result. The brownfield app runs its own tests with `npm test` from its `app/` folder.
 
 The site's pages explain shipped behavior, so they need the same care as the README. When a Framework or Extension change alters what a page or a demo describes, such as an installed file, a loading tag, a package name, or an install command, update it in the same change.

@@ -12,8 +12,9 @@ export default function HowItFits(): ReactNode {
           How it fits together
         </Heading>
         <p className={styles.sectionLead}>
-          Everything in the workspace answers one of two questions. <strong>Core</strong> says how work should be done. <strong>Memory</strong> keeps what's worth remembering, and
-          how far to trust it. The loader connects them, so an agent reads a map instead of everything.
+          The base Framework has two parts. <strong>Core</strong> defines how work is done. <strong>Memory</strong> keeps what's worth remembering, sorted by how far it can be
+          trusted. At startup the rules have an agent read the loader and the entrypoints of most categories, plus any entries those entrypoints mark to load. Everything else opens
+          only when the task needs it. Optional Extensions add categories and files inside both parts.
         </p>
         <FrameworkMap />
         <Link to="/docs/concepts">Read the concepts →</Link>

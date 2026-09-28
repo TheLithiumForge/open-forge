@@ -23,4 +23,4 @@ Use these records for products, services, or other work. They do not require an 
 
 ## Install And Customize
 
-See the [installation guide](../../../docs/extensions.md) and [migration from the earlier package layout](../../../docs/extensions.md#moving-from-the-earlier-package-layout). These four starters formerly belonged to Planning. Existing copies remain independent; moving the starters does not move or rewrite their results.
+See the [installation guide](../../../docs/extensions.md) and [migration from the earlier package layout](../../../docs/extensions.md#moving-from-the-earlier-package-layout). These four starters formerly belonged to Planning. Existing copies remain independent. Moving the starters does not move or rewrite their results.

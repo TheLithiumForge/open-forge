@@ -9,11 +9,11 @@ Explore an uncertain direction with concrete alternatives, useful questions, and
 
 - **Package ID:** `collaboration`
 - **Depends on:** Nothing
-- **Loads at startup:** Nothing. The Guidance appears in the Guidance entries and is read when relevant.
+- **Loads at startup:** Only one entry line: the Guidance file's entry in the Guidance [entrypoint](../concepts/routing.md#entrypoints). The Guidance itself opens on demand. The Template stays on demand too, because the Templates root entrypoint isn't read at startup.
 
 ## Why it exists
 
-The most expensive time to find out you built the wrong thing is after building it. This Guidance has the agent lead with its understanding and a recommendation, ask about one important choice at a time, and give you something concrete to react to, instead of charging ahead or burying you in questions.
+Correcting a direction before the work starts costs less than rebuilding afterward. This Guidance has the agent lead with its understanding and a recommendation, ask about one important choice at a time, and give you something concrete to react to. It steers the agent away from both starting on a guess and asking a long list of questions up front.
 
 The Brainstorming Template is for the comparisons worth keeping. Collaboration stays separate from Planning because exploring isn't a required step before work.
 
@@ -34,13 +34,15 @@ The Brainstorming Template is for the comparisons worth keeping. Collaboration s
 
 **Kind:** Guidance. **Used when:** exploring an idea, resolving an important uncertainty, clarifying the desired outcome, or finishing broad work.
 
-It shapes how the agent talks with you when direction is unclear:
+It shapes how the agent works with you while direction is unclear and when broad work finishes:
 
 - Start from what you've already said and what accepted context settles.
 - Build the best current understanding before asking for more.
 - Unless you ask for deep analysis, open with the outcome as understood, the strongest recommendation, and at most one important open choice.
 - Give you something concrete to react to instead of asking you to invent the solution.
 - Match depth to the request: proceed when the outcome is clear, compare a few directions when it's still forming, and go deep only when needed.
+- At convergence, summarize what's accepted, what stays open, and the smallest safe next step. Put each accepted outcome in the source that answers its question.
+- After broad, important, or hard-to-reverse work, offer an independent review when a fresh perspective could catch omissions or risk. Say what it would check and that it uses extra model tokens, and ask before running it unless you've already authorized that cost.
 
 ### `templates/collaboration/brainstorming.md`
 

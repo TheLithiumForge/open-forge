@@ -38,6 +38,11 @@ as `memory/crystallized/documents`, or an exact path under `.agents`, such as
 `.agents/memory/crystallized/documents/_documents.md`. The exact grammar is
 covered in [Source references](#source-references).
 
+Most examples use `memory/crystallized/documents`, the Documents category that
+the Project Documents Extension installs. The base install doesn't include it.
+In a base-only workspace, use a Core route such as `memory/crystallized`
+instead.
+
 The CLI separates observation from change. Commands such as `status`,
 `context`, `find`, `references`, `route list`, and `route inspect` read the
 workspace. Commands that can change files offer `--dry-run` when a complete
@@ -80,26 +85,38 @@ operation result and never rerun the operation.
 In text mode, `completed`, `completed-with-warnings`, and `incomplete` results
 use standard output. `failed`, `invalid-input`, `blocked`, and `cancelled`
 results use standard error. JSON always uses standard output. Human results use
-colour automatically on capable terminals: green for completed, yellow for
-completed-with-warnings and warnings, red for errors, and cyan for information
-labels. Written labels remain visible. Redirected output, Windows, missing or
-`dumb` `TERM`, and a nonempty `NO_COLOR` use plain text. JSON, selected file
-content, and preview diffs stay plain. There is no colour option to configure.
+colour automatically on capable terminals: green for completed results, yellow
+for results that need attention and for warnings, red for invalid, blocked, or
+failed results and for errors, and cyan for information labels. Written labels
+remain visible. Redirected output, Windows, missing or `dumb` `TERM`, and a
+nonempty `NO_COLOR` use plain text. JSON, selected file content, and preview
+diffs stay plain. There is no colour option to configure.
 
 ### Prompts and noninteractive runs
 
-Mutating commands that need confirmation show their already-built minimal plan
-on standard error and ask the command-specific question. Install and Update use
-`Apply these changes? [y/N]`. Update includes the eligible prune deletion count
-when `--prune` is supplied. Library Attach, Sync, and Detach use the same
-confirmation boundary and expose `--automatic` to bypass only that question.
+Commands that write files after confirmation show their already-built minimal
+plan on standard error and ask one command-specific question. Most ask
+`Apply these changes? [y/N]`. Install asks `Replace the <N> existing files
+listed above? [y/N]` when `--force` would replace files. Update asks
+`Delete the <K> files listed above? [y/N]` when `--prune` would delete retired
+files. Extension Create asks `Create these files? [y/N]`.
+
+These commands confirm this way and accept `--automatic`, which skips only that
+question and adds no force, prune, or other authority:
+
+- `install`, `update`, `remove`, `route remove`, and `repair`
+- `extension create`, `extension install`, `extension update`, and
+  `extension remove`
+- `library attach`, `library sync`, and `library detach`
 
 Permission prompts list the affected path and scope. A directory grant means
 everything beneath that directory. `--allow-path <path>` supplies the same
 grant noninteractively. Explicit grants and interactive Always answers are
 published only after final confirmation. A declined, exhausted, or cancelled
 prompt leaves files and settings unchanged and returns `cancelled` with exit
-`130`. JSON, redirected operation, `--automatic`, and dry-run never prompt.
+`130`. JSON, redirected operation, `--automatic`, and dry-run never prompt. A
+noninteractive request that needs confirmation returns `invalid-input`, writes
+nothing, and names the `--automatic` form to run instead.
 
 ### Status and exit codes
 
@@ -157,9 +174,11 @@ open-forge context \
 
 Useful options are:
 
-- `--additions-only` omits files already required at startup.
-- `--content=part[,part...]` projects selected parts, such as `metadata`,
-  `frontmatter`, `headings`, `body`, or a named `section:<heading>`.
+- `--additions-only` omits files already required at startup. It needs at
+  least one source argument.
+- `--content=part[,part...]` projects selected parts: `metadata`, `paths`,
+  `frontmatter`, `headings`, `body`, or a named `section:<heading>`. The
+  default is `frontmatter,body`.
 - `--follow-links=positive-depth|all` follows contained local Markdown links to
   the requested positive depth or through the complete reachable link set.
 
@@ -182,18 +201,23 @@ meaning.
 ```sh
 open-forge find --tag=Memory --tag=CurrentTruth --require=all
 open-forge find --heading=Axioms --within=body
-open-forge find --include=memory/crystallized/documents --content=metadata,headings
+open-forge find --include=memory/crystallized/documents --content=headings
 ```
 
 The selectors are:
 
 - `--include <source-reference>` adds a set of sources to search.
 - `--exclude <source-reference>` excludes a set of sources from the search.
+  Exclusions win over inclusions.
 - `--tag <tag>` matches one authored tag. Repeat it for additional predicates.
 - `--heading <heading>` matches one complete structural heading.
 - `--require=all|any` chooses whether all or any supplied predicates must match.
-- `--within=part[,part...]` limits predicate evaluation to authored regions.
-- `--content=part[,part...]` chooses which parts of matched sources to return.
+  The default is `all`.
+- `--within=part[,part...]` limits predicate evaluation to authored regions:
+  `document`, `frontmatter`, `body`, or `section:<name>`. By default, tags
+  match in frontmatter and headings match in the body.
+- `--content=part[,part...]` chooses which parts of matched sources to return:
+  `metadata`, `frontmatter`, `headings`, `body`, or `section:<name>`.
 
 Use an exact path when an ID is ambiguous. A blocked or incomplete result is
 not permission to guess which source was intended.
@@ -207,11 +231,13 @@ for one source. The default direction is `both`.
 open-forge references memory/crystallized/documents
 open-forge references memory/crystallized/documents --direction=out
 open-forge references memory/crystallized/documents --direction=in \
-  --include=memory/crystallized/documents/framework
+  --include=memory/crystallized
 ```
 
 `--direction=in|out|both` selects the report. `--include` and `--exclude`
-limit an incoming scan. They do not apply to an outgoing-only request.
+limit the incoming scan. Combining them with `--direction=out` is invalid
+input. Links listed under `Entries` are generated navigation, so they aren't
+counted as references.
 
 ### Routes
 
@@ -221,7 +247,9 @@ source-reference grammar described below unless their target has a narrower
 shape.
 
 `route list` shows routed sources and descendants at a structural depth. The
-default depth is `1`. Use `all` to include the complete routed descendant set.
+default depth is `1`. Use `--depth=0` for the selected sources only, or
+`--depth=all` to include the complete routed descendant set. `--depth` needs
+the `=` form.
 
 ```sh
 open-forge route list
@@ -283,7 +311,9 @@ generated entry.
 
 `route init <route-target>` initializes each missing entrypoint in one exact
 route chain. A target is a route ID or an exact canonical `.agents` entrypoint
-path. The generic scaffold accepts optional metadata:
+path. The generic scaffold accepts optional metadata for the final entrypoint.
+Without it, the new entrypoint gets a placeholder description and tags, and
+the result reminds you to edit them.
 
 ```sh
 open-forge route init memory/crystallized/documents/project-alpha \
@@ -303,11 +333,15 @@ running a command that depends on the new path.
 
 ### Create one routed file
 
-`route create <file-target>` creates one ordinary routed Markdown file below an
-existing routable parent. It requires a nonblank description and at least one
-unique canonical tag. A responsibility is optional. `--template` copies the
-body of one existing routed Template as starting content. The new source gets
-its own metadata and does not retain Template ownership.
+`route create <file-target>` creates one ordinary routed Markdown file inside
+an existing root category, such as `memory` or `guidance`. When folders between
+the root and the new file are missing, it creates them with their entrypoints
+in the same plan. Description, tags, and responsibility are all optional. When
+the description or tags are omitted, the file is still created, and the result
+is `completed-with-warnings` with a `route update` next step to add them.
+`--template` copies the body of one existing routed Markdown source tagged
+`Template` as starting content. The new source gets its own metadata and does
+not retain Template ownership.
 
 ```sh
 open-forge route create memory/crystallized/documents/project-alpha/architecture \
@@ -318,10 +352,10 @@ open-forge route create memory/crystallized/documents/project-alpha/architecture
   --dry-run
 ```
 
-The target is an ordinary Markdown file below an existing route. It is not a
-directory, entrypoint, overwrite companion, Loader, or general external path.
-The command never overwrites an existing target. Use `route update` for an
-existing source.
+The target is an ordinary Markdown file below an existing root category. It is
+not a directory, entrypoint, overwrite companion, Loader, or general external
+path. An unknown root is invalid input. The command never overwrites an
+existing target. Use `route update` for an existing source.
 
 ### Update one routed source
 
@@ -343,8 +377,9 @@ The options are patches, not inferred replacements:
 - `--responsibility <text>` sets the responsibility. `--responsibility ""`
   removes it.
 - `--template <template-reference>` completes an eligible frontmatter-only
-  body. If the target already has authored body content, the CLI preserves it
-  and reports the applicable warning status rather than overwriting it.
+  body. If the target already has authored body content, the CLI preserves it,
+  still applies any metadata changes, and returns `completed-with-warnings`
+  rather than overwriting the body.
 
 At least one metadata or Template operation is required. The selected Template
 contributes body content only. Its frontmatter and continuing lifecycle do not
@@ -353,7 +388,9 @@ transfer to the destination.
 ### Move or remove a route
 
 `route move` moves one routed source or category to an exact destination path.
-Review the destination's scope and inherited rules when choosing the new location.
+Select a category by its entrypoint path. The destination's parent route must
+already exist, so run `route init` first when it doesn't. Review the
+destination's scope and inherited rules when choosing the new location.
 
 ```sh
 open-forge route move \
@@ -363,8 +400,10 @@ open-forge route move \
 ```
 
 `route remove` removes one eligible routed source or complete category, releases
-its file ownership and records the removal choice. The root [`remove`](#remove-and-keep-removed)
-command also handles ordinary files, directories, packages and Libraries.
+its file ownership and records the removal choice. Supported links that point
+at the removed file are detached: each keeps its visible text as plain text.
+The root [`remove`](#remove-and-keep-removed) command also handles ordinary
+files, directories, packages and Libraries.
 
 ```sh
 open-forge route remove memory/crystallized/documents/project-alpha/service-architecture --dry-run
@@ -379,8 +418,10 @@ content. Read the plan and resolve the named boundary before applying it.
 ### `index`
 
 `index` rebuilds bounded generated `Entries` regions from routed sources. With
-no operands it follows the Loader's selected topology. With operands it uses
-the supplied source IDs or exact `.agents` paths.
+no operands it rebuilds the Loader and every reachable entrypoint. With
+operands it uses the supplied source IDs or exact `.agents` paths: an
+entrypoint selects its subtree and the parent that lists it, and a routed file
+selects the parent that lists it.
 
 ```sh
 open-forge index --dry-run
@@ -416,9 +457,10 @@ open-forge repair --dry-run
 open-forge repair --automatic --dry-run
 ```
 
-`--automatic` selects every current safe-exact repair without prompting. An
-explicit relink can select one source occurrence, expected destination, and
-target path:
+Without `--automatic` or `--relink`, repair asks which repairs to apply, so it
+needs an interactive terminal. `--automatic` selects every current safe-exact
+repair without prompting. An explicit relink can select one source occurrence,
+expected destination, and target path:
 
 ```text
 open-forge repair --relink <source-location> <expected-destination> <target-path>
@@ -453,19 +495,19 @@ conflict. `--automatic` removes prompting but adds no force or safety authority.
 
 ```sh
 open-forge update --dry-run
-open-forge update --force --dry-run
-open-forge update --force --prune --dry-run
+open-forge update --prune --dry-run
 ```
 
 Normal update replaces changed owned files and restores missing ones when the
 current ownership facts authorize the effect. It reports every replaced,
 restored, deleted, and retained path. Retired managed content is retained unless
-`--prune` is supplied. `--force` and `--prune` remain separate named boundaries,
-and `--automatic` implies neither one. When the plan needs a recovery bundle to
-protect existing bytes, Update retains it after successful verification and
-reports its exact path. When an ordinary `.git`
-directory is present, it also advises `git diff`. Otherwise it points to the
-bundle for previous content. Explicit Cleanup removes retained recovery data.
+`--prune` is supplied. `--force` is accepted but adds no authority, because
+normal update already replaces and restores. `--automatic` implies neither
+`--force` nor `--prune`. When the plan needs a recovery bundle to protect
+existing bytes, Update retains it after successful verification. When an
+ordinary `.git` directory is present, the result advises `git diff` for the
+previous content. Otherwise, `--detail standard` shows the bundle's exact path.
+Explicit Cleanup removes retained recovery data.
 
 Ownership state is recorded in `.agents/open-forge.lock.json`. Authored settings
 are in `.agents/open-forge.json`. Framework and Extension records share the lock
@@ -543,7 +585,8 @@ defines the complete selection and recovery boundary.
 ### Cleanup
 
 `cleanup` removes only recognized Open Forge recovery bundles and drafts for
-the selected workspace.
+the selected workspace. The bundles are stored outside the workspace, and
+`status` reports the ones that remain.
 
 ```sh
 open-forge cleanup --dry-run
@@ -570,14 +613,14 @@ capabilities. The command group is:
 open-forge extension <operation>
 ```
 
-| Operation                            | Purpose and useful form                                                                                                                                                                                                            |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `extension list`                     | List installed and available packages. Add `--installed`, `--available`, or `--source <package-or-catalogue-path>`.                                                                                                                |
-| `extension inspect <stable-id>`      | Inspect one installed or available package. Add `--source <package-or-catalogue-path>` for an exact local source.                                                                                                                  |
-| `extension create [<stable-id>]`     | Create a package scaffold. Use `--path <catalogue-path>`, `--name <text>`, `--description <text>`, `--package-version <text>`, repeat `--dependency <stable-id>` as needed, and add `--automatic` or `--dry-run` when appropriate. |
-| `extension install [<stable-id>...]` | Install selected packages. Use `--source`, `--all`, `--force`, `--automatic`, or `--dry-run`.                                                                                                                                      |
-| `extension update [<stable-id>...]`  | Reconcile selected managed packages. Use `--source`, `--all`, `--force`, `--prune`, `--automatic`, or `--dry-run`.                                                                                                                 |
-| `extension remove [<stable-id>...]`  | Uninstall selected packages and record their removal. Use `--automatic` or `--dry-run`.                                                                                                                                            |
+| Operation                            | Purpose and useful form                                                                                                                                                                                                                                    |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `extension list`                     | List installed and available packages. Add `--installed`, `--available`, or `--source <package-or-catalogue-path>`.                                                                                                                                        |
+| `extension inspect <stable-id>`      | Inspect one installed or available package. Add `--source <package-or-catalogue-path>` for an exact local source.                                                                                                                                          |
+| `extension create [<stable-id>]`     | Create a package scaffold. The ID and `--path <catalogue-path>` are required. Add `--name <text>`, `--description <text>`, `--package-version <text>`, repeat `--dependency <stable-id>` as needed, and add `--automatic` or `--dry-run` when appropriate. |
+| `extension install [<stable-id>...]` | Install selected packages. Use `--source`, `--all`, `--force`, `--allow-path`, `--automatic`, or `--dry-run`.                                                                                                                                              |
+| `extension update [<stable-id>...]`  | Reconcile selected managed packages. Use `--source`, `--all`, `--prune`, `--allow-path`, `--automatic`, or `--dry-run`. `--force` is accepted but adds nothing.                                                                                            |
+| `extension remove [<stable-id>...]`  | Uninstall selected packages and record their removal. Use `--allow-path`, `--automatic`, or `--dry-run`.                                                                                                                                                   |
 
 For example:
 
@@ -591,9 +634,18 @@ open-forge extension remove development-toolkit --dry-run
 
 The `--source` value is one exact local package or catalogue path. An install
 or update source is read-only and must be separate from the target workspace.
-Dependencies resolve offline within that selected source. A manual installation
-is also valid: copy reviewed package content into the workspace, rebuild the
-affected `Entries`, and review the assembled diff. Manual copying does not
+Dependencies resolve offline within that selected source and install first.
+`--allow-path <path>` grants permission to write a destination outside
+`.agents` and records it in `.agents/open-forge.json`.
+
+Extension Update works like Framework Update. It replaces package files you
+edited and restores missing ones, keeping the previous bytes in a recovery
+bundle. `--force` adds no authority. Extension Remove deletes a file once no
+retained package owns it, including a file you edited, and keeps its bytes in
+a recovery bundle first. Files that another installed package still owns stay.
+
+A manual installation is also valid: copy reviewed package content into the
+workspace, rebuild the affected `Entries`, and review the assembled diff. Manual copying does not
 create managed lifecycle state.
 
 See [Extension packages](extensions.md) for package structure and examples.
@@ -616,9 +668,12 @@ open-forge library <operation>
 | `library detach`  | `open-forge library detach <library-id>`                                                     | Remove one local registration and its links while preserving its source.    |
 
 Add `--dry-run` to `attach`, `sync`, or `detach` to inspect the complete plan
-before writing. `attach --to` selects the workspace-relative projection
-directory and defaults to the workspace root. A Library ID is a management
-identity. It is not a source ID.
+before writing. They also accept `--automatic` and `--allow-path <path>`.
+`attach --to` selects the workspace-relative projection directory and defaults
+to the workspace root. Each projected file is a relative file symlink. A file
+that lands under `.agents` joins an existing route: its folder and entrypoint
+must already exist, and the command updates that entrypoint's `Entries`. A
+Library ID is a management identity. It is not a source ID.
 Use `doctor` when a record, source root, link capability, permission, or
 projection is blocked.
 
@@ -632,7 +687,7 @@ Existing `.agents` sources accept one of these forms:
 ./.agents/<path>
 ```
 
-The first two examples address the same default route. The third shows quoting
+The first two examples address the same route. The third shows quoting
 for a custom scope whose folder name contains a space. Create that scope before
 selecting it.
 

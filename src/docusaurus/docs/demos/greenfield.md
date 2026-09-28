@@ -18,6 +18,8 @@ Start from an empty folder and a request for a command-line tool that splits sha
    open-forge extension install development-toolkit
    ```
 
+   Decisions, and Documents such as a Vision or Architecture, come from these Extensions, not from the base install.
+
 3. Pick a seed level and give your agent that request:
 
    | Level | Request                                                                                                                              |
@@ -26,6 +28,8 @@ Start from an empty folder and a request for a command-line tool that splits sha
    | 2     | [A short brief](../../../../demos/expense-splitter/greenfield/seeds/2-brief.md), with money handling deliberately left unsaid        |
    | 3     | [The brief plus expected results](../../../../demos/expense-splitter/greenfield/seeds/3-scenarios.md), including rounding            |
    | 4     | [A Vision, an Architecture, two Decisions, and scenarios](../../../../demos/expense-splitter/greenfield/seeds/4-records/) as records |
+
+   At level 4, copy the records into your project first, as the [level 4 README](../../../../demos/expense-splitter/greenfield/seeds/4-records/README.md) describes.
 
 4. Answer the agent's questions as a product owner would, and accept the proposals you agree with.
 5. Check the result against [the checklist](../../../../demos/expense-splitter/greenfield/checks.md).

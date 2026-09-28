@@ -9,11 +9,11 @@ Keep understandable, current project knowledge without duplicating it. Keep docu
 
 - **Package ID:** `project-documents`
 - **Depends on:** [Workflow Support](workflows.md)
-- **Loads at startup:** Only the Documents entry line, through Crystallized Memory. Documents themselves load when relevant.
+- **Loads at startup:** Only one entry line: the Documents entry in Crystallized Memory's `Entries`. The category [entrypoint](../concepts/routing.md#entrypoints) and your Documents open on demand. The recipes and the Templates stay on demand too.
 
 ## Why it exists
 
-Knowledge scattered across decisions, chats, and code comments has to be pieced together every time someone needs it. A Document explains one subject as it is now, in one place. Documents stack from an overview at the top down to the detail, and each links to the Decisions that shaped it. [The document flow](document-flow.md) shows how they fit together.
+Knowledge scattered across decisions, chats, and code comments has to be pieced together every time someone needs it. A Document explains one subject as it is now, in one place. Documents stack from an overview at the top down to the detail, and each can link to the Decisions that shaped it. Decisions come from [Planning](planning.md), or from wherever your workspace already keeps rationale. [The document flow](document-flow.md) shows how they fit together.
 
 The Vision and Architecture workflows add one discipline that matters for both: a proposal stays a proposal until you accept it. Your existing documentation can stay where it is. This package offers a convention, not a new home you have to migrate to.
 
@@ -39,9 +39,9 @@ The Vision and Architecture workflows add one discipline that matters for both: 
 
 **Kind:** Memory category (Crystallized). **Used when:** work needs accepted current knowledge.
 
-A Document is one coherent, current explanation of a subject, written so readers don't have to piece its meaning together from Decisions. When a Document names another source as authoritative, it follows that source instead of duplicating it.
+A Document is one coherent, current explanation of a subject, written so readers don't have to piece its meaning together from past decisions. When a Document names another source as authoritative, it follows that source instead of duplicating it.
 
-Documents are kept top-down. Top-level Documents give an overview of the whole and summarize each narrower Document they link to. A narrower Document explains its own part in more detail, links back up, and links to the Decisions behind its part. When accepted knowledge changes a narrower Document, the summaries above it are updated too. [The document flow](document-flow.md) shows it with an example.
+Documents are kept top-down. Top-level Documents give an overview of the whole and summarize each narrower Document they link to. A narrower Document explains its own part in more detail and links back up. A Document links to a Decision when that Decision's reasoning helps. When accepted knowledge changes a narrower Document, the rules ask for the summaries above it that no longer match to be updated too. [The document flow](document-flow.md) shows it with an example.
 
 ### The Vision recipe: `vision.md`
 
@@ -57,13 +57,13 @@ Documents are kept top-down. Top-level Documents give an overview of the whole a
 
 ### The Templates
 
-| Template                  | Answers                                          | Main sections                                                                                               |
-| ------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `document.md`             | What is the current explanation of this subject? | Summary (scope, authority and status), Current Explanation, Boundaries And Limits, Sources                  |
-| `vision.md`               | Why does this exist, and for whom?               | Vision, Why And For Whom, Scope (first useful version, growth direction), Success, Non-Goals                |
-| `architecture.md`         | How is it structured?                            | Overview And Scope, Drivers, System Model, Important Flows, Boundaries And Invariants, Tradeoffs And Limits |
-| `principles.md`           | What guides unfamiliar choices?                  | Principles (each with why, in practice, tradeoff), Tensions And Ordering, Change Boundary                   |
-| `maintenance-contract.md` | What must stay true about a maintained source?   | Source (what it owns, related surfaces), Contract, Verification                                             |
+| Template                  | Answers                                          | Main sections                                                                                                                            |
+| ------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `document.md`             | What is the current explanation of this subject? | Summary (scope, authority and status), Current Explanation, Boundaries And Limits, Sources And Related Detail                            |
+| `vision.md`               | Why does this exist, and for whom?               | Vision, Why And For Whom, Scope (first useful version, growth direction), Success, Non-Goals, Principles And Related Sources             |
+| `architecture.md`         | How is it structured?                            | Overview And Scope, Drivers, System Model, Important Flows, Boundaries And Invariants, Tradeoffs And Limits, Related Views And Rationale |
+| `principles.md`           | What guides unfamiliar choices?                  | Scope, Principles (each with why, in practice, tradeoff), Tensions And Ordering, Change Boundary, Related Sources                        |
+| `maintenance-contract.md` | What must stay true about a maintained source?   | Source (what it owns, related surfaces), Contract, Verification                                                                          |
 
 ## How to use it
 

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { readRegistryVersion } from "../npm/registry-version.ts";
+import { isPrerelease, readHasStableVersion, readRegistryVersion } from "../npm/registry-version.ts";
+import { promotesLatest } from "../npm/publish-packages.ts";
 import { MainPackageName } from "../package-model.ts";
 
 const version = "1.2.3";
@@ -24,4 +25,29 @@ test("registry errors and unexpected responses cannot authorize publication", ()
   ] as const) {
     assert.throws(() => readRegistryVersion(status, output, MainPackageName, version), /[Rr]egistry/);
   }
+});
+
+test("a package has a stable version only when a published version has no prerelease part", () => {
+  assert.equal(readHasStableVersion(0, JSON.stringify(["0.9.0-beta.1", "0.9.0-beta.2"]), MainPackageName), false);
+  assert.equal(readHasStableVersion(0, JSON.stringify(["0.9.0-beta.2", "1.0.0"]), MainPackageName), true);
+  assert.equal(readHasStableVersion(0, JSON.stringify("1.0.0+build.5"), MainPackageName), true);
+  assert.equal(readHasStableVersion(1, JSON.stringify({ error: { code: "E404" } }), MainPackageName), false);
+  assert.throws(() => readHasStableVersion(1, JSON.stringify({ error: { code: "E500" } }), MainPackageName), /Unexpected registry/);
+  assert.throws(() => readHasStableVersion(0, "", MainPackageName), /invalid JSON/);
+});
+
+test("a new prerelease also becomes latest only until the first stable release", () => {
+  assert.equal(isPrerelease("0.9.0-beta.2"), true);
+  assert.equal(isPrerelease("1.0.0+build.5"), false);
+  const never = (): boolean => assert.fail("The registry is asked only for a prerelease.");
+  assert.equal(
+    promotesLatest("0.9.0-beta.2", "beta", () => false),
+    true,
+  );
+  assert.equal(
+    promotesLatest("0.9.0-beta.2", "beta", () => true),
+    false,
+  );
+  assert.equal(promotesLatest("1.0.0", "latest", never), false);
+  assert.equal(promotesLatest("1.2.3", "preview", never), false);
 });

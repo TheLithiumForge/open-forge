@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 import { PlatformPackages } from "../../package-model.ts";
 import { IsolatedNpm } from "./isolated-npm.ts";
+import { packageReadme } from "../package-readme.ts";
 import {
   ExpectedHomepage,
   ExpectedLauncherPath,
@@ -59,7 +60,7 @@ for (const platform of ExpectedPlatforms) {
       const licenseBytes = readFileSync(join(repositoryRoot, licenseName));
       assert.deepEqual(readFileSync(join(mainDirectory, licenseName)), licenseBytes);
       assert.deepEqual(readFileSync(join(platformDirectory, licenseName)), licenseBytes);
-      assert.deepEqual(readFileSync(join(mainDirectory, readmeName)), readFileSync(join(repositoryRoot, readmeName)));
+      assert.equal(readFileSync(join(mainDirectory, readmeName), "utf8"), packageReadme(readFileSync(join(repositoryRoot, readmeName), "utf8")));
       if (process.platform !== "win32") {
         assert.equal(statSync(join(platformDirectory, nativePath)).mode & executablePermissions, executablePermissions);
         assert.equal(statSync(join(mainDirectory, ExpectedLauncherPath)).mode & executablePermissions, executablePermissions);

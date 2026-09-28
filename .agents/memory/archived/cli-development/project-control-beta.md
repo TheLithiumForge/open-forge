@@ -14,14 +14,14 @@ boundary. Historical receipts and retired queue state are preserved in the
 
 | ID  | Task                                                                             | State                       | Current boundary                                                                                           | Owner                                                  |
 | --- | -------------------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| 30  | [CLI Experience Remediation](../../working/cli-development/tasks/task30-cli-experience-remediation.md)         | Active                      | G1/B1/G4 complete; Phase 5-D is next                                                                       | Root, direct sequential                                |
-| 31  | [Implementation Duplication Removal](../../working/cli-development/tasks/task31-implementation-duplication.md) | Open                        | M1/M2/M3/M4 complete; M5 waits for stable structure                                                        | Root, direct sequential                                |
+| 30  | [CLI Experience Remediation](tasks/task30-cli-experience-remediation.md)         | Active                      | G1/B1/G4 complete; Phase 5-D is next                                                                       | Root, direct sequential                                |
+| 31  | [Implementation Duplication Removal](tasks/task31-implementation-duplication.md) | Open                        | M1/M2/M3/M4 complete; M5 waits for stable structure                                                        | Root, direct sequential                                |
 | 38  | [Project And Test Split](tasks/task38-project-and-test-split.md)                 | Complete                    | G0–G4 accepted; implementation committed locally; preserved task/history edits remain                      | Root, Astra high overseer and direct stage coordinator |
 | 45  | [End-to-end observability](tasks/task45-end-to-end-observability.md)             | Complete for approved scope | G5/G6 accepted; post-G6 correction resolves all four failures;17platform skips and C17-07 deferment remain | Root, Astra high coordinator                           |
-| 52  | [Documentation site](../../working/cli-development/tasks/task52-documentation-site.md)                         | Active                      | Integrated into local `develop`; the maintainer merges to `main`, pushes, and enables Pages                | Root, direct sequential                                |
+| 52  | [Documentation site](tasks/task52-documentation-site.md)                         | Active                      | Integrated into local `develop`; the maintainer merges to `main`, pushes, and enables Pages                | Root, direct sequential                                |
 | 53  | [Loading and scoping audit](../../working/cli-development/tasks/task53-loading-and-scoping-audit.md)           | Open                        | Recorded for 1.0 polish; not started                                                                       | Unassigned                                             |
 | 54  | [Tag trimming](../../working/cli-development/tasks/task54-tag-trimming.md)                                     | Open                        | Recorded for 1.0 polish; not started                                                                       | Unassigned                                             |
-| 55  | [Alternative root](../../working/cli-development/tasks/task55-alternative-root.md)                             | Open                        | Recorded for 1.0 polish; investigation not started                                                         | Unassigned                                             |
+| 55  | [Alternative root](tasks/task55-alternative-root.md)                             | Open                        | Recorded for 1.0 polish; investigation not started                                                         | Unassigned                                             |
 
 The maintainer selected Task 38 planning on 2026-09-19 and structural execution
 on 2026-09-20. Its
@@ -47,7 +47,7 @@ Tasks 28 and 29 and earlier completed records remain historical evidence.
 
 ## Current next action
 
-On 2026-09-25 the maintainer selected [Task 52](../../working/cli-development/tasks/task52-documentation-site.md),
+On 2026-09-25 the maintainer selected [Task 52](tasks/task52-documentation-site.md),
 a Docusaurus documentation site, and recorded Tasks 53, 54, and 55 for 1.0
 polish. Task 52 is integrated into local `develop`. Merging to `main`, pushing,
 and enabling GitHub Pages are the maintainer's steps.

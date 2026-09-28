@@ -5,51 +5,54 @@ description: The four Memory states, what belongs in each, and how records move 
 
 # Memory
 
-Memory asks one question: **what is worth remembering for current or future work?** It's plain Markdown that grows with the work. People and agents add useful records and scopes as they go, and unselected branches never enter active context.
+Memory asks one question: **what is worth remembering for current or future work?** It's self-growing Markdown state: people and agents add useful records and routed scopes as the work produces them. Unselected branches don't enter active context.
 
 ## Four states
 
-| State            | Question it answers                                                         | Normal status             | Loads at startup?                  |
-| ---------------- | --------------------------------------------------------------------------- | ------------------------- | ---------------------------------- |
-| **Working**      | What temporary context is needed to continue or resume this work?           | `#Contextual`             | Yes (`#LoadNow`)                   |
-| **Emerging**     | What is useful but still unsettled?                                         | `#Contextual`             | Yes, and refreshed (`#KeepInMind`) |
-| **Crystallized** | What accepted knowledge should remain current within this scope?            | `#CurrentTruth`           | Yes (`#LoadNow`)                   |
-| **Archived**     | What useful history should remain available without governing current work? | `#Contextual`, historical | No                                 |
+| State            | Question it answers                                                         | Normal status             | At startup                                        |
+| ---------------- | --------------------------------------------------------------------------- | ------------------------- | ------------------------------------------------- |
+| **Working**      | What temporary context is needed to continue or resume this work?           | `#Contextual`             | Entrypoint at startup                             |
+| **Emerging**     | What is useful but still unsettled?                                         | `#Contextual`             | Entrypoint at startup, and at every refresh point |
+| **Crystallized** | What accepted knowledge should remain current within this scope?            | `#CurrentTruth`           | Entrypoint at startup                             |
+| **Archived**     | What useful history should remain available without governing current work? | `#Contextual`, historical | Entrypoint on demand                              |
+
+"Entrypoint at startup" means the agent reads the state's entrypoint and its list of entries, not the records. Emerging is re-read at each refresh point because it's tagged `#KeepInMind`. [Loading and tags](loading-and-tags.md#what-loads-at-startup-in-a-fresh-install) defines these terms.
 
 The states describe how to treat material. They're not quality scores or required stages, and a record doesn't have to pass through every state.
 
 ### Working
 
-Temporary state for active work: where a task stands, what's next, what must not be lost. It's expected to expire. When the need ends, keep the useful results and archive or prune the rest.
+Temporary state for work in progress: where a task stands, what's next, and what must not be lost. Examples include a Checkpoint from the [Planning](../extensions/planning.md) Extension or a Handoff from the [Observations and Handoffs](../extensions/observations-and-handoffs.md) Extension. It's expected to expire. When the need ends, keep the useful results, then move, archive, consolidate, or prune the record.
 
 ### Emerging
 
-Useful material that isn't accepted yet: a finding, an investigation, an idea worth revisiting. At each refresh point the agent checks whether anything useful should be saved before it's lost. "Nothing useful to save" is a valid answer.
+Useful material that isn't accepted yet, such as a finding, an investigation, or an idea worth revisiting. Examples include an Idea from Planning or an Observation from Observations and Handoffs. At each refresh point the rules ask the agent to check whether anything useful should be saved before it's lost. "Nothing useful to save" is a valid answer.
 
 ### Crystallized
 
-Accepted knowledge that should stay current: current documents, accepted decisions. Update, split, or merge existing records instead of creating a competing version. Tags, repetition, and agent confidence don't make something accepted.
+Accepted knowledge that should stay current. Examples include a current Document from the [Project Documents](../extensions/project-documents.md) Extension or a Decision from Planning. Update, split, or merge existing records instead of creating a competing version. Tags, repetition, and agent confidence don't make something accepted.
 
 ### Archived
 
-History that no longer governs current work. Before archiving, move anything still current into the source that defines it, and keep a note of where the material came from and what replaced it.
+History that no longer governs current work. Before archiving, move anything still current into the source that defines it. Keep a note of where the material came from, why it was archived, and what replaced it.
 
 ## What gets saved
 
-Memory holds what's worth keeping. Agents save outcomes deliberately rather than logging every conversation. Capture is warranted when:
+Memory holds what's worth keeping. The rules ask agents to save outcomes deliberately rather than log every conversation. They call for a record when:
 
 - you explicitly ask to preserve something
+- future work needs an accepted result, its reasoning, a required behavior, or a reusable shape
+- an unsettled finding is worth revisiting
 - work needs to survive a pause, a context boundary, or a handoff
-- an occurrence is reusable, surprising, or costly to rediscover
-- accepted reasoning or current state would otherwise exist only in chat
+- accepted knowledge would otherwise exist only in chat
 
 ## One source per question
 
-One rule keeps Memory from turning into a pile of notes: each source defines only its own part of the truth.
+Each source defines only its own part of the truth. This keeps Memory from filling up with competing copies of the same answer.
 
-- A **Decision** records what was chosen and why.
-- A current **Document** explains its subject as it is now.
-- Required behavior belongs in **Directives** or Axioms. Writing an instruction into Memory doesn't make it a Directive.
+- Required behavior belongs in **Directives** or Axioms, which are Core. Writing an instruction into Memory doesn't make it a Directive.
+- A **Decision**, from Planning, records what was chosen and why.
+- A current **Document**, from Project Documents, explains its subject as it is now.
 
 When something is accepted, update the source that defines it and keep the useful reasoning in Memory.
 
@@ -67,12 +70,14 @@ The base Framework ships only the four state entrypoints. Extensions add named c
 | Decisions    | `memory/crystallized/decisions/` | [Planning](../extensions/planning.md)                                   |
 | Documents    | `memory/crystallized/documents/` | [Project Documents](../extensions/project-documents.md)                 |
 
+These categories carry no loading tag. At startup only their one-line entry in the parent state's `Entries` is visible. The category entrypoint and its records open on demand.
+
 Without them, records can live directly under a state. These categories are useful defaults, not a required taxonomy.
 
 ## Scoping Memory
 
-Memory uses the same [scopes](scopes.md) as everything else. `memory/mobile-app/crystallized/` gives a subject its own Memory. `memory/crystallized/documents/mobile-app/` narrows only its Documents.
+Memory uses the same [scopes](scopes.md) as everything else. `memory/mobile-app/crystallized/` gives a subject its own Memory. `memory/crystallized/documents/mobile-app/` narrows only the Documents route.
 
-Adding a new top-level state beneath `memory/` changes the shared model, so it needs your explicit agreement. Adding a scope is ordinary customization.
+Adding a new top-level state beneath `memory/` changes the shared model, so it needs your explicit direction. Adding a scope is ordinary customization.
 
 Next: [Customizing](customizing.md).

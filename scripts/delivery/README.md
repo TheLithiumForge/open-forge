@@ -106,7 +106,9 @@ executable payload. Both include the license.
 `--dry-run` validates local artifacts and prints a plan without registry
 contact. **Removing it uploads to the configured npm registry.** Actual upload
 requires committed matching source, current packages, credentials and an
-explicit tag. Prereleases cannot use `latest`. Existing versions warn and skip
+explicit tag. Prereleases cannot use `latest` as that tag, but until a package
+has a stable version, a newly published prerelease also becomes `latest`.
+Existing versions warn and skip
 without retagging; an existing wrapper with different dependencies rejects the
 run. Changing a published wrapper's targets requires a new version.
 

@@ -21,7 +21,7 @@ Create separate documents only when their questions need separate answers. A sma
 - [Explain the system model, responsibilities, dependency direction, important flows, and limits](architecture.md) - #Extension #Template #Document #Architecture
 - [Contract template is used when one current document must define observable and testable guarantees at a product, API, protocol, or behavioral boundary](contract.md) - #Extension #Template #Document #Contract #CurrentView
 - [Write one coherent current explanation without duplicating another source's detail](document.md) - #Extension #Template #Memory #Document
-- [State what a maintained source owns, what must remain true, and how to verify it](maintenance-contract.md) - #Extension #Template #Document #Maintenance #Governance
+- [State what a maintained source defines, what must remain true, and how to verify it](maintenance-contract.md) - #Extension #Template #Document #Maintenance #Governance
 - [Operating context template is used when one current document must define which external reality, stakeholders, constraints, assumptions, and dependencies shape a subject](operating-context.md) - #Template #Document #Context #CurrentView
 - [Define the principles that guide unfamiliar choices and resolve tensions between them](principles.md) - #Extension #Template #Document #Principle
 - [Roadmap template is used when one current document must define which accepted outcomes come next, in what order, and under which dependencies and change conditions](roadmap.md) - #Template #Document #Roadmap #CurrentView

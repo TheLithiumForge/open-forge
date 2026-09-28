@@ -8,8 +8,7 @@ open-forge:
 
 {
 Use when reasoning must remain inspectable or resumable. A conclusion is not acceptance.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Question
@@ -28,7 +27,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 | --- | --- | --- |
 | {Source, artifact, or measured result} | {Supported fact and its relevance} | {What this does not establish} |
 
-{Explain the reasoning connecting the evidence to the conclusion. Distinguish observations from inferences; do not merely repeat the table.}
+{Explain the reasoning connecting the evidence to the conclusion. Distinguish observations from inferences. Do not merely repeat the table.}
 
 ## Alternatives And Assumptions
 
@@ -44,5 +43,5 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 {
 If handed off for execution, retain an identifiable version used at that boundary.
-Later execution findings belong in the active working record; exploratory analysis may remain open.
+Later execution findings belong in the active working record. Exploratory analysis may remain open.
 }

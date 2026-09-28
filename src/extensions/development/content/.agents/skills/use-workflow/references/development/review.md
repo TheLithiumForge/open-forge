@@ -22,7 +22,7 @@ Produce actionable findings in priority order, or a clear no-findings result, wi
 
 ## Completion
 
-- Each finding has evidence, consequence, and useful correction guidance; no-findings results state the inspected scope and evidence limits.
+- Each finding has evidence, consequence, and useful correction guidance. No-findings results state the inspected scope and evidence limits.
 - Relevant durable knowledge transitions and counterevidence were considered.
 - The target remained unchanged unless corrections were authorized. Any correction has a disposition and fresh affected evidence.
 - Uncertainty, verification gaps, and residual risk are explicit.

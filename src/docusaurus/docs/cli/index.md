@@ -5,28 +5,30 @@ description: What the open-forge CLI is for, the habits that make it safe, and w
 
 # Working with the CLI
 
-The Framework is plain Markdown, and you can do everything by hand. The CLI exists for the parts that are tedious or easy to get subtly wrong by hand: seeing exactly what an agent will load, keeping navigation in step with the files, and changing many files safely. This page explains what each command is for. [Everyday flows](flows.md) shows how they fit together, and the [command reference](/guides/cli) lists every option.
+The Framework is plain Markdown, and you can do everything by hand. The CLI covers the parts that are tedious or easy to get subtly wrong by hand: seeing exactly what the rules load, keeping navigation in step with the files, and changing many files safely. This page explains what each command is for. [Everyday flows](flows.md) shows how they fit together, and the [command reference](/guides/cli) lists every option. The [glossary](../glossary.md) defines terms such as route, scope, entrypoint, and `Entries`.
 
 ## Three habits
 
-**Preview first.** Commands that change files accept `--dry-run` and print the complete plan: what it would create, replace, move, or delete. Nothing is written until you run it again without the flag.
+**Preview first.** Every command that changes files accepts `--dry-run`. It reports the plan (what the command would create, replace, move, or delete) and writes nothing. Some previews summarize new files as a count, and `--detail standard` lists each one. Nothing changes until you run the command again without the flag.
 
-**Read the status line.** Every result ends in one status: `completed`, `completed-with-warnings`, `incomplete`, `blocked`, and a few more. A warning isn't a failure, and `blocked` means the CLI refused rather than guessed. Each status has its own exit code, so scripts can tell them apart too.
+**Check the status.** Every result has one status: `completed`, `completed-with-warnings`, `incomplete`, `blocked`, or one of a few others. A warning isn't a failure, and `blocked` means the CLI stopped at a boundary instead of guessing. The first line of a text result summarizes the outcome, and each status has its own exit code, so scripts can tell them apart too.
 
 **Follow the next step.** When something needs attention, the result says what to do next, often as the exact command to run. Do that, then run the original command again so it starts from the workspace's current state.
 
 ## Which command for which job
 
-### Look around: nothing changes
+### Inspect the workspace
 
-| Command         | Use it to                                                                                             |
-| --------------- | ----------------------------------------------------------------------------------------------------- |
-| `status`        | Get a one-screen summary: startup context, navigation, installed packages, anything needing attention |
-| `context`       | See exactly what an agent loads at startup, or what selecting a scope adds                            |
-| `route list`    | See how the workspace is organized, one level or the whole tree                                       |
-| `route inspect` | Find out why one file loads or doesn't: its route, its scope, and its loading behavior                |
-| `find`          | Find files by tag or heading, such as every Decision or every file tagged `Frontend`                  |
-| `references`    | See what links to a file and what it links to, before you move or delete it                           |
+These commands change nothing.
+
+| Command         | Use it to                                                                                                 |
+| --------------- | --------------------------------------------------------------------------------------------------------- |
+| `status`        | Get a one-screen summary: startup context, navigation, installed packages, anything needing attention     |
+| `context`       | See exactly what the rules load at startup, or what selecting a scope adds                                |
+| `route list`    | See how the workspace is organized, one level or the whole tree                                           |
+| `route inspect` | Find out why one file loads or doesn't: its route, its scope, and its loading behavior                    |
+| `find`          | Find files by tag or heading, such as every file tagged `Frontend` or every file with an `Axioms` heading |
+| `references`    | See what links to a file and what it links to, before you move or delete it                               |
 
 ### Add and organize knowledge
 
@@ -35,10 +37,10 @@ The Framework is plain Markdown, and you can do everything by hand. The CLI exis
 | `route init`   | Create a scope: a folder and its entrypoint, or a whole missing chain of them                               |
 | `route create` | Add a file with correct frontmatter, optionally starting from a Template. Its parent's `Entries` update too |
 | `route update` | Change a file's description, tags, or responsibility without hand-editing the frontmatter                   |
-| `route move`   | Move a file or a category and update the links that point to it                                             |
+| `route move`   | Move a file or a category you created and update the links that point to it. Installed files can't be moved |
 | `route remove` | Remove a file or a category and remember that you removed it                                                |
 
-### Keep it healthy
+### Check and repair
 
 | Command  | Use it to                                                                                      |
 | -------- | ---------------------------------------------------------------------------------------------- |
@@ -48,14 +50,16 @@ The Framework is plain Markdown, and you can do everything by hand. The CLI exis
 
 ### Install, update, and remove
 
-| Command   | Use it to                                                                                    |
-| --------- | -------------------------------------------------------------------------------------------- |
-| `install` | Put the Framework into a workspace, and record what was installed so it can be updated later |
-| `update`  | Bring Framework files to the current version. Every file it replaces is listed first         |
-| `remove`  | Remove a file, folder, route, package, or Library, and keep it removed through later updates |
-| `cleanup` | Delete the recovery copies that updates and removals keep, once you've checked the result    |
+| Command   | Use it to                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------- |
+| `install` | Put the Framework into a workspace, and record what was installed so it can be updated later      |
+| `update`  | Bring Framework files to the version bundled with the CLI. Every file it replaces is listed first |
+| `remove`  | Remove a file, folder, route, package, or Library, and keep it removed through later updates      |
+| `cleanup` | Delete the recovery copies that updates and removals keep, once you've checked the result         |
 
 ### Extensions and Libraries
+
+Extensions are optional packages of files. A Library is a folder of shared files, such as a team's rules, that the CLI links into the workspace.
 
 | Command group                                               | Use it to                                                                     |
 | ----------------------------------------------------------- | ----------------------------------------------------------------------------- |
@@ -67,10 +71,10 @@ The Framework is plain Markdown, and you can do everything by hand. The CLI exis
 
 ## For agents and scripts
 
-**Your agent can use it too.** The loader lists the main commands, so an agent with the CLI available can run `context` or `find` instead of opening files one by one. The base also ships an `open-forge-cli` Skill with this page's advice in agent form: which command fits which job, previewing with `--dry-run`, and reading the status. It loads only when a task needs it.
+**Your agent can use it too.** The loader lists the main commands, so an agent with the CLI available can run `context` or `find` instead of opening files one by one. The base install also ships one Skill, `open-forge-cli`, which gives the agent this page's advice: which command fits which job, how to preview with `--dry-run`, and how to read the status. At startup the agent sees only the Skill's one-line entry in the Skills entrypoint. The Skill file itself opens on demand, when a task needs the CLI.
 
-**Scripts and CI get structured output.** Add `--format json` for one machine-readable result, and use the exit code: `0` is completed, `2` is completed with warnings, and higher codes mean the result needs attention. `open-forge doctor` exits with code `2` or higher when it finds a warning or worse, so running it in CI catches a broken link or stale navigation before it reaches anyone's agent.
+**Scripts and CI get structured output.** Add `--format json` for one machine-readable result, and check the exit code. `0` means completed and `2` means completed with warnings. Every other code means the result is incomplete, the input was invalid, or the command failed, was blocked, or was cancelled. The [command reference](/guides/cli#status-and-exit-codes) lists each code. `open-forge doctor` exits with a nonzero code when it finds a warning or an error, so running it in CI catches a broken link or stale navigation before it reaches an agent. A command that asks for confirmation, such as `install`, `update`, or `remove`, needs `--automatic` when nobody is there to answer.
 
-**Every command works on the current folder** unless you pass `--workspace <path>`, and `--detail standard` or `--detail full` add reasons and evidence to any result.
+**Every command works on the current folder** unless you pass `--workspace <path>`. Add `--detail standard` or `--detail full` to any command for reasons and evidence.
 
 Next: [Everyday flows](flows.md).

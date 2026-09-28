@@ -2,7 +2,7 @@
 
 The most guidance. The product direction, structure, key decisions, and expected results arrive as Open Forge records, the way they would after a planning conversation. The agent's job is to build what they describe.
 
-This level needs the Development Toolkit, which installs Project Documents, Planning, Flows and Scenarios, and the Development workflows. The records link to each other at their installed locations.
+This level needs the Development Toolkit. It installs Planning for the Decisions, Project Documents for the Documents, Development for the development workflow the request names, and Flows and Scenarios. The records link to each other at their installed locations.
 
 1. Copy `vision.md`, `architecture.md`, and `expense-scenarios.md` into `.agents/memory/crystallized/documents/`.
 2. Copy `decision-money-in-cents.md` and `decision-payer-absorbs-rounding.md` into `.agents/memory/crystallized/decisions/`.

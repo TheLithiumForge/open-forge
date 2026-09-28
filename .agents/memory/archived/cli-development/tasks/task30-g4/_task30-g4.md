@@ -40,7 +40,7 @@ unsandboxed host with `vswhere` on `PATH`.
 ## Accepted Decisions
 
 Recorded from the maintainer's review of the
-[consolidated proposal](../../../../working/cli-development/tasks/task30/phase-4b-g4-output-proposal-consolidated.md)
+[consolidated proposal](../task30/phase-4b-g4-output-proposal-consolidated.md)
 on 2026-09-14. These are the accepted gate decisions for every subtask. The
 current wire vocabulary after implementation is summarized in [Closeout Notes](#closeout-notes).
 
@@ -146,7 +146,7 @@ complete managed suite and the supported Native AOT gate once.
 
 - G4 is complete: 01, 02, 03, 04, 05, every command subtask 10–37, 40
   verification and 41 documentation propagation are merged and green.
-- The [Task 30 open findings](../../../../working/cli-development/tasks/task30-cli-experience-remediation.md#open-findings)
+- The [Task 30 open findings](../task30-cli-experience-remediation.md#open-findings)
   retain the pre-G4 Entries finding as history; [05](05-index-entries-region.md)
   now owns the fixed list-only boundary and its verification evidence.
 

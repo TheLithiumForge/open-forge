@@ -9,7 +9,7 @@ open-forge:
 {
 Use only when the information is worth finding again and no existing source already holds it.
 Choose the destination from its current meaning: Working for active work state, Emerging for unsettled material, Crystallized for accepted knowledge, or Archived for useful history.
-Replace metadata, prompts, and links; remove Template and Extension. Add accurate state and subject tags. Do not add CurrentTruth without an identifiable source of acceptance.
+Replace metadata, prompts, and links. Remove #Template and #Extension. Add accurate state and subject tags. Do not add #CurrentTruth without an identifiable source of acceptance.
 Follow the selected state's rules. Remove this source guidance and sections that add no value.
 }
 

@@ -6,7 +6,7 @@ open-forge:
 
 # M1 — Enumerated extractions
 
-> Read [00 — Slice conventions](../../../../working/cli-development/tasks/task30/00-conventions.md) first: verification
+> Read [00 — Slice conventions](../task30/00-conventions.md) first: verification
 > commands, pass conditions, the recurring composition pattern, and the rules
 > every slice shares. This plan does not repeat them.
 

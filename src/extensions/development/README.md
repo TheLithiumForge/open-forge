@@ -18,13 +18,13 @@ Implement changes, investigate defects, and review results using the project's t
 
 ## Stay Proportionate
 
-Development depends only on Workflow Support. It does not install Planning, Project Documents, Observations, or an agent hierarchy. Use those packages only when their additional methods and records help.
+Development depends only on Workflow Support. It does not install Planning, Project Documents, Observations and Handoffs, or an agent hierarchy. Use those packages only when their additional methods and records help.
 
-The three recipes remain separate methods within the shared selector Skill. They may use multiple configured Skills and tools; they do not replace native harness behavior.
+The three recipes remain separate methods within the shared selector Skill. They may use multiple configured Skills and tools. They do not replace native harness behavior.
 
 ## Install And Customize
 
 Use the complete source catalogue so dependencies resolve together. See the [installation guide](../../../docs/extensions.md) for managed and manual setup.
 
-Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent; deleting a starter never means deleting the work created from it.
+Keep or remove the methods that fit the workspace. Review dependent references and user-created descendants before removal.
 

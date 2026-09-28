@@ -6,6 +6,9 @@ open-forge:
 
 # Task 44 — Template and core file content
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task44-template-content.md). Recommendation:
+Do before 1.0. The review names any details in this record that are out of date.
+
 ## Task state
 
 - State: **Open, not started.** Raised by the maintainer on 2026-09-17.
@@ -27,7 +30,7 @@ template makes a rougher first impression than a rough error message.
 - What each template contains, and whether that is the least a user needs to
   start rather than a demonstration of the format.
 - The wording of every installed core file, against the
-  [writing standard](../../../../crystallized/documents/maintenance/writing.md).
+  [writing standard](../../../crystallized/documents/maintenance/writing.md).
 - Whether a file earns its place at all. A template nobody fills in is worse
   than no template.
 - The relation between a file's prose and the `description` a reader uses to
@@ -36,7 +39,7 @@ template makes a rougher first impression than a rough error message.
 ## Boundary
 
 - This is the shipped payload under `src/open-forge/`, not the CLI's messages.
-- It depends on [Task 42](task42-minimal-core.md) deciding which files remain in
+- It depends on [Task 42](../../../archived/cli-development/tasks/task42-minimal-core.md) deciding which files remain in
   the core, so effort is not spent on files that are about to move.
 
 ## Acceptance

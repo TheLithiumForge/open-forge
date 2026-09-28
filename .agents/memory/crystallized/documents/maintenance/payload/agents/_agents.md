@@ -12,7 +12,7 @@ This route contains maintainer contracts for reviewed Core and Extension install
 
 - The canonical routed Markdown and generated-region contracts apply unless a component links a more specific representation
 - A newly authored category entrypoint with no local Axioms uses one `inherited` sentinel. Omission or an empty local section remains accepted compatibility input with the same inherited meaning. It never combines `inherited` with substantive local Axioms, and it never uses `none` for Axioms.
-- A direct sibling Directive file exposes exactly one substantive `Instructions` section. Maintenance leaves retain `Source`, `Contract`, and `Verification` instead of Axioms.
+- A direct sibling Directive file keeps its instructions under a substantive `Instructions` heading. Maintenance leaves retain `Source`, `Contract`, and `Verification` instead of Axioms.
 - After changing route structure or generated route metadata, rebuild indexes and run `open-forge doctor` in each affected tree, including both the repository and `src/open-forge/` when shared routing changed
 
 ## Entries

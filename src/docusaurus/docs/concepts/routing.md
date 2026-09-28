@@ -9,14 +9,14 @@ Routing is how an agent finds the right context. Instead of reading every file, 
 
 ## The loader
 
-`.agents/loader.md` is the first Open Forge file an agent reads. `AGENTS.md` points to it. It defines:
+An agent enters through `AGENTS.md`, which tells it to read `.agents/loader.md` before starting a task. In Claude Code, `CLAUDE.md` imports both files. The loader defines:
 
 - the terms used everywhere else, such as `entrypoint`, `route`, and `scope`
 - the rules (called **Axioms**) that apply to the whole workspace
-- what each loading tag means
+- what each defined tag means, including the two loading tags
 - the **root routes**: Directives, Guidance, Maps, Memory, Patterns, Skills, and Templates
 
-A root route exists only because the loader lists it. A folder called `patterns/` somewhere deeper in the tree is just a folder with that name. It doesn't gain the Patterns rules.
+A root route exists only because the loader lists it. A folder called `patterns/` somewhere deeper in the tree is an ordinary scope with that name. It doesn't gain the Patterns rules.
 
 ## Entrypoints
 
@@ -24,7 +24,7 @@ Every routed folder has exactly one **entrypoint**, named after the folder with 
 
 An entrypoint has a predictable shape:
 
-```md title=".agents/patterns/_patterns.md (shortened)"
+```md title=".agents/patterns/_patterns.md (shortened, with an example entry)"
 ---
 open-forge:
   description: Reusable default shapes for code, files, APIs, documents, and other work
@@ -52,7 +52,7 @@ Patterns define reusable default shapes that make related work consistent...
 | Frontmatter `description` | Helps a reader decide whether to open the file.                 |
 | Frontmatter `tags`        | Classify the file and, for a few defined tags, control loading. |
 | Title and question        | Name the category and the one question it answers.              |
-| `Axioms`                  | Rules for everything below this folder. Children inherit them.  |
+| `Axioms`                  | Required rules for this route. Loaded descendants inherit them. |
 | `Entries`                 | One line per direct child. This is the navigation.              |
 
 `index.md`, `_index.md`, `references.md`, and `_references.md` are accepted as compatibility names for an entrypoint.
@@ -65,7 +65,7 @@ Each line under `Entries` is one **entry**: a link, the child's description, and
 - [Run the tests before calling a change done](testing.md) - #LoadNow #Directive #Testing
 ```
 
-Entries are navigation, not content. An agent reads the line, decides whether the child matters for the task, and opens it only if it does. That's why descriptions matter: they're what the agent uses to decide.
+Entries are navigation, not content. An agent reads the line, decides whether the child matters for the task, and opens it only if it does. Descriptions matter because they're what the agent uses to decide. The exception is an entry tagged `#LoadNow` or `#KeepInMind`: the agent reads its file as soon as the parent loads. [Loading and tags](loading-and-tags.md) explains both.
 
 An entrypoint with no children has a placeholder line so the section is never ambiguous:
 
@@ -73,16 +73,17 @@ An entrypoint with no children has a placeholder line so the section is never am
 - none - No entries - #Empty
 ```
 
-`open-forge index` rebuilds `Entries` from the files' frontmatter. Without the CLI, keep each list in step with the files by hand.
+`open-forge index` rebuilds `Entries` from the files' frontmatter. Without the CLI, update the list by hand whenever a file's path, description, or tags change.
 
 ## How an agent navigates
 
 1. Read an entrypoint, including its Axioms.
-2. Scan its `Entries`. Open the children whose descriptions, tags, or paths matter for the task.
-3. Repeat for each selected child entrypoint.
-4. Skip everything else. An unselected branch costs one line of context, not its whole contents.
+2. Read every child whose entry is tagged `#LoadNow` or `#KeepInMind`, in listed order.
+3. Scan the other entries. Open the children whose descriptions, tags, or paths matter for the task.
+4. Repeat for each selected child entrypoint.
+5. Skip everything else. An unselected branch costs one line of context, not its whole contents.
 
-When search or a direct link lands an agent on a file deep in the tree, it loads that file's ancestor entrypoints first, so inherited rules still apply.
+When search or a direct link selects a file deep in the tree, the agent loads that file's ancestor entrypoints before using it, so inherited rules still apply.
 
 ## Axioms and inheritance
 
@@ -94,6 +95,6 @@ Axioms are required rules defined only in the loader and in entrypoints. A loade
 - inherited - No local axioms; loaded ancestor axioms remain active.
 ```
 
-Adding a rule in a child never cancels a rule from its parent. When two loaded rules conflict, the agent reports the conflict rather than silently picking one.
+A missing or empty `Axioms` section means the same thing. Adding a rule in a child never cancels a rule from its parent. When two loaded rules conflict, the loader asks the agent to report the conflict rather than silently pick one.
 
 Next: [Scopes](scopes.md).

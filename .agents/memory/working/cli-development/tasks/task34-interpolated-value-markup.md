@@ -6,6 +6,9 @@ open-forge:
 
 # Task 34 — Interpolated Value Markup
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task34-interpolated-value-markup.md). Recommendation:
+Do before 1.0. The review names any details in this record that are out of date.
+
 ## Task state
 
 - State: **Open, not started.** Raised and ruled by the maintainer on

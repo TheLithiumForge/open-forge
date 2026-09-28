@@ -6,7 +6,7 @@ open-forge:
 
 # B1 — Heading-based Entries, guards deleted
 
-> Read [00 — Slice conventions](../../../../working/cli-development/tasks/task30/00-conventions.md) first: verification
+> Read [00 — Slice conventions](00-conventions.md) first: verification
 > commands, pass conditions, the recurring composition pattern, and the rules
 > every slice shares. This plan does not repeat them.
 
@@ -293,7 +293,7 @@ generated boundaries remain unchanged. The only authored edit is the expressly
 authorized note metadata. No runtime parser or payload change is included.
 
 The requested automatic-metadata issue belongs to [Task 30 Phase 5 diagnosis
-and interoperability](../../../../working/cli-development/tasks/task30/phase-5-diagnosis-and-interoperability.md), scheduled after
+and interoperability](phase-5-diagnosis-and-interoperability.md), scheduled after
 G4 with no calendar date. Its source analysis names missing frontmatter under
 Index's safe structural fixes and records the no-new-flag division of labor.
 That is the later behavior packet; this preparation does not implement it.

@@ -13,8 +13,8 @@ base capabilities; optional Extensions provide the deeper roles. Workflow
 selection is supplied by the native `use-workflow` Skill. This work changes
 documentation, not installed files, routing, loading rules or upgrade behavior.
 
-[Task 42](../../../../working/cli-development/tasks/task42-minimal-core.md) records the accepted reduction and its
-remaining contracts. [Task 43](../../../../working/cli-development/tasks/task43-workflows-as-skill.md) records the accepted
+[Task 42](../task42-minimal-core.md) records the accepted reduction and its
+remaining contracts. [Task 43](../task43-workflows-as-skill.md) records the accepted
 workflow direction. Their former `not started` status did not mean these moves
 need to be performed again.
 

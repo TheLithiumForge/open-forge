@@ -4,15 +4,15 @@ open-forge:
   tags: [Extension, Template, ScenarioCollection]
 ---
 
-# {Collection name}
+# {Collection Name}
 
-{Copy and adapt. A collection groups cases; it is not automatically an ordered flow.}
+{Copy and adapt. A collection groups cases. It is not automatically an ordered flow.}
 
 ## Purpose
 
 {The user question, command or capability these scenarios cover.}
 
-## Shared context
+## Shared Context
 
 {Common role, goal, fixtures and supporting contracts. Keep scenario-specific state in the case.}
 
@@ -22,7 +22,7 @@ open-forge:
 | --- | --- | --- |
 | {Link} | {Starting condition} | {Risk or outcome checked} |
 
-## Coverage boundaries
+## Coverage Boundaries
 
 {What is specified, what remains undefined, what has real execution evidence,
 and what needs a fixture. Do not turn counts of documents into passing-test coverage.}

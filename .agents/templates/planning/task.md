@@ -8,15 +8,14 @@ open-forge:
 
 {
 Use when the task needs a durable record and no existing task source already serves it. A plan does not grant permission.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Outcome
 
 {State the result to deliver, not merely the activity to perform.}
 
-**Direction:** {Accepted request or source; distinguish any proposal still awaiting a decision.}
+**Direction:** {Accepted request or source. Distinguish any proposal still awaiting a decision.}
 
 **In scope:** {Allowed work and surfaces.}
 
@@ -31,21 +30,21 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 1. {A coherent action, its result, and verification. Name a prerequisite when it matters.}
 
 {
-Keep the short plan here. If an independent Plan owns the sequence, replace this section's contents with its link.
+Keep the short plan here. If an independent Plan defines the sequence, replace this section's contents with its link.
 }
 
 ## Current State
 
 **Now:** {Current step and identifiable work state.}
 
-**Evidence:** {Checks actually completed, result, and state checked; say not run when appropriate.}
+**Evidence:** {Checks actually completed, result, and state checked. Say not run when appropriate.}
 
 **Blocked / open:** {Consequential missing input or decision, or none.}
 
 **Next:** {The exact next useful action.}
 
 {
-If a Checkpoint or external task system owns current state, link to it instead of maintaining a second copy.
+If a Checkpoint or external task system defines current state, link to it instead of maintaining a second copy.
 }
 
 ## Result

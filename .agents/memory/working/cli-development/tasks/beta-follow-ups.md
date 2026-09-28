@@ -52,13 +52,13 @@ below are deliberately not presented as current measurements.
       their descriptions against their contents. The reduced Core and workflow
       Skill already landed; do not repeat those moves.
 - [x] **Reconcile documentation left behind by the Core reduction.**
-      [Tasks 42](task42-minimal-core.md)/[43](task43-workflows-as-skill.md) now have
+      [Tasks 42](../../../archived/cli-development/tasks/task42-minimal-core.md)/[43](../../../archived/cli-development/tasks/task43-workflows-as-skill.md) now have
       aligned payload maintenance and conceptual documentation: six Core primitives,
       four Core Memory states, optional deeper Memory roles and Skill-based recipes.
       Historical ownership-transfer and user-edited-file upgrade requirements remain
       unqualified; this documentation correction does not claim those guarantees.
 - [ ] **Settle the remaining Skill-resource navigation question.**
-      [Task 46](task46-routed-skill-resources.md) and
+      [Task 46](../../../archived/cli-development/tasks/task46-routed-skill-resources.md) and
       [Task 47](task47-entrypoint-reachability.md) were rechecked against current
       fresh installs. Superseded reports are marked; Doctor now names the expected
       missing destination and advertises the owning catalogue's targeted Index.
@@ -71,7 +71,7 @@ below are deliberately not presented as current measurements.
       findings, and retain genuine OS-specific evidence. More captures must not
       silently change wording or bless incorrect behavior.
 - [ ] **Select the next useful user journeys.**
-      [Task 41](task41-beta-journey-scenarios.md) and Task 45 own later additions.
+      Tasks 41 and 45 are closed, so give this an owner when it's selected.
       Compare the deferred permutations with the 82 implemented cases, then choose
       realistic gaps and agree on expectations before adding tests. Do not treat all
       438 source scenario identities as approved or implemented.
@@ -80,9 +80,10 @@ below are deliberately not presented as current measurements.
 
 These were recorded as later work. They are not automatically beta blockers.
 
-- [ ] **Remove one managed file without the next update restoring it.**
-      [Task 33](task33-managed-content-removal.md) records the accepted capability.
-      [Task 35](task35-removal-and-suppression-model.md) must settle how removal is
+- [x] **Remove one managed file without the next update restoring it.** Done by
+      Task 50's `remove`. Tasks 33 and 35 closed on 2026-09-28.
+      [Task 33](../../../archived/cli-development/tasks/task33-managed-content-removal.md) records the accepted capability.
+      [Task 35](../../../archived/cli-development/tasks/task35-removal-and-suppression-model.md) must settle how removal is
       remembered, reversed, reported and respected by Framework, Extensions and
       Libraries before implementation.
 - [ ] **Create scopes under routes supplied by Extensions.**
@@ -94,7 +95,7 @@ These were recorded as later work. They are not automatically beta blockers.
       replacement. Reconcile earlier heading migration first and retain only the
       unresolved behavior. No general merge mechanism is approved by this list.
 - [ ] **Reassess the remaining implementation cleanup.**
-      [Task 31](task31-implementation-duplication.md) retains M5 and the Route
+      [Task 31](../../../archived/cli-development/tasks/task31-implementation-duplication.md) retains M5 and the Route
       Move/Remove boundary. Compare them with the completed project migration before
       assigning work. Keep optional cleanup behind visible beta improvements.
 - [ ] **Resolve unsafe Markdown unlinking only from a concrete example.**

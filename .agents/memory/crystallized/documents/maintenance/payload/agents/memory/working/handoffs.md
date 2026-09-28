@@ -16,12 +16,12 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 ## Contract
 
 - Frontmatter preserves #Extension, #Memory, #Handoff, #AgentCommunication, and #Contextual classification
-- A Handoff is created and sealed only when an actual transfer or explicitly planned resumption needs a stable boundary snapshot while the active Checkpoint may continue to change
+- A Handoff is created and sealed only when an actual transfer or explicitly planned resumption needs a fixed boundary snapshot while the active working record may continue to change
 - Routine pauses, ordinary closeout, and possible future interruptions do not create a Handoff
 - The intended reader or resumed work remains clear from the route, description, or content
 - Handoffs remain concise and link to current work state, durable sources, documents, code, or other details instead of copying them
-- Boundary status, next action, blockers, and verification state appear in the Handoff itself. A live Checkpoint may supplement but not replace the snapshot
-- The snapshot remains unchanged while serving as a sealed Handoff. Later state belongs in the active Checkpoint or a new Handoff. Category transitions follow the destination's rules
+- Boundary status, next action, blockers, and verification state appear in the Handoff itself. A live working record may supplement but not replace the snapshot
+- The snapshot remains unchanged while serving as a sealed Handoff. Later state belongs in the active working record or a new Handoff. Category transitions follow the destination's rules
 - Handoffs remain contextual rather than complete history or accepted truth
 - Useful material is extracted and the handoff is archived after it no longer supports an active transfer
 

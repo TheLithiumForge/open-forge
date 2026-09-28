@@ -13,7 +13,7 @@ Deliver one accepted change that fits the current system and has evidence matche
 ## Steps
 
 1. **Establish the boundary.** Carry forward the accepted outcome, scope, non-goals, authorization, completion evidence, and task source when one exists. Ask only for a missing consequential decision or permission.
-2. **Resolve blocking design choices.** Check whether an unsettled product, experience, or architecture question could materially change the work. Use an appropriate configured capability when needed; otherwise proceed without an invented preliminary phase.
+2. **Resolve blocking design choices.** Check whether an unsettled product, experience, or architecture question could materially change the work. Use an appropriate configured capability when needed. Otherwise, proceed without an invented preliminary phase.
 3. **Inspect the actual system.** Load applicable project scopes, existing implementation, verification procedures, and pre-existing failures. Use the project's technologies, tools, commands, and conventions rather than substituting familiar defaults.
 4. **Define a coherent slice.** State the behavior change, preservation boundary, and verification path. Use test-first ordering when a regression, stable contract, high-risk behavior, or local convention benefits from it. Otherwise choose the clearest practical order.
 5. **Implement and check.** Make the smallest change that fits the system, then run the narrowest checks that distinguish success from failure.

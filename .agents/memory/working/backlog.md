@@ -11,11 +11,12 @@ is preserved as [historical backlog](../archived/cli-development/backlog-pre-cle
 
 ## Current priorities
 
-1. Merge `develop` into `main` and enable GitHub Pages for the
-   [documentation site](cli-development/tasks/task52-documentation-site.md).
-2. Work through the 1.0 polish Tasks in
-   [Open CLI Tasks](cli-development/tasks/_tasks.md#10-polish). Decide Task 55
-   before 1.0 fixes the workspace layout.
+1. Release beta 2 once the integration snapshots are refreshed and the Build
+   is green. See [Task 59](cli-development/tasks/task59-beta-2-release.md).
+2. Work through the open Tasks in the
+   [current order](cli-development/tasks/_tasks.md#current-order), accepted on
+   2026-09-28 from the
+   [open task review](../emerging/analysis/open-task-review/_open-task-review.md).
 3. Close the remaining items in
    [Beta follow-ups](cli-development/tasks/beta-follow-ups.md) and the open CLI
    Tasks in their recorded order.

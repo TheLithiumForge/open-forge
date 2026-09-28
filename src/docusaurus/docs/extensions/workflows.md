@@ -5,18 +5,18 @@ description: The use-workflow Skill, its recipe catalogue, and a Template for wr
 
 # Workflow Support
 
-Find and follow installed workflows, or write your own. This package supplies the `use-workflow` Skill, which is the one entry point for every repeatable method other packages install.
+Find and follow installed workflows, or write your own. This package supplies the `use-workflow` Skill. Agents reach every workflow recipe that other packages install through this one Skill.
 
 - **Package ID:** `workflows`
 - **Depends on:** Nothing
 - **Needed by:** [Planning](planning.md), [Project Documents](project-documents.md), [Development](development.md), and through them [Task Coordination](orchestration.md)
-- **Loads at startup:** Only the Skill's one-line entry, through the Skills list. Your harness discovers the Skill itself, and recipes load when selected.
+- **Loads at startup:** Only one entry line: the Skill's entry in the Skills [entrypoint](../concepts/routing.md#entrypoints). `SKILL.md`, the recipe catalogue, the recipes, and the Template open on demand. Your harness may also list the Skill through its own Skill discovery, if you've set that up.
 
 ## Why it exists
 
-Repeatable methods, such as reviewing or debugging, are useful, but they aren't rules and most tasks don't need them. Making them a Core category would put them in front of every task and blur them with Skills.
+Repeatable methods, such as reviewing or debugging, are useful, but they aren't rules and most tasks don't need them. A Core category would put them in every workspace's base install, and they would overlap with Skills.
 
-So they live behind one native Skill, `use-workflow`, and a catalogue. Your harness finds the Skill when a method is actually wanted, and the agent opens only the recipe that fits. Other packages add their recipes to the same catalogue, so there's one way in instead of one per package.
+So they live behind one native Skill, `use-workflow`, and a catalogue. The agent sees the Skill's one-line entry, opens `SKILL.md` when a method is wanted, and then opens only the recipe that fits. Other packages add their recipes to the same catalogue, so there's one way in instead of one per package.
 
 ## What it installs
 
@@ -25,7 +25,7 @@ So they live behind one native Skill, `use-workflow`, and a catalogue. Your harn
   skills/use-workflow/
     SKILL.md                      <- native Skill: how to pick and follow a recipe
     references/
-      _references.md              <- the recipe catalogue (starts empty)
+      _references.md              <- the recipe catalogue (empty until other packages add recipes)
   templates/workflows/
     _workflows.md                 <- Template category entrypoint
     workflow.md                   <- starter for writing your own recipe
@@ -39,13 +39,13 @@ So they live behind one native Skill, `use-workflow`, and a catalogue. Your harn
 
 This is the selector. It tells the agent to read the catalogue, load only the relevant scope and recipe, check the recipe's `Goal` before proceeding, and prefer the smallest method that fits. If no recipe adds value, the agent works directly.
 
-Once a recipe is selected, the Skill makes the agent follow its required steps, take conditional branches only when their conditions hold, and check `Completion` against the actual result. Finishing a recipe never authorizes new scope or permission to commit, merge, or publish.
+Once a recipe is selected, the Skill tells the agent to follow its required steps, take conditional branches only when their conditions hold, and check `Completion` against the actual result. Finishing a recipe doesn't authorize new scope, accept its own output, or grant permission to commit, merge, or publish.
 
 ### `skills/use-workflow/references/_references.md`
 
 **Kind:** recipe catalogue entrypoint. **Used when:** the Skill is choosing a recipe.
 
-The catalogue defines the recipe convention: every recipe has one non-empty `## Goal`, `## Steps`, and `## Completion`, in that order. Other packages add their recipes as scoped folders below it (`development/`, `planning/`, `project-documents/`, `orchestration/`). Installed alone, it contains no recipes.
+The catalogue defines the recipe convention: every recipe has one non-empty `## Goal`, `## Steps`, and `## Completion`, in that order, and may add other sections. Other packages add their recipes as scoped folders below it (`development/`, `planning/`, `project-documents/`, `orchestration/`). Installed alone, it contains no recipes.
 
 The catalogue is reached through the Skill, not through the loader's root routes. After adding or removing recipes, rebuild its `Entries` by naming it explicitly:
 

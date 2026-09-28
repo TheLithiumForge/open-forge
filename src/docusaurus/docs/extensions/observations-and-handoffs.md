@@ -5,18 +5,18 @@ description: Memory categories and Templates for saving useful observations and 
 
 # Observations and Handoffs
 
-Save an observation worth revisiting, or give the next person, agent, or session enough information to resume work.
+Save an observation worth revisiting, or give the next person, agent, or session enough information to resume work. The package adds two [Memory](../concepts/memory.md) categories and a starter [Template](../glossary.md#content-roles) for each.
 
 - **Package ID:** `observations-and-handoffs`
 - **Depends on:** Nothing
 - **Needed by:** [Task Coordination](orchestration.md)
-- **Loads at startup:** Only the two category entry lines, through Working and Emerging Memory.
+- **Loads at startup:** Only two entry lines. The Handoffs entry appears in Working Memory's `Entries`, and the Observations entry appears in Emerging Memory's `Entries`. Both category entrypoints and their records open on demand. The starters stay on demand too.
 
 ## Why it exists
 
-Some things are worth remembering after seeing them once: a surprising failure, or a workaround that took an hour to find. Observations keep them without claiming more than the evidence shows.
+Some things are worth remembering after seeing them once, such as a surprising failure or a workaround that took an hour to find. An Observation keeps one without claiming more than the evidence shows.
 
-Handoffs exist because resuming from memory, or from a live checkpoint that has changed since, loses state. Both used to ship with Task Coordination. They moved into their own package because solo work needs them too.
+A Handoff exists because resuming from recollection, or from a live working record that has changed since, loses state. A Checkpoint from [Planning](planning.md) is one kind of working record. Both records used to ship with Task Coordination. They moved into their own package so you can use them without development methods.
 
 ## What it installs
 
@@ -39,17 +39,17 @@ Handoffs exist because resuming from memory, or from a live checkpoint that has 
 
 An Observation records an occurrence or pattern in evidence: a surprising result, a recurring failure, a detail that would be costly to rediscover. Its rules:
 
-- Before handoff or closeout, record an Observation when something may matter later. One occurrence is enough if it's reusable, surprising, or costly.
+- Before handoff or closeout, record an Observation when something may matter later. One occurrence is enough if it may be reusable, surprising, or costly to rediscover.
 - Keep the evidence clear enough to verify and reuse.
-- Add matching later occurrences to the same Observation. Recurrence strengthens the case for promoting it, but doesn't validate it by itself.
+- Add matching later occurrences to the same Observation when their scope and meaning align. Recurrence strengthens the case for promoting it, but doesn't validate it by itself.
 
 ### `memory/working/handoffs/_handoffs.md`
 
 **Kind:** Memory category (Working). **Used when:** work is actually transferred, or a resumption across a context boundary is explicitly planned.
 
-A Handoff is a **sealed snapshot**. Once written, it stays unchanged. Later state goes in the live Checkpoint or a new Handoff. Its rules:
+A Handoff is a **sealed snapshot**. It stays unchanged while it serves as a Handoff. Later state goes in the active working record or a new Handoff. Its rules:
 
-- Create one only for a real transfer or planned resumption, not for a routine pause or a possible future interruption.
+- Create one only when a real transfer or planned resumption needs a fixed snapshot, not for a routine pause, an ordinary closeout, or a possible future interruption.
 - Keep it short and link to details. Record the boundary status, next action, blockers, and verification state in the Handoff itself.
 - Archive it when it no longer supports an active transfer.
 

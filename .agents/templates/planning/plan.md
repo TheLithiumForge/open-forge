@@ -8,15 +8,14 @@ open-forge:
 
 {
 Keep a short plan in the Task. Use this only when the sequence needs independent maintenance.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Outcome Source
 
 **Outcome and boundaries:** {Link to the accepted Task, request, or external source.}
 
-**Current state:** {Link to the source that owns progress. Do not maintain duplicate status here.}
+**Current state:** {Link to the source that defines progress. Do not maintain duplicate status here.}
 
 ## Steps And Dependencies
 
@@ -24,7 +23,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 | --- | --- | --- | --- |
 | {Coherent step} | {What becomes true} | {Predecessor, input, decision, or none} | {How to distinguish success from failure} |
 
-**Parallel work:** {Only genuinely independent steps with permitted isolation and available capabilities; omit when sequential.}
+**Parallel work:** {Only genuinely independent steps with permitted isolation and available capabilities. Omit when sequential.}
 
 **Decision or stop points:** {What requires a decision, permission, or revised plan before continuing.}
 
@@ -32,8 +31,8 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 {Link to the outcome's completion criteria. State combined checks that individual steps cannot establish, using the project's actual procedures.}
 
-**Recovery or reversal:** {What protects the current system if adoption fails; omit when immaterial.}
+**Recovery or reversal:** {What protects the current system if adoption fails. Omit when immaterial.}
 
 {
-Revise remaining steps when evidence changes the plan. Preserve completed evidence in its owning source.
+Revise remaining steps when evidence changes the plan. Preserve completed evidence in its defining source.
 }

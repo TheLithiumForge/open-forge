@@ -13,7 +13,7 @@ Ideas preserve possibilities, experiments, open questions, and options worth exp
 ## Axioms
 
 - Check `Entries` when the work explores possibilities, plans future work, revisits postponed options, or needs earlier exploration.
-- Record a requested idea or exploration here without treating it as accepted.
+- Record a requested idea or exploration here.
 - Keep the problem, opportunity, or motivation clear enough to revisit later.
 
 ## Entries

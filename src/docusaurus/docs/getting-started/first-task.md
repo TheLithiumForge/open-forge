@@ -7,33 +7,41 @@ description: What happens when an agent starts work in an Open Forge workspace, 
 
 Give your agent a real task. You don't need a spec up front. Start with the request and add detail as the work calls for it.
 
-## What the agent does
+For a first look at what the agent reads, try a small task in an existing project:
+
+> Explain how this project runs its tests. Follow `AGENTS.md`, and name the Open Forge files you read.
+
+The answer should describe the test setup and list the loader and the entrypoints it read.
+
+## What the rules ask the agent to do
 
 1. **It reads `AGENTS.md`.** The installed block tells it to read `.agents/loader.md` before starting.
 2. **It reads the loader.** The loader defines the routing and loading rules, and lists the root routes: Directives, Guidance, Maps, Memory, Patterns, Skills, and Templates.
-3. **It loads what's marked for startup.** Entries tagged `#LoadNow` are read right away. That's how the root entrypoints (all but Templates), your workspace-wide Directives, and the Working and Crystallized Memory states reach the agent before it touches your task. Emerging Memory is tagged `#KeepInMind`, so it's read at startup and refreshed at defined points.
-4. **It selects the routes the task needs.** Each entrypoint lists its children under `Entries`, one line each, with a description and tags. The agent reads those lines and opens only the branches that matter.
-5. **It works within the loaded rules** and saves what's worth keeping for the next task in Memory.
+3. **It loads what's marked for startup.** Entries tagged `#LoadNow` are read right away. That's how the root entrypoints (all but Templates), your workspace-wide Directives, and the Working and Crystallized Memory entrypoints reach the agent before it touches your task. The Emerging Memory entrypoint is tagged `#KeepInMind`, so it's read at startup and read again at each refresh point: task start or resume, after context restoration, and before handoff or closeout.
+4. **It stops at each entrypoint.** An entrypoint gives the agent its category's purpose, its rules, and one line per item under `Entries`, with a description and tags. The files and folders those lines point to stay closed unless their entry is tagged `#LoadNow` or `#KeepInMind`. For example, with the Planning Extension installed, the agent sees a one-line entry for Decisions in Crystallized Memory, but reads no Decision at startup.
+5. **It selects the routes the task needs.** The agent reads the entry lines and opens only the branches that matter.
+6. **It works within the loaded rules** and saves what's worth keeping for the next task in Memory.
 
-For a frontend task in a workspace with a frontend scope, the path looks like this:
+For a frontend task in a workspace with a frontend scope and the Planning Extension installed, the path looks like this:
 
 ```text
-AGENTS.md
-└─ .agents/loader.md                          read first
-   ├─ directives/_directives.md               #LoadNow: read at startup
-   │  ├─ testing.md                           #LoadNow: applies everywhere
-   │  └─ frontend/_frontend.md                on demand: selected for this task
-   │     └─ components.md                     #LoadNow inside the selected scope
-   ├─ memory/_memory.md                       #LoadNow
-   │  └─ crystallized/_crystallized.md        #LoadNow
-   └─ templates/_templates.md                 on demand: not needed, never opened
+AGENTS.md                                     read at startup, first
+└─ .agents/loader.md                          read in full, next
+   ├─ directives/_directives.md               entrypoint at startup (#LoadNow)
+   │  ├─ testing.md                           read with its entrypoint (#LoadNow)
+   │  └─ frontend/_frontend.md                entrypoint on demand: selected for this task
+   │     └─ components.md                     read once frontend/ is selected (#LoadNow)
+   ├─ memory/_memory.md                       entrypoint at startup (#LoadNow)
+   │  └─ crystallized/_crystallized.md        entrypoint at startup (#LoadNow)
+   │     └─ decisions/_decisions.md           entrypoint on demand, from Planning: entry visible, not opened
+   └─ templates/_templates.md                 entrypoint on demand: not needed, never opened
 ```
 
-A database scope next to `frontend/` would stay closed. Its entry line is visible, so the agent knows it exists, but none of its content loads.
+"Entrypoint at startup" means the entrypoint is read, and the items it lists open on demand unless their entry is tagged, like `testing.md`. "Entrypoint on demand" means the entrypoint itself waits until a task opens it. A database scope next to `frontend/` would stay closed. Its entry line is visible, so the agent knows it exists, but none of its content loads.
 
 ## See what loads
 
-With the CLI installed, you can read exactly what an agent would load at startup:
+With the CLI installed, you can see exactly what the rules load at startup:
 
 ```sh
 open-forge context
@@ -50,7 +58,7 @@ open-forge route inspect .agents/memory/_memory.md
 
 ## Keep what's worth keeping
 
-As the work unfolds, the agent follows the Memory rules it loaded: temporary state goes in **Working**, unsettled findings in **Emerging**, accepted knowledge in **Crystallized**, and history in **Archived**. It saves outcomes deliberately rather than logging every conversation.
+As the work unfolds, the agent follows the Memory rules it loaded: temporary state goes in **Working**, unsettled findings in **Emerging**, accepted knowledge in **Crystallized**, and history in **Archived**. The rules ask it to save outcomes deliberately rather than log every conversation.
 
 Read more in [Memory](../concepts/memory.md).
 

@@ -8,8 +8,7 @@ open-forge:
 
 {
 Use only for an actual transfer or planned resumption needing a fixed snapshot. Once sealed, record later changes elsewhere.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 **For:** {Recipient or named resumption.}
@@ -24,7 +23,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 ## State At Transfer
 
-{What exists now, what is unfinished, and what must be preserved. Identify the working location and baseline when needed. Do not rely on a live Checkpoint to supply this snapshot's essential facts.}
+{What exists now, what is unfinished, and what must be preserved. Identify the working location and baseline when needed. Do not rely on a live working record to supply this snapshot's essential facts.}
 
 ## Direction And Boundaries
 
@@ -34,7 +33,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 | Claim or remaining question | Evidence or blocker | Consequence for continuation |
 | --- | --- | --- |
-| {What is complete or unknown} | {Actual result and state checked, or not run / unavailable} | {What can proceed; what cannot} |
+| {What is complete or unknown} | {Actual result and state checked, or not run / unavailable} | {What can proceed, what cannot} |
 
 ## Required Context
 

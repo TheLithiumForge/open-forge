@@ -9,19 +9,19 @@ Turn an outcome into work that can be understood, carried out, and resumed. Keep
 
 - **Package ID:** `planning`
 - **Depends on:** [Workflow Support](workflows.md)
-- **Loads at startup:** Only the one-line entries for its Memory categories and Pattern, through their already-loaded parents. The contents stay on demand.
+- **Loads at startup:** Only five entry lines. The Checkpoints entry appears in Working Memory's `Entries`, the Ideas and Analysis entries in Emerging Memory's, the Decisions entry in Crystallized Memory's, and the Work Records entry in the Patterns [entrypoint](../concepts/routing.md#entrypoints). The category entrypoints, their records, and the Pattern open on demand. The recipe and the Templates stay on demand too.
 
 :::tip[Start with Decisions]
 
-Early feedback singled out Decisions as one of the most valuable parts of the Extensions. They preserve why something was chosen, which matters most when a codebase outlives the people and conversations behind it. See [Highlights](../highlights.md#decisions-keep-the-why).
+Decisions preserve why something was chosen, which matters most when a codebase outlives the people and conversations behind it. See [Highlights](../highlights.md#decisions-keep-the-why).
 
 :::
 
 ## Why it exists
 
-When work spans days, people, or agents, two things get lost first: where things stand, and why they are the way they are. Checkpoints keep the first and Decisions keep the second. Ideas and Analysis hold possibilities and reasoning without mistaking them for commitments. A Decision records the change, and the documents it affects are updated to say what's true now, as [the document flow](document-flow.md) explains.
+When work spans days, people, or agents, two things are easy to lose: where things stand, and why they are the way they are. Checkpoints keep the first and Decisions keep the second. Ideas and Analysis hold possibilities and reasoning without presenting them as commitments. A Decision records the change, and the sources it affects, such as Documents from [Project Documents](project-documents.md), are meant to be updated to say what's true now, as [the document flow](document-flow.md) explains.
 
-The Work Records Pattern gives each fact one home, so a task, a plan, and a checkpoint don't drift into three competing versions of the truth. None of it replaces your issue tracker. When you already have a task source, Planning uses it.
+The Work Records Pattern gives each fact one home, which helps keep a task, a plan, and a checkpoint from drifting into three competing versions of the truth. None of it replaces your issue tracker. When you already have a task source, Planning points the agent to it.
 
 ## What it installs
 
@@ -69,26 +69,26 @@ Split into a separate **Plan**, **Backlog**, or **Checkpoint** only when that an
 
 ### The Memory categories
 
-| Entrypoint                    | State        | Holds                                                         | Key rules                                                                                                                                                  |
-| ----------------------------- | ------------ | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `checkpoints/_checkpoints.md` | Working      | Current state, step, and next steps for one active workstream | One per workstream, only when durable sources aren't enough to resume. Tag it `#Active` and `#KeepInMind` while active, and remove those tags at closeout. |
-| `ideas/_ideas.md`             | Emerging     | Possibilities, experiments, open questions                    | Record without treating it as accepted. Keep the motivation clear enough to revisit.                                                                       |
-| `analysis/_analysis.md`       | Emerging     | Structured reasoning, investigation, comparison               | State the question, evidence, assumptions, limits, and current conclusion. Check the assumptions still hold before relying on it.                          |
-| `decisions/_decisions.md`     | Crystallized | Accepted choices and why                                      | Record what was chosen, why, and who accepted it. Keep proposals elsewhere until accepted. One choice per Decision.                                        |
+| Entrypoint                    | State        | Holds                                                         | Key rules                                                                                                                                                                                            |
+| ----------------------------- | ------------ | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `checkpoints/_checkpoints.md` | Working      | Current state, step, and next steps for one active workstream | One per workstream, only when durable sources aren't enough to resume. Tag it `#Active` and `#KeepInMind` while it's active. When the need ends, remove those tags, then archive or prune it.        |
+| `ideas/_ideas.md`             | Emerging     | Possibilities, experiments, open questions                    | Record requested ideas and explorations here. Keep the motivation clear enough to revisit.                                                                                                           |
+| `analysis/_analysis.md`       | Emerging     | Structured reasoning, investigation, comparison               | State the question, evidence, assumptions, limits, and current conclusion. Check the assumptions still hold before relying on it.                                                                    |
+| `decisions/_decisions.md`     | Crystallized | Accepted choices and why                                      | Record what was chosen, why, and who accepted it. Keep proposals elsewhere until accepted. Link to the source that defines the current result. One choice, or a tightly related group, per Decision. |
 
 Each arrives empty. Records appear as you create them.
 
 ### The Templates
 
-| Template        | Starts a...    | Main sections                                                                                  |
-| --------------- | -------------- | ---------------------------------------------------------------------------------------------- |
-| `task.md`       | Task           | Outcome (with a "Done when" checklist), Plan, Current State                                    |
-| `plan.md`       | Separate plan  | Outcome Source, Steps And Dependencies (table), Verification And Completion                    |
-| `backlog.md`    | Selection view | Scope, Items (work, priority, why now)                                                         |
-| `checkpoint.md` | Checkpoint     | Goal And Sources, Current State, Accepted Direction And Evidence, Open Questions, Next Steps   |
-| `idea.md`       | Idea           | Opportunity, Proposed Direction, What We Know, Smallest Useful Experiment                      |
-| `analysis.md`   | Analysis       | Question, Current Conclusion, Evidence And Reasoning, Alternatives And Assumptions, Next Check |
-| `decision.md`   | Decision       | Decision (with "Accepted by"), Context And Rationale, Alternatives And Tradeoffs, Consequences |
+| Template        | Starts a...    | Main sections                                                                                                   |
+| --------------- | -------------- | --------------------------------------------------------------------------------------------------------------- |
+| `task.md`       | Task           | Outcome (with a "Done when" checklist), Plan, Current State, Result                                             |
+| `plan.md`       | Separate plan  | Outcome Source, Steps And Dependencies (table), Verification And Completion                                     |
+| `backlog.md`    | Selection view | Scope, Items (work, priority, why now)                                                                          |
+| `checkpoint.md` | Checkpoint     | Goal And Sources, Current State, Accepted Direction And Evidence, Open Questions, Next Steps                    |
+| `idea.md`       | Idea           | Opportunity, Proposed Direction, What We Know, Smallest Useful Experiment                                       |
+| `analysis.md`   | Analysis       | Question, Current Conclusion, Evidence And Reasoning, Alternatives And Assumptions, Next Check                  |
+| `decision.md`   | Decision       | Decision (with "Accepted by"), Context And Rationale, Alternatives And Tradeoffs, Consequences, Current Sources |
 
 ## How to use it
 

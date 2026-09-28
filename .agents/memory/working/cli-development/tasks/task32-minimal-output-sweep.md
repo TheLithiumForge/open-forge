@@ -6,6 +6,9 @@ open-forge:
 
 # Task 32 — Minimal Output Sweep
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task32-minimal-output-sweep.md). Recommendation:
+Do before 1.0. The review names any details in this record that are out of date.
+
 ## Task state
 
 - State: **Open, not started.** Queued as the last task after Task 30 G4's

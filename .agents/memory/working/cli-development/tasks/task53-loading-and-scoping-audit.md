@@ -6,6 +6,9 @@ open-forge:
 
 # Task 53 — Loading and scoping audit for 1.0
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task53-loading-and-scoping-audit.md). Recommendation:
+Do next. The review names any details in this record that are out of date.
+
 ## Outcome
 
 Recorded at the maintainer's request on 2026-09-25 as 1.0 polish. Every
@@ -57,11 +60,17 @@ the two loading tags belongs to [Task 54](task54-tag-trimming.md).
      lists only the `open-forge-cli` Skill. Does reading their entrypoints at
      startup earn its cost before they have entries?
    - The loader's CLI section overlaps the `open-forge-cli` Skill. Should it
-     shrink now that the Skill exists? See [Task 60](task60-cli-skill.md).
+     shrink now that the Skill exists? See [Task 60](../../../archived/cli-development/tasks/task60-cli-skill.md).
    - Crystallized starts empty. Does it need `#LoadNow` before Extensions add
      Decisions or Documents?
    - Does Emerging need `#KeepInMind` in a base install without the Observations
      or Ideas categories?
+   - Planning's Checkpoints category tells agents to tag an active Checkpoint
+     `#KeepInMind`, but the category's own entry in Working carries no loading
+     tag. Tags act only through loaded parents, so the Checkpoint refreshes only
+     after the category has been opened. Found during
+     [Task 61](task61-documentation-accuracy-and-voice.md). Decide whether the
+     category entry needs a tag or the Checkpoint guidance needs rewording.
 3. **Question the workspace.** Identify root Directives that apply only to a
    kind of work, such as orchestration, review, or C#, and propose scopes for
    them. Retire stale `#KeepInMind` Working records left from beta preparation.
@@ -79,3 +88,21 @@ already asks whether only actionable leaf Directives should carry `#LoadNow`
 and what startup budget applies. Promote its loading questions into this task
 rather than keeping two answers. The [Authors' Findings](../../../emerging/authors-findings/_authors-findings.md)
 on active-context size are related evidence.
+
+## Folded in on 2026-09-28
+
+- **From [Task 60](../../../archived/cli-development/tasks/task60-cli-skill.md): should the loader's CLI section shrink
+  to a pointer?** The [review](../../../emerging/analysis/open-task-review/task60-cli-skill.md) proposes one
+  sentence saying the CLI is optional and the files stay complete without it,
+  pointing to the `open-forge-cli` Skill and `open-forge --help`. The Skills
+  entrypoint loads at startup, so the Skill stays reachable, and the change
+  saves about 225 tokens. After acceptance, update the loader in both copies,
+  both maintenance contracts, the README, and `cli/index.md`, then refresh
+  snapshots and measure startup again. A Task 58 demo in a harness without
+  native Skills could confirm the pointer is enough.
+- **From [Task 42](../../../archived/cli-development/tasks/task42-minimal-core.md): is each startup Core entrypoint
+  worth its startup cost?** Add it to the audit table where the existing
+  questions don't already cover it.
+- **The shipped loader is over its budget.** It has 92 authored lines against
+  its maintenance contract's 35 to 80. Settle the budget or the length here or
+  in [Task 44](task44-template-content.md).

@@ -2,6 +2,7 @@
   container: framework-map / inline-size;
   --map-line: var(--ifm-color-primary);
   --map-memory: #a8650a;
+  --map-lit: color-mix(in srgb, var(--ifm-color-primary) 11%, var(--forge-card-background));
   margin: 1.5rem 0 2rem;
   padding: 18px;
   border: 1px solid var(--forge-card-border);
@@ -12,6 +13,42 @@
 /* Light gold is only readable on the dark background. */
 :global([data-theme="dark"]) .map {
   --map-memory: var(--forge-amber);
+  --map-lit: color-mix(in srgb, var(--ifm-color-primary) 17%, var(--forge-card-background));
+}
+
+/* The two loading states. Read at startup is tinted with a solid outline.
+   Opened on demand is unfilled with a dashed outline. */
+
+.startup {
+  border: 1px solid var(--map-line);
+  background: var(--map-lit);
+}
+
+.demand {
+  border: 1px dashed var(--ifm-color-emphasis-500);
+  background: transparent;
+}
+
+/* Pitch */
+
+.pitch {
+  margin: 0 auto 14px;
+  max-width: 46rem;
+  text-align: center;
+}
+
+.pitch p {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.pitch .footprint {
+  margin-top: 4px;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 /* Entry row: AGENTS.md -> loader */
@@ -27,10 +64,10 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  max-width: 17rem;
   padding: 8px 14px;
-  border: 1.5px solid var(--map-line);
+  border-width: 1.5px;
   border-radius: 10px;
-  background: var(--forge-card-background);
   text-align: center;
 }
 
@@ -41,7 +78,7 @@
   font-weight: 700;
 }
 
-.node span {
+.node > span {
   color: var(--ifm-color-emphasis-700);
   font-size: 0.8rem;
 }
@@ -49,6 +86,7 @@
 .arrow {
   position: relative;
   align-self: center;
+  flex: none;
   width: 44px;
   height: 2px;
   background: var(--map-line);
@@ -62,12 +100,6 @@
   border-bottom: 5px solid transparent;
   border-left: 8px solid var(--map-line);
   content: "";
-}
-
-.fork {
-  position: relative;
-  display: block;
-  height: 30px;
 }
 
 .loader {
@@ -84,16 +116,29 @@
   content: "";
 }
 
+/* The fork routes the loader to both panels and carries the entrypoint note
+   between its two arms. */
+
+.fork {
+  position: relative;
+  margin: 0;
+  padding: 24px 23% 12px 32%;
+  color: var(--ifm-font-color-base);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
 .fork::after {
   position: absolute;
   left: 29%;
   right: 20%;
   top: 14px;
-  height: 16px;
+  bottom: 0;
   border: 2px solid var(--map-line);
   border-bottom: none;
   border-radius: 10px 10px 0 0;
   content: "";
+  pointer-events: none;
 }
 
 /* Panels */
@@ -133,6 +178,21 @@
   text-transform: uppercase;
 }
 
+/* Memory has its own entrypoint, so its heading carries a badge too. */
+
+.panelHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 10px;
+  margin-bottom: 10px;
+}
+
+.panelHeading .panelTitle {
+  margin: 0;
+}
+
 .roles {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -142,27 +202,54 @@
   list-style: none;
 }
 
-.role,
-.state {
+/* A card is a folder: its index above, what the index links to below. */
+
+.card {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 10px 12px;
+  gap: 6px;
+  padding: 6px;
   border: 1px solid var(--forge-card-border);
   border-radius: 10px;
   font-size: 0.88rem;
   line-height: 1.35;
 }
 
-.role strong {
+.index {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px 9px;
+  border-radius: 7px;
+}
+
+.index strong {
   color: var(--ifm-color-primary);
   font-size: 0.98rem;
 }
 
-.role em {
+.memory .index strong {
+  color: var(--map-memory);
+}
+
+.files {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 3px 3px;
+}
+
+.fileRow {
+  padding: 1px 8px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.muted {
   color: var(--ifm-color-emphasis-700);
   font-size: 0.8rem;
-  font-style: normal;
 }
 
 .states {
@@ -177,11 +264,6 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-}
-
-.state strong {
-  color: var(--map-memory);
-  font-size: 0.98rem;
 }
 
 .tense {
@@ -213,37 +295,24 @@
   font-size: 0.78rem;
 }
 
-/* Loading badges */
+/* Loading badges: when a folder's index is read. */
 
 .badge {
   align-self: flex-start;
-  margin-top: 4px;
+  margin-top: 2px;
   padding: 0 8px;
-  border: 1px solid var(--ifm-color-primary);
   border-radius: 999px;
+  color: var(--ifm-color-primary);
   font-size: 0.7rem;
   font-weight: 600;
   line-height: 1.6;
 }
 
-.loadStartup {
-  background: var(--ifm-color-primary);
-  color: var(--ifm-background-color);
+.badge.startup {
+  background: var(--forge-card-background);
 }
 
-.loadListed {
-  color: var(--ifm-color-primary);
-}
-
-.loadCheckpoints {
-  border-style: dashed;
-  border-color: var(--map-memory);
-  color: var(--map-memory);
-}
-
-.loadDemand {
-  border-style: dashed;
-  border-color: var(--ifm-color-emphasis-500);
+.badge.demand {
   color: var(--ifm-color-emphasis-700);
 }
 
@@ -269,6 +338,16 @@
   counter-increment: step;
 }
 
+.steps li.startup {
+  border-color: var(--map-line);
+  background: var(--map-lit);
+}
+
+.steps li.demand {
+  border: 1px dashed var(--ifm-color-emphasis-500);
+  background: transparent;
+}
+
 .steps li::before {
   display: inline-block;
   width: 20px;
@@ -285,37 +364,15 @@
 }
 
 .caption {
-  margin-top: 14px;
+  max-width: 62rem;
+  margin: 14px auto 0;
   color: var(--ifm-color-emphasis-700);
   font-size: 0.8rem;
-}
-
-.legend {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px 16px;
-  margin: 0;
-}
-
-.legendItem {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.legendItem dt {
-  flex: none;
-}
-
-.legendItem dd {
-  margin: 0;
-}
-
-.childNote {
-  margin: 10px 0 0;
-  color: var(--ifm-font-color-base);
-  font-weight: 600;
   text-align: center;
+}
+
+.caption p {
+  margin: 0 0 6px;
 }
 
 /* The layout follows the diagram's own width, so it fits the wide homepage and
@@ -326,16 +383,16 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .fork {
+    padding: 22px 4% 12px;
+  }
+
   .fork::after {
     display: none;
   }
 
-  .fork {
-    height: 16px;
-  }
-
   .loader::after {
-    height: 16px;
+    height: 18px;
   }
 
   .roles {
@@ -346,10 +403,6 @@
 @container framework-map (max-width: 640px) {
   .roles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .legend {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 

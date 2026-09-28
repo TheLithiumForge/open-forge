@@ -19,7 +19,7 @@ Save an observation worth revisiting, or give the next person, agent, or session
 
 > Prepare a handoff so another session can resume from the actual state.
 
-Use either record independently. A Handoff is a fixed snapshot; keep changing task state in the existing working record. An Observation can come from solo work, a conversation, or a tool. Neither requires task coordination or a development workflow.
+Use either record independently. A Handoff is a fixed snapshot. Keep changing task state in the existing working record. An Observation can come from solo work, a conversation, or a tool. Neither requires task coordination or a development workflow.
 
 ## Install And Customize
 

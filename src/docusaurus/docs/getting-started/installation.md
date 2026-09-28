@@ -5,7 +5,7 @@ description: Install the Open Forge CLI, then use it (or a plain copy) to add th
 
 # Installation
 
-Setup has two steps: install the CLI, then use it to install the Framework into your project. The CLI is optional. If you'd rather not use it, skip to [installing the Framework manually](#manually-from-a-clone).
+Setup has three steps: install the CLI, use it to install the Framework into your project, then review and commit the result. The CLI is optional. If you'd rather not use it, skip to [installing the Framework manually](#manually-from-a-clone).
 
 ## 1. Install the CLI
 
@@ -38,6 +38,8 @@ Clone the repository and follow the [local setup guide](/guides/development#link
 
 ## 2. Install the Framework
 
+The Framework is the base: 15 Markdown files. They are `AGENTS.md`, the `CLAUDE.md` bridge, the loader, one entrypoint for each Core category and Memory state, and the `open-forge-cli` Skill. Everything else, such as Decisions, Checkpoints, and workflow recipes, comes from optional [Extensions](#add-extensions-optional) or from you.
+
 Both routes install the same Framework files. The CLI also records what it installed, so it can update those files later.
 
 ### With the CLI
@@ -49,7 +51,7 @@ open-forge install --dry-run
 open-forge install
 ```
 
-The dry run lists what will be written. Nothing changes until you run the second command.
+The dry run lists what will be written and changes nothing. The second command shows the same plan and asks before it writes.
 
 ### Manually, from a clone
 
@@ -65,19 +67,19 @@ If your harness reads `CLAUDE.md`, append `open-forge/src/open-forge/CLAUDE.md` 
 
 ## 3. Review and commit
 
-Whichever route you took, review the result with `git diff` and commit it. That's the whole setup.
+Whichever route you took, review the result with `git status` and `git diff`, then commit it. A fresh install adds new files, which `git status` lists and `git diff` alone doesn't show. That's the whole setup.
 
 Installing and updating are things you do when maintaining the workspace. Agents don't repeat them at startup.
 
 :::tip[Read the files once]
 
-The installed files are short, and they become instructions your agents follow. Read them once now, and again after each update. They're also yours: add, adapt, replace, or remove the defaults as your needs change.
+The installed files are short, and they become the instructions your agents are asked to follow. Read them once now, and again after each update. They're also yours: add, adapt, replace, or remove the defaults as your needs change.
 
 :::
 
 ## Add Extensions (optional)
 
-Once the Framework is in place, you can add optional packages. Preview first:
+Extensions are optional packages of more files, such as Planning for Decisions and Checkpoints, or Development for review and debugging workflows. Their files carry no loading tags, so at startup an installed Extension adds only its one-line entries to the entrypoints that already load. Once the Framework is in place, preview a package before you install it:
 
 ```sh
 open-forge extension list --available

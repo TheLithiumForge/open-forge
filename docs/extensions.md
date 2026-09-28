@@ -1,6 +1,8 @@
 # Open Forge Extensions
 
-Extensions are optional packages of workspace content: instructions, advice, reusable shapes, workflows, templates, native skills, and supporting files. Pick the packages that help your work, then adapt what they install as your needs change.
+Extensions are optional packages of workspace content: instructions, advice, reusable shapes, workflows, templates, Memory categories, native skills, and supporting files. Pick the packages that help your work, then adapt what they install as your needs change.
+
+Apart from the `open-forge-cli` Skill, the base Framework contains none of this content. It ships 15 files: `AGENTS.md`, `CLAUDE.md`, the loader, six category entrypoints, the Memory entrypoint with its four state entrypoints, and the `open-forge-cli` Skill. Record categories such as Decisions, Checkpoints, or Observations, workflow recipes, and starter Templates all come from Extensions or from you.
 
 An Extension is a way to distribute files. Routed content takes the role and scope of the route it lands in. Native capabilities and support files follow the tools that use them. The package manifest helps manage installation, but the installed files carry everything an agent needs to understand them.
 
@@ -60,7 +62,9 @@ open-forge extension install orchestration \
 
 Review the proposed files, then run the command again without `--dry-run` to apply it. When it runs interactively, it shows the plan and asks before applying it. If you are running from another directory, add `--workspace /path/to/project` to both commands. Check the resulting diff before adopting the content.
 
-You can select several package IDs in one request. `--all` selects all packages in the chosen source. `--automatic` disables prompting. It does not select packages or authorize overwrites for you.
+You can select several package IDs in one request. `--all` selects all packages in the chosen source. `--automatic` disables prompting. A script or other non-interactive run needs it to apply changes, because nothing can answer the question. It does not select packages or authorize overwrites for you.
+
+Install doesn't replace an existing file on its own. If a file already sits where a package file goes, an interactive run can ask to replace it, and other runs stop and name the file. `--force` replaces such a file with the package version, but only when no package, the Framework, or another manager claims it and the other safety checks pass. To change files that a package already manages, use `update`.
 
 Installation records managed ownership in `.agents/open-forge.lock.json`, so later operations can tell package files apart from your own changes. The lock file exists for file maintenance only. It isn't agent context, and it gives the content no authority.
 
@@ -81,13 +85,14 @@ open-forge extension update orchestration \
   --dry-run
 ```
 
-Normal updates replace changed owned files and restore missing owned files. Retired content is preserved unless `--prune` selects its deletion. Use the result to review which differences to keep:
+A normal update replaces package files that differ from the package, including files you edited, and restores missing ones. The previous bytes go into a recovery bundle, and the preview marks each edited file, so review it and save the edits you want to keep. Retired content, which the package no longer ships, stays unless you add `--prune`:
 
-| Option              | What it selects                                                    |
-| ------------------- | ------------------------------------------------------------------ |
-| `--force`           | Eligible changed or missing paths that the current package expects |
-| `--prune` on update | Eligible retired content that is no longer in the package          |
-| `--automatic`       | Non-interactive execution with the choices already supplied        |
+| Option               | What it selects                                                               |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `--force` on install | Eligible existing files at the package's destinations that no one else claims |
+| `--force` on update  | Nothing beyond a normal update, which already replaces and restores its files |
+| `--prune` on update  | Eligible retired content that is no longer in the package                     |
+| `--automatic`        | Non-interactive execution with the choices already supplied                   |
 
 Preview these options before applying them. Each selects something specific, and none of them is a general permission to overwrite the workspace.
 
@@ -97,7 +102,7 @@ To remove a package, first inspect the plan:
 open-forge extension remove orchestration --dry-run
 ```
 
-Removal releases the package's ownership and keeps files that another package still owns. It deletes eligible files whose last owner is being removed, including files you edited, so review the preview and save any customizations you need first. An installed package that depends on it blocks removal unless you remove that package too. You don't need the original source catalogue.
+Removal releases the package's ownership and keeps files that another package still owns. It deletes eligible files whose last owner is being removed, including files you edited, so review the preview and save any customizations you need first. An installed package that depends on it blocks removal unless you remove that package too. Its own dependencies stay installed, and the result names any that nothing else needs. You don't need the original source catalogue.
 
 The selected IDs are recorded in `removedExtensions` in `.agents/open-forge.json`, so later installation, updates and dependency resolution keep them removed. To reinstall a package, explicitly clear its ID and any covering path exclusions, then install it. The root command `open-forge remove orchestration --kind extension` provides the same package operation.
 
@@ -124,13 +129,13 @@ Fresh installations use the new layout directly. Existing installations need a r
 
 Normal update may retain retired starter paths. Review these before removing them. Do not leave two independently changing copies of the same starter. Updating or removing a starter never updates or removes the artifacts created from it.
 
-Don't keep and update the shared Workflow Support catalogue partway through this transition. That has produced an install block reporting that the catalogue changed after planning, so it isn't a supported migration path. The complete replacement sequence above was tested with an independently written Handoff, which came through byte for byte. A workspace with further edits or dependents still needs its own review of the plan.
+Don't keep and update the shared Workflow Support catalogue partway through this transition. That has produced an install block reporting that the catalogue changed after planning, so it isn't a supported migration path. The complete replacement sequence above was tested with an independently written Handoff, which kept its exact bytes. A workspace with further edits or dependents still needs its own review of the plan.
 
 This is a manual migration boundary, not a promise of automatic conversion. Review actual ownership and reported plans for the installed revision.
 
 ## Customize installed content
 
-Edit an installed file when your workspace needs a different version. Managed updates recognize that divergence. For a small adjustment, an adjacent `{name}.overwrite.md` can hold the corresponding local change without editing the base.
+Edit an installed file when your workspace needs a different version. A later `extension update` replaces an edited package file with the package's version and keeps your bytes only in its recovery bundle, so preview updates and carry your edits forward. For a small adjustment, an adjacent `{name}.overwrite.md` can hold the corresponding local change without editing the base. Updates don't touch it.
 
 An overwrite shares the base's role, scope, and loading behavior. It takes precedence only for the corresponding base content. It stays workspace-owned and is not a separately indexed route.
 
@@ -163,7 +168,7 @@ open-forge extension create team-practices \
 
 Apply the reviewed command without `--dry-run`, then add complete files under `content/`. Create writes the manifest and an initial `content/.agents/` directory. It does not install the package into a workspace. Its `--path` selects the catalogue parent. `--workspace` does not redirect creation.
 
-Use `--dependency <stable-id>` for each dependency and `--package-version <text>` to choose the version. Supply the package ID and destination explicitly in scripts. Creating a manifest records dependency IDs without proving they are available. Installation resolves them from the selected source.
+Use `--dependency <stable-id>` for each dependency and `--package-version <text>` to choose the version. In scripts, supply the package ID and `--path` explicitly and add `--automatic`. Without it, a non-interactive create stops because it can't ask for confirmation. Creating a manifest records dependency IDs without proving they are available. Installation resolves them from the selected source.
 
 ## Package format
 
@@ -191,7 +196,7 @@ A minimal manifest is:
 }
 ```
 
-Use a stable package ID and list dependencies as unique, sorted IDs. The manifest accepts these five fields. A package may provide one content role, a useful combination, or only dependencies. A dependency-only package may omit `content/`.
+Use a stable package ID and list dependencies as unique, sorted IDs that don't include the package itself. The manifest accepts only these five fields. A package may provide one content role, a useful combination, or only dependencies. A dependency-only package may omit `content/`.
 
 Add complete files, including entrypoints where new routed folders require them. Write links for the installed layout. The assembled Framework and declared dependencies may supply destinations outside the package itself.
 
@@ -199,7 +204,9 @@ Native Skill packages retain their own `SKILL.md` metadata and resources. Suppor
 
 ### Files used by other tools
 
-Files outside `.agents/`, such as an agent definition consumed by another tool, require exact consumer grants in `.agents/open-forge.json` for managed installation. An interactive apply request can ask whether to remember a missing grant. The staged settings change is saved only during confirmed application. Dry runs, JSON output, redirected input, and automatic mode report missing grants without saving approval unless explicit `--allow-path` authority supplies them.
+Managed installation writes a file outside `.agents/`, such as an agent definition consumed by another tool, only when `allowInstallPaths` in `.agents/open-forge.json` admits its path. A grant is a workspace-relative file or directory path, and every Extension and Library shares it. Destinations inside `.agents/` need no grant.
+
+When a grant is missing, an interactive apply asks once for the complete missing set. You can allow it always (saved to the settings), allow it once (this run only), or cancel. Dry runs, JSON output, redirected input, and `--automatic` never ask. They report the missing grant instead. To grant a path without a prompt, add `--allow-path <path>` to `extension install`, `update`, or `remove`. A dry run writes nothing, even with `--allow-path`.
 
 `--force` and `--prune` do not bypass those grants. Keep one manager per installed path. Installing a capability through another tool does not by itself satisfy an Open Forge package dependency.
 
@@ -207,6 +214,6 @@ Files outside `.agents/`, such as an agent definition consumed by another tool, 
 
 Preview installation into a separate workspace with the intended Framework and dependencies. Inspect the installed content, links, loading behavior, and any existing files the operation would affect. With the CLI available, use `open-forge doctor` and review the diff.
 
-Structural checks show whether the package fits together. Trying its workflows, templates, or capabilities on representative work shows whether it earns its place. Keep those two kinds of evidence clear when describing a package.
+Structural checks show whether the package fits together. Trying its workflows, templates, or capabilities on representative work shows whether it helps. Keep those two kinds of evidence clear when describing a package.
 
 See the [Extensions Architecture](../.agents/memory/crystallized/documents/extensions/architecture.md) for composition principles and the [Extension contracts](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md) for exact managed-operation rules.

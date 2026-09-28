@@ -9,13 +9,15 @@ Every installed file is yours. Add, adapt, replace, or remove the defaults as yo
 
 ## Three ways to change a shipped file
 
-| You want to...                               | Do this                                   | What `open-forge update` does                                                                |
-| -------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Use a different version of the file          | Edit the file directly.                   | Brings changed Framework files back to the current version and reports each one it replaces. |
-| Add a local adjustment that survives updates | Create an adjacent `{name}.overwrite.md`. | Leaves the overwrite alone.                                                                  |
-| Stop using the file entirely                 | Remove it with `open-forge remove`.       | Keeps it removed.                                                                            |
+| You want to...                               | Do this                                   | What `open-forge update` does                                              |
+| -------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------- |
+| Change the file itself                       | Edit the file directly.                   | Replaces your edited copy with the current shipped version and reports it. |
+| Add a local adjustment that survives updates | Create an adjacent `{name}.overwrite.md`. | Leaves the overwrite alone.                                                |
+| Stop using the file entirely                 | Remove it with `open-forge remove`.       | Keeps it removed.                                                          |
 
-An update reports every path it replaces, restores, deletes, or retains, and keeps a recovery bundle when existing bytes need protecting. Still, review `open-forge update --dry-run` before applying one, and commit your edits first so `git diff` shows what changed.
+In a CLI-managed install, a direct edit to a shipped file lasts until the next update. Put a change you want to keep in an overwrite companion instead.
+
+An update reports every path it replaces, restores, deletes, or retains, and keeps a recovery bundle when existing bytes need protecting. Review `open-forge update --dry-run` before applying one, and commit your edits first so `git diff` shows what changed.
 
 ## Overwrite companions
 
@@ -29,7 +31,9 @@ An overwrite is a user-owned file next to its base, named `{name}.overwrite.md`:
 
 It loads immediately after its base file and shares the base file's route, scope, and loading behavior. It isn't listed in `Entries` or selected separately.
 
-Read it as part of the base source. Where the two answer the same question differently, the overwrite wins, but only for that corresponding content. It doesn't override unrelated files.
+Read it as part of the base source. Where the two answer the same question differently, the overwrite wins, but only for that corresponding content. It doesn't override unrelated files, ancestor Directives, clear user direction, or runtime safety.
+
+Use an overwrite when the base is still right except for a small local addition, exception, or replacement. When the base no longer fits at all, edit, replace, or remove it instead. An overwrite without its base file inherits no route or loading behavior. Restore its base, move its content to its own route, or remove it.
 
 ```md title=".agents/memory/_memory.overwrite.md"
 ## Axioms
@@ -59,14 +63,14 @@ The CLI records exclusions in `.agents/open-forge.json`:
 }
 ```
 
-Deleting a file by hand doesn't record an exclusion, so a later update may restore it. To bring removed content back, clear its exclusion and run the relevant install or update.
+Deleting a file by hand doesn't record an exclusion, so a later update may restore it. If you delete a managed file by hand, add its path to `removedFiles` before the next update. To bring removed content back, clear its exclusion and run the relevant install or update.
 
 ## Files the CLI keeps for itself
 
-| File                           | Purpose                                                                                                   | Agent context? |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------- | -------------- |
-| `.agents/open-forge.lock.json` | Which files the Framework and each Extension installed, so updates can tell them apart from your changes. | No             |
-| `.agents/open-forge.json`      | Your settings, including removal exclusions and path grants for files outside `.agents/`.                 | No             |
+| File                           | Purpose                                                                                                | Agent context? |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------ | -------------- |
+| `.agents/open-forge.lock.json` | Which files the Framework and each Extension installed and manage, so updates change only those files. | No             |
+| `.agents/open-forge.json`      | Your settings, including removal exclusions and path grants for files outside `.agents/`.              | No             |
 
 Neither file gives content any authority. They exist for file maintenance only.
 

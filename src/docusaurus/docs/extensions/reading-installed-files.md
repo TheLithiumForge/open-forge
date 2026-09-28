@@ -23,25 +23,26 @@ The folder a file lands in tells you its role:
 
 ## Then check the tags
 
-Every Extension file carries `#Extension`, plus tags for its role:
+Every Extension file except a native `SKILL.md` carries the `Extension` tag in its frontmatter, plus tags for its role:
 
 ```yaml
 tags: [Extension, Template, Planning, Task, Memory]
 ```
 
-Look for the role tag: `Template`, `Guidance`, `Pattern`, `Workflow`, `Memory`, `Decision`, and so on. If you see `LoadNow`, the file loads whenever its parent does. First-party Extension files don't use it. They all load on demand.
+Look for the role tag: `Template`, `Guidance`, `Pattern`, `Workflow`, `Memory`, `Decision`, and so on. A `SKILL.md` keeps its harness's own frontmatter instead, with no Open Forge tags.
+
+A `LoadNow` or `KeepInMind` tag would make a file load as soon as its parent entrypoint (the `_{folder}.md` file that lists it under `Entries`) is read. First-party Extension files carry neither, so all of them are on demand. At startup, an agent sees at most a file's one-line entry in a parent entrypoint that's already loaded. It opens the file only when a task needs it.
 
 ## Templates: `{prompts}` and source guidance
 
-A Template is a starter you copy, never an instruction to follow. You'll recognize one by its placeholders:
+A Template is a starter you copy, never an instruction to follow. You'll recognize one by its placeholders. Here's the start of the Planning `task.md` Template:
 
 ```md
 # {Task Outcome}
 
 {
-Use when the task needs a durable record and no existing task source already serves it.
-Replace {prompts}; remove this source guidance and sections that add no value.
-Set metadata for the destination, not this Template. Rebase links after copying.
+Use when the task needs a durable record and no existing task source already serves it. A plan does not grant permission.
+Replace {prompts}. Remove this source guidance and optional sections that add no value.
 }
 
 ## Outcome
@@ -51,7 +52,7 @@ Set metadata for the destination, not this Template. Rebase links after copying.
 
 - **`{Something}`** is a prompt. Replace it with your content.
 - **A `{ ... }` block right after the title** is source guidance: when to use the Template and how to adapt it. Delete it from your copy.
-- **The frontmatter describes the Template**, not your record. Give the copy its own description and tags, and drop `Template` and `Extension`.
+- **The frontmatter describes the Template**, not your record. Give the copy its own description and tags. Drop `Extension`, and drop `Template` unless the copy is itself a new Template.
 - **Relative links** point from the Template's location. Fix them for the copy's location.
 
 Your copy is yours. Updating the Template never updates copies made from it, and removing a Template never removes them.
@@ -68,9 +69,11 @@ A Memory category is an entrypoint that defines a kind of record. It arrives emp
 
 That's not a broken install. The category defines what a Decision, a Handoff, or an Observation is and the rules for writing one. Records appear as you and your agents create them, usually by copying the matching Template.
 
+A category has no loading tag. At startup, an agent sees only its one-line entry in the parent state's `Entries`, such as the Decisions entry in Crystallized. The category entrypoint and its records open on demand.
+
 ## Workflow recipes: Goal, Steps, Completion
 
-A recipe always has three sections, in order:
+Every recipe has these three sections, in this order, and may add others:
 
 - **Goal** says when the recipe fits and the outcome it serves.
 - **Steps** is the method, including conditional work.
@@ -88,7 +91,7 @@ Many Extension entrypoints add no rules of their own. They say so explicitly:
 - inherited - No local axioms; loaded ancestor axioms remain active.
 ```
 
-It means the folder only organizes its children. Every rule from the folders above it still applies.
+It means the entrypoint adds no rules of its own. It can still explain its folder and list its children. Every rule from the entrypoints above it still applies.
 
 ## Package READMEs
 

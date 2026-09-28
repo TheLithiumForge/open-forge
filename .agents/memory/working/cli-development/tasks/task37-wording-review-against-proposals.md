@@ -6,6 +6,9 @@ open-forge:
 
 # Task 37 — Wording Review Against The Output Proposals
 
+**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task37-wording-review-against-proposals.md). Recommendation:
+Needs the maintainer's decision first. The review names any details in this record that are out of date.
+
 ## Task state
 
 - State: **Open, not started.** Raised by the maintainer on 2026-09-16.
@@ -16,7 +19,7 @@ open-forge:
 ## Why this exists
 
 Three long output proposals were written for G4 and only partly consumed. The
-[consolidated proposal](task30/phase-4b-g4-output-proposal-consolidated.md)
+[consolidated proposal](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-consolidated.md)
 produced the accepted decisions **C1–C18** — the flags, the four detail levels,
 the schema-3 envelope, the severity vocabulary. Those were **structural**.
 
@@ -29,10 +32,10 @@ shipped text and the proposed text have never been placed side by side.
 
 | Proposal | Size | What it is |
 | --- | --- | --- |
-| [Fable](task30/phase-4b-g4-output-proposal-fable.md) | 1,859 lines | Shared presentation rules plus per-command transcripts for all 28 commands |
-| [Astra](task30/phase-4b-g4-output-proposal-astra.md) | 1,884 lines | A review of the others that also proposes its own wording |
-| [Opus](task30/phase-4b-g4-output-proposal-opus.md) | — | The third proposal |
-| [Consolidated](task30/phase-4b-g4-output-proposal-consolidated.md) | — | What the maintainer reviewed to produce C1–C18 |
+| [Fable](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-fable.md) | 1,859 lines | Shared presentation rules plus per-command transcripts for all 28 commands |
+| [Astra](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-astra.md) | 1,884 lines | A review of the others that also proposes its own wording |
+| [Opus](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-opus.md) | — | The third proposal |
+| [Consolidated](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-consolidated.md) | — | What the maintainer reviewed to produce C1–C18 |
 
 **The maintainer intends to add a further proposal.** Check for it before
 starting; if a fourth document is present, it is an input like the rest.

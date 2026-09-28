@@ -17,6 +17,6 @@ The methods use [Workflow Support](../workflows/README.md), installed once throu
 
 [Core Templates](../core-templates/README.md), [Collaboration](../collaboration/README.md), [Observations and Handoffs](../observations-and-handoffs/README.md), and [Task Coordination](../orchestration/README.md) remain separately selectable.
 
-Install individual packages when only part of the set is useful. A bundle selects capabilities; it does not make every convention mandatory.
+Install individual packages when only part of the set is useful. A bundle selects capabilities. It does not make every convention mandatory.
 
 See the [installation guide](../../../docs/extensions.md). Flows and Scenarios is now a direct dependency so the Toolkit continues to provide the starters that previously arrived through Planning.

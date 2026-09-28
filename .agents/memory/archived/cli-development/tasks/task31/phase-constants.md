@@ -30,4 +30,4 @@ flag vocabulary as historical evidence. They predate the completed G4 report
 migration and do not describe current CLI behavior.
 
 The source evidence is the sealed [Implementation Duplication analysis](../../../../emerging/analysis/cli-experience-audit/implementation-duplication.md);
-the current update rule is in [Task 31](../../../../working/cli-development/tasks/task31-implementation-duplication.md).
+the current update rule is in [Task 31](../task31-implementation-duplication.md).
