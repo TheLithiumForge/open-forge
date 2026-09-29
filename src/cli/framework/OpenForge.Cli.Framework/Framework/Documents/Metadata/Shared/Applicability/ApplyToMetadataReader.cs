@@ -123,12 +123,18 @@ internal static class ApplyToMetadataReader
                 return;
             }
 
-            if (!TryParse(scalar, parsed, out var parseFailure))
+            var result = ApplyToPatternExpressionParser.Parse(scalar.Value);
+            if (result.Failure is { } patternFailure)
             {
-                failure ??= parseFailure;
+                failure ??= new ApplyToMetadataFailure(
+                    ApplyToMetadataFailureKind.InvalidPattern,
+                    scalar.Span,
+                    patternFailure);
                 AddDeclaration(entry, location, parsed, declarations);
                 return;
             }
+
+            parsed.AddRange(result.Patterns);
         }
         else if (entry.Value.Sequence is { } sequence)
         {
@@ -191,7 +197,7 @@ internal static class ApplyToMetadataReader
         ICollection<ApplyToPattern> patterns,
         out ApplyToMetadataFailure? failure)
     {
-        var result = ApplyToPatternMatcher.Parse(scalar.Value);
+        var result = ApplyToPatternMatcher.Parse(scalar.Value.Trim());
         if (result.Pattern is { } pattern)
         {
             patterns.Add(pattern);

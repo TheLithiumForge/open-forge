@@ -195,21 +195,39 @@ Use the returned file identities to inspect what the command included. The
 [loader](../src/open-forge/.agents/loader.md) defines Framework loading and scope.
 Command output does not change those rules.
 
-A file condition can limit when a source's context applies. With no `--for`
-paths, unconditioned context keeps its usual behavior, while encountered
-conditioned sources are pending. The command returns `incomplete`, exit 3, and
-shows the pending conditions until you provide working paths. The CLI does not
-infer paths from Git or discover code dependencies. Repeat `--for` for the full
-working set, including planned files and related callers or tests. Reading a
-Markdown source only to obtain context does not add that source to the working
-set. A source applies when at least one supplied working path satisfies every
-condition in its inherited chain. A condition does not select a hidden ancestor
-or grant or restrict edit permission.
+`applyTo` only filters a source that another loading or selection rule would
+include. It never selects or loads an entry by itself. Context includes a
+conditioned entry only when a loading tag, an explicit source selection, or a
+followed link would include it. With no `--for` paths, only entries that would
+otherwise load automatically are deferred and reported as pending. Untagged
+conditioned entries stay on demand and are not reported as pending. The command
+returns `incomplete`, exit 3, and shows those pending conditions until you
+provide working paths. The CLI does not infer paths from Git or discover code
+dependencies. Repeat `--for` for the full working set, including planned files
+and related callers or tests. Reading a Markdown source only to obtain context
+does not add that source to the working set. A source passes the filter when at
+least one supplied working path satisfies every condition in its inherited
+chain. A condition does not select a hidden ancestor or grant or restrict edit
+permission.
+
+To look further than the loading rules, use Find for discovery and Context to
+load what you choose. `find --for` lists every compatible source, including
+sources below scopes nobody selected, without loading anything:
+
+```sh
+open-forge context --for src/Order.cs
+open-forge find --for src/Order.cs --tag=Directive
+open-forge context directives/backend/csharp --for src/Order.cs
+```
+
+The first command returns what the loading rules load for that file. The second
+lists other compatible sources. The third loads a source you selected, with its
+route context.
 
 With supplied paths, an explicit source or followed reference can retrieve a
 known nonmatch for inspection with its needed route context. That inspection
-does not activate the source's automatic children. `applyTo` is a pre-load file
-condition and does not replace a Directive's required `LoadNow` tag.
+does not activate the source's automatic children. The `--for` values only
+filter applicable sources. They do not supply a loading reason.
 `LoadNow` and `KeepInMind` still load through exposed entries of already-loaded
 parents. Selecting an on-demand scope activates its applicable child loading
 rules. `KeepInMind` adds refresh instructions while the scope remains active.
@@ -295,8 +313,9 @@ open-forge route list memory/crystallized/documents --depth=all
 authored body. Repeat `--for <path>` to see how supplied working paths match
 the source's declared and inherited conditions. A planned path may not exist.
 An explicit inspection can explain a nonmatch, but it does not activate the
-source's automatic children. Without `--for` paths, conditions are pending,
-not unmatched.
+source's automatic children. Without `--for` paths, only entries that a loading
+tag would otherwise load automatically have pending conditions. Explicitly
+selected entries remain inspectable without a path filter.
 
 ```sh
 open-forge route inspect memory/crystallized/documents
@@ -338,19 +357,34 @@ classification, loading, routing, or search. A tag starts with a letter and
 then contains letters or digits, with single internal hyphens allowed. It may
 not end with a hyphen or contain two adjacent hyphens.
 
-`applyTo` is an optional file condition. A quoted scalar or list of quoted
-patterns is accepted at the frontmatter root or under `open-forge:`, with the
-same meaning in either place. A root declaration may sit beside an existing
-`open-forge:` block. For example, both locations accept a quoted scalar such as
-`"**/*.cs"` or a quoted list. Commas are literal filename
-characters, so patterns are never split on commas. Missing means no condition;
-empty or non-string values are invalid. New CLI-authored conditions use a
-quoted-string list under `open-forge:`. If both locations declare the field,
-equivalent declarations count once, and conflicting pattern sets are invalid.
-`route update` keeps an existing declaration at its authored location and
-updates equivalent root and scoped declarations together. For example,
-`applyTo: "**/*.cs"` and `applyTo: ["**/*.cs", "src/report,legacy.cs"]` are
-valid at either location. A comma is part of the second pattern. See the
+`applyTo` is an optional file condition. A quoted string is an expression and
+a list of quoted strings contains one atomic pattern per entry. Both forms are
+accepted at the frontmatter root or under `open-forge:`, with the same meaning
+in either place. A root declaration may sit beside an existing `open-forge:`
+block. A string expression separates top-level patterns with commas, trims
+whitespace around each fragment, and drops empty fragments. For example,
+`"**/*.cs, **/*.csproj"` is equivalent to a two-item list. Commas inside brace
+alternatives or character classes do not separate patterns. For example,
+`"**/*.{cs,csproj}"` uses brace alternatives and `"**/*.[ch]"` uses a character
+class. Include `**/` when a pattern should match at any depth, such as
+`"**/*.cs"`.
+
+`!` at the start of a pattern is literal. It negates only when it is the first
+member of a character class, such as `[!abc]`.
+
+Within a string expression, `\,` is a literal comma. A list entry is not split or decoded, so its comma remains part of
+that one atomic pattern. Empty expressions or entries, and non-string values,
+are invalid. New CLI-authored conditions use a quoted-string list under
+`open-forge:`. If both locations declare the field, equivalence compares their
+sets of atomic pattern texts, and conflicting sets are invalid. A brace
+shorthand is not equivalent to its expanded list. `route update` keeps an
+existing declaration at its authored location and updates equivalent root and
+scoped declarations together. For example, `applyTo: "**/*.cs"` and
+`applyTo: ["**/*.cs", "src/report,legacy.cs"]` are valid at either location.
+The list example remains valid because each list entry is atomic. A string such
+as `applyTo: "src/report,legacy.cs"` now means two patterns. To keep one
+literal-comma pattern, write `applyTo: 'src/report\,legacy.cs'` or move it to a
+list entry such as `applyTo: ["src/report,legacy.cs"]`. See the
 [Loader](../src/open-forge/.agents/loader.md) for matching and loading rules.
 
 The command flags use the same concepts:
@@ -360,8 +394,10 @@ The command flags use the same concepts:
   and update commands require unique canonical tags when the list is supplied.
 - `--responsibility <text>` sets the optional responsibility. On update, an
   exact empty value removes the key.
-- Repeat `--apply-to <pattern>` on `route create`, `route init`, or
-  `route update` to supply patterns. A literal comma remains part of one pattern.
+- Each `--apply-to <glob>` on `route create`, `route init`, or
+  `route update` accepts comma-separated patterns. Repeat the option to supply
+  additional expressions. Include `**/` for patterns that should match at any
+  depth.
 - `route update --clear-apply-to` removes the condition and cannot be combined
   with `--apply-to`.
 
@@ -453,7 +489,7 @@ The options are patches, not inferred replacements:
 - Repeated `--tag=<tag>` values replace the complete ordered tag list.
 - `--responsibility <text>` sets the responsibility. `--responsibility ""`
   removes it.
-- Repeated `--apply-to <pattern>` values replace the complete condition.
+- Repeated `--apply-to <glob>` values replace the complete condition.
   Existing root or scoped placement is preserved, and equivalent dual
   declarations are updated together. `--clear-apply-to` removes both locations
   and is mutually exclusive with `--apply-to`.

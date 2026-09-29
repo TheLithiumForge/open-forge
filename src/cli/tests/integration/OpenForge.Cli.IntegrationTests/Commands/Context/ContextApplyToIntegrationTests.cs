@@ -7,8 +7,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Context;
 public sealed class ContextApplyToIntegrationTests
 {
     [Trait("Boundary", "Host")]
-    [Fact(DisplayName = "Context automatically includes an exposed matching applyTo entry without loading a nonmatch"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
-    public async Task MatchingExposedConditionLoadsUntaggedChildAndOmitsNonmatch()
+    [Fact(DisplayName = "Context does not automatically include an exposed matching untagged applyTo entry"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    public async Task MatchingExposedConditionDoesNotLoadUntaggedChild()
     {
         using var workspace = CreateWorkspace(
             LoaderEntry("Rules", "rules/_rules.md"),
@@ -46,13 +46,98 @@ public sealed class ContextApplyToIntegrationTests
         Assert.Equal("completed", root.GetProperty("status").GetString());
         var paths = SourcePaths(root);
         Assert.Contains(".agents/rules/_rules.md", paths);
-        Assert.Contains(".agents/rules/csharp.md", paths);
+        Assert.DoesNotContain(".agents/rules/csharp.md", paths);
         Assert.DoesNotContain(".agents/rules/web.md", paths);
-        Assert.Equal("matched", Source(root, ".agents/rules/csharp.md")
-            .GetProperty("applicability").GetProperty("state").GetString());
-        Assert.Equal(["src/Order.cs"], Source(root, ".agents/rules/csharp.md")
-            .GetProperty("applicability").GetProperty("matchingPaths")
-            .EnumerateArray().Select(path => path.GetString()));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Context closure matches and rejects comma-separated applyTo expressions"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    public async Task CommaSeparatedExpressionControlsContextClosure()
+    {
+        using var workspace = CreatePatternClosureWorkspace(
+            ["src/**/*.cs", "tests/**/*.cs"],
+            "src/**/*.cs,tests/**/*.cs",
+            "# CSharp\n\nComma-separated rule.\n");
+        var before = workspace.SnapshotHashes();
+
+        var matching = await RunContextAsync(
+            workspace,
+            "rules",
+            "--for", "tests/Order.cs",
+            "--format", "json");
+        var nonmatching = await RunContextAsync(
+            workspace,
+            "rules",
+            "--for", "docs/readme.md",
+            "--format", "json");
+
+        AssertSuccessfulCommand(matching);
+        AssertSuccessfulCommand(nonmatching);
+        using var matchingDocument = JsonDocument.Parse(matching.Output);
+        using var nonmatchingDocument = JsonDocument.Parse(nonmatching.Output);
+        Assert.Contains(".agents/rules/csharp.md", SourcePaths(matchingDocument.RootElement));
+        Assert.DoesNotContain(".agents/rules/csharp.md", SourcePaths(nonmatchingDocument.RootElement));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Context closure matches and rejects brace applyTo patterns"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    public async Task BraceExpressionControlsContextClosure()
+    {
+        using var workspace = CreatePatternClosureWorkspace(
+            ["{src,test}/**/*.cs"],
+            "{src,test}/**/*.cs",
+            "# CSharp\n\nBrace rule.\n");
+        var before = workspace.SnapshotHashes();
+
+        var matching = await RunContextAsync(
+            workspace,
+            "rules",
+            "--for", "test/Order.cs",
+            "--format", "json");
+        var nonmatching = await RunContextAsync(
+            workspace,
+            "rules",
+            "--for", "docs/readme.md",
+            "--format", "json");
+
+        AssertSuccessfulCommand(matching);
+        AssertSuccessfulCommand(nonmatching);
+        using var matchingDocument = JsonDocument.Parse(matching.Output);
+        using var nonmatchingDocument = JsonDocument.Parse(nonmatching.Output);
+        Assert.Contains(".agents/rules/csharp.md", SourcePaths(matchingDocument.RootElement));
+        Assert.DoesNotContain(".agents/rules/csharp.md", SourcePaths(nonmatchingDocument.RootElement));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Context closure matches and rejects class applyTo patterns"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    public async Task ClassExpressionControlsContextClosure()
+    {
+        using var workspace = CreatePatternClosureWorkspace(
+            ["src/[OT]*.cs"],
+            "src/[OT]*.cs",
+            "# CSharp\n\nClass rule.\n");
+        var before = workspace.SnapshotHashes();
+
+        var matching = await RunContextAsync(
+            workspace,
+            "rules",
+            "--for", "src/Order.cs",
+            "--format", "json");
+        var nonmatching = await RunContextAsync(
+            workspace,
+            "rules",
+            "--for", "src/Json.cs",
+            "--format", "json");
+
+        AssertSuccessfulCommand(matching);
+        AssertSuccessfulCommand(nonmatching);
+        using var matchingDocument = JsonDocument.Parse(matching.Output);
+        using var nonmatchingDocument = JsonDocument.Parse(nonmatching.Output);
+        Assert.Contains(".agents/rules/csharp.md", SourcePaths(matchingDocument.RootElement));
+        Assert.DoesNotContain(".agents/rules/csharp.md", SourcePaths(nonmatchingDocument.RootElement));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
@@ -67,11 +152,11 @@ public sealed class ContextApplyToIntegrationTests
                 "Rules",
                 ["Project"],
                 null,
-                Entry("CSharp", "csharp.md", [], ["src/**/*.cs"])),
+                Entry("CSharp", "csharp.md", ["LoadNow"], ["src/**/*.cs"])),
             DocumentFile(
                 ".agents/rules/csharp.md",
                 "CSharp",
-                ["Rule"],
+                ["LoadNow", "Rule"],
                 ["src/**/*.cs"],
                 "# CSharp\n\nCSharp rule.\n"));
         var before = workspace.SnapshotHashes();
@@ -111,17 +196,17 @@ public sealed class ContextApplyToIntegrationTests
                 "Products",
                 ["Project"],
                 ["src/**"],
-                Entry("Managed", "managed/_managed.md", [], ["**/*.cs"])),
+                Entry("Managed", "managed/_managed.md", ["LoadNow"], ["**/*.cs"])),
             EntryPointFile(
                 ".agents/products/managed/_managed.md",
                 "Managed",
-                ["Project"],
+                ["LoadNow", "Project"],
                 ["**/*.cs"],
-                Entry("CSharp", "csharp.md", [])),
+                Entry("CSharp", "csharp.md", ["LoadNow"])),
             DocumentFile(
                 ".agents/products/managed/csharp.md",
                 "CSharp",
-                ["Rule"],
+                ["LoadNow", "Rule"],
                 null,
                 "# CSharp\n\nScoped rule.\n"),
             EntryPointFile(
@@ -379,18 +464,18 @@ public sealed class ContextApplyToIntegrationTests
                 "Rules",
                 ["Project"],
                 null,
-                Entry("CSharp", "csharp.md", [], ["src/**/*.cs"]),
-                Entry("TypeScript", "typescript.md", [], ["web/**/*.ts"])),
+                Entry("CSharp", "csharp.md", ["LoadNow"], ["src/**/*.cs"]),
+                Entry("TypeScript", "typescript.md", ["LoadNow"], ["web/**/*.ts"])),
             DocumentFile(
                 ".agents/rules/csharp.md",
                 "CSharp",
-                ["Rule"],
+                ["LoadNow", "Rule"],
                 ["src/**/*.cs"],
                 "# CSharp\n\nCSharp rule.\n"),
             DocumentFile(
                 ".agents/rules/typescript.md",
                 "TypeScript",
-                ["Rule"],
+                ["LoadNow", "Rule"],
                 ["web/**/*.ts"],
                 "# TypeScript\n\nTypeScript rule.\n"));
         var before = workspace.SnapshotHashes();
@@ -429,11 +514,11 @@ public sealed class ContextApplyToIntegrationTests
                 "Rules",
                 ["Project"],
                 null,
-                Entry("CSharp", "csharp.md", [], ["src/**/*.cs"])),
+                Entry("CSharp", "csharp.md", ["LoadNow"], ["src/**/*.cs"])),
             DocumentFile(
                 ".agents/rules/csharp.md",
                 "CSharp",
-                ["Rule"],
+                ["LoadNow", "Rule"],
                 ["src/**/*.cs"],
                 "# CSharp\n\nPlanned rule.\n"));
         const string plannedPath = "src/new-feature.cs";
@@ -454,6 +539,43 @@ public sealed class ContextApplyToIntegrationTests
         Assert.Equal([plannedPath], Source(root, ".agents/rules/csharp.md")
             .GetProperty("applicability").GetProperty("matchingPaths")
             .EnumerateArray().Select(path => path.GetString()));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Context discards a LoadNow entry with a nonmatching applyTo condition"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    public async Task LoadNowNonmatchingConditionIsDiscarded()
+    {
+        using var workspace = CreateWorkspace(
+            LoaderEntry("Rules", "rules/_rules.md"),
+            EntryPointFile(
+                ".agents/rules/_rules.md",
+                "Rules",
+                ["Project"],
+                null,
+                Entry("CSharp", "csharp.md", ["LoadNow"], ["src/**/*.cs"])),
+            DocumentFile(
+                ".agents/rules/csharp.md",
+                "CSharp",
+                ["LoadNow", "Rule"],
+                ["src/**/*.cs"],
+                "# CSharp\n\nCSharp rule.\n"));
+        var before = workspace.SnapshotHashes();
+
+        var result = await RunContextAsync(
+            workspace,
+            "rules",
+            "--for", "docs/readme.md",
+            "--format", "json",
+            "--detail", "standard");
+
+        AssertSuccessfulCommand(result);
+        using var document = JsonDocument.Parse(result.Output);
+        var root = document.RootElement;
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        Assert.Contains(".agents/rules/_rules.md", SourcePaths(root));
+        Assert.DoesNotContain(".agents/rules/csharp.md", SourcePaths(root));
+        Assert.False(root.GetProperty("data").TryGetProperty("pendingConditions", out _));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
@@ -507,6 +629,37 @@ public sealed class ContextApplyToIntegrationTests
             ? $"  applyTo: [{string.Join(", ", applyTo.Select(pattern => $"\"{pattern}\""))}]\n"
             : string.Empty;
         var content = $"---\nopen-forge:\n  description: {description}\n  tags: [{tagsText}]\n{applyToLine}---\n{body}";
+        return new SeedFile(path, content);
+    }
+
+    private static TemporaryWorkspace CreatePatternClosureWorkspace(
+        IReadOnlyList<string> entryPatterns,
+        string applyToExpression,
+        string body)
+        => CreateWorkspace(
+            LoaderEntry("Rules", "rules/_rules.md"),
+            EntryPointFile(
+                ".agents/rules/_rules.md",
+                "Rules",
+                ["Project"],
+                null,
+                Entry("CSharp", "csharp.md", ["LoadNow"], entryPatterns)),
+            DocumentFileWithExpression(
+                ".agents/rules/csharp.md",
+                "CSharp",
+                ["LoadNow", "Rule"],
+                applyToExpression,
+                body));
+
+    private static SeedFile DocumentFileWithExpression(
+        string path,
+        string description,
+        IReadOnlyList<string> tags,
+        string applyToExpression,
+        string body)
+    {
+        var tagsText = string.Join(", ", tags);
+        var content = $"---\nopen-forge:\n  description: {description}\n  tags: [{tagsText}]\n  applyTo: \"{applyToExpression}\"\n---\n{body}";
         return new SeedFile(path, content);
     }
 

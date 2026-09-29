@@ -74,8 +74,8 @@ Extensions are optional packages of files. A Library is a folder of shared files
 **Your agent can use it too.** The loader lists the main commands, so an agent
 with the CLI available can run `context` or `find` instead of opening files one
 by one. Repeat `context --for <path>` for every file in the task, including
-planned files. If paths are unknown, encountered conditions stay pending and
-`context` returns an incomplete result with exit code `3`. The CLI does not
+planned files. If paths are unknown, the conditions of tagged entries stay
+pending and `context` returns an incomplete result with exit code `3`. The CLI does not
 infer paths from Git or discover code dependencies. A file condition does not
 select hidden ancestors or control edit permission.
 

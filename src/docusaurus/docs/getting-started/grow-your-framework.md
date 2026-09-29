@@ -31,7 +31,7 @@ Then run `open-forge index`, or replace the `none` placeholder under `Entries` i
 - [Run the tests before calling a change done](testing.md) - #LoadNow #Directive #Testing
 ```
 
-The Directives entrypoint loads at startup, and this unconditioned entry is tagged `LoadNow`, so the rule is read at the start of every task. Directive files must carry that tag. An optional `applyTo` condition is checked before loading and limits which working files make a Directive applicable. [Loading and tags](../concepts/loading-and-tags.md#file-conditions) explains how the field works.
+The Directives entrypoint loads at startup, and the new entry is tagged `LoadNow`, which tells the agent to read the rule at the start of every task. Directive files must carry that tag. Without it, the agent would see only the one-line entry.
 
 ## Put it in the right place
 

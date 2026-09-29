@@ -21,7 +21,7 @@ Agents need enough information to select or skip a route before paying to read i
 
 ## Decision
 
-The linked entry description is the pre-load selection surface. Its path identifies the routed destination, tags provide cheap additional signals, and the selected body contains the complete role-specific meaning. The accepted `applyTo` file condition is an additional pre-load selection condition on the routed source; it is evaluated before opening that body.
+The linked entry description is the pre-load selection surface. Its path identifies the routed destination, tags provide cheap additional signals, and the selected body contains the complete role-specific meaning. The accepted `applyTo` file condition is a pre-load filter. The entry shows it, so it is checked before that body is opened.
 
 Descriptions expose enough trigger, purpose, or outcome to select or skip a route without opening it. A body may confirm its goal or purpose for direct readers, but it does not repeat a large selection contract.
 

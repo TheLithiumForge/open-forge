@@ -72,14 +72,18 @@ including for recognized native sources such as `SKILL.md`. Equivalent
 normalized dual declarations represent one condition; invalid or conflicting
 declarations do not become a preferred or combined value.
 
-`ApplyToPatternMatcher` parses declarations into slash-separated path segments.
-It uses `FileSystemName.MatchesSimpleExpression` with case-sensitive matching
-for ordinary segments and bounded dynamic programming over pattern and path
-segments for a standalone `**`. It does not enumerate files. Framework `Sources`
-uses `SourceApplicabilityEvaluator` to evaluate an ordered chain of typed
-conditions against normalized working paths. Patterns within one declaration
-are alternatives, each conditioned ancestor adds a condition on the same path,
-and any supplied path satisfying the complete chain makes the source match.
+`ApplyToPatternExpressionParser` parses each string declaration into atomic
+patterns by splitting top-level comma expressions. A list entry remains one
+atomic pattern after trimming. `ApplyToPatternMatcher.Parse` parses each
+atomic pattern into slash-separated path segments, and
+`ApplyToPatternMatcher.IsMatch` performs ordinal, case-sensitive atomic
+matching against normalized working paths. It uses bounded dynamic programming
+over pattern and path segments for a standalone `**` and does not enumerate
+files. Framework `Sources` uses `SourceApplicabilityEvaluator` to evaluate an
+ordered chain of typed conditions against normalized working paths. Patterns
+within one declaration are alternatives, each conditioned ancestor adds a
+condition on the same path, and any supplied path satisfying the complete
+chain makes the source match.
 `SourceApplicabilityResult` retains the state, condition provenance, and matching
 paths. A conditioned chain with no supplied paths is pending, while an invalid
 declaration remains invalid.

@@ -14,7 +14,6 @@ internal enum ContextInclusionReasonKind
     Loader,
     LoadNow,
     KeepInMind,
-    Applicability,
     AncestorRequired,
     SelectedSource,
     ScopeLocal,

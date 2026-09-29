@@ -8,10 +8,10 @@ Workspace: <workspace>
          cause: The registered Library projection is missing.
          owner: team-knowledge
 Startup context
-  Shipped by this CLI:   11 files, about 6.4k tokens
-  This workspace:        11 files, about 6.4k tokens
+  Shipped by this CLI:   11 files, about 6.1k tokens
+  This workspace:        11 files, about 6.1k tokens
   May load again later:  1 file, about 0.3k tokens
-All routed files: 14 files, about 9.0k tokens (startup is 71%)
+All routed files: 14 files, about 8.8k tokens (startup is 69%)
 Routes: 7 root categories, 12 Entries sections current
 Framework files: 15 current
 Libraries: team-knowledge, shared/team-knowledge -> .
@@ -49,6 +49,6 @@ Entries sections
 Library team-knowledge links
   .agents/resources/data.json  missing (expected ../../shared/team-knowledge/.agents/resources/data.json)
 Recovery data: none
-14 routed files, 11 startup files, 6361 startup tokens, 1 may-load-again files, 278 may-load-again tokens, 8965 all routed tokens, 70.955687554031066120081430045 startup share, 7 root categories, 12 current Entries sections, 15 current Framework files, 1 registered Libraries, 1 missing Library links, 1 warnings.
+14 routed files, 11 startup files, 6088 startup tokens, 1 may-load-again files, 278 may-load-again tokens, 8781 all routed tokens, 69.330638043447313726048458275 startup share, 7 root categories, 12 current Entries sections, 15 current Framework files, 1 registered Libraries, 1 missing Library links, 1 warnings.
   Synchronize the missing Library link.
 Next: open-forge library sync team-knowledge

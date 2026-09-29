@@ -320,15 +320,16 @@ internal static class RouteInitBinding
         var patterns = new SortedDictionary<string, ApplyToPattern>(StringComparer.Ordinal);
         foreach (var value in values)
         {
-            var parsed = ApplyToPatternMatcher.Parse(value);
+            var parsed = ApplyToPatternExpressionParser.Parse(value);
             if (parsed.Failure is { } failure)
             {
                 return new ApplyToBindingResult([], failure);
             }
 
-            var pattern = parsed.Pattern
-                ?? throw new InvalidOperationException("A successful applyTo parse did not contain a pattern.");
-            patterns.TryAdd(pattern.Text, pattern);
+            foreach (var pattern in parsed.Patterns)
+            {
+                patterns.TryAdd(pattern.Text, pattern);
+            }
         }
 
         return new ApplyToBindingResult(patterns.Values.ToArray(), null);

@@ -20,6 +20,9 @@ public sealed class MarkdownEntriesBlockTests
         var patterns = new[]
         {
             "**/*.cs",
+            "{src,test}/**/*.cs",
+            "[a-z].cs",
+            "{a[,]b,c}.cs",
             "folder,sub/has space.cs",
             "`literal`/name`",
             "`leading/name",

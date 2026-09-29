@@ -84,10 +84,6 @@ internal static class RouteInspectText
     internal static string LabelSupplyForToEvaluate()
         => "pending; supply --for paths to evaluate the conditions";
 
-    // @OpenForgeText route.inspect.label.working-path-matches-condition
-    internal static string LabelAWorkingPathMatchesItsEffectiveFileCondition()
-        => "a supplied working path matches the route's effective file condition";
-
     // @OpenForgeText route.inspect.title.invalid-working-path
     internal static string TitleInvalidWorkingPath()
         => "Invalid working path";

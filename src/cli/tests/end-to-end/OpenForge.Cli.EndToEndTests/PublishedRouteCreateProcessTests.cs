@@ -48,6 +48,50 @@ public sealed class PublishedRouteCreateProcessTests
         workspace.AssertNoLockInfrastructure();
     }
 
+    [Fact(DisplayName = "Published Route Create writes quoted atomic apply-to patterns and reports them in JSON"), Trait("Feature", "route-create"), Trait("Evidence", "EndToEnd")]
+    public async Task ApplyToExpressionWritesQuotedAtomicPatternsAndReportsJson()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedRouteCreateWorkspace.Create();
+        workspace.OwnApplicationCreatedTarget();
+        string[] arguments =
+        [
+            "route", "create", PublishedRouteCreateWorkspace.TargetId,
+            "--description", PublishedRouteCreateWorkspace.Description,
+            "--tag=Docs",
+            "--tag=Overview",
+            "--apply-to", "src/**/*.cs,**/*.{ts,tsx}",
+            "--responsibility", PublishedRouteCreateWorkspace.Responsibility,
+            "--format=json",
+            "--detail=standard",
+        ];
+
+        var applied = await PublishedProcessTestSupport.RunAsync(
+            target,
+            workspace.Path,
+            arguments,
+            workspace.ProcessEnvironment);
+
+        Assert.Equal(0, applied.ExitCode);
+        Assert.Equal(string.Empty, applied.StandardError);
+        using var document = JsonDocument.Parse(applied.StandardOutput);
+        var result = document.RootElement.GetProperty("data");
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        Assert.Equal(
+            ["**/*.{ts,tsx}", "src/**/*.cs"],
+            result.GetProperty("metadata").GetProperty("applyTo")
+                .EnumerateArray().Select(pattern => pattern.GetString()));
+        Assert.Contains(
+            "applyTo: [\"**/*.{ts,tsx}\", \"src/**/*.cs\"]",
+            await workspace.ReadTargetAsync(TestContext.Current.CancellationToken),
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "- applies to `**/*.{ts,tsx}`, `src/**/*.cs`",
+            await workspace.ReadParentAsync(TestContext.Current.CancellationToken),
+            StringComparison.Ordinal);
+        workspace.AssertPersistentExternalLock();
+    }
+
     [Fact(DisplayName = "Published Route Create applies exact bytes then repeats as a verified no-op"), Trait("Feature", "route-create"), Trait("Evidence", "EndToEnd")]
     public async Task ApplyCreatesExactTargetUpdatesOnlyParentInteriorAndConverges()
     {

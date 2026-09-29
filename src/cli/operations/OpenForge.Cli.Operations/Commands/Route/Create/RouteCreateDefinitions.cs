@@ -45,7 +45,7 @@ internal static class RouteCreateDefinitions
 
     internal static readonly CliOptionDefinition<string[]> ApplyTo = new(
         "--apply-to",
-        "Apply the destination to one workspace-relative path pattern; repeat for additional patterns.",
+        "Apply the destination using workspace-relative glob patterns. Separate patterns with commas or repeat this option.",
         CliOptionArity.ExactlyOne,
         [],
         ApplyToValueName);

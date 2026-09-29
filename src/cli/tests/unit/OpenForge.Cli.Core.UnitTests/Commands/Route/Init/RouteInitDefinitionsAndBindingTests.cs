@@ -162,7 +162,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
             new[] { "init", "memory/project-alpha/documents", "--tag=duplicate", "--tag=duplicate" },
             new[] { "init", "memory/project-alpha/documents", "--apply-to=../outside" },
             new[] { "init", "memory/project-alpha/documents", "--apply-to=/absolute.cs" },
-            new[] { "init", "memory/project-alpha/documents", "--apply-to=src/**.cs" },
+            new[] { "init", "memory/project-alpha/documents", "--apply-to=src\\file.cs" },
         })
         {
             var parse = route.Parse(arguments);
@@ -206,8 +206,8 @@ public sealed class RouteInitDefinitionsAndBindingTests
     }
 
     [Trait("Boundary", "Input")]
-    [Fact(DisplayName = "Route Init sorts distinct applyTo patterns ordinally and keeps commas inside one pattern"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
-    public void BindingNormalizesApplyToPatternsWithoutSplittingCommas()
+    [Fact(DisplayName = "Route Init splits applyTo expressions while preserving braces and escaped commas"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    public void BindingNormalizesApplyToExpressions()
     {
         var route = RouteBinding.CreateGroup();
         var symbols = RouteInitBinding.CreateSymbols(route);
@@ -215,8 +215,10 @@ public sealed class RouteInitDefinitionsAndBindingTests
         [
             "init",
             "memory/project-alpha/documents",
-            "--apply-to=src/*.ts",
-            "--apply-to=src/*.cs,src/*.md",
+            "--apply-to=src/*.ts,src/*.cs",
+            "--apply-to={src,test}/**/*.cs",
+            "--apply-to=src/report\\,legacy.cs",
+            "--apply-to=src/**.cs",
             "--apply-to:src/*.cs",
             "--apply-to=src/*.ts",
         ]);
@@ -230,7 +232,13 @@ public sealed class RouteInitDefinitionsAndBindingTests
 
         Assert.Null(bound.InvalidResult);
         Assert.Equal(
-            ["src/*.cs", "src/*.cs,src/*.md", "src/*.ts"],
+            [
+                "src/**.cs",
+                "src/*.cs",
+                "src/*.ts",
+                "src/report,legacy.cs",
+                "{src,test}/**/*.cs",
+            ],
             request.Metadata.ApplyTo.Select(pattern => pattern.Text));
     }
 

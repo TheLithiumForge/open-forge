@@ -131,12 +131,13 @@ its state is `invalid` and the existing metadata finding makes the result
 incomplete. Matching is evaluated from visible entries top-down. A condition
 does not select a hidden ancestor. An explicit or reference-selected nonmatching
 source can still be retrieved with the ancestors needed to inspect it; that
-inspection does not automatically load its children. A visible entry exposed by
-a loaded parent and matching the working set is included before work on its
-matching file even when it has no loading tag.
+inspection does not automatically load its children. A condition only filters. A
+conditioned entry is included only when a loading tag, an explicit source, or a
+followed link includes it and a working path satisfies its chain.
 
 If no working paths are supplied, the command defers encountered conditioned
-entries instead of treating them as matches or mismatches. `pendingConditions`
+entries that a loading tag would include, instead of treating them as matches or
+mismatches. `pendingConditions`
 contains each deferred `{ source, patterns }` pair, and the result is `incomplete`
 with exit 3 and a visible limitation. For example, parent `src/**` and child
 `**/*.cs` conditions apply together to `src/Order.cs`; neither `src/readme.md`

@@ -57,9 +57,9 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - Generated `Entries` remain navigation metadata. Detailed meaning comes from the routed destination or the authoritative source it identifies.
 - Loading and tags change visibility, timing, or classification without creating authority.
 - The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Its #Memory definition identifies self-growing Markdown state without moving Memory mechanics into the loader. Undefined tags remain routing and search signals.
-- Optional frontmatter `applyTo` conditions use case-sensitive, workspace-relative patterns and limit when context applies, not edit permission. The installed loader defines both accepted field locations, the glob grammar, same-file ancestor-condition matching, working-file handling, deferred unknown paths, reference inspection, and matching #KeepInMind refresh; it never lets a condition activate a hidden ancestor.
-- #LoadNow remains required on sibling Directive files. A matching `applyTo` condition may gate when their instructions apply without replacing the tag requirement.
-- Base files precede their adjacent overwrites, and entrypoints apply their child loading rules in listed order. Verify that condition handling preserves these relationships.
+- #LoadNow and #KeepInMind operate through loaded parent routes for both entrypoints and other files. Neither activates an unselected ancestor or scope. Read the tagged context when its parent loads, then refresh it at the defined boundaries while its scope remains active. Base files precede their adjacent overwrites, and entrypoints apply their child loading rules in listed order.
+- The loader defines the `applyTo` file condition once, in its File Conditions section. The condition only filters loading, refresh, and applicability by working file. It never selects an entry. Tag definitions and category entrypoints inherit this rule and do not restate it.
+- File Conditions keeps what an agent needs without the CLI: working and related files, ancestor matching, unknown paths, inspection, field locations, and pattern meaning. Value validation stays in the [syntax contract](../../../framework/markdown/syntax.md#file-conditions).
 - Every recovered result retains the authority and scope established by its `route` and content.
 - A user-owned `{name}.overwrite.md` is not an independent `route` and loads immediately after its base.
 - It is interpreted as part of the base source, within that source's role and scope, and inherits its route and loading behavior. It is neither indexed nor selected independently. Its precedence applies only to corresponding base content and does not override unrelated authority.
@@ -78,7 +78,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - The heading-owned `Entries` body is derived locally and may differ when the installed `root routes` differ.
 - Generated loader `entries` expose direct active root `entrypoints` only. They never flatten nested `routes`.
 - Generated links resolve relative to `.agents/loader.md`; CLI `route` identities remain workspace-relative.
-- The pre-change authored loader had 92 non-empty lines. Task 62 adds six lines for its accepted conditional-loading rules. Review future growth against that baseline and justify changes required by accepted contracts. Keep operational detail in routed sources instead of imposing a hard ceiling.
+- The authored loader, excluding generated `Entries`, has 101 non-empty lines: 92 before Task 62 and nine for its File Conditions section. Review future growth against that baseline and justify changes required by accepted contracts. Keep operational detail in routed sources instead of imposing a hard ceiling.
 
 ## Verification
 

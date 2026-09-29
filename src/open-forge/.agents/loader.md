@@ -78,28 +78,16 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 
 Defined tags keep the meanings below wherever they appear. They control loading or classify content, but do not grant authority. Other tags remain search and routing signals.
 
-Unconditioned entries stay on demand unless marked #LoadNow or #KeepInMind. A conditioned entry loads when its condition matches a working file, even without either tag. Loading still requires a loaded parent, and neither tags nor conditions activate an unselected ancestor or scope.
+Entries stay on demand unless marked #LoadNow or #KeepInMind. These tags act only through loaded parents. Neither activates an unselected ancestor or scope.
 
 Select the scope first, then follow its loading rules. Do not skip a required file because its individual description seems less relevant. Read each source once per loading or refresh pass. A later refresh or a changed source may require another read.
-
-An optional frontmatter `applyTo` condition limits when a source's context applies. It does not grant or restrict permission to edit files. Put it at the frontmatter root or under `open-forge:`. A quoted pattern or list of quoted patterns is valid. Missing means no condition; empty values and non-string patterns are invalid. If both locations declare it, equivalent lists count once and conflicting lists are invalid.
-
-Patterns use case-sensitive, workspace-relative paths with `/` separators. `*` and `?` match within one path segment. `**` is valid only as a whole segment and matches zero or more segments. Reject absolute or drive paths, backslashes, empty, `.` or `..` segments, controls, braces, brackets, leading `!`, embedded `**`, and unsupported syntax.
-
-Commas are literal filename characters. Patterns are not comma-split and have no escape syntax.
-
-Patterns in one list are alternatives. Conditions inherited from route ancestors combine with AND and must all match the same working file. A source applies when that full chain matches any working file. An absent local condition adds no restriction.
-
-A working file is an artifact the task investigates, creates, changes, deletes, renames, or reviews. Add necessary related files before working on them, and load their applicable context. For a rename, include both paths. Reading a source only to obtain context does not make it a working file or widen a condition. If a referenced code file is itself investigated or changed, include its path as a working file. When paths are unknown, defer conditioned loading and report it as pending.
-
-Before working on a matching file, read matching entries exposed by loaded parents. A condition never selects a hidden ancestor. Explicit source selection establishes its required route chain. Explicit selection or reference inspection may retrieve a nonmatching source for inspection, including its necessary route context, but does not activate its automatic children. Refresh matching #KeepInMind context at the usual checkpoints while its working paths remain in task scope.
 
 For example, a C# scope may contain a #LoadNow design file and an on-demand Windows scope. Selecting C# loads its design rules, not Windows. A #LoadNow file under Windows loads only after Windows is selected.
 
 #### Defined Tags
 
-- #LoadNow - Read the linked file, in listed order, when a loaded parent exposes it and its `applyTo` condition, if any, matches a working file. If it is an entrypoint, apply its child loading rules.
-- #KeepInMind - Read the tagged context when its parent loads and its `applyTo` condition, if any, matches a working file. Refresh it while the condition matches and its scope remains active.
+- #LoadNow - Read the linked file, in listed order, when a loaded parent exposes it. If it is an entrypoint, apply its child loading rules.
+- #KeepInMind - Read the tagged context when its parent loads, then refresh it while its scope remains active.
   - Timing: Refresh at task start or resume, after context restoration, and before handoff or closeout.
   - Order: Read the tagged file and its adjacent overwrite. For an entrypoint, apply its child loading rules in listed order.
   - Boundaries: Refresh only active scopes. Do not open file bodies just to discover tagged files.
@@ -119,6 +107,18 @@ For example, a C# scope may contain a #LoadNow design file and an on-demand Wind
 - Use #LoadNow only when the content is needed whenever its parent loads and missing it would cost more than reading it each time.
 - Narrow the scope before making specialized content mandatory. Do not mark a broad parent #LoadNow merely to expose an important descendant.
 - Use #KeepInMind only when work needs the content read again at the defined refresh points. It is not an importance label.
+
+#### File Conditions
+
+A source may list `applyTo` file patterns in its frontmatter, and its entry shows them after the tags. The condition only filters that source's context: it loads, refreshes, and applies only while a working file matches, whatever its tags or category. A condition never selects a source or its ancestors.
+
+- A working file is one the task investigates, creates, changes, deletes, renames, or reviews. Planned paths count, and a rename counts both paths. Reading a source for context does not make it a working file.
+- When necessary work reaches another file, add it to the working files and load its context. A condition does not grant or restrict permission to edit files.
+- Patterns in one list are alternatives. Conditions from route ancestors also apply, and one working file must match them all.
+- While the working files are unknown, report conditioned #LoadNow and #KeepInMind entries as pending, not as matches or mismatches.
+- Retrieving a nonmatching source for inspection does not make it apply or load its children.
+- Put `applyTo` at the frontmatter root or under `open-forge:`. A quoted string may hold several patterns separated by commas. Each entry of a quoted list is one pattern.
+- Patterns are case-sensitive and relative to the workspace root, with `/` separators. `*` and `?` match within one path segment, and a whole `**` segment matches zero or more segments. `{a,b}` lists alternatives, and `[abc]` matches one listed character. Write `**/*.py` to match at any depth.
 
 ### CLI
 

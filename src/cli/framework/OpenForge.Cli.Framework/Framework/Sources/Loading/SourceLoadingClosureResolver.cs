@@ -14,6 +14,14 @@ internal sealed class SourceLoadingClosureResolver
     internal SourceLoadingClosureResolution Resolve(SourceLoadingClosureRequest request)
         => new ClosureBuilder(request).Build();
 
+    internal static bool ShouldLoadAutomatically(bool hasLoadingTag, SourceApplicabilityState? applicability)
+        => applicability switch
+        {
+            null or SourceApplicabilityState.Unconditioned or SourceApplicabilityState.Matched => hasLoadingTag,
+            SourceApplicabilityState.Unmatched or SourceApplicabilityState.Pending or SourceApplicabilityState.Invalid => false,
+            _ => throw new ArgumentOutOfRangeException(nameof(applicability), applicability, "The source applicability state is not defined."),
+        };
+
     private sealed class ClosureBuilder
     {
         private readonly List<string> _continuityPaths = [];
@@ -119,16 +127,6 @@ internal sealed class SourceLoadingClosureResolver
                         visible.Applicability);
                 }
 
-                if (frame.AddSelections
-                    && visible.Applicability is { State: SourceApplicabilityState.Matched }
-                    && !visible.LoadNow
-                    && !visible.KeepInMind)
-                {
-                    addedToSelection |= _selection.Add(visible.Target.Path,
-                        new SourceLoadingClosureReason(SourceLoadingClosureReasonKind.Applicability, frame.Source.Path),
-                        visible.Applicability);
-                }
-
                 var isContinuity = frame.IsContinuity || visible.KeepInMind;
                 var addedToContinuity = isContinuity && AddContinuity(visible.Target.Path);
                 if (visible.Target.IsEntrypoint
@@ -169,24 +167,12 @@ internal sealed class SourceLoadingClosureResolver
                 keepInMind &= target.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal);
             }
 
-            var applicability = ReadApplicability(target);
-            var autoSelect = applicability?.State switch
-            {
-                SourceApplicabilityState.Matched => true,
-                SourceApplicabilityState.Unmatched
-                    or SourceApplicabilityState.Pending
-                    or SourceApplicabilityState.Invalid => false,
-                SourceApplicabilityState.Unconditioned => loadNow || keepInMind,
-                null => loadNow || keepInMind,
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(target),
-                    applicability.State,
-                    "The source applicability state is not defined."),
-            };
+            var applicability = ReadApplicability(target, reportPending: loadNow || keepInMind);
+            var autoSelect = ShouldLoadAutomatically(loadNow || keepInMind, applicability?.State);
             return new VisibleEntry(target, loadNow, keepInMind, autoSelect, applicability);
         }
 
-        private SourceApplicabilityResult? ReadApplicability(SourceLoadingClosureSource target)
+        private SourceApplicabilityResult? ReadApplicability(SourceLoadingClosureSource target, bool reportPending)
         {
             if (!_request.EvaluateApplicability)
             {
@@ -213,7 +199,7 @@ internal sealed class SourceLoadingClosureResolver
                 case SourceApplicabilityState.Pending:
                     foreach (var condition in result.Conditions)
                     {
-                        if (condition.Metadata.State == ApplyToMetadataState.Valid
+                        if (reportPending && condition.Metadata.State == ApplyToMetadataState.Valid
                             && _pendingConditionSources.Add(condition.CanonicalSourcePath))
                         {
                             _pendingConditions.Add(condition);

@@ -62,7 +62,7 @@ open-forge route update <source-reference>
   [--description <text>]
   [--responsibility <text>]
   [--tag=<tag>]...
-  [--apply-to <pattern>]...
+  [--apply-to <glob>]...
   [--clear-apply-to]
   [--template <template-reference>]
   [--dry-run]
@@ -78,10 +78,14 @@ the existing source and Template reference grammar, exact paths, quoting,
 collisions, and overwrite identity.
 
 `--description`, `--responsibility`, and `--tag` patch destination metadata.
-`--apply-to` replaces the destination's complete local pattern set.
+`--apply-to` replaces the destination's complete local `applyTo` list.
 `--clear-apply-to` removes its local declarations. They are mutually exclusive.
 `--template` selects optional starting body content. `--dry-run` is the
 write-policy preview.
+
+The `--apply-to` option description is:
+
+`Replace the complete local applyTo list. Separate patterns with commas or repeat this option.`
 
 At least one metadata operation (`--description`, `--responsibility`, `--tag`,
 `--apply-to`, or `--clear-apply-to`) or `--template` is required. The command
@@ -111,7 +115,7 @@ collision, containment, and overwrite rules remain in [CLI Source References](..
 | `--description <text>`            | Selection of destination metadata  | One description value; empty or whitespace-only is invalid                                     | The destination `description` remains unchanged    | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
 | `--responsibility <text>`         | Selection of destination metadata  | One responsibility value; whitespace-only is invalid; exact `""` removes the key               | The destination `responsibility` remains unchanged | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
 | `--tag=<tag>`                     | Selection of destination metadata  | One canonical tag without the `#` prefix                                                       | The destination tag list remains unchanged         | Repeatable. Supplied values replace the complete tag list in command-line order; duplicate exact tags and an empty supplied set are invalid. |
-| `--apply-to <pattern>`            | Selection of destination metadata  | One workspace-relative pattern                                                               | The destination's local declarations remain unchanged | Repeatable, one pattern per occurrence. Values form an ordinal-distinct normalized set. Conflicts with `--clear-apply-to`.                  |
+| `--apply-to <glob>`         | Selection of destination metadata  | One workspace-relative glob expression                                                       | The destination's local declarations remain unchanged | Repeatable. Each occurrence is one expression. Atomic patterns are appended in first-seen order with duplicates removed. Conflicts with `--clear-apply-to`. |
 | `--clear-apply-to`                | Selection of destination metadata  | Boolean flag with no value                                                                    | No local declaration is removed                    | Singleton. Conflicts with `--apply-to`. Removes only the target's local declarations.                                                       |
 | `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `.agents/...` path for an existing routed Markdown Template | No Template body is selected                       | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                      |
 | `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                            | Repetition is accepted and idempotent; it does not add authority or precedence.                                                              |
@@ -137,9 +141,12 @@ patch rules are defined in [Metadata Patch](#metadata-patch).
 
 ### Applicability flag effects
 
-`--apply-to` replaces the full local `applyTo` set on the target. It does not
-replace or copy a condition from an ancestor. `--clear-apply-to` removes local
-declarations only. Omitting both flags preserves them. Supplying both is invalid.
+`--apply-to` replaces the full local `applyTo` list on the target. Each
+occurrence is one expression. The command parses each occurrence once, flattens
+its atomic patterns, and retains their first-seen order while removing
+duplicates. It does not replace or copy a condition from an ancestor.
+`--clear-apply-to` removes local declarations only. Omitting both flags
+preserves them. Supplying both is invalid.
 
 For example, set or clear local patterns with:
 
@@ -222,7 +229,7 @@ metadata:
 - Repeated `--tag=<tag>` values replace the complete tag list in argument order.
 - `--responsibility <text>` adds or replaces `responsibility`.
 - `--responsibility ""` removes the `responsibility` key.
-- `--apply-to <pattern>` values replace the complete local `applyTo` pattern set.
+- `--apply-to <glob>` values replace the complete local `applyTo` list.
 - `--clear-apply-to` removes the target's local `applyTo` declaration or
   declarations and leaves ancestor conditions unchanged.
 
@@ -235,12 +242,15 @@ the `#` prefix. Empty tags, duplicate exact tags, and a supplied empty tag set
 are invalid. `description` and tags cannot be removed because the source must
 retain the metadata required for indexing.
 
-`applyTo` accepts one quoted scalar pattern or a quoted-string list in flow or
-block form, at the frontmatter root or in the scoped `open-forge` mapping.
-Patterns use the workspace-relative grammar in the [route create Interface
+`applyTo` accepts one quoted expression or a quoted-string list in flow or block
+form, at the frontmatter root or in the scoped `open-forge` mapping. A scalar
+string is parsed as one expression. Each list entry is one atomic pattern and is
+not split at commas. Expressions and atomic patterns use the workspace-relative
+grammar in the [route create Interface
 Contract](../create/interface.md#destination-metadata). The command reads both
 locations when present, including root `applyTo` when a scoped mapping exists.
-Equivalent normalized declarations represent one local set. A set operation
+Equivalent declarations compare the sets of atomic pattern texts and represent
+one local set. A set operation
 updates each existing declaration in place and preserves its location. A clear
 removes every local declaration. Conflicting declarations are invalid and block
 mutation. When no declaration exists and a set is requested, the command adds a

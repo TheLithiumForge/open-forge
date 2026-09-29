@@ -243,11 +243,9 @@ relationship.
 
 The resulting typed reason is paired with the actual parent or event needed by
 the human renderer. The renderer receives ordinary event wording rather than
-internal labels. When a supplied path matches the effective condition, record
-reason kind `matching-file-condition`, event `working-path-matches`, and human
-text `a supplied working path matches the route's effective file condition.`
-This applicability reason does not establish task-start membership or imply
-automatic reading. These mechanics satisfy the public [Automatic Reading
+internal labels. A matching `applyTo` condition adds no reading reason, because
+a condition only filters. It removes loading-tag reasons when no supplied path
+matches. The route's applicability facts report the match itself. These mechanics satisfy the public [Automatic Reading
 Trigger](interface.md#automatic-reading-trigger) boundary.
 
 A detached entrypoint has no Loader-rooted automatic trigger. Its local

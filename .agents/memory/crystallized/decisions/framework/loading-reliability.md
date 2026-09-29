@@ -16,7 +16,7 @@ The Framework needed reliable baseline and continuity context without loading ev
 
 Reliability-critical context is read early when its route is loaded. Conditional context remains cheap to select, cheap to skip, and cheap to recover from.
 
-Route selection establishes scope before routed content is read. An entrypoint may declare an `applyTo` file condition that narrows this pre-load selection. A matching condition allows the ordinary loading rules to apply; it does not add a second applicability gate inside the source body. The mandatory #LoadNow rule for Directives remains in force after the route and file condition establish scope. #KeepInMind also operates through loaded parent routes. Both entrypoints and records enter and refresh context within active scopes. The tag does not activate an unselected ancestor or scope.
+Route selection establishes scope before routed content is read. Directives use ordinary #LoadNow traversal after their route establishes scope, without a second applicability gate inside each Directive. #KeepInMind also operates through loaded parent routes. Both entrypoints and records enter and refresh context within active scopes. The tag does not activate an unselected ancestor or scope. An optional `applyTo` condition filters this selection by working file before any body is read, so it adds no gate inside a body either.
 
 Loading instructions address the agent directly. Deterministic tools may batch the same plain-file traversal, but they do not create a separate loading contract or enforce reasoning.
 

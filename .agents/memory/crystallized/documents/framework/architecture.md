@@ -146,11 +146,11 @@ These primitives are distinct because they answer different questions. Their def
 
 ### Routing
 
-Routing moves from the canonical loader through small `entrypoints` that expose direct children. Each `description` supports pre-load selection, relative links identify destinations, and tags add compact loading, type, scope, and search signals. An entrypoint may also declare an `applyTo` file condition that narrows its pre-load selection. Selected descendants inherit loaded ancestor `Axioms`, while unselected siblings remain outside active context.
+Routing moves from the canonical loader through small `entrypoints` that expose direct children. Each `description` supports pre-load selection, relative links identify destinations, and tags add compact loading, type, scope, and search signals. A source may also declare an `applyTo` file condition, which its entry shows for pre-load selection. Selected descendants inherit loaded ancestor `Axioms`, while unselected siblings remain outside active context.
 
 Work may select several scopes without merging them. Each keeps its own `route` chain and authority, explicit relationships connect them, and conflicts about a shared result are resolved by clear direction or the authoritative source for that result rather than by path depth or load order.
 
-Loading determines when routed context becomes visible, not what authority it has. A declared `applyTo` condition is evaluated before opening a routed source and does not change edit permission or authority. Baseline and continuity context follow loaded parent routes when their conditions match. Continuity content is refreshed while its scope remains active. Other context remains selected on demand. The [loading and continuity contract](routing/loading.md) defines how conditions combine along a route chain.
+Loading determines when routed context becomes visible, not what authority it has. Baseline and continuity context both follow loaded parent routes. Continuity content is refreshed while its scope remains active. Other context remains selected on demand. An `applyTo` condition filters all three by the files a task works on, as the [loading contract](routing/loading.md#file-conditions) defines.
 
 The detailed current contracts are separated by responsibility:
 

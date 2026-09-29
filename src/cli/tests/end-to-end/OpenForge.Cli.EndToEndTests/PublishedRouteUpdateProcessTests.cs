@@ -165,6 +165,63 @@ public sealed class PublishedRouteUpdateProcessTests
         workspace.AssertPersistentExternalLock();
     }
 
+    [Fact(DisplayName = "Published Route Update comma-separated apply-to replaces the list and refreshes Entries"),
+     Trait("Feature", "route-update"), Trait("Evidence", "EndToEnd")]
+    public async Task CommaSeparatedApplyToReplacesListAndRefreshesGeneratedEntry()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedRouteUpdateWorkspace.Create();
+        var initial = await PublishedProcessTestSupport.RunAsync(
+            target,
+            workspace.Path,
+            [
+                "route", "update", PublishedRouteUpdateWorkspace.TargetId,
+                "--apply-to", "**/*.cs",
+                "--apply-to", "docs/*.md",
+            ],
+            workspace.ProcessEnvironment);
+        Assert.Equal(0, initial.ExitCode);
+        Assert.Equal(string.Empty, initial.StandardError);
+
+        var replacement = await PublishedProcessTestSupport.RunAsync(
+            target,
+            workspace.Path,
+            [
+                "route", "update", PublishedRouteUpdateWorkspace.TargetId,
+                "--apply-to", "src/**/*.cs,docs/*.md",
+                "--format=json",
+            ],
+            workspace.ProcessEnvironment);
+        Assert.Equal(0, replacement.ExitCode);
+        Assert.Equal(string.Empty, replacement.StandardError);
+        using var document = JsonDocument.Parse(replacement.StandardOutput);
+        var change = Assert.Single(document.RootElement.GetProperty("data")
+            .GetProperty("changes").EnumerateArray());
+        Assert.Equal("applyTo", change.GetProperty("field").GetString());
+        Assert.Equal(
+            new[] { "**/*.cs", "docs/*.md" },
+            change.GetProperty("beforeValues").EnumerateArray()
+                .Select(value => value.GetString()));
+        Assert.Equal(
+            new[] { "src/**/*.cs", "docs/*.md" },
+            change.GetProperty("afterValues").EnumerateArray()
+                .Select(value => value.GetString()));
+        Assert.Contains(
+            "applyTo: [\"src/**/*.cs\", \"docs/*.md\"]",
+            await workspace.ReadTargetAsync(TestContext.Current.CancellationToken),
+            StringComparison.Ordinal);
+        var parent = await workspace.ReadParentAsync(TestContext.Current.CancellationToken);
+        Assert.Contains(
+            "- [Before overview](overview.md) - #Before #Memory - applies to `docs/*.md`, `src/**/*.cs`",
+            parent,
+            StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "- [Before overview](overview.md) - #Before #Memory - applies to `**/*.cs`, `docs/*.md`",
+            parent,
+            StringComparison.Ordinal);
+        workspace.AssertPersistentExternalLock();
+    }
+
     [Fact(DisplayName = "Published Route Update refuses an ambiguous target without writes"), Trait("Feature", "route-update"), Trait("Evidence", "EndToEnd")]
     public async Task AmbiguousTargetRefusesWrites()
     {

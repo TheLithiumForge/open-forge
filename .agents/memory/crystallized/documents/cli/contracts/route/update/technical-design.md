@@ -68,11 +68,12 @@ changing the request or result schema.
 
 ## `applyTo` source-span patch
 
-The repeated `--apply-to` values use ordinary typed `System.CommandLine`
-binding and Framework `Documents` `ApplyToPatternMatcher`. The existing
-`CLI-EDGE-016` recognizer remains limited to attached-empty responsibility
-input. Route Update reads root and scoped `applyTo` declarations through
-`ApplyToMetadataReader` and shared typed YAML facts, which retain each
+The repeated `--apply-to` occurrences use ordinary typed `System.CommandLine`
+binding. Binding supplies atomic patch values through
+`ApplyToPatternExpressionParser`, and planning never splits them again. The
+existing `CLI-EDGE-016` recognizer remains limited to attached-empty
+responsibility input. Route Update reads root and scoped `applyTo` declarations
+through `ApplyToMetadataReader` and shared typed YAML facts, which retain each
 declaration's location and source span. It validates both locations before
 planning an edit.
 
@@ -113,8 +114,10 @@ depth forms. It adds no raw argument inspection.
 Applicability evidence must also cover root and scoped declarations, equivalent
 dual updates and clears, conflicts, malformed patterns, bounded exact-span
 insertion, preservation of unrelated bytes, and failure before effects when a
-safe span cannot be established. It must confirm that the new flags stay on the
-ordinary parser path and do not expand `CLI-EDGE-016`.
+safe span cannot be established. It must confirm that binding supplies atomic
+patch values through `ApplyToPatternExpressionParser` once and that planning
+does not split them again. The new flags stay on the ordinary parser path and
+do not expand `CLI-EDGE-016`.
 
 ## Related Current Sources
 

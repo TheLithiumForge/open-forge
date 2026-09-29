@@ -18,6 +18,7 @@ Ideas preserve possibilities, experiments, open questions, and options worth exp
 
 ## Entries
 
+- [Explore a way to exclude files from an applyTo condition now that a leading ! is an ordinary glob character](applyto-exclusions.md) - #Memory #Idea #Contextual #Candidate #Framework #Loading #Glob #Frontmatter #CLI
 - [Explore a read-only browser WebAssembly CLI playground backed by seeded Open Forge workspaces in documentation](cli-browser-wasm-playground.md) - #Memory #Idea #Contextual #Candidate #CLI #WebAssembly #Browser #Documentation #Docusaurus #Testing
 - [Define the accepted `--verbose` diagnostic content after ordinary human-readable failures and dogfood evidence exist](cli-debug-diagnostics.md) - #Memory #Idea #Contextual #Candidate #CLI #Debug #Diagnostics #Dogfood #Brownfield
 - [Explore additional thin package-manager wrappers after canonical native artifacts and the first npm wrapper ship](cli-distribution-channels.md) - #Memory #Idea #Contextual #Candidate #CLI #Distribution #Package #Bundle #Executable #Dogfood

@@ -138,18 +138,19 @@ internal static class RouteCreateRequestBinder
         {
             foreach (var value in input.ApplyTo)
             {
-                var parsed = ApplyToPatternMatcher.Parse(value);
+                var parsed = ApplyToPatternExpressionParser.Parse(value);
                 if (parsed.Failure is { } failure)
                 {
                     metadataProblems.Add($"--apply-to pattern '{value}' is invalid workspace-relative glob syntax ({failure})");
                     continue;
                 }
 
-                var pattern = parsed.Pattern
-                    ?? throw new InvalidOperationException("A valid apply-to parse requires a pattern.");
-                if (!applyToPatterns.Any(existing => string.Equals(existing.Text, pattern.Text, StringComparison.Ordinal)))
+                foreach (var pattern in parsed.Patterns)
                 {
-                    applyToPatterns.Add(pattern);
+                    if (!applyToPatterns.Any(existing => string.Equals(existing.Text, pattern.Text, StringComparison.Ordinal)))
+                    {
+                        applyToPatterns.Add(pattern);
+                    }
                 }
             }
         }

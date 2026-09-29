@@ -406,8 +406,8 @@ and fixtures are under `src/cli/tests/`.
 
 Task 62 “Glob-scoped loading” (phase 3/3): milestone 6/6.
 
-The accepted implementation horizon is complete in branch `task62-applyto` at
-`C:/Users/Tedy/.codex/worktrees/task62-applyto/open-forge`. Loader rules, optional
+The accepted implementation horizon is complete in branch `task62-applyto` in
+its isolated worktree. Loader rules, optional
 metadata, Entries, authoring, filtering, inspection, validation, public guides,
 contracts and diagrams agree with the verified result. The documentation site
 type check and production build also passed. The one independent review and its
@@ -422,3 +422,84 @@ were not added to Task 62.
 Final review disposition from `/root/luna_max_final_review`: PASS after
 correction recheck and all six gate receipts. Final targeted Index preview
 completed with zero changes. Final `git diff --check` passed.
+
+## Post-release wording follow-up
+
+On 2026-09-29 the maintainer judged the released wording broken: it patched the
+condition into #LoadNow, #KeepInMind, the on-demand rule, the Directives Axioms
+and the Directive template instead of stating it once. Branch `applyto-wording`
+restores those sources to their pre-Task 62 text and defines `applyTo` once in a
+loader File Conditions section, as a filter on loading, refresh and
+applicability plus a selection signal for visible matching entries. Framework
+contracts, public guides and the framework map follow the same shape. No CLI
+behavior changed.
+
+Open decision: an inherited condition currently makes untagged descendants load.
+`SourceApplicabilityEvaluator` counts ancestor clauses, so `ReadVisible` in
+`SourceLoadingClosureResolver` auto-selects every visible untagged entry below
+a conditioned entrypoint for a matching file, recursively. The accepted analysis
+says a matching entrypoint's children follow their normal loading rules. The
+recommended resolution is that only a source's own condition selects it, while
+inherited conditions only filter. That needs a loader phrase, one CLI branch,
+its Context contract and tests. The shipped wording describes current behavior
+until the maintainer decides.
+
+## Glob-dialect alignment horizon
+
+On 2026-09-29 the maintainer asked to align `applyTo` with the glob syntax of
+APM and Copilot rather than a locally invented subset, and to implement it
+through parallel workers. An independent council and the Overseer found that
+the tools share comma-separated lists, brace alternatives and character classes,
+but disagree on anchoring and case. The [frozen plan](glob-dialect-plan.md)
+adopts the shared syntax and keeps workspace-root anchoring and case-sensitive
+matching.
+
+Exception record: the Task 62 BCL-only matcher is extended into a bounded
+expression parser and glob matcher. No .NET library supplies the syntax. The
+maintainer's direction to implement the standard is the acceptance. The plan
+records scope, evidence and the reconsideration condition.
+
+Waves A, B and C are integrated on branch `applyto-wording`. One semantic
+owner implemented the expression parser and matcher, and 36 single-file
+workers updated binders, tests and contracts. Workers could not write under
+`.agents` because of the sandbox ACL, so they returned diffs. The Overseer
+applied three malformed ones by hand and resolved the `{a\,b,c}` question in
+favour of APM's decode-before-braces order.
+
+Final gate receipt at `bd009e9f804f2c4089cb28627836ed43c5d5be46` on Windows
+x64: `npm run check:dotnet` passed. `npm run test -- --no-restore` passed Unit
+3682, Integration 2522 with 17 platform exclusions, and Public 259.
+`npm run build:native -- --rid win-x64 --no-restore` passed.
+`npm run test:built -- --rid win-x64` passed all six modes with the same counts,
+including native-integration 2522, native-public 259 and public-native 259. The
+delivery script used npm's bundled `semver` 7.8.1 through a temporary local link
+because the checkout's `node_modules` predates that dependency. Status
+snapshots changed only in size metrics after the loader and Skill edits.
+
+Task 62 “Glob-scoped loading” (phase 3/3): milestone 4/5. M5 maintainer review is active.
+
+## Filter-only follow-up
+
+The maintainer decided on 2026-09-29 that `applyTo` is a filter, never a
+trigger, and that a leading `!` is a literal glob character. One shared
+`SourceLoadingClosureResolver.ShouldLoadAutomatically` decision now serves
+startup loading, Context and Route Inspect, the `Applicability` inclusion
+reason and Route Inspect's matching-file-condition reading reason are removed,
+and pending conditions are reported only for entries a loading tag would load.
+An independent council confirmed that `find --for` already searches the whole
+eligible inventory, including sources below unselected scopes, so Find stays
+broad discovery and Context is the filtered pack. Find docs, the CLI guide and
+the CLI Skill now show the discover-then-select workflow, and one journey test
+proves it. The maintainer's wish for file exclusions is recorded as an
+[Emerging idea](../../../../emerging/ideas/applyto-exclusions.md).
+
+Worker notes: Astra high hit capacity twice, so the core implementation moved to
+Astra medium per the workspace roster in the worker-watch Skill.
+
+Final gate receipt at `b5839b9a00b0ea83e7db4308a57fc5502e824e38` on Windows
+x64: `npm run check:dotnet` passed. `npm run test -- --no-restore` passed Unit
+3689, Integration 2529 with 17 platform exclusions, and Public 259.
+`npm run build:native -- --rid win-x64 --no-restore` passed.
+`npm run test:built -- --rid win-x64` passed all six modes with the same counts.
+
+Task 62 “Glob-scoped loading” (phase 2/2): milestone 2/3. M3 maintainer review is active.

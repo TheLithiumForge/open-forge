@@ -21,9 +21,7 @@ A category Axiom belongs with the route whose meaning it defines. A Directive be
 
 ## Routing And Activation
 
-Routing establishes a Directive's positive scope before its binding contents become active. A Directive on the selected active route chain applies within that scope. If its frontmatter declares `applyTo`, the condition further determines which working files make the Directive applicable; it is checked before the Directive is loaded. Directive files remain mandatory #LoadNow entries within their scope. The condition gates that loading on file applicability; it does not grant or restrict permission to edit files.
-
-Merely inspecting a Directive as source, history, an example, or an inactive alternative does not activate it. Explicitly retrieving a nonmatching Directive for inspection also does not activate its automatic children. The [routing loading contract](../routing/loading.md#file-applicability-and-working-paths) defines condition inheritance, pending selection when working paths are unknown, and inspection boundaries.
+Routing establishes a Directive's positive scope before its binding contents become active. A Directive on the selected active route chain applies within that scope. Merely inspecting a Directive as source, history, an example, or an inactive alternative does not activate it.
 
 This separation makes mandatory behavior discoverable without loading every possible instruction. The installed [Directives entrypoint](../../../../../directives/_directives.md) owns the exact loading and direct-sibling-file contract.
 

@@ -33,7 +33,7 @@ public sealed class SourceApplicabilityEvaluatorTests
     {
         var conditions = new[]
         {
-            Condition("_root.md", "src/**/*.cs"),
+            Condition("_root.md", "{src,test}/[a-z]*.cs"),
         };
 
         var result = SourceApplicabilityEvaluator.Evaluate(conditions, []);
@@ -100,6 +100,25 @@ public sealed class SourceApplicabilityEvaluatorTests
         Assert.Equal(SourceApplicabilityState.Matched, result.State);
         Assert.Equal(conditions, result.Conditions);
         Assert.Equal(["src/file.cs"], result.MatchingPaths);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "A planned path must satisfy brace and class patterns on every ancestor")]
+    public void MatchesBraceAndClassPatternsOnTheSamePlannedPath()
+    {
+        var conditions = new[]
+        {
+            Condition("_root.md", "{src,test}/[a-z]*.cs"),
+            Condition("src/_src.md", "src/[a-z]*.cs"),
+        };
+
+        var result = SourceApplicabilityEvaluator.Evaluate(
+            conditions,
+            ["src/planned.cs", "test/planned.cs"]);
+
+        Assert.Equal(SourceApplicabilityState.Matched, result.State);
+        Assert.Equal(conditions, result.Conditions);
+        Assert.Equal(["src/planned.cs"], result.MatchingPaths);
     }
 
     [Trait("Boundary", "Processing")]

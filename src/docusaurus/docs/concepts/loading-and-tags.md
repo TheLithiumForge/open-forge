@@ -1,6 +1,6 @@
 ---
 title: Loading and tags
-description: How loading tags and file conditions work together, and how to choose between on demand, LoadNow, and KeepInMind.
+description: What the defined tags mean, which ones control loading, how applyTo narrows loading to matching files, and how to choose between on demand, LoadNow, and KeepInMind.
 ---
 
 # Loading and tags
@@ -23,28 +23,28 @@ open-forge:
 - **description** helps a reader decide whether to open the file. It becomes the text of the file's entry.
 - **responsibility** (optional) helps an editor decide what belongs in the file. It creates no authority or loading behavior.
 - **tags** are bare values without `#`. In `Entries` and prose they're written with `#`, like `#LoadNow`.
-- **applyTo** (optional) lists the workspace file patterns that make the source applicable to task files. It can appear at the frontmatter root or under `open-forge:`. Both locations mean the same thing. Use a quoted string for one pattern or a list of quoted strings.
+- **applyTo** (optional) narrows the file to tasks that work on matching files. [File conditions](#file-conditions) explains how.
 
 ## Loading tags
 
-Without a loading tag or an effective file condition, an entry stays **on demand**. There are exactly two loading tags:
+Entries stay **on demand** unless a loading tag says otherwise. There are exactly two loading tags:
 
 | Tag           | Behavior                                                                                                                                                               |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `#LoadNow`    | Read the file when its already-loaded parent exposes it, in listed order, subject to any file condition. If it's an entrypoint, apply its own children's loading rules too. |
-| `#KeepInMind` | Read it when its parent loads, subject to any file condition, then refresh it at task start or resume, after context restoration, and before handoff or closeout while its scope remains active. |
+| `#LoadNow`    | Read the file when its already-loaded parent exposes it, in listed order. If it's an entrypoint, apply its own children's loading rules too.                           |
+| `#KeepInMind` | Read it when its parent loads, then refresh it at task start or resume, after context restoration, and before handoff or closeout, for as long as its scope is active. |
 
-Loading tags and matching `applyTo` conditions act only through entries exposed by a parent that's already loaded. Neither can pull in a scope nobody selected.
+Loading tags act only through a parent that's already loaded. They can't pull in a scope nobody selected.
 
 ### Choosing a loading behavior
 
-- **On demand** (no loading tag and no effective file condition) is the default. Use it for content that should open only when the task selects it by relevance.
-- **`#LoadNow`** is for content whose omission would cost more than reading it whenever it applies. Every Directive file in a Directives folder must carry it. An unconditioned Directive loads with its parent; check an `applyTo` condition before loading a conditioned Directive.
+- **On demand** (no tag) is the default. Use it for anything optional.
+- **`#LoadNow`** is for content needed every time its parent loads, where missing it would cost more than reading it each time. Every Directive file in a Directives folder must carry it, because Directives are mandatory within their scope.
 - **`#KeepInMind`** is for continuity that must be re-read at the refresh points. The Emerging Memory entrypoint uses it, so the agent is prompted to review unsettled findings before they're lost. It's not an importance label. Like `#LoadNow`, it acts only through a loaded parent: an active Checkpoint from the [Planning](../extensions/planning.md) Extension is tagged `#KeepInMind`, but it's refreshed only once its Checkpoints category has been opened.
 
 ## File conditions
 
-A routed source can use the optional `applyTo` field to limit when its context applies to files in a task. For example, this condition applies the Directive to C# files:
+A routed file can list `applyTo` patterns to narrow it to the files a task works on. For example, this Directive applies only to C# files:
 
 ```yaml
 open-forge:
@@ -53,22 +53,23 @@ open-forge:
   applyTo: ["**/*.cs"]
 ```
 
-Patterns in one field are alternatives. Conditions on a source and its selected route ancestors combine: the same working file must match every condition in that chain. The source applies when at least one working file matches the whole chain. A child with no local condition inherits its ancestors' conditions. Patterns use workspace-relative paths with `/` separators. `*` and `?` match within one path segment. `**` must be a whole segment and matches zero or more segments. Matching is case-sensitive on every platform.
+`applyTo` only filters what a loading tag or relevance would load. It never selects or loads a file by itself. When the task works on a matching file, the source behaves as it would without a condition. A C# rule that should load automatically therefore uses `#LoadNow` with `applyTo`. The entry shows the patterns after its tags, so the agent can check them without opening the file. An overwrite companion follows its base.
 
-Check conditions on entries exposed by loaded parents before loading them. A visible matching entry opens before work on its file, even if it has no loading tag. A visible nonmatching entry does not load automatically. An unconditioned entry keeps its existing behavior: `#LoadNow` and `#KeepInMind` load it through its parent, and an untagged entry stays on demand. On a conditioned entry, `#LoadNow` remains valid but adds no extra first-read behavior after a match. `#KeepInMind` still adds its usual refreshes while a matching path remains in the task. An unconditioned `#KeepInMind` source keeps its existing refresh behavior when no file paths are supplied.
+- **Working files** are the files the task investigates, creates, changes, deletes, renames, or reviews, including planned files that don't exist yet. A rename counts both paths. Reading a Directive or following a link doesn't make that Markdown file a working file.
+- **Related files join as the work reaches them.** If a C# change also needs its TypeScript caller updated, add the caller and load its context. The C# rules still cover only the C# file. A condition never grants or restricts permission to edit.
+- **Ancestors combine.** Patterns in one list are alternatives. Conditions on parent entrypoints also apply, and the same working file must match all of them.
+- **Hidden scopes stay hidden.** A matching file never opens an ancestor nobody selected. If `directives/backend/` hasn't been selected, a `csharp.md` inside it stays closed even for `src/Order.cs`.
+- **Unknown paths are pending.** Until the task's files are known, only conditioned entries that a loading tag would otherwise load are reported as pending, not as matches or mismatches. Untagged conditioned entries remain on demand. Planning and research can still select files by relevance.
+- **Inspection isn't application.** Asking to read a nonmatching file, or following a link to it, shows its content without making it apply.
 
-A file condition never reveals a hidden ancestor. If `directives/backend/_backend.md` has not been selected, a `csharp.md` child there stays hidden even when `src/Order.cs` matches its pattern. Select the `backend` scope through its entry or an explicit source request before expecting the child to load. The [routing guide](routing.md) explains how entrypoints expose their children.
-
-A task can include planned paths that do not exist yet. When the task needs a related file outside the first set of paths, add that file and load the context that applies to it. For example, a C# change may also require updating a TypeScript caller. Include both paths, and keep each rule limited to its matching files. Reading a Directive or following a link does not add that Markdown source's path to the task's working files. If you edit the context source itself, add its Markdown path as a working path. A condition does not grant or restrict permission to edit.
-
-When task paths are unknown, an unconditioned source keeps its existing loading behavior. Treat encountered conditions as pending, not as matches or mismatches, and do not claim that context is complete for an unspecified file set. Planning and research can still select sources by ordinary relevance. An explicit source request or reference can also retrieve a nonmatching source with its necessary ancestor context for inspection; that inspection does not activate its automatic children. An overwrite companion stays with its base and shares the base's effective condition.
+Patterns use workspace-relative paths with `/` separators. A quoted string can contain comma-separated patterns, while each list entry is one pattern. Braces expand alternatives, as in `**/*.{ts,tsx}`, and character classes such as `[ab]` match one character from a set. A leading `!` is an ordinary character, as in other glob tools. `[!...]` negates a character class. `*` and `?` match within one path segment, and a whole `**` segment matches zero or more segments. Matching is case-sensitive on every platform. `*.py` matches only the workspace root, while `**/*.py` matches at any depth. `applyTo` can sit at the frontmatter root or under `open-forge:`, and both mean the same thing.
 
 ## What loads at startup in a fresh install
 
 An agent enters through `AGENTS.md` (or `CLAUDE.md` in Claude Code), which points it to the loader. Both are read in full. Everything below them is reached through entrypoints, and the table uses two terms for them. They describe the instructions, not a record of what an agent actually read:
 
-- **Entrypoint at startup:** the entrypoint is read before the task begins. Its entries open on demand unless a loading tag or matching file condition applies.
-- **Entrypoint on demand:** the entrypoint isn't read until a task opens it. A file condition below it does not open the entrypoint by itself.
+- **Entrypoint at startup:** the entrypoint is read before the task begins. The entries it lists open on demand, unless their line is tagged.
+- **Entrypoint on demand:** the entrypoint isn't read until a task opens it.
 
 Paths are relative to `.agents/`.
 
@@ -88,11 +89,11 @@ Paths are relative to `.agents/`.
 | `templates/_templates.md`              | none          | Entrypoint on demand                              |
 | `memory/archived/_archived.md`         | none          | Entrypoint on demand                              |
 
-Loading an entrypoint doesn't load what it lists. The agent reads the entrypoint itself: its purpose, its rules, and one line per item under `Entries`. Its children stay on demand unless a loading tag applies or a matching file condition makes a visible entry applicable. For example, at startup the agent sees the one-line entry for `open-forge-cli` in `skills/_skills.md`, but it doesn't read the Skill.
+Loading an entrypoint doesn't load what it lists. The agent reads the entrypoint itself: its purpose, its rules, and one line per item under `Entries`. The files and folders those lines point to stay closed until a task selects them, unless an entry is tagged `#LoadNow` or `#KeepInMind`. For example, at startup the agent sees the one-line entry for `open-forge-cli` in `skills/_skills.md`, but it doesn't read the Skill.
 
-The Memory rows show that exception. `memory/_memory.md` lists Working and Crystallized with `#LoadNow` and Emerging with `#KeepInMind`, so those three entrypoints load too. Archived has no loading tag, so it stays closed. Directive files directly under the root Directives entrypoint must carry `#LoadNow`. An unconditioned Directive loads at startup; if it declares `applyTo`, the condition first limits which working files make it applicable. A fresh install has no Directive files.
+The Memory rows show that exception. `memory/_memory.md` lists Working and Crystallized with `#LoadNow` and Emerging with `#KeepInMind`, so those three entrypoints load too. Archived has no loading tag, so it stays closed. Directives work the same way: each Directive file directly in `directives/` must carry `#LoadNow`, so it loads at startup once you add one. A fresh install has none.
 
-Extension Memory categories, such as Decisions from [Planning](../extensions/planning.md) or Documents from [Project Documents](../extensions/project-documents.md), aren't part of a fresh install and carry no loading tag. Once installed, only their one-line entry in the parent state's `Entries` is visible at startup. By default, the category entrypoint and its records open on demand. A matching file condition can also load a visible entry.
+Extension Memory categories, such as Decisions from [Planning](../extensions/planning.md) or Documents from [Project Documents](../extensions/project-documents.md), aren't part of a fresh install and carry no loading tag. Once installed, only their one-line entry in the parent state's `Entries` is visible at startup. The category entrypoint and its records open on demand.
 
 Run `open-forge context` to see the startup context of your workspace. When task paths are unknown, the output reports encountered file conditions as pending. Pass known or planned working paths with `--for` to check the matching entries.
 

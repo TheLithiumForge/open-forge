@@ -46,27 +46,21 @@ internal sealed class RouteInspectReadingProfileBuilder
             return Unavailable("The loading facts needed for reading classification are unavailable.");
         }
 
-        if (_applicability is { State: SourceApplicabilityState.Pending or SourceApplicabilityState.Invalid } applicability)
+        if (_applicability?.State == SourceApplicabilityState.Invalid)
         {
-            return Unavailable(
-                applicability.State == SourceApplicabilityState.Pending
-                    ? "No matching working paths were supplied, so effective loading is pending."
-                    : "The selected route has invalid applyTo metadata, so effective loading is unavailable.");
+            return Unavailable("The selected route has invalid applyTo metadata, so effective loading is unavailable.");
         }
 
         var reasons = new List<RouteInspectAutomaticReading>();
-        if (_applicability?.State == SourceApplicabilityState.Matched && IsExposedByReadParent())
-        {
-            reasons.Add(new RouteInspectAutomaticReading(
-                RouteInspectAutomaticReadingKind.MatchingFileCondition,
-                null,
-                [RouteInspectAutomaticReadingEvent.WorkingPathMatches]));
-        }
-
         if (_applicability?.State != SourceApplicabilityState.Unmatched)
         {
             AddParentLoadNow(reasons);
             AddKeepInMind(reasons);
+        }
+
+        if (_applicability?.State == SourceApplicabilityState.Pending && reasons.Count > 0)
+        {
+            return Unavailable("No matching working paths were supplied, so effective loading is pending.");
         }
 
         if (reasons.Count == 0)
@@ -102,14 +96,6 @@ internal sealed class RouteInspectReadingProfileBuilder
 
     private RouteInspectFact<bool> ReadTaskStart()
     {
-        if (_applicability is { State: SourceApplicabilityState.Pending or SourceApplicabilityState.Invalid } applicability)
-        {
-            return RouteInspectFact<bool>.Unavailable(
-                applicability.State == SourceApplicabilityState.Pending
-                    ? "No matching working paths were supplied, so automatic applicability is pending."
-                    : "The selected route has invalid applyTo metadata, so automatic applicability is unavailable.");
-        }
-
         if (_applicability?.State == SourceApplicabilityState.Unmatched)
         {
             return RouteInspectFact<bool>.Available(false);
@@ -118,11 +104,6 @@ internal sealed class RouteInspectReadingProfileBuilder
         return RouteInspectFact<bool>.Available(
             _loading.StartupPaths.Contains(_selected.CanonicalPath));
     }
-
-    private bool IsExposedByReadParent()
-        => _loading.VisibleEntries.Values
-            .SelectMany(entries => entries)
-            .Any(entry => entry.TargetPath == _selected.CanonicalPath);
 
     private void AddParentLoadNow(ICollection<RouteInspectAutomaticReading> reasons)
     {

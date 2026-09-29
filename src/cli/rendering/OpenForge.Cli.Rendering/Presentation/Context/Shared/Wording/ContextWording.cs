@@ -122,7 +122,6 @@ internal static class ContextWording
             ContextInclusionReasonKind.Loader => global::OpenForge.Cli.OutputText.Context.ContextText.TitleLoader(),
             ContextInclusionReasonKind.LoadNow => global::OpenForge.Cli.OutputText.Context.ContextText.LabelLoadNow(),
             ContextInclusionReasonKind.KeepInMind => global::OpenForge.Cli.OutputText.Context.ContextText.LabelKeepInMind(),
-            ContextInclusionReasonKind.Applicability => global::OpenForge.Cli.OutputText.Context.ContextText.LabelApplicability(),
             ContextInclusionReasonKind.AncestorRequired => global::OpenForge.Cli.OutputText.Context.ContextText.LabelAncestorRequired(),
             ContextInclusionReasonKind.SelectedSource => global::OpenForge.Cli.OutputText.Context.ContextText.LabelSelectedSource(),
             ContextInclusionReasonKind.ScopeLocal => global::OpenForge.Cli.OutputText.Context.ContextText.LabelScopeLocalLoading(),

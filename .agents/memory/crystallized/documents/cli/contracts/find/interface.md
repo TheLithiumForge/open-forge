@@ -834,7 +834,14 @@ ANDed against the same path.
 
 Find may inspect ancestor metadata needed to establish inherited conditions.
 That inspection does not add ancestors or other sources to the returned
-candidate universe. When `--for` is omitted, do not apply the compatibility
+candidate universe.
+
+With `--for`, Find is broad discovery and Context is the filtered context pack.
+Find returns every compatible candidate, including a matching source below an
+unselected scope, because routed navigation never hides a source from Find.
+Returning a source neither loads it nor activates its ancestors. An agent that
+decides a discovered source is relevant selects it with
+`context <source> --for <path>`, which loads it with its route context. When `--for` is omitted, do not apply the compatibility
 filter or change the existing result universe. `--require` and `--within` still
 require a `--tag` or `--heading` predicate, regardless of `--for`.
 

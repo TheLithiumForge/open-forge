@@ -78,12 +78,14 @@ The resolver accepts one occurrence each of `--description`,
 `--responsibility`, and `--template`. Any repeated occurrence is invalid, even
 when its value is identical, and no last occurrence wins. `--description`,
 `--tag`, and `--apply-to` are optional. Repeated tags retain argument order.
-Each repeated apply-to value supplies one path pattern. The resolver validates
-and normalizes these values into an ordinal-distinct set. Empty tags and
-duplicate exact tags are rejected. Repeated `--dry-run` occurrences collapse to
-one idempotent Boolean choice. Shared global flags retain their shared
-repetition, composition, and terminal rules; this operation adds no precedence
-or last-wins behavior and no wizard or automatic mode.
+Each `--apply-to` occurrence supplies one expression. Binding parses each
+expression once into atomic patterns, then sorts and deduplicates the resulting
+patterns by ordinal comparison for Create output. Planning receives those
+atomic patterns and never splits expressions again. Empty tags and duplicate
+exact tags are rejected. Repeated `--dry-run` occurrences collapse to one
+idempotent Boolean choice. Shared global flags retain their shared repetition,
+composition, and terminal rules; this operation adds no precedence or last-wins
+behavior and no wizard or automatic mode.
 
 ### Workspace and shared references
 
@@ -155,12 +157,10 @@ derive, correct, summarize, or judge values from the target, parent, Template,
 body, or another routed source. See [Destination Metadata](interface.md#destination-metadata)
 and [Errors](interface.md#errors).
 
-`--apply-to` accepts one workspace-relative pattern per occurrence. The
-patterns follow the path grammar in [Destination Metadata](interface.md#destination-metadata),
-are normalized, and form an ordinal-distinct set. The resolver writes the
-resulting quoted string list as `applyTo` in the new scoped `open-forge`
-mapping. Omission leaves the field absent and does not add an
-`optional-metadata` warning.
+`--apply-to` supplies the expressions described in Request Resolution. The
+resolver writes the resulting atomic patterns as a quoted scoped list in
+`applyTo` in the new scoped `open-forge` mapping. Omission leaves the field
+absent and does not add an `optional-metadata` warning.
 
 ### Template resolution
 
@@ -527,8 +527,9 @@ obligations:
   covered. No leaf metadata is copied to an ancestor.
 - Existing generated effects are planned against intended post-create bytes and
   use the complete Index projection.
-- `--apply-to` grammar validation, normalized ordinal-distinct values, scoped
-  quoted-list output, and an absent field and warning-free result when omitted.
+- `--apply-to` expression parsing into atomic patterns during binding, sorting
+  and deduplication for Create output, scoped quoted-list metadata, and an
+  absent field and warning-free result when omitted.
 - Singleton repetition of `--description`, `--responsibility`, and
   `--template` is rejected even for equal values; optional repeated tags retain
   order and reject empty or duplicate values when supplied; explicit blank

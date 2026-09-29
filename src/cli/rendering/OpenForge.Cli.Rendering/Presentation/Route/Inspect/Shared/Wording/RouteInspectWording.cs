@@ -76,7 +76,6 @@ internal static class RouteInspectWording
         => kind switch
         {
             RouteInspectAutomaticReadingKind.OnDemand => "on-demand",
-            RouteInspectAutomaticReadingKind.MatchingFileCondition => "matching-file-condition",
             RouteInspectAutomaticReadingKind.ParentLoadNow => "parent-load-now",
             RouteInspectAutomaticReadingKind.EntrypointKeepInMind => "entrypoint-keep-in-mind",
             RouteInspectAutomaticReadingKind.RoutedFileKeepInMind => "routed-file-keep-in-mind",
@@ -95,7 +94,6 @@ internal static class RouteInspectWording
             RouteInspectAutomaticReadingEvent.TaskReview => "task-review",
             RouteInspectAutomaticReadingEvent.LaterReview => "later-review",
             RouteInspectAutomaticReadingEvent.BaseRead => "base-read",
-            RouteInspectAutomaticReadingEvent.WorkingPathMatches => "working-path-matches",
             _ => throw new ArgumentOutOfRangeException(nameof(readingEvent), readingEvent, "The reading event is not defined."),
         };
 
@@ -122,7 +120,6 @@ internal static class RouteInspectWording
 
         return reading.Kind switch
         {
-            RouteInspectAutomaticReadingKind.MatchingFileCondition => Events(reading.Events),
             RouteInspectAutomaticReadingKind.EntrypointKeepInMind
                 or RouteInspectAutomaticReadingKind.RoutedFileKeepInMind => Events(reading.Events),
             RouteInspectAutomaticReadingKind.OnDemand => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelThisRouteIsSelected(),
@@ -299,7 +296,6 @@ internal static class RouteInspectWording
             RouteInspectAutomaticReadingEvent.AncestorRequired => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelItIsNeededAsAnAncestor(),
             RouteInspectAutomaticReadingEvent.TaskReview => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelATaskReviewPointIsReachedWhileItsScopeIsActive(),
             RouteInspectAutomaticReadingEvent.LaterReview => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelALaterReviewPointIsReachedWhileItsScopeIsActive(),
-            RouteInspectAutomaticReadingEvent.WorkingPathMatches => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelAWorkingPathMatchesItsEffectiveFileCondition(),
             _ => throw new ArgumentOutOfRangeException(nameof(readingEvent), readingEvent, "The automatic-reading event is not defined."),
         };
 

@@ -13,7 +13,7 @@ This document is authoritative for the loading model that turns visible `routes`
 
 The [loader](../../../../../loader.md#defined-tags) remains authoritative for the exact reserved tag wording installed in a workspace. This document explains the complete current model and its relationships. Component sources decide which of their own `routes` deliberately carry a load-policy tag.
 
-The optional frontmatter `applyTo` condition determines when a routed source is applicable to working files. It does not grant permission to edit those files. The [scope contract](scope.md) summarizes how file applicability composes with route scope.
+The [File Conditions](#file-conditions) section defines how an optional `applyTo` condition filters this model by the files a task works on.
 
 ## Loading Invariant
 
@@ -33,21 +33,21 @@ The shipped root `entrypoints` and compact route maps deliberately pay a small b
 
 ## #LoadNow
 
-#LoadNow reads an `entry` when it appears in an already-loaded parent's `Entries`, subject to any file condition. Check the effective condition before loading. When it matches a working file, open the visible entry even if it has no loading tag. #LoadNow remains valid for a conditioned entry, but adds no extra first-read behavior after a match. It does not bypass a condition. Directive files remain mandatory #LoadNow entries within their scope, with `applyTo` deciding whether their scope applies to the working files.
+#LoadNow reads an `entry` when it appears in an already-loaded parent's `Entries`.
 
 `Entries` are read in listed order. When a #LoadNow `entry` points to another `entrypoint`, that child is read first, then its own visible `entries` apply the same rule.
 
-A hidden descendant does not become visible merely because it carries #LoadNow or has a matching `applyTo` pattern. Selection remains top-down: load the ancestor chain, inspect the now-visible entries, and open a matching entry before working on its file. A nonmatching entry does not load automatically. A matching descendant below an unselected ancestor does not select that ancestor.
+A hidden descendant does not become visible merely because it carries #LoadNow. Parent-chain traversal keeps conditional subtrees cheap to skip.
 
 Use #LoadNow only for context whose omission is more costly than its baseline attention cost.
 
 ## #KeepInMind
 
-#KeepInMind identifies applicable context that needs refreshing after its parent route loads. Tagged entrypoints and other tagged files use the same scope, file-condition, and parent-loading boundaries as #LoadNow. Neither tag activates an otherwise unselected ancestor or scope.
+#KeepInMind identifies context that needs refreshing after its parent route loads. Tagged entrypoints and other tagged files use the same scope and parent-loading boundaries as #LoadNow. Neither tag activates an otherwise unselected ancestor or scope.
 
-Read a tagged entry when its parent loads if it has no effective file condition or its condition matches a working path, then read its adjacent overwrite when present. For an entrypoint, apply its visible child loading rules in listed order. Explicitly selecting an on-demand route establishes its parent chain and exposes the applicable loading rules within that scope.
+Read a tagged entry when its parent loads, then read its adjacent overwrite when present. For an entrypoint, apply its visible child loading rules in listed order. Explicitly selecting an on-demand route establishes its parent chain and exposes the applicable loading rules within that scope.
 
-Refresh the applicable tagged files while their scope remains active. An unconditioned tagged file follows these checkpoints even when no working paths are supplied. A conditioned file refreshes only while at least one relevant working path satisfies its effective condition:
+Refresh the applicable tagged files while their scope remains active:
 
 - At task start or resume
 - After detected context restoration
@@ -63,7 +63,7 @@ A broken applicable #KeepInMind route is a structural defect to repair or report
 
 ## Selected Context
 
-Files without a reserved loading tag and without an effective `applyTo` condition remain on demand.
+Files without a reserved loading tag remain on demand.
 
 Scan visible paths, `descriptions`, tags, ancestor meaning, explicit relationships, and existing current truth. Recursively select every materially relevant scope, compose their separate route chains, and reevaluate after a material task change. Read every selected `entrypoint` before considering its `entries`; do not load route bodies merely to expose their selection surface.
 
@@ -72,70 +72,47 @@ chain that establishes its scope and inherited Axioms. Loading a selected
 entrypoint makes its generated Entries visible, so its #LoadNow and #KeepInMind
 child loading rules apply normally.
 
-## File Applicability And Working Paths
-
-`applyTo` is an optional file condition in Markdown frontmatter. It may appear
-at the YAML frontmatter root or under `open-forge:`; both locations have the
-same meaning, including when a scoped `open-forge:` block is also present. A
-source without a condition adds no file restriction.
-
-Each condition lists patterns with OR semantics. Conditions accumulate down
-the selected route chain with AND semantics: every conditioned ancestor and
-the source itself must match the same working path. A missing condition at a
-child adds nothing. The source is applicable when at least one supplied working
-path satisfies the entire chain. Thus, OR applies within one declaration and
-across the set of working paths; ancestor conditions remain ANDed for each
-individual path.
-
-For example, if a parent condition is `src/**` and a child condition is
-`**/*.cs`, `src/Order.cs` satisfies both and makes the child applicable. The
-paths `src/readme.md` and `tests/Order.cs` do not: each satisfies only one
-condition, so their union does not satisfy the chain.
-
-Apply this rule to the concrete paths the task will work on, including planned
-paths that do not exist yet. A rename contributes both its old and new path.
-Do not infer paths from Git changes or guess dependencies. When implementation
-or another necessary change reaches a related file outside the initial working
-set, add that path and load the context applicable to it. For example, if a
-C# change requires updating a TypeScript caller, add the caller's path to the
-working set and load its TypeScript context. The C# condition remains limited
-to the C# file; adding a related path does not broaden it.
-
-Applicability is not edit permission. A condition describes which files make
-the source relevant to work; it does not prohibit a necessary edit outside its
-patterns or authorize an edit by itself. If the task edits the Markdown source
-that declares `applyTo`, include that source path as a working path and load
-the context applicable to that Markdown path. Merely reading the source for
-inspection does not add its path to the working set or change its
-applicability.
-
-When the working paths are unknown, an unconditioned source keeps its existing
-loading behavior. Do not treat unknown as a match or a mismatch. Defer the
-automatic loading decision for conditioned sources and report them as pending
-file selection; do not claim that context is complete for an unspecified file
-set. Planning or research without a file set may still select sources by
-ordinary relevance. Explicitly requesting a conditioned source makes it
-available for inspection without asserting a file match.
-
-An explicit source selection or a reference can retrieve a nonmatching source
-for inspection, with its necessary route context. Inspection does not make the
-source applicable to the working paths and does not activate automatic child
-entries beneath a nonmatching source. Follow the explicit instruction to
-inspect a source while keeping that distinction clear.
-
 Conditional context must be cheap to select, cheap to skip, and recoverable when initially missed.
+
+## File Conditions
+
+A routed source may declare an optional `applyTo` file condition in its frontmatter. [Canonical Markdown Syntax](../markdown/syntax.md#file-conditions) defines where the field goes and which patterns are valid. This section defines its effect on loading.
+
+The condition filters the source's context. The rules above still decide when a source would load, refresh, or apply. With a condition, that happens only while a working file matches, whatever the source's tags or category. For example, a #LoadNow Directive with the condition `**/*.cs` is mandatory for work on C# files and does not load for other work.
+
+A condition never selects a source. A matching #LoadNow entry loads when its parent loads, a matching #KeepInMind entry also refreshes while a matching file remains in the task, and a matching untagged entry stays on demand. A condition never selects a hidden ancestor either. Selection stays top-down, so a matching descendant below an unselected ancestor remains unread until that ancestor is selected.
+
+Patterns in one condition are alternatives. Conditions accumulate down the selected route chain: every conditioned ancestor and the source itself must match the same working file. A missing condition at a child adds nothing. The source applies when at least one working file satisfies the whole chain.
+
+For example, if a parent condition is `src/**` and a child condition is `**/*.cs`, `src/Order.cs` satisfies both and makes the child applicable. The files `src/readme.md` and `tests/Order.cs` do not. Each satisfies only one condition, so their union does not satisfy the chain.
+
+An overwrite companion shares its base's effective condition, as the [overwrite contract](overwrites.md) defines.
+
+### Working Files
+
+A working file is a concrete path the task investigates, creates, changes, deletes, renames, or reviews. Planned paths that do not exist yet count. A rename contributes both its old and new path. Do not infer paths from Git changes or guess dependencies.
+
+When implementation or another necessary change reaches a related file outside the current working files, add that path and load the context that applies to it. For example, if a C# change requires updating a TypeScript caller, add the caller's path and load its TypeScript context. The C# condition still covers only the C# file.
+
+A condition describes which files make a source relevant. It does not grant or restrict permission to edit any file. Reading a source for context does not make its Markdown path a working file. Editing that source does, so load the context that applies to its Markdown path.
+
+### Unknown Paths And Inspection
+
+When the working files are unknown, unconditioned sources keep their loading behavior. Do not treat unknown as a match or a mismatch. Report conditioned #LoadNow and #KeepInMind entries as pending file selection, and do not claim that context is complete for an unspecified file set. Planning or research without a file set may still select sources by ordinary relevance.
+
+An explicit source selection or a reference can retrieve a nonmatching source for inspection, with its necessary route context. Inspection does not make the source apply to the working files and does not load automatic child entries beneath it.
 
 ## Loading Order
 
 The effective order is:
 
 1. Read the canonical workspace entry and loader
-2. Read matching conditioned entries and eligible #LoadNow and initial #KeepInMind entries through loaded parents in generated entry order
+2. Apply #LoadNow and initial #KeepInMind reading through loaded parents in generated entry order
 3. Select other relevant `routes` and apply their child loading rules as the parent chains become active
 4. Follow explicit relationships and dependencies
 5. Refresh applicable #KeepInMind content at the defined points while its scope remains active
 
-Whenever a base file has a user-owned `{name}.overwrite.md` companion, read it immediately after the base, including when an explicit source selection or reference retrieves a nonmatching base for inspection. During automatic loading, the companion shares the base's effective condition and is never matched independently or used to change the base's effective applicability. That condition gates activation, not paired inspection. The [overwrite contract](overwrites.md) owns the remaining loading, precedence, and independent-selection details.
+When a base file has a user-owned `{name}.overwrite.md` companion, read it immediately after the base. The [overwrite contract](overwrites.md) owns its inherited `route`, scope, loading behavior, precedence, and independent-selection boundary.
 
 ## Deterministic Assistance
 

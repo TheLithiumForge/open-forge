@@ -125,7 +125,6 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=#Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--tag=Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--apply-to=../outside.cs"], Code: RouteCreateFindingCode.InvalidMetadata),
-            (Arguments: ["create", RouteCreateTestData.TargetId, "--apply-to=src/**Order.cs"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--apply-to"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--responsibility=   "], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--template="], Code: RouteCreateFindingCode.InvalidTemplate),
@@ -172,8 +171,8 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
     }
 
     [Trait("Boundary", "Input")]
-    [Fact(DisplayName = "Route Create binding treats a comma as part of one apply-to pattern"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
-    public void BindingDoesNotSplitCommaBearingApplyToPatterns()
+    [Fact(DisplayName = "Route Create binding expands expressions into sorted distinct atomic apply-to patterns"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
+    public void BindingExpandsApplyToExpressionsIntoAtomicPatterns()
     {
         var route = RouteBinding.CreateGroup();
         var symbols = RouteCreateBinding.CreateSymbols(route);
@@ -181,14 +180,38 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         [
             "create",
             RouteCreateTestData.TargetId,
-            "--apply-to=src/**/*.cs,docs/**",
+            "--apply-to=src/a.cs,src/b.cs",
+            "--apply-to=**/*.{ts,tsx}",
+            "--apply-to=src/a\\,b.cs",
         ]);
 
         var bound = RouteCreateRequestBinder.Bind(parse, RouteCreateTestData.Invocation(), symbols);
         var request = Assert.IsType<RouteCreateRequest>(bound.Request);
 
         Assert.Null(bound.InvalidResult);
-        Assert.Equal(["src/**/*.cs,docs/**"], request.Metadata.ApplyTo.Select(pattern => pattern.Text));
+        Assert.Equal(
+            ["**/*.{ts,tsx}", "src/a,b.cs", "src/a.cs", "src/b.cs"],
+            request.Metadata.ApplyTo.Select(pattern => pattern.Text));
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Route Create binding accepts embedded double-star syntax"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
+    public void BindingAcceptsEmbeddedDoubleStarSyntax()
+    {
+        var route = RouteBinding.CreateGroup();
+        var symbols = RouteCreateBinding.CreateSymbols(route);
+        var parse = route.Parse(
+        [
+            "create",
+            RouteCreateTestData.TargetId,
+            "--apply-to=src/**Order.cs",
+        ]);
+
+        var bound = RouteCreateRequestBinder.Bind(parse, RouteCreateTestData.Invocation(), symbols);
+        var request = Assert.IsType<RouteCreateRequest>(bound.Request);
+
+        Assert.Null(bound.InvalidResult);
+        Assert.Equal(["src/**Order.cs"], request.Metadata.ApplyTo.Select(pattern => pattern.Text));
     }
 
     [Trait("Boundary", "Input")]

@@ -73,10 +73,9 @@ public sealed class PublishedRouteInspectProcessTests
         Assert.Equal(".agents/root/_root.md", condition.GetProperty("source").GetString());
         Assert.Equal(["src/**"], condition.GetProperty("patterns").EnumerateArray().Select(pattern => pattern.GetString()));
         Assert.Equal(["src/Order.cs"], applicability.GetProperty("matchingPaths").EnumerateArray().Select(path => path.GetString()));
-        Assert.Contains(
-            "a supplied working path matches the route's effective file condition",
-            data.GetProperty("read").GetProperty("automaticallyWhen")
-                .EnumerateArray().Select(reason => reason.GetString()));
+        var readReasons = data.GetProperty("read").GetProperty("automaticallyWhen")
+            .EnumerateArray().Select(reason => reason.GetString()).ToArray();
+        Assert.Equal(["the Loader is read"], readReasons);
 
         if (detail == "standard")
         {

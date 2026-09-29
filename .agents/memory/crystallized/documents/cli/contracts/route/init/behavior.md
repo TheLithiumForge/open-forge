@@ -93,8 +93,11 @@ route resolution:
   the final target already exists.
 - `--tag` occurrences remain one ordered multi-value list. Empty values, exact
   duplicates, and invalid tag syntax remain invalid.
-- Each `--apply-to` occurrence supplies one pattern. Validate and normalize all
-  values into an ordinal-distinct set.
+- Each `--apply-to` occurrence is an expression. Bind it once through the
+  expression parser to produce normalized atomic patterns, then pass those
+  patterns to planning. Init sorts the combined patterns with ordinal ordering
+  and removes ordinal-equal duplicates. Planning never splits an expression
+  again.
 - Repeated `--framework` occurrences collapse to one idempotent Boolean choice.
 - Repeated `--dry-run` occurrences collapse to one idempotent Boolean choice.
 
@@ -215,7 +218,8 @@ metadata independently from the ancestor defaults:
   value omits it.
 - Repeated tags are retained in argument order as the final target's explicit tag
   list.
-- Repeated `--apply-to` values form the final target's local applicability set.
+- The resulting sorted, ordinal-distinct atomic patterns from repeated
+  `--apply-to` expressions form the final target's local applicability set.
   This metadata applies only to a missing final target. It is not copied to
   missing ancestors.
 - If either the explicit description or any explicit tag is absent, append
@@ -229,9 +233,10 @@ canonical tag syntax without the `#` prefix. Validate syntax and presence only.
 Do not judge or rewrite semantic accuracy. A later `doctor` operation may report
 meaning-quality diagnostics separately.
 
-`applyTo` uses the workspace-relative pattern grammar in the [route create
-Interface Contract](../create/interface.md#destination-metadata) and is emitted
-as a quoted string list in the final target's scoped `open-forge` mapping.
+`applyTo` expressions use the workspace-relative syntax defined in the [route
+create Interface Contract](../create/interface.md#destination-metadata). The
+resolver emits their normalized atomic patterns as a quoted string list in the
+final target's scoped `open-forge` mapping.
 
 The resolver records draft versus explicit metadata provenance for each created
 entrypoint. It does not obtain metadata from a Template, filename meaning, or
@@ -590,8 +595,9 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
 - Exact fixed scaffold bytes, literal visible slug titles, draft descriptions,
   `NeedsAuthoring`, inherited `Axioms`, and valid generated regions.
 - Final description, responsibility addition and omission, tag replacement and
-  ordering, `applyTo` final-target scope and normalized set, partial metadata,
-  duplicate and invalid field values, and metadata
+  ordering, `applyTo` final-target scope and sorted, ordinal-distinct atomic
+  output from expressions, partial metadata, duplicate and invalid field
+  values, and metadata
   provenance for every created entrypoint.
 - Canonical `open-forge` authoring and reading only, opaque `rune` preservation,
   and `open-forge` selection when unrelated sibling YAML is present.

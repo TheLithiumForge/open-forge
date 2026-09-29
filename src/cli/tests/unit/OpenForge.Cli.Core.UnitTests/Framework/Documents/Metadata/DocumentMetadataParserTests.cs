@@ -10,6 +10,7 @@ public sealed class DocumentMetadataParserTests
     [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Framework metadata reads quoted root and scoped applyTo patterns")]
     [InlineData("applyTo: '**/*.cs'\n", "Root")]
+    [InlineData("applyTo: '{src,test}/**/*.{cs,ts}, docs/[,]*'\n", "Root")]
     [InlineData("open-forge:\n  description: Route description\n  tags: [Docs]\n  applyTo: ['**/*.cs', 'src/*.cs']\n", "OpenForge")]
     [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
     public void ReadsRootAndScopedApplyTo(string frontmatter, string location)
@@ -63,7 +64,7 @@ public sealed class DocumentMetadataParserTests
     {
         var facts = Parse(
             "---\n"
-                + "applyTo: ['src/*.cs', '**/*.cs', 'src/*.cs']\n"
+                + "applyTo: ' src/*.cs, **/*.cs, src/*.cs '\n"
                 + "open-forge:\n  description: Route description\n  tags: [Docs]\n  applyTo: ['**/*.cs', 'src/*.cs']\n"
                 + "---\n");
 
@@ -147,6 +148,9 @@ public sealed class DocumentMetadataParserTests
     [InlineData("applyTo: ['**/*.cs', src/*.cs]\n")]
     [InlineData("applyTo: ''\n")]
     [InlineData("applyTo: '**//*.cs'\n")]
+    [InlineData("applyTo: ' , , '\n")]
+    [InlineData("applyTo: ['  ']\n")]
+    [InlineData("applyTo: 'good,{bad'\n")]
     [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
     public void InvalidApplyToMakesMetadataMalformed(string value)
     {

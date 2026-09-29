@@ -45,7 +45,7 @@ These commands change nothing.
 
 | Command                      | Use it to                                                                         |
 | ---------------------------- | --------------------------------------------------------------------------------- |
-| `route init <source>`        | Create a scope or chain; metadata needs a missing generic final target                   |
+| `route init <source>`        | Create a scope or chain. Metadata needs a missing generic final target                   |
 | `route create <source>`      | Add routed file with frontmatter, optional Template or repeated `--apply-to` patterns    |
 | `route update <source>`      | Change description, tags, responsibility, or file conditions                     |
 | `route move <source> <path>` | Move a file or category and update the links to it                                |
@@ -54,11 +54,12 @@ These commands change nothing.
 | `repair`                     | Fix broken local links that have one safe answer                                  |
 
 `route create`, `route init`, and `route update` accept repeated
-`--apply-to <pattern>` values. New declarations use a quoted-string list under
+`--apply-to <glob>` values. New declarations use a quoted-string list under
 `open-forge:`. Existing frontmatter may put `applyTo` at its root or under
 `open-forge:` and may use one quoted string or a list. If both locations declare
-the field, their pattern sets must be equivalent. A comma is part of a pattern,
-not a separator. `route update` preserves the authored location; use
+the field, their pattern sets must be equivalent. A comma separates patterns in a
+string or an `--apply-to` value. A list entry stays one pattern, and `[,]` is a
+literal comma. `route update` preserves the authored location. Use
 `--clear-apply-to` by itself to remove the condition. It cannot be combined
 with `--apply-to`.
 
@@ -66,14 +67,13 @@ with `--apply-to`.
 entrypoint. They cannot update an existing final target, and `--apply-to`
 cannot be combined with `--framework`.
 
-For a new condition, preview the repeated option:
+For a new condition, preview a comma-separated value:
 
 ```sh
 open-forge route create guidance/ui-rules \
   --description="UI rules" \
   --tag=Guidance \
-  --apply-to "**/*.tsx" \
-  --apply-to "**/*.css" \
+  --apply-to "**/*.tsx,**/*.css" \
   --dry-run
 ```
 
@@ -99,7 +99,8 @@ For an existing source with a condition, preview clearing it with
   `context` can inspect an explicit or referenced nonmatch, but it does not
   activate that source's automatic children. A condition does not activate a
   hidden ancestor or determine edit permission.
-- **Before recording something.** Run `find` with the category's tag, such as `find --tag=Decision`. `--for` adds a path filter; it does not replace the tag or heading predicates used by `--require`.
+- **Looking for rules about some files.** `context --for <path>` returns only what the loading rules load for those files. `find --for <path> --tag=Directive` lists every compatible source, including ones below scopes nobody selected. Load a relevant one with `context <source> --for <path>`.
+- **Before recording something.** Run `find` with the category's tag, such as `find --tag=Decision`. `--for` adds a path filter. It does not replace the tag or heading predicates used by `--require`.
 - **After editing routed files by hand.** Run `index --dry-run`, then `index`, so `Entries` match the files.
 - **Before moving or deleting a file.** Run `references <source> --direction=in`, then preview `route move` or `route remove`.
 - **Before closeout.** When the task changed routed files, run `doctor`. Resolve what it reports, or name it in the handoff.

@@ -43,12 +43,7 @@ After selection, the routed source defines its complete concept, instruction, ca
 
 Generated `entries` remain navigation metadata. They do not privately define instructions, behavior, authority, current truth, or component semantics.
 
-An optional `applyTo` condition can make a visible source applicable to
-specified working files. It does not replace top-down selection or expose a
-hidden ancestor: inspect entries only after their parent `entrypoint` loads,
-then open each applicable matching entry before working on its file. The
-[loading contract](loading.md#file-applicability-and-working-paths) defines
-condition inheritance, working-path evaluation, and explicit inspection.
+An entry also shows any `applyTo` patterns its source declares. A file condition never selects an entry or its ancestors. It only filters what routing and tags would load. The [loading contract](loading.md#file-conditions) defines how conditions filter loading.
 
 ## Top-Down Navigation
 

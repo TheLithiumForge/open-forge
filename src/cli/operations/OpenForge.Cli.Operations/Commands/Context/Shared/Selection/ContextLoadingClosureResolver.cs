@@ -131,7 +131,6 @@ internal sealed class ContextLoadingClosureResolver
                 SourceLoadingClosureReasonKind.Loader => ContextInclusionReasonKind.Loader,
                 SourceLoadingClosureReasonKind.LoadNow => ContextInclusionReasonKind.LoadNow,
                 SourceLoadingClosureReasonKind.KeepInMind => ContextInclusionReasonKind.KeepInMind,
-                SourceLoadingClosureReasonKind.Applicability => ContextInclusionReasonKind.Applicability,
                 SourceLoadingClosureReasonKind.AncestorRequired => ContextInclusionReasonKind.AncestorRequired,
                 _ => throw new ArgumentOutOfRangeException(
                     nameof(reason),
@@ -279,16 +278,6 @@ internal sealed class ContextLoadingClosureResolver
                         ProjectApplicability(entry.Applicability));
                 }
 
-                if (entry.Applicability is { State: SourceApplicabilityState.Matched }
-                    && !entry.LoadNow
-                    && !entry.KeepInMind)
-                {
-                    added |= selected.Add(
-                        entry.Target,
-                        ParentReason(ContextInclusionReasonKind.Applicability, parent, reference),
-                        ProjectApplicability(entry.Applicability));
-                }
-
                 if (added && entry.Target.IsEntrypoint)
                 {
                     queue.Enqueue(entry.Target);
@@ -344,17 +333,8 @@ internal sealed class ContextLoadingClosureResolver
                 keepInMind &= target.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal);
             }
 
-            var applicability = ReadApplicability(graph, target);
-            var autoSelect = applicability?.State switch
-            {
-                SourceApplicabilityState.Matched => true,
-                SourceApplicabilityState.Unmatched
-                    or SourceApplicabilityState.Pending
-                    or SourceApplicabilityState.Invalid => false,
-                SourceApplicabilityState.Unconditioned => loadNow || keepInMind,
-                null => loadNow || keepInMind,
-                _ => throw new ArgumentOutOfRangeException(nameof(target), applicability.State, "The source applicability state is not defined."),
-            };
+            var applicability = ReadApplicability(graph, target, reportPending: loadNow || keepInMind);
+            var autoSelect = SourceLoadingClosureResolver.ShouldLoadAutomatically(loadNow || keepInMind, applicability?.State);
 
             entries.Add(new VisibleEntry
             {
@@ -369,7 +349,7 @@ internal sealed class ContextLoadingClosureResolver
         return entries;
     }
 
-    private SourceApplicabilityResult? ReadApplicability(ContextGraph graph, ContextGraphSource source)
+    private SourceApplicabilityResult? ReadApplicability(ContextGraph graph, ContextGraphSource source, bool reportPending = false)
     {
         var result = ContextApplicabilityProjector.Evaluate(graph, source, _workingPaths);
         if (result is null)
@@ -382,7 +362,7 @@ internal sealed class ContextLoadingClosureResolver
             case SourceApplicabilityState.Pending:
                 foreach (var condition in result.Conditions)
                 {
-                    if (condition.Metadata.State == ApplyToMetadataState.Valid)
+                    if (reportPending && condition.Metadata.State == ApplyToMetadataState.Valid)
                     {
                         AddPendingCondition(condition);
                     }

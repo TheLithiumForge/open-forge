@@ -16,15 +16,16 @@ The [current Directive contract](../../../framework/primitives/directives.md) de
 ## Contract
 
 - Frontmatter uses #LoadNow, #Core, and #Directive so the `root route` enters baseline context with its primitive type visible
-- The entrypoint keeps the one-pass model: select a Directive route, then load and follow each sibling Directive exposed through #LoadNow whose `applyTo` condition matches a working file or is absent
-- Sibling Directives under the root apply across the workspace, subject to declared conditions. A selected child entrypoint sets the narrower scope before its applicable sibling Directives load
+- The entrypoint keeps the one-pass model: select a Directive route, then load and follow every sibling Directive exposed through #LoadNow
+- Sibling Directives under the root apply across the workspace. A selected child entrypoint sets the narrower scope before its sibling Directives load
 - Child Directives add to active parent Directives and report conflicts instead of creating hidden precedence
-- Every sibling Directive carries #LoadNow and keeps its instructions under a non-empty level-2 `## Instructions` heading. An optional frontmatter `applyTo` condition may limit when those instructions apply to working files without replacing the #LoadNow requirement.
+- Every sibling Directive carries #LoadNow and keeps its instructions under a non-empty level-2 `## Instructions` heading
 - The entrypoint defines the reusable category rules. Each sibling Directive defines its own required behavior
+- Loader rules reach Directive files through inheritance. The entrypoint does not restate them, including the `applyTo` file condition
 
 The [routed Markdown representation](../../../framework/markdown/routes.md) defines entrypoint and generated-region syntax. Directive-specific meaning remains in the source and current Directive contract rather than in shared Markdown rules.
 
 ## Verification
 
-- Directive validation requires sibling-file #LoadNow, accepts `applyTo` as an optional pre-load file condition, and checks non-empty Instructions and active primitive classification
+- Directive validation requires sibling-file #LoadNow, non-empty Instructions, and active primitive classification. It accepts `applyTo` like any other routed source
 - Core installation tests verify that the root category installs, indexes, and remains baseline-loaded

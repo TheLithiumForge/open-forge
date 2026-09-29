@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Shared.Binding;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Binding;
@@ -81,11 +82,14 @@ internal sealed class RouteUpdateBindingValidator
                 "--apply-to and --clear-apply-to cannot be used together.");
         }
 
+        var applyTo = input.ApplyToFacts.IsExplicit
+            ? ParseApplyTo(input.ApplyTo)
+            : null;
         if (input.ApplyToFacts.IsExplicit
             && (input.ApplyToFacts.ValueCount == 0
                 || input.ApplyTo.Count == 0
-                || input.ApplyTo.Any(value => string.IsNullOrWhiteSpace(value)
-                    || ApplyToPatternMatcher.Parse(value).Pattern is null)))
+                || applyTo is null
+                || applyTo.Failure is not null))
         {
             return Invalid(
                 RouteUpdateFindingCode.InvalidPatch,
@@ -115,7 +119,7 @@ internal sealed class RouteUpdateBindingValidator
             new RouteUpdateBindingFacts
             {
                 Target = input.Target,
-                Patch = CreatePatch(input),
+                Patch = CreatePatch(input, applyTo?.Patterns),
                 Template = input.Template,
                 Mode = mode,
             });
@@ -123,6 +127,11 @@ internal sealed class RouteUpdateBindingValidator
 
     internal static RouteUpdatePatchRequest CreatePatch(
         RouteUpdateBindingInput input)
+        => CreatePatch(input, parsedApplyTo: null);
+
+    private static RouteUpdatePatchRequest CreatePatch(
+        RouteUpdateBindingInput input,
+        IReadOnlyList<ApplyToPattern>? parsedApplyTo)
         => new()
         {
             Description = new RouteUpdateDescriptionRequest
@@ -145,11 +154,53 @@ internal sealed class RouteUpdateBindingValidator
             ApplyTo = new RouteUpdateApplyToRequest
             {
                 Operation = ReadApplyToOperation(input),
-                Values = input.ApplyToFacts.IsExplicit
-                    ? input.ApplyTo.Distinct(StringComparer.Ordinal).ToImmutableArray()
-                    : [],
+                Values = ReadApplyToValues(input, parsedApplyTo),
             },
         };
+
+    private static ApplyToPatternExpressionParseResult ParseApplyTo(
+        IReadOnlyList<string> values)
+    {
+        var patterns = ImmutableArray.CreateBuilder<ApplyToPattern>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var value in values)
+        {
+            var parsed = ApplyToPatternExpressionParser.Parse(value);
+            if (parsed.Failure is { } failure)
+            {
+                return ApplyToPatternExpressionParseResult.Failed(failure);
+            }
+
+            foreach (var pattern in parsed.Patterns)
+            {
+                if (seen.Add(pattern.Text))
+                {
+                    patterns.Add(pattern);
+                }
+            }
+        }
+
+        return patterns.Count == 0
+            ? ApplyToPatternExpressionParseResult.Failed(ApplyToPatternFailure.Empty)
+            : ApplyToPatternExpressionParseResult.Succeeded(patterns.ToImmutable());
+    }
+
+    private static ImmutableArray<string> ReadApplyToValues(
+        RouteUpdateBindingInput input,
+        IReadOnlyList<ApplyToPattern>? parsedApplyTo)
+    {
+        if (!input.ApplyToFacts.IsExplicit)
+        {
+            return [];
+        }
+
+        if (parsedApplyTo is null)
+        {
+            return input.ApplyTo.Distinct(StringComparer.Ordinal).ToImmutableArray();
+        }
+
+        return parsedApplyTo.Select(pattern => pattern.Text).ToImmutableArray();
+    }
 
     private static RouteUpdateResponsibilityOperation ReadResponsibilityOperation(
         RouteUpdateBindingInput input)

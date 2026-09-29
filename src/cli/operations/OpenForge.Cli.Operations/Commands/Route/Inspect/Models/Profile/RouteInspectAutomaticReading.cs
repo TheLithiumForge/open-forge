@@ -5,7 +5,6 @@ namespace OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 internal enum RouteInspectAutomaticReadingKind
 {
     OnDemand,
-    MatchingFileCondition,
     ParentLoadNow,
     EntrypointKeepInMind,
     RoutedFileKeepInMind,
@@ -22,7 +21,6 @@ internal enum RouteInspectAutomaticReadingEvent
     TaskReview,
     LaterReview,
     BaseRead,
-    WorkingPathMatches,
 }
 
 internal sealed class RouteInspectAutomaticReading
@@ -117,8 +115,6 @@ internal sealed class RouteInspectAutomaticReading
         {
             RouteInspectAutomaticReadingKind.OnDemand =>
                 [RouteInspectAutomaticReadingEvent.RouteSelected],
-            RouteInspectAutomaticReadingKind.MatchingFileCondition =>
-                [RouteInspectAutomaticReadingEvent.WorkingPathMatches],
             RouteInspectAutomaticReadingKind.ParentLoadNow =>
                 [RouteInspectAutomaticReadingEvent.ExposingParentRead],
             RouteInspectAutomaticReadingKind.EntrypointKeepInMind =>

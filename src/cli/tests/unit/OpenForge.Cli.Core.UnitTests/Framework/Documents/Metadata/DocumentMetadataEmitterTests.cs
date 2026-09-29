@@ -29,6 +29,26 @@ public sealed class DocumentMetadataEmitterTests
     }
 
     [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Framework metadata round trips authored glob syntax through a quoted scoped list")]
+    [InlineData("{src,test}/**/*.{cs,ts}")]
+    [InlineData("src/[ab].cs")]
+    [InlineData("src/report,legacy.cs")]
+    [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
+    public void EmitsAndReadsAuthoredApplyToPatterns(string text)
+    {
+        var pattern = new ApplyToPattern(text, [.. text.Split('/')]);
+        var yaml = new FrameworkDocumentMetadataEmitter().EmitOptional(
+            new FrameworkDocumentMetadataEmission("Route description", ["Docs"], null, [pattern]));
+
+        Assert.Contains($"applyTo: [\"{text}\"]", yaml, StringComparison.Ordinal);
+        var facts = new FrameworkDocumentMetadataParser().Parse(
+            new MarkdownDocumentParser().Parse($"---\n{yaml}---\n"));
+
+        Assert.Equal(ApplyToMetadataState.Valid, facts.ApplyTo.State);
+        Assert.Equal([text], facts.ApplyTo.Patterns.Select(pattern => pattern.Text));
+    }
+
+    [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Optional metadata omits missing fields while retaining safe authored values")]
     [InlineData(null, false)]
     [InlineData("true: # 路由", false)]

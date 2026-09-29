@@ -34,7 +34,7 @@ The [Concepts](concepts/index.md) section covers each part in depth.
 
 ## What you actually install
 
-The base Framework is 15 plain Markdown files, about 7.8k tokens, of which about 5.7k load at startup ([how it's measured](/guides/development#measure-context-size)).
+The base Framework is 15 plain Markdown files, about 8.8k tokens, of which about 6.1k load at startup ([how it's measured](/guides/development#measure-context-size)).
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first

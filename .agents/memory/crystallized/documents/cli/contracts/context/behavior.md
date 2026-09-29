@@ -118,9 +118,10 @@ relationships. Reject a path that lexically escapes the selected workspace;
 never silently discard it. Repeated values that normalize to the same path are
 one path for matching.
 
-Evaluate entries top-down from visible loaded parents. Include an exposed entry
-whose condition matches a working path before work on that file, whether or not
-the entry has a loading tag. A source's `applyTo` patterns use OR; every
+Evaluate entries top-down from visible loaded parents. A condition only
+filters. Include a conditioned entry only when a loading tag, an explicit
+source, or a followed link would include it and a working path satisfies its
+chain. A source's `applyTo` patterns use OR; every
 conditioned ancestor in the source's route chain adds an AND condition evaluated
 against that same working path. A missing local condition inherits its ancestor
 conditions. A valid overwrite shares its base's applicability and remains
@@ -137,9 +138,10 @@ A directly selected or referenced source remains inspectable when it does not
 match the working set. Include only the route ancestors required to establish
 that inspection; do not load its descendants automatically on that basis.
 When no working paths were supplied, a conditioned entry cannot be classified
-against the task. Defer it and retain `{ source, patterns }` in
-`pendingConditions`; report `applicability.state` as `pending` and do not call it
-matched, unmatched, or unconditioned. Encountered pending conditions make
+against the task. Defer a conditioned entry that a loading tag would include and
+retain `{ source, patterns }` in `pendingConditions`. For any conditioned
+source, report `applicability.state` as `pending` and do not call it matched,
+unmatched, or unconditioned. Encountered pending conditions make
 coverage `incomplete`. Invalid authored conditions report applicability as
 `invalid` and use the existing metadata-validation and incomplete-result policy;
 they do not change the report envelope or status vocabulary.

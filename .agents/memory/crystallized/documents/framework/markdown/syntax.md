@@ -110,19 +110,16 @@ Direct-load files that are never indexed do not need Open Forge metadata unless 
 
 ### File Conditions
 
-An optional `applyTo` condition limits when a routed source is selected for
-work on matching files. It applies before the source body is opened. It does
-not change edit permission or the source's authority. The [routing and loading
-contracts](../routing/loading.md) define how conditions combine across a
-selected route chain and how file selection affects context.
+An optional `applyTo` condition narrows a routed source to tasks that work on
+matching files. This section defines its syntax. The [loading
+contract](../routing/loading.md#file-conditions) defines its effect.
 
 `applyTo` has the same meaning at the YAML frontmatter root and under
 `open-forge:`. Readers inspect both locations, including a root declaration
-beside an existing `open-forge:` block. New fields use a list of quoted
-patterns under `open-forge:`. A quoted scalar containing one pattern is also
-accepted as input. A list contains one quoted string per pattern. Strings are
-not split at commas, because commas and spaces may be literal filename
-characters.
+beside an existing `open-forge:` block. A declaration is one quoted string or
+a list of quoted strings. A string is an expression that produces one or more
+atomic patterns. A list entry is one atomic pattern. Canonical authoring uses
+a list of atomic patterns under `open-forge:`.
 
 For example, canonical authoring places the field in the scoped block:
 
@@ -135,20 +132,55 @@ open-forge:
 ---
 ```
 
+In a string expression, split at top-level commas, meaning commas outside
+`{...}` and `[...]`. Inside an expression, `\,` is a literal comma and `\\`
+is a literal backslash. Decoding happens before brace parsing, so `\,` escapes
+only the list separator. Write `[,]` for a literal comma inside a brace
+alternative, as in `{a[,]b,c}`. Trim white space around each fragment and drop
+empty fragments. An expression with no fragments fails with `Empty`. A list entry is
+trimmed as one atomic pattern. Do not split it at commas or decode `\,`. An
+entry that is empty after trimming fails with `Empty`. A string containing
+`**/*.cs, **/*.csproj` is therefore equivalent to a two-item list containing
+those atomic pattern texts. Brace shorthand is not equivalent to its expansion,
+so `{src,test}/**/*.cs` and `src/**/*.cs, test/**/*.cs` are different atomic
+pattern sets even when they match the same paths.
+
 An absent field adds no condition. Empty strings, empty lists, nulls, and
 non-string values are invalid. If both locations declare `applyTo`, readers
-normalize each declaration to a set of distinct patterns, comparing strings
-with ordinal, case-sensitive equality. Equivalent sets represent one
-condition. Different sets make the metadata conflicting and invalid; readers
-do not union the sets or choose one location.
+normalize each declaration to a set of distinct atomic pattern texts,
+comparing those texts with ordinal, case-sensitive equality. Equivalent sets
+represent one condition. Different sets make the metadata conflicting and
+invalid, and readers do not union the sets or choose one location.
 
-Patterns use slash-separated, workspace-relative paths. `*` matches within one
-path segment, and `?` matches one character within a segment. `**` matches zero
-or more segments only when it is a complete segment. Matching is
-case-sensitive on every platform. Patterns cannot be absolute or contain
-backslashes, empty, `.` or `..` segments, controls, braces, character classes,
-leading negation, or consecutive stars embedded in another segment. There is
-no escape syntax. Literal spaces and commas remain part of a pattern.
+Atomic patterns use slash-separated, workspace-relative paths. A leading `/`
+or drive prefix fails with `AbsolutePath`. A `.` or `..` segment fails with
+`Traversal`. Empty segments, including a trailing `/`, fail with `Empty`.
+Backslashes and control characters fail with `UnsupportedSyntax`. A leading
+`!` is an ordinary character, as in POSIX globbing, APM and VS Code. It does
+not negate the pattern.
+
+`**` as a whole segment matches zero or more path segments. `**` inside a
+longer segment, such as `a**b` or `***`, behaves as `*`. `*` matches any run of
+characters within one segment, including an empty run and a leading dot. `?`
+matches exactly one character within one segment.
+
+`[...]` matches one character from a set. Ranges use `a-z`. `[!...]` and
+`[^...]` negate the set. A `]` directly after `[`, `[!`, or `[^` is a literal
+member. A `-` at the start or end is literal. Classes never match `/`. Bracket
+forms such as `[*]`, `[?]`, `[[]`, `[{]`, and `[,]` express literal
+metacharacters. An unterminated class fails with `UnsupportedSyntax`.
+
+`{a,b}` expands to alternatives before segments are parsed, so an alternative
+may contain `/`, as in `{src,test}/**/*.cs`. Several groups multiply. Empty
+alternatives are allowed, and commas inside a class within a group do not split
+it. A group with one alternative is that alternative. Nested groups, unbalanced
+braces, and more than 1000 total alternatives fail with `UnsupportedSyntax`.
+Every expanded alternative must pass the path rules above. Matching succeeds
+when any alternative matches.
+
+Matching is anchored at the workspace root and is ordinal and case-sensitive on
+every host. Dot-prefixed names match normally. Working paths are matched
+lexically and need not exist. Use `**/*.py`, not `*.py`, for any depth.
 
 ## Tags
 

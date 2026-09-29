@@ -81,7 +81,7 @@ open-forge route init <route-target>
   [--description <text>]
   [--responsibility <text>]
   [--tag=<tag>]...
-  [--apply-to <pattern>]...
+  [--apply-to <glob>]...
   [--dry-run]
   [global flags]
 ```
@@ -160,7 +160,7 @@ contract. This command does not copy their complete definitions.
 | `--description <text>`    | Authored metadata | One description value                                          | The final target uses its draft description unless another rule supplies an explicit description | Singleton. Repetition is invalid, including repetition with an equal value.                                                     |
 | `--responsibility <text>` | Authored metadata | One responsibility value, including the exact empty value `""` | No responsibility field is added to a missing target                                             | A non-empty value adds the field and `""` omits it. The flag is singleton; any repetition is invalid, including an equal value. |
 | `--tag=<tag>`             | Authored metadata | One tag without a `#` prefix                                   | The final target uses draft metadata and the `NeedsAuthoring` rule                               | Repeatable. Values retain argument order. Empty tags and duplicate exact tags are invalid.                                      |
-| `--apply-to <pattern>`    | Authored metadata | One workspace-relative pattern                                 | No `applyTo` field is added to the final target                                                  | Repeatable, one pattern per occurrence. Normalized values form an ordinal-distinct set.                                        |
+| `--apply-to <glob>`       | Authored metadata | One workspace-relative glob expression                         | No `applyTo` field is added to the final target                                                  | Repeatable. Each value may list comma-separated patterns. Patterns form a sorted ordinal-distinct set.                                        |
 | `--dry-run`               | Write policy      | No value                                                       | Application is selected                                                                          | Repetition is accepted and idempotent. It previews the same complete plan and preflight.                                        |
 
 `--description`, `--responsibility`, `--tag`, and `--apply-to` are valid only in
@@ -327,7 +327,7 @@ entrypoint:
 - An exact empty `--responsibility ""` omits the field.
 - Repeated `--tag` values provide the final target's explicit tags in argument
   order.
-- Repeated `--apply-to <pattern>` values provide the final target's local
+- Repeated `--apply-to <glob>` values provide the final target's local
   applicability patterns. Missing ancestors receive no copied or inferred
   `applyTo` declaration.
 
@@ -347,9 +347,11 @@ semantic accuracy of supplied prose and tags. A later `doctor` operation may
 report meaning-quality diagnostics separately.
 
 `applyTo` is written only in the missing final target's scoped `open-forge`
-mapping as a quoted string list. Patterns use the workspace-relative,
-slash-separated grammar defined for `route create`. The field is optional and
-does not change the existing `NeedsAuthoring` rules for description and tags.
+mapping as a quoted string list. Each `--apply-to` value is an expression under
+the [File Conditions syntax](../../../../framework/markdown/syntax.md#file-conditions),
+and the resulting patterns are sorted and deduplicated by ordinal comparison.
+The field is optional and does not change the existing `NeedsAuthoring` rules
+for description and tags.
 
 ### Placeholder metadata condition
 

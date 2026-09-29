@@ -49,7 +49,7 @@ internal static partial class RouteInitDefinitions
 
     internal static readonly CliOptionDefinition<string[]> ApplyTo = new(
         "--apply-to",
-        "Add one file glob to the missing generic final target's applicability.",
+        "Set glob patterns for the missing generic final target. Separate patterns with commas or repeat this option.",
         CliOptionArity.ExactlyOne,
         [],
         "glob");

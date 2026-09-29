@@ -2,18 +2,18 @@
 
 Open Forge is a small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work. It's agent- and harness-agnostic, and the whole design comes from an idea I call **Adaptive Context Engineering (ACE)**. ACE takes progressive disclosure and spec-driven development and applies them to the workspace itself. Each task starts from what you want to achieve, pulls in the context it needs as the work unfolds, and leaves behind what's worth keeping for the next one.
 
-An agent doesn't need to know everything, but it does need to know where everything is. Open Forge gives your workspace a loader and one short entrypoint per folder. At startup the rules have an agent read the loader and the entrypoints of most categories, plus any entries those entrypoints mark to load, such as the project's root rules. As task paths become clear, a matching file condition can also open a visible entry. Everything else stays closed until a task needs it. A useful correction, a workflow that saves you time, or a decision you don't want to explain again gets a place in that structure. Scopes keep each piece within reach without bringing the whole collection into every task.
+An agent doesn't need to know everything, but it does need to know where everything is. Open Forge gives your workspace a loader and one short entrypoint per folder. At startup the rules have an agent read the loader and the entrypoints of most categories, plus any entries those entrypoints mark to load, such as the project's root rules. Everything else stays closed until a task needs it. A useful correction, a workflow that saves you time, or a decision you don't want to explain again gets a place in that structure. Scopes keep each piece within reach without bringing the whole collection into every task.
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="src/docusaurus/static/img/framework-map-dark.svg">
-    <img alt="How Open Forge fits together. With the default loading tags and no file conditions, the agent reads AGENTS.md or CLAUDE.md, the loader, and the indexes of Directives, Guidance, Patterns, Skills, Maps, Memory, Working, Emerging, and Crystallized at startup, plus any linked files those indexes tag to load. Templates and Archived open on demand. Each card shows a folder's index above the files it links to, which open on demand unless tagged to load. A matching file condition can also open a visible entry. Core holds six categories for how work gets done. Memory holds four states for what's worth remembering. Cards include examples of what optional Extensions add, such as Checkpoints and Decisions." src="src/docusaurus/static/img/framework-map-light.svg" width="900">
+    <img alt="How Open Forge fits together. With the default loading tags, the agent reads AGENTS.md or CLAUDE.md, the loader, and the indexes of Directives, Guidance, Patterns, Skills, Maps, Memory, Working, Emerging, and Crystallized at startup, plus any linked files those indexes tag to load. Templates and Archived open on demand. Each card shows a folder's index above the files it links to, which open on demand unless tagged to load. A file with applyTo patterns applies only while the task works on a matching file. Core holds six categories for how work gets done. Memory holds four states for what's worth remembering. Cards include examples of what optional Extensions add, such as Checkpoints and Decisions." src="src/docusaurus/static/img/framework-map-light.svg" width="900">
   </picture>
 </p>
 
 The base Framework has two parts. **Core** defines how work is done: a Directive must be followed, Guidance can be adapted, and a Template is copied and then maintained on its own. **Memory** keeps what's worth remembering and shows how far to trust it: current work, unconfirmed findings, accepted knowledge, and history each have their own state. Optional **Extensions** add categories and files inside both parts, such as Decisions from the Planning Extension.
 
-The base is 15 files and about 7.8k tokens, of which about 5.7k load at startup ([how it's measured](docs/development.md#measure-context-size)). From there, make it yours: keep your favorite tools, add your own ideas, and change the parts that don't fit. The CLI makes maintenance faster, but the files work on their own.
+The base is 15 files and about 8.8k tokens, of which about 6.1k load at startup ([how it's measured](docs/development.md#measure-context-size)). From there, make it yours: keep your favorite tools, add your own ideas, and change the parts that don't fit. The CLI makes maintenance faster, but the files work on their own.
 
 ## Get started
 
@@ -107,7 +107,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 
 Each entrypoint says what its category is for and the rules for using it, then lists what's inside under `Entries`. Apart from Memory's four states and the `open-forge-cli` Skill, every category starts empty. The content comes from your work, or from Extensions you choose.
 
-At startup an agent reads `AGENTS.md`, the loader, and every entrypoint above except Templates and Archived. Reading an entrypoint doesn't open what it lists. Its children open when the task selects them, a loading tag applies, or a matching file condition makes a visible entry applicable. The numbers above cover the base. Installed Extensions and your own content add to them.
+At startup an agent reads `AGENTS.md`, the loader, and every entrypoint above except Templates and Archived. Reading an entrypoint doesn't open what it lists: those files open when a task needs them, unless their entry is tagged `LoadNow` or `KeepInMind`. The numbers above cover the base. Installed Extensions and your own content add to them.
 
 Read these files once now, and again after each update. They're short, and they become the instructions your agents are asked to follow.
 
@@ -139,7 +139,7 @@ Then run `open-forge index`, or replace the `none` placeholder under `Entries` i
 - [Run the tests before calling a change done](testing.md) - #LoadNow #Directive #Testing
 ```
 
-A Directive at the root of `directives/` must carry `LoadNow`. With no file condition, the agent reads it at the start of every task. If the Directive declares `applyTo`, the condition limits which working files make it applicable.
+A Directive at the root of `directives/` must carry `LoadNow`, which tells the agent to read it at the start of every task.
 
 The same move works for everything your project keeps teaching you:
 
@@ -149,7 +149,7 @@ The same move works for everything your project keeps teaching you:
 - A specialized capability can become a Skill.
 - A useful finding or an accepted decision can become Memory that later work builds on.
 
-**Scopes keep this growth cheap.** Put frontend conventions in a frontend scope and database rules in a database scope. A task selects the branches it needs, and a task that spans both follows both on purpose. Each scope holds only what helps there. There's no fixed limit on how many scopes you add or how deep they go. Active context follows selected routes and their matching file conditions, so adding knowledge doesn't mean every task reads more of it.
+**Scopes keep this growth cheap.** Put frontend conventions in a frontend scope and database rules in a database scope. A task selects the branches it needs, and a task that spans both follows both on purpose. Each scope holds only what helps there. There's no fixed limit on how many scopes you add or how deep they go. Active context follows the selected routes and their links, so adding knowledge doesn't mean every task reads more of it.
 
 ## Why it works this way
 
@@ -219,14 +219,16 @@ The **description** helps a reader decide whether to open the file. The optional
 
 | Tag                           | Meaning                                                                                                                      |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `LoadNow`                     | Read the linked file when its loaded parent exposes it, subject to any `applyTo` condition                                   |
-| `KeepInMind`                  | Read it when its parent loads, subject to any `applyTo` condition, then refresh at task start or resume, after restoration, and before handoff or closeout while its scope remains active |
+| `LoadNow`                     | Read the linked file when its loaded parent lists it                                                                         |
+| `KeepInMind`                  | Read it when its parent loads, then again at task start or resume, after context restoration, and before handoff or closeout |
 | `Contextual`                  | Treat useful context as unaccepted unless applicable authority establishes acceptance                                        |
 | `CurrentTruth`                | Identify accepted current state within its stated scope                                                                      |
 | `Evergreen`                   | Keep the content aligned with the current state it represents                                                                |
 | `Core`, `Memory`, `Extension` | Identify the part of the Framework or package the content relates to                                                         |
 
-Tags don't grant authority. Loading tags and `applyTo` conditions act only through a parent that's already loaded, so they can't pull in a scope nobody selected. A file condition doesn't grant or restrict permission to edit. Any other tag is yours to describe your own subjects, and it adds no loading behavior. See [Loading and tags](src/docusaurus/docs/concepts/loading-and-tags.md#file-conditions) for the details.
+Tags don't grant authority. Loading tags act only through a parent that is already loaded, so they can't pull in a scope nobody selected. Any other tag is yours to describe your own subjects, and it adds no loading behavior.
+
+A file can also list `applyTo` patterns, such as `["**/*.cs"]`. The patterns only filter: a tagged or selected file applies only while the task works on a matching file. [Loading and tags](src/docusaurus/docs/concepts/loading-and-tags.md#file-conditions) has the details.
 
 Each routed folder has an **entrypoint**, normally `_{folder-name}.md`, with short links under `Entries`. Those links are the next choices an agent can make. Reading an entrypoint doesn't open the files it links to. The [loader](src/open-forge/.agents/loader.md) has the complete routing and tag rules, and the [Markdown reference](.agents/memory/crystallized/documents/framework/markdown/syntax.md#frontmatter) covers the format.
 

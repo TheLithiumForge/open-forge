@@ -12,7 +12,6 @@ internal enum SourceLoadingClosureReasonKind
     Loader,
     LoadNow,
     KeepInMind,
-    Applicability,
     AncestorRequired,
 }
 
@@ -27,7 +26,6 @@ internal sealed record SourceLoadingClosureReason
             SourceLoadingClosureReasonKind.WorkspaceEntry
                 or SourceLoadingClosureReasonKind.Loader => sourcePath is null,
             SourceLoadingClosureReasonKind.LoadNow
-                or SourceLoadingClosureReasonKind.Applicability
                 or SourceLoadingClosureReasonKind.AncestorRequired => !string.IsNullOrWhiteSpace(sourcePath),
             SourceLoadingClosureReasonKind.KeepInMind => sourcePath is null
                 || !string.IsNullOrWhiteSpace(sourcePath),

@@ -330,8 +330,9 @@ Every non-empty generated body uses this exact canonical line shape:
 
 A generated line has the accepted description, containing-file-relative
 destination, separator, and useful bare tags shown above. When the source has a
-valid declared `applyTo` set, append ` - applies to ` followed by its patterns
-as comma-separated Markdown code spans. The suffix follows the tags. For
+valid declared `applyTo` set, append ` - applies to ` followed by one normalized
+atomic pattern per Markdown code span, separated by `, `. Braces and character
+classes remain unexpanded in each span. The suffix follows the tags. For
 example:
 
 ```md

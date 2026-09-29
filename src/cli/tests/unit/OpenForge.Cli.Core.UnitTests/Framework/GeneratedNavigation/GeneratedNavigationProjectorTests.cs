@@ -127,6 +127,56 @@ public sealed class GeneratedNavigationProjectorTests
     }
 
     [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation projects a frontmatter applyTo expression as atomic code spans without expanding braces")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void ProjectionProjectsFrontmatterApplyToExpressionAsAtomicCodeSpans()
+    {
+        var parent = Source(
+            ".agents/root/_root.md",
+            "root",
+            SourceDocumentForm.CanonicalEntrypoint);
+        var child = Source(".agents/root/child.md", "root/child");
+        var facts = new SourceAuthoredMetadataParser().Parse(
+            new MarkdownDocumentParser().Parse(
+                """
+                ---
+                open-forge:
+                  description: Child
+                  tags: [Docs]
+                  applyTo: 'src/**/*.cs,**/*.{ts,tsx}'
+                ---
+                """),
+            SourceDocumentForm.Markdown);
+        var topology = new SourceRouteTopology(
+            [
+                Node(parent, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        var request = Request(
+            topology,
+            [parent, child],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
+            [new GeneratedNavigationMetadata(child, facts)]);
+
+        Assert.Equal(SourceAuthoredMetadataState.Complete, facts.State);
+        Assert.Equal(ApplyToMetadataState.Valid, facts.ApplyTo.State);
+        Assert.Equal(
+            ["**/*.{ts,tsx}", "src/**/*.cs"],
+            facts.ApplyTo.Patterns.Select(pattern => pattern.Text));
+
+        var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
+        var entry = Assert.Single(region.Entries);
+
+        Assert.Equal(
+            "- [Child](child.md) - #Docs - applies to `**/*.{ts,tsx}`, `src/**/*.cs`",
+            entry.Line);
+        Assert.Equal(
+            ["**/*.{ts,tsx}", "src/**/*.cs"],
+            entry.ApplyTo.Select(pattern => pattern.Text));
+    }
+
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation emits the exact empty body for a childless entrypoint")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void EmptyEntrypointProjectionUsesCanonicalSentinel()

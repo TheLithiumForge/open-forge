@@ -125,6 +125,50 @@ public sealed class PublishedFindProcessTests
             pendingMatch.GetProperty("applicability").GetProperty("state").GetString());
     }
 
+    [Fact(DisplayName = "Published Find filters --for paths using a brace pattern"), Trait("Feature", "find-applicability"), Trait("Evidence", "EndToEnd")]
+    public async Task PublishedFindBracePatternFiltersWorkingPaths()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedFindWorkspace.CreateBare();
+        File.WriteAllText(
+            working.Combine(".agents/docs.md"),
+            "---\nopen-forge:\n  description: Docs\n  tags: [Architecture]\n  applyTo: \"{src,tests}/**/*.cs\"\n---\n# Architecture\n\n## Target\n\nTarget body\n");
+
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+            target,
+            working.Path,
+            working.SnapshotState,
+            [
+                "find",
+                "--tag=Architecture",
+                "--for", "src/Planned.cs",
+                "--for", "tests/Planned.cs",
+                "--for", "docs/Notes.md",
+                "--format=json",
+                "--detail=standard",
+            ]);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        var query = document.RootElement.GetProperty("data").GetProperty("query");
+        Assert.Equal(
+            ["src/Planned.cs", "tests/Planned.cs", "docs/Notes.md"],
+            query.GetProperty("workingPaths").EnumerateArray().Select(path => path.GetString()));
+        var match = Assert.Single(document.RootElement.GetProperty("data").GetProperty("matches").EnumerateArray());
+        Assert.Equal(".agents/docs.md", match.GetProperty("path").GetString());
+        var applicability = match.GetProperty("applicability");
+        Assert.Equal("matched", applicability.GetProperty("state").GetString());
+        var condition = Assert.Single(applicability.GetProperty("conditions").EnumerateArray());
+        Assert.Equal(".agents/docs.md", condition.GetProperty("source").GetString());
+        Assert.Equal(
+            ["{src,tests}/**/*.cs"],
+            condition.GetProperty("patterns").EnumerateArray().Select(pattern => pattern.GetString()));
+        Assert.Equal(
+            ["src/Planned.cs", "tests/Planned.cs"],
+            applicability.GetProperty("matchingPaths").EnumerateArray().Select(path => path.GetString()));
+    }
+
     private static string[] NonEmptyLines(string output) => output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
 
 }

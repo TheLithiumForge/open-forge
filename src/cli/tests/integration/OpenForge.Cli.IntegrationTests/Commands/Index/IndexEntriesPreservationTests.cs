@@ -39,6 +39,30 @@ public sealed class IndexEntriesPreservationTests
     }
 
     [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Index projects string ApplyTo expressions without expanding brace patterns")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
+    public async Task StringApplyToExpressionProjectionIsStable()
+    {
+        using var workspace = IndexOperationWorkspace.Create("index-apply-to-expression");
+        workspace.ReplaceChildBytes(Encoding.UTF8.GetBytes(
+            "---\nopen-forge:\n  description: Child\n  tags: [Docs]\n  applyTo: \"{src,test}/**/*.{cs,ts}, docs/**/*.md\"\n---\n# Child\n"));
+        const string expectedEntry = "- [Child](child.md) - #Docs - applies to `docs/**/*.md`, `{src,test}/**/*.{cs,ts}`";
+        var operation = IndexOperationFactory.Create(workspace.LockStoreRoot);
+
+        var first = await operation.ExecuteAsync(workspace.Request(IndexMode.Apply), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, first.Status);
+        Assert.Contains(expectedEntry, await workspace.ReadRootAsync(TestContext.Current.CancellationToken), StringComparison.Ordinal);
+        var hashes = workspace.SnapshotHashes();
+
+        var second = await operation.ExecuteAsync(workspace.Request(IndexMode.Apply), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, second.Status);
+        Assert.Equal(hashes, workspace.SnapshotHashes());
+        Assert.Contains(expectedEntry, await workspace.ReadRootAsync(TestContext.Current.CancellationToken), StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Index preserves authored prose around the first Entries list and is stable on a second run")]
     [InlineData("\n", false)]
     [InlineData("\n", true)]

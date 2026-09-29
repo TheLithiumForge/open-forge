@@ -326,11 +326,9 @@ parent-triggered `#LoadNow`, entrypoint `#KeepInMind`, routed-file
 corresponding event in ordinary words. For both `KeepInMind` kinds,
 `relatedSourceId` identifies the exposing parent and `events` contains
 `exposing-parent-read` followed by `later-review`. Later review applies only
-while that scope remains active. A matching supplied path uses reason kind
-`matching-file-condition` and event `working-path-matches`, with the exact
-human text: `a supplied working path matches the route's effective file
-condition.` This reason reports applicability; it does not claim automatic
-reading.
+while that scope remains active. A matching `applyTo` condition adds no
+reading reason, because a condition only filters. The applicability facts
+report whether supplied paths match.
 
 Detached entrypoints have no Loader-rooted automatic trigger. Their local
 `#LoadNow` descendants may still be measured as a local topology fact. Known

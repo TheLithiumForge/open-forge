@@ -5,6 +5,36 @@ namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedRouteInitProcessTests
 {
+    [Fact(DisplayName = "Published generic Route Init emits canonical atomic metadata for a comma-separated apply-to value"), Trait("Feature", "route-init"), Trait("Evidence", "EndToEnd")]
+    public async Task CommaSeparatedApplyToEmitsCanonicalAtomicList()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedRouteInitWorkspace.CreateGeneric();
+        var result = await RunWithoutWritesAsync(
+            target,
+            workspace,
+            [
+                "route", "init", "docs",
+                "--description", "Project documents",
+                "--tag=Documentation",
+                "--apply-to", "src/*.ts,**/*.cs",
+                "--dry-run",
+                "--format=json",
+                "--detail", "full",
+                "--workspace", workspace.Path,
+            ]);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        Assert.Equal("dry-run", document.RootElement.GetProperty("data").GetProperty("mode").GetString());
+        Assert.Equal(
+            ["**/*.cs", "src/*.ts"],
+            document.RootElement.GetProperty("data").GetProperty("metadata").GetProperty("applyTo")
+                .EnumerateArray().Select(value => value.GetString()));
+        workspace.AssertNoLockInfrastructure();
+    }
+
     [Fact(DisplayName = "Published generic Route Init previews applies and converges"), Trait("Feature", "route-init"), Trait("Evidence", "EndToEnd")]
     public async Task GenericDryRunApplyAndRepeatNoOpFormOneRealJourney()
     {

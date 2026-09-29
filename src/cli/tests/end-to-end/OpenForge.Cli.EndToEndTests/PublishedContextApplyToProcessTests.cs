@@ -92,6 +92,49 @@ public sealed class PublishedContextApplyToProcessTests
                 .Select(condition => condition.GetProperty("source").GetString()));
     }
 
+    [Fact(DisplayName = "Published Context matches a comma-separated brace applyTo expression for a TypeScript path"),
+     Trait("Feature", "context"), Trait("Evidence", "EndToEnd")]
+    public async Task ExpressionSelectsTypeScriptPath()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedContextWorkspace.Create();
+        working.ReplaceText(
+            ".agents/startup/_startup.md",
+            ExpressionConditionedDocument(
+                "Startup",
+                ["LoadNow", "Core"],
+                "src/**/*.cs,**/*.{ts,tsx}",
+                "# Startup\n\n## Entries\n\n- [Topic](topic.md) - #KeepInMind #Core\n"));
+
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+            target,
+            working.Path,
+            working.SnapshotState,
+            [
+                "context",
+                "--for", "src/components/app.tsx",
+                "--content=metadata",
+                "--detail=full",
+                "--format=json",
+            ]);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        var data = document.RootElement.GetProperty("data");
+        Assert.Equal(
+            ["src/components/app.tsx"],
+            data.GetProperty("workingPaths").EnumerateArray().Select(value => value.GetString()));
+        var startup = Assert.Single(
+            data.GetProperty("sources").EnumerateArray(),
+            source => source.GetProperty("path").GetString() == ".agents/startup/_startup.md");
+        var applicability = startup.GetProperty("applicability");
+        Assert.Equal("matched", applicability.GetProperty("state").GetString());
+        Assert.Equal(
+            ["src/components/app.tsx"],
+            applicability.GetProperty("matchingPaths").EnumerateArray().Select(value => value.GetString()));
+    }
+
     private static string ConditionedDocument(
         string description,
         IReadOnlyList<string> tags,
@@ -101,5 +144,15 @@ public sealed class PublishedContextApplyToProcessTests
         var applyTo = string.Join("\n", patterns.Select(pattern => $"  - \"{pattern}\""));
         var tagList = string.Join(", ", tags);
         return $"---\napplyTo:\n{applyTo}\nopen-forge:\n  description: {description}\n  tags: [{tagList}]\n---\n\n{body}";
+    }
+
+    private static string ExpressionConditionedDocument(
+        string description,
+        IReadOnlyList<string> tags,
+        string expression,
+        string body)
+    {
+        var tagList = string.Join(", ", tags);
+        return $"---\napplyTo: \"{expression}\"\nopen-forge:\n  description: {description}\n  tags: [{tagList}]\n---\n\n{body}";
     }
 }

@@ -59,7 +59,7 @@ internal static class RouteUpdateDefinitions
 
     internal static readonly CliOptionDefinition<string[]> ApplyTo = new(
         "--apply-to",
-        "Replace the complete local applyTo pattern list; repeat for additional patterns.",
+        "Replace the complete local applyTo list. Separate patterns with commas or repeat this option.",
         CliOptionArity.ExactlyOne,
         [],
         ApplyToValueName);

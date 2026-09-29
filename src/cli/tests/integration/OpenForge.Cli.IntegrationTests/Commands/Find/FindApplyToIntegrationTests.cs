@@ -8,6 +8,8 @@ public sealed class FindApplyToIntegrationTests
 {
     private const string RulesPath = ".agents/rules/_rules.md";
     private const string CSharpRulesPath = ".agents/rules/csharp.md";
+    private const string ScopedRulesPath = ".agents/rules/scoped/_scoped.md";
+    private const string ScopedCSharpRulesPath = ".agents/rules/scoped/csharp.md";
 
     [Trait("Boundary", "Host"), Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
     [Fact(DisplayName = "Find applies inherited and local conditions to the same path without expanding its filtered universe")]
@@ -63,6 +65,71 @@ public sealed class FindApplyToIntegrationTests
     }
 
     [Trait("Boundary", "Host"), Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Find filters discovery with brace and comma conditions while applying inherited conditions")]
+    public async Task BraceAndCommaConditionsFilterDiscoveryWithInheritedConditions()
+    {
+        using var workspace = CreateWorkspace(
+            rulesApplyTo: "\"{src,tests}/**\"",
+            cSharpApplyTo: "\"**/*.cs,**/*.ts\"");
+
+        var matching = await Run(
+            workspace,
+            "--format", "json",
+            "--detail", "full",
+            "--tag", "Selected",
+            "--heading", "Needle",
+            "--require", "all",
+            "--for", "tests/Order.ts");
+
+        Assert.Equal(0, matching.ExitCode);
+        Assert.Empty(matching.Error);
+        using var matchingDocument = JsonDocument.Parse(matching.Output);
+        Assert.Equal(
+            new[] { ".agents/plain.md", CSharpRulesPath },
+            Paths(Matches(matchingDocument)).OrderBy(path => path, StringComparer.Ordinal));
+        AssertApplicability(
+            MatchAtPath(matchingDocument, CSharpRulesPath),
+            "matched",
+            [
+                (RulesPath, new[] { "{src,tests}/**" }),
+                (CSharpRulesPath, new[] { "**/*.cs", "**/*.ts" }),
+            ],
+            ["tests/Order.ts"]);
+
+        var inheritedMismatch = await Run(
+            workspace,
+            "--format", "json",
+            "--detail", "full",
+            "--tag", "Selected",
+            "--heading", "Needle",
+            "--require", "all",
+            "--for", "docs/Order.cs");
+
+        Assert.Equal(0, inheritedMismatch.ExitCode);
+        Assert.Empty(inheritedMismatch.Error);
+        using var inheritedMismatchDocument = JsonDocument.Parse(inheritedMismatch.Output);
+        Assert.Equal(
+            new[] { ".agents/plain.md" },
+            Paths(Matches(inheritedMismatchDocument)).OrderBy(path => path, StringComparer.Ordinal));
+
+        var localMismatch = await Run(
+            workspace,
+            "--format", "json",
+            "--detail", "full",
+            "--tag", "Selected",
+            "--heading", "Needle",
+            "--require", "all",
+            "--for", "tests/Order.md");
+
+        Assert.Equal(0, localMismatch.ExitCode);
+        Assert.Empty(localMismatch.Error);
+        using var localMismatchDocument = JsonDocument.Parse(localMismatch.Output);
+        Assert.Equal(
+            new[] { ".agents/plain.md" },
+            Paths(Matches(localMismatchDocument)).OrderBy(path => path, StringComparer.Ordinal));
+    }
+
+    [Trait("Boundary", "Host"), Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
     [Fact(DisplayName = "Find combines file compatibility with tag and heading predicates and keeps unconditioned sources eligible")]
     public async Task FileCompatibilityIsAnIndependentFilterAtStandardAndFullDetail()
     {
@@ -109,8 +176,16 @@ public sealed class FindApplyToIntegrationTests
                 (CSharpRulesPath, "**/*.cs"),
             ],
             ["src/Order.cs"]);
-        AssertApplicability(MatchAtPath(standardDocument, ".agents/plain.md"), "unconditioned", [], []);
-        AssertApplicability(MatchAtPath(fullDocument, ".agents/plain.md"), "unconditioned", [], []);
+        AssertApplicability(
+            MatchAtPath(standardDocument, ".agents/plain.md"),
+            "unconditioned",
+            Array.Empty<(string Source, string Pattern)>(),
+            []);
+        AssertApplicability(
+            MatchAtPath(fullDocument, ".agents/plain.md"),
+            "unconditioned",
+            Array.Empty<(string Source, string Pattern)>(),
+            []);
 
         var anyPredicate = await Run(
             workspace,
@@ -189,7 +264,11 @@ public sealed class FindApplyToIntegrationTests
                 (CSharpRulesPath, "**/*.cs"),
             ],
             ["src/Order.cs"]);
-        AssertApplicability(MatchAtPath(document, ".agents/plain.md"), "unconditioned", [], []);
+        AssertApplicability(
+            MatchAtPath(document, ".agents/plain.md"),
+            "unconditioned",
+            Array.Empty<(string Source, string Pattern)>(),
+            []);
         Assert.False(File.Exists(plannedPath));
         Assert.False(Directory.Exists(Path.GetDirectoryName(plannedPath)));
     }
@@ -211,6 +290,89 @@ public sealed class FindApplyToIntegrationTests
         using var document = JsonDocument.Parse(result.Output);
         Assert.Empty(Matches(document).EnumerateArray());
         Assert.Equal(1, document.RootElement.GetProperty("data").GetProperty("sourceSet").GetProperty("candidates").GetInt32());
+    }
+
+    [Trait("Boundary", "Host"), Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Find discovers an unselected conditioned source while Context requires explicit selection")]
+    public async Task FindDiscoversUnselectedConditionedSourceWhileContextKeepsItOnDemand()
+    {
+        using var workspace = CreateWorkspace();
+        workspace.WriteText("AGENTS.md", "# Workspace\n\nRead `.agents/loader.md`.\n");
+        workspace.ReplaceText(".agents/loader.md", """
+            ---
+            open-forge:
+              description: Loader
+              tags: [LoadNow]
+            ---
+            # Loader
+
+            ## Entries
+
+            - [Rules](rules/_rules.md) - #LoadNow
+            """);
+        workspace.ReplaceText(RulesPath, """
+            ---
+            open-forge:
+              description: Rules
+              tags: [Project]
+            ---
+            # Rules
+
+            ## Entries
+
+            - [Scoped](scoped/_scoped.md)
+            """);
+        workspace.MoveFile(CSharpRulesPath, ScopedCSharpRulesPath);
+        workspace.WriteText(ScopedRulesPath, """
+            ---
+            open-forge:
+              description: Scoped
+              tags: [Project]
+              applyTo: ["src/**"]
+            ---
+            # Scoped
+
+            ## Entries
+
+            - [C# rules](csharp.md)
+            """);
+
+        var find = await Run(
+            workspace,
+            "--format", "json",
+            "--detail", "full",
+            "--include", ScopedCSharpRulesPath,
+            "--for", "src/Order.cs");
+
+        Assert.Equal(0, find.ExitCode);
+        Assert.Empty(find.Error);
+        using var findDocument = JsonDocument.Parse(find.Output);
+        Assert.Contains(ScopedCSharpRulesPath, Paths(Matches(findDocument)));
+
+        var startup = await RunContext(
+            workspace,
+            "--for", "src/Order.cs",
+            "--format", "json");
+
+        Assert.Equal(0, startup.ExitCode);
+        Assert.Empty(startup.Error);
+        using var startupDocument = JsonDocument.Parse(startup.Output);
+        Assert.DoesNotContain(ScopedRulesPath, SourcePaths(startupDocument));
+        Assert.DoesNotContain(ScopedCSharpRulesPath, SourcePaths(startupDocument));
+
+        var explicitContext = await RunContext(
+            workspace,
+            "rules/scoped/csharp",
+            "--for", "src/Order.cs",
+            "--format", "json");
+
+        Assert.Equal(0, explicitContext.ExitCode);
+        Assert.Empty(explicitContext.Error);
+        using var explicitDocument = JsonDocument.Parse(explicitContext.Output);
+        var sources = SourcePaths(explicitDocument);
+        Assert.Contains(RulesPath, sources);
+        Assert.Contains(ScopedRulesPath, sources);
+        Assert.Contains(ScopedCSharpRulesPath, sources);
     }
 
     [Trait("Boundary", "Host"), Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
@@ -256,7 +418,9 @@ public sealed class FindApplyToIntegrationTests
             finding => finding.GetProperty("code").GetString() == "find.invalid-input");
     }
 
-    private static TemporaryWorkspace CreateWorkspace()
+    private static TemporaryWorkspace CreateWorkspace(
+        string rulesApplyTo = "[\"src/**\"]",
+        string cSharpApplyTo = "[\"**/*.cs\"]")
     {
         var workspace = TemporaryWorkspace.Create("find-apply-to");
         try
@@ -269,9 +433,9 @@ public sealed class FindApplyToIntegrationTests
                 ---
                 # Loader
                 """);
-            workspace.WriteText(RulesPath, """
+            workspace.WriteText(RulesPath, $"""
                 ---
-                applyTo: ["src/**"]
+                applyTo: {rulesApplyTo}
                 open-forge:
                   description: Rules
                   tags: [Directive]
@@ -284,12 +448,12 @@ public sealed class FindApplyToIntegrationTests
                 - [Other tag](other-tag.md) - #Directive
                 - [Other path](other-path.md) - #Directive
                 """);
-            workspace.WriteText(CSharpRulesPath, """
+            workspace.WriteText(CSharpRulesPath, $"""
                 ---
                 open-forge:
                   description: C sharp rules
                   tags: [Selected]
-                  applyTo: ["**/*.cs"]
+                  applyTo: {cSharpApplyTo}
                 ---
                 # C sharp rules
 
@@ -346,6 +510,18 @@ public sealed class FindApplyToIntegrationTests
         return result;
     }
 
+    private static async Task<CliHostCaptureResult> RunContext(
+        TemporaryWorkspace workspace,
+        params string[] options)
+    {
+        var before = workspace.SnapshotHashes();
+        var result = await CliHostCapture.RunAsync(
+            ["context", "--workspace", workspace.Path, .. options],
+            workspace.Path);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        return result;
+    }
+
     private static JsonElement Matches(JsonDocument document)
         => document.RootElement.GetProperty("data").GetProperty("matches");
 
@@ -355,6 +531,12 @@ public sealed class FindApplyToIntegrationTests
     private static string[] Paths(JsonElement matches)
         => matches.EnumerateArray()
             .Select(match => match.GetProperty("path").GetString())
+            .OfType<string>()
+            .ToArray();
+
+    private static string[] SourcePaths(JsonDocument document)
+        => document.RootElement.GetProperty("data").GetProperty("sources").EnumerateArray()
+            .Select(source => source.GetProperty("path").GetString())
             .OfType<string>()
             .ToArray();
 
@@ -370,6 +552,19 @@ public sealed class FindApplyToIntegrationTests
         string expectedState,
         (string Source, string Pattern)[] expectedConditions,
         string[] expectedMatchingPaths)
+        => AssertApplicability(
+            match,
+            expectedState,
+            expectedConditions
+                .Select(condition => (condition.Source, Patterns: new[] { condition.Pattern }))
+                .ToArray(),
+            expectedMatchingPaths);
+
+    private static void AssertApplicability(
+        JsonElement match,
+        string expectedState,
+        (string Source, string[] Patterns)[] expectedConditions,
+        string[] expectedMatchingPaths)
     {
         var applicability = match.GetProperty("applicability");
         Assert.Equal(expectedState, applicability.GetProperty("state").GetString());
@@ -379,7 +574,7 @@ public sealed class FindApplyToIntegrationTests
         {
             Assert.Equal(expectedConditions[index].Source, conditions[index].GetProperty("source").GetString());
             Assert.Equal(
-                new[] { expectedConditions[index].Pattern },
+                expectedConditions[index].Patterns,
                 conditions[index].GetProperty("patterns").EnumerateArray()
                     .Select(pattern => pattern.GetString())
                     .OfType<string>());

@@ -15,6 +15,29 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Loading;
 
 public sealed class SourceLoadingClosureResolverTests
 {
+    [Fact(DisplayName = "Automatic loading requires a tag and an allowed applicability state"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    public void AutomaticLoadingDecisionCoversEveryApplicabilityState()
+    {
+        (SourceApplicabilityState? State, bool TaggedLoads)[] cases =
+        [
+            (null, true),
+            (SourceApplicabilityState.Unconditioned, true),
+            (SourceApplicabilityState.Matched, true),
+            (SourceApplicabilityState.Unmatched, false),
+            (SourceApplicabilityState.Pending, false),
+            (SourceApplicabilityState.Invalid, false),
+        ];
+
+        foreach (var (state, taggedLoads) in cases)
+        {
+            Assert.Equal(taggedLoads, SourceLoadingClosureResolver.ShouldLoadAutomatically(true, state));
+            Assert.False(SourceLoadingClosureResolver.ShouldLoadAutomatically(false, state));
+        }
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            SourceLoadingClosureResolver.ShouldLoadAutomatically(true, (SourceApplicabilityState)int.MaxValue));
+    }
+
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Loading closure visits each generated branch depth-first"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
     public void BranchingSourcesUseDepthFirstGeneratedOrder()
@@ -345,21 +368,21 @@ public sealed class SourceLoadingClosureResolverTests
     }
 
     [Trait("Boundary", "Processing")]
-    [Fact(DisplayName = "Applicability conditions intersect on one supplied path and activate untagged entries"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
-    public void ConditionsUseOnePathAndActivateUntaggedEntries()
+    [Fact(DisplayName = "Inherited conditions filter a tagged descendant on the same working path"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    public void InheritedConditionsFilterTaggedDescendant()
     {
         var loader = Source(
             ".agents/loader.md",
             SourceDocumentForm.Loader,
-            Entries(Entry("guide/_guide.md")),
+            Entries(Entry("guide/_guide.md", "LoadNow")),
             parentPath: null);
         var guide = Source(
             ".agents/guide/_guide.md",
             SourceDocumentForm.CanonicalEntrypoint,
-            Entries(Entry("topic.md")),
+            Entries(Entry("topic.md", "LoadNow")),
             parentPath: null) with
         {
-            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", ["LoadNow"]) with
             {
                 ApplyTo = ApplyTo("src/**"),
             },
@@ -370,7 +393,7 @@ public sealed class SourceLoadingClosureResolverTests
             Entries(),
             guide.Path) with
         {
-            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", ["LoadNow"]) with
             {
                 ApplyTo = ApplyTo("docs/**"),
             },
@@ -390,21 +413,26 @@ public sealed class SourceLoadingClosureResolverTests
     }
 
     [Trait("Boundary", "Processing")]
-    [Fact(DisplayName = "Applicability loads an untagged entry when one concrete path matches every clause"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
-    public void MatchingApplyToLoadsUntaggedEntry()
+    [Theory(DisplayName = "Matching conditions preserve loading tags and leave untagged entries on demand"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    [InlineData("LoadNow", "src/main.cs", true)]
+    [InlineData("KeepInMind", "src/main.cs", true)]
+    [InlineData(null, "src/main.cs", false)]
+    [InlineData("LoadNow", "src/main.ts", false)]
+    [InlineData("KeepInMind", "src/main.ts", false)]
+    public void MatchingApplyToRequiresLoadingTag(string? tag, string workingPath, bool expectedLoaded)
     {
         var loader = Source(
             ".agents/loader.md",
             SourceDocumentForm.Loader,
-            Entries(Entry("guide/_guide.md")),
+            Entries(Entry("guide/_guide.md", "LoadNow")),
             parentPath: null);
         var guide = Source(
             ".agents/guide/_guide.md",
             SourceDocumentForm.CanonicalEntrypoint,
-            Entries(Entry("topic.md")),
+            Entries(Entry("topic.md", tag is null ? [] : [tag])),
             parentPath: null) with
         {
-            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", ["LoadNow"]) with
             {
                 ApplyTo = ApplyTo("src/**"),
             },
@@ -415,7 +443,7 @@ public sealed class SourceLoadingClosureResolverTests
             Entries(),
             guide.Path) with
         {
-            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", tag is null ? [] : [tag]) with
             {
                 ApplyTo = ApplyTo("src/*.cs"),
             },
@@ -425,24 +453,31 @@ public sealed class SourceLoadingClosureResolverTests
             [loader, guide, topic],
             [guide.Path],
             evaluateApplicability: true,
-            workingPaths: ["src/main.cs"],
+            workingPaths: [workingPath],
             workingPathsSupplied: true);
 
-        Assert.Equal(["AGENTS.md", loader.Path, guide.Path, topic.Path], Paths(resolution));
-        Assert.Contains(
-            resolution.Startup.Single(selection => selection.Path == topic.Path).Reasons,
-            reason => reason.Kind == SourceLoadingClosureReasonKind.Applicability && reason.SourcePath == guide.Path);
-        Assert.Equal(["src/main.cs"], resolution.Startup.Single(selection => selection.Path == topic.Path).Applicability?.MatchingPaths);
+        Assert.Equal(expectedLoaded, Paths(resolution).Contains(topic.Path));
+        Assert.Empty(resolution.PendingConditions);
+        if (expectedLoaded)
+        {
+            var selection = resolution.Startup.Single(selection => selection.Path == topic.Path);
+            var expectedReason = tag == "LoadNow" ? SourceLoadingClosureReasonKind.LoadNow : SourceLoadingClosureReasonKind.KeepInMind;
+            Assert.Contains(selection.Reasons, reason => reason.Kind == expectedReason && reason.SourcePath == guide.Path);
+            Assert.Equal([workingPath], selection.Applicability?.MatchingPaths);
+        }
     }
 
     [Trait("Boundary", "Processing")]
-    [Fact(DisplayName = "Pending applyTo conditions defer loading and identify each condition source"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
-    public void MissingWorkingPathsProducePendingConditions()
+    [Theory(DisplayName = "Unknown working paths defer only entries with loading tags"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    [InlineData("LoadNow")]
+    [InlineData("KeepInMind")]
+    [InlineData(null)]
+    public void MissingWorkingPathsProducePendingConditionsOnlyForLoadingTags(string? tag)
     {
         var loader = Source(
             ".agents/loader.md",
             SourceDocumentForm.Loader,
-            Entries(Entry("notes.md", "LoadNow")),
+            Entries(Entry("notes.md", tag is null ? [] : [tag])),
             parentPath: null);
         var notes = Source(
             ".agents/notes.md",
@@ -451,7 +486,7 @@ public sealed class SourceLoadingClosureResolverTests
             parentPath: null,
             "LoadNow") with
         {
-            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", ["LoadNow"]) with
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", tag is null ? [] : [tag]) with
             {
                 ApplyTo = ApplyTo("src/**"),
             },
@@ -460,9 +495,16 @@ public sealed class SourceLoadingClosureResolverTests
         var resolution = Resolve([loader, notes], [notes.Path], evaluateApplicability: true);
 
         Assert.DoesNotContain(resolution.Startup, selection => selection.Path == notes.Path);
-        var condition = Assert.Single(resolution.PendingConditions);
-        Assert.Equal(notes.Path, condition.CanonicalSourcePath);
-        Assert.Equal(["src/**"], condition.Metadata.Patterns.Select(pattern => pattern.Text));
+        if (tag is null)
+        {
+            Assert.Empty(resolution.PendingConditions);
+        }
+        else
+        {
+            var condition = Assert.Single(resolution.PendingConditions);
+            Assert.Equal(notes.Path, condition.CanonicalSourcePath);
+            Assert.Equal(["src/**"], condition.Metadata.Patterns.Select(pattern => pattern.Text));
+        }
     }
 
     [Trait("Boundary", "Processing")]

@@ -70,8 +70,9 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
             "--tag=Decision",
             "--responsibility=Owns the revised decision",
             "--template=templates/topic",
-            "--apply-to=src/**/*.cs",
-            "--apply-to=docs/*.md",
+            "--apply-to=src/**/*.cs, {docs,tests}/**/*.md",
+            "--apply-to={docs,tests}/**/*.md",
+            "--apply-to=tests/**/*.cs,src/**/*.cs",
             "--dry-run",
             "--dry-run",
         ];
@@ -93,7 +94,9 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal("templates/topic", request.TemplateReference);
         Assert.Equal(RouteUpdateMode.DryRun, request.Mode);
         Assert.Equal(RouteUpdateApplyToOperation.Set, request.Patch.ApplyTo.Operation);
-        Assert.Equal(["src/**/*.cs", "docs/*.md"], request.Patch.ApplyTo.Values);
+        Assert.Equal(
+            ["src/**/*.cs", "{docs,tests}/**/*.md", "tests/**/*.cs"],
+            request.Patch.ApplyTo.Values);
     }
 
     [Trait("Boundary", "Input")]
@@ -151,6 +154,7 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
             (Arguments: ["update", RouteUpdateTestData.TargetId, "--template="], Code: RouteUpdateFindingCode.InvalidTemplate),
             (Arguments: ["update", RouteUpdateTestData.TargetId, "--apply-to="], Code: RouteUpdateFindingCode.InvalidPatch),
             (Arguments: ["update", RouteUpdateTestData.TargetId, "--apply-to=src//*.cs"], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--apply-to=src/**/*.cs,../docs/*.md"], Code: RouteUpdateFindingCode.InvalidPatch),
             (Arguments: ["update", RouteUpdateTestData.TargetId, "--apply-to=src/**/*.cs", "--clear-apply-to"], Code: RouteUpdateFindingCode.InvalidPatch),
         };
 
@@ -163,6 +167,23 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
             Assert.Equal(CliSemanticStatus.Invalid, invalid.Status);
             Assert.Contains(invalid.Findings, finding => finding.Code == Code);
         }
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Route Update maps an invalid apply-to expression to the existing patch message"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
+    public void InvalidApplyToExpressionUsesExistingPatchMessage()
+    {
+        var bound = Bind(
+            "update",
+            RouteUpdateTestData.TargetId,
+            "--apply-to=src/**/*.cs,../docs/*.md");
+        var result = Assert.IsType<RouteUpdateResult>(bound.InvalidResult);
+
+        var finding = Assert.Single(result.Findings);
+        Assert.Equal(RouteUpdateFindingCode.InvalidPatch, finding.Code);
+        Assert.Equal(
+            "Supplied --apply-to values must be valid nonempty workspace-relative patterns.",
+            finding.Cause);
     }
 
     [Trait("Boundary", "Input")]

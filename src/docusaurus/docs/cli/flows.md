@@ -39,19 +39,21 @@ open-forge route inspect directives/frontend/components \
 
 **Look for:** whether the rule applies to either supplied working path. Include the
 complete path set on each invocation, including planned files that do not exist
-yet. One file must satisfy the source's whole inherited condition chain. A
-matching entry loads only when exposed by a selected ancestor.
+yet. One file must satisfy the source's whole inherited condition chain.
+`applyTo` only filters, so a matching rule still needs a loading tag, or an
+explicit request, to load.
 
-If paths are unknown, `context` reports encountered conditions as pending,
-returns an incomplete result, and exits `3`. `route inspect` can explain a
+If paths are unknown, `context` reports the conditions of tagged entries as
+pending, returns an incomplete result, and exits `3`. `route inspect` can explain a
 nonmatching source without activating its automatic children. Neither command
 globally selects hidden ancestors or discovers code dependencies. If a related
 caller or test is part of the work, add its path and load its context before
 editing it.
 
-Other causes still include a missing `LoadNow` tag or a rule placed in the
-wrong folder. Use `route update` to correct tags or `applyTo`, then check
-`context` again.
+The usual causes are a missing `LoadNow` tag or a rule placed in a scope that
+the task never selects. `find --for src/Order.cs --tag=Directive` lists rules
+that match the file wherever they live. Use `route update` to correct tags or
+`applyTo`, then check `context` again.
 
 **Why it helps:** "the model didn't listen" becomes something you can check.
 Often the rule was never set to load, which is quick to fix. The command shows

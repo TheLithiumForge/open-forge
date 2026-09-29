@@ -154,8 +154,13 @@ public sealed class RouteUpdateApplicationIntegrationTests
     public async Task ApplyToAndClearRefreshTargetAndGeneratedEntry()
     {
         using var workspace = RouteUpdateIntegrationWorkspace.Create("route-update-apply-to");
+        string[] patterns = ["{src,test}/**/*.{cs,ts}", "[a,b].cs"];
         var setRequest = workspace.Request(
-            patch: RouteUpdateIntegrationWorkspace.ApplyToPatch("**/*.cs", "docs/*.md"));
+            patch: RouteUpdateIntegrationWorkspace.ApplyToPatch(patterns));
+        var build = await RouteUpdateIntegrationWorkspace.BuildPlanAsync(setRequest);
+        var plan = Assert.IsType<RouteUpdatePlan>(build.Plan);
+        Assert.Equal(patterns, plan.Preview.Patch.ApplyTo.Expected);
+
         var set = await workspace.ExecuteAsync(
             setRequest,
             TestContext.Current.CancellationToken);
@@ -163,13 +168,13 @@ public sealed class RouteUpdateApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, set.Status);
         Assert.Equal(RouteUpdateVerificationState.Verified, set.Verification);
         Assert.Equal(RouteUpdatePatchState.Changed, set.Patch.ApplyTo.State);
-        Assert.Equal(["**/*.cs", "docs/*.md"], set.Patch.ApplyTo.Expected);
+        Assert.Equal(patterns, set.Patch.ApplyTo.Expected);
         Assert.Contains(
-            "applyTo: [\"**/*.cs\", \"docs/*.md\"]",
+            "applyTo: [\"{src,test}/**/*.{cs,ts}\", \"[a,b].cs\"]",
             workspace.ReadText(RouteUpdateIntegrationWorkspace.TargetPath),
             StringComparison.Ordinal);
         Assert.Contains(
-            "- [Before overview](overview.md) - #Before #Memory - applies to `**/*.cs`, `docs/*.md`",
+            "- [Before overview](overview.md) - #Before #Memory - applies to `[a,b].cs`, `{src,test}/**/*.{cs,ts}`",
             workspace.ReadText(RouteUpdateIntegrationWorkspace.ParentPath),
             StringComparison.Ordinal);
         Assert.Collection(

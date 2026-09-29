@@ -66,7 +66,7 @@ Each line under `Entries` is one **entry**: a link, the child's description, and
 - [C# rules](csharp.md) - #LoadNow #Directive - applies to `**/*.cs`
 ```
 
-Entries are navigation, not content. An agent reads the line, decides whether the child matters for the task, and opens it when its effective file condition matches or its loading tag applies. A matching condition opens a visible entry even without a loading tag. Conditions inherited from route ancestors are not repeated in the entry. A file match never opens a hidden ancestor. [Loading and tags](loading-and-tags.md#file-conditions) explains how conditions and tags work together.
+Entries are navigation, not content. An agent reads the line, decides whether the child matters for the task, and opens it only if it does. Descriptions matter because they're what the agent uses to decide. The exception is an entry tagged `#LoadNow` or `#KeepInMind`: the agent reads its file as soon as the parent loads. [Loading and tags](loading-and-tags.md) explains both, and how [`applyTo` patterns](loading-and-tags.md#file-conditions) filter entries by the files a task works on.
 
 An entrypoint with no children has a placeholder line so the section is never ambiguous:
 
@@ -79,7 +79,7 @@ An entrypoint with no children has a placeholder line so the section is never am
 ## How an agent navigates
 
 1. Read an entrypoint, including its Axioms.
-2. Check the file conditions on its visible entries. Open matching sources before working on their files, even when they have no loading tag. Also read unconditioned children tagged `#LoadNow` or `#KeepInMind`, in listed order.
+2. Read every child whose entry is tagged `#LoadNow` or `#KeepInMind`, in listed order.
 3. Scan the other entries. Open the children whose descriptions, tags, or paths matter for the task.
 4. Repeat for each selected child entrypoint.
 5. Skip everything else. An unselected branch costs one line of context, not its whole contents.

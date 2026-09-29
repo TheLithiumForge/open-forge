@@ -76,3 +76,4 @@ Do not invent a local substitute or weaken evidence to finish a slice.
 - [Exact Task 62 documentation ownership and verification for Loader, Framework, commands, guides, and diagrams](documentation-plan.md) - #Memory #Working #Task #Plan #Documentation #CLI #Contextual
 - [Execute Task 62 through frozen shared contracts, isolated parallel slices, integration, and managed and Native AOT evidence](execution.md) - #Memory #Working #Task #Plan #CLI #Contextual #Active
 - [F1 through F4 execution plans for applyTo matching, metadata, Entries, and source applicability](foundation-plan.md) - #Memory #Working #Task #Plan #CLI #Contextual
+- [Frozen applyTo glob-dialect contract and parallel packets that align Open Forge with APM and Copilot glob syntax](glob-dialect-plan.md) - #Memory #Working #Task #Plan #CLI #Framework #Glob #Contextual #Active

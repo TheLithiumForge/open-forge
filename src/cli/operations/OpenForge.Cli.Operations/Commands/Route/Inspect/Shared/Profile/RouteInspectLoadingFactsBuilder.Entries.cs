@@ -131,6 +131,11 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         RouteInspectLoadingSet target,
         bool hasLoadingTag)
     {
+        if (!hasLoadingTag)
+        {
+            return false;
+        }
+
         var applicability = RouteInspectSourceApplicabilityEvaluator.Evaluate(_graph, path, _workingPaths);
         if (applicability is null)
         {
@@ -138,24 +143,12 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
             return false;
         }
 
-        switch (applicability.State)
+        if (applicability.State is SourceApplicabilityState.Pending or SourceApplicabilityState.Invalid)
         {
-            case SourceApplicabilityState.Unconditioned:
-                return hasLoadingTag;
-            case SourceApplicabilityState.Matched:
-                return true;
-            case SourceApplicabilityState.Unmatched:
-                return false;
-            case SourceApplicabilityState.Pending:
-            case SourceApplicabilityState.Invalid:
-                MarkLoadingSetUnavailable(target);
-                return false;
-            default:
-                throw new ArgumentOutOfRangeException(
-                    nameof(path),
-                    applicability.State,
-                    "The source applicability state is not defined.");
+            MarkLoadingSetUnavailable(target);
         }
+
+        return SourceLoadingClosureResolver.ShouldLoadAutomatically(hasLoadingTag, applicability.State);
     }
 
     private void MarkLoadingSetUnavailable(RouteInspectLoadingSet target)

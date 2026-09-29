@@ -72,12 +72,14 @@ on the same physical line:
 - [C# rules](csharp/_csharp.md) - #Directive #KeepInMind - applies to `**/*.cs`, `**/*.csproj`
 ````
 
-Each pattern appears in a code span, separated by a comma and a space. This
-suffix shows only patterns declared on that source. It does not flatten
-conditions inherited from ancestor entrypoints; the route chain supplies that
-meaning. Entries without a declared condition keep their existing line shape.
+Each code span holds one atomic pattern, separated by a comma and a space.
+Braces and character classes appear unexpanded. A string expression from
+frontmatter is shown as its separate atomic patterns. This suffix shows only
+patterns declared on that source. It does not flatten conditions inherited
+from ancestor entrypoints. The route chain supplies that meaning. Entries
+without a declared condition keep their existing line shape.
 The [canonical syntax contract](syntax.md#file-conditions) defines pattern
-values, and the [loading contract](../routing/loading.md) defines their effect.
+values, and the [loading contract](../routing/loading.md#file-conditions) defines their effect.
 
 The label provides enough trigger, purpose, or outcome for pre-load selection. The destination identifies the route. The tags provide compact loading, type, scope, and search signals. The [path contract](../routing/paths.md) defines destination resolution, normalization, encoding, and containment.
 

@@ -105,21 +105,32 @@ destination; it does not make that filename a canonical authoring form.
 The new CLI accepts `applyTo` at either the root of YAML frontmatter or under
 `open-forge:`. Both locations have identical meaning, and a root declaration
 is read even when the scoped metadata block is present. These locations are
-input-compatible; canonical authoring uses a list of quoted patterns under
+input-compatible. Canonical authoring uses a list of quoted patterns under
 `open-forge:`.
 
 This root-level exception applies only to `applyTo`. It does not make root
 `description`, `tags`, or `responsibility` accepted metadata.
 
-A quoted scalar for one pattern is also accepted as input, as is a list of
-quoted strings. Commas are not split from scalar values. Missing `applyTo`
-means no file condition. Empty strings, empty lists, nulls, and non-string
-values are invalid. When both locations are present, each value normalizes to
-a set of distinct patterns compared with ordinal, case-sensitive equality.
-Equivalent sets count as one condition. Conflicting sets are invalid and are
-neither unioned nor resolved by precedence. Updates preserve the authored
-location. When equivalent declarations exist in both locations, updates and
-clears apply to both.
+A quoted scalar is a comma-separated expression. Top-level commas separate
+patterns, while commas inside `{...}` or `[...]` remain part of the expression.
+Inside a string expression, `\,` represents a literal comma and `\\` represents
+a literal backslash. Whitespace around each fragment is trimmed, and empty
+fragments are dropped. A list contains one quoted string per pattern. Each
+list entry stays one atomic pattern, so commas are not split and `\,` is not
+decoded in a list entry.
+
+To preserve a literal comma during migration, use a list entry such as
+`["reports,final/*.md"]`, or write an expression such as
+`"reports[,]final/*.md"` or `'reports\,final/*.md'`. Each form produces one
+atomic pattern containing a literal comma.
+
+Missing `applyTo` means no file condition. Empty strings, expressions with no
+fragments, empty lists, nulls, and non-string values are invalid. When both
+locations are present, each value normalizes to a set of distinct patterns
+compared with ordinal, case-sensitive equality. Equivalent sets count as one
+condition. Conflicting sets are invalid and are neither unioned nor resolved
+by precedence. Updates preserve the authored location. When equivalent
+declarations exist in both locations, updates and clears apply to both.
 
 These accepted value forms do not make arbitrary YAML forms compatible.
 `applyTo` pattern syntax remains the grammar defined in [Canonical Markdown

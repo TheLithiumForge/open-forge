@@ -131,7 +131,7 @@ from an ordinary shell. Runs still fail.
 
 To keep the binary fix across a restart:
 
-    export WW_CODEX_BIN="C:\nvm4w\nodejs\node_modules\@openai\codex\node_modules\@openai\codex-win32-x64\vendor\x86_64-pc-windows-msvc\bin\codex.exe"
+    export WW_CODEX_BIN="<npm-global-root>\@openai\codex\node_modules\@openai\codex-win32-x64\vendor\x86_64-pc-windows-msvc\bin\codex.exe"
     worker-watch daemon stop && worker-watch daemon start
 
 The login half needs the maintainer. Until it is fixed, scenarios are run by

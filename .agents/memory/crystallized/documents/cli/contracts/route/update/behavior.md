@@ -86,8 +86,10 @@ Contract](interface.md#syntax). `--description`, `--responsibility`,
 `--clear-apply-to`, and `--template` each accept one occurrence only. Any
 repetition is invalid, even when the value is equal. Repeated `--tag` values remain accepted and form one
 complete replacement list in argument order, subject to the existing empty,
-duplicate, and syntax validation. Repeated `--apply-to` values each supply one
-pattern and form a normalized ordinal-distinct local set. `--apply-to` conflicts
+duplicate, and syntax validation. Each `--apply-to` value is parsed once as an
+expression and flattened to atomic patterns in argument order. Duplicate
+patterns are removed by ordinal comparison, keeping first-seen order, and
+planning never splits a value again. `--apply-to` conflicts
 with `--clear-apply-to`. Repeated `--dry-run` collapses to an idempotent
 Boolean choice. No command-specific
 flag uses last-wins or precedence behavior. Shared global flags retain their
@@ -144,15 +146,16 @@ The field patch is resolved as a set of explicitly supplied operations. Omitted
 fields retain their current values. Supplied description, responsibility, and
 tag values follow the replacement, addition, exact-empty removal, validation,
 and required-metadata rules in [Metadata Patch](interface.md#metadata-patch).
-The `--apply-to` operation replaces the target's complete local declaration set.
-The mutually exclusive `--clear-apply-to` operation removes only its local
-declarations. Neither operation changes an ancestor's condition.
+The `--apply-to` operation replaces the target's complete local declaration set
+with the flattened atomic patterns. The mutually exclusive `--clear-apply-to`
+operation removes only its local declarations. Neither operation changes an
+ancestor's condition.
 For the empty-map enrichment path, the complete supplied metadata is formed by
 an exact span patch that preserves unrelated YAML, body bytes, line endings,
 and encoding. It rejects arbitrary non-empty flow mappings, aliases, duplicate
 ownership maps, whole-file rewrites, and any partial enrichment request.
 
-`applyTo` may be authored as one quoted scalar pattern or a quoted-string list
+`applyTo` may be authored as one quoted scalar expression or a quoted-string list
 in flow or block form at the frontmatter root or scoped `open-forge` mapping.
 The resolver reads both locations when present, including root `applyTo` when a
 scoped mapping exists. Every value is validated under the accepted path-pattern
