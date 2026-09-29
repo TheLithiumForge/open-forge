@@ -13,11 +13,19 @@ internal sealed record ContextBindingInput
 
     public required IReadOnlyList<string> FollowLinksValues { get; init; }
 
+    public IReadOnlyList<string> ForValues { get; init; } = [];
+
+    public IReadOnlyList<string> WorkingPaths { get; init; } = [];
+
+    public bool WorkingPathsSupplied { get; init; }
+
     public required CliOptionResultFacts AdditionsOnlyFacts { get; init; }
 
     public required CliOptionResultFacts ContentFacts { get; init; }
 
     public required CliOptionResultFacts FollowLinksFacts { get; init; }
+
+    public CliOptionResultFacts? ForFacts { get; init; }
 
     public required CliDetail? SuppliedDetail { get; init; }
 

@@ -133,4 +133,16 @@ The [Memory model](../../framework/memory/model.md) and [transition rules](../..
 | `actor`          | Person, agent, system, or role performing an action.                                             | Name the actor only when it adds useful meaning.                                 |
 | `link`           | Navigable relationship to related detail.                                                        | A link does not merge authority, scope, loading, responsibility, or lifecycle.   |
 
+## File-Scoped Loading
+
+| Term              | Meaning                                                                                         | Use                                                                                                  |
+| ----------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `working file`    | A concrete path included in the files a task works on or plans to create or change.              | Use when deciding whether a file condition matches the task's file set.                              |
+| `context source`  | A routed source read to guide, explain, or authorize work.                                       | Reading it does not by itself make its Markdown path a `working file` or widen its `applyTo` scope.  |
+| `applyTo`         | Optional condition that limits when a routed source is selected for work on matching files.     | It controls pre-load applicability, not edit permission or authority.                               |
+
+The [routing and loading contract](../../framework/routing/loading.md) defines
+how file conditions combine and how explicit inspection relates to automatic
+loading.
+
 The [Writing Standard](../writing.md) defines how repository prose should read. This dictionary helps maintainers apply it and the linked Framework sources.

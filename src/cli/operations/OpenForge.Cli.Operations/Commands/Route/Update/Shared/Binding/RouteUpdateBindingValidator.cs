@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Shared.Binding;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
 using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Binding;
@@ -73,10 +74,30 @@ internal sealed class RouteUpdateBindingValidator
                 templateFailure ?? "--template requires one nonblank route reference.");
         }
 
+        if (input.ApplyToFacts.IsExplicit && input.ClearApplyToFacts.IsExplicit)
+        {
+            return Invalid(
+                RouteUpdateFindingCode.InvalidPatch,
+                "--apply-to and --clear-apply-to cannot be used together.");
+        }
+
+        if (input.ApplyToFacts.IsExplicit
+            && (input.ApplyToFacts.ValueCount == 0
+                || input.ApplyTo.Count == 0
+                || input.ApplyTo.Any(value => string.IsNullOrWhiteSpace(value)
+                    || ApplyToPatternMatcher.Parse(value).Pattern is null)))
+        {
+            return Invalid(
+                RouteUpdateFindingCode.InvalidPatch,
+                "Supplied --apply-to values must be valid nonempty workspace-relative patterns.");
+        }
+
         if (!input.DescriptionFacts.IsExplicit
             && !input.TagFacts.IsExplicit
             && !input.ResponsibilityFacts.IsExplicit
-            && !input.TemplateFacts.IsExplicit)
+            && !input.TemplateFacts.IsExplicit
+            && !input.ApplyToFacts.IsExplicit
+            && !input.ClearApplyToFacts.IsExplicit)
         {
             return Invalid(
                 RouteUpdateFindingCode.InvalidInput,
@@ -121,6 +142,13 @@ internal sealed class RouteUpdateBindingValidator
                 Requested = input.TagFacts.IsExplicit,
                 Values = ImmutableArray.CreateRange(input.Tags),
             },
+            ApplyTo = new RouteUpdateApplyToRequest
+            {
+                Operation = ReadApplyToOperation(input),
+                Values = input.ApplyToFacts.IsExplicit
+                    ? input.ApplyTo.Distinct(StringComparer.Ordinal).ToImmutableArray()
+                    : [],
+            },
         };
 
     private static RouteUpdateResponsibilityOperation ReadResponsibilityOperation(
@@ -134,6 +162,22 @@ internal sealed class RouteUpdateBindingValidator
         return input.Responsibility is { Length: 0 }
             ? RouteUpdateResponsibilityOperation.Remove
             : RouteUpdateResponsibilityOperation.Set;
+    }
+
+    private static RouteUpdateApplyToOperation ReadApplyToOperation(
+        RouteUpdateBindingInput input)
+    {
+        if (input.ClearApplyToFacts.IsExplicit)
+        {
+            return RouteUpdateApplyToOperation.Clear;
+        }
+
+        if (input.ApplyToFacts.IsExplicit)
+        {
+            return RouteUpdateApplyToOperation.Set;
+        }
+
+        return RouteUpdateApplyToOperation.NotRequested;
     }
 
     private static RouteUpdateBindingValidation Invalid(

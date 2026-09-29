@@ -63,6 +63,9 @@ internal static class RouteCreateWording
     internal static string MetadataTags(IReadOnlyList<string> values)
         => OpenForge.Cli.OutputText.Route.Shared.MetadataText.Tags(string.Join(", ", values));
 
+    internal static string MetadataApplyTo(IReadOnlyList<string> values)
+        => global::OpenForge.Cli.OutputText.Route.Create.RouteCreateWording.MetadataApplyTo(values);
+
     internal static string MetadataResponsibility(string value) => global::OpenForge.Cli.OutputText.Route.Create.RouteCreateWording.MetadataResponsibility(value);
 
     internal static string TemplatePath(string path) => global::OpenForge.Cli.OutputText.Route.Create.RouteCreateWording.TemplatePath(path);

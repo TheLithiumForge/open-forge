@@ -368,6 +368,7 @@ a presentation dependency, or a generic bag.
 | `route.overwrite-orphan`            | An overwrite companion has no valid base source; route coverage is `blocked` when the relationship is unsafe to inspect.                               | `manual-decision`; never index or adopt the orphan.                                                                                            |
 | `route.overwrite-independent-index` | An overwrite appears as an independent generated or route entry.                                                                                       | `targeted-operation`; use accepted `index` behavior; overwrite content is not independently indexed.                                           |
 | `route.compatibility-conflict`      | Compatibility route forms cannot be reconciled to one accepted route identity.                                                                         | `blocked-repair`; no compatibility winner is selected.                                                                                         |
+| `route.generated-entry-apply-to`    | Generated `applyTo` patterns do not match the source's current declaration.                                                         | `targeted-operation` lane, using `index` after metadata is valid.                                                                     |
 
 ### Local References
 
@@ -736,6 +737,16 @@ current catalogue titles.
 | workspace.root-unreachable              | warning  | manual-decision | Root route cannot be reached          | `<route> is listed but cannot be reached from the Loader: <reason>.`                     | edit by hand                                                                    |
 | workspace.detached                      | info     | informational   | Source is outside the loaded routes   | `<path> is not reachable from any route, so agents never load it.`                       | `open-forge index` when its parent is routed                                    |
 
+The existing `workspace.frontmatter-malformed` finding also covers invalid
+`applyTo` declarations. Doctor reads root and scoped declarations whenever
+present, including a root declaration beside an `open-forge` mapping.
+Equivalent normalized declarations form one condition. Conflicting
+declarations are invalid. This validation does not depend on required
+`description` or `tags` being present and includes recognized native `SKILL.md`
+sources. Doctor validates pattern syntax and declaration consistency, not
+whether a current file matches. A valid pattern with no current matching file
+is not a finding.
+
 ### Recovery data
 
 | Kind                            | Severity | Lane           | Title                                 | Message                                                                            | Action                         |
@@ -771,6 +782,7 @@ current catalogue titles.
 | route.overwrite-orphan            | warning  | manual-decision    | Overwrite has no base file          | `<name>.overwrite.md has no <name>.md beside it.`                                                   | edit by hand                                       |
 | route.overwrite-independent-index | warning  | targeted-operation | Overwrite is listed independently   | `<path> lists <name>.overwrite.md as its own entry. Overwrite files are read with their base file.` | targeted Index advice below                        |
 | route.compatibility-conflict      | error    | blocked-repair     | Route names conflict                | `<folder> can be reached by two route names: <names>.`                                              | edit by hand                                       |
+| route.generated-entry-apply-to   | warning  | targeted-operation | Entry applies-to patterns are stale | `The entry for <child> in <path> has stale applies-to patterns.`                                        | targeted Index advice below                        |
 
 ### Links
 
@@ -937,6 +949,12 @@ Conformance evidence must cover:
   no extraction, disclosure, retention, or materialization.
 - Every route, metadata, overwrite, generated-region, generated-entry, and
   compatibility kind.
+- Invalid or conflicting `applyTo` declarations use the existing
+  `workspace.frontmatter-malformed` finding, including on recognized native
+  Skills and sources missing required ordinary metadata. Diagnosis does not
+  depend on current file matches. A valid declaration with no current matching
+  file is not a finding. Stale generated `applyTo` suffixes use the separate
+  `route.generated-entry-apply-to` finding, distinct from tag drift.
 - Every local-reference kind, including valid and missing targets, fragments,
   malformed and unsafe destinations, images, external unchecked facts, cycles,
   repeats, exact same-target corrections, bounded candidate evidence, and zero,

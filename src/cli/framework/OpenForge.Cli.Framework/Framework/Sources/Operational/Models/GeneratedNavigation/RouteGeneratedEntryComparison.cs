@@ -10,6 +10,7 @@ internal enum RouteGeneratedEntryComparisonKind
     Path,
     Description,
     Tags,
+    ApplyTo,
 }
 
 internal sealed class RouteGeneratedEntryComparison
@@ -32,9 +33,10 @@ internal sealed class RouteGeneratedEntryComparison
             RouteGeneratedEntryComparisonKind.Order
                 or RouteGeneratedEntryComparisonKind.Path
                 or RouteGeneratedEntryComparisonKind.Description
-                or RouteGeneratedEntryComparisonKind.Tags =>
+                or RouteGeneratedEntryComparisonKind.Tags
+                or RouteGeneratedEntryComparisonKind.ApplyTo =>
                 expected is not null && actual is not null && location is not null,
-            _ => false,
+            _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The generated-entry comparison kind is not defined."),
         };
         if (!compatible || string.Equals(expected, actual, StringComparison.Ordinal))
         {

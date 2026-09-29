@@ -44,6 +44,12 @@ internal sealed record RouteUpdateDataChange
 {
     public required string Field { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<string>? BeforeValues { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<string>? AfterValues { get; init; }
+
     public string? Before { get; init; }
 
     public string? After { get; init; }

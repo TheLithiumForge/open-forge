@@ -89,9 +89,12 @@ route resolution:
 
 - A second `--description` or `--responsibility` is invalid, including when its
   value equals the first occurrence.
-- Metadata flags combined with `--framework` are invalid.
+- Metadata flags, including `--apply-to`, are invalid with `--framework` or when
+  the final target already exists.
 - `--tag` occurrences remain one ordered multi-value list. Empty values, exact
   duplicates, and invalid tag syntax remain invalid.
+- Each `--apply-to` occurrence supplies one pattern. Validate and normalize all
+  values into an ordinal-distinct set.
 - Repeated `--framework` occurrences collapse to one idempotent Boolean choice.
 - Repeated `--dry-run` occurrences collapse to one idempotent Boolean choice.
 
@@ -212,6 +215,9 @@ metadata independently from the ancestor defaults:
   value omits it.
 - Repeated tags are retained in argument order as the final target's explicit tag
   list.
+- Repeated `--apply-to` values form the final target's local applicability set.
+  This metadata applies only to a missing final target. It is not copied to
+  missing ancestors.
 - If either the explicit description or any explicit tag is absent, append
   `NeedsAuthoring` after supplied tags unless it is already present.
 - If both an explicit description and one or more explicit tags are present, keep
@@ -223,13 +229,19 @@ canonical tag syntax without the `#` prefix. Validate syntax and presence only.
 Do not judge or rewrite semantic accuracy. A later `doctor` operation may report
 meaning-quality diagnostics separately.
 
+`applyTo` uses the workspace-relative pattern grammar in the [route create
+Interface Contract](../create/interface.md#destination-metadata) and is emitted
+as a quoted string list in the final target's scoped `open-forge` mapping.
+
 The resolver records draft versus explicit metadata provenance for each created
 entrypoint. It does not obtain metadata from a Template, filename meaning, or
 folder semantics, and it does not invent a fallback.
 
 Canonical emission and reading recognize exactly one Open Forge metadata root,
-`open-forge`, with supported children `description`, `tags`, and optional
-`responsibility`. A `rune` root and every other unrelated YAML root are opaque:
+`open-forge`, with supported children `description`, `tags`, optional
+`responsibility`, and optional scoped `applyTo`. A root-level `applyTo` declaration
+has the same applicability meaning and remains an authored top-level property.
+A `rune` root and every other unrelated YAML root are opaque:
 they supply no Open Forge metadata and bounded generated-region editing preserves
 their bytes. When `open-forge` and `rune` coexist, the reader uses exactly
 `open-forge` and ignores the meaning of `rune` without deleting or rewriting it.
@@ -578,12 +590,15 @@ in addition to the public checks in [Interface Verification](interface.md#verifi
 - Exact fixed scaffold bytes, literal visible slug titles, draft descriptions,
   `NeedsAuthoring`, inherited `Axioms`, and valid generated regions.
 - Final description, responsibility addition and omission, tag replacement and
-  ordering, partial metadata, duplicate and invalid field values, and metadata
+  ordering, `applyTo` final-target scope and normalized set, partial metadata,
+  duplicate and invalid field values, and metadata
   provenance for every created entrypoint.
 - Canonical `open-forge` authoring and reading only, opaque `rune` preservation,
   and `open-forge` selection when unrelated sibling YAML is present.
 - Existing direct children in a newly routable folder and blocking when child
   metadata needed by the intended generated region is missing.
+- Optional `applyTo` field absence from ancestor scaffolds, scoped quoted-list
+  output on the final target, and the existing mode and target restrictions.
 - Automatic generated effects formed against the complete intended topology and
   the complete [Index Behavior Contract](../../index-candidate/behavior.md) projection.
 - Dry-run and application parity for request, current facts, intended state,

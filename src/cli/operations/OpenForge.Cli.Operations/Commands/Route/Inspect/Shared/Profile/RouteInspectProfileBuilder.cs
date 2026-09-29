@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -7,7 +8,9 @@ internal sealed class RouteInspectProfileBuilder
 {
     internal RouteInspectProfile Build(
         RouteInspectResolution resolution,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        IReadOnlyList<string>? workingPaths = null,
+        SourceApplicabilityResult? applicability = null)
     {
         ArgumentNullException.ThrowIfNull(resolution);
         if (resolution.State is not (
@@ -20,9 +23,9 @@ internal sealed class RouteInspectProfileBuilder
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        var loading = new RouteInspectLoadingFactsBuilder(resolution, cancellationToken).Build();
+        var loading = new RouteInspectLoadingFactsBuilder(resolution, cancellationToken, workingPaths).Build();
         cancellationToken.ThrowIfCancellationRequested();
-        var reading = new RouteInspectReadingProfileBuilder(resolution, loading).Build();
+        var reading = new RouteInspectReadingProfileBuilder(resolution, loading, applicability).Build();
         var measurements = new RouteInspectMeasurementsBuilder(
             resolution,
             loading,

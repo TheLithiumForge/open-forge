@@ -44,6 +44,13 @@ internal static class ContextDefinitions
         defaultValue: [],
         valueName: "positive-depth|all");
 
+    internal static readonly CliOptionDefinition<string[]> For = new(
+        name: "--for",
+        description: "Workspace file path used to evaluate applyTo conditions; repeat for additional files.",
+        arity: CliOptionArity.ExactlyOne,
+        defaultValue: [],
+        valueName: "path");
+
     internal static ContextFindingDefinition Read(ContextFindingCode code)
         => code switch
         {
@@ -51,6 +58,7 @@ internal static class ContextDefinitions
             ContextFindingCode.InvalidSource => new(Code: "context.invalid-source", Status: CliSemanticStatus.Invalid),
             ContextFindingCode.InvalidContent => new(Code: "context.invalid-content", Status: CliSemanticStatus.Invalid),
             ContextFindingCode.InvalidLinkDepth => new(Code: "context.invalid-link-depth", Status: CliSemanticStatus.Invalid),
+            ContextFindingCode.InvalidWorkingPath => new(Code: "context.invalid-working-path", Status: CliSemanticStatus.Invalid),
             ContextFindingCode.WorkspaceUnavailable => new(Code: "context.workspace-unavailable", Status: CliSemanticStatus.Blocked),
             ContextFindingCode.WorkspaceUnsafe => new(Code: "context.workspace-unsafe", Status: CliSemanticStatus.Blocked),
             ContextFindingCode.SourceAmbiguous => new(Code: "context.source-ambiguous", Status: CliSemanticStatus.Blocked),
@@ -59,6 +67,8 @@ internal static class ContextDefinitions
             ContextFindingCode.TargetAmbiguous => new(Code: "context.target-ambiguous", Status: CliSemanticStatus.Blocked),
             ContextFindingCode.TargetUnsafe => new(Code: "context.target-unsafe", Status: CliSemanticStatus.Blocked),
             ContextFindingCode.ClosureUnavailable => new(Code: "context.closure-unavailable", Status: CliSemanticStatus.Incomplete),
+            ContextFindingCode.ApplicabilityPending => new(Code: "context.applicability-pending", Status: CliSemanticStatus.Incomplete),
+            ContextFindingCode.ApplicabilityInvalid => new(Code: "context.applicability-invalid", Status: CliSemanticStatus.Incomplete),
             ContextFindingCode.LayerUnavailable => new(Code: "context.layer-unavailable", Status: CliSemanticStatus.Incomplete),
             ContextFindingCode.InvalidEncoding => new(Code: "context.invalid-encoding", Status: CliSemanticStatus.Incomplete),
             ContextFindingCode.MarkdownUnavailable => new(Code: "context.markdown-unavailable", Status: CliSemanticStatus.Incomplete),

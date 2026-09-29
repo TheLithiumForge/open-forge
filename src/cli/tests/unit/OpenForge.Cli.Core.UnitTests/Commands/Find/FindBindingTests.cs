@@ -23,7 +23,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find;
 public sealed class FindBindingTests
 {
     [Trait("Boundary", "Input")]
-    [Fact(DisplayName = "Find symbols expose the exact detached seven-option grammar")]
+    [Fact(DisplayName = "Find symbols expose the exact detached eight-option grammar")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public void SymbolsExposeTheExactDetachedGrammar()
     {
@@ -34,11 +34,12 @@ public sealed class FindBindingTests
         Assert.Empty(symbols.FindCommand.Arguments);
         Assert.Empty(symbols.FindCommand.Subcommands);
         Assert.Equal(
-            ["--include", "--exclude", "--tag", "--heading", "--require", "--within", "--content"],
+            ["--include", "--exclude", "--for", "--tag", "--heading", "--require", "--within", "--content"],
             symbols.FindCommand.Options.Select(option => option.Name));
 
         AssertRepeatable(symbols.Include);
         AssertRepeatable(symbols.Exclude);
+        AssertRepeatable(symbols.For);
         AssertRepeatable(symbols.Tag);
         AssertRepeatable(symbols.Heading);
         AssertSingleton(symbols.Require);
@@ -46,6 +47,7 @@ public sealed class FindBindingTests
         AssertSingleton(symbols.Content);
         Assert.Equal("source-reference", FindDefinitions.Include.ValueName);
         Assert.Equal("source-reference", FindDefinitions.Exclude.ValueName);
+        Assert.Equal("path", FindDefinitions.For.ValueName);
         Assert.Equal("tag", FindDefinitions.Tag.ValueName);
         Assert.Equal("heading", FindDefinitions.Heading.ValueName);
         Assert.Equal("all|any", FindDefinitions.Require.ValueName);

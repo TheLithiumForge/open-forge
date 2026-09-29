@@ -117,10 +117,24 @@ internal sealed record RouteUpdateResult : ICliCommandResult
         RouteUpdateDefinitions.ReadMachineName(patch.Responsibility.Operation);
         RouteUpdateDefinitions.ReadMachineName(patch.Responsibility.State);
         RouteUpdateDefinitions.ReadMachineName(patch.Tags.State);
+        RouteUpdateDefinitions.ReadMachineName(patch.ApplyTo.Operation);
+        RouteUpdateDefinitions.ReadMachineName(patch.ApplyTo.State);
         if (patch.Tags.Before is { IsDefault: true }
-            || patch.Tags.Expected is { IsDefault: true })
+            || patch.Tags.Expected is { IsDefault: true }
+            || patch.ApplyTo.Before is { IsDefault: true }
+            || patch.ApplyTo.Expected is { IsDefault: true })
         {
-            throw new ArgumentException("Route Update tag patch arrays must be initialized when present.");
+            throw new ArgumentException("Route Update metadata patch arrays must be initialized when present.");
+        }
+
+        if (patch.ApplyTo.Requested
+            != (patch.ApplyTo.Operation != RouteUpdateApplyToOperation.NotRequested)
+            || patch.ApplyTo.Operation == RouteUpdateApplyToOperation.Clear
+                && patch.ApplyTo.Expected is not null
+            || patch.ApplyTo.Operation == RouteUpdateApplyToOperation.Set
+                && patch.ApplyTo.Expected is null)
+        {
+            throw new ArgumentException("Route Update applyTo patch facts are inconsistent.");
         }
     }
 

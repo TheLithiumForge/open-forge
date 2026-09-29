@@ -5,6 +5,8 @@ using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Shared.Binding;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
@@ -22,10 +24,12 @@ internal static class RouteCreateRequestBinder
         var target = parseResult.GetValue(symbols.FileTarget);
         var descriptionFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Description);
         var tagFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Tag);
+        var applyToFacts = CliOptionResultFactsReader.Read(parseResult, symbols.ApplyTo);
         var responsibilityFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Responsibility);
         var templateFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Template);
         var description = CliOptionResultFactsReader.ReadValue(parseResult, symbols.Description);
         var tags = CliOptionResultFactsReader.ReadValues(parseResult, symbols.Tag);
+        var applyTo = CliOptionResultFactsReader.ReadValues(parseResult, symbols.ApplyTo);
         var responsibility = CliOptionResultFactsReader.ReadValue(parseResult, symbols.Responsibility);
         var template = CliOptionResultFactsReader.ReadValue(parseResult, symbols.Template);
         var mode = parseResult.GetValue(symbols.DryRun)
@@ -38,10 +42,12 @@ internal static class RouteCreateRequestBinder
             Target = target,
             Description = description,
             Tags = tags,
+            ApplyTo = applyTo,
             Responsibility = responsibility,
             Template = template,
             DescriptionFacts = descriptionFacts,
             TagFacts = tagFacts,
+            ApplyToFacts = applyToFacts,
             ResponsibilityFacts = responsibilityFacts,
             TemplateFacts = templateFacts,
             ParserErrors = parserErrors,
@@ -73,7 +79,8 @@ internal static class RouteCreateRequestBinder
                 metadata: new RouteCreateMetadataInput(
                     description: facts.Description,
                     tags: facts.Tags,
-                    responsibility: facts.Responsibility),
+                    responsibility: facts.Responsibility,
+                    applyTo: facts.ApplyTo),
                 templateReference: facts.Template,
                 mode: facts.Mode));
     }
@@ -118,6 +125,33 @@ internal static class RouteCreateRequestBinder
                 .GroupBy(tag => tag, StringComparer.Ordinal)
                 .Where(group => group.Count() > 1)
                 .Select(group => $"--tag {group.Key} is repeated"));
+        }
+
+        var applyToPatterns = new List<ApplyToPattern>();
+        if (input.ApplyToFacts.IsExplicitWithoutValue
+            || input.ApplyToFacts.IsExplicit
+                && (input.ApplyToFacts.ValueCount == 0 || input.ApplyTo.Count == 0))
+        {
+            metadataProblems.Add("at least one --apply-to pattern is required");
+        }
+        else if (input.ApplyToFacts.IsExplicit)
+        {
+            foreach (var value in input.ApplyTo)
+            {
+                var parsed = ApplyToPatternMatcher.Parse(value);
+                if (parsed.Failure is { } failure)
+                {
+                    metadataProblems.Add($"--apply-to pattern '{value}' is invalid workspace-relative glob syntax ({failure})");
+                    continue;
+                }
+
+                var pattern = parsed.Pattern
+                    ?? throw new InvalidOperationException("A valid apply-to parse requires a pattern.");
+                if (!applyToPatterns.Any(existing => string.Equals(existing.Text, pattern.Text, StringComparison.Ordinal)))
+                {
+                    applyToPatterns.Add(pattern);
+                }
+            }
         }
 
         var responsibilityFailure = RouteOptionValidation.ValidateSingleton(
@@ -179,6 +213,7 @@ internal static class RouteCreateRequestBinder
                 Target = input.Target,
                 Description = input.Description,
                 Tags = input.Tags,
+                ApplyTo = applyToPatterns,
                 Responsibility = NormalizeOptionalValue(input.Responsibility),
                 Template = input.Template,
                 Mode = mode,

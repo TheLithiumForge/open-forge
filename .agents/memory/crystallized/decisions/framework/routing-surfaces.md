@@ -21,7 +21,7 @@ Agents need enough information to select or skip a route before paying to read i
 
 ## Decision
 
-The linked entry description is the pre-load selection surface. Its path identifies the routed destination, tags provide cheap additional signals, and the selected body contains the complete role-specific meaning.
+The linked entry description is the pre-load selection surface. Its path identifies the routed destination, tags provide cheap additional signals, and the selected body contains the complete role-specific meaning. The accepted `applyTo` file condition is an additional pre-load selection condition on the routed source; it is evaluated before opening that body.
 
 Descriptions expose enough trigger, purpose, or outcome to select or skip a route without opening it. A body may confirm its goal or purpose for direct readers, but it does not repeat a large selection contract.
 
@@ -38,7 +38,7 @@ Keeping primitive-specific exceptions in their own contracts avoids forcing one 
 - Selection prose only inside the body would require opening every candidate
 - Repeating the full description in the body would increase maintenance and context cost
 - Requiring every routed body to open with one Goal would impose Workflow language on documents, routes, and other roles
-- A second directive applicability gate would weaken the scope decision already made by routing
+- A directive-body applicability gate would ask for a second decision after routing. The accepted `applyTo` condition is evaluated before the body is opened and therefore does not create that second gate.
 - Adding a fixed Workflow phase vocabulary would duplicate descriptions and topical tags while suggesting a lifecycle the Framework does not impose
 
 Descriptions require careful writing because they are decision surfaces rather than decorative summaries.
@@ -54,6 +54,7 @@ Descriptions require careful writing because they are decision surfaces rather t
 
 - [Current routing model](../../documents/framework/routing/model.md)
 - [Routed Markdown representation](../../documents/framework/markdown/routes.md)
+- [Canonical `applyTo` syntax](../../documents/framework/markdown/syntax.md#file-conditions)
 - [Directive contract](../../documents/framework/primitives/directives.md)
 - [Workflow contract](../../documents/framework/primitives/workflows.md)
 - [Open Forge loader](../../../../loader.md)

@@ -76,10 +76,12 @@ blank or invalid values remain invalid.
 
 The resolver accepts one occurrence each of `--description`,
 `--responsibility`, and `--template`. Any repeated occurrence is invalid, even
-when its value is identical, and no last occurrence wins. `--description` and
-`--tag` are optional; when supplied, repeated tag order is retained and empty
-or duplicate exact tags are rejected. It collapses repeated `--dry-run` occurrences to one idempotent
-Boolean choice. Shared global flags retain their shared
+when its value is identical, and no last occurrence wins. `--description`,
+`--tag`, and `--apply-to` are optional. Repeated tags retain argument order.
+Each repeated apply-to value supplies one path pattern. The resolver validates
+and normalizes these values into an ordinal-distinct set. Empty tags and
+duplicate exact tags are rejected. Repeated `--dry-run` occurrences collapse to
+one idempotent Boolean choice. Shared global flags retain their shared
 repetition, composition, and terminal rules; this operation adds no precedence
 or last-wins behavior and no wizard or automatic mode.
 
@@ -152,6 +154,13 @@ exist. The resolver validates supplied syntax and values only; it does not
 derive, correct, summarize, or judge values from the target, parent, Template,
 body, or another routed source. See [Destination Metadata](interface.md#destination-metadata)
 and [Errors](interface.md#errors).
+
+`--apply-to` accepts one workspace-relative pattern per occurrence. The
+patterns follow the path grammar in [Destination Metadata](interface.md#destination-metadata),
+are normalized, and form an ordinal-distinct set. The resolver writes the
+resulting quoted string list as `applyTo` in the new scoped `open-forge`
+mapping. Omission leaves the field absent and does not add an
+`optional-metadata` warning.
 
 ### Template resolution
 
@@ -342,6 +351,10 @@ ordering, generated-boundary, verification, and recovery behavior. Generated
 effects are dependency-minimal, part of the same plan, and never invoke a
 hidden `index` subprocess.
 
+The new file's own authored `applyTo` set, when supplied, is projected after
+tags using the suffix defined by the [Index Interface Contract](../../index-candidate/interface.md#generated-lines).
+Index does not synthesize inherited patterns into that entry.
+
 The complete plan blocks before writes when an existing Entries boundary is
 missing or duplicate; when a direct sibling has malformed metadata or lacks required readable facts; when a
 destination is unsafe; or when another Index projection blocker exists. It
@@ -514,6 +527,8 @@ obligations:
   covered. No leaf metadata is copied to an ancestor.
 - Existing generated effects are planned against intended post-create bytes and
   use the complete Index projection.
+- `--apply-to` grammar validation, normalized ordinal-distinct values, scoped
+  quoted-list output, and an absent field and warning-free result when omitted.
 - Singleton repetition of `--description`, `--responsibility`, and
   `--template` is rejected even for equal values; optional repeated tags retain
   order and reject empty or duplicate values when supplied; explicit blank

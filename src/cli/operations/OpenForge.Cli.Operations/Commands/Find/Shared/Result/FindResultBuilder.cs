@@ -64,6 +64,7 @@ internal sealed class FindResultBuilder
             coverage,
             orderedFindings,
             orderedMatches,
-            FindResultNextActionPolicy.Read(new FindResultNextActionInput(status, orderedFindings)));
+            FindResultNextActionPolicy.Read(new FindResultNextActionInput(status, orderedFindings)),
+            input.Request.WorkingPaths);
     }
 }

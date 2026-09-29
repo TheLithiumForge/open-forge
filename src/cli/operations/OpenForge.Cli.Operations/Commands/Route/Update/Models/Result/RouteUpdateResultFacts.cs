@@ -65,6 +65,19 @@ internal sealed record RouteUpdateTagsPatch
     public required RouteUpdatePatchState State { get; init; }
 }
 
+internal sealed record RouteUpdateApplyToPatch
+{
+    public required bool Requested { get; init; }
+
+    public required RouteUpdateApplyToOperation Operation { get; init; }
+
+    public ImmutableArray<string>? Before { get; init; }
+
+    public ImmutableArray<string>? Expected { get; init; }
+
+    public required RouteUpdatePatchState State { get; init; }
+}
+
 internal sealed record RouteUpdatePatch
 {
     public required RouteUpdateDescriptionPatch Description { get; init; }
@@ -72,6 +85,8 @@ internal sealed record RouteUpdatePatch
     public required RouteUpdateResponsibilityPatch Responsibility { get; init; }
 
     public required RouteUpdateTagsPatch Tags { get; init; }
+
+    public required RouteUpdateApplyToPatch ApplyTo { get; init; }
 
     internal static RouteUpdatePatch Unresolved(RouteUpdatePatchRequest request)
         => new()
@@ -105,6 +120,18 @@ internal sealed record RouteUpdatePatch
                 State = request.Tags.Requested
                     ? RouteUpdatePatchState.Unresolved
                     : RouteUpdatePatchState.NotRequested,
+            },
+            ApplyTo = new RouteUpdateApplyToPatch
+            {
+                Requested = request.ApplyTo.Operation != RouteUpdateApplyToOperation.NotRequested,
+                Operation = request.ApplyTo.Operation,
+                Before = null,
+                Expected = request.ApplyTo.Operation == RouteUpdateApplyToOperation.Set
+                    ? request.ApplyTo.Values
+                    : null,
+                State = request.ApplyTo.Operation == RouteUpdateApplyToOperation.NotRequested
+                    ? RouteUpdatePatchState.NotRequested
+                    : RouteUpdatePatchState.Unresolved,
             },
         };
 }

@@ -7,6 +7,7 @@ internal sealed record FindSymbols(
     Command FindCommand,
     Option<string[]> Include,
     Option<string[]> Exclude,
+    Option<string[]> For,
     Option<string[]> Tag,
     Option<string[]> Heading,
     Option<string?> Require,
@@ -20,6 +21,7 @@ internal sealed record FindSymbols(
             FindDefinitions.FindCommand.Description);
         var include = CreateRepeatable(FindDefinitions.Include);
         var exclude = CreateRepeatable(FindDefinitions.Exclude);
+        var @for = CreateRepeatable(FindDefinitions.For);
         var tag = CreateRepeatable(FindDefinitions.Tag);
         var heading = CreateRepeatable(FindDefinitions.Heading);
         var require = CreateSingleton(FindDefinitions.Require);
@@ -28,6 +30,7 @@ internal sealed record FindSymbols(
 
         findCommand.Options.Add(include);
         findCommand.Options.Add(exclude);
+        findCommand.Options.Add(@for);
         findCommand.Options.Add(tag);
         findCommand.Options.Add(heading);
         findCommand.Options.Add(require);
@@ -38,6 +41,7 @@ internal sealed record FindSymbols(
             findCommand,
             include,
             exclude,
+            @for,
             tag,
             heading,
             require,

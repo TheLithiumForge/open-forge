@@ -42,6 +42,11 @@ internal static class RouteInspectDataTextRenderer
 
         builder.Append('\n').Append(RouteInspectWording.ReadingHeading).Append('\n');
         AddReading(builder, profile.Reading);
+        if (standard)
+        {
+            AddApplicability(builder, data.Applicability);
+        }
+
         builder.Append('\n').Append(RouteInspectWording.ContextSizeHeading).Append('\n');
         AddMeasurements(builder, profile.Measurements, full);
 
@@ -172,6 +177,56 @@ internal static class RouteInspectDataTextRenderer
         else if (reading.Later.State == RouteInspectFactState.Unavailable)
         {
             UnavailableLine(builder, global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.TitleMayBeReadAgain(), reading.Later.ReadReason());
+        }
+    }
+
+    private static void AddApplicability(StringBuilder builder, RouteInspectDataApplicability? applicability)
+    {
+        if (applicability is null)
+        {
+            return;
+        }
+
+        builder.Append('\n').Append(global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.TitleFileApplicability()).Append('\n');
+        Line(
+            builder,
+            global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelApplicabilityState(),
+            applicability.State);
+        foreach (var condition in applicability.Conditions)
+        {
+            var patterns = condition.Patterns.Count == 0
+                ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNone()
+                : string.Join(", ", condition.Patterns.Select(pattern => $"`{pattern}`"));
+            Line(
+                builder,
+                global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelConditionFrom(),
+                $"{condition.Source}: {patterns}");
+        }
+
+        if (applicability.State == "unmatched")
+        {
+            Line(
+                builder,
+                global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelMatchingPaths(),
+                global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNone());
+            return;
+        }
+
+        if (applicability.State == "pending")
+        {
+            Line(
+                builder,
+                global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelMatchingPaths(),
+                global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelSupplyForToEvaluate());
+            return;
+        }
+
+        if (applicability.MatchingPaths.Count > 0)
+        {
+            Line(
+                builder,
+                global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelMatchingPaths(),
+                string.Join(", ", applicability.MatchingPaths));
         }
     }
 

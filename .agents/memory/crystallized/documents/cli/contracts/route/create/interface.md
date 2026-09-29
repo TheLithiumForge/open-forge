@@ -83,6 +83,7 @@ returns a verified no-op.
 open-forge route create <file-target>
   [--description <text>]
   [--tag=<tag>]...
+  [--apply-to <pattern>]...
   [--responsibility <text>]
   [--template <template-reference>]
   [--dry-run]
@@ -93,7 +94,8 @@ The shared [Global CLI Flags](../../shared/global-flags/interface.md) contract d
 `--workspace <path>`, `--format <text|json>`, `--detail <minimal|standard|full|debug>`, repeatable `--detail-filter <error|warning|info|all>`, `--help`, and `--version`. All
 six apply to `route create` under that contract.
 
-`--description`, `--responsibility`, and `--tag` define destination metadata.
+`--description`, `--responsibility`, `--tag`, and `--apply-to` define
+destination metadata.
 `--template` selects optional starting body content. `--dry-run` is the write-
 policy preview.
 
@@ -115,6 +117,9 @@ The command-specific flags have these public states and meanings:
   supplied. Omission is valid and is reported as optional metadata missing.
 - Repeated `--tag=<tag>` values optionally define destination `tags` in argument
   order. Omission is valid and is reported as optional metadata missing.
+- Repeated `--apply-to <pattern>` values optionally define the destination's
+  `applyTo` patterns. Each occurrence supplies one pattern. Omission leaves the
+  field absent and does not produce a missing-metadata warning.
 - `--responsibility <text>` is optional and defines destination
   `responsibility` when its value is non-empty.
 - `--template <template-reference>` is optional and selects starting body
@@ -128,7 +133,9 @@ The command-specific flags have these public states and meanings:
 meaning. It is an optional multi-value flag. When supplied, repetition retains
 argument order. The exact empty, duplicate, and syntax rules are defined in
 [Destination Metadata](#destination-metadata).
-`--description`, `--responsibility`, and `--template` are singleton flags. Any
+`--apply-to` is also repeatable, with one pattern per occurrence. Patterns are
+validated, normalized, and deduplicated by ordinal comparison. `--description`,
+`--responsibility`, and `--template` are singleton flags. Any
 repeated occurrence of one of them is invalid, even when the repeated value is
 identical; no last occurrence wins. Repeated `--dry-run` occurrences are
 accepted and idempotent. The shared global
@@ -201,13 +208,15 @@ open-forge:
   description: Why the cache policy was chosen
   responsibility: Record the accepted choice and its durable rationale
   tags: [Memory, Decision]
+  applyTo: ["src/**/*.cs", "tests/*.cs"]
 ---
 ```
 
 Only explicitly supplied destination fields are written. An omitted description
 or tag list is absent; the command never fabricates description, tags, or
-responsibility from a filename, parent, Template, Template body, or another
-routed source. An empty mapping is valid when no destination field is supplied.
+responsibility or `applyTo` from a filename, parent, Template, Template body, or
+another routed source. An empty mapping is valid when no destination field is
+supplied.
 
 When supplied, `--description` must be non-empty and contain more than
 whitespace. Supplied tags retain argument order. Each tag follows canonical tag
@@ -216,6 +225,15 @@ syntax and omits the `#` prefix. Empty or duplicate exact tags are invalid.
 `--responsibility` is optional. A non-empty value adds the field. An exact empty
 value, `--responsibility ""`, omits it. A whitespace-only value is invalid.
 There is no separate removal flag because the destination does not exist yet.
+
+`applyTo` is written only in the scoped `open-forge` mapping and as a quoted
+string list. Each pattern is workspace-relative and slash-separated. The
+wildcards `*` and `?` match within one path segment. `**` is valid only as a complete segment and
+matches zero or more segments. Matching is case-sensitive. The command rejects
+absolute or drive paths, backslashes, empty, `.` or `..` segments, control
+characters, braces, brackets, a leading `!`, and consecutive `**` embedded in a
+segment. Commas and escape syntax have no special meaning. Repeated values are
+normalized and duplicate normalized patterns appear once in the authored list.
 
 The command validates syntax and supplied values. It does not inspect Template
 placeholders or infer authoring quality. Semantic accuracy remains authored
@@ -471,8 +489,11 @@ The command is exactly route create; data follows the catalogue:
 | Level    | `data`                                                                   |
 | -------- | ------------------------------------------------------------------------ |
 | minimal  | `{ mode, target { id, path }, listedIn, template { id, path } \| null }` |
-| standard | + `metadata { description, responsibility, tags }`; omitted description/responsibility are null, tags remain an array |
+| standard | + `metadata { description, responsibility, tags }`. Omitted description and responsibility are `null`, tags remain an array, and `applyTo` appears only when supplied. |
 | full     | + `content`, per section `before`, `after`, `verification`               |
+
+The shared schema-3 envelope is unchanged. The command-local `metadata` object
+omits `applyTo` when the flag was not supplied.
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON

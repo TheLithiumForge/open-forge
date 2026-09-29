@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
@@ -13,6 +14,8 @@ internal enum SourceAuthoredMetadataState
 
 internal sealed record SourceAuthoredMetadataFacts
 {
+    internal ApplyToMetadataFacts ApplyTo { get; init; } = ApplyToMetadataFacts.Absent;
+
     private SourceAuthoredMetadataFacts(
         SourceAuthoredMetadataState state,
         string? description,

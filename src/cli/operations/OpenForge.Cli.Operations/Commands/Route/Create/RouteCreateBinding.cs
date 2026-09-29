@@ -27,6 +27,13 @@ internal static class RouteCreateBinding
             Arity = ArgumentArity.ZeroOrMore,
             AllowMultipleArgumentsPerToken = false,
         };
+        var applyTo = new Option<string[]>(RouteCreateDefinitions.ApplyTo.Name)
+        {
+            Description = RouteCreateDefinitions.ApplyTo.Description,
+            HelpName = RouteCreateDefinitions.ApplyTo.ValueName,
+            Arity = ArgumentArity.ZeroOrMore,
+            AllowMultipleArgumentsPerToken = false,
+        };
         var responsibility = CreateSingleton(RouteCreateDefinitions.Responsibility);
         var template = CreateSingleton(RouteCreateDefinitions.Template);
         var dryRun = new Option<bool>(RouteCreateDefinitions.DryRun.Name)
@@ -40,6 +47,7 @@ internal static class RouteCreateBinding
         command.Arguments.Add(fileTarget);
         command.Options.Add(description);
         command.Options.Add(tag);
+        command.Options.Add(applyTo);
         command.Options.Add(responsibility);
         command.Options.Add(template);
         command.Options.Add(dryRun);
@@ -51,6 +59,7 @@ internal static class RouteCreateBinding
             FileTarget = fileTarget,
             Description = description,
             Tag = tag,
+            ApplyTo = applyTo,
             Responsibility = responsibility,
             Template = template,
             DryRun = dryRun,

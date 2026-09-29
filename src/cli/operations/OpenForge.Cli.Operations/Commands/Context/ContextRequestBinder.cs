@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.Context.Shared.Binding;
 using OpenForge.Cli.Core.Commands.Context.Shared.Result;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 
@@ -28,6 +29,13 @@ internal sealed class ContextRequestBinder(ContextSymbols symbols)
             invocation.Presentation.Detail);
         var parser = new ContextRequestParser();
         var findings = ReadInputFindings(input).ToList();
+        var workspace = invocation.Workspace;
+        var workingPaths = ReadWorkingPaths(input, workspace, findings);
+        input = input with
+        {
+            WorkingPaths = workingPaths,
+            WorkingPathsSupplied = input.ForFacts?.IsExplicit == true,
+        };
         var content = ReadContent(parser, input, findings);
         var linkExpansion = ReadLinkExpansion(parser, input, findings);
         if (findings.Count != 0)
@@ -41,8 +49,10 @@ internal sealed class ContextRequestBinder(ContextSymbols symbols)
                     findings));
         }
 
-        var workspace = invocation.Workspace
-            ?? throw new InvalidOperationException("A bound Context invocation requires a selected workspace.");
+        if (workspace is null)
+        {
+            throw new InvalidOperationException("A bound Context invocation requires a selected workspace.");
+        }
         return CliBindResult<ContextRequest, ContextResult>.Bound(
             new ContextRequest(
                 workspace: workspace,
@@ -51,7 +61,11 @@ internal sealed class ContextRequestBinder(ContextSymbols symbols)
                 content: content,
                 linkExpansion: linkExpansion,
                 suppliedDetail: input.SuppliedDetail,
-                effectiveView: input.EffectiveView));
+                effectiveView: input.EffectiveView)
+            {
+                WorkingPaths = input.WorkingPaths,
+                WorkingPathsSupplied = input.WorkingPathsSupplied,
+            });
     }
 
     internal static IReadOnlyList<ContextFinding> ReadInputFindings(ContextBindingInput input)
@@ -64,6 +78,16 @@ internal sealed class ContextRequestBinder(ContextSymbols symbols)
                 ContextFindingCode.InvalidInput,
                 ContextDefinitions.AdditionsOnly.Name,
                 "Additions-only requires at least one explicit source reference."));
+        }
+
+        if (input.ForFacts?.IsExplicit == true
+            && (input.ForValues.Count == 0
+                || input.ForFacts.IdentifierCount != input.ForFacts.ValueCount))
+        {
+            findings.Add(InvalidFinding(
+                ContextFindingCode.InvalidWorkingPath,
+                ContextDefinitions.For.Name,
+                string.Empty));
         }
 
         foreach (var source in input.Sources)
@@ -87,6 +111,33 @@ internal sealed class ContextRequestBinder(ContextSymbols symbols)
             }
         }
         return findings;
+    }
+
+    private static IReadOnlyList<string> ReadWorkingPaths(
+        ContextBindingInput input,
+        OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace? workspace,
+        ICollection<ContextFinding> findings)
+    {
+        if (input.ForFacts?.IsExplicit != true)
+        {
+            return [];
+        }
+
+        if (workspace is null)
+        {
+            return [];
+        }
+
+        var normalized = SourceWorkingPathNormalizer.Normalize(workspace.LexicalRoot, input.ForValues);
+        foreach (var path in normalized.InvalidPaths)
+        {
+            findings.Add(InvalidFinding(
+                ContextFindingCode.InvalidWorkingPath,
+                path,
+                string.Empty));
+        }
+
+        return normalized.Paths;
     }
 
     internal static ContextContentSelection ReadContent(

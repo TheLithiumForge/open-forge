@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
@@ -15,7 +16,8 @@ internal sealed record RouteCreateMetadataInput
     internal RouteCreateMetadataInput(
         string? description,
         IEnumerable<string> tags,
-        string? responsibility)
+        string? responsibility,
+        IEnumerable<ApplyToPattern>? applyTo = null)
     {
         if (description is not null && string.IsNullOrWhiteSpace(description))
         {
@@ -48,6 +50,18 @@ internal sealed record RouteCreateMetadataInput
         Description = description;
         Tags = tagValues;
         Responsibility = responsibility is { Length: 0 } ? null : responsibility;
+        var applyToPatterns = applyTo?.ToImmutableArray() ?? [];
+        if (applyToPatterns.Any(pattern => pattern is null)
+            || applyToPatterns.Select(pattern => pattern.Text).Distinct(StringComparer.Ordinal).Count() != applyToPatterns.Length)
+        {
+            throw new ArgumentException(
+                "Route Create apply-to patterns must be initialized and unique.",
+                nameof(applyTo));
+        }
+
+        ApplyTo = applyToPatterns
+            .OrderBy(pattern => pattern.Text, StringComparer.Ordinal)
+            .ToImmutableArray();
     }
 
     internal string? Description { get; }
@@ -55,6 +69,8 @@ internal sealed record RouteCreateMetadataInput
     internal ImmutableArray<string> Tags { get; }
 
     internal string? Responsibility { get; }
+
+    internal ImmutableArray<ApplyToPattern> ApplyTo { get; }
 }
 
 internal sealed record RouteCreateRequest

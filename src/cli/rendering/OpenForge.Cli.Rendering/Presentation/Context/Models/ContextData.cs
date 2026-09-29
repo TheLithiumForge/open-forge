@@ -9,6 +9,10 @@ internal sealed record ContextData
 {
     public required IReadOnlyList<ContextDataSource> Sources { get; init; }
 
+    public IReadOnlyList<ContextDataPendingCondition> PendingConditions { get; init; } = [];
+
+    public IReadOnlyList<string>? WorkingPaths { get; init; }
+
     [JsonIgnore]
     internal IReadOnlyList<CliContentBlock> ContentBlocks { get; init; } = [];
 
@@ -67,6 +71,31 @@ internal sealed record ContextDataSourceStandard
     public string? Route { get; init; }
 
     public string? Scope { get; init; }
+
+    public ContextDataApplicability? Applicability { get; init; }
+}
+
+internal sealed record ContextDataApplicability
+{
+    public required string State { get; init; }
+
+    public required IReadOnlyList<ContextDataApplicabilityCondition> Conditions { get; init; }
+
+    public required IReadOnlyList<string> MatchingPaths { get; init; }
+}
+
+internal sealed record ContextDataApplicabilityCondition
+{
+    public required string Source { get; init; }
+
+    public required IReadOnlyList<string> Patterns { get; init; }
+}
+
+internal sealed record ContextDataPendingCondition
+{
+    public required string Source { get; init; }
+
+    public required IReadOnlyList<string> Patterns { get; init; }
 }
 
 internal sealed record ContextDataSourceFull

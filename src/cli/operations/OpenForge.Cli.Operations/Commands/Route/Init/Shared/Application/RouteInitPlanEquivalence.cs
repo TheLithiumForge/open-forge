@@ -69,7 +69,9 @@ internal static class RouteInitPlanEquivalence
                     StringComparison.Ordinal)
                 && expected.ResponsibilitySource == actual.ResponsibilitySource
                 && expected.Tags.SequenceEqual(actual.Tags, StringComparer.Ordinal)
-                && expected.TagsSource == actual.TagsSource;
+                && expected.TagsSource == actual.TagsSource
+                && expected.ApplyTo.Select(pattern => pattern.Text)
+                    .SequenceEqual(actual.ApplyTo.Select(pattern => pattern.Text), StringComparer.Ordinal);
 
     private static bool Matches(
         PlannedDirectoryCreation expected,

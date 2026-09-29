@@ -22,12 +22,16 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal("--tag", RouteUpdateDefinitions.Tag.Name);
         Assert.Equal("--responsibility", RouteUpdateDefinitions.Responsibility.Name);
         Assert.Equal("--template", RouteUpdateDefinitions.Template.Name);
+        Assert.Equal("--apply-to", RouteUpdateDefinitions.ApplyTo.Name);
+        Assert.Equal("--clear-apply-to", RouteUpdateDefinitions.ClearApplyTo.Name);
         Assert.Equal("--dry-run", RouteUpdateDefinitions.DryRun.Name);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteUpdateDefinitions.Description.Arity);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteUpdateDefinitions.Tag.Arity);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteUpdateDefinitions.Responsibility.Arity);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteUpdateDefinitions.Template.Arity);
         Assert.Equal(CliOptionArity.None, RouteUpdateDefinitions.DryRun.Arity);
+        Assert.Equal(CliOptionArity.ExactlyOne, RouteUpdateDefinitions.ApplyTo.Arity);
+        Assert.Equal(CliOptionArity.None, RouteUpdateDefinitions.ClearApplyTo.Arity);
     }
 
     [Trait("Boundary", "Input")]
@@ -45,6 +49,9 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.False(symbols.Tag.AllowMultipleArgumentsPerToken);
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Responsibility.Arity);
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Template.Arity);
+        Assert.Equal(ArgumentArity.ZeroOrMore, symbols.ApplyTo.Arity);
+        Assert.False(symbols.ApplyTo.AllowMultipleArgumentsPerToken);
+        Assert.Equal(ArgumentArity.Zero, symbols.ClearApplyTo.Arity);
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
     }
 
@@ -63,6 +70,8 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
             "--tag=Decision",
             "--responsibility=Owns the revised decision",
             "--template=templates/topic",
+            "--apply-to=src/**/*.cs",
+            "--apply-to=docs/*.md",
             "--dry-run",
             "--dry-run",
         ];
@@ -83,6 +92,26 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
         Assert.Equal("Owns the revised decision", request.Patch.Responsibility.Value);
         Assert.Equal("templates/topic", request.TemplateReference);
         Assert.Equal(RouteUpdateMode.DryRun, request.Mode);
+        Assert.Equal(RouteUpdateApplyToOperation.Set, request.Patch.ApplyTo.Operation);
+        Assert.Equal(["src/**/*.cs", "docs/*.md"], request.Patch.ApplyTo.Values);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Theory(DisplayName = "Route Update applyTo set and clear form complete local operations"),
+     InlineData("--apply-to=src/**/*.cs", "set"),
+     InlineData("--clear-apply-to", "clear"),
+     Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
+    public void ApplyToOptionsFormLocalOperations(
+        string option,
+        string expected)
+    {
+        var bound = Bind("update", RouteUpdateTestData.TargetId, option);
+        var request = Assert.IsType<RouteUpdateRequest>(bound.Request);
+
+        Assert.Null(bound.InvalidResult);
+        Assert.Equal(
+            expected,
+            RouteUpdateDefinitions.ReadMachineName(request.Patch.ApplyTo.Operation));
     }
 
     [Trait("Boundary", "Input")]
@@ -120,6 +149,9 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
             (Arguments: ["update", RouteUpdateTestData.TargetId, "--", "--responsibility="], Code: RouteUpdateFindingCode.InvalidInput),
             (Arguments: ["update", RouteUpdateTestData.TargetId, "--responsibility=   "], Code: RouteUpdateFindingCode.InvalidPatch),
             (Arguments: ["update", RouteUpdateTestData.TargetId, "--template="], Code: RouteUpdateFindingCode.InvalidTemplate),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--apply-to="], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--apply-to=src//*.cs"], Code: RouteUpdateFindingCode.InvalidPatch),
+            (Arguments: ["update", RouteUpdateTestData.TargetId, "--apply-to=src/**/*.cs", "--clear-apply-to"], Code: RouteUpdateFindingCode.InvalidPatch),
         };
 
         foreach (var (Arguments, Code) in cases)

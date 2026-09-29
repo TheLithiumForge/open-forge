@@ -39,6 +39,11 @@ internal sealed class ContextDataJsonConverter : JsonConverter<ContextData>
                 writer.WriteEndArray();
                 writer.WriteString("route", standard.Route);
                 writer.WriteString("scope", standard.Scope);
+                if (standard.Applicability is { } applicability)
+                {
+                    writer.WritePropertyName("applicability");
+                    WriteApplicability(writer, applicability);
+                }
             }
 
             if (source.Full is { } full)
@@ -64,6 +69,36 @@ internal sealed class ContextDataJsonConverter : JsonConverter<ContextData>
         }
 
         writer.WriteEndArray();
+        if (value.WorkingPaths is { } workingPaths)
+        {
+            writer.WriteStartArray("workingPaths");
+            foreach (var path in workingPaths)
+            {
+                writer.WriteStringValue(path);
+            }
+
+            writer.WriteEndArray();
+        }
+
+        if (value.PendingConditions.Count > 0)
+        {
+            writer.WriteStartArray("pendingConditions");
+            foreach (var condition in value.PendingConditions)
+            {
+                writer.WriteStartObject();
+                writer.WriteString("source", condition.Source);
+                writer.WriteStartArray("patterns");
+                foreach (var pattern in condition.Patterns)
+                {
+                    writer.WriteStringValue(pattern);
+                }
+
+                writer.WriteEndArray();
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+        }
         if (value.Links is { } links)
         {
             writer.WriteStartArray("links");
@@ -83,6 +118,36 @@ internal sealed class ContextDataJsonConverter : JsonConverter<ContextData>
             writer.WriteEndArray();
         }
 
+        writer.WriteEndObject();
+    }
+
+    private static void WriteApplicability(Utf8JsonWriter writer, ContextDataApplicability applicability)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("state", applicability.State);
+        writer.WriteStartArray("conditions");
+        foreach (var condition in applicability.Conditions)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("source", condition.Source);
+            writer.WriteStartArray("patterns");
+            foreach (var pattern in condition.Patterns)
+            {
+                writer.WriteStringValue(pattern);
+            }
+
+            writer.WriteEndArray();
+            writer.WriteEndObject();
+        }
+
+        writer.WriteEndArray();
+        writer.WriteStartArray("matchingPaths");
+        foreach (var path in applicability.MatchingPaths)
+        {
+            writer.WriteStringValue(path);
+        }
+
+        writer.WriteEndArray();
         writer.WriteEndObject();
     }
 

@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 
@@ -47,14 +48,17 @@ internal sealed class SourceAuthoredMetadataParser
             SourceOpenForgeMetadataState.Complete => SourceAuthoredMetadataFacts.Complete(
                 facts.Description
                     ?? throw new InvalidOperationException("Complete Open Forge metadata requires a description."),
-                facts.Tags),
+                facts.Tags) with
+            { ApplyTo = facts.ApplyTo },
             SourceOpenForgeMetadataState.Missing => SourceAuthoredMetadataFacts.WithoutValues(
                 SourceAuthoredMetadataState.Missing,
                 facts.ObservedDescription,
-                facts.ObservedTags),
+                facts.ObservedTags) with
+            { ApplyTo = facts.ApplyTo },
             SourceOpenForgeMetadataState.Malformed => SourceAuthoredMetadataFacts.WithoutValues(
                 SourceAuthoredMetadataState.Malformed,
-                facts.ObservedDescription),
+                facts.ObservedDescription) with
+            { ApplyTo = facts.ApplyTo },
             _ => throw new ArgumentOutOfRangeException(nameof(facts), facts.State, "The Open Forge metadata state is not defined."),
         };
     }
@@ -79,33 +83,43 @@ internal sealed class SourceAuthoredMetadataParser
             return SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed);
         }
 
+        var applyTo = ApplyToMetadataReader.Read(syntax);
+
         if (syntax.Root is null || IsNullScalar(syntax.Root, yaml))
         {
-            return SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Missing);
+            return SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Missing) with
+            {
+                ApplyTo = applyTo,
+            };
         }
 
         if (syntax.Root is not { Kind: YamlNodeKind.Mapping } root
             || root.ContainsUnsupportedMapping
             || !TryCreateAnchorIndex(root, yaml, out var anchors))
         {
-            return SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed);
+            return SourceAuthoredMetadataFacts.WithoutValues(SourceAuthoredMetadataState.Malformed) with
+            {
+                ApplyTo = applyTo,
+            };
         }
 
         if (!TryReadSkillValues(root, yaml, anchors, out var name, out var description))
         {
             return SourceAuthoredMetadataFacts.WithoutValues(
                 SourceAuthoredMetadataState.Malformed,
-                NormalizeObservedDescription(description));
+                NormalizeObservedDescription(description)) with
+            { ApplyTo = applyTo };
         }
 
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(description))
         {
             return SourceAuthoredMetadataFacts.WithoutValues(
                 SourceAuthoredMetadataState.Missing,
-                NormalizeObservedDescription(description));
+                NormalizeObservedDescription(description)) with
+            { ApplyTo = applyTo };
         }
 
-        return SourceAuthoredMetadataFacts.Complete(description, []);
+        return SourceAuthoredMetadataFacts.Complete(description, []) with { ApplyTo = applyTo };
     }
 
     private static string? NormalizeObservedDescription(string? description)

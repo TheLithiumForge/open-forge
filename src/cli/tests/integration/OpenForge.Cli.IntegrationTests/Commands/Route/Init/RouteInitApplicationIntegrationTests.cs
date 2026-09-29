@@ -147,7 +147,9 @@ public sealed class RouteInitApplicationIntegrationTests
         Assert.Equal(CliBindingSelectionState.Leaf, equalsSelection.State);
         Assert.NotNull(equalsSelection.Binding);
         Assert.Null(CliTerminalValidator.Validate(equals).InvalidInput);
-        var tag = Assert.Single(equalsSelection.Command.Options.OfType<Option<string[]>>());
+        var tag = Assert.Single(
+            equalsSelection.Command.Options.OfType<Option<string[]>>(),
+            option => option.Name == "--tag");
         var tagValues = Assert.IsType<string[]>(equals.Result.GetValue(tag));
         Assert.Equal(["Memory"], tagValues);
 

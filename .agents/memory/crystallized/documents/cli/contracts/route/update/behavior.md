@@ -82,11 +82,13 @@ Library record.
 Request resolution validates the command path, one required source operand,
 operation-specific flags, shared global flags, the at-least-one-operation rule,
 and the complete command-specific repetition rules according to the [Interface
-Contract](interface.md#syntax). `--description`, `--responsibility`, and
-`--template` each accept one occurrence only. Any repetition is invalid, even
-when the value is equal. Repeated `--tag` values remain accepted and form one
+Contract](interface.md#syntax). `--description`, `--responsibility`,
+`--clear-apply-to`, and `--template` each accept one occurrence only. Any
+repetition is invalid, even when the value is equal. Repeated `--tag` values remain accepted and form one
 complete replacement list in argument order, subject to the existing empty,
-duplicate, and syntax validation. Repeated `--dry-run` collapses to an idempotent
+duplicate, and syntax validation. Repeated `--apply-to` values each supply one
+pattern and form a normalized ordinal-distinct local set. `--apply-to` conflicts
+with `--clear-apply-to`. Repeated `--dry-run` collapses to an idempotent
 Boolean choice. No command-specific
 flag uses last-wins or precedence behavior. Shared global flags retain their
 shared rules and are not reinterpreted here.
@@ -142,10 +144,24 @@ The field patch is resolved as a set of explicitly supplied operations. Omitted
 fields retain their current values. Supplied description, responsibility, and
 tag values follow the replacement, addition, exact-empty removal, validation,
 and required-metadata rules in [Metadata Patch](interface.md#metadata-patch).
+The `--apply-to` operation replaces the target's complete local declaration set.
+The mutually exclusive `--clear-apply-to` operation removes only its local
+declarations. Neither operation changes an ancestor's condition.
 For the empty-map enrichment path, the complete supplied metadata is formed by
 an exact span patch that preserves unrelated YAML, body bytes, line endings,
 and encoding. It rejects arbitrary non-empty flow mappings, aliases, duplicate
 ownership maps, whole-file rewrites, and any partial enrichment request.
+
+`applyTo` may be authored as one quoted scalar pattern or a quoted-string list
+in flow or block form at the frontmatter root or scoped `open-forge` mapping.
+The resolver reads both locations when present, including root `applyTo` when a
+scoped mapping exists. Every value is validated under the accepted path-pattern
+grammar and normalized before set comparison. Equivalent declarations at both
+locations represent one local set. Set operations update each existing
+declaration in place, and clear operations remove all local declarations.
+Conflicting normalized declarations make the target ambiguous and block
+mutation. When a set is requested and no declaration exists, the new quoted
+list is written in scoped metadata.
 The resolver preserves unrelated top-level and unsupported scoped metadata when
 safe preservation can be established. It does not derive, summarize, correct,
 or judge field meaning from filenames, bodies, Templates, generated entries, or
@@ -272,7 +288,8 @@ replacement, verification, or recovery.
 
 The operation forms one complete intended destination from the current target,
 the explicit field patch, and the Template body decision. It changes only
-explicitly supplied metadata fields, removes `responsibility` only for the
+explicitly supplied metadata fields, replaces or clears only the target's local
+`applyTo` declarations, removes `responsibility` only for the
 exact-empty request, retains unrelated metadata when safe, and preserves the
 target body whenever authored content protects it. A Template body is copied
 only into an eligible whitespace-only body and becomes independent destination
@@ -290,6 +307,10 @@ unchanged. The operation does not serialize the whole document, accept a
 non-empty flow mapping or alias as an empty map, merge duplicate ownership
 maps, or treat partial enrichment as valid.
 
+When an explicitly requested normalized applicability set already matches, or
+`--clear-apply-to` finds no local declaration, the operation preserves the target
+bytes and plans no applicability effect.
+
 ### Generated projection
 
 After the intended destination is established, the operation projects generated
@@ -299,8 +320,8 @@ ordering, generated boundaries, bounded interiors, verification, and recovery.
 
 The dependency-minimal generated effects are:
 
-- A description or tag change may change the generated entry in the exposing
-  parent.
+- A description, tag, or `applyTo` change may change the generated entry in the
+  exposing parent.
 - Completing a frontmatter-only entrypoint from a valid Template may establish
   that entrypoint's own generated region and change its exposing parent's entry.
 - A responsibility-only change and an ordinary-body-only change do not change
@@ -521,8 +542,9 @@ semantic status.
 The [Interface Contract](interface.md) owns the exact human blocks, minimal-detail and
 full-detail content, structured facts, accepted stream allocations, and semantic
 result meanings. Behavior supplies the result evidence for workspace, selection
-method, and target identity, field state, Template decision, preservation,
-completeness and safety, intended effects, exact preview effects, preflight,
+method, and target identity, field state (including normalized `applyTo` before
+and after values when an applicability operation changes metadata), Template
+decision, preservation, completeness and safety, intended effects, exact preview effects, preflight,
 recovery-bundle, application, verification, recovery, residual targets, observations,
 availability conditions, and at most one required `Next:` action without defining
 another output shape. JSON uses the one complete stdout result and bounded stderr
@@ -548,8 +570,16 @@ boundary:
   span, preserves unrelated YAML/body bytes, line endings, and encoding, and
   rejects partial enrichment, non-empty flow mappings, aliases, duplicate
   ownership maps, and whole-file rewrites.
-- Singleton rejection for repeated `--description`, `--responsibility`, and
-  `--template` values, accepted complete tag-list replacement, idempotent
+- Applicability scalar, flow-list, and block-list parsing and path-pattern
+  validation. Equivalent declarations update and clear as one set. Conflicting
+  declarations block mutation. Replacement and removal affect only local
+  declarations. Identical sets and absent clears preserve bytes. Unrelated YAML,
+  body, comments, line endings, and mutation safety are preserved without
+  whole-document rewriting.
+- Singleton rejection for repeated `--description`, `--responsibility`,
+  `--clear-apply-to`, and `--template` values, mutually exclusive
+  `--apply-to` and `--clear-apply-to`, normalized distinct local pattern sets,
+  accepted complete tag-list replacement, idempotent
   Boolean repetition, and unchanged shared-global repetition and composition
   without last-wins or precedence behavior.
 - Template source classification, ID and exact-path selection, collision and

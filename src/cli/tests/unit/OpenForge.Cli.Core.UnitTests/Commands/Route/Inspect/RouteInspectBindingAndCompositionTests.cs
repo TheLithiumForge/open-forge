@@ -44,6 +44,71 @@ public sealed class RouteInspectBindingAndCompositionTests
         Assert.DoesNotContain("Planned but unavailable operation: remove.", text, StringComparison.Ordinal);
     }
 
+    [Fact(DisplayName = "Route Inspect binding normalizes and de-duplicates repeated working paths")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
+    public void BindingNormalizesRepeatedWorkingPaths()
+    {
+        var workspace = RouteInspectPresentationTestDataWorkspace();
+        var route = new Command("route");
+        var symbols = RouteInspectBinding.CreateSymbols(route);
+        string[] arguments =
+        [
+            "inspect", "root",
+            "--for", "src/../src/Order.cs",
+            "--for", "src/Order.cs",
+        ];
+
+        var parse = route.Parse(arguments);
+        Assert.Empty(parse.Errors);
+        var bound = RouteInspectBinding.Bind(parse, Invocation(workspace), symbols);
+
+        Assert.Null(bound.InvalidResult);
+        var request = Assert.IsType<RouteInspectRequest>(bound.Request);
+        Assert.Equal(["src/Order.cs"], request.WorkingPaths);
+    }
+
+    [Fact(DisplayName = "Route Inspect binding rejects an outside working path without echoing it")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
+    public void BindingRejectsOutsideWorkingPathWithoutEchoingIt()
+    {
+        var workspace = RouteInspectPresentationTestDataWorkspace();
+        var outsidePath = Path.GetFullPath(Path.Combine(workspace.LexicalRoot, "..", "private-working-file.cs"));
+        var route = new Command("route");
+        var symbols = RouteInspectBinding.CreateSymbols(route);
+        var parse = route.Parse(["inspect", "root", "--for", outsidePath]);
+
+        Assert.Empty(parse.Errors);
+        var bound = RouteInspectBinding.Bind(parse, Invocation(workspace), symbols);
+
+        Assert.Null(bound.Request);
+        var result = Assert.IsType<RouteInspectResult>(bound.InvalidResult);
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        var condition = Assert.Single(result.Conditions);
+        Assert.Equal(RouteInspectConditionCode.InvalidWorkingPath, condition.Code);
+        Assert.Equal("--for", condition.Subject);
+        Assert.DoesNotContain(outsidePath, condition.Message, StringComparison.Ordinal);
+    }
+
+    [Theory(DisplayName = "Route Inspect binding rejects invalid non-file working path spellings")]
+    [InlineData(".")]
+    [InlineData("bad\nname.cs")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
+    public void BindingRejectsInvalidWorkingPath(string workingPath)
+    {
+        var workspace = RouteInspectPresentationTestDataWorkspace();
+        var route = new Command("route");
+        var symbols = RouteInspectBinding.CreateSymbols(route);
+        var parse = route.Parse(["inspect", "root", "--for", workingPath]);
+
+        Assert.Empty(parse.Errors);
+        var bound = RouteInspectBinding.Bind(parse, Invocation(workspace), symbols);
+
+        Assert.Null(bound.Request);
+        var result = Assert.IsType<RouteInspectResult>(bound.InvalidResult);
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        Assert.Equal(RouteInspectConditionCode.InvalidWorkingPath, Assert.Single(result.Conditions).Code);
+    }
+
     [Fact(DisplayName = "Route Inspect owns one parser argument with omission and typed semantic cardinality")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void InspectArgumentUsesParserOwnedValuesAndTypedCardinality()

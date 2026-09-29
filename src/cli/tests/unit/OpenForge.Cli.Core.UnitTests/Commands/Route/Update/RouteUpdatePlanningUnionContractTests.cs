@@ -31,6 +31,8 @@ public sealed class RouteUpdatePlanningUnionContractTests
             DescriptionMember = null,
             ResponsibilityMember = null,
             TagsMember = null,
+            ApplyToPatterns = [],
+            ApplyToMembers = [],
         };
         var editPlan = new RouteUpdateMetadataEditPlan
         {

@@ -152,6 +152,26 @@ remain blocking facts. The design adds no speculative portable case, Unicode,
 or device-name equivalence and does not change current-visible Route or Context
 facts.
 
+## Declared Applicability In Generated Entries
+
+Index consumes each source's declared `applyTo` patterns from Framework
+`ApplyToMetadataFacts`. It does not calculate or project inherited condition
+chains. `MarkdownEntryRowParser` and `MarkdownEntryRowFormatter` provide the
+neutral Documents row grammar shared with source loading and Generated
+Navigation; Index does not maintain a second suffix parser. The grammar reads
+the optional ` - applies to ` suffix after the existing tag slot, and the
+formatter emits the source's declared patterns as comma-separated Markdown code
+spans.
+Unconditioned entries retain the existing generated line shape.
+
+Index keeps its complete eligible source inventory regardless of which files
+are currently being worked on. It does not apply path-compatibility filtering or
+use the shared evaluator to select entries. Doctor's metadata validation also
+covers its normal source universe without depending on working paths. Index
+projects Framework metadata and row facts into its own typed operation and
+result models; the existing source-generated JSON graph remains the only
+structured presentation boundary.
+
 ## JSON And Presentation
 
 Structured output uses source-generated `System.Text.Json` metadata for the

@@ -83,7 +83,7 @@ This flow moves context into and out of work. It does not require a project to f
 
 ## Structural Model
 
-A `route` is a visible path through small Markdown `entrypoints`. Each `entrypoint` exposes direct children with relative links, `descriptions` sufficient to select or skip them, and descriptive tags. A routed `slug` acts as a scope when it narrows the authority or meaning of everything that follows it.
+A `route` is a visible path through small Markdown `entrypoints`. Each `entrypoint` exposes direct children with relative links, `descriptions` sufficient to select or skip them, and descriptive tags. An entrypoint may declare an `applyTo` file condition to narrow its pre-load selection. A routed `slug` acts as a scope when it narrows the authority or meaning of everything that follows it.
 
 Agents move top-down from known context into relevant detail. Loaded ancestor rules remain active below them, while a child adds only what is specific to its scope. Relative Markdown links and established tags connect material across branches without creating competing authoritative sources.
 
@@ -165,7 +165,7 @@ The architecture is intentionally split by authoritative scope:
 
 - This top architecture is authoritative for the system map and cross-cutting invariants
 - The [Framework Architecture](framework/architecture.md) is authoritative for Core and Memory internals
-- The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for navigation, recursive scope, inheritance, loading, continuity, and path identity
+- The [Open Forge Routing scope](framework/routing/_routing.md) is authoritative for navigation, recursive scope, inheritance, loading, continuity, and path identity; its [loading contract](framework/routing/loading.md) defines file-condition behavior
 - The [Extensions Architecture](extensions/architecture.md) defines optional package composition and its boundary with installed Framework behavior
 - The [CLI MVP Architecture](cli/mvp-architecture.md) is authoritative for shipped commands, deterministic state, safety, verification, implementation, and liabilities
 

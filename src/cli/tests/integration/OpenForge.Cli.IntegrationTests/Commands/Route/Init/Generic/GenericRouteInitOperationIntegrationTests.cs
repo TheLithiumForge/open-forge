@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
 
@@ -110,6 +111,33 @@ public sealed class GenericRouteInitOperationIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Generic Route Init rejects applyTo for an existing final target without changing it"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
+    public async Task ExistingFinalTargetRejectsApplyToWithoutChangingBytes()
+    {
+        using var workspace = GenericRouteInitIntegrationWorkspace.Create("route-init-existing-final-apply-to");
+        const string path = ".agents/docs/_docs.md";
+        const string original = "---\nopen-forge:\n  description: Existing docs\n  tags: [Docs]\n---\n\n# docs\n\nAuthored bytes stay unchanged.\n";
+        workspace.WriteText(path, original);
+        var before = workspace.SnapshotHashes();
+        var pattern = ApplyToPatternMatcher.Parse("**/*.cs").Pattern
+            ?? throw new InvalidOperationException("The test applyTo pattern must be valid.");
+        var metadata = new RouteInitMetadataInput(
+            description: null,
+            responsibilitySpecified: false,
+            responsibility: null,
+            tags: [],
+            applyTo: [pattern]);
+
+        var result = await ExecuteAsync(workspace, workspace.Request("docs", metadata: metadata));
+
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        Assert.Contains(result.Findings, finding => finding.Code == RouteInitFindingCode.InvalidMetadata);
+        Assert.Equal(original, workspace.ReadText(path));
+        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.Equal(0, await workspace.RecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Generic Route Init preserves a canonical parent and only replaces its bounded generated region"), Trait("Feature", "route-init-generic"), Trait("Evidence", "Integration")]
     public async Task ExistingCanonicalParentPreservesAuthoredBytesAndUnrelatedFiles()
     {
@@ -125,10 +153,19 @@ public sealed class GenericRouteInitOperationIntegrationTests
         workspace.WriteText("unrelated.txt", "unrelated authored bytes\n");
         var beforeUnrelated = workspace.ReadText("unrelated.txt");
         var before = workspace.ReadText(".agents/memory/_memory.md");
+        var applyTo = new[] { "**/*.cs", "src/*.ts" }
+            .Select(pattern => ApplyToPatternMatcher.Parse(pattern).Pattern!)
+            .ToArray();
+        var metadata = new RouteInitMetadataInput(
+            description: "Project route",
+            responsibilitySpecified: false,
+            responsibility: null,
+            tags: ["Project"],
+            applyTo: applyTo);
 
         var result = await ExecuteAsync(
             workspace,
-            workspace.Request("memory/project"));
+            workspace.Request("memory/project", metadata: metadata));
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.True(workspace.Exists(".agents/memory/project/_project.md"));
@@ -139,6 +176,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
             StringComparison.Ordinal);
         Assert.Contains("\nAuthored suffix must remain.", after, StringComparison.Ordinal);
         Assert.Contains("project/_project.md", after, StringComparison.Ordinal);
+        Assert.Contains(" - applies to `**/*.cs`, `src/*.ts`", after, StringComparison.Ordinal);
         Assert.DoesNotContain("stale generated entry", after, StringComparison.Ordinal);
         Assert.Equal(beforeUnrelated, workspace.ReadText("unrelated.txt"));
         Assert.Contains(
@@ -314,7 +352,7 @@ public sealed class GenericRouteInitOperationIntegrationTests
             .ExecuteAsync(request, cancellationToken ?? TestContext.Current.CancellationToken);
 
     private static void AssertCreatedDraft(
-        RouteInitEntrypoint entrypoint,
+        RouteInitResultEntrypoint entrypoint,
         string id,
         string path)
     {

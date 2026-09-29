@@ -100,6 +100,32 @@ examples, and newly initialized entrypoints use the canonical filename. A
 generated link to a preserved compatibility entrypoint records the actual
 destination; it does not make that filename a canonical authoring form.
 
+## Accepted `applyTo` Input Forms
+
+The new CLI accepts `applyTo` at either the root of YAML frontmatter or under
+`open-forge:`. Both locations have identical meaning, and a root declaration
+is read even when the scoped metadata block is present. These locations are
+input-compatible; canonical authoring uses a list of quoted patterns under
+`open-forge:`.
+
+This root-level exception applies only to `applyTo`. It does not make root
+`description`, `tags`, or `responsibility` accepted metadata.
+
+A quoted scalar for one pattern is also accepted as input, as is a list of
+quoted strings. Commas are not split from scalar values. Missing `applyTo`
+means no file condition. Empty strings, empty lists, nulls, and non-string
+values are invalid. When both locations are present, each value normalizes to
+a set of distinct patterns compared with ordinal, case-sensitive equality.
+Equivalent sets count as one condition. Conflicting sets are invalid and are
+neither unioned nor resolved by precedence. Updates preserve the authored
+location. When equivalent declarations exist in both locations, updates and
+clears apply to both.
+
+These accepted value forms do not make arbitrary YAML forms compatible.
+`applyTo` pattern syntax remains the grammar defined in [Canonical Markdown
+Syntax](syntax.md#file-conditions), and the [routed Markdown
+contract](routes.md) defines its Entries projection.
+
 ## Historical CLI-v2 Proposal
 
 Deleted CLI v2 proposed accepting these noncanonical frontmatter forms for

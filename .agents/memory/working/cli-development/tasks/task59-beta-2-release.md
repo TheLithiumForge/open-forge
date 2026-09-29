@@ -17,7 +17,7 @@ link, so its npm page tells a visitor almost nothing. Beta 2 ships the
 documentation site work and a package page that explains Open Forge and links
 to the site and GitHub.
 
-**Direction:** the maintainer asked for the package fix and for a beta 2 after
+**Original direction:** the maintainer asked for the package fix and for a beta 2 after
 the documentation work is merged. Merging, tagging, and publishing are the
 maintainer's steps. This record authorizes none of them.
 
@@ -98,8 +98,8 @@ The workspace doctor check remains blocked by 12 existing
 `reference.target-alias` findings concerning the `beta-follow-ups` routes.
 Those paths and references are unchanged by this repair.
 
-**Now:** package fix integrated, release not started. The integration snapshot
-refresh is verified locally and included in the local `develop` repair commit.
+**Prior checkpoint:** the package fix and verified integration snapshot refresh
+are included locally. The release authorization and current state follow below.
 
 **Check on the published page:** npm resolves relative README links and images
 against the `repository` field. The README's diagram uses a `<picture>` element
@@ -116,3 +116,68 @@ with relative paths. If npm doesn't show it, switch its image paths to absolute
 - **The npm page shows the `latest` version's README.** `latest` still points at
   `0.9.0-beta.1`, which has no README. See the
   [review](../../../emerging/analysis/open-task-review/task59-beta-2-release.md) for the dist-tag options.
+
+## Authorized delivery, 2026-09-29
+
+The maintainer explicitly authorized confirming the documentation and website,
+squash merging Task 62 into `develop`, pushing `develop`, and checking the full
+build and test results. Beta 2 may be released only after those checks pass.
+After publication, assess what remains for a good 1.0.0 release. This direction
+supersedes the earlier record's withheld integration and publication boundary.
+
+Execution uses Managed Delivery with root retaining integration and publication.
+The completed Task 62 implementation and independent review are retained without
+another whole-change review. A Luna max read-only helper checks the release
+procedure. No parallel worker may mutate Git refs, version files or release state.
+
+Task 59 “Beta 2 release” (phase 1/3): milestone 1/5.
+
+The phases are integration, release qualification/publication, and published
+verification. Milestones are documentation readiness, develop integration,
+complete CI qualification, beta publication, and published-package/site checks.
+The later 1.0.0 assessment is a separate analysis outcome, not authority to
+implement the remaining backlog.
+
+The candidate is the verified `task62-applyto` worktree based on
+`d7e8a6d261dd85ac4086584121758ff143640226`. Task 62 passed all six local Windows
+managed/native modes, documentation type checking/build, its one independent
+review, and the native CLI smoke journey. All 9331 test executions passed with
+34 expected platform exclusions. The source and receipts are recorded in
+[Task 62 execution](task62/execution.md).
+
+The repository's Build workflow qualifies six native targets and packaging.
+Documentation deploys only from `main`. After verified develop integration,
+promote the accepted release candidate to `main` as part of the authorized beta
+release and website update. Preserve unrelated local files. Publish through the
+existing Release workflow, which requires successful builds and publishes the
+six native npm packages before the wrapper. Do not bypass its gates or change
+release-channel policy. The intended version/tag are `0.9.0-beta.2` and
+`v0.9.0-beta.2`.
+
+Current boundary: docs/site source verified; packaging preflight and integration
+preparation active. No beta 2 tag or package has been published. Record exact
+commit, CI run, release URL, package versions and website evidence as they become
+available. Existing repository Doctor findings are unrelated to this release
+candidate and were not increased by Task 62.
+
+### Candidate preparation
+
+The committed Task 62 candidate `e11109d09c3e7cea5fb60e70cdf0a8504b202087`
+passed a fresh Windows native build, all six test modes (9331 passes and 34
+expected platform exclusions), packing, and installation of the generated npm
+packages. Delivery checks passed 55 tests, package-layout checks passed seven,
+and the documentation type check and production build passed.
+
+Prepare `0.9.0-beta.2` before the final CI run so that CI qualifies the version
+to be published. The normal version command changed only `package.json`,
+`package-lock.json`, and `Directory.Build.props`, with no dependency changes or
+tag creation. The prepared candidate is undergoing version-specific local
+qualification before squash integration. The release remains conditional on the
+complete CI gate and the documentation deployment.
+
+The existing publication policy assigns the `beta` tag and also advances
+`latest` while no stable version exists. Verify both tags after publication.
+The normal tag-triggered Release workflow will perform its own six-host
+qualification before publishing. The checked remote `main` is behind the
+candidate, so earlier statements that it already contains the current
+documentation do not establish deployment readiness.

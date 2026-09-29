@@ -63,6 +63,29 @@ internal sealed class PublishedRouteInspectWorkspace : IDisposable
         }
     }
 
+    internal static PublishedRouteInspectWorkspace CreateConditioned()
+    {
+        var workspace = TemporaryWorkspace.Create("e2e-route-inspect-conditioned");
+        try
+        {
+            WriteLoader(workspace, "- [Root](root/_root.md) - #LoadNow");
+            WriteEntrypoint(
+                workspace,
+                ".agents/root/_root.md",
+                "Root",
+                ["Root", "LoadNow"],
+                "- [Child](child.md) - #Route",
+                ["src/**"]);
+            WriteRoute(workspace, ".agents/root/child.md", "Child", "Route");
+            return new PublishedRouteInspectWorkspace(workspace);
+        }
+        catch
+        {
+            workspace.Dispose();
+            throw;
+        }
+    }
+
     internal static PublishedRouteInspectWorkspace CreateIncomplete()
     {
         var workspace = TemporaryWorkspace.Create("e2e-route-inspect-incomplete");
@@ -124,11 +147,15 @@ internal sealed class PublishedRouteInspectWorkspace : IDisposable
         string path,
         string description,
         IEnumerable<string> tags,
-        string entries)
+        string entries,
+        IReadOnlyList<string>? applyTo = null)
     {
         var body = entries.Length == 0
             ? "- none - No entries - #Empty"
             : entries;
+        var applyToField = applyTo is null
+            ? string.Empty
+            : $"  applyTo: [{string.Join(", ", applyTo.Select(QuoteYamlString))}]\n";
         workspace.WriteText(
             path,
             $"""
@@ -136,13 +163,16 @@ internal sealed class PublishedRouteInspectWorkspace : IDisposable
             open-forge:
               description: {description}
               tags: [{string.Join(", ", tags)}]
-            ---
+            {applyToField}---
             # {description}
 
             ## Entries
             {body}
             """);
     }
+
+    private static string QuoteYamlString(string value)
+        => $"'{value.Replace("'", "''", StringComparison.Ordinal)}'";
 
     private static void WriteRoute(
         TemporaryWorkspace workspace,

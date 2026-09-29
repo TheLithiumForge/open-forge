@@ -157,6 +157,7 @@ internal static class DoctorWording
             DoctorFindingKind.RouteGeneratedEntryPath => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleEntryPathIsWrong(),
             DoctorFindingKind.RouteGeneratedEntryDescription => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleEntryDescriptionIsStale(),
             DoctorFindingKind.RouteGeneratedEntryTags => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleEntryTagsAreStale(),
+            DoctorFindingKind.RouteGeneratedEntryApplyTo => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleEntryApplyToIsStale(),
             DoctorFindingKind.RouteOverwriteOrphan => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleOverwriteHasNoBaseFile(),
             DoctorFindingKind.RouteOverwriteIndependentIndex => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleOverwriteIsListedIndependently(),
             DoctorFindingKind.RouteCompatibilityConflict => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleRouteNamesConflict(),
@@ -267,6 +268,7 @@ internal static class DoctorWording
             DoctorFindingKind.RouteGeneratedEntryPath => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatTheEntryForInPointsTo($"{FindingIdentifier(finding)}", $"{path}", $"{ComparisonActual(finding)}"),
             DoctorFindingKind.RouteGeneratedEntryDescription => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatTheEntryForInHasAnOldDescription($"{FindingIdentifier(finding)}", $"{path}"),
             DoctorFindingKind.RouteGeneratedEntryTags => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatTheEntryForInHasOldTags($"{FindingIdentifier(finding)}", $"{path}"),
+            DoctorFindingKind.RouteGeneratedEntryApplyTo => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatTheEntryForInHasStaleApplyTo($"{FindingIdentifier(finding)}", $"{path}"),
             DoctorFindingKind.RouteOverwriteOrphan => OverwriteOrphan(finding),
             DoctorFindingKind.RouteOverwriteIndependentIndex => EnsureSentence(finding.Message),
             DoctorFindingKind.RouteCompatibilityConflict => EnsureSentence(finding.Message),
@@ -648,6 +650,7 @@ internal static class DoctorWording
                 or DoctorFindingKind.RouteGeneratedEntryMissing or DoctorFindingKind.RouteGeneratedEntryExtra
                 or DoctorFindingKind.RouteGeneratedEntryOrder or DoctorFindingKind.RouteGeneratedEntryPath
                 or DoctorFindingKind.RouteGeneratedEntryDescription or DoctorFindingKind.RouteGeneratedEntryTags
+                or DoctorFindingKind.RouteGeneratedEntryApplyTo
                 or DoctorFindingKind.RouteOverwriteIndependentIndex => Action("open-forge index", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageUpdateDeterministicGeneratedNavigation()),
             DoctorFindingKind.ReferenceFragmentUnverified => Action("open-forge doctor", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageRunDoctorAgainAfterFixingTheSourceFile()),
             DoctorFindingKind.ReferenceTargetMissing or DoctorFindingKind.ReferenceFragmentMissing
@@ -695,6 +698,7 @@ internal static class DoctorWording
             or DoctorFindingKind.RouteGeneratedEntryPath
             or DoctorFindingKind.RouteGeneratedEntryDescription
             or DoctorFindingKind.RouteGeneratedEntryTags
+            or DoctorFindingKind.RouteGeneratedEntryApplyTo
             or DoctorFindingKind.RouteOverwriteIndependentIndex;
 
     private static CliNextAction Action(string command, string reason)

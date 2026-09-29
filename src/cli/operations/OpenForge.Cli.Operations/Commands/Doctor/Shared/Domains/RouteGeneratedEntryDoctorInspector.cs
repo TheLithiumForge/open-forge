@@ -34,6 +34,7 @@ internal static class RouteGeneratedEntryDoctorInspector
             RouteGeneratedEntryComparisonKind.Path => DoctorFindingKind.RouteGeneratedEntryPath,
             RouteGeneratedEntryComparisonKind.Description => DoctorFindingKind.RouteGeneratedEntryDescription,
             RouteGeneratedEntryComparisonKind.Tags => DoctorFindingKind.RouteGeneratedEntryTags,
+            RouteGeneratedEntryComparisonKind.ApplyTo => DoctorFindingKind.RouteGeneratedEntryApplyTo,
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The generated-entry comparison kind is not defined."),
         };
 

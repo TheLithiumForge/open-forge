@@ -271,6 +271,7 @@ internal sealed class RouteCreateAppliedVerifier(
                 actual.Metadata.Responsibility,
                 StringComparison.Ordinal)
             && expected.Metadata.Tags.SequenceEqual(actual.Metadata.Tags)
+            && expected.Metadata.ApplyTo.SequenceEqual(actual.Metadata.ApplyTo, StringComparer.Ordinal)
             && Equals(expected.Template, actual.Template);
 
     private static bool MatchesOptionalFindings(

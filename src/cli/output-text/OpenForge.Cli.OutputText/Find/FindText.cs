@@ -102,11 +102,31 @@ internal static class FindText
 
     // @OpenForgeText find.help.syntax
     internal static string HelpSyntax()
-        => "open-forge find [--include <source-reference>]... [--exclude <source-reference>]... [--tag <tag>]... [--heading <heading>]... [--require <all|any>] [--within <part>[,<part>...]] [--content <part>[,<part>...]] [global options]";
+        => "open-forge find [--include <source-reference>]... [--exclude <source-reference>]... [--for <path>]... [--tag <tag>]... [--heading <heading>]... [--require <all|any>] [--within <part>[,<part>...]] [--content <part>[,<part>...]] [global options]";
 
     // @OpenForgeText find.help.source-references
     internal static string HelpSourceReferences()
         => "--include and --exclude accept one exact source ID or one exact .agents/... Markdown path per occurrence. All includes are combined, exclusions take priority, and an unresolved reference prevents the search.";
+
+    // @OpenForgeText find.help.file-applicability
+    internal static string HelpFileApplicability()
+        => "Repeat --for <path> to limit results to sources compatible with those workspace-relative working paths. A source without an applyTo condition remains compatible. This filter combines with tag and heading predicates independently of --require.";
+
+    // @OpenForgeText find.label.applicability
+    internal static string FormatApplicability(string state)
+        => $"applicability: {state}";
+
+    // @OpenForgeText find.label.applicability-condition
+    internal static string FormatApplicabilityCondition(string source, string patterns)
+        => $"  {source}: {patterns}";
+
+    // @OpenForgeText find.label.matching-paths
+    internal static string FormatMatchingPaths(string paths)
+        => $"matching paths: {paths}";
+
+    // @OpenForgeText find.label.working-paths
+    internal static string FormatWorkingPaths(string paths)
+        => $"--for: {paths}";
 
     // @OpenForgeText find.help.heading.predicates-and-regions
     internal static string HelpHeadingPredicatesAndRegions()

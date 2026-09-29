@@ -38,6 +38,13 @@ internal static class FindDefinitions
         [],
         "source-reference");
 
+    internal static readonly CliOptionDefinition<string[]> For = new(
+        "--for",
+        "Limit results to sources that apply to one supplied workspace path; repeat for more paths.",
+        CliOptionArity.ExactlyOne,
+        [],
+        "path");
+
     internal static readonly CliOptionDefinition<string[]> Tag = new(
         "--tag",
         "Match one authored tag value.",

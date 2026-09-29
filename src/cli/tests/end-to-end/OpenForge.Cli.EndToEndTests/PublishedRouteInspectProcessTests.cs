@@ -27,6 +27,8 @@ public sealed class PublishedRouteInspectProcessTests
         Assert.Equal("completed", root.GetProperty("status").GetString());
         var data = root.GetProperty("data");
         Assert.Equal("root", data.GetProperty("selection").GetProperty("requested").GetString());
+        Assert.False(data.TryGetProperty("applicability", out _));
+        Assert.False(data.TryGetProperty("workingPaths", out _));
 
         Assert.Equal(".agents/root/_root.md", data.GetProperty("path").GetString());
         var layers = data.GetProperty("layers").EnumerateArray().ToArray();
@@ -36,6 +38,64 @@ public sealed class PublishedRouteInspectProcessTests
         Assert.Equal(["base", "overwrite"], layers.Select(layer => layer.GetProperty("kind").GetString()));
 
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
+    }
+
+    [Theory(DisplayName = "Published Route Inspect explains a matched repeated working-path set")]
+    [InlineData("standard")]
+    [InlineData("full")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "EndToEnd")]
+    public async Task JsonResultExplainsMatchedWorkingPaths(string detail)
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = PublishedRouteInspectWorkspace.CreateConditioned();
+        var result = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+            target,
+            working.Path,
+            working.SnapshotHashes,
+            [
+                "route", "inspect", "root",
+                "--workspace", working.Path,
+                "--format=json", $"--detail={detail}",
+                "--for", "src/../src/Order.cs",
+                "--for", "src/Order.cs",
+            ]);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(string.Empty, result.StandardError);
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        var root = document.RootElement;
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        var data = root.GetProperty("data");
+        Assert.Equal(["src/Order.cs"], data.GetProperty("workingPaths").EnumerateArray().Select(path => path.GetString()));
+        var applicability = data.GetProperty("applicability");
+        Assert.Equal("matched", applicability.GetProperty("state").GetString());
+        var condition = Assert.Single(applicability.GetProperty("conditions").EnumerateArray());
+        Assert.Equal(".agents/root/_root.md", condition.GetProperty("source").GetString());
+        Assert.Equal(["src/**"], condition.GetProperty("patterns").EnumerateArray().Select(pattern => pattern.GetString()));
+        Assert.Equal(["src/Order.cs"], applicability.GetProperty("matchingPaths").EnumerateArray().Select(path => path.GetString()));
+        Assert.Contains(
+            "a supplied working path matches the route's effective file condition",
+            data.GetProperty("read").GetProperty("automaticallyWhen")
+                .EnumerateArray().Select(reason => reason.GetString()));
+
+        if (detail == "standard")
+        {
+            var minimal = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+                target,
+                working.Path,
+                working.SnapshotHashes,
+                [
+                    "route", "inspect", "root",
+                    "--workspace", working.Path,
+                    "--format=json", "--detail=minimal",
+                    "--for", "src/Order.cs",
+                ]);
+            Assert.Equal(0, minimal.ExitCode);
+            using var minimalDocument = JsonDocument.Parse(minimal.StandardOutput);
+            var minimalData = minimalDocument.RootElement.GetProperty("data");
+            Assert.False(minimalData.TryGetProperty("applicability", out _));
+            Assert.Equal(["src/Order.cs"], minimalData.GetProperty("workingPaths").EnumerateArray().Select(path => path.GetString()));
+        }
     }
 
     [Fact(DisplayName = "Published Route Inspect exact-path attention status uses stdout without an invented next action"),

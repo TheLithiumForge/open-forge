@@ -49,7 +49,13 @@ internal sealed class YamlDocumentParser
     private static YamlNode ReadScalar(YamlEventReader reader, Scalar scalar)
     {
         reader.Advance();
-        return YamlNode.FromScalar(new YamlScalar(scalar.Value, CreateSpan(scalar.Start, scalar.End)));
+        return YamlNode.FromScalar(new YamlScalar(
+            scalar.Value,
+            scalar.Style,
+            scalar.Tag.ToString(),
+            scalar.IsPlainImplicit,
+            scalar.IsQuotedImplicit,
+            CreateSpan(scalar.Start, scalar.End)));
     }
 
     private static YamlNode ReadAlias(YamlEventReader reader, AnchorAlias alias)

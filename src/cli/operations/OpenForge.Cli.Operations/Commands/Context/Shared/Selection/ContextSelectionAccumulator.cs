@@ -11,7 +11,10 @@ internal sealed class ContextSelectionAccumulator
     internal IReadOnlyList<ContextSelectedGraphSource> Sources
         => _values.Select(value => value.Freeze()).ToArray();
 
-    internal bool Add(ContextGraphSource source, ContextInclusionReason reason)
+    internal bool Add(
+        ContextGraphSource source,
+        ContextInclusionReason reason,
+        ContextApplicability? applicability = null)
     {
         if (_byPath.TryGetValue(source.CanonicalPath, out var existing))
         {
@@ -20,6 +23,8 @@ internal sealed class ContextSelectionAccumulator
                 existing.Reasons.Add(reason);
             }
 
+            existing.Applicability ??= applicability;
+
             return false;
         }
 
@@ -27,6 +32,7 @@ internal sealed class ContextSelectionAccumulator
         {
             Source = source,
             Reasons = [reason],
+            Applicability = applicability,
         };
         _byPath.Add(source.CanonicalPath, added);
         _values.Add(added);
@@ -40,7 +46,7 @@ internal sealed class ContextSelectionAccumulator
         {
             foreach (var reason in value.Reasons)
             {
-                clone.Add(value.Source, reason);
+                clone.Add(value.Source, reason, value.Applicability);
             }
         }
 
@@ -53,10 +59,13 @@ internal sealed class ContextSelectionAccumulator
 
         public required List<ContextInclusionReason> Reasons { get; init; }
 
+        public ContextApplicability? Applicability { get; set; }
+
         internal ContextSelectedGraphSource Freeze() => new()
         {
             Source = Source,
             InclusionReasons = Reasons.ToArray(),
+            Applicability = Applicability,
         };
     }
 }

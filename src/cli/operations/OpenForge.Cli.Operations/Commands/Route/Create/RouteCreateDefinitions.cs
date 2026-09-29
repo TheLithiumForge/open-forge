@@ -15,6 +15,7 @@ internal static class RouteCreateDefinitions
     internal const string FileTargetValueName = "file-target";
     internal const string TextValueName = "text";
     internal const string TagValueName = "tag";
+    internal const string ApplyToValueName = "glob";
     internal const string TemplateReferenceValueName = "template-reference";
 
     internal const string RouteCreateHelpCommand = "open-forge route create --help";
@@ -41,6 +42,13 @@ internal static class RouteCreateDefinitions
         CliOptionArity.ExactlyOne,
         [],
         TagValueName);
+
+    internal static readonly CliOptionDefinition<string[]> ApplyTo = new(
+        "--apply-to",
+        "Apply the destination to one workspace-relative path pattern; repeat for additional patterns.",
+        CliOptionArity.ExactlyOne,
+        [],
+        ApplyToValueName);
 
     internal static readonly CliOptionDefinition<string?> Responsibility = new(
         "--responsibility",

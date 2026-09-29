@@ -3,6 +3,7 @@ using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
@@ -37,6 +38,7 @@ public sealed class RouteCreateCompositionIntegrationTests
         Assert.Contains("open-forge route create <file-target> [--description <text>] [--tag <tag>...]", string.Join(" ", result.Output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)), StringComparison.Ordinal);
         Assert.Contains("--description <text>", result.Output, StringComparison.Ordinal);
         Assert.Contains("--tag <tag>", result.Output, StringComparison.Ordinal);
+        Assert.Contains("--apply-to <glob>", result.Output, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
@@ -110,6 +112,7 @@ public sealed class RouteCreateCompositionIntegrationTests
         var arguments = new[]
         {
             "route", "create", RouteCreateIntegrationWorkspace.TargetId,
+            "--apply-to=**/*.cs",
             "--format", "json", "--detail", "full",
         };
 
@@ -127,15 +130,22 @@ public sealed class RouteCreateCompositionIntegrationTests
             var metadata = root.GetProperty("data").GetProperty("metadata");
             Assert.Equal(System.Text.Json.JsonValueKind.Null, metadata.GetProperty("description").ValueKind);
             Assert.Empty(metadata.GetProperty("tags").EnumerateArray());
+            Assert.Equal(["**/*.cs"], metadata.GetProperty("applyTo").EnumerateArray()
+                .Select(pattern => pattern.GetString()));
             Assert.Equal("removed", root.GetProperty("recovery").GetProperty("disposition").GetString());
             Assert.Equal(
                 "open-forge route update " + RouteCreateIntegrationWorkspace.TargetId,
                 root.GetProperty("next").GetProperty("command").GetString());
         }
 
+        var applyToPattern = ApplyToPatternMatcher.Parse("**/*.cs").Pattern
+            ?? throw new InvalidOperationException("The expected apply-to test pattern must be valid.");
         var targetBytes = File.ReadAllBytes(workspace.Absolute(RouteCreateIntegrationWorkspace.TargetPath));
         var expectedTarget = new FrameworkMarkdownDocumentWriter().WriteOptional(
-            new FrameworkDocumentMetadataEmission(null, [], null),
+            new FrameworkDocumentMetadataEmission(null, [], null)
+            {
+                ApplyTo = [applyToPattern],
+            },
             string.Empty);
         Assert.Equal(expectedTarget.ToArray(), targetBytes);
         var parent = workspace.ReadText(RouteCreateIntegrationWorkspace.ParentPath);
@@ -161,6 +171,75 @@ public sealed class RouteCreateCompositionIntegrationTests
         }
 
         Assert.Equal(beforeRepeat, workspace.SnapshotHashes());
+
+        var text = await CliHostCapture.RunAsync(
+        [
+            .. arguments.Take(3),
+            "--apply-to=**/*.cs",
+            "--format", "text", "--detail", "full",
+        ],
+        workspace.Workspace.LexicalRoot);
+        Assert.Equal(2, text.ExitCode);
+        Assert.Contains("Applies to: '**/*.cs'", text.Output, StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Route Create authors apply-to patterns and projects them in text and JSON"),
+     Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
+    public async Task ComposedCreateAuthorsAndProjectsApplyToPatterns()
+    {
+        using var workspace = RouteCreateIntegrationWorkspace.Create("create-apply-to");
+        workspace.SeedBase();
+        workspace.OwnApplicationCreatedTarget();
+        var arguments = new[]
+        {
+            "route", "create", RouteCreateIntegrationWorkspace.TargetId,
+            "--description", "Project overview", "--tag=Docs", "--apply-to=**/*.cs",
+            "--apply-to=docs/**", "--format", "json", "--detail", "full",
+        };
+
+        var created = await CliHostCapture.RunAsync(arguments, workspace.Workspace.LexicalRoot);
+
+        Assert.Equal(0, created.ExitCode);
+        Assert.Equal(string.Empty, created.Error);
+        using var document = System.Text.Json.JsonDocument.Parse(created.Output);
+        var metadata = document.RootElement.GetProperty("data").GetProperty("metadata");
+        Assert.Equal(["**/*.cs", "docs/**"], metadata.GetProperty("applyTo").EnumerateArray()
+            .Select(pattern => pattern.GetString()));
+        var authored = workspace.ReadText(RouteCreateIntegrationWorkspace.TargetPath);
+        Assert.Contains("  applyTo: [\"**/*.cs\", \"docs/**\"]", authored, StringComparison.Ordinal);
+        Assert.Contains("- applies to `**/*.cs`, `docs/**`", workspace.ReadText(RouteCreateIntegrationWorkspace.ParentPath), StringComparison.Ordinal);
+
+        var text = await CliHostCapture.RunAsync(
+        [
+            "route", "create", RouteCreateIntegrationWorkspace.TargetId,
+            "--description", "Project overview", "--tag=Docs", "--apply-to=**/*.cs",
+            "--apply-to=docs/**", "--format", "text", "--detail", "full",
+        ],
+            workspace.Workspace.LexicalRoot);
+        Assert.Contains("Applies to: '**/*.cs', 'docs/**'", text.Output, StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Composed Route Create rejects invalid apply-to patterns before any workspace effect"),
+     Trait("Feature", "route-create"), Trait("Evidence", "Integration")]
+    public async Task InvalidApplyToPatternStopsBeforeWorkspaceEffects()
+    {
+        using var workspace = RouteCreateIntegrationWorkspace.Create("create-invalid-apply-to");
+        workspace.SeedBase();
+        var before = workspace.SnapshotHashes();
+
+        var result = await CliHostCapture.RunAsync(
+        [
+            "route", "create", RouteCreateIntegrationWorkspace.TargetId,
+            "--apply-to=../outside.cs",
+        ],
+        workspace.Workspace.LexicalRoot);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.Output);
+        Assert.Contains("--apply-to pattern '../outside.cs' is invalid", result.Error, StringComparison.Ordinal);
+        Assert.Equal(before, workspace.SnapshotHashes());
     }
 
     [Trait("Boundary", "Host")]

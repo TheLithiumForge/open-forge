@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
@@ -32,10 +33,12 @@ internal sealed class FrameworkDocumentMetadataParser
             return Malformed();
         }
 
+        var applyTo = ApplyToMetadataReader.Read(facts);
+
         var root = facts.Root;
         if (root?.Mapping is not { } entries)
         {
-            return Missing();
+            return Missing() with { ApplyTo = applyTo };
         }
 
         var selected = entries
@@ -47,7 +50,7 @@ internal sealed class FrameworkDocumentMetadataParser
             .ToArray();
         if (selected.Length == 0)
         {
-            return Missing();
+            return Missing() with { ApplyTo = applyTo };
         }
 
         if (selected.Length != 1)
@@ -58,12 +61,12 @@ internal sealed class FrameworkDocumentMetadataParser
                 .Select(entry => entry.Key.Scalar?.Span)
                 .OfType<YamlTextSpan>()
                 .First();
-            return Duplicate(duplicate);
+            return Duplicate(duplicate) with { ApplyTo = applyTo };
         }
 
         if (FrameworkDocumentMetadataValueReader.ReadDuplicateKey(selected[0]) is { } duplicateKey)
         {
-            return Duplicate(duplicateKey);
+            return Duplicate(duplicateKey) with { ApplyTo = applyTo };
         }
 
         if (!FrameworkDocumentMetadataValueReader.TryRead(
@@ -75,15 +78,19 @@ internal sealed class FrameworkDocumentMetadataParser
                 out var malformed))
         {
             return malformed
-                ? Malformed(observedDescription)
-                : Missing(observedDescription, observedTags);
+                ? Malformed(observedDescription) with { ApplyTo = applyTo }
+                : Missing(observedDescription, observedTags) with { ApplyTo = applyTo };
         }
 
-        return FrameworkDocumentMetadataFacts.Complete(
-            metadata
-                ?? throw new InvalidOperationException(
-                    "Complete Framework document metadata parsing requires authored metadata."),
-            tagSpans);
+        var authoredMetadata = metadata
+            ?? throw new InvalidOperationException(
+                "Complete Framework document metadata parsing requires authored metadata.");
+        var completeMetadata = new FrameworkDocumentMetadata(
+            authoredMetadata.Description,
+            authoredMetadata.Tags,
+            authoredMetadata.Responsibility,
+            applyTo.Patterns);
+        return FrameworkDocumentMetadataFacts.Complete(completeMetadata, tagSpans) with { ApplyTo = applyTo };
     }
 
     private static FrameworkDocumentMetadataFacts Missing(

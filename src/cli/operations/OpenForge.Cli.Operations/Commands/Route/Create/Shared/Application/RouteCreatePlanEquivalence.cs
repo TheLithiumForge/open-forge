@@ -39,6 +39,11 @@ internal static class RouteCreatePlanEquivalence
                 actual.Request.Metadata.Description,
                 StringComparison.Ordinal)
             && expected.Request.Metadata.Tags.SequenceEqual(actual.Request.Metadata.Tags)
+            && expected.Request.Metadata.ApplyTo
+                .Select(pattern => pattern.Text)
+                .SequenceEqual(
+                    actual.Request.Metadata.ApplyTo.Select(pattern => pattern.Text),
+                    StringComparer.Ordinal)
             && string.Equals(
                 expected.Request.Metadata.Responsibility,
                 actual.Request.Metadata.Responsibility,

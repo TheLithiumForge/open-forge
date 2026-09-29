@@ -5,6 +5,8 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
@@ -33,6 +35,13 @@ internal static class RouteInitBinding
             Arity = ArgumentArity.ZeroOrMore,
             AllowMultipleArgumentsPerToken = false,
         };
+        var applyTo = new Option<string[]>(RouteInitDefinitions.ApplyTo.Name)
+        {
+            Description = RouteInitDefinitions.ApplyTo.Description,
+            HelpName = RouteInitDefinitions.ApplyTo.ValueName,
+            Arity = ArgumentArity.ZeroOrMore,
+            AllowMultipleArgumentsPerToken = false,
+        };
         var dryRun = CreateBoolean(RouteInitDefinitions.DryRun);
         var command = new Command(
             RouteInitDefinitions.InitCommand.Name,
@@ -42,6 +51,7 @@ internal static class RouteInitBinding
         command.Options.Add(description);
         command.Options.Add(responsibility);
         command.Options.Add(tag);
+        command.Options.Add(applyTo);
         command.Options.Add(dryRun);
         routeGroup.Subcommands.Add(command);
         return new RouteInitSymbols(
@@ -52,6 +62,7 @@ internal static class RouteInitBinding
             description,
             responsibility,
             tag,
+            applyTo,
             dryRun);
     }
 
@@ -100,9 +111,12 @@ internal static class RouteInitBinding
         var descriptionFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Description);
         var responsibilityFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Responsibility);
         var tagFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Tag);
+        var applyToFacts = CliOptionResultFactsReader.Read(parseResult, symbols.ApplyTo);
         var description = parseResult.GetValue(symbols.Description);
         var responsibility = parseResult.GetValue(symbols.Responsibility);
         var tags = parseResult.GetValue(symbols.Tag) ?? [];
+        var applyToValues = parseResult.GetValue(symbols.ApplyTo) ?? [];
+        var applyTo = ParseApplyTo(applyToValues);
         if (!IsValidMetadata(
                 scaffold,
                 descriptionFacts.IsExplicit,
@@ -110,7 +124,9 @@ internal static class RouteInitBinding
                 responsibilityFacts.IsExplicit,
                 responsibility,
                 tagFacts.IsExplicit,
-                tags))
+                tags,
+                applyToFacts.IsExplicit,
+                applyTo))
         {
             return Invalid(
                 invocation.Workspace,
@@ -123,7 +139,9 @@ internal static class RouteInitBinding
                     responsibilityFacts.IsExplicit,
                     responsibility,
                     tagFacts.IsExplicit,
-                    tags));
+                    tags,
+                    applyToFacts.IsExplicit,
+                    applyTo));
         }
 
         var workspace = invocation.Workspace
@@ -138,7 +156,8 @@ internal static class RouteInitBinding
                     description,
                     responsibilityFacts.IsExplicit,
                     responsibility,
-                    tags)));
+                    tags,
+                    applyTo.Patterns)));
     }
 
     private static RouteInitResult CreateContextualInvalidResult(
@@ -214,10 +233,12 @@ internal static class RouteInitBinding
         bool responsibilitySpecified,
         string? responsibility,
         bool tagsSpecified,
-        IReadOnlyList<string> tags)
+        IReadOnlyList<string> tags,
+        bool applyToSpecified,
+        ApplyToBindingResult applyTo)
     {
         if (scaffold == RouteInitScaffold.Framework
-            && (descriptionSpecified || responsibilitySpecified || tagsSpecified))
+            && (descriptionSpecified || responsibilitySpecified || tagsSpecified || applyToSpecified))
         {
             return false;
         }
@@ -237,7 +258,9 @@ internal static class RouteInitBinding
 
         return (!tagsSpecified || tags.Count > 0)
             && tags.All(SourceOpenForgeMetadataParser.IsValidTag)
-            && tags.Distinct(StringComparer.Ordinal).Count() == tags.Count;
+            && tags.Distinct(StringComparer.Ordinal).Count() == tags.Count
+            && (!applyToSpecified || applyTo.Patterns.Count > 0)
+            && applyTo.Failure is null;
     }
 
     private static string InvalidMetadataCause(
@@ -247,12 +270,14 @@ internal static class RouteInitBinding
         bool responsibilitySpecified,
         string? responsibility,
         bool tagsSpecified,
-        IReadOnlyList<string> tags)
+        IReadOnlyList<string> tags,
+        bool applyToSpecified,
+        ApplyToBindingResult applyTo)
     {
         if (scaffold == RouteInitScaffold.Framework
-            && (descriptionSpecified || responsibilitySpecified || tagsSpecified))
+            && (descriptionSpecified || responsibilitySpecified || tagsSpecified || applyToSpecified))
         {
-            return "--framework cannot be combined with --description, --responsibility or --tag.";
+            return "--framework cannot be combined with --description, --responsibility, --tag or --apply-to.";
         }
 
         if (descriptionSpecified && string.IsNullOrWhiteSpace(description))
@@ -270,8 +295,48 @@ internal static class RouteInitBinding
             return $"--tag {repeated.Key} must not be repeated.";
         }
 
+        if (applyTo.Failure is { } failure)
+        {
+            return failure switch
+            {
+                ApplyToPatternFailure.Empty => "--apply-to <glob> must not be empty.",
+                ApplyToPatternFailure.AbsolutePath => "--apply-to <glob> must be workspace-relative.",
+                ApplyToPatternFailure.Traversal => "--apply-to <glob> must not contain . or .. path segments.",
+                ApplyToPatternFailure.UnsupportedSyntax => "--apply-to <glob> contains unsupported pattern syntax.",
+                _ => throw new ArgumentOutOfRangeException(nameof(applyTo), failure, "The applyTo pattern failure is not defined."),
+            };
+        }
+
+        if (applyToSpecified && applyTo.Patterns.Count == 0)
+        {
+            return "--apply-to requires at least one <glob>.";
+        }
+
         return "Route Init metadata is invalid.";
     }
+
+    private static ApplyToBindingResult ParseApplyTo(IReadOnlyList<string> values)
+    {
+        var patterns = new SortedDictionary<string, ApplyToPattern>(StringComparer.Ordinal);
+        foreach (var value in values)
+        {
+            var parsed = ApplyToPatternMatcher.Parse(value);
+            if (parsed.Failure is { } failure)
+            {
+                return new ApplyToBindingResult([], failure);
+            }
+
+            var pattern = parsed.Pattern
+                ?? throw new InvalidOperationException("A successful applyTo parse did not contain a pattern.");
+            patterns.TryAdd(pattern.Text, pattern);
+        }
+
+        return new ApplyToBindingResult(patterns.Values.ToArray(), null);
+    }
+
+    private sealed record ApplyToBindingResult(
+        IReadOnlyList<ApplyToPattern> Patterns,
+        ApplyToPatternFailure? Failure);
 
     private static CliBindResult<RouteInitRequest, RouteInitResult> Invalid(
         OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace? workspace,

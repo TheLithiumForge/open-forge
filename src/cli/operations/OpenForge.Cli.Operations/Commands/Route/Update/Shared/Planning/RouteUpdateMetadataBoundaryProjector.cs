@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
@@ -88,7 +89,50 @@ internal static class RouteUpdateMetadataBoundaryProjector
                     request.Tags.Requested,
                     layout.Tags.SequenceEqual(request.Tags.Values)),
             },
+            ApplyTo = new RouteUpdateApplyToPatch
+            {
+                Requested = request.ApplyTo.Operation != RouteUpdateApplyToOperation.NotRequested,
+                Operation = request.ApplyTo.Operation,
+                Before = layout.ApplyToPatterns.IsEmpty
+                    ? null
+                    : layout.ApplyToPatterns.Select(pattern => pattern.Text).ToImmutableArray(),
+                Expected = request.ApplyTo.Operation == RouteUpdateApplyToOperation.Set
+                    ? request.ApplyTo.Values
+                    : null,
+                State = ReadApplyToState(request.ApplyTo, layout),
+            },
         };
+    }
+
+    private static RouteUpdatePatchState ReadApplyToState(
+        RouteUpdateApplyToRequest request,
+        RouteUpdateMetadataLayout layout)
+    {
+        if (request.Operation == RouteUpdateApplyToOperation.NotRequested)
+        {
+            return RouteUpdatePatchState.NotRequested;
+        }
+
+        if (request.Operation == RouteUpdateApplyToOperation.Clear)
+        {
+            return layout.ApplyToMembers.IsEmpty
+                ? RouteUpdatePatchState.Unchanged
+                : RouteUpdatePatchState.Changed;
+        }
+
+        if (request.Operation == RouteUpdateApplyToOperation.Set)
+        {
+            var before = layout.ApplyToPatterns.Select(pattern => pattern.Text).ToHashSet(StringComparer.Ordinal);
+            var after = request.Values.ToHashSet(StringComparer.Ordinal);
+            return before.SetEquals(after)
+                ? RouteUpdatePatchState.Unchanged
+                : RouteUpdatePatchState.Changed;
+        }
+
+        throw new ArgumentOutOfRangeException(
+            nameof(request),
+            request.Operation,
+            "The Route Update applyTo operation is not defined.");
     }
 
     private static RouteUpdatePatchState ReadState(bool requested, bool unchanged)

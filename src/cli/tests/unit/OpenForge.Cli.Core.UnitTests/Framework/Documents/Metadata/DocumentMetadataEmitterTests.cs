@@ -1,11 +1,33 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Metadata;
 
 public sealed class DocumentMetadataEmitterTests
 {
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Framework metadata emits applyTo as a quoted scoped list and reads it back")]
+    [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
+    public void EmitsAndReadsScopedApplyToList()
+    {
+        var patterns = new[]
+        {
+            new ApplyToPattern("**/*.cs", ["**", "*.cs"]),
+            new ApplyToPattern("src/*.cs", ["src", "*.cs"]),
+        };
+        var yaml = new FrameworkDocumentMetadataEmitter().EmitOptional(
+            new FrameworkDocumentMetadataEmission("Route description", ["Docs"], null, patterns));
+
+        Assert.Contains("applyTo: [\"**/*.cs\", \"src/*.cs\"]", yaml, StringComparison.Ordinal);
+        var facts = new FrameworkDocumentMetadataParser().Parse(
+            new MarkdownDocumentParser().Parse($"---\n{yaml}---\n"));
+        Assert.Equal(ApplyToMetadataState.Valid, facts.ApplyTo.State);
+        Assert.Equal(patterns.Select(pattern => pattern.Text), facts.ApplyTo.Patterns.Select(pattern => pattern.Text));
+    }
+
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Optional metadata omits missing fields while retaining safe authored values")]
     [InlineData(null, false)]

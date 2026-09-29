@@ -1,19 +1,20 @@
 ---
 open-forge:
-  description: Accepted bounded lexical recognizer for Route Update attached-empty responsibility input
-  responsibility: Define the exact implementation exception that preserves the Route Update public responsibility grammar
-  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Route, Update, TechnicalDesign, Parser, EdgeCase, CurrentTruth]
+  description: Define Route Update's bounded parser exception and byte-preserving applicability metadata patch
+  responsibility: Record the accepted Route Update realization for attached-empty responsibility input and source-span metadata edits
+  tags: [Memory, Crystallized, CLI, Release, Command, Contract, Route, Update, TechnicalDesign, Parser, EdgeCase, Metadata, Mutation, CurrentTruth]
 ---
 
 # route update Technical Design
 
 ## Status And Authority
 
-This Technical Design records the one accepted Route Update parser exception.
-The [Interface Contract](interface.md) remains authoritative for public syntax
-and exact-empty responsibility removal. The [Behavior Contract](behavior.md)
-remains authoritative for technology-neutral request resolution and operation
-behavior. This design adds no spelling, result, diagnostic, or domain fact.
+This Technical Design records the bounded Route Update parser exception and the
+byte-preserving realization of its `applyTo` metadata patch. The [Interface
+Contract](interface.md) remains authoritative for public syntax and field
+meaning. The [Behavior Contract](behavior.md) remains authoritative for
+technology-neutral request resolution and operation behavior. This design adds
+no spelling, result, diagnostic, or domain fact.
 
 The generic parser and typed-request boundaries remain in the [CLI
 Architecture](../../../architecture.md). The active [edge-case
@@ -65,6 +66,37 @@ diagnostic. Its implementation evidence must show that the shared fact is
 consumed at the Route Update plan, revalidation, and effect boundaries without
 changing the request or result schema.
 
+## `applyTo` source-span patch
+
+The repeated `--apply-to` values use ordinary typed `System.CommandLine`
+binding and Framework `Documents` `ApplyToPatternMatcher`. The existing
+`CLI-EDGE-016` recognizer remains limited to attached-empty responsibility
+input. Route Update reads root and scoped `applyTo` declarations through
+`ApplyToMetadataReader` and shared typed YAML facts, which retain each
+declaration's location and source span. It validates both locations before
+planning an edit.
+
+For equivalent normalized dual declarations, a set operation patches both
+declarations in their existing locations, and a clear operation removes both.
+A new declaration is written as a quoted list under the scoped `open-forge`
+mapping. The operation replaces or inserts only the exact spans supported by the
+parsed mapping and preserves unrelated frontmatter, body bytes, line endings,
+and encoding. It does not serialize the whole YAML document or use whole-file
+serialization as a fallback.
+
+Quoted-string flow and block lists are eligible. Replacing a block list retains
+its terminal line ending and a safely separable trailing comment. Interior
+sequence comments, or a clear that would consume a retained comment, produce
+the existing metadata-preservation failure before any write. Clearing an absent
+field is unchanged and does not refresh an otherwise stale parent Entries region.
+
+Invalid or conflicting declarations block mutation. If the parsed document does
+not provide safe spans for every required replacement or insertion, planning
+fails before effects. The operation projects normalized before-and-after values
+into Route Update's command-owned result types; Framework YAML nodes and
+applicability facts do not pass directly to Rendering. Structured output remains
+part of the source-generated command result graph.
+
 ## Conformance Evidence
 
 Focused parser and process evidence must prove both accepted attached-empty
@@ -77,6 +109,12 @@ under-lease revalidation, and immediately before each ordinary effect, including
 refusal to follow or mutate an eligible `.agents/...` Library projection.
 Route List evidence separately proves equivalent native space, equals and colon
 depth forms. It adds no raw argument inspection.
+
+Applicability evidence must also cover root and scoped declarations, equivalent
+dual updates and clears, conflicts, malformed patterns, bounded exact-span
+insertion, preservation of unrelated bytes, and failure before effects when a
+safe span cannot be established. It must confirm that the new flags stay on the
+ordinary parser path and do not expand `CLI-EDGE-016`.
 
 ## Related Current Sources
 

@@ -16,11 +16,17 @@ internal sealed record RouteInspectData
 
     public string? OverwritePath { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<string>? WorkingPaths { get; init; }
+
     public RouteInspectDataBelongs? Belongs { get; init; }
 
     public RouteInspectDataRead? Read { get; init; }
 
     public RouteInspectDataSize? Size { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public RouteInspectDataApplicability? Applicability { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public RouteInspectDataAxioms? Axioms { get; init; }
@@ -74,6 +80,22 @@ internal sealed record RouteInspectDataSize
     public RouteInspectDataMeasurement? Adds { get; init; }
 
     public RouteInspectDataMeasurement? LoadNow { get; init; }
+}
+
+internal sealed record RouteInspectDataApplicability
+{
+    public required string State { get; init; }
+
+    public required IReadOnlyList<RouteInspectDataApplicabilityCondition> Conditions { get; init; }
+
+    public required IReadOnlyList<string> MatchingPaths { get; init; }
+}
+
+internal sealed record RouteInspectDataApplicabilityCondition
+{
+    public required string Source { get; init; }
+
+    public required IReadOnlyList<string> Patterns { get; init; }
 }
 
 internal sealed record RouteInspectDataMeasurement

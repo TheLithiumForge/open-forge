@@ -95,6 +95,32 @@ The route-facts resolver reads only supporting sources in the effective Find
 universe; metadata projection does not widen source filters to inspect excluded
 sources.
 
+## Path-Scoped Applicability
+
+Find uses Framework `Documents` typed YAML facts, `ApplyToMetadataReader`, and
+`ApplyToPatternMatcher` for `applyTo`, together with Framework `Sources`
+`SourceApplicabilityEvaluator` and `SourceWorkingPathNormalizer`. The metadata
+reader retains root and scoped declarations independently of required metadata
+completeness. The matcher handles ordinary path segments with
+`FileSystemName.MatchesSimpleExpression` and a standalone `**` with bounded
+dynamic programming over pattern and path segments. Working paths are normalized
+against the selected workspace without checking that they exist.
+
+When `--for` is supplied, Find evaluates each eligible candidate against the
+complete condition chain from its route ancestors. One path must satisfy every
+condition in the chain. Find reads ancestor metadata only to form that chain;
+this does not add ancestors or other sources to the candidate universe. Path
+compatibility narrows candidates before tag or heading matching and combines
+with source-universe filters and predicates using AND. When `--for` is omitted,
+Find applies no compatibility filter and preserves its existing candidate and
+coverage behavior. A source with no effective condition remains compatible.
+
+The operation maps the shared evaluation into Find-owned result types, including
+condition provenance and matching working paths where the Interface requires
+them. Find presentation consumes only that typed result. Its JSON context
+registers the concrete command result through source generation; Framework
+metadata and evaluator facts do not enter Rendering directly.
+
 ## Parsing And Origin Mapping
 
 The fixed accepted Markdig CommonMark pipeline supplies ATX and Setext heading nodes,
@@ -164,6 +190,9 @@ or artifacts already exist.
   filesystem state to exercise the selected parser and source boundary,
   overwrite layers, malformed and non-UTF-8 candidates, structural headings,
   body tags, regions, source locations, and containment failures.
+- Applicability evidence should verify that matching ancestor metadata does not
+  widen the candidate universe, and that the same normalized path set combines
+  conjunctively with source filters and the existing predicates.
 - **EndToEnd** evidence should exercise a built Native AOT process through the
   public boundary for minimal, standard, structured, culture, and exit behavior.
 - **PackageEndToEnd** evidence should exercise packaged execution and the same

@@ -8,7 +8,8 @@ internal sealed record ContextSymbols(
     Argument<string[]> Sources,
     Option<bool> AdditionsOnly,
     Option<string[]> Content,
-    Option<string[]> FollowLinks)
+    Option<string[]> FollowLinks,
+    Option<string[]> For)
 {
     internal static ContextSymbols Create()
     {
@@ -27,20 +28,33 @@ internal sealed record ContextSymbols(
         };
         var content = CreateScalar(ContextDefinitions.Content);
         var followLinks = CreateScalar(ContextDefinitions.FollowLinks);
+        var forPaths = CreateRepeatable(ContextDefinitions.For);
 
         command.Arguments.Add(sources);
         command.Options.Add(additionsOnly);
         command.Options.Add(content);
         command.Options.Add(followLinks);
+        command.Options.Add(forPaths);
         return new ContextSymbols(
             ContextCommand: command,
             Sources: sources,
             AdditionsOnly: additionsOnly,
             Content: content,
-            FollowLinks: followLinks);
+            FollowLinks: followLinks,
+            For: forPaths);
     }
 
     private static Option<string[]> CreateScalar(
+        CliOptionDefinition<string[]> definition)
+        => new(definition.Name)
+        {
+            Description = definition.Description,
+            HelpName = definition.ValueName,
+            Arity = ArgumentArity.ZeroOrMore,
+            AllowMultipleArgumentsPerToken = false,
+        };
+
+    private static Option<string[]> CreateRepeatable(
         CliOptionDefinition<string[]> definition)
         => new(definition.Name)
         {

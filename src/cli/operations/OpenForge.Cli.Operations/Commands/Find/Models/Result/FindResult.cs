@@ -20,7 +20,8 @@ internal sealed partial record FindResult : ICliCommandResult
         FindCoverage coverage,
         IEnumerable<FindFinding> findings,
         IEnumerable<FindMatch> matches,
-        CliNextAction? next)
+        CliNextAction? next,
+        IEnumerable<string>? workingPaths = null)
     {
         _ = CliStatusDefinitions.Read(status);
         ArgumentNullException.ThrowIfNull(universe);
@@ -29,6 +30,12 @@ internal sealed partial record FindResult : ICliCommandResult
         ArgumentNullException.ThrowIfNull(coverage);
         ArgumentNullException.ThrowIfNull(findings);
         ArgumentNullException.ThrowIfNull(matches);
+        var materializedWorkingPaths = (workingPaths ?? []).ToArray();
+        if (materializedWorkingPaths.Any(path => path is null))
+        {
+            throw new ArgumentException("Find working paths cannot contain null members.", nameof(workingPaths));
+        }
+
         var materializedFindings = findings.ToArray();
         var materializedMatches = matches.ToArray();
         if (materializedFindings.Any(finding => finding is null)
@@ -67,6 +74,7 @@ internal sealed partial record FindResult : ICliCommandResult
         Coverage = coverage;
         Findings = Array.AsReadOnly(materializedFindings);
         Matches = Array.AsReadOnly(materializedMatches);
+        WorkingPaths = Array.AsReadOnly(materializedWorkingPaths);
         Next = next;
     }
 
@@ -91,6 +99,8 @@ internal sealed partial record FindResult : ICliCommandResult
     internal IReadOnlyList<FindFinding> Findings { get; }
 
     internal IReadOnlyList<FindMatch> Matches { get; }
+
+    internal IReadOnlyList<string> WorkingPaths { get; }
 
     public CliNextAction? Next { get; }
 }

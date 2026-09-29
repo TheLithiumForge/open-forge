@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 
@@ -11,6 +12,7 @@ internal enum SourceLoadingClosureReasonKind
     Loader,
     LoadNow,
     KeepInMind,
+    Applicability,
     AncestorRequired,
 }
 
@@ -25,6 +27,7 @@ internal sealed record SourceLoadingClosureReason
             SourceLoadingClosureReasonKind.WorkspaceEntry
                 or SourceLoadingClosureReasonKind.Loader => sourcePath is null,
             SourceLoadingClosureReasonKind.LoadNow
+                or SourceLoadingClosureReasonKind.Applicability
                 or SourceLoadingClosureReasonKind.AncestorRequired => !string.IsNullOrWhiteSpace(sourcePath),
             SourceLoadingClosureReasonKind.KeepInMind => sourcePath is null
                 || !string.IsNullOrWhiteSpace(sourcePath),
@@ -57,6 +60,7 @@ internal enum SourceLoadingClosureIssueKind
     ContinuityChainUnavailable,
     GeneratedEntriesUnavailable,
     VisibleMetadataUnavailable,
+    ApplicabilityInvalid,
 }
 
 internal sealed record SourceLoadingClosureIssue
@@ -74,6 +78,7 @@ internal sealed record SourceLoadingClosureIssue
                 or SourceLoadingClosureIssueKind.ContinuityChainUnavailable
                 or SourceLoadingClosureIssueKind.GeneratedEntriesUnavailable
                 or SourceLoadingClosureIssueKind.VisibleMetadataUnavailable => true,
+            SourceLoadingClosureIssueKind.ApplicabilityInvalid => true,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(kind),
                 kind,
@@ -120,6 +125,12 @@ internal sealed record SourceLoadingClosureRequest
     public required IReadOnlyList<SourceLoadingClosureSource> Sources { get; init; }
 
     public required IReadOnlyList<string> LoaderRootPaths { get; init; }
+
+    public bool EvaluateApplicability { get; init; }
+
+    public bool WorkingPathsSupplied { get; init; }
+
+    public IReadOnlyList<string> WorkingPaths { get; init; } = [];
 }
 
 internal sealed record SourceLoadingClosureSelection
@@ -127,6 +138,8 @@ internal sealed record SourceLoadingClosureSelection
     public required string Path { get; init; }
 
     public required IReadOnlyList<SourceLoadingClosureReason> Reasons { get; init; }
+
+    public SourceApplicabilityResult? Applicability { get; init; }
 }
 
 internal sealed record SourceLoadingClosureResolution
@@ -136,4 +149,6 @@ internal sealed record SourceLoadingClosureResolution
     public required IReadOnlyList<string> ContinuityPaths { get; init; }
 
     public required IReadOnlyList<SourceLoadingClosureIssue> Issues { get; init; }
+
+    public IReadOnlyList<SourceApplyToCondition> PendingConditions { get; init; } = [];
 }

@@ -28,6 +28,8 @@ internal sealed record RouteCreateMetadata
     public string? Responsibility { get; init; }
 
     public required ImmutableArray<string> Tags { get; init; }
+
+    public ImmutableArray<string> ApplyTo { get; init; } = [];
 }
 
 internal sealed record RouteCreateTemplate

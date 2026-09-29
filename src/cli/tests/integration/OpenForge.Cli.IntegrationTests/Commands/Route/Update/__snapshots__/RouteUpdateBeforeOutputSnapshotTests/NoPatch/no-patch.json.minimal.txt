@@ -9,7 +9,7 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "Cannot update memory/project-alpha/overview: Nothing to update: pass --description, --responsibility, --tag or --template.",
+    "headline": "Cannot update memory/project-alpha/overview: Nothing to update: pass --description, --responsibility, --tag, --apply-to, --clear-apply-to or --template.",
     "kind": "cannot-start"
   },
   "findings": [
@@ -17,7 +17,7 @@
       "severity": "error",
       "code": "route-update.invalid-input",
       "title": "Invalid input",
-      "message": "Nothing to update: pass --description, --responsibility, --tag or --template.",
+      "message": "Nothing to update: pass --description, --responsibility, --tag, --apply-to, --clear-apply-to or --template.",
       "subject": {
         "kind": "identifier",
         "path": null,

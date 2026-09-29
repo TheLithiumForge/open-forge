@@ -161,21 +161,30 @@ that needs diagnosis.
 
 `context` returns ordered startup context or the selected sources added to it.
 With no source arguments it returns the startup files. Add source IDs or
-exact paths to include the context you select.
+exact paths to include the context you select. `context`, `find`, and
+`route inspect` accept repeated `--for <path>` values. Paths resolve against
+the selected workspace, may name planned files that do not exist yet, and must
+stay inside that workspace.
 
 ```sh
 open-forge context
-open-forge context memory/crystallized/documents
+open-forge context --for src/Order.cs --for web/order.ts
+open-forge context memory/crystallized/documents --for src/Order.cs
 open-forge context \
   templates \
+  --for src/Order.cs \
+  --for web/order.ts \
   --content=frontmatter,headings \
   --additions-only
 ```
 
 Useful options are:
 
+- Repeat `--for <path>` for every working file in the task. Paths are relative
+  to the selected workspace, and planned paths may not exist yet.
 - `--additions-only` omits files already required at startup. It needs at
-  least one source argument.
+  least one explicit source argument. With `--for`, the same complete path set
+  filters both startup and combined context before their difference is computed.
 - `--content=part[,part...]` projects selected parts: `metadata`, `paths`,
   `frontmatter`, `headings`, `body`, or a named `section:<heading>`. The
   default is `frontmatter,body`.
@@ -186,11 +195,26 @@ Use the returned file identities to inspect what the command included. The
 [loader](../src/open-forge/.agents/loader.md) defines Framework loading and scope.
 Command output does not change those rules.
 
-`LoadNow` and `KeepInMind` both load through exposed entries of already-loaded
+A file condition can limit when a source's context applies. With no `--for`
+paths, unconditioned context keeps its usual behavior, while encountered
+conditioned sources are pending. The command returns `incomplete`, exit 3, and
+shows the pending conditions until you provide working paths. The CLI does not
+infer paths from Git or discover code dependencies. Repeat `--for` for the full
+working set, including planned files and related callers or tests. Reading a
+Markdown source only to obtain context does not add that source to the working
+set. A source applies when at least one supplied working path satisfies every
+condition in its inherited chain. A condition does not select a hidden ancestor
+or grant or restrict edit permission.
+
+With supplied paths, an explicit source or followed reference can retrieve a
+known nonmatch for inspection with its needed route context. That inspection
+does not activate the source's automatic children. `applyTo` is a pre-load file
+condition and does not replace a Directive's required `LoadNow` tag.
+`LoadNow` and `KeepInMind` still load through exposed entries of already-loaded
 parents. Selecting an on-demand scope activates its applicable child loading
-rules. Tagged files inside other inactive scopes stay excluded. `KeepInMind`
-adds refresh instructions while the scope remains active. The CLI resolves each
-invocation independently and does not track an agent session.
+rules. `KeepInMind` adds refresh instructions while the scope remains active.
+The CLI resolves each invocation independently and does not track an agent
+session.
 
 ### `find`
 
@@ -201,6 +225,8 @@ meaning.
 ```sh
 open-forge find --tag=Memory --tag=CurrentTruth --require=all
 open-forge find --heading=Axioms --within=body
+open-forge find --tag=Directive --require=all \
+  --for src/Order.cs --for web/order.ts
 open-forge find --include=memory/crystallized/documents --content=headings
 ```
 
@@ -218,6 +244,15 @@ The selectors are:
   match in frontmatter and headings match in the body.
 - `--content=part[,part...]` chooses which parts of matched sources to return:
   `metadata`, `frontmatter`, `headings`, `body`, or `section:<name>`.
+- Repeat `--for <path>` to keep only sources whose declared or inherited file
+  conditions match at least one supplied working path. A source without an
+  effective condition matches every path. This is an additional filter over
+  `find` command's existing source universe. Ancestor facts are read to
+  evaluate the condition, but ancestors are not added to the results.
+
+`--for` is independent of tag and heading predicates. `--require=all|any` still
+combines only supplied tags and headings, and `--for` does not satisfy the
+existing tag or heading requirements for `--require` or `--within`.
 
 Use an exact path when an ID is ambiguous. A blocked or incomplete result is
 not permission to guess which source was intended.
@@ -257,10 +292,17 @@ open-forge route list memory/crystallized/documents --depth=all
 ```
 
 `route inspect` explains one source's route behavior without returning its
-authored body.
+authored body. Repeat `--for <path>` to see how supplied working paths match
+the source's declared and inherited conditions. A planned path may not exist.
+An explicit inspection can explain a nonmatch, but it does not activate the
+source's automatic children. Without `--for` paths, conditions are pending,
+not unmatched.
 
 ```sh
 open-forge route inspect memory/crystallized/documents
+open-forge route inspect memory/crystallized/documents \
+  --for src/Order.cs \
+  --for web/order.ts
 open-forge route inspect .agents/memory/crystallized/documents/_documents.md
 ```
 
@@ -296,6 +338,21 @@ classification, loading, routing, or search. A tag starts with a letter and
 then contains letters or digits, with single internal hyphens allowed. It may
 not end with a hyphen or contain two adjacent hyphens.
 
+`applyTo` is an optional file condition. A quoted scalar or list of quoted
+patterns is accepted at the frontmatter root or under `open-forge:`, with the
+same meaning in either place. A root declaration may sit beside an existing
+`open-forge:` block. For example, both locations accept a quoted scalar such as
+`"**/*.cs"` or a quoted list. Commas are literal filename
+characters, so patterns are never split on commas. Missing means no condition;
+empty or non-string values are invalid. New CLI-authored conditions use a
+quoted-string list under `open-forge:`. If both locations declare the field,
+equivalent declarations count once, and conflicting pattern sets are invalid.
+`route update` keeps an existing declaration at its authored location and
+updates equivalent root and scoped declarations together. For example,
+`applyTo: "**/*.cs"` and `applyTo: ["**/*.cs", "src/report,legacy.cs"]` are
+valid at either location. A comma is part of the second pattern. See the
+[Loader](../src/open-forge/.agents/loader.md) for matching and loading rules.
+
 The command flags use the same concepts:
 
 - `--description <text>` sets one nonblank description.
@@ -303,6 +360,10 @@ The command flags use the same concepts:
   and update commands require unique canonical tags when the list is supplied.
 - `--responsibility <text>` sets the optional responsibility. On update, an
   exact empty value removes the key.
+- Repeat `--apply-to <pattern>` on `route create`, `route init`, or
+  `route update` to supply patterns. A literal comma remains part of one pattern.
+- `route update --clear-apply-to` removes the condition and cannot be combined
+  with `--apply-to`.
 
 The CLI does not infer these values from a filename, parent, Template, body, or
 generated entry.
@@ -321,12 +382,15 @@ open-forge route init memory/crystallized/documents/project-alpha \
   --responsibility="Define the documents route" \
   --tag=Document \
   --tag=ProjectAlpha \
+  --apply-to "**/*.md" \
   --dry-run
 ```
 
 `--framework` selects the trusted embedded Framework scaffold. It cannot be
-combined with `--description`, `--responsibility`, or `--tag` because those are
-different scaffold choices. `route init` does not initialize the Loader itself.
+combined with metadata options, including `--apply-to`, because those are
+different scaffold choices. Metadata options are valid only for a missing
+generic final entrypoint and cannot update an existing final target. `route init`
+does not initialize the Loader itself.
 
 The following examples use this scope. Apply each previewed creation before
 running a command that depends on the new path.
@@ -349,6 +413,8 @@ open-forge route create memory/crystallized/documents/project-alpha/architecture
   --tag=Document \
   --tag=Architecture \
   --responsibility="Define the current service structure and dependencies" \
+  --apply-to "**/*.cs" \
+  --apply-to "**/*.csproj" \
   --dry-run
 ```
 
@@ -367,6 +433,17 @@ open-forge route update memory/crystallized/documents/project-alpha/architecture
   --description="Current service structure and dependency boundaries" \
   --tag=Document \
   --tag=Architecture \
+  --apply-to "**/*.cs" \
+  --apply-to "**/*.csproj" \
+  --dry-run
+```
+
+For an existing source with a declared condition, preview its removal with
+`--clear-apply-to` by itself:
+
+```sh
+open-forge route update memory/crystallized/documents/project-alpha/architecture \
+  --clear-apply-to \
   --dry-run
 ```
 
@@ -376,6 +453,10 @@ The options are patches, not inferred replacements:
 - Repeated `--tag=<tag>` values replace the complete ordered tag list.
 - `--responsibility <text>` sets the responsibility. `--responsibility ""`
   removes it.
+- Repeated `--apply-to <pattern>` values replace the complete condition.
+  Existing root or scoped placement is preserved, and equivalent dual
+  declarations are updated together. `--clear-apply-to` removes both locations
+  and is mutually exclusive with `--apply-to`.
 - `--template <template-reference>` completes an eligible frontmatter-only
   body. If the target already has authored body content, the CLI preserves it,
   still applies any metadata changes, and returns `completed-with-warnings`

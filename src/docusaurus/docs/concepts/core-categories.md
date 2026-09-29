@@ -9,14 +9,14 @@ Core gives content six roles, called categories. Each category answers one quest
 
 | Category                  | Question it answers                                                         | At startup                                      |
 | ------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------- |
-| [Directives](#directives) | What behavior is required in this scope?                                    | Entrypoint at startup, plus its Directive files |
+| [Directives](#directives) | What behavior is required in this scope?                                    | Entrypoint at startup, plus applicable Directive files |
 | [Guidance](#guidance)     | What approach is recommended, and when does it fit?                         | Entrypoint at startup                           |
 | [Patterns](#patterns)     | What reusable shape makes related work easy to create and inspect?          | Entrypoint at startup                           |
 | [Skills](#skills)         | Which specialized capability would help with this work?                     | Entrypoint at startup                           |
 | [Templates](#templates)   | What starting content can be copied, adapted, and maintained independently? | Entrypoint on demand                            |
 | [Maps](#maps)             | Where is a useful local or external source, and when should it be used?     | Entrypoint at startup                           |
 
-"Entrypoint at startup" means the agent reads the category's entrypoint: its purpose, its rules, and one line per item. It doesn't read the items. It opens one when the task calls for it. "Entrypoint on demand" means the entrypoint itself waits until a task opens it. Directive files are the exception: each file directly in `directives/` must carry `#LoadNow`, so it loads with its entrypoint. [Loading and tags](loading-and-tags.md#what-loads-at-startup-in-a-fresh-install) lists every startup file.
+"Entrypoint at startup" means the agent reads the category's entrypoint: its purpose, its rules, and one line per item. It doesn't read the items. It opens one when the task calls for it. "Entrypoint on demand" means the entrypoint itself waits until a task opens it. Directive files are the exception: each file directly in `directives/` must carry `#LoadNow`. An unconditioned file loads with its entrypoint; a declared `applyTo` condition limits the working files that make it applicable. [Loading and tags](loading-and-tags.md#what-loads-at-startup-in-a-fresh-install) lists the startup files in a fresh install.
 
 In a fresh install, every category entrypoint lists no items except Skills, which lists `open-forge-cli`. You or an [Extension](../extensions/index.md) add the rest.
 
@@ -24,9 +24,9 @@ In a fresh install, every category entrypoint lists no items except Skills, whic
 
 **Required behavior.** A Directive is a rule the agent must follow within its scope.
 
-- Every Directive file directly in a Directives folder must carry `#LoadNow`, because it's mandatory there. Without the tag, it stays on demand.
+- Every Directive file directly in a Directives folder must carry `#LoadNow`, because it's mandatory there. If it declares `applyTo`, check that condition before loading it. The tag keeps a matching Directive mandatory once its parent route exposes it, and the condition limits which working files make the rule applicable.
 - Each Directive file keeps its instructions under a non-empty `## Instructions` heading.
-- Files in the root `directives/` folder apply to the whole workspace. A scoped folder like `directives/frontend/` loads only when selected, and its Directives then add to the root ones. A narrower Directive never cancels a broader one.
+- The root `directives/` route applies to the whole workspace unless a file condition narrows an individual Directive. A scoped folder like `directives/frontend/` loads only when selected, and its Directives then add to the root ones. A narrower Directive never cancels a broader one.
 
 Use a Directive when behavior is mandatory in a scope, such as a correction you keep repeating. If the right approach depends on the situation, use Guidance instead.
 

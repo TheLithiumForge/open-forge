@@ -116,7 +116,8 @@ internal sealed class RouteInitIntendedChainBuilder
                     authored.Responsibility,
                     RouteInitResponsibilitySource.Embedded,
                     authored.Tags,
-                    RouteInitTagsSource.Embedded);
+                    RouteInitTagsSource.Embedded,
+                    authored.ApplyTo);
                 var content = new RouteInitProspectiveSourceContent(
                     aligned.IntendedSource,
                     MissingSnapshot(request, aligned.IntendedSource.Identity.CanonicalBasePath),

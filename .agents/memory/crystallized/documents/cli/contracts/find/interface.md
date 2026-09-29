@@ -61,6 +61,7 @@ contract defines the global flags used here.
   open-forge find
     [--include=<source-reference>]...
     [--exclude=<source-reference>]...
+    [--for=<workspace-relative-path>]...
     [--tag=<tag>]...
     [--heading=<heading>]...
     [--require=all|any]
@@ -84,6 +85,7 @@ contract defines the global flags used here.
 | ------------------------------ | ---------- | ----------------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `--include=<source-reference>` | Selection  | One shared source reference               | Start from the normal complete eligible `.agents` Markdown universe | Repeatable. Occurrences form a union of source selections.                                           |
 | `--exclude=<source-reference>` | Selection  | One shared source reference               | Subtract nothing                                                    | Repeatable. Occurrences form a union of exclusions, and exclusions win overlap.                      |
+| `--for=<workspace-relative-path>` | Applicability | One workspace-relative file path       | Keep the existing candidate universe when omitted                  | Repeatable. Paths form one normalized working set; duplicates have no additional effect.             |
 | `--tag=<tag>`                  | Selection  | One tag query value                       | No tag predicate is added                                           | Repeatable. Each occurrence adds one scalar predicate in command-line order.                         |
 | `--heading=<heading>`          | Selection  | One complete heading query value          | No heading predicate is added                                       | Repeatable. Each occurrence adds one scalar predicate in command-line order.                         |
 | `--require=all\|any`           | Selection  | `all` or `any`                            | `all`                                                               | Repeating is invalid. Its position among predicate flags has no effect.                              |
@@ -112,7 +114,8 @@ complete public selection, matching, projection, and result meaning.
 
 - `--require` and `--within` are invalid without at least one
   `--tag` or `--heading` predicate because neither would modify an active query.
-  `--include` and `--exclude` remain valid in that bare-inventory form because
+  Supplying `--for` does not satisfy this predicate requirement. `--include` and
+  `--exclude` remain valid in that bare-inventory form because
   they establish the source universe.
 - Bare inventory remains flat. It does not display route
   hierarchy, inherited rules, loading relationships, or relevance. `context`
@@ -403,9 +406,9 @@ When a requested section is known to be absent, the source remains in the result
 
 | Level    | `data`                                                                                                                      |
 | -------- | --------------------------------------------------------------------------------------------------------------------------- |
-| minimal  | `{ matches: [ { id, path, description, parts: [ ... ] when requested } ] }`                                                 |
-| standard | + per match `evidence: [ { kind: "tag" \| "heading", value, region, layer } ]`, `query { tags, headings, require, within }` |
-| full     | + `sourceSet { mode, include: [...], exclude: [...], inspected, candidates }`                                               |
+| minimal  | `{ matches: [ { id, path, description, parts: [ ... ] when requested } ], workingPaths?: [ ... ] }` |
+| standard | + per match `evidence: [ { kind: "tag" \| "heading", value, region, layer } ]`, `query { tags, headings, require, within }`, and, when applicable, `applicability: { state, conditions: [ { source, patterns: [ ... ] } ], matchingPaths: [ ... ] }` |
+| full     | + `sourceSet { mode, include: [...], exclude: [...], inspected, candidates }`, the same optional applicability facts, and `workingPaths` when supplied |
 ## Semantic Results
 
 The status and exit mapping above are unchanged by detail or format. A
@@ -415,7 +418,16 @@ treating them as a complete set.
 
 ### Counts and limitations
 
-`matches`, `sourcesInspected`, `sourcesCandidates`.
+`matches`, `sourcesInspected`, `sourcesCandidates`. When supplied, normalized
+`workingPaths` is echoed at every detail level. With `--for`, standard and full
+detail include applicability facts for returned matches: `unconditioned` when
+the source has no effective condition, or `matched` with its condition chain
+and matching paths. An unconditioned source has `matchingPaths: []`; its state
+conveys compatibility. Invalid condition metadata retains the existing
+incomplete-coverage finding and is not treated as a match. When `--for` is
+omitted, Find applies no path-compatibility filter or applicability projection
+and preserves the existing result universe and coverage behavior. Nonmatching
+sources are removed by the filter.
 
 ### Next rules
 
@@ -804,6 +816,34 @@ Find-specific rules below preserve Find's applicability, default universe,
 coverage, output, examples, and verification without redefining the shared
 contract.
 
+### Working-Path Applicability
+
+`--for` supplies the complete, repeatable, stateless set of files involved in
+the task. Values are workspace-relative paths normalized lexically against the
+selected workspace. Planned nonexistent paths are valid, while paths that
+escape the selected workspace are rejected. Find does not infer paths from Git
+or earlier calls.
+
+When supplied, this is an independent compatibility filter combined with
+`--include` and `--exclude` using AND. It narrows the existing eligible candidate
+universe before tag or heading matching; it does not replace that universe or
+change source ordering. An unconditioned source remains compatible. A conditioned
+source matches if at least one working path satisfies its full route chain:
+patterns within each condition are alternatives, while ancestor conditions are
+ANDed against the same path.
+
+Find may inspect ancestor metadata needed to establish inherited conditions.
+That inspection does not add ancestors or other sources to the returned
+candidate universe. When `--for` is omitted, do not apply the compatibility
+filter or change the existing result universe. `--require` and `--within` still
+require a `--tag` or `--heading` predicate, regardless of `--for`.
+
+A planned path may be supplied before it exists. If a parent condition is
+`src/**` and a child condition is `**/*.cs`, `--for=src/Order.cs` satisfies both;
+`--for=src/readme.md` does not. Each path is tested independently against the
+whole inherited chain, and compatibility combines with include/exclude and
+predicates using AND.
+
 ### Filter Composition And Expansion
 
 - Find explicitly declares `--include` and `--exclude` as
@@ -842,8 +882,9 @@ contract.
   physical layers, whether the reference resolves through its ID, base path, or
   overwrite path. The overwrite is not an independent candidate.
 - Find resolves and composes the effective source universe
-  before inspecting candidates or matching predicates. `--require` and
-  `--within` do not govern source filtering. Source filtering is valid for bare
+  before inspecting candidates or matching predicates. `--for` adds an
+  independent compatibility filter. `--require` and `--within` do not govern
+  source filtering or satisfy the predicate requirement. Source filtering is valid for bare
   inventory with no `--tag` or `--heading` predicate; predicates then operate
   only on the effective universe.
 - Every selector uses the shared exact source-ID or `.agents/...`
@@ -860,7 +901,8 @@ contract.
 
 - Coverage is complete when every candidate in the explicitly
   effective source universe has been accounted for under the existing Find
-  inspection rules. Excluded sources and excluded physical areas are outside
+  inspection rules. When `--for` is supplied, apply compatibility before forming
+  that universe. Excluded sources and excluded physical areas are outside
   that universe and need not be parsed. A valid effective universe with zero
   candidates or zero matches is complete.
 - Standard human results echo the supplied include and exclude
@@ -1023,6 +1065,11 @@ contract.
 - Verify that effective-universe formation precedes inspection
   and matching, excluded areas need not be parsed, and effective zero-candidate
   and zero-match results are complete.
+- Verify that `--for` normalizes the complete repeated working-path set,
+  accepts planned nonexistent paths, rejects paths outside the workspace, and
+  evaluates every ancestor condition against the same path. Confirm that it
+  composes with source filters and predicates without widening the candidate
+  universe during ancestor inspection.
 - Verify standard and JSON selector echo, default-or-filtered
   state, effective candidate/inspected/matched counts, minimal filtered marking,
   stable source ordering, flat `all`/`any` behavior, and absence of result caps.

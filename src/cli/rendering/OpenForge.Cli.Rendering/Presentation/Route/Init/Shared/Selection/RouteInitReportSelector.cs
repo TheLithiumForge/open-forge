@@ -99,6 +99,9 @@ internal static class RouteInitReportSelector
                     Description = value.Description,
                     Responsibility = value.Responsibility,
                     Tags = value.Tags,
+                    ApplyTo = value.ApplyTo.IsDefaultOrEmpty
+                        ? null
+                        : value.ApplyTo,
                     Sources = new RouteInitDataMetadataSources
                     {
                         Description = RouteInitWireVocabulary.Name(value.DescriptionSource),
@@ -137,7 +140,7 @@ internal static class RouteInitReportSelector
     private static IReadOnlyList<string> TextMetadata(
         RouteInitResult result,
         bool includeStandard,
-        RouteInitMetadata? metadata)
+        RouteInitResultMetadata? metadata)
     {
         if (!includeStandard)
         {
@@ -159,6 +162,11 @@ internal static class RouteInitReportSelector
             if (!value.Tags.IsDefaultOrEmpty)
             {
                 lines.Add(RouteInitWording.MetadataTags(value.Tags));
+            }
+
+            if (!value.ApplyTo.IsDefaultOrEmpty)
+            {
+                lines.Add(RouteInitWording.MetadataApplyTo(value.ApplyTo));
             }
         }
 
@@ -231,7 +239,7 @@ internal static class RouteInitReportSelector
                 "The Route Init effect outcome is not defined."),
         };
 
-    private static string EntrypointOutcome(RouteInitEntrypoint entrypoint)
+    private static string EntrypointOutcome(RouteInitResultEntrypoint entrypoint)
         => entrypoint.Outcome switch
         {
             RouteInitEntrypointOutcome.Unchanged => global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.LabelAlreadyPresent(),
@@ -534,14 +542,14 @@ internal static class RouteInitReportSelector
             .. result.Findings.Select(finding => finding.Cause),
         ];
 
-    private static RouteInitEntrypoint? TargetEntrypoint(RouteInitResult result)
+    private static RouteInitResultEntrypoint? TargetEntrypoint(RouteInitResult result)
         => result.Entrypoints.FirstOrDefault(entrypoint =>
             string.Equals(entrypoint.Id, result.Target.Id, StringComparison.Ordinal))
             ?? result.Entrypoints.LastOrDefault(entrypoint => entrypoint.Metadata is not null);
 
     private static string? EntrypointContent(
         RouteInitResult result,
-        RouteInitEntrypoint entrypoint)
+        RouteInitResultEntrypoint entrypoint)
         => result.Effects.FirstOrDefault(effect =>
             effect.Kind == RouteInitEffectKind.Entrypoint
             && string.Equals(effect.Path, entrypoint.Path, StringComparison.Ordinal))
@@ -557,7 +565,7 @@ internal static class RouteInitReportSelector
     private static string Hash(string value)
         => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
 
-    private static bool NeedsAuthoring(RouteInitEntrypoint entrypoint)
+    private static bool NeedsAuthoring(RouteInitResultEntrypoint entrypoint)
         => entrypoint.Metadata?.Tags.Contains("NeedsAuthoring", StringComparer.Ordinal) == true;
 
     private static long CountProgressedEntrypoints(RouteInitResult result)

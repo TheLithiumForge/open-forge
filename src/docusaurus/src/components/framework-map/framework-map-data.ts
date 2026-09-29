@@ -21,7 +21,7 @@ export const startupFootprint = "A fresh install reads 11 files at startup, abou
 
 // Shown between the loader and the panels, before the first card.
 export const entrypointNote =
-  "An entrypoint is a folder's index file: its purpose, its rules, and one line per entry, each linking to a file or another index. The linked files open on demand, when a task needs them, unless their entry is tagged to load.";
+  "An entrypoint is a folder's index file: its purpose, its rules, and one line per entry, each linking to a file or another index. Files open on demand unless tagged to load or an exposed `applyTo` condition matches a working file.";
 
 // A row in a card's lower half: what the entrypoint links to, and when it's read.
 export interface FileRow {
@@ -29,7 +29,7 @@ export interface FileRow {
   readonly loading: Loading;
 }
 
-export const linkedFiles: FileRow = { text: "Linked files: on demand unless tagged", loading: "demand" };
+export const linkedFiles: FileRow = { text: "Linked files: on demand unless tagged or applyTo matches", loading: "demand" };
 
 export interface CoreRole {
   readonly name: string;
@@ -49,8 +49,8 @@ export const coreRoles: readonly CoreRole[] = [
     example: "For example: run the tests before calling work done.",
     loading: "startup",
     files: [
-      { text: "Root rules: at startup", loading: "startup" },
-      { text: "Scoped rules: when their scope is selected", loading: "demand" },
+      { text: "Root rules: #LoadNow, optionally narrowed by applyTo", loading: "startup" },
+      { text: "Scoped rules: #LoadNow after selection, optionally narrowed by applyTo", loading: "demand" },
     ],
   },
   {
@@ -154,10 +154,11 @@ export const entryNodes: readonly [EntryNode, EntryNode] = [
 
 // Captions below the diagram.
 export const captions: readonly string[] = [
-  "Linked files open on demand unless their entry is tagged `#LoadNow`, which reads the file when its index is read, or `#KeepInMind`, which also re-reads it at each refresh point while its scope is active: task start or resume, after a context restore, and before handoff or closeout. Both tags act only through a parent index that has been read.",
+  "`#LoadNow` reads a linked file when its index is read. `#KeepInMind` also re-reads it at each refresh point while its scope is active: task start or resume, after a context restore, and before handoff or closeout. Both tags act only through a parent index that has been read.",
+  "`applyTo` loads a matching visible entry even without a loading tag. It does not activate a hidden ancestor. Every Directive still requires `#LoadNow`; an optional `applyTo` condition narrows when it loads.",
   "`open-forge context` lists what the rules select at startup. Extensions are optional packages you add.",
 ];
 
 // The README image's alt text and the SVG title. Keep them identical.
 export const diagramDescription =
-  "How Open Forge fits together. With the default loading tags, the agent reads AGENTS.md or CLAUDE.md, the loader, and the indexes of Directives, Guidance, Patterns, Skills, Maps, Memory, Working, Emerging, and Crystallized at startup, plus any linked files those indexes tag to load. Templates and Archived open on demand. Each card shows a folder's index above the files it links to, which open on demand unless tagged to load. Core holds six categories for how work gets done. Memory holds four states for what's worth remembering. Cards include examples of what optional Extensions add, such as Checkpoints and Decisions.";
+  "How Open Forge fits together. With the default loading tags, the agent reads AGENTS.md or CLAUDE.md, the loader, and the indexes of Directives, Guidance, Patterns, Skills, Maps, Memory, Working, Emerging, and Crystallized at startup, plus any linked files those indexes tag to load. Templates and Archived open on demand. Each card shows a folder's index above the files it links to, which open on demand unless tagged to load or exposed by a matching applyTo condition. A matching condition never selects a hidden ancestor. Directives still require LoadNow, with applyTo narrowing which working files load them. Core holds six categories for how work gets done. Memory holds four states for what's worth remembering. Cards include examples of what optional Extensions add, such as Checkpoints and Decisions.";

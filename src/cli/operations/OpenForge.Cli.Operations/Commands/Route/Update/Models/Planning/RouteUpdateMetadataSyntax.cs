@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
@@ -16,6 +18,8 @@ internal sealed record RouteUpdateMetadataLayout
     public required RouteUpdateMetadataMember? DescriptionMember { get; init; }
     public required RouteUpdateMetadataMember? ResponsibilityMember { get; init; }
     public required RouteUpdateMetadataMember? TagsMember { get; init; }
+    public required ImmutableArray<ApplyToPattern> ApplyToPatterns { get; init; }
+    public required ImmutableArray<RouteUpdateMetadataMember> ApplyToMembers { get; init; }
 }
 
 internal sealed record RouteUpdateMetadataEmptyMapping
@@ -36,8 +40,12 @@ internal sealed record RouteUpdateMetadataMemberLine
     public required int Start { get; init; }
     public required int ContentEnd { get; init; }
     public required int End { get; init; }
+    public required int ValueStart { get; init; }
+    public required int ValueEnd { get; init; }
     public required string Indentation { get; init; }
     public required string RawValue { get; init; }
+    public required bool HasTrailingComment { get; init; }
+    public bool IsMultilineValue { get; init; }
 }
 
 internal sealed class RouteUpdateMetadataLayoutRead
@@ -77,4 +85,5 @@ internal sealed record RouteUpdateCanonicalMetadataValues
     public required string Description { get; init; }
     public required string Tags { get; init; }
     public required string? Responsibility { get; init; }
+    public required string? ApplyTo { get; init; }
 }

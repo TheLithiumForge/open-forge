@@ -81,13 +81,15 @@ open-forge route init <route-target>
   [--description <text>]
   [--responsibility <text>]
   [--tag=<tag>]...
+  [--apply-to <pattern>]...
   [--dry-run]
   [global flags]
 ```
 
-In generic mode, `--description`, `--responsibility`, and `--tag` provide
-authored metadata for the final target only. `--framework` selects the embedded
-Framework topology and asset mode. `--dry-run` is the write-policy preview.
+In generic mode, `--description`, `--responsibility`, `--tag`, and
+`--apply-to` provide authored metadata for the final target only. `--framework`
+selects the embedded Framework topology and asset mode. `--dry-run` is the
+write-policy preview.
 The command has no `--template`, `--scope`, `--scaffold-from`, `--yes`, `--force`,
 `--no-responsibility`, Loader-creation mode, or alias.
 
@@ -158,11 +160,12 @@ contract. This command does not copy their complete definitions.
 | `--description <text>`    | Authored metadata | One description value                                          | The final target uses its draft description unless another rule supplies an explicit description | Singleton. Repetition is invalid, including repetition with an equal value.                                                     |
 | `--responsibility <text>` | Authored metadata | One responsibility value, including the exact empty value `""` | No responsibility field is added to a missing target                                             | A non-empty value adds the field and `""` omits it. The flag is singleton; any repetition is invalid, including an equal value. |
 | `--tag=<tag>`             | Authored metadata | One tag without a `#` prefix                                   | The final target uses draft metadata and the `NeedsAuthoring` rule                               | Repeatable. Values retain argument order. Empty tags and duplicate exact tags are invalid.                                      |
+| `--apply-to <pattern>`    | Authored metadata | One workspace-relative pattern                                 | No `applyTo` field is added to the final target                                                  | Repeatable, one pattern per occurrence. Normalized values form an ordinal-distinct set.                                        |
 | `--dry-run`               | Write policy      | No value                                                       | Application is selected                                                                          | Repetition is accepted and idempotent. It previews the same complete plan and preflight.                                        |
 
-`--description`, `--responsibility`, and `--tag` are valid only in generic mode
-as metadata for a missing final target. They are invalid with `--framework`
-because caller metadata cannot rewrite embedded managed content. Repeating
+`--description`, `--responsibility`, `--tag`, and `--apply-to` are valid only in
+generic mode as metadata for a missing final target. Supplying any metadata flag
+with `--framework` or when the final target already exists is invalid. Repeating
 `--description` or `--responsibility` is invalid,
 even when the repeated values are equal. Repeated `--tag` values form one
 ordered list; there is no last-wins or other precedence rule. Repeated
@@ -314,7 +317,9 @@ Every missing ancestor receives its path-derived draft description and the
 `NeedsAuthoring` tag. These values state the source's current draft condition;
 they do not claim what the route will eventually contain.
 
-Metadata flags affect only a missing final target:
+Metadata flags affect only a missing final target. Supplying one when the final
+target already exists is invalid. `route init` never patches an existing final
+entrypoint:
 
 - A non-empty `--description` replaces the final draft description in both
   frontmatter and the minimal-detail body definition.
@@ -322,6 +327,9 @@ Metadata flags affect only a missing final target:
 - An exact empty `--responsibility ""` omits the field.
 - Repeated `--tag` values provide the final target's explicit tags in argument
   order.
+- Repeated `--apply-to <pattern>` values provide the final target's local
+  applicability patterns. Missing ancestors receive no copied or inferred
+  `applyTo` declaration.
 
 When the final target lacks either an explicit description or any explicit tag,
 the command ensures that its tag list contains `NeedsAuthoring`. It appends that
@@ -337,6 +345,11 @@ invalid.
 The command validates syntax and presence. It does not judge or rewrite the
 semantic accuracy of supplied prose and tags. A later `doctor` operation may
 report meaning-quality diagnostics separately.
+
+`applyTo` is written only in the missing final target's scoped `open-forge`
+mapping as a quoted string list. Patterns use the workspace-relative,
+slash-separated grammar defined for `route create`. The field is optional and
+does not change the existing `NeedsAuthoring` rules for description and tags.
 
 ### Placeholder metadata condition
 
@@ -566,8 +579,11 @@ The command is exactly route init; data follows the catalogue:
 | Level    | `data`                                                                                                            |
 | -------- | ----------------------------------------------------------------------------------------------------------------- |
 | minimal  | `{ mode, target { id, path }, scaffold, entrypoints: [ { path, outcome, needsAuthoring } ], listedIn: [ path ] }` |
-| standard | + `metadata { description, responsibility, tags, sources }`, `lockPath`                                           |
+| standard | + `metadata { description, responsibility, tags, sources }`. Include `applyTo` only when supplied. `lockPath` is also present. |
 | full     | + per entrypoint `content` (string), per section `before`, `after`, `frameworkFingerprint`, `verification`        |
+
+The shared schema-3 envelope is unchanged. The command-local `metadata` object
+omits `applyTo` when the flag was not supplied.
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON

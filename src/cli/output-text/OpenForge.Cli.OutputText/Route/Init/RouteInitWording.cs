@@ -39,6 +39,10 @@ internal static class RouteInitWording
     internal static string MetadataResponsibility(string value)
         => global::OpenForge.Cli.OutputText.Route.Shared.CanonicalPhrases.MetadataResponsibility(value);
 
+    // @OpenForgeText route.init.wording.metadata-applies-to
+    internal static string MetadataApplyTo(IReadOnlyList<string> values)
+        => $"Applies to: {string.Join(", ", values.Select(value => $"`{value}`"))}";
+
     // @OpenForgeText route.init.wording.scaffold
     internal static string Scaffold(string value)
         => $"Scaffold: {value}";

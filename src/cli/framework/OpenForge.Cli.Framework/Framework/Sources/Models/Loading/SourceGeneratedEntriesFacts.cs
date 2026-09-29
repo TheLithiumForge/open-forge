@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Models.Loading;
@@ -36,6 +37,8 @@ internal sealed record SourceGeneratedEntry
     internal string Destination { get; }
 
     internal IReadOnlyList<string> Tags { get; }
+
+    internal IReadOnlyList<ApplyToPattern> ApplyTo { get; init; } = [];
 
     internal MarkdownTextSpan Span { get; }
 

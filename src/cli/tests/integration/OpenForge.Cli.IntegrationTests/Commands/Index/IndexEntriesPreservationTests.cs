@@ -1,3 +1,4 @@
+using System.Text;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Update;
@@ -12,6 +13,30 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Index;
 public sealed class IndexEntriesPreservationTests
 {
     private const string MapsPath = ".agents/maps/_maps.md";
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Index projects ApplyTo patterns and remains idempotent")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Integration")]
+    public async Task ApplyToEntryProjectionIsStable()
+    {
+        using var workspace = IndexOperationWorkspace.Create("index-apply-to");
+        workspace.ReplaceChildBytes(Encoding.UTF8.GetBytes(
+            "---\nopen-forge:\n  description: Child\n  tags: [Docs]\n  applyTo: [\"**/*.cs\", \"folder,sub/has space`tick`/*.cs\"]\n---\n# Child\n"));
+        const string expectedEntry = "- [Child](child.md) - #Docs - applies to `**/*.cs`, ``folder,sub/has space`tick`/*.cs``";
+        var operation = IndexOperationFactory.Create(workspace.LockStoreRoot);
+
+        var first = await operation.ExecuteAsync(workspace.Request(IndexMode.Apply), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, first.Status);
+        Assert.Contains(expectedEntry, await workspace.ReadRootAsync(TestContext.Current.CancellationToken), StringComparison.Ordinal);
+        var hashes = workspace.SnapshotHashes();
+
+        var second = await operation.ExecuteAsync(workspace.Request(IndexMode.Apply), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, second.Status);
+        Assert.Equal(hashes, workspace.SnapshotHashes());
+        Assert.Contains(expectedEntry, await workspace.ReadRootAsync(TestContext.Current.CancellationToken), StringComparison.Ordinal);
+    }
 
     [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Index preserves authored prose around the first Entries list and is stable on a second run")]

@@ -10,23 +10,48 @@ public sealed class PublishedRouteInitProcessTests
     {
         var target = PublishedExecutableTarget.Discover();
         using var workspace = PublishedRouteInitWorkspace.CreateGeneric();
-        string[] arguments = ["route", "init", "docs", "--description", "Project documents", "--tag=Documentation", "--format=json", "--detail", "full", "--workspace", workspace.Path];
+        string[] arguments = ["route", "init", "docs", "--description", "Project documents", "--tag=Documentation", "--apply-to", "src/*.ts", "--apply-to=**/*.cs", "--format=json", "--detail", "full", "--workspace", workspace.Path];
         var preview = await RunWithoutWritesAsync(target, workspace, [.. arguments, "--dry-run"]);
         Assert.Equal(0, preview.ExitCode);
         Assert.Equal(string.Empty, preview.StandardError);
         using var previewDocument = JsonDocument.Parse(preview.StandardOutput);
         Assert.Equal("dry-run", previewDocument.RootElement.GetProperty("data").GetProperty("mode").GetString());
+        Assert.Equal(
+            ["**/*.cs", "src/*.ts"],
+            previewDocument.RootElement.GetProperty("data").GetProperty("metadata").GetProperty("applyTo")
+                .EnumerateArray().Select(value => value.GetString()));
         workspace.AssertNoLockInfrastructure();
+
+        var textPreview = await RunWithoutWritesAsync(
+            target,
+            workspace,
+            [
+                "route", "init", "docs",
+                "--description", "Project documents",
+                "--tag=Documentation",
+                "--apply-to", "src/*.ts",
+                "--apply-to=**/*.cs",
+                "--dry-run",
+                "--detail", "standard",
+                "--workspace", workspace.Path,
+            ]);
+        Assert.Equal(0, textPreview.ExitCode);
+        Assert.Contains("Applies to: `**/*.cs`, `src/*.ts`", textPreview.StandardOutput, StringComparison.Ordinal);
 
         var applied = await PublishedProcessTestSupport.RunAsync(target, workspace.Path, arguments, workspace.ProcessEnvironment);
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
         using var appliedDocument = JsonDocument.Parse(applied.StandardOutput);
         Assert.Equal("verified", appliedDocument.RootElement.GetProperty("data").GetProperty("verification").GetString());
+        Assert.Equal(
+            ["**/*.cs", "src/*.ts"],
+            appliedDocument.RootElement.GetProperty("data").GetProperty("metadata").GetProperty("applyTo")
+                .EnumerateArray().Select(value => value.GetString()));
         Assert.True(File.Exists(workspace.Combine(PublishedRouteInitWorkspace.GenericTargetPath)));
         var scaffold = await workspace.ReadTextAsync(PublishedRouteInitWorkspace.GenericTargetPath, TestContext.Current.CancellationToken);
         Assert.Contains("Project documents", scaffold, StringComparison.Ordinal);
         Assert.Contains("# docs", scaffold, StringComparison.Ordinal);
+        Assert.Contains("applyTo: [\"**/*.cs\", \"src/*.ts\"]", scaffold, StringComparison.Ordinal);
         workspace.AssertPersistentExternalLock();
 
         var noOp = await RunWithoutWritesAsync(target, workspace, ["route", "init", "docs", "--format=json", "--workspace", workspace.Path]);

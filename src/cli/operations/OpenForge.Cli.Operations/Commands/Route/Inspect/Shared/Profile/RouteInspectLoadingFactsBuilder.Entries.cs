@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Applicability;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -121,6 +123,59 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         if (paths.Add(path) && source.Kind == RouteSourceKind.Entrypoint)
         {
             entrypointQueue?.Enqueue(path);
+        }
+    }
+
+    private bool ShouldReadAutomaticEntry(
+        string path,
+        RouteInspectLoadingSet target,
+        bool hasLoadingTag)
+    {
+        var applicability = RouteInspectSourceApplicabilityEvaluator.Evaluate(_graph, path, _workingPaths);
+        if (applicability is null)
+        {
+            MarkLoadingSetUnavailable(target);
+            return false;
+        }
+
+        switch (applicability.State)
+        {
+            case SourceApplicabilityState.Unconditioned:
+                return hasLoadingTag;
+            case SourceApplicabilityState.Matched:
+                return true;
+            case SourceApplicabilityState.Unmatched:
+                return false;
+            case SourceApplicabilityState.Pending:
+            case SourceApplicabilityState.Invalid:
+                MarkLoadingSetUnavailable(target);
+                return false;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(path),
+                    applicability.State,
+                    "The source applicability state is not defined.");
+        }
+    }
+
+    private void MarkLoadingSetUnavailable(RouteInspectLoadingSet target)
+    {
+        switch (target)
+        {
+            case RouteInspectLoadingSet.Startup:
+                _startupAvailable = false;
+                return;
+            case RouteInspectLoadingSet.Selected:
+                _selectedAvailable = false;
+                return;
+            case RouteInspectLoadingSet.Narrow:
+                _narrowAvailable = false;
+                return;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(target),
+                    target,
+                    "The route-inspect loading set is not defined.");
         }
     }
 }

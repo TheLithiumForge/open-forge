@@ -1,3 +1,5 @@
+using YamlDotNet.Core;
+
 namespace OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
 internal enum YamlNodeKind
@@ -11,14 +13,38 @@ internal enum YamlNodeKind
 internal sealed record YamlScalar
 {
     internal YamlScalar(string value, YamlTextSpan span)
+        : this(value, ScalarStyle.Any, string.Empty, false, false, span)
+    {
+    }
+
+    internal YamlScalar(
+        string value,
+        ScalarStyle style,
+        string tag,
+        bool isPlainImplicit,
+        bool isQuotedImplicit,
+        YamlTextSpan span)
     {
         ArgumentNullException.ThrowIfNull(value);
+        ArgumentNullException.ThrowIfNull(tag);
         ArgumentNullException.ThrowIfNull(span);
         Value = value;
+        Style = style;
+        Tag = tag;
+        IsPlainImplicit = isPlainImplicit;
+        IsQuotedImplicit = isQuotedImplicit;
         Span = span;
     }
 
     internal string Value { get; }
+
+    internal ScalarStyle Style { get; }
+
+    internal string Tag { get; }
+
+    internal bool IsPlainImplicit { get; }
+
+    internal bool IsQuotedImplicit { get; }
 
     internal YamlTextSpan Span { get; }
 }

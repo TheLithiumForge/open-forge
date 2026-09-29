@@ -48,6 +48,7 @@ internal sealed class FindRequestBinder(
             var request = new FindRequest(
                 workspace,
                 new FindUniverseFilter(queryInput.IncludeValues, queryInput.ExcludeValues),
+                queryInput.WorkingPaths,
                 query,
                 presentation);
             return CliBindResult<FindRequest, FindResult>.Bound(request);
@@ -80,6 +81,7 @@ internal static class FindBindingSupport
 
         var includeValues = result.GetValue(symbols.Include) ?? [];
         var excludeValues = result.GetValue(symbols.Exclude) ?? [];
+        var workingPaths = result.GetValue(symbols.For) ?? [];
         var tagValues = result.GetValue(symbols.Tag) ?? [];
         var headingValues = result.GetValue(symbols.Heading) ?? [];
         var includeFacts = CliOptionResultFactsReader.Read(result, symbols.Include);
@@ -99,6 +101,7 @@ internal static class FindBindingSupport
         return new FindQueryInput(
             includeValues,
             excludeValues,
+            workingPaths,
             tagValues,
             headingValues,
             requireValue,
@@ -152,6 +155,7 @@ internal static class FindBindingSupport
         var request = new FindRequestEcho(
             workspace,
             new FindUniverseFilter(input.IncludeValues, input.ExcludeValues),
+            input.WorkingPaths,
             query,
             presentation);
         var finding = new FindFinding(
@@ -212,6 +216,7 @@ internal static class FindBindingSupport
         var request = new FindRequestEcho(
             null,
             new FindUniverseFilter(input.IncludeValues, input.ExcludeValues),
+            input.WorkingPaths,
             query,
             presentation);
         return resultBuilder.Build(

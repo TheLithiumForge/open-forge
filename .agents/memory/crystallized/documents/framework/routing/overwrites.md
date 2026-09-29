@@ -36,6 +36,17 @@ The shared filename stem and containing folder visibly identify the pair:
 
 Whenever the base is loaded, the overwrite is read immediately afterward. It inherits the base `route`, scope, and loading behavior. A valid pair stays adjacent in the same folder, so the final visible local adjustment can be inspected with its base.
 
+When the base has an `applyTo` condition, the overwrite shares the base's
+effective condition, including conditions inherited from ancestor entrypoints.
+For automatic loading, the base and companion load together only after that
+condition makes the base applicable to a working path. If an explicit source
+selection or reference retrieves a nonmatching base for inspection, read the
+companion immediately afterward as part of the pair. The condition gates
+automatic applicability, not paired inspection. The overwrite is never matched
+separately, and its metadata cannot add to or widen the base's condition. The
+[loading contract](loading.md#file-applicability-and-working-paths) defines
+evaluation across route chains and working paths.
+
 An overwrite is never selected, indexed, or loaded independently. Frontmatter, `descriptions`, or tags inside it do not create a second routing surface or change the base file's generated `entry` or load policy.
 
 An overwrite without its base is an orphan. It has no inherited `route`, scope, or loading behavior and must be repaired, moved to an appropriate independent `route`, or removed. Tools and review fail closed when the pair or its identity cannot be established.

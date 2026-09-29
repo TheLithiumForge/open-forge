@@ -1,9 +1,15 @@
+using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Loading;
 
@@ -264,6 +270,240 @@ public sealed class SourceLoadingClosureResolverTests
         Assert.DoesNotContain(resolution.Startup, selection => selection.Path == inactiveChild.Path);
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Applicability stays opt in for legacy consumers including ambiguous routes"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    public void ApplicabilityModeDefaultsOffForLegacyConsumers()
+    {
+        var loader = Source(
+            ".agents/loader.md",
+            SourceDocumentForm.Loader,
+            Entries(Entry("notes.md", "LoadNow")),
+            parentPath: null);
+        var notes = Source(
+            ".agents/notes.md",
+            SourceDocumentForm.Markdown,
+            Entries(),
+            parentPath: null,
+            "LoadNow") with
+        {
+            RouteState = SourceRouteState.Ambiguous,
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", ["LoadNow"]) with
+            {
+                ApplyTo = ApplyTo("src/**"),
+            },
+        };
+
+        var resolution = Resolve([loader, notes], [notes.Path]);
+
+        Assert.Contains(resolution.Startup, selection => selection.Path == notes.Path);
+        Assert.Empty(resolution.PendingConditions);
+        Assert.DoesNotContain(resolution.Issues, issue => issue.Kind == SourceLoadingClosureIssueKind.ApplicabilityInvalid);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Applicability does not auto-select a route with ambiguous condition ancestry"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    public void AmbiguousRouteAncestryCannotActivateMatchingSourceOrDescendants()
+    {
+        var loader = Source(
+            ".agents/loader.md",
+            SourceDocumentForm.Loader,
+            Entries(Entry("products/child/_child.md", "LoadNow")),
+            parentPath: null);
+        var child = Source(
+            ".agents/products/child/_child.md",
+            SourceDocumentForm.CanonicalEntrypoint,
+            Entries(Entry("leaf.md")),
+            parentPath: null) with
+        {
+            RouteState = SourceRouteState.Ambiguous,
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            {
+                ApplyTo = ApplyTo("src/**/*.cs"),
+            },
+        };
+        var leaf = Source(
+            ".agents/products/child/leaf.md",
+            SourceDocumentForm.Markdown,
+            Entries(),
+            child.Path) with
+        {
+            RouteState = SourceRouteState.Ambiguous,
+        };
+
+        var resolution = Resolve(
+            [loader, child, leaf],
+            [child.Path],
+            evaluateApplicability: true,
+            workingPaths: ["src/Order.cs"],
+            workingPathsSupplied: true);
+
+        Assert.Equal(["AGENTS.md", loader.Path], Paths(resolution));
+        var issue = Assert.Single(resolution.Issues);
+        Assert.Equal(SourceLoadingClosureIssueKind.ApplicabilityInvalid, issue.Kind);
+        Assert.Equal(child.Path, issue.Path);
+        Assert.Empty(resolution.PendingConditions);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Applicability conditions intersect on one supplied path and activate untagged entries"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    public void ConditionsUseOnePathAndActivateUntaggedEntries()
+    {
+        var loader = Source(
+            ".agents/loader.md",
+            SourceDocumentForm.Loader,
+            Entries(Entry("guide/_guide.md")),
+            parentPath: null);
+        var guide = Source(
+            ".agents/guide/_guide.md",
+            SourceDocumentForm.CanonicalEntrypoint,
+            Entries(Entry("topic.md")),
+            parentPath: null) with
+        {
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            {
+                ApplyTo = ApplyTo("src/**"),
+            },
+        };
+        var topic = Source(
+            ".agents/guide/topic.md",
+            SourceDocumentForm.Markdown,
+            Entries(),
+            guide.Path) with
+        {
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            {
+                ApplyTo = ApplyTo("docs/**"),
+            },
+        };
+
+        var resolution = Resolve(
+            [loader, guide, topic],
+            [guide.Path],
+            evaluateApplicability: true,
+            workingPaths: ["src/main.cs", "docs/readme.md"],
+            workingPathsSupplied: true);
+
+        Assert.Contains(resolution.Startup, selection => selection.Path == guide.Path);
+        Assert.DoesNotContain(resolution.Startup, selection => selection.Path == topic.Path);
+        Assert.Equal(SourceApplicabilityState.Matched, resolution.Startup.Single(selection => selection.Path == guide.Path).Applicability?.State);
+        Assert.Empty(resolution.PendingConditions);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Applicability loads an untagged entry when one concrete path matches every clause"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    public void MatchingApplyToLoadsUntaggedEntry()
+    {
+        var loader = Source(
+            ".agents/loader.md",
+            SourceDocumentForm.Loader,
+            Entries(Entry("guide/_guide.md")),
+            parentPath: null);
+        var guide = Source(
+            ".agents/guide/_guide.md",
+            SourceDocumentForm.CanonicalEntrypoint,
+            Entries(Entry("topic.md")),
+            parentPath: null) with
+        {
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            {
+                ApplyTo = ApplyTo("src/**"),
+            },
+        };
+        var topic = Source(
+            ".agents/guide/topic.md",
+            SourceDocumentForm.Markdown,
+            Entries(),
+            guide.Path) with
+        {
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            {
+                ApplyTo = ApplyTo("src/*.cs"),
+            },
+        };
+
+        var resolution = Resolve(
+            [loader, guide, topic],
+            [guide.Path],
+            evaluateApplicability: true,
+            workingPaths: ["src/main.cs"],
+            workingPathsSupplied: true);
+
+        Assert.Equal(["AGENTS.md", loader.Path, guide.Path, topic.Path], Paths(resolution));
+        Assert.Contains(
+            resolution.Startup.Single(selection => selection.Path == topic.Path).Reasons,
+            reason => reason.Kind == SourceLoadingClosureReasonKind.Applicability && reason.SourcePath == guide.Path);
+        Assert.Equal(["src/main.cs"], resolution.Startup.Single(selection => selection.Path == topic.Path).Applicability?.MatchingPaths);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Pending applyTo conditions defer loading and identify each condition source"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    public void MissingWorkingPathsProducePendingConditions()
+    {
+        var loader = Source(
+            ".agents/loader.md",
+            SourceDocumentForm.Loader,
+            Entries(Entry("notes.md", "LoadNow")),
+            parentPath: null);
+        var notes = Source(
+            ".agents/notes.md",
+            SourceDocumentForm.Markdown,
+            Entries(),
+            parentPath: null,
+            "LoadNow") with
+        {
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", ["LoadNow"]) with
+            {
+                ApplyTo = ApplyTo("src/**"),
+            },
+        };
+
+        var resolution = Resolve([loader, notes], [notes.Path], evaluateApplicability: true);
+
+        Assert.DoesNotContain(resolution.Startup, selection => selection.Path == notes.Path);
+        var condition = Assert.Single(resolution.PendingConditions);
+        Assert.Equal(notes.Path, condition.CanonicalSourcePath);
+        Assert.Equal(["src/**"], condition.Metadata.Patterns.Select(pattern => pattern.Text));
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Applicability does not inspect descendants behind a hidden ancestor"), Trait("Feature", "source-loading-closure"), Trait("Evidence", "Unit")]
+    public void HiddenAncestorStillHidesMatchingDescendants()
+    {
+        var loader = Source(".agents/loader.md", SourceDocumentForm.Loader, Entries(), parentPath: null);
+        var guide = Source(
+            ".agents/guide/_guide.md",
+            SourceDocumentForm.CanonicalEntrypoint,
+            Entries(Entry("topic.md")),
+            parentPath: null) with
+        {
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            {
+                ApplyTo = ApplyTo("src/**"),
+            },
+        };
+        var topic = Source(
+            ".agents/guide/topic.md",
+            SourceDocumentForm.Markdown,
+            Entries(),
+            guide.Path) with
+        {
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", []) with
+            {
+                ApplyTo = ApplyTo("src/**"),
+            },
+        };
+
+        var resolution = Resolve(
+            [loader, guide, topic],
+            [],
+            evaluateApplicability: true,
+            workingPaths: ["src/main.cs"],
+            workingPathsSupplied: true);
+
+        Assert.Equal(["AGENTS.md", loader.Path], Paths(resolution));
+        Assert.DoesNotContain(resolution.PendingConditions, condition => condition.CanonicalSourcePath == guide.Path);
+    }
+
     private static SourceLoadingClosureSource Source(
         string path,
         SourceDocumentForm form,
@@ -284,13 +524,32 @@ public sealed class SourceLoadingClosureResolverTests
 
     private static SourceLoadingClosureResolution Resolve(
         IReadOnlyList<SourceLoadingClosureSource> sources,
-        IReadOnlyList<string> loaderRootPaths)
+        IReadOnlyList<string> loaderRootPaths,
+        bool evaluateApplicability = false,
+        IReadOnlyList<string>? workingPaths = null,
+        bool workingPathsSupplied = false)
         => new SourceLoadingClosureResolver().Resolve(new SourceLoadingClosureRequest
         {
             WorkspaceEntryPath = "AGENTS.md",
             Sources = sources,
             LoaderRootPaths = loaderRootPaths,
+            EvaluateApplicability = evaluateApplicability,
+            WorkingPathsSupplied = workingPathsSupplied,
+            WorkingPaths = workingPaths ?? [],
         });
+
+    private static ApplyToMetadataFacts ApplyTo(params string[] values)
+    {
+        var patterns = values.Select(value =>
+            ApplyToPatternMatcher.Parse(value).Pattern
+            ?? throw new InvalidOperationException("The test applyTo pattern must be valid.")).ToImmutableArray();
+        var declaration = new ApplyToDeclaration(
+            ApplyToMetadataLocation.Root,
+            new YamlTextSpan(0, 1),
+            new YamlTextSpan(0, 1),
+            patterns);
+        return ApplyToMetadataFacts.Valid(patterns, [declaration]);
+    }
 
     private static IReadOnlyList<string> Paths(SourceLoadingClosureResolution resolution)
         => resolution.Startup.Select(selection => selection.Path).ToArray();

@@ -53,6 +53,7 @@ The complete public command form is:
 
 ```text
 open-forge context [source-reference...]
+  [--for=<workspace-relative-path>]...
   [--additions-only]
   [--content=<part>[,<part>...]]
   [--follow-links=<positive-depth|all>]
@@ -91,6 +92,7 @@ behavior is defined below.
 
 | Flag                                   | Role       | Accepted value                                            | Omission                                                                    | Repetition, ordering, and composition                                                                                                                                 |
 | -------------------------------------- | ---------- | --------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--for=<workspace-relative-path>`      | Applicability | One workspace-relative file path                         | Preserve unconditioned loading behavior                                    | Repeatable. The complete supplied path set is evaluated together; duplicate normalized paths have no extra effect.                                                     |
 | `--additions-only`                     | Selection  | Boolean flag with no value                                | Include the startup-required closure together with explicit route additions | Requires at least one explicit source. Repetition is accepted and idempotent.                                                                                         |
 | `--content=<part>[,<part>...]`         | Projection | One comma-separated content value using the grammar below | `frontmatter,body`                                                          | Parts are composable and idempotent. Repeat a part without additional effect. The flag itself may not be repeated. Flag order does not change canonical output order. |
 | `--follow-links=<positive-depth\|all>` | Selection  | A positive integer depth or `all`                         | Do not follow ordinary outgoing links                                       | Zero is invalid. Repetition is invalid, including repeated values that are equal and values that conflict.                                                            |
@@ -107,6 +109,39 @@ contract defines exact current-working-directory and `--workspace <path>`
 selection, path resolution, reporting, and the prohibition on workspace
 discovery. The selected workspace and selection method are part of every
 workspace-aware result.
+
+## Path-Scoped Applicability
+
+`--for` supplies the complete set of files involved in the current task. It is
+repeatable and stateless: the command does not infer paths from Git, prior
+invocations, or a dependency graph. Paths are workspace-relative and normalized
+lexically against the selected workspace. They may name files that do not exist
+yet. A path that escapes the selected workspace is rejected. Repeated values
+are combined as one set.
+
+A source without an effective `applyTo` condition keeps its existing loading
+behavior. When `--for` is supplied, its applicability state is `unconditioned`
+and every supplied path is compatible; `matchingPaths` remains empty because
+there is no declared condition to match. For a conditioned source, one source's
+patterns are alternatives, while conditions inherited from route ancestors must
+all match the same working path. Its state is `matched` when at least one path
+satisfies the complete chain and `unmatched` when none does. If no working paths
+are supplied, its state is `pending`. If invalid metadata prevents evaluation,
+its state is `invalid` and the existing metadata finding makes the result
+incomplete. Matching is evaluated from visible entries top-down. A condition
+does not select a hidden ancestor. An explicit or reference-selected nonmatching
+source can still be retrieved with the ancestors needed to inspect it; that
+inspection does not automatically load its children. A visible entry exposed by
+a loaded parent and matching the working set is included before work on its
+matching file even when it has no loading tag.
+
+If no working paths are supplied, the command defers encountered conditioned
+entries instead of treating them as matches or mismatches. `pendingConditions`
+contains each deferred `{ source, patterns }` pair, and the result is `incomplete`
+with exit 3 and a visible limitation. For example, parent `src/**` and child
+`**/*.cs` conditions apply together to `src/Order.cs`; neither `src/readme.md`
+nor `tests/Order.cs` satisfies both on the same path. Supplying `--for` does not
+change source references, projection, or the shared schema-3 envelope.
 
 ## Context Resolution
 
@@ -192,14 +227,15 @@ assume that the caller retained earlier content.
 Without at least one explicit source, `--additions-only` is invalid because the
 result would have no selected addition.
 
-When link expansion is enabled, the command expands the startup closure alone
-and the startup-plus-route closure with the same depth. It then subtracts the
-standard startup set. A source reachable from startup does not become a route
-addition only because a selected route also links to it.
-
-If that fully resolved difference contains zero added sources, the command
-returns an explicit `completed` empty result. This is distinct from the invalid
-request that omits every explicit source while using `--additions-only`.
+Resolve the startup-required closure and the startup-plus-explicit closure with
+the same supplied `--for` path set. When `--for` is present, both closures use
+that filter. When link expansion is enabled, use the same link depth for both
+closures. Subtract the startup closure from the combined closure to form the
+ordered difference. A source reachable from startup does not become a route
+addition only because a selected route also links to it. If the resolved
+difference contains zero added sources, the command returns an explicit
+`completed` empty result. This is distinct from the invalid request that omits
+every explicit source while using `--additions-only`.
 
 Source blocks and findings needed to explain an added source remain in the
 result. The projection must not hide a missing startup dependency or make an
@@ -734,15 +770,26 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 
 | Level    | `data`                                                                                                                          |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| minimal  | `{ sources: [ { path, id, layer: "base" \| "overwrite", parts: [ { part, text \| headings: [ ... ] \| paths: [ ... ] } ] } ] }` |
-| standard | + per source `includedBecause: [ ... ]`, `route`, `scope`                                                                       |
-| full     | + `order`, headings with `line`, `links: [ { from, location, destination, resolvedPath, resolution, followed } ]`               |
+| minimal  | `{ sources: [ { path, id, layer: "base" \| "overwrite", parts: [ { part, text \| headings: [ ... ] \| paths: [ ... ] } ] } ], workingPaths?: [ ... ], pendingConditions: [ { source, patterns: [ ... ] } ] }` |
+| standard | + per source `includedBecause: [ ... ]`, `route`, `scope`, and, when applicable, `applicability: { state, conditions: [ { source, patterns: [ ... ] } ], matchingPaths: [ ... ] }` |
+| full     | + `order`, headings with `line`, `links: [ { from, location, destination, resolvedPath, resolution, followed } ]`, and the same optional per-source `applicability` |
 
 Text values are exact; JSON escaping is the serializer's.
 
 ## Semantic Results
 
-The status and exit mapping above are unchanged by detail or format. Root effects and recovery receipts retain their complete result facts at every detail level; command-owned data follows the catalogue's level rows.
+The status and exit mapping above are unchanged by detail or format. Root
+effects and recovery receipts retain their complete result facts at every detail
+level; command-owned data follows the catalogue's level rows. When supplied,
+normalized `workingPaths` is echoed at every detail level. At standard and full
+detail, `applicability` reports `unconditioned`, `matched`, `unmatched`,
+`pending`, or `invalid` with its condition sources and `matchingPaths`. A pending
+record retains its conditions and has `matchingPaths: []`. For an unconditioned
+source, `matchingPaths` is empty; the state conveys compatibility. Omit
+applicability only for an unconditioned source when `--for` is omitted.
+`pendingConditions: [ { source, patterns } ]` appears at every detail level,
+including when content projection selects only paths. Encountered pending
+conditions make the result `incomplete` with exit 3 and a visible limitation.
 
 ### Counts and limitations
 

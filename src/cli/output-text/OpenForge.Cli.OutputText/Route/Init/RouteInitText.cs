@@ -170,7 +170,7 @@ internal static class RouteInitText
 
     // @OpenForgeText route.init.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route init <route-target> [--framework] [--description <text>] [--responsibility <text>] [--tag <tag>]... [--dry-run] [global options]";
+        => "open-forge route init <route-target> [--framework] [--description <text>] [--responsibility <text>] [--tag <tag>]... [--apply-to <glob>]... [--dry-run] [global options]";
 
     // @OpenForgeText route.init.help.target
     internal static string HelpTarget()
@@ -186,7 +186,7 @@ internal static class RouteInitText
 
     // @OpenForgeText route.init.help.metadata
     internal static string HelpMetadata()
-        => "--description <text>, --responsibility <text>, and ordered repeated --tag <tag> values apply only to a missing generic final target. Supply description and responsibility only once; empty or duplicate tags are invalid.";
+        => "--description <text>, --responsibility <text>, ordered repeated --tag <tag> values, and repeated --apply-to <glob> values apply only to a missing generic final target. Apply-to patterns are workspace-relative; * and ? match within one path segment and ** matches zero or more segments. Supply description and responsibility only once; empty or duplicate tags are invalid.";
 
     // @OpenForgeText route.init.help.write-policy
     internal static string HelpWritePolicy()
@@ -194,7 +194,7 @@ internal static class RouteInitText
 
     // @OpenForgeText route.init.help.examples
     internal static string HelpExamples()
-        => "open-forge route init memory/project-alpha/documents\n  open-forge route init memory/project-alpha/documents --description \"Project documents\" --tag Memory\n  open-forge route init \"memory/Mobile App/crystallized/documents\" --framework --dry-run\n  open-forge route init .agents/memory/project-alpha/documents/_documents.md --format json";
+        => "open-forge route init memory/project-alpha/documents\n  open-forge route init memory/project-alpha/documents --description \"Project documents\" --tag Memory --apply-to \"**/*.cs\" --apply-to \"**/*.ts\"\n  open-forge route init \"memory/Mobile App/crystallized/documents\" --framework --dry-run\n  open-forge route init .agents/memory/project-alpha/documents/_documents.md --format json";
 
     // @OpenForgeText route.init.help.related-commands
     internal static string HelpRelatedCommands()

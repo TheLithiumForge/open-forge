@@ -2,7 +2,10 @@ using System.Text;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Entries;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
@@ -157,6 +160,13 @@ internal sealed class GeneratedNavigationRegionPlanner
         foreach (var child in children)
         {
             var metadata = request.FindMetadata(child);
+            if (metadata is not null && metadata.ApplyTo.State == ApplyToMetadataState.Invalid)
+            {
+                return GeneratedNavigationProjectionStage<IReadOnlyList<GeneratedNavigationEntry>>.Unavailable(
+                    GeneratedNavigationRegionUnavailableReason.MetadataInvalid,
+                    "Every direct routed child requires valid applyTo metadata.");
+            }
+
             if (metadata is null
                 || metadata.State == SourceAuthoredMetadataState.NotApplicable
                 || (metadata.State == SourceAuthoredMetadataState.Missing
@@ -176,6 +186,7 @@ internal sealed class GeneratedNavigationRegionPlanner
 
             string description;
             IReadOnlyList<string> tags;
+            IReadOnlyList<ApplyToPattern> applyTo;
             if (metadata.State == SourceAuthoredMetadataState.Complete)
             {
                 if (metadata.Description is not { } completeDescription)
@@ -186,6 +197,7 @@ internal sealed class GeneratedNavigationRegionPlanner
                 }
 
                 description = completeDescription;
+                applyTo = metadata.ApplyTo.Patterns;
                 tags = child.Base.Form == SourceDocumentForm.Skill
                     ? ["Skill"]
                     : metadata.Tags;
@@ -193,6 +205,7 @@ internal sealed class GeneratedNavigationRegionPlanner
             else
             {
                 description = metadata.ObservedDescription ?? child.Identity.AutomaticId;
+                applyTo = metadata.ApplyTo.Patterns;
                 tags = metadata.ObservedTags;
             }
 
@@ -218,15 +231,20 @@ internal sealed class GeneratedNavigationRegionPlanner
             }
 
             var label = EncodeLinkLabel(description);
-            var line = tags.Count == 0
-                ? $"- [{label}]({destination})"
-                : $"- [{label}]({destination}) - {string.Join(' ', tags.Select(tag => $"#{tag}"))}";
+            var tagsSuffix = tags.Count == 0
+                ? string.Empty
+                : $" - {string.Join(' ', tags.Select(tag => $"#{tag}"))}";
+            var line = $"- [{label}]({destination}){tagsSuffix}"
+                + MarkdownEntryRowFormatter.FormatApplyToSuffix(applyTo);
             projected.Add(new GeneratedNavigationEntry(
                 source: child,
                 description: description,
                 destination: destination,
                 tags: tags,
-                line: line));
+                line: line)
+            {
+                ApplyTo = applyTo,
+            });
         }
 
         var entries = projected

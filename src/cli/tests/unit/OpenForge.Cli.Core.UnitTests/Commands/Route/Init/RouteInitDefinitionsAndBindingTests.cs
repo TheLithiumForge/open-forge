@@ -24,10 +24,12 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Equal("--description", RouteInitDefinitions.Description.Name);
         Assert.Equal("--responsibility", RouteInitDefinitions.Responsibility.Name);
         Assert.Equal("--tag", RouteInitDefinitions.Tag.Name);
+        Assert.Equal("--apply-to", RouteInitDefinitions.ApplyTo.Name);
         Assert.Equal("--dry-run", RouteInitDefinitions.DryRun.Name);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteInitDefinitions.Description.Arity);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteInitDefinitions.Responsibility.Arity);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteInitDefinitions.Tag.Arity);
+        Assert.Equal(CliOptionArity.ExactlyOne, RouteInitDefinitions.ApplyTo.Arity);
         Assert.Equal(
             Enum.GetValues<RouteInitFindingCode>().Length,
             RouteInitDefinitions.FindingCodes.Count);
@@ -50,6 +52,8 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Responsibility.Arity);
         Assert.Equal(ArgumentArity.ZeroOrMore, symbols.Tag.Arity);
         Assert.False(symbols.Tag.AllowMultipleArgumentsPerToken);
+        Assert.Equal(ArgumentArity.ZeroOrMore, symbols.ApplyTo.Arity);
+        Assert.False(symbols.ApplyTo.AllowMultipleArgumentsPerToken);
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
 
         var parse = route.Parse(["init", "memory/project-alpha/documents", "--tag=alpha"]);
@@ -58,6 +62,20 @@ public sealed class RouteInitDefinitionsAndBindingTests
         var tags = parse.GetValue(symbols.Tag);
         Assert.NotNull(tags);
         Assert.Equal(["alpha"], tags);
+        var applyToParse = route.Parse(
+        [
+            "init",
+            "memory/project-alpha/documents",
+            "--apply-to",
+            "**/*.cs",
+            "--apply-to=src/*.ts",
+            "--apply-to",
+            "**/*.cs",
+        ]);
+        Assert.Empty(applyToParse.Errors);
+        var applyToValues = applyToParse.GetValue(symbols.ApplyTo);
+        Assert.NotNull(applyToValues);
+        Assert.Equal(["**/*.cs", "src/*.ts", "**/*.cs"], applyToValues);
     }
 
     [Trait("Boundary", "Input")]
@@ -136,11 +154,15 @@ public sealed class RouteInitDefinitionsAndBindingTests
             new[] { "init", "memory/crystallized/documents", "--framework", "--description=managed" },
             new[] { "init", "memory/crystallized/documents", "--framework", "--responsibility=managed" },
             new[] { "init", "memory/crystallized/documents", "--framework", "--tag=managed" },
+            new[] { "init", "memory/crystallized/documents", "--framework", "--apply-to=**/*.cs" },
             new[] { "init", "memory/project-alpha/documents", "--description=" },
             new[] { "init", "memory/project-alpha/documents", "--responsibility=   " },
             new[] { "init", "memory/project-alpha/documents", "--tag=" },
             new[] { "init", "memory/project-alpha/documents", "--tag=#already-prefixed" },
             new[] { "init", "memory/project-alpha/documents", "--tag=duplicate", "--tag=duplicate" },
+            new[] { "init", "memory/project-alpha/documents", "--apply-to=../outside" },
+            new[] { "init", "memory/project-alpha/documents", "--apply-to=/absolute.cs" },
+            new[] { "init", "memory/project-alpha/documents", "--apply-to=src/**.cs" },
         })
         {
             var parse = route.Parse(arguments);
@@ -181,6 +203,35 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Equal(RouteInitScaffold.Framework, request.Scaffold);
         Assert.Equal(RouteInitMode.DryRun, request.Mode);
         Assert.Empty(request.Metadata.Tags);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Route Init sorts distinct applyTo patterns ordinally and keeps commas inside one pattern"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    public void BindingNormalizesApplyToPatternsWithoutSplittingCommas()
+    {
+        var route = RouteBinding.CreateGroup();
+        var symbols = RouteInitBinding.CreateSymbols(route);
+        var parse = route.Parse(
+        [
+            "init",
+            "memory/project-alpha/documents",
+            "--apply-to=src/*.ts",
+            "--apply-to=src/*.cs,src/*.md",
+            "--apply-to:src/*.cs",
+            "--apply-to=src/*.ts",
+        ]);
+
+        Assert.Empty(parse.Errors);
+        var bound = RouteInitBinding.Bind(
+            parse,
+            RouteInitRedTestData.Invocation(RouteInitRedTestData.Workspace()),
+            symbols);
+        var request = Assert.IsType<RouteInitRequest>(bound.Request);
+
+        Assert.Null(bound.InvalidResult);
+        Assert.Equal(
+            ["src/*.cs", "src/*.cs,src/*.md", "src/*.ts"],
+            request.Metadata.ApplyTo.Select(pattern => pattern.Text));
     }
 
     [Trait("Boundary", "Input")]

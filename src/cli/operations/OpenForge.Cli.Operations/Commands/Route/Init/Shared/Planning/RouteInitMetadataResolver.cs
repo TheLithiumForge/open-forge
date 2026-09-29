@@ -61,7 +61,8 @@ internal sealed class RouteInitMetadataResolver
             responsibility,
             responsibilitySource,
             tags,
-            tagsSource);
+            tagsSource,
+            input.ApplyTo);
     }
 
     private static RouteInitMetadata Draft(string description)

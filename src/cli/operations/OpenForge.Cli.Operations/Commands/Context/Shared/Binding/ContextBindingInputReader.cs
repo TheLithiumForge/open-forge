@@ -18,15 +18,18 @@ internal static class ContextBindingInputReader
         var additionsFacts = CliOptionResultFactsReader.Read(result, symbols.AdditionsOnly);
         var contentFacts = CliOptionResultFactsReader.Read(result, symbols.Content);
         var followLinksFacts = CliOptionResultFactsReader.Read(result, symbols.FollowLinks);
+        var forFacts = CliOptionResultFactsReader.Read(result, symbols.For);
         return new ContextBindingInput
         {
             Sources = ReadSources(result, symbols.Sources),
             AdditionsOnly = additionsFacts.IsExplicit,
             ContentValues = ReadValues(result, symbols.Content),
             FollowLinksValues = ReadValues(result, symbols.FollowLinks),
+            ForValues = ReadValues(result, symbols.For),
             AdditionsOnlyFacts = additionsFacts,
             ContentFacts = contentFacts,
             FollowLinksFacts = followLinksFacts,
+            ForFacts = forFacts,
             SuppliedDetail = suppliedDetail,
             EffectiveView = effectiveView,
         };
@@ -40,5 +43,5 @@ internal static class ContextBindingInputReader
     }
 
     private static IReadOnlyList<string> ReadValues(ParseResult result, Option<string[]> option)
-        => result.GetValue(option) ?? [];
+        => CliOptionResultFactsReader.ReadValues(result, option);
 }

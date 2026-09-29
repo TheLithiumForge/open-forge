@@ -33,6 +33,25 @@ internal sealed record FindDataMatch
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<FindDataPart>? Parts { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public FindDataApplicability? Applicability { get; init; }
+}
+
+internal sealed record FindDataApplicability
+{
+    public required string State { get; init; }
+
+    public required IReadOnlyList<FindDataApplicabilityCondition> Conditions { get; init; }
+
+    public required IReadOnlyList<string> MatchingPaths { get; init; }
+}
+
+internal sealed record FindDataApplicabilityCondition
+{
+    public required string Source { get; init; }
+
+    public required IReadOnlyList<string> Patterns { get; init; }
 }
 
 internal sealed record FindDataEvidence
@@ -83,6 +102,9 @@ internal sealed record FindDataQuery
     public required string Require { get; init; }
 
     public required IReadOnlyList<string> Within { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<string>? WorkingPaths { get; init; }
 }
 
 internal sealed record FindDataSourceSet

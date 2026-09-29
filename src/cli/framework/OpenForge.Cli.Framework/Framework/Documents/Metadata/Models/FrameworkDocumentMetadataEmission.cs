@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 
@@ -7,7 +9,8 @@ internal sealed record FrameworkDocumentMetadataEmission
     internal FrameworkDocumentMetadataEmission(
         string? description,
         IEnumerable<string> tags,
-        string? responsibility)
+        string? responsibility,
+        IEnumerable<ApplyToPattern>? applyTo = null)
     {
         if (description is not null && string.IsNullOrWhiteSpace(description))
         {
@@ -46,6 +49,7 @@ internal sealed record FrameworkDocumentMetadataEmission
         Description = description;
         Tags = values;
         Responsibility = responsibility;
+        ApplyTo = (applyTo ?? []).ToImmutableArray();
     }
 
     internal string? Description { get; }
@@ -53,4 +57,6 @@ internal sealed record FrameworkDocumentMetadataEmission
     internal ImmutableArray<string> Tags { get; }
 
     internal string? Responsibility { get; }
+
+    internal ImmutableArray<ApplyToPattern> ApplyTo { get; init; } = [];
 }

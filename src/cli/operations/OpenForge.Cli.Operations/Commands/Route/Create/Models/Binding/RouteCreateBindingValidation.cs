@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Models.Binding;
@@ -12,6 +13,8 @@ internal sealed record RouteCreateBindingInput
 
     public required IReadOnlyList<string> Tags { get; init; }
 
+    public required IReadOnlyList<string> ApplyTo { get; init; }
+
     public string? Responsibility { get; init; }
 
     public string? Template { get; init; }
@@ -19,6 +22,8 @@ internal sealed record RouteCreateBindingInput
     public required CliOptionResultFacts DescriptionFacts { get; init; }
 
     public required CliOptionResultFacts TagFacts { get; init; }
+
+    public required CliOptionResultFacts ApplyToFacts { get; init; }
 
     public required CliOptionResultFacts ResponsibilityFacts { get; init; }
 
@@ -38,6 +43,8 @@ internal sealed record RouteCreateBindingFacts
     public required string? Description { get; init; }
 
     public required IReadOnlyList<string> Tags { get; init; }
+
+    public required IReadOnlyList<ApplyToPattern> ApplyTo { get; init; }
 
     public string? Responsibility { get; init; }
 

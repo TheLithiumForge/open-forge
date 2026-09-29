@@ -16,6 +16,10 @@ internal sealed record RouteUpdateBindingInput
 
     public string? Template { get; init; }
 
+    public required IReadOnlyList<string> ApplyTo { get; init; }
+
+    public required bool ClearApplyTo { get; init; }
+
     public required CliOptionResultFacts DescriptionFacts { get; init; }
 
     public required CliOptionResultFacts TagFacts { get; init; }
@@ -23,6 +27,10 @@ internal sealed record RouteUpdateBindingInput
     public required CliOptionResultFacts ResponsibilityFacts { get; init; }
 
     public required CliOptionResultFacts TemplateFacts { get; init; }
+
+    public required CliOptionResultFacts ApplyToFacts { get; init; }
+
+    public required CliOptionResultFacts ClearApplyToFacts { get; init; }
 
     public required IReadOnlyList<string> ParserErrors { get; init; }
 }

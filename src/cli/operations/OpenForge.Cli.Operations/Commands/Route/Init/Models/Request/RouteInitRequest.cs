@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
@@ -21,7 +23,8 @@ internal sealed record RouteInitMetadataInput
         string? description,
         bool responsibilitySpecified,
         string? responsibility,
-        IEnumerable<string> tags)
+        IEnumerable<string> tags,
+        IEnumerable<ApplyToPattern>? applyTo = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         var tagValues = tags
@@ -33,6 +36,7 @@ internal sealed record RouteInitMetadataInput
         ResponsibilitySpecified = responsibilitySpecified;
         Responsibility = responsibility;
         Tags = new ReadOnlyCollection<string>(tagValues);
+        ApplyTo = applyTo?.ToImmutableArray() ?? [];
     }
 
     internal string? Description { get; }
@@ -42,6 +46,8 @@ internal sealed record RouteInitMetadataInput
     internal string? Responsibility { get; }
 
     internal IReadOnlyList<string> Tags { get; }
+
+    internal ImmutableArray<ApplyToPattern> ApplyTo { get; }
 
     internal static RouteInitMetadataInput None { get; } = new(
         description: null,

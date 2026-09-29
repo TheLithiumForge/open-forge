@@ -14,12 +14,13 @@ internal sealed class PublishedRouteCreateWorkspace : IDisposable
     internal const string Description = "Project overview";
     internal const string Responsibility = "Explains the project";
     internal const string InitialEntry = "- none - No entries - #Empty";
-    internal const string ExpectedEntry = "- [Project overview](overview.md) - #Docs #Overview";
+    internal const string ExpectedEntry = "- [Project overview](overview.md) - #Docs #Overview - applies to `**/*.cs`, `docs/**`";
     internal const string ExpectedTargetDocument = "---\n"
         + "open-forge:\n"
         + "  description: Project overview\n"
         + "  tags: [Docs, Overview]\n"
         + "  responsibility: Explains the project\n"
+        + "  applyTo: [\"**/*.cs\", \"docs/**\"]\n"
         + "---\n";
 
     private readonly TemporaryWorkspace _temporary;

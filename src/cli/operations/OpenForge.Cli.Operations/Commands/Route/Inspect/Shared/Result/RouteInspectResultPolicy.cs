@@ -43,6 +43,7 @@ internal static class RouteInspectResultPolicy
         return code switch
         {
             RouteInspectConditionCode.InvalidWorkspace
+                or RouteInspectConditionCode.InvalidWorkingPath
                 or RouteInspectConditionCode.MissingSource
                 or RouteInspectConditionCode.MultipleSources
                 or RouteInspectConditionCode.InvalidSourceReference

@@ -14,6 +14,8 @@ internal sealed record ContextLinkExpansionFormation
 
     public required IReadOnlyList<ContextFinding> Findings { get; init; }
 
+    public IReadOnlyList<ContextPendingCondition> PendingConditions { get; init; } = [];
+
     public required bool Complete { get; init; }
 
     public required bool Blocked { get; init; }
@@ -27,6 +29,7 @@ internal sealed record ContextLinkExpansionFormation
             ResultSources = closure.ResultSources,
             Links = [],
             Findings = [],
+            PendingConditions = closure.PendingConditions,
             Complete = true,
             Blocked = false,
         };
@@ -44,6 +47,7 @@ internal sealed record ContextLinkExpansionFormation
             ResultSources = resultSources,
             Links = combined.Links,
             Findings = combined.Findings,
+            PendingConditions = combined.PendingConditions,
             Complete = combined.Complete,
             Blocked = combined.Blocked,
         };
@@ -57,6 +61,8 @@ internal sealed record ContextLinkExpansionRun
     public required IReadOnlyList<ContextLink> Links { get; init; }
 
     public required IReadOnlyList<ContextFinding> Findings { get; init; }
+
+    public IReadOnlyList<ContextPendingCondition> PendingConditions { get; init; } = [];
 
     public required bool Complete { get; init; }
 

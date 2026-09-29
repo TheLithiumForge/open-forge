@@ -6,6 +6,7 @@ internal sealed class RouteInspectAutomaticReadings
 {
     private static readonly RouteInspectAutomaticReadingKind[] CanonicalOrder =
     [
+        RouteInspectAutomaticReadingKind.MatchingFileCondition,
         RouteInspectAutomaticReadingKind.ParentLoadNow,
         RouteInspectAutomaticReadingKind.EntrypointKeepInMind,
         RouteInspectAutomaticReadingKind.RoutedFileKeepInMind,

@@ -20,11 +20,13 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         Assert.Equal("file-target", RouteCreateDefinitions.FileTarget.Name);
         Assert.Equal("--description", RouteCreateDefinitions.Description.Name);
         Assert.Equal("--tag", RouteCreateDefinitions.Tag.Name);
+        Assert.Equal("--apply-to", RouteCreateDefinitions.ApplyTo.Name);
         Assert.Equal("--responsibility", RouteCreateDefinitions.Responsibility.Name);
         Assert.Equal("--template", RouteCreateDefinitions.Template.Name);
         Assert.Equal("--dry-run", RouteCreateDefinitions.DryRun.Name);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteCreateDefinitions.Description.Arity);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteCreateDefinitions.Tag.Arity);
+        Assert.Equal(CliOptionArity.ExactlyOne, RouteCreateDefinitions.ApplyTo.Arity);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteCreateDefinitions.Responsibility.Arity);
         Assert.Equal(CliOptionArity.ExactlyOne, RouteCreateDefinitions.Template.Arity);
         Assert.Equal(CliOptionArity.None, RouteCreateDefinitions.DryRun.Arity);
@@ -43,6 +45,8 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Description.Arity);
         Assert.Equal(ArgumentArity.ZeroOrMore, symbols.Tag.Arity);
         Assert.False(symbols.Tag.AllowMultipleArgumentsPerToken);
+        Assert.Equal(ArgumentArity.ZeroOrMore, symbols.ApplyTo.Arity);
+        Assert.False(symbols.ApplyTo.AllowMultipleArgumentsPerToken);
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Responsibility.Arity);
         Assert.Equal(ArgumentArity.ZeroOrOne, symbols.Template.Arity);
         Assert.Equal(ArgumentArity.Zero, symbols.DryRun.Arity);
@@ -61,6 +65,8 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
             "--description=Project overview",
             "--tag=Docs",
             "--tag=Overview",
+            "--apply-to=**/*.cs",
+            "--apply-to=docs/**",
             "--responsibility=Explains the project",
             "--template=templates/route",
             "--dry-run",
@@ -77,6 +83,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
         Assert.Equal(RouteCreateTestData.TargetId, request.FileTarget);
         Assert.Equal("Project overview", request.Metadata.Description);
         Assert.Equal(["Docs", "Overview"], request.Metadata.Tags);
+        Assert.Equal(["**/*.cs", "docs/**"], request.Metadata.ApplyTo.Select(pattern => pattern.Text));
         Assert.Equal("Explains the project", request.Metadata.Responsibility);
         Assert.Equal("templates/route", request.TemplateReference);
         Assert.Equal(RouteCreateMode.DryRun, request.Mode);
@@ -106,6 +113,7 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
             Assert.Null(bound.InvalidResult);
             Assert.Equal(expectedDescription, request.Metadata.Description);
             Assert.Equal(expectedTags, request.Metadata.Tags);
+            Assert.Empty(request.Metadata.ApplyTo);
         }
 
         (string[] Arguments, RouteCreateFindingCode Code)[] invalidCases =
@@ -116,6 +124,9 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=#Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--tag=Docs"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--apply-to=../outside.cs"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--apply-to=src/**Order.cs"], Code: RouteCreateFindingCode.InvalidMetadata),
+            (Arguments: ["create", RouteCreateTestData.TargetId, "--apply-to"], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--responsibility=   "], Code: RouteCreateFindingCode.InvalidMetadata),
             (Arguments: ["create", RouteCreateTestData.TargetId, "--description=Overview", "--tag=Docs", "--template="], Code: RouteCreateFindingCode.InvalidTemplate),
         ];
@@ -136,6 +147,48 @@ public sealed class RouteCreateDefinitionsAndBindingContractTests
                 invalid.Findings,
                 finding => finding.Code == expectedCode);
         }
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Route Create binding normalizes repeated equivalent apply-to patterns"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
+    public void BindingNormalizesRepeatedEquivalentApplyToPatterns()
+    {
+        var route = RouteBinding.CreateGroup();
+        var symbols = RouteCreateBinding.CreateSymbols(route);
+        var parse = route.Parse(
+        [
+            "create",
+            RouteCreateTestData.TargetId,
+            "--apply-to=docs/**",
+            "--apply-to=**/*.cs",
+            "--apply-to=**/*.cs",
+        ]);
+
+        var bound = RouteCreateRequestBinder.Bind(parse, RouteCreateTestData.Invocation(), symbols);
+        var request = Assert.IsType<RouteCreateRequest>(bound.Request);
+
+        Assert.Null(bound.InvalidResult);
+        Assert.Equal(["**/*.cs", "docs/**"], request.Metadata.ApplyTo.Select(pattern => pattern.Text));
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Route Create binding treats a comma as part of one apply-to pattern"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
+    public void BindingDoesNotSplitCommaBearingApplyToPatterns()
+    {
+        var route = RouteBinding.CreateGroup();
+        var symbols = RouteCreateBinding.CreateSymbols(route);
+        var parse = route.Parse(
+        [
+            "create",
+            RouteCreateTestData.TargetId,
+            "--apply-to=src/**/*.cs,docs/**",
+        ]);
+
+        var bound = RouteCreateRequestBinder.Bind(parse, RouteCreateTestData.Invocation(), symbols);
+        var request = Assert.IsType<RouteCreateRequest>(bound.Request);
+
+        Assert.Null(bound.InvalidResult);
+        Assert.Equal(["src/**/*.cs,docs/**"], request.Metadata.ApplyTo.Select(pattern => pattern.Text));
     }
 
     [Trait("Boundary", "Input")]

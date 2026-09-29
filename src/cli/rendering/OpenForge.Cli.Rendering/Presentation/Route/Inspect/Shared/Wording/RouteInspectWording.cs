@@ -14,6 +14,17 @@ internal static class RouteInspectWording
     internal const string AxiomsHeading = "Axioms";
     internal const string PhysicalLayersHeading = "Physical layers";
 
+    internal static string ApplicabilityState(RouteInspectApplicabilityState state)
+        => state switch
+        {
+            RouteInspectApplicabilityState.Unconditioned => "unconditioned",
+            RouteInspectApplicabilityState.Matched => "matched",
+            RouteInspectApplicabilityState.Unmatched => "unmatched",
+            RouteInspectApplicabilityState.Pending => "pending",
+            RouteInspectApplicabilityState.Invalid => "invalid",
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The source applicability state is not defined."),
+        };
+
     internal static string SourceKind(RouteInspectSourceKind kind)
         => kind switch
         {
@@ -65,6 +76,7 @@ internal static class RouteInspectWording
         => kind switch
         {
             RouteInspectAutomaticReadingKind.OnDemand => "on-demand",
+            RouteInspectAutomaticReadingKind.MatchingFileCondition => "matching-file-condition",
             RouteInspectAutomaticReadingKind.ParentLoadNow => "parent-load-now",
             RouteInspectAutomaticReadingKind.EntrypointKeepInMind => "entrypoint-keep-in-mind",
             RouteInspectAutomaticReadingKind.RoutedFileKeepInMind => "routed-file-keep-in-mind",
@@ -83,6 +95,7 @@ internal static class RouteInspectWording
             RouteInspectAutomaticReadingEvent.TaskReview => "task-review",
             RouteInspectAutomaticReadingEvent.LaterReview => "later-review",
             RouteInspectAutomaticReadingEvent.BaseRead => "base-read",
+            RouteInspectAutomaticReadingEvent.WorkingPathMatches => "working-path-matches",
             _ => throw new ArgumentOutOfRangeException(nameof(readingEvent), readingEvent, "The reading event is not defined."),
         };
 
@@ -109,6 +122,7 @@ internal static class RouteInspectWording
 
         return reading.Kind switch
         {
+            RouteInspectAutomaticReadingKind.MatchingFileCondition => Events(reading.Events),
             RouteInspectAutomaticReadingKind.EntrypointKeepInMind
                 or RouteInspectAutomaticReadingKind.RoutedFileKeepInMind => Events(reading.Events),
             RouteInspectAutomaticReadingKind.OnDemand => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelThisRouteIsSelected(),
@@ -187,6 +201,9 @@ internal static class RouteInspectWording
 
     internal static string InvalidSourceReference(string operand)
         => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectWording.InvalidSourceReference(operand);
+
+    internal static string InvalidWorkingPath()
+        => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MessageInvalidWorkingPath();
 
     internal static string LoaderSubject()
         => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MessageTheLoaderIsNotARouteInspectOneOfItsRoutesInstead();
@@ -282,6 +299,7 @@ internal static class RouteInspectWording
             RouteInspectAutomaticReadingEvent.AncestorRequired => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelItIsNeededAsAnAncestor(),
             RouteInspectAutomaticReadingEvent.TaskReview => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelATaskReviewPointIsReachedWhileItsScopeIsActive(),
             RouteInspectAutomaticReadingEvent.LaterReview => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelALaterReviewPointIsReachedWhileItsScopeIsActive(),
+            RouteInspectAutomaticReadingEvent.WorkingPathMatches => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.LabelAWorkingPathMatchesItsEffectiveFileCondition(),
             _ => throw new ArgumentOutOfRangeException(nameof(readingEvent), readingEvent, "The automatic-reading event is not defined."),
         };
 

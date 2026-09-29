@@ -97,6 +97,40 @@ blocked collision and exact-path guidance; caller cancellation forms
 `cancelled`. Each retains the known collision facts. JSON and redirected
 requests never call the session, and no prompt text is written to stdout.
 
+### Working-path applicability
+
+Lexically normalize the complete repeated `--for` set against the selected
+workspace, including planned paths that do not exist. Reject a path that escapes
+the workspace. The command does not infer paths from Git, prior invocations, or
+dependencies.
+
+Use the same route graph to collect the inspected source's declared condition
+and each inherited ancestor condition. Report those condition sources and their
+patterns, then evaluate each supplied path against the chain: patterns within a
+condition are OR alternatives, and conditioned ancestors are ANDed against the
+same path. For a conditioned source with supplied paths, the state is `matched`
+when at least one path satisfies the full chain and `unmatched` when none does.
+`matchingPaths` contains only paths that satisfy every condition. With an
+effective condition and no supplied paths, the state is `pending` and
+`matchingPaths` is empty. Invalid condition metadata has state `invalid` and
+does not claim a match. A missing local condition inherits every applicable
+ancestor condition. With `--for`, a source without an effective condition has
+state `unconditioned`, remains compatible with the supplied paths, and has an
+empty `matchingPaths` list because no condition matched. Without `--for`,
+omit applicability for an unconditioned source.
+
+This is inspection only. It does not activate the inspected route, load
+nonmatching automatic or `#KeepInMind` children, or change authored content. A
+valid overwrite remains adjacent to its base during explicit inspection. Keep
+authored tags as metadata, but suppress effective automatic and
+`#KeepInMind` reread claims for an unmatched source. Pending applicability
+makes `read.atStart` unavailable with a reason and leaves other effective
+behavior facts unavailable when their values depend on applicability. An
+unmatched condition makes `read.atStart` false. A matched condition does not by
+itself make the source part of task-start context. Keep route and topology
+counts structural. Mark a context-set or size measurement unavailable only
+when pending conditions prevent its value from being established.
+
 ### One route and loading graph
 
 After workspace and source-reference validation, the operation constructs at
@@ -163,15 +197,33 @@ sources remain `invalid-input`. The classifier does not reinterpret a compatibil
 filename, detached route, unrouted source, overwrite customization, route
 depth, added context, or size as a health condition.
 
+Pending applicability remains a reported state. Pending conditions or invalid
+metadata make the result `incomplete` only when they leave a requested reading or
+measurement fact unknown under the existing completeness rules. A definitive
+nonmatch sets `read.atStart` to false and does not by itself make an otherwise
+structurally valid profile incomplete.
+
 ### Reading classification
 
 #### Task start or resume
 
 The classifier resolves the same startup-required context as `context` with no
-explicit operands. It tests membership of the inspected logical source in that
-set independently of the inspection operand. Inspecting the source cannot add
-it to the set being measured. The public yes/no result and its prospective
-meaning are [Task Start Or Resume](interface.md#task-start-or-resume).
+explicit operands and the same normalized `--for` set when supplied. It tests
+membership of the inspected logical source in that filtered set independently
+of the inspection operand. Inspecting the source cannot add it to the set being
+measured. The public result and its prospective meaning are [Task Start Or
+Resume](interface.md#task-start-or-resume).
+
+When the source's effective `applyTo` conditions are pending because no working
+paths were supplied, or invalid metadata prevents evaluation, `read.atStart` is
+null through the existing unavailable fact, with a reason. If supplied paths do
+not match the complete chain, `read.atStart` is false. When paths match or no
+condition applies, determine membership from the actual filtered startup
+context. A condition match or an unconditioned state alone does not imply
+task-start membership. Pending applicability also leaves an automatic or later
+reread fact unavailable when its value depends on whether the source applies;
+an unmatched source has no effective automatic or later `#KeepInMind` reread
+claim, though the authored tag remains metadata.
 
 For a detached entrypoint or a known supported unrouted source, no Loader-rooted
 chain establishes task-start membership. The classifier records that fact as
@@ -191,7 +243,11 @@ relationship.
 
 The resulting typed reason is paired with the actual parent or event needed by
 the human renderer. The renderer receives ordinary event wording rather than
-internal labels. These mechanics satisfy the public [Automatic Reading
+internal labels. When a supplied path matches the effective condition, record
+reason kind `matching-file-condition`, event `working-path-matches`, and human
+text `a supplied working path matches the route's effective file condition.`
+This applicability reason does not establish task-start membership or imply
+automatic reading. These mechanics satisfy the public [Automatic Reading
 Trigger](interface.md#automatic-reading-trigger) boundary.
 
 A detached entrypoint has no Loader-rooted automatic trigger. Its local
@@ -230,13 +286,18 @@ does not measure a rendered identity block or other CLI framing.
 #### Selected closure and additions
 
 The resolver calculates the selected route closure with the same rules as
-`context` and without ordinary link expansion. It retains missing ancestor
-entrypoints needed for route establishment, the target and overwrite, visible
-`#LoadNow` descendants, and applicable scope-local loading. The selection-addition
-set is the ordered selected closure minus the current task-start set. The
-task-start overlap is retained as its own measurement relationship, so an
-already present source is not counted as an addition and is not described as
-having caused startup context.
+`context`, the same supplied `--for` set, and without ordinary link expansion.
+It retains missing ancestor entrypoints needed for route establishment, the
+target and overwrite, visible `#LoadNow` descendants, and applicable scope-local
+loading. The selection-addition set is the ordered selected closure minus the
+current filtered task-start set. The task-start overlap is retained as its own
+measurement relationship, so an already present source is not counted as an
+addition and is not described as having caused startup context.
+
+Route-chain, parent, child, and descendant counts remain structural facts.
+Pending conditions make a context-set or size measurement unavailable only
+when they prevent that measurement from being established. Preserve other
+measurable values and attach an explicit reason to each unavailable fact.
 
 If the difference is empty, the typed result records the empty addition and the
 human renderer uses the exact no-addition meaning in
@@ -313,8 +374,9 @@ missing optional local section adds no local rule. An ordinary `Axioms` heading
 in a routed leaf is not activated as a Framework rule, because only the Loader
 and recognized entrypoints define active `Axioms`.
 
-The collector records the valid base/overwrite relationship but does not emit
-rule bodies. Human output lists source IDs, and `context` with exact section
+The collector records declared and inherited `applyTo` conditions, the
+per-path matching state when `--for` is supplied, and the valid base/overwrite
+relationship, but does not emit rule bodies. Human output lists source IDs, and `context` with exact section
 projection remains the operation for reading inherited rules. Extension
 ownership and managed-file state are not added to this route-profile result;
 they belong to lifecycle behavior outside this operation. See [Rules And
@@ -323,8 +385,8 @@ Customization](interface.md#rules-and-customization).
 ## Selection And Result Formation
 
 The operation forms one typed result after request resolution, graph inspection,
-classification, measurement, topology, inheritance provenance, and availability
-have been established. The result keeps the requested reference, resolved
+classification, measurement, topology, inheritance provenance, applicability,
+and availability have been established. The result keeps the requested reference, resolved
 identity, physical layers, reading facts and reasons, each applicable
 measurement, route structure, Axioms provenance, overwrite relationship,
 observations, availability conditions, semantic status, and useful next
@@ -463,6 +525,12 @@ Implementation evidence must cover:
 - Unresolved non-interactive ID collisions that retain every candidate path and
   require rerunning with one listed exact path.
 - Task-start membership independent of the inspection operand.
+- The same normalized `--for` set for task-start and selected loading; pending,
+  matched, and unmatched applicability; `read.atStart` unavailable with an
+  explicit reason while pending, false when the full chain is unmatched, and
+  otherwise determined by filtered startup membership. Preserve structural
+  route counts and mark only affected context-set or size measurements
+  unavailable.
 - On-demand, parent-triggered `#LoadNow`, visible and selected `#KeepInMind`
   entrypoints, parent-exposed routed `#KeepInMind` files, and overwrite
   inheritance.

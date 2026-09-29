@@ -109,6 +109,7 @@ internal static class RepairCoverageMapper
                 or DoctorFindingKind.RouteGeneratedEntryPath
                 or DoctorFindingKind.RouteGeneratedEntryDescription
                 or DoctorFindingKind.RouteGeneratedEntryTags
+                or DoctorFindingKind.RouteGeneratedEntryApplyTo
                 or DoctorFindingKind.RouteOverwriteOrphan
                 or DoctorFindingKind.RouteOverwriteIndependentIndex
                 or DoctorFindingKind.RouteCompatibilityConflict

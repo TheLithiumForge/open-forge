@@ -55,4 +55,8 @@ internal sealed record ContextRequest
     internal CliDetail? SuppliedDetail { get; }
 
     internal CliDetail EffectiveView { get; }
+
+    internal IReadOnlyList<string> WorkingPaths { get; init; } = [];
+
+    internal bool WorkingPathsSupplied { get; init; }
 }

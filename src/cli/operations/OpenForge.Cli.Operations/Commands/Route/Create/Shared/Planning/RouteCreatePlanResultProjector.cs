@@ -199,6 +199,9 @@ internal sealed class RouteCreatePlanResultProjector
             Description = request.Metadata.Description,
             Responsibility = request.Metadata.Responsibility,
             Tags = request.Metadata.Tags,
+            ApplyTo = request.Metadata.ApplyTo
+                .Select(pattern => pattern.Text)
+                .ToImmutableArray(),
         };
 
     private static ImmutableArray<RouteCreateFinding> Findings(

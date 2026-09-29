@@ -270,6 +270,7 @@ internal sealed record FindQueryInput
     internal FindQueryInput(
         IEnumerable<string> includeValues,
         IEnumerable<string> excludeValues,
+        IEnumerable<string> workingPaths,
         IEnumerable<string> tagValues,
         IEnumerable<string> headingValues,
         string? requireValue,
@@ -291,6 +292,7 @@ internal sealed record FindQueryInput
     {
         IncludeValues = Snapshot(includeValues, nameof(includeValues));
         ExcludeValues = Snapshot(excludeValues, nameof(excludeValues));
+        WorkingPaths = Snapshot(workingPaths, nameof(workingPaths));
         TagValues = Snapshot(tagValues, nameof(tagValues));
         HeadingValues = Snapshot(headingValues, nameof(headingValues));
         PredicateOccurrences = Snapshot(predicateOccurrences, nameof(predicateOccurrences));
@@ -320,6 +322,8 @@ internal sealed record FindQueryInput
     internal IReadOnlyList<string> IncludeValues { get; }
 
     internal IReadOnlyList<string> ExcludeValues { get; }
+
+    internal IReadOnlyList<string> WorkingPaths { get; }
 
     internal IReadOnlyList<string> TagValues { get; }
 

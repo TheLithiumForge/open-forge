@@ -39,7 +39,8 @@ internal sealed class FindResultMatchBuilder
                     match.Path,
                     match.Description,
                     evidence,
-                    matchProjections);
+                    matchProjections,
+                    match.Applicability);
             })
             .ToArray();
     }

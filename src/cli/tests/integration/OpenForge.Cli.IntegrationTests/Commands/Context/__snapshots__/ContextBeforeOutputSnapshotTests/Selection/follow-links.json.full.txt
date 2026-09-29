@@ -72,7 +72,8 @@
         "layer": "base",
         "includedBecause": [
           "#LoadNow from .agents/loader.md",
-          "ancestor required from .agents/docs/guide.md for docs/guide"
+          "ancestor required from .agents/docs/guide.md for docs/guide",
+          "ancestor required from .agents/docs/reference.md"
         ],
         "route": "docs",
         "scope": null,

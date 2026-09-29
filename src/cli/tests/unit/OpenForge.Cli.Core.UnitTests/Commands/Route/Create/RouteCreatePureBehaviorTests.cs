@@ -1,8 +1,10 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
+using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Create.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Create.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Create;
 
@@ -55,6 +57,28 @@ public sealed class RouteCreatePureBehaviorTests
     }
 
     [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Route Create plan equivalence compares independently parsed apply-to patterns by text"), Trait("Feature", "route-create"), Trait("Evidence", "UnitBehavior")]
+    public void PlanEquivalenceMatchesEquivalentApplyToPatternsFromSeparateParses()
+    {
+        var plan = RouteCreateTestData.Plan();
+        var expected = plan with
+        {
+            Request = WithApplyToPattern(plan.Request, "**/*.cs"),
+        };
+        var equivalent = plan with
+        {
+            Request = WithApplyToPattern(plan.Request, "**/*.cs"),
+        };
+        var different = plan with
+        {
+            Request = WithApplyToPattern(plan.Request, "**/*.ts"),
+        };
+
+        Assert.True(RouteCreatePlanEquivalence.Matches(expected, equivalent));
+        Assert.False(RouteCreatePlanEquivalence.Matches(expected, different));
+    }
+
+    [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Create application result factory preserves plan and progress facts"), Trait("Feature", "route-create"), Trait("Evidence", "UnitBehavior")]
     public void ApplicationResultFactoryPreservesPlanAndProgressFacts()
     {
@@ -66,5 +90,23 @@ public sealed class RouteCreatePureBehaviorTests
 
         Assert.Equal(plan.Preview.Target, formation.Target);
         Assert.Equal(RouteCreateVerificationState.Verified, formation.Verification);
+    }
+
+    private static RouteCreateRequest WithApplyToPattern(
+        RouteCreateRequest request,
+        string text)
+    {
+        var pattern = ApplyToPatternMatcher.Parse(text).Pattern
+            ?? throw new InvalidOperationException("The expected apply-to test pattern must be valid.");
+        return new RouteCreateRequest(
+            workspace: request.Workspace,
+            fileTarget: request.FileTarget,
+            metadata: new RouteCreateMetadataInput(
+                request.Metadata.Description,
+                request.Metadata.Tags,
+                request.Metadata.Responsibility,
+                [pattern]),
+            templateReference: request.TemplateReference,
+            mode: request.Mode);
     }
 }

@@ -159,12 +159,23 @@ authored source facts, validates required facts, then forms expected generated
 bytes conforming to the [Generated lines](interface.md#generated-lines) section
 before comparing current bounded content.
 
+Within each selected route closure, Index projects every eligible direct child.
+The command has no `--for` input and does not filter its route inventory by a
+task's working-file set.
+
 Projection rejects identity or route facts that fail the public precondition in
 the [Authoritative Projection](interface.md#authoritative-projection) section
 before plan completion.
 
 Metadata acquisition follows source contracts and contributes only admitted
 facts. Behavior does not define another metadata source.
+
+Read `applyTo` declarations from both the frontmatter root and scoped
+`open-forge` mapping when present, including the root declaration when the
+scoped mapping also exists. Equivalent normalized declarations form one set.
+Declarations whose normalized sets differ, or whose values are malformed,
+remain invalid metadata under the existing Index boundary. Index never prefers
+one declaration or unions their patterns.
 
 Projection carries authored metadata through without semantic rewriting and
 rejects invented fallback meaning. Eligible ordinary Missing optional metadata
@@ -189,6 +200,10 @@ remains outside the operation.
 The projector serializes each expected generated body to the exact public shapes
 owned by the [Generated lines](interface.md#generated-lines) section. Behavior
 requires conformance but does not define another line grammar.
+
+For a valid declared `applyTo` set, the generated row appends its visible suffix
+after the tags. It contains only that source's declaration. Ancestor conditions
+are not synthesized into the row.
 
 Destination resolution and containment are validated before expected bytes are
 accepted. The empty-child case is emitted exactly as required by the Interface
@@ -534,6 +549,9 @@ concerns. Conforming implementation evidence must cover:
 - Required metadata, native source metadata, eligible ordinary Missing optional
   values with automatic-ID fallback, supplied malformed values, and the absence
   of invented fallback meaning.
+- Declared `applyTo` patterns in the suffix after tags, no inherited-condition
+  expansion, complete inventory independent of a task working-file set, and
+  unchanged unconditioned entry lines.
 - Canonical linked and empty entry lines, destination containment, ordinal
   ordering, and stable output bytes.
 - Valid stale bodies, malformed bodies inside a valid heading body, and every invalid

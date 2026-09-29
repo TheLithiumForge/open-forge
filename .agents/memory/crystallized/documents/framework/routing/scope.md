@@ -25,7 +25,14 @@ The `entrypoint` for each `slug` acting as a scope states what it means locally,
 
 Put specialized material in the narrowest scope that fully expresses where it applies. Workspace-wide placement is appropriate only when the material genuinely applies across the workspace. This keeps future context cost tied to selected scopes instead of total stored content.
 
-Each scoped `entrypoint` is responsible for the loading behavior of the entries it exposes. On-demand is the default. Use #LoadNow when omission is more costly than baseline attention, and use #KeepInMind only for continuity that must be revisited at its defined boundaries. Scope does not imply either loading tag.
+Each scoped `entrypoint` is responsible for the loading behavior of the entries it exposes. Without an effective `applyTo` condition, on-demand is the default. Use #LoadNow when omission is more costly than baseline attention, and use #KeepInMind only for continuity that must be revisited at its defined boundaries. Scope does not imply either loading tag.
+
+An optional `applyTo` condition can further limit when a source is applicable to
+working files. Conditions inherit through the selected route chain; ancestor
+conditions must all match the same working path, and any one working path may
+satisfy the complete chain. This controls applicability, not edit permission.
+The [loading contract](loading.md#file-applicability-and-working-paths) defines
+the matching, unknown-path, and inspection rules.
 
 Open Forge does not reserve organizational groupings such as `projects`, `domains`, `teams`, or `platforms`. A workspace introduces whichever concrete `slugs` make its own scopes understandable.
 
@@ -111,6 +118,12 @@ For a newly authored child that adds no local rules, prefer one `inherited` sent
 `inherited` is the only `Axioms` sentinel. Do not combine it with substantive local `Axioms`; omit the sentinel when the child adds local rules. `none` is invalid because it can be read as cancelling inherited `Axioms`.
 
 Inheritance follows the loaded `route` chain. Merely inspecting an inactive source payload, archived file, example, or unselected branch does not activate the scope that file would govern.
+
+File applicability follows that same selected chain. A matching condition on a
+visible entry does not activate a hidden ancestor, and inspection of a
+nonmatching source does not activate its automatic children. See the [loading
+contract](loading.md#file-applicability-and-working-paths) for the complete
+rule.
 
 ## Narrower Meaning
 

@@ -84,6 +84,14 @@ internal static partial class RouteUpdateTestData
                 Expected = null,
                 State = RouteUpdatePatchState.NotRequested,
             },
+            ApplyTo = new RouteUpdateApplyToPatch
+            {
+                Requested = false,
+                Operation = RouteUpdateApplyToOperation.NotRequested,
+                Before = null,
+                Expected = null,
+                State = RouteUpdatePatchState.NotRequested,
+            },
         };
 
     internal static RouteUpdateTemplate ProtectedTemplate()

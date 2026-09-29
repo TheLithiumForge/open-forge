@@ -148,6 +148,95 @@ public sealed class RouteUpdateApplicationIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route Update applies applyTo to target and generated entry then clears both")]
+    [Trait("Feature", "route-update")]
+    [Trait("Evidence", "IntegrationBehavior")]
+    public async Task ApplyToAndClearRefreshTargetAndGeneratedEntry()
+    {
+        using var workspace = RouteUpdateIntegrationWorkspace.Create("route-update-apply-to");
+        var setRequest = workspace.Request(
+            patch: RouteUpdateIntegrationWorkspace.ApplyToPatch("**/*.cs", "docs/*.md"));
+        var set = await workspace.ExecuteAsync(
+            setRequest,
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, set.Status);
+        Assert.Equal(RouteUpdateVerificationState.Verified, set.Verification);
+        Assert.Equal(RouteUpdatePatchState.Changed, set.Patch.ApplyTo.State);
+        Assert.Equal(["**/*.cs", "docs/*.md"], set.Patch.ApplyTo.Expected);
+        Assert.Contains(
+            "applyTo: [\"**/*.cs\", \"docs/*.md\"]",
+            workspace.ReadText(RouteUpdateIntegrationWorkspace.TargetPath),
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "- [Before overview](overview.md) - #Before #Memory - applies to `**/*.cs`, `docs/*.md`",
+            workspace.ReadText(RouteUpdateIntegrationWorkspace.ParentPath),
+            StringComparison.Ordinal);
+        Assert.Collection(
+            set.Effects,
+            target => Assert.Equal(RouteUpdateIntegrationWorkspace.TargetPath, target.Path),
+            parent => Assert.Equal(RouteUpdateIntegrationWorkspace.ParentPath, parent.Path));
+
+        var afterSet = workspace.SnapshotHashes();
+        var repeated = await workspace.ExecuteAsync(
+            setRequest,
+            TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, repeated.Status);
+        Assert.Empty(repeated.Effects);
+        Assert.Equal(afterSet, workspace.SnapshotHashes());
+
+        var clear = await workspace.ExecuteAsync(
+            workspace.Request(patch: RouteUpdateIntegrationWorkspace.ClearApplyToPatch()),
+            TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, clear.Status);
+        Assert.Equal(RouteUpdateVerificationState.Verified, clear.Verification);
+        Assert.Equal(RouteUpdatePatchState.Changed, clear.Patch.ApplyTo.State);
+        Assert.DoesNotContain(
+            "applyTo:",
+            workspace.ReadText(RouteUpdateIntegrationWorkspace.TargetPath),
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "- [Before overview](overview.md) - #Before #Memory",
+            workspace.ReadText(RouteUpdateIntegrationWorkspace.ParentPath),
+            StringComparison.Ordinal);
+
+        var afterClear = workspace.SnapshotHashes();
+        var clearNoOp = await workspace.ExecuteAsync(
+            workspace.Request(patch: RouteUpdateIntegrationWorkspace.ClearApplyToPatch()),
+            TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, clearNoOp.Status);
+        Assert.Equal(RouteUpdatePatchState.Unchanged, clearNoOp.Patch.ApplyTo.State);
+        Assert.Empty(clearNoOp.Effects);
+        Assert.Equal(afterClear, workspace.SnapshotHashes());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route Update clearing absent applyTo leaves an unrelated stale generated entry untouched")]
+    [Trait("Feature", "route-update")]
+    [Trait("Evidence", "IntegrationSafety")]
+    public async Task ClearingAbsentApplyToDoesNotRewriteStaleParentEntry()
+    {
+        using var workspace = RouteUpdateIntegrationWorkspace.Create(
+            "route-update-clear-absent-preserves-stale-entry");
+        workspace.SeedStaleParentApplyToEntry();
+        var before = workspace.SnapshotHashes();
+        var staleEntry = "- [Before overview](overview.md) - #Before #Memory - applies to `old/*.cs`";
+
+        var result = await workspace.ExecuteAsync(
+            workspace.Request(patch: RouteUpdateIntegrationWorkspace.ClearApplyToPatch()),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(RouteUpdatePatchState.Unchanged, result.Patch.ApplyTo.State);
+        Assert.Empty(result.Effects);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.Contains(
+            staleEntry,
+            workspace.ReadText(RouteUpdateIntegrationWorkspace.ParentPath),
+            StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Route Update applies canonical and compatibility entrypoints without identity drift"),
      InlineData(".agents/memory/project-alpha/overview/_overview.md", (int)RouteUpdateTargetForm.CanonicalEntrypoint),
      InlineData(".agents/memory/project-alpha/overview/index.md", (int)RouteUpdateTargetForm.CompatibilityEntrypoint),

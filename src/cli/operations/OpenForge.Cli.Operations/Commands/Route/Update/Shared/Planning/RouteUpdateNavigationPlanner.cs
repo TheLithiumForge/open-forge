@@ -26,8 +26,9 @@ internal sealed partial class RouteUpdateNavigationPlanner
             observation.Catalogue);
         var templateChangesEntrypoint = destination.Body.State == RouteUpdateBodyState.TemplateCopied
             && SourceFormClassifier.IsEntrypoint(observation.TargetSource.Base.Form);
-        if (!observation.Request.Patch.Description.Requested
-            && !observation.Request.Patch.Tags.Requested
+        if (destination.Body.Metadata.Patch.Description.State != RouteUpdatePatchState.Changed
+            && destination.Body.Metadata.Patch.Tags.State != RouteUpdatePatchState.Changed
+            && destination.Body.Metadata.Patch.ApplyTo.State != RouteUpdatePatchState.Changed
             && !templateChangesEntrypoint)
         {
             return RouteUpdateNavigationBuild.Complete(

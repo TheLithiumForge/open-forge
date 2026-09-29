@@ -50,6 +50,7 @@ internal static class FindOperationFactory
             layerInspector: layerInspector,
             matcher: matcher,
             projectionBuilder: projectionBuilder,
+            applicabilityResolver: new FindApplicabilityResolver(layerInspector),
             resultBuilder: resultBuilder);
     }
 

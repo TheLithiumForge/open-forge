@@ -23,7 +23,8 @@ internal sealed class RouteMetadataParser
                 },
                 isCompatibilityEntrypoint,
                 isOverwritePresent,
-                facts.ObservedDescription);
+                facts.ObservedDescription,
+                facts.ApplyTo);
         }
 
         return RouteSourceMetadata.Complete(
@@ -31,6 +32,7 @@ internal sealed class RouteMetadataParser
                 ?? throw new InvalidOperationException("Complete Open Forge metadata requires a description."),
             facts.Tags,
             isCompatibilityEntrypoint,
-            isOverwritePresent);
+            isOverwritePresent,
+            facts.ApplyTo);
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
@@ -41,6 +42,8 @@ internal sealed record GeneratedNavigationEntry
     internal string Destination { get; }
 
     internal IReadOnlyList<string> Tags { get; }
+
+    internal IReadOnlyList<ApplyToPattern> ApplyTo { get; init; } = [];
 
     internal string Line { get; }
 }

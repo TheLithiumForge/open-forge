@@ -6,23 +6,34 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Selection;
 
 internal sealed class ContextLoadingClosureResolver
 {
     private readonly List<ContextFinding> _findings = [];
+    private readonly List<ContextPendingCondition> _pendingConditions = [];
+    private readonly HashSet<string> _pendingConditionSources = new(StringComparer.Ordinal);
+    private IReadOnlyList<string> _workingPaths = [];
+    private bool _workingPathsSupplied;
     private bool _incomplete;
     private bool _blocked;
 
     internal ContextLoadingClosureResolution Resolve(
         ContextGraph graph,
         IReadOnlyList<ContextResolvedRequest> requested,
-        ContextSelectionAccumulator startup)
+        ContextSelectionAccumulator startup,
+        IReadOnlyList<string>? workingPaths = null,
+        bool workingPathsSupplied = false)
     {
         ArgumentNullException.ThrowIfNull(graph);
         ArgumentNullException.ThrowIfNull(requested);
         ArgumentNullException.ThrowIfNull(startup);
+        _workingPaths = workingPaths ?? [];
+        _workingPathsSupplied = workingPathsSupplied;
         AddRootFindings(graph);
         ResolveStartup(graph, startup);
         var combined = startup.Clone();
@@ -35,6 +46,7 @@ internal sealed class ContextLoadingClosureResolver
                 CombinedSources = combined.Sources,
             },
             Findings = _findings.ToArray(),
+            PendingConditions = _pendingConditions.ToArray(),
             Incomplete = _incomplete,
             Blocked = _blocked,
         };
@@ -57,6 +69,9 @@ internal sealed class ContextLoadingClosureResolver
                 GeneratedEntries = source.GeneratedEntries,
             }).ToArray(),
             LoaderRootPaths = graph.RouteFacts.Topology.LoaderRootPaths,
+            EvaluateApplicability = true,
+            WorkingPathsSupplied = _workingPathsSupplied,
+            WorkingPaths = _workingPaths,
         });
         foreach (var selection in loading.Startup)
         {
@@ -65,13 +80,25 @@ internal sealed class ContextLoadingClosureResolver
                     "A resolved source loading selection must belong to the Context graph.");
             foreach (var reason in selection.Reasons)
             {
-                selected.Add(source, ProjectReason(graph, reason));
+                selected.Add(source, ProjectReason(graph, reason), ProjectApplicability(selection.Applicability));
             }
         }
 
         foreach (var issue in loading.Issues)
         {
-            AddClosureFinding(issue.Path, issue.Cause);
+            if (issue.Kind == SourceLoadingClosureIssueKind.ApplicabilityInvalid)
+            {
+                AddApplicabilityInvalidFinding(issue.Path);
+            }
+            else
+            {
+                AddClosureFinding(issue.Path, issue.Cause);
+            }
+        }
+
+        foreach (var condition in loading.PendingConditions)
+        {
+            AddPendingCondition(condition);
         }
     }
 
@@ -104,6 +131,7 @@ internal sealed class ContextLoadingClosureResolver
                 SourceLoadingClosureReasonKind.Loader => ContextInclusionReasonKind.Loader,
                 SourceLoadingClosureReasonKind.LoadNow => ContextInclusionReasonKind.LoadNow,
                 SourceLoadingClosureReasonKind.KeepInMind => ContextInclusionReasonKind.KeepInMind,
+                SourceLoadingClosureReasonKind.Applicability => ContextInclusionReasonKind.Applicability,
                 SourceLoadingClosureReasonKind.AncestorRequired => ContextInclusionReasonKind.AncestorRequired,
                 _ => throw new ArgumentOutOfRangeException(
                     nameof(reason),
@@ -150,7 +178,7 @@ internal sealed class ContextLoadingClosureResolver
             IReadOnlyList<ContextGraphSource> chain = [];
             if (source.RouteState == SourceRouteState.Routed)
             {
-                var resolvedChain = ReadChain(graph, source);
+                var resolvedChain = ContextApplicabilityProjector.ReadChain(graph, source);
                 if (resolvedChain is null)
                 {
                     AddClosureFinding(source.CanonicalPath, "The selected source route chain is unavailable.");
@@ -161,6 +189,7 @@ internal sealed class ContextLoadingClosureResolver
                     var identity = Identity(source);
                     foreach (var ancestor in chain.Take(chain.Count - 1).Where(item => item.IsEntrypoint))
                     {
+                        var applicability = ReadApplicability(graph, ancestor);
                         selected.Add(
                             ancestor,
                             new ContextInclusionReason(
@@ -168,10 +197,13 @@ internal sealed class ContextLoadingClosureResolver
                                 source: identity,
                                 reference: value.Reference,
                                 depth: null,
-                                location: null));
+                                location: null),
+                            ProjectApplicability(applicability));
                     }
                 }
             }
+
+            var sourceApplicability = ReadApplicability(graph, source);
 
             selected.Add(
                 source,
@@ -180,7 +212,8 @@ internal sealed class ContextLoadingClosureResolver
                     source: null,
                     reference: value.Reference,
                     depth: null,
-                    location: null));
+                    location: null),
+                ProjectApplicability(sourceApplicability));
             var selectedEntrypoints = chain.Where(item => item.IsEntrypoint).ToArray();
             if (selectedEntrypoints.Length == 0 && source.IsEntrypoint)
             {
@@ -189,7 +222,12 @@ internal sealed class ContextLoadingClosureResolver
 
             if (selectedEntrypoints.Length != 0)
             {
-                TraverseSelected(graph, selectedEntrypoints, selected, value.Reference);
+                TraverseSelected(
+                    graph,
+                    selectedEntrypoints,
+                    selected,
+                    value.Reference,
+                    source.RouteState == SourceRouteState.Routed && chain.Count != 0);
             }
         }
     }
@@ -198,8 +236,14 @@ internal sealed class ContextLoadingClosureResolver
         ContextGraph graph,
         IEnumerable<ContextGraphSource> seeds,
         ContextSelectionAccumulator selected,
-        string reference)
+        string reference,
+        bool chainAvailable)
     {
+        if (!chainAvailable)
+        {
+            return;
+        }
+
         var queue = new Queue<ContextGraphSource>(seeds);
         var traversed = new HashSet<string>(StringComparer.Ordinal);
         while (queue.TryDequeue(out var parent))
@@ -209,17 +253,40 @@ internal sealed class ContextLoadingClosureResolver
                 continue;
             }
 
-            foreach (var entry in ReadVisibleEntries(graph, parent).Where(entry => entry.LoadNow || entry.KeepInMind))
+            var parentApplicability = ReadApplicability(graph, parent);
+            if (parentApplicability is not null
+                && parentApplicability.State is not (SourceApplicabilityState.Unconditioned or SourceApplicabilityState.Matched))
+            {
+                continue;
+            }
+
+            foreach (var entry in ReadVisibleEntries(graph, parent).Where(entry => entry.AutoSelect))
             {
                 var added = false;
                 if (entry.LoadNow)
                 {
-                    added = selected.Add(entry.Target, ParentReason(ContextInclusionReasonKind.LoadNow, parent, reference));
+                    added = selected.Add(
+                        entry.Target,
+                        ParentReason(ContextInclusionReasonKind.LoadNow, parent, reference),
+                        ProjectApplicability(entry.Applicability));
                 }
 
                 if (entry.KeepInMind)
                 {
-                    added |= selected.Add(entry.Target, ParentReason(ContextInclusionReasonKind.KeepInMind, parent, reference));
+                    added |= selected.Add(
+                        entry.Target,
+                        ParentReason(ContextInclusionReasonKind.KeepInMind, parent, reference),
+                        ProjectApplicability(entry.Applicability));
+                }
+
+                if (entry.Applicability is { State: SourceApplicabilityState.Matched }
+                    && !entry.LoadNow
+                    && !entry.KeepInMind)
+                {
+                    added |= selected.Add(
+                        entry.Target,
+                        ParentReason(ContextInclusionReasonKind.Applicability, parent, reference),
+                        ProjectApplicability(entry.Applicability));
                 }
 
                 if (added && entry.Target.IsEntrypoint)
@@ -277,16 +344,107 @@ internal sealed class ContextLoadingClosureResolver
                 keepInMind &= target.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal);
             }
 
+            var applicability = ReadApplicability(graph, target);
+            var autoSelect = applicability?.State switch
+            {
+                SourceApplicabilityState.Matched => true,
+                SourceApplicabilityState.Unmatched
+                    or SourceApplicabilityState.Pending
+                    or SourceApplicabilityState.Invalid => false,
+                SourceApplicabilityState.Unconditioned => loadNow || keepInMind,
+                null => loadNow || keepInMind,
+                _ => throw new ArgumentOutOfRangeException(nameof(target), applicability.State, "The source applicability state is not defined."),
+            };
+
             entries.Add(new VisibleEntry
             {
                 Target = target,
                 LoadNow = loadNow,
                 KeepInMind = keepInMind,
+                AutoSelect = autoSelect,
+                Applicability = applicability,
             });
         }
 
         return entries;
     }
+
+    private SourceApplicabilityResult? ReadApplicability(ContextGraph graph, ContextGraphSource source)
+    {
+        var result = ContextApplicabilityProjector.Evaluate(graph, source, _workingPaths);
+        if (result is null)
+        {
+            return null;
+        }
+
+        switch (result.State)
+        {
+            case SourceApplicabilityState.Pending:
+                foreach (var condition in result.Conditions)
+                {
+                    if (condition.Metadata.State == ApplyToMetadataState.Valid)
+                    {
+                        AddPendingCondition(condition);
+                    }
+                }
+
+                break;
+            case SourceApplicabilityState.Invalid:
+                AddApplicabilityInvalidFinding(source.CanonicalPath);
+                break;
+            case SourceApplicabilityState.Unconditioned:
+            case SourceApplicabilityState.Matched:
+            case SourceApplicabilityState.Unmatched:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(result), result.State, "The source applicability state is not defined.");
+        }
+
+        return result;
+    }
+
+    private void AddPendingCondition(SourceApplyToCondition condition)
+    {
+        if (_pendingConditionSources.Add(condition.CanonicalSourcePath))
+        {
+            _pendingConditions.Add(new ContextPendingCondition(
+                condition.CanonicalSourcePath,
+                condition.Metadata.Patterns.Select(pattern => pattern.Text)));
+        }
+
+        _incomplete = true;
+        if (!_findings.Any(finding => finding.Code == ContextFindingCode.ApplicabilityPending))
+        {
+            _findings.Add(Finding(
+                code: ContextFindingCode.ApplicabilityPending,
+                subject: null,
+                cause: string.Empty,
+                reference: null,
+                source: null,
+                path: null));
+        }
+    }
+
+    private void AddApplicabilityInvalidFinding(string path)
+    {
+        _incomplete = true;
+        if (_findings.Any(finding => finding.Code == ContextFindingCode.ApplicabilityInvalid
+            && string.Equals(finding.Path, path, StringComparison.Ordinal)))
+        {
+            return;
+        }
+
+        _findings.Add(Finding(
+            code: ContextFindingCode.ApplicabilityInvalid,
+            subject: path,
+            cause: string.Empty,
+            reference: null,
+            source: null,
+            path: path));
+    }
+
+    private ContextApplicability? ProjectApplicability(SourceApplicabilityResult? result)
+        => ContextApplicabilityProjector.Project(result, _workingPathsSupplied);
 
     private static bool IsDirectChild(ContextGraph graph, ContextGraphSource parent, ContextGraphSource target)
     {
@@ -297,46 +455,6 @@ internal sealed class ContextLoadingClosureResolver
 
         var node = graph.RouteFacts.Topology.FindByPath(parent.CanonicalPath);
         return node is not null && node.ChildPaths.Contains(target.CanonicalPath, StringComparer.Ordinal);
-    }
-
-    private static IReadOnlyList<ContextGraphSource>? ReadChain(ContextGraph graph, ContextGraphSource source)
-    {
-        var current = graph.RouteFacts.Topology.FindByPath(source.CanonicalPath);
-        if (current is null)
-        {
-            return null;
-        }
-
-        var chain = new List<ContextGraphSource>();
-        var seen = new HashSet<string>(StringComparer.Ordinal);
-        while (seen.Add(current.Identity.CanonicalBasePath))
-        {
-            var item = graph.FindByPath(current.Identity.CanonicalBasePath);
-            if (item is null)
-            {
-                return null;
-            }
-
-            chain.Add(item);
-            if (current.ParentState == SourceRouteParentState.None)
-            {
-                chain.Reverse();
-                return chain;
-            }
-
-            if (current.ParentState != SourceRouteParentState.Resolved)
-            {
-                return null;
-            }
-
-            current = graph.RouteFacts.Topology.FindByPath(current.ParentPaths[0]);
-            if (current is null)
-            {
-                return null;
-            }
-        }
-
-        return null;
     }
 
     private void AddRootFindings(ContextGraph graph)
@@ -409,5 +527,9 @@ internal sealed class ContextLoadingClosureResolver
         public required bool LoadNow { get; init; }
 
         public required bool KeepInMind { get; init; }
+
+        public required bool AutoSelect { get; init; }
+
+        public required SourceApplicabilityResult? Applicability { get; init; }
     }
 }

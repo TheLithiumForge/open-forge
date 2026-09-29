@@ -1,7 +1,11 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Loading;
 
@@ -15,11 +19,15 @@ internal sealed class SourceLoadingClosureResolver
         private readonly List<string> _continuityPaths = [];
         private readonly HashSet<string> _continuitySet = new(StringComparer.Ordinal);
         private readonly List<SourceLoadingClosureIssue> _issues = [];
+        private readonly List<SourceApplyToCondition> _pendingConditions = [];
+        private readonly HashSet<string> _pendingConditionSources = new(StringComparer.Ordinal);
         private readonly SourceLoadingClosureGraph _graph;
         private readonly SelectionAccumulator _selection = new();
+        private readonly SourceLoadingClosureRequest _request;
 
         internal ClosureBuilder(SourceLoadingClosureRequest request)
         {
+            _request = request;
             _graph = new SourceLoadingClosureGraph(request);
         }
 
@@ -91,8 +99,7 @@ internal sealed class SourceLoadingClosureResolver
 
                 var generated = frame.Source.GeneratedEntries.Entries[frame.NextEntryIndex++];
                 var visible = ReadVisible(frame.Source, generated);
-                if (visible is null
-                    || !visible.LoadNow && !visible.KeepInMind)
+                if (visible is null || !visible.AutoSelect)
                 {
                     continue;
                 }
@@ -101,13 +108,25 @@ internal sealed class SourceLoadingClosureResolver
                 if (frame.AddSelections && visible.LoadNow)
                 {
                     addedToSelection = _selection.Add(visible.Target.Path,
-                        new SourceLoadingClosureReason(SourceLoadingClosureReasonKind.LoadNow, frame.Source.Path));
+                        new SourceLoadingClosureReason(SourceLoadingClosureReasonKind.LoadNow, frame.Source.Path),
+                        visible.Applicability);
                 }
 
                 if (frame.AddSelections && visible.KeepInMind)
                 {
                     addedToSelection |= _selection.Add(visible.Target.Path,
-                        new SourceLoadingClosureReason(SourceLoadingClosureReasonKind.KeepInMind, frame.Source.Path));
+                        new SourceLoadingClosureReason(SourceLoadingClosureReasonKind.KeepInMind, frame.Source.Path),
+                        visible.Applicability);
+                }
+
+                if (frame.AddSelections
+                    && visible.Applicability is { State: SourceApplicabilityState.Matched }
+                    && !visible.LoadNow
+                    && !visible.KeepInMind)
+                {
+                    addedToSelection |= _selection.Add(visible.Target.Path,
+                        new SourceLoadingClosureReason(SourceLoadingClosureReasonKind.Applicability, frame.Source.Path),
+                        visible.Applicability);
                 }
 
                 var isContinuity = frame.IsContinuity || visible.KeepInMind;
@@ -150,7 +169,99 @@ internal sealed class SourceLoadingClosureResolver
                 keepInMind &= target.Metadata.Tags.Contains("KeepInMind", StringComparer.Ordinal);
             }
 
-            return new VisibleEntry(target, loadNow, keepInMind);
+            var applicability = ReadApplicability(target);
+            var autoSelect = applicability?.State switch
+            {
+                SourceApplicabilityState.Matched => true,
+                SourceApplicabilityState.Unmatched
+                    or SourceApplicabilityState.Pending
+                    or SourceApplicabilityState.Invalid => false,
+                SourceApplicabilityState.Unconditioned => loadNow || keepInMind,
+                null => loadNow || keepInMind,
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(target),
+                    applicability.State,
+                    "The source applicability state is not defined."),
+            };
+            return new VisibleEntry(target, loadNow, keepInMind, autoSelect, applicability);
+        }
+
+        private SourceApplicabilityResult? ReadApplicability(SourceLoadingClosureSource target)
+        {
+            if (!_request.EvaluateApplicability)
+            {
+                return null;
+            }
+
+            SourceApplicabilityResult result;
+            if (target.RouteState == SourceRouteState.Ambiguous)
+            {
+                result = new SourceApplicabilityResult(
+                    SourceApplicabilityState.Invalid,
+                    ImmutableArray<SourceApplyToCondition>.Empty,
+                    ImmutableArray<string>.Empty);
+            }
+            else
+            {
+                result = SourceApplicabilityEvaluator.Evaluate(
+                    ReadConditionChain(target),
+                    _request.WorkingPaths);
+            }
+
+            switch (result.State)
+            {
+                case SourceApplicabilityState.Pending:
+                    foreach (var condition in result.Conditions)
+                    {
+                        if (condition.Metadata.State == ApplyToMetadataState.Valid
+                            && _pendingConditionSources.Add(condition.CanonicalSourcePath))
+                        {
+                            _pendingConditions.Add(condition);
+                        }
+                    }
+
+                    break;
+                case SourceApplicabilityState.Invalid:
+                    AddIssue(
+                        SourceLoadingClosureIssueKind.ApplicabilityInvalid,
+                        target.Path,
+                        "The source has an invalid applyTo condition or ambiguous route ancestry.");
+                    break;
+                case SourceApplicabilityState.Unconditioned:
+                case SourceApplicabilityState.Matched:
+                case SourceApplicabilityState.Unmatched:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(result), result.State, "The source applicability state is not defined.");
+            }
+
+            return result;
+        }
+
+        private IReadOnlyList<SourceApplyToCondition> ReadConditionChain(SourceLoadingClosureSource source)
+        {
+            var chain = new List<SourceLoadingClosureSource>();
+            var current = source;
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            while (seen.Add(current.Path))
+            {
+                chain.Add(current);
+                if (current.ParentPath is not { } parentPath)
+                {
+                    break;
+                }
+
+                var parent = _graph.Sources.FirstOrDefault(item => string.Equals(item.Path, parentPath, StringComparison.Ordinal));
+                if (parent is null)
+                {
+                    break;
+                }
+
+                current = parent;
+            }
+
+            chain.Reverse();
+            return chain.Select(item => new SourceApplyToCondition(item.Path, item.Metadata.ApplyTo)).ToArray();
         }
 
         private bool AddContinuity(string path)
@@ -176,6 +287,7 @@ internal sealed class SourceLoadingClosureResolver
                 Startup = _selection.Freeze(),
                 ContinuityPaths = _continuityPaths.ToArray(),
                 Issues = _issues.ToArray(),
+                PendingConditions = _pendingConditions.ToArray(),
             };
 
         private sealed class TraversalFrame
@@ -202,14 +314,19 @@ internal sealed class SourceLoadingClosureResolver
         private sealed record VisibleEntry(
             SourceLoadingClosureSource Target,
             bool LoadNow,
-            bool KeepInMind);
+            bool KeepInMind,
+            bool AutoSelect,
+            SourceApplicabilityResult? Applicability);
 
         private sealed class SelectionAccumulator
         {
             private readonly Dictionary<string, MutableSelection> _byPath = new(StringComparer.Ordinal);
             private readonly List<MutableSelection> _values = [];
 
-            internal bool Add(string path, SourceLoadingClosureReason reason)
+            internal bool Add(
+                string path,
+                SourceLoadingClosureReason reason,
+                SourceApplicabilityResult? applicability = null)
             {
                 if (_byPath.TryGetValue(path, out var existing))
                 {
@@ -218,6 +335,8 @@ internal sealed class SourceLoadingClosureResolver
                         existing.Reasons.Add(reason);
                     }
 
+                    existing.Applicability ??= applicability;
+
                     return false;
                 }
 
@@ -225,6 +344,7 @@ internal sealed class SourceLoadingClosureResolver
                 {
                     Path = path,
                     Reasons = [reason],
+                    Applicability = applicability,
                 };
                 _byPath.Add(path, added);
                 _values.Add(added);
@@ -236,6 +356,7 @@ internal sealed class SourceLoadingClosureResolver
                 {
                     Path = value.Path,
                     Reasons = value.Reasons.ToArray(),
+                    Applicability = value.Applicability,
                 }).ToArray();
 
             private sealed record MutableSelection
@@ -243,6 +364,8 @@ internal sealed class SourceLoadingClosureResolver
                 public required string Path { get; init; }
 
                 public required List<SourceLoadingClosureReason> Reasons { get; init; }
+
+                public SourceApplicabilityResult? Applicability { get; set; }
             }
         }
     }

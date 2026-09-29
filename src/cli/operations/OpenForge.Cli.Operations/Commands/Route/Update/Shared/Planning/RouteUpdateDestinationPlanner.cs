@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
+using OpenForge.Cli.Core.Framework.Sources.Metadata;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
@@ -76,8 +77,12 @@ internal sealed class RouteUpdateDestinationPlanner
         var intendedText = StrictUtf8.GetString(body.IntendedTargetBytes.AsSpan());
         var document = new MarkdownDocumentParser().Parse(intendedText);
         var facts = new FrameworkDocumentMetadataParser().Parse(document);
+        var intendedMetadata = new SourceAuthoredMetadataParser().Parse(
+            document,
+            observation.TargetSource.Base.Form);
         if (facts.State != FrameworkDocumentMetadataState.Complete
-            || facts.Metadata is not { } intended)
+            || facts.Metadata is not { }
+            || intendedMetadata.State != SourceAuthoredMetadataState.Complete)
         {
             return RouteUpdateDestinationBuild.Stop(
                 new RouteUpdatePlanningBoundary
@@ -92,9 +97,7 @@ internal sealed class RouteUpdateDestinationPlanner
                 Body = body,
                 Template = template,
                 IntendedTargetBytes = body.IntendedTargetBytes,
-                IntendedMetadata = SourceAuthoredMetadataFacts.Complete(
-                    intended.Description,
-                    intended.Tags),
+                IntendedMetadata = intendedMetadata,
             });
     }
 

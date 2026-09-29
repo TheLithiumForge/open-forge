@@ -17,6 +17,7 @@ included because Loader
 === .agents/docs/_docs.md (docs) ===
 included because #LoadNow from .agents/loader.md
 included because ancestor required from .agents/docs/guide.md for docs/guide
+included because ancestor required from .agents/docs/reference.md
 ---
 open-forge:
   description: Documents

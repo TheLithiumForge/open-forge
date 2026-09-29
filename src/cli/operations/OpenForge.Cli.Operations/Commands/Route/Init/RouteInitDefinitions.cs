@@ -47,6 +47,13 @@ internal static partial class RouteInitDefinitions
         [],
         "tag");
 
+    internal static readonly CliOptionDefinition<string[]> ApplyTo = new(
+        "--apply-to",
+        "Add one file glob to the missing generic final target's applicability.",
+        CliOptionArity.ExactlyOne,
+        [],
+        "glob");
+
     internal static readonly CliOptionDefinition<bool> DryRun = new(
         "--dry-run",
         "Preview the complete initialization without writing files.",

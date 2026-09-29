@@ -18,7 +18,7 @@ internal static class FindHelpSections
                 ),
             new CliHelpSection(
                 global::OpenForge.Cli.OutputText.Find.FindText.HelpHeadingPredicatesAndRegions(),
-                ("  " + global::OpenForge.Cli.OutputText.Find.FindText.HelpPredicatesAndRegions())
+                ("  " + global::OpenForge.Cli.OutputText.Find.FindText.HelpPredicatesAndRegions() + "\n  " + global::OpenForge.Cli.OutputText.Find.FindText.HelpFileApplicability())
                 ),
             new CliHelpSection(
                 global::OpenForge.Cli.OutputText.Find.FindText.HelpHeadingContentAndViews(),

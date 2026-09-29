@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
+using YamlDotNet.Core;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Yaml;
 
@@ -39,6 +40,10 @@ public sealed class YamlDocumentParserTests
 
         var values = Assert.IsAssignableFrom<IReadOnlyList<YamlNode>>(tags.Sequence);
         Assert.Equal(["Plain", "Évidence", "工作"], values.Select(value => value.Scalar?.Value));
+        Assert.Equal(ScalarStyle.Plain, values[0].Scalar?.Style);
+        Assert.Equal(ScalarStyle.SingleQuoted, values[1].Scalar?.Style);
+        Assert.Equal(ScalarStyle.DoubleQuoted, values[2].Scalar?.Style);
+        Assert.True(values[1].Scalar?.IsQuotedImplicit);
         Assert.Equal(["Plain", "'Évidence'", "\"工作\""], values.Select(value => Slice(source, value.Span)));
 
         var emoji = MappingValue(root, "emoji");

@@ -51,6 +51,11 @@ public sealed class FindPresentationBindingTests
         var jsonCalls = 0;
         SourcePhysicalPathResolver physicalPathResolver = (_, _) => throw new InvalidOperationException(
             "The failed boundary must stop before path resolution.");
+        var layerInspector = new FindLayerInspector(
+            (_, _, _) => throw new InvalidOperationException("The failed boundary must stop before layer reads."),
+            _ => throw new InvalidOperationException("The failed boundary must stop before Markdown parsing."),
+            _ => throw new InvalidOperationException("The failed boundary must stop before frontmatter parsing."),
+            new FindBodyTagScanner());
         var operation = new FindOperation(
             new FindSourceResolver(
                 (_, _) =>
@@ -62,13 +67,10 @@ public sealed class FindPresentationBindingTests
                     new SourceReferenceResolver(physicalPathResolver))),
                 physicalPathResolver,
                 (_, _, _) => throw new InvalidOperationException("The failed boundary must stop before route facts.")),
-            new FindLayerInspector(
-                (_, _, _) => throw new InvalidOperationException("The failed boundary must stop before layer reads."),
-                _ => throw new InvalidOperationException("The failed boundary must stop before Markdown parsing."),
-                _ => throw new InvalidOperationException("The failed boundary must stop before frontmatter parsing."),
-                new FindBodyTagScanner()),
+            layerInspector,
             new FindMatcher(),
             new FindProjectionBuilder(),
+            new FindApplicabilityResolver(layerInspector),
             new FindResultBuilder());
         var binding = CliReportBinding.Close(
             FindBinding.CreateRequestBinding(symbols, new FindBindingComponents { Help = CliHelpContent.Empty, Operation = operation }),

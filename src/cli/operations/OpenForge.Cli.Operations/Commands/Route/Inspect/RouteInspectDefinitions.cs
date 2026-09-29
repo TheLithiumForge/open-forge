@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
+using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect;
@@ -16,6 +17,13 @@ internal static class RouteInspectDefinitions
     internal static readonly CliSyntaxDefinition SourceReference = new(
         "source-reference",
         "Select one source by its ID or exact .agents path.");
+
+    internal static readonly CliOptionDefinition<string[]> WorkingPath = new(
+        "--for",
+        "Explain applicability for one workspace-relative working path; repeat for more paths.",
+        CliOptionArity.ExactlyOne,
+        [],
+        "path");
 
     internal static string ReadObservationCode(RouteInspectObservationCode code)
     {
@@ -38,6 +46,7 @@ internal static class RouteInspectDefinitions
         return code switch
         {
             RouteInspectConditionCode.InvalidWorkspace => "route-inspect.invalid-workspace",
+            RouteInspectConditionCode.InvalidWorkingPath => "route-inspect.invalid-working-path",
             RouteInspectConditionCode.WorkspaceUnavailable => "route-inspect.workspace-unavailable",
             RouteInspectConditionCode.UnsafeWorkspace => "route-inspect.unsafe-workspace",
             RouteInspectConditionCode.MissingSource => "route-inspect.missing-source",

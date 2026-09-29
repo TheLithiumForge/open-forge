@@ -38,6 +38,10 @@ internal static class ContextReportSelector
                 ? ContextWording.Summary(sources, tokens)
                 : null,
             Links = full ? result.Links.Select(Link).ToArray() : null,
+            PendingConditions = result.PendingConditions.Select(PendingCondition).ToArray(),
+            WorkingPaths = result.Selection.WorkingPathsSupplied
+                ? result.Selection.WorkingPaths
+                : null,
             PathsOnly = result.Presentation.Content.Effective is [{ Kind: ContextContentPartKind.Paths }],
             EmptyAdditions = result.Selection.AdditionsOnly && selectedLayers.Length == 0,
             SourceCount = result.Counts.Sources,
@@ -64,6 +68,12 @@ internal static class ContextReportSelector
                     finding.Part?.CanonicalValue ?? "content",
                     finding.Cause,
                     Subject(finding)))
+                .Concat(result.PendingConditions.Count > 0
+                    ? [new CliLimitation(
+                        ContextWording.ApplicabilityLabel(),
+                        ContextWording.ApplicabilityPendingLimitation(),
+                        null)]
+                    : [])
                 .ToArray(),
             Data = data,
             Next = Next(result),
@@ -158,7 +168,9 @@ internal static class ContextReportSelector
                 or ContextFindingCode.FragmentMissing
                 or ContextFindingCode.LinkEncodingInvalid
                 or ContextFindingCode.TargetUnreadable
-                or ContextFindingCode.ProjectionUnavailable))
+                or ContextFindingCode.ProjectionUnavailable
+                or ContextFindingCode.ApplicabilityPending
+                or ContextFindingCode.ApplicabilityInvalid))
         {
             return new CliNextAction(
                 "open-forge doctor",
@@ -206,11 +218,33 @@ internal static class ContextReportSelector
                     IncludedBecause = Reasons(source, layer),
                     Route = source.Route,
                     Scope = source.Scope,
+                    Applicability = Applicability(source.Applicability),
                 }
                 : null,
             Full = full
                 ? new ContextDataSourceFull { Order = layer.PathPosition }
                 : null,
+        };
+
+    private static ContextDataApplicability? Applicability(ContextApplicability? applicability)
+        => applicability is null
+            ? null
+            : new ContextDataApplicability
+            {
+                State = ContextWording.ApplicabilityState(applicability.State),
+                Conditions = applicability.Conditions.Select(condition => new ContextDataApplicabilityCondition
+                {
+                    Source = condition.Source,
+                    Patterns = condition.Patterns,
+                }).ToArray(),
+                MatchingPaths = applicability.MatchingPaths,
+            };
+
+    private static ContextDataPendingCondition PendingCondition(ContextPendingCondition condition)
+        => new()
+        {
+            Source = condition.Source,
+            Patterns = condition.Patterns,
         };
 
     private static CliContentBlock Block(

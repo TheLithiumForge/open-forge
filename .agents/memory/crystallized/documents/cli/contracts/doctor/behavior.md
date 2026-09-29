@@ -360,6 +360,17 @@ generated navigation with the current bounded generated region. Authored
 filesystem and metadata facts are authoritative for the comparison. Current
 generated lines do not define topology or provide metadata fallback.
 
+The stage validates optional `applyTo` metadata independently of required
+ordinary metadata completeness. It reads declarations at both the frontmatter
+root and scoped `open-forge` mapping when present, including a root declaration
+beside a scoped mapping. Equivalent normalized declarations form one condition.
+Conflicting or malformed declarations use the existing
+`workspace.frontmatter-malformed` finding. This check includes recognized
+native Skills and ordinary sources missing required `description` or `tags`.
+Doctor validates pattern syntax and declaration consistency, not current
+filesystem matches. A valid pattern with no current matching file is not a
+finding.
+
 The stage realizes the route catalogue:
 
 - `route.entrypoint-missing` and `route.entrypoint-duplicate` preserve
@@ -378,10 +389,11 @@ The stage realizes the route catalogue:
   not general Repair proposals.
 - `route.generated-entry-missing`, `route.generated-entry-extra`,
   `route.generated-entry-order`, `route.generated-entry-path`,
-  `route.generated-entry-description`, and `route.generated-entry-tags`
-  compare each generated entry's presence, membership, ordering, destination,
-  description, and tags. They form a typed `index` action only when the route
-  boundary and authored metadata are valid.
+  `route.generated-entry-description`, `route.generated-entry-tags`, and
+  `route.generated-entry-apply-to` compare each generated entry's presence,
+  membership, ordering, destination, description, tags, and declared
+  applicability separately. They form a typed `index` action only when the
+  route boundary and authored metadata are valid.
 - `route.overwrite-orphan` and `route.overwrite-independent-index` preserve the
   base and overwrite identity boundary. The overwrite is not treated as an
   independent source or generated child.
@@ -724,6 +736,10 @@ section. A conforming implementation must additionally prove:
   extraction, disclosure, retention, or materialization.
 - Authored route topology, generated navigation, metadata, overwrite, and
   compatibility evidence without route or index mutation.
+- Root and scoped `applyTo` parsing, equivalent and conflicting declarations,
+  malformed patterns on Skills and sources missing required metadata, and
+  diagnosis independent of current file matches. Stale generated applicability
+  has a separate finding from stale tags.
 - Local-reference target, fragment, path, encoding, containment, alias, image,
   external, cycle, repeat, exact same-target, candidate-basis, and candidate
   cardinality behavior without network or fuzzy selection.

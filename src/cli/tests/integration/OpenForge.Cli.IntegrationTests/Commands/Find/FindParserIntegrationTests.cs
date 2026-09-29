@@ -11,8 +11,10 @@ public sealed class FindParserIntegrationTests
     [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Pinned Find parser preserves native forms, cross-option occurrence order, and explicit missing values")]
     [InlineData("spaced-equals-colon")]
+    [InlineData("repeated-for")]
     [InlineData("missing-include")]
     [InlineData("missing-exclude")]
+    [InlineData("missing-for")]
     [InlineData("missing-tag")]
     [InlineData("missing-heading")]
     [InlineData("missing-require")]
@@ -38,6 +40,15 @@ public sealed class FindParserIntegrationTests
         Assert.Equal(
             ["Instructions", "Axioms"],
             Assert.IsType<string[]>(parse.GetValue(symbols.Heading)));
+        if (scenario == "repeated-for")
+        {
+            Assert.Equal(
+                ["src/Order.cs", "tests/OrderTests.cs"],
+                Assert.IsType<string[]>(parse.GetValue(symbols.For)));
+            AssertFacts(parse, symbols.For, 2, 2);
+            return;
+        }
+
         AssertFacts(parse, symbols.Tag, 2, 2);
         AssertFacts(parse, symbols.Heading, 2, 2);
         Assert.Equal(
@@ -59,10 +70,12 @@ public sealed class FindParserIntegrationTests
     {
         return scenario switch
         {
+            "repeated-for" => ["--for", "src/Order.cs", "--for=tests/OrderTests.cs", "--tag", "Architecture", "--heading=Instructions", "--tag:CurrentTruth", "--heading", "Axioms"],
             "spaced-equals-colon" =>
             ["--tag", "Architecture", "--heading=Instructions", "--tag:CurrentTruth", "--heading", "Axioms"],
             "missing-include" => ["--include"],
             "missing-exclude" => ["--exclude"],
+            "missing-for" => ["--for"],
             "missing-tag" => ["--tag"],
             "missing-heading" => ["--heading"],
             "missing-require" => ["--require"],
@@ -84,6 +97,9 @@ public sealed class FindParserIntegrationTests
                 break;
             case "exclude":
                 AssertFacts(parse, symbols.Exclude, 1, 0);
+                break;
+            case "for":
+                AssertFacts(parse, symbols.For, 1, 0);
                 break;
             case "tag":
                 AssertFacts(parse, symbols.Tag, 1, 0);

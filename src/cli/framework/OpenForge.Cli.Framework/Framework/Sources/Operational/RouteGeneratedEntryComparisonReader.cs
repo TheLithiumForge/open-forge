@@ -70,6 +70,16 @@ internal static class RouteGeneratedEntryComparisonReader
                     actual: string.Join(",", entry.Tags),
                     location: location));
             }
+
+            if (!HaveEquivalentApplyToPatterns(entry.ApplyTo.Select(pattern => pattern.Text),
+                    expectedEntry.ApplyTo.Select(pattern => pattern.Text)))
+            {
+                comparisons.Add(new RouteGeneratedEntryComparison(
+                    kind: RouteGeneratedEntryComparisonKind.ApplyTo,
+                    expected: string.Join(",", expectedEntry.ApplyTo.Select(pattern => pattern.Text)),
+                    actual: string.Join(",", entry.ApplyTo.Select(pattern => pattern.Text)),
+                    location: location));
+            }
         }
 
         foreach (var entry in expected.Where(entry => !matched.Contains(entry.CanonicalPath)))
@@ -99,5 +109,13 @@ internal static class RouteGeneratedEntryComparisonReader
             .ThenBy(comparison => comparison.Expected, StringComparer.Ordinal)
             .ThenBy(comparison => comparison.Actual, StringComparer.Ordinal)
             .ToArray();
+    }
+
+    private static bool HaveEquivalentApplyToPatterns(
+        IEnumerable<string> actual,
+        IEnumerable<string> expected)
+    {
+        var actualSet = actual.ToHashSet(StringComparer.Ordinal);
+        return actualSet.SetEquals(expected);
     }
 }

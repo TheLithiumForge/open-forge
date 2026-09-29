@@ -55,6 +55,9 @@ internal sealed record RouteCreateDataMetadata
     public string? Responsibility { get; init; }
 
     public required IReadOnlyList<string> Tags { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<string>? ApplyTo { get; init; }
 }
 
 internal sealed record RouteCreateDataSection

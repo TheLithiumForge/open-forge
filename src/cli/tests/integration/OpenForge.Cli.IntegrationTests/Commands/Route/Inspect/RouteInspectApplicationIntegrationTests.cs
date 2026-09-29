@@ -49,6 +49,7 @@ public sealed class RouteInspectApplicationIntegrationTests
             leaf.Output,
             StringComparison.Ordinal);
         Assert.Contains("--workspace <path>", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("--for <path>", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("--format", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("route list", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("Related commands", leaf.Output, StringComparison.Ordinal);
@@ -288,6 +289,30 @@ public sealed class RouteInspectApplicationIntegrationTests
             document.RootElement.GetProperty("findings")[0]
                 .GetProperty("code").GetString());
         Assert.False(Directory.Exists(missing));
+    }
+
+    [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "CLI Route Inspect rejects an outside --for path without returning the supplied path")]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]
+    public async Task OutsideWorkingPathProducesTypedInvalidResultWithoutEcho()
+    {
+        using var workspace = CompleteWorkspace();
+        var outsidePath = Path.GetFullPath(Path.Combine(workspace.Path, "..", "private-working-file.cs"));
+
+        var result = await CliHostCapture.RunAsync(
+            [
+                "route", "inspect", "root",
+                "--workspace", workspace.Path,
+                "--format", "json",
+                "--for", outsidePath,
+            ],
+            workspace.Path);
+
+        Assert.Equal(4, result.ExitCode);
+        Assert.Equal(string.Empty, result.Error);
+        Assert.DoesNotContain(outsidePath, result.Output, StringComparison.Ordinal);
+        using var document = JsonDocument.Parse(result.Output);
+        AssertInvalidJson(document, "route-inspect.invalid-working-path");
     }
 
     [Trait("Boundary", "Host")]

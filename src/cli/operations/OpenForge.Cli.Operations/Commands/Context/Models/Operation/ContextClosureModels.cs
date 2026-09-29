@@ -8,6 +8,8 @@ internal sealed record ContextSelectedGraphSource
     public required ContextGraphSource Source { get; init; }
 
     public required IReadOnlyList<ContextInclusionReason> InclusionReasons { get; init; }
+
+    public ContextApplicability? Applicability { get; init; }
 }
 
 internal sealed record ContextClosureResolution
@@ -20,12 +22,14 @@ internal sealed record ContextClosureResolution
         IEnumerable<ContextFinding> findings,
         bool startupIncluded,
         bool selectionComplete,
-        bool selectionBlocked)
+        bool selectionBlocked,
+        IEnumerable<ContextPendingCondition>? pendingConditions = null)
     {
         RequestedSources = Snapshot(requestedSources);
         StartupSources = Snapshot(startupSources);
         CombinedSources = Snapshot(combinedSources);
         ResultSources = Snapshot(resultSources);
+        PendingConditions = Snapshot(pendingConditions ?? []);
         Findings = Snapshot(findings);
         StartupIncluded = startupIncluded;
         SelectionComplete = selectionComplete;
@@ -39,6 +43,8 @@ internal sealed record ContextClosureResolution
     internal IReadOnlyList<ContextSelectedGraphSource> CombinedSources { get; }
 
     internal IReadOnlyList<ContextSelectedGraphSource> ResultSources { get; }
+
+    internal IReadOnlyList<ContextPendingCondition> PendingConditions { get; }
 
     internal IReadOnlyList<ContextFinding> Findings { get; }
 

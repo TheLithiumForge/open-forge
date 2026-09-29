@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Find.Models.Query;
 using OpenForge.Cli.Core.Commands.Find.Models.Request;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Commands.Find.Models.Selection;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Find.Models.Operation;
@@ -16,12 +17,27 @@ internal sealed record FindRequestEcho
         FindUniverseFilter universeFilter,
         FindQuery query,
         FindPresentationSelection presentation)
+        : this(workspace, universeFilter, [], query, presentation)
+    {
+    }
+
+    internal FindRequestEcho(
+        CliWorkspace? workspace,
+        FindUniverseFilter universeFilter,
+        IEnumerable<string> workingPaths,
+        FindQuery query,
+        FindPresentationSelection presentation)
     {
         ArgumentNullException.ThrowIfNull(universeFilter);
+        ArgumentNullException.ThrowIfNull(workingPaths);
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(presentation);
         Workspace = workspace;
         UniverseFilter = universeFilter;
+        var suppliedWorkingPaths = workingPaths.ToArray();
+        WorkingPaths = workspace is null
+            ? Array.Empty<string>()
+            : SourceWorkingPathNormalizer.Normalize(workspace.LexicalRoot, suppliedWorkingPaths).Paths;
         Query = query;
         Presentation = presentation;
     }
@@ -29,6 +45,8 @@ internal sealed record FindRequestEcho
     internal CliWorkspace? Workspace { get; }
 
     internal FindUniverseFilter UniverseFilter { get; }
+
+    internal IReadOnlyList<string> WorkingPaths { get; }
 
     internal FindQuery Query { get; }
 

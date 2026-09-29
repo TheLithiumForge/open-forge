@@ -11,13 +11,15 @@ description: Plain-language definitions of the terms used across Open Forge.
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Loader**              | `.agents/loader.md`, the file `AGENTS.md` tells the agent to read before starting a task. It defines the core terms, the rules for selecting and loading context, the defined tags, and the root routes.                                                                                |
 | **Entrypoint**          | The Markdown file that makes a folder routable, named `_{folder-name}.md`. `index.md`, `_index.md`, `references.md`, and `_references.md` are accepted compatibility names.                                                                                                             |
-| **Entry**               | One generated route line under an entrypoint's `Entries`, with a link, a description, and tags. It describes a destination rather than containing its contents.                                                                                                                         |
+| **Entry**               | One generated navigation line with a link, description, tags, and, when declared, file patterns. It describes a destination, not its contents.                                                                                                                                          |
 | **Route**               | A navigable path exposed through entrypoints and `Entries`.                                                                                                                                                                                                                             |
 | **Root route**          | A route the loader exposes directly. The standard root routes are Directives, Guidance, Maps, Memory, Patterns, Skills, and Templates.                                                                                                                                                  |
 | **Scope**               | A part of a route that narrows where the following content applies.                                                                                                                                                                                                                     |
 | **Slug**                | The concrete folder name in a route path.                                                                                                                                                                                                                                               |
 | **Description**         | Short text that helps a reader decide whether to open a file.                                                                                                                                                                                                                           |
 | **Responsibility**      | An optional sentence stating what a file defines, so an editor can decide what belongs there. It creates no authority or loading behavior.                                                                                                                                              |
+| **`applyTo`**           | Optional frontmatter at the YAML root or under `open-forge:`, with one quoted workspace-relative pattern or a list. It limits which task paths make a source applicable, not which files may be edited.                                                                                   |
+| **Working path**        | Workspace-relative path of a file the task investigates, creates, changes, deletes, renames, or reviews. It can name a planned file that does not exist yet.                                                                                                                         |
 | **Axiom**               | A required rule under `Axioms` in the loader or a recognized loaded entrypoint, inherited by selected descendants.                                                                                                                                                                      |
 | **Overwrite companion** | A user-owned `{name}.overwrite.md` file that loads immediately after `{name}.md`. It shares the base file's route, scope, and loading behavior, and isn't indexed or selected separately. Where the two answer the same question differently, the overwrite wins only for that content. |
 | **Managed route**       | A route whose declared manager, such as the CLI, may install, update, or remove identified files. Management doesn't create runtime authority.                                                                                                                                          |
@@ -60,7 +62,7 @@ The base ships these four states. A **record** is one saved item in the applicab
 
 ## Memory categories from Extensions
 
-These categories aren't part of the base. Each one arrives with an Extension as an entrypoint under a Memory state. Its entrypoint and records are on demand.
+These categories aren't part of the base. Each one arrives with an Extension as an entrypoint under a Memory state. Its entrypoint and records are on demand by default, though a matching file condition can load a visible entry.
 
 | Term            | Meaning                                                                            | From                                   |
 | --------------- | ---------------------------------------------------------------------------------- | -------------------------------------- |
@@ -76,9 +78,9 @@ These categories aren't part of the base. Each one arrives with an Extension as 
 
 | Term                      | Meaning                                                                                                                                                                     |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Entrypoint at startup** | The entrypoint is read before the task begins. The items it lists open on demand, unless their entry is tagged `LoadNow` or `KeepInMind`.                                   |
-| **Entrypoint on demand**  | The entrypoint isn't read until a task opens it, such as the Templates or Archived Memory entrypoint.                                                                       |
-| **On demand**             | Not read until a task selects it.                                                                                                                                           |
+| **Entrypoint at startup** | The entrypoint is read before the task begins. Its entries open on demand unless a loading tag or matching file condition applies.                                               |
+| **Entrypoint on demand**  | The entrypoint isn't read until a task opens it, such as the Templates or Archived Memory entrypoint. A child condition doesn't open it by itself.                                 |
+| **On demand**             | Not read until a task selects it. A matching `applyTo` condition on a visible entry also loads that source automatically.                                                         |
 | **Refresh point**         | A moment when `KeepInMind` content, such as the Emerging Memory entrypoint, is read again: task start or resume, after context restoration, and before handoff or closeout. |
 
 ## Tags
@@ -87,8 +89,8 @@ Defined tags control loading or classify content, but they don't grant authority
 
 | Tag                              | Meaning                                                                                                                              |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `#LoadNow`                       | Read the linked file, in listed order, when a loaded parent exposes it. If it's an entrypoint, its child loading rules apply.        |
-| `#KeepInMind`                    | Read the tagged context when its parent loads, then refresh it at each refresh point while its scope remains active.                 |
+| `#LoadNow`                       | Read the linked file, in listed order, when a loaded parent exposes it, subject to any effective `applyTo` condition. If it's an entrypoint, its child loading rules apply.       |
+| `#KeepInMind`                    | Read the tagged context when its parent loads, subject to any effective `applyTo` condition, then refresh it at each refresh point while its scope remains active.                |
 | `#Contextual`                    | Useful context, not authority by itself. Treat it as unaccepted unless applicable authority establishes acceptance within its scope. |
 | `#CurrentTruth`                  | Accepted current state within its stated scope.                                                                                      |
 | `#Evergreen`                     | Material that must stay aligned with accepted current state. It creates no authority or loading behavior.                            |

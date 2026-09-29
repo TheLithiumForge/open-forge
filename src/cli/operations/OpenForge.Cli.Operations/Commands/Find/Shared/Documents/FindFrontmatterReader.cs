@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
@@ -30,13 +31,13 @@ internal sealed class FindFrontmatterReader
         var boundary = input.Document.Frontmatter;
         if (boundary.State == MarkdownFrontmatterState.Missing)
         {
-            return Complete(null, []);
+            return Complete(null, [], ApplyToMetadataFacts.Absent);
         }
 
         if (boundary.State != MarkdownFrontmatterState.Complete
             || boundary.YamlSpan is not { } yamlSpan)
         {
-            return Unavailable();
+            return Unavailable(null);
         }
 
         var yaml = input.Document.Source[yamlSpan.Start..yamlSpan.End];
@@ -44,18 +45,22 @@ internal sealed class FindFrontmatterReader
         {
             if (input.Layer.Form == SourceDocumentForm.Skill)
             {
-                return ReadSkill(yaml);
+                return ReadSkill(input, yaml);
             }
 
             var metadataFacts = _metadataParser.Parse(input.Document);
             if (metadataFacts.State == FrameworkDocumentMetadataState.Malformed)
             {
-                return Unavailable();
+                var applyTo = metadataFacts.ApplyTo.State != ApplyToMetadataState.Absent
+                    || _yamlParser.Parse(yaml).State == YamlDocumentState.Complete
+                    ? metadataFacts.ApplyTo
+                    : null;
+                return Unavailable(applyTo);
             }
 
             if (metadataFacts.State == FrameworkDocumentMetadataState.Missing)
             {
-                return Complete(null, []);
+                return Complete(null, [], metadataFacts.ApplyTo);
             }
 
             var metadata = metadataFacts.Metadata
@@ -71,23 +76,24 @@ internal sealed class FindFrontmatterReader
                     MapLocation(input.Document.Source, start, span.Length)));
             }
 
-            return Complete(metadata.Description, tags);
+            return Complete(metadata.Description, tags, metadataFacts.ApplyTo);
         }
         catch (Exception exception) when (IsUnavailableYamlFailure(exception))
         {
-            return Unavailable();
+            return Unavailable(null);
         }
     }
 
     private static FindFrontmatterFacts Complete(
         string? description,
-        IEnumerable<FindFrontmatterTagOccurrence> tags)
-        => new(FindFrontmatterAvailability.Complete, description, tags);
+        IEnumerable<FindFrontmatterTagOccurrence> tags,
+        ApplyToMetadataFacts applyTo)
+        => new(FindFrontmatterAvailability.Complete, description, tags, applyTo);
 
-    private static FindFrontmatterFacts Unavailable()
-        => new(FindFrontmatterAvailability.Unavailable, null, []);
+    private static FindFrontmatterFacts Unavailable(ApplyToMetadataFacts? applyTo)
+        => new(FindFrontmatterAvailability.Unavailable, null, [], applyTo);
 
-    private FindFrontmatterFacts ReadSkill(string yaml)
+    private FindFrontmatterFacts ReadSkill(FindFrontmatterInput input, string yaml)
     {
         var syntax = _yamlParser.Parse(yaml);
         if (syntax.State != YamlDocumentState.Complete
@@ -95,11 +101,12 @@ internal sealed class FindFrontmatterReader
             || syntax.HasUnsupportedMappings
             || syntax.Root is not null && syntax.Root.Kind != YamlNodeKind.Mapping)
         {
-            return Unavailable();
+            return Unavailable(null);
         }
 
         var skill = _skillDeserializer.Deserialize<FrameworkSkillMetadataYamlDocument>(yaml);
-        return Complete(skill?.Description, []);
+        var applyTo = _metadataParser.Parse(input.Document).ApplyTo;
+        return Complete(skill?.Description, [], applyTo);
     }
 
     private static bool IsUnavailableYamlFailure(Exception exception)

@@ -27,7 +27,10 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 
         foreach (var entry in read.Entries)
         {
-            if (entry.LoadNow || entry.KeepInMind)
+            if (ShouldReadAutomaticEntry(
+                    entry.TargetPath,
+                    RouteInspectLoadingSet.Startup,
+                    entry.LoadNow || entry.KeepInMind))
             {
                 AddSource(paths, entry.TargetPath, queue, selected: false);
             }
@@ -49,7 +52,10 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 
             foreach (var entry in read.Entries)
             {
-                if (entry.LoadNow || entry.KeepInMind)
+                if (ShouldReadAutomaticEntry(
+                        entry.TargetPath,
+                        RouteInspectLoadingSet.Startup,
+                        entry.LoadNow || entry.KeepInMind))
                 {
                     AddSource(paths, entry.TargetPath, queue, selected: false);
                 }
@@ -74,8 +80,16 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
                 continue;
             }
 
-            foreach (var entry in read.Entries.Where(entry => entry.LoadNow || entry.KeepInMind))
+            foreach (var entry in read.Entries)
             {
+                if (!ShouldReadAutomaticEntry(
+                        entry.TargetPath,
+                        RouteInspectLoadingSet.Selected,
+                        entry.LoadNow || entry.KeepInMind))
+                {
+                    continue;
+                }
+
                 if (descendants.Add(entry.TargetPath) && IsEntrypoint(entry.TargetPath))
                 {
                     queue.Enqueue(entry.TargetPath);
@@ -105,9 +119,21 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
                 continue;
             }
 
-            foreach (var entry in read.Entries.Where(entry => entry.LoadNow))
+            foreach (var entry in read.Entries)
             {
-                descendants.Add(entry.TargetPath);
+                if (!ShouldReadAutomaticEntry(
+                        entry.TargetPath,
+                        RouteInspectLoadingSet.Narrow,
+                        entry.LoadNow))
+                {
+                    continue;
+                }
+
+                if (entry.LoadNow)
+                {
+                    descendants.Add(entry.TargetPath);
+                }
+
                 if (IsEntrypoint(entry.TargetPath))
                 {
                     queue.Enqueue(entry.TargetPath);

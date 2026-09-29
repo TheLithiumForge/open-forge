@@ -32,13 +32,31 @@ open-forge status
 **When:** you wrote a rule and the agent behaves as if it never saw it.
 
 ```sh
-open-forge context
-open-forge route inspect directives/frontend/components
+open-forge context --for src/Order.cs --for web/order.ts
+open-forge route inspect directives/frontend/components \
+  --for src/Order.cs --for web/order.ts
 ```
 
-**Look for:** whether the file appears in the startup context at all. If it doesn't, `route inspect` says why: the file may be on demand when you meant it to be loaded at startup, or it may sit in a scope the task didn't select. Two common causes are a missing `LoadNow` tag and a rule placed in the wrong folder. Fix the tags with `route update`, which replaces the whole tag list and updates the parent's `Entries`. Then check `context` again.
+**Look for:** whether the rule applies to either supplied working path. Include the
+complete path set on each invocation, including planned files that do not exist
+yet. One file must satisfy the source's whole inherited condition chain. A
+matching entry loads only when exposed by a selected ancestor.
 
-**Why it helps:** "the model didn't listen" becomes something you can check. Often the rule was never set to load, which is quick to fix. The command shows what the rules select, not what a model actually read.
+If paths are unknown, `context` reports encountered conditions as pending,
+returns an incomplete result, and exits `3`. `route inspect` can explain a
+nonmatching source without activating its automatic children. Neither command
+globally selects hidden ancestors or discovers code dependencies. If a related
+caller or test is part of the work, add its path and load its context before
+editing it.
+
+Other causes still include a missing `LoadNow` tag or a rule placed in the
+wrong folder. Use `route update` to correct tags or `applyTo`, then check
+`context` again.
+
+**Why it helps:** "the model didn't listen" becomes something you can check.
+Often the rule was never set to load, which is quick to fix. The command shows
+what the rules select, not what a model actually read. A file condition
+controls when context applies, not whether related files may be edited.
 
 ## Record something new
 

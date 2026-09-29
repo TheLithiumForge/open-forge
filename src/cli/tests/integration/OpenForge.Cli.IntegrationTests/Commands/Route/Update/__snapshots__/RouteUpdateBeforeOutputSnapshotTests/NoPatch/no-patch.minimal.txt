@@ -1,2 +1,2 @@
-Cannot update memory/project-alpha/overview: Nothing to update: pass --description, --responsibility, --tag or --template.
+Cannot update memory/project-alpha/overview: Nothing to update: pass --description, --responsibility, --tag, --apply-to, --clear-apply-to or --template.
 Next: open-forge route update memory/project-alpha/overview --description "<one sentence>"

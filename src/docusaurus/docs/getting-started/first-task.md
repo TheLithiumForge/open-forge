@@ -17,9 +17,9 @@ The answer should describe the test setup and list the loader and the entrypoint
 
 1. **It reads `AGENTS.md`.** The installed block tells it to read `.agents/loader.md` before starting.
 2. **It reads the loader.** The loader defines the routing and loading rules, and lists the root routes: Directives, Guidance, Maps, Memory, Patterns, Skills, and Templates.
-3. **It loads what's marked for startup.** Entries tagged `#LoadNow` are read right away. That's how the root entrypoints (all but Templates), your workspace-wide Directives, and the Working and Crystallized Memory entrypoints reach the agent before it touches your task. The Emerging Memory entrypoint is tagged `#KeepInMind`, so it's read at startup and read again at each refresh point: task start or resume, after context restoration, and before handoff or closeout.
-4. **It stops at each entrypoint.** An entrypoint gives the agent its category's purpose, its rules, and one line per item under `Entries`, with a description and tags. The files and folders those lines point to stay closed unless their entry is tagged `#LoadNow` or `#KeepInMind`. For example, with the Planning Extension installed, the agent sees a one-line entry for Decisions in Crystallized Memory, but reads no Decision at startup.
-5. **It selects the routes the task needs.** The agent reads the entry lines and opens only the branches that matter.
+3. **It loads what's marked for startup.** Entries tagged `#LoadNow` are read through their loaded parent, subject to any file condition. That's how the root entrypoints (all but Templates), unconditioned workspace-wide Directives, and the Working and Crystallized Memory entrypoints reach the agent before it touches your task. The Emerging Memory entrypoint is unconditioned and tagged `#KeepInMind`, so it's read at startup and again at each refresh point: task start or resume, after context restoration, and before handoff or closeout.
+4. **It stops at each entrypoint.** An entrypoint gives the agent its category's purpose, its rules, and one line per item under `Entries`, with a description and tags. Its children stay on demand by default. The agent opens one when the task makes it relevant, a loading tag applies, or a matching file condition makes the visible entry applicable. For example, with the Planning Extension installed, the agent sees a one-line entry for Decisions in Crystallized Memory, but reads no Decision at startup.
+5. **It selects the routes the task needs.** The agent reads the entry lines and opens the branches that matter. A file condition can also make a visible entry applicable to matching working files, even when it has no loading tag. A matching path doesn't reveal a hidden ancestor; see [Loading and tags](../concepts/loading-and-tags.md#file-conditions) for the details.
 6. **It works within the loaded rules** and saves what's worth keeping for the next task in Memory.
 
 For a frontend task in a workspace with a frontend scope and the Planning Extension installed, the path looks like this:
@@ -37,15 +37,23 @@ AGENTS.md                                     read at startup, first
    └─ templates/_templates.md                 entrypoint on demand: not needed, never opened
 ```
 
-"Entrypoint at startup" means the entrypoint is read, and the items it lists open on demand unless their entry is tagged, like `testing.md`. "Entrypoint on demand" means the entrypoint itself waits until a task opens it. A database scope next to `frontend/` would stay closed. Its entry line is visible, so the agent knows it exists, but none of its content loads.
+"Entrypoint at startup" means the entrypoint is read, and the items it lists open on demand unless a loading tag or a matching file condition applies, like `testing.md`. "Entrypoint on demand" means the entrypoint itself waits until a task opens it. A database scope next to `frontend/` would stay closed. Its entry line is visible, so the agent knows it exists, but none of its content loads until the agent selects that scope.
 
 ## See what loads
 
-With the CLI installed, you can see exactly what the rules load at startup:
+With the CLI installed, you can see what the rules load at startup:
 
 ```sh
 open-forge context
 ```
+
+When you know which files the task will touch, pass every path with `--for`. You can include planned files that do not exist yet. For example, if the task adds a C# file and updates its TypeScript caller, select the relevant routes and include both paths:
+
+```sh
+open-forge context --for src/orders/new-order.cs --for web/orders.ts
+```
+
+Context checks the conditions on entries those routes expose. Adding the TypeScript path lets its own rules apply without extending C# rules to that file. Context uses the paths you supply and does not infer related files. If the paths are not known yet, unconditioned startup behavior stays the same and conditioned sources remain pending file selection.
 
 To see the route tree, or inspect how one file behaves:
 

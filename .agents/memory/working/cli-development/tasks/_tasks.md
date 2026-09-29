@@ -52,6 +52,13 @@ The ordering that came before it is preserved in
 The remaining backlog items stay in [beta follow-ups](beta-follow-ups.md), and
 the [candidate queue](potential/_potential.md) holds work not yet selected.
 
+On 2026-09-29, the maintainer restored [Task 55](task55-alternative-root.md)
+as a separate open investigation of alternative roots and APM interoperability.
+Its scheduling is independent. [Task 62](task62-glob-scoped-loading.md) now
+covers optional `applyTo` loading and CLI filtering. Implementation and local
+qualification are complete. The maintainer authorized squash integration into
+`develop`, a push, and beta 2 publication after the complete CI gate passes.
+
 ## Archived on 2026-09-28
 
 These records moved to [Archived CLI Tasks](../../../archived/cli-development/tasks/_tasks.md)
@@ -68,6 +75,8 @@ when the maintainer accepted the review:
   [57](../../../archived/cli-development/tasks/task57-onboarding-and-demos.md).
 - Folded: [46](../../../archived/cli-development/tasks/task46-routed-skill-resources.md) into Task 47's Skill indexing
   follow-up, and [55](../../../archived/cli-development/tasks/task55-alternative-root.md) into Task 62.
+  Task 55 was subsequently restored separately on 2026-09-29. The archived
+  record remains historical provenance.
 
 ## Archived on 2026-09-25
 
@@ -98,10 +107,12 @@ Their links from open Tasks now point there.
 - [Open Task 48 to extend Framework route scaffolding and scope insertion to routes an Extension created, so scoping is a property of the routing model rather than of whatever Core happens to ship](task48-scoping-for-extension-routes.md) - #Memory #Working #CLI #Task #Routing #Scopes #Extensions #RouteInit #Contextual #Active
 - [Open Task 53 to audit every LoadNow and KeepInMind entry and the default scoping before 1.0, so startup context holds only what omission would cost more than reading](task53-loading-and-scoping-audit.md) - #Memory #Working #Task #Framework #Loading #Scope #Release #Contextual #Active
 - [Open Task 54 to trim tags that add no selection, search, or loading value before 1.0, in shipped files first and then in this workspace](task54-tag-trimming.md) - #Memory #Working #Task #Framework #Tags #Release #Contextual #Active
+- [Investigate alternative Framework roots such as .apm and APM interoperability separately from applyTo loading](task55-alternative-root.md) - #Memory #Working #Task #Framework #Root #APM #Investigation #Contextual
 - [Open Task 58 to turn the demos into a repeatable evaluation comparing Open Forge with other setups, agents, and models](task58-demo-evals.md) - #Memory #Working #Task #Evaluation #Demo #Contextual #Active
 - [Open Task 59 to publish 0.9.0-beta.2 once the documentation site is merged, so the npm package shows the README, the website, and the repository](task59-beta-2-release.md) - #Memory #Working #Task #Release #Beta #Package #Contextual #Active
 - [Task 61 accuracy and voice pass over the documentation site, the README, and the repository guides, with a diagram that separates Core from Extensions and startup from on-demand loading](task61-documentation-accuracy-and-voice.md) - #Memory #Working #Task #Documentation #Site #Diagram #Writing #Contextual #Active
-- [Open Task 62 to investigate an applies-to glob, like GitHub Copilot's applyTo, as a loading condition, and whether description and tags may also sit at the root of frontmatter](task62-glob-scoped-loading.md) - #Memory #Working #Task #Framework #Loading #Frontmatter #Tags #CLI #Investigation #Contextual #Active
+- [Implement optional applyTo file conditions, loading rules, Entries display, and CLI context filtering through accepted execution packets](task62-glob-scoped-loading.md) - #Memory #Working #Task #Framework #Loading #Frontmatter #CLI #Contextual #Active
+- [Task 62 execution decisions, foundation packets, command packets, and documentation ownership](task62/_task62.md) - #Memory #Working #Task #Plan #CLI #Contextual #Active
 - [Open Task 63 to decide whether and how a direct edit to a managed file can survive updates, since removedFiles already keeps such a file untouched as an undocumented side effect](task63-keeping-edits-through-updates.md) - #Memory #Working #Task #CLI #Update #Removal #Customization #Investigation #Contextual #Active
 - [Open Task 64 to fix the CLI defects, wording errors, and contract contradictions found by the documentation review, and the leftovers of the closed removal and remediation Tasks](task64-cli-defects-and-contract-drift.md) - #Memory #Working #Task #CLI #Defect #Contract #Wording #Contextual #Active
 - [Open Task 65 to decide where long-running open Tasks should live, in Working Memory as now, in a Planning backlog, or split between them](task65-where-open-tasks-live.md) - #Memory #Working #Task #Planning #Backlog #Contextual #Active

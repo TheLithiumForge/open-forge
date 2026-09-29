@@ -3,12 +3,14 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Applicability;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Result;
 using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -72,12 +74,21 @@ internal sealed class RouteInspectOperationCoordinator
         }
 
         RouteInspectProfile? profile = null;
+        SourceApplicabilityResult? applicability = null;
         if (resolution.State is RouteInspectResolutionState.Resolved
             or RouteInspectResolutionState.Incomplete)
         {
+            applicability = RouteInspectSourceApplicabilityEvaluator.Evaluate(
+                resolution.ReadGraph(),
+                resolution.ReadIdentity().CanonicalWorkspaceRelativePath,
+                request.WorkingPaths);
             try
             {
-                profile = _profileBuilder.Build(resolution, cancellationToken);
+                profile = _profileBuilder.Build(
+                    resolution,
+                    cancellationToken,
+                    request.WorkingPaths,
+                    applicability);
             }
             catch (OperationCanceledException)
             {
@@ -92,7 +103,7 @@ internal sealed class RouteInspectOperationCoordinator
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return _resultBuilder.Build(request, resolution, profile);
+            return _resultBuilder.Build(request, resolution, profile, applicability);
         }
         catch (OperationCanceledException)
         {
@@ -183,6 +194,7 @@ internal sealed class RouteInspectOperationCoordinator
             null,
             [],
             [new RouteInspectCondition(code, status, request.SourceReference, message)],
-            next);
+            next,
+            workingPaths: request.WorkingPaths);
     }
 }

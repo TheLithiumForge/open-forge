@@ -17,6 +17,7 @@ internal sealed class ContextClosureResolver
                 startupSources: [],
                 combinedSources: [],
                 resultSources: [],
+                pendingConditions: [],
                 findings: requested.Findings,
                 startupIncluded: false,
                 selectionComplete: false,
@@ -27,7 +28,9 @@ internal sealed class ContextClosureResolver
         var loading = new ContextLoadingClosureResolver().Resolve(
             graph,
             requested.Requests,
-            startup);
+            startup,
+            request.WorkingPaths,
+            request.WorkingPathsSupplied);
         var startupPaths = loading.Selection.StartupSources
             .Select(source => source.Source.CanonicalPath)
             .ToHashSet(StringComparer.Ordinal);
@@ -41,6 +44,7 @@ internal sealed class ContextClosureResolver
             startupSources: loading.Selection.StartupSources,
             combinedSources: loading.Selection.CombinedSources,
             resultSources: result,
+            pendingConditions: loading.PendingConditions,
             findings: requested.Findings.Concat(loading.Findings),
             startupIncluded: !request.AdditionsOnly,
             selectionComplete: !loading.Incomplete && !loading.Blocked && !requested.Blocked,

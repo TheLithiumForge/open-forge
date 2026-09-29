@@ -23,12 +23,14 @@ internal sealed class FindOperation(
     FindLayerInspector layerInspector,
     FindMatcher matcher,
     FindProjectionBuilder projectionBuilder,
+    FindApplicabilityResolver applicabilityResolver,
     FindResultBuilder resultBuilder)
 {
     private readonly FindSourceResolver _sourceResolver = sourceResolver;
     private readonly FindLayerInspector _layerInspector = layerInspector;
     private readonly FindMatcher _matcher = matcher;
     private readonly FindProjectionBuilder _projectionBuilder = projectionBuilder;
+    private readonly FindApplicabilityResolver _applicabilityResolver = applicabilityResolver;
     private readonly FindResultBuilder _resultBuilder = resultBuilder;
 
     internal ValueTask<FindResult> ExecuteAsync(
@@ -45,6 +47,7 @@ internal sealed class FindOperation(
         var requestEcho = new FindRequestEcho(
             request.Workspace,
             request.UniverseFilter,
+            request.NormalizedWorkingPaths,
             request.Query,
             request.Presentation);
         var inspections = new List<FindLayerInspectionFacts>();
@@ -60,7 +63,8 @@ internal sealed class FindOperation(
         FindUniverseResolution? universeResolution = null;
         FindUniverse? universe = null;
         FindMatchingFacts? matchingFacts = null;
-        SourceRouteFacts? routeFacts = null;
+        SourceRouteFacts? applicabilityRouteFacts = null;
+        SourceRouteFacts? projectionRouteFacts = null;
         FindTerminalEvent? terminalEvent = null;
 
         try
@@ -165,6 +169,116 @@ internal sealed class FindOperation(
             matchingCoverage = ReadTerminalCoverage(terminalEvent);
         }
 
+        var applicabilityRouteFactsNeeded = matches.Count != 0
+            && (request.WorkingPaths.Count != 0
+                || request.Presentation.EffectiveView >= OpenForge.Cli.Core.Shell.Definitions.CliDetail.Standard);
+        if (terminalEvent is null
+            && applicabilityRouteFactsNeeded
+            && !cancellationToken.IsCancellationRequested)
+        {
+            try
+            {
+                var establishedSourceSession = sourceSession
+                    ?? throw new InvalidOperationException("A Find source context is required for route facts.");
+                applicabilityRouteFacts = await _sourceResolver
+                    .ReadRouteFactsAsync(
+                        new FindRouteFactsInput(
+                            establishedSourceSession,
+                            establishedSourceSession.Catalogue.SelectAll()),
+                        cancellationToken)
+                    .ConfigureAwait(false);
+                if (applicabilityRouteFacts.IsCancelled)
+                {
+                    terminalEvent = CreateInterruptedEvent();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                terminalEvent = CreateInterruptedEvent();
+            }
+            catch (Exception)
+            {
+                applicabilityRouteFacts = null;
+                terminalEvent = CreateFailedEvent();
+                matchingCoverage = ReadTerminalCoverage(terminalEvent);
+            }
+        }
+
+        var metadataProjectionRequested = matches.Count != 0
+            && request.Presentation.Content.Effective.Any(
+                part => part.Kind == FindContentPartKind.Metadata);
+        if (terminalEvent is null
+            && metadataProjectionRequested
+            && !cancellationToken.IsCancellationRequested)
+        {
+            if (applicabilityRouteFacts is not null
+                && request.UniverseFilter.Include.Count == 0
+                && request.UniverseFilter.Exclude.Count == 0)
+            {
+                // With no selectors, the full catalogue is the existing Find universe too.
+                projectionRouteFacts = applicabilityRouteFacts;
+            }
+            else
+            {
+                try
+                {
+                    var establishedSourceSession = sourceSession
+                        ?? throw new InvalidOperationException("A Find source context is required for route facts.");
+                    var selectedUniverse = universeResolution
+                        ?? throw new InvalidOperationException("A Find universe selection is required for route facts.");
+                    projectionRouteFacts = await _sourceResolver
+                        .ReadRouteFactsAsync(
+                            new FindRouteFactsInput(
+                                establishedSourceSession,
+                                selectedUniverse.Selection),
+                            cancellationToken)
+                        .ConfigureAwait(false);
+                    if (projectionRouteFacts.IsCancelled)
+                    {
+                        terminalEvent = CreateInterruptedEvent();
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    terminalEvent = CreateInterruptedEvent();
+                }
+                catch (Exception)
+                {
+                    projectionRouteFacts = null;
+                }
+            }
+        }
+
+        if (terminalEvent is null
+            && matchingFacts is not null
+            && matches.Count != 0
+            && (request.WorkingPaths.Count != 0 || applicabilityRouteFacts is not null))
+        {
+            try
+            {
+                var evaluation = await _applicabilityResolver
+                    .EvaluateAsync(
+                        request,
+                        sourceSession ?? throw new InvalidOperationException("A Find source context is required for applicability."),
+                        applicabilityRouteFacts,
+                        matches,
+                        inspections,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+                matches.Clear();
+                matches.AddRange(evaluation.Matches);
+                AddDistinctFindings(findings, evaluation.Findings);
+            }
+            catch (OperationCanceledException)
+            {
+                terminalEvent = CreateInterruptedEvent();
+            }
+            catch (Exception)
+            {
+                terminalEvent = CreateFailedEvent();
+            }
+        }
+
         if (terminalEvent is null && cancellationToken.IsCancellationRequested)
         {
             terminalEvent = CreateInterruptedEvent();
@@ -176,41 +290,6 @@ internal sealed class FindOperation(
 
         if (universe is not null && matchingFacts is not null && projectionRequested)
         {
-            if (terminalEvent is null
-                && !cancellationToken.IsCancellationRequested
-                && matches.Count != 0
-                && request.Presentation.Content.Effective.Any(
-                    part => part.Kind == FindContentPartKind.Metadata))
-            {
-                try
-                {
-                    var establishedSourceSession = sourceSession
-                        ?? throw new InvalidOperationException("A Find source context is required for route facts.");
-                    var establishedSelection = universeResolution
-                        ?.Selection
-                        ?? throw new InvalidOperationException("A Find universe selection is required for route facts.");
-                    routeFacts = await _sourceResolver
-                        .ReadRouteFactsAsync(
-                            new FindRouteFactsInput(
-                                establishedSourceSession,
-                                establishedSelection),
-                            cancellationToken)
-                        .ConfigureAwait(false);
-                    if (routeFacts?.IsCancelled == true)
-                    {
-                        terminalEvent = CreateInterruptedEvent();
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    terminalEvent ??= CreateInterruptedEvent();
-                }
-                catch (Exception)
-                {
-                    terminalEvent ??= CreateFailedEvent();
-                }
-            }
-
             if (terminalEvent is null && cancellationToken.IsCancellationRequested)
             {
                 terminalEvent = CreateInterruptedEvent();
@@ -224,7 +303,7 @@ internal sealed class FindOperation(
                         universe,
                         inspections,
                         matches,
-                        routeFacts));
+                        projectionRouteFacts));
                 projections.AddRange(projectionFacts.Projections);
                 findings.AddRange(projectionFacts.Findings);
                 projectionCoverage = projectionFacts.Coverage;
@@ -320,6 +399,24 @@ internal sealed class FindOperation(
         => new(
             FindTerminalEventKind.Failed,
             "An unexpected failure prevented Find from completing.");
+
+    private static void AddDistinctFindings(
+        ICollection<FindFinding> findings,
+        IEnumerable<FindFinding> additions)
+    {
+        foreach (var finding in additions)
+        {
+            if (!findings.Any(existing => existing.Code == finding.Code
+                    && string.Equals(existing.Source?.Id, finding.Source?.Id, StringComparison.Ordinal)
+                    && string.Equals(existing.Source?.Path, finding.Source?.Path, StringComparison.Ordinal)
+                    && existing.Layer == finding.Layer
+                    && string.Equals(existing.Path, finding.Path, StringComparison.Ordinal)
+                    && string.Equals(existing.Region?.Name, finding.Region?.Name, StringComparison.Ordinal)))
+            {
+                findings.Add(finding);
+            }
+        }
+    }
 
     private static FindCoverageState ReadTerminalCoverage(FindTerminalEvent terminalEvent)
         => terminalEvent.Kind switch

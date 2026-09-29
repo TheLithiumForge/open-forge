@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Context.Shared.Selection;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Commands.Context.Shared.Links.Models;
 using OpenForge.Cli.Core.Commands.Context.Models.Operation;
 using OpenForge.Cli.Core.Commands.Context.Models.Request;
@@ -84,11 +85,13 @@ internal sealed class ContextLinkExpander
         {
             foreach (var reason in seed.InclusionReasons)
             {
-                selected.Add(seed.Source, reason);
+                selected.Add(seed.Source, reason, seed.Applicability);
             }
         }
         var links = new List<ContextLink>();
         var findings = new List<ContextFinding>();
+        var pendingConditions = new List<ContextPendingCondition>();
+        var pendingSources = new HashSet<string>(StringComparer.Ordinal);
         var externalSources = new Dictionary<string, ContextGraphSource>(StringComparer.Ordinal);
         var queue = new Queue<TraversalNode>(seeds.Select(seed => new TraversalNode
         {
@@ -200,13 +203,83 @@ internal sealed class ContextLinkExpander
                     }
                     else
                     {
+                        var chain = ContextApplicabilityProjector.ReadChain(graph, targetSource);
+                        if (chain is null && captureEvidence)
+                        {
+                            complete = false;
+                            findings.Add(new ContextFinding(
+                                code: ContextFindingCode.ClosureUnavailable,
+                                subject: targetSource.CanonicalPath,
+                                cause: string.Empty,
+                                reference: null,
+                                source: Identity(targetSource),
+                                layer: null,
+                                path: targetSource.CanonicalPath,
+                                part: null,
+                                location: null,
+                                destinationLocation: null,
+                                candidates: []));
+                        }
+
+                        var applicability = ContextApplicabilityProjector.Evaluate(
+                            graph,
+                            targetSource,
+                            request.WorkingPaths);
+                        if (captureEvidence)
+                        {
+                            RecordApplicability(
+                                applicability,
+                                targetSource,
+                                pendingConditions,
+                                pendingSources,
+                                findings,
+                                ref complete);
+                        }
+
+                        if (chain is not null)
+                        {
+                            var targetIdentity = Identity(targetSource);
+                            foreach (var ancestor in chain.Take(chain.Count - 1).Where(item => item.IsEntrypoint))
+                            {
+                                var ancestorApplicability = ContextApplicabilityProjector.Evaluate(
+                                    graph,
+                                    ancestor,
+                                    request.WorkingPaths);
+                                if (captureEvidence)
+                                {
+                                    RecordApplicability(
+                                        ancestorApplicability,
+                                        ancestor,
+                                        pendingConditions,
+                                        pendingSources,
+                                        findings,
+                                        ref complete);
+                                }
+
+                                selected.Add(
+                                    ancestor,
+                                    new ContextInclusionReason(
+                                        kind: ContextInclusionReasonKind.AncestorRequired,
+                                        source: targetIdentity,
+                                        reference: null,
+                                        depth: null,
+                                        location: null),
+                                    ContextApplicabilityProjector.Project(
+                                        ancestorApplicability,
+                                        request.WorkingPathsSupplied));
+                            }
+                        }
+
                         var reason = new ContextInclusionReason(
                             kind: ContextInclusionReasonKind.LinkedSource,
                             source: Identity(node.Source),
                             reference: null,
                             depth: depth,
                             location: location);
-                        var added = selected.Add(targetSource, reason);
+                        var added = selected.Add(
+                            targetSource,
+                            reason,
+                            ContextApplicabilityProjector.Project(applicability, request.WorkingPathsSupplied));
                         disposition = ReadDisposition(added, node.Lineage, targetSource);
                         if (added)
                         {
@@ -249,9 +322,72 @@ internal sealed class ContextLinkExpander
             Sources = selected.Sources,
             Links = links,
             Findings = findings,
+            PendingConditions = pendingConditions,
             Complete = complete,
             Blocked = blocked,
         };
+    }
+
+    private static void RecordApplicability(
+        SourceApplicabilityResult? applicability,
+        ContextGraphSource source,
+        ICollection<ContextPendingCondition> pendingConditions,
+        ISet<string> pendingSources,
+        ICollection<ContextFinding> findings,
+        ref bool complete)
+    {
+        if (applicability is null)
+        {
+            return;
+        }
+
+        if (applicability.State == SourceApplicabilityState.Pending)
+        {
+            complete = false;
+            foreach (var condition in ContextApplicabilityProjector.PendingConditions(applicability))
+            {
+                if (pendingSources.Add(condition.Source))
+                {
+                    pendingConditions.Add(condition);
+                }
+            }
+
+            if (!findings.Any(finding => finding.Code == ContextFindingCode.ApplicabilityPending))
+            {
+                findings.Add(new ContextFinding(
+                    code: ContextFindingCode.ApplicabilityPending,
+                    subject: source.CanonicalPath,
+                    cause: string.Empty,
+                    reference: null,
+                    source: Identity(source),
+                    layer: null,
+                    path: source.CanonicalPath,
+                    part: null,
+                    location: null,
+                    destinationLocation: null,
+                    candidates: []));
+            }
+        }
+        else if (applicability.State == SourceApplicabilityState.Invalid)
+        {
+            complete = false;
+            if (!findings.Any(finding => finding.Code == ContextFindingCode.ApplicabilityInvalid
+                && string.Equals(finding.Path, source.CanonicalPath, StringComparison.Ordinal)))
+            {
+                findings.Add(new ContextFinding(
+                    code: ContextFindingCode.ApplicabilityInvalid,
+                    subject: source.CanonicalPath,
+                    cause: string.Empty,
+                    reference: null,
+                    source: Identity(source),
+                    layer: null,
+                    path: source.CanonicalPath,
+                    part: null,
+                    location: null,
+                    destinationLocation: null,
+                    candidates: []));
+            }
+        }
     }
 
     private static ContextLinkDisposition ReadDisposition(

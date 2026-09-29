@@ -33,13 +33,25 @@ internal static class FindReportSelector
                 Parts = result.Presentation.Content.IsRequested
                     ? match.Projections.Select(projection => Part(projection, full)).ToArray()
                     : null,
+                Applicability = standard && match.Applicability is { } applicability
+                    ? new FindDataApplicability
+                    {
+                        State = applicability.State,
+                        Conditions = applicability.Conditions.Select(condition => new FindDataApplicabilityCondition
+                        {
+                            Source = condition.Source,
+                            Patterns = condition.Patterns,
+                        }).ToArray(),
+                        MatchingPaths = applicability.MatchingPaths,
+                    }
+                    : null,
             })
             .ToArray();
 
         var data = new FindData
         {
             Matches = matches,
-            Query = standard ? Query(result.Query) : null,
+            Query = standard ? Query(result.Query, result.WorkingPaths) : null,
             SourceSet = full ? SourceSet(result.Universe) : null,
             ContentBlocks = result.Matches.SelectMany(match => ContentBlocks(match, selection.Detail)).ToArray(),
             PrependBlankLine = result.Findings.Count > 0 && matches.Length > 0,
@@ -285,7 +297,7 @@ internal static class FindReportSelector
                     MetadataRows(metadata).Select(row => $"{row.Name}: {row.Value}"))
                 + "\n";
 
-    private static FindDataQuery Query(FindQuery query)
+    private static FindDataQuery Query(FindQuery query, IReadOnlyList<string> workingPaths)
         => new()
         {
             Tags = query.Predicates
@@ -302,6 +314,7 @@ internal static class FindReportSelector
                 .Select(region => region.CanonicalValue)
                 .Distinct(StringComparer.Ordinal)
                 .ToArray(),
+            WorkingPaths = workingPaths.Count == 0 ? null : workingPaths,
         };
 
     private static FindDataSourceSet SourceSet(FindUniverse universe)

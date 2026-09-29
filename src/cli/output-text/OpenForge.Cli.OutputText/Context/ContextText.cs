@@ -6,11 +6,11 @@ internal static class ContextText
 {
     // @OpenForgeText context.help.syntax
     internal static string HelpSyntax()
-        => "open-forge context [source-reference...] [--additions-only] [--content <part>[,<part>...]] [--follow-links <positive-depth|all>] [global options]";
+        => "open-forge context [source-reference...] [--additions-only] [--for <path>...] [--content <part>[,<part>...]] [--follow-links <positive-depth|all>] [global options]";
 
     // @OpenForgeText context.help.selection
     internal static string HelpSelection()
-        => "With no source reference, Context returns all required startup context. Each source ID or exact .agents path adds the source and its required route context. --additions-only requires an explicit source and removes the startup set from the result.";
+        => "With no source reference, Context returns required startup context. Each source ID or exact .agents path adds that source and its required route context. Repeat --for with file paths inside the workspace to evaluate applyTo conditions; conditions inherited along a route must all match the same path. --additions-only requires an explicit source and removes the startup set from the result.";
 
     // @OpenForgeText context.help.content
     internal static string HelpContent()
@@ -22,11 +22,11 @@ internal static class ContextText
 
     // @OpenForgeText context.help.examples
     internal static string HelpExamples()
-        => "open-forge context\nopen-forge context memory --content body\nopen-forge context .agents/memory/_memory.md --format json";
+        => "open-forge context\nopen-forge context --for src/app.cs\nopen-forge context memory --for src/app.cs --content body\nopen-forge context .agents/memory/_memory.md --format json";
 
     // @OpenForgeText context.help.notes
     internal static string HelpNotes()
-        => "Context preserves authored source bytes and adds generated delimiters around each physical layer. It never changes source files or follows external links.";
+        => "Context preserves authored source bytes and adds generated delimiters around each physical layer. applyTo conditions require --for paths; without them, affected selection is reported as incomplete. It never changes source files or follows external links.";
 
     // @OpenForgeText context.message.context-is-complete
     internal static string MessageContextIsComplete()
@@ -100,6 +100,10 @@ internal static class ContextText
     internal static string LabelKeepInMind()
         => "#KeepInMind";
 
+    // @OpenForgeText context.label.applicability
+    internal static string LabelApplicability()
+        => "applyTo";
+
     // @OpenForgeText context.label.ancestor-required
     internal static string LabelAncestorRequired()
         => "ancestor required";
@@ -127,6 +131,18 @@ internal static class ContextText
     // @OpenForgeText context.title.invalid-link-depth
     internal static string TitleInvalidLinkDepth()
         => "Invalid link depth";
+
+    // @OpenForgeText context.title.invalid-working-path
+    internal static string TitleInvalidWorkingPath()
+        => "Invalid working path";
+
+    // @OpenForgeText context.title.applicability-pending
+    internal static string TitleApplicabilityPending()
+        => "applyTo conditions are pending";
+
+    // @OpenForgeText context.title.applicability-invalid
+    internal static string TitleApplicabilityInvalid()
+        => "Source applicability is invalid";
 
     // @OpenForgeText context.title.link-target-is-ambiguous
     internal static string TitleLinkTargetIsAmbiguous()
@@ -167,6 +183,22 @@ internal static class ContextText
     // @OpenForgeText context.message.follow-links-must-be-a-positive-number-or-all
     internal static string MessageFollowLinksMustBeAPositiveNumberOrAll()
         => "--follow-links must be a positive number or all.";
+
+    // @OpenForgeText context.message.for-must-have-one-workspace-file-path
+    internal static string MessageForMustHaveOneWorkspaceFilePath()
+        => "Each --for occurrence must resolve to a file path inside the selected workspace.";
+
+    // @OpenForgeText context.message.applyto-could-not-be-evaluated-without-for
+    internal static string MessageApplyToCouldNotBeEvaluatedWithoutFor()
+        => "Some applyTo conditions could not be evaluated because no --for path was supplied.";
+
+    // @OpenForgeText context.message.applyto-invalid
+    internal static string MessageApplyToInvalid()
+        => "A source has invalid applyTo metadata or unresolved route ancestry and was not selected automatically.";
+
+    // @OpenForgeText context.message.applicability-pending-limitation
+    internal static string MessageApplicabilityPendingLimitation()
+        => "Context is incomplete while applyTo conditions await one or more --for paths.";
 
     // @OpenForgeText context.title.context
     internal static string TitleContext()

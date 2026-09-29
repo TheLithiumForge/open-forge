@@ -179,6 +179,7 @@ public sealed class RouteCreatePresentationTests
         Assert.Equal(JsonValueKind.Null, metadata.GetProperty("description").ValueKind);
         Assert.Equal(JsonValueKind.Null, metadata.GetProperty("responsibility").ValueKind);
         Assert.Empty(metadata.GetProperty("tags").EnumerateArray());
+        Assert.False(metadata.TryGetProperty("applyTo", out _));
         Assert.Equal(
             "route-create.optional-metadata",
             Assert.Single(root.GetProperty("findings").EnumerateArray()).GetProperty("code").GetString());

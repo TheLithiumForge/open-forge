@@ -1,4 +1,6 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
@@ -7,6 +9,91 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Metadata;
 
 public sealed class SourceAuthoredMetadataParserTests
 {
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Authored native Skill keeps applyTo when ordinary metadata is missing")]
+    [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
+    public void NativeSkillRetainsApplyToWithoutChangingItsMetadataRequirements()
+    {
+        var facts = Parse(
+            "---\napplyTo: '**/*.md'\n---\n",
+            SourceDocumentForm.Skill);
+
+        Assert.Equal(SourceAuthoredMetadataState.Missing, facts.State);
+        Assert.Equal(ApplyToMetadataState.Valid, facts.ApplyTo.State);
+        Assert.Equal("**/*.md", Assert.Single(facts.ApplyTo.Patterns).Text);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Authored native Skill preserves complete metadata when applyTo is invalid")]
+    [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
+    public void NativeSkillKeepsCompleteMetadataAndInvalidApplyTo()
+    {
+        var facts = Parse(
+            "---\nname: skill\ndescription: Skill description\napplyTo: plain/*.md\n---\n",
+            SourceDocumentForm.Skill);
+
+        Assert.Equal(SourceAuthoredMetadataState.Complete, facts.State);
+        Assert.Equal("Skill description", facts.Description);
+        Assert.Equal(ApplyToMetadataState.Invalid, facts.ApplyTo.State);
+        Assert.NotNull(facts.ApplyTo.Failure);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Authored Open Forge source preserves complete metadata when applyTo is invalid")]
+    [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
+    public void CompleteOpenForgeMetadataRetainsInvalidApplyToIndependently()
+    {
+        var facts = Parse(
+            "---\nopen-forge:\n"
+                + "  description: Guide\n"
+                + "  tags: [Docs]\n"
+                + "  applyTo: '**//*.md'\n"
+                + "---\n",
+            SourceDocumentForm.Markdown);
+
+        Assert.Equal(SourceAuthoredMetadataState.Complete, facts.State);
+        Assert.Equal("Guide", facts.Description);
+        Assert.Equal(["Docs"], facts.Tags);
+        Assert.Equal(ApplyToMetadataState.Invalid, facts.ApplyTo.State);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Authored native Skill retains duplicate scoped applyTo across duplicate open-forge mappings")]
+    [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
+    public void NativeSkillRetainsDuplicateScopedApplyToFailure()
+    {
+        var facts = Parse(
+            "---\n"
+                + "name: skill\n"
+                + "description: Skill description\n"
+                + "open-forge:\n  applyTo: '**/*.cs'\n"
+                + "open-forge:\n  applyTo: '**/*.ts'\n"
+                + "---\n",
+            SourceDocumentForm.Skill);
+
+        Assert.Equal(SourceAuthoredMetadataState.Malformed, facts.State);
+        Assert.Equal(ApplyToMetadataState.Invalid, facts.ApplyTo.State);
+        Assert.Equal(ApplyToMetadataFailureKind.DuplicateField, facts.ApplyTo.Failure?.Kind);
+        Assert.Equal(2, facts.ApplyTo.Declarations.Length);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Authored source keeps missing ordinary metadata alongside invalid applyTo")]
+    [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
+    public void IncompleteOpenForgeMetadataRetainsInvalidApplyTo()
+    {
+        var facts = Parse(
+            "---\nopen-forge:\n  applyTo: '**//*.md'\n---\n",
+            SourceDocumentForm.Markdown);
+
+        Assert.Equal(SourceAuthoredMetadataState.Missing, facts.State);
+        Assert.Null(facts.Description);
+        Assert.Empty(facts.Tags);
+        Assert.Equal(ApplyToMetadataState.Invalid, facts.ApplyTo.State);
+        Assert.Equal(ApplyToMetadataFailureKind.InvalidPattern, facts.ApplyTo.Failure?.Kind);
+        Assert.Equal(ApplyToPatternFailure.Empty, facts.ApplyTo.Failure?.Cause);
+    }
+
     [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Authored metadata preserves Open Forge semantics for every Markdown base form")]
     [InlineData(nameof(SourceDocumentForm.Markdown))]
@@ -26,6 +113,20 @@ public sealed class SourceAuthoredMetadataParserTests
         Assert.Equal("  Exact 描述  ", facts.Description);
         Assert.Equal(["Route-List", "Évidence2", "工作"], facts.Tags);
         Assert.Equal(facts.Tags, facts.ObservedTags);
+    }
+
+    [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Authored Open Forge source metadata projects root applyTo")]
+    [Trait("Feature", "apply-to-metadata"), Trait("Evidence", "Unit")]
+    public void OpenForgeProjectionPreservesRootApplyTo()
+    {
+        var facts = Parse(
+            "---\napplyTo: '**/*.md'\nopen-forge:\n  description: Guide\n  tags: [Docs]\n---\n",
+            SourceDocumentForm.Markdown);
+
+        Assert.Equal(SourceAuthoredMetadataState.Complete, facts.State);
+        Assert.Equal(ApplyToMetadataState.Valid, facts.ApplyTo.State);
+        Assert.Equal("**/*.md", Assert.Single(facts.ApplyTo.Patterns).Text);
     }
 
     [Trait("Boundary", "Input")]

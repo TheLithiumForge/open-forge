@@ -68,7 +68,8 @@ internal sealed class ContextProjectionBuilder
                 scope: null,
                 inclusionReasons: selected.InclusionReasons,
                 layers: layers,
-                metadata: Metadata(graphSource.Metadata)));
+                metadata: Metadata(graphSource.Metadata),
+                applicability: selected.Applicability));
         }
 
         return new ContextProjectionFormation

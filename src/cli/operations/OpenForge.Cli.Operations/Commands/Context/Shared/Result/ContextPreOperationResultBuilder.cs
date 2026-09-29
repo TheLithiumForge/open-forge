@@ -77,7 +77,9 @@ internal static class ContextPreOperationResultBuilder
                 startupIncluded: false,
                 additionsOnly: input.AdditionsOnly,
                 linkExpansion: linkExpansion,
-                sourceCount: null),
+                sourceCount: null,
+                workingPaths: input.WorkingPaths,
+                workingPathsSupplied: input.WorkingPathsSupplied),
             presentation: new ContextPresentation(
                 suppliedDetail: input.SuppliedDetail,
                 effectiveView: input.EffectiveView,

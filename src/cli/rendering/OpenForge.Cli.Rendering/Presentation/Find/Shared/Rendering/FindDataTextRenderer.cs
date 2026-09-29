@@ -38,6 +38,11 @@ internal static class FindDataTextRenderer
         for (var index = 0; index < tableLines.Length; index++)
         {
             spans.Add(new CliTextSpan(tableLines[index] + "\n"));
+            if (standard && data.Matches[index].Applicability is { } applicability)
+            {
+                AppendApplicability(spans, applicability);
+            }
+
             if (!full)
             {
                 continue;
@@ -90,6 +95,28 @@ internal static class FindDataTextRenderer
         return new CliTextDocument(spans);
     }
 
+    private static void AppendApplicability(
+        ICollection<CliTextSpan> spans,
+        FindDataApplicability applicability)
+    {
+        spans.Add(new CliTextSpan(CliText.Escape(
+            global::OpenForge.Cli.OutputText.Find.FindText.FormatApplicability(applicability.State)) + "\n"));
+        foreach (var condition in applicability.Conditions)
+        {
+            spans.Add(new CliTextSpan(CliText.Escape(
+                global::OpenForge.Cli.OutputText.Find.FindText.FormatApplicabilityCondition(
+                    condition.Source,
+                    string.Join(", ", condition.Patterns))) + "\n"));
+        }
+
+        if (applicability.MatchingPaths.Count != 0)
+        {
+            spans.Add(new CliTextSpan(CliText.Escape(
+                global::OpenForge.Cli.OutputText.Find.FindText.FormatMatchingPaths(
+                    string.Join(", ", applicability.MatchingPaths))) + "\n"));
+        }
+    }
+
     private static void AppendQuery(List<CliTextSpan> spans, FindDataQuery query)
     {
         var filters = query.Tags
@@ -101,5 +128,10 @@ internal static class FindDataTextRenderer
         spans.Add(new CliTextSpan(CliText.Escape(global::OpenForge.Cli.OutputText.Find.FindPhrases.FormatRequire($"{query.Require}")) + "\n"));
         spans.Add(new CliTextSpan(CliText.Escape(
             global::OpenForge.Cli.OutputText.Find.FindPhrases.FormatRegionsSearched($"{(query.Within.Count == 0 ? "none" : string.Join(", ", query.Within))}")) + "\n"));
+        if (query.WorkingPaths is { Count: > 0 } workingPaths)
+        {
+            spans.Add(new CliTextSpan(CliText.Escape(
+                global::OpenForge.Cli.OutputText.Find.FindText.FormatWorkingPaths(string.Join(", ", workingPaths))) + "\n"));
+        }
     }
 }

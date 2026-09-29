@@ -90,6 +90,12 @@ internal sealed partial class RouteUpdateIntegrationWorkspace
             ".agents/templates/route.overwrite.md",
             "template overwrite\n");
 
+    internal void SeedStaleParentApplyToEntry()
+        => _temporary.ReplaceText(
+            ParentPath,
+            ParentDocument(
+                "- [Before overview](overview.md) - #Before #Memory - applies to `old/*.cs`"));
+
     internal void SeedUnreadableTemplate()
         => _temporary.ReplaceBytes(TemplatePath, [0xC3, 0x28]);
 

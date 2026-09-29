@@ -75,6 +75,7 @@ The complete domain command form is:
 
 ```text
 open-forge route inspect <source-reference>
+  [--for=<workspace-relative-path>]...
   [global flags]
 ```
 
@@ -99,9 +100,10 @@ The shared [Global CLI Flags](../../shared/global-flags/interface.md) contract d
 six apply to `route inspect` under that contract.
 
 The `route` group itself continues to show help and performs no domain
-operation. `route inspect` has no `--all`, content projection, link expansion,
-search, mutation, write-policy flag, route-list mode, generic `inspect` alias,
-or other operation-specific flag.
+operation. `route inspect` accepts repeatable `--for=<workspace-relative-path>`
+values to report applicability for a complete working-path set. It has no `--all`,
+content projection, link expansion, search, mutation, write-policy flag,
+route-list mode, generic `inspect` alias, or other operation-specific flag.
 
 ## Workspace And Subject
 
@@ -198,10 +200,11 @@ All six [Global CLI Flags](../../shared/global-flags/interface.md) apply to this
 spelling, values, defaults, repetition, composition, terminal behavior, errors,
 and presentation meaning remain defined only by that shared contract.
 
-The command has no operation-specific flags, so it defines no additional
-flag-repetition or flag-composition policy beyond the shared global contract.
-The accepted source defines no operation-specific flag repetition case. No
-repetition behavior is inferred for a flag that this command does not define.
+`--for=<workspace-relative-path>` is repeatable and supplies the complete
+stateless working-path set. Normalize paths lexically against the selected
+workspace; nonexistent planned paths are allowed and paths that escape the
+workspace are rejected. Duplicate normalized paths have no additional effect.
+The command defines no other operation-specific flags.
 
 ## Identity
 
@@ -239,8 +242,10 @@ workspace. It is not a claim that an agent runtime observed a read.
 
 ### Task Start Or Resume
 
-The command resolves the same task-start context as `context` without operands.
-It then reports whether the inspected logical source belongs to that set.
+The command resolves the same task-start context as `context` without explicit
+source operands and uses the same normalized `--for` path set when one is
+supplied. It then reports whether the inspected logical source belongs to that
+filtered set. The inspection operand does not add the inspected source.
 
 Human output uses:
 
@@ -253,6 +258,26 @@ or:
 ```text
 Read at task start or resume: no
 ```
+
+When an effective `applyTo` condition is pending because no working paths were
+supplied, or invalid metadata prevents evaluation, `read.atStart` is unavailable
+and null. Use the existing unavailable fact with an explicit reason, such as:
+
+```text
+Read at task start or resume could not be measured: No working paths were supplied to evaluate the source's applyTo conditions.
+```
+
+When the supplied paths do not match the full condition chain, report `no`.
+When a path matches, report actual membership in the filtered startup context;
+a condition match alone does not establish that the route is selected.
+
+An explicitly inspected source remains inspectable when its conditions do not
+match. That inspection does not activate nonmatching automatic or
+`#KeepInMind` children. Keep a valid overwrite immediately after its base in
+the inspected source layers. Authored tags remain metadata, but an unmatched
+source has no effective automatic or `#KeepInMind` reread trigger. While
+applicability is pending, report effective reading facts as unavailable when
+their values depend on whether the source applies.
 
 Inspecting a source does not add that source to the task-start calculation.
 
@@ -272,6 +297,11 @@ The command explains the concrete trigger in ordinary language:
   is read, then refreshed at applicable review points while its scope remains
   active. Neither loading tag activates an otherwise unselected ancestor or scope.
 - An overwrite is read immediately after its base.
+
+These bullets describe effective reading behavior only when the source is
+applicable. For an unmatched source, retain authored tags in metadata but do
+not claim automatic or `#KeepInMind` rereading. When applicability is pending,
+leave affected effective behavior facts unavailable with reasons.
 
 The human renderer names the actual exposing parent or event. It does not use
 `policy`, `target-sensitive`, `continuity boundary`, or another internal label
@@ -296,7 +326,11 @@ parent-triggered `#LoadNow`, entrypoint `#KeepInMind`, routed-file
 corresponding event in ordinary words. For both `KeepInMind` kinds,
 `relatedSourceId` identifies the exposing parent and `events` contains
 `exposing-parent-read` followed by `later-review`. Later review applies only
-while that scope remains active.
+while that scope remains active. A matching supplied path uses reason kind
+`matching-file-condition` and event `working-path-matches`, with the exact
+human text: `a supplied working path matches the route's effective file
+condition.` This reason reports applicability; it does not claim automatic
+reading.
 
 Detached entrypoints have no Loader-rooted automatic trigger. Their local
 `#LoadNow` descendants may still be measured as a local topology fact. Known
@@ -454,6 +488,19 @@ The result reports:
 - Ordered Loader and ancestor entrypoint sources that contribute inherited
   `Axioms`.
 - Whether the inspected entrypoint contributes local substantive `Axioms`.
+- Applicability state, the declared and inherited conditions that form the
+  route chain, and the supplied paths that match the complete chain. With no
+  `--for`, a conditioned source has pending applicability and no matching paths.
+  With paths supplied and no effective conditions, the state is `unconditioned`
+  and every path is compatible, while `matchingPaths` remains empty because no
+  condition matched. With a condition, a path belongs to `matchingPaths` only
+  when it satisfies every condition. Paths omitted from
+  `matchingPaths` do not match the chain. Invalid metadata has state `invalid`
+  and remains subject to the existing metadata finding. A pending condition
+  does not claim unconditional `atStart` reading. A matched condition does not
+  itself establish task-start membership. For parent `src/**` and child
+  `**/*.cs`, `--for=src/Order.cs` reports both conditions in the chain and
+  includes that path in `matchingPaths`.
 - The base and overwrite relationship.
 
 Human output lists source IDs, not rule bodies. Use `context` with exact section
@@ -545,13 +592,25 @@ The envelope has exactly these fields:
 }
 ~~~
 
-The command is exactly route inspect; data follows the catalogue:
+The command is exactly route inspect; data follows the catalogue. When
+`--for` is supplied, the result also echoes normalized `workingPaths` at every
+detail level. At standard and full detail, applicable sources include
+`applicability { state, conditions: [ { source, patterns } ], matchingPaths }`.
+The state is `unconditioned` when a supplied path set reaches a source with no
+effective condition, `pending` when an effective condition exists and no paths
+were supplied, `matched` when at least one supplied path satisfies the full
+chain, `unmatched` when none does, and `invalid` when metadata prevents
+evaluation. A pending record retains its conditions and has
+`matchingPaths: []`. An unconditioned record with `--for` also has
+`matchingPaths: []`; its state conveys compatibility. Omit applicability for an
+unconditioned source when no paths were supplied. Pending and unmatched
+conditions do not claim unconditional task-start reading.
 
 | Level    | `data`                                                                                                                                                                                                                                         |
 | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| minimal  | `{ id, path, kind, entrypointForm, overwritePath, belongs { routeChain, parent, directChildren { files, entrypoints }, descendants { files, entrypoints } }, read { atStart, automaticallyWhen, mayReadAgain }, size { own, adds, loadNow } }` |
-| standard | + `axioms { inheritedFrom: [...], local }`, `tags`                                                                                                                                                                                             |
-| full     | + `selected { closure, startupOverlap }`, `selection { kind, method, requested }`, `layers: [ { path, kind } ]`, `statusReason`                                                                                                                |
+| minimal  | `{ id, path, kind, entrypointForm, overwritePath, belongs { routeChain, parent, directChildren { files, entrypoints }, descendants { files, entrypoints } }, read { atStart, automaticallyWhen, mayReadAgain }, size { own, adds, loadNow }, workingPaths?: [ ... ] }` |
+| standard | + `axioms { inheritedFrom: [...], local }`, `tags`, and `applicability { state, conditions: [ { source, patterns } ], matchingPaths: [ ... ] }` when conditions or `--for` apply |
+| full     | + `selected { closure, startupOverlap }`, `selection { kind, method, requested }`, `layers: [ { path, kind } ]`, `statusReason`, and the same applicability facts |
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON
@@ -622,8 +681,14 @@ action when available. Counts are:
 
 `entrypoint`, `routed-file`, `load-now-child`, `keep-in-mind`, `overwrite-pair`,
 `compatibility-entrypoint`, `not-routed-file`, `id-not-unique-exact-path`
-(warnings), `ambiguous-id-prompt`, `unknown-source` (invalid), `loader-subject`
-(invalid), `unreadable-source` (incomplete), `orphan-overwrite` (blocked).
+(warnings), `ambiguous-id-prompt`, `unknown-source` (invalid),
+`loader-subject` (invalid),
+`unreadable-source` (incomplete), `orphan-overwrite` (blocked).
+
+Applicability is reported as `unconditioned`, `matched`, `unmatched`, `pending`,
+or `invalid` in the applicability data. These states do not add finding codes or
+status values. Existing completeness rules determine whether an unavailable
+requested fact makes the profile incomplete.
 
 Prompt rules from the catalogue:
 

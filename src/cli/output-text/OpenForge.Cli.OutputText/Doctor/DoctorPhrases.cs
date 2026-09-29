@@ -188,6 +188,10 @@ internal static class DoctorPhrases
     internal static string FormatTheEntryForInHasOldTags(string findingIdentifierText, string pathText)
         => $"The entry for {findingIdentifierText} in {pathText} has old tags.";
 
+    // @OpenForgeText doctor.phrase.the-entry-for-in-has-stale-apply-to
+    internal static string FormatTheEntryForInHasStaleApplyTo(string findingIdentifierText, string pathText)
+        => $"The entry for {findingIdentifierText} in {pathText} has stale applies-to patterns.";
+
     // @OpenForgeText doctor.phrase.is-not-a-link-open-forge-can-check
     internal static string FormatIsNotALinkOpenForgeCanCheck(string findingIdentifierText)
         => $"{findingIdentifierText} is not a link Open Forge can check.";

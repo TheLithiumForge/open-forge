@@ -21,7 +21,9 @@ internal sealed record RouteInitResult : ICliCommandResult
         Target = formation.Target;
         Plan = formation.Plan;
         Framework = formation.Framework;
-        Entrypoints = formation.Entrypoints;
+        Entrypoints = formation.Entrypoints
+            .Select(entrypoint => new RouteInitResultEntrypoint(entrypoint))
+            .ToImmutableArray();
         Effects = formation.Effects;
         UnchangedPaths = formation.UnchangedPaths;
         Lifecycle = formation.Lifecycle;
@@ -54,7 +56,7 @@ internal sealed record RouteInitResult : ICliCommandResult
 
     internal RouteInitFramework? Framework { get; }
 
-    internal ImmutableArray<RouteInitEntrypoint> Entrypoints { get; }
+    internal ImmutableArray<RouteInitResultEntrypoint> Entrypoints { get; }
 
     internal ImmutableArray<RouteInitEffect> Effects { get; }
 

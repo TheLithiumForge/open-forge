@@ -450,6 +450,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
                     value.Expected,
                     string.Join(',', expected.Tags),
                     StringComparison.Ordinal),
+            RouteGeneratedEntryComparisonKind.ApplyTo => true,
             RouteGeneratedEntryComparisonKind.Missing
                 or RouteGeneratedEntryComparisonKind.Extra => false,
             _ => throw new ArgumentOutOfRangeException(

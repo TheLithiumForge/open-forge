@@ -69,13 +69,16 @@ public sealed class FindOperationTests
     }
 
     [Trait("Boundary", "Processing")]
-    [Theory(DisplayName = "Find operation requests route facts only when a matched metadata projection is effective"),
-        InlineData("", 0),
-        InlineData("metadata", 1)]
+    [Theory(DisplayName = "Find operation reads route facts for applicability and matched metadata projections"),
+        InlineData("", (int)CliDetail.Standard, 1, false),
+        InlineData("metadata", (int)CliDetail.Standard, 2, true),
+        InlineData("", (int)CliDetail.Minimal, 0, false)]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
-    public async Task OperationSkipsRouteFactsUnlessMatchedMetadataIsRequested(
+    public async Task OperationReadsRouteFactsForApplicabilityAndMatchedMetadataProjections(
         string content,
-        int expectedRouteFactsCalls)
+        int detail,
+        int expectedRouteFactsCalls,
+        bool expectsMetadataProjection)
     {
         var fixture = CreateOperationFixture();
         var routeFactsCalls = 0;
@@ -84,14 +87,14 @@ public sealed class FindOperationTests
             [],
             routeFacts: true,
             routeFactsCall: () => routeFactsCalls++);
-        var request = CreateRequest("id", SplitContent(content));
+        var request = CreateRequest("id", SplitContent(content), (CliDetail)detail);
 
         var result = await operation.ExecuteAsync(request, CancellationToken.None);
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(expectedRouteFactsCalls, routeFactsCalls);
         Assert.Single(result.Matches);
-        if (expectedRouteFactsCalls == 1)
+        if (expectsMetadataProjection)
         {
             Assert.Contains(
                 result.Matches[0].Projections,
@@ -161,6 +164,37 @@ public sealed class FindOperationTests
         Assert.Empty(result.Matches);
     }
 
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Find operation exposes unexpected applicability route fact failures"),
+        InlineData(false),
+        InlineData(true)]
+    [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
+    public async Task OperationDoesNotReportCompleteWhenApplicabilityRouteFactsFail(bool withWorkingPath)
+    {
+        var fixture = CreateOperationFixture();
+        const string failureMessage = "applicability-route-facts-failure";
+        var operation = CreateOperation(
+            fixture,
+            [],
+            routeFacts: true,
+            routeFactsCall: () => throw new InvalidOperationException(failureMessage));
+        string[] workingPaths = withWorkingPath ? ["src/Component.cs"] : [];
+
+        var result = await operation.ExecuteAsync(
+            CreateRequest("id", [], workingPaths: workingPaths),
+            CancellationToken.None);
+
+        Assert.Equal(CliSemanticStatus.Failed, result.Status);
+        Assert.Single(result.Matches);
+        Assert.Contains(result.Findings, finding => finding.Code == FindFindingCode.OperationFailed);
+
+        Assert.All(result.Findings, finding =>
+        {
+            Assert.DoesNotContain(failureMessage, finding.Cause, StringComparison.Ordinal);
+            Assert.DoesNotContain(nameof(InvalidOperationException), finding.Cause, StringComparison.Ordinal);
+        });
+    }
+
     private static FindOperation CreateOperation(
         OperationFixture fixture,
         IList<string> calls,
@@ -220,6 +254,11 @@ public sealed class FindOperationTests
             routeFactsCall = null;
         }
 
+        var layerInspector = new FindLayerInspector(
+            readLayer,
+            readMarkdown,
+            readFrontmatter,
+            new FindBodyTagScanner());
         return new FindOperation(
             new FindSourceResolver(
                 sessionRead,
@@ -227,19 +266,18 @@ public sealed class FindOperationTests
                     new SourceReferenceResolver(physicalPathResolver))),
                 physicalPathResolver,
                 readRouteFacts),
-            new FindLayerInspector(
-                readLayer,
-                readMarkdown,
-                readFrontmatter,
-                new FindBodyTagScanner()),
+            layerInspector,
             new FindMatcher(),
             new FindProjectionBuilder(),
+            new FindApplicabilityResolver(layerInspector),
             new FindResultBuilder());
     }
 
     private static FindRequest CreateRequest(
         string selectorForm,
-        IEnumerable<string> content)
+        IEnumerable<string> content,
+        CliDetail detail = CliDetail.Standard,
+        IEnumerable<string>? workingPaths = null)
     {
         var workspace = CreateWorkspace();
         var selector = selectorForm switch
@@ -254,6 +292,7 @@ public sealed class FindOperationTests
         return new FindRequest(
             workspace,
             new FindUniverseFilter(selector is null ? [] : [selector], []),
+            workingPaths ?? [],
             new FindQuery(
                 [predicate],
                 [predicate],
@@ -264,7 +303,7 @@ public sealed class FindOperationTests
                     [new FindRegion(FindRegionKind.Body, null, "body")])),
             new FindPresentationSelection(
                 null,
-                CliDetail.Standard,
+                detail,
                 new FindContentSelection(contentParts, contentParts)));
     }
 

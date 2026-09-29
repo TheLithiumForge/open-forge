@@ -2,17 +2,26 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
 internal sealed partial class RouteInspectLoadingFactsBuilder
 {
+    private enum RouteInspectLoadingSet
+    {
+        Startup,
+        Selected,
+        Narrow,
+    }
+
     private const string LoaderPath = SourceLogicalPath.LoaderPath;
     private readonly RouteInspectResolution _resolution;
     private readonly RouteInspectGraph _graph;
     private readonly RouteInspectIdentity _identity;
     private readonly RouteSource _selected;
     private readonly CancellationToken _cancellationToken;
+    private readonly IReadOnlyList<string>? _workingPaths;
     private readonly Dictionary<string, RouteInspectVisibleEntriesRead> _visibleEntries = new(StringComparer.Ordinal);
     private bool _startupAvailable = true;
     private bool _selectedAvailable = true;
@@ -21,7 +30,8 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 
     internal RouteInspectLoadingFactsBuilder(
         RouteInspectResolution resolution,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        IReadOnlyList<string>? workingPaths = null)
     {
         _resolution = resolution;
         _graph = resolution.ReadGraph();
@@ -29,6 +39,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
         _selected = _graph.ProjectionSet.FindByPath(_identity.CanonicalWorkspaceRelativePath)
             ?? throw new InvalidOperationException("The selected source is absent from the inspect projection set.");
         _cancellationToken = cancellationToken;
+        _workingPaths = workingPaths;
     }
 
     internal RouteInspectLoadingFacts Build()

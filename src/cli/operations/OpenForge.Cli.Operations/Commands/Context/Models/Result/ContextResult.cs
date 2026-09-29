@@ -14,6 +14,7 @@ internal enum ContextFindingCode
     InvalidSource,
     InvalidContent,
     InvalidLinkDepth,
+    InvalidWorkingPath,
     WorkspaceUnavailable,
     WorkspaceUnsafe,
     SourceAmbiguous,
@@ -22,6 +23,8 @@ internal enum ContextFindingCode
     TargetAmbiguous,
     TargetUnsafe,
     ClosureUnavailable,
+    ApplicabilityPending,
+    ApplicabilityInvalid,
     LayerUnavailable,
     InvalidEncoding,
     MarkdownUnavailable,
@@ -123,6 +126,7 @@ internal sealed record ContextResult : ICliCommandResult
         IEnumerable<ContextFinding> findings,
         CliSemanticStatus status,
         CliNextAction? next,
+        IEnumerable<ContextPendingCondition>? pendingConditions = null,
         ContextCounts? counts = null)
     {
         ArgumentNullException.ThrowIfNull(selection);
@@ -137,6 +141,7 @@ internal sealed record ContextResult : ICliCommandResult
         Links = ContextResultCollections.Snapshot(links, nameof(links));
         Sources = ContextResultCollections.Snapshot(sources, nameof(sources));
         Findings = ContextResultCollections.Snapshot(findings, nameof(findings));
+        PendingConditions = ContextResultCollections.Snapshot(pendingConditions ?? [], nameof(pendingConditions));
         Status = status;
         Next = next;
         Counts = counts ?? ContextCounts.Unavailable("Context counts were not established.");
@@ -165,6 +170,8 @@ internal sealed record ContextResult : ICliCommandResult
     internal IReadOnlyList<ContextSource> Sources { get; }
 
     internal IReadOnlyList<ContextFinding> Findings { get; }
+
+    internal IReadOnlyList<ContextPendingCondition> PendingConditions { get; }
 
     internal ContextCounts Counts { get; }
 

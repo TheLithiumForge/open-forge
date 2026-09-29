@@ -3,6 +3,7 @@ using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -23,9 +24,11 @@ internal static class RouteInspectBinding
         var inspect = new Command(
             RouteInspectDefinitions.InspectCommand.Name,
             RouteInspectDefinitions.InspectCommand.Description);
+        var workingPaths = RouteInspectSymbols.CreateWorkingPaths();
         inspect.Arguments.Add(sourceReferences);
+        inspect.Options.Add(workingPaths);
         routeGroup.Subcommands.Add(inspect);
-        return new RouteInspectSymbols(routeGroup, inspect, sourceReferences);
+        return new RouteInspectSymbols(routeGroup, inspect, sourceReferences, workingPaths);
     }
 
     internal static CliRequestBinder<RouteInspectRequest, RouteInspectResult> CreateBinder(
@@ -61,11 +64,32 @@ internal static class RouteInspectBinding
 
         var workspace = invocation.Workspace
             ?? throw new InvalidOperationException("The route-inspect binding requires a selected workspace.");
+        var workingPaths = parseResult.GetValue(symbols.WorkingPaths);
+        if (workingPaths is { Length: 0 })
+        {
+            workingPaths = null;
+        }
+
+        if (workingPaths is { Length: > 0 })
+        {
+            var normalized = SourceWorkingPathNormalizer.Normalize(workspace.LexicalRoot, workingPaths);
+            if (normalized.InvalidPaths.Count > 0)
+            {
+                return CliBindResult<RouteInspectRequest, RouteInspectResult>.Invalid(
+                    RouteInspectBindingInputPolicy.CreateWorkingPathsInvalidResult(
+                        workspace,
+                        sourceReferences[0]));
+            }
+
+            workingPaths = normalized.Paths.ToArray();
+        }
+
         return CliBindResult<RouteInspectRequest, RouteInspectResult>.Bound(
             new RouteInspectRequest(
                 workspace,
                 sourceReferences[0],
-                allowInteractiveSourceSelection: invocation.Presentation.Format == CliFormat.Text));
+                allowInteractiveSourceSelection: invocation.Presentation.Format == CliFormat.Text,
+                workingPaths: workingPaths));
     }
 
     internal static CliRequestBinding<RouteInspectRequest, RouteInspectResult> CreateRequestBinding(

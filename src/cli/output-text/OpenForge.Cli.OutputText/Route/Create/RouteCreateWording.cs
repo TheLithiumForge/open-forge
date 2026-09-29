@@ -40,6 +40,9 @@ internal static class RouteCreateWording
 
     internal static string MetadataResponsibility(string value) => global::OpenForge.Cli.OutputText.Route.Shared.CanonicalPhrases.MetadataResponsibility(value);
 
+    internal static string MetadataApplyTo(IReadOnlyList<string> values)
+        => $"Applies to: {string.Join(", ", values.Select(value => $"'{value}'"))}";
+
     internal static string TemplatePath(string path) => global::OpenForge.Cli.OutputText.Route.Shared.CanonicalPhrases.TemplatePath(path);
 
     internal static string FileHeader(string path) => global::OpenForge.Cli.OutputText.Route.Shared.CanonicalPhrases.FileHeader(path);

@@ -106,4 +106,20 @@ internal static class RouteInspectBindingInputPolicy
                 "open-forge route inspect --help",
                 "Correct the named source or input, then rerun route inspect."));
     }
+
+    internal static RouteInspectResult CreateWorkingPathsInvalidResult(
+        CliWorkspace workspace,
+        string sourceReference)
+    {
+        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceReference);
+        return CreateInvalidResult(
+            workspace,
+            RouteInspectResolutionSupport.UnresolvedSelection(SourceReferenceParser.Parse(sourceReference)),
+            new RouteInspectCondition(
+                RouteInspectConditionCode.InvalidWorkingPath,
+                CliSemanticStatus.Invalid,
+                "--for",
+                "Each --for path must resolve inside the selected workspace."));
+    }
 }

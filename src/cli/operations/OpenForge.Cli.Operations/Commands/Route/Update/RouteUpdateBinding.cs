@@ -34,6 +34,18 @@ internal sealed partial class RouteUpdateBinding(RouteUpdateSymbols symbols)
         };
         var responsibility = CreateSingleton(RouteUpdateDefinitions.Responsibility);
         var template = CreateSingleton(RouteUpdateDefinitions.Template);
+        var applyTo = new Option<string[]>(RouteUpdateDefinitions.ApplyTo.Name)
+        {
+            Description = RouteUpdateDefinitions.ApplyTo.Description,
+            HelpName = RouteUpdateDefinitions.ApplyTo.ValueName,
+            Arity = ArgumentArity.ZeroOrMore,
+            AllowMultipleArgumentsPerToken = false,
+        };
+        var clearApplyTo = new Option<bool>(RouteUpdateDefinitions.ClearApplyTo.Name)
+        {
+            Description = RouteUpdateDefinitions.ClearApplyTo.Description,
+            Arity = ArgumentArity.Zero,
+        };
         var dryRun = new Option<bool>(RouteUpdateDefinitions.DryRun.Name)
         {
             Description = RouteUpdateDefinitions.DryRun.Description,
@@ -47,6 +59,8 @@ internal sealed partial class RouteUpdateBinding(RouteUpdateSymbols symbols)
         command.Options.Add(tag);
         command.Options.Add(responsibility);
         command.Options.Add(template);
+        command.Options.Add(applyTo);
+        command.Options.Add(clearApplyTo);
         command.Options.Add(dryRun);
         routeGroup.Subcommands.Add(command);
         return new RouteUpdateSymbols
@@ -58,6 +72,8 @@ internal sealed partial class RouteUpdateBinding(RouteUpdateSymbols symbols)
             Tag = tag,
             Responsibility = responsibility,
             Template = template,
+            ApplyTo = applyTo,
+            ClearApplyTo = clearApplyTo,
             DryRun = dryRun,
         };
     }

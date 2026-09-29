@@ -17,9 +17,12 @@ public sealed class PublishedRouteCreateProcessTests
             "--description", PublishedRouteCreateWorkspace.Description,
             "--tag=Docs",
             "--tag=Overview",
+            "--apply-to=**/*.cs",
+            "--apply-to=docs/**",
             "--responsibility", PublishedRouteCreateWorkspace.Responsibility,
             "--dry-run",
             "--format=json",
+            "--detail=full",
         ];
         var preview = await PublishedProcessTestSupport.RunWithoutWritesAsync(
             target,
@@ -38,6 +41,8 @@ public sealed class PublishedRouteCreateProcessTests
         // The command data names the created file and the entrypoint that lists it. The complete
         // effect receipts stay on the envelope, not inside the command data.
         Assert.Equal(PublishedRouteCreateWorkspace.ParentPath, result.GetProperty("listedIn").GetString());
+        Assert.Equal(["**/*.cs", "docs/**"], result.GetProperty("metadata").GetProperty("applyTo")
+            .EnumerateArray().Select(pattern => pattern.GetString()));
         Assert.Equal([PublishedRouteCreateWorkspace.TargetPath, PublishedRouteCreateWorkspace.ParentPath],
             document.RootElement.GetProperty("effects").EnumerateArray().Select(effect => effect.GetProperty("path").GetString()));
         workspace.AssertNoLockInfrastructure();
@@ -56,6 +61,8 @@ public sealed class PublishedRouteCreateProcessTests
             "--description", PublishedRouteCreateWorkspace.Description,
             "--tag=Docs",
             "--tag=Overview",
+            "--apply-to=**/*.cs",
+            "--apply-to=docs/**",
             "--responsibility", PublishedRouteCreateWorkspace.Responsibility,
         ];
 
@@ -78,9 +85,17 @@ public sealed class PublishedRouteCreateProcessTests
         Assert.Equal(
             Encoding.UTF8.GetBytes(PublishedRouteCreateWorkspace.ExpectedTargetDocument),
             await workspace.ReadTargetBytesAsync(TestContext.Current.CancellationToken));
+        Assert.Contains(
+            "  applyTo: [\"**/*.cs\", \"docs/**\"]",
+            await workspace.ReadTargetAsync(TestContext.Current.CancellationToken),
+            StringComparison.Ordinal);
         Assert.Equal(
             Encoding.UTF8.GetBytes(workspace.ExpectedParentDocument),
             await workspace.ReadParentBytesAsync(TestContext.Current.CancellationToken));
+        Assert.Contains(
+            "- applies to `**/*.cs`, `docs/**`",
+            await workspace.ReadParentAsync(TestContext.Current.CancellationToken),
+            StringComparison.Ordinal);
         var after = workspace.SnapshotState();
         Assert.Equal(before.Count + 1, after.Count);
         Assert.Equal(before[".agents/loader.md"], after[".agents/loader.md"]);
@@ -129,6 +144,34 @@ public sealed class PublishedRouteCreateProcessTests
         Assert.Contains("--description is missing.", invalid.StandardError, StringComparison.Ordinal);
         Assert.DoesNotContain("Status:", invalid.StandardError, StringComparison.Ordinal);
         Assert.Contains("Next: open-forge route create ", invalid.StandardError, StringComparison.Ordinal);
+        workspace.AssertNoLockInfrastructure();
+    }
+
+    [Fact(DisplayName = "Published Route Create rejects invalid apply-to without changing workspace bytes"), Trait("Feature", "route-create"), Trait("Evidence", "EndToEnd")]
+    public async Task InvalidApplyToUsesInvalidInputExitAndPreservesWorkspaceBytes()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedRouteCreateWorkspace.Create();
+        var before = workspace.SnapshotState();
+        var invalid = await PublishedProcessTestSupport.RunWithoutWritesAsync(
+            target,
+            workspace.Path,
+            workspace.SnapshotState,
+            [
+                "route", "create", PublishedRouteCreateWorkspace.TargetId,
+                "--apply-to=../outside.cs",
+            ],
+            workspace.ProcessEnvironment);
+
+        Assert.Equal(4, invalid.ExitCode);
+        Assert.Equal(string.Empty, invalid.StandardOutput);
+        Assert.StartsWith("Cannot create the routed file: ", invalid.StandardError, StringComparison.Ordinal);
+        Assert.Contains("--apply-to pattern '../outside.cs' is invalid", invalid.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("Status:", invalid.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route create ", invalid.StandardError, StringComparison.Ordinal);
+        Assert.Equal(
+            before.OrderBy(pair => pair.Key, StringComparer.Ordinal).ToArray(),
+            workspace.SnapshotState().OrderBy(pair => pair.Key, StringComparer.Ordinal).ToArray());
         workspace.AssertNoLockInfrastructure();
     }
 

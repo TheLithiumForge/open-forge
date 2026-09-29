@@ -100,10 +100,27 @@ internal static partial class RouteUpdateTestData
                 Values = ImmutableArray.CreateRange(values),
             });
 
+    internal static RouteUpdatePatchRequest ApplyToPatch(params string[] values)
+        => Patch(
+            applyTo: new RouteUpdateApplyToRequest
+            {
+                Operation = RouteUpdateApplyToOperation.Set,
+                Values = ImmutableArray.CreateRange(values),
+            });
+
+    internal static RouteUpdatePatchRequest ClearApplyToPatch()
+        => Patch(
+            applyTo: new RouteUpdateApplyToRequest
+            {
+                Operation = RouteUpdateApplyToOperation.Clear,
+                Values = [],
+            });
+
     internal static RouteUpdatePatchRequest Patch(
         RouteUpdateDescriptionRequest? description = null,
         RouteUpdateResponsibilityRequest? responsibility = null,
-        RouteUpdateTagsRequest? tags = null)
+        RouteUpdateTagsRequest? tags = null,
+        RouteUpdateApplyToRequest? applyTo = null)
         => new()
         {
             Description = description ?? new RouteUpdateDescriptionRequest
@@ -119,6 +136,11 @@ internal static partial class RouteUpdateTestData
             Tags = tags ?? new RouteUpdateTagsRequest
             {
                 Requested = false,
+                Values = [],
+            },
+            ApplyTo = applyTo ?? new RouteUpdateApplyToRequest
+            {
+                Operation = RouteUpdateApplyToOperation.NotRequested,
                 Values = [],
             },
         };

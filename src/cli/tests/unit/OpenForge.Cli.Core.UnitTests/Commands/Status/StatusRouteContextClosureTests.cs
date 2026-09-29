@@ -1,4 +1,9 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
@@ -135,6 +140,34 @@ public sealed class StatusRouteContextClosureTests
         Assert.Contains(closure.Continuity, source => source.Path == child.Path);
     }
 
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Status keeps legacy startup loading when applyTo metadata is present"), Trait("Feature", "status-command"), Trait("Evidence", "Unit")]
+    public void ApplyToDoesNotChangeStatusClosureByDefault()
+    {
+        var loader = Source(
+            ".agents/loader.md",
+            SourceDocumentForm.Loader,
+            Entries(Entry("alpha/_alpha.md", "LoadNow")),
+            parentPath: null);
+        var alpha = Source(
+            ".agents/alpha/_alpha.md",
+            SourceDocumentForm.CanonicalEntrypoint,
+            Entries(),
+            parentPath: null,
+            ["LoadNow"]) with
+        {
+            Metadata = SourceAuthoredMetadataFacts.Complete("Test source.", ["LoadNow"]) with
+            {
+                ApplyTo = ApplyTo("src/**"),
+            },
+        };
+
+        var closure = Resolve([loader, alpha], [alpha.Path]);
+
+        Assert.Contains(closure.Startup, source => source.Path == alpha.Path);
+        Assert.True(closure.IsComplete);
+    }
+
     private static RouteContextSource Source(
         string path,
         SourceDocumentForm form,
@@ -176,4 +209,17 @@ public sealed class StatusRouteContextClosureTests
 
     private static SourceGeneratedEntry Entry(string destination, string tag)
         => new(destination, destination, [tag], new MarkdownTextSpan(0, 1));
+
+    private static ApplyToMetadataFacts ApplyTo(params string[] values)
+    {
+        var patterns = values.Select(value =>
+            ApplyToPatternMatcher.Parse(value).Pattern
+            ?? throw new InvalidOperationException("The test applyTo pattern must be valid.")).ToImmutableArray();
+        var declaration = new ApplyToDeclaration(
+            ApplyToMetadataLocation.Root,
+            new YamlTextSpan(0, 1),
+            new YamlTextSpan(0, 1),
+            patterns);
+        return ApplyToMetadataFacts.Valid(patterns, [declaration]);
+    }
 }

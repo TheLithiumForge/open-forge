@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
@@ -20,6 +21,8 @@ internal enum FrameworkDocumentMetadataFailureKind
 
 internal sealed record FrameworkDocumentMetadataFacts
 {
+    internal ApplyToMetadataFacts ApplyTo { get; init; } = ApplyToMetadataFacts.Absent;
+
     private FrameworkDocumentMetadataFacts(
         FrameworkDocumentMetadataState state,
         FrameworkDocumentMetadata? metadata,

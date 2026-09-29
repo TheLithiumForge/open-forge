@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Find.Models.Matching;
 using OpenForge.Cli.Core.Commands.Find.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
@@ -50,7 +51,8 @@ internal sealed record FindFrontmatterFacts
     internal FindFrontmatterFacts(
         FindFrontmatterAvailability availability,
         string? description,
-        IEnumerable<FindFrontmatterTagOccurrence> tags)
+        IEnumerable<FindFrontmatterTagOccurrence> tags,
+        ApplyToMetadataFacts? applyTo = null)
     {
         if (!Enum.IsDefined(availability))
         {
@@ -73,6 +75,7 @@ internal sealed record FindFrontmatterFacts
         Availability = availability;
         Description = description;
         Tags = Array.AsReadOnly(materializedTags);
+        ApplyTo = applyTo;
     }
 
     internal FindFrontmatterAvailability Availability { get; }
@@ -80,6 +83,8 @@ internal sealed record FindFrontmatterFacts
     internal string? Description { get; }
 
     internal IReadOnlyList<FindFrontmatterTagOccurrence> Tags { get; }
+
+    internal ApplyToMetadataFacts? ApplyTo { get; }
 }
 
 internal sealed record FindLayerInspectionInput

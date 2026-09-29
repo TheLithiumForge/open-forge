@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -31,7 +32,8 @@ internal static class RouteSourceStructureReader
             return [RouteWorkspaceSourceIssue.WithoutLocation(RouteWorkspaceSourceIssueKind.ParseIncomplete, path)];
         }
 
-        if (metadata.State != FrameworkDocumentMetadataState.Malformed)
+        var hasMalformedApplyTo = metadata.ApplyTo.State == ApplyToMetadataState.Invalid;
+        if (metadata.State != FrameworkDocumentMetadataState.Malformed && !hasMalformedApplyTo)
         {
             return [];
         }

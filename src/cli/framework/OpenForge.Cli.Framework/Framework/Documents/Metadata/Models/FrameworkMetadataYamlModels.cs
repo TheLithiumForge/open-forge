@@ -15,6 +15,9 @@ internal sealed class FrameworkOpenForgeMetadataYamlModel
         Order = 2,
         DefaultValuesHandling = DefaultValuesHandling.OmitNull)]
     public string? Responsibility { get; set; }
+
+    [YamlMember(Alias = "applyTo", Order = 3, DefaultValuesHandling = DefaultValuesHandling.OmitNull)]
+    public string[]? ApplyTo { get; set; }
 }
 
 internal sealed class FrameworkAuthoredMetadataYamlDocument

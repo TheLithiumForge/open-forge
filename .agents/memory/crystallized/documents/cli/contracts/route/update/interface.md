@@ -62,6 +62,8 @@ open-forge route update <source-reference>
   [--description <text>]
   [--responsibility <text>]
   [--tag=<tag>]...
+  [--apply-to <pattern>]...
+  [--clear-apply-to]
   [--template <template-reference>]
   [--dry-run]
   [global flags]
@@ -76,13 +78,16 @@ the existing source and Template reference grammar, exact paths, quoting,
 collisions, and overwrite identity.
 
 `--description`, `--responsibility`, and `--tag` patch destination metadata.
+`--apply-to` replaces the destination's complete local pattern set.
+`--clear-apply-to` removes its local declarations. They are mutually exclusive.
 `--template` selects optional starting body content. `--dry-run` is the
 write-policy preview.
 
-At least one metadata flag or `--template` is required. The command has no
-whole-body value, implicit Template, Template machine-name registry, wizard,
-automatic mode, `--no-responsibility`, `--yes`, `--force`, replacement mode,
-alias, or other command-specific flag.
+At least one metadata operation (`--description`, `--responsibility`, `--tag`,
+`--apply-to`, or `--clear-apply-to`) or `--template` is required. The command
+has no whole-body value, implicit Template, Template machine-name registry,
+wizard, automatic mode, `--no-responsibility`, `--yes`, `--force`, replacement
+mode, alias, or other command-specific flag.
 
 ## Operands
 
@@ -106,6 +111,8 @@ collision, containment, and overwrite rules remain in [CLI Source References](..
 | `--description <text>`            | Selection of destination metadata  | One description value; empty or whitespace-only is invalid                                     | The destination `description` remains unchanged    | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
 | `--responsibility <text>`         | Selection of destination metadata  | One responsibility value; whitespace-only is invalid; exact `""` removes the key               | The destination `responsibility` remains unchanged | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
 | `--tag=<tag>`                     | Selection of destination metadata  | One canonical tag without the `#` prefix                                                       | The destination tag list remains unchanged         | Repeatable. Supplied values replace the complete tag list in command-line order; duplicate exact tags and an empty supplied set are invalid. |
+| `--apply-to <pattern>`            | Selection of destination metadata  | One workspace-relative pattern                                                               | The destination's local declarations remain unchanged | Repeatable, one pattern per occurrence. Values form an ordinal-distinct normalized set. Conflicts with `--clear-apply-to`.                  |
+| `--clear-apply-to`                | Selection of destination metadata  | Boolean flag with no value                                                                    | No local declaration is removed                    | Singleton. Conflicts with `--apply-to`. Removes only the target's local declarations.                                                       |
 | `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `.agents/...` path for an existing routed Markdown Template | No Template body is selected                       | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                      |
 | `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                            | Repetition is accepted and idempotent; it does not add authority or precedence.                                                              |
 
@@ -114,10 +121,10 @@ values, defaults, repetition, composition, terminal behavior, errors, and
 presentation meaning remain defined only by that shared contract.
 
 The command-specific repetition rules above are complete. `--description`,
-`--responsibility`, and `--template` are singleton inputs, and any second
-occurrence is invalid even when it repeats the same value. Repeated `--tag`
-values form one complete replacement list in argument order. Repeated
-Repeated `--dry-run` occurrences collapse to their one idempotent Boolean choice.
+`--responsibility`, `--clear-apply-to`, and `--template` are singleton inputs.
+Any second occurrence is invalid even when it repeats the same value. Repeated
+`--tag` values form one complete replacement list in argument order. Repeated
+`--dry-run` occurrences collapse to their one idempotent Boolean choice.
 No command-specific flag uses last-wins or precedence behavior.
 The shared global flags keep their shared spelling, values, defaults, repetition,
 composition, terminal behavior, and errors; this command does not change those
@@ -127,6 +134,21 @@ rules or add another global-flag precedence rule.
 
 Each supplied metadata flag changes only its named destination field. The exact
 patch rules are defined in [Metadata Patch](#metadata-patch).
+
+### Applicability flag effects
+
+`--apply-to` replaces the full local `applyTo` set on the target. It does not
+replace or copy a condition from an ancestor. `--clear-apply-to` removes local
+declarations only. Omitting both flags preserves them. Supplying both is invalid.
+
+For example, set or clear local patterns with:
+
+```text
+open-forge route update <source-reference> --apply-to "**/*.cs" --apply-to "tests/*.cs"
+open-forge route update <source-reference> --clear-apply-to
+```
+
+Clearing local declarations leaves any ancestor condition unchanged.
 
 ### Template and write-policy effects
 
@@ -200,6 +222,9 @@ metadata:
 - Repeated `--tag=<tag>` values replace the complete tag list in argument order.
 - `--responsibility <text>` adds or replaces `responsibility`.
 - `--responsibility ""` removes the `responsibility` key.
+- `--apply-to <pattern>` values replace the complete local `applyTo` pattern set.
+- `--clear-apply-to` removes the target's local `applyTo` declaration or
+  declarations and leaves ancestor conditions unchanged.
 
 Omitted supported fields remain unchanged. There is no default description,
 responsibility, or tag list.
@@ -209,6 +234,23 @@ responsibility is invalid. Each tag must follow canonical tag syntax and omit
 the `#` prefix. Empty tags, duplicate exact tags, and a supplied empty tag set
 are invalid. `description` and tags cannot be removed because the source must
 retain the metadata required for indexing.
+
+`applyTo` accepts one quoted scalar pattern or a quoted-string list in flow or
+block form, at the frontmatter root or in the scoped `open-forge` mapping.
+Patterns use the workspace-relative grammar in the [route create Interface
+Contract](../create/interface.md#destination-metadata). The command reads both
+locations when present, including root `applyTo` when a scoped mapping exists.
+Equivalent normalized declarations represent one local set. A set operation
+updates each existing declaration in place and preserves its location. A clear
+removes every local declaration. Conflicting declarations are invalid and block
+mutation. When no declaration exists and a set is requested, the command adds a
+quoted list in the scoped mapping. Empty strings, empty lists, nulls, and
+non-string values are invalid. The existing complete-metadata prerequisite
+remains in force.
+
+An actual applicability change appears in the existing `changes` array as field
+`applyTo`, with normalized local patterns before and after the operation. A
+clear has no after declaration. No standalone result field is added.
 
 For the empty-mapping enrichment exception only, the accepted patch is a
 bounded exact-span insertion of the complete supplied description and tag list,
@@ -302,8 +344,8 @@ and generated interiors in the target itself.
 
 Generated navigation may still change in a different bounded region:
 
-- Changing a source description or tags updates its exposing parent's generated
-  entry.
+- Changing a source description, tags, or `applyTo` updates its exposing
+  parent's generated entry.
 - Completing a frontmatter-only entrypoint from a valid Template may establish
   its own generated region and update its exposing parent.
 - Responsibility-only and ordinary-body-only changes do not affect generated
@@ -326,6 +368,8 @@ with current bytes.
 
 - A supplied field already holding the exact intended value is unchanged.
 - Removing an already absent responsibility is unchanged.
+- An `applyTo` set already equal to the normalized local set and a clear with no
+  local declaration are verified no-ops. Neither rewrites bytes.
 - A supplied Template body is protected rather than compared or recopied when
   authored target content is present.
 - An unchanged generated projection creates no effect.
@@ -506,9 +550,12 @@ The command is exactly route update; data follows the catalogue:
 
 | Level    | `data`                                                                                                                   |
 | -------- | ------------------------------------------------------------------------------------------------------------------------ |
-| minimal  | `{ mode, target { id, path }, changes: [ { field, before, after } ], template { id, path, applied } \| null, listedIn }` |
+| minimal  | `{ mode, target { id, path }, changes: [ { field, before, after } ], template { id, path, applied } \| null, listedIn }`. Applicability changes use the existing `changes` array. |
 | standard | same                                                                                                                     |
 | full     | + `frontmatterBefore`, `frontmatterAfter`, per effect `before`, `after`                                                  |
+
+The shared schema-3 envelope and command-local `data` shape are unchanged.
+Applicability results use the existing `changes` array.
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON

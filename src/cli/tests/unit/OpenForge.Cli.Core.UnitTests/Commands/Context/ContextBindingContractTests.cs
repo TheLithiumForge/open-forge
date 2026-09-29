@@ -16,7 +16,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Context;
 public sealed class ContextBindingContractTests
 {
     [Trait("Boundary", "Input")]
-    [Fact(DisplayName = "Context symbols expose the exact direct-root operand and three operation options"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Context symbols expose the exact direct-root operand and operation options"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     public void SymbolsExposeExactDirectGrammar()
     {
         var symbols = ContextBinding.CreateSymbols();
@@ -29,7 +29,7 @@ public sealed class ContextBindingContractTests
         Assert.Equal(ArgumentArity.ZeroOrMore, symbols.Sources.Arity);
         Assert.Equal(typeof(string[]), symbols.Sources.ValueType);
         Assert.Equal(
-            ["--additions-only", "--content", "--follow-links"],
+            ["--additions-only", "--content", "--follow-links", "--for"],
             symbols.ContextCommand.Options.Select(option => option.Name));
         Assert.Equal(ArgumentArity.Zero, symbols.AdditionsOnly.Arity);
         Assert.Equal(ArgumentArity.ZeroOrMore, symbols.Content.Arity);
@@ -38,6 +38,8 @@ public sealed class ContextBindingContractTests
         Assert.False(symbols.FollowLinks.AllowMultipleArgumentsPerToken);
         Assert.Equal("part[,part...]", symbols.Content.HelpName);
         Assert.Equal("positive-depth|all", symbols.FollowLinks.HelpName);
+        Assert.Equal(ArgumentArity.ZeroOrMore, symbols.For.Arity);
+        Assert.Equal("path", symbols.For.HelpName);
     }
 
     [Trait("Boundary", "Input")]
@@ -102,6 +104,25 @@ public sealed class ContextBindingContractTests
     }
 
     [Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Context normalizes and deduplicates repeated working paths"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    public void BindingNormalizesRepeatedWorkingPaths()
+    {
+        var symbols = ContextBinding.CreateSymbols();
+        string[] arguments = [
+            "--for", "src/./main.cs",
+            "--for=src/../src/main.cs",
+            "--for", "docs/readme.md",
+        ];
+        var bound = new ContextRequestBinder(symbols).Bind(
+            new CliBindingParse(symbols.ContextCommand.Parse(arguments), arguments),
+            Invocation(CliDetail.Standard));
+
+        var request = Assert.IsType<ContextRequest>(bound.Request);
+        Assert.True(request.WorkingPathsSupplied);
+        Assert.Equal(["src/main.cs", "docs/readme.md"], request.WorkingPaths);
+    }
+
+    [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Context binding returns typed invalid results for exact semantic input errors"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
     [InlineData("additions-without-source", "context.invalid-input")]
     [InlineData("repeated-content", "context.invalid-content")]
@@ -109,6 +130,8 @@ public sealed class ContextBindingContractTests
     [InlineData("zero-link-depth", "context.invalid-link-depth")]
     [InlineData("repeated-link-depth", "context.invalid-link-depth")]
     [InlineData("invalid-source", "context.invalid-source")]
+    [InlineData("invalid-for-path", "context.invalid-working-path")]
+    [InlineData("additions-only-for-without-source", "context.invalid-input")]
     public void BindingFormsTypedInvalidResults(string scenario, string expectedCode)
     {
         var symbols = ContextBinding.CreateSymbols();
@@ -142,6 +165,7 @@ public sealed class ContextBindingContractTests
             ("context.invalid-source", CliSemanticStatus.Invalid),
             ("context.invalid-content", CliSemanticStatus.Invalid),
             ("context.invalid-link-depth", CliSemanticStatus.Invalid),
+            ("context.invalid-working-path", CliSemanticStatus.Invalid),
             ("context.workspace-unavailable", CliSemanticStatus.Blocked),
             ("context.workspace-unsafe", CliSemanticStatus.Blocked),
             ("context.source-ambiguous", CliSemanticStatus.Blocked),
@@ -150,6 +174,8 @@ public sealed class ContextBindingContractTests
             ("context.target-ambiguous", CliSemanticStatus.Blocked),
             ("context.target-unsafe", CliSemanticStatus.Blocked),
             ("context.closure-unavailable", CliSemanticStatus.Incomplete),
+            ("context.applicability-pending", CliSemanticStatus.Incomplete),
+            ("context.applicability-invalid", CliSemanticStatus.Incomplete),
             ("context.layer-unavailable", CliSemanticStatus.Incomplete),
             ("context.invalid-encoding", CliSemanticStatus.Incomplete),
             ("context.markdown-unavailable", CliSemanticStatus.Incomplete),
@@ -195,6 +221,8 @@ public sealed class ContextBindingContractTests
             "zero-link-depth" => ["--follow-links=0"],
             "repeated-link-depth" => ["--follow-links=1", "--follow-links=1"],
             "invalid-source" => [".agents/../outside.md"],
+            "invalid-for-path" => ["--for", "../outside.cs"],
+            "additions-only-for-without-source" => ["--additions-only", "--for", "src/main.cs"],
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The Context invalid binding scenario is not defined."),
         };
 }

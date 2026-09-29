@@ -14,6 +14,8 @@ internal sealed record RouteCreateSymbols
 
     public required Option<string[]> Tag { get; init; }
 
+    public required Option<string[]> ApplyTo { get; init; }
+
     public required Option<string?> Responsibility { get; init; }
 
     public required Option<string?> Template { get; init; }

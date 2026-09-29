@@ -286,8 +286,14 @@ Ambiguous entrypoints, proven incompatible aliases, or two children that cannot
 retain distinct safe route identities block the complete selected plan.
 
 Ordinary indexed Markdown and entrypoints contribute their authored
-`description` and tags. A recognized native source such as `SKILL.md` contributes
-the metadata and classification defined by its source contract.
+`description`, tags, and optional `applyTo` patterns. A recognized native
+source such as `SKILL.md` contributes the metadata and classification defined by
+its source contract.
+
+Read `applyTo` at the frontmatter root and under `open-forge` whenever either
+declaration is present. Equivalent normalized declarations represent one set.
+Declarations whose normalized sets differ are invalid metadata under the
+existing Index boundary. Index does not prefer one declaration or combine them.
 
 The command preserves authored description and tag spelling. It does not infer,
 summarize, correct, normalize, or invent semantic metadata from filenames,
@@ -323,7 +329,18 @@ Every non-empty generated body uses this exact canonical line shape:
 ```
 
 A generated line has the accepted description, containing-file-relative
-destination, separator, and useful bare tags shown above.
+destination, separator, and useful bare tags shown above. When the source has a
+valid declared `applyTo` set, append ` - applies to ` followed by its patterns
+as comma-separated Markdown code spans. The suffix follows the tags. For
+example:
+
+```md
+- [C# rules](csharp/_csharp.md) - #Directive #KeepInMind - applies to `**/*.cs`, `tests/*.cs`
+```
+
+The suffix contains only the source's declared patterns. It does not expand
+conditions inherited from ancestor routes. A source without `applyTo` keeps the
+existing line shape.
 
 A destination resolves relative to the Loader or entrypoint containing the
 generated region. It identifies a direct routed source, remains contained in the
@@ -620,6 +637,8 @@ The native all-current minimal report includes a `Workspace: <workspace>` echo, 
 - Format complete files.
 - Add, move, remove, or rename routed sources.
 - Infer semantic descriptions, tags, loading, scope, or authority.
+- Filter the indexed inventory by a task working-file set or rewrite source
+  frontmatter while projecting `applyTo`.
 - Index overwrite companions or non-routed support resources.
 - Build a search, vector, graph, or persistent retrieval index.
 - Persist a route graph, saved plan, transaction journal, or historical baseline.

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -337,6 +338,18 @@ internal sealed record RouteCreateResult : ICliCommandResult
         {
             throw new ArgumentException(
                 "Route Create result tags must be initialized, canonical, and unique.",
+                parameterName);
+        }
+
+        if (metadata.ApplyTo.IsDefault
+            || metadata.ApplyTo.Any(pattern =>
+                pattern is null
+                || ApplyToPatternMatcher.Parse(pattern).Failure is not null)
+            || metadata.ApplyTo.Distinct(StringComparer.Ordinal).Count() != metadata.ApplyTo.Length
+            || !metadata.ApplyTo.SequenceEqual(metadata.ApplyTo.OrderBy(pattern => pattern, StringComparer.Ordinal)))
+        {
+            throw new ArgumentException(
+                "Route Create result apply-to patterns must be initialized, valid, and unique.",
                 parameterName);
         }
     }

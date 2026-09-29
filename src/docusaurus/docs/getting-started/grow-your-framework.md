@@ -31,7 +31,7 @@ Then run `open-forge index`, or replace the `none` placeholder under `Entries` i
 - [Run the tests before calling a change done](testing.md) - #LoadNow #Directive #Testing
 ```
 
-The Directives entrypoint loads at startup, and the new entry is tagged `LoadNow`, which tells the agent to read the rule at the start of every task. Directive files must carry that tag. Without it, the agent would see only the one-line entry.
+The Directives entrypoint loads at startup, and this unconditioned entry is tagged `LoadNow`, so the rule is read at the start of every task. Directive files must carry that tag. An optional `applyTo` condition is checked before loading and limits which working files make a Directive applicable. [Loading and tags](../concepts/loading-and-tags.md#file-conditions) explains how the field works.
 
 ## Put it in the right place
 
@@ -65,6 +65,8 @@ Adding knowledge doesn't have to mean every task reads more. Put frontend conven
     _database.md
     migrations.md
 ```
+
+Scopes narrow rules by subject, while `applyTo` can narrow a source to matching files within a selected route. A matching path doesn't open a hidden scope.
 
 At startup the agent sees each scope only as one entry line in `_directives.md`. A task selects the branches it needs, and a task that spans both follows both on purpose. There's no fixed limit on how many scopes you add or how deep they go. The CLI can create a scope for you:
 

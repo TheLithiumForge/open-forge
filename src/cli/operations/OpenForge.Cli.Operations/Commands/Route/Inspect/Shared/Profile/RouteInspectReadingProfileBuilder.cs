@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile.Models;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 
@@ -17,14 +18,17 @@ internal sealed class RouteInspectReadingProfileBuilder
     private readonly RouteInspectIdentity _identity;
     private readonly RouteInspectLoadingFacts _loading;
     private readonly RouteSource _selected;
+    private readonly SourceApplicabilityResult? _applicability;
 
     internal RouteInspectReadingProfileBuilder(
         RouteInspectResolution resolution,
-        RouteInspectLoadingFacts loading)
+        RouteInspectLoadingFacts loading,
+        SourceApplicabilityResult? applicability = null)
     {
         _graph = resolution.ReadGraph();
         _identity = resolution.ReadIdentity();
         _loading = loading;
+        _applicability = applicability;
         _selected = _graph.ProjectionSet.FindByPath(_identity.CanonicalWorkspaceRelativePath)
             ?? throw new InvalidOperationException("The selected source is absent from the inspect projection set.");
     }
@@ -42,9 +46,29 @@ internal sealed class RouteInspectReadingProfileBuilder
             return Unavailable("The loading facts needed for reading classification are unavailable.");
         }
 
+        if (_applicability is { State: SourceApplicabilityState.Pending or SourceApplicabilityState.Invalid } applicability)
+        {
+            return Unavailable(
+                applicability.State == SourceApplicabilityState.Pending
+                    ? "No matching working paths were supplied, so effective loading is pending."
+                    : "The selected route has invalid applyTo metadata, so effective loading is unavailable.");
+        }
+
         var reasons = new List<RouteInspectAutomaticReading>();
-        AddParentLoadNow(reasons);
-        AddKeepInMind(reasons);
+        if (_applicability?.State == SourceApplicabilityState.Matched && IsExposedByReadParent())
+        {
+            reasons.Add(new RouteInspectAutomaticReading(
+                RouteInspectAutomaticReadingKind.MatchingFileCondition,
+                null,
+                [RouteInspectAutomaticReadingEvent.WorkingPathMatches]));
+        }
+
+        if (_applicability?.State != SourceApplicabilityState.Unmatched)
+        {
+            AddParentLoadNow(reasons);
+            AddKeepInMind(reasons);
+        }
+
         if (reasons.Count == 0)
         {
             reasons.Add(new RouteInspectAutomaticReading(
@@ -62,8 +86,7 @@ internal sealed class RouteInspectReadingProfileBuilder
         }
 
         var automatic = new RouteInspectAutomaticReadings(reasons);
-        var taskStart = RouteInspectFact<bool>.Available(
-            _loading.StartupPaths.Contains(_selected.CanonicalPath));
+        var taskStart = ReadTaskStart();
         var later = automatic.Reasons.Any(reason => reason.Kind is
                 RouteInspectAutomaticReadingKind.EntrypointKeepInMind
                 or RouteInspectAutomaticReadingKind.RoutedFileKeepInMind)
@@ -76,6 +99,30 @@ internal sealed class RouteInspectReadingProfileBuilder
             RouteInspectFact<RouteInspectAutomaticReadings>.Available(automatic),
             later);
     }
+
+    private RouteInspectFact<bool> ReadTaskStart()
+    {
+        if (_applicability is { State: SourceApplicabilityState.Pending or SourceApplicabilityState.Invalid } applicability)
+        {
+            return RouteInspectFact<bool>.Unavailable(
+                applicability.State == SourceApplicabilityState.Pending
+                    ? "No matching working paths were supplied, so automatic applicability is pending."
+                    : "The selected route has invalid applyTo metadata, so automatic applicability is unavailable.");
+        }
+
+        if (_applicability?.State == SourceApplicabilityState.Unmatched)
+        {
+            return RouteInspectFact<bool>.Available(false);
+        }
+
+        return RouteInspectFact<bool>.Available(
+            _loading.StartupPaths.Contains(_selected.CanonicalPath));
+    }
+
+    private bool IsExposedByReadParent()
+        => _loading.VisibleEntries.Values
+            .SelectMany(entries => entries)
+            .Any(entry => entry.TargetPath == _selected.CanonicalPath);
 
     private void AddParentLoadNow(ICollection<RouteInspectAutomaticReading> reasons)
     {

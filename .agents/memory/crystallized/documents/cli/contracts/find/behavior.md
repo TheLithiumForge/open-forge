@@ -202,6 +202,43 @@ Contract and does not claim facts before their preconditions are established.
   finding and result instead of being silently discarded. Sources excluded
   before effective-universe formation are not candidates for that result.
 
+## Working-Path Applicability
+
+When supplied, lexically normalize repeated `--for` values against the exact
+selected workspace and retain the complete set, including nonexistent planned
+paths. Reject paths that escape the workspace. Do not infer paths from Git,
+prior calls, or dependency graphs. Duplicate normalized paths have no additional
+effect.
+
+Evaluate a conditioned candidate against the full ancestor chain. Patterns on
+one source are OR alternatives; each conditioned ancestor contributes an AND
+condition that must match the same working path. Any one working path that
+satisfies the chain makes the candidate compatible. Sources with no effective
+condition remain compatible. A valid overwrite companion shares its base
+source's effective condition and remains adjacent to that source. Read ancestor
+metadata only as needed for this evaluation; do not widen Find's existing
+candidate universe or returned results.
+
+When `--for` is present, apply path compatibility independently and
+conjunctively with the shared `--include`/`--exclude` source-universe filter and
+the existing tag/heading predicates. It does not satisfy the requirement for
+`--require` or `--within` to have a tag or heading predicate. When `--for` is
+omitted, apply no path-compatibility filter and preserve existing result and
+coverage behavior. An unconditioned source remains compatible and has state
+`unconditioned` in the applicability projection. A conditioned candidate has
+state `matched` if any working path satisfies its full chain and `unmatched` if
+none does; unmatched sources are removed by the filter. If malformed condition
+metadata prevents evaluation, retain the existing incomplete-coverage finding
+and mark the applicability fact `invalid`; do not treat the candidate as
+matched or unmatched.
+
+The typed result echoes normalized `workingPaths` when supplied. At standard
+and full detail, returned matches retain applicability state, the source and
+patterns for each condition in the chain, and the paths that satisfy the full
+chain. For an unconditioned source, `matchingPaths` remains empty because no
+declared condition matched; the state conveys compatibility with the supplied
+paths. Omit applicability when `--for` is omitted.
+
 ## Source-Universe Filter Responsibilities
 
 The [Shared Source-Universe Filters Behavior

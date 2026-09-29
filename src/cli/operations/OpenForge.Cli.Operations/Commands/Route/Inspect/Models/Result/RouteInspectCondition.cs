@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 internal enum RouteInspectConditionCode
 {
     InvalidWorkspace,
+    InvalidWorkingPath,
     WorkspaceUnavailable,
     UnsafeWorkspace,
     MissingSource,
@@ -73,6 +74,7 @@ internal sealed class RouteInspectCondition
         var expectedStatus = code switch
         {
             RouteInspectConditionCode.InvalidWorkspace
+                or RouteInspectConditionCode.InvalidWorkingPath
                 or RouteInspectConditionCode.MissingSource
                 or RouteInspectConditionCode.MultipleSources
                 or RouteInspectConditionCode.InvalidSourceReference

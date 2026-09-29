@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Presentation.Route.Update.Models;
@@ -132,6 +133,22 @@ internal static class RouteUpdateReportSelector
             });
         }
 
+        if (patch.ApplyTo.State == RouteUpdatePatchState.Changed)
+        {
+            changes.Add(new RouteUpdateDataChange
+            {
+                Field = "applyTo",
+                BeforeValues = patch.ApplyTo.Before is { } beforeValues
+                    ? beforeValues
+                    : null,
+                AfterValues = patch.ApplyTo.Operation == RouteUpdateApplyToOperation.Clear
+                    ? null
+                    : patch.ApplyTo.Expected is { } afterValues
+                        ? afterValues
+                        : null,
+            });
+        }
+
         return changes;
     }
 
@@ -185,6 +202,17 @@ internal static class RouteUpdateReportSelector
 
     private static string ChangeRow(RouteUpdateDataChange change)
     {
+        if (change.Field == "applyTo")
+        {
+            var beforePatterns = change.BeforeValues is { } beforeValues
+                ? FormatPatterns(beforeValues)
+                : global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateText.PlaceholderNone();
+            var afterPatterns = change.AfterValues is { } afterValues
+                ? FormatPatterns(afterValues)
+                : global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateText.PlaceholderRemoved();
+            return $"applyTo: {beforePatterns} -> {afterPatterns}";
+        }
+
         var before = change.Field == "tags"
             ? change.Before ?? global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateText.PlaceholderNone()
             : change.Before is null ? global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateText.PlaceholderNone() : $"\"{change.Before}\"";
@@ -195,6 +223,9 @@ internal static class RouteUpdateReportSelector
                 : $"\"{change.After}\"";
         return $"{change.Field}: {before} -> {after}";
     }
+
+    private static string FormatPatterns(IReadOnlyList<string> patterns)
+        => $"[{string.Join(", ", patterns.Select(pattern => $"\"{JsonEncodedText.Encode(pattern)}\""))}]";
 
     private static string? Tags(IReadOnlyList<string>? values)
         => values is null

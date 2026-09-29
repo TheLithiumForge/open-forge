@@ -32,6 +32,8 @@ internal sealed record ContextLoadingClosureResolution
 
     public required IReadOnlyList<ContextFinding> Findings { get; init; }
 
+    public IReadOnlyList<ContextPendingCondition> PendingConditions { get; init; } = [];
+
     public required bool Incomplete { get; init; }
 
     public required bool Blocked { get; init; }

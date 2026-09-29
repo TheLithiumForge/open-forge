@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -354,7 +355,8 @@ internal sealed class RouteInitPlanningInspector
     private static bool HasMetadataInput(RouteInitMetadataInput input)
         => input.Description is not null
             || input.ResponsibilitySpecified
-            || input.Tags.Count > 0;
+            || input.Tags.Count > 0
+            || input.ApplyTo.Length > 0;
 
     private static bool IsValidMetadataInput(RouteInitRequest request)
     {
@@ -377,7 +379,19 @@ internal sealed class RouteInitPlanningInspector
         }
 
         return input.Tags.All(FrameworkDocumentMetadataTagGrammar.IsValid)
-            && input.Tags.Distinct(StringComparer.Ordinal).Count() == input.Tags.Count;
+            && input.Tags.Distinct(StringComparer.Ordinal).Count() == input.Tags.Count
+            && input.ApplyTo.All(IsValidApplyToPattern)
+            && input.ApplyTo.Select(pattern => pattern.Text)
+                .Distinct(StringComparer.Ordinal).Count() == input.ApplyTo.Length;
+    }
+
+    private static bool IsValidApplyToPattern(
+        OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models.ApplyToPattern pattern)
+    {
+        var parsed = ApplyToPatternMatcher.Parse(pattern.Text);
+        return parsed.Pattern is { } normalized
+            && normalized.Text == pattern.Text
+            && normalized.Segments.SequenceEqual(pattern.Segments, StringComparer.Ordinal);
     }
 
     private static RouteInitInspectionStopped Stopped(

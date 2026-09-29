@@ -71,6 +71,7 @@ internal static class DoctorDefinitions
             DoctorFindingKind.RouteGeneratedEntryPath => "route.generated-entry-path",
             DoctorFindingKind.RouteGeneratedEntryDescription => "route.generated-entry-description",
             DoctorFindingKind.RouteGeneratedEntryTags => "route.generated-entry-tags",
+            DoctorFindingKind.RouteGeneratedEntryApplyTo => "route.generated-entry-apply-to",
             DoctorFindingKind.RouteOverwriteOrphan => "route.overwrite-orphan",
             DoctorFindingKind.RouteOverwriteIndependentIndex => "route.overwrite-independent-index",
             DoctorFindingKind.RouteCompatibilityConflict => "route.compatibility-conflict",

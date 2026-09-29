@@ -108,6 +108,47 @@ only when the safe context and the missing boundary can both be stated. Do not
 claim a complete result when an unresolved boundary could change the selected
 context, its requested projection, or its safety.
 
+## Working-Path Applicability
+
+When `--for` is supplied, lexically normalize every value as a
+workspace-relative path against the exact selected workspace. Preserve the
+complete path set for the invocation, including planned paths that do not exist.
+Do not discover paths from Git, prior invocations, open files, or dependency
+relationships. Reject a path that lexically escapes the selected workspace;
+never silently discard it. Repeated values that normalize to the same path are
+one path for matching.
+
+Evaluate entries top-down from visible loaded parents. Include an exposed entry
+whose condition matches a working path before work on that file, whether or not
+the entry has a loading tag. A source's `applyTo` patterns use OR; every
+conditioned ancestor in the source's route chain adds an AND condition evaluated
+against that same working path. A missing local condition inherits its ancestor
+conditions. A valid overwrite shares its base's applicability and remains
+immediately after the base. When paths are supplied, the state
+is `matched` if any path satisfies the full chain, `unmatched` if none does, or
+`unconditioned` if the chain has no condition. With no paths, a valid conditioned
+entry is `pending`; invalid metadata that prevents evaluation is `invalid`. Do
+not load a hidden ancestor because a descendant pattern matches. `matchingPaths`
+contains only paths that satisfy a declared condition chain. For an
+unconditioned source, `matchingPaths` remains empty; its state conveys that it
+is compatible with the supplied paths.
+
+A directly selected or referenced source remains inspectable when it does not
+match the working set. Include only the route ancestors required to establish
+that inspection; do not load its descendants automatically on that basis.
+When no working paths were supplied, a conditioned entry cannot be classified
+against the task. Defer it and retain `{ source, patterns }` in
+`pendingConditions`; report `applicability.state` as `pending` and do not call it
+matched, unmatched, or unconditioned. Encountered pending conditions make
+coverage `incomplete`. Invalid authored conditions report applicability as
+`invalid` and use the existing metadata-validation and incomplete-result policy;
+they do not change the report envelope or status vocabulary.
+
+For `--additions-only`, require explicit source operands as before. Resolve the
+filtered startup closure and the filtered startup-plus-explicit closure using
+the same complete path set, then calculate their ordered difference. If
+`--for` is omitted, preserve the existing unfiltered calculation.
+
 ## Additions Beyond Startup
 
 When `--additions-only` is present, resolve the startup closure and the selected
@@ -344,7 +385,8 @@ conditions; it does not create another status vocabulary.
 - Form `incomplete` when safe content is available but a requested relationship
   or projection cannot be established completely, including missing local
   targets, broken fragments, invalid link encodings, unreadable required layers,
-  incomplete source inspection, or ambiguous sections.
+  incomplete source inspection, ambiguous sections, or encountered conditioned
+entries deferred because no working paths were supplied.
 - Form `invalid-input` for command input or a selected route outside the accepted
   grammar, including an unknown reference, invalid `--content` grammar, invalid
   operation-flag repetition, `--additions-only` without a route, or zero link
@@ -366,7 +408,17 @@ compatibility. This Behavior Contract defines the semantic conditions that those
 shared results represent.
 
 The typed result includes the complete Interface-defined workspace, source,
-closure, flag, count, finding, boundary, view, and content facts. It preserves
+closure, flag, count, finding, boundary, view, and content facts. When supplied,
+it echoes normalized `workingPaths`. At standard and full detail, each applicable
+source projects `applicability: { state, conditions: [ { source, patterns } ],
+matchingPaths }`. The state is `unconditioned` when a supplied path set reaches a
+source with no effective conditions, `matched` or `unmatched` when paths can be
+evaluated, `pending` with retained conditions and empty `matchingPaths` when no
+paths were supplied, and `invalid` when malformed metadata prevents evaluation.
+Omit applicability for an unconditioned source when `--for` is omitted.
+`pendingConditions: [ { source, patterns } ]` is present at every detail level,
+including a `paths`-only content projection, and any encountered pending
+condition selects `incomplete` with exit 3. It preserves
 exact authored bytes, source order, layer order, inclusion reasons, and
 projection coverage. Human and structured renderers consume that result without
 rerunning the operation.
@@ -426,6 +478,13 @@ behind those facts:
   deduplication, completeness, repetition rules, canonical mixed projection
   order, empty results, external unchecked observations, safety/coverage
   precedence, and each semantic status condition.
+- Applicability evidence should cover the complete repeated working-path set,
+  OR within each condition, AND across ancestor conditions on the same path, OR
+  across paths, pending conditions without `--for`, nonmatching explicit or
+  referenced sources, hidden ancestors, adjacent overwrite companions, and the
+  same filtered startup and combined closures for `--additions-only`.
+- Verify pending-condition limitations and `pendingConditions` at every detail
+  level, including paths-only projection, while preserving the schema-3 envelope.
 - Focused integration tests should use real temporary workspaces to cross the
   filesystem, route, Markdown, overwrite, source-identity, link, and containment
   boundaries named by the Interface Contract.

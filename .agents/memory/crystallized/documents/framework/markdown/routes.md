@@ -65,6 +65,20 @@ Each line contains:
 - One `-` separator
 - One or more useful bare tags
 
+When the source declares `applyTo`, append its declared patterns after the tags
+on the same physical line:
+
+````md
+- [C# rules](csharp/_csharp.md) - #Directive #KeepInMind - applies to `**/*.cs`, `**/*.csproj`
+````
+
+Each pattern appears in a code span, separated by a comma and a space. This
+suffix shows only patterns declared on that source. It does not flatten
+conditions inherited from ancestor entrypoints; the route chain supplies that
+meaning. Entries without a declared condition keep their existing line shape.
+The [canonical syntax contract](syntax.md#file-conditions) defines pattern
+values, and the [loading contract](../routing/loading.md) defines their effect.
+
 The label provides enough trigger, purpose, or outcome for pre-load selection. The destination identifies the route. The tags provide compact loading, type, scope, and search signals. The [path contract](../routing/paths.md) defines destination resolution, normalization, encoding, and containment.
 
 Each route entry stays on one physical line. Normal links elsewhere may target headings or external URLs.

@@ -77,6 +77,7 @@ internal enum DoctorFindingKind
     RouteGeneratedEntryPath,
     RouteGeneratedEntryDescription,
     RouteGeneratedEntryTags,
+    RouteGeneratedEntryApplyTo,
     RouteOverwriteOrphan,
     RouteOverwriteIndependentIndex,
     RouteCompatibilityConflict,

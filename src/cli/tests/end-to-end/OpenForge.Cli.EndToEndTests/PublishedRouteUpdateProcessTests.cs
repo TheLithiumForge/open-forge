@@ -81,6 +81,90 @@ public sealed class PublishedRouteUpdateProcessTests
         Assert.Equal(after, workspace.SnapshotState());
     }
 
+    [Fact(DisplayName = "Published Route Update repeated apply-to options regenerate and then clear Entries")]
+    [Trait("Feature", "route-update")]
+    [Trait("Evidence", "EndToEnd")]
+    public async Task ApplyToOptionsRefreshAndClearGeneratedEntry()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedRouteUpdateWorkspace.Create();
+        string[] setArguments =
+        [
+            "route", "update", PublishedRouteUpdateWorkspace.TargetId,
+            "--apply-to", "**/*.cs",
+            "--apply-to", "docs/*.md",
+            "--format=json",
+        ];
+
+        var set = await PublishedProcessTestSupport.RunAsync(
+            target,
+            workspace.Path,
+            setArguments,
+            workspace.ProcessEnvironment);
+        Assert.True(
+            set.ExitCode == 0,
+            $"Published applyTo update failed. stdout: {set.StandardOutput} stderr: {set.StandardError}");
+        Assert.Equal(string.Empty, set.StandardError);
+        using (var setDocument = JsonDocument.Parse(set.StandardOutput))
+        {
+            var result = setDocument.RootElement.GetProperty("data");
+            var change = Assert.Single(result.GetProperty("changes").EnumerateArray());
+            Assert.Equal("applyTo", change.GetProperty("field").GetString());
+            Assert.Equal(
+                new[] { "**/*.cs", "docs/*.md" },
+                change.GetProperty("afterValues").EnumerateArray()
+                    .Select(value => value.GetString()));
+            Assert.Equal(
+                1,
+                setDocument.RootElement.GetProperty("counts")
+                    .GetProperty("fieldsChanged").GetInt32());
+        }
+        Assert.Contains(
+            "applyTo: [\"**/*.cs\", \"docs/*.md\"]",
+            await workspace.ReadTargetAsync(TestContext.Current.CancellationToken),
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "- [Before overview](overview.md) - #Before #Memory - applies to `**/*.cs`, `docs/*.md`",
+            await workspace.ReadParentAsync(TestContext.Current.CancellationToken),
+            StringComparison.Ordinal);
+
+        var cleared = await PublishedProcessTestSupport.RunAsync(
+            target,
+            workspace.Path,
+            ["route", "update", PublishedRouteUpdateWorkspace.TargetId, "--clear-apply-to", "--format=json"],
+            workspace.ProcessEnvironment);
+        Assert.Equal(0, cleared.ExitCode);
+        Assert.Equal(string.Empty, cleared.StandardError);
+        using (var clearDocument = JsonDocument.Parse(cleared.StandardOutput))
+        {
+            var change = Assert.Single(clearDocument.RootElement.GetProperty("data")
+                .GetProperty("changes").EnumerateArray());
+            Assert.Equal("applyTo", change.GetProperty("field").GetString());
+            Assert.Equal(
+                new[] { "**/*.cs", "docs/*.md" },
+                change.GetProperty("beforeValues").EnumerateArray()
+                    .Select(value => value.GetString()));
+            Assert.False(change.TryGetProperty("afterValues", out _));
+        }
+        Assert.DoesNotContain(
+            "applyTo:",
+            await workspace.ReadTargetAsync(TestContext.Current.CancellationToken),
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "- [Before overview](overview.md) - #Before #Memory",
+            await workspace.ReadParentAsync(TestContext.Current.CancellationToken),
+            StringComparison.Ordinal);
+
+        var afterClear = workspace.SnapshotState();
+        var clearNoOp = await RunWithoutWritesAsync(
+            target,
+            workspace,
+            ["route", "update", PublishedRouteUpdateWorkspace.TargetId, "--clear-apply-to"]);
+        Assert.Equal(0, clearNoOp.ExitCode);
+        Assert.Equal(afterClear, workspace.SnapshotState());
+        workspace.AssertPersistentExternalLock();
+    }
+
     [Fact(DisplayName = "Published Route Update refuses an ambiguous target without writes"), Trait("Feature", "route-update"), Trait("Evidence", "EndToEnd")]
     public async Task AmbiguousTargetRefusesWrites()
     {

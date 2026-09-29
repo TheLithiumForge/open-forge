@@ -21,7 +21,8 @@ internal sealed class ContextResultBuilder
         ArgumentNullException.ThrowIfNull(links);
         ArgumentNullException.ThrowIfNull(projection);
         var findings = closure.Findings
-            .Concat(links.Findings)
+            .Concat(links.Findings.Where(finding => finding.Code != ContextFindingCode.ApplicabilityPending
+                || !closure.Findings.Any(existing => existing.Code == finding.Code)))
             .Concat(projection.Findings)
             .OrderBy(finding => finding.Code)
             .ToArray();
@@ -40,7 +41,9 @@ internal sealed class ContextResultBuilder
                 linkExpansion: request.LinkExpansion,
                 sourceCount: status == CliSemanticStatus.Invalid || closure.SelectionBlocked
                     ? null
-                    : projection.Sources.Count),
+                    : projection.Sources.Count,
+                workingPaths: request.WorkingPaths,
+                workingPathsSupplied: request.WorkingPathsSupplied),
             presentation: new ContextPresentation(
                 suppliedDetail: request.SuppliedDetail,
                 effectiveView: request.EffectiveView,
@@ -56,6 +59,9 @@ internal sealed class ContextResultBuilder
             findings: findings,
             status: status,
             next: ReadNext(status, findings),
+            pendingConditions: closure.PendingConditions
+                .Concat(links.PendingConditions)
+                .DistinctBy(condition => condition.Source, StringComparer.Ordinal),
             counts: counts);
     }
 

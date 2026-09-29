@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Commands.Doctor;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
@@ -20,6 +21,31 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor;
 
 public sealed class DoctorWorkspaceRouteMappingTests
 {
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Doctor gives stale ApplyTo entry projections a distinct indexable finding")]
+    [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
+    public void ApplyToDriftHasDedicatedFindingAndCode()
+    {
+        const string cataloguePath = ".agents/root/_root.md";
+        var observation = DoctorGeneratedNavigationTargetObservation.Available(
+            cataloguePath,
+            OperationalGeneratedNavigationState.Changed,
+            new DoctorGeneratedNavigationContent(
+                SourceGeneratedEntriesFacts.Complete([]),
+                [],
+                [new RouteGeneratedEntryComparison(
+                    RouteGeneratedEntryComparisonKind.ApplyTo,
+                    expected: "**/*.cs",
+                    actual: "**/*.ts",
+                    location: new SourceLocation(3, 1, 15, 18))]));
+
+        var finding = Assert.Single(RouteGeneratedEntryDoctorInspector.Inspect([observation]));
+
+        Assert.Equal(DoctorFindingKind.RouteGeneratedEntryApplyTo, finding.Kind);
+        Assert.Equal("route.generated-entry-apply-to", DoctorDefinitions.ReadFindingKind(finding.Kind));
+        AssertIndexAction(finding, cataloguePath);
+    }
+
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor maps exact Loader-declared root boundaries with typed evidence")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]

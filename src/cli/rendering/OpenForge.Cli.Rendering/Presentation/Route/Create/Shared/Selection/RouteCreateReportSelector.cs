@@ -82,6 +82,9 @@ internal static class RouteCreateReportSelector
                     Description = result.Metadata.Description,
                     Responsibility = result.Metadata.Responsibility,
                     Tags = result.Metadata.Tags,
+                    ApplyTo = result.Metadata.ApplyTo.IsDefaultOrEmpty
+                        ? null
+                        : result.Metadata.ApplyTo.ToArray(),
                 }
                 : null,
             Content = includeFull ? result.Content : null,
@@ -116,6 +119,11 @@ internal static class RouteCreateReportSelector
         if (result.Metadata.Responsibility is { } responsibility)
         {
             lines.Add(RouteCreateWording.MetadataResponsibility(responsibility));
+        }
+
+        if (!result.Metadata.ApplyTo.IsDefaultOrEmpty)
+        {
+            lines.Add(RouteCreateWording.MetadataApplyTo(result.Metadata.ApplyTo));
         }
 
         var targetEffect = result.Effects.FirstOrDefault(effect =>

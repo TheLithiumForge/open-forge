@@ -56,6 +56,7 @@ internal static class ContextWording
             ContextFindingCode.InvalidSource => "context.invalid-source",
             ContextFindingCode.InvalidContent => "context.invalid-content",
             ContextFindingCode.InvalidLinkDepth => "context.invalid-link-depth",
+            ContextFindingCode.InvalidWorkingPath => "context.invalid-working-path",
             ContextFindingCode.WorkspaceUnavailable => "context.workspace-unavailable",
             ContextFindingCode.WorkspaceUnsafe => "context.workspace-unsafe",
             ContextFindingCode.SourceAmbiguous => "context.source-ambiguous",
@@ -64,6 +65,8 @@ internal static class ContextWording
             ContextFindingCode.TargetAmbiguous => "context.target-ambiguous",
             ContextFindingCode.TargetUnsafe => "context.target-unsafe",
             ContextFindingCode.ClosureUnavailable => "context.closure-unavailable",
+            ContextFindingCode.ApplicabilityPending => "context.applicability-pending",
+            ContextFindingCode.ApplicabilityInvalid => "context.applicability-invalid",
             ContextFindingCode.LayerUnavailable => "context.layer-unavailable",
             ContextFindingCode.InvalidEncoding => "context.invalid-encoding",
             ContextFindingCode.MarkdownUnavailable => "context.markdown-unavailable",
@@ -94,6 +97,23 @@ internal static class ContextWording
     internal static string RepairCaseMismatchNext()
         => global::OpenForge.Cli.OutputText.Context.ContextText.MessageRunRepairWithAutomaticToCorrectTheLinkTargetCasingThenRerunContext();
 
+    internal static string ApplicabilityLabel()
+        => global::OpenForge.Cli.OutputText.Context.ContextText.LabelApplicability();
+
+    internal static string ApplicabilityPendingLimitation()
+        => global::OpenForge.Cli.OutputText.Context.ContextText.MessageApplicabilityPendingLimitation();
+
+    internal static string ApplicabilityState(ContextApplicabilityState state)
+        => state switch
+        {
+            ContextApplicabilityState.Unconditioned => "unconditioned",
+            ContextApplicabilityState.Matched => "matched",
+            ContextApplicabilityState.Unmatched => "unmatched",
+            ContextApplicabilityState.Pending => "pending",
+            ContextApplicabilityState.Invalid => "invalid",
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The Context applicability state is not defined."),
+        };
+
     internal static string Reason(ContextInclusionReason reason)
     {
         var value = reason.Kind switch
@@ -102,6 +122,7 @@ internal static class ContextWording
             ContextInclusionReasonKind.Loader => global::OpenForge.Cli.OutputText.Context.ContextText.TitleLoader(),
             ContextInclusionReasonKind.LoadNow => global::OpenForge.Cli.OutputText.Context.ContextText.LabelLoadNow(),
             ContextInclusionReasonKind.KeepInMind => global::OpenForge.Cli.OutputText.Context.ContextText.LabelKeepInMind(),
+            ContextInclusionReasonKind.Applicability => global::OpenForge.Cli.OutputText.Context.ContextText.LabelApplicability(),
             ContextInclusionReasonKind.AncestorRequired => global::OpenForge.Cli.OutputText.Context.ContextText.LabelAncestorRequired(),
             ContextInclusionReasonKind.SelectedSource => global::OpenForge.Cli.OutputText.Context.ContextText.LabelSelectedSource(),
             ContextInclusionReasonKind.ScopeLocal => global::OpenForge.Cli.OutputText.Context.ContextText.LabelScopeLocalLoading(),
@@ -134,6 +155,7 @@ internal static class ContextWording
             ContextFindingCode.InvalidSource => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleInvalidSource(),
             ContextFindingCode.InvalidContent => global::OpenForge.Cli.OutputText.Context.ContextText.TitleInvalidContent(),
             ContextFindingCode.InvalidLinkDepth => global::OpenForge.Cli.OutputText.Context.ContextText.TitleInvalidLinkDepth(),
+            ContextFindingCode.InvalidWorkingPath => global::OpenForge.Cli.OutputText.Context.ContextText.TitleInvalidWorkingPath(),
             ContextFindingCode.WorkspaceUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnavailable(),
             ContextFindingCode.WorkspaceUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnsafe(),
             ContextFindingCode.SourceAmbiguous => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleSourceIsAmbiguous(),
@@ -142,6 +164,8 @@ internal static class ContextWording
             ContextFindingCode.TargetAmbiguous => global::OpenForge.Cli.OutputText.Context.ContextText.TitleLinkTargetIsAmbiguous(),
             ContextFindingCode.TargetUnsafe => global::OpenForge.Cli.OutputText.Context.ContextText.TitleLinkTargetIsUnsafe(),
             ContextFindingCode.ClosureUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleStartupContextIsUnavailable(),
+            ContextFindingCode.ApplicabilityPending => global::OpenForge.Cli.OutputText.Context.ContextText.TitleApplicabilityPending(),
+            ContextFindingCode.ApplicabilityInvalid => global::OpenForge.Cli.OutputText.Context.ContextText.TitleApplicabilityInvalid(),
             ContextFindingCode.LayerUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleSourceCouldNotBeRead(),
             ContextFindingCode.InvalidEncoding => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleSourceEncodingIsInvalid(),
             ContextFindingCode.MarkdownUnavailable => global::OpenForge.Cli.OutputText.Context.ContextText.TitleSourceMarkdownIsUnavailable(),
@@ -184,6 +208,9 @@ internal static class ContextWording
             ContextFindingCode.InvalidSource => reason,
             ContextFindingCode.InvalidContent => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatContentIsNotAKnownPartUseMetadataPathsFrontmatterHeadingsBodyOrSectionName($"{finding.Subject ?? "value"}"),
             ContextFindingCode.InvalidLinkDepth => global::OpenForge.Cli.OutputText.Context.ContextText.MessageFollowLinksMustBeAPositiveNumberOrAll(),
+            ContextFindingCode.InvalidWorkingPath => global::OpenForge.Cli.OutputText.Context.ContextText.MessageForMustHaveOneWorkspaceFilePath(),
+            ContextFindingCode.ApplicabilityPending => global::OpenForge.Cli.OutputText.Context.ContextText.MessageApplyToCouldNotBeEvaluatedWithoutFor(),
+            ContextFindingCode.ApplicabilityInvalid => global::OpenForge.Cli.OutputText.Context.ContextText.MessageApplyToInvalid(),
             ContextFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(path),
             ContextFindingCode.WorkspaceUnsafe => CliFindingWording.WorkspaceUnsafe(path, reason),
             ContextFindingCode.SourceAmbiguous => CliFindingWording.SourceAmbiguous(path),

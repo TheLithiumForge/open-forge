@@ -57,6 +57,9 @@ internal static class RouteInitWording
     internal static string MetadataTags(IReadOnlyList<string> values)
         => OpenForge.Cli.OutputText.Route.Shared.MetadataText.Tags(string.Join(", ", values));
 
+    internal static string MetadataApplyTo(IReadOnlyList<string> values)
+        => global::OpenForge.Cli.OutputText.Route.Init.RouteInitWording.MetadataApplyTo(values);
+
     internal static string Scaffold(string value)
         => global::OpenForge.Cli.OutputText.Route.Init.RouteInitWording.Scaffold(value);
 

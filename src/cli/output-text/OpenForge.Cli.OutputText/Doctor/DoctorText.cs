@@ -300,6 +300,10 @@ internal static class DoctorText
     internal static string TitleEntryTagsAreStale()
         => "Entry tags are stale";
 
+    // @OpenForgeText doctor.title.entry-apply-to-is-stale
+    internal static string TitleEntryApplyToIsStale()
+        => "Entry applies-to patterns are stale";
+
     // @OpenForgeText doctor.title.overwrite-is-listed-independently
     internal static string TitleOverwriteIsListedIndependently()
         => "Overwrite is listed independently";

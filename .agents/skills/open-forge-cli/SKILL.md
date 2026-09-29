@@ -32,10 +32,10 @@ These commands change nothing.
 | Command                               | Use it to                                                                                 |
 | ------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `status`                              | Summarize startup context, navigation, installed packages, and anything needing attention |
-| `context [<source>...]`               | See the startup context, or with `--additions-only`, what selecting a scope adds          |
+| `context [<source>...]`               | See startup or selected context, optionally filtered by repeated `--for <path>`           |
 | `route list [<source>]`               | See how a route is organized                                                              |
-| `route inspect <source>`              | Explain one source's route, scope, and loading behavior                                   |
-| `find`                                | Find sources by `--tag` or `--heading`, combined with `--require=all` or `any`            |
+| `route inspect <source>`              | Explain route behavior and how supplied paths match inherited conditions                 |
+| `find`                                | Find by tags or headings, with an additional path filter through `--for`                   |
 | `references <source>`                 | See what links to a source with `--direction=in`, or what it links to with `out`          |
 | `doctor`                              | Diagnose broken links, stale navigation, and lifecycle problems                           |
 | `extension list`, `extension inspect` | See which packages exist, what each installs, and what it depends on                      |
@@ -45,13 +45,40 @@ These commands change nothing.
 
 | Command                      | Use it to                                                                         |
 | ---------------------------- | --------------------------------------------------------------------------------- |
-| `route init <source>`        | Create a scope, or a missing chain of entrypoints                                 |
-| `route create <source>`      | Add a file with correct frontmatter, optionally from a Template with `--template` |
-| `route update <source>`      | Change a description, tags, or responsibility                                     |
+| `route init <source>`        | Create a scope or chain; metadata needs a missing generic final target                   |
+| `route create <source>`      | Add routed file with frontmatter, optional Template or repeated `--apply-to` patterns    |
+| `route update <source>`      | Change description, tags, responsibility, or file conditions                     |
 | `route move <source> <path>` | Move a file or category and update the links to it                                |
 | `route remove <source>`      | Remove a file or category and record the removal                                  |
 | `index [<source>...]`        | Rebuild generated `Entries` after files were added, renamed, or retagged by hand  |
 | `repair`                     | Fix broken local links that have one safe answer                                  |
+
+`route create`, `route init`, and `route update` accept repeated
+`--apply-to <pattern>` values. New declarations use a quoted-string list under
+`open-forge:`. Existing frontmatter may put `applyTo` at its root or under
+`open-forge:` and may use one quoted string or a list. If both locations declare
+the field, their pattern sets must be equivalent. A comma is part of a pattern,
+not a separator. `route update` preserves the authored location; use
+`--clear-apply-to` by itself to remove the condition. It cannot be combined
+with `--apply-to`.
+
+`route init` accepts metadata options only for a missing generic final
+entrypoint. They cannot update an existing final target, and `--apply-to`
+cannot be combined with `--framework`.
+
+For a new condition, preview the repeated option:
+
+```sh
+open-forge route create guidance/ui-rules \
+  --description="UI rules" \
+  --tag=Guidance \
+  --apply-to "**/*.tsx" \
+  --apply-to "**/*.css" \
+  --dry-run
+```
+
+For an existing source with a condition, preview clearing it with
+`route update <source> --clear-apply-to --dry-run`.
 
 ### Change The Installation
 
@@ -59,8 +86,20 @@ These commands change nothing.
 
 ## Common Situations
 
-- **A rule seems ignored.** Run `context` to see whether its file loads. Then run `route inspect <source>` to see why it does not: it may be on demand, or in a scope the task did not select.
-- **Before recording something.** Run `find` with the category's tag, such as `find --tag=Decision`. Update an existing record instead of adding a competing one.
+- **Choose context for a change.** Supply every working path, repeating `--for`.
+  A source applies when one supplied path satisfies its full inherited condition
+  chain. Reading a source only for context does not add its Markdown path.
+  Planned paths may not exist yet. If paths are unknown, encountered conditioned
+  sources stay pending and `context` returns `incomplete` with exit 3.
+  `--additions-only` still needs an explicit source operand and uses the same
+  complete path set for startup and combined context.
+- **A rule seems ignored.** Run `context --for src/Order.cs --for web/order.ts`
+  with the complete working set. Run `route inspect <source>` with the same
+  repeated `--for` inputs to explain declared and inherited conditions.
+  `context` can inspect an explicit or referenced nonmatch, but it does not
+  activate that source's automatic children. A condition does not activate a
+  hidden ancestor or determine edit permission.
+- **Before recording something.** Run `find` with the category's tag, such as `find --tag=Decision`. `--for` adds a path filter; it does not replace the tag or heading predicates used by `--require`.
 - **After editing routed files by hand.** Run `index --dry-run`, then `index`, so `Entries` match the files.
 - **Before moving or deleting a file.** Run `references <source> --direction=in`, then preview `route move` or `route remove`.
 - **Before closeout.** When the task changed routed files, run `doctor`. Resolve what it reports, or name it in the handoff.

@@ -56,13 +56,15 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
 
     internal ValueTask<RouteInspectResult> InspectAsync(
         string reference,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        IEnumerable<string>? workingPaths = null)
     {
         return RouteInspectOperationFactory.Create()(
             new RouteInspectRequest(
                 Workspace,
                 reference,
-                allowInteractiveSourceSelection: false),
+                allowInteractiveSourceSelection: false,
+                workingPaths),
             cancellationToken);
     }
 
@@ -81,18 +83,20 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
                 source.Description,
                 source.Tags,
                 source.Axioms,
-                source.Entries));
+                source.Entries,
+                source.ApplyTo));
     }
 
     internal void WriteRoutedMarkdown(
         string relativePath,
         string description,
         IEnumerable<string> tags,
-        string body)
+        string body,
+        IReadOnlyList<string>? applyTo = null)
     {
         Write(
             relativePath,
-            OpenForgeMetadata(description, tags.ToArray())
+            OpenForgeMetadata(description, tags.ToArray(), applyTo)
             + body);
     }
 
@@ -106,6 +110,51 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
             body: string.Empty);
     }
 
+    internal static string OpenForgeMetadata(
+        string description,
+        IReadOnlyList<string> tags,
+        IReadOnlyList<string>? applyTo)
+    {
+        if (applyTo is null)
+        {
+            return OpenForgeMetadata(description, tags.ToArray());
+        }
+
+        var metadata = OpenForgeMetadata(description, tags.ToArray());
+        var renderedPatterns = string.Join(
+            ", ",
+            applyTo.Select(QuoteYamlString));
+        var closingDelimiter = metadata.LastIndexOf("---", StringComparison.Ordinal);
+        return metadata.Insert(closingDelimiter, $"  applyTo: [{renderedPatterns}]\n");
+    }
+
+    private static string QuoteYamlString(string value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        var builder = new StringBuilder(value.Length + 2).Append('"');
+        foreach (var character in value)
+        {
+            builder.Append(character switch
+            {
+                '"' => "\\\"",
+                '\\' => "\\\\",
+                '\0' => "\\0",
+                '\a' => "\\a",
+                '\b' => "\\b",
+                '\t' => "\\t",
+                '\n' => "\\n",
+                '\v' => "\\v",
+                '\f' => "\\f",
+                '\r' => "\\r",
+                '\u001b' => "\\e",
+                _ when char.IsControl(character) => $"\\u{(int)character:X4}",
+                _ => character.ToString(),
+            });
+        }
+
+        return builder.Append('"').ToString();
+    }
+
     internal static string Entry(
         string label,
         string destination,
@@ -114,16 +163,18 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
         var renderedTags = string.Join(
             " ",
             tags.Select(tag => tag.StartsWith('#') ? tag : $"#{tag}"));
-        return $"- [{label}]({destination}) - {renderedTags}";
+        var tagSuffix = renderedTags.Length == 0 ? string.Empty : $" - {renderedTags}";
+        return $"- [{label}]({destination}){tagSuffix}";
     }
 
     internal static string BuildSource(
         string description,
         IEnumerable<string> tags,
         string? axioms,
-        IEnumerable<string> entries)
+        IEnumerable<string> entries,
+        IReadOnlyList<string>? applyTo = null)
     {
-        return OpenForgeMetadata(description, tags.ToArray())
+        return OpenForgeMetadata(description, tags.ToArray(), applyTo)
             + BuildBody(description, axioms, entries);
     }
 
@@ -233,6 +284,8 @@ internal sealed class RouteInspectProfileIntegrationEntrypoint
     internal required IReadOnlyList<string> Tags { get; init; }
 
     internal string? Axioms { get; init; }
+
+    internal IReadOnlyList<string>? ApplyTo { get; init; }
 
     internal IReadOnlyList<string> Entries { get; init; } = [];
 }

@@ -1,5 +1,8 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Entries;
 using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
@@ -9,6 +12,72 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Markdown;
 
 public sealed class MarkdownEntriesBlockTests
 {
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Generated Entries ApplyTo rows round-trip patterns with commas spaces and literal backticks")]
+    [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void ApplyToRowsRoundTripCodeSpans()
+    {
+        var patterns = new[]
+        {
+            "**/*.cs",
+            "folder,sub/has space.cs",
+            "`literal`/name`",
+            "`leading/name",
+            "trailing/name`",
+            "`",
+            "``",
+            "   ",
+        }
+            .Select(ParsePattern)
+            .ToArray();
+        var line = "- [C# rules](rules.md) - #Guide"
+            + MarkdownEntryRowFormatter.FormatApplyToSuffix(patterns);
+
+        var generated = SourceGeneratedEntriesParser.Parse(
+            new MarkdownDocumentParser().Parse("## Entries\n\n" + line + "\n"));
+        var loader = SourceLoaderEntriesParser.Parse(LoaderContents(line));
+
+        Assert.Equal(SourceGeneratedEntriesState.Complete, generated.State);
+        Assert.Equal(patterns.Select(pattern => pattern.Text),
+            Assert.Single(generated.Entries).ApplyTo.Select(pattern => pattern.Text));
+        Assert.Equal(SourceLoaderEntriesParseState.Valid, loader.State);
+        Assert.Single(loader.Destinations);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Generated Entries preserves legacy tagless rows and supports a tagless ApplyTo suffix")]
+    [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void TaglessRowsRemainValid()
+    {
+        Assert.True(MarkdownEntryRowParser.TryParse("- [Legacy](legacy.md)", out var legacy, out _));
+        Assert.NotNull(legacy);
+        Assert.Empty(legacy.Tags);
+        Assert.Empty(legacy.ApplyTo);
+
+        var generated = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(
+            "## Entries\n\n- [Conditional](conditional.md) - applies to `**/*.cs`\n"));
+
+        Assert.Equal(SourceGeneratedEntriesState.Complete, generated.State);
+        Assert.Equal("**/*.cs", Assert.Single(Assert.Single(generated.Entries).ApplyTo).Text);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Theory(DisplayName = "Generated Entries rejects malformed ApplyTo suffixes"),
+        InlineData("- [C# rules](rules.md) - #Guide - applies to `../secret`"),
+        InlineData("- [C# rules](rules.md) - #Guide - applies to `**/*.cs, other.cs"),
+        InlineData("- [C# rules](rules.md) - #Guide - applies to `**/*.cs`, ")]
+    [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void MalformedApplyToRowsAreUnavailable(string line)
+    {
+        var generated = SourceGeneratedEntriesParser.Parse(
+            new MarkdownDocumentParser().Parse("## Entries\n\n" + line + "\n"));
+        var loader = SourceLoaderEntriesParser.Parse(LoaderContents(line));
+
+        Assert.Equal(SourceGeneratedEntriesState.Unavailable, generated.State);
+        Assert.False(string.IsNullOrWhiteSpace(generated.Cause));
+        Assert.Equal(SourceLoaderEntriesParseState.Malformed, loader.State);
+    }
+
     [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Entries owns only the first top-level dash-space list inside its section")]
     [InlineData("## Entries\n\n- one\n- two\n", "- one\n- two\n", "\n")]
@@ -135,4 +204,11 @@ public sealed class MarkdownEntriesBlockTests
         Assert.Equal(SourceGeneratedEntriesState.Complete, generated.State);
         Assert.Empty(generated.Entries);
     }
+
+    private static ApplyToPattern ParsePattern(string text)
+        => ApplyToPatternMatcher.Parse(text).Pattern
+            ?? throw new InvalidOperationException($"Test pattern '{text}' must be valid.");
+
+    private static string LoaderContents(string entry)
+        => "# Loader\n\n## Entries\n\n" + entry + "\n";
 }

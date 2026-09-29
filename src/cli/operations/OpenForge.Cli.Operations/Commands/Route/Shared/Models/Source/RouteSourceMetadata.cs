@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.Models.Source;
@@ -20,7 +21,8 @@ internal sealed class RouteSourceMetadata
         IEnumerable<string> tags,
         bool isCompatibilityEntrypoint,
         bool isOverwritePresent,
-        string? observedDescription)
+        string? observedDescription,
+        ApplyToMetadataFacts applyTo)
     {
         if (!Enum.IsDefined(state))
         {
@@ -28,6 +30,7 @@ internal sealed class RouteSourceMetadata
         }
 
         ArgumentNullException.ThrowIfNull(tags);
+        ArgumentNullException.ThrowIfNull(applyTo);
         var materializedTags = tags.ToArray();
         if (materializedTags.Any(tag => tag is null))
         {
@@ -60,6 +63,7 @@ internal sealed class RouteSourceMetadata
         Tags = new ReadOnlyCollection<string>(materializedTags);
         IsCompatibilityEntrypoint = isCompatibilityEntrypoint;
         IsOverwritePresent = isOverwritePresent;
+        ApplyTo = applyTo;
     }
 
     internal RouteSourceMetadataState State { get; }
@@ -74,11 +78,14 @@ internal sealed class RouteSourceMetadata
 
     internal bool IsOverwritePresent { get; }
 
+    internal ApplyToMetadataFacts ApplyTo { get; }
+
     internal static RouteSourceMetadata Complete(
         string description,
         IEnumerable<string> tags,
         bool isCompatibilityEntrypoint,
-        bool isOverwritePresent)
+        bool isOverwritePresent,
+        ApplyToMetadataFacts? applyTo = null)
     {
         return new RouteSourceMetadata(
             RouteSourceMetadataState.Complete,
@@ -86,14 +93,16 @@ internal sealed class RouteSourceMetadata
             tags,
             isCompatibilityEntrypoint,
             isOverwritePresent,
-            description);
+            description,
+            applyTo ?? ApplyToMetadataFacts.Absent);
     }
 
     internal static RouteSourceMetadata WithoutValues(
         RouteSourceMetadataState state,
         bool isCompatibilityEntrypoint,
         bool isOverwritePresent,
-        string? observedDescription = null)
+        string? observedDescription = null,
+        ApplyToMetadataFacts? applyTo = null)
     {
         if (state == RouteSourceMetadataState.Complete)
         {
@@ -106,7 +115,8 @@ internal sealed class RouteSourceMetadata
             [],
             isCompatibilityEntrypoint,
             isOverwritePresent,
-            observedDescription);
+            observedDescription,
+            applyTo ?? ApplyToMetadataFacts.Absent);
     }
 
 }

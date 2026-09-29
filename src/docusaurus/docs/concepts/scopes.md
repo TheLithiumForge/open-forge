@@ -44,13 +44,18 @@ An agent selects every scope that's relevant to the task and follows each one as
 
 Selecting several scopes doesn't merge them or rank them. If two selected scopes disagree about one result, path depth and load order don't decide it. The agent follows clear user direction or the source declared authoritative for that question, and reports anything still unresolved.
 
+A route scope narrows content by subject. An optional `applyTo` condition can further limit a source to work involving matching files. Conditions combine down the selected route chain, and every condition must match the same working file. A file match does not reveal an unselected scope. See [Loading and tags](loading-and-tags.md#file-conditions) for the matching and loading rules.
+
+If a necessary related change reaches a file outside the paths that first matched a rule, add that file to the task and load its applicable context. The original rule remains limited to its matching files. Reading a context file does not make that Markdown path one of the task's working files.
+
 ## Loading inside a scope
 
 A scope's own entrypoint decides what loads once the scope is selected:
 
-- Entries are on demand by default.
-- `#LoadNow` inside a scope means "read this whenever the scope is selected", not "read this at startup".
-- A loading tag inside an unselected scope has no effect.
+- Entries without a loading tag or effective `applyTo` condition are on demand by default.
+- A visible entry loads when its effective `applyTo` condition matches a working file, even if it has no loading tag.
+- `#LoadNow` inside a scope still means "read this when the scope is selected", subject to any file condition, not "read this at startup".
+- Loading tags and file conditions inside an unselected scope have no effect until that scope is selected.
 
 For example, a C# scope may contain a `#LoadNow` design file and an on-demand Windows scope. Selecting C# loads its design rules, not Windows. A `#LoadNow` file under Windows loads only after Windows is selected.
 

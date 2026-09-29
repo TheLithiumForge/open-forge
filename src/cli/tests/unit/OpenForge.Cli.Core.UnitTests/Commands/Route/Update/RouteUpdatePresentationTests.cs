@@ -244,6 +244,14 @@ public sealed class RouteUpdatePresentationTests
                 Expected = ["After"],
                 State = RouteUpdatePatchState.Changed,
             },
+            ApplyTo = new RouteUpdateApplyToPatch
+            {
+                Requested = false,
+                Operation = RouteUpdateApplyToOperation.NotRequested,
+                Before = null,
+                Expected = null,
+                State = RouteUpdatePatchState.NotRequested,
+            },
         };
 
     private static string Render(RouteUpdateResult result, CliFormat format, CliDetail detail)

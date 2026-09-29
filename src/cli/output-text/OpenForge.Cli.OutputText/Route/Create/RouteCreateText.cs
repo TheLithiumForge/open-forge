@@ -78,7 +78,7 @@ internal static class RouteCreateText
 
     // @OpenForgeText route.create.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route create <file-target> [--description <text>] [--tag <tag>...] [--responsibility <text>] [--template <template-reference>] [--dry-run] [global options]";
+        => "open-forge route create <file-target> [--description <text>] [--tag <tag>...] [--apply-to <glob>...] [--responsibility <text>] [--template <template-reference>] [--dry-run] [global options]";
 
     // @OpenForgeText route.create.help.target
     internal static string HelpTarget()
@@ -86,7 +86,7 @@ internal static class RouteCreateText
 
     // @OpenForgeText route.create.help.metadata
     internal static string HelpMetadata()
-        => "--description <text>, ordered --tag <tag> values, and --responsibility <text> are optional. Omitting description or tags creates the route with a warning and a next action to add them when useful. Supply --description, --responsibility, and --template at most once each. Repeat --tag for more tags; exact duplicate tags are invalid.";
+        => "--description <text>, ordered --tag <tag> values, repeatable --apply-to <glob> patterns, and --responsibility <text> are optional. Omitting description or tags creates the route with a warning and a next action to add them when useful. Supply --description, --responsibility, and --template at most once each. Repeat --tag for more tags; exact duplicate tags are invalid. Each --apply-to pattern must be workspace-relative and use the supported path glob syntax.";
 
     // @OpenForgeText route.create.help.template
     internal static string HelpTemplate()
@@ -98,7 +98,7 @@ internal static class RouteCreateText
 
     // @OpenForgeText route.create.help.examples
     internal static string HelpExamples()
-        => "open-forge route create memory/project-alpha/overview --description \"Project overview\" --tag Docs\n  open-forge route create .agents/memory/project-alpha/overview.md --description \"Project overview\" --tag Docs --template templates/route --dry-run";
+        => "open-forge route create memory/project-alpha/overview --description \"Project overview\" --tag Docs --apply-to \"**/*.cs\"\n  open-forge route create .agents/memory/project-alpha/overview.md --description \"Project overview\" --tag Docs --template templates/route --dry-run";
 
     // @OpenForgeText route.create.help.notes
     internal static string HelpNotes()

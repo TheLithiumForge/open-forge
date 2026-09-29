@@ -10,4 +10,5 @@ internal sealed record RouteInitSymbols(
     Option<string?> Description,
     Option<string?> Responsibility,
     Option<string[]> Tag,
+    Option<string[]> ApplyTo,
     Option<bool> DryRun);

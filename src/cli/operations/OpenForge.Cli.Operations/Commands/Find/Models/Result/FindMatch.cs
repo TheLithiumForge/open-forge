@@ -14,7 +14,8 @@ internal sealed record FindMatch
         string path,
         string? description,
         IEnumerable<FindEvidence> evidence,
-        IEnumerable<FindProjection> projections)
+        IEnumerable<FindProjection> projections,
+        FindMatchApplicability? applicability = null)
     {
         if (position < 1)
         {
@@ -59,6 +60,7 @@ internal sealed record FindMatch
         Description = description;
         Evidence = Array.AsReadOnly(materializedEvidence);
         Projections = Array.AsReadOnly(materializedProjections);
+        Applicability = applicability;
     }
 
     internal int Position { get; }
@@ -72,6 +74,14 @@ internal sealed record FindMatch
     internal IReadOnlyList<FindEvidence> Evidence { get; }
 
     internal IReadOnlyList<FindProjection> Projections { get; }
+
+    internal FindMatchApplicability? Applicability { get; }
+
+    internal FindMatch WithApplicability(FindMatchApplicability applicability)
+    {
+        ArgumentNullException.ThrowIfNull(applicability);
+        return new FindMatch(Position, Id, Path, Description, Evidence, Projections, applicability);
+    }
 
     private static void ValidateNestedIdentity(
         int position,

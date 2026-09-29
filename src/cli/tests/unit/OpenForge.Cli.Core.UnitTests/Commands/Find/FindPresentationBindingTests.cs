@@ -19,7 +19,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find;
 
 public sealed class FindPresentationBindingTests
 {
-    [Fact(DisplayName = "Find binding exposes the exact seven-option command and preserves one command identity"), Trait("Feature", "find-presentation"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
+    [Fact(DisplayName = "Find binding exposes the exact eight-option command and preserves one command identity"), Trait("Feature", "find-presentation"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void BindingSymbolsExposeExactCommandIdentity()
     {
         var symbols = FindBinding.CreateSymbols();
@@ -29,10 +29,11 @@ public sealed class FindPresentationBindingTests
         Assert.Empty(symbols.FindCommand.Arguments);
         Assert.Empty(symbols.FindCommand.Subcommands);
         Assert.Equal(
-            ["--include", "--exclude", "--tag", "--heading", "--require", "--within", "--content"],
+            ["--include", "--exclude", "--for", "--tag", "--heading", "--require", "--within", "--content"],
             symbols.FindCommand.Options.Select(option => option.Name));
         AssertRepeatable(symbols.Include);
         AssertRepeatable(symbols.Exclude);
+        AssertRepeatable(symbols.For);
         AssertRepeatable(symbols.Tag);
         AssertRepeatable(symbols.Heading);
         AssertSingleton(symbols.Require);

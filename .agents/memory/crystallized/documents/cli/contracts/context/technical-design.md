@@ -61,6 +61,55 @@ current decoded source, and range-bearing facts are retained through projection
 and diagnostics. Invalid encoding or an unusable range remains the contract's
 observable finding rather than being silently repaired.
 
+### Path-scoped applicability
+
+Framework `Documents` owns the shared `applyTo` metadata and pattern boundary.
+`ApplyToMetadataReader` consumes the existing `YamlDocumentFacts` and returns
+typed `ApplyToMetadataFacts`, retaining declarations from both the frontmatter
+root and scoped `open-forge` mapping with their source spans. These facts carry
+applicability independently of required description and tag completeness,
+including for recognized native sources such as `SKILL.md`. Equivalent
+normalized dual declarations represent one condition; invalid or conflicting
+declarations do not become a preferred or combined value.
+
+`ApplyToPatternMatcher` parses declarations into slash-separated path segments.
+It uses `FileSystemName.MatchesSimpleExpression` with case-sensitive matching
+for ordinary segments and bounded dynamic programming over pattern and path
+segments for a standalone `**`. It does not enumerate files. Framework `Sources`
+uses `SourceApplicabilityEvaluator` to evaluate an ordered chain of typed
+conditions against normalized working paths. Patterns within one declaration
+are alternatives, each conditioned ancestor adds a condition on the same path,
+and any supplied path satisfying the complete chain makes the source match.
+`SourceApplicabilityResult` retains the state, condition provenance, and matching
+paths. A conditioned chain with no supplied paths is pending, while an invalid
+declaration remains invalid.
+
+`SourceWorkingPathNormalizer` resolves each supplied value lexically with
+`Path.GetFullPath(path, workspaceRoot)` and
+`Path.GetRelativePath(workspaceRoot, fullPath)`, then returns a canonical
+slash-separated relative path. It rejects paths outside the workspace and
+workspace-root-only results. It does not require a planned path to exist.
+
+Context applies these facts during its own top-down selection of visible entries.
+A condition does not select a hidden ancestor. It is a pre-load file condition,
+so a matching visible `LoadNow` entry retains its mandatory first-load behavior
+and `KeepInMind` retains its refresh behavior. When the workspace has no
+conditions, omitting `--for` preserves existing startup loading. The Status
+command stays outside this Context resolver. An explicitly or reference-selected
+nonmatch remains inspectable with the ancestors needed for that inspection,
+without activating its automatic descendants. With no supplied working paths,
+encountered conditions remain pending and contribute their `{ source, patterns }`
+pairs to `pendingConditions` under the Interface and Behavior contracts. The
+same normalized path set filters both the startup closure and the
+startup-plus-explicit closure before `--additions-only` calculates their
+difference.
+
+The Context operation projects shared Framework facts into Context-owned typed
+result values. Presentation consumes that result, and the registered
+source-generated JSON graph serializes its public projection. Framework metadata
+and evaluator models do not cross directly into Rendering or become shared
+command-result contracts.
+
 ### Results and filesystem boundary
 
 The operation produces one concrete typed result conforming to the [Shared Result
@@ -83,6 +132,7 @@ accepted Architecture boundary.
 | Base and overwrite layering    | Represent one logical source with ordered physical layers and preserve the contract's base-first projection.                                    |
 | Heading and section projection | Use fixed Markdig structural nodes, visible text, source forms, strict UTF-8, and exact source ranges.                                          |
 | Authored frontmatter           | Use YamlDotNet source-generated semantics while preserving the authored representation required by the contracts.                               |
+| Path-scoped applicability      | Read typed declarations once, evaluate visible source chains against normalized paths, and retain pending conditions. |
 | Human and structured results   | Form one typed result, render human views from it, and serialize the shared JSON shape with source-generated JSON.                              |
 | Read-only safety               | Use real BCL-first `System.IO` reads and no persistent graph, session, receipt, cache key, or mutation plan.                                    |
 
@@ -97,6 +147,10 @@ Gate 5 executable proof must mirror the source boundaries:
   projection, ordering, range handling, repetition, and status formation.
 - Integration tests cover real temporary workspaces, real `System.IO` behavior,
   route and overwrite relationships, links, containment, and strict UTF-8.
+- Applicability tests cover root and scoped YAML declarations, equivalent and
+  conflicting dual declarations, path-pattern matching, lexical normalization
+  of existing and planned paths, inherited same-path conditions, pending
+  conditions, and reuse of one working set for startup and selected closures.
 - E2E tests exercise the built CLI process and its human and structured streams.
 - PackageEndToEnd tests exercise the packaged executable and thin invocation
   boundary without reimplementing command behavior.

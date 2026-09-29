@@ -108,6 +108,48 @@ Use `responsibility` only when it adds a useful boundary beyond the route and de
 
 Direct-load files that are never indexed do not need Open Forge metadata unless another tool or contract requires it. Standard files such as `SKILL.md` keep the metadata required by their active runtime.
 
+### File Conditions
+
+An optional `applyTo` condition limits when a routed source is selected for
+work on matching files. It applies before the source body is opened. It does
+not change edit permission or the source's authority. The [routing and loading
+contracts](../routing/loading.md) define how conditions combine across a
+selected route chain and how file selection affects context.
+
+`applyTo` has the same meaning at the YAML frontmatter root and under
+`open-forge:`. Readers inspect both locations, including a root declaration
+beside an existing `open-forge:` block. New fields use a list of quoted
+patterns under `open-forge:`. A quoted scalar containing one pattern is also
+accepted as input. A list contains one quoted string per pattern. Strings are
+not split at commas, because commas and spaces may be literal filename
+characters.
+
+For example, canonical authoring places the field in the scoped block:
+
+```yaml
+---
+open-forge:
+  description: C# design rules
+  tags: [Directive, CSharp]
+  applyTo: ["**/*.cs", "**/*.csproj"]
+---
+```
+
+An absent field adds no condition. Empty strings, empty lists, nulls, and
+non-string values are invalid. If both locations declare `applyTo`, readers
+normalize each declaration to a set of distinct patterns, comparing strings
+with ordinal, case-sensitive equality. Equivalent sets represent one
+condition. Different sets make the metadata conflicting and invalid; readers
+do not union the sets or choose one location.
+
+Patterns use slash-separated, workspace-relative paths. `*` matches within one
+path segment, and `?` matches one character within a segment. `**` matches zero
+or more segments only when it is a complete segment. Matching is
+case-sensitive on every platform. Patterns cannot be absolute or contain
+backslashes, empty, `.` or `..` segments, controls, braces, character classes,
+leading negation, or consecutive stars embedded in another segment. There is
+no escape syntax. Literal spaces and commas remain part of a pattern.
+
 ## Tags
 
 Tags add compact loading, type, state, scope, topic, or search signals. They do not replace readable scope in paths and descriptions.

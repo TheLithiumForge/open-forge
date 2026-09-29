@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Result;
@@ -11,7 +12,8 @@ internal sealed class RouteInspectResultBuilder
     internal RouteInspectResult Build(
         RouteInspectRequest request,
         RouteInspectResolution resolution,
-        RouteInspectProfile? profile)
+        RouteInspectProfile? profile,
+        SourceApplicabilityResult? sourceApplicability = null)
     {
         if (resolution.State is RouteInspectResolutionState.Resolved
             or RouteInspectResolutionState.Incomplete)
@@ -57,6 +59,14 @@ internal sealed class RouteInspectResultBuilder
             ? null
             : profile;
         var identity = status == CliSemanticStatus.Invalid ? null : resolution.Identity;
+        RouteInspectApplicability? applicability = null;
+        if (sourceApplicability is not null
+            && (request.WorkingPaths is not null
+                || sourceApplicability.State != SourceApplicabilityState.Unconditioned))
+        {
+            applicability = RouteInspectApplicability.From(sourceApplicability);
+        }
+
         var next = RouteInspectResultPolicy.ReadNextAction(status, resolution, conditions);
         return RouteInspectResult.Create(
             status,
@@ -66,7 +76,9 @@ internal sealed class RouteInspectResultBuilder
             resultProfile,
             status == CliSemanticStatus.Invalid ? [] : observations,
             conditions,
-            next);
+            next,
+            applicability,
+            request.WorkingPaths);
     }
 
     private static IReadOnlyList<RouteInspectObservation> ReadObservations(

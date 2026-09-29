@@ -41,10 +41,21 @@ public sealed class ContextLinkExpansionSeedTests
         Assert.True(expansion.Complete);
         Assert.False(expansion.Blocked);
         Assert.Empty(expansion.Findings);
-        Assert.Equal([".agents/projects/linked.md"], expansion.StartupSources.Select(row => row.Source.CanonicalPath));
-        Assert.Equal([".agents/projects/linked.md"], expansion.CombinedSources.Select(row => row.Source.CanonicalPath));
-        Assert.Equal([".agents/projects/linked.md"], expansion.ResultSources.Select(row => row.Source.CanonicalPath));
-        var reason = Assert.Single(Assert.Single(expansion.ResultSources).InclusionReasons);
+        string[] selectedPaths = [".agents/projects/_projects.md", ".agents/projects/linked.md"];
+        Assert.Equal(selectedPaths, expansion.StartupSources.Select(row => row.Source.CanonicalPath));
+        Assert.Equal(selectedPaths, expansion.CombinedSources.Select(row => row.Source.CanonicalPath));
+        Assert.Equal(selectedPaths, expansion.ResultSources.Select(row => row.Source.CanonicalPath));
+        Assert.DoesNotContain(expansion.ResultSources, row => row.Source.CanonicalPath == ".agents/projects/guide.md");
+        var ancestor = Assert.Single(
+            expansion.ResultSources,
+            row => row.Source.CanonicalPath == ".agents/projects/_projects.md");
+        var ancestorReason = Assert.Single(ancestor.InclusionReasons);
+        Assert.Equal(ContextInclusionReasonKind.AncestorRequired, ancestorReason.Kind);
+        Assert.Equal(".agents/projects/linked.md", ancestorReason.Source?.Path);
+        var linked = Assert.Single(
+            expansion.ResultSources,
+            row => row.Source.CanonicalPath == ".agents/projects/linked.md");
+        var reason = Assert.Single(linked.InclusionReasons);
         Assert.Equal(ContextInclusionReasonKind.LinkedSource, reason.Kind);
         Assert.Equal(".agents/projects/guide.md", reason.Source?.Path);
         Assert.Equal(1, reason.Depth);

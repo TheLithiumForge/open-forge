@@ -224,6 +224,21 @@ public sealed class FindQueryParserTests
                 Assert.IsType<ArgumentException>(exception);
             }
 
+            var requireWithOnlyWorkingPath = Record.Exception(() => parser.Parse(QueryInput(
+                [],
+                [],
+                [],
+                requireValue: "any",
+                workingPaths: ["src/Order.cs"])));
+            var withinWithOnlyWorkingPath = Record.Exception(() => parser.Parse(QueryInput(
+                [],
+                [],
+                [],
+                withinValue: "body",
+                workingPaths: ["src/Order.cs"])));
+            Assert.IsType<ArgumentException>(requireWithOnlyWorkingPath);
+            Assert.IsType<ArgumentException>(withinWithOnlyWorkingPath);
+
             return;
         }
 
@@ -434,7 +449,8 @@ public sealed class FindQueryParserTests
         IEnumerable<FindPredicateOccurrence> occurrences,
         string? requireValue = null,
         string? withinValue = null,
-        string? contentValue = null)
+        string? contentValue = null,
+        IEnumerable<string>? workingPaths = null)
     {
         var tagValues = tags.ToArray();
         var headingValues = headings.ToArray();
@@ -442,6 +458,7 @@ public sealed class FindQueryParserTests
         return new FindQueryInput(
             [],
             [],
+            workingPaths?.ToArray() ?? [],
             tagValues,
             headingValues,
             requireValue,

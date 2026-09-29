@@ -1,6 +1,10 @@
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates.Models;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
@@ -22,6 +26,9 @@ internal sealed partial class RouteUpdateAppliedVerifier
             && MatchesTags(
                 expected.Preview.Patch.Tags.Expected,
                 actual.Preview.Patch.Tags.Expected)
+            && MatchesApplyTo(
+                expected.Preview.Patch.ApplyTo,
+                actual.Observation.Frontmatter)
             && MatchesBodyTransition(
                 expected.Preview.Plan.Body,
                 actual.Preview.Plan.Body);
@@ -74,6 +81,38 @@ internal sealed partial class RouteUpdateAppliedVerifier
         }
 
         return expected.Value.SequenceEqual(actual.Value, StringComparer.Ordinal);
+    }
+
+    private static bool MatchesApplyTo(
+        RouteUpdateApplyToPatch expected,
+        YamlDocumentFacts actualFrontmatter)
+    {
+        if (!expected.Requested)
+        {
+            return true;
+        }
+
+        var actual = ApplyToMetadataReader.Read(actualFrontmatter);
+        if (actual.State == ApplyToMetadataState.Invalid)
+        {
+            return false;
+        }
+
+        if (expected.Operation == RouteUpdateApplyToOperation.Clear)
+        {
+            return actual.State == ApplyToMetadataState.Absent;
+        }
+
+        if (expected.Operation == RouteUpdateApplyToOperation.Set
+            && expected.Expected is { } patterns)
+        {
+            return actual.State == ApplyToMetadataState.Valid
+                && patterns.Length == actual.Patterns.Length
+                && patterns.ToHashSet(StringComparer.Ordinal).SetEquals(
+                    actual.Patterns.Select(pattern => pattern.Text));
+        }
+
+        return false;
     }
 
     private static bool MatchesBodyTransition(

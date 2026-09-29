@@ -24,19 +24,19 @@ These commands change nothing.
 | Command         | Use it to                                                                                                 |
 | --------------- | --------------------------------------------------------------------------------------------------------- |
 | `status`        | Get a one-screen summary: startup context, navigation, installed packages, anything needing attention     |
-| `context`       | See exactly what the rules load at startup, or what selecting a scope adds                                |
+| `context`       | See startup or selected context, filtered by repeated `--for <path>` values                               |
 | `route list`    | See how the workspace is organized, one level or the whole tree                                           |
-| `route inspect` | Find out why one file loads or doesn't: its route, its scope, and its loading behavior                    |
-| `find`          | Find files by tag or heading, such as every file tagged `Frontend` or every file with an `Axioms` heading |
+| `route inspect` | Explain a source's route and how supplied paths match its declared and inherited conditions               |
+| `find`          | Find by tag or heading, with an additional path filter through `--for`                                     |
 | `references`    | See what links to a file and what it links to, before you move or delete it                               |
 
 ### Add and organize knowledge
 
 | Command        | Use it to                                                                                                   |
 | -------------- | ----------------------------------------------------------------------------------------------------------- |
-| `route init`   | Create a scope: a folder and its entrypoint, or a whole missing chain of them                               |
-| `route create` | Add a file with correct frontmatter, optionally starting from a Template. Its parent's `Entries` update too |
-| `route update` | Change a file's description, tags, or responsibility without hand-editing the frontmatter                   |
+| `route init`   | Create scope folders and entrypoints; metadata applies only to a missing generic final entrypoint           |
+| `route create` | Add a file with optional Template or repeated `--apply-to`; update its parent's `Entries`                   |
+| `route update` | Change metadata or file conditions, including clearing `applyTo`                                           |
 | `route move`   | Move a file or a category you created and update the links that point to it. Installed files can't be moved |
 | `route remove` | Remove a file or a category and remember that you removed it                                                |
 
@@ -71,7 +71,19 @@ Extensions are optional packages of files. A Library is a folder of shared files
 
 ## For agents and scripts
 
-**Your agent can use it too.** The loader lists the main commands, so an agent with the CLI available can run `context` or `find` instead of opening files one by one. The base install also ships one Skill, `open-forge-cli`, which gives the agent this page's advice: which command fits which job, how to preview with `--dry-run`, and how to read the status. At startup the agent sees only the Skill's one-line entry in the Skills entrypoint. The Skill file itself opens on demand, when a task needs the CLI.
+**Your agent can use it too.** The loader lists the main commands, so an agent
+with the CLI available can run `context` or `find` instead of opening files one
+by one. Repeat `context --for <path>` for every file in the task, including
+planned files. If paths are unknown, encountered conditions stay pending and
+`context` returns an incomplete result with exit code `3`. The CLI does not
+infer paths from Git or discover code dependencies. A file condition does not
+select hidden ancestors or control edit permission.
+
+The base install also ships one Skill, `open-forge-cli`, which gives the agent
+this page's advice: which command fits which job, how to preview with
+`--dry-run`, and how to read the status. At startup the agent sees only the
+Skill's one-line entry in the Skills entrypoint. The Skill file itself opens on
+demand, when a task needs the CLI.
 
 **Scripts and CI get structured output.** Add `--format json` for one machine-readable result, and check the exit code. `0` means completed and `2` means completed with warnings. Every other code means the result is incomplete, the input was invalid, or the command failed, was blocked, or was cancelled. The [command reference](/guides/cli#status-and-exit-codes) lists each code. `open-forge doctor` exits with a nonzero code when it finds a warning or an error, so running it in CI catches a broken link or stale navigation before it reaches an agent. A command that asks for confirmation, such as `install`, `update`, or `remove`, needs `--automatic` when nobody is there to answer.
 

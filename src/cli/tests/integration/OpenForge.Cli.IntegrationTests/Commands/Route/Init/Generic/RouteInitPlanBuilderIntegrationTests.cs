@@ -2,6 +2,7 @@ using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -89,6 +90,44 @@ public sealed class RouteInitPlanBuilderIntegrationTests
             Assert.Equal(RouteInitDescriptionSource.Draft, item.Metadata?.DescriptionSource);
             Assert.Equal(RouteInitTagsSource.Draft, item.Metadata?.TagsSource);
         });
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Route Init plan writes applyTo only on the missing generic final target"), Trait("Feature", "route-init"), Trait("Evidence", "Integration")]
+    public async Task PlanFormationAppliesApplyToOnlyToFinalTarget()
+    {
+        using var temporary = TemporaryWorkspace.Create("route-init-plan-apply-to");
+        var applyTo = new[] { "**/*.cs", "src/*.ts" }
+            .Select(pattern => ApplyToPatternMatcher.Parse(pattern).Pattern!)
+            .ToArray();
+        var metadata = new RouteInitMetadataInput(
+            description: "Project documents",
+            responsibilitySpecified: false,
+            responsibility: null,
+            tags: ["Docs"],
+            applyTo: applyTo);
+        var build = await new RouteInitPlanBuilder().BuildAsync(
+            Request(temporary, "memory/project-alpha/documents", metadata),
+            TestContext.Current.CancellationToken);
+        var plan = Assert.IsType<RouteInitPlan>(build.Plan);
+        var final = Assert.Single(plan.Preview.Entrypoints.Where(item => item.Id == "memory/project-alpha/documents"));
+        var ancestors = plan.Preview.Entrypoints.Where(item => item.Id != final.Id).ToArray();
+        var change = Assert.Single(plan.FileChanges.Where(item =>
+            item.Kind == PlannedFileChangeKind.Create
+                && item.LogicalPath.EndsWith("_documents.md", StringComparison.Ordinal)));
+        var scaffold = Encoding.UTF8.GetString(change.IntendedBytes.AsSpan());
+        var parentChange = Assert.Single(plan.FileChanges.Where(item =>
+            item.Kind == PlannedFileChangeKind.Create
+                && item.LogicalPath.EndsWith("_project-alpha.md", StringComparison.Ordinal)));
+        var parentScaffold = Encoding.UTF8.GetString(parentChange.IntendedBytes.AsSpan());
+
+        Assert.Equal(["**/*.cs", "src/*.ts"], final.Metadata?.ApplyTo.Select(pattern => pattern.Text));
+        Assert.All(ancestors, ancestor => Assert.Empty(ancestor.Metadata?.ApplyTo ?? []));
+        Assert.Contains("applyTo: [\"**/*.cs\", \"src/*.ts\"]", scaffold, StringComparison.Ordinal);
+        Assert.Contains(
+            "- [Project documents](documents/_documents.md) - #Docs - applies to `**/*.cs`, `src/*.ts`",
+            parentScaffold,
+            StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "OS")]

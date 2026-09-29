@@ -72,10 +72,14 @@ internal sealed class RouteUpdateInvalidResultFactory
             Tags = [],
             Responsibility = null,
             Template = null,
+            ApplyTo = [],
+            ClearApplyTo = false,
             DescriptionFacts = new CliOptionResultFacts(false, 0, 0),
             TagFacts = new CliOptionResultFacts(false, 0, 0),
             ResponsibilityFacts = new CliOptionResultFacts(false, 0, 0),
             TemplateFacts = new CliOptionResultFacts(false, 0, 0),
+            ApplyToFacts = new CliOptionResultFacts(false, 0, 0),
+            ClearApplyToFacts = new CliOptionResultFacts(false, 0, 0),
             ParserErrors = [],
         };
 }

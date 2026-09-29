@@ -36,7 +36,10 @@ internal sealed class RouteInitScaffoldComposer
             new FrameworkDocumentMetadata(
                 description: metadata.Description,
                 tags: metadata.Tags,
-                responsibility: metadata.Responsibility),
+                responsibility: metadata.Responsibility)
+            {
+                ApplyTo = metadata.ApplyTo,
+            },
             body);
         return new RouteInitComposedScaffold(
             metadata,

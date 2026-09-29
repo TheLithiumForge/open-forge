@@ -18,5 +18,9 @@ internal sealed record RouteUpdateSymbols
 
     public required Option<string?> Template { get; init; }
 
+    public required Option<string[]> ApplyTo { get; init; }
+
+    public required Option<bool> ClearApplyTo { get; init; }
+
     public required Option<bool> DryRun { get; init; }
 }

@@ -23,10 +23,12 @@ internal sealed class SourceOpenForgeMetadataParser
             FrameworkDocumentMetadataState.Missing => SourceOpenForgeMetadataFacts.WithoutValues(
                 SourceOpenForgeMetadataState.Missing,
                 facts.ObservedDescription,
-                facts.ObservedTags),
+                facts.ObservedTags) with
+            { ApplyTo = facts.ApplyTo },
             FrameworkDocumentMetadataState.Malformed => SourceOpenForgeMetadataFacts.WithoutValues(
                 SourceOpenForgeMetadataState.Malformed,
-                facts.ObservedDescription),
+                facts.ObservedDescription) with
+            { ApplyTo = facts.ApplyTo },
             _ => throw new ArgumentOutOfRangeException(
                 nameof(facts),
                 facts.State,
@@ -45,6 +47,7 @@ internal sealed class SourceOpenForgeMetadataParser
                 "Complete Framework document metadata facts require authored values.");
         return SourceOpenForgeMetadataFacts.Complete(
             metadata.Description,
-            metadata.Tags);
+            metadata.Tags) with
+        { ApplyTo = facts.ApplyTo };
     }
 }

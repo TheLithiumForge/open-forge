@@ -85,7 +85,9 @@ internal sealed record ContextSelection
         bool startupIncluded,
         bool additionsOnly,
         ContextLinkExpansion linkExpansion,
-        int? sourceCount)
+        int? sourceCount,
+        IEnumerable<string>? workingPaths = null,
+        bool workingPathsSupplied = false)
     {
         ArgumentNullException.ThrowIfNull(linkExpansion);
         if (sourceCount is < 0)
@@ -98,6 +100,8 @@ internal sealed record ContextSelection
         AdditionsOnly = additionsOnly;
         LinkExpansion = linkExpansion;
         SourceCount = sourceCount;
+        WorkingPathsSupplied = workingPathsSupplied;
+        WorkingPaths = ContextResultCollections.Snapshot(workingPaths ?? [], nameof(workingPaths));
     }
 
     internal IReadOnlyList<ContextRequestedSource> RequestedSources { get; }
@@ -109,4 +113,8 @@ internal sealed record ContextSelection
     internal ContextLinkExpansion LinkExpansion { get; }
 
     internal int? SourceCount { get; }
+
+    internal bool WorkingPathsSupplied { get; }
+
+    internal IReadOnlyList<string> WorkingPaths { get; }
 }

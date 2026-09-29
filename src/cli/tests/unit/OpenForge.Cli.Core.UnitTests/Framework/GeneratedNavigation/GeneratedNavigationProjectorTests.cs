@@ -1,7 +1,13 @@
+using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Entries;
+using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -13,6 +19,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Operational;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.TestSupport;
 
@@ -54,6 +62,68 @@ public sealed class GeneratedNavigationProjectorTests
             "- [Root](root/_root.md) - #Root #Guide\n",
             region.ExpectedBody);
         Assert.True(projection.IsComplete);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation emits declared ApplyTo patterns after tags and round-trips them")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void ProjectionEmitsAndParsesDeclaredApplyTo()
+    {
+        var parent = Source(
+            ".agents/root/_root.md",
+            "root",
+            SourceDocumentForm.CanonicalEntrypoint);
+        var child = Source(".agents/root/child.md", "root/child");
+        var patterns = new[] { "**/*.cs", "folder,sub/has space`tick`/*.cs", " trailing/*.cs " }
+            .Select(ParsePattern)
+            .ToArray();
+        var topology = new SourceRouteTopology(
+            [
+                Node(parent, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        var request = Request(
+            topology,
+            [parent, child],
+            [Region(parent, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
+            [Metadata(child, "Child", ["Docs"], patterns)]);
+
+        var region = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
+        var entry = Assert.Single(region.Entries);
+        var reparsed = SourceGeneratedEntriesParser.Parse(
+            new MarkdownDocumentParser().Parse(OpenForgeDocumentSeed.GeneratedEntries(entries: entry.Line)));
+
+        Assert.Equal(
+            "- [Child](child.md) - #Docs - applies to `**/*.cs`, ``folder,sub/has space`tick`/*.cs``, `  trailing/*.cs  `",
+            entry.Line);
+        Assert.Equal(patterns.Select(pattern => pattern.Text), entry.ApplyTo.Select(pattern => pattern.Text));
+        Assert.Equal(SourceGeneratedEntriesState.Complete, reparsed.State);
+        Assert.Equal(patterns.Select(pattern => pattern.Text),
+            Assert.Single(reparsed.Entries).ApplyTo.Select(pattern => pattern.Text));
+
+        var reorderedLine = "- [Child](child.md) - #Docs"
+            + MarkdownEntryRowFormatter.FormatApplyToSuffix(patterns.Reverse());
+        var reorderedText = OpenForgeDocumentSeed.GeneratedEntries(entries: reorderedLine);
+        var reorderedEntries = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(reorderedText));
+        var reorderedComparisons = RouteGeneratedEntryComparisonReader.Read(
+            parent,
+            reorderedEntries,
+            region.Entries,
+            new Utf8SourceMap(reorderedText));
+
+        Assert.Empty(reorderedComparisons);
+
+        var staleLine = entry.Line.Replace("**/*.cs", "**/*.ts", StringComparison.Ordinal);
+        var staleText = OpenForgeDocumentSeed.GeneratedEntries(entries: staleLine);
+        var staleEntries = SourceGeneratedEntriesParser.Parse(new MarkdownDocumentParser().Parse(staleText));
+        var comparisons = RouteGeneratedEntryComparisonReader.Read(
+            parent,
+            staleEntries,
+            region.Entries,
+            new Utf8SourceMap(staleText));
+
+        Assert.Equal(RouteGeneratedEntryComparisonKind.ApplyTo, Assert.Single(comparisons).Kind);
     }
 
     [Trait("Boundary", "Output")]
@@ -775,6 +845,42 @@ public sealed class GeneratedNavigationProjectorTests
     }
 
     [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation blocks complete child metadata with invalid applyTo")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void InvalidApplyToCannotBeErasedFromGeneratedEntries()
+    {
+        var root = Source(RootPath, "root", SourceDocumentForm.CanonicalEntrypoint);
+        var child = Source(".agents/root/child.md", "root/child");
+        var topology = new SourceRouteTopology(
+            [
+                Node(root, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [root.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        var facts = new SourceAuthoredMetadataParser().Parse(
+            new MarkdownDocumentParser().Parse(
+                "---\nopen-forge:\n"
+                    + "  description: Child\n"
+                    + "  tags: [Docs]\n"
+                    + "  applyTo: '**//*.cs'\n"
+                    + "---\n"),
+            SourceDocumentForm.Markdown);
+
+        Assert.Equal(SourceAuthoredMetadataState.Complete, facts.State);
+        Assert.Equal(ApplyToMetadataState.Invalid, facts.ApplyTo.State);
+        var region = Assert.Single(new GeneratedNavigationProjector().Project(Request(
+            topology,
+            [root, child],
+            [Region(root, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale"))],
+            [new GeneratedNavigationMetadata(child, facts)])).Regions);
+
+        Assert.Equal(GeneratedNavigationRegionState.Unavailable, region.State);
+        Assert.Equal(GeneratedNavigationRegionUnavailableReason.MetadataInvalid, region.UnavailableReason);
+        Assert.Empty(region.Entries);
+        Assert.Null(region.Change);
+    }
+
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation rejects an unsafe observed partial description")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void UnsafeObservedPartialDescriptionIsUnavailable()
@@ -839,12 +945,33 @@ public sealed class GeneratedNavigationProjectorTests
     private static GeneratedNavigationMetadata Metadata(
         SourceLogicalSource source,
         string description,
-        IEnumerable<string> tags)
+        IEnumerable<string> tags,
+        IEnumerable<ApplyToPattern>? applyTo = null)
     {
+        var facts = SourceAuthoredMetadataFacts.Complete(description, tags);
+        if (applyTo is not null)
+        {
+            var patterns = applyTo.ToImmutableArray();
+            facts = facts with
+            {
+                ApplyTo = ApplyToMetadataFacts.Valid(
+                    patterns,
+                    [new ApplyToDeclaration(
+                        ApplyToMetadataLocation.OpenForge,
+                        new YamlTextSpan(0, 7),
+                        new YamlTextSpan(8, 4),
+                        patterns)]),
+            };
+        }
+
         return new GeneratedNavigationMetadata(
             source,
-            SourceAuthoredMetadataFacts.Complete(description, tags));
+            facts);
     }
+
+    private static ApplyToPattern ParsePattern(string text)
+        => ApplyToPatternMatcher.Parse(text).Pattern
+            ?? throw new InvalidOperationException($"Test pattern '{text}' must be valid.");
 
     private static GeneratedNavigationMetadata MissingMetadata(
         SourceLogicalSource source,

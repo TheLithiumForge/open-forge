@@ -59,6 +59,7 @@ internal static class RouteInspectReportSelector
         {
             Id = identity?.Id,
             Path = identity?.CanonicalWorkspaceRelativePath,
+            WorkingPaths = result.WorkingPaths?.ToArray(),
             Kind = identity is null ? null : RouteInspectWording.SourceKind(identity.Kind),
             EntrypointForm = identity is null ? null : RouteInspectWording.SourceForm(identity.Form),
             OverwritePath = identity?.PhysicalLayers.Count > 1
@@ -85,6 +86,7 @@ internal static class RouteInspectReportSelector
                 Adds = ProjectMeasurement(profile?.Measurements.SelectionAddition),
                 LoadNow = ProjectMeasurement(profile?.Measurements.LoadNowDescendants),
             },
+            Applicability = standard ? ProjectApplicability(result.Applicability) : null,
             Axioms = standard ? ProjectAxioms(axioms) : null,
             Tags = standard && identity is not null ? identity.Tags.ToArray() : null,
             Selected = full && profile is not null
@@ -112,6 +114,25 @@ internal static class RouteInspectReportSelector
             StatusReason = full ? RouteInspectWording.StatusReason(result.Status) : null,
             Identity = identity,
             Profile = profile,
+        };
+    }
+
+    private static RouteInspectDataApplicability? ProjectApplicability(RouteInspectApplicability? applicability)
+    {
+        if (applicability is null)
+        {
+            return null;
+        }
+
+        return new RouteInspectDataApplicability
+        {
+            State = RouteInspectWording.ApplicabilityState(applicability.State),
+            Conditions = applicability.Conditions.Select(condition => new RouteInspectDataApplicabilityCondition
+            {
+                Source = condition.Source,
+                Patterns = condition.Patterns.ToArray(),
+            }).ToArray(),
+            MatchingPaths = applicability.MatchingPaths.ToArray(),
         };
     }
 
@@ -271,7 +292,8 @@ internal static class RouteInspectReportSelector
             RouteInspectConditionCode.InvalidSourceReference
                 or RouteInspectConditionCode.MissingSource
                 or RouteInspectConditionCode.MultipleSources
-                or RouteInspectConditionCode.UnknownSource => CliSubjectKind.Identifier,
+                or RouteInspectConditionCode.UnknownSource
+                or RouteInspectConditionCode.InvalidWorkingPath => CliSubjectKind.Identifier,
             _ => CliSubjectKind.Source,
         };
         return new CliFinding
@@ -314,6 +336,7 @@ internal static class RouteInspectReportSelector
             RouteInspectConditionCode.MissingSource => RouteInspectWording.MissingSource(),
             RouteInspectConditionCode.MultipleSources => RouteInspectWording.MultipleSources(),
             RouteInspectConditionCode.InvalidSourceReference => RouteInspectWording.InvalidSourceReference(condition.Subject),
+            RouteInspectConditionCode.InvalidWorkingPath => RouteInspectWording.InvalidWorkingPath(),
             RouteInspectConditionCode.LoaderSubject => RouteInspectWording.LoaderSubject(),
             RouteInspectConditionCode.UnknownSource => RouteInspectWording.UnknownSource(
                 result.Selection.RequestedReference ?? condition.Subject),
@@ -363,6 +386,7 @@ internal static class RouteInspectReportSelector
                 or RouteInspectConditionCode.UnknownSource => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleSourceIsUnknown(),
             RouteInspectConditionCode.MultipleSources => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.TitleTooManySources(),
             RouteInspectConditionCode.InvalidSourceReference => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleInvalidSourceReference(),
+            RouteInspectConditionCode.InvalidWorkingPath => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.TitleInvalidWorkingPath(),
             RouteInspectConditionCode.LoaderSubject => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.TitleLoaderIsNotARoute(),
             RouteInspectConditionCode.MissingSourceFile => global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.TitleSourceFileIsMissing(),
             RouteInspectConditionCode.UnsupportedSource => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.TitleSourceIsUnsupported(),

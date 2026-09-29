@@ -64,6 +64,38 @@ internal static class RouteInspectText
     internal static string TitleMayBeReadAgain()
         => "May be read again";
 
+    // @OpenForgeText route.inspect.title.file-applicability
+    internal static string TitleFileApplicability()
+        => "File applicability";
+
+    // @OpenForgeText route.inspect.label.applicability-state
+    internal static string LabelApplicabilityState()
+        => "state";
+
+    // @OpenForgeText route.inspect.label.condition-from
+    internal static string LabelConditionFrom()
+        => "condition from";
+
+    // @OpenForgeText route.inspect.label.matching-paths
+    internal static string LabelMatchingPaths()
+        => "matching paths";
+
+    // @OpenForgeText route.inspect.label.supply-for-to-evaluate
+    internal static string LabelSupplyForToEvaluate()
+        => "pending; supply --for paths to evaluate the conditions";
+
+    // @OpenForgeText route.inspect.label.working-path-matches-condition
+    internal static string LabelAWorkingPathMatchesItsEffectiveFileCondition()
+        => "a supplied working path matches the route's effective file condition";
+
+    // @OpenForgeText route.inspect.title.invalid-working-path
+    internal static string TitleInvalidWorkingPath()
+        => "Invalid working path";
+
+    // @OpenForgeText route.inspect.message.invalid-working-path
+    internal static string MessageInvalidWorkingPath()
+        => "Each --for path must resolve inside the selected workspace.";
+
     // @OpenForgeText route.inspect.title.this-file
     internal static string TitleThisFile()
         => "This file";
@@ -354,7 +386,7 @@ internal static class RouteInspectText
 
     // @OpenForgeText route.inspect.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route inspect <source-reference> [global options]";
+        => "open-forge route inspect <source-reference> [--for <path>...] [global options]";
 
     // @OpenForgeText route.inspect.help.source-references
     internal static string HelpSourceReferences()
@@ -366,7 +398,7 @@ internal static class RouteInspectText
 
     // @OpenForgeText route.inspect.help.examples
     internal static string HelpExamples()
-        => "open-forge route inspect memory/working\n  open-forge route inspect .agents/memory/_memory.md --detail minimal\n  open-forge route inspect memory/working --format json --detail standard\n  open-forge route inspect --help\n  open-forge route inspect --version";
+        => "open-forge route inspect memory/working\n  open-forge route inspect memory/working --for src/cli/App.cs\n  open-forge route inspect memory/working --for src/cli/App.cs --for tests/AppTests.cs\n  open-forge route inspect .agents/memory/_memory.md --detail minimal\n  open-forge route inspect memory/working --format json --detail standard\n  open-forge route inspect --help\n  open-forge route inspect --version";
 
     // @OpenForgeText route.inspect.help.related-commands
     internal static string HelpRelatedCommands()

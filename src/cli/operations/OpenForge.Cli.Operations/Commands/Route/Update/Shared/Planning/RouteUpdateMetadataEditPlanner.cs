@@ -1,8 +1,12 @@
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
@@ -51,6 +55,16 @@ internal sealed class RouteUpdateMetadataEditPlanner(
                 request.Responsibility.Operation,
                 "The Route Update responsibility operation is not defined."),
         };
+        if (!TryReadApplyToPatterns(
+                request.ApplyTo,
+                layout.ApplyToPatterns,
+                out var applyTo,
+                out cause))
+        {
+            intended = null;
+            return false;
+        }
+
         if (string.IsNullOrWhiteSpace(description) || tags.IsEmpty)
         {
             intended = null;
@@ -60,7 +74,7 @@ internal sealed class RouteUpdateMetadataEditPlanner(
 
         try
         {
-            intended = new FrameworkDocumentMetadata(description, tags, responsibility);
+            intended = new FrameworkDocumentMetadata(description, tags, responsibility, applyTo);
             cause = string.Empty;
             return true;
         }
@@ -69,6 +83,55 @@ internal sealed class RouteUpdateMetadataEditPlanner(
             intended = null;
             cause = exception.Message;
             return false;
+        }
+    }
+
+    private static bool TryReadApplyToPatterns(
+        RouteUpdateApplyToRequest request,
+        ImmutableArray<ApplyToPattern> current,
+        out ImmutableArray<ApplyToPattern> patterns,
+        out string cause)
+    {
+        switch (request.Operation)
+        {
+            case RouteUpdateApplyToOperation.NotRequested:
+                patterns = current;
+                cause = string.Empty;
+                return true;
+            case RouteUpdateApplyToOperation.Clear:
+                patterns = [];
+                cause = string.Empty;
+                return true;
+            case RouteUpdateApplyToOperation.Set:
+                var values = ImmutableArray.CreateBuilder<ApplyToPattern>();
+                foreach (var value in request.Values)
+                {
+                    var parsed = ApplyToPatternMatcher.Parse(value);
+                    if (parsed.Pattern is not { } pattern)
+                    {
+                        patterns = [];
+                        cause = "The requested applyTo pattern is invalid.";
+                        return false;
+                    }
+
+                    values.Add(pattern);
+                }
+
+                if (values.Count == 0)
+                {
+                    patterns = [];
+                    cause = "The requested applyTo list cannot be empty.";
+                    return false;
+                }
+
+                patterns = values.ToImmutable();
+                cause = string.Empty;
+                return true;
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(request),
+                    request.Operation,
+                    "The Route Update applyTo operation is not defined.");
         }
     }
 
@@ -96,6 +159,7 @@ internal sealed class RouteUpdateMetadataEditPlanner(
             Description = values["description"],
             Tags = values["tags"],
             Responsibility = values.GetValueOrDefault("responsibility"),
+            ApplyTo = values.GetValueOrDefault("applyTo"),
         };
     }
 
@@ -109,7 +173,9 @@ internal sealed class RouteUpdateMetadataEditPlanner(
         var draft = new RouteUpdateMetadataEditDraft(layout);
         if (layout.EmptyMapping is { } emptyMapping)
         {
-            if (!TryExpandEmptyMapping(emptyMapping, canonical, draft))
+            if (!TryExpandEmptyMapping(input, emptyMapping, canonical, draft)
+                || !layout.ApplyToMembers.IsEmpty
+                    && !TryPlanApplyTo(input, canonical, draft))
             {
                 plan = null;
                 return false;
@@ -150,6 +216,12 @@ internal sealed class RouteUpdateMetadataEditPlanner(
                 plan = null;
                 return false;
             }
+
+            if (!TryPlanApplyTo(input, canonical, draft))
+            {
+                plan = null;
+                return false;
+            }
         }
 
         plan = draft.Build();
@@ -157,6 +229,7 @@ internal sealed class RouteUpdateMetadataEditPlanner(
     }
 
     private static bool TryExpandEmptyMapping(
+        RouteUpdateMetadataEditPlanningInput input,
         RouteUpdateMetadataEmptyMapping emptyMapping,
         RouteUpdateCanonicalMetadataValues canonical,
         RouteUpdateMetadataEditDraft draft)
@@ -171,6 +244,13 @@ internal sealed class RouteUpdateMetadataEditPlanner(
         if (canonical.Responsibility is { } responsibility)
         {
             members.Add($"{memberIndentation}responsibility: {responsibility}");
+        }
+
+        var insertApplyTo = input.Layout.ApplyToMembers.IsEmpty
+            && input.Request.ApplyTo.Operation == RouteUpdateApplyToOperation.Set;
+        if (insertApplyTo && canonical.ApplyTo is { } applyTo)
+        {
+            members.Add($"{memberIndentation}applyTo: {applyTo}");
         }
 
         var replacement = $"{lineEnding}{string.Join(lineEnding, members)}";
@@ -219,6 +299,77 @@ internal sealed class RouteUpdateMetadataEditPlanner(
         };
     }
 
+    private static bool TryPlanApplyTo(
+        RouteUpdateMetadataEditPlanningInput input,
+        RouteUpdateCanonicalMetadataValues canonical,
+        RouteUpdateMetadataEditDraft draft)
+    {
+        var request = input.Request.ApplyTo;
+        return request.Operation switch
+        {
+            RouteUpdateApplyToOperation.NotRequested => true,
+            RouteUpdateApplyToOperation.Set when MatchesPatterns(
+                input.Layout.ApplyToPatterns,
+                request.Values) => true,
+            RouteUpdateApplyToOperation.Set => TrySetApplyTo(
+                input.Layout,
+                canonical.ApplyTo
+                    ?? throw new InvalidOperationException(
+                        "An applyTo set requires one canonical list."),
+                draft),
+            RouteUpdateApplyToOperation.Clear => TryRemoveApplyTo(input.Layout, draft),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(input),
+                request.Operation,
+                "The Route Update applyTo operation is not defined."),
+        };
+    }
+
+    private static bool MatchesPatterns(
+        ImmutableArray<ApplyToPattern> current,
+        ImmutableArray<string> requested)
+        => current.Length == requested.Length
+            && current.All(pattern => requested.Contains(pattern.Text, StringComparer.Ordinal));
+
+    private static bool TrySetApplyTo(
+        RouteUpdateMetadataLayout layout,
+        string replacement,
+        RouteUpdateMetadataEditDraft draft)
+    {
+        if (layout.ApplyToMembers.IsEmpty)
+        {
+            var anchor = layout.ResponsibilityMember
+                ?? layout.TagsMember
+                ?? layout.DescriptionMember;
+            return TryInsertAfter(draft, anchor, "applyTo", replacement);
+        }
+
+        foreach (var member in layout.ApplyToMembers)
+        {
+            if (!TryReplace(member, replacement, draft))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool TryRemoveApplyTo(
+        RouteUpdateMetadataLayout layout,
+        RouteUpdateMetadataEditDraft draft)
+    {
+        foreach (var member in layout.ApplyToMembers)
+        {
+            if (!TryRemoveMember(member, draft))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private static bool TryReplace(
         RouteUpdateMetadataMember member,
         string replacement,
@@ -236,8 +387,8 @@ internal sealed class RouteUpdateMetadataEditPlanner(
 
         draft.Edits.Add(new RouteUpdateMetadataEdit
         {
-            YamlStart = member.Entry.Value.Span.Start,
-            YamlLength = member.Entry.Value.Span.Length,
+            YamlStart = line.ValueStart,
+            YamlLength = line.ValueEnd - line.ValueStart,
             Replacement = replacement,
         });
         draft.Preview.Add(new RouteUpdatePreviewHunk
@@ -245,6 +396,49 @@ internal sealed class RouteUpdateMetadataEditPlanner(
             Kind = RouteUpdatePreviewKind.MetadataField,
             Before = $"{member.Name}: {line.RawValue}",
             Expected = $"{member.Name}: {replacement}",
+        });
+        return true;
+    }
+
+    private static bool TryRemoveMember(
+        RouteUpdateMetadataMember member,
+        RouteUpdateMetadataEditDraft draft)
+    {
+        if (member.Line is not { } line)
+        {
+            return false;
+        }
+
+        if (line.IsMultilineValue && line.HasTrailingComment)
+        {
+            return false;
+        }
+
+        var start = line.IsMultilineValue
+            ? line.Start
+            : line.HasTrailingComment
+                ? line.Start + line.Indentation.Length
+                : line.Start;
+        var length = line.IsMultilineValue
+            ? line.End - start
+            : line.HasTrailingComment
+                ? line.ContentEnd - start
+                : line.End - line.Start;
+        var replacement = line.HasTrailingComment && !line.IsMultilineValue
+            ? draft.Layout.Source[member.Entry.Value.Span.End..line.ContentEnd]
+                .TrimStart()
+            : string.Empty;
+        draft.Edits.Add(new RouteUpdateMetadataEdit
+        {
+            YamlStart = start,
+            YamlLength = length,
+            Replacement = replacement,
+        });
+        draft.Preview.Add(new RouteUpdatePreviewHunk
+        {
+            Kind = RouteUpdatePreviewKind.MetadataField,
+            Before = $"{member.Name}: {line.RawValue}",
+            Expected = string.Empty,
         });
         return true;
     }
@@ -284,24 +478,7 @@ internal sealed class RouteUpdateMetadataEditPlanner(
             return true;
         }
 
-        if (responsibility.Line is not { } line)
-        {
-            return false;
-        }
-
-        draft.Edits.Add(new RouteUpdateMetadataEdit
-        {
-            YamlStart = line.Start,
-            YamlLength = line.End - line.Start,
-            Replacement = string.Empty,
-        });
-        draft.Preview.Add(new RouteUpdatePreviewHunk
-        {
-            Kind = RouteUpdatePreviewKind.MetadataField,
-            Before = $"responsibility: {line.RawValue}",
-            Expected = string.Empty,
-        });
-        return true;
+        return TryRemoveMember(responsibility, draft);
     }
 
     private static bool TryInsertBefore(

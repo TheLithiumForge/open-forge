@@ -27,10 +27,14 @@ internal sealed partial class RouteUpdateBinding
                 responsibilityFacts,
                 originalArguments),
             Template = CliOptionResultFactsReader.ReadValue(parseResult, symbols.Template),
+            ApplyTo = CliOptionResultFactsReader.ReadValues(parseResult, symbols.ApplyTo),
+            ClearApplyTo = parseResult.GetValue(symbols.ClearApplyTo),
             DescriptionFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Description),
             TagFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Tag),
             ResponsibilityFacts = responsibilityFacts,
             TemplateFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Template),
+            ApplyToFacts = CliOptionResultFactsReader.Read(parseResult, symbols.ApplyTo),
+            ClearApplyToFacts = CliOptionResultFactsReader.Read(parseResult, symbols.ClearApplyTo),
             ParserErrors = parseResult.Errors.Select(error => error.Message).ToArray(),
         };
     }

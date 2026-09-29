@@ -31,6 +31,20 @@ internal sealed record RouteUpdateTagsRequest
     public required ImmutableArray<string> Values { get; init; }
 }
 
+internal enum RouteUpdateApplyToOperation
+{
+    NotRequested,
+    Set,
+    Clear,
+}
+
+internal sealed record RouteUpdateApplyToRequest
+{
+    public required RouteUpdateApplyToOperation Operation { get; init; }
+
+    public required ImmutableArray<string> Values { get; init; }
+}
+
 internal sealed record RouteUpdatePatchRequest
 {
     public required RouteUpdateDescriptionRequest Description { get; init; }
@@ -39,9 +53,12 @@ internal sealed record RouteUpdatePatchRequest
 
     public required RouteUpdateTagsRequest Tags { get; init; }
 
+    public required RouteUpdateApplyToRequest ApplyTo { get; init; }
+
     internal bool IsRequested => Description.Requested
         || Responsibility.Operation != RouteUpdateResponsibilityOperation.NotRequested
-        || Tags.Requested;
+        || Tags.Requested
+        || ApplyTo.Operation != RouteUpdateApplyToOperation.NotRequested;
 }
 
 internal sealed record RouteUpdateRequest

@@ -375,8 +375,9 @@ public sealed class ContextOperationTests
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(
-            [".agents/projects/_projects.md", ".agents/projects/guide.md"],
+            [".agents/projects/guide.md"],
             result.Sources.Select(source => source.Path));
+        Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/projects/_projects.md");
         Assert.DoesNotContain(result.Sources, source => source.Path == ".agents/projects/linked.md");
         Assert.Equal(ContextOptionalCoverageState.Complete, result.Coverage.Links);
     }

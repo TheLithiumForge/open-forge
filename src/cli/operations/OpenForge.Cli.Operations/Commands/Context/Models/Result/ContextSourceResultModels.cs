@@ -92,7 +92,8 @@ internal sealed record ContextSource
         string? scope,
         IEnumerable<ContextInclusionReason> inclusionReasons,
         IEnumerable<ContextLayer> layers,
-        ContextSourceMetadata? metadata = null)
+        ContextSourceMetadata? metadata = null,
+        ContextApplicability? applicability = null)
     {
         if (position < 1)
         {
@@ -112,6 +113,7 @@ internal sealed record ContextSource
         Route = route;
         Scope = scope;
         Metadata = metadata ?? ContextSourceMetadata.WithoutValues(ContextMetadataState.Unavailable);
+        Applicability = applicability;
         InclusionReasons = ContextResultCollections.Snapshot(inclusionReasons, nameof(inclusionReasons));
         Layers = ContextResultCollections.Snapshot(layers, nameof(layers));
     }
@@ -129,6 +131,8 @@ internal sealed record ContextSource
     internal string? Scope { get; }
 
     internal ContextSourceMetadata Metadata { get; }
+
+    internal ContextApplicability? Applicability { get; }
 
     internal IReadOnlyList<ContextInclusionReason> InclusionReasons { get; }
 

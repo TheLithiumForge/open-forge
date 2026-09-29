@@ -62,13 +62,19 @@ internal sealed class RouteCreatePlanBuilder
                 new FrameworkDocumentMetadata(
                     request.Metadata.Description!,
                     request.Metadata.Tags,
-                    request.Metadata.Responsibility),
+                    request.Metadata.Responsibility)
+                {
+                    ApplyTo = request.Metadata.ApplyTo,
+                },
                 body)
             : _documentWriter.WriteOptional(
                 new FrameworkDocumentMetadataEmission(
                     request.Metadata.Description,
                     request.Metadata.Tags,
-                    request.Metadata.Responsibility),
+                    request.Metadata.Responsibility)
+                {
+                    ApplyTo = request.Metadata.ApplyTo,
+                },
                 body);
         if (inspection.Snapshot.Kind == FileExpectationKind.File
             && !inspection.Snapshot.Bytes.AsSpan().SequenceEqual(intendedBytes.AsSpan()))

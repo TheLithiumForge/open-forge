@@ -16,6 +16,7 @@ internal static class RouteUpdateDefinitions
     internal const string TextValueName = "text";
     internal const string TagValueName = "tag";
     internal const string TemplateReferenceValueName = "template-reference";
+    internal const string ApplyToValueName = "path-pattern";
 
     internal const string RouteUpdateHelpCommand = "open-forge route update --help";
     internal const string VerboseRouteUpdateCommand = "open-forge route update --detail debug";
@@ -55,6 +56,19 @@ internal static class RouteUpdateDefinitions
         CliOptionArity.ExactlyOne,
         null,
         TemplateReferenceValueName);
+
+    internal static readonly CliOptionDefinition<string[]> ApplyTo = new(
+        "--apply-to",
+        "Replace the complete local applyTo pattern list; repeat for additional patterns.",
+        CliOptionArity.ExactlyOne,
+        [],
+        ApplyToValueName);
+
+    internal static readonly CliOptionDefinition<bool> ClearApplyTo = new(
+        "--clear-apply-to",
+        "Remove applyTo declarations from the root and Open Forge metadata locations.",
+        CliOptionArity.None,
+        false);
 
     internal static readonly CliOptionDefinition<bool> DryRun = new(
         "--dry-run",
@@ -107,6 +121,15 @@ internal static class RouteUpdateDefinitions
             RouteUpdateResponsibilityOperation.NotRequested => "not-requested",
             RouteUpdateResponsibilityOperation.Set => "set",
             RouteUpdateResponsibilityOperation.Remove => "remove",
+            _ => Undefined(nameof(operation), operation),
+        };
+
+    internal static string ReadMachineName(RouteUpdateApplyToOperation operation)
+        => operation switch
+        {
+            RouteUpdateApplyToOperation.NotRequested => "not-requested",
+            RouteUpdateApplyToOperation.Set => "set",
+            RouteUpdateApplyToOperation.Clear => "clear",
             _ => Undefined(nameof(operation), operation),
         };
 
