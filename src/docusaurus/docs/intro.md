@@ -11,6 +11,8 @@ import FrameworkMap from "@site/src/components/framework-map/FrameworkMap";
 
 Open Forge is a small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work. It's agent- and harness-agnostic. Anything that reads `AGENTS.md` (or `CLAUDE.md`) can use it.
 
+Open Forge is built to work beside your harness, not to replace it or get in its way. Because it's plain Markdown, it never needs to take over your hooks, custom agents, or instruction files. Keep using them as much as you like, and set them up the way your harness expects. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
+
 The idea behind it is **Adaptive Context Engineering (ACE)**: an agent doesn't need to know everything, but it does need to know where everything is. Open Forge gives your workspace a loader and one short entrypoint per folder. An entrypoint is a Markdown file, named `_{folder-name}.md`, that says what its folder is for and lists what's inside, one line per item. The rules guide an agent from the task to the routes that matter, and the rest stays closed.
 
 ## Three parts, one of them required
@@ -34,7 +36,7 @@ The [Concepts](concepts/index.md) section covers each part in depth.
 
 ## What you actually install
 
-The base Framework is 15 plain Markdown files, about 8.8k tokens, of which about 6.1k load at startup ([how it's measured](/guides/development#measure-context-size)).
+The base Framework is 15 plain Markdown files, about 8.9k tokens, of which about 6.0k load at startup ([how it's measured](/guides/development#measure-context-size)).
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first

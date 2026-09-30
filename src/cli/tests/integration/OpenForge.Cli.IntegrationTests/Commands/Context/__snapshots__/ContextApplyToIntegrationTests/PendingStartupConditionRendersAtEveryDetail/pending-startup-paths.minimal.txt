@@ -1,0 +1,10 @@
+  Warning  <workspace>  applyTo conditions are pending
+         Some applyTo conditions could not be evaluated because no --for path was supplied.
+AGENTS.md
+.agents/loader.md
+.agents/directives/_directives.md
+  applyTo: Context is incomplete while applyTo conditions await one or more --for paths.
+  sources: The Context source closure could not be resolved completely.
+  tokens: The Context source closure could not be resolved completely.
+  bytes: The Context source closure could not be resolved completely.
+Next: open-forge context --for <path>

@@ -1,0 +1,9 @@
+status=invalid-input
+referenceKind=missing
+selectionMethod=unresolved
+requested=none
+identity=none
+profile=none
+observations=0
+conditions=1
+next=present

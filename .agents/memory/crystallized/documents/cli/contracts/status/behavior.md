@@ -88,7 +88,7 @@ Before claiming any inspection fact, the resolver establishes that the selected
 target is available, is a directory, and provides a safe lexical and physical
 containment boundary for the operation. It does not search upward, substitute a
 Git root, or choose a nearby workspace. A missing, unavailable, or non-directory
-target forms the public `blocked` result described by [Interface Errors](interface.md#errors).
+target forms the public `blocked` result described by [Interface Errors](interface.md#errors-and-boundaries).
 
 The resolver does not require an installed Framework to recognize a directory as
 a valid Status subject. It records an uninstalled state. If that absence can be
@@ -420,7 +420,7 @@ The stage does not remove, clean, restore, roll back, or otherwise mutate a
 bundle or target. The separate [cleanup contract](../cleanup/interface.md) owns
 lease-validated candidate deletion. Status's boundary remains
 defined by [Interface Recovery Bundles](interface.md#recovery-bundles) and
-[Interface Architecture Boundary](interface.md#architecture-boundary).
+[Interface Architecture Boundary](interface.md#status-and-boundary).
 
 ## Result Formation And Presentation
 
@@ -594,7 +594,7 @@ Architecture.
 
 ### Error Formation
 
-Error formation preserves the public error boundary in [Interface Errors](interface.md#errors).
+Error formation preserves the public error boundary in [Interface Errors](interface.md#errors-and-boundaries).
 Every error identifies the Status operation, affected workspace or fact, direct
 cause, and useful next action when one exists. A malformed startup route or
 unreadable required context becomes an incomplete result when safe facts remain;

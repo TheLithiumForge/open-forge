@@ -555,7 +555,7 @@ diagnostics required by the Interface.
 
 ## Conformance Evidence
 
-The public obligations in [Interface Verification](interface.md#verification)
+The public obligations in [Interface Verification](interface.md)
 remain in force. Behavioral evidence must prove the following without selecting
 one parser, filesystem API, recovery-bundle filename, lock strategy, or source-module
 boundary:

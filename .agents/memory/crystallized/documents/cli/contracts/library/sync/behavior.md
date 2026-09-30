@@ -454,7 +454,7 @@ Conformance must prove, at the cheapest boundary that directly owns each fact:
   result mapping with human/JSON parity and useful actions.
 
 The three public EndToEnd journeys are defined only by the [Interface
-Contract](interface.md#endtoend-journeys). Lower-tier evidence may exercise
+Contract](interface.md#scenarios). Lower-tier evidence may exercise
 additional source, set, collision, retirement, failure, and residual branches
 without creating additional public journeys.
 

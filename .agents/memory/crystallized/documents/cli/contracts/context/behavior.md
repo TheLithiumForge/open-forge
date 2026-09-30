@@ -374,7 +374,7 @@ even when flag order changes.
 ## Results And Failures
 
 Form one typed result with the exact seven status names and public meanings in
-the [Interface Contract](interface.md#semantic-status). Behavior forms the
+the [Interface Contract](interface.md#semantic-results). Behavior forms the
 conditions; it does not create another status vocabulary.
 
 - Form `completed` only when resolution, required inspection, requested
@@ -424,6 +424,13 @@ condition selects `incomplete` with exit 3. It preserves
 exact authored bytes, source order, layer order, inclusion reasons, and
 projection coverage. Human and structured renderers consume that result without
 rerunning the operation.
+
+The report selects its next action from the complete findings before detail or
+severity filtering, following the [Interface next rules](interface.md#next-rules).
+Pending `applyTo` conditions direct the reader to supply working paths with
+`open-forge context --for <path>`. Unavailable closure, source, link or projection
+facts keep `open-forge doctor` as the next action, including when pending
+conditions are also present.
 
 ## Effects
 

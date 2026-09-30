@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "docs/guide  .agents/docs/guide.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "ownBytes": 89,
+    "ownTokens": 23,
+    "addedFiles": 2,
+    "addedBytes": 215,
+    "addedTokens": 54,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs/guide",
+    "path": ".agents/docs/guide.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": null,
+    "workingPaths": [
+      "docs/planned.md",
+      "src/other.cs"
+    ],
+    "matchingFiles": {
+      "scope": "workspace-files",
+      "complete": true,
+      "count": 2,
+      "paths": [
+        "docs/guide.md",
+        "docs/reference.md"
+      ],
+      "pathLimit": 100,
+      "truncated": false,
+      "reason": null,
+      "note": null
+    },
+    "belongs": {
+      "routeChain": [
+        "docs",
+        "guide"
+      ],
+      "parent": "docs",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": false,
+      "automaticallyWhen": [
+        "this route is selected"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 89,
+        "tokens": 23
+      },
+      "adds": {
+        "files": 2,
+        "bytes": 215,
+        "tokens": 54
+      },
+      "loadNow": null
+    },
+    "applicability": {
+      "state": "matched",
+      "conditions": [
+        {
+          "source": ".agents/docs/guide.md",
+          "patterns": [
+            "docs/*.md"
+          ]
+        }
+      ],
+      "matchingPaths": [
+        "docs/planned.md"
+      ]
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "not applicable"
+    },
+    "tags": [
+      "Docs"
+    ],
+    "selected": {
+      "closure": {
+        "files": 2,
+        "bytes": 215,
+        "tokens": 54
+      },
+      "startupOverlap": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      }
+    },
+    "selection": {
+      "kind": "source-id",
+      "method": "automatic-id",
+      "requested": "docs/guide"
+    },
+    "layers": [
+      {
+        "path": ".agents/docs/guide.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "all applicable route facts are available"
+  },
+  "recovery": null,
+  "next": null
+}

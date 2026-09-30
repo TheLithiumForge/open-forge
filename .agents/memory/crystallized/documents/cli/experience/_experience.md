@@ -26,8 +26,8 @@ Actual observations belong to the separate [2026-09-19 run record](../../../../a
 
 ## Entries
 
+- [Disposition of every supplied flow and scenario](assessment.md) - #Memory #Document #CLI #Review
+- [Reproduce useful CLI scenarios with ordinary files and independently checked state](fixtures.md) - #Memory #Document #CLI #Fixture
+- [Compact flow list for maintainer validation before new tests](flow-review.md) - #Memory #Document #CLI #Review
 - [Connected CLI user flows selected for validation before automated tests](flows/_flows.md) - #Memory #Document #CLI #UserFlow
 - [Reviewed scenario collections with explicit selection and target changes](scenarios/_scenarios.md) - #Memory #Document #CLI #Scenario
-- [Disposition of every supplied flow and scenario](assessment.md) - #Memory #Document #CLI #Review
-- [Portable fixture recipes for reproducing the selected user outcomes](fixtures.md) - #Memory #Document #CLI #Fixture
-- [Compact flow list for validation before new tests](flow-review.md) - #Memory #Document #CLI #Review

@@ -18,6 +18,8 @@ internal sealed class RouteInspectLoadingFacts
 
     internal bool ReadingAvailable { get; init; }
 
+    internal bool WorkingPathsPending { get; init; }
+
     internal IReadOnlySet<string> StartupPaths { get; init; } = new HashSet<string>(StringComparer.Ordinal);
 
     internal IReadOnlySet<string> SelectedPaths { get; init; } = new HashSet<string>(StringComparer.Ordinal);

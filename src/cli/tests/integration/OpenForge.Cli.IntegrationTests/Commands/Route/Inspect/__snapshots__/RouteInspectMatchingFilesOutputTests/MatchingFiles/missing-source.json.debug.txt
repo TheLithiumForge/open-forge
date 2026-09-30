@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot inspect source-reference: A source reference is required.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-inspect.missing-source",
+      "title": "Source is unknown",
+      "message": "A source reference is required.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "source-reference",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": null,
+    "ownTokens": null,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": null,
+    "path": null,
+    "kind": null,
+    "entrypointForm": null,
+    "overwritePath": null,
+    "matchingFiles": {
+      "scope": null,
+      "complete": false,
+      "count": null,
+      "paths": [],
+      "pathLimit": 100,
+      "truncated": false,
+      "reason": "source-unavailable",
+      "note": null
+    },
+    "belongs": {
+      "routeChain": null,
+      "parent": null,
+      "directChildren": null,
+      "descendants": null
+    },
+    "read": {
+      "atStart": null,
+      "automaticallyWhen": null,
+      "mayReadAgain": null
+    },
+    "size": {
+      "own": null,
+      "adds": null,
+      "loadNow": null
+    },
+    "selection": {
+      "kind": "missing",
+      "method": "unresolved",
+      "requested": null
+    },
+    "statusReason": "the source reference was not accepted"
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route inspect --help",
+    "reason": "Correct the named source or input, then rerun route inspect."
+  }
+}

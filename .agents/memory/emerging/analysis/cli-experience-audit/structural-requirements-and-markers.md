@@ -39,11 +39,11 @@ if (sections.Length != 1
 ```
 
 Surfaced by
-[`RouteSourceDoctorInspector.cs:28-38`](../../../../../src/cli/core/OpenForge.Cli.Core/Commands/Doctor/Shared/Domains/RouteSourceDoctorInspector.cs#L28-L38)
+[`RouteSourceDoctorInspector.cs:28-38`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Commands/Doctor/Shared/Domains/RouteSourceDoctorInspector.cs#L28-L38)
 as `route.axioms-invalid`
-([`DoctorDefinitions.cs:63`](../../../../../src/cli/core/OpenForge.Cli.Core/Commands/Doctor/DoctorDefinitions.cs#L63),
+([`DoctorDefinitions.cs:63`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Commands/Doctor/DoctorDefinitions.cs#L63),
 title at
-[`DoctorFindingTitles.cs:53`](../../../../../src/cli/core/OpenForge.Cli.Core/Commands/Doctor/Shared/Rendering/DoctorFindingTitles.cs#L53)):
+[`DoctorFindingTitles.cs:53`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Commands/Doctor/Shared/Rendering/DoctorFindingTitles.cs#L53)):
 _"The route source has missing, duplicate, or empty required Axioms structure."_
 
 ### Measured
@@ -90,7 +90,7 @@ generated scopes past the check.
 ## 2. The HTML comment markers are unnecessary
 
 The project depends on **Markdig**, a full CommonMark parser
-([`MarkdownDocumentParser.cs:1-3`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Documents/Markdown/MarkdownDocumentParser.cs#L1-L3),
+([`MarkdownDocumentParser.cs:1-3`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Documents/Markdown/MarkdownDocumentParser.cs#L1-L3),
 `Markdig 1.3.2` pinned in `Directory.Packages.props:7`).
 
 The same file that requires markers already knows the heading:
@@ -122,7 +122,7 @@ The cost of markers, all measured elsewhere in this audit:
 - They are what `route init` renders as `<!-- … -->` in human output.
 
 The AGENTS.md managed region has the same shape:
-[`FrameworkContentIdentity.cs:12`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Lifecycle/FrameworkContentIdentity.cs#L12) —
+[`FrameworkContentIdentity.cs:12`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Lifecycle/FrameworkContentIdentity.cs#L12) —
 `private const string ManagedStart = "<!-- open-forge:start -->";`
 
 ### Proposed result
@@ -144,7 +144,7 @@ missing frontmatter, missing Axioms, a misplaced Entries region, a tag
 containing a space, an unquoted colon in a description.
 
 `index` is explicitly forbidden from touching any of it
-([`IndexHelpSections.cs:41`](../../../../../src/cli/core/OpenForge.Cli.Core/Commands/Index/Shared/Rendering/IndexHelpSections.cs#L41)):
+([`IndexHelpSections.cs:41`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Commands/Index/Shared/Rendering/IndexHelpSections.cs#L41)):
 
 > _"Index changes only valid bounded generated Entries interiors. It does not
 > repair markers, format complete files, modify overwrites, search for another

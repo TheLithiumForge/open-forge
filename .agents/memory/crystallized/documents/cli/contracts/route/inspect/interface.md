@@ -65,9 +65,10 @@ authored content. It answers:
 The command is a route profile, not a workspace summary, content reader,
 discovery operation, validator, or mutation.
 
-Given the same CLI payload, workspace bytes, and explicit source reference, the
-command returns the same route facts, measurements, ordering, and semantic
-result.
+Given the same CLI payload, workspace bytes, explicit source reference, and
+observed file inventory, the command returns the same route facts, measurements,
+ordering, and semantic result. Determinism also depends on the tracked-file
+inventory or ignore configuration used by the selected scan strategy.
 
 ## Syntax
 
@@ -76,10 +77,11 @@ The complete domain command form is:
 ```text
 open-forge route inspect <source-reference>
   [--for=<workspace-relative-path>]...
+  [--matching-files]
   [global flags]
 ```
 
-This is the exact public shape: `open-forge route inspect <source-reference> [global flags]`.
+The operation-specific options may be combined with the global flags.
 
 Exactly one source reference is required in domain mode. The operand uses the
 shared source-reference forms:
@@ -103,7 +105,8 @@ The `route` group itself continues to show help and performs no domain
 operation. `route inspect` accepts repeatable `--for=<workspace-relative-path>`
 values to report applicability for a complete working-path set. It has no `--all`,
 content projection, link expansion, search, mutation, write-policy flag,
-route-list mode, generic `inspect` alias, or other operation-specific flag.
+route-list mode, or generic `inspect` alias. `--matching-files` independently
+lists current files matching the source's effective conditions.
 
 ## Workspace And Subject
 
@@ -204,7 +207,93 @@ and presentation meaning remain defined only by that shared contract.
 stateless working-path set. Normalize paths lexically against the selected
 workspace; nonexistent planned paths are allowed and paths that escape the
 workspace are rejected. Duplicate normalized paths have no additional effect.
-The command defines no other operation-specific flags.
+
+`--matching-files` enumerates current files. It never supplies working paths,
+changes applicability from `--for`, or changes loading calculations. The scan
+may succeed while the overall report remains `incomplete` because loading facts
+still require explicit `--for` paths. Without this option, the command performs
+no candidate enumeration and launches no Git process. Help and version also
+perform no enumeration.
+
+| Property | `--matching-files` |
+| -------- | ------------------ |
+| Type | Boolean |
+| Default | `false` |
+| Value | No required value |
+| Repetition | Idempotent, following native Boolean option behavior |
+| Alias | None |
+| Composition | May be combined with repeated `--for` |
+
+The exact option help description is:
+
+```text
+List current workspace files matching this source's own and inherited applyTo conditions.
+```
+
+The additional help text is:
+
+```text
+Matching files do not select or load a source. --for supplies working paths independently of this scan. At most 100 matching paths are listed.
+```
+
+The exact scope help is:
+
+```text
+In a Git work tree, the scan lists existing tracked and untracked files and excludes ignored untracked files. Without a usable Git inventory, it walks the workspace and applies its .gitignore files using Open Forge rules. The scan stays inside the workspace and does not follow symbolic links or enter submodules.
+```
+
+### Matching files
+
+The scan chooses its strategy once per request. A Git probe checks whether the
+selected workspace lies inside a work tree. A confirmed work tree uses existing
+tracked and untracked files reported by Git, excluding ignored untracked files.
+Tracked files remain eligible even when an ignore pattern matches them. The
+scope is `git-tracked-and-untracked`.
+
+If Git cannot start, the workspace is not a work tree, there is a repository
+refusal, or inventory fails after a confirmed probe, including warnings or
+malformed output, discard any Git output and use the ignore-aware walk with
+scope `workspace-files`. The walk reads regular `.gitignore` files when entering
+eligible directories and applies the ten documented Open Forge translation
+rules. It reads nothing above the workspace, uses no global excludes or
+`.git/info/exclude`, and gives tracked files no exemption. Matching remains
+case-sensitive. It prunes excluded directories and counts unsupported lines.
+An unreadable or undecodable required `.gitignore` discards partial results and
+returns `files-unavailable`.
+
+Scope `workspace-files` means `workspace files filtered by .gitignore using Open
+Forge rules`. Timeout or cancellation keeps the existing unavailable or
+cancelled result and does not start the fallback. Unexpected implementation
+failures remain `scan-failed`.
+
+The no-scan result uses scope `all-files`.
+
+Both strategies stay inside the exact selected workspace, including a workspace
+inside a larger repository. They return files only and exclude symbolic links,
+directory links, other reparse points, Git administrative paths, and submodule
+contents. They skip every entry named `.git`. Deleted tracked paths are not
+current files. The scan has one
+30-second deadline covering its selected strategy and any fallback. It never
+restarts that deadline. It reads candidate metadata and required `.gitignore`
+contents, not other candidate file contents.
+
+Each eligible path must satisfy every effective ancestor and local `applyTo`
+condition. Alternatives within one condition are OR. Different files cannot
+jointly satisfy different ancestors. Overwrite references use the base source's
+established chain, and detached sources use their established local chain.
+An established chain with no effective applyTo restriction returns the complete
+all-files answer without scanning. This includes a chain with no conditions and
+a chain whose every condition is recognized as match-all. Only a remaining
+restrictive condition requests candidate enumeration. Invalid or unresolved
+ancestry remains unavailable rather than becoming an empty set.
+A successfully enumerated empty inventory means zero current matches, even
+though the separate working-path applicability may remain pending.
+
+Paths are workspace-relative with `/` separators, deduplicated and ordered by
+ordinal comparison. Count all eligible matches before listing the first 100 at
+every detail level. There is no additional limit option. `truncated` means that
+matching paths were omitted from the list, not that the scan is incomplete.
+Completeness describes the observed scan, not an atomic filesystem snapshot.
 
 ## Identity
 
@@ -566,6 +655,14 @@ Results with completed, completed-with-warnings, or incomplete status use
 stdout. Invalid-input, blocked, failed, and cancelled results use stderr.
 A parser failure is text on stderr without a result envelope.
 
+When requested, the matching-files block remains visible at minimal detail,
+including paths, count, scope, completeness, truncation, and any limitation.
+Standard adds the existing applicability explanations. Full adds existing
+provenance and evidence. Debug has the same primary result as full and bounded
+diagnostics on stderr. `--detail-filter` never hides the block or changes its
+count. The [matching-files transcripts](#matching-files-transcripts) define its
+text, including the exact scope labels and zero-match sentence.
+
 ## Structured Output
 
 --format json emits one schema-3 envelope on stdout for each semantic result.
@@ -604,15 +701,93 @@ evaluation. A pending record retains its conditions and has
 unconditioned source when no paths were supplied. Pending and unmatched
 conditions do not claim unconditional task-start reading.
 
+`applicability.matchingPaths` describes supplied `--for` paths.
+`matchingFiles.paths` independently lists current files from the requested scan.
+Neither result substitutes for the other.
+
 | Level    | `data`                                                                                                                                                                                                                                         |
 | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| minimal  | `{ id, path, kind, entrypointForm, overwritePath, belongs { routeChain, parent, directChildren { files, entrypoints }, descendants { files, entrypoints } }, read { atStart, automaticallyWhen, mayReadAgain }, size { own, adds, loadNow }, workingPaths?: [ ... ] }` |
+| minimal  | `{ id, path, kind, entrypointForm, overwritePath, belongs { routeChain, parent, directChildren { files, entrypoints }, descendants { files, entrypoints } }, read { atStart, automaticallyWhen, mayReadAgain }, size { own, adds, loadNow }, workingPaths?: [ ... ], matchingFiles?: { scope, complete, count, paths, pathLimit, truncated, reason, note } }` |
 | standard | + `axioms { inheritedFrom: [...], local }`, `tags`, and `applicability { state, conditions: [ { source, patterns } ], matchingPaths: [ ... ] }` when conditions or `--for` apply |
 | full     | + `selected { closure, startupOverlap }`, `selection { kind, method, requested }`, `layers: [ { path, kind } ]`, `statusReason`, and the same applicability facts |
+| debug    | Same primary data as full, with bounded diagnostics on stderr |
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON
 projection.
+
+### Matching-files data
+
+Add `data.matchingFiles` only when `--matching-files` is requested. All eight
+fields are present at every detail level, including debug. Invalid source
+cardinality, invalid working paths, and workspace binding failures retain the
+requested block with `source-unavailable` and `scope: null`. No scan runs on
+these binding paths, and the result stays `invalid-input` with exit 4. Without
+the flag, the block remains absent. For example:
+
+```json
+{
+  "matchingFiles": {
+    "scope": "git-tracked-and-untracked",
+    "complete": true,
+    "count": 2,
+    "paths": [
+      "docs/guide.md",
+      "docs/reference.md"
+    ],
+    "pathLimit": 100,
+    "truncated": false,
+    "reason": null,
+    "note": null
+  }
+}
+```
+
+| Field | Shape |
+| ----- | ----- |
+| `scope` | `"git-tracked-and-untracked"`, `"workspace-files"` for the ignore-aware Open Forge walk, `"all-files"`, or `null` when no scope could be established |
+| `complete` | Boolean |
+| `count` | Nonnegative integer when a scan is complete, otherwise null. The all-files answer is complete with a null count because it runs no scan. |
+| `paths` | Ordered string array with at most 100 entries |
+| `pathLimit` | Integer `100` |
+| `truncated` | `true` exactly when a complete count exceeds 100 |
+| `reason` | `null` on success, otherwise one finite reason below |
+| `note` | `No current files match this condition. Planned files may still match.` when a complete count is zero, `Skipped unsupported .gitignore lines: N.` when lines were skipped, `No effective applyTo restriction. Every file applies. No scan was run.` for `all-files`, otherwise `null` |
+
+When unsupported lines are skipped, use `Skipped unsupported .gitignore lines: N.`
+as the note. When the complete count is zero, append that sentence to the
+existing zero-match note with one space. A nonzero count with matches uses only
+the skipped-lines sentence. The count includes only unsupported lines
+encountered during the walk. No paths or raw patterns are included.
+
+For `scope: "all-files"`, `complete` is true, `count` is null, `paths` is
+empty, `truncated` is false, and `reason` is null. Completeness describes the
+applicability answer. No inventory was measured.
+Here `count: null` means unmeasured, never zero. The `Complete => Reason is
+null` rule holds. The all-files answer adds no finding, warning, or failure. An
+otherwise complete inspection stays `completed`, exit 0.
+
+On failure, discard partial candidates and return `complete: false`,
+`count: null`, `paths: []`, and `truncated: false`. Retain an established scope,
+using `workspace-files` once the ignore-aware fallback starts. There are no
+lower-bound counts.
+
+The finite reasons and exact limitation sentences are:
+
+| Reason | Text |
+| ------ | ---- |
+| `source-unavailable` | `The source could not be resolved for matching-file inspection.` |
+| `condition-unavailable` | `The source's effective applyTo conditions could not be established.` |
+| `scan-timeout` | `The matching-file scan did not finish within 30 seconds.` |
+| `scan-failed` | `The matching-file scan could not be completed.` |
+| `files-unavailable` | `Required file information or .gitignore content could not be read or decoded.` |
+| `unsafe-path` | `The matching-file scan encountered a path outside the workspace boundary.` |
+| `cancelled` | `The matching-file scan was cancelled.` |
+
+The four ordinary Git failures select the ignore-aware walk. A timeout or
+cancellation keeps its existing result and does not start the fallback. A
+candidate-metadata failure or an unreadable or undecodable required `.gitignore`
+uses `files-unavailable` and discards partial results.
 
 ## Semantic Results
 
@@ -651,6 +826,7 @@ The finding catalogue is:
 | route-inspect.loader-subject           | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.loader-subject`).                  | `open-forge route list`                      |
 | route-inspect.invalid-workspace        | error    | workspace-unavailable |                                                                                  |                                              |
 | route-inspect.workspace-unavailable    | error    | workspace-unavailable |                                                                                  |                                              |
+| route-inspect.invalid-working-path     | error    | invalid-input         | `Each --for path must resolve inside the selected workspace.` | `open-forge route inspect --help` |
 | route-inspect.unsafe-workspace         | error    | workspace-unsafe      |                                                                                  |                                              |
 | route-inspect.ambiguous-source         | error    | source-ambiguous      | (the prompt resolves it in a terminal)                                           |                                              |
 | route-inspect.ambiguous-route          | error    | route-ambiguous       |                                                                                  |                                              |
@@ -660,7 +836,7 @@ The finding catalogue is:
 | route-inspect.orphan-overwrite         | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.orphan-overwrite`).                                | fix by hand                                  |
 | route-inspect.unreadable-source        | warning  | inspection-incomplete |                                                                                  |                                              |
 | route-inspect.incomplete-route         | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.incomplete-route`).    | `open-forge doctor`                          |
-| route-inspect.unavailable-fact         | warning  | local                 | `<fact> could not be measured: <reason>.` (rendered in place of the block line)  | `open-forge doctor`                          |
+| route-inspect.unavailable-fact         | warning  | local                 | `Route facts could not be measured: No working paths were supplied, so effective loading is pending.` when pending loading needs working paths, otherwise `<fact> could not be measured: <reason>.` | `open-forge route inspect "<source-path>" --for <path>` for pending working paths, `open-forge route inspect --help` for scan-only failures, otherwise `open-forge doctor` |
 | route-inspect.automatic-id-not-unique  | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.automatic-id-not-unique`).          | none                                         |
 | route-inspect.not-routed               | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.not-routed`). | `open-forge index` when its parent is routed |
 | route-inspect.detached-source          | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.detached-source`).                        | none                                         |
@@ -674,6 +850,28 @@ action when available. Counts are:
 
 `ownBytes`, `ownTokens`, `addedFiles`, `addedBytes`, `addedTokens`,
 `loadNowFiles`, `loadNowBytes`, `loadNowTokens`, `directChildren`, `descendants`.
+
+### Matching-file failures
+
+| Situation | Result |
+| --------- | ------ |
+| Complete scan, including zero matches | Does not itself raise status |
+| Git cannot start or the workspace is not a work tree | Select the ignore-aware walk, which can complete |
+| Repository refusal | Select the ignore-aware walk, which can complete |
+| Inventory fails after a confirmed work-tree probe, including warnings or malformed output | Discard Git output, then select the ignore-aware walk, which can complete |
+| Scan timeout or caller cancellation | Keep the existing unavailable or cancelled result. Do not fall back. |
+| Unexpected implementation failure | `scan-failed`, exit 1 |
+| Candidate metadata unavailable or required `.gitignore` unreadable or undecodable | `files-unavailable`, exit 3 |
+| Invalid condition chain | `incomplete`, exit 3 |
+| Containment violation | `blocked`, exit 5 |
+| Existing invalid or blocked source selection | Preserve that result and do not scan |
+
+Use the existing `route-inspect.unavailable-fact` condition for scan
+unavailability. Its finding wording stays intact. The matching-files block
+supplies the precise limitation. When scanning is the only unavailable fact,
+the next action is `open-forge route inspect --help`, with the exact reason
+`Use --for <path> to inspect supplied working paths without scanning.` Preserve
+higher-priority source-resolution actions.
 
 ## Scenarios
 
@@ -772,6 +970,139 @@ Route inspect stopped because of an unexpected error: <reason>.
 ~~~text
 Route inspect was cancelled.
 ~~~
+
+### Matching-files transcripts
+
+These blocks accompany the ordinary inspection report at every detail level.
+At every detail level, an all-files answer renders:
+
+```text
+Matching files: all files
+No effective applyTo restriction. Every file applies. No scan was run.
+```
+
+This answer has no `Scan scope:` or `Scan completeness:` line.
+
+The corresponding `matchingFiles` value is:
+
+```json
+{
+  "scope": "all-files",
+  "complete": true,
+  "count": null,
+  "paths": [],
+  "pathLimit": 100,
+  "truncated": false,
+  "reason": null,
+  "note": "No effective applyTo restriction. Every file applies. No scan was run."
+}
+```
+
+A complete Git scan renders:
+
+```text
+Matching files: 2
+Scan scope: existing Git tracked and untracked files, excluding ignored untracked files
+Scan completeness: complete
+  docs/guide.md
+  docs/reference.md
+```
+
+A capped list renders this block followed by the first 100 paths:
+
+```text
+Matching files: 143
+Scan scope: existing Git tracked and untracked files, excluding ignored untracked files
+Scan completeness: complete
+Listed paths: 100 of 143
+```
+
+A complete zero renders:
+
+```text
+Matching files: 0
+Scan scope: existing Git tracked and untracked files, excluding ignored untracked files
+Scan completeness: complete
+No current files match this condition. Planned files may still match.
+```
+
+An ignore-aware walk uses this exact scope line in the same block:
+
+```text
+Scan scope: workspace files filtered by .gitignore using Open Forge rules
+```
+
+For example, a complete fallback scan renders:
+
+```text
+Matching files: 2
+Scan scope: workspace files filtered by .gitignore using Open Forge rules
+Scan completeness: complete
+  docs/guide.md
+  docs/reference.md
+```
+
+When the walk skips unsupported lines, it reuses `note`:
+
+```text
+Matching files: 0
+Scan scope: workspace files filtered by .gitignore using Open Forge rules
+Scan completeness: complete
+No current files match this condition. Planned files may still match. Skipped unsupported .gitignore lines: 2.
+```
+
+A candidate-metadata failure or an unreadable or undecodable required
+`.gitignore` renders:
+
+```text
+Matching files: unavailable
+Scan scope: workspace files filtered by .gitignore using Open Forge rules
+Scan completeness: incomplete
+Required file information or .gitignore content could not be read or decoded.
+```
+
+An unavailable scan without an established scope renders `Scan scope:
+unavailable`. For example, unresolved effective conditions render:
+
+```text
+Matching files: unavailable
+Scan scope: unavailable
+Scan completeness: incomplete
+The source's effective applyTo conditions could not be established.
+```
+
+A failed Git inventory falls back to the ignore-aware walk. If that walk cannot
+read a required `.gitignore`, it retains its workspace scope:
+
+```text
+Matching files: unavailable
+Scan scope: workspace files filtered by .gitignore using Open Forge rules
+Scan completeness: incomplete
+Required file information or .gitignore content could not be read or decoded.
+```
+
+### Pending working paths at minimal detail
+
+When loading facts depend on working paths that were not supplied, minimal
+detail states the cause. This also applies when the inspected source is
+unconditioned and a conditioned automatic entry elsewhere makes its startup
+context measurements unavailable. The finding code remains
+`route-inspect.unavailable-fact`, the status remains `incomplete`, and the exit
+code remains 3.
+
+For `open-forge route inspect maps`, the warning and next action are:
+
+```text
+  Warning  .agents/maps/_maps.md  Route fact is unavailable
+         Route facts could not be measured: No working paths were supplied, so effective loading is pending.
+
+Next: open-forge route inspect ".agents/maps/_maps.md" --for <path>
+```
+
+The next-action reason is `Supply working paths with --for to evaluate pending
+loading conditions.` Other unavailable facts retain their generic wording.
+Source-resolution findings retain their existing actions. A scan-only failure
+retains the matching-files action defined above.
 
 ## Related Current Sources
 

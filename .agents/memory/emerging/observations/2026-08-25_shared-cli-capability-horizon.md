@@ -26,7 +26,7 @@ and Purple sequence even though both command slices had focused passing evidence
 
 The current [CLI Framework layer](../../crystallized/documents/cli/layers/framework.md)
 already names source, routing, Markdown, YAML, and generated-navigation consumers.
-The active [Plan](../../working/cli-development/plan.md#approach) requires neutral
+The active [Plan](../../working/cli-development/plan.md) requires neutral
 mechanical foundations before dependent commands and keeps semantic policy local
 until multiple consumers prove identical meaning.
 

@@ -516,7 +516,7 @@ not report a successful partial category removal.
 
 ## Behavioral Conformance
 
-The mandatory public evidence boundary is [Interface Verification](interface.md#verification-requirements).
+The mandatory public evidence boundary is [Interface Verification](interface.md).
 A conforming implementation must additionally prove:
 
 - one exact request resolver with shared source and global flag semantics and no

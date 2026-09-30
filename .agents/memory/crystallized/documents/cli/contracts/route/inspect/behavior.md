@@ -32,9 +32,12 @@ implementation choice to change those boundaries and remains technology-neutral.
 
 - The operation performs one complete route-profile inspection for one resolved
   source reference. It does not select a hidden child operation.
-- For the same CLI payload, workspace bytes, and explicit source reference, it
-  forms the same route facts, measurements, ordering, availability, and
-  semantic result described by the [Interface Contract](interface.md#purpose).
+- For the same CLI payload, workspace bytes, explicit source reference, and
+  observed file inventory, including Git inventory or ignore configuration used
+  by the selected scan strategy, it forms the same route facts, measurements,
+  ordering,
+  availability, and semantic result described by the
+  [Interface Contract](interface.md#purpose).
 - The operation builds at most one current in-memory route and loading graph for
   the invocation. It does not persist that graph or create inspection state.
 - Reading and parsing workspace bytes to establish facts does not make authored
@@ -79,7 +82,7 @@ source and route are safe and complete while the automatic ID remains
 non-unique, resolution records the identity observation for `completed-with-warnings`.
 Exact-path resolution does not repair a structurally ambiguous route. A Loader
 reference is rejected as a workspace root rather than treated as the inspected
-route subject. These resolution outcomes use the public [Errors](interface.md#errors)
+route subject. These resolution outcomes use the public [Errors](interface.md#errors-and-boundaries)
 and [Semantic Results](interface.md#semantic-results) without inventing another
 status.
 
@@ -130,6 +133,175 @@ unmatched condition makes `read.atStart` false. A matched condition does not by
 itself make the source part of task-start context. Keep route and topology
 counts structural. Mark a context-set or size measurement unavailable only
 when pending conditions prevent its value from being established.
+
+Carry the pending-working-path cause from loading evaluation into result
+formation. A conditioned automatic entry may make measurements unavailable
+even when the inspected source is unconditioned. In that case, the minimal
+`route-inspect.unavailable-fact` warning says `Route facts could not be
+measured: No working paths were supplied, so effective loading is pending.`
+Its next action uses the inspected source's exact path with `--for <path>` and
+the reason `Supply working paths with --for to evaluate pending loading
+conditions.` Keep `incomplete` and exit 3. Keep generic wording for other
+unavailable facts and preserve higher-priority source-resolution actions.
+
+### Matching-file inspection
+
+Only `--matching-files` requests candidate enumeration. Without it, perform no
+enumeration and launch no Git process. Help and version stop before enumeration.
+Preserve an existing invalid or blocked source-selection result without scanning.
+
+An invalid or unresolved chain produces `condition-unavailable` before
+enumeration, not zero matches. Validate the established condition chain before
+candidate enumeration. Remove recognized match-all conditions from the scanner's
+evaluation chain. They are redundant there. Authored conditions and ordinary
+`--for` applicability are unchanged. If no restrictive condition remains,
+return the complete all-files answer without invoking the host enumerator. Do
+not start a Git process or walk candidate files. No Git probe or Git inventory
+occurs.
+
+**Match-all rule.** Examine `ApplyToPattern.Alternatives`, falling back to
+`Segments` when alternatives are empty. An alternative is match-all when every
+segment is nonempty and contains only `*`, at least one segment is exactly
+`**`, and at most one segment is not exactly `**`. A pattern is match-all if any
+alternative is. A condition is match-all if any of its patterns is. This covers
+`**`, `**/*`, `**/**`, `*/**`, and brace forms that expand to them. It excludes
+`*`, `*/*`, and `**/*/*`. `*` has no dotfile exception in this dialect, so
+`**/*` matches every file.
+
+Otherwise scan, evaluating only the remaining restrictive conditions.
+
+The host chooses the strategy once per request. It creates one 30-second scan
+deadline before the Git probe and never restarts it. It probes whether the
+exact selected workspace is inside a Git work tree. A confirmed work tree
+uses Git's existing tracked and untracked inventory, excluding ignored
+untracked files. Tracked files stay eligible even when an ignore pattern
+matches them. The probe reads no Git messages, so it does not depend on
+locale. Skip every entry named `.git`.
+
+The fallback triggers are:
+
+| Situation | Result |
+| --------- | ------ |
+| Git cannot start | Ignore-aware workspace walk |
+| Workspace is not a work tree | Ignore-aware workspace walk |
+| Repository refusal | Ignore-aware workspace walk |
+| Inventory fails after a confirmed probe, including warnings or malformed output | Discard Git output, then use the ignore-aware workspace walk |
+| Timeout or caller cancellation | Keep the existing unavailable or cancelled result. Do not fall back. |
+
+A timeout or cancellation never restarts the deadline. Unexpected
+implementation failures remain `scan-failed`. The host preserves process
+cleanup and does not apply trust overrides.
+
+The ignore-aware workspace walk reads regular `.gitignore` files when entering
+eligible directories, before examining children. The host carries an
+immutable inherited rule set with each queued directory and never enters an
+excluded directory to discover more rules. Reading `.gitignore` contents is
+allowed for this purpose. Operations owns pure line translation and
+evaluation beside the scanner. Each typed rule stores its base directory
+separately. Operations evaluates an entry's path relative to that base and
+its directory flag through the Framework matcher. It prunes a directory only
+after the final inclusion decision. Directory names are not parsed as glob
+patterns. The Framework matcher itself is unchanged.
+
+The ten translation rules below translate the
+[Git gitignore specification](https://git-scm.com/docs/gitignore) onto the
+existing Framework matcher. `Δ` marks a documented difference from Git.
+
+1. Read regular `.gitignore` files when entering eligible directories, before
+   examining children. Never enter an excluded directory to discover more
+   rules. **Δ:** Read nothing above the workspace. Do not use global excludes
+   or `.git/info/exclude`. Tracked files receive no exemption.
+2. Skip empty lines and initial `#` comments. Preserve leading spaces. Remove
+   only unescaped trailing spaces. An initial `\#` or `\!` is literal.
+3. Start included. An unescaped initial `!` means inclusion. Apply ancestor
+   rules before local rules while preserving line order. The last matching
+   rule decides each entry.
+4. A leading slash or an internal slash anchors the pattern to its
+   `.gitignore` directory. Remove the leading slash before matching.
+5. Otherwise prefix `**/` after removing a directory-only trailing slash.
+   Thus `*.log` becomes `**/*.log`.
+6. A trailing slash requires a directory. Evaluate all applicable rules before
+   pruning an excluded directory. Do not generate `p/**` for every rule.
+   Descendants cannot reappear beneath a pruned parent.
+7. Use the Framework matcher for `*`, `?`, ordinary bracket lists and ranges,
+   and negated classes. **Δ:** Character matching remains Open Forge's
+   case-sensitive semantics, regardless of Git configuration.
+8. Preserve recursive `**` segments, but translate terminal `/**` to
+   `/**/*`. This prevents `docs/**` from excluding `docs` itself and blocking
+   `!docs/keep.md`.
+9. Treat commas literally through `ApplyToPatternMatcher.Parse`, never the
+   expression parser. Encode literal braces as `[{]` and `[}]`. Outside
+   brackets, decode escaped characters into literals, quoting matcher
+   metacharacters with singleton classes. Supported escapes include escaped
+   spaces and wildcard characters. Braces are expressible, so they do not
+   need to be skipped.
+10. **Δ:** Skip and count unsupported lines: extended POSIX bracket
+    constructs, escapes inside brackets, escaped slash or literal backslash,
+    dangling escapes, and patterns rejected by the shared parser. Do not
+    silently reinterpret them.
+
+Count only unsupported lines encountered during the walk. When the count is
+nonzero, reuse `note` for `Skipped unsupported .gitignore lines: N.`. At zero
+matches, append that sentence after the existing zero-match note with one
+space. Do not include paths or raw patterns for skipped lines. Skips do not
+raise status.
+
+A successful fallback is `complete: true` with `reason: null`, the exact
+count, and the existing path cap. An unreadable or undecodable required
+`.gitignore` discards partial candidates and returns `files-unavailable`.
+Otherwise-complete inspection remains `completed` with exit `0`.
+
+The host supplies a command-owned enumeration result. Inspect owns eligibility
+and passes each eligible candidate separately to `SourceApplicabilityEvaluator`.
+Reuse the remaining effective chain from the route graph. Every remaining
+ancestor and local condition must match that same path, with OR alternatives
+within each condition. Different files cannot jointly satisfy different
+ancestors.
+Overwrite references use the base source's established chain. Detached sources
+use their established local chain. A complete empty inventory is zero current
+matches, not the evaluator's working-paths-unknown state.
+
+Enumeration never supplies `WorkingPaths`, changes `--for` applicability, or
+changes loading calculations. A complete scan can therefore accompany an
+`incomplete` report whose loading facts still need explicit working paths.
+
+Keep the selected workspace boundary even inside a larger repository. Return
+files only. Exclude deleted tracked paths, symbolic links, directory links,
+other reparse points, Git administrative paths, and submodule contents. Check
+physical containment using the existing capability. Read candidate metadata
+and required `.gitignore` contents, not other candidate file contents. The
+host owns process launch, the walk, cancellation, and child-process cleanup
+under the single 30-second scan deadline. The accepted adapter
+and hardening rules are in the [CLI Dependency Policy](../../../../../decisions/cli-dependency-policy.md#optional-git-inventory).
+
+Normalize eligible matching paths to workspace-relative `/` paths, deduplicate
+and sort them ordinally, and count every match before retaining the first 100.
+Operations owns eligibility, matching, count, cap, completeness, and status.
+Completeness covers the observed scan, not an atomic snapshot. A complete count
+above 100 sets `truncated` without making the scan incomplete.
+
+On scan failure, discard all partial candidates. Return the requested block
+with `complete: false`, `count: null`, `paths: []`, and `truncated: false`,
+retaining an established scope. The [Interface Contract](interface.md#matching-files-data)
+defines all eight fields, finite reasons, and exact limitation sentences.
+Safe unavailable facts select `incomplete`, containment violations select
+`blocked`, cancellation selects `cancelled`, and unexpected internal failure
+selects `failed`. A complete scan, including zero, does not itself raise status.
+
+Use `route-inspect.unavailable-fact` with its existing finding wording. The
+matching-files block carries the precise limitation. When scanning is the only
+unavailable fact, select `open-forge route inspect --help` and the reason
+`Use --for <path> to inspect supplied working paths without scanning.` Keep
+higher-priority source-resolution actions.
+
+Invalid source cardinality, invalid working paths, and workspace binding
+failures retain a requested matching-files block with `source-unavailable` and
+no established scope. These paths do not enumerate files. They remain
+`invalid-input` with exit 4, and omit the block when it was not requested.
+
+Candidate-metadata failures and required `.gitignore` read or decode failures
+share `files-unavailable`. The exact limitation sentence covers both causes:
+`Required file information or .gitignore content could not be read or decoded.`
 
 ### One route and loading graph
 
@@ -439,7 +611,7 @@ context merely because it was mechanically read.
 
 Read-only execution stops after the typed result is formed. It does not create
 an empty mutation plan or acquire write-policy authority. This satisfies the
-public [Non-Goals](interface.md#non-goals) and [Purpose](interface.md#purpose)
+public [Non-Goals](interface.md) and [Purpose](interface.md#purpose)
 boundaries.
 
 ## Safety And Recovery
@@ -459,7 +631,7 @@ identity conditions are `blocked`; unreadable or unmeasurable safe facts are
 route, or a guessed relationship. A cancellation or unexpected failure cannot
 leave a persistent inspection effect, so there is no mutation rollback or
 residual recovery state to manufacture. The public error and status boundaries
-remain in [Errors](interface.md#errors) and [Semantic Results](interface.md#semantic-results).
+remain in [Errors](interface.md#errors-and-boundaries) and [Semantic Results](interface.md#semantic-results).
 
 ## Presentation Relationship
 
@@ -496,9 +668,44 @@ When the Interface permits a direct safe correction, the renderer names only
 the observed input or safety boundary. It does not turn that correction into a
 route mutation proposal.
 
+The requested matching-files block keeps all eight fields and up to 100 paths
+at every detail level. Minimal retains the count, scope, completeness,
+truncation, and limitation. Standard adds existing applicability explanations,
+full adds existing provenance and evidence, and debug keeps full's primary
+result with bounded stderr diagnostics. `--detail-filter` does not hide the
+block or change its count. Presentation consumes the command-owned result
+without enumerating again or importing Framework facts.
+
 ## Conformance Evidence
 
 Implementation evidence must cover:
+
+- No candidate enumeration or Git process without `--matching-files`, including
+  help, version, and existing invalid or blocked source selection.
+- Actual binding paths for missing and multiple sources, invalid working paths,
+  and workspace failures retain a requested unavailable matching-files block.
+  Without the flag, they omit it. Neither case invokes the operation.
+- Git inventory, ignored untracked and tracked files, deleted paths, nested
+  workspaces, linked worktrees, the ignore-aware walk, all four ordinary Git
+  fallback triggers, discarded Git output after warnings or malformed output,
+  and no fallback after timeout or cancellation.
+- Condition validation before enumeration, match-all recognition and removal,
+  all-files answers for unconditioned and match-all chains, restrictive
+  per-file full-chain matching, OR alternatives, overwrite and detached chains,
+  invalid ancestry, and empty inventories without changing `--for` applicability
+  or loading.
+- Ordinal deduplication and ordering, complete counts, the 100-path cap, all
+  detail levels and filters, exact zero-match text, and partial-result discard.
+- Link, reparse-point, Git-administration, submodule, and containment exclusions,
+  unreadable metadata, required `.gitignore` reads, deadline, cancellation,
+  child cleanup, and no other candidate content reads or raw Git diagnostics in
+  normal output.
+- The ten `.gitignore` translation rules, immutable inherited rule sets,
+  per-rule base directories, directory pruning after final inclusion, the
+  Framework matcher's case-sensitive behavior, skipped-line counts, and
+  `files-unavailable` for unreadable or undecodable required `.gitignore` files.
+- Requested schema-3 data, every finite reason, status and exit behavior, and
+  next-action priority for scan-only unavailability.
 
 - Exact current-directory and `--workspace` selection without workspace
   discovery, as specified by [Workspace And Subject](interface.md#workspace-and-subject).
@@ -523,6 +730,10 @@ Implementation evidence must cover:
 - Unresolved non-interactive ID collisions that retain every candidate path and
   require rerunning with one listed exact path.
 - Task-start membership independent of the inspection operand.
+- Minimal warnings name pending working paths and offer `--for` for both a
+  conditioned inspected source and an unconditioned source affected by another
+  startup entry. Supplying matching paths resolves that cause. Other
+  unavailable facts retain generic wording.
 - The same normalized `--for` set for task-start and selected loading; pending,
   matched, and unmatched applicability; `read.atStart` unavailable with an
   explicit reason while pending, false when the full chain is unmatched, and

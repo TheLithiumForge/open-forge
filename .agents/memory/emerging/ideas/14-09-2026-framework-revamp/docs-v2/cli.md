@@ -106,7 +106,7 @@ Useful options:
 - `--content=part[,part...]` returns selected parts: `metadata`, `frontmatter`, `headings`, `body`, or a named `section:<heading>`.
 - `--follow-links=positive-depth|all` follows contained local Markdown links to the requested depth or through the complete reachable set.
 
-The returned file identities show what was included. The [loader](../src/open-forge/.agents/loader.md) defines loading and scope. Command output does not change those rules.
+The returned file identities show what was included. The [loader](../../../../../../src/open-forge/.agents/loader.md) defines loading and scope. Command output does not change those rules.
 
 How the loading tags resolve: `LoadNow` and `KeepInMind` both load through exposed entries of already-loaded parents. Selecting an on-demand scope activates its applicable child loading rules. Tagged files inside other inactive scopes stay excluded. `KeepInMind` adds refresh instructions while the scope remains active. The CLI resolves each invocation independently and does not track an agent session.
 
@@ -349,9 +349,9 @@ It does not scan arbitrary workspace files, extract a bundle, restore a target, 
 
 The complete safety and residual-state rules are in the contracts:
 
-- [Install contract](../.agents/memory/crystallized/documents/cli/contracts/install/_install.md)
-- [Update contract](../.agents/memory/crystallized/documents/cli/contracts/update/_update.md)
-- [Cleanup contract](../.agents/memory/crystallized/documents/cli/contracts/cleanup/_cleanup.md)
+- [Install contract](../../../../crystallized/documents/cli/contracts/install/_install.md)
+- [Update contract](../../../../crystallized/documents/cli/contracts/update/_update.md)
+- [Cleanup contract](../../../../crystallized/documents/cli/contracts/cleanup/_cleanup.md)
 
 ## Extensions
 
@@ -444,14 +444,14 @@ The shell removes the quotes before the CLI sees the value. Exact paths resolve 
 
 [Development](development.md) covers local prerequisites and worktree-local setup. The command contracts hold the exact public boundary when you need more:
 
-- [Global flags](../.agents/memory/crystallized/documents/cli/contracts/shared/global-flags/interface.md)
-- [Source references](../.agents/memory/crystallized/documents/cli/contracts/shared/source-references/interface.md)
-- [Context](../.agents/memory/crystallized/documents/cli/contracts/context/_context.md)
-- [Find](../.agents/memory/crystallized/documents/cli/contracts/find/_find.md)
-- [Route commands](../.agents/memory/crystallized/documents/cli/contracts/route/_route.md)
-- [Index](../.agents/memory/crystallized/documents/cli/contracts/index-candidate/_index-candidate.md)
-- [Repair](../.agents/memory/crystallized/documents/cli/contracts/repair/_repair.md)
-- [Extension commands](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md)
-- [Workspace Libraries](../.agents/memory/crystallized/documents/cli/contracts/library/_library.md)
+- [Global flags](../../../../crystallized/documents/cli/contracts/shared/global-flags/interface.md)
+- [Source references](../../../../crystallized/documents/cli/contracts/shared/source-references/interface.md)
+- [Context](../../../../crystallized/documents/cli/contracts/context/_context.md)
+- [Find](../../../../crystallized/documents/cli/contracts/find/_find.md)
+- [Route commands](../../../../crystallized/documents/cli/contracts/route/_route.md)
+- [Index](../../../../crystallized/documents/cli/contracts/index-candidate/_index-candidate.md)
+- [Repair](../../../../crystallized/documents/cli/contracts/repair/_repair.md)
+- [Extension commands](../../../../crystallized/documents/cli/contracts/extension/_extension.md)
+- [Workspace Libraries](../../../../crystallized/documents/cli/contracts/library/_library.md)
 
 The Framework stays usable with no executable present. Markdown is the durable interface. The CLI makes inspection and maintenance faster, repeatable, and easier to review.

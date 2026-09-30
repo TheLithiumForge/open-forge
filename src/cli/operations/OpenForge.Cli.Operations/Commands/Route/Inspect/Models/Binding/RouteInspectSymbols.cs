@@ -6,7 +6,8 @@ internal sealed record RouteInspectSymbols(
     Command RouteGroup,
     Command InspectCommand,
     Argument<string[]> SourceReferences,
-    Option<string[]> WorkingPaths)
+    Option<string[]> WorkingPaths,
+    Option<bool> MatchingFiles)
 {
     internal static Option<string[]> CreateWorkingPaths()
         => new(RouteInspectDefinitions.WorkingPath.Name)

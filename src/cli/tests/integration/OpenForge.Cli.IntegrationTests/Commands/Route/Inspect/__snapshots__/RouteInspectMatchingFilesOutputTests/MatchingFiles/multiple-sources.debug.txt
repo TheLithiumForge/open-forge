@@ -1,0 +1,13 @@
+Cannot inspect docs docs/guide: Route inspect takes one source.
+Workspace: <workspace>
+  Error  docs docs/guide  Too many sources [route-inspect.multiple-sources]
+         Route inspect takes one source.
+
+Matching files: unavailable
+Scan scope: unavailable
+Scan completeness: incomplete
+The source could not be resolved for matching-file inspection.
+  Why: the source reference was not accepted
+  Selection: source ID; unresolved; requested "docs docs/guide"
+  Correct the named source or input, then rerun route inspect.
+Next: open-forge route inspect --help

@@ -53,7 +53,7 @@ When you know which files the task will touch, pass every path with `--for`. You
 open-forge context --for src/orders/new-order.cs --for web/orders.ts
 ```
 
-Context checks the conditions on entries those routes expose. Adding the TypeScript path lets its own rules apply without extending C# rules to that file. Context uses the paths you supply and does not infer related files. If the paths are not known yet, unconditioned startup behavior stays the same and tagged entries with a file condition remain pending.
+Context checks the conditions on entries those routes expose. Adding the TypeScript path lets its own rules apply without extending C# rules to that file. Context uses the paths you supply and does not infer related files. If the paths aren't known yet, startup works as usual for entries without conditions. Only conditioned `#LoadNow` and `#KeepInMind` entries that a loaded parent exposes remain pending. Other conditioned entries stay on demand.
 
 To see the route tree, or inspect how one file behaves:
 

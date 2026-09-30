@@ -1,0 +1,15 @@
+maps  .agents/maps/_maps.md
+
+Where this source belongs
+  Route chain: maps
+  Parent: none (Loader root)
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  May be read again: no
+
+Context size
+  This file: 117 B, about 30 tokens
+  Selecting this route adds: 1 file, 117 B, about 30 tokens

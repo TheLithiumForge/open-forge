@@ -2,6 +2,12 @@
   "provenance": "Independently reviewed contract message forms, relocated from pre-S3 interfaces; approved S6 deltas are bound to root receipts in Task45.",
   "rows": [
     {
+      "code": "context.applicability-pending",
+      "forms": [
+        "Some applyTo conditions could not be evaluated because no --for path was supplied."
+      ]
+    },
+    {
       "code": "cleanup.workspace-lock-unavailable",
       "forms": [
         "... Nothing was removed."
@@ -1094,6 +1100,13 @@
       "code": "route-inspect.orphan-overwrite",
       "forms": [
         "<name>.overwrite.md has no <name>.md beside it."
+      ]
+    },
+    {
+      "code": "route-inspect.unavailable-fact",
+      "forms": [
+        "Route facts could not be measured: No working paths were supplied, so effective loading is pending.",
+        "<fact> could not be measured: <reason>."
       ]
     },
     {

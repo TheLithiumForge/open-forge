@@ -148,7 +148,7 @@ boundaries. Workers do not commit. The Overseer integrates diffs.
 | D15 | L | `.agents/skills/open-forge-cli/SKILL.md` and its identical shipped copy | Replace the literal-comma claim and update examples |
 | D17 | L | `docs/cli.md` | Syntax, examples, literal-comma migration |
 | D18 | L | `src/docusaurus/docs/concepts/loading-and-tags.md` | File conditions syntax paragraph |
-| D13 | Overseer | both loader copies and the loader maintenance contract | File Conditions syntax bullet |
+| D13 | Overseer | both loader copies and the loader maintenance contract | File Conditions syntax bullet, in the section the loader now calls Frontmatter |
 
 `O` = `src/cli/operations/OpenForge.Cli.Operations/`. Framework contract and
 CLI contract paths are relative to `.agents/memory/crystallized/documents/`.

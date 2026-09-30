@@ -9,11 +9,13 @@ internal sealed record RouteInspectRequest
         CliWorkspace workspace,
         string sourceReference,
         bool allowInteractiveSourceSelection,
-        IEnumerable<string>? workingPaths = null)
+        IEnumerable<string>? workingPaths = null,
+        bool matchingFiles = false)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceReference);
         Workspace = workspace;
+        MatchingFiles = matchingFiles;
         SourceReference = sourceReference;
         AllowInteractiveSourceSelection = allowInteractiveSourceSelection;
         var materializedPaths = (workingPaths ?? []).ToArray();
@@ -28,6 +30,8 @@ internal sealed record RouteInspectRequest
     }
 
     internal CliWorkspace Workspace { get; }
+
+    internal bool MatchingFiles { get; }
 
     internal string SourceReference { get; }
 

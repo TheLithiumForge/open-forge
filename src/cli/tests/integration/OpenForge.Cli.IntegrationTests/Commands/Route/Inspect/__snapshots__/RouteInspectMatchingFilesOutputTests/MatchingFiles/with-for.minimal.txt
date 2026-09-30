@@ -1,0 +1,21 @@
+docs/guide  .agents/docs/guide.md
+
+Matching files: 2
+Scan scope: workspace files filtered by .gitignore using Open Forge rules
+Scan completeness: complete
+  docs/guide.md
+  docs/reference.md
+
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  May be read again: no
+
+Context size
+  This file: 89 B, about 23 tokens
+  Selecting this route adds: 2 files, 215 B, about 54 tokens

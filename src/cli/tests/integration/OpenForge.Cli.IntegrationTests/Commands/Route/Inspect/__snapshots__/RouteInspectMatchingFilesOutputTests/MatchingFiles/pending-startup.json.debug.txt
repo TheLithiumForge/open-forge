@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "incomplete",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "maps  .agents/maps/_maps.md",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-inspect.unavailable-fact",
+      "title": "Route fact is unavailable",
+      "message": "Route facts could not be measured: No working paths were supplied, so effective loading is pending.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/maps/_maps.md",
+        "id": ".agents/maps/_maps.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": 117,
+    "ownTokens": 30,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": 0,
+    "loadNowBytes": 0,
+    "loadNowTokens": 0,
+    "directChildren": 0,
+    "descendants": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "maps",
+    "path": ".agents/maps/_maps.md",
+    "kind": "entrypoint",
+    "entrypointForm": "canonical",
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": [
+        "maps"
+      ],
+      "parent": null,
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": false,
+      "automaticallyWhen": [
+        "this route is selected"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 117,
+        "tokens": 30
+      },
+      "adds": null,
+      "loadNow": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      }
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "no local Axioms section"
+    },
+    "tags": [
+      "Maps"
+    ],
+    "selected": {
+      "closure": {
+        "files": 1,
+        "bytes": 117,
+        "tokens": 30
+      },
+      "startupOverlap": null
+    },
+    "selection": {
+      "kind": "source-id",
+      "method": "automatic-id",
+      "requested": "maps"
+    },
+    "layers": [
+      {
+        "path": ".agents/maps/_maps.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "a required route fact or measurement is unavailable"
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route inspect \".agents/maps/_maps.md\" --for <path>",
+    "reason": "Supply working paths with --for to evaluate pending loading conditions."
+  }
+}

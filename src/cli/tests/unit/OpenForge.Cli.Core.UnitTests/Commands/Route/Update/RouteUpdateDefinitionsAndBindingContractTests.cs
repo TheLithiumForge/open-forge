@@ -170,15 +170,35 @@ public sealed class RouteUpdateDefinitionsAndBindingContractTests
     }
 
     [Trait("Boundary", "Input")]
-    [Fact(DisplayName = "Route Update maps an invalid apply-to expression to the existing patch message"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
-    public void InvalidApplyToExpressionUsesExistingPatchMessage()
+    [Theory(DisplayName = "Route Update reports the specific apply-to failure"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
+    [InlineData("docs/", "--apply-to <glob> must contain a non-empty pattern with no empty path segments. Use docs/** to match files under docs/.")]
+    [InlineData("", "--apply-to <glob> must contain a non-empty pattern with no empty path segments. Use docs/** to match files under docs/.")]
+    [InlineData("/docs/**", "--apply-to <glob> must be workspace-relative.")]
+    [InlineData("src/**/*.cs,../docs/*.md", "--apply-to <glob> must not contain . or .. path segments.")]
+    [InlineData("docs\\file.cs", "--apply-to <glob> contains unsupported pattern syntax.")]
+    public void InvalidApplyToExpressionReportsSpecificCause(string pattern, string expectedCause)
     {
         var bound = Bind(
             "update",
             RouteUpdateTestData.TargetId,
-            "--apply-to=src/**/*.cs,../docs/*.md");
+            "--apply-to",
+            pattern);
         var result = Assert.IsType<RouteUpdateResult>(bound.InvalidResult);
 
+        Assert.Null(bound.Request);
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        var finding = Assert.Single(result.Findings);
+        Assert.Equal(RouteUpdateFindingCode.InvalidPatch, finding.Code);
+        Assert.Equal(expectedCause, finding.Cause);
+    }
+
+    [Fact(DisplayName = "Route Update preserves the bare apply-to message"), Trait("Boundary", "Input"), Trait("Feature", "route-update"), Trait("Evidence", "UnitContract")]
+    public void BareApplyToRetainsExistingPatchMessage()
+    {
+        var bound = Bind("update", RouteUpdateTestData.TargetId, "--apply-to");
+        var result = Assert.IsType<RouteUpdateResult>(bound.InvalidResult);
+
+        Assert.Null(bound.Request);
         var finding = Assert.Single(result.Findings);
         Assert.Equal(RouteUpdateFindingCode.InvalidPatch, finding.Code);
         Assert.Equal(

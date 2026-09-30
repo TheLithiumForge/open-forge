@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Presentation;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect;
 
@@ -102,6 +103,10 @@ public sealed class RouteInspectPresentationTests
         var help = RouteInspectHelpSections.CreateInspect();
         var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
 
+        CommandOutputSnapshot.MatchSnapshot(
+            Assert.Single(help.Sections, section => section.Heading == "Notes").Body,
+            "notes");
+
         Assert.Contains("open-forge route inspect <source-reference>", text, StringComparison.Ordinal);
         Assert.Contains("source-id", text, StringComparison.Ordinal);
         Assert.Contains(".agents/", text, StringComparison.Ordinal);
@@ -120,6 +125,7 @@ public sealed class RouteInspectPresentationTests
         Assert.Contains("exit 0", text, StringComparison.Ordinal);
         Assert.Contains("exit 130", text, StringComparison.Ordinal);
         Assert.Contains("open-forge route inspect memory/working", text, StringComparison.Ordinal);
+        Assert.Contains("open-forge route inspect directives/backend/csharp --matching-files", text, StringComparison.Ordinal);
         Assert.Contains("route inspect --help", text, StringComparison.Ordinal);
         Assert.Contains("route inspect --version", text, StringComparison.Ordinal);
         Assert.Contains("--detail", text, StringComparison.Ordinal);

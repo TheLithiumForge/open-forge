@@ -16,6 +16,27 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect;
 
 public sealed class RouteInspectBindingAndCompositionTests
 {
+    [Theory(DisplayName = "Matching files uses native Boolean binding independently of repeated working paths")]
+    [InlineData(false), InlineData(true)]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
+    public void BindsMatchingFiles(bool requested)
+    {
+        var route = new Command("route");
+        var symbols = RouteInspectBinding.CreateSymbols(route);
+        var arguments = new List<string> { "inspect", "root", "--for", "src/a.cs", "--for", "src/b.cs" };
+        if (requested)
+        {
+            arguments.AddRange(["--matching-files", "--matching-files"]);
+        }
+
+        var parse = route.Parse(arguments.ToArray());
+        Assert.Empty(parse.Errors);
+        var bound = RouteInspectBinding.Bind(parse, Invocation(RouteInspectPresentationTestDataWorkspace()), symbols);
+        var request = Assert.IsType<RouteInspectRequest>(bound.Request);
+        Assert.Equal(requested, request.MatchingFiles);
+        Assert.Equal(["src/a.cs", "src/b.cs"], request.WorkingPaths);
+    }
+
     [Fact(DisplayName = "Manual Route graph composes List and Inspect with current group notes")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void RouteFamilyComposesOneGroupWithExactChildren()

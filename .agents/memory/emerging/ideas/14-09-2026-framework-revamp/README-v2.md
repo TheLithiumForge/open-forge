@@ -26,9 +26,9 @@ Context here means the knowledge, rules, decisions, and working state relevant t
 
 You need a project and an agent that reads `AGENTS.md` or `CLAUDE.md`. Most do.
 
-**Copy the files.** The whole Framework is the `.agents/` folder in [src/open-forge](src/open-forge/) plus a short `AGENTS.md`. Copy `.agents/` into your project, add the `AGENTS.md` handoff to your existing agent instructions, and include `CLAUDE.md` if your harness uses it. Keep your existing files and review the result.
+**Copy the files.** The whole Framework is the `.agents/` folder in [src/open-forge](../../../../../src/open-forge) plus a short `AGENTS.md`. Copy `.agents/` into your project, add the `AGENTS.md` handoff to your existing agent instructions, and include `CLAUDE.md` if your harness uses it. Keep your existing files and review the result.
 
-**Or use the CLI.** Follow the [setup guide](docs/development.md#link-the-native-cli-locally), then run this from your project:
+**Or use the CLI.** Follow the [setup guide](docs-v2/development.md#link-the-native-cli-locally), then run this from your project:
 
 ```sh
 open-forge install --dry-run
@@ -60,7 +60,7 @@ Everything lives under `.agents/`:
 
 Each folder has an entrypoint, `_folder.md`, that lists what's inside with a one-line description. An agent reads the entrypoint, opens what matters, and skips the rest. Rules from a parent stay in force inside its children.
 
-Every category answers one question. Directives: what is required here? Guidance: what is recommended? Memory: what is worth remembering? The [loader](src/open-forge/.agents/loader.md) carries the complete rules, and the Framework explains itself through its own files. Nothing here needs a runtime.
+Every category answers one question. Directives: what is required here? Guidance: what is recommended? Memory: what is worth remembering? The [loader](../../../../../src/open-forge/.agents/loader.md) carries the complete rules, and the Framework explains itself through its own files. Nothing here needs a runtime.
 
 ## Grow your own framework
 
@@ -77,7 +77,7 @@ Scopes are what make this practical. Put frontend conventions in a frontend scop
 
 There's no limit on how many scopes you add or how deep they go. What a task loads follows the routes it selects, not the size of the workspace.
 
-The base is about 8k tokens of Markdown, under 7k at startup, before any of your own content. Those are [measured source counts](docs/development.md#measure-context-size), not a promise about any particular model. Add to it, replace it, or remove what you don't use. Removed defaults stay removed.
+The base is about 8k tokens of Markdown, under 7k at startup, before any of your own content. Those are [measured source counts](docs-v2/development.md#measure-context-size), not a promise about any particular model. Add to it, replace it, or remove what you don't use. Removed defaults stay removed.
 
 ## Extensions
 
@@ -91,7 +91,7 @@ Optional packages for when you'd like a head start:
 | Development       | Development, debugging, and review workflows                                              |
 | Orchestration     | Managed delivery across dependent tasks. Brings in Planning and Development               |
 
-`development-toolkit` bundles the first four. Everything installs as ordinary files that follow the rules of wherever they land. The [Extension guide](docs/extensions.md) covers installing, customizing, and writing your own.
+`development-toolkit` bundles the first four. Everything installs as ordinary files that follow the rules of wherever they land. The [Extension guide](docs-v2/extensions.md) covers installing, customizing, and writing your own.
 
 ## The CLI
 
@@ -107,14 +107,14 @@ The files are complete on their own. The CLI makes the repetitive parts faster:
 | `open-forge doctor`                          | Check structure without changing anything        |
 | `open-forge update --dry-run`                | Preview a Framework update                       |
 
-Anything that changes files takes `--dry-run`. `open-forge --help` and the [CLI guide](docs/cli.md) have the rest.
+Anything that changes files takes `--dry-run`. `open-forge --help` and the [CLI guide](docs-v2/cli.md) have the rest.
 
 ## Learn more
 
-- [CLI guide](docs/cli.md) for everyday commands and maintenance
-- [Extension guide](docs/extensions.md) for packages, dependencies, and customization
-- [Development guide](docs/development.md) for building, contributing, and verifying changes
+- [CLI guide](docs-v2/cli.md) for everyday commands and maintenance
+- [Extension guide](docs-v2/extensions.md) for packages, dependencies, and customization
+- [Development guide](docs-v2/development.md) for building, contributing, and verifying changes
 
-This repository runs on Open Forge. Its own [Vision](.agents/memory/crystallized/documents/vision.md), [Principles](.agents/memory/crystallized/documents/principles.md), and [Architecture](.agents/memory/crystallized/documents/architecture.md) are worked examples of the Framework in use.
+This repository runs on Open Forge. Its own [Vision](../../../crystallized/documents/vision.md), [Principles](../../../crystallized/documents/principles.md), and [Architecture](../../../crystallized/documents/architecture.md) are worked examples of the Framework in use.
 
-[MIT license](LICENSE)
+[MIT license](../../../../../LICENSE)

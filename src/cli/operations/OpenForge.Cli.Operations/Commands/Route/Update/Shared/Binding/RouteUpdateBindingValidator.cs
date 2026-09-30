@@ -87,13 +87,18 @@ internal sealed class RouteUpdateBindingValidator
             : null;
         if (input.ApplyToFacts.IsExplicit
             && (input.ApplyToFacts.ValueCount == 0
-                || input.ApplyTo.Count == 0
-                || applyTo is null
-                || applyTo.Failure is not null))
+                || input.ApplyTo.Count == 0))
         {
             return Invalid(
                 RouteUpdateFindingCode.InvalidPatch,
                 "Supplied --apply-to values must be valid nonempty workspace-relative patterns.");
+        }
+
+        if (applyTo?.Failure is { } applyToFailure)
+        {
+            return Invalid(
+                RouteUpdateFindingCode.InvalidPatch,
+                ApplyToPatternFailureText.ReadMessage(applyToFailure));
         }
 
         if (!input.DescriptionFacts.IsExplicit

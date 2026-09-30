@@ -15,5 +15,5 @@ also defines the persistent exclusions shared by the existing removal commands.
 
 ## Entries
 
-- [Select a removal target, preview or apply it, and explicitly restore excluded content](interface.md) - #Memory #Document #CLI #Contract #Interface #CurrentTruth
-- [Record removal intent and apply guarded content, navigation and ownership changes](behavior.md) - #Memory #Document #CLI #Contract #Behavior #CurrentTruth
+- [Apply one verified removal plan with persistent exclusions, exact recovery inputs and consistent ownership](behavior.md) - #Memory #Document #CLI #Contract #Remove #Behavior #CurrentTruth
+- [Select one removal target and keep files, directories, packages or libraries removed until explicitly restored](interface.md) - #Memory #Document #CLI #Contract #Remove #Interface #CurrentTruth

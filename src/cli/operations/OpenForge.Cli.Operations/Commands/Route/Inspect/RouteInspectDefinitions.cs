@@ -25,6 +25,12 @@ internal static class RouteInspectDefinitions
         [],
         "path");
 
+    internal static readonly CliOptionDefinition<bool> MatchingFiles = new(
+        "--matching-files",
+        "List current workspace files matching this source's own and inherited applyTo conditions.",
+        CliOptionArity.None,
+        false);
+
     internal static string ReadObservationCode(RouteInspectObservationCode code)
     {
         return code switch

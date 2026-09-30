@@ -43,7 +43,10 @@ internal sealed class RouteInspectProfileBuilder
             topology,
             axioms,
             incomplete ? RouteInspectCompleteness.Incomplete : RouteInspectCompleteness.Complete,
-            RouteInspectSafety.Safe);
+            RouteInspectSafety.Safe)
+        {
+            WorkingPathsPending = loading.WorkingPathsPending,
+        };
     }
 
     private static bool HasUnavailableReading(RouteInspectReadingProfile reading)

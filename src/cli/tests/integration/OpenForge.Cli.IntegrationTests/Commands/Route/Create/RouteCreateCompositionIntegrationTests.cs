@@ -238,7 +238,7 @@ public sealed class RouteCreateCompositionIntegrationTests
 
         Assert.Equal(4, result.ExitCode);
         Assert.Equal(string.Empty, result.Output);
-        Assert.Contains("--apply-to pattern '../outside.cs' is invalid", result.Error, StringComparison.Ordinal);
+        Assert.Contains("--apply-to <glob> must not contain . or .. path segments.", result.Error, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

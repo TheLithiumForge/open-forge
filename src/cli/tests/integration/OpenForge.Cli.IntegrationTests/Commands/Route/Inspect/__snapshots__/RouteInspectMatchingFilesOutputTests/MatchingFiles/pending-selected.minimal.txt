@@ -1,0 +1,17 @@
+docs/guide  .agents/docs/guide.md
+  Warning  .agents/docs/guide.md  Route fact is unavailable
+         Route facts could not be measured: No working paths were supplied, so effective loading is pending.
+
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
+
+When it is read
+  At task start or resume could not be measured: No matching working paths were supplied, so effective loading is pending.
+  Read automatically could not be measured: No matching working paths were supplied, so effective loading is pending.
+  May be read again could not be measured: No matching working paths were supplied, so effective loading is pending.
+
+Context size
+  This file: 92 B, about 23 tokens
+  Selecting this route adds could not be measured: The selection addition cannot be established completely.
+Next: open-forge route inspect ".agents/docs/guide.md" --for <path>

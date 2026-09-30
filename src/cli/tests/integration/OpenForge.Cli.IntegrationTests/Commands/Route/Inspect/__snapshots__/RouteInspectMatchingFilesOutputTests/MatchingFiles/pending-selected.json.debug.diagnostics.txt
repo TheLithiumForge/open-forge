@@ -1,0 +1,9 @@
+status=incomplete
+referenceKind=source-id
+selectionMethod=automatic-id
+requested=docs/guide
+identity=present
+profile=present
+observations=0
+conditions=1
+next=present

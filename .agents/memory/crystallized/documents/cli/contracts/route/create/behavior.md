@@ -155,7 +155,7 @@ There is no destination-removal flag because the destination does not yet
 exist. The resolver validates supplied syntax and values only; it does not
 derive, correct, summarize, or judge values from the target, parent, Template,
 body, or another routed source. See [Destination Metadata](interface.md#destination-metadata)
-and [Errors](interface.md#errors).
+and [Errors](interface.md#errors-and-boundaries).
 
 `--apply-to` supplies the expressions described in Request Resolution. The
 resolver writes the resulting atomic patterns as a quoted scoped list in
@@ -273,7 +273,7 @@ blocked and directs the caller to `route update` or an explicit future
 replacement operation. An unsupported kind, unsafe identity, or ambiguous
 route relationship is blocked rather than adopted or overwritten. See [Existing
 Target](interface.md#existing-target), [Dry Run And Apply](interface.md#dry-run-and-apply),
-and [Errors](interface.md#errors).
+and [Errors](interface.md#errors-and-boundaries).
 
 The operation returns one typed result. It forms the public semantic result
 according to [Semantic Results](interface.md#semantic-results):
@@ -404,7 +404,7 @@ The explicit command, target, supplied metadata, and optional Template select
 the intended creation. They do not grant overwrite, force, adoption, deletion,
 ownership, heading-repair, or unrelated formatting authority. The command does
 not inspect or report repository state. See [Dry Run And Apply](interface.md#dry-run-and-apply)
-and [Non-Goals](interface.md#non-goals).
+and [Non-Goals](interface.md).
 
 A verified no-op has no affected mutation path and needs no bundle. An actual
 creation checks every new directory, entrypoint, and destination path for
@@ -517,7 +517,7 @@ recovery when needed. Presentation does not add diagnosis or recommendations.
 Gate 5 executable proof must cover the complete Interface and Behavior without
 introducing a permanent requirement-ID system or changing accepted Architecture.
 Public input and output evidence is listed in
-[Interface Verification](interface.md#verification). The following evidence
+[Interface Verification](interface.md). The following evidence
 covers the semantic, projection, effect, safety, recovery, and process
 obligations:
 

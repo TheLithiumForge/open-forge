@@ -1,4 +1,5 @@
 using OpenForge.Cli.Composition.Models;
+using OpenForge.Cli.Composition.Shared.RouteInspectMatchingFiles;
 using OpenForge.Cli.Core.Commands.Route;
 using OpenForge.Cli.Core.Commands.Route.Create;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Binding;
@@ -103,7 +104,8 @@ internal static class CliRouteComposer
             {
                 Help = RouteInspectHelpSections.CreateInspect(),
                 Operation = RouteInspectOperationFactory.Create(
-                    RouteInspectSourceSelectionPrompt.Create(prompts)),
+                    RouteInspectSourceSelectionPrompt.Create(prompts),
+                    new RouteInspectGitFileEnumerator().EnumerateAsync),
             }), RouteInspectPresentation.Rendering);
 
     private static ICliCommandBinding BuildInit(

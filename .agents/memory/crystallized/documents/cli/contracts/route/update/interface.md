@@ -233,6 +233,12 @@ metadata:
 - `--clear-apply-to` removes the target's local `applyTo` declaration or
   declarations and leaves ancestor conditions unchanged.
 
+A pattern with an empty path segment, such as `docs/` or `src//file.cs`, is
+invalid input. The cause reads `--apply-to <glob> must contain a non-empty
+pattern with no empty path segments. Use docs/** to match files under docs/.`
+Other invalid patterns keep their own causes, and the finding code is
+unchanged.
+
 Omitted supported fields remain unchanged. There is no default description,
 responsibility, or tag list.
 

@@ -1,11 +1,68 @@
 using System.Text.Json;
+using OpenForge.Cli.Hosting;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Context;
 
 public sealed class ContextApplyToIntegrationTests
 {
+    [Fact(DisplayName = "Context text renders pending startup conditions at every detail"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    public async Task PendingStartupConditionRendersAtEveryDetail()
+    {
+        using var workspace = CreateWorkspace(
+            LoaderEntry("Directives", "directives/_directives.md", ["LoadNow", "Core", "Directive"]),
+            EntryPointFile(
+                ".agents/directives/_directives.md",
+                "Required instructions",
+                ["LoadNow", "Core", "Directive"],
+                null,
+                Entry("C# style rules for every C# file", "csharp.md", ["Directive", "LoadNow"], ["**/*.cs"])),
+            DocumentFile(
+                ".agents/directives/csharp.md",
+                "C# style rules for every C# file",
+                ["Directive", "LoadNow"],
+                ["**/*.cs"],
+                "# CSharp\n\nFollow C# style rules.\n"));
+        var before = workspace.SnapshotHashes();
+
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var detail in new[] { "minimal", "standard", "full", "debug" })
+        {
+            foreach (var pathsOnly in new[] { false, true })
+            {
+                string[] projection = pathsOnly ? ["--content", "paths"] : [];
+                var result = await RunContextAsync(workspace, ["--detail", detail, .. projection]);
+
+                Assert.Equal(3, result.ExitCode);
+                if (detail == "debug")
+                {
+                    Assert.True(string.IsNullOrWhiteSpace(result.Error), result.Error);
+                }
+                else
+                {
+                    Assert.Empty(result.Error);
+                }
+                var situation = pathsOnly ? "pending-startup-paths" : "pending-startup";
+                snapshots.Add($"{situation}.{detail}", CommandOutputNormalization.Normalize(
+                    result.Output, workspace.Path, CliBuildVersion.InformationalVersion, normalizeTextPaths: true));
+
+                var json = await RunContextAsync(workspace, ["--detail", detail, "--format", "json", .. projection]);
+                Assert.Equal(3, json.ExitCode);
+                using var document = JsonDocument.Parse(json.Output);
+                Assert.Equal("incomplete", document.RootElement.GetProperty("status").GetString());
+                Assert.Equal("open-forge context --for <path>", document.RootElement.GetProperty("next").GetProperty("command").GetString());
+                snapshots.Add($"{situation}.json.{detail}", CommandOutputNormalization.Normalize(
+                    json.Output, workspace.Path, CliBuildVersion.InformationalVersion));
+            }
+        }
+
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
+
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
     [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Context does not automatically include an exposed matching untagged applyTo entry"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task MatchingExposedConditionDoesNotLoadUntaggedChild()
@@ -142,47 +199,95 @@ public sealed class ContextApplyToIntegrationTests
     }
 
     [Trait("Boundary", "Host")]
-    [Fact(DisplayName = "Context reports pending applyTo conditions with metadata and paths content"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Context pending action preserves selected sources and resolves their conditions"), Trait("Feature", "context"), Trait("Evidence", "Integration")]
     public async Task UnknownWorkingPathsReportPendingConditionWithContentProjection()
     {
-        using var workspace = CreateWorkspace(
-            LoaderEntry("Rules", "rules/_rules.md"),
-            EntryPointFile(
-                ".agents/rules/_rules.md",
-                "Rules",
-                ["Project"],
-                null,
-                Entry("CSharp", "csharp.md", ["LoadNow"], ["src/**/*.cs"])),
-            DocumentFile(
-                ".agents/rules/csharp.md",
-                "CSharp",
-                ["LoadNow", "Rule"],
-                ["src/**/*.cs"],
-                "# CSharp\n\nCSharp rule.\n"));
-        var before = workspace.SnapshotHashes();
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var multipleSources in new[] { false, true })
+        {
+            using var workspace = CreateWorkspace(
+                LoaderEntry("Rules", "rules/_rules.md"),
+                EntryPointFile(
+                    ".agents/rules/_rules.md",
+                    "Rules",
+                    ["Project"],
+                    null,
+                    Entry("CSharp", "csharp.md", ["LoadNow"], ["src/**/*.cs"])),
+                DocumentFile(
+                    ".agents/rules/csharp.md",
+                    "CSharp",
+                    ["LoadNow", "Rule"],
+                    ["src/**/*.cs"],
+                    "# CSharp\n\nCSharp rule.\n"),
+                DocumentFile(
+                    ".agents/extra guide.md",
+                    "Extra guide",
+                    ["Guide"],
+                    null,
+                    "# Extra guide\n\nAdditional guidance.\n"));
+            var before = workspace.SnapshotHashes();
 
-        var result = await RunContextAsync(
-            workspace,
-            "rules",
-            "--content=metadata,paths",
-            "--format", "json");
+            string[] references = multipleSources ? ["rules", ".agents/extra guide.md"] : ["rules"];
+            var result = await RunContextAsync(
+                workspace,
+                [.. references, "--content=metadata,paths", "--format", "json"]);
 
-        Assert.Equal(3, result.ExitCode);
-        Assert.Equal(string.Empty, result.Error);
-        using var document = JsonDocument.Parse(result.Output);
-        var root = document.RootElement;
-        Assert.Equal("incomplete", root.GetProperty("status").GetString());
-        var pending = root.GetProperty("data").GetProperty("pendingConditions").EnumerateArray().ToArray();
-        var condition = Assert.Single(pending);
-        Assert.Equal(".agents/rules/csharp.md", condition.GetProperty("source").GetString());
-        Assert.Equal(["src/**/*.cs"], condition.GetProperty("patterns").EnumerateArray().Select(pattern => pattern.GetString()));
-        Assert.DoesNotContain(".agents/rules/csharp.md", SourcePaths(root));
-        Assert.All(
-            root.GetProperty("data").GetProperty("sources").EnumerateArray(),
-            source => Assert.Contains(
-                source.GetProperty("parts").EnumerateArray(),
-                part => part.GetProperty("part").GetString() == "paths"));
-        Assert.Equal(before, workspace.SnapshotHashes());
+            Assert.Equal(3, result.ExitCode);
+            Assert.Equal(string.Empty, result.Error);
+            using var document = JsonDocument.Parse(result.Output);
+            var root = document.RootElement;
+            Assert.Equal("incomplete", root.GetProperty("status").GetString());
+            var finding = Assert.Single(root.GetProperty("findings").EnumerateArray());
+            Assert.Equal("context.applicability-pending", finding.GetProperty("code").GetString());
+            var expectedCommand = multipleSources
+                ? "open-forge context \"rules\" \".agents/extra guide.md\" --for <path>"
+                : "open-forge context \"rules\" --for <path>";
+            var nextCommand = root.GetProperty("next").GetProperty("command").GetString();
+            Assert.Equal(expectedCommand, nextCommand);
+            Assert.NotNull(nextCommand);
+            Assert.Equal("workspace", finding.GetProperty("subject").GetProperty("kind").GetString());
+            Assert.Equal(workspace.Path, finding.GetProperty("subject").GetProperty("path").GetString());
+            var pending = root.GetProperty("data").GetProperty("pendingConditions").EnumerateArray().ToArray();
+            var condition = Assert.Single(pending);
+            Assert.Equal(".agents/rules/csharp.md", condition.GetProperty("source").GetString());
+            Assert.Equal(["src/**/*.cs"], condition.GetProperty("patterns").EnumerateArray().Select(pattern => pattern.GetString()));
+            Assert.DoesNotContain(".agents/rules/csharp.md", SourcePaths(root));
+            Assert.All(
+                root.GetProperty("data").GetProperty("sources").EnumerateArray(),
+                source => Assert.Contains(
+                    source.GetProperty("parts").EnumerateArray(),
+                    part => part.GetProperty("part").GetString() == "paths"));
+
+            var situation = multipleSources ? "pending-multiple-sources" : "pending-selected-source";
+            foreach (var detail in new[] { "minimal", "standard", "full", "debug" })
+            {
+                var json = detail == "minimal"
+                    ? result
+                    : await RunContextAsync(workspace, [.. references, "--content=metadata,paths", "--format", "json", "--detail", detail]);
+                var text = await RunContextAsync(workspace, [.. references, "--content=metadata,paths", "--detail", detail]);
+                Assert.Equal(3, json.ExitCode);
+                Assert.Equal(3, text.ExitCode);
+                Assert.True(string.IsNullOrWhiteSpace(json.Error), json.Error);
+                Assert.True(string.IsNullOrWhiteSpace(text.Error), text.Error);
+                snapshots.Add($"{situation}.json.{detail}", CommandOutputNormalization.Normalize(
+                    json.Output, workspace.Path, CliBuildVersion.InformationalVersion));
+                snapshots.Add($"{situation}.{detail}", CommandOutputNormalization.Normalize(
+                    text.Output, workspace.Path, CliBuildVersion.InformationalVersion, normalizeTextPaths: true));
+            }
+            var next = await CliHostCapture.RunAsync(
+                System.CommandLine.Parsing.CommandLineParser.SplitCommandLine(
+                    nextCommand.Replace("open-forge ", string.Empty, StringComparison.Ordinal)
+                        .Replace("<path>", "src/Order.cs", StringComparison.Ordinal)).ToArray(),
+                workspace.Path);
+            AssertSuccessfulCommand(next);
+            Assert.Contains("CSharp rule.", next.Output, StringComparison.Ordinal);
+            if (multipleSources)
+            {
+                Assert.Contains("Additional guidance.", next.Output, StringComparison.Ordinal);
+            }
+            Assert.Equal(before, workspace.SnapshotHashes());
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
     }
 
     [Trait("Boundary", "Host")]

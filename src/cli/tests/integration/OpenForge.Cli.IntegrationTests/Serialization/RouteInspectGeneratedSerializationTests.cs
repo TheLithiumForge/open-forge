@@ -1,11 +1,36 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Presentation.Route.Inspect.Models;
 using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 
 namespace OpenForge.Cli.IntegrationTests.Serialization;
 
 public sealed class RouteInspectGeneratedSerializationTests
 {
+    [Fact(DisplayName = "Matching files use generated JSON metadata and retain null members"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Integration"), Trait("Boundary", "Output")]
+    public void MatchingFilesUseGeneratedMetadata()
+    {
+        var data = new RouteInspectData
+        {
+            MatchingFiles = RouteInspectReportSelector.ProjectMatchingFiles(
+                RouteInspectMatchingFiles.Unavailable(null, RouteInspectMatchingFilesReason.SourceUnavailable)),
+        };
+        var json = JsonSerializer.Serialize(data, RouteInspectDataJsonContext.Default.RouteInspectData);
+        Assert.False(JsonSerializer.IsReflectionEnabledByDefault);
+        Assert.Equal(typeof(RouteInspectMatchingFilesData), RouteInspectDataJsonContext.Default.RouteInspectMatchingFilesData.Type);
+        using var document = JsonDocument.Parse(json);
+        var files = document.RootElement.GetProperty("matchingFiles");
+        Assert.Equal(["scope", "complete", "count", "paths", "pathLimit", "truncated", "reason", "note"],
+            files.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(JsonValueKind.Null, files.GetProperty("scope").ValueKind);
+        Assert.Equal(JsonValueKind.Null, files.GetProperty("count").ValueKind);
+        Assert.Equal(JsonValueKind.Null, files.GetProperty("note").ValueKind);
+        Assert.Empty(files.GetProperty("paths").EnumerateArray());
+        Assert.Equal("source-unavailable", files.GetProperty("reason").GetString());
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Inspect data uses generated metadata for the complete native data graph")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration")]

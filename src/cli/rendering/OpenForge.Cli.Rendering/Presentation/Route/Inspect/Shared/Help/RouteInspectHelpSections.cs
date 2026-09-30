@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.OutputText.Route.Inspect;
 
 namespace OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Help;
 
@@ -27,7 +28,11 @@ internal static class RouteInspectHelpSections
                 ("  " + global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpRelatedCommands())),
             new CliHelpSection(
                 global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingNotes(),
-                ("  " + global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpNotes())),
+                $"""
+                  {RouteInspectText.HelpNotes()}
+                  {RouteInspectText.HelpMatchingFiles()}
+                  {RouteInspectText.HelpMatchingFilesScope()}
+                """),
         ]);
     }
 }

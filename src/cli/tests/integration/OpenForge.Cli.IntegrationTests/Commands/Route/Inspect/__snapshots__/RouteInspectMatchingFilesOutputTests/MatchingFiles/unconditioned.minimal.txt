@@ -1,0 +1,19 @@
+docs/guide  .agents/docs/guide.md
+Workspace: <workspace>
+
+Matching files: all files
+No effective applyTo restriction. Every file applies. No scan was run.
+
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  May be read again: no
+
+Context size
+  This file: 64 B, about 16 tokens
+  Selecting this route adds: 2 files, 190 B, about 48 tokens

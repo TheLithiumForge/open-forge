@@ -16,7 +16,7 @@ internal static class RouteUpdateDefinitions
     internal const string TextValueName = "text";
     internal const string TagValueName = "tag";
     internal const string TemplateReferenceValueName = "template-reference";
-    internal const string ApplyToValueName = "path-pattern";
+    internal const string ApplyToValueName = "glob";
 
     internal const string RouteUpdateHelpCommand = "open-forge route update --help";
     internal const string VerboseRouteUpdateCommand = "open-forge route update --detail debug";

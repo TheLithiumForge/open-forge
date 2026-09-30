@@ -124,12 +124,27 @@ internal static class RouteInspectResultPolicy
         };
     }
 
+    internal static CliNextAction ReadWorkingPathsAction(RouteInspectResolution resolution)
+        => new(
+            $"{ReadExactCommand(resolution)} --for <path>",
+            "Supply working paths with --for to evaluate pending loading conditions.");
+
     private static CliSemanticStatus ReadOrdinaryStatus(
         RouteInspectResolution resolution,
         RouteInspectProfile? profile,
         IReadOnlyList<RouteInspectCondition> conditions,
         IReadOnlyList<RouteInspectObservation> observations)
     {
+        if (conditions.Any(condition => condition.Status == CliSemanticStatus.Interrupted))
+        {
+            return CliSemanticStatus.Interrupted;
+        }
+
+        if (conditions.Any(condition => condition.Status == CliSemanticStatus.Failed))
+        {
+            return CliSemanticStatus.Failed;
+        }
+
         if (conditions.Any(condition => condition.Status == CliSemanticStatus.Blocked))
         {
             return CliSemanticStatus.Blocked;

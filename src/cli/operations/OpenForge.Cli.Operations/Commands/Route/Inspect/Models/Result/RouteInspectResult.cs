@@ -19,9 +19,11 @@ internal sealed partial class RouteInspectResult : ICliCommandResult
         RouteInspectApplicability? applicability,
         IReadOnlyList<RouteInspectObservation> observations,
         IReadOnlyList<RouteInspectCondition> conditions,
-        CliNextAction? next)
+        CliNextAction? next,
+        RouteInspectMatchingFiles? matchingFiles)
     {
         Status = status;
+        MatchingFiles = matchingFiles;
         Workspace = workspace;
         Selection = selection;
         Identity = identity;
@@ -34,6 +36,8 @@ internal sealed partial class RouteInspectResult : ICliCommandResult
     }
 
     internal int SchemaVersion => RouteInspectDefinitions.SchemaVersion;
+
+    internal RouteInspectMatchingFiles? MatchingFiles { get; }
 
     public string Command => RouteInspectDefinitions.CommandIdentity;
 
@@ -71,7 +75,8 @@ internal sealed partial class RouteInspectResult : ICliCommandResult
         IEnumerable<RouteInspectCondition> conditions,
         CliNextAction? next,
         RouteInspectApplicability? applicability = null,
-        IEnumerable<string>? workingPaths = null)
+        IEnumerable<string>? workingPaths = null,
+        RouteInspectMatchingFiles? matchingFiles = null)
     {
         _ = CliStatusDefinitions.Read(status);
         ArgumentNullException.ThrowIfNull(selection);
@@ -97,7 +102,7 @@ internal sealed partial class RouteInspectResult : ICliCommandResult
             throw new ArgumentException("Route-inspect working paths must be nonblank and unique.", nameof(workingPaths));
         }
 
-        ValidateStatus(status, selection, workspace, identity, profile, materializedObservations, materializedConditions, next);
+        ValidateStatus(status, selection, workspace, identity, profile, materializedObservations, materializedConditions, next, matchingFiles);
         return new RouteInspectResult(
             status,
             workspace,
@@ -110,6 +115,7 @@ internal sealed partial class RouteInspectResult : ICliCommandResult
             applicability,
             new ReadOnlyCollection<RouteInspectObservation>(materializedObservations),
             new ReadOnlyCollection<RouteInspectCondition>(materializedConditions),
-            next);
+            next,
+            matchingFiles);
     }
 }

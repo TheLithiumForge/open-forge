@@ -41,6 +41,14 @@ projected into a command-owned value under `Commands/<Owner>/Models/`. The
 Presentation selector consumes that value rather than importing the Framework
 model.
 
+For `route inspect --matching-files`, the host Git adapter or walk supplies a
+command-owned enumeration result. Inspect's matching-files scanner owns
+eligibility, matching, count, cap, completeness, and status. It reuses the
+Framework applicability evaluator and projects a command-owned matching-files
+result for Presentation. Framework gains no command or process dependency.
+The [Route Inspect behavior](../contracts/route/inspect/behavior.md#matching-file-inspection)
+defines the scan without changing working-path applicability or loading.
+
 ## The Four Stages
 
 A command operation moves through the same four stages whether it reads or

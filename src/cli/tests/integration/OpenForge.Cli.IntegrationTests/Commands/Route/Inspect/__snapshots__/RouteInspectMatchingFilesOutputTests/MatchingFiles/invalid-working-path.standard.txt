@@ -1,0 +1,11 @@
+Cannot inspect docs/guide: Each --for path must resolve inside the selected workspace.
+Workspace: <workspace>
+  Error  --for  Invalid working path
+         Each --for path must resolve inside the selected workspace.
+
+Matching files: unavailable
+Scan scope: unavailable
+Scan completeness: incomplete
+The source could not be resolved for matching-file inspection.
+  Correct the named source or input, then rerun route inspect.
+Next: open-forge route inspect --help

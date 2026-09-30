@@ -98,6 +98,7 @@ internal static class RouteCreateRequestBinder
         }
 
         var metadataProblems = new List<string>();
+        var metadataHints = new List<string>();
         if (input.DescriptionFacts.IsExplicitWithoutValue
             || (input.DescriptionFacts.IsExplicit
                 && string.IsNullOrWhiteSpace(input.Description)))
@@ -141,7 +142,18 @@ internal static class RouteCreateRequestBinder
                 var parsed = ApplyToPatternExpressionParser.Parse(value);
                 if (parsed.Failure is { } failure)
                 {
-                    metadataProblems.Add($"--apply-to pattern '{value}' is invalid workspace-relative glob syntax ({failure})");
+                    var problem = ApplyToPatternFailureText.ReadProblemClause(failure);
+                    if (!metadataProblems.Contains(problem, StringComparer.Ordinal))
+                    {
+                        metadataProblems.Add(problem);
+                    }
+
+                    if (ApplyToPatternFailureText.ReadHint(failure) is { } hint
+                        && !metadataHints.Contains(hint, StringComparer.Ordinal))
+                    {
+                        metadataHints.Add(hint);
+                    }
+
                     continue;
                 }
 
@@ -173,10 +185,16 @@ internal static class RouteCreateRequestBinder
 
         if (metadataProblems.Count > 0)
         {
+            var cause = $"{string.Join(" and ", metadataProblems)}.";
+            if (metadataHints.Count > 0)
+            {
+                cause = $"{cause} {string.Join(" ", metadataHints)}";
+            }
+
             return RouteCreateBindingValidation.Invalid(
                 new RouteCreateBindingFailure(
                     Code: RouteCreateFindingCode.InvalidMetadata,
-                    Cause: string.Join(" and ", metadataProblems) + "."));
+                    Cause: cause));
         }
 
         var templateFailure = RouteOptionValidation.ValidateSingleton(

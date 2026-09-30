@@ -63,4 +63,6 @@ internal sealed class RouteInspectProfile
     internal RouteInspectCompleteness Completeness { get; }
 
     internal RouteInspectSafety Safety { get; }
+
+    internal bool WorkingPathsPending { get; init; }
 }

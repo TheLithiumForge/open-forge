@@ -17,7 +17,7 @@ export const loadingLabels: Record<Loading, string> = {
 // The pitch above the diagram, and what a fresh install reads.
 export const pitch =
   "At startup your agent reads its instructions, the index of most main folders, and whatever those indexes mark to load. Everything else opens only when a task needs it.";
-export const startupFootprint = "A fresh install reads 11 files at startup, about 6.1k tokens. What you add can change the count.";
+export const startupFootprint = "A fresh install reads 11 files at startup, about 6.0k tokens. What you add can change the count.";
 
 // Shown between the loader and the panels, before the first card.
 export const entrypointNote =
@@ -153,6 +153,11 @@ export const entryNodes: readonly [EntryNode, EntryNode] = [
 ];
 
 // Captions below the diagram.
+export const loadingGuide = {
+  label: "How loading works",
+  href: "/docs/concepts/loading-and-tags",
+} as const;
+
 export const captions: readonly string[] = [
   "Linked files open on demand unless their entry is tagged `#LoadNow`, which reads the file when its index is read, or `#KeepInMind`, which also re-reads it at each refresh point while its scope is active: task start or resume, after a context restore, and before handoff or closeout. Both tags act only through a parent index that has been read.",
   "A file with `applyTo` patterns applies only while the task works on a matching file.",

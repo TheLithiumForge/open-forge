@@ -3,9 +3,13 @@ title: Loading and tags
 description: What the defined tags mean, which ones control loading, how applyTo narrows loading to matching files, and how to choose between on demand, LoadNow, and KeepInMind.
 ---
 
+import LoadingDiagram from "@site/src/components/loading-diagram/LoadingDiagram";
+
 # Loading and tags
 
 Tags help readers, human or agent, decide what to open and find related files. The loader defines eight tags: two control loading, and six classify content. None of them grants authority. Any other tag is yours to describe your own subjects.
+
+<LoadingDiagram />
 
 ## Frontmatter
 
@@ -62,7 +66,9 @@ open-forge:
 - **Unknown paths are pending.** Until the task's files are known, only conditioned entries that a loading tag would otherwise load are reported as pending, not as matches or mismatches. Untagged conditioned entries remain on demand. Planning and research can still select files by relevance.
 - **Inspection isn't application.** Asking to read a nonmatching file, or following a link to it, shows its content without making it apply.
 
-Patterns use workspace-relative paths with `/` separators. A quoted string can contain comma-separated patterns, while each list entry is one pattern. Braces expand alternatives, as in `**/*.{ts,tsx}`, and character classes such as `[ab]` match one character from a set. A leading `!` is an ordinary character, as in other glob tools. `[!...]` negates a character class. `*` and `?` match within one path segment, and a whole `**` segment matches zero or more segments. Matching is case-sensitive on every platform. `*.py` matches only the workspace root, while `**/*.py` matches at any depth. `applyTo` can sit at the frontmatter root or under `open-forge:`, and both mean the same thing.
+Patterns use workspace-relative paths with `/` separators. A quoted string can contain comma-separated patterns, while each list entry is one pattern. Braces expand alternatives, as in `**/*.{ts,tsx}`, and character classes such as `[ab]` match one character from a set. A leading `!` is an ordinary character and does not exclude files. `[!...]` negates a character class. `*` and `?` match within one path segment, and a whole `**` segment matches zero or more segments. Matching is case-sensitive on every platform. `*.py` matches only files at the workspace root, `**/*.py` matches at any depth, and `docs/**` matches everything under `docs`. A trailing `/`, as in `docs/`, is rejected. `applyTo` can sit at the frontmatter root or under `open-forge:`, and both mean the same thing.
+
+Check a pattern against specific paths with `route inspect <source> --for <path>`, or preview the files that match right now with `route inspect <source> --matching-files`. When the chain has no conditions, or only match-all conditions, the preview answers `all files` without scanning. Otherwise it uses Git's file inventory, and falls back to a `.gitignore`-aware walk of the workspace when Git can't provide one. The [CLI reference](/guides/cli#current-matching-files) has the details.
 
 ## What loads at startup in a fresh install
 
@@ -95,7 +101,7 @@ The Memory rows show that exception. `memory/_memory.md` lists Working and Cryst
 
 Extension Memory categories, such as Decisions from [Planning](../extensions/planning.md) or Documents from [Project Documents](../extensions/project-documents.md), aren't part of a fresh install and carry no loading tag. Once installed, only their one-line entry in the parent state's `Entries` is visible at startup. The category entrypoint and its records open on demand.
 
-Run `open-forge context` to see the startup context of your workspace. When task paths are unknown, the output reports encountered file conditions as pending. Pass known or planned working paths with `--for` to check the matching entries.
+Run `open-forge context` to see the startup context of your workspace. When task paths are unknown, only conditioned `#LoadNow` and `#KeepInMind` entries that a loaded parent exposes are reported as pending. Other conditioned entries stay on demand. If any entries are pending, the command returns `incomplete` with exit 3. Pass known or planned working paths with `--for` to check the matching entries.
 
 ## Status tags
 
@@ -132,7 +138,7 @@ A tag starts with a letter and contains letters or digits, with single internal 
 Tags are plain text, so the files work without the CLI. The CLI reads them too:
 
 - `open-forge context` lists startup and selected-route context by following loaded routes, loading tags, and matching `applyTo` conditions. Pass each known or planned working path with `--for`.
-- `open-forge route inspect` explains how one file loads, and why.
+- `open-forge route inspect <source>` explains how one file loads, and why. Use `--for <path>` to check working paths, or `--matching-files` to preview current matches.
 - `open-forge status` reports how many tokens load at startup, and how many may load again at refresh points.
 - `open-forge route create --template` copies only from a file tagged `#Template`.
 - `open-forge find --tag` searches by any tag, including your own.

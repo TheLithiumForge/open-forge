@@ -1,0 +1,32 @@
+Workspace: <workspace>
+  Warning  <workspace>  applyTo conditions are pending [context.applicability-pending]
+         Some applyTo conditions could not be evaluated because no --for path was supplied.
+=== AGENTS.md ===
+included because workspace entry
+order: 1
+layer: base
+AGENTS.md
+
+=== .agents/loader.md (loader) ===
+included because Loader
+order: 2
+layer: base
+id: loader
+.agents/loader.md
+
+=== .agents/rules/_rules.md (rules) ===
+included because selected source for rules
+route: rules
+order: 3
+layer: base
+id: rules
+route: rules
+description: Rules
+tags: Project
+.agents/rules/_rules.md
+  applyTo: Context is incomplete while applyTo conditions await one or more --for paths.
+  sources: The Context source closure could not be resolved completely.
+  tokens: The Context source closure could not be resolved completely.
+  bytes: The Context source closure could not be resolved completely.
+  Supply the files you are working on so applyTo conditions can be evaluated.
+Next: open-forge context "rules" --for <path>

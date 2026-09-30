@@ -1,0 +1,7 @@
+Cannot inspect docs/guide: Cannot use missing as the workspace: it does not exist or cannot be read.
+
+Matching files: unavailable
+Scan scope: unavailable
+Scan completeness: incomplete
+The source could not be resolved for matching-file inspection.
+Next: open-forge route inspect --help

@@ -1,0 +1,32 @@
+maps  .agents/maps/_maps.md
+Workspace: <workspace>
+  Warning  .agents/maps/_maps.md  Route fact is unavailable [route-inspect.unavailable-fact]
+         Route facts could not be measured: No working paths were supplied, so effective loading is pending.
+
+Where this source belongs
+  Route chain: maps
+  Parent: none (Loader root)
+  Tags: Maps
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  May be read again: no
+
+Context size
+  This file: 117 B, about 30 tokens
+  Selecting this route adds could not be measured: The selection addition cannot be established completely.
+  Selected context: 1 file, 117 B, about 30 tokens
+  Already in startup context could not be measured: The task-start and selected closures cannot be compared completely.
+
+Axioms
+  Inherited rules from: none
+  Local rules: no
+  Why: a required route fact or measurement is unavailable
+  Selection: source ID; automatic ID; requested "maps"
+
+Physical layers
+  base .agents/maps/_maps.md
+  Supply working paths with --for to evaluate pending loading conditions.
+Next: open-forge route inspect ".agents/maps/_maps.md" --for <path>

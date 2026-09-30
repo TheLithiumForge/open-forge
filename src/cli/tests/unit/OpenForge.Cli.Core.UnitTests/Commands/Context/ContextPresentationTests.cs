@@ -3,6 +3,8 @@ using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Commands.Context.Models.Selection;
 using OpenForge.Cli.Core.Presentation.Context.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Context.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
@@ -18,6 +20,85 @@ public sealed class ContextPresentationTests
     private const int ExpectedSourceCount = 2;
     private const int MaximumDiagnosticLength = 4095;
     private const string OverwriteHeading = "=== .agents/projects/guide.overwrite.md (projects/guide, overwrite) ===";
+
+    [Theory(DisplayName = "Context next action distinguishes pending conditions from closure failures"), Trait("Boundary", "Output"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [InlineData(true, null, "open-forge context \"projects/guide\" --for <path>")]
+    [InlineData(true, (int)ContextFindingCode.LayerUnavailable, "open-forge doctor")]
+    [InlineData(true, (int)ContextFindingCode.ClosureUnavailable, "open-forge doctor")]
+    [InlineData(true, (int)ContextFindingCode.ApplicabilityInvalid, "open-forge doctor")]
+    [InlineData(true, (int)ContextFindingCode.InvalidSource, "open-forge route list --depth=all")]
+    [InlineData(true, (int)ContextFindingCode.TargetCaseMismatch, "open-forge context \"projects/guide\" --for <path>")]
+    [InlineData(false, (int)ContextFindingCode.ApplicabilityInvalid, "open-forge doctor")]
+    [InlineData(false, (int)ContextFindingCode.InvalidWorkingPath, null)]
+    [InlineData(false, (int)ContextFindingCode.ClosureUnavailable, "open-forge doctor")]
+    [InlineData(false, null, null)]
+    public void NextActionDistinguishesPendingConditions(bool pending, int? otherCode, string? expectedCommand)
+    {
+        List<ContextFinding> findings = [];
+        if (pending)
+        {
+            findings.Add(Finding(ContextFindingCode.ApplicabilityPending));
+        }
+
+        if (otherCode is { } code)
+        {
+            findings.Add(Finding((ContextFindingCode)code));
+        }
+
+        var result = ContextPresentationTestData.Create(
+            ContextPresentationTestData.Content(ContextContentPartKind.Paths),
+            findings: findings);
+
+        foreach (var detail in new[] { CliDetail.Minimal, CliDetail.Standard, CliDetail.Full, CliDetail.Debug })
+        {
+            var report = ContextReportSelector.Select(result, new CliSelection(detail));
+            Assert.Equal(expectedCommand, report.Next?.Command);
+        }
+
+        static ContextFinding Finding(ContextFindingCode code)
+            => new(
+                code: code,
+                subject: null,
+                cause: string.Empty,
+                reference: null,
+                source: null,
+                layer: null,
+                path: null,
+                part: null,
+                location: null,
+                destinationLocation: null,
+                candidates: []);
+    }
+
+    [Theory(DisplayName = "Context findings without a source identify their workspace"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
+    [InlineData((int)ContextFindingCode.ApplicabilityPending)]
+    [InlineData((int)ContextFindingCode.OperationFailed)]
+    [InlineData((int)ContextFindingCode.Interrupted)]
+    public void FindingWithoutSourceIdentifiesWorkspace(int code)
+    {
+        var finding = new ContextFinding(
+            code: (ContextFindingCode)code,
+            subject: null,
+            cause: string.Empty,
+            reference: null,
+            source: null,
+            layer: null,
+            path: null,
+            part: null,
+            location: null,
+            destinationLocation: null,
+            candidates: []);
+        var result = ContextPresentationTestData.Create(
+            ContextPresentationTestData.Content(ContextContentPartKind.Paths),
+            findings: [finding]);
+
+        var report = ContextReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
+
+        var subject = Assert.Single(report.Findings).Subject;
+        Assert.Equal(CliSubjectKind.Workspace, subject.Kind);
+        Assert.Equal(result.WorkspacePath, subject.Path);
+        Assert.Null(subject.Id);
+    }
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Context human views preserve selected authored text and canonical overwrite framing")]

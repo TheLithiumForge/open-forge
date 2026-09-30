@@ -1,0 +1,31 @@
+docs/guide  .agents/docs/guide.md
+Workspace: <workspace>
+
+Matching files: 0
+Scan scope: workspace files filtered by .gitignore using Open Forge rules
+Scan completeness: complete
+No current files match this condition. Planned files may still match.
+
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
+  Tags: Docs
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  May be read again: no
+
+File applicability
+  state: pending
+  condition from: .agents/docs/guide.md: `docs/*.md`
+  matching paths: pending. Supply --for paths to evaluate the conditions.
+
+Context size
+  This file: 89 B, about 23 tokens
+  Selecting this route adds: 2 files, 215 B, about 54 tokens
+
+Axioms
+  Inherited rules from: none
+  Local rules: no

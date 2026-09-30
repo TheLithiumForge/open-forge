@@ -49,7 +49,7 @@ internal static class ContextReportSelector
             LinksFollowed = result.Counts.LinksFollowed,
             LinksNotFollowed = result.Counts.LinksNotFollowed,
         };
-        var findings = result.Findings.Select(Finding).ToArray();
+        var findings = result.Findings.Select(finding => Finding(result, finding)).ToArray();
         var counts = Counts(result);
         return new CliReport<ContextData>
         {
@@ -67,7 +67,7 @@ internal static class ContextReportSelector
                 .Select(finding => new CliLimitation(
                     finding.Part?.CanonicalValue ?? "content",
                     finding.Cause,
-                    Subject(finding)))
+                    Subject(result, finding)))
                 .Concat(result.PendingConditions.Count > 0
                     ? [new CliLimitation(
                         ContextWording.ApplicabilityLabel(),
@@ -169,12 +169,21 @@ internal static class ContextReportSelector
                 or ContextFindingCode.LinkEncodingInvalid
                 or ContextFindingCode.TargetUnreadable
                 or ContextFindingCode.ProjectionUnavailable
-                or ContextFindingCode.ApplicabilityPending
                 or ContextFindingCode.ApplicabilityInvalid))
         {
             return new CliNextAction(
                 "open-forge doctor",
                 ContextWording.InspectUnavailableNext());
+        }
+
+        if (result.Findings.Any(finding => finding.Code == ContextFindingCode.ApplicabilityPending))
+        {
+            var references = result.Selection.RequestedSources
+                .Select(source => $"\"{source.Supplied}\"");
+            var command = string.Join(" ", new[] { "open-forge context" }.Concat(references));
+            return new CliNextAction(
+                $"{command} --for <path>",
+                ContextWording.SupplyWorkingPathsNext());
         }
 
         if (result.Findings.Any(finding => finding.Code == ContextFindingCode.TargetCaseMismatch))
@@ -437,7 +446,7 @@ internal static class ContextReportSelector
             Followed = link.FollowState == ContextLinkFollowState.Followed,
         };
 
-    private static CliFinding Finding(ContextFinding finding)
+    private static CliFinding Finding(ContextResult result, ContextFinding finding)
     {
         return new CliFinding
         {
@@ -445,17 +454,24 @@ internal static class ContextReportSelector
             Code = ContextWording.FindingCode(finding.Code),
             Title = ContextWording.FindingTitle(finding.Code),
             Message = ContextWording.FindingMessage(finding),
-            Subject = Subject(finding),
+            Subject = Subject(result, finding),
             Candidates = finding.Candidates.Select(candidate => new CliCandidate(
                 new CliSubject(CliSubjectKind.Source, candidate.Path, candidate.Id),
                 [])).ToArray(),
         };
     }
 
-    private static CliSubject Subject(ContextFinding finding)
+    private static CliSubject Subject(ContextResult result, ContextFinding finding)
     {
         var path = finding.Source?.Path ?? finding.Path ?? finding.Subject;
         var id = finding.Source?.Id ?? finding.Subject;
+        if (path is null && id is null)
+        {
+            return result.WorkspacePath is { } workspacePath
+                ? new CliSubject(CliSubjectKind.Workspace, Path: workspacePath)
+                : new CliSubject(CliSubjectKind.Identifier, Id: result.Command);
+        }
+
         return new CliSubject(
             finding.Source is null ? CliSubjectKind.Identifier : CliSubjectKind.Source,
             path,

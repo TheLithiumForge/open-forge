@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Result;
 
@@ -13,7 +14,8 @@ internal sealed class RouteInspectResultBuilder
         RouteInspectRequest request,
         RouteInspectResolution resolution,
         RouteInspectProfile? profile,
-        SourceApplicabilityResult? sourceApplicability = null)
+        SourceApplicabilityResult? sourceApplicability = null,
+        RouteInspectMatchingFiles? matchingFiles = null)
     {
         if (resolution.State is RouteInspectResolutionState.Resolved
             or RouteInspectResolutionState.Incomplete)
@@ -47,6 +49,31 @@ internal sealed class RouteInspectResultBuilder
                 resolution.Identity?.CanonicalWorkspaceRelativePath
                     ?? resolution.Selection.RequestedReference
                     ?? request.SourceReference,
+                profile.WorkingPathsPending
+                    ? "No working paths were supplied, so effective loading is pending."
+                    : "One or more applicable route-inspect facts are unavailable."));
+        }
+
+        var scanOnlyUnavailable = conditions.Count == 0 && profile?.Completeness == RouteInspectCompleteness.Complete;
+        if (matchingFiles is { Complete: false }
+            && resolution.State is RouteInspectResolutionState.Resolved or RouteInspectResolutionState.Incomplete)
+        {
+            var code = matchingFiles.Reason switch
+            {
+                RouteInspectMatchingFilesReason.UnsafePath => RouteInspectConditionCode.UnsafeSource,
+                RouteInspectMatchingFilesReason.Cancelled => RouteInspectConditionCode.Interrupted,
+                RouteInspectMatchingFilesReason.ScanFailed => RouteInspectConditionCode.OperationFailed,
+                RouteInspectMatchingFilesReason.SourceUnavailable
+                    or RouteInspectMatchingFilesReason.ConditionUnavailable
+                    or RouteInspectMatchingFilesReason.GitUnavailable
+                    or RouteInspectMatchingFilesReason.ScanTimeout
+                    or RouteInspectMatchingFilesReason.FilesUnavailable => RouteInspectConditionCode.UnavailableFact,
+                _ => throw new ArgumentOutOfRangeException(nameof(matchingFiles)),
+            };
+            conditions.Add(new RouteInspectCondition(
+                code,
+                RouteInspectResultPolicy.ReadConditionStatus(code),
+                resolution.Identity?.CanonicalWorkspaceRelativePath ?? request.SourceReference,
                 "One or more applicable route-inspect facts are unavailable."));
         }
 
@@ -68,6 +95,19 @@ internal sealed class RouteInspectResultBuilder
         }
 
         var next = RouteInspectResultPolicy.ReadNextAction(status, resolution, conditions);
+        if (status == CliSemanticStatus.Incomplete
+            && profile?.WorkingPathsPending == true
+            && conditions.All(condition => condition.Code == RouteInspectConditionCode.UnavailableFact))
+        {
+            next = RouteInspectResultPolicy.ReadWorkingPathsAction(resolution);
+        }
+
+        if (scanOnlyUnavailable && matchingFiles is { Complete: false } && status == CliSemanticStatus.Incomplete)
+        {
+            next = new CliNextAction(
+                "open-forge route inspect --help",
+                "Use --for <path> to inspect supplied working paths without scanning.");
+        }
         return RouteInspectResult.Create(
             status,
             request.Workspace,
@@ -78,7 +118,8 @@ internal sealed class RouteInspectResultBuilder
             conditions,
             next,
             applicability,
-            request.WorkingPaths);
+            request.WorkingPaths,
+            matchingFiles);
     }
 
     private static IReadOnlyList<RouteInspectObservation> ReadObservations(

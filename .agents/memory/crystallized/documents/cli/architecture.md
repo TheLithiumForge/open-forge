@@ -402,6 +402,20 @@ Shell types do not depend on concrete commands. Framework capabilities do not
 depend on command requests, results, renderers, parser symbols, or process
 writers. Commands may depend on Shell contracts and Framework capabilities.
 
+Matching-file inspection follows this dependency direction:
+
+```text
+Host Git adapter and walk -> command-owned enumeration result
+  -> Inspect matching-files scanner -> Framework applicability evaluator
+  -> command-owned matching-files result -> presentation
+```
+
+The host owns process launch, the walk, and cancellation. Operations owns
+eligibility, matching, count, cap, completeness, and status. Framework gains no
+command or process dependency. The [CLI Dependency Policy](../../decisions/cli-dependency-policy.md#optional-git-inventory)
+records the optional executable and its boundaries. The
+[Route Inspect contracts](contracts/route/inspect/_inspect.md) define the scan.
+
 Presentation has its own checked direction. No `Presentation/**` file may import
 any `Framework.*` namespace. A command presentation under
 `Presentation/<Owner>/` may import `Commands.<Owner>.Models.*` only for its own

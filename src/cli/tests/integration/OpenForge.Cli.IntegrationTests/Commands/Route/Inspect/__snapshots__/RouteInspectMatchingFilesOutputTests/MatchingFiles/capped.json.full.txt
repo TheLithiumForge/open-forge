@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "docs/guide  .agents/docs/guide.md",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "ownBytes": 89,
+    "ownTokens": 23,
+    "addedFiles": 2,
+    "addedBytes": 215,
+    "addedTokens": 54,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs/guide",
+    "path": ".agents/docs/guide.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": null,
+    "matchingFiles": {
+      "scope": "workspace-files",
+      "complete": true,
+      "count": 143,
+      "paths": [
+        "docs/guide.md",
+        "docs/item-000.md",
+        "docs/item-001.md",
+        "docs/item-002.md",
+        "docs/item-003.md",
+        "docs/item-004.md",
+        "docs/item-005.md",
+        "docs/item-006.md",
+        "docs/item-007.md",
+        "docs/item-008.md",
+        "docs/item-009.md",
+        "docs/item-010.md",
+        "docs/item-011.md",
+        "docs/item-012.md",
+        "docs/item-013.md",
+        "docs/item-014.md",
+        "docs/item-015.md",
+        "docs/item-016.md",
+        "docs/item-017.md",
+        "docs/item-018.md",
+        "docs/item-019.md",
+        "docs/item-020.md",
+        "docs/item-021.md",
+        "docs/item-022.md",
+        "docs/item-023.md",
+        "docs/item-024.md",
+        "docs/item-025.md",
+        "docs/item-026.md",
+        "docs/item-027.md",
+        "docs/item-028.md",
+        "docs/item-029.md",
+        "docs/item-030.md",
+        "docs/item-031.md",
+        "docs/item-032.md",
+        "docs/item-033.md",
+        "docs/item-034.md",
+        "docs/item-035.md",
+        "docs/item-036.md",
+        "docs/item-037.md",
+        "docs/item-038.md",
+        "docs/item-039.md",
+        "docs/item-040.md",
+        "docs/item-041.md",
+        "docs/item-042.md",
+        "docs/item-043.md",
+        "docs/item-044.md",
+        "docs/item-045.md",
+        "docs/item-046.md",
+        "docs/item-047.md",
+        "docs/item-048.md",
+        "docs/item-049.md",
+        "docs/item-050.md",
+        "docs/item-051.md",
+        "docs/item-052.md",
+        "docs/item-053.md",
+        "docs/item-054.md",
+        "docs/item-055.md",
+        "docs/item-056.md",
+        "docs/item-057.md",
+        "docs/item-058.md",
+        "docs/item-059.md",
+        "docs/item-060.md",
+        "docs/item-061.md",
+        "docs/item-062.md",
+        "docs/item-063.md",
+        "docs/item-064.md",
+        "docs/item-065.md",
+        "docs/item-066.md",
+        "docs/item-067.md",
+        "docs/item-068.md",
+        "docs/item-069.md",
+        "docs/item-070.md",
+        "docs/item-071.md",
+        "docs/item-072.md",
+        "docs/item-073.md",
+        "docs/item-074.md",
+        "docs/item-075.md",
+        "docs/item-076.md",
+        "docs/item-077.md",
+        "docs/item-078.md",
+        "docs/item-079.md",
+        "docs/item-080.md",
+        "docs/item-081.md",
+        "docs/item-082.md",
+        "docs/item-083.md",
+        "docs/item-084.md",
+        "docs/item-085.md",
+        "docs/item-086.md",
+        "docs/item-087.md",
+        "docs/item-088.md",
+        "docs/item-089.md",
+        "docs/item-090.md",
+        "docs/item-091.md",
+        "docs/item-092.md",
+        "docs/item-093.md",
+        "docs/item-094.md",
+        "docs/item-095.md",
+        "docs/item-096.md",
+        "docs/item-097.md",
+        "docs/item-098.md"
+      ],
+      "pathLimit": 100,
+      "truncated": true,
+      "reason": null,
+      "note": null
+    },
+    "belongs": {
+      "routeChain": [
+        "docs",
+        "guide"
+      ],
+      "parent": "docs",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": false,
+      "automaticallyWhen": [
+        "this route is selected"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 89,
+        "tokens": 23
+      },
+      "adds": {
+        "files": 2,
+        "bytes": 215,
+        "tokens": 54
+      },
+      "loadNow": null
+    },
+    "applicability": {
+      "state": "pending",
+      "conditions": [
+        {
+          "source": ".agents/docs/guide.md",
+          "patterns": [
+            "docs/*.md"
+          ]
+        }
+      ],
+      "matchingPaths": []
+    },
+    "axioms": {
+      "inheritedFrom": [],
+      "local": "not applicable"
+    },
+    "tags": [
+      "Docs"
+    ],
+    "selected": {
+      "closure": {
+        "files": 2,
+        "bytes": 215,
+        "tokens": 54
+      },
+      "startupOverlap": {
+        "files": 0,
+        "bytes": 0,
+        "tokens": 0
+      }
+    },
+    "selection": {
+      "kind": "source-id",
+      "method": "automatic-id",
+      "requested": "docs/guide"
+    },
+    "layers": [
+      {
+        "path": ".agents/docs/guide.md",
+        "kind": "base"
+      }
+    ],
+    "statusReason": "all applicable route facts are available"
+  },
+  "recovery": null,
+  "next": null
+}

@@ -94,6 +94,9 @@ internal static class ContextWording
     internal static string InspectUnavailableNext()
         => global::OpenForge.Cli.OutputText.Context.ContextText.MessageInspectTheUnavailableClosureSourceLinkOrProjectionFactsBeforeRelyingOnThisContextResult();
 
+    internal static string SupplyWorkingPathsNext()
+        => global::OpenForge.Cli.OutputText.Context.ContextText.MessageSupplyWorkingPathsNext();
+
     internal static string RepairCaseMismatchNext()
         => global::OpenForge.Cli.OutputText.Context.ContextText.MessageRunRepairWithAutomaticToCorrectTheLinkTargetCasingThenRerunContext();
 

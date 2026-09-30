@@ -5,4 +5,5 @@ namespace OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Rendering;
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(RouteInspectData))]
+[JsonSerializable(typeof(RouteInspectMatchingFilesData))]
 internal sealed partial class RouteInspectDataJsonContext : JsonSerializerContext;

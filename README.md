@@ -11,9 +11,13 @@ An agent doesn't need to know everything, but it does need to know where everyth
   </picture>
 </p>
 
+The [loading page](https://thelithiumforge.github.io/open-forge/docs/concepts/loading-and-tags) walks through how an agent decides what to read, step by step.
+
 The base Framework has two parts. **Core** defines how work is done: a Directive must be followed, Guidance can be adapted, and a Template is copied and then maintained on its own. **Memory** keeps what's worth remembering and shows how far to trust it: current work, unconfirmed findings, accepted knowledge, and history each have their own state. Optional **Extensions** add categories and files inside both parts, such as Decisions from the Planning Extension.
 
-The base is 15 files and about 8.8k tokens, of which about 6.1k load at startup ([how it's measured](docs/development.md#measure-context-size)). From there, make it yours: keep your favorite tools, add your own ideas, and change the parts that don't fit. The CLI makes maintenance faster, but the files work on their own.
+The base is 15 files and about 8.9k tokens, of which about 6.0k load at startup ([how it's measured](docs/development.md#measure-context-size)). From there, make it yours: keep your favorite tools, add your own ideas, and change the parts that don't fit. The CLI makes maintenance faster, but the files work on their own.
+
+I built Open Forge to work beside your harness, not to replace it or get in its way. It's plain Markdown that an agent reaches through `AGENTS.md`, so it never needs to take over your hooks, custom agents, or instruction files. Keep using them as much as you like, and set them up the way your harness expects. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
 
 ## Get started
 

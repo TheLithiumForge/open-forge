@@ -1,0 +1,7 @@
+Cannot inspect docs docs/guide: Route inspect takes one source.
+
+Matching files: unavailable
+Scan scope: unavailable
+Scan completeness: incomplete
+The source could not be resolved for matching-file inspection.
+Next: open-forge route inspect --help

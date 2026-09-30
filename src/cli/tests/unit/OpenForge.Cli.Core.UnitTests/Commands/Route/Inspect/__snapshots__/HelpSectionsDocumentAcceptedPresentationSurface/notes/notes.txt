@@ -1,0 +1,3 @@
+  Inspect reports one route profile without authored source bodies, ordinary links, diagnosis, recommendations, or mutation. JSON always writes one complete result document to stdout; verbose diagnostics are bounded and use stderr.
+  Matching files do not select or load a source. A source with no restrictive applyTo condition answers all files without scanning. --for supplies working paths independently of this scan. At most 100 matching paths are listed.
+  In a Git work tree, the scan lists existing tracked and untracked files and excludes ignored untracked files. Without a usable Git inventory, it walks the workspace and applies its .gitignore files using Open Forge rules. The scan stays inside the workspace and does not follow symbolic links or enter submodules.

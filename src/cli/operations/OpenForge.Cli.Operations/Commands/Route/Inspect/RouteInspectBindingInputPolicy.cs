@@ -15,7 +15,8 @@ internal static class RouteInspectBindingInputPolicy
 {
     internal static RouteInspectResult CreateSourceCardinalityInvalidResult(
         CliInvocation invocation,
-        IReadOnlyList<string> sourceReferences)
+        IReadOnlyList<string> sourceReferences,
+        bool matchingFiles)
     {
         ArgumentNullException.ThrowIfNull(invocation);
         ArgumentNullException.ThrowIfNull(sourceReferences);
@@ -52,7 +53,8 @@ internal static class RouteInspectBindingInputPolicy
                 code,
                 CliSemanticStatus.Invalid,
                 subject,
-                message));
+                message),
+            matchingFiles);
     }
 
     internal static RouteInspectResult CreateWorkspaceInvalidResult(
@@ -86,13 +88,15 @@ internal static class RouteInspectBindingInputPolicy
                 RouteInspectConditionCode.InvalidWorkspace,
                 CliSemanticStatus.Invalid,
                 subject,
-                cause));
+                cause),
+            input.BindingParse.Result.GetValue(symbols.MatchingFiles));
     }
 
     private static RouteInspectResult CreateInvalidResult(
         CliWorkspace? workspace,
         RouteInspectSelection selection,
-        RouteInspectCondition condition)
+        RouteInspectCondition condition,
+        bool matchingFiles)
     {
         return RouteInspectResult.Create(
             CliSemanticStatus.Invalid,
@@ -104,12 +108,16 @@ internal static class RouteInspectBindingInputPolicy
             [condition],
             new CliNextAction(
                 "open-forge route inspect --help",
-                "Correct the named source or input, then rerun route inspect."));
+                "Correct the named source or input, then rerun route inspect."),
+            matchingFiles: matchingFiles
+                ? RouteInspectMatchingFiles.Unavailable(null, RouteInspectMatchingFilesReason.SourceUnavailable)
+                : null);
     }
 
     internal static RouteInspectResult CreateWorkingPathsInvalidResult(
         CliWorkspace workspace,
-        string sourceReference)
+        string sourceReference,
+        bool matchingFiles)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceReference);
@@ -120,6 +128,7 @@ internal static class RouteInspectBindingInputPolicy
                 RouteInspectConditionCode.InvalidWorkingPath,
                 CliSemanticStatus.Invalid,
                 "--for",
-                "Each --for path must resolve inside the selected workspace."));
+                "Each --for path must resolve inside the selected workspace."),
+            matchingFiles);
     }
 }

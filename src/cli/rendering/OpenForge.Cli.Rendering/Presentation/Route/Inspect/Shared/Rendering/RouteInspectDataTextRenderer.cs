@@ -18,6 +18,11 @@ internal static class RouteInspectDataTextRenderer
         ArgumentNullException.ThrowIfNull(selection);
         ArgumentNullException.ThrowIfNull(style);
         var builder = new StringBuilder();
+        if (data.MatchingFiles is { } matchingFiles)
+        {
+            RouteInspectMatchingFilesTextRenderer.Render(builder, matchingFiles);
+        }
+
         if (data.Profile is null)
         {
             AddFullContext(builder, data, selection);

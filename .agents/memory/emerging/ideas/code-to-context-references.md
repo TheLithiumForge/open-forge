@@ -121,3 +121,21 @@ written as `memory/crystallized/documents/cli/architecture.md` or as
 idea gets cheaper after it.
 
 Revisit once the CLI is releasable and the state and view work is done.
+
+## Update, 2026-09-30
+
+A council review for the [VS Code Extension](vscode-extension.md) idea corrected
+three assumptions above:
+
+- VS Code does not make a root-relative path inside a source-code comment
+  clickable. Only terminals and Markdown links resolve such paths. Clickable
+  references in code need an extension or another editor integration.
+- `references` reads links in `.agents` Markdown. Scanning code comments is a
+  new input format and scan scope, not the same scan pointed at more files.
+- `context --content section:<name>` matches visible heading text, not `#slug`
+  fragments. `id#heading` needs its own resolution rule, including duplicate
+  headings.
+
+The convention itself still stands. It helps agents and readers without any
+tooling, and one comment is enough for both directions because a reverse lookup
+can derive document-to-code links from it.

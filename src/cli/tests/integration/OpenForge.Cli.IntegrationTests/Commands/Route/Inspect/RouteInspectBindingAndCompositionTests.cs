@@ -25,6 +25,60 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect;
 
 public sealed class RouteInspectBindingAndCompositionTests
 {
+    [Theory(DisplayName = "Invalid Route Inspect binding preserves only requested matching files without invoking the operation")]
+    [InlineData("missing", false), InlineData("missing", true)]
+    [InlineData("multiple", false), InlineData("multiple", true)]
+    [InlineData("working-path", false), InlineData("working-path", true)]
+    [InlineData("workspace", false), InlineData("workspace", true)]
+    [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
+    public async Task InvalidBindingRetainsRequestedMatchingFiles(string scenario, bool requested)
+    {
+        using var workspace = OpenForge.Cli.TestSupport.TemporaryWorkspace.Create("route-inspect-invalid-binding");
+        var operationCalls = 0;
+        RouteInspectResult? captured = null;
+        var application = CreateApplication(() => { }, () => operationCalls++, result => captured = result);
+        string[] operands = scenario switch
+        {
+            "missing" => [],
+            "multiple" => ["first", "second"],
+            "working-path" => ["memory", "--for", "../outside.cs"],
+            "workspace" => ["memory"],
+            _ => throw new ArgumentOutOfRangeException(nameof(scenario)),
+        };
+        var selectedWorkspace = scenario == "workspace" ? workspace.Combine("missing") : workspace.Path;
+        string[] flag = requested ? ["--matching-files"] : [];
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        var completion = await application.RunAsync(
+            ["route", "inspect", .. operands, .. flag, "--workspace", selectedWorkspace, "--format", "json"],
+            new CliProcessEnvironment(workspace.Path),
+            new CliOutputWriters(output, error),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(4, completion.ExitCode);
+        Assert.Equal(0, operationCalls);
+        var result = Assert.IsType<RouteInspectResult>(captured);
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        Assert.Null(result.Profile);
+        if (requested)
+        {
+            var files = Assert.IsType<RouteInspectMatchingFiles>(result.MatchingFiles);
+            Assert.False(files.Complete);
+            Assert.Null(files.Scope);
+            Assert.Null(files.Count);
+            Assert.Empty(files.Paths);
+            Assert.Equal(100, files.PathLimit);
+            Assert.False(files.Truncated);
+            Assert.Equal(RouteInspectMatchingFilesReason.SourceUnavailable, files.Reason);
+            Assert.Null(files.Note);
+        }
+        else
+        {
+            Assert.Null(result.MatchingFiles);
+        }
+    }
+
     [Fact(DisplayName = "Route Inspect missing source operand bypasses the closed operation")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
     public async Task MissingOperandDoesNotInvokeOperation()
@@ -322,7 +376,8 @@ public sealed class RouteInspectBindingAndCompositionTests
 
     private static CliCoreApplication CreateApplication(
         Action bindingCall,
-        Action operationCall)
+        Action operationCall,
+        Action<RouteInspectResult>? selected = null)
     {
         var route = RouteBinding.CreateGroup();
         var symbols = RouteInspectBinding.CreateSymbols(route);
@@ -343,7 +398,7 @@ public sealed class RouteInspectBindingAndCompositionTests
                     operationCall();
                     return ValueTask.FromResult(RouteInspectPresentationTestData.CompleteResult());
                 },
-            }, CommandBindingTestRendering.Create<RouteInspectResult>());
+            }, CommandBindingTestRendering.Create<RouteInspectResult>(selected: selected));
         var tree = CliCommandTree.Create(
             CliHelpContent.Empty,
             [new CliRootBranch(route, CliHelpContent.Empty)],

@@ -6,8 +6,6 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 
 - `entrypoint` - Markdown file that makes a folder routable. Open Forge uses `_{folder-name}.md`. `index.md`, `_index.md`, `references.md`, and `_references.md` are compatibility names.
 - `entry` - One generated route line under `Entries`, describing a destination rather than containing its contents.
-- `description` - Short text that helps a reader decide whether to open a file.
-- `responsibility` - Optional sentence stating what a file defines, so an editor can decide what belongs there. It creates no authority or loading behavior.
 - `axiom` - Required rule under `Axioms` in this loader or a recognized loaded entrypoint, inherited by selected descendants.
 
 ## Axioms
@@ -108,17 +106,18 @@ For example, a C# scope may contain a #LoadNow design file and an on-demand Wind
 - Narrow the scope before making specialized content mandatory. Do not mark a broad parent #LoadNow merely to expose an important descendant.
 - Use #KeepInMind only when work needs the content read again at the defined refresh points. It is not an importance label.
 
-#### File Conditions
+### Frontmatter
 
-A source may list `applyTo` file patterns in its frontmatter, and its entry shows them after the tags. The condition only filters that source's context: it loads, refreshes, and applies only while a working file matches, whatever its tags or category. A condition never selects a source or its ancestors.
+Routed Markdown files start with YAML frontmatter under `open-forge:`. For routing, each line under an entrypoint's `Entries` repeats a file's description, tags, and `applyTo` patterns, so you can decide before opening it.
 
-- A working file is one the task investigates, creates, changes, deletes, renames, or reviews. Planned paths count, and a rename counts both paths. Reading a source for context does not make it a working file.
-- When necessary work reaches another file, add it to the working files and load its context. A condition does not grant or restrict permission to edit files.
-- Patterns in one list are alternatives. Conditions from route ancestors also apply, and one working file must match them all.
-- While the working files are unknown, report conditioned #LoadNow and #KeepInMind entries as pending, not as matches or mismatches.
-- Retrieving a nonmatching source for inspection does not make it apply or load its children.
-- Put `applyTo` at the frontmatter root or under `open-forge:`. A quoted string may hold several patterns separated by commas. Each entry of a quoted list is one pattern.
-- Patterns are case-sensitive and relative to the workspace root, with `/` separators. `*` and `?` match within one path segment, and a whole `**` segment matches zero or more segments. `{a,b}` lists alternatives, and `[abc]` matches one listed character. Write `**/*.py` to match at any depth.
+- `description` - Required short text that helps a reader decide whether to open the file.
+- `responsibility` - Optional sentence stating what the file defines, so an editor can decide what belongs there. It creates no authority or loading behavior.
+- `tags` - Required list of tag names without `#`. Defined Tags gives the reserved meanings.
+- `applyTo` - Optional glob patterns, as a list or a comma-separated string, that filter a file by the files the task works on. It may also sit at the frontmatter root.
+  - Filter: A file that would load or refresh does so, and applies, only while one working file matches its patterns and those of every ancestor with `applyTo`. `applyTo` never loads a file by itself.
+  - Patterns: Globs match from the workspace root and are case-sensitive. `*.py` matches root files, `**/*.py` any depth, and `docs/**` a folder. A leading `!` is literal and does not exclude files.
+  - Working files: Files the task investigates, creates, changes, deletes, renames, or reviews, including planned ones. Reading a file for context does not count. When work reaches another file, that file's own conditions apply. `applyTo` never grants or restricts edit permission.
+  - Unknown files: While the working files are unknown, report conditioned #LoadNow and #KeepInMind entries as pending.
 
 ### CLI
 

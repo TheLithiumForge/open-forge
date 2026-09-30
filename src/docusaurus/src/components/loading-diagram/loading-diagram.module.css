@@ -1,0 +1,118 @@
+.diagram {
+  container: loading-diagram / inline-size;
+  --map-line: var(--ifm-color-primary);
+  --map-lit: color-mix(in srgb, var(--ifm-color-primary) 11%, var(--forge-card-background));
+  margin: 1.5rem 0 2rem;
+  padding: 18px;
+  border: 1px solid var(--forge-card-border);
+  border-radius: 16px;
+  background: var(--ifm-background-surface-color);
+}
+
+:global([data-theme="dark"]) .diagram {
+  --map-lit: color-mix(in srgb, var(--ifm-color-primary) 17%, var(--forge-card-background));
+}
+
+.title {
+  margin: 0 0 14px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.steps {
+  display: grid;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 12px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--forge-card-border);
+  border-radius: 10px;
+  background: var(--forge-card-background);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.step + .step::before {
+  position: absolute;
+  bottom: 100%;
+  left: 24px;
+  height: 22px;
+  border-left: 2px solid var(--map-line);
+  content: "";
+}
+
+.step + .step::after {
+  position: absolute;
+  top: -7px;
+  left: 20px;
+  border-top: 7px solid var(--map-line);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  content: "";
+}
+
+.gate {
+  border-color: var(--map-line);
+  background: var(--map-lit);
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.number {
+  flex: none;
+  width: 24px;
+  border-radius: 50%;
+  background: var(--map-line);
+  color: var(--ifm-background-color);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+}
+
+.body p {
+  margin: 0;
+}
+
+.body .note {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--ifm-color-emphasis-500);
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+}
+
+.caption {
+  margin: 14px auto 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+@container loading-diagram (max-width: 460px) {
+  .step {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+}
+
+@media (max-width: 560px) {
+  .diagram {
+    padding: 12px;
+  }
+}

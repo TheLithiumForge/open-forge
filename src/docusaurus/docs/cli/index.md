@@ -26,16 +26,18 @@ These commands change nothing.
 | `status`        | Get a one-screen summary: startup context, navigation, installed packages, anything needing attention     |
 | `context`       | See startup or selected context, filtered by repeated `--for <path>` values                               |
 | `route list`    | See how the workspace is organized, one level or the whole tree                                           |
-| `route inspect` | Explain a source's route and how supplied paths match its declared and inherited conditions               |
+| `route inspect` | Explain a source's route, check supplied paths, or preview files matching its own and inherited conditions |
 | `find`          | Find by tag or heading, with an additional path filter through `--for`                                     |
 | `references`    | See what links to a file and what it links to, before you move or delete it                               |
+
+Check specific paths with `route inspect <source> --for <path>`, or preview the files that match right now with `route inspect <source> --matching-files`. If the full condition chain is unrestricted, the preview answers `all files` without scanning. Otherwise it uses Git's file inventory, and falls back to a `.gitignore`-aware walk of the workspace when Git can't provide one. The [command reference](/guides/cli#current-matching-files) has the details.
 
 ### Add and organize knowledge
 
 | Command        | Use it to                                                                                                   |
 | -------------- | ----------------------------------------------------------------------------------------------------------- |
-| `route init`   | Create scope folders and entrypoints; metadata applies only to a missing generic final entrypoint           |
-| `route create` | Add a file with optional Template or repeated `--apply-to`; update its parent's `Entries`                   |
+| `route init`   | Create scope folders and entrypoints, with metadata only for a missing generic final entrypoint           |
+| `route create` | Add a file with optional Template or repeated `--apply-to`, and update its parent's `Entries`              |
 | `route update` | Change metadata or file conditions, including clearing `applyTo`                                           |
 | `route move`   | Move a file or a category you created and update the links that point to it. Installed files can't be moved |
 | `route remove` | Remove a file or a category and remember that you removed it                                                |
@@ -74,10 +76,11 @@ Extensions are optional packages of files. A Library is a folder of shared files
 **Your agent can use it too.** The loader lists the main commands, so an agent
 with the CLI available can run `context` or `find` instead of opening files one
 by one. Repeat `context --for <path>` for every file in the task, including
-planned files. If paths are unknown, the conditions of tagged entries stay
-pending and `context` returns an incomplete result with exit code `3`. The CLI does not
-infer paths from Git or discover code dependencies. A file condition does not
-select hidden ancestors or control edit permission.
+planned files. If paths are unknown, any conditioned `#LoadNow` or `#KeepInMind`
+entry that a loaded parent exposes stays pending, and `context` returns an
+incomplete result with exit code `3`. Other conditioned entries stay on demand.
+The CLI does not infer paths from Git or discover code dependencies. A file
+condition does not select hidden ancestors or control edit permission.
 
 The base install also ships one Skill, `open-forge-cli`, which gives the agent
 this page's advice: which command fits which job, how to preview with

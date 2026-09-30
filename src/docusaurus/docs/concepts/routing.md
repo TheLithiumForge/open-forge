@@ -14,6 +14,7 @@ An agent enters through `AGENTS.md`, which tells it to read `.agents/loader.md` 
 - the terms used everywhere else, such as `entrypoint`, `route`, and `scope`
 - the rules (called **Axioms**) that apply to the whole workspace
 - what each defined tag means, including the two loading tags
+- the frontmatter fields: `description`, `responsibility`, `tags`, and `applyTo`
 - the **root routes**: Directives, Guidance, Maps, Memory, Patterns, Skills, and Templates
 
 A root route exists only because the loader lists it. A folder called `patterns/` somewhere deeper in the tree is an ordinary scope with that name. It doesn't gain the Patterns rules.
@@ -66,7 +67,7 @@ Each line under `Entries` is one **entry**: a link, the child's description, and
 - [C# rules](csharp.md) - #LoadNow #Directive - applies to `**/*.cs`
 ```
 
-Entries are navigation, not content. An agent reads the line, decides whether the child matters for the task, and opens it only if it does. Descriptions matter because they're what the agent uses to decide. The exception is an entry tagged `#LoadNow` or `#KeepInMind`: the agent reads its file as soon as the parent loads. [Loading and tags](loading-and-tags.md) explains both, and how [`applyTo` patterns](loading-and-tags.md#file-conditions) filter entries by the files a task works on.
+Entries are navigation, not content. An agent reads the line, decides whether the child matters for the task, and opens it only if it does. Descriptions matter because they're what the agent uses to decide. The exception is an entry tagged `#LoadNow` or `#KeepInMind`: the agent reads its file as soon as the parent loads, if its own and inherited file conditions allow it. [Loading and tags](loading-and-tags.md) explains both, and how [`applyTo` patterns](loading-and-tags.md#file-conditions) filter entries by the files a task works on.
 
 An entrypoint with no children has a placeholder line so the section is never ambiguous:
 

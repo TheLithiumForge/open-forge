@@ -208,7 +208,7 @@ Unit and Integration evidence should cover:
   formation without a full source inventory.
 
 Public EndToEnd evidence is limited to the exactly three journeys named by the
-[Interface Contract](interface.md#public-endtoend-journeys-exactly-three). No
+[Interface Contract](interface.md#scenarios). No
 additional public EndToEnd journey is defined here.
 
 ## Related Current Sources

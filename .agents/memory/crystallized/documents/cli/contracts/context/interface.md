@@ -747,6 +747,9 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 
 [Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#context-incomplete). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/__snapshots__/ContextBeforeOutputSnapshotTests/Selection/unreadable-source.minimal.txt).
 
+[Pending conditions for an explicitly selected source](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/__snapshots__/ContextApplyToIntegrationTests/UnknownWorkingPathsReportPendingConditionWithContentProjection/pending-selected-source.minimal.txt)
+shows `open-forge context "rules" --for <path>` as the next action.
+
 ### Transcript — invalid-input
 
 [Preserved interface example](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractTranscripts.md#context-invalid-input). [Matching reviewed capture](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Context/__snapshots__/ContextBeforeOutputSnapshotTests/Selection/invalid-content.minimal.txt).
@@ -798,9 +801,22 @@ conditions make the result `incomplete` with exit 3 and a visible limitation.
 
 ### Next rules
 
-Invalid source -> `open-forge route list --depth=all`; unreadable ->
-`open-forge doctor`; case mismatch -> `open-forge repair --automatic`;
-otherwise none.
+Choose the first applicable action:
+
+1. Invalid source: `open-forge route list --depth=all`.
+2. Unavailable closure, source, link or projection facts, including invalid
+   `applyTo` metadata: `open-forge doctor`.
+3. Pending `applyTo` conditions: `open-forge context [<source-reference>...] --for <path>`.
+   Keep every explicitly requested source reference in request order, enclosing
+   each reference in double quotes. For `context rules`, suggest
+   `open-forge context "rules" --for <path>`. With no selected sources, suggest
+   `open-forge context --for <path>`. Do not retain other options.
+   Supply the files you are working on so `applyTo` conditions can be evaluated.
+4. Case mismatch: `open-forge repair --automatic`.
+5. Otherwise, no next action.
+
+A closure failure keeps priority when pending conditions are also present.
+Detail and severity filtering do not change the selected action.
 
 ## Errors And Boundaries
 
@@ -810,6 +826,9 @@ The findings catalogue below is the command's finite error and warning vocabular
 
 | Code                           | Severity | Family                | Message                                                                                                                     | Next                                |
 | ------------------------------ | -------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| context.applicability-pending | warning | local | [`context.message.applyto-could-not-be-evaluated-without-for`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextText.cs), [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs), [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.applicability-pending`) | `open-forge context [<source-reference>...] --for <path>`, preserving and double-quoting each requested reference |
+| context.applicability-invalid | warning | local | [`context.message.applyto-invalid`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextText.cs), [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs) | `open-forge doctor` |
+| context.invalid-working-path | error | local | [`context.message.for-must-have-one-workspace-file-path`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextText.cs), [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs) | none |
 | context.invalid-input          | error    | invalid-input         |                                                                                                                             |                                     |
 | context.invalid-source         | error    | unknown-source        | [`context.label.the-requested-source`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextText.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.invalid-source`).                                                              | `open-forge route list --depth=all` |
 | context.invalid-content        | error    | local                 | [`context.phrase.content-is-not-a-known-part-use-metadata-paths-frontmatter-headings-body-or-section-name`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.invalid-content`).               | none                                |

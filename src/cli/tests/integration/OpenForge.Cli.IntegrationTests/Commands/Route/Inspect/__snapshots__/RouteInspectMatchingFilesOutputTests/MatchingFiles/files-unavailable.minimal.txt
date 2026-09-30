@@ -1,0 +1,24 @@
+docs/guide  .agents/docs/guide.md
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md  Route fact is unavailable
+         Route facts could not be measured: One or more applicable route-inspect facts are unavailable.
+
+Matching files: unavailable
+Scan scope: existing Git tracked and untracked files, excluding ignored untracked files
+Scan completeness: incomplete
+Required file information or .gitignore content could not be read or decoded.
+
+Where this source belongs
+  Route chain: docs -> guide
+  Parent: docs
+
+When it is read
+  At task start or resume: no
+  Read automatically after another route: no
+  Read when this route is selected: yes
+  May be read again: no
+
+Context size
+  This file: 89 B, about 23 tokens
+  Selecting this route adds: 2 files, 215 B, about 54 tokens
+Next: open-forge route inspect --help

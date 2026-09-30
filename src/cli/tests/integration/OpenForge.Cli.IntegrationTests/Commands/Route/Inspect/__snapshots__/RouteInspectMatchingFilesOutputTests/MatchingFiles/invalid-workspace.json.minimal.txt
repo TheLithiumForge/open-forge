@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "invalid-input",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": null,
+  "summary": {
+    "headline": "Cannot inspect docs/guide: Cannot use missing as the workspace: it does not exist or cannot be read.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-inspect.invalid-workspace",
+      "title": "Workspace is unavailable",
+      "message": "Cannot use missing as the workspace: it does not exist or cannot be read.",
+      "subject": {
+        "kind": "workspace",
+        "path": null,
+        "id": "missing",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": null,
+    "ownTokens": null,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": null,
+    "path": null,
+    "kind": null,
+    "entrypointForm": null,
+    "overwritePath": null,
+    "matchingFiles": {
+      "scope": null,
+      "complete": false,
+      "count": null,
+      "paths": [],
+      "pathLimit": 100,
+      "truncated": false,
+      "reason": "source-unavailable",
+      "note": null
+    },
+    "belongs": {
+      "routeChain": null,
+      "parent": null,
+      "directChildren": null,
+      "descendants": null
+    },
+    "read": {
+      "atStart": null,
+      "automaticallyWhen": null,
+      "mayReadAgain": null
+    },
+    "size": {
+      "own": null,
+      "adds": null,
+      "loadNow": null
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route inspect --help",
+    "reason": "Correct the named source or input, then rerun route inspect."
+  }
+}

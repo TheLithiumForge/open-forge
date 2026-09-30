@@ -8,6 +8,7 @@ public sealed class DoctorWorkspaceApplyToValidationIntegrationTests
 {
     private const string InvalidSkillPath = ".agents/skills/native-tool/SKILL.md";
     private const string InvalidSourcePath = ".agents/status/invalid-apply-to.md";
+    private const string TrailingSlashPath = ".agents/status/trailing-slash-apply-to.md";
     private const string ValidGlobPath = ".agents/status/valid-glob-apply-to.md";
     private const string EquivalentDualPath = ".agents/status/equivalent-dual-apply-to.md";
     private const string NonmatchingValidPath = ".agents/status/nonmatching-apply-to.md";
@@ -31,12 +32,12 @@ public sealed class DoctorWorkspaceApplyToValidationIntegrationTests
         var malformedApplyToPaths = findings
             .Where(finding => finding.GetProperty("code").GetString() == "workspace.frontmatter-malformed")
             .Select(SubjectPath)
-            .Where(path => path is InvalidSkillPath or InvalidSourcePath or UnbalancedBracesPath or UnterminatedClassPath)
+            .Where(path => path is InvalidSkillPath or InvalidSourcePath or TrailingSlashPath or UnbalancedBracesPath or UnterminatedClassPath)
             .Order(StringComparer.Ordinal)
             .ToArray();
 
         Assert.Equal(
-            new[] { InvalidSkillPath, InvalidSourcePath, UnbalancedBracesPath, UnterminatedClassPath }
+            new[] { InvalidSkillPath, InvalidSourcePath, TrailingSlashPath, UnbalancedBracesPath, UnterminatedClassPath }
                 .Order(StringComparer.Ordinal),
             malformedApplyToPaths);
         Assert.DoesNotContain(findings, finding =>
@@ -77,6 +78,17 @@ public sealed class DoctorWorkspaceApplyToValidationIntegrationTests
               applyTo: ["../outside.md"]
             ---
             # Invalid ordinary source
+            """);
+        workspace.WriteText(
+            TrailingSlashPath,
+            """
+            ---
+            open-forge:
+              description: Trailing slash applyTo
+              tags: [Guidance]
+              applyTo: ["docs/"]
+            ---
+            # Trailing slash applyTo
             """);
         workspace.WriteText(
             ValidGlobPath,

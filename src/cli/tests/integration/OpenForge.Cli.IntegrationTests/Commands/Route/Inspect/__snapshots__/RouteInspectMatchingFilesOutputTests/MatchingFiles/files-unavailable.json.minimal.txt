@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "incomplete",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "docs/guide  .agents/docs/guide.md",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "route-inspect.unavailable-fact",
+      "title": "Route fact is unavailable",
+      "message": "Route facts could not be measured: One or more applicable route-inspect facts are unavailable.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": ".agents/docs/guide.md",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": 89,
+    "ownTokens": 23,
+    "addedFiles": 2,
+    "addedBytes": 215,
+    "addedTokens": 54,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": "docs/guide",
+    "path": ".agents/docs/guide.md",
+    "kind": "markdown",
+    "entrypointForm": "markdown",
+    "overwritePath": null,
+    "matchingFiles": {
+      "scope": "git-tracked-and-untracked",
+      "complete": false,
+      "count": null,
+      "paths": [],
+      "pathLimit": 100,
+      "truncated": false,
+      "reason": "files-unavailable",
+      "note": null
+    },
+    "belongs": {
+      "routeChain": [
+        "docs",
+        "guide"
+      ],
+      "parent": "docs",
+      "directChildren": {
+        "files": 0,
+        "entrypoints": 0
+      },
+      "descendants": {
+        "files": 0,
+        "entrypoints": 0
+      }
+    },
+    "read": {
+      "atStart": false,
+      "automaticallyWhen": [
+        "this route is selected"
+      ],
+      "mayReadAgain": false
+    },
+    "size": {
+      "own": {
+        "files": 1,
+        "bytes": 89,
+        "tokens": 23
+      },
+      "adds": {
+        "files": 2,
+        "bytes": 215,
+        "tokens": 54
+      },
+      "loadNow": null
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route inspect --help",
+    "reason": "Use --for <path> to inspect supplied working paths without scanning."
+  }
+}

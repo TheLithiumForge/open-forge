@@ -72,6 +72,13 @@ never strings. No command binding locates services. The composition root
 supplies complete immutable dependencies through direct construction or narrow
 capability records.
 
+For matching-file inspection, the root host composes the Git adapter and plain
+walk. It owns process launch, the walk, and cancellation, returning a
+command-owned enumeration result to Inspect. Eligibility, matching, count, cap,
+completeness, and status stay in Operations. This adds no concrete command
+dependency to Shell and no command or process dependency to Framework. The
+[Architecture](../architecture.md#dependency-direction) defines the direction.
+
 The operational contributor catalogue follows the same explicit-composition
 direction. Each producer owns its contributor and typed observation. Status and
 Doctor consume only their narrow views. Neither command locates producers or

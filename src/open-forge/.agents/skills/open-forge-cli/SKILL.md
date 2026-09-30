@@ -34,7 +34,7 @@ These commands change nothing.
 | `status`                              | Summarize startup context, navigation, installed packages, and anything needing attention |
 | `context [<source>...]`               | See startup or selected context, optionally filtered by repeated `--for <path>`           |
 | `route list [<source>]`               | See how a route is organized                                                              |
-| `route inspect <source>`              | Explain route behavior and how supplied paths match inherited conditions                 |
+| `route inspect <source>`              | Explain route behavior, check supplied paths, or preview current matching files           |
 | `find`                                | Find by tags or headings, with an additional path filter through `--for`                   |
 | `references <source>`                 | See what links to a source with `--direction=in`, or what it links to with `out`          |
 | `doctor`                              | Diagnose broken links, stale navigation, and lifecycle problems                           |
@@ -89,8 +89,10 @@ For an existing source with a condition, preview clearing it with
 - **Choose context for a change.** Supply every working path, repeating `--for`.
   A source applies when one supplied path satisfies its full inherited condition
   chain. Reading a source only for context does not add its Markdown path.
-  Planned paths may not exist yet. If paths are unknown, encountered conditioned
-  sources stay pending and `context` returns `incomplete` with exit 3.
+  Planned paths may not exist yet. If paths are unknown, only conditioned
+  `#LoadNow` and `#KeepInMind` entries exposed by loaded parents stay pending,
+  and `context` returns `incomplete` with exit 3. Other conditioned entries stay
+  on demand.
   `--additions-only` still needs an explicit source operand and uses the same
   complete path set for startup and combined context.
 - **A rule seems ignored.** Run `context --for src/Order.cs --for web/order.ts`
@@ -100,6 +102,7 @@ For an existing source with a condition, preview clearing it with
   activate that source's automatic children. A condition does not activate a
   hidden ancestor or determine edit permission.
 - **Looking for rules about some files.** `context --for <path>` returns only what the loading rules load for those files. `find --for <path> --tag=Directive` lists every compatible source, including ones below scopes nobody selected. Load a relevant one with `context <source> --for <path>`.
+- **Find current matching files.** Use `route inspect <source> --matching-files` to list existing files that match its own and inherited `applyTo` conditions. It doesn't supply working paths or change loading. A source with no restrictive condition answers `all files` without scanning.
 - **Before recording something.** Run `find` with the category's tag, such as `find --tag=Decision`. `--for` adds a path filter. It does not replace the tag or heading predicates used by `--require`.
 - **After editing routed files by hand.** Run `index --dry-run`, then `index`, so `Entries` match the files.
 - **Before moving or deleting a file.** Run `references <source> --direction=in`, then preview `route move` or `route remove`.

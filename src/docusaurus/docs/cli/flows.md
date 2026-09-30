@@ -43,17 +43,26 @@ yet. One file must satisfy the source's whole inherited condition chain.
 `applyTo` only filters, so a matching rule still needs a loading tag, or an
 explicit request, to load.
 
-If paths are unknown, `context` reports the conditions of tagged entries as
-pending, returns an incomplete result, and exits `3`. `route inspect` can explain a
-nonmatching source without activating its automatic children. Neither command
-globally selects hidden ancestors or discovers code dependencies. If a related
-caller or test is part of the work, add its path and load its context before
-editing it.
+If paths are unknown, only conditioned `#LoadNow` and `#KeepInMind` entries
+that a loaded parent exposes are pending. `context` reports them, returns an
+incomplete result, and exits `3`. Other conditioned entries stay on demand.
+`route inspect` can explain a nonmatching source without activating its
+automatic children. Neither command globally selects hidden ancestors or
+discovers code dependencies. If a related caller or test is part of the work,
+add its path and load its context before editing it.
 
 The usual causes are a missing `LoadNow` tag or a rule placed in a scope that
 the task never selects. `find --for src/Order.cs --tag=Directive` lists rules
 that match the file wherever they live. Use `route update` to correct tags or
 `applyTo`, then check `context` again.
+
+Check a pattern against specific paths with `route inspect <source> --for <path>`,
+or preview the files that match right now with
+`route inspect <source> --matching-files`. If the condition chain is
+unrestricted, the preview answers `all files` without scanning. Otherwise it
+uses Git's file inventory, and falls back to a `.gitignore`-aware walk of the
+workspace when Git can't provide one. The command reference has
+[scope and completeness details](/guides/cli#current-matching-files).
 
 **Why it helps:** "the model didn't listen" becomes something you can check.
 Often the rule was never set to load, which is quick to fix. The command shows

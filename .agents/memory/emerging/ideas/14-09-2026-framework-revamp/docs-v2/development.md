@@ -1,10 +1,10 @@
 # Developing Open Forge
 
-This guide is for people changing Open Forge itself: building the CLI, contributing to the Framework, and checking a change before review. For everyday use, start with the [README](../README.md) or the [CLI guide](cli.md).
+This guide is for people changing Open Forge itself: building the CLI, contributing to the Framework, and checking a change before review. For everyday use, start with the [README](../README-v2.md) or the [CLI guide](cli.md).
 
 ## Find your way around
 
-Read `AGENTS.md` and `.agents/loader.md`, then select the scopes relevant to your change. The [Sources Of Truth map](../.agents/maps/sources-of-truth.md) points to the file that defines each affected question.
+Read `AGENTS.md` and `.agents/loader.md`, then select the scopes relevant to your change. The [Sources Of Truth map](../../../../../maps/sources-of-truth.md) points to the file that defines each affected question.
 
 | Location                | What belongs there                                               |
 | ----------------------- | ---------------------------------------------------------------- |
@@ -69,13 +69,13 @@ git diff
 
 ### Documentation voice
 
-Use [Project Voice](../.agents/memory/crystallized/documents/maintenance/project-voice.md) for READMEs and introductions: natural, welcoming, and quietly proud of what the project offers. Give rules and reference text the precise, conversational voice of the [Writing Standard](../.agents/memory/crystallized/documents/maintenance/writing.md). Both share the same accuracy and terminology requirements. Choose the voice for the passage's purpose, so an inviting introduction can lead into exact setup instructions.
+Use [Project Voice](../../../../crystallized/documents/maintenance/project-voice.md) for READMEs and introductions: natural, welcoming, and quietly proud of what the project offers. Give rules and reference text the precise, conversational voice of the [Writing Standard](../../../../crystallized/documents/maintenance/writing.md). Both share the same accuracy and terminology requirements. Choose the voice for the passage's purpose, so an inviting introduction can lead into exact setup instructions.
 
 The README should quickly explain what Open Forge is, why it helps, how to start, and where to learn more. Public guides explain use in more detail. Current repository documents preserve the complete accepted subjects, and maintenance files explain how their sources stay aligned. Link between them rather than maintaining competing explanations.
 
 Keep category questions in sync between the README and their defining files. A description helps a reader decide whether to open a file. An optional responsibility helps an editor decide what belongs in it.
 
-Follow the [Writing Directive](../.agents/directives/public-facing-writing.md) and the [Dictionary](../.agents/memory/crystallized/documents/maintenance/helpers/dictionary.md). The Framework itself must stay understandable without these repository documents.
+Follow the [Writing Directive](../../../../../directives/public-facing-writing.md) and the [Dictionary](../../../../crystallized/documents/maintenance/helpers/dictionary.md). The Framework itself must stay understandable without these repository documents.
 
 ### Measure context size
 
@@ -94,7 +94,7 @@ Recalculate after changing the shipped files or their loading policy. Report the
 
 ## Build and test in depth
 
-The [delivery CLI guide](../scripts/delivery/README.md) is the quick reference for setup, stage selection, target-specific packaging, and publication. The delivery CLI is the shared entry point for local development and CI. It runs directly as TypeScript with the required Node version, so a fresh checkout can run setup before dependencies or a compiled build tool exist. Run `npx forge` from the repository root. The private root package registers the local command, so no global link or bootstrap compilation is needed. Arguments after `forge` go straight to the tool without an extra `--`. Root npm scripts are short aliases for the same CLI:
+The [delivery CLI guide](../../../../../../scripts/delivery/README.md) is the quick reference for setup, stage selection, target-specific packaging, and publication. The delivery CLI is the shared entry point for local development and CI. It runs directly as TypeScript with the required Node version, so a fresh checkout can run setup before dependencies or a compiled build tool exist. Run `npx forge` from the repository root. The private root package registers the local command, so no global link or bootstrap compilation is needed. Arguments after `forge` go straight to the tool without an extra `--`. Root npm scripts are short aliases for the same CLI:
 
 ```sh
 npx forge --help
@@ -113,7 +113,7 @@ Delivery scripts live under `scripts/delivery/`. Each task has a direct entry po
 
 One root `tsconfig.json` checks all repository TypeScript, including tests. The launcher's emitting configuration includes only its runtime sources. Tests stay independently runnable through their package commands. Compiler configuration does not decide which test tier runs.
 
-The C# implementation follows the current [CLI Architecture](../.agents/memory/crystallized/documents/cli/architecture.md) and the [active Plan](../.agents/memory/working/cli-development/plan.md). Source and projects live below `src/cli/`, divided into `root/`, `core/`, and `tests/`. The repository root owns `OpenForge.Cli.slnx`, `global.json`, `NuGet.Config`, `Directory.Build.props`, and `Directory.Packages.props`. All .NET output goes to the ignored root `artifacts/` directory.
+The C# implementation follows the current [CLI Architecture](../../../../crystallized/documents/cli/architecture.md) and the [active Plan](../../../../working/cli-development/plan.md). Source and projects live below `src/cli/`, divided into `root/`, `core/`, and `tests/`. The repository root owns `OpenForge.Cli.slnx`, `global.json`, `NuGet.Config`, `Directory.Build.props`, and `Directory.Packages.props`. All .NET output goes to the ignored root `artifacts/` directory.
 
 Building the CLI project directly, through the solution, or through the EndToEnd project publishes the managed development executable as `artifacts/publish/open-forge-dev/<Configuration>/open-forge-dev[.exe]` and writes `open-forge-dev.version`. EndToEnd tests discover that artifact directly, so local terminal, Visual Studio, and VS Code test runs need no environment variables. Use `-p:OpenForgeSkipDevelopmentPublish=true` only for a build that deliberately does not need the artifact. A `dotnet test --no-build` run needs the artifact selected by an earlier build. CI and explicit Native AOT evidence compile the EndToEnd project for one supported target RID and use the matching `artifacts/publish/<RID>/open-forge/OpenForge.Cli[.exe]` publication.
 
@@ -167,7 +167,7 @@ Ordinary builds preserve incremental compiler outputs. Native builds replace the
 
 ## Link the native CLI locally
 
-The npm tooling under `scripts/delivery/npm/` can prepare the native package for the current host on Linux (glibc), macOS, or Windows, on x64 or ARM64. The accepted distribution contains all six target packages. Package layout and packing are implemented. Five matching-host runtime receipts remain unproven. See [CLI Distribution](../.agents/memory/crystallized/documents/cli/distribution.md).
+The npm tooling under `scripts/delivery/npm/` can prepare the native package for the current host on Linux (glibc), macOS, or Windows, on x64 or ARM64. The accepted distribution contains all six target packages. Package layout and packing are implemented. Five matching-host runtime receipts remain unproven. See [CLI Distribution](../../../../crystallized/documents/cli/distribution.md).
 
 The root link command publishes the current host in Release mode without restoring, stages the product version with the full Git commit SHA, and links the platform package through the main package globally. This is an explicit maintainer workflow that creates global links, not a verification prerequisite.
 

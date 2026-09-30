@@ -25,10 +25,15 @@ internal static class RouteInspectBinding
             RouteInspectDefinitions.InspectCommand.Name,
             RouteInspectDefinitions.InspectCommand.Description);
         var workingPaths = RouteInspectSymbols.CreateWorkingPaths();
+        var matchingFiles = new Option<bool>(RouteInspectDefinitions.MatchingFiles.Name)
+        {
+            Description = RouteInspectDefinitions.MatchingFiles.Description,
+        };
+        inspect.Options.Add(matchingFiles);
         inspect.Arguments.Add(sourceReferences);
         inspect.Options.Add(workingPaths);
         routeGroup.Subcommands.Add(inspect);
-        return new RouteInspectSymbols(routeGroup, inspect, sourceReferences, workingPaths);
+        return new RouteInspectSymbols(routeGroup, inspect, sourceReferences, workingPaths, matchingFiles);
     }
 
     internal static CliRequestBinder<RouteInspectRequest, RouteInspectResult> CreateBinder(
@@ -54,12 +59,14 @@ internal static class RouteInspectBinding
         ArgumentNullException.ThrowIfNull(invocation);
         ArgumentNullException.ThrowIfNull(symbols);
         var sourceReferences = parseResult.GetValue(symbols.SourceReferences) ?? [];
+        var matchingFiles = parseResult.GetValue(symbols.MatchingFiles);
         if (sourceReferences.Length != 1)
         {
             return CliBindResult<RouteInspectRequest, RouteInspectResult>.Invalid(
                 RouteInspectBindingInputPolicy.CreateSourceCardinalityInvalidResult(
                     invocation,
-                    sourceReferences));
+                    sourceReferences,
+                    matchingFiles));
         }
 
         var workspace = invocation.Workspace
@@ -78,7 +85,8 @@ internal static class RouteInspectBinding
                 return CliBindResult<RouteInspectRequest, RouteInspectResult>.Invalid(
                     RouteInspectBindingInputPolicy.CreateWorkingPathsInvalidResult(
                         workspace,
-                        sourceReferences[0]));
+                        sourceReferences[0],
+                        matchingFiles));
             }
 
             workingPaths = normalized.Paths.ToArray();
@@ -89,7 +97,8 @@ internal static class RouteInspectBinding
                 workspace,
                 sourceReferences[0],
                 allowInteractiveSourceSelection: invocation.Presentation.Format == CliFormat.Text,
-                workingPaths: workingPaths));
+                workingPaths: workingPaths,
+                matchingFiles: matchingFiles));
     }
 
     internal static CliRequestBinding<RouteInspectRequest, RouteInspectResult> CreateRequestBinding(

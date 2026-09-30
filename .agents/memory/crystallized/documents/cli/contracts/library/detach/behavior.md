@@ -331,7 +331,7 @@ Conformance must prove, at the cheapest boundary that directly owns each fact:
   preservation, and useful error actions.
 
 The three public EndToEnd journeys are defined only by the [Interface
-Contract](interface.md#endtoend-journeys). Lower-tier evidence may exercise
+Contract](interface.md#scenarios). Lower-tier evidence may exercise
 additional record, occupant, dangling-link, failure, and residual branches
 without creating additional public journeys.
 

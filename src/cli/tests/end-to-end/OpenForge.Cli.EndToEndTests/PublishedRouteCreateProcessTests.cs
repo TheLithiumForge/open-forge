@@ -210,7 +210,7 @@ public sealed class PublishedRouteCreateProcessTests
         Assert.Equal(4, invalid.ExitCode);
         Assert.Equal(string.Empty, invalid.StandardOutput);
         Assert.StartsWith("Cannot create the routed file: ", invalid.StandardError, StringComparison.Ordinal);
-        Assert.Contains("--apply-to pattern '../outside.cs' is invalid", invalid.StandardError, StringComparison.Ordinal);
+        Assert.Contains("--apply-to <glob> must not contain . or .. path segments.", invalid.StandardError, StringComparison.Ordinal);
         Assert.DoesNotContain("Status:", invalid.StandardError, StringComparison.Ordinal);
         Assert.Contains("Next: open-forge route create ", invalid.StandardError, StringComparison.Ordinal);
         Assert.Equal(

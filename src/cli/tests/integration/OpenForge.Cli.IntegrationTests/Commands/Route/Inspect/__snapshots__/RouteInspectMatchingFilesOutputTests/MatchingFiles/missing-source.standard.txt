@@ -1,0 +1,11 @@
+Cannot inspect source-reference: A source reference is required.
+Workspace: <workspace>
+  Error  source-reference  Source is unknown
+         A source reference is required.
+
+Matching files: unavailable
+Scan scope: unavailable
+Scan completeness: incomplete
+The source could not be resolved for matching-file inspection.
+  Correct the named source or input, then rerun route inspect.
+Next: open-forge route inspect --help

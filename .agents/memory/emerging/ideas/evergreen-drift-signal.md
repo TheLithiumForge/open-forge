@@ -41,6 +41,19 @@ Two framework rules should have caught it, and could not:
 A rule whose trigger only exists inside the agent's own attention is a norm.
 Norms lose to feedback loops.
 
+## Link drift observed on 2026-09-30
+
+Commit `dac3bb53c` replaced `Errors` with `Errors And Boundaries` and removed
+`Non-Goals` and `Verification` from the Route Create Interface, but incoming
+Behavior links retained the old fragments. Packet K repaired those links after
+checking every tracked Markdown file. The
+[Doctor contract](../../crystallized/documents/cli/contracts/doctor/interface.md)
+and [References contract](../../crystallized/documents/cli/contracts/references-candidate/behavior.md)
+already require missing-fragment findings, so this occurrence shows that having
+a diagnostic contract alone did not keep the repository's authored links valid.
+The available evidence does not establish whether earlier checks were skipped
+or their warnings were left unresolved.
+
 ## Candidate remedies
 
 Ordered by strength. They compose; the first is the cheapest real fix.

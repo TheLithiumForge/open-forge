@@ -10,6 +10,48 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Create;
 
 public sealed class RouteCreateDefinitionsAndBindingContractTests
 {
+    [Theory(DisplayName = "Route Create reports the specific apply-to failure"), Trait("Boundary", "Input"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
+    [InlineData("docs/", "--apply-to <glob> must contain a non-empty pattern with no empty path segments. Use docs/** to match files under docs/.")]
+    [InlineData("", "--apply-to <glob> must contain a non-empty pattern with no empty path segments. Use docs/** to match files under docs/.")]
+    [InlineData("/docs/**", "--apply-to <glob> must be workspace-relative.")]
+    [InlineData("../docs/**", "--apply-to <glob> must not contain . or .. path segments.")]
+    [InlineData("docs\\file.cs", "--apply-to <glob> contains unsupported pattern syntax.")]
+    public void InvalidApplyToPatternReportsSpecificCause(string pattern, string expectedCause)
+    {
+        var route = RouteBinding.CreateGroup();
+        var symbols = RouteCreateBinding.CreateSymbols(route);
+        var parse = route.Parse(["create", RouteCreateTestData.TargetId, "--apply-to", pattern]);
+        var bound = RouteCreateRequestBinder.Bind(parse, RouteCreateTestData.Invocation(), symbols);
+
+        Assert.Null(bound.Request);
+        var result = Assert.IsType<RouteCreateResult>(bound.InvalidResult);
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        var finding = Assert.Single(result.Findings);
+        Assert.Equal(RouteCreateFindingCode.InvalidMetadata, finding.Code);
+        Assert.Equal(expectedCause, finding.Cause);
+    }
+
+    [Fact(DisplayName = "Route Create appends one hint after joined metadata problems"), Trait("Boundary", "Input"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
+    public void ApplyToHintFollowsJoinedMetadataProblemsOnce()
+    {
+        var route = RouteBinding.CreateGroup();
+        var symbols = RouteCreateBinding.CreateSymbols(route);
+        var parse = route.Parse(
+        [
+            "create", RouteCreateTestData.TargetId,
+            "--description=", "--apply-to=docs/", "--apply-to=src/", "--responsibility",
+        ]);
+        var bound = RouteCreateRequestBinder.Bind(parse, RouteCreateTestData.Invocation(), symbols);
+
+        Assert.Null(bound.Request);
+        var result = Assert.IsType<RouteCreateResult>(bound.InvalidResult);
+        var finding = Assert.Single(result.Findings);
+        Assert.Equal(RouteCreateFindingCode.InvalidMetadata, finding.Code);
+        Assert.Equal(
+            "--description is missing and --apply-to <glob> must contain a non-empty pattern with no empty path segments and --responsibility accepts exactly one value. Use docs/** to match files under docs/.",
+            finding.Cause);
+    }
+
     [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Create definitions expose the accepted grammar"), Trait("Feature", "route-create"), Trait("Evidence", "UnitContract")]
     public void DefinitionsExposeAcceptedGrammar()

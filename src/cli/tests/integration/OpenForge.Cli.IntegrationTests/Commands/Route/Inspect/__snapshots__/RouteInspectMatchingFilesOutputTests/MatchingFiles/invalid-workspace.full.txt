@@ -1,0 +1,12 @@
+Cannot inspect docs/guide: Cannot use missing as the workspace: it does not exist or cannot be read.
+  Error  missing  Workspace is unavailable [route-inspect.invalid-workspace]
+         Cannot use missing as the workspace: it does not exist or cannot be read.
+
+Matching files: unavailable
+Scan scope: unavailable
+Scan completeness: incomplete
+The source could not be resolved for matching-file inspection.
+  Why: the source reference was not accepted
+  Selection: source ID; unresolved; requested "docs/guide"
+  Correct the named source or input, then rerun route inspect.
+Next: open-forge route inspect --help

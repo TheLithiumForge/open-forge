@@ -10,7 +10,7 @@ open-forge:
 
 Some binding behavior applies only during a migration, release freeze, incident, experiment, or another bounded condition. Route scope answers where a Directive applies, but it does not by itself express when the behavior should begin, suspend, expire, or be removed.
 
-The Framework migration tested the simplest available representation through an ordinary binding Directive with an explicit trigger, lifecycle statement, and removal condition. The [migration closeout](../../archived/sessions/2026-07-29_open-forge-framework-migration-closeout.md) records the experiment and the proposed retirement of its Directive.
+The Framework migration tested the simplest available representation through an ordinary binding Directive with an explicit trigger, lifecycle statement, and removal condition. The [migration closeout](https://github.com/TheLithiumForge/open-forge/blob/a5dddf16b2e60bcb116dd8f276822ab384afae22/.agents/memory/archived/sessions/2026-07-29_open-forge-framework-migration-closeout.md) records the experiment and the proposed retirement of its Directive.
 
 That single experiment does not establish a new Directive type, activation field, or routing semantic.
 
@@ -37,4 +37,4 @@ For future cases, record whether the trigger is clear, whether agents follow it,
 - [Directive runtime maintenance](../../crystallized/documents/maintenance/payload/agents/directives.md)
 - [Loading and continuity](../../crystallized/documents/framework/routing/loading.md)
 - [Rejected applicability gates and loading tradeoffs](../../crystallized/decisions/framework/loading-reliability.md)
-- [Framework migration closeout](../../archived/sessions/2026-07-29_open-forge-framework-migration-closeout.md)
+- [Framework migration closeout](https://github.com/TheLithiumForge/open-forge/blob/a5dddf16b2e60bcb116dd8f276822ab384afae22/.agents/memory/archived/sessions/2026-07-29_open-forge-framework-migration-closeout.md)

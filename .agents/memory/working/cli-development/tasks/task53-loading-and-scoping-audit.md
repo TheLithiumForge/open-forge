@@ -103,6 +103,9 @@ on active-context size are related evidence.
 - **From [Task 42](../../../archived/cli-development/tasks/task42-minimal-core.md): is each startup Core entrypoint
   worth its startup cost?** Add it to the audit table where the existing
   questions don't already cover it.
-- **The shipped loader is over its budget.** It has 92 authored lines against
-  its maintenance contract's 35 to 80. Settle the budget or the length here or
-  in [Task 44](task44-template-content.md).
+- **The shipped loader's length.** It has 100 authored lines after the
+  2026-09-30 Frontmatter rewrite. Its [maintenance
+  contract](../../../crystallized/documents/maintenance/payload/agents/loader.md)
+  now keeps that count as a reviewed baseline instead of a 35 to 80 budget.
+  Revisit the length here or in [Task 44](task44-template-content.md) if the
+  audit shows a section costs more than it saves.

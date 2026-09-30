@@ -62,8 +62,6 @@ active development records track execution without replacing these contracts.
 
 ## Entries
 
-- [Remove one workspace path, route, Extension or Library and preserve the removal choice](remove/_remove.md) - #Memory #Document #CLI #Contract #Remove #CurrentTruth
-
 - [Route the accepted non-shipping root cleanup contracts for lease-validated recovery-bundle and draft deletion](cleanup/_cleanup.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Mutation #Recovery #Safety #CurrentTruth
 - [Current Crystallized contract set for stateless ordered context resolution, projection, and explicit link expansion](context/_context.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #CurrentTruth
 - [Route the accepted current read-only Doctor Interface and Behavior contracts](doctor/_doctor.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Doctor #CurrentTruth
@@ -73,6 +71,7 @@ active development records track execution without replacing these contracts.
 - [Route the accepted non-shipping root Framework management-establishment and exact-no-op contracts for `install`](install/_install.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Lifecycle #CurrentTruth
 - [Route the accepted current Workspace Library list, inspect, attach, sync, and detach contracts](library/_library.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Workspace #CurrentTruth
 - [Routing-only entrypoint for the accepted current `references` command contracts](references-candidate/_references-candidate.md) - #Memory #Crystallized #CLI #Release #Command #Contract #References #CurrentTruth
+- [Remove workspace content through one root command and keep Open Forge from restoring it](remove/_remove.md) - #Memory #Document #CLI #Contract #Remove #CurrentTruth
 - [Route the accepted current Repair Interface and Behavior contracts for exact and guided local repair](repair/_repair.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Repair #CurrentTruth
 - [Routing-only group entrypoint for the `route` command family](route/_route.md) - #Memory #Crystallized #CLI #Release #Command #Route #Contract #CurrentTruth
 - [Permanent route for accepted shared CLI contract sets](shared/_shared.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #CurrentTruth

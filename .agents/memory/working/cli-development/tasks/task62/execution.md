@@ -14,13 +14,24 @@ implementation. [Task 62](../task62-glob-scoped-loading.md) retains the outcome.
 Task 55 remains separate. The accepted analysis is frozen as input evidence.
 Current contracts and this packet own subsequent implementation decisions.
 
+Current state follows the [glob-dialect alignment](#glob-dialect-alignment-horizon),
+the [filter-only follow-up](#filter-only-follow-up), and the
+[Glob UX follow-up](#glob-ux-follow-up). The frozen dialect supports comma-separated
+lists, brace alternatives and character classes. `applyTo` is a filter, never a
+loading trigger. The [review and polish follow-up](#review-and-polish-follow-up)
+records the final corrections and receipts.
+M3 maintainer review remains active in the phase 2/2, milestone 2/3 horizon.
+
 ## Execution capsule
+
+Historical capsule: the [Glob UX follow-up](#glob-ux-follow-up) replaces this
+original completed horizon as the current execution state.
 
 - Profile: Standard with a shared-foundation integration gate.
 - Horizon: phase 1/3 planning and contracts, phase 2/3 implementation, phase 3/3
   integration and qualification. Six milestones: packet freeze, foundation,
   authoring/navigation, retrieval commands, documentation, full qualification.
-- Current status: Task 62 “Glob-scoped loading” (phase 3/3): milestone 6/6.
+- Original horizon status: Task 62 “Glob-scoped loading” (phase 3/3): milestone 6/6.
   Implementation, documentation, independent review and full qualification are
   complete in the isolated worktree. Ready for maintainer review and integration.
 - Review budget: one independent whole-change review after integration, one
@@ -48,6 +59,10 @@ Current contracts and this packet own subsequent implementation decisions.
   trigger final complete managed and supported host Native AOT gates.
 
 ## Frozen behavioral decisions
+
+Historical decisions: the [frozen glob dialect](#glob-dialect-alignment-horizon)
+replaces the original syntax restrictions, and the
+[filter-only follow-up](#filter-only-follow-up) replaces condition-triggered loading.
 
 1. Optional applyTo at frontmatter root or open-forge scope has identical meaning.
    Both locations are read even when a scoped block exists. Existing requirements
@@ -429,12 +444,16 @@ On 2026-09-29 the maintainer judged the released wording broken: it patched the
 condition into #LoadNow, #KeepInMind, the on-demand rule, the Directives Axioms
 and the Directive template instead of stating it once. Branch `applyto-wording`
 restores those sources to their pre-Task 62 text and defines `applyTo` once in a
-loader File Conditions section, as a filter on loading, refresh and
+loader File Conditions section, since 2026-09-30 the `applyTo` entry of the
+loader's Frontmatter section, as a filter on loading, refresh and
 applicability plus a selection signal for visible matching entries. Framework
 contracts, public guides and the framework map follow the same shape. No CLI
 behavior changed.
 
-Open decision: an inherited condition currently makes untagged descendants load.
+Resolved by the [filter-only follow-up](#filter-only-follow-up): `applyTo` is a
+filter, never a trigger, whether declared on the source or inherited.
+
+Historical loading question: an inherited condition currently makes untagged descendants load.
 `SourceApplicabilityEvaluator` counts ancestor clauses, so `ReadVisible` in
 `SourceLoadingClosureResolver` auto-selects every visible untagged entry below
 a conditioned entrypoint for a matching file, recursively. The accepted analysis
@@ -501,5 +520,84 @@ x64: `npm run check:dotnet` passed. `npm run test -- --no-restore` passed Unit
 3689, Integration 2529 with 17 platform exclusions, and Public 259.
 `npm run build:native -- --rid win-x64 --no-restore` passed.
 `npm run test:built -- --rid win-x64` passed all six modes with the same counts.
+
+Task 62 “Glob-scoped loading” (phase 2/2): milestone 2/3. M3 maintainer review is active.
+
+## Glob UX follow-up
+
+On 2026-09-30 the maintainer kept strict root-anchored globs for their
+expressiveness and accepted these follow-ups from an independent council:
+
+- The loader replaces File Conditions with a Frontmatter section that lists
+  `description`, `responsibility`, `tags`, and `applyTo`. The top Terms keep
+  only `entrypoint`, `entry`, and `axiom`. The authored loader is 100 lines.
+- A trailing `/` or other empty path segment in `--apply-to` now reads
+  `--apply-to <glob> must contain a non-empty pattern with no empty path
+  segments. Use docs/** to match files under docs/.` One Operations owner words
+  every pattern failure for Route Create, Init, and Update. Create no longer
+  prints the failure enum name. Doctor keeps its existing malformed-frontmatter
+  finding, and a regression proves it for `docs/`.
+- Help, the CLI guide, and the documentation site say that `*.py` matches root
+  files, `**/*.py` any depth, `docs/**` a folder, and that a leading `!` is
+  literal. Route Update's help now names its value `<glob>`, as its contract
+  does.
+- Doctor gains no new hints. A valid pattern that matches no current file is
+  still not a finding.
+- `route inspect <source> --matching-files` lists current files matching the
+  source's effective conditions, with a count, a 100-path cap, the scan scope,
+  and completeness. The maintainer accepted an optional Git inventory
+  (`git ls-files --cached --others --exclude-standard`). When Git cannot
+  provide it, a workspace walk applies the workspace's `.gitignore` files
+  through the Open Forge matcher, using ten documented translation rules, and
+  prunes excluded directories. The walk is exact by those rules, and the
+  contract lists where they differ from Git. Unsupported lines are skipped and
+  counted. The [dependency decision](../../../../crystallized/decisions/cli-dependency-policy.md#optional-git-inventory)
+  records the boundary.
+- Fencing, at the maintainer's request: a chain with no `applyTo`, or whose
+  every condition is match-all (`**`, `**/*`, `**/**`, `*/**`), answers
+  "all files" without starting Git or walking files. A match-all condition
+  beside a narrower ancestor is dropped before scanning. Literal-prefix pruning
+  and literal-path lookups were considered and deferred.
+
+Final gate receipt at `e36e414624f38ed162b3aaae6ad5e136506e6bc4` on Windows
+x64: `npm run check:dotnet` passed. `npm run test -- --no-restore` passed Unit
+3841, Integration 2614 with 17 platform exclusions, and Public 263.
+`npm run build:native -- --rid win-x64 --no-restore` passed.
+`npm run test:built -- --rid win-x64` passed all six modes with the same counts.
+Status snapshots changed only in size metrics. The published startup estimate
+is now about 6.0k tokens and the CLI Skill about 2.1k.
+
+## Review and polish follow-up
+
+On 2026-09-30 an independent Astra high review of the whole branch found two
+defects, now fixed: the scan deadline did not bound matching and result
+formation, and invalid input dropped a requested `matchingFiles` block. Its
+smaller findings were also fixed: the unreadable-file sentence, help saying Git
+excludes ignored files instead of ignored untracked files, stale pending
+wording, a cleanup test that did not prove cleanup, and superseded summaries in
+this record.
+
+A manual check in a scratch workspace with real `applyTo` sources found a crash
+that predates this branch: plain `open-forge context` in text output threw when
+a conditioned #LoadNow entry was pending, because the pending finding had an
+empty subject. It is fixed with text snapshots at every detail level, pending
+results now point to `open-forge context --for <path>`, and the Context
+contract lists its three missing `applyTo` finding codes. The same check led to
+a clearer Route Inspect warning that names pending working paths and suggests
+`--for`.
+
+The pass also added a `--matching-files` help example, a loading diagram on the
+documentation site linked from the framework map, documentation alignment across
+the site, the CLI guide, and the Skill, 75 repaired links and anchors in
+current sources, and a reindex of seven stale entrypoints. The broken anchors
+came from headings renamed on 2026-09-21 without updating incoming links.
+
+Final gate receipt at `a20916c59b3b41636e52259481df82c16c534321` on Windows
+x64: `npm run check:dotnet` passed. `npm run test -- --no-restore` passed Unit
+3860, Integration 2631 with 17 platform exclusions, and Public 263.
+`npm run build:native -- --rid win-x64 --no-restore` passed.
+`npm run test:built -- --rid win-x64` passed all six modes with the same counts.
+The documentation site was not built because its dependencies are not
+installed.
 
 Task 62 “Glob-scoped loading” (phase 2/2): milestone 2/3. M3 maintainer review is active.

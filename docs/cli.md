@@ -325,6 +325,64 @@ open-forge route inspect memory/crystallized/documents \
 open-forge route inspect .agents/memory/crystallized/documents/_documents.md
 ```
 
+#### Current matching files
+
+Use `route inspect <source> --for <path>` to check specific working paths. Use
+`route inspect <source> --matching-files` to preview which current files match
+the source's own and inherited `applyTo` conditions. When the whole chain has
+no conditions, or only match-all conditions such as `**`, `**/*`, `**/**`, or
+`*/**`, every file matches. The preview then answers `all files` without
+scanning.
+
+Otherwise, the command scans. It counts every match, lists the first 100 paths,
+and reports the scan's scope and completeness. Reaching the 100-path cap doesn't
+make the scan incomplete. Paths are relative to the workspace, use `/`
+separators, and are sorted by case-sensitive ordinal comparison.
+
+When the workspace is confirmed to be in a Git work tree, the scan asks Git with
+`git ls-files --cached --others --exclude-standard`. That lists existing tracked
+files and any untracked files that aren't ignored. A tracked file stays eligible
+even when an ignore pattern matches it.
+
+The command discards any Git output and uses the
+[workspace fallback](#workspace-fallback) instead when any of these happen:
+
+- Git can't start.
+- The workspace isn't in a Git work tree.
+- Git refuses the repository.
+- Git's inventory fails.
+
+Both strategies stay inside the selected workspace and omit deleted tracked
+files. They skip `.git`, symbolic links, directory links, other reparse points,
+and submodule contents.
+
+One 30-second deadline covers the scan and any fallback. A timeout leaves the
+scan unavailable, and a cancellation leaves it cancelled. Neither one starts a
+fallback. Completeness describes what the scan observed, not an atomic snapshot
+of the filesystem.
+
+```sh
+open-forge route inspect directives/backend/csharp --matching-files
+```
+
+The two options do different jobs, and you can combine them. `--for` supplies
+working paths, so it can change whether the source applies. `--matching-files`
+only lists current files. It supplies no working paths and doesn't change
+loading. So a complete scan can still come with an `incomplete` report when the
+loading facts need explicit working paths. A scan with no matches reports
+`No current files match this condition. Planned files may still match.`
+
+#### Workspace fallback
+
+Without a usable Git inventory, the command walks the workspace itself and
+applies its `.gitignore` files with the Open Forge matcher. It reports the scope
+as `workspace files filtered by .gitignore using Open Forge rules`.
+
+The walk reads only `.gitignore` files inside the workspace, and tracked files
+get no exemption. Matching is case-sensitive. The walk skips and counts lines it
+can't express. The [fallback rules](#gitignore-fallback-rules) list exactly how
+each pattern is translated.
+
 ## Maintain routes and Markdown
 
 The route commands preserve the distinction between authored source content and
@@ -396,10 +454,23 @@ The command flags use the same concepts:
   exact empty value removes the key.
 - Each `--apply-to <glob>` on `route create`, `route init`, or
   `route update` accepts comma-separated patterns. Repeat the option to supply
-  additional expressions. Include `**/` for patterns that should match at any
-  depth.
+  additional expressions. Patterns match from the workspace root and are
+  case-sensitive. For example, `*.py` matches only files at the root,
+  `**/*.py` matches at any depth, and `docs/**` matches everything under
+  `docs`. A trailing `/`, as in `docs/`, is rejected. A leading `!` is literal
+  and does not exclude files.
 - `route update --clear-apply-to` removes the condition and cannot be combined
   with `--apply-to`.
+
+For `--apply-to "docs/"`, the error is:
+
+```text
+--apply-to <glob> must contain a non-empty pattern with no empty path segments. Use docs/** to match files under docs/.
+```
+
+After authoring a condition, [inspect its matches](#current-matching-files) with
+`route inspect <source> --for <path>` or
+`route inspect <source> --matching-files`.
 
 The CLI does not infer these values from a filename, parent, Template, body, or
 generated entry.
@@ -864,6 +935,50 @@ open-forge route inspect "memory/project alpha/documents"
 The shell removes the quotes before the CLI receives the value. Exact paths
 resolve inside the selected workspace and cannot escape it through lexical or
 physical aliases.
+
+## .gitignore fallback rules
+
+When `route inspect --matching-files` walks the workspace instead of asking
+Git, it translates `.gitignore` patterns for the Open Forge matcher using these
+ten rules:
+
+1. Read a directory's regular `.gitignore` file before looking at its children.
+   Never enter an excluded directory. Don't read anything above the workspace,
+   and ignore global excludes and `.git/info/exclude`. Tracked files get no
+   exemption.
+2. Skip empty lines and lines that start with `#`. Keep leading spaces, and
+   remove only trailing spaces that aren't escaped. An initial `\#` or `\!`
+   stands for a literal `#` or `!`.
+3. Every entry starts out included. A matching rule excludes it, and a rule
+   with an unescaped initial `!` includes it again. Apply ancestor rules before
+   local rules, keeping line order. The last matching rule decides whether the
+   entry is included.
+4. A leading or internal slash anchors a pattern to the directory that holds
+   its `.gitignore`. Remove the leading slash before matching.
+5. Otherwise, remove any directory-only trailing slash and then prefix `**/`.
+   For example, `*.log` becomes `**/*.log`.
+6. A trailing slash matches only directories. Apply every applicable rule
+   before pruning an excluded directory. Once a directory is pruned, nothing
+   beneath it can be included again.
+7. Use Open Forge matching for `*`, `?`, bracket lists and ranges, and negated
+   character classes. Matching stays case-sensitive regardless of Git settings.
+8. Keep recursive `**` segments, but translate a terminal `/**` to `/**/*`.
+   That way `docs/**` excludes everything inside `docs` without excluding
+   `docs` itself, so `!docs/keep.md` can still include that file.
+9. Treat commas and braces as literal characters. Outside brackets, an escaped
+   character is literal, including escaped spaces and wildcards.
+10. Skip and count unsupported lines: extended POSIX bracket constructs, escapes
+    inside brackets, escaped slashes or literal backslashes, dangling escapes,
+    and patterns the Open Forge matcher rejects.
+
+The fallback differs from Git in four ways: which ignore files it reads, how it
+treats tracked files, case sensitivity, and unsupported patterns.
+
+When the walk skips unsupported lines, it adds a
+`Skipped unsupported .gitignore lines: N.` note. The note doesn't make the scan
+incomplete or raise its status. If a `.gitignore` file can't be read or
+decoded, the command discards partial results and reports the scan as
+unavailable, with reason `files-unavailable` and exit code `3`.
 
 ## Where to go next
 

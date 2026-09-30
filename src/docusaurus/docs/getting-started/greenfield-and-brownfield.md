@@ -68,7 +68,7 @@ No. Start with a Map. Decisions begin with your next change, and rules grow from
 No. Installation adds a clearly marked Open Forge section and keeps everything you wrote. Other tools' rule files aren't touched. Read the combined instructions once, in case your rules and the loader's pull in different directions.
 
 **How much context does it add in a large repository?**
-The base adds about 6.1k tokens at startup: `AGENTS.md`, the loader, and the entrypoints tagged to load at startup. Reading an entrypoint gives the agent its rules and one line per item, and the items themselves stay closed until a task needs them. Specialized rules live in [scopes](../concepts/scopes.md) that load only when a task selects them, and Memory records open when they're relevant. Installed Extensions add only their one-line entries at startup. Adding knowledge doesn't mean every task reads more of it.
+The base adds about 6.0k tokens at startup: `AGENTS.md`, the loader, and the entrypoints tagged to load at startup. Reading an entrypoint gives the agent its rules and one line per item, and the items themselves stay closed until a task needs them. Specialized rules live in [scopes](../concepts/scopes.md) that load only when a task selects them, and Memory records open when they're relevant. Installed Extensions add only their one-line entries at startup. Adding knowledge doesn't mean every task reads more of it.
 
 **What if the agent writes something wrong into Memory?**
 Everything is plain Markdown in your repository, so it shows up in `git diff` like any change. The rules keep unconfirmed findings in Emerging Memory and reserve Crystallized for what you accept. Tags alone never make something authoritative.

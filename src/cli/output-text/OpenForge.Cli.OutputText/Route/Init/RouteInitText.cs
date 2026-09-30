@@ -186,7 +186,7 @@ internal static class RouteInitText
 
     // @OpenForgeText route.init.help.metadata
     internal static string HelpMetadata()
-        => "--description <text>, --responsibility <text>, ordered repeated --tag <tag> values, and repeated --apply-to <glob> values apply only to a missing generic final target. Apply-to patterns are workspace-relative; * and ? match within one path segment and ** matches zero or more segments. Supply description and responsibility only once; empty or duplicate tags are invalid.";
+        => "--description <text>, --responsibility <text>, ordered repeated --tag <tag> values, and repeated --apply-to <glob> values apply only to a missing generic final target. Each --apply-to value may hold comma-separated patterns. Patterns match from the workspace root and are case-sensitive. *.py matches root files, **/*.py any depth, and docs/** a folder. A leading ! is literal and does not exclude files. Supply description and responsibility only once. Empty or duplicate tags are invalid.";
 
     // @OpenForgeText route.init.help.write-policy
     internal static string HelpWritePolicy()

@@ -145,6 +145,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
 
         if (applicability.State is SourceApplicabilityState.Pending or SourceApplicabilityState.Invalid)
         {
+            _workingPathsPending |= applicability.State == SourceApplicabilityState.Pending;
             MarkLoadingSetUnavailable(target);
         }
 

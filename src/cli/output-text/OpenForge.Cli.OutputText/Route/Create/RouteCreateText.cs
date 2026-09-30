@@ -86,7 +86,7 @@ internal static class RouteCreateText
 
     // @OpenForgeText route.create.help.metadata
     internal static string HelpMetadata()
-        => "--description <text>, ordered --tag <tag> values, repeatable --apply-to <glob> patterns, and --responsibility <text> are optional. Omitting description or tags creates the route with a warning and a next action to add them when useful. Supply --description, --responsibility, and --template at most once each. Repeat --tag for more tags; exact duplicate tags are invalid. Each --apply-to pattern must be workspace-relative and use the supported path glob syntax.";
+        => "--description <text>, ordered --tag <tag> values, repeatable --apply-to <glob> patterns, and --responsibility <text> are optional. Omitting description or tags creates the route with a warning and a next action to add them when useful. Supply --description, --responsibility, and --template at most once each. Repeat --tag for more tags. Exact duplicate tags are invalid. Each --apply-to value may hold comma-separated patterns. Patterns match from the workspace root and are case-sensitive. *.py matches root files, **/*.py any depth, and docs/** a folder. A leading ! is literal and does not exclude files.";
 
     // @OpenForgeText route.create.help.template
     internal static string HelpTemplate()

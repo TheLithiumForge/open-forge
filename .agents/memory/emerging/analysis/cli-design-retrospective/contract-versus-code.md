@@ -76,7 +76,7 @@ documents at once:
   with their own metadata and resources. Routing a native package does **not**
   require wrapping or rewriting it as another Framework category."_
 
-[`SourceAuthoredMetadataParser.cs:120`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Sources/Metadata/SourceAuthoredMetadataParser.cs#L120)
+[`SourceAuthoredMetadataParser.cs:120`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Sources/Metadata/SourceAuthoredMetadataParser.cs#L120)
 rejects any key but `name` and `description`, so `license` and `allowed-tools` —
 metadata required by the active runtime — hard-block the workspace. This is a
 direct violation, and it is the interoperability ship-blocker.

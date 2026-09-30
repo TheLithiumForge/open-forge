@@ -16,7 +16,8 @@ internal sealed partial class RouteInspectResult
         RouteInspectProfile? profile,
         IReadOnlyList<RouteInspectObservation> observations,
         IReadOnlyList<RouteInspectCondition> conditions,
-        CliNextAction? next)
+        CliNextAction? next,
+        RouteInspectMatchingFiles? matchingFiles)
     {
         switch (status)
         {
@@ -45,7 +46,11 @@ internal sealed partial class RouteInspectResult
                 RequireNext(next, selection.SelectionMethod == RouteInspectSelectionMethod.Interactive);
                 return;
             case CliSemanticStatus.Incomplete:
-                RequireProfile(selection, workspace, identity, profile, RouteInspectCompleteness.Incomplete, RouteInspectSafety.Safe);
+                RequireProfile(selection, workspace, identity, profile,
+                    matchingFiles is { Complete: false } && profile is not null
+                        ? profile.Completeness
+                        : RouteInspectCompleteness.Incomplete,
+                    RouteInspectSafety.Safe);
                 RequireCondition(conditions, CliSemanticStatus.Incomplete);
                 RequireAllowedConditions(conditions, CliSemanticStatus.Incomplete);
                 RequireNext(next, required: true);

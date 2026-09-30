@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Applicability;
+using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.MatchingFiles;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Shared.Resolution;
@@ -24,12 +25,17 @@ internal static class RouteInspectOperationFactory
 
     internal static RouteInspectOperation Create(
         CliPrompt<RouteInspectSourceSelectionQuestion, string>? sourceSelectionPrompt)
+        => Create(sourceSelectionPrompt, null);
+
+    internal static RouteInspectOperation Create(
+        CliPrompt<RouteInspectSourceSelectionQuestion, string>? sourceSelectionPrompt,
+        RouteInspectFileEnumerator? enumerateFiles)
     {
         var resolver = new RouteInspectResolver(
             new RouteInspectSourceSelector(sourceSelectionPrompt));
         var profileBuilder = new RouteInspectProfileBuilder();
         var resultBuilder = new RouteInspectResultBuilder();
-        return new RouteInspectOperationCoordinator(resolver, profileBuilder, resultBuilder).ExecuteAsync;
+        return new RouteInspectOperationCoordinator(resolver, profileBuilder, resultBuilder, enumerateFiles).ExecuteAsync;
     }
 }
 
@@ -38,11 +44,13 @@ internal sealed class RouteInspectOperationCoordinator
     private readonly RouteInspectResolver _resolver;
     private readonly RouteInspectProfileBuilder _profileBuilder;
     private readonly RouteInspectResultBuilder _resultBuilder;
+    private readonly RouteInspectMatchingFilesScanner? _scanner;
 
     internal RouteInspectOperationCoordinator(
         RouteInspectResolver resolver,
         RouteInspectProfileBuilder profileBuilder,
-        RouteInspectResultBuilder resultBuilder)
+        RouteInspectResultBuilder resultBuilder,
+        RouteInspectFileEnumerator? enumerateFiles = null)
     {
         ArgumentNullException.ThrowIfNull(resolver);
         ArgumentNullException.ThrowIfNull(profileBuilder);
@@ -50,6 +58,7 @@ internal sealed class RouteInspectOperationCoordinator
         _resolver = resolver;
         _profileBuilder = profileBuilder;
         _resultBuilder = resultBuilder;
+        _scanner = enumerateFiles is null ? null : new RouteInspectMatchingFilesScanner(enumerateFiles);
     }
 
     internal async ValueTask<RouteInspectResult> ExecuteAsync(
@@ -100,10 +109,26 @@ internal sealed class RouteInspectOperationCoordinator
             }
         }
 
+        RouteInspectMatchingFiles? matchingFiles = null;
+        if (request.MatchingFiles)
+        {
+            matchingFiles = RouteInspectMatchingFiles.Unavailable(null, RouteInspectMatchingFilesReason.SourceUnavailable);
+            if (resolution.State is RouteInspectResolutionState.Resolved or RouteInspectResolutionState.Incomplete)
+            {
+                matchingFiles = _scanner is null
+                    ? RouteInspectMatchingFiles.Unavailable(null, RouteInspectMatchingFilesReason.ScanFailed)
+                    : await _scanner.ScanAsync(request.Workspace.LexicalRoot, applicability, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
         try
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            return _resultBuilder.Build(request, resolution, profile, applicability);
+            if (matchingFiles?.Reason != RouteInspectMatchingFilesReason.Cancelled)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            return _resultBuilder.Build(request, resolution, profile, applicability, matchingFiles);
         }
         catch (OperationCanceledException)
         {
@@ -195,6 +220,19 @@ internal sealed class RouteInspectOperationCoordinator
             [],
             [new RouteInspectCondition(code, status, request.SourceReference, message)],
             next,
-            workingPaths: request.WorkingPaths);
+            workingPaths: request.WorkingPaths,
+            matchingFiles: ReadFallbackMatchingFiles(request, interrupted));
+    }
+
+    private static RouteInspectMatchingFiles? ReadFallbackMatchingFiles(RouteInspectRequest request, bool interrupted)
+    {
+        if (!request.MatchingFiles)
+        {
+            return null;
+        }
+
+        return RouteInspectMatchingFiles.Unavailable(null, interrupted
+            ? RouteInspectMatchingFilesReason.Cancelled
+            : RouteInspectMatchingFilesReason.ScanFailed);
     }
 }

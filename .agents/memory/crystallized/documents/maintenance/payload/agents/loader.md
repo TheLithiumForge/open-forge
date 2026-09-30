@@ -20,7 +20,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - The loader is the first Open Forge `entrypoint` after the canonical workspace entry.
 - It contains only the terms and `Axioms` needed to enter, route, and understand an installed Framework. It also contains compact CLI help and a generated list of direct `root routes`.
 - Its authored sections remain, in order, the introduction, `Terms`, one grouped `Axioms` section, and `Entries`.
-- The `Axioms` groups remain, in order, `Authority And Inheritance`, `Routing`, `Tags And Loading` with `Defined Tags`, and `CLI` with `Applicable Commands`.
+- The `Axioms` groups remain, in order, `Authority And Inheritance`, `Routing`, `Tags And Loading` with `Defined Tags`, `Frontmatter`, and `CLI` with `Applicable Commands`.
 - It lets each source answer one clear question and links to related sources instead of repeating their detail. A link does not change authority, scope, loading, or lifecycle.
 - Its short grouped lists keep related operational rules adjacent.
 - Category-specific behavior stays in routed sources. Workflow execution, Memory transitions, primitive details, Extension mechanics, and complete CLI behavior do not move into the loader.
@@ -41,7 +41,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 
 ### Routing And Loading
 
-- The loader defines an `axiom` only as a mandatory instruction under an `Axioms` heading in the loader or a recognized loaded `entrypoint`, keeps general file terms in `Terms`, and defines only four routing terms locally: `route`, `root route`, `slug`, and `managed route`.
+- The loader defines an `axiom` only as a mandatory instruction under an `Axioms` heading in the loader or a recognized loaded `entrypoint`, keeps general routing terms in `Terms` and frontmatter fields in `Frontmatter`, and defines only four routing terms locally: `route`, `root route`, `slug`, and `managed route`.
 - `description` helps a reader decide whether to open a file and remains the pre-load route-selection surface. Optional `responsibility` helps an editor decide what belongs in the file by stating what it defines. It creates no authority or loading behavior.
 - The routing section separates short `Terms` and universal `Rules`.
 - A `root route` exists only where the loader exposes it; it cannot be scoped or recreated inside another `route`.
@@ -58,8 +58,8 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - Loading and tags change visibility, timing, or classification without creating authority.
 - The loader remains authoritative for the meanings of #LoadNow, #KeepInMind, #Core, #Memory, #Extension, #Contextual, #CurrentTruth, and #Evergreen. Its #Memory definition identifies self-growing Markdown state without moving Memory mechanics into the loader. Undefined tags remain routing and search signals.
 - #LoadNow and #KeepInMind operate through loaded parent routes for both entrypoints and other files. Neither activates an unselected ancestor or scope. Read the tagged context when its parent loads, then refresh it at the defined boundaries while its scope remains active. Base files precede their adjacent overwrites, and entrypoints apply their child loading rules in listed order.
-- The loader defines the `applyTo` file condition once, in its File Conditions section. The condition only filters loading, refresh, and applicability by working file. It never selects an entry. Tag definitions and category entrypoints inherit this rule and do not restate it.
-- File Conditions keeps what an agent needs without the CLI: working and related files, ancestor matching, unknown paths, inspection, field locations, and pattern meaning. Value validation stays in the [syntax contract](../../../framework/markdown/syntax.md#file-conditions).
+- The loader defines the `applyTo` file condition once, under `applyTo` in its Frontmatter section. The condition only filters loading, refresh, and applicability by working file. It never selects an entry. Tag definitions and category entrypoints inherit this rule and do not restate it.
+- The Frontmatter section keeps what an agent needs without the CLI: the frontmatter fields, the `applyTo` filter and ancestor matching, pattern meaning, working files, and unknown paths. Value validation stays in the [syntax contract](../../../framework/markdown/syntax.md#file-conditions).
 - Every recovered result retains the authority and scope established by its `route` and content.
 - A user-owned `{name}.overwrite.md` is not an independent `route` and loads immediately after its base.
 - It is interpreted as part of the base source, within that source's role and scope, and inherits its route and loading behavior. It is neither indexed nor selected independently. Its precedence applies only to corresponding base content and does not override unrelated authority.
@@ -78,7 +78,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - The heading-owned `Entries` body is derived locally and may differ when the installed `root routes` differ.
 - Generated loader `entries` expose direct active root `entrypoints` only. They never flatten nested `routes`.
 - Generated links resolve relative to `.agents/loader.md`; CLI `route` identities remain workspace-relative.
-- The authored loader, excluding generated `Entries`, has 101 non-empty lines: 92 before Task 62 and nine for its File Conditions section. Review future growth against that baseline and justify changes required by accepted contracts. Keep operational detail in routed sources instead of imposing a hard ceiling.
+- The authored loader, excluding generated `Entries`, has 100 non-empty lines. Its Frontmatter section holds ten of them, including the former `description` and `responsibility` terms and the Task 62 `applyTo` rules. Review future growth against that baseline and justify changes required by accepted contracts. Keep operational detail in routed sources instead of imposing a hard ceiling.
 
 ## Verification
 

@@ -4,6 +4,18 @@ namespace OpenForge.Cli.OutputText.Route.Inspect;
 
 internal static class RouteInspectWording
 {
+    // @OpenForgeText route.inspect.wording.matching-files-summary
+    internal static string MatchingFilesSummary(string count, string scope, string completeness)
+        => $"""
+            Matching files: {count}
+            Scan scope: {scope}
+            Scan completeness: {completeness}
+            """;
+
+    // @OpenForgeText route.inspect.wording.matching-listed-paths
+    internal static string MatchingListedPaths(int listed, int? count)
+        => string.Create(CultureInfo.InvariantCulture, $"Listed paths: {listed} of {count}");
+
     internal static string UnknownSource(string reference)
         => global::OpenForge.Cli.OutputText.Shared.CliFindingWording.UnknownSource(reference);
 

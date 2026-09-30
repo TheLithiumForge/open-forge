@@ -6,7 +6,7 @@ An Extension is a way to distribute files, nothing more. Routed content keeps th
 
 ## Choose a package
 
-The [first-party catalogue](../src/extensions/README.md) has five focused packages:
+The [first-party catalogue](../../../../../../src/extensions/README.md) has five focused packages:
 
 | Package             | What it helps you do                                                                                  |
 | ------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -165,4 +165,4 @@ Preview installation into a separate workspace with the intended Framework and d
 
 Structural checks show whether the package fits together. Trying its workflows, templates, or capabilities on representative work shows whether it earns its place. Keep those two kinds of evidence distinct when describing a package.
 
-The [Extensions Architecture](../.agents/memory/crystallized/documents/extensions/architecture.md) covers composition principles. The [Extension contracts](../.agents/memory/crystallized/documents/cli/contracts/extension/_extension.md) hold the exact managed-operation rules.
+The [Extensions Architecture](../../../../crystallized/documents/extensions/architecture.md) covers composition principles. The [Extension contracts](../../../../crystallized/documents/cli/contracts/extension/_extension.md) hold the exact managed-operation rules.

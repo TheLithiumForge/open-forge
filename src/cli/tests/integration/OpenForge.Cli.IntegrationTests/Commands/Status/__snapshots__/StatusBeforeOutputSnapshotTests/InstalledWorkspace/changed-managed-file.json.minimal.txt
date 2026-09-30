@@ -38,11 +38,11 @@
   "counts": {
     "routedFiles": 14,
     "startupFiles": 11,
-    "startupTokens": 6094,
+    "startupTokens": 6044,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 278,
-    "allTokens": 8787,
-    "startupShare": 69.351580504737246422169744217,
+    "allTokens": 8833,
+    "startupShare": 68.425223593343145024340541152,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
@@ -70,21 +70,21 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 24340,
-          "bytes": 24340,
-          "tokens": 6085
+          "characters": 24141,
+          "bytes": 24141,
+          "tokens": 6036
         },
         "current": {
           "files": 11,
-          "characters": 24375,
-          "bytes": 24375,
-          "tokens": 6094
+          "characters": 24176,
+          "bytes": 24176,
+          "tokens": 6044
         },
         "difference": {
           "files": 0,
           "characters": 35,
           "bytes": 35,
-          "tokens": 9
+          "tokens": 8
         },
         "mayLoadAgain": {
           "files": 1,
@@ -95,11 +95,11 @@
       },
       "allRouted": {
         "files": 14,
-        "characters": 35147,
-        "bytes": 35147,
-        "tokens": 8787
+        "characters": 35332,
+        "bytes": 35332,
+        "tokens": 8833
       },
-      "startupShare": 69.351580504737246422169744217
+      "startupShare": 68.425223593343145024340541152
     },
     "extensions": [],
     "libraries": []

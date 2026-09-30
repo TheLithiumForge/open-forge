@@ -27,6 +27,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
     private bool _selectedAvailable = true;
     private bool _narrowAvailable = true;
     private bool _readingAvailable = true;
+    private bool _workingPathsPending;
 
     internal RouteInspectLoadingFactsBuilder(
         RouteInspectResolution resolution,
@@ -128,6 +129,7 @@ internal sealed partial class RouteInspectLoadingFactsBuilder
             SelectedAvailable = _selectedAvailable,
             NarrowDescendantsAvailable = _narrowAvailable,
             ReadingAvailable = _readingAvailable,
+            WorkingPathsPending = _workingPathsPending,
             StartupPaths = input.StartupPaths.ToHashSet(StringComparer.Ordinal),
             SelectedPaths = input.SelectedPaths.ToHashSet(StringComparer.Ordinal),
             LoadNowDescendantPaths = input.LoadNowDescendantPaths.ToHashSet(StringComparer.Ordinal),

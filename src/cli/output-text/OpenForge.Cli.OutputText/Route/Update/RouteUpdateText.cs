@@ -110,7 +110,7 @@ internal static class RouteUpdateText
 
     // @OpenForgeText route.update.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route update <source-reference> [--description <text>] [--responsibility <text>] [--tag <tag>]... [--apply-to <path-pattern>]... | [--clear-apply-to] [--template <template-reference>] [--dry-run] [global options]";
+        => "open-forge route update <source-reference> [--description <text>] [--responsibility <text>] [--tag <tag>]... [--apply-to <glob>]... | [--clear-apply-to] [--template <template-reference>] [--dry-run] [global options]";
 
     // @OpenForgeText route.update.help.target
     internal static string HelpTarget()
@@ -118,7 +118,7 @@ internal static class RouteUpdateText
 
     // @OpenForgeText route.update.help.metadata
     internal static string HelpMetadata()
-        => "Supply at least one metadata or Template operation. Description, responsibility, and Template values must each be supplied only once.\n  Repeated --tag <tag> values form one ordered replacement list; empty or duplicate tags are invalid.\n  Repeated --apply-to <path-pattern> values replace the complete local applyTo list; --clear-apply-to removes local declarations. These options cannot be combined.\n  An exact empty responsibility removes that field, while whitespace-only text is invalid.";
+        => "Supply at least one metadata or Template operation. Description, responsibility, and Template values must each be supplied only once.\n  Repeated --tag <tag> values form one ordered replacement list. Empty or duplicate tags are invalid.\n  Repeated --apply-to <glob> values replace the complete local applyTo list, and --clear-apply-to removes local declarations. These options cannot be combined.\n  Patterns match from the workspace root and are case-sensitive. *.py matches root files, **/*.py any depth, and docs/** a folder. A leading ! is literal and does not exclude files.\n  An exact empty responsibility removes that field, while whitespace-only text is invalid.";
 
     // @OpenForgeText route.update.help.template
     internal static string HelpTemplate()

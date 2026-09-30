@@ -60,5 +60,5 @@ the active Task records implementation and executable evidence.
 
 ## Entries
 
-- [Define the technology-neutral record checks, all-or-nothing planning, application, verification, and recovery behavior for `library detach`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
-- [Define the exact public syntax, source-independent link checks, all-or-nothing effects, record, and results for `library detach`](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Interface #Mutation #Recovery #Safety #CurrentTruth
+- [Define the technology-neutral record checks, verified planning, application, verification, and recovery behavior for `library detach`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
+- [Define the exact public syntax, source-independent link checks, verified effects, record, and results for `library detach`](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Detach #Interface #Mutation #Recovery #Safety #CurrentTruth

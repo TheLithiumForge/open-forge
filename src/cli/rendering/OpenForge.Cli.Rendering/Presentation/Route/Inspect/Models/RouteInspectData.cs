@@ -19,6 +19,9 @@ internal sealed record RouteInspectData
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<string>? WorkingPaths { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public RouteInspectMatchingFilesData? MatchingFiles { get; init; }
+
     public RouteInspectDataBelongs? Belongs { get; init; }
 
     public RouteInspectDataRead? Read { get; init; }

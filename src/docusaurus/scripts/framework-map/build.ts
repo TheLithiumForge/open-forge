@@ -9,6 +9,7 @@ import {
   entryNodes,
   entrypointNote,
   linkedFiles,
+  loadingGuide,
   loadingLabels,
   memoryLoading,
   memoryNote,
@@ -18,6 +19,7 @@ import {
   taskSteps,
 } from "../../src/components/framework-map/framework-map-data.ts";
 import type { FileRow, Loading } from "../../src/components/framework-map/framework-map-data.ts";
+import { siteBaseUrl, siteUrl } from "../../src/config/site.ts";
 import { box, escape, FONT, MONO, pill, text, themes, wrap } from "./svg-parts.ts";
 import type { Theme } from "./svg-parts.ts";
 
@@ -158,8 +160,9 @@ const memoryHeight = MEMORY_HEADING + memoryCards.reduce((sum, item) => sum + it
 const PANEL_HEIGHT = Math.max(coreHeight, memoryHeight);
 const STEPS_TOP = PANEL_TOP + PANEL_HEIGHT + 24;
 const CAPTION = { top: STEPS_TOP + 58, width: WIDTH - 160 };
+const GUIDE_HEIGHT = 24;
 const captionBlocks = captions.map((caption, index) => ({ ...block(caption, CAPTION.width, index === 0 ? 12 : 11.5), first: index === 0 }));
-const HEIGHT = CAPTION.top + captionBlocks.reduce((sum, item) => sum + blockHeight(item) + 8, 0) + 8;
+const HEIGHT = CAPTION.top + GUIDE_HEIGHT + captionBlocks.reduce((sum, item) => sum + blockHeight(item) + 8, 0) + 8;
 
 function header(theme: Theme): string {
   return (
@@ -247,15 +250,19 @@ function steps(theme: Theme): string {
 }
 
 function caption(theme: Theme): string {
-  let y = CAPTION.top;
-  return captionBlocks
-    .map((item) => {
-      const style = item.first ? { size: item.size, fill: theme.text, anchor: "middle" as const } : { size: item.size, fill: theme.muted, anchor: "middle" as const };
-      const markup = text(WIDTH / 2, y, item.lines, style, item.lineHeight);
-      y += blockHeight(item) + 8;
-      return markup;
-    })
-    .join("");
+  const href = new URL(`${siteBaseUrl}${loadingGuide.href.slice(1)}`, siteUrl).href;
+  const guide = `<a href="${escape(href)}" text-decoration="underline">${text(WIDTH / 2, CAPTION.top, [loadingGuide.label], { size: 12, fill: theme.line, anchor: "middle" })}</a>`;
+  let y = CAPTION.top + GUIDE_HEIGHT;
+  return (
+    guide + captionBlocks
+      .map((item) => {
+        const style = item.first ? { size: item.size, fill: theme.text, anchor: "middle" as const } : { size: item.size, fill: theme.muted, anchor: "middle" as const };
+        const markup = text(WIDTH / 2, y, item.lines, style, item.lineHeight);
+        y += blockHeight(item) + 8;
+        return markup;
+      })
+      .join("")
+  );
 }
 
 function diagram(theme: Theme): string {

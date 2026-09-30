@@ -4,6 +4,66 @@ namespace OpenForge.Cli.OutputText.Route.Inspect;
 
 internal static class RouteInspectText
 {
+    // @OpenForgeText route.inspect.label.matching-all-files
+    internal static string MatchingAllFiles() => "Matching files: all files";
+
+    // @OpenForgeText route.inspect.label.matching-unavailable
+    internal static string MatchingUnavailable() => "unavailable";
+
+    // @OpenForgeText route.inspect.label.matching-complete
+    internal static string MatchingComplete() => "complete";
+
+    // @OpenForgeText route.inspect.label.matching-incomplete
+    internal static string MatchingIncomplete() => "incomplete";
+
+    // @OpenForgeText route.inspect.label.matching-git-scope
+    internal static string MatchingGitScope()
+        => "existing Git tracked and untracked files, excluding ignored untracked files";
+
+    // @OpenForgeText route.inspect.label.matching-workspace-scope
+    internal static string MatchingWorkspaceScope()
+        => "workspace files filtered by .gitignore using Open Forge rules";
+
+    // @OpenForgeText route.inspect.message.matching-source-unavailable
+    internal static string MatchingSourceUnavailable()
+        => "The source could not be resolved for matching-file inspection.";
+
+    // @OpenForgeText route.inspect.message.matching-condition-unavailable
+    internal static string MatchingConditionUnavailable()
+        => "The source's effective applyTo conditions could not be established.";
+
+    // @OpenForgeText route.inspect.message.matching-git-unavailable
+    internal static string MatchingGitUnavailable()
+        => "Git could not provide the workspace file inventory.";
+
+    // @OpenForgeText route.inspect.message.matching-scan-timeout
+    internal static string MatchingScanTimeout()
+        => "The matching-file scan did not finish within 30 seconds.";
+
+    // @OpenForgeText route.inspect.message.matching-scan-failed
+    internal static string MatchingScanFailed()
+        => "The matching-file scan could not be completed.";
+
+    // @OpenForgeText route.inspect.message.matching-paths-unavailable
+    internal static string MatchingPathsUnavailable()
+        => "Required file information or .gitignore content could not be read or decoded.";
+
+    // @OpenForgeText route.inspect.message.matching-unsafe-path
+    internal static string MatchingUnsafePath()
+        => "The matching-file scan encountered a path outside the workspace boundary.";
+
+    // @OpenForgeText route.inspect.message.matching-cancelled
+    internal static string MatchingCancelled()
+        => "The matching-file scan was cancelled.";
+
+    // @OpenForgeText route.inspect.help.matching-files
+    internal static string HelpMatchingFiles()
+        => "Matching files do not select or load a source. A source with no restrictive applyTo condition answers all files without scanning. --for supplies working paths independently of this scan. At most 100 matching paths are listed.";
+
+    // @OpenForgeText route.inspect.help.matching-files-scope
+    internal static string HelpMatchingFilesScope()
+        => "In a Git work tree, the scan lists existing tracked and untracked files and excludes ignored untracked files. Without a usable Git inventory, it walks the workspace and applies its .gitignore files using Open Forge rules. The scan stays inside the workspace and does not follow symbolic links or enter submodules.";
+
     // @OpenForgeText route.inspect.message.a-source-reference-is-required
     internal static string MessageASourceReferenceIsRequired()
         => "A source reference is required.";
@@ -82,7 +142,7 @@ internal static class RouteInspectText
 
     // @OpenForgeText route.inspect.label.supply-for-to-evaluate
     internal static string LabelSupplyForToEvaluate()
-        => "pending; supply --for paths to evaluate the conditions";
+        => "pending. Supply --for paths to evaluate the conditions.";
 
     // @OpenForgeText route.inspect.title.invalid-working-path
     internal static string TitleInvalidWorkingPath()
@@ -382,7 +442,7 @@ internal static class RouteInspectText
 
     // @OpenForgeText route.inspect.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route inspect <source-reference> [--for <path>...] [global options]";
+        => "open-forge route inspect <source-reference> [--for <path>]... [--matching-files] [global options]";
 
     // @OpenForgeText route.inspect.help.source-references
     internal static string HelpSourceReferences()
@@ -394,7 +454,7 @@ internal static class RouteInspectText
 
     // @OpenForgeText route.inspect.help.examples
     internal static string HelpExamples()
-        => "open-forge route inspect memory/working\n  open-forge route inspect memory/working --for src/cli/App.cs\n  open-forge route inspect memory/working --for src/cli/App.cs --for tests/AppTests.cs\n  open-forge route inspect .agents/memory/_memory.md --detail minimal\n  open-forge route inspect memory/working --format json --detail standard\n  open-forge route inspect --help\n  open-forge route inspect --version";
+        => "open-forge route inspect memory/working\n  open-forge route inspect memory/working --for src/cli/App.cs\n  open-forge route inspect memory/working --for src/cli/App.cs --for tests/AppTests.cs\n  open-forge route inspect directives/backend/csharp --matching-files\n  open-forge route inspect .agents/memory/_memory.md --detail minimal\n  open-forge route inspect memory/working --format json --detail standard\n  open-forge route inspect --help\n  open-forge route inspect --version";
 
     // @OpenForgeText route.inspect.help.related-commands
     internal static string HelpRelatedCommands()

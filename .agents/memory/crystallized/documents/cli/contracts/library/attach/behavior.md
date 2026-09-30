@@ -353,7 +353,7 @@ Conformance must prove, at the cheapest boundary that directly owns each fact:
   `completed-with-warnings`, and useful error actions.
 
 The three public EndToEnd journeys are defined only by the [Interface
-Contract](interface.md#endtoend-journeys). Lower-tier evidence may exercise
+Contract](interface.md#scenarios). Lower-tier evidence may exercise
 additional branches, failure injection supplied by the accepted test boundary,
 and exact filesystem identities without creating additional public journeys.
 

@@ -10,11 +10,11 @@ internal static class ContextText
 
     // @OpenForgeText context.help.selection
     internal static string HelpSelection()
-        => "With no source reference, Context returns required startup context. Each source ID or exact .agents path adds that source and its required route context. Repeat --for with file paths inside the workspace to evaluate applyTo conditions; conditions inherited along a route must all match the same path. --additions-only requires an explicit source and removes the startup set from the result.";
+        => "With no source reference, Context returns required startup context. Each source ID or exact .agents path adds that source and its required route context. Repeat --for with file paths inside the workspace to evaluate applyTo conditions. Conditions inherited along a route must all match the same path. --additions-only requires an explicit source and removes the startup set from the result.";
 
     // @OpenForgeText context.help.content
     internal static string HelpContent()
-        => "Parts are metadata, paths, frontmatter, headings, body, and section:<name>. Default: frontmatter,body. Use one --content value; comma and backslash may be escaped inside section names.";
+        => "Parts are metadata, paths, frontmatter, headings, body, and section:<name>. Default: frontmatter,body. Use one --content value. Comma and backslash may be escaped inside section names.";
 
     // @OpenForgeText context.help.links
     internal static string HelpLinks()
@@ -26,7 +26,7 @@ internal static class ContextText
 
     // @OpenForgeText context.help.notes
     internal static string HelpNotes()
-        => "Context preserves authored source bytes and adds generated delimiters around each physical layer. applyTo conditions require --for paths; without them, affected selection is reported as incomplete. It never changes source files or follows external links.";
+        => "Context preserves authored source bytes and adds generated delimiters around each physical layer. applyTo conditions require --for paths. Without them, affected selection is reported as incomplete. It never changes source files or follows external links.";
 
     // @OpenForgeText context.message.context-is-complete
     internal static string MessageContextIsComplete()
@@ -199,6 +199,10 @@ internal static class ContextText
     // @OpenForgeText context.message.applicability-pending-limitation
     internal static string MessageApplicabilityPendingLimitation()
         => "Context is incomplete while applyTo conditions await one or more --for paths.";
+
+    // @OpenForgeText context.message.supply-working-paths-next
+    internal static string MessageSupplyWorkingPathsNext()
+        => "Supply the files you are working on so applyTo conditions can be evaluated.";
 
     // @OpenForgeText context.title.context
     internal static string TitleContext()

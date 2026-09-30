@@ -3,6 +3,7 @@ using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Binding;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability;
@@ -297,14 +298,7 @@ internal static class RouteInitBinding
 
         if (applyTo.Failure is { } failure)
         {
-            return failure switch
-            {
-                ApplyToPatternFailure.Empty => "--apply-to <glob> must not be empty.",
-                ApplyToPatternFailure.AbsolutePath => "--apply-to <glob> must be workspace-relative.",
-                ApplyToPatternFailure.Traversal => "--apply-to <glob> must not contain . or .. path segments.",
-                ApplyToPatternFailure.UnsupportedSyntax => "--apply-to <glob> contains unsupported pattern syntax.",
-                _ => throw new ArgumentOutOfRangeException(nameof(applyTo), failure, "The applyTo pattern failure is not defined."),
-            };
+            return ApplyToPatternFailureText.ReadMessage(failure);
         }
 
         if (applyToSpecified && applyTo.Patterns.Count == 0)

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "@docusaurus/Link";
 import { codeSpans } from "./code-spans";
 import {
   captions,
@@ -6,6 +7,7 @@ import {
   entryNodes,
   entrypointNote,
   linkedFiles,
+  loadingGuide,
   loadingLabels,
   memoryLoading,
   memoryNote,
@@ -146,6 +148,9 @@ export default function FrameworkMap(): ReactNode {
         ))}
       </ol>
       <figcaption className={styles.caption}>
+        <p>
+          <Link to={loadingGuide.href}>{loadingGuide.label}</Link>
+        </p>
         {captions.map((caption) => (
           <p key={caption}>
             <Prose text={caption} />

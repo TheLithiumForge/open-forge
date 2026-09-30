@@ -60,6 +60,7 @@ internal static class RouteInspectReportSelector
             Id = identity?.Id,
             Path = identity?.CanonicalWorkspaceRelativePath,
             WorkingPaths = result.WorkingPaths?.ToArray(),
+            MatchingFiles = ProjectMatchingFiles(result.MatchingFiles),
             Kind = identity is null ? null : RouteInspectWording.SourceKind(identity.Kind),
             EntrypointForm = identity is null ? null : RouteInspectWording.SourceForm(identity.Form),
             OverwritePath = identity?.PhysicalLayers.Count > 1
@@ -116,6 +117,65 @@ internal static class RouteInspectReportSelector
             Profile = profile,
         };
     }
+
+    internal static RouteInspectMatchingFilesData? ProjectMatchingFiles(RouteInspectMatchingFiles? files)
+    {
+        if (files is null)
+        {
+            return null;
+        }
+
+        var scope = MatchingScope(files.Scope);
+        var reason = MatchingReason(files.Reason);
+        return new RouteInspectMatchingFilesData
+        {
+            Scope = scope.Name,
+            Complete = files.Complete,
+            Count = files.Count,
+            Paths = files.Paths,
+            PathLimit = files.PathLimit,
+            Truncated = files.Truncated,
+            Reason = reason.Name,
+            Note = files.Note,
+            ScopeDescription = scope.Description,
+            Limitation = reason.Description,
+        };
+    }
+
+    internal static (string? Name, string? Description) MatchingScope(RouteInspectMatchingFilesScope? scope)
+        => scope switch
+        {
+            null => (null, global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingUnavailable()),
+            RouteInspectMatchingFilesScope.GitTrackedAndUntracked =>
+                ("git-tracked-and-untracked", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingGitScope()),
+            RouteInspectMatchingFilesScope.WorkspaceFiles =>
+                ("workspace-files", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingWorkspaceScope()),
+            RouteInspectMatchingFilesScope.AllFiles => (RouteInspectMatchingFilesData.AllFilesScope, null),
+            _ => throw new ArgumentOutOfRangeException(nameof(scope)),
+        };
+
+    internal static (string? Name, string? Description) MatchingReason(RouteInspectMatchingFilesReason? reason)
+        => reason switch
+        {
+            null => (null, null),
+            RouteInspectMatchingFilesReason.SourceUnavailable =>
+                ("source-unavailable", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingSourceUnavailable()),
+            RouteInspectMatchingFilesReason.ConditionUnavailable =>
+                ("condition-unavailable", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingConditionUnavailable()),
+            RouteInspectMatchingFilesReason.GitUnavailable =>
+                ("git-unavailable", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingGitUnavailable()),
+            RouteInspectMatchingFilesReason.ScanTimeout =>
+                ("scan-timeout", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingScanTimeout()),
+            RouteInspectMatchingFilesReason.ScanFailed =>
+                ("scan-failed", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingScanFailed()),
+            RouteInspectMatchingFilesReason.FilesUnavailable =>
+                ("files-unavailable", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingPathsUnavailable()),
+            RouteInspectMatchingFilesReason.UnsafePath =>
+                ("unsafe-path", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingUnsafePath()),
+            RouteInspectMatchingFilesReason.Cancelled =>
+                ("cancelled", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.MatchingCancelled()),
+            _ => throw new ArgumentOutOfRangeException(nameof(reason)),
+        };
 
     private static RouteInspectDataApplicability? ProjectApplicability(RouteInspectApplicability? applicability)
     {

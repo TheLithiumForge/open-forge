@@ -104,6 +104,12 @@ results supply workspace, permission, enum and complete location display facts;
 selectors do not infer those facts through Framework objects. Update's previous
 content observation is captured during operation result formation.
 
+Route Inspect's matching-files block consumes only its command-owned result.
+Presentation never invokes the host Git adapter or walk, evaluates applicability,
+or recomputes the count, cap, completeness, or status. Its
+[Interface Contract](../contracts/route/inspect/interface.md#matching-files-data)
+keeps the requested block at every detail level, independently of finding filters.
+
 ## Dependency Direction
 
 The dependency rules are mechanical and enforced by `LayerBoundaryTests`:

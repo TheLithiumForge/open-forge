@@ -3,6 +3,11 @@ using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 using OpenForge.Cli.Core.Presentation.Route.Inspect;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Models;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Selection;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect.Shared.Presentation;
@@ -11,6 +16,85 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Inspect;
 
 public sealed class RouteInspectJsonPresentationTests
 {
+    [Fact(DisplayName = "All-files JSON preserves its complete unmeasured answer and every field"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void AllFilesJsonKeepsNullCount()
+    {
+        var data = new RouteInspectMatchingFilesData
+        {
+            Scope = RouteInspectReportSelector.MatchingScope(RouteInspectMatchingFilesScope.AllFiles).Name,
+            Complete = true,
+            Count = null,
+            Paths = [],
+            PathLimit = 100,
+            Truncated = false,
+            Reason = null,
+            Note = "No effective applyTo restriction. Every file applies. No scan was run.",
+        };
+        var json = JsonSerializer.Serialize(data, RouteInspectDataJsonContext.Default.RouteInspectMatchingFilesData);
+        using var document = JsonDocument.Parse(json);
+        var files = document.RootElement;
+        Assert.Equal(["scope", "complete", "count", "paths", "pathLimit", "truncated", "reason", "note"],
+            files.EnumerateObject().Select(property => property.Name));
+        Assert.Equal("all-files", files.GetProperty("scope").GetString());
+        Assert.True(files.GetProperty("complete").GetBoolean());
+        Assert.Equal(JsonValueKind.Null, files.GetProperty("count").ValueKind);
+        Assert.Empty(files.GetProperty("paths").EnumerateArray());
+        Assert.Equal(100, files.GetProperty("pathLimit").GetInt32());
+        Assert.False(files.GetProperty("truncated").GetBoolean());
+        Assert.Equal(JsonValueKind.Null, files.GetProperty("reason").ValueKind);
+        Assert.Equal("No effective applyTo restriction. Every file applies. No scan was run.", files.GetProperty("note").GetString());
+    }
+
+    [Theory(DisplayName = "Matching-files JSON retains all facts at every detail and severity filter"),
+     InlineData((int)CliDetail.Minimal), InlineData((int)CliDetail.Standard), InlineData((int)CliDetail.Full), InlineData((int)CliDetail.Debug),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void MatchingFilesAreIndependentOfDetailAndFilter(int detail)
+    {
+        var basis = RouteInspectPresentationTestData.CompleteResult();
+        foreach (var count in new[] { 0, 2, 143 })
+        {
+            var matching = RouteInspectMatchingFiles.Success(RouteInspectMatchingFilesScope.WorkspaceFiles,
+                Enumerable.Range(0, count).Select(index => FormattableString.Invariant($"docs/{index:D3}.md")));
+            var result = RouteInspectResult.Create(basis.Status, basis.Workspace, basis.Selection, basis.Identity, basis.Profile,
+                basis.Observations, basis.Conditions, basis.Next, matchingFiles: matching);
+            foreach (IReadOnlySet<CliSeverity>? filter in new IReadOnlySet<CliSeverity>?[] { null, new HashSet<CliSeverity> { CliSeverity.Error } })
+            {
+                var request = new CliPresentationRequest<RouteInspectResult>(result, new(CliFormat.Json, (CliDetail)detail, filter));
+                var rendered = CliRenderingStage.Render(request, RouteInspectPresentation.Rendering);
+                using var document = JsonDocument.Parse(rendered.PrimaryContent);
+                var files = document.RootElement.GetProperty("data").GetProperty("matchingFiles");
+                Assert.Equal(["scope", "complete", "count", "paths", "pathLimit", "truncated", "reason", "note"],
+                    files.EnumerateObject().Select(property => property.Name));
+                Assert.Equal("workspace-files", files.GetProperty("scope").GetString());
+                Assert.True(files.GetProperty("complete").GetBoolean());
+                Assert.Equal(count, files.GetProperty("count").GetInt32());
+                Assert.Equal(matching.Paths, files.GetProperty("paths").EnumerateArray().Select(path => path.GetString()));
+                Assert.Equal(100, files.GetProperty("pathLimit").GetInt32());
+                Assert.Equal(count > 100, files.GetProperty("truncated").GetBoolean());
+                Assert.Equal(JsonValueKind.Null, files.GetProperty("reason").ValueKind);
+                Assert.Equal(count == 0 ? "No current files match this condition. Planned files may still match." : null,
+                    files.GetProperty("note").GetString());
+                var textRequest = new CliPresentationRequest<RouteInspectResult>(result, new(CliFormat.Text, (CliDetail)detail, filter));
+                var text = CliRenderingStage.Render(textRequest, RouteInspectPresentation.Rendering).PrimaryContent;
+                Assert.Contains(FormattableString.Invariant($"Matching files: {count}"), text, StringComparison.Ordinal);
+                foreach (var path in matching.Paths)
+                {
+                    Assert.Contains($"  {path}", text, StringComparison.Ordinal);
+                }
+            }
+        }
+    }
+
+    [Fact(DisplayName = "Matching-files mappings reject undefined enum values"),
+     Trait("Feature", "route-inspect"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void UndefinedMatchingValuesAreRejected()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => RouteInspectReportSelector.MatchingScope((RouteInspectMatchingFilesScope)int.MaxValue));
+        Assert.Throws<ArgumentOutOfRangeException>(() => RouteInspectReportSelector.MatchingReason((RouteInspectMatchingFilesReason)int.MaxValue));
+        Assert.Null(RouteInspectReportSelector.ProjectMatchingFiles(null));
+    }
+
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Route Inspect JSON emits one schema-version-3 envelope for every semantic status")]
     [Trait("Feature", "route-inspect"), Trait("Evidence", "Unit")]

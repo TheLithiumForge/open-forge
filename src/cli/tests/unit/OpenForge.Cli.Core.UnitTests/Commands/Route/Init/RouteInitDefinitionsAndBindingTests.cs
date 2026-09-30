@@ -5,6 +5,8 @@ using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Binding;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Commands.Route.Shared.Binding;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
@@ -12,6 +14,35 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
 
 public sealed class RouteInitDefinitionsAndBindingTests
 {
+    [Theory(DisplayName = "Route Init reports the specific apply-to failure"), Trait("Boundary", "Input"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    [InlineData("docs/", "--apply-to <glob> must contain a non-empty pattern with no empty path segments. Use docs/** to match files under docs/.")]
+    [InlineData("", "--apply-to <glob> must contain a non-empty pattern with no empty path segments. Use docs/** to match files under docs/.")]
+    [InlineData("/docs/**", "--apply-to <glob> must be workspace-relative.")]
+    [InlineData("../docs/**", "--apply-to <glob> must not contain . or .. path segments.")]
+    [InlineData("docs\\file.cs", "--apply-to <glob> contains unsupported pattern syntax.")]
+    public void InvalidApplyToPatternReportsSpecificCause(string pattern, string expectedCause)
+    {
+        var route = RouteBinding.CreateGroup();
+        var symbols = RouteInitBinding.CreateSymbols(route);
+        var parse = route.Parse(["init", "memory/project-alpha/documents", "--apply-to", pattern]);
+        var bound = RouteInitBinding.Bind(
+            parse,
+            RouteInitRedTestData.Invocation(RouteInitRedTestData.Workspace()),
+            symbols);
+
+        Assert.Null(bound.Request);
+        var result = Assert.IsType<RouteInitResult>(bound.InvalidResult);
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        var finding = Assert.Single(result.Findings);
+        Assert.Equal(RouteInitFindingCode.InvalidMetadata, finding.Code);
+        Assert.Equal(expectedCause, finding.Cause);
+    }
+
+    [Fact(DisplayName = "Apply-to failure wording rejects undefined failures"), Trait("Boundary", "Input"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
+    public void ApplyToFailureTextRejectsUndefinedFailure()
+        => Assert.Throws<ArgumentOutOfRangeException>(
+            () => ApplyToPatternFailureText.ReadMessage((ApplyToPatternFailure)int.MaxValue));
+
     [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Route Init definitions expose the frozen command grammar and result identity"), Trait("Feature", "route-init"), Trait("Evidence", "Unit")]
     public void DefinitionsExposeFrozenCommandGrammarAndResultIdentity()

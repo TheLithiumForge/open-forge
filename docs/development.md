@@ -462,7 +462,7 @@ git diff
 
 Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. The current base has 15 Markdown files, with 11 read at startup through `AGENTS.md`.
 
-The README quotes the CLI's own estimate, the same one `open-forge status` reports: each file's character count divided by four and rounded up, then summed. For the current base, that gives about 6.1k tokens for the 11 startup files and about 8.8k tokens for all 15. The `open-forge-cli` Skill accounts for about 2.0k of the total. At startup, only its one-line entry in the Skills entrypoint is read. Installed Extensions and your own content add to both numbers.
+The README quotes the CLI's own estimate, the same one `open-forge status` reports: each file's character count divided by four and rounded up, then summed. For the current base, that gives about 6.0k tokens for the 11 startup files and about 8.9k tokens for all 15. The `open-forge-cli` Skill accounts for about 2.1k of the total. At startup, only its one-line entry in the Skills entrypoint is read. Installed Extensions and your own content add to both numbers.
 
 Reference tokenizer counts use [tiktoken](https://github.com/openai/tiktoken) with two named encodings, `o200k_base` and `cl100k_base`. The counts below predate the optional-content extraction and are historical, not counts for the current payload. Fresh tiktoken totals have not been measured.
 

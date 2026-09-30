@@ -34,7 +34,7 @@ Route map for this repository's important authoritative sources and representati
 - [current first-party extension catalogue.](../../src/extensions/README.md) - #CurrentTruth #Extension #Catalogue
 - [bundled first-party extension source packages and manifests.](../../src/extensions/) - #Extension #Implementation
 - [shared local and CI commands](../../package.json) - #Build
-- [build output; never edit it by hand.](../../artifacts/) - #Build #Generated
+- [build output and commands. Do not edit generated output by hand.](../../docs/development.md#build-and-test) - #Build #Generated
 - [current repository workflow for changing, verifying, building, packaging, and releasing Open Forge.](../../docs/development.md) - #Documentation #Development
 - [current public documentation site, with getting started, concepts, and a file-by-file reference for every first-party Extension; it also publishes the CLI, Extension, and development guides.](../../src/docusaurus/) - #Evergreen #Documentation #Site
 - [current demo projects, seed requests at four levels, and result checklists for trying Open Forge on new and existing codebases.](../../demos/) - #Evergreen #Documentation #Demo

@@ -51,6 +51,11 @@ below are deliberately not presented as current measurements.
       reader knows what belongs in each file. Keep useful starters short and check
       their descriptions against their contents. The reduced Core and workflow
       Skill already landed; do not repeat those moves.
+- [x] **Say that Open Forge is built to work beside each harness.**
+      Recorded on 2026-09-30 from the maintainer. The README and the site's
+      Introduction now say Open Forge is built to work beside the harness,
+      encourage its native features, and name APM as a translator. Limits
+      points back to that statement.
 - [x] **Reconcile documentation left behind by the Core reduction.**
       [Tasks 42](../../../archived/cli-development/tasks/task42-minimal-core.md)/[43](../../../archived/cli-development/tasks/task43-workflows-as-skill.md) now have
       aligned payload maintenance and conceptual documentation: six Core primitives,

@@ -234,6 +234,12 @@ syntax](../../../../framework/markdown/syntax.md#file-conditions) defines
 expressions, atomic patterns, and their validation. Duplicate normalized
 patterns appear once in the authored list.
 
+A pattern with an empty path segment, such as `docs/` or `src//file.cs`, is
+invalid input. The cause reads `--apply-to <glob> must contain a non-empty
+pattern with no empty path segments. Use docs/** to match files under docs/.`
+Other invalid patterns keep their own causes, and the finding code is
+unchanged.
+
 The command validates syntax and supplied values. It does not inspect Template
 placeholders or infer authoring quality. Semantic accuracy remains authored
 responsibility. Omitting description or tags produces the
@@ -522,7 +528,7 @@ The finding catalogue is:
 | ---------------------------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |
 | route-create.invalid-input               | error    | invalid-input               |                                                                                                                                                              |                                     |
 | route-create.invalid-target              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.invalid-target`). | `open-forge route create --help`    |
-| route-create.invalid-metadata            | error    | local                       | `--description is empty.` / `--tag <value> is empty.` / `--tag <value> is repeated.` / `--tag <value> is not a valid tag.` joined with `and`       | corrected command                   |
+| route-create.invalid-metadata            | error    | local                       | `--description is empty.` / `--tag <value> is empty.` / `--tag <value> is repeated.` / `--tag <value> is not a valid tag.` / an `--apply-to <glob>` pattern problem, joined with `and`. An empty path segment adds `Use docs/** to match files under docs/.` once | corrected command                   |
 | route-create.optional-metadata | warning | local | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Selection/RouteCreateReportSelector.cs): distinguish preview, verified creation, and already-current optional metadata. | `open-forge route update <target id>`; add an optional description or tag when useful. |
 | route-create.invalid-template            | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.invalid-template`).                                                                                                                 | `open-forge find --tag Template`    |
 | route-create.parent-missing              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.parent-missing`); retained only for a missing Framework or other required existing boundary. | `open-forge route init <parent id>` |

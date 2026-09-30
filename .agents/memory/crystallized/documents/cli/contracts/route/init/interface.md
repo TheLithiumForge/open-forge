@@ -353,6 +353,12 @@ and the resulting patterns are sorted and deduplicated by ordinal comparison.
 The field is optional and does not change the existing `NeedsAuthoring` rules
 for description and tags.
 
+A pattern with an empty path segment, such as `docs/` or `src//file.cs`, is
+invalid input. The cause reads `--apply-to <glob> must contain a non-empty
+pattern with no empty path segments. Use docs/** to match files under docs/.`
+Other invalid patterns keep their own causes, and the finding code is
+unchanged.
+
 ### Placeholder metadata condition
 
 After a safe complete plan and preflight have been established, a newly created
