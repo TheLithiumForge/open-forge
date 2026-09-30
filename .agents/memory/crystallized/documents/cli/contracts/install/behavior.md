@@ -181,7 +181,8 @@ fingerprint. It:
 
 - preserves Unicode and semantic text without blanket ASCII conversion,
   Unicode loss, case folding, or unsupported normalization;
-- preserves headings, tags, links and destinations, marker meaning, inline text,
+- preserves headings, tags, links and destinations, managed-host boundary
+  meaning, inline text,
   code-block content, and semantically significant whitespace;
 - normalizes line endings and only parser-proven formatting trivia;
 - excludes derived generated `Entries` interiors from authored identity while
@@ -214,13 +215,14 @@ all four facts:
 
 1. No Framework receipt selects a target in the closed base Install subset.
 2. No exact current payload destination is occupied.
-3. No canonical `AGENTS.md` or supported `CLAUDE.md` managed block exists.
+3. No recognized canonical or exact legacy `AGENTS.md` or supported `CLAUDE.md`
+   managed host exists.
 4. No recognized Framework recovery or residual evidence exists.
 
-Existing hosts without matching markers and unrelated user-owned `.agents`
-content do not alone defeat this state. An unavailable absence fact is
-`incomplete`; partial, malformed, ambiguous, colliding, or occupied evidence is
-`blocked` when unsafe. Neither writes.
+Existing hosts with no managed-host boundary candidate and unrelated user-owned
+`.agents` content do not alone defeat this state. An unavailable absence fact
+is `incomplete`; partial, malformed, ambiguous, colliding, or occupied evidence
+is `blocked` when unsafe. Neither writes.
 
 ### Trusted exact managed state
 
@@ -246,10 +248,10 @@ force is not managed-update authority.
 
 An exact current payload destination or supported managed block may be an
 eligible initial occupant only when no known ownership receipt or competing
-manager claims it and all route, source, physical-identity, containment, marker,
-bundle identity and recovery-bundle facts are safe. A known user-owned or Extension-owned
-path, route collision, ambiguous managed block, unknown path, or unsafe boundary
-is not eligible.
+manager claims it and all route, source, physical-identity, containment,
+managed-host boundary, bundle identity and recovery-bundle facts are safe. A
+known user-owned or Extension-owned path, route collision, ambiguous managed
+block, unknown path, or unsafe boundary is not eligible.
 
 Normal install blocks an eligible occupant without writing. Explicit force may
 replace only the exact recognized occupant, never its surrounding host bytes,
@@ -278,9 +280,18 @@ bytes outside the body remain unchanged; retired guard comments inside it are
 removed by the shared generated-navigation projection.
 
 Root and provider resolution admits only an absent host where creation is
-supported, an existing host with no markers for bounded append, or one complete
-ordered marker pair for bounded replacement. It rejects malformed marker
-topology and never replaces host bytes outside the managed block.
+supported, an existing host with no boundary candidate for bounded append, or
+one complete canonical heading and footer pair or exact legacy comment pair for
+bounded replacement. It recognizes boundaries from
+Markdig parsed root-level blocks and typed source spans. Fenced code blocks,
+quoted blocks, nested lists, and inline examples do not delimit a host. Missing,
+reversed, duplicate, mixed, or otherwise ambiguous boundaries block before any
+write. A heading without its named footer never captures the user suffix or the
+end of the file. Install emits the canonical heading and footer form for new or
+eligible replacement hosts. A managed legacy host is managed divergence even
+when its instruction or import body matches, so it remains blocked and directs
+the caller to Update. Install never replaces host bytes outside the managed
+block.
 
 ## Complete Plan And Preflight
 
@@ -296,7 +307,8 @@ The one ordered plan records, for every effect:
 - exact bundle identity, provenance, success-removal, and residual-reporting
   facts.
 
-Preflight validates all source, target, route, ownership, containment, marker,
+Preflight validates all source, target, route, ownership, containment,
+managed-host boundary,
 cross-section, expected-state, recovery-bundle, verification, and preservation
 facts. Every planned existing-target effect (`Replace` or
 `ReplaceGeneratedRegion`) must be covered by one
@@ -313,7 +325,7 @@ evidence.
 `--automatic` admits only safe absent creation or exact no-op effects already
 selected by the explicit operation. It cannot admit an eligible initial occupant
 without explicit `--force`. It never admits divergence, deletion, adoption,
-ownership, or marker repair.
+ownership, or managed-host boundary repair.
 
 ## Dry-Run Parity
 
@@ -350,7 +362,7 @@ When application is selected:
    normalized physical workspace path. Cancellation before acquisition creates
    no workspace effect.
 3. Revalidate the complete plan and all volatile source, target, ownership,
-   containment, marker, section, and expected-state facts.
+    containment, managed-host boundary, section, and expected-state facts.
 4. Prepare and verify the one complete external recovery bundle when the plan
    contains an existing-target effect. Complete preparation before any workspace
    effect.
@@ -484,7 +496,12 @@ A conforming implementation must demonstrate:
 - syntax-aware semantic fingerprints, exact operation-time bytes, format-only
   observations, generated-interior exclusion, and fail-closed equivalence;
 - one intended topology and current Index projection;
-- bounded generated sections and root/provider markers; no hidden subprocess;
+- bounded generated sections and canonical or legacy root/provider boundaries;
+  no hidden subprocess;
+- canonical `# Open Forge` and standalone footer output for both hosts, exact
+  legacy boundary input, source/dogfood parity, unchanged bytes outside the
+  managed span, and blocked incomplete, reversed, duplicate, mixed, or
+  ambiguous boundaries;
 - complete preflight, external schema-v1 recovery-bundle preparation and verification,
   exact prior-byte preservation, expected-state revalidation, per-effect and
   whole-operation verification, typed post-verification deletion

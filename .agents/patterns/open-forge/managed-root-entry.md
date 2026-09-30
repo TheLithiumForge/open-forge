@@ -11,18 +11,27 @@ open-forge:
 A canonical source template contains exactly one complete ordered managed block and only that block:
 
 ```md
-<!-- {marker}:start -->
+# Open Forge
 
-managed content
-<!-- {marker}:end -->
+managed instructions or imports
+
+**End of Open Forge managed section.**
 ```
 
 A workspace target has one of two valid shapes:
 
-1. no matching markers, so installation appends the source block;
-2. exactly one complete ordered marker pair, so installation replaces that block.
+1. no canonical or exact legacy boundary candidate, so installation appends the
+   canonical source block;
+2. exactly one complete canonical heading and footer pair or exact legacy
+   comment pair, so installation replaces that span with the canonical block.
 
-Text outside the managed block belongs to the workspace and remains byte-for-byte unchanged.
+An incomplete, reversed, duplicate, mixed, or otherwise ambiguous boundary is
+neither valid shape and blocks before writing. Text outside the managed block
+belongs to the workspace and remains byte-for-byte unchanged. Boundaries are
+recognized from root-level parsed Markdown blocks and typed source spans. A
+heading or footer inside fenced code, a quote, a nested list, or an inline
+example is content, not a delimiter. A heading without its named footer never
+extends the managed span to the user suffix or end-of-file.
 
 ### Entry Roles
 
@@ -33,7 +42,7 @@ Text outside the managed block belongs to the workspace and remains byte-for-byt
 ### Installation
 
 - Validate every canonical source template and existing target before applying the installation plan.
-- Treat incomplete, reversed, or duplicate marker topology as an invalid target and stop before writing.
+- Treat incomplete, reversed, duplicate, mixed, or ambiguous boundary topology as an invalid target and stop before writing.
 - Keep source and dogfood blocks identical.
 - Reapplying the same source block produces no change.
 
@@ -42,5 +51,5 @@ Text outside the managed block belongs to the workspace and remains byte-for-byt
 - One canonical policy source serves every bridge.
 - Source templates contain one managed block and no surrounding authored content.
 - Valid workspace content outside the block survives creation, replacement, and reinstallation.
-- Invalid marker topology produces no partial output.
+- Invalid or ambiguous boundary topology produces no partial output.
 - File-specific maintenance documents link to this pattern, their source, implementation, external contract when present, and verification.

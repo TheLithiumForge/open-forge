@@ -8,6 +8,19 @@ public sealed class UpdateRemovedFilesIntegrationTests
 {
     private const string ExcludedOwnedPath = ".agents/patterns/_patterns.md";
     private const string ExcludedGeneratedPath = UpdateIntegrationWorkspace.GeneratedPath;
+    private const string CanonicalHostHeading = "# Open Forge";
+    private const string CanonicalHostFooter = "**End of Open Forge managed section.**";
+    private const string LegacyStartMarker = "<!-- open-forge:start -->";
+    private const string LegacyEndMarker = "<!-- open-forge:end -->";
+    private const string LegacyHostPrefix = "User-owned introduction.\n\n";
+    private const string LegacyHostSuffix = "\n\n# User-owned notes\nKeep this suffix exactly.\n";
+    private const string LegacyAgentsBody =
+        "# Open Forge\n\n"
+        + "Open Forge provides the working rules and context for this workspace.\n\n"
+        + "Before starting a task, read `.agents/loader.md`.\n"
+        + "Use it to select every relevant scope, including nested scopes.\n"
+        + "Follow the loaded rules throughout the task.\n";
+    private const string LegacyClaudeBody = "@AGENTS.md\n@.agents/loader.md\n";
 
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update leaves an absent excluded owned file missing through force and prune, then restores it when exclusion is removed"), Trait("Evidence", "Integration")]
@@ -74,6 +87,46 @@ public sealed class UpdateRemovedFilesIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Update preserves an excluded root host's legacy HTML bytes without conversion"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    [InlineData("AGENTS.md")]
+    [InlineData("CLAUDE.md")]
+    public async Task PreservesExcludedLegacyRootHostBytes(string path)
+    {
+        using var workspace = UpdateIntegrationWorkspace.Create("update-removed-files-legacy-host");
+        workspace.WriteText(".agents/open-forge.json", "{}");
+        await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
+        var legacy = LegacyHostContents(path);
+        Assert.DoesNotContain(CanonicalHostFooter, legacy, StringComparison.Ordinal);
+        if (path == "CLAUDE.md")
+        {
+            Assert.DoesNotContain(CanonicalHostHeading, legacy, StringComparison.Ordinal);
+        }
+
+        workspace.ReplaceText(path, legacy);
+        var expected = workspace.ReadBytes(path);
+        var settings = $$"""{"removedFiles":["{{path}}"]}""";
+        workspace.ReplaceText(".agents/open-forge.json", settings);
+
+        var result = await workspace.ExecuteAsync(workspace.Request());
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(expected, workspace.ReadBytes(path));
+        Assert.DoesNotContain(result.Effects, effect => effect.Path == path);
+    }
+
+    private static string LegacyHostContents(string path)
+    {
+        var body = path switch
+        {
+            "AGENTS.md" => LegacyAgentsBody,
+            "CLAUDE.md" => LegacyClaudeBody,
+            _ => throw new ArgumentOutOfRangeException(nameof(path), path, "Unsupported managed host."),
+        };
+
+        return $"{LegacyHostPrefix}{LegacyStartMarker}\n\n{body}{LegacyEndMarker}\n{LegacyHostSuffix}";
+    }
+
+    [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update blocks instead of restoring an excluded missing loader required by remaining routes"), Trait("Evidence", "Integration")]
     public async Task BlocksWhenMissingExcludedLoaderIsRequired()
     {
@@ -117,9 +170,8 @@ public sealed class UpdateRemovedFilesIntegrationTests
 
     private static void MutateManagedRegion(UpdateIntegrationWorkspace workspace, string path)
     {
-        const string marker = "<!-- open-forge:start -->";
         var current = workspace.ReadText(path);
-        var changed = current.Replace(marker, marker + "\n\nExcluded managed-region bytes.", StringComparison.Ordinal);
+        var changed = current.Replace(CanonicalHostHeading, CanonicalHostHeading + "\n\nExcluded managed-region bytes.", StringComparison.Ordinal);
         Assert.NotEqual(current, changed);
         workspace.ReplaceText(path, changed);
     }

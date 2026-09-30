@@ -24,6 +24,6 @@ Added since shipped: about -0.2k tokens
 All routed files: 14 files, about 8.6k tokens (startup is 69%)
 Routes: 7 root categories, 10 Entries sections current
 Framework files: 14 current
-14 routed files, 11 startup files, 5861 startup tokens, 1 may-load-again files, 278 may-load-again tokens, 8554 all routed tokens, 68.514892000116914623096483793 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 14 current Framework files, 1 changed Framework files, 4 warnings.
+14 routed files, 11 startup files, 5858 startup tokens, 1 may-load-again files, 278 may-load-again tokens, 8551 all routed tokens, 68.504765803169405297935793228 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 14 current Framework files, 1 changed Framework files, 4 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

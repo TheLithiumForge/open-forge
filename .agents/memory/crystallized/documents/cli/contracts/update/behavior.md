@@ -141,15 +141,30 @@ reversed, nested, misplaced, or ambiguous boundary blocks before the first
 effect. Update never starts a hidden index subprocess.
 
 Root/provider planning admits only absent-host creation when supported, bounded
-append to a valid host with no markers, or replacement inside exactly one valid
-ordered marker pair. Outside bytes remain unchanged. Force is not marker-repair
+append to a valid host with no boundary candidate, or replacement inside
+exactly one valid canonical heading and footer pair or exact legacy
+comment pair. Markdig parsed root-level blocks and typed source spans provide
+the boundary facts. Fenced code blocks, quoted blocks, nested lists, and inline
+examples are content, not delimiters. A complete legacy pair is input-only.
+Normal and `--automatic` Update convert an owned legacy host to the canonical
+heading and footer form under the existing ownership, recovery, preview,
+confirmation, and expected-state rules. Dry-run reports that conversion without
+writing. No migration flag or additional force requirement is needed. Missing,
+reversed, duplicate, mixed, or otherwise ambiguous boundaries
+block the complete plan. A heading without its named footer never captures the
+user suffix or the end of the file. Outside bytes remain unchanged. Index is
+unchanged and remains navigation-only. Force is not managed-host boundary-repair
 authority.
 
 ## Normal Plan
 
 Ordinary Update replaces edited owned Framework content, restores missing owned
 current targets, creates safe absent current targets and projects affected
-navigation. Semantic equality preserves current formatting. `removedCategories`
+navigation. Semantic equality preserves current formatting. For an owned root
+host in the exact legacy form, ordinary Update treats conversion to the
+canonical heading and footer form as the normal replacement. `--automatic`
+selects that replacement under the same safety rules, and preview reports it
+without applying it. `removedCategories`
 excludes payloads beneath each named root category from reinstatement.
 `removedFiles` excludes exact canonical workspace-relative file destinations
 from whole-file and generated-region planning, including root managed hosts. The
@@ -318,6 +333,13 @@ Final verification may retain an informational ownership observation when lock
 publication was skipped. It still verifies an effect-free intended projection,
 the same raw ownership read state and expectation, and every applied content
 effect. When a lock write was planned, its exact intended bytes must verify.
+
+Managed-host evidence covers canonical heading and footer output for both hosts,
+exact legacy comment input, normal and automatic Update conversion, dry-run
+preview, source/dogfood parity, unchanged prefix and suffix bytes, and
+root-level parsed spans. Incomplete, reversed, duplicate, mixed, and otherwise
+ambiguous boundaries block without writes, and a heading without its footer
+never captures the user suffix or end-of-file.
 
 Directory creation follows the installed-Framework and exclusion boundaries in
 [Normal Plan](#normal-plan). A missing retired path requires neither parent

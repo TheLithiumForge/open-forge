@@ -4,6 +4,7 @@ using Markdig.Syntax;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.ManagedHosts;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 
@@ -26,7 +27,8 @@ internal sealed class MarkdownDocumentParser
                     [],
                     [],
                     MarkdownGeneratedRegionFact.Unavailable("The Markdown body boundary is unavailable.")),
-                new MarkdownInlineFacts([], [], [], []));
+                new MarkdownInlineFacts([], [], [], []),
+                MarkdownManagedHostFact.Invalid("The Markdown body boundary is unavailable."));
         }
 
         var bodyStart = frontmatter.BodyStart ?? throw new InvalidOperationException(
@@ -83,7 +85,8 @@ internal sealed class MarkdownDocumentParser
                 inlineFacts.VisibleText,
                 inlineFacts.OpaqueSpans,
                 inlineFacts.Links,
-                inlineFacts.Images));
+                inlineFacts.Images),
+            MarkdownManagedHostReader.Read(source, document, parseStart));
     }
 
     private static MarkdownHeadingFact CreateHeadingFact(HeadingBlock heading, int bodyStart)

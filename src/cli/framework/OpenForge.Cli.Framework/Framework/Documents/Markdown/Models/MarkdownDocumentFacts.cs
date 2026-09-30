@@ -9,7 +9,8 @@ internal sealed record MarkdownDocumentFacts
     internal MarkdownDocumentFacts(
         string source,
         MarkdownDocumentStructure structure,
-        MarkdownInlineFacts inlineFacts)
+        MarkdownInlineFacts inlineFacts,
+        MarkdownManagedHostFact? managedHost = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(structure);
@@ -29,6 +30,7 @@ internal sealed record MarkdownDocumentFacts
         Links = inlineFacts.Links;
         Images = inlineFacts.Images;
         GeneratedRegion = structure.GeneratedRegion;
+        ManagedHost = managedHost ?? MarkdownManagedHostFact.Absent();
     }
 
     internal string Source { get; }
@@ -50,4 +52,6 @@ internal sealed record MarkdownDocumentFacts
     internal IReadOnlyList<MarkdownLinkFact> Images { get; }
 
     internal MarkdownGeneratedRegionFact GeneratedRegion { get; }
+
+    internal MarkdownManagedHostFact ManagedHost { get; }
 }

@@ -48,16 +48,28 @@ Open Forge keeps agent-facing meaning visible in raw and rendered Markdown.
 HTML comments do not carry instructions, selection guidance, behavioral
 requirements, or other authored meaning.
 
-The only canonical HTML comments are these exact machine-owned boundary
-tokens:
+Canonical managed root hosts use one top-level ATX heading and one standalone
+strong paragraph as their boundaries:
 
-```text
-<!-- open-forge:start -->
-<!-- open-forge:end -->
+```md
+# Open Forge
+
+managed instructions or imports
+
+**End of Open Forge managed section.**
 ```
 
-They must be paired and position-valid under the owning workspace-block contract. The markers contain no instruction body; Markdown
-between them remains visible.
+The heading and footer are ordinary Markdown blocks, but the managed-host
+contract assigns them boundary meaning. Markdown between them remains ordinary
+instructions or imports. Boundary recognition is structural, so fenced code,
+quoted blocks, nested lists, and inline examples do not claim host ownership. An
+incomplete heading and footer pair does not extend ownership to the end of the
+file.
+
+Existing exact `<!-- open-forge:start -->` and `<!-- open-forge:end -->` lines
+remain input-only compatibility for managed hosts. They are not canonical
+output. The generated `Entries` contract separately retains exact historical
+guard comments as input-only migration data. Index does not emit them.
 
 Generated Entries use heading boundaries, with no comment tokens.
 

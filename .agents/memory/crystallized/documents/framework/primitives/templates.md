@@ -18,8 +18,10 @@ Templates reduce blank-page cost. They provide useful starting material without 
 Templates expose the need or result they address so the most specific useful starting source can be selected before its contents are copied.
 
 Selection and removal guidance remains visible in removable `{...}`
-placeholders. Templates do not hide instructions in HTML comments; comments
-are reserved for exact machine control markers with no behavioral body.
+placeholders. Templates do not hide instructions in HTML comments. Canonical
+Templates use visible Markdown and do not emit HTML guard comments. Exact legacy
+Open Forge control-marker pairs remain input-only compatibility, as defined by
+the [Markdown compatibility contract](../markdown/compatibility.md).
 
 Generic Templates are fallbacks. A specialization earns its own source only when the content to be instantiated differs materially, not merely because a subject has a different name. This keeps useful starting points discoverable without turning Templates into a catalogue of every possible artifact.
 

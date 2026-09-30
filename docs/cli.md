@@ -615,6 +615,27 @@ open-forge update --dry-run
 open-forge update --prune --dry-run
 ```
 
+Managed `AGENTS.md` and `CLAUDE.md` hosts use a visible boundary. The
+canonical form starts with a top-level `# Open Forge` heading and ends with a
+standalone `**End of Open Forge managed section.**` paragraph. New installs
+write this form. Update still accepts the exact legacy pair
+`<!-- open-forge:start -->` and `<!-- open-forge:end -->` as input.
+Instructions and Claude imports remain ordinary Markdown between the
+boundaries. Put user instructions before or after the managed span so Update
+leaves them outside managed content.
+
+To convert an existing legacy host, preview the conversion with
+`open-forge update --dry-run`, then apply it with
+`open-forge update --automatic`. This uses the existing Update ownership,
+confirmation, recovery, and preservation rules. It preserves the exact bytes
+outside the recognized managed span, so no migration flag or `--force` is
+needed solely for this syntax change. `index` only rebuilds generated `Entries`
+navigation and does not migrate these hosts.
+
+Missing, reversed, duplicated, mixed, or otherwise ambiguous boundaries block
+writes. A heading without its named closing paragraph is incomplete and does
+not make the rest of the file managed.
+
 Normal update replaces changed owned files and restores missing ones when the
 current ownership facts authorize the effect. It reports every replaced,
 restored, deleted, and retained path. Retired managed content is retained unless

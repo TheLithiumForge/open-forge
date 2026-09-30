@@ -42,6 +42,28 @@ The Framework is the base: 15 Markdown files. They are `AGENTS.md`, the `CLAUDE.
 
 Both routes install the same Framework files. The CLI also records what it installed, so it can update those files later.
 
+New installations use visible managed boundaries in `AGENTS.md` and
+`CLAUDE.md`. Keep your own instructions before or after the managed section.
+For example:
+
+```md
+# Project instructions
+
+Keep project-specific instructions here.
+
+# Open Forge
+
+Before starting a task, read `.agents/loader.md`.
+Use it to select every relevant scope, including nested scopes.
+Follow the loaded rules throughout the task.
+
+**End of Open Forge managed section.**
+
+# More project instructions
+
+Keep additional project-specific instructions here.
+```
+
 ### With the CLI
 
 From your project:
@@ -64,6 +86,15 @@ cat open-forge/src/open-forge/AGENTS.md >> /path/to/your-project/AGENTS.md
 ```
 
 If your harness reads `CLAUDE.md`, append `open-forge/src/open-forge/CLAUDE.md` to your project's `CLAUDE.md` as well. If the project already has a `.agents/` folder, merge the two by hand instead of copying over it.
+
+If an existing host still uses the legacy `<!-- open-forge:start -->` and
+`<!-- open-forge:end -->` pair, you do not need to migrate it by hand. Run
+`open-forge update --dry-run` to preview the conversion, then
+`open-forge update --automatic` to apply it under the normal update rules.
+Content outside the recognized managed section stays unchanged. See the
+[CLI reference](/guides/cli#update) for the complete boundary, recovery, and
+blocked-write behavior. `index` only rebuilds generated navigation and does
+not convert these hosts.
 
 ## 3. Review and commit
 

@@ -12,18 +12,25 @@ public sealed class F01InstallReadinessJourneyTests
     private const string ClaudePath = "CLAUDE.md";
     private const string OwnershipPath = ".agents/open-forge.lock.json";
     private const string ReadmePath = "README.md";
-    private const string ManagedStart = "<!-- open-forge:start -->";
-    private const string ManagedEnd = "<!-- open-forge:end -->";
+    private const string LegacyManagedStart = "<!-- open-forge:start -->";
+    private const string LegacyManagedEnd = "<!-- open-forge:end -->";
+    private const string ManagedStart = "# Open Forge";
+    private const string ManagedEnd = "**End of Open Forge managed section.**";
     private const string OccupiedPath = ".agents/guidance/_guidance.md";
     private const string ExpectedGuidancePayloadSha256 = "47f5fe9f6b5d4bd59c7818664181bac5e912f5ed0eb85ae8c34cbf6b5297b664";
     private const string ExpectedManagedRegion =
-        "<!-- open-forge:start -->\n\n"
-        + "# Open Forge\n\n"
+        ManagedStart + "\n\n"
         + "Open Forge provides the working rules and context for this workspace.\n\n"
         + "Before starting a task, read `.agents/loader.md`.\n"
         + "Use it to select every relevant scope, including nested scopes.\n"
         + "Follow the loaded rules throughout the task.\n"
-        + "<!-- open-forge:end -->\n";
+        + "\n"
+        + ManagedEnd + "\n";
+    private const string ExpectedClaudeRegion =
+        ManagedStart + "\n\n"
+        + "@AGENTS.md\n"
+        + "@.agents/loader.md\n\n"
+        + ManagedEnd + "\n";
 
     private static readonly IReadOnlyList<string> ExpectedStartupSourcePaths =
     [
@@ -249,6 +256,75 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Equal(readme, File.ReadAllText(workspace.Combine(ReadmePath)));
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
+    }
+
+    [Fact(DisplayName = "F01 updates legacy root hosts to canonical boundaries while preserving authored bytes"),
+     Trait("Feature", "install-readiness"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F01")]
+    public async Task UpdateMigratesLegacyRootHostsToCanonicalBoundaries()
+    {
+        using var workspace = PublishedJourneyWorkspace.Create("f01-update-managed-host-migration");
+        workspace.ExpectCoreInstall();
+
+        var install = await workspace.RunAsync("install", "--automatic");
+        AssertCompleted(install);
+
+        var canonicalAgents = Encoding.UTF8.GetBytes(ExpectedManagedRegion);
+        var canonicalClaude = Encoding.UTF8.GetBytes(ExpectedClaudeRegion);
+        Assert.Equal(canonicalAgents, File.ReadAllBytes(workspace.Combine(AgentsPath)));
+        Assert.Equal(canonicalClaude, File.ReadAllBytes(workspace.Combine(ClaudePath)));
+
+        const string authoredPrefix = "# Préface 🧭\r\n\r\nKeep this user-owned introduction.\r\n";
+        const string authoredSuffix = "\r\n## User notes\r\nKeep this suffix exactly.\r\n";
+        var legacyAgents = authoredPrefix
+            + LegacyManagedStart + "\n\n"
+            + ExpectedManagedRegion.Replace(ManagedEnd, LegacyManagedEnd, StringComparison.Ordinal)
+            + authoredSuffix;
+        var legacyClaude = authoredPrefix
+            + LegacyManagedStart + "\n\n"
+            + "@AGENTS.md\n"
+            + "@.agents/loader.md\n"
+            + LegacyManagedEnd + "\n"
+            + authoredSuffix;
+        Assert.Equal(1, Count(legacyAgents, ManagedStart));
+        Assert.DoesNotContain(ManagedStart, legacyClaude, StringComparison.Ordinal);
+        var expectedAgents = Encoding.UTF8.GetBytes(authoredPrefix + ExpectedManagedRegion + authoredSuffix);
+        var expectedClaude = Encoding.UTF8.GetBytes(authoredPrefix + ExpectedClaudeRegion + authoredSuffix);
+        var legacyAgentsBytes = Encoding.UTF8.GetBytes(legacyAgents);
+        var legacyClaudeBytes = Encoding.UTF8.GetBytes(legacyClaude);
+        workspace.WriteText(AgentsPath, legacyAgents);
+        workspace.WriteText(ClaudePath, legacyClaude);
+
+        var beforeDryRun = workspace.SnapshotState();
+        var externalBeforeDryRun = SnapshotExternalStore(workspace);
+        var dryRun = await workspace.RunAsync("update", "--dry-run");
+        AssertCompleted(dryRun);
+        Assert.Equal(beforeDryRun, workspace.SnapshotState());
+        Assert.Equal(externalBeforeDryRun, SnapshotExternalStore(workspace));
+        Assert.Equal(legacyAgentsBytes, File.ReadAllBytes(workspace.Combine(AgentsPath)));
+        Assert.Equal(legacyClaudeBytes, File.ReadAllBytes(workspace.Combine(ClaudePath)));
+
+        var applied = await workspace.RunAsync("update", "--automatic");
+        AssertCompleted(applied);
+        Assert.Equal(expectedAgents, File.ReadAllBytes(workspace.Combine(AgentsPath)));
+        Assert.Equal(expectedClaude, File.ReadAllBytes(workspace.Combine(ClaudePath)));
+
+        var migratedAgents = Encoding.UTF8.GetString(expectedAgents);
+        var migratedClaude = Encoding.UTF8.GetString(expectedClaude);
+        Assert.Equal(1, Count(migratedAgents, ManagedStart));
+        Assert.Equal(1, Count(migratedClaude, ManagedStart));
+        Assert.DoesNotContain(LegacyManagedStart, migratedAgents, StringComparison.Ordinal);
+        Assert.DoesNotContain(LegacyManagedStart, migratedClaude, StringComparison.Ordinal);
+        Assert.DoesNotContain(LegacyManagedEnd, migratedAgents, StringComparison.Ordinal);
+        Assert.DoesNotContain(LegacyManagedEnd, migratedClaude, StringComparison.Ordinal);
+
+        var beforeRepeat = workspace.SnapshotState();
+        var externalBeforeRepeat = SnapshotExternalStore(workspace);
+        var repeat = await workspace.RunAsync("update", "--automatic");
+        AssertCompleted(repeat);
+        Assert.Equal(beforeRepeat, workspace.SnapshotState());
+        Assert.Equal(externalBeforeRepeat, SnapshotExternalStore(workspace));
+        Assert.Equal(expectedAgents, File.ReadAllBytes(workspace.Combine(AgentsPath)));
+        Assert.Equal(expectedClaude, File.ReadAllBytes(workspace.Combine(ClaudePath)));
     }
 
     [Fact(DisplayName = "F01 blocks an eligible occupied target, previews force, then replaces only that target"),

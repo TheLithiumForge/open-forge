@@ -15,8 +15,9 @@ The [canonical syntax](syntax.md) and [routed representation](routes.md) define
 what Open Forge authors and emits. The [CLI MVP
 Architecture](../../cli/mvp-architecture.md) defines only the frozen old CLI's
 retained behavior until that implementation is retired. Most new-CLI
-compatibility input remains to be designed. The structural heading and
-entrypoint filename inputs below are explicit accepted exceptions.
+compatibility input remains to be designed. The structural heading,
+managed-host, and entrypoint filename inputs below are explicit accepted
+exceptions.
 
 ## Accepted New CLI Structural Headings
 
@@ -56,6 +57,30 @@ removing these guards on the first rewrite and remaining byte-stable thereafter.
 A lone or reordered guard does not change the heading boundary. Comments outside
 the body and quoted examples remain ordinary source bytes. This exception is
 input-only; it does not restore the retired marker grammar.
+
+Root managed hosts use a separate accepted boundary. Canonical output starts
+with one top-level `# Open Forge` ATX heading and ends with one standalone
+paragraph whose exact contents are `**End of Open Forge managed section.**`.
+Instructions or imports between those blocks remain ordinary Markdown.
+
+Update reads the exact legacy `<!-- open-forge:start -->` and
+`<!-- open-forge:end -->` pair indefinitely as input-only compatibility. Root
+Update selects conversion to the canonical heading and footer during ordinary
+and `--automatic` application, and reports the same conversion in a dry-run
+preview, under the existing ownership, recovery, expected-state, and
+confirmation rules. No migration flag or additional force requirement is
+needed. Install emits canonical syntax and retains its existing
+managed-divergence policy. Index does not recognize or convert managed hosts
+and remains navigation-only.
+
+Managed-host boundaries come from Markdig parsed root-level blocks and typed
+source spans. A heading or footer inside a fenced code block, quoted block,
+nested list, or inline example is content, not a boundary. A host with no
+boundary candidate may use the bounded append behavior of its owning operation.
+A complete canonical pair or exact legacy comment pair bounds a replacement.
+Missing, reversed, duplicate, mixed, or otherwise ambiguous boundaries block
+writes. A heading without its named footer never captures the user suffix or
+the end of the file.
 
 ## Accepted New CLI Entrypoint Filenames
 

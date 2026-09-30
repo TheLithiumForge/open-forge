@@ -125,24 +125,27 @@ public sealed class InstallOperationIntegrationTests
             "CLAUDE.md",
             TestContext.Current.CancellationToken);
         Assert.Equal(
-            "<!-- open-forge:start -->\n\n"
-            + "# Open Forge\n\n"
+            "# Open Forge\n\n"
             + "Open Forge provides the working rules and context for this workspace.\n\n"
             + "Before starting a task, read `.agents/loader.md`.\n"
             + "Use it to select every relevant scope, including nested scopes.\n"
-            + "Follow the loaded rules throughout the task.\n"
-            + "<!-- open-forge:end -->\n",
+            + "Follow the loaded rules throughout the task.\n\n"
+            + "**End of Open Forge managed section.**\n",
             agents);
         Assert.Equal(
-            "<!-- open-forge:start -->\n\n"
+            "# Open Forge\n\n"
             + "@AGENTS.md\n"
-            + "@.agents/loader.md\n"
-            + "<!-- open-forge:end -->\n",
+            + "@.agents/loader.md\n\n"
+            + "**End of Open Forge managed section.**\n",
             claude);
-        Assert.Equal(1, Count(agents, "<!-- open-forge:start -->"));
-        Assert.Equal(1, Count(agents, "<!-- open-forge:end -->"));
-        Assert.Equal(1, Count(claude, "<!-- open-forge:start -->"));
-        Assert.Equal(1, Count(claude, "<!-- open-forge:end -->"));
+        Assert.Equal(1, Count(agents, "# Open Forge"));
+        Assert.Equal(1, Count(agents, "**End of Open Forge managed section.**"));
+        Assert.Equal(1, Count(claude, "# Open Forge"));
+        Assert.Equal(1, Count(claude, "**End of Open Forge managed section.**"));
+        Assert.DoesNotContain("<!-- open-forge:start -->", agents, StringComparison.Ordinal);
+        Assert.DoesNotContain("<!-- open-forge:end -->", agents, StringComparison.Ordinal);
+        Assert.DoesNotContain("<!-- open-forge:start -->", claude, StringComparison.Ordinal);
+        Assert.DoesNotContain("<!-- open-forge:end -->", claude, StringComparison.Ordinal);
 
         var memory = await workspace.ReadTextAsync(
             ".agents/memory/_memory.md",

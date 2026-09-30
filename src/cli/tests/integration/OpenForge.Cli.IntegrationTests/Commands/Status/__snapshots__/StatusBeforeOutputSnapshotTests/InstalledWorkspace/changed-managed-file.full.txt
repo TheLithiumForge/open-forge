@@ -46,6 +46,6 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-14 routed files, 11 startup files, 6097 startup tokens, 1 may-load-again files, 278 may-load-again tokens, 8790 all routed tokens, 69.361169577336594800614369418 startup share, 7 root categories, 12 current Entries sections, 14 current Framework files, 1 changed Framework files, 1 warnings.
+14 routed files, 11 startup files, 6094 startup tokens, 1 may-load-again files, 278 may-load-again tokens, 8787 all routed tokens, 69.351580504737246422169744217 startup share, 7 root categories, 12 current Entries sections, 14 current Framework files, 1 changed Framework files, 1 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

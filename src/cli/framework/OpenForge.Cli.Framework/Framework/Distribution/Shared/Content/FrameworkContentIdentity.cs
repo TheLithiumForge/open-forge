@@ -10,9 +10,6 @@ namespace OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 
 internal sealed class FrameworkContentIdentity
 {
-    private const string ManagedStart = "<!-- open-forge:start -->";
-    private const string ManagedEnd = "<!-- open-forge:end -->";
-
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
@@ -38,40 +35,23 @@ internal sealed class FrameworkContentIdentity
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        var start = source.IndexOf(ManagedStart, StringComparison.Ordinal);
-        var lastStart = source.LastIndexOf(ManagedStart, StringComparison.Ordinal);
-        var end = source.IndexOf(ManagedEnd, StringComparison.Ordinal);
-        var lastEnd = source.LastIndexOf(ManagedEnd, StringComparison.Ordinal);
-        if (start < 0 && end < 0)
+        var managedHost = _documentParser.Parse(source).ManagedHost;
+        if (managedHost.State == MarkdownManagedHostState.Absent)
         {
             return FrameworkManagedBlockRecognition.Absent();
         }
 
-        if (start < 0
-            || end < 0
-            || start != lastStart
-            || end != lastEnd
-            || end < start)
+        if (managedHost.State == MarkdownManagedHostState.Invalid)
         {
             return FrameworkManagedBlockRecognition.Blocked(
-                "The managed host contains an incomplete, duplicate, or reversed Open Forge marker boundary.");
+                managedHost.Cause ?? throw new InvalidOperationException("An invalid managed host requires a cause."));
         }
 
-        var endExclusive = checked(end + ManagedEnd.Length);
-        if (endExclusive < source.Length && source[endExclusive] == '\r')
-        {
-            endExclusive++;
-        }
-
-        if (endExclusive < source.Length && source[endExclusive] == '\n')
-        {
-            endExclusive++;
-        }
-
+        var span = managedHost.Span ?? throw new InvalidOperationException("A present managed host requires a source span.");
         return FrameworkManagedBlockRecognition.Present(
-            start,
-            endExclusive,
-            StrictUtf8.GetBytes(source[start..endExclusive]));
+            span.Start,
+            span.End,
+            StrictUtf8.GetBytes(source[span.Start..span.End]));
     }
 
     internal string ReadGeneratedEntriesFingerprint(ReadOnlySpan<byte> bytes)

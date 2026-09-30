@@ -1,5 +1,6 @@
-<!-- open-forge:start -->
+# Open Forge
 
 @AGENTS.md
 @.agents/loader.md
-<!-- open-forge:end -->
+
+**End of Open Forge managed section.**

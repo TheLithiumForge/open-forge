@@ -18,7 +18,7 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 - Templates are copy-ready starting files. After copying and adapting one, the destination is maintained independently.
 - The entrypoint explains when to choose a Template, how the result becomes independent, how continuing requirements differ from starting content, and how customization works. Restoration follows the inherited Loader rule: removed defaults stay removed unless the user asks to restore them.
 - Every Template makes its selection information visible before use: its route description and removable `{...}` instructions state the need and primary question or result.
-- Template prose is never hidden in HTML comments. Exact Open Forge control-marker comments contain no instructions and remain the only first-party exception.
+- Template prose is never hidden in HTML comments. Canonical Templates use visible Markdown and do not emit HTML guard comments. Exact legacy Open Forge control-marker pairs remain input-only compatibility, as defined by the [Markdown compatibility contract](../../../framework/markdown/compatibility.md).
 - Templates are on-demand. The entrypoint uses #Core and #Template without a load-policy tag so its description remains visible while its Axioms load only when the route is selected.
 - A Template result receives destination-specific metadata, scope, state, authority, and relationships. The source Template does not control the result, and later Template changes do not update it.
 - Continuing guidance or requirements belong to the matching #Core route. A Template may link to that source without copying its complete rules.
@@ -62,5 +62,9 @@ Package source files are canonical. Their counterparts under `.agents/templates/
 - The category-creation closure test verifies that scoped descendants inherit #Template classification.
 - The primitive-validation closure test verifies that topical #Workflow or #Directive tags inside a template do not activate those primitive schemas.
 - First-party Extension integration verifies isolated package links, indexing, installation, removal, and normalized package-to-dogfood leaf parity.
-- First-party source verification rejects hidden Template instructions and any
-  HTML comment other than an exact position-valid Open Forge control marker.
+- First-party source verification continues to reject hidden Template
+  instructions and any HTML comment other than an exact, position-valid Open
+  Forge control marker accepted as legacy input-only compatibility under the
+  [Markdown compatibility contract](../../../framework/markdown/compatibility.md).
+  Canonical Template source uses visible Markdown and does not emit HTML guard
+  comments.

@@ -14,7 +14,8 @@ The [source and packaging decision](../../../decisions/framework/source-and-pack
 
 ## Contract
 
-- The managed block contains only its boundary markers, the exact `@AGENTS.md` import, and the exact `@.agents/loader.md` import.
+- The managed block starts with the top-level ATX heading `# Open Forge` and ends with the standalone strong paragraph `**End of Open Forge managed section.**`. Between them it contains only the exact `@AGENTS.md` import and the exact `@.agents/loader.md` import as ordinary Markdown.
+- The exact legacy `<!-- open-forge:start -->` and `<!-- open-forge:end -->` pair remains input-only compatibility. Root Update converts it under the existing ownership, recovery, preview, confirmation, and expected-state rules. New Install output uses the canonical heading and footer, and managed divergence remains Install-blocking.
 - The [AGENTS entry contract](AGENTS.md) remains the canonical root instruction contract.
 - The [loader maintenance contract](agents/loader.md) governs the detailed Open Forge contract imported directly by the bridge.
 - Direct loader import removes an agent-decided read step without copying either canonical source into `CLAUDE.md`.
@@ -22,7 +23,7 @@ The [source and packaging decision](../../../decisions/framework/source-and-pack
 
 ### Installation
 
-- The bridge follows the [managed root entry pattern](../../../../../patterns/open-forge/managed-root-entry.md), implemented by the [native Install command](../../../../../../src/cli/core/OpenForge.Cli.Core/Commands/Install/InstallOperation.cs).
+- The bridge follows the [managed root entry pattern](../../../../../patterns/open-forge/managed-root-entry.md), implemented by the [native Install command](../../../../../../src/cli/operations/OpenForge.Cli.Operations/Commands/Install/InstallOperation.cs).
 
 ### External Contract
 
@@ -30,7 +31,7 @@ The [source and packaging decision](../../../decisions/framework/source-and-pack
 
 ## Verification
 
-- [Install integration tests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Install/InstallOperationIntegrationTests.cs) verify exact installed AGENTS and CLAUDE blocks and one matching marker pair.
-- [Managed-host Update tests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Update/UpdateManagedHostIntegrationTests.cs) verify block updates, preservation of outside bytes and repeated no-op behavior.
+- [Install integration tests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Install/InstallOperationIntegrationTests.cs) verify exact installed AGENTS and CLAUDE hosts with the canonical heading and footer.
+- [Managed-host Update tests](../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Update/UpdateManagedHostIntegrationTests.cs) verify legacy conversion, invalid-boundary blocking, preservation of outside bytes, and repeated canonical no-op behavior.
 - Check source and dogfood block equality directly when this maintenance contract changes.
 - Recheck the linked Claude Code documentation when bridge syntax or loading behavior changes.
