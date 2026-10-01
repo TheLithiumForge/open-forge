@@ -38,7 +38,7 @@ Older receipts and retired queue state are in the
 | 66  | [Council polish](tasks/task66-council-polish.md)                                     | Active | Committed; answers to its questions on `task66-council-decisions`            | Root, council            |
 | 67  | [Diagram labels](tasks/task67-diagram-labels.md)                                     | Active | Committed on `task67-diagram-labels`; the maintainer reviews                 | Root, council            |
 | 68  | [Repository link validation](tasks/task68-repository-link-validation.md)             | Complete | Phase 2/2, milestone 3/3; exact scope and checker contract preserved, integrated/tested gate green, two stale anchors fixed | Root (Worker Watch) |
-| 69  | [Next beta stabilization and release](tasks/task69-next-beta-stabilization-release.md) | Active | Phase 3/3, milestone 3/5; local qualification and review green, clean merge complete, original hosted run finished, correction integrated, repository gate passed; full requalification, second squash, and new hosted gate pending; beta4 unpublished | Root (Worker Watch) |
+| 69  | [Next beta stabilization and release](tasks/task69-next-beta-stabilization-release.md) | Complete | Phase 3/3, milestone 5/5; beta4 qualification, publication, package, documentation, upgrade, and demonstration receipts complete | Root (Worker Watch) |
 
 No completion grace has been consumed for Tasks 68 or 69.
 
@@ -69,9 +69,9 @@ Other records, such as the [beta follow-ups](tasks/beta-follow-ups.md) and the
 
 ## Current next action
 
-The current selection is [Task 69](tasks/task69-next-beta-stabilization-release.md)
-for beta stabilization. Root owns acceptance and execution runs through Worker
-Watch.
+The current selection is the 1.0 polish queue following the completed
+[Task 69](tasks/task69-next-beta-stabilization-release.md) beta4 closeout. Root
+owns acceptance and execution runs through Worker Watch.
 
 1. Continue [Task 64](tasks/task64-cli-defects-and-contract-drift.md) for its
    separate B6 follow-up, [Task 61](tasks/task61-documentation-accuracy-and-voice.md)
@@ -81,17 +81,11 @@ Watch.
    2/2, milestone 3/3. Its exact named-root scope, parser/resolver boundary,
    checker contract, tests, and wiring remain accepted. The two stale anchors
    are fixed, and no source beyond the named roots is silently excluded. Task
-  69 is phase 3/3, milestone 3/5: implementation, local qualification, and
-  review are green, the clean merge is complete, the original hosted run is
-  finished, the correction is integrated, and the corrected-candidate
-  repository gate passed. Full native/test/package requalification, a second
-  clean squash, and a new exact-SHA hosted gate remain pending. The proposed
-  B6 relaxation is deferred separately, and beta4 preserves current recovery
-  blocking behavior.
-3. Treat `0.9.0-beta.3` as the published release and `0.9.0-beta.4` as
-   unpublished until the hosted gate and the remaining publication, package,
-   and demonstration receipts are complete. Preserve Task 59's beta 2 receipt
-   as historical.
+  69 is complete at phase 3/3, milestone 5/5. Its detailed release receipt is
+  linked above. The proposed B6 relaxation is deferred separately, and beta4
+  preserves current recovery blocking behavior.
+3. Treat `0.9.0-beta.4` as the current public release. Preserve Task 59's beta
+   2 receipt and the earlier beta3 limited-verification record as historical.
 
 The detailed candidate, test, package, upgrade, merge, hosted-run, and cleanup
 evidence is in [Task 69's candidate and merge receipt](tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
@@ -103,9 +97,9 @@ worker lock restriction, and the second dry-run reported zero effects and
 findings. Scratch customization completed all five retry steps with exit 0 and
 no findings, and removal settings and ownership are correct.
 
-The exact merged candidate and hosted-run boundary are recorded in Task 69.
-One whole-candidate review and one focused recheck were consumed with no
-material findings. One grouped correction pass was consumed, with zero
-councils or completion grace consumed. Task 53's full loading audit remains
-outside this horizon. Task 55's bounded local triage is recorded, while its
-full investigation remains open outside the horizon.
+The exact final candidate, hosted-run boundary, and publication receipt are
+recorded in Task 69. One whole-candidate review and one focused recheck were
+consumed with no material findings. One grouped correction pass was consumed,
+with zero councils or completion grace consumed. Task 53's full loading audit
+remains outside this horizon. Task 55's bounded local triage is recorded, while
+its full investigation remains open outside the horizon.

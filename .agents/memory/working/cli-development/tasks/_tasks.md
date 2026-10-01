@@ -25,10 +25,10 @@ the completed release and published-package verification receipts.
 
 Accepted on 2026-10-01, [Task 69 — Next beta stabilization and
 release](task69-next-beta-stabilization-release.md) coordinates the bounded
-implementation, qualification, and release boundary. Its current boundary is
-phase 3/3, milestone 3/5: implementation, local qualification, and review are
-green, the clean merge is complete, and the exact-merged hosted gate is
-pending. Root remains active and execution is via Worker Watch.
+implementation, qualification, and release boundary. It is complete at phase
+3/3, milestone 5/5: qualification, clean squash, hosted six-host gate,
+publication, package, documentation, upgrade, and demonstration receipts are
+complete. Root remains the owner and execution was via Worker Watch.
 [Task 68 — Repository link validation](task68-repository-link-validation.md)
 is complete at phase 2/2, milestone 3/3. Its exact scope and checker contract
 remain accepted. No completion grace has been consumed.
@@ -137,5 +137,5 @@ Their links from open Tasks now point there.
 - [Open Task 65 to decide where long-running open Tasks should live, in Working Memory as now, in a Planning backlog, or split between them](task65-where-open-tasks-live.md) - #Memory #Working #Task #Planning #Backlog #Contextual #Active
 - [Task 66 council review of the published documentation for overclaims and polish, and of the shipped Framework and Extension files for consistency, redundancy, order, and readability](task66-council-polish.md) - #Memory #Working #Task #Documentation #Framework #Extensions #Council #Writing #Contextual #Active
 - [Task 67 council redesign of the framework diagram's labels, so what loads when and where content comes from reads at a glance and stays accurate](task67-diagram-labels.md) - #Memory #Working #Task #Documentation #Diagram #Loading #Council #Writing #Contextual #Active
-- [Offline validation of current README, public guides, and routed Markdown local paths and anchors](task68-repository-link-validation.md) - #Memory #Working #Task #CLI #Contextual #Active
-- [Coordinate the next beta stabilization, qualification, merge, and release boundary](task69-next-beta-stabilization-release.md) - #Memory #Working #Task #CLI #Contextual #Active
+- [Offline validation of current README, public guides, and routed Markdown local paths and anchors](task68-repository-link-validation.md) - #Memory #Working #Task #CLI #Contextual #Complete
+- [Coordinate the next beta stabilization, qualification, merge, and release boundary](task69-next-beta-stabilization-release.md) - #Memory #Working #Task #CLI #Contextual #Complete

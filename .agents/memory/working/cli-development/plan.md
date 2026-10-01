@@ -13,12 +13,11 @@ release](tasks/task69-next-beta-stabilization-release.md) as the bounded next
 horizon. [Task 68 — Repository link validation](tasks/task68-repository-link-validation.md)
 is its offline link-gate packet. Root is the active owner, execution is through
 Worker Watch, and no completion grace has been consumed. The current boundary
-is Task 69 phase 3/3, milestone 3/5: implementation, local qualification, and
-whole-candidate review are green, and the clean squash merge is complete. The
-original hosted run is finished, the correction is integrated, and the
-corrected-candidate repository gate passed. Full native/test/package
-requalification, a second clean squash, and a new exact-SHA hosted gate remain
-pending. Publication has not started. The proposed B6
+is Task 69 phase 3/3, milestone 5/5: implementation, qualification, clean
+squash, hosted six-host gate, publication, package, documentation, upgrade,
+and demonstration receipts are complete. Beta4 is the current public release.
+The detailed final receipt is in [Task 69's candidate and merge receipt](tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
+The proposed B6
 recovery-coexistence relaxation is explicitly deferred pending maintainer
 direction. Beta4 preserves current recovery blocking behavior, and this
 separate follow-up does not block shipping the accepted concrete fixes.
@@ -34,17 +33,11 @@ separate follow-up does not block shipping the accepted concrete fixes.
 - The confirmation discussion is closed by preserving existing runtime final
   confirmations and correcting Create and Install help and contracts. This
   makes no runtime policy change.
-- The current published release on npm and GitHub remains `0.9.0-beta.3`.
-  Beta4 is merged to `develop` but remains unpublished. The detailed candidate,
-  local qualification, review, merge, hosted-run, package, and upgrade receipts
-  are in [Task 69's candidate and merge receipt](tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
-  Local gates and review are green. The original hosted run is finished, the
-  correction is integrated, and the corrected-candidate repository gate passed.
-  Full native/test/package requalification, a second clean squash, and a new
-  exact-SHA hosted gate remain pending; publication has not started.
+- The current public release on npm and GitHub is `0.9.0-beta.4`. The detailed
+  qualification, review, merge, hosted-run, package, upgrade, documentation,
+  and publication receipts are in [Task 69's candidate and merge receipt](tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
   One whole-candidate review and one focused recheck were consumed. One grouped
-  correction pass was consumed, with zero councils or completion grace
-  consumed.
+  correction pass was consumed, with zero completion grace consumed.
 - Task 53's full loading audit remains outside this horizon. Task 55's full
   investigation remains open outside this horizon; its bounded local triage is
   recorded, and no APM implementation is authorized. Task 59's beta 2 receipt
@@ -52,9 +45,9 @@ separate follow-up does not block shipping the accepted concrete fixes.
 
 ## Current selection
 
-Version `0.9.0-beta.3` is published on npm and GitHub, and the documentation
-site is live. The next intended release is `0.9.0-beta.4`. Task 59 retains the
-historical beta 2 release and package verification receipt. On 2026-09-28 the maintainer accepted the
+Version `0.9.0-beta.4` is public on npm and GitHub, and the documentation site
+is deployed. Task 69 retains the completed beta4 release receipt. Task 59
+retains the historical beta 2 release and package verification receipt. On 2026-09-28 the maintainer accepted the
 [open task review](../../emerging/analysis/open-task-review/_open-task-review.md):
 ten Tasks closed, two folded into others, and one order for the rest.
 
@@ -68,11 +61,8 @@ ten Tasks closed, two folded into others, and one order for the rest.
 - [Task 68](tasks/task68-repository-link-validation.md) is complete at phase
   2/2, milestone 3/3. Its exact named-root scope and checker contract remain
   accepted, including the two explicit exclusions and no arbitrary directory
-  filtering. Task 69 owns hosted qualification and release qualification. The
-  original hosted run is finished, the correction is integrated, and the
-  corrected-candidate repository gate passed. Full native/test/package
-  requalification, a second clean squash, and a new exact-SHA hosted gate
-  remain pending.
+  filtering. Task 69 is complete at phase 3/3, milestone 5/5; its release
+  receipt records the hosted qualification and publication.
 - Decisions before 1.0 are pending on Tasks 36, 37, 63, and 65.
 - On 2026-09-29, [Task 62](tasks/task62-glob-scoped-loading.md) was narrowed to
   optional `applyTo` loading and CLI filtering. The maintainer accepted the

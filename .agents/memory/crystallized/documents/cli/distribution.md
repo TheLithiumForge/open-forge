@@ -48,13 +48,36 @@ channels, or support-floor claims require a new maintainer decision.
 
 ## Current Implementation And Delivery State
 
-### Beta 3
+### Beta 4
+
+Version `0.9.0-beta.4` uses source
+`80f0b46dd71837fc65593e9bcd1656ef5a6314a6`, matching the clean second squash
+and the deployed `main` fast-forward. [Build 36809625271](https://github.com/TheLithiumForge/open-forge/actions/runs/36809625271),
+[Release 36813167101](https://github.com/TheLithiumForge/open-forge/actions/runs/36813167101),
+and [Documentation 36813142627](https://github.com/TheLithiumForge/open-forge/actions/runs/36813142627)
+passed. The [GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.4)
+and the [npm package](https://www.npmjs.com/package/@thelithiumforge/open-forge/v/0.9.0-beta.4)
+identify that exact release.
+
+All seven exact-version npm records and the `beta` and `latest` tags agree. The
+wrapper declares six exact platform dependencies; each native package has the
+matching platform metadata. All six portable archives match `SHA256SUMS`, and
+the public Windows x64 portable and
+npm executables have identical SHA-256
+`73F3AC762C0F42F0CBE287F2D0D16442E88A09D3508BB67FC592DC6B0DF4B3FC` values.
+Fresh exact-version and `@beta` installs ran the actual `0.9.0-beta.4` npm
+shim; Framework, Core Templates, Context, Status, and Doctor passed. The
+published beta3-to-beta4 upgrade and the deployed Loading, Frontmatter,
+diagram, and Customizing guidance are recorded in [Task 69](../../../working/cli-development/tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
+Final public receipts are retained under `artifacts/beta4-public/` and
+`artifacts/beta4-published-upgrade/receipt.json`.
+
+### Beta 3 (historical)
 
 On 2026-10-01, the npm `beta` and `latest` tags identified `0.9.0-beta.3`, as
 did the [GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.3).
-This receipt records no six-host or portable-archive
-verification. Qualification of the current beta 4 candidate remains pending in
-[Task 69](../../../working/cli-development/tasks/task69-next-beta-stabilization-release.md).
+Its receipt recorded no six-host or portable-archive verification. That limited
+verification fact remains historical; beta4 is the current public release.
 
 ### Beta 2
 

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Coordinate the next beta stabilization, qualification, merge, and release boundary
-  tags: [Memory, Working, Task, CLI, Contextual, Active]
+  tags: [Memory, Working, Task, CLI, Contextual, Complete]
 ---
 
 # Task 69 — Next beta stabilization and release
@@ -35,89 +35,87 @@ package, and demonstration receipts verified.
 
 ## Current release state and focused baseline
 
-Beta 3 remains the published release. Beta 4 remains unpublished. The frozen
-candidate is `ff84af47c4b404d3cc1908c6754567bc30730b2d` with tree
-`549e81a774af4059809920100a794fedd899f0b5`. Task 69 is phase 3/3, milestone
-3/5: implementation, local qualification, and whole-candidate review are
-green, and the clean squash merge is complete. Original Build 36804134087
-finished with the hosted fixture failure described below. The correction is
-integrated, the corrected-candidate repository gate passed, and full
-native/test/package requalification, a second clean squash, and a new
-exact-SHA hosted gate remain pending. Publication has not started. Historical
-beta 2 records remain unchanged.
+Beta 3 remains historical. Beta 4 is the current public release. The corrected
+local candidate is `d04e1106fca987c12288a15f6e92ac2e84bc8fef` with tree
+`081ad06987e553a47ceaedcbbde064886ba58034`. Task 69 is complete at phase 3/3,
+milestone 5/5: local qualification, clean squash, hosted six-host gate,
+publication, package, documentation, upgrade, and demonstration receipts are
+complete. Zero completion grace was consumed. Historical beta 2 records remain
+unchanged.
 
-A full solution build before the version bump succeeded with 0 warnings and
-errors. The subsequent beta4 Integration project build also succeeded with 0
-warnings and errors. The earlier `ContextApplyToIntegrationTests` 14/14
-baseline remains focused historical evidence. The first managed pass is also
-historical: 3,871/3,875 unit tests passed, with four stale assertions, and the
-integration run recorded 2,658 passed, 10 failed, and 17 Unix exclusions. The
-10 failures were 9 reviewed snapshots and 1 Context parity test. All fixes are
-now integrated, and the correction pass made no additional production changes.
-These failed or stale-assertion runs are resolved historical evidence, not
-current blockers. The final candidate and merge evidence is recorded below.
+The final candidate, public release, package, upgrade, and documentation
+evidence is recorded below. The earlier `ff84af...`/`1c6e752...` qualified
+candidate and first hosted correction remain concise historical evidence; they
+do not qualify the corrected release.
 
 ## Verified candidate and merge receipt
 
-The frozen candidate is `ff84af47c4b404d3cc1908c6754567bc30730b2d`, with tree
-`549e81a774af4059809920100a794fedd899f0b5`. Whole-candidate Astra review
-`r_82e9214c3640` found no material findings, verified the initial and final
-candidate were clean with an unchanged tree, and independently inspected the
-managed CTRF counts. One whole-candidate review remains consumed. Focused
-Astra recheck `r_45b235a83ee3` found no material findings and independently
-checked all 72 correction captures and reports. The source was unchanged by
-the reviewer. The focused recheck was part of the CI correction. One grouped
-correction pass was consumed. No new whole-candidate review or council was
-consumed, and zero completion grace was consumed.
+The corrected local candidate is `d04e1106fca987c12288a15f6e92ac2e84bc8fef`,
+with tree `081ad06987e553a47ceaedcbbde064886ba58034`. `npm run verify` passed;
+`npm run build:native -- --no-restore` exited 0 with 0 warnings and errors;
+`npm run test:built` recorded 10,000 executions with 34 documented platform
+exclusions; and `npm run pack` plus package installation passed.
 
-`npm run verify` and the site type-check/build are green, as the existing
-records describe. `npm run build:native -- --no-restore` exited 0 with zero
-warnings and errors. `npm run test:built` exited 0 with zero failures. Counts were
-unit 3,875, managed integration 2,668 plus 17 documented Unix-only
-exclusions, managed public 263, native integration 2,668 plus the same 17
-exclusions, native public 263, and the managed public runner against the native
-CLI 263. Reports are under
-`artifacts/delivery/win-x64/reports/{unit,integration,public,native-integration,native-public,public-native}/results.json`.
+The clean second squash of `develop` is
+`80f0b46dd71837fc65593e9bcd1656ef5a6314a6`, matching that tree. Root pushed
+`develop` only after the squash, and `main` was fast-forwarded to the same SHA.
+[Build 36809625271](https://github.com/TheLithiumForge/open-forge/actions/runs/36809625271)
+passed all six host jobs. [Release 36813167101](https://github.com/TheLithiumForge/open-forge/actions/runs/36813167101)
+and [Documentation 36813142627](https://github.com/TheLithiumForge/open-forge/actions/runs/36813142627)
+passed. The [GitHub prerelease v0.9.0-beta.4](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.4)
+points exactly to `80f0b46dd71837fc65593e9bcd1656ef5a6314a6`.
 
-`npm run pack` exited 0, and the installed native package test passed on
-Windows x64. Both `artifacts/delivery/win-x64/manifest.json` and
-`artifacts/delivery/win-x64/packages/package.json`
-record `tested: true` and the exact candidate SHA
-`ff84af47c4b404d3cc1908c6754567bc30730b2d`.
+All seven npm packages have exact matching versions and agreeing `beta` and
+`latest` tags. The six wrapper dependencies and platform metadata are exact.
+All six portable archives match `SHA256SUMS`. The public Windows x64 portable
+and npm executables are identical at SHA-256
+`73F3AC762C0F42F0CBE287F2D0D16442E88A09D3508BB67FC592DC6B0DF4B3FC`.
 
-The local upgrade rehearsal passed from a public beta3 npm install to candidate
-native beta4. Framework and Core Templates installed, the intentional template
-removal remained absent after Framework and Extension updates, custom source
-and overwrite exact hashes were preserved, and the previous Loader bytes were
-found in recovery by SHA-256 comparison. Plain Context text and JSON produced
-the expected incomplete exit 3 without a crash, while the matching
-`open-forge context --for src/Demo.cs` invocation exited 0 and included the
-source and overwrite. The receipt is `artifacts/beta4-upgrade/receipt.json`.
-This is local-candidate evidence, not published-beta4 proof.
+Fresh exact-version and `@beta` installs ran the actual `0.9.0-beta.4` npm
+shim. Fresh Framework, Core Templates, Context, Status, and Doctor checks
+passed. The published beta3-to-beta4 upgrade passed: the intentional template
+removal stayed absent, custom source and overwrite exact bytes were retained,
+the old edited Loader bytes were found by SHA-256 inside the retained recovery
+ZIP, plain Context text and JSON exited 3 without a crash, matching
+`--for src/Demo.cs` exited 0 with source and overwrite, and Doctor exited 0.
+Public Loading, Frontmatter, diagram, and Customizing removal/overwrite
+guidance was verified after deployment.
 
-Root safely backed up 11 preexisting main-checkout documents at
+Evidence is retained in `artifacts/beta4-public/{final-receipt.json,npm-records.json,archive-checks.json,smoke-receipt.json,site-receipt.json}`,
+`artifacts/beta4-published-upgrade/receipt.json`, and
+`artifacts/beta-platform-correction/local-qualification.json` with the hosted
+logs. The transient npm ETARGET/mixed-metadata result resolved after propagation
+and a fresh-cache retry; there is no current blocker.
+
+Whole-candidate Astra review `r_82e9214c3640` found no material findings.
+Focused Astra recheck `r_45b235a83ee3` found no material findings and checked
+the correction captures and reports. One whole-candidate review, one focused
+correction recheck, and one grouped correction pass were consumed; zero
+completion grace was consumed.
+
+Historical pre-release evidence: Root safely backed up 11 preexisting
+main-checkout documents at
 `D:/Repositories/open-forge-cleanup-archive/20261001/main-before-beta4-squash`,
 confirmed their inclusion, and squash-merged `develop` clean at
-`1c6e752c6ac7dcbfe83a95ece9ca9fba22e4cdf1`. The squash tree is exactly
-`549e81a774af4059809920100a794fedd899f0b5`. Root pushed `develop` only after
-that squash. [Build 36804134087](https://github.com/TheLithiumForge/open-forge/actions/runs/36804134087)
-finished with failure for the exact merged SHA. Its Linux x64 native build and 3,875-unit
-stage passed before managed integration recorded the fixture failure described
-below. The original run finished with the Windows x64 and ARM64 full
-build/test/package jobs passed and all four Linux/macOS jobs failing the same
-snapshot case. The correction and its verification are recorded in the hosted
-correction follow-up below. Beta 3 is still published, and beta 4 is not
-published.
+`1c6e752c6ac7dcbfe83a95ece9ca9fba22e4cdf1` with tree
+`549e81a774af4059809920100a794fedd899f0b5`. The original
+[Build 36804134087](https://github.com/TheLithiumForge/open-forge/actions/runs/36804134087)
+finished with failure: Windows x64 and ARM64 passed, while all four Linux/macOS
+jobs failed on the same fixture. That first hosted run and its correction remain
+historical evidence; the final release receipt above is authoritative.
 
 Cleanup remains verified: 66 old clean Worker Watch worktrees were removed, 13
 base-equal branches were deleted, 53 unique-commit branches were retained,
 and 13 dirty worktrees plus one unregistered clean orphan were preserved. The
 complete bundle history/hash receipt is at
 `D:/Repositories/open-forge-cleanup-archive/20261001`.
-Milestone 4 requires the hosted six-platform gate to succeed. Milestone 5
-requires the publication, package, and demonstration receipts.
+The cleanup receipt and the original candidate evidence remain historical and
+unchanged.
 
 ## Hosted correction follow-up
+
+This section preserves the first hosted failure and its correction as historical
+evidence for the final release receipt above.
 
 Original Build 36804134087 finished with failure. The Windows x64 and ARM64
 full build, test, and package jobs passed. All four Linux/macOS jobs failed on
@@ -144,12 +142,11 @@ pass was consumed. The original whole-candidate review remains the only whole
 candidate review, with no new whole review, council, or policy change.
 
 Corrected-candidate `npm run verify` exited 0 with 55 delivery tests, 7 layout
-tests, format/analyzers, and 13 repository Markdown tests with 0 skips. Full
-native, test, and package requalification, a second clean squash, and a new
-exact-SHA hosted gate remain pending. Beta4 remains unpublished, and no
-publication occurred. This correction remains within phase 3/3, milestone 3/5.
+tests, format/analyzers, and 13 repository Markdown tests with 0 skips. This
+correction was part of phase 3/3, milestone 3/5; the final native, test,
+package, hosted, and publication receipts are recorded above at milestone 5/5.
 
-The candidate worktree remains branch `beta4-platform-qualification` at the
+At that time, the candidate worktree was branch `beta4-platform-qualification` at the
 `develop` `1c6e752c6ac7dcbfe83a95ece9ca9fba22e4cdf1` base, with current
 documentation edits preserved. The earlier complete local evidence remains
 explicitly historical qualified-candidate evidence for frozen candidate
@@ -167,12 +164,10 @@ source.
    package, site, offline-link, delivery, and dotnet gates after the integrated
    code and version are final. The whole-candidate review is complete, and the
    focused Astra recheck is part of the CI correction.
-3. The local gates, review, candidate cleanliness, and squash merge are green
-   and complete. The corrected-candidate repository gate passed. Full native,
-   test, and package requalification, a second clean squash, and a new
-   exact-SHA hosted gate remain pending. After those gates pass, verify
-   publication, packages, installation, beta upgrade, demonstration smoke, and
-   the source/version receipt.
+3. The local gates, review, candidate cleanliness, second squash, hosted
+   six-host gate, publication, package, installation, beta upgrade,
+   demonstration smoke, documentation, and source/version receipts are green
+   and complete. Task 69 is complete at phase 3/3, milestone 5/5.
 
 Tasks 53 loading policy and 55 APM implementation are excluded. Inventory old
 worker worktrees during cleanup, preserve dirty or unmerged work, and remove
@@ -206,53 +201,49 @@ scope and checker contract remain unchanged. The final candidate, local
 qualification, whole-candidate review, clean merge, hosted run, package, and
 upgrade evidence is in the [verified candidate and merge receipt](#verified-candidate-and-merge-receipt).
 The [hosted correction follow-up](#hosted-correction-follow-up) records the
-completed first-run failure and integrated correction. The corrected-candidate
-repository gate passed. Full native, test, and package requalification, a
-second clean squash, and a new exact-SHA hosted gate remain pending. Publication
-has not started, and beta4 remains unpublished.
-The proposed recovery-coexistence relaxation is deferred pending maintainer
-direction. Beta4 preserves current recovery blocking behavior, and this
-follow-up is separate from shipping the accepted concrete fixes.
+first-run failure and integrated correction as historical evidence. Task 69 is
+complete at phase 3/3, milestone 5/5, and beta4 is public. The proposed
+recovery-coexistence relaxation is deferred pending maintainer direction.
+Beta4 preserves current recovery blocking behavior, and this follow-up is
+separate from shipping the accepted concrete fixes.
 
 ## Execution Capsule
 
 - Current owner: Root; execution via Worker Watch.
 - Responsibility: Root owns acceptance and shared contracts. Luna max owns small specified code and documentation packets. Three read-only investigators prepare packets. This record does not authorize a new semantic choice.
-- Current boundary: Phase 3/3, milestone 3/5, implementation, local
-  qualification, and whole-candidate review are green, the clean merge is
-  complete. The original hosted run finished with the fixture failure. The
-  correction is integrated, the corrected-candidate repository gate passed, and
-  full native, test, and package requalification, a second clean squash, and a
-  new exact-SHA hosted gate remain pending.
-- Review budget: 1 independent whole-candidate Astra review covering C#, tests, contracts, prose, and the release boundary, consumed with no material findings.
+- Current boundary: Phase 3/3, milestone 5/5. Implementation, local
+  qualification, whole-candidate review, clean merge, hosted six-host gate,
+  publication, package, documentation, upgrade, and demonstration receipts are
+  complete; beta4 is public.
+- Review budget: 1 independent whole-candidate Astra review and 1 focused Astra
+  correction recheck, consumed with no material findings.
 - Council budget: 0.
 - Correction budget: 1 grouped review-correction pass consumed.
 - Invariants: preserve the existing layer graph; add no dependency or parser duplicate without Root acceptance; preserve containment, user bytes, and recovery; keep JSON shape unchanged except for an explicit accepted change; make snapshot mutations explicit; and do not weaken or skip gates.
 - Required evidence: focused tests per defect; final full managed and local Native AOT/package gates after final code and version; site typecheck/build; the offline link gate; `npm run check:delivery`; `npm run check:dotnet`; and the exact post-merge hosted six-platform release process.
-- Recoverability: keep the current worktree/branch baseline, commands, and receipts in these Task records. The current candidate worktree is branch `beta4-platform-qualification` at the `develop` `1c6e752c6ac7dcbfe83a95ece9ca9fba22e4cdf1` base, with current documentation edits preserved. The original `beta-stabilization` baseline is historical.
-- External boundary: Root pushed `develop` only after the clean squash merge. The correction is integrated, the corrected-candidate repository gate passed, and beta4 publication has not started while full requalification and the new hosted gate remain pending.
+- Recoverability: keep the current worktree/branch baseline, commands, and receipts in these Task records. The closeout branch `beta4-release-receipt` is based on release commit `80f0b46dd71837fc65593e9bcd1656ef5a6314a6`, so it cannot become stale after its receipt commit. The original `beta-stabilization` baseline is historical.
+- External evidence: A hashed external copy of the release evidence is retained at `D:/Repositories/open-forge-cleanup-archive/20261001/beta4-release-proof`. The unused clean `beta-worker-base` helper worktree was archived recoverably after verification.
+- External boundary: Root pushed `develop` only after the clean second squash. `main` was fast-forwarded to the same SHA, and the hosted, release, documentation, package, upgrade, and publication receipts are complete.
 - Completion grace: None consumed.
 - Stop condition: Return to Root for any protected-path conflict, new policy, dependency, parser, contract, safety, or release-boundary choice, or for any gate that is not reproducibly green.
 
 ## Current State
 
-**Task 69 “Next beta stabilization and release” (phase 3/3): milestone 3/5 —
-implementation, local qualification, and whole-candidate review green; clean
-merge complete; the original hosted run failed on the fixture, the correction
-is integrated, the corrected-candidate repository gate passed, and publication
-has not started.** The confirmation
+**Task 69 “Next beta stabilization and release” (phase 3/3): milestone 5/5 —
+implementation, qualification, clean second squash, hosted six-host gate,
+publication, package, documentation, upgrade, and demonstration receipts
+complete; beta4 is public.** The confirmation
 discussion is closed by preserving existing runtime final confirmations and
 correcting Create and Install help and contracts, with no runtime policy
 change. Root has integrated B1–B5, W1/W3/W4/W5, Context, Library mapped-leaf
 ownership, N1, N2, and the `ExtensionUpdateMutation` regression. Mutation
 no-follow guards remain unchanged, and Task 68 is complete.
 
-The frozen candidate, review, local qualification, package and upgrade checks,
-clean merge, hosted run, and cleanup evidence are recorded in the [verified
-candidate and merge receipt](#verified-candidate-and-merge-receipt). Prior
-failed or stale-assertion runs are resolved historical evidence, not current
-blockers. No source beyond Task 68's named roots is silently excluded. The
-complete local evidence applies only to frozen candidate
+The final candidate, review, qualification, package, upgrade, hosted, and
+publication evidence is recorded in the [verified candidate and merge receipt](#verified-candidate-and-merge-receipt).
+The first failed hosted run and earlier qualified candidate are resolved
+historical evidence, not current blockers. No source beyond Task 68's named
+roots is silently excluded. The earlier local evidence applies only to frozen candidate
 `ff84af47c4b404d3cc1908c6754567bc30730b2d` and squash merge
 `1c6e752c6ac7dcbfe83a95ece9ca9fba22e4cdf1` with tree
 `549e81a774af4059809920100a794fedd899f0b5`. It does not qualify the corrected
@@ -262,10 +253,8 @@ Beta4 preserves current recovery blocking behavior. The proposed
 recovery-coexistence relaxation is explicitly deferred pending maintainer
 direction, no answer or acceptance of the relaxation is inferred, and this
 separate follow-up does not block shipping the accepted concrete fixes. Beta 3
-remains published and beta 4 remains unpublished. The test-only correction is
-integrated. Windows and WSL `RouteInspect` verification, the WSL fresh build,
-and 72-capture parity are green as recorded above. The corrected-candidate
-repository gate passed. Full native, test, and package requalification, a
-second clean squash, and a new exact-SHA hosted gate remain pending. Publication
-has not started. No completion grace has been consumed.
+is historical and beta 4 is public. The test-only correction, Windows and WSL
+`RouteInspect` verification, WSL fresh build, and 72-capture parity are
+historical correction evidence; the final release receipt above is authoritative.
+No completion grace has been consumed.
 The beta 1 PATH/dev executable is not candidate evidence.

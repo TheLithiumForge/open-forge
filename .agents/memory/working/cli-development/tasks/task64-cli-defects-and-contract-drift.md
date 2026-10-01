@@ -159,7 +159,7 @@ These are accepted conformance fixes, not new ownership authority.
 W1/W3/W4/W5, Context, Library mapped-leaf ownership, N1, N2, and the
 `ExtensionUpdateMutation` regression. The accepted fixes and local gates are
 recorded in [Task 69's candidate and merge receipt](task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt),
-which also records the clean merge and pending exact-merged hosted gate. The
-existing confirmation runtime remains unchanged. Task 64 stays open for the
-deferred B6 follow-up. Beta4 preserves current recovery blocking behavior, and
-the follow-up is not a blocker for shipping the accepted fixes.
+which also records the clean merge, completed hosted gate, and beta4 release.
+The existing confirmation runtime remains unchanged. Task 64 stays open for
+the deferred B6 follow-up. Beta4 preserves current recovery blocking behavior,
+and the follow-up is not a blocker for shipping the accepted fixes.
