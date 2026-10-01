@@ -456,14 +456,14 @@ semantic status. Bounded diagnostics and prompts use stderr. Parser failures
 before binding remain text on stderr with no envelope.
 
 When a result needs a next action, text retains at most one `Next:` line. It
-uses the exact runnable command or short sentence and its reason. The line
-normally follows the rest of the result and is last. Current output is not
-always last: Extension Install adds this catalogue-required continuation after
-its `Next:` line:
-`Or add ".apm/agents/team.md" to allowInstallPaths in .agents/open-forge.json.`
-Whether to relax the last-line rule or move that continuation before `Next:` is
-an open maintainer question. When recovery warning coexists with another
-command-local completed-with-warnings condition, exact recovery cleanup guidance owns the
+uses the exact runnable command or short sentence and its reason, and remains
+the final text line. For Extension Install PermissionRequired results with
+MissingPermissions, preserve both existing permission options and place the
+settings alternative before the runnable `Next:` action.
+
+When recovery warning coexists with another
+command-local completed-with-warnings condition, exact recovery cleanup
+guidance owns the
 single `Next:` action; the other warning facts remain visible evidence.
 
 The [Global CLI Flags contract](contracts/shared/global-flags/interface.md)

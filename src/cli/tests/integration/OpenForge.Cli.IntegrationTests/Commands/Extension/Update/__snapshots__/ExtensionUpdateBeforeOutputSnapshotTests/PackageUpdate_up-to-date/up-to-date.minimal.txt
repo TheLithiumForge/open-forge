@@ -1,1 +1,2 @@
 The toolkit Extension is up to date. Nothing to do.
+Workspace: <workspace>

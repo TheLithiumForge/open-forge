@@ -1,2 +1,3 @@
 Nothing was installed from <extension-source>: the package has no content directory.
+Workspace: <workspace>
   Package files belong under <extension-source>/content/.agents/.

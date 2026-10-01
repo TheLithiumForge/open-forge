@@ -1,4 +1,5 @@
 Cannot clean up: another Open Forge command holds the workspace lock. Nothing was removed.
+Workspace: <workspace>
   <recovery-bundle-1>    not started
   <recovery-bundle-2>    not started
   <recovery-bundle-3>  not started

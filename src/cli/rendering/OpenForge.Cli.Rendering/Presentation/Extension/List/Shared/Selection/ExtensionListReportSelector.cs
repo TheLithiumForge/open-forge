@@ -37,6 +37,7 @@ internal static class ExtensionListReportSelector
                 ? ExtensionListWording.AvailableEmpty()
                 : ExtensionListWording.AvailableUnavailable()
             : null;
+        var (next, isHealthyAvailableHint) = Next(result);
         return new CliReport<ExtensionListData>
         {
             Command = result.Command,
@@ -70,8 +71,9 @@ internal static class ExtensionListReportSelector
                 ShowSource = selection.Detail >= CliDetail.Standard && result.Selection.Available,
                 ShowInstalledDetails = selection.Detail >= CliDetail.Full,
                 ShowAvailableDependencies = selection.Detail >= CliDetail.Standard,
+                IsHealthyAvailableHint = isHealthyAvailableHint,
             },
-            Next = Next(result),
+            Next = next,
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? new[]
                 {
@@ -303,14 +305,14 @@ internal static class ExtensionListReportSelector
         return evidence;
     }
 
-    private static CliNextAction? Next(ExtensionListResult result)
+    private static (CliNextAction? Action, bool IsHealthyAvailableHint) Next(ExtensionListResult result)
     {
         var sourceFailure = result.Findings.FirstOrDefault(finding =>
             finding.Code is (ExtensionListFindingCode.SourceUnavailable or ExtensionListFindingCode.SourceInvalid)
             && finding.FailureDetail is not null);
         if (sourceFailure?.FailureDetail is { } detail)
         {
-            return ExtensionListWording.SourceFailureNext(detail);
+            return (ExtensionListWording.SourceFailureNext(detail), false);
         }
 
         var installedOwner = result.Findings
@@ -320,7 +322,7 @@ internal static class ExtensionListReportSelector
             .FirstOrDefault();
         if (installedOwner is not null)
         {
-            return ExtensionListWording.Inspect(installedOwner);
+            return (ExtensionListWording.Inspect(installedOwner), false);
         }
 
         if (result.Selection.Available
@@ -328,13 +330,18 @@ internal static class ExtensionListReportSelector
                 or ExtensionListFindingCode.SourceInvalid
                 or ExtensionListFindingCode.SourceBlocked))
         {
-            return null;
+            return (null, false);
         }
 
-        return result.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention
-            && result.Available.Count > 0
-            ? new CliNextAction("open-forge extension install <id>", ExtensionListWording.NextInstall())
-            : result.Next;
+        if (result.Status is (CliSemanticStatus.Complete or CliSemanticStatus.Attention)
+            && result.Available.Count > 0)
+        {
+            return (
+                new CliNextAction("open-forge extension install <id>", ExtensionListWording.NextInstall()),
+                result.Status == CliSemanticStatus.Complete);
+        }
+
+        return (result.Next, false);
     }
 
     private static IReadOnlyList<CliCount> ReadCounts(ExtensionListResult result)

@@ -28,7 +28,6 @@ internal static class CleanupPresentation
         Shape = CliCommandShape.ChangeReport,
         SelectText = static selected => selected with
         {
-            ShowWorkspace = selected.Selection.Detail >= CliDetail.Standard,
             TextFindings = selected.Selection.Detail == CliDetail.Minimal
                 && selected.Report.HeadlineFindingCode is not null
                     ? selected.TextFindings

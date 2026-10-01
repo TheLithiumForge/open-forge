@@ -81,7 +81,7 @@ public sealed class RepairProjectionTests
         var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, RepairPresentation.Rendering.DataTextRenderer).Content;
         using var document = JsonDocument.Parse(Json(selected));
 
-        Assert.Equal("Nothing to repair.\n", text);
+        Assert.Equal($"Nothing to repair.\nWorkspace: {RepairTestData.WorkspaceRoot}\n", text);
         Assert.Equal("Nothing to repair.", document.RootElement.GetProperty("summary").GetProperty("headline").GetString());
         Assert.DoesNotContain("verified", text, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("verified", Json(selected), StringComparison.OrdinalIgnoreCase);
@@ -101,7 +101,7 @@ public sealed class RepairProjectionTests
             CliTextStyle.Plain,
             RepairPresentation.Rendering.DataTextRenderer).Content;
 
-        Assert.Equal("Cannot repair: Select a current link.\nNext: open-forge repair --help\n", text);
+        Assert.Equal($"Cannot repair: Select a current link.\nWorkspace: {RepairTestData.WorkspaceRoot}\nNext: open-forge repair --help\n", text);
     }
 
     [Trait("Boundary", "Processing")]
@@ -279,7 +279,7 @@ public sealed class RepairProjectionTests
             CliTextStyle.Plain,
             RepairPresentation.Rendering.DataTextRenderer).Content;
 
-        Assert.Equal("Repair was cancelled. Nothing was changed.\nNext: open-forge repair\n", text);
+        Assert.Equal($"Repair was cancelled. Nothing was changed.\nWorkspace: {RepairTestData.WorkspaceRoot}\nNext: open-forge repair\n", text);
         Assert.DoesNotContain("Library", text, StringComparison.Ordinal);
     }
 

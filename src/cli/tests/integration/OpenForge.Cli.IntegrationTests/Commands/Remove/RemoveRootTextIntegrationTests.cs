@@ -33,11 +33,13 @@ public sealed class RemoveRootTextIntegrationTests
         Assert.Contains("Would remove old.txt", textOutput.ToString(), StringComparison.Ordinal);
         if (detail == "minimal")
         {
+            Assert.DoesNotContain("Workspace: ", textOutput.ToString(), StringComparison.Ordinal);
             Assert.DoesNotContain("Would create", textOutput.ToString(), StringComparison.Ordinal);
             Assert.DoesNotContain("Would remove file old.txt", textOutput.ToString(), StringComparison.Ordinal);
         }
         else
         {
+            Assert.Contains($"Workspace: {workspace.Path}", textOutput.ToString(), StringComparison.Ordinal);
             Assert.Contains("Would create directory .agents", textOutput.ToString(), StringComparison.Ordinal);
             Assert.Contains("Would create setting .agents/open-forge.json", textOutput.ToString(), StringComparison.Ordinal);
             Assert.Contains("Would remove file old.txt", textOutput.ToString(), StringComparison.Ordinal);
@@ -63,6 +65,36 @@ public sealed class RemoveRootTextIntegrationTests
     }
 
     [Trait("Boundary", "Host")]
+    [Fact(DisplayName = "Root Remove minimal current-directory no-op omits its workspace echo")]
+    [Trait("Feature", "remove-root"), Trait("Evidence", "Integration")]
+    public async Task MinimalNoOpOmitsCurrentDirectoryWorkspaceEcho()
+    {
+        using var workspace = RemoveRootIntegrationWorkspace.Create("remove-root-minimal-no-op");
+        var setupOutput = new StringWriter();
+        var setupError = new StringWriter();
+        var setupCompletion = await workspace.RunAsync(
+            ["remove", "absent.txt", "--automatic", "--format", "json"],
+            setupOutput,
+            setupError);
+        Assert.Equal(0, setupCompletion.ExitCode);
+        Assert.Equal(string.Empty, setupError.ToString());
+
+        var output = new StringWriter();
+        var error = new StringWriter();
+
+        var completion = await workspace.RunAsync(
+            ["remove", "absent.txt", "--automatic", "--detail", "minimal", "--format", "text"],
+            output,
+            error);
+
+        Assert.Equal(0, completion.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, completion.Status);
+        Assert.Equal(string.Empty, error.ToString());
+        Assert.Contains("No changes for absent.txt", output.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain("Workspace: ", output.ToString(), StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root Remove minimal text prints its headline finding only once")]
     [Trait("Feature", "remove-root"), Trait("Evidence", "Integration")]
     public async Task MinimalTextDoesNotRepeatHeadlineFinding()
@@ -81,6 +113,7 @@ public sealed class RemoveRootTextIntegrationTests
         const string message = "This path contains workspace settings, ownership, Git metadata, or other protected workspace state.";
         var text = output.ToString() + error.ToString();
         Assert.Equal(1, text.Split(message, StringSplitOptions.None).Length - 1);
+        Assert.Contains($"Workspace: {workspace.Path}", text, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "OS")]

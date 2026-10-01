@@ -1,2 +1,3 @@
 Cannot update toolkit: Extension 'toolkit' is excluded by workspace settings. Remove it from removedExtensions in .agents/open-forge.json, then rerun extension update.
+Workspace: <workspace>
 Next: Repair .agents/open-forge.json or remove the relevant exclusion there, then rerun extension update.

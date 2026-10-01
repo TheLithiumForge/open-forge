@@ -1,1 +1,2 @@
 Cannot update toolkit: it writes outside .agents and no grant allows that.
+Workspace: <workspace>

@@ -8,5 +8,5 @@ Workspace: <workspace>
   Source: <extension-source> (package)
   Permission scope: .apm/agents/team.md
   .agents/open-forge.lock.json  updated
-Next: open-forge extension install team --allow-path .apm/agents/team.md
   Or add ".apm/agents/team.md" to allowInstallPaths in .agents/open-forge.json.
+Next: open-forge extension install team --allow-path .apm/agents/team.md

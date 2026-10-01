@@ -1,2 +1,3 @@
 Installed the team Extension.
+Workspace: <workspace>
   Created 1 file under .apm/agents

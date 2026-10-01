@@ -1,2 +1,3 @@
 Library sync stopped after 1 of 2 changes.
+Workspace: <workspace>
   Added    .agents/directives/review.md

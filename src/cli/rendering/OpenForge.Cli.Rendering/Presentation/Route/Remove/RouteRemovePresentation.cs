@@ -29,10 +29,6 @@ internal static class RouteRemovePresentation
         Shape = CliCommandShape.ChangeReport,
         SelectText = static selected => selected with
         {
-            ShowWorkspace = selected.Selection.Detail >= CliDetail.Standard
-                || selected.Report.Status is CliSemanticStatus.Blocked
-                    or CliSemanticStatus.Failed
-                    or CliSemanticStatus.Interrupted,
             TextEffects = [],
             TextCounts = [],
             Report = selected.Report with

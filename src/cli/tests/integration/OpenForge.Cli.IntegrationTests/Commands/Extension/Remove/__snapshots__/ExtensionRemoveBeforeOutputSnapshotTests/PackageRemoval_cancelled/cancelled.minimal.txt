@@ -1,1 +1,2 @@
 Extension remove was cancelled. Nothing was changed.
+Workspace: <workspace>

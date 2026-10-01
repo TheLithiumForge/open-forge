@@ -1,4 +1,5 @@
 Removed the toolkit Extension. base remains installed and is no longer needed by it.
+Workspace: <workspace>
   Warning  base  Dependency remains installed
          base remains installed and is no longer needed by toolkit.
          open-forge extension remove base

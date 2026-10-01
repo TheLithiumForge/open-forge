@@ -29,7 +29,6 @@ internal static class ExtensionRemovePresentation
         Shape = CliCommandShape.ChangeReport,
         SelectText = static selected => selected with
         {
-            ShowWorkspace = selected.Selection.Detail >= CliDetail.Standard,
             TextEffects = [],
             TextCounts = [],
             Report = selected.Report with

@@ -1,2 +1,3 @@
 Cannot synchronize team-knowledge: another Open Forge command holds the workspace lock. Nothing was changed.
+Workspace: <workspace>
   not started  .agents/directives/added.md

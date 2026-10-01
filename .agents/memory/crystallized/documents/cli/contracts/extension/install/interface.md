@@ -425,8 +425,8 @@ Installed the orchestration Extension and 2 packages it requires: planning, proj
 ```text
 Cannot install team-tools: it writes outside .agents and no grant allows that.
   tools/review   (directory: everything under it)
-Next: open-forge extension install team-tools --allow-path tools/review
   Or add "tools/review" to allowInstallPaths in .agents/open-forge.json.
+Next: open-forge extension install team-tools --allow-path tools/review
 ```
 
 `minimal`, no content (exit 2):
@@ -598,12 +598,10 @@ Each status has one representative native text transcript above. JSON uses the s
 
 The catalogue says `--all cannot be combined with package IDs.`; the native command says `Explicit Extension IDs and --all cannot be combined.` The same wording conflict is present in Extension Update and is kept unresolved. The no-content case is current native behavior: `Nothing was installed from <extension-source>: the package has no content directory.` followed by the required content-path row. **Maintainer decision remains open.**
 
-The Extension Install catalogue requires the continuation `Or add
-".apm/agents/team.md" to allowInstallPaths in .agents/open-forge.json.` after
-`Next:`, while the shared report invariant requires `Next:` to be the final
-line. The current output is recorded without deciding whether the continuation
-should move before `Next:` or the invariant should change. **Maintainer
-decision remains open.**
+When required permissions are missing, preserve both existing permission
+options. In text, place the settings alternative before the runnable `Next:`
+action, which remains the final text line. Preserve the exact option strings
+and the structured `Next` action and reason.
 
 ## Non-Goals And Public Conformance
 

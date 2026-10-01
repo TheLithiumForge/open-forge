@@ -15,6 +15,36 @@ namespace OpenForge.Cli.Core.UnitTests.Presentation.Shared.Rendering;
 
 public sealed class CliReportRenderingTests
 {
+    private static readonly CliSemanticStatus[] WorkspaceStatuses =
+    [
+        CliSemanticStatus.Complete,
+        CliSemanticStatus.Failed,
+        CliSemanticStatus.Attention,
+        CliSemanticStatus.Incomplete,
+        CliSemanticStatus.Invalid,
+        CliSemanticStatus.Blocked,
+        CliSemanticStatus.Interrupted,
+    ];
+
+    private static readonly CliDetail[] WorkspaceDetails =
+    [CliDetail.Minimal, CliDetail.Standard, CliDetail.Full, CliDetail.Debug];
+
+    public static TheoryData<bool, int, int> WorkspaceVisibilityCases
+    {
+        get
+        {
+            var cases = new TheoryData<bool, int, int>();
+            foreach (var explicitWorkspace in new[] { false, true })
+                foreach (var status in WorkspaceStatuses)
+                    foreach (var detail in WorkspaceDetails)
+                    {
+                        cases.Add(explicitWorkspace, (int)status, (int)detail);
+                    }
+
+            return cases;
+        }
+    }
+
     [Trait("Boundary", "Output")]
     [Theory, Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
     [InlineData(0, 0, 2)]
@@ -221,14 +251,59 @@ public sealed class CliReportRenderingTests
     }
 
     [Trait("Boundary", "Output")]
-    [Fact, Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
-    public void WorkspaceTextVisibilityDoesNotEraseJsonFacts()
+    [Theory, MemberData(nameof(WorkspaceVisibilityCases)), Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
+    public void WorkspaceVisibilityFollowsSelectionStatusAndDetail(
+        bool explicitWorkspace,
+        int statusValue,
+        int detailValue)
     {
-        var selected = CliReportTrimmer.Trim(Report(), new CliSelection(CliDetail.Minimal), CliCommandShape.Summary);
-        Assert.False(selected.ShowWorkspace);
-        Assert.NotNull(selected.Report.Workspace);
-        Assert.True(CliReportTrimmer.Trim(Report() with { Status = CliSemanticStatus.Blocked }, new CliSelection(CliDetail.Minimal), CliCommandShape.Summary).ShowWorkspace);
-        Assert.True(CliReportTrimmer.Trim(Report() with { Workspace = new CliWorkspaceEcho("explicit", true) }, new CliSelection(CliDetail.Minimal), CliCommandShape.Summary).ShowWorkspace);
+        var status = (CliSemanticStatus)statusValue;
+        var detail = (CliDetail)detailValue;
+        var selected = CliReportTrimmer.Trim(
+            Report() with
+            {
+                Status = status,
+                Workspace = new CliWorkspaceEcho("workspace", explicitWorkspace),
+            },
+            new CliSelection(detail),
+            CliCommandShape.Summary);
+        var expected = detail >= CliDetail.Standard
+            || explicitWorkspace
+            || status is CliSemanticStatus.Blocked or CliSemanticStatus.Failed or CliSemanticStatus.Interrupted;
+        var text = CliTextRenderer.Render(
+            selected,
+            CliTextStyle.Plain,
+            static (_, _, _) => new CliTextDocument([])).Content;
+
+        Assert.Equal(expected, selected.ShowWorkspace);
+        Assert.Equal(expected, text.Contains("Workspace: workspace\n", StringComparison.Ordinal));
+        using var json = JsonDocument.Parse(CliJsonRenderer.Render(selected, Context.Data));
+        var workspace = json.RootElement.GetProperty("workspace");
+        Assert.Equal("workspace", workspace.GetProperty("path").GetString());
+        Assert.Equal(explicitWorkspace ? "explicit-workspace" : "current-directory", workspace.GetProperty("selectedBy").GetString());
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact, Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
+    public void MissingWorkspaceIsNeverPrintedAtAnyStatusOrDetail()
+    {
+        foreach (var status in WorkspaceStatuses)
+            foreach (var detail in WorkspaceDetails)
+            {
+                var selected = CliReportTrimmer.Trim(
+                    Report() with { Status = status, Workspace = null },
+                    new CliSelection(detail),
+                    CliCommandShape.Summary);
+                var text = CliTextRenderer.Render(
+                    selected,
+                    CliTextStyle.Plain,
+                    static (_, _, _) => new CliTextDocument([])).Content;
+                using var json = JsonDocument.Parse(CliJsonRenderer.Render(selected, Context.Data));
+
+                Assert.False(selected.ShowWorkspace);
+                Assert.DoesNotContain("Workspace: ", text, StringComparison.Ordinal);
+                Assert.Equal(JsonValueKind.Null, json.RootElement.GetProperty("workspace").ValueKind);
+            }
     }
 
     [Trait("Boundary", "Output")]

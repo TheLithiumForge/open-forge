@@ -167,6 +167,11 @@ planning 0.4.0  Record ideas, investigate questions, preserve decisions, and org
 
 The complete bundled inventory is in the [first-party Extension catalogue](../../../../../../../../src/extensions/README.md).
 
+When a completed Extension List result selects only the generic available-package
+installation hint, `minimal` text omits that `Next:` line. JSON and text at
+`standard`, `full`, and `debug` retain it. Corrective, warning, and incomplete-
+result actions retain their existing selection and visibility.
+
 `Installed  none` is shown when nothing is installed. The `Available` heading names
 the source: `(bundled with this CLI)` or `(from <path>)`. An installed
 package already in the available list is shown once in each block; the

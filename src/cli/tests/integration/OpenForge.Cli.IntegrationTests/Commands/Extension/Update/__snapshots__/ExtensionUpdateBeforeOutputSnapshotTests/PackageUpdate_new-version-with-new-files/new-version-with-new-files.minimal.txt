@@ -1,4 +1,5 @@
 Updated the toolkit Extension to 2.0.0.
+Workspace: <workspace>
   .agents/new.md  created (new in this version)
   Previous content: recovery bundle at <recovery-bundle>
 Next: Review previous content in the recovery bundle at <recovery-bundle>.

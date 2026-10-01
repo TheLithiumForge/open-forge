@@ -1,2 +1,3 @@
 Cannot remove: Extension Remove requires explicit stable IDs outside a prompt-capable human request.
+Workspace: <workspace>
 Next: open-forge extension remove --help

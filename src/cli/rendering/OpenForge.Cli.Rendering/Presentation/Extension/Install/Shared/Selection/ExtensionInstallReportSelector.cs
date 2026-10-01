@@ -789,8 +789,8 @@ internal static class ExtensionInstallReportSelector
         {
             return
             [
-                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatNext($"{ExtensionInstallWording.PermissionNext(primaryId, path)}"),
                 $"  {ExtensionInstallWording.PermissionAlternative(path)}",
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatNext($"{ExtensionInstallWording.PermissionNext(primaryId, path)}"),
             ];
         }
 

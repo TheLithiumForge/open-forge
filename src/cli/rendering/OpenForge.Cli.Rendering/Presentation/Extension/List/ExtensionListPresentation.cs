@@ -27,6 +27,8 @@ internal static class ExtensionListPresentation
         SelectText = static selected => selected with
         {
             ShowHeadline = selected.Report.Status != CliSemanticStatus.Complete,
+            ShowNext = selected.Selection.Detail != CliDetail.Minimal
+                || !selected.Report.Data.IsHealthyAvailableHint,
             TextCounts = [],
         },
     };

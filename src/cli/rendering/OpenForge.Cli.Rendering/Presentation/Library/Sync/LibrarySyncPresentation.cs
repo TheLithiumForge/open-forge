@@ -29,7 +29,6 @@ internal static class LibrarySyncPresentation
         Shape = CliCommandShape.ChangeReport,
         SelectText = static selected => selected with
         {
-            ShowWorkspace = selected.Selection.Detail >= CliDetail.Standard,
             TextEffects = [],
             TextCounts = [],
         },

@@ -1,4 +1,5 @@
 Removed the route guidance/topics  (4 files)
+Workspace: <workspace>
   Removed .agents/guidance/topics/_topics.md
   Removed .agents/guidance/topics/assets/settings.json
   Removed .agents/guidance/topics/child.md

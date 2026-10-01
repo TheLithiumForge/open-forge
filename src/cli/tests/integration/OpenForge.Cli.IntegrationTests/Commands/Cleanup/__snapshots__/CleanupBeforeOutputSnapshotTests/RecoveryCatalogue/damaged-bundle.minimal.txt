@@ -1,3 +1,4 @@
 <recovery-bundle-1> is damaged and was left in place.
+Workspace: <workspace>
   <recovery-bundle-1>  left in place: not recognized
 Next: Remove it by hand after review.

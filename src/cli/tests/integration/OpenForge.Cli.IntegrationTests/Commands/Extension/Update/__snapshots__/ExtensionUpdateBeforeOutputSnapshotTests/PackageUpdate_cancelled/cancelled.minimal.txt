@@ -1,1 +1,2 @@
 Extension update was cancelled. Nothing was changed.
+Workspace: <workspace>

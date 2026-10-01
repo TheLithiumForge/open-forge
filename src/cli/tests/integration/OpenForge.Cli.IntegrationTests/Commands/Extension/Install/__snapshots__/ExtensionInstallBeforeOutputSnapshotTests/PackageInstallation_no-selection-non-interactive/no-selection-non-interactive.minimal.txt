@@ -1,2 +1,3 @@
 Cannot install: Extension install needs to know which packages. Pass their IDs or --all. This session cannot ask.
+Workspace: <workspace>
 Next: open-forge extension list

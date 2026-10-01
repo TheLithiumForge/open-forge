@@ -31,7 +31,6 @@ internal static class RepairPresentation
         Shape = CliCommandShape.ChangeReport,
         SelectText = static selected => selected with
         {
-            ShowWorkspace = selected.Selection.Detail >= CliDetail.Standard,
             TextEffects = [],
             TextCounts = selected.Selection.Detail >= CliDetail.Standard
                 ? selected.Report.Counts

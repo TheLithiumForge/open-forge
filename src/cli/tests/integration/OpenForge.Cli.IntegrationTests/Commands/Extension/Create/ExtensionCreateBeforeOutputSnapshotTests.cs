@@ -17,9 +17,11 @@ public sealed class ExtensionCreateBeforeOutputSnapshotTests
 {
     private static readonly CommandOutputRenderers<ExtensionCreateResult> Renderers = CommandOutputRenderers<ExtensionCreateResult>.From(ExtensionCreatePresentation.Rendering);
 
-    [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Extension create output preserves an inaccessible catalogue without effects")]
-    public async Task CatalogueUnreadable()
+    [Theory(DisplayName = "Extension create output preserves an inaccessible catalogue across bounded diagnostic path lengths"), Trait("Boundary", "Output")]
+    [InlineData(0)]
+    [InlineData(20)]
+    [InlineData(60)]
+    public async Task CatalogueUnreadable(int pathPadding)
     {
         if (!OperatingSystem.IsWindows())
         {
@@ -27,6 +29,13 @@ public sealed class ExtensionCreateBeforeOutputSnapshotTests
             return;
         }
         using var catalogue = TemporaryWorkspace.Create("extension-create-output-unreadable");
+        var cataloguePath = catalogue.Path;
+        if (pathPadding > 0)
+        {
+            var child = new string('x', pathPadding);
+            catalogue.CreateDirectory(child);
+            cataloguePath = catalogue.Combine(child);
+        }
         var scripted = ScriptedCliTerminal.Lines([], canPrompt: false);
         var prompts = new CliPrompts(scripted.Terminal);
         var operation = ExtensionCreateOperationFactory.Create(
@@ -34,7 +43,7 @@ public sealed class ExtensionCreateBeforeOutputSnapshotTests
         var request = new ExtensionCreateRequest
         {
             StableId = "toolkit",
-            CataloguePath = catalogue.Path,
+            CataloguePath = cataloguePath,
             Mode = ExtensionCreateMode.Apply,
             Automatic = true,
             AllowInteraction = false,
@@ -43,7 +52,7 @@ public sealed class ExtensionCreateBeforeOutputSnapshotTests
             PackageVersion = null,
             Dependencies = [],
         };
-        var destination = catalogue.Combine("toolkit");
+        var destination = Path.Combine(cataloguePath, "toolkit");
         try
         {
             Assert.Equal(CliSemanticStatus.Complete, (await operation.ExecuteAsync(request, TestContext.Current.CancellationToken)).Status);
@@ -54,9 +63,14 @@ public sealed class ExtensionCreateBeforeOutputSnapshotTests
                 result = await operation.ExecuteAsync(request, TestContext.Current.CancellationToken);
             }
             Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
-            Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.CatalogueUnavailable);
+            var finding = Assert.Single(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.CatalogueUnavailable);
+            Assert.Equal(destination, finding.Subject);
+            Assert.Equal($"Access to the path '{destination}' is denied.", finding.Cause);
+            Assert.Equal(2, result.IntendedEffects.Count);
+            Assert.Empty(result.AppliedEffects);
             Assert.Equal(before, catalogue.SnapshotHashes());
-            Renderers.MatchDetails(result, "catalogue-unreadable", extensionSourcePath: catalogue.Path);
+            Renderers.MatchDetails(result, "catalogue-unreadable", extensionSourcePath: cataloguePath,
+                diagnosticComparer: new ExtensionCreateDiagnosticSnapshotComparer(cataloguePath));
         }
         finally
         {

@@ -9,4 +9,3 @@ Available (bundled with this CLI)
   project-documents          0.4.0  Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements  (2 packages)
   scenarios                  0.4.0  Describe user journeys and expected outcomes, organize scenarios, and record what happened when they were tried
   workflows                  0.4.0  Find and follow installed workflows, or create your own using the supplied template
-Next: open-forge extension install <id>

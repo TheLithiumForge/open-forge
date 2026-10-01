@@ -39,6 +39,9 @@ internal sealed record ExtensionListData
 
     [JsonIgnore]
     internal bool ShowAvailableDependencies { get; init; }
+
+    [JsonIgnore]
+    internal bool IsHealthyAvailableHint { get; init; }
 }
 
 internal sealed record ExtensionListDataSource(string? Kind, string Path);

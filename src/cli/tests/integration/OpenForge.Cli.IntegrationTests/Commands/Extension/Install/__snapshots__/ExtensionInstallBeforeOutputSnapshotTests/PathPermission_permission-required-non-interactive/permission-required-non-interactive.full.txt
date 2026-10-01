@@ -14,5 +14,5 @@ Workspace: <workspace>
   Framework fingerprint: <sha256>
   Verification: targets unknown; Entries unknown; Extension record unknown; Framework record unknown
   Recovery: not-created.
-Next: open-forge extension install team --allow-path .apm/agents/team.md
   Or add ".apm/agents/team.md" to allowInstallPaths in .agents/open-forge.json.
+Next: open-forge extension install team --allow-path .apm/agents/team.md
