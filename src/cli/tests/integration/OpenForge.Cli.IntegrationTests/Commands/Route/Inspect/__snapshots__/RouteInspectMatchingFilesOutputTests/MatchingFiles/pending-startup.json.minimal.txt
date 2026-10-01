@@ -30,8 +30,8 @@
   ],
   "effects": [],
   "counts": {
-    "ownBytes": 117,
-    "ownTokens": 30,
+    "ownBytes": 108,
+    "ownTokens": 27,
     "addedFiles": null,
     "addedBytes": null,
     "addedTokens": null,
@@ -73,8 +73,8 @@
     "size": {
       "own": {
         "files": 1,
-        "bytes": 117,
-        "tokens": 30
+        "bytes": 108,
+        "tokens": 27
       },
       "adds": null,
       "loadNow": {

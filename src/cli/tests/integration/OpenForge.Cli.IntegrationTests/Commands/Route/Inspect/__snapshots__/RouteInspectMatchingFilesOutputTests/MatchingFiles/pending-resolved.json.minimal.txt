@@ -15,11 +15,11 @@
   "findings": [],
   "effects": [],
   "counts": {
-    "ownBytes": 117,
-    "ownTokens": 30,
+    "ownBytes": 108,
+    "ownTokens": 27,
     "addedFiles": 1,
-    "addedBytes": 117,
-    "addedTokens": 30,
+    "addedBytes": 108,
+    "addedTokens": 27,
     "loadNowFiles": 0,
     "loadNowBytes": 0,
     "loadNowTokens": 0,
@@ -60,13 +60,13 @@
     "size": {
       "own": {
         "files": 1,
-        "bytes": 117,
-        "tokens": 30
+        "bytes": 108,
+        "tokens": 27
       },
       "adds": {
         "files": 1,
-        "bytes": 117,
-        "tokens": 30
+        "bytes": 108,
+        "tokens": 27
       },
       "loadNow": {
         "files": 0,

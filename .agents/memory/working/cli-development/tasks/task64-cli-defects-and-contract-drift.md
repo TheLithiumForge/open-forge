@@ -134,7 +134,10 @@ project, and no new test project is permitted.
 - **Recovery Next:** successful retained recovery uses `git diff` for an
   ordinary `.git` directory. Otherwise the sentence directs the user to the
   exact bundle, while actual-error precedence is preserved.
-- **B6:** recovery coexistence policy remains pending the user's answer.
+- **B6 — Recovery coexistence:** the proposed relaxation is explicitly deferred
+  pending maintainer direction. Beta4 preserves current recovery blocking
+  behavior. This separate follow-up does not block shipping the accepted
+  concrete fixes, and no acceptance of the relaxation is inferred.
 
 These are accepted conformance fixes, not new ownership authority.
 
@@ -152,30 +155,11 @@ These are accepted conformance fixes, not new ownership authority.
 ## Current State
 
 **Now:** Active within the authorized bounded beta-stabilization horizon in
-[Task 69](task69-next-beta-stabilization-release.md). The existing defect and
-contract scope and unresolved policy questions remain visible. Root has
-integrated B1–B5, W1/W3/W4/W5, Context, Library mapped-leaf ownership, N1,
-N2, and the `ExtensionUpdateMutation` regression. B2 supplies the full
-verified registered-Library read-only projection through
-`UpdateProjectionInputReader.cs`; mutation no-follow guards are unchanged. B3
-includes the shared `PlanProjectedEntries` path and generated-only
-package/nonpackage reconciliation. These corrections add no new production
-policy or shared contract. Version `0.9.0-beta.4` is allocated in
-`package.json`, `package-lock.json`, and `Directory.Build.props`.
-
-On beta4, `npm run verify` exited 0: `check:delivery` was green, 55 delivery
-tests and 7 package-layout tests passed across all six targets (layout only,
-not host execution), dotnet whitespace/analyzers were green, and 13
-`RepositoryMarkdownTests` passed with 0 skipped against the current repository
-inventory. The earlier 39-test result, 38 passed, 1 failed, and 0 skipped, is
-resolved historical evidence. The four-class snapshot refresh passed 47/47
-with 0 skipped, and Root independently reviewed its 68 changes: 32 JSON-only
-top-level `next` changes and 36 human `Next` or empty-Extension-list wording
-changes. The beta4 managed run passed via `npm run test -- --no-restore`:
-unit 3,875 passed with 0 excluded, integration 2,668 passed with 17
-documented Unix platform exclusions, public 263 passed with 0 excluded, and
-zero failures. The build completed with 0 warnings/errors. Exact reports are
-at `artifacts/delivery/managed-reports/{unit,integration,public}/results.json`.
-Native AOT/package gates, the whole-candidate review, merge, and release remain
-pending. B6 recovery coexistence is the sole pending user decision. No changed
-policy or release-green claim is made.
+[Task 69](task69-next-beta-stabilization-release.md). Root has integrated B1–B5,
+W1/W3/W4/W5, Context, Library mapped-leaf ownership, N1, N2, and the
+`ExtensionUpdateMutation` regression. The accepted fixes and local gates are
+recorded in [Task 69's candidate and merge receipt](task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt),
+which also records the clean merge and pending exact-merged hosted gate. The
+existing confirmation runtime remains unchanged. Task 64 stays open for the
+deferred B6 follow-up. Beta4 preserves current recovery blocking behavior, and
+the follow-up is not a blocker for shipping the accepted fixes.

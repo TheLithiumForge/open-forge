@@ -16,7 +16,7 @@ Older receipts and retired queue state are in the
 
 | ID  | Task                                                                                 | State  | Current boundary                                                             | Owner                    |
 | --- | ------------------------------------------------------------------------------------ | ------ | ---------------------------------------------------------------------------- | ------------------------ |
-| 32  | [Minimal output sweep](tasks/task32-minimal-output-sweep.md)                         | Active | Bounded pending/next-action polish under [Task 69](tasks/task69-next-beta-stabilization-release.md); full sweep remains queued | Root (Worker Watch) |
+| 32  | [Minimal output sweep](tasks/task32-minimal-output-sweep.md)                         | Active | Bounded pending/next-action polish integrated under [Task 69](tasks/task69-next-beta-stabilization-release.md); full sweep remains queued | Root (Worker Watch) |
 | 34  | [Interpolated value markup](tasks/task34-interpolated-value-markup.md)               | Open   | Do before 1.0; write the rule down first                                     | Unassigned               |
 | 36  | [Extension merge and guards](tasks/task36-extension-merge-and-guards.md)             | Open   | Needs the maintainer's decision; now holds Task 30's heading direction       | Maintainer               |
 | 37  | [Wording review](tasks/task37-wording-review-against-proposals.md)                   | Open   | Needs the maintainer's scope decision; after 32 and 39                       | Maintainer               |
@@ -29,16 +29,16 @@ Older receipts and retired queue state are in the
 | 54  | [Tag trimming](tasks/task54-tag-trimming.md)                                         | Open   | Do before 1.0, shipped files only; after 53                                  | Unassigned               |
 | 58  | [Demo-based evaluations](tasks/task58-demo-evals.md)                                 | Open   | Do after 1.0; needs a decision on cost and publication                       | Unassigned               |
 | 59 | [Beta 2 release](tasks/task59-beta-2-release.md) | Complete | `0.9.0-beta.2` published; final release and package/site verification are recorded in Task 59 | Root |
-| 61  | [Documentation accuracy and voice](tasks/task61-documentation-accuracy-and-voice.md) | Active | Stale documentation reconciliation under [Task 69](tasks/task69-next-beta-stabilization-release.md); existing docs scope retained | Root (Worker Watch), parallel reviewers |
+| 61  | [Documentation accuracy and voice](tasks/task61-documentation-accuracy-and-voice.md) | Active | Current documentation reconciliation integrated under [Task 69](tasks/task69-next-beta-stabilization-release.md); maintainer review checkbox remains unchecked | Root (Worker Watch), parallel reviewers |
 | 55  | [Alternative workspace root such as `.apm`](tasks/task55-alternative-root.md)       | Open   | Restored separately on 2026-09-29; bounded local triage recorded, full investigation open | Unassigned               |
 | 62 | [Glob-scoped loading](tasks/task62-glob-scoped-loading.md) | Complete | Implementation reviewed and verified; candidate is integrated on `develop` and `main`. Publication remains in Task 59 | Root |
 | 63  | [Keeping edits through updates](tasks/task63-keeping-edits-through-updates.md)       | Open   | Needs the maintainer's decision before 1.0                                   | Maintainer               |
-| 64  | [CLI defects and contract drift](tasks/task64-cli-defects-and-contract-drift.md)     | Active | Bounded fixes under [Task 69](tasks/task69-next-beta-stabilization-release.md); accepted fixes integrated, beta4 verify and managed qualification green | Root (Worker Watch) |
+| 64  | [CLI defects and contract drift](tasks/task64-cli-defects-and-contract-drift.md)     | Active | Accepted fixes integrated under [Task 69](tasks/task69-next-beta-stabilization-release.md); B6 follow-up remains open and current recovery blocking is preserved | Root (Worker Watch) |
 | 65  | [Where open Tasks live](tasks/task65-where-open-tasks-live.md)                       | Open   | Recorded; needs the maintainer's decision                                    | Maintainer               |
 | 66  | [Council polish](tasks/task66-council-polish.md)                                     | Active | Committed; answers to its questions on `task66-council-decisions`            | Root, council            |
 | 67  | [Diagram labels](tasks/task67-diagram-labels.md)                                     | Active | Committed on `task67-diagram-labels`; the maintainer reviews                 | Root, council            |
 | 68  | [Repository link validation](tasks/task68-repository-link-validation.md)             | Complete | Phase 2/2, milestone 3/3; exact scope and checker contract preserved, integrated/tested gate green, two stale anchors fixed | Root (Worker Watch) |
-| 69  | [Next beta stabilization and release](tasks/task69-next-beta-stabilization-release.md) | Active | Phase 1/3, milestone 0/5; beta4 local, Task 68 complete, managed green, B6 sole pending user decision, Native AOT/package/review/merge/release pending | Root (Worker Watch) |
+| 69  | [Next beta stabilization and release](tasks/task69-next-beta-stabilization-release.md) | Active | Phase 3/3, milestone 3/5; local qualification and review green, clean merge complete, original hosted run finished, correction integrated, repository gate passed; full requalification, second squash, and new hosted gate pending; beta4 unpublished | Root (Worker Watch) |
 
 No completion grace has been consumed for Tasks 68 or 69.
 
@@ -73,51 +73,39 @@ The current selection is [Task 69](tasks/task69-next-beta-stabilization-release.
 for beta stabilization. Root owns acceptance and execution runs through Worker
 Watch.
 
-1. Continue [Task 64](tasks/task64-cli-defects-and-contract-drift.md) bounded
-   fixes, [Task 61](tasks/task61-documentation-accuracy-and-voice.md) stale-doc
-   reconciliation, and [Task 32](tasks/task32-minimal-output-sweep.md) bounded
-   polish. Keep the full Task 32 sweep queued.
+1. Continue [Task 64](tasks/task64-cli-defects-and-contract-drift.md) for its
+   separate B6 follow-up, [Task 61](tasks/task61-documentation-accuracy-and-voice.md)
+   for current documentation reconciliation, and [Task 32](tasks/task32-minimal-output-sweep.md)
+   for bounded polish. Keep the full Task 32 sweep queued.
 2. [Task 68](tasks/task68-repository-link-validation.md) is complete at phase
    2/2, milestone 3/3. Its exact named-root scope, parser/resolver boundary,
    checker contract, tests, and wiring remain accepted. The two stale anchors
-   are fixed, and no source beyond the named roots is silently excluded. Keep
-   Task 69 at phase 1/3, milestone 0/5 while B6 recovery coexistence awaits
-   the user's response and final qualification remains.
+   are fixed, and no source beyond the named roots is silently excluded. Task
+  69 is phase 3/3, milestone 3/5: implementation, local qualification, and
+  review are green, the clean merge is complete, the original hosted run is
+  finished, the correction is integrated, and the corrected-candidate
+  repository gate passed. Full native/test/package requalification, a second
+  clean squash, and a new exact-SHA hosted gate remain pending. The proposed
+  B6 relaxation is deferred separately, and beta4 preserves current recovery
+  blocking behavior.
 3. Treat `0.9.0-beta.3` as the published release and `0.9.0-beta.4` as
-   locally allocated only. Preserve Task 59's beta 2 receipt as historical and
-   do not push, merge, or release from this boundary.
+   unpublished until the hosted gate and the remaining publication, package,
+   and demonstration receipts are complete. Preserve Task 59's beta 2 receipt
+   as historical.
 
-`npm run verify` exited 0 on beta4: `check:delivery` was green, 55 delivery
-tests and 7 package-layout tests passed across all six targets (layout only,
-not host execution), dotnet whitespace/analyzers were green, and 13
-`RepositoryMarkdownTests` passed with 0 skipped against the current repository
-inventory. The earlier managed first pass is resolved historical evidence:
-3,871/3,875 unit tests passed with four stale assertions, and integration
-recorded 2,658 passed, 10 failed, and 17 Unix exclusions, consisting of 9
-reviewed snapshots and 1 Context parity test. All fixes are integrated. The
-four-class targeted snapshot refresh passed 47/47 with 0 skipped; Root reviewed
-all 68 changes independently, comprising 32 JSON-only top-level `next` changes
-and 36 human `Next` or empty-Extension-list wording changes. The beta4 managed
-run passed via `npm run test -- --no-restore`: unit 3,875 passed with 0
-excluded, integration 2,668 passed with 17 documented Unix platform
-exclusions, public 263 passed with 0 excluded, and zero failures. The build
-completed with 0 warnings/errors. Exact reports are at
-`artifacts/delivery/managed-reports/{unit,integration,public}/results.json`.
-Native AOT/package gates, review, merge, and release remain pending, with no
-release-green claim.
+The detailed candidate, test, package, upgrade, merge, hosted-run, and cleanup
+evidence is in [Task 69's candidate and merge receipt](tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
+Prior failed or stale-assertion runs are historical resolved evidence, not
+current blockers.
 
 Root applied the exact five generated hosts after rerunning index outside the
 worker lock restriction, and the second dry-run reported zero effects and
 findings. Scratch customization completed all five retry steps with exit 0 and
 no findings, and removal settings and ownership are correct.
 
-Version beta4 is allocated locally. The CLI wave is committed locally at
-`3901e6156`; docs, checker, and version changes remain local edits. Cleanup is
-verified, including the retained dirty and orphan worktrees and the complete
-bundle history/hash receipt at `D:/Repositories/open-forge-cleanup-archive/20261001`.
-No Native AOT/package/review/merge/release qualification, push, or release is
-claimed.
-Councils are zero. One final fresh whole-candidate Astra review and one grouped
-correction pass remain pending. Task 53's full loading audit remains outside
-this horizon; Task 55's bounded local triage is recorded, while its full
-investigation remains open outside the horizon.
+The exact merged candidate and hosted-run boundary are recorded in Task 69.
+One whole-candidate review and one focused recheck were consumed with no
+material findings. One grouped correction pass was consumed, with zero
+councils or completion grace consumed. Task 53's full loading audit remains
+outside this horizon. Task 55's bounded local triage is recorded, while its
+full investigation remains open outside the horizon.

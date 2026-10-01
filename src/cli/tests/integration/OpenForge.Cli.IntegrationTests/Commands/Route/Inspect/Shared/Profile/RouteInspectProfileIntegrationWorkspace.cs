@@ -213,7 +213,7 @@ internal sealed class RouteInspectProfileIntegrationWorkspace : IDisposable
 
         builder.AppendLine();
         builder.AppendLine("");
-        return builder.ToString();
+        return builder.ToString().ReplaceLineEndings("\n");
     }
 
     internal static string BuildLoader(

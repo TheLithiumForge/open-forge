@@ -18,8 +18,8 @@
     "ownBytes": 64,
     "ownTokens": 16,
     "addedFiles": 2,
-    "addedBytes": 190,
-    "addedTokens": 48,
+    "addedBytes": 181,
+    "addedTokens": 46,
     "loadNowFiles": null,
     "loadNowBytes": null,
     "loadNowTokens": null,
@@ -73,8 +73,8 @@
       },
       "adds": {
         "files": 2,
-        "bytes": 190,
-        "tokens": 48
+        "bytes": 181,
+        "tokens": 46
       },
       "loadNow": null
     },
@@ -88,8 +88,8 @@
     "selected": {
       "closure": {
         "files": 2,
-        "bytes": 190,
-        "tokens": 48
+        "bytes": 181,
+        "tokens": 46
       },
       "startupOverlap": {
         "files": 0,

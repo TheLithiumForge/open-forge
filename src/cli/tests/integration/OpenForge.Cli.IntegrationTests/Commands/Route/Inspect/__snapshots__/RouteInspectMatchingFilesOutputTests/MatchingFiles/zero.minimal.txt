@@ -17,4 +17,4 @@ When it is read
 
 Context size
   This file: 89 B, about 23 tokens
-  Selecting this route adds: 2 files, 215 B, about 54 tokens
+  Selecting this route adds: 2 files, 206 B, about 52 tokens

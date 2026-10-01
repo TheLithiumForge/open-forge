@@ -13,6 +13,6 @@ When it is read
   May be read again: no
 
 Context size
-  This file: 117 B, about 30 tokens
+  This file: 108 B, about 27 tokens
   Selecting this route adds could not be measured: The selection addition cannot be established completely.
 Next: open-forge route inspect ".agents/maps/_maps.md" --for <path>

@@ -82,7 +82,7 @@ of the time.
 
 ## Current State
 
-**Now:** Active for bounded pending/next-action polish within the authorized
-beta-stabilization horizon in [Task 69](task69-next-beta-stabilization-release.md).
+**Now:** The bounded pending/next-action polish is integrated within the
+authorized beta-stabilization horizon in [Task 69](task69-next-beta-stabilization-release.md).
 The existing sweep scope is unchanged, and the full 28-command sweep remains
-queued.
+open and queued. This bounded work does not start or complete the full sweep.

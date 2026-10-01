@@ -34,8 +34,8 @@
     "ownBytes": 89,
     "ownTokens": 23,
     "addedFiles": 2,
-    "addedBytes": 215,
-    "addedTokens": 54,
+    "addedBytes": 206,
+    "addedTokens": 52,
     "loadNowFiles": null,
     "loadNowBytes": null,
     "loadNowTokens": null,
@@ -90,8 +90,8 @@
       },
       "adds": {
         "files": 2,
-        "bytes": 215,
-        "tokens": 54
+        "bytes": 206,
+        "tokens": 52
       },
       "loadNow": null
     },

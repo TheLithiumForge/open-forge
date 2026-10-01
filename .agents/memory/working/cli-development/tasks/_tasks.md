@@ -6,7 +6,7 @@ open-forge:
 
 # Open CLI Tasks
 
-The current selection is 1.0 polish, listed below. Open and unstarted Tasks stay
+The current selection is 1.0 polish, listed below. Open Tasks stay
 here. Completed Tasks and their packets moved to Archived Memory on
 2026-09-25, as listed under [Archived on 2026-09-25](#archived-on-2026-09-25).
 Older completed and superseded records are preserved under
@@ -26,10 +26,12 @@ the completed release and published-package verification receipts.
 Accepted on 2026-10-01, [Task 69 — Next beta stabilization and
 release](task69-next-beta-stabilization-release.md) coordinates the bounded
 implementation, qualification, and release boundary. Its current boundary is
-phase 1/3, milestone 0/5, with Root active and execution via Worker Watch.
+phase 3/3, milestone 3/5: implementation, local qualification, and review are
+green, the clean merge is complete, and the exact-merged hosted gate is
+pending. Root remains active and execution is via Worker Watch.
 [Task 68 — Repository link validation](task68-repository-link-validation.md)
-is the phase 1/2, milestone 0/3 offline link-gate packet. No checks have passed
-and no completion grace has been consumed.
+is complete at phase 2/2, milestone 3/3. Its exact scope and checker contract
+remain accepted. No completion grace has been consumed.
 
 ## Current order
 
@@ -41,9 +43,11 @@ The ordering that came before it is preserved in
 1. **Review 1.0 release readiness.** Use the root-authored
    [assessment](../../../emerging/analysis/one-zero-release-readiness.md) as
    contextual input. It does not authorize implementation.
-2. **Do next:** [53](task53-loading-and-scoping-audit.md) and
-   [64](task64-cli-defects-and-contract-drift.md), after the 1.0 direction is
-   accepted.
+2. The pre-beta order listed [53](task53-loading-and-scoping-audit.md) and
+   [64](task64-cli-defects-and-contract-drift.md) as next after the 1.0
+   direction was accepted. In the accepted beta-stabilization horizon,
+   Task 53's full loading audit remains out of scope, while Task 64 stays open
+   for the separate B6 follow-up after its accepted fixes.
    [66](task66-council-polish.md) is committed on its own branch and awaits review.
    [67](task67-diagram-labels.md) builds on it.
 3. **Decide before 1.0:** [36](task36-extension-merge-and-guards.md),
@@ -67,7 +71,8 @@ the [candidate queue](potential/_potential.md) holds work not yet selected.
 
 On 2026-09-29, the maintainer restored [Task 55](task55-alternative-root.md)
 as a separate open investigation of alternative roots and APM interoperability.
-It remains open and unstarted, and its scheduling is independent. [Task 62](task62-glob-scoped-loading.md)
+It remains open, with bounded local triage recorded, and its scheduling is
+independent. [Task 62](task62-glob-scoped-loading.md)
 covers optional `applyTo` loading and CLI filtering. Its implementation and
 qualification are complete in candidate
 `00e3ba0294679163d95b42a81295091254debfb7`, now pushed to `develop` and `main`.

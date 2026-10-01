@@ -46,7 +46,12 @@ code and seed records, and page structure and URLs.
 
 ## Current State
 
-**Now:** The earlier documentation pass is integrated, with its release and site-verification receipts recorded in Task59. Task61 now owns current documentation reconciliation for the accepted next-beta stabilization. Task69 owns qualification of the resulting candidate.
+**Now:** The earlier documentation pass remains integrated, with its release and
+site-verification receipts recorded in Task59. The current documentation
+reconciliation is integrated in the verified beta4 candidate, and the site
+type-check/build gates are green. [Task 69](task69-next-beta-stabilization-release.md)
+records the local qualification, review, clean merge, and pending exact-merged
+hosted gate. The maintainer review checkbox above remains unchecked.
 
 **Shipped content changed:** the `open-forge-cli` Skill said to read "the
 status that ends each result", but text output has no status line. It now
