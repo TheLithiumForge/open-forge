@@ -18,6 +18,10 @@ public sealed class IndexSelectionResolverTests
     private const string RootPath = ".agents/root/_root.md";
     private const string ChildPath = ".agents/root/child/_child.md";
     private const string LeafPath = ".agents/root/leaf.md";
+    private const string SkillsRootPath = ".agents/skills/_skills.md";
+    private const string WorkflowSkillPath = ".agents/skills/use-workflow/SKILL.md";
+    private const string ReferencesCataloguePath = ".agents/skills/use-workflow/references/_references.md";
+    private const string NestedCataloguePath = ".agents/skills/use-workflow/references/nested/_nested.md";
 
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Index selection closes automatic and explicit rooted entrypoints through Loader"), Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
@@ -55,6 +59,256 @@ public sealed class IndexSelectionResolverTests
             Assert.True(resolution.IsComplete);
             Assert.Empty(resolution.Findings);
         });
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index bridges rooted Skills to immediate catalogues for default and entrypoint closures")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void RootedSkillCataloguesExpandDefaultLoaderAndExplicitEntrypointClosures()
+    {
+        var loader = Source(SourceLogicalPath.LoaderPath, SourceDocumentForm.Loader);
+        var skillsRoot = Source(SkillsRootPath, SourceDocumentForm.CanonicalEntrypoint);
+        var skill = Source(WorkflowSkillPath, SourceDocumentForm.Skill);
+        var references = Source(ReferencesCataloguePath, SourceDocumentForm.UnderscoreReferencesEntrypoint);
+        var nested = Source(NestedCataloguePath, SourceDocumentForm.CanonicalEntrypoint);
+        var referencePage = Source(".agents/skills/use-workflow/references/guide.md", SourceDocumentForm.Markdown);
+        var nestedPage = Source(".agents/skills/use-workflow/references/nested/guide.md", SourceDocumentForm.Markdown);
+        var formation = Formation(loader, skillsRoot, skill, references, nested, referencePage, nestedPage);
+        var beforeRoots = formation.Topology.LoaderRootPaths.ToArray();
+        var beforeNodes = TopologySnapshot(formation);
+        var resolver = Resolver();
+
+        var automatic = resolver.Resolve(Request(formation), formation);
+        var explicitLoader = resolver.Resolve(Request(formation, SourceLogicalPath.LoaderPath), formation);
+        var explicitSkills = resolver.Resolve(Request(formation, SkillsRootPath), formation);
+        var explicitCatalogue = resolver.Resolve(Request(formation, references.Identity.CanonicalBasePath), formation);
+
+        var rootedTargets = new[]
+        {
+            SourceLogicalPath.LoaderPath,
+            SkillsRootPath,
+            references.Identity.CanonicalBasePath,
+            NestedCataloguePath,
+        };
+        Assert.Equal([SourceLogicalPath.LoaderPath], automatic.Selection.Sources.Select(source => source.Path));
+        Assert.Equal([SourceLogicalPath.LoaderPath], explicitLoader.Selection.Sources.Select(source => source.Path));
+        Assert.Equal([SkillsRootPath], explicitSkills.Selection.Sources.Select(source => source.Path));
+        Assert.Equal(rootedTargets, automatic.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.Equal(rootedTargets, explicitLoader.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.Equal(rootedTargets, explicitSkills.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.Equal(
+            [references.Identity.CanonicalBasePath, NestedCataloguePath],
+            explicitCatalogue.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.All([automatic, explicitLoader, explicitSkills, explicitCatalogue], resolution =>
+        {
+            Assert.True(resolution.IsComplete);
+            Assert.Empty(resolution.Findings);
+            Assert.DoesNotContain(resolution.Targets, target => target.Base.Form == SourceDocumentForm.Skill);
+        });
+        Assert.Equal(beforeRoots, formation.Topology.LoaderRootPaths);
+        Assert.Equal(beforeNodes, TopologySnapshot(formation));
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index explicit native Skill selection remains exposing-parent only")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void ExplicitSkillSelectsExposingParentWithoutInvokingCatalogueClosure()
+    {
+        var loader = Source(SourceLogicalPath.LoaderPath, SourceDocumentForm.Loader);
+        var skillsRoot = Source(SkillsRootPath, SourceDocumentForm.CanonicalEntrypoint);
+        var skill = Source(WorkflowSkillPath, SourceDocumentForm.Skill);
+        var references = Source(ReferencesCataloguePath, SourceDocumentForm.UnderscoreReferencesEntrypoint);
+        var formation = Formation(loader, skillsRoot, skill, references);
+
+        var resolution = Resolver().Resolve(Request(formation, WorkflowSkillPath), formation);
+
+        Assert.Equal([WorkflowSkillPath], resolution.Selection.Sources.Select(source => source.Path));
+        Assert.Equal([SkillsRootPath], resolution.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.DoesNotContain(resolution.Targets, target => target.Base.Form == SourceDocumentForm.Skill);
+        Assert.True(resolution.IsComplete);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index Skill catalogue lookup recognizes all entrypoint forms and keeps ordinal target order")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void SkillCatalogueLookupSupportsAllEntrypointFormsInOrdinalOrder()
+    {
+        var catalogueSources = new[]
+        {
+            Source(".agents/skills/use-workflow/canonical/_canonical.md", SourceDocumentForm.CanonicalEntrypoint),
+            Source(".agents/skills/use-workflow/compat-index/index.md", SourceDocumentForm.IndexEntrypoint),
+            Source(".agents/skills/use-workflow/compat-underscore-index/_index.md", SourceDocumentForm.UnderscoreIndexEntrypoint),
+            Source(".agents/skills/use-workflow/compat-references/references.md", SourceDocumentForm.ReferencesEntrypoint),
+            Source(".agents/skills/use-workflow/compat-underscore-references/_references.md", SourceDocumentForm.UnderscoreReferencesEntrypoint),
+        };
+        var loader = Source(SourceLogicalPath.LoaderPath, SourceDocumentForm.Loader);
+        var skillsRoot = Source(SkillsRootPath, SourceDocumentForm.CanonicalEntrypoint);
+        var skill = Source(WorkflowSkillPath, SourceDocumentForm.Skill);
+        var formation = Formation([.. catalogueSources.Reverse(), loader, skillsRoot, skill]);
+
+        var resolution = Resolver().Resolve(Request(formation), formation);
+
+        Assert.True(resolution.IsComplete);
+        Assert.Equal(
+        [
+            SourceLogicalPath.LoaderPath,
+            SkillsRootPath,
+            ".agents/skills/use-workflow/canonical/_canonical.md",
+            ".agents/skills/use-workflow/compat-index/index.md",
+            ".agents/skills/use-workflow/compat-references/references.md",
+            ".agents/skills/use-workflow/compat-underscore-index/_index.md",
+            ".agents/skills/use-workflow/compat-underscore-references/_references.md",
+        ],
+            resolution.Targets.Select(source => source.Identity.CanonicalBasePath));
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index bridges direct and scoped rooted Skills and accepts zero or multiple catalogues")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void DirectAndScopedSkillsSupportZeroOrSeveralImmediateCatalogues()
+    {
+        const string TeamEntrypointPath = ".agents/skills/team/_team.md";
+        const string ScopedEntrypointPath = ".agents/skills/team/scopes/_scopes.md";
+        const string ScopedSkillPath = ".agents/skills/team/scopes/skill/SKILL.md";
+        const string ScopedCataloguePath = ".agents/skills/team/scopes/skill/manuals/_manuals.md";
+        const string MultipleSkillPath = ".agents/skills/multiple/SKILL.md";
+        const string FirstCataloguePath = ".agents/skills/multiple/reference/_reference.md";
+        const string SecondCataloguePath = ".agents/skills/multiple/recipes/_recipes.md";
+        const string EmptySkillPath = ".agents/skills/empty/SKILL.md";
+
+        var sources = new[]
+        {
+            Source(SourceLogicalPath.LoaderPath, SourceDocumentForm.Loader),
+            Source(SkillsRootPath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(".agents/skills/direct/SKILL.md", SourceDocumentForm.Skill),
+            Source(TeamEntrypointPath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(ScopedEntrypointPath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(ScopedSkillPath, SourceDocumentForm.Skill),
+            Source(ScopedCataloguePath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(MultipleSkillPath, SourceDocumentForm.Skill),
+            Source(FirstCataloguePath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(SecondCataloguePath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(EmptySkillPath, SourceDocumentForm.Skill),
+        };
+        var formation = Formation(sources);
+
+        var resolution = Resolver().Resolve(Request(formation), formation);
+
+        Assert.True(resolution.IsComplete);
+        Assert.Contains(ScopedCataloguePath, resolution.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.Contains(FirstCataloguePath, resolution.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.Contains(SecondCataloguePath, resolution.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.DoesNotContain(resolution.Targets, target => target.Base.Form == SourceDocumentForm.Skill);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index excludes unrooted, outside-root, nested Skill bridges, hidden sources, and gaps")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void SkillCatalogueBridgeRequiresExistingSkillsRootAncestryAndDoesNotBridgeGaps()
+    {
+        const string RootSkillPath = ".agents/skills/rooted/SKILL.md";
+        const string RootCataloguePath = ".agents/skills/rooted/references/_references.md";
+        const string NestedSkillPath = ".agents/skills/rooted/references/nested/SKILL.md";
+        const string NestedCataloguePath = ".agents/skills/rooted/references/nested/resources/_resources.md";
+        const string GapCataloguePath = ".agents/skills/rooted/references/gap/deep/_deep.md";
+        const string UnrootedSkillPath = ".agents/skills/unrooted/deep/SKILL.md";
+        const string UnrootedCataloguePath = ".agents/skills/unrooted/deep/references/_references.md";
+        const string OutsideRootPath = ".agents/guidance/_guidance.md";
+        const string OutsideSkillPath = ".agents/guidance/foreign/SKILL.md";
+        const string OutsideCataloguePath = ".agents/guidance/foreign/references/_references.md";
+        const string HiddenSkillPath = ".agents/skills/rooted/hidden/SKILL.md";
+        const string HiddenCataloguePath = ".agents/skills/rooted/hidden/references/_references.md";
+
+        var sources = new[]
+        {
+            Source(SourceLogicalPath.LoaderPath, SourceDocumentForm.Loader),
+            Source(SkillsRootPath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(RootSkillPath, SourceDocumentForm.Skill),
+            Source(RootCataloguePath, SourceDocumentForm.UnderscoreReferencesEntrypoint),
+            Source(NestedSkillPath, SourceDocumentForm.Skill),
+            Source(NestedCataloguePath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(GapCataloguePath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(UnrootedSkillPath, SourceDocumentForm.Skill),
+            Source(UnrootedCataloguePath, SourceDocumentForm.UnderscoreReferencesEntrypoint),
+            Source(OutsideRootPath, SourceDocumentForm.CanonicalEntrypoint),
+            Source(OutsideSkillPath, SourceDocumentForm.Skill),
+            Source(OutsideCataloguePath, SourceDocumentForm.UnderscoreReferencesEntrypoint),
+        };
+        var hiddenCandidates = new[]
+        {
+            GeneratedNavigationTestData.Candidate(
+                HiddenSkillPath,
+                SourceDocumentForm.Skill,
+                Physical(HiddenSkillPath)),
+            GeneratedNavigationTestData.Candidate(
+                HiddenCataloguePath,
+                SourceDocumentForm.UnderscoreReferencesEntrypoint,
+                Physical(HiddenCataloguePath)),
+        };
+        var formation = new GeneratedNavigationFormationBuilder().Build(
+            GeneratedNavigationTestData.Catalogue(sources, additionalCandidates: hiddenCandidates));
+
+        var resolution = Resolver().Resolve(Request(formation), formation);
+
+        Assert.True(resolution.IsComplete);
+        Assert.Contains(RootCataloguePath, resolution.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.DoesNotContain(
+            resolution.Targets,
+            source => source.Identity.CanonicalBasePath is NestedCataloguePath
+                or GapCataloguePath
+                or UnrootedCataloguePath
+                or OutsideCataloguePath
+                or HiddenCataloguePath);
+        Assert.DoesNotContain(
+            resolution.Targets,
+            source => source.Identity.CanonicalBasePath is NestedSkillPath or UnrootedSkillPath or OutsideSkillPath or HiddenSkillPath);
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index rejects multiple entrypoints for one immediate Skill catalogue directory even when empty")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void MultipleEntrypointsForOneSkillCatalogueDirectoryAreTopologyAmbiguous()
+    {
+        const string ConflictingCataloguePath = ".agents/skills/use-workflow/references/index.md";
+        var loader = Source(SourceLogicalPath.LoaderPath, SourceDocumentForm.Loader);
+        var skillsRoot = Source(SkillsRootPath, SourceDocumentForm.CanonicalEntrypoint);
+        var skill = Source(WorkflowSkillPath, SourceDocumentForm.Skill);
+        var references = Source(ReferencesCataloguePath, SourceDocumentForm.UnderscoreReferencesEntrypoint);
+        var conflicting = Source(ConflictingCataloguePath, SourceDocumentForm.IndexEntrypoint);
+        var formation = Formation(loader, skillsRoot, skill, references, conflicting);
+
+        var resolution = Resolver().Resolve(Request(formation), formation);
+
+        Assert.Empty(resolution.Targets);
+        var finding = Assert.Single(resolution.Findings);
+        Assert.Equal(IndexFindingCode.TopologyAmbiguous, finding.Code);
+        Assert.Equal(
+            [ReferencesCataloguePath, ConflictingCataloguePath],
+            finding.Candidates.Select(candidate => candidate.Path));
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Index overlapping rooted and catalogue selections process each generated region once")]
+    [Trait("Feature", "index-command"), Trait("Evidence", "Unit")]
+    public void RootedAndCatalogueOperandsDeduplicateBridgedTargets()
+    {
+        var loader = Source(SourceLogicalPath.LoaderPath, SourceDocumentForm.Loader);
+        var skillsRoot = Source(SkillsRootPath, SourceDocumentForm.CanonicalEntrypoint);
+        var skill = Source(WorkflowSkillPath, SourceDocumentForm.Skill);
+        var references = Source(ReferencesCataloguePath, SourceDocumentForm.UnderscoreReferencesEntrypoint);
+        var formation = Formation(loader, skillsRoot, skill, references);
+
+        var resolution = Resolver().Resolve(
+            Request(formation, SkillsRootPath, ReferencesCataloguePath, ReferencesCataloguePath),
+            formation);
+
+        Assert.True(resolution.IsComplete);
+        Assert.Equal(
+            [SourceLogicalPath.LoaderPath, SkillsRootPath, ReferencesCataloguePath],
+            resolution.Targets.Select(source => source.Identity.CanonicalBasePath));
+        Assert.Equal(
+            resolution.Targets.Count,
+            resolution.Targets.Select(source => source.Identity.CanonicalBasePath).Distinct(StringComparer.Ordinal).Count());
     }
 
     [Trait("Boundary", "Processing")]
@@ -264,6 +518,11 @@ public sealed class IndexSelectionResolverTests
             relatedPaths: [],
             scopePhysicalPath: null,
             failure: null);
+
+    private static string[] TopologySnapshot(GeneratedNavigationFormation formation)
+        => formation.Topology.Nodes.Select(node =>
+            $"{node.Identity.CanonicalBasePath}|{node.ParentState}|{string.Join(',', node.ParentPaths)}|{string.Join(',', node.ChildPaths)}")
+            .ToArray();
 
     private static SourceLogicalSource Source(
         string canonicalPath,

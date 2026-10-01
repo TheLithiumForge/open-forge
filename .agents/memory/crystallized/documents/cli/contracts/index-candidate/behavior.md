@@ -108,6 +108,27 @@ Explicit entrypoint resolution applies the [Entrypoint selection](interface.md#e
 closure and parent rules. It computes that closure from direct routed
 relationships, not current generated lines.
 
+After rooted/default or explicit Loader or entrypoint selection is established,
+the bounded Index bridge considers native Skills already structurally reachable
+under the standard `.agents/skills` route, including routed scopes. Existing
+typed formation supplies those Skill facts. The bridge checks only each Skill
+package folder's immediate child directories for the five recognized entrypoint
+forms (`_{folder-name}.md`, `index.md`, `_index.md`, `references.md`, and
+`_references.md`), then adds each found catalogue's normal entrypoint closure. No authored
+Markdown links are followed, no route gap is searched recursively, and no
+workspace-wide scan is added. These catalogue closures are Index selections
+only. They do not change Loader or runtime route facts or activate a Skill.
+
+The bridge preserves existing physical `WORKSPACE` containment, recognized
+entrypoint ordering, physical identity, alias collapse and ambiguity handling.
+If it finds no catalogue entrypoint, it adds no targets. Multiple catalogues
+join once each under the existing closure and deduplication rules. Native
+`SKILL.md` files are never target regions, regardless of any authored
+`Entries` section. An explicit native Skill leaf remains parent-only, while an
+explicitly selected detached catalogue continues to use ordinary detached-
+entrypoint selection. Existing malformed native-source findings and safe-skip
+semantics, including Skill metadata validation, are unchanged.
+
 Parent inclusion and descendant completeness are treated as dependencies of the
 resolved request. No higher ancestor is added solely by ancestry.
 

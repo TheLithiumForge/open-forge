@@ -26,6 +26,10 @@ at `09aa03eddb97831ff544afe1eac54ad9af501f5c`: its tree
 `2dcfca18020980a9cafbc429a72930af3368df5f` exactly equals final Index closeout
 tip `2b353c48978ee88e53345be8037776181612222c`. The command does not ship.
 
+The 2026-10-01 Task 47 freeze adds a bounded command-local Skill catalogue
+selection bridge. The existing candidate hash and executable evidence do not
+establish that this bridge is implemented or verified.
+
 ## Accepted Runtime Boundary
 
 The implementation is C# on .NET 10 or newer in the modern `.slnx` solution
@@ -104,13 +108,29 @@ shared exact JSON schema and numeric exits come from the accepted [Shared Result
 Coordinates](../shared/result-coordinates/interface.md); this command adds no
 private schema or exit mapping.
 
-Index owns binding, source-reference resolution, rooted/detached target closure,
-command planning, orchestration, result formation, and presentation. Formation
-and Generated Navigation return immutable facts only. M1 owns workspace locking,
+Index owns binding, source-reference resolution, the bounded Skill catalogue
+lookup and rooted/detached target closure, command planning, orchestration,
+result formation, and presentation. Formation and Generated Navigation return
+immutable facts only. M1 owns workspace locking,
 post-lock expected-state revalidation, recovery preparation, atomic one-change
 application, receipts, and verification mechanics. Index consumes those
 callables; it does not create command-local substitutes or turn Generated
 Navigation into an applier or universal coordinator.
+
+For rooted/default and explicit Loader or entrypoint selection, the existing
+`IndexSelectionResolver` computes one command-local catalogue lookup from the
+existing `GeneratedNavigationFormation`. It considers only native Skills
+already structurally reachable under the standard `.agents/skills` route,
+including routed scopes, and checks each Skill package folder's immediate child
+directories for recognized entrypoints. Each discovered catalogue then uses
+the existing `IndexSelectionResolver` entrypoint-closure traversal. This lookup
+does not change `GeneratedNavigationFormation`, `SourceRouteTopologyBuilder`,
+the runtime route graph, current Route or Context facts, or activation. It does
+not crawl authored Markdown links or search recursively. A native `SKILL.md` is
+never a target region, even when it has authored `Entries`. Direct Skill-leaf
+selection remains parent-only, and an explicitly selected detached catalogue
+retains ordinary detached-entrypoint behavior. No new implementation symbol or
+signature is fixed by this design addition.
 
 ## Markdown, YAML, And Byte Boundaries
 

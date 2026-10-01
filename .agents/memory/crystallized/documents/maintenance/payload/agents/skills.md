@@ -30,6 +30,7 @@ The [current Skills document](../../../framework/primitives/skills.md) defines t
 
 ## Verification
 
-- Skill routing tests verify package discovery at the Skills `root route` and within routed scopes beneath it, nested resources, generated `entries`, cross-root rejection, and loader-to-resource inheritance
+- Verify native package discovery at the Skills `root route` and within routed scopes beneath it, plus package-local resource structure, generated `entries`, and cross-root rejection.
+- Verify Index selection separately: it discovers recognized entrypoints in each eligible Skill package's immediate child directories and maintains their generated `Entries`. This selection does not automatically load resources or activate the Skill.
 - Core installation tests verify that the category installs, indexes, and remains baseline-loaded
 - When a command's name, purpose, status meaning, or commonly used option changes, review the `open-forge-cli` Skill against the command reference and keep the Skill's examples valid

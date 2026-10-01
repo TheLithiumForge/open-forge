@@ -25,6 +25,26 @@ internal sealed class IndexOperationWorkspace : IDisposable
     internal const string BetaChildPath = ".agents/beta/child.md";
     internal const string BetaExpectedEntry = "- [Beta Child](child.md) - #Beta";
     internal const string BetaPrefix = "# Beta\n\nBeta unrelated prose.";
+    internal const string LoaderPath = ".agents/loader.md";
+    internal const string SkillsPath = ".agents/skills/_skills.md";
+    internal const string NativeSkillPath = ".agents/skills/example/SKILL.md";
+    internal const string NativeSkillOverwritePath = ".agents/skills/example/SKILL.overwrite.md";
+    internal const string ReferencesPath = ".agents/skills/example/references/_references.md";
+    internal const string RecipePath = ".agents/skills/example/references/recipe.md";
+    internal const string RecipeOverwritePath = ".agents/skills/example/references/recipe.overwrite.md";
+    internal const string GuidesPath = ".agents/skills/example/references/guides/_guides.md";
+    internal const string GuidePath = ".agents/skills/example/references/guides/guide.md";
+    internal const string SkillsPrefix = "# Skills\n\nAuthored skills route.";
+    internal const string ReferencesPrefix = "# References\n\nAuthored reference notes.";
+    internal const string GuidesPrefix = "# Guides\n\nAuthored guide notes.";
+    internal const string LoaderExpectedEntry = "- [Skills](skills/_skills.md) - #Skill";
+    internal const string SkillsExpectedEntry = "- [Native workflow skill](example/SKILL.md) - #Skill";
+    internal const string GuidesExpectedEntry = "- [Guides](guides/_guides.md) - #Docs";
+    internal const string RecipeExpectedEntry = "- [Planning recipe](recipe.md) - #Extension #Workflow #Planning";
+    internal const string GuideExpectedEntry = "- [Getting started](guide.md) - #Docs";
+    internal const string NativeSkillAuthoredBody = "# Native workflow skill\n\n## Entries\n\nThis is authored Skill text.\n";
+    internal const string NativeSkillOverwriteText = "Authored Skill overwrite bytes.\r\n";
+    internal const string RecipeOverwriteText = "Authored recipe overwrite bytes.\r\n";
 
     private readonly TemporaryWorkspace _temporary;
     private readonly WorkspaceLockTestStore _lockStore;
@@ -115,6 +135,73 @@ internal sealed class IndexOperationWorkspace : IDisposable
         }
     }
 
+    internal static IndexOperationWorkspace CreateSkillCatalogue(string purpose)
+    {
+        var temporary = TemporaryWorkspace.Create(purpose);
+        var lockStore = WorkspaceLockTestStore.Create($"{purpose}-lock-store");
+        try
+        {
+            temporary.WriteText(LoaderPath, GeneratedLoaderDocumentBuilder.Build("- stale"));
+            temporary.WriteText(
+                SkillsPath,
+                OpenForgeDocumentSeed.Metadata(
+                    description: "Skills",
+                    tags: ["Skill"],
+                    body: OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+                    {
+                        Entries = "- stale",
+                        Prefix = SkillsPrefix,
+                    })));
+            temporary.WriteText(
+                NativeSkillPath,
+                OpenForgeDocumentSeed.Skill(
+                    name: "example-workflow",
+                    description: "Native workflow skill",
+                    body: NativeSkillAuthoredBody));
+            temporary.WriteText(NativeSkillOverwritePath, NativeSkillOverwriteText);
+            temporary.WriteText(
+                ReferencesPath,
+                OpenForgeDocumentSeed.Metadata(
+                    description: "References",
+                    tags: ["Docs"],
+                    body: OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+                    {
+                        Entries = "- stale",
+                        Prefix = ReferencesPrefix,
+                    })));
+            temporary.WriteText(
+                RecipePath,
+                OpenForgeDocumentSeed.Metadata(
+                    description: "Planning recipe",
+                    tags: ["Extension", "Workflow", "Planning"],
+                    body: "# Planning recipe\n"));
+            temporary.WriteText(RecipeOverwritePath, RecipeOverwriteText);
+            temporary.WriteText(
+                GuidesPath,
+                OpenForgeDocumentSeed.Metadata(
+                    description: "Guides",
+                    tags: ["Docs"],
+                    body: OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+                    {
+                        Entries = "- stale",
+                        Prefix = GuidesPrefix,
+                    })));
+            temporary.WriteText(
+                GuidePath,
+                OpenForgeDocumentSeed.Metadata(
+                    description: "Getting started",
+                    tags: ["Docs"],
+                    body: "# Getting started\n"));
+            return new IndexOperationWorkspace(temporary, lockStore);
+        }
+        catch
+        {
+            lockStore.Dispose();
+            temporary.Dispose();
+            throw;
+        }
+    }
+
     internal IndexRequest Request(IndexMode mode)
         => new(
             Workspace,
@@ -126,6 +213,9 @@ internal sealed class IndexOperationWorkspace : IDisposable
             Workspace,
             [BetaPath, AlphaPath],
             mode);
+
+    internal IndexRequest AutomaticRequest(IndexMode mode)
+        => new(Workspace, [], mode);
 
     internal IReadOnlyDictionary<string, string> SnapshotHashes()
         => _temporary.SnapshotHashes();
@@ -153,6 +243,9 @@ internal sealed class IndexOperationWorkspace : IDisposable
         string canonicalPath,
         CancellationToken cancellationToken)
         => File.ReadAllTextAsync(_temporary.Combine(canonicalPath), cancellationToken);
+
+    internal byte[] ReadBytes(string canonicalPath)
+        => File.ReadAllBytes(_temporary.Combine(canonicalPath));
 
     internal async ValueTask<int> ReadRecoveryCandidateCountAsync(
         CancellationToken cancellationToken)

@@ -181,6 +181,17 @@ Current generated lines do not add, hide, or order routed sources during rooted
 selection. Selection follows the current topology rather than stale generated
 navigation.
 
+For Index selection only, a bounded bridge also considers native Skills already
+structurally reachable under the standard `.agents/skills` route, including
+routed scopes. Existing typed formation supplies the Skills. The bridge checks
+only each Skill package folder's immediate child directories for the five
+recognized entrypoint forms and adds each found catalogue's normal entrypoint
+closure. It does not crawl authored Markdown links, search recursively through
+gaps, add a workspace-wide scan, change Loader or runtime route facts, or
+activate a Skill. With no catalogue entrypoints, the rooted selection is
+unchanged. Multiple catalogues join it once each under the existing ordering,
+physical identity, alias, ambiguity, and `WORKSPACE` containment rules.
+
 ### Entrypoint selection
 
 Representative forms are:
@@ -201,6 +212,14 @@ not depend on the selected entrypoint.
 
 The entrypoint descendant closure is complete. The caller does not need to list
 every descendant.
+
+The same bounded bridge applies when an explicit Loader or entrypoint selection
+reaches an eligible native Skill. An explicitly selected native `SKILL.md`
+remains parent-only and selects only its existing exposing parent region. It
+does not expand to that Skill's catalogue. An explicitly selected catalogue
+entrypoint remains maintainable under [Detached entrypoint
+selection](#detached-entrypoint-selection); the bridge does not make it a
+runtime route.
 
 ### Routed-leaf selection
 

@@ -37,12 +37,15 @@ internal sealed class IndexSelectionResolver
                 rootFindings);
         }
 
+        var skillCatalogueTraversal = new IndexSkillCatalogueTraversal(formation);
         return request.HasExplicitSources
-            ? ResolveExplicit(request, formation)
-            : ResolveAutomatic(formation);
+            ? ResolveExplicit(request, formation, skillCatalogueTraversal)
+            : ResolveAutomatic(formation, skillCatalogueTraversal);
     }
 
-    private IndexSelectionResolution ResolveAutomatic(GeneratedNavigationFormation formation)
+    private IndexSelectionResolution ResolveAutomatic(
+        GeneratedNavigationFormation formation,
+        IndexSkillCatalogueTraversal skillCatalogueTraversal)
     {
         if (formation.Loader is not { } loader)
         {
@@ -61,7 +64,7 @@ internal sealed class IndexSelectionResolver
         var targets = new List<SourceLogicalSource> { loader };
         foreach (var rootPath in formation.Topology.LoaderRootPaths)
         {
-            AddEntrypointClosure(formation, rootPath, targets);
+            AddEntrypointClosure(formation, rootPath, targets, skillCatalogueTraversal, findings);
         }
 
         AddRelevantAmbiguities(formation, normalizedSelection, targets, automatic: true, findings);
@@ -78,7 +81,8 @@ internal sealed class IndexSelectionResolver
 
     private IndexSelectionResolution ResolveExplicit(
         IndexRequest request,
-        GeneratedNavigationFormation formation)
+        GeneratedNavigationFormation formation,
+        IndexSkillCatalogueTraversal skillCatalogueTraversal)
     {
         var resolved = new List<SourceLogicalSource>();
         var findings = new List<IndexFinding>();
@@ -123,7 +127,7 @@ internal sealed class IndexSelectionResolver
         var targets = new List<SourceLogicalSource>();
         foreach (var source in normalizedSelection)
         {
-            AddExplicitClosure(formation, source, targets, findings);
+            AddExplicitClosure(formation, source, targets, findings, skillCatalogueTraversal);
         }
 
         AddRelevantAmbiguities(formation, normalizedSelection, targets, automatic: false, findings);
@@ -142,14 +146,15 @@ internal sealed class IndexSelectionResolver
         GeneratedNavigationFormation formation,
         SourceLogicalSource source,
         ICollection<SourceLogicalSource> targets,
-        ICollection<IndexFinding> findings)
+        ICollection<IndexFinding> findings,
+        IndexSkillCatalogueTraversal skillCatalogueTraversal)
     {
         if (source.Base.Form == SourceDocumentForm.Loader)
         {
             targets.Add(source);
             foreach (var rootPath in formation.Topology.LoaderRootPaths)
             {
-                AddEntrypointClosure(formation, rootPath, targets);
+                AddEntrypointClosure(formation, rootPath, targets, skillCatalogueTraversal, findings);
             }
 
             return;
@@ -158,7 +163,12 @@ internal sealed class IndexSelectionResolver
         var node = formation.Topology.FindByPath(source.Identity.CanonicalBasePath);
         if (SourceFormClassifier.IsEntrypoint(source.Base.Form))
         {
-            AddEntrypointClosure(formation, source.Identity.CanonicalBasePath, targets);
+            AddEntrypointClosure(
+                formation,
+                source.Identity.CanonicalBasePath,
+                targets,
+                skillCatalogueTraversal,
+                findings);
             AddDirectParent(formation, source, node, targets, findings);
             return;
         }
@@ -243,7 +253,9 @@ internal sealed class IndexSelectionResolver
     private static void AddEntrypointClosure(
         GeneratedNavigationFormation formation,
         string rootPath,
-        ICollection<SourceLogicalSource> targets)
+        ICollection<SourceLogicalSource> targets,
+        IndexSkillCatalogueTraversal skillCatalogueTraversal,
+        ICollection<IndexFinding> findings)
     {
         var pending = new Queue<string>();
         var visited = new HashSet<string>(StringComparer.Ordinal);
@@ -262,10 +274,53 @@ internal sealed class IndexSelectionResolver
                 targets.Add(source);
             }
 
+            EnqueueSkillCatalogues(
+                formation,
+                source,
+                pending,
+                skillCatalogueTraversal,
+                findings);
             foreach (var childPath in node.ChildPaths)
             {
                 pending.Enqueue(childPath);
             }
+        }
+    }
+
+    private static void EnqueueSkillCatalogues(
+        GeneratedNavigationFormation formation,
+        SourceLogicalSource source,
+        Queue<string> pending,
+        IndexSkillCatalogueTraversal skillCatalogueTraversal,
+        ICollection<IndexFinding> findings)
+    {
+        if (source.Base.Form != SourceDocumentForm.Skill)
+        {
+            return;
+        }
+
+        var cataloguePaths = skillCatalogueTraversal.ReadCataloguePaths(source);
+        foreach (var group in cataloguePaths
+                     .GroupBy(SourceLogicalPath.ReadParent, StringComparer.Ordinal))
+        {
+            var candidates = group.Order(StringComparer.Ordinal).ToArray();
+            if (candidates.Length == 1)
+            {
+                pending.Enqueue(candidates[0]);
+                continue;
+            }
+
+            findings.Add(new IndexFinding(
+                IndexFindingCode.TopologyAmbiguous,
+                sourceOccurrence: null,
+                source: IndexLogicalSourceProjector.Project(
+                    source: source,
+                    formation: formation),
+                cause: "More than one recognized entrypoint represents the same immediate catalogue directory beneath this Skill.",
+                candidates: candidates.Select(path => IndexLogicalSourceProjector.Project(
+                    source: formation.FindSource(path)
+                        ?? throw new InvalidOperationException("A Skill catalogue candidate must retain its formation source."),
+                    formation: formation))));
         }
     }
 

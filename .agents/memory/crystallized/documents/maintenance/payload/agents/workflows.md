@@ -27,6 +27,7 @@ The optional [catalogue Template](../../../../../../../src/extensions/workflows/
 - Execute required steps. Keep optional steps optional. Resolve missing capabilities before the step that needs them; use a substitute only when it is permitted and preserves the requirement. Otherwise report the blocked step and continue only independent authorized work. Do not restart completed work or recurse into the same unchanged request.
 - Check `Completion` against the actual result and report unmet conditions or unavailable evidence. Finishing a recipe does not authorize new scope, accept its output, or authorize commits, merges, publication, or contact with remotes.
 - The Skill and its catalogue define workflow selection. The Skill mechanism does not make its resources loader-reachable ordinary routes, establish a Core Workflow route, or create baseline loading behavior.
+- Separately, bounded Index selection may maintain generated `Entries` in recognized resource catalogues in the immediate child directories of an already structurally reachable native Skill. This selection does not make those resources loader-reachable ordinary routes, change native Skill resource loading, or activate the Skill or optional Workflow execution.
 
 ## Verification
 
