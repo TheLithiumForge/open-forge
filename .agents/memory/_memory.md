@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Self-growing Markdown memory for active work, coordination, accepted knowledge, candidates, and history
-  tags: [LoadNow, Memory, OrganicGrowth]
+  tags: [LoadNow, Memory]
 ---
 
 # Memory
@@ -40,5 +40,5 @@ Its self-growing structure lets people and agents add useful records and routed 
 
 - [Useful history that no longer controls current work](archived/_archived.md) - #Memory #Archived #Contextual #Historical
 - [Accepted knowledge that should remain current](crystallized/_crystallized.md) - #LoadNow #Memory #Crystallized #CurrentTruth
-- [Useful material that is not accepted yet](emerging/_emerging.md) - #KeepInMind #Memory #Emerging #OrganicGrowth #Contextual #Candidate
+- [Useful material that is not accepted yet](emerging/_emerging.md) - #KeepInMind #Memory #Emerging #Contextual #Candidate
 - [Temporary memory that helps agents continue or resume active work](working/_working.md) - #LoadNow #Memory #Working #Contextual

@@ -15,7 +15,7 @@ The [Memory architecture](../../../../framework/memory/_memory.md), [Memory mode
 
 ## Contract
 
-- Frontmatter keeps #LoadNow, #Memory, and #OrganicGrowth so the root Memory contract enters baseline context with its Framework classification and growth role visible
+- Frontmatter keeps #LoadNow and #Memory so the root Memory contract enters baseline context with its Framework classification and growth role visible
 - Memory can grow through useful records and routed scopes without a fixed structural ceiling, while unrelated branches stay outside active context. People and agents add records deliberately when their value justifies the cost of finding and reviewing them
 - The root `entrypoint` preserves the scoped knowledge authority of accepted records while keeping user direction, platform constraints, runtime safety, and declared external facts applicable. Recording another category's content does not give Memory that category's role
 - Communication, coordination, direction, uncertainty, and learning are saved when they must survive the current context. Ordinary conversation does not become Memory automatically

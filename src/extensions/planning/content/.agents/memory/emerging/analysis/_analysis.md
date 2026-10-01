@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Structured reasoning, investigation, or comparison that is useful but not accepted truth
-  tags: [Extension, Memory, Analysis, Reasoning, Contextual, Candidate]
+  tags: [Extension, Memory, Analysis, Contextual, Candidate]
 ---
 
 # Analysis

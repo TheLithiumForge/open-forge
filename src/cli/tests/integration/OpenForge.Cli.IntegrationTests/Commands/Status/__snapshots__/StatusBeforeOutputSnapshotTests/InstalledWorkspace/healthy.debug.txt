@@ -39,4 +39,4 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-14 routed files, 11 startup files, 6036 startup tokens, 1 may-load-again files, 278 may-load-again tokens, 8825 all routed tokens, 68.393914496982746409043261467 startup share, 7 root categories, 12 current Entries sections, 15 current Framework files.
+14 routed files, 11 startup files, 6021 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 8810 all routed tokens, 68.340097057070692737747254307 startup share, 7 root categories, 12 current Entries sections, 15 current Framework files.

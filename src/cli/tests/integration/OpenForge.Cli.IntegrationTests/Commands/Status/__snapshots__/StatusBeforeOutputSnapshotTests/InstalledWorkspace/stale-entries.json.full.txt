@@ -134,11 +134,11 @@
   "counts": {
     "routedFiles": 14,
     "startupFiles": 11,
-    "startupTokens": 5808,
+    "startupTokens": 5793,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 278,
-    "allTokens": 8597,
-    "startupShare": 67.557507197487422572483787478,
+    "mayLoadAgainTokens": 274,
+    "allTokens": 8582,
+    "startupShare": 67.500801118652955399539720919,
     "rootCategories": 7,
     "entriesSectionsCurrent": 10,
     "entriesSectionsStale": 2,
@@ -166,15 +166,15 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 24141,
-          "bytes": 24141,
-          "tokens": 6036
+          "characters": 24081,
+          "bytes": 24081,
+          "tokens": 6021
         },
         "current": {
           "files": 11,
-          "characters": 23231,
-          "bytes": 23231,
-          "tokens": 5808
+          "characters": 23171,
+          "bytes": 23171,
+          "tokens": 5793
         },
         "difference": {
           "files": 0,
@@ -184,26 +184,26 @@
         },
         "mayLoadAgain": {
           "files": 1,
-          "characters": 1111,
-          "bytes": 1111,
-          "tokens": 278
+          "characters": 1096,
+          "bytes": 1096,
+          "tokens": 274
         }
       },
       "allRouted": {
         "files": 14,
-        "characters": 34387,
-        "bytes": 34387,
-        "tokens": 8597
+        "characters": 34327,
+        "bytes": 34327,
+        "tokens": 8582
       },
-      "startupShare": 67.557507197487422572483787478,
+      "startupShare": 67.500801118652955399539720919,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
-          "bytes": 1111,
+          "bytes": 1096,
           "layers": [
             {
               "path": ".agents/memory/emerging/_emerging.md",
-              "bytes": 1111
+              "bytes": 1096
             }
           ]
         }

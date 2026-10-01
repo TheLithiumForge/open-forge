@@ -15,7 +15,7 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Contract
 
-- Frontmatter preserves #KeepInMind, #Memory, #Emerging, #OrganicGrowth, #Contextual, and #Candidate classification
+- Frontmatter preserves #KeepInMind, #Memory, #Emerging, #Contextual, and #Candidate classification
 - The entrypoint keeps useful unsettled material visible at #KeepInMind boundaries that apply without turning raw activity into durable Memory
 - Candidate source, scope, uncertainty, evidence, knowledge role, and intended destination remain visible when they affect later use
 - Emerging material remains contextual until acceptance is established within its scope. The entrypoint's #Contextual classification applies the loader's rule, so the Axioms do not restate it

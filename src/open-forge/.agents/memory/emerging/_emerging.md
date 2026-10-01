@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Useful material that is not accepted yet
-  tags: [KeepInMind, Memory, Emerging, OrganicGrowth, Contextual, Candidate]
+  tags: [KeepInMind, Memory, Emerging, Contextual, Candidate]
 ---
 
 # Emerging Memory

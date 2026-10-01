@@ -20,5 +20,5 @@ Crystallized Memory holds accepted knowledge that should remain current within i
 
 ## Entries
 
-- [What was chosen, why, and what follows from the choice](decisions/_decisions.md) - #Extension #Memory #Decision #Rationale #CurrentTruth
-- [Complete current explanations of accepted project knowledge](documents/_documents.md) - #Extension #Memory #Document #Record #CurrentTruth
+- [What was chosen, why, and what follows from the choice](decisions/_decisions.md) - #Extension #Memory #Decision #CurrentTruth
+- [Complete current explanations of accepted project knowledge](documents/_documents.md) - #Extension #Memory #Document #CurrentTruth

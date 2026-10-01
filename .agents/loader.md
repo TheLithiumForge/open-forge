@@ -140,7 +140,7 @@ Use the relevant commands below when the Open Forge CLI is available. The plain 
 - [Required instructions loaded through selected routes](directives/_directives.md) - #LoadNow #Core #Directive
 - [Advice for recurring choices, tradeoffs, and work situations](guidance/_guidance.md) - #LoadNow #Core #Guidance
 - [Concise maps to important local and external sources and when to use them](maps/_maps.md) - #LoadNow #Core #Map
-- [Self-growing Markdown memory for active work, coordination, accepted knowledge, candidates, and history](memory/_memory.md) - #LoadNow #Memory #OrganicGrowth
+- [Self-growing Markdown memory for active work, coordination, accepted knowledge, candidates, and history](memory/_memory.md) - #LoadNow #Memory
 - [Reusable default shapes for code, files, APIs, documents, and other work](patterns/_patterns.md) - #LoadNow #Core #Pattern
 - [Specialized capabilities provided through native SKILL.md packages](skills/_skills.md) - #LoadNow #Core #Skill
 - [Copy-ready files for starting independently maintained workspace content](templates/_templates.md) - #Core #Template

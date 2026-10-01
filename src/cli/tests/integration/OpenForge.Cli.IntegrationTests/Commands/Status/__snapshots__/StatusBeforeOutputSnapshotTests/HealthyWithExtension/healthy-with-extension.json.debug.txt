@@ -17,11 +17,11 @@
   "counts": {
     "routedFiles": 52,
     "startupFiles": 11,
-    "startupTokens": 6347,
+    "startupTokens": 6321,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 361,
-    "allTokens": 25017,
-    "startupShare": 25.369002768145342620444302317,
+    "mayLoadAgainTokens": 351,
+    "allTokens": 24980,
+    "startupShare": 25.302000660548255051692905111,
     "rootCategories": 7,
     "entriesSectionsCurrent": 25,
     "entriesSectionsStale": 0,
@@ -48,44 +48,44 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 24141,
-          "bytes": 24141,
-          "tokens": 6036
+          "characters": 24081,
+          "bytes": 24081,
+          "tokens": 6021
         },
         "current": {
           "files": 11,
-          "characters": 25386,
-          "bytes": 25386,
-          "tokens": 6347
+          "characters": 25281,
+          "bytes": 25281,
+          "tokens": 6321
         },
         "difference": {
           "files": 0,
-          "characters": 1245,
-          "bytes": 1245,
-          "tokens": 311
+          "characters": 1200,
+          "bytes": 1200,
+          "tokens": 300
         },
         "mayLoadAgain": {
           "files": 1,
-          "characters": 1442,
-          "bytes": 1442,
-          "tokens": 361
+          "characters": 1401,
+          "bytes": 1401,
+          "tokens": 351
         }
       },
       "allRouted": {
         "files": 52,
-        "characters": 100067,
-        "bytes": 100067,
-        "tokens": 25017
+        "characters": 99917,
+        "bytes": 99917,
+        "tokens": 24980
       },
-      "startupShare": 25.369002768145342620444302317,
+      "startupShare": 25.302000660548255051692905111,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
-          "bytes": 1442,
+          "bytes": 1401,
           "layers": [
             {
               "path": ".agents/memory/emerging/_emerging.md",
-              "bytes": 1442
+              "bytes": 1401
             }
           ]
         }

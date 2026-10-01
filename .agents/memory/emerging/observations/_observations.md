@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Concrete occurrences or patterns noticed in evidence that may become reusable learning
-  tags: [Extension, Memory, Observation, AgentLearning, OrganicGrowth, Contextual, Candidate]
+  tags: [Extension, Memory, Observation, AgentLearning, Contextual, Candidate]
 ---
 
 # Observations

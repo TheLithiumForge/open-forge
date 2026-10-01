@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Useful material that is not accepted yet
-  tags: [KeepInMind, Memory, Emerging, OrganicGrowth, Contextual, Candidate]
+  tags: [KeepInMind, Memory, Emerging, Contextual, Candidate]
 ---
 
 # Emerging Memory
@@ -26,7 +26,7 @@ Emerging Memory keeps useful findings, possibilities, and reasoning that are not
 
 ## Entries
 
-- [Structured reasoning, investigation, or comparison that is useful but not accepted truth](analysis/_analysis.md) - #Extension #Memory #Analysis #Reasoning #Contextual #Candidate
+- [Structured reasoning, investigation, or comparison that is useful but not accepted truth](analysis/_analysis.md) - #Extension #Memory #Analysis #Contextual #Candidate
 - [Maintainer-authored findings retained until explicit archival or pruning direction](authors-findings/_authors-findings.md) - #KeepInMind #Memory #Emerging #AuthorsFindings #Author #Contextual #Candidate
-- [Future possibilities, experiments, open questions, and options to explore later](ideas/_ideas.md) - #Extension #Memory #Idea #Exploration #OrganicGrowth #Contextual #Candidate
-- [Concrete occurrences or patterns noticed in evidence that may become reusable learning](observations/_observations.md) - #Extension #Memory #Observation #AgentLearning #OrganicGrowth #Contextual #Candidate
+- [Future possibilities, experiments, open questions, and options to explore later](ideas/_ideas.md) - #Extension #Memory #Idea #Exploration #Contextual #Candidate
+- [Concrete occurrences or patterns noticed in evidence that may become reusable learning](observations/_observations.md) - #Extension #Memory #Observation #AgentLearning #Contextual #Candidate

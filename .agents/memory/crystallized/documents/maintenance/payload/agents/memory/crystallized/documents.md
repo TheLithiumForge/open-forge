@@ -15,7 +15,7 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Contract
 
-- Frontmatter preserves #Extension, #Memory, #Document, #Record, and #CurrentTruth classification
+- Frontmatter preserves #Extension, #Memory, #Document, and #CurrentTruth classification
 - Documents explain accepted current knowledge that needs one coherent view, or link to the system that contains it
 - A document that assigns a subject to another authoritative source follows that source for its detail
 - A routed destination still defines its own detail. The containing document does not become a competing copy

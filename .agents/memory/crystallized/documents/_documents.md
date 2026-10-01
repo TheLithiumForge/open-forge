@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Complete current explanations of accepted project knowledge
-  tags: [Extension, Memory, Document, Record, CurrentTruth]
+  tags: [Extension, Memory, Document, CurrentTruth]
 ---
 
 # Documents

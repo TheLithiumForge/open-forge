@@ -15,7 +15,7 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Contract
 
-- Frontmatter uses #Extension, #Memory, #Analysis, #Reasoning, #Contextual, and #Candidate to classify this optional Planning route
+- Frontmatter uses #Extension, #Memory, #Analysis, #Contextual, and #Candidate to classify this optional Planning route
 - Analysis keeps its question, evidence, assumptions, limits, and current conclusion visible
 - Assumptions are rechecked before later work relies on the analysis
 - Analysis remains contextual until a separate acceptance source establishes a durable result

@@ -14,4 +14,4 @@ Extensions: planning 0.4.0 (15 files current)
 Extensions: project-documents 0.4.0 (10 files current)
 Extensions: scenarios 0.4.0 (5 files current)
 Extensions: workflows 0.4.0 (4 files current)
-52 routed files, 11 startup files, 6347 startup tokens, 1 may-load-again files, 361 may-load-again tokens, 25017 all routed tokens, 25.369002768145342620444302317 startup share, 7 root categories, 25 current Entries sections, 15 current Framework files, 6 installed Extensions.
+52 routed files, 11 startup files, 6321 startup tokens, 1 may-load-again files, 351 may-load-again tokens, 24980 all routed tokens, 25.302000660548255051692905111 startup share, 7 root categories, 25 current Entries sections, 15 current Framework files, 6 installed Extensions.

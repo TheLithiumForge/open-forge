@@ -15,7 +15,7 @@ The [Emerging state contract](../../../../../framework/memory/emerging.md) defin
 
 ## Contract
 
-- Frontmatter preserves #Extension, #Memory, #Observation, #AgentLearning, #OrganicGrowth, #Contextual, and #Candidate classification
+- Frontmatter preserves #Extension, #Memory, #Observation, #AgentLearning, #Contextual, and #Candidate classification
 - Concrete occurrences or patterns noticed in evidence are saved before handoff or closeout when they may matter later
 - One useful, surprising, or costly occurrence may justify capture
 - Later occurrences extend an existing Observation when scope and meaning align

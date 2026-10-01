@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Future possibilities, experiments, open questions, and options to explore later
-  tags: [Extension, Memory, Idea, Exploration, OrganicGrowth, Contextual, Candidate]
+  tags: [Extension, Memory, Idea, Exploration, Contextual, Candidate]
 ---
 
 # Ideas

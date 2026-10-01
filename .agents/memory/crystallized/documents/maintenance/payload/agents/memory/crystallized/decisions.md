@@ -15,7 +15,7 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Contract
 
-- Frontmatter uses #Extension, #Memory, #Decision, #Rationale, and #CurrentTruth to classify this optional Planning route
+- Frontmatter uses #Extension, #Memory, #Decision, and #CurrentTruth to classify this optional Planning route
 - Decisions record important accepted choices and why they were made
 - The source for the current behavior, record, route, code, or external state defines the result and may link back to the Decision for why
 - Alternatives, tradeoffs, constraints, and consequences remain only when they provide future explanatory value

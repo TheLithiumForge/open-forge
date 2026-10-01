@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: What was chosen, why, and what follows from the choice
-  tags: [Extension, Memory, Decision, Rationale, CurrentTruth]
+  tags: [Extension, Memory, Decision, CurrentTruth]
 ---
 
 # Decisions
