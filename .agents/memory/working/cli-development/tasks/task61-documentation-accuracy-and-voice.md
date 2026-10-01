@@ -46,12 +46,7 @@ code and seed records, and page structure and URLs.
 
 ## Current State
 
-**Now:** committed on `task61-documentation-polish` on 2026-09-28 as modular
-commits, after the council's changes. Merging into `develop` and `main`,
-pushing, and the final review are the maintainer's steps. Six reviewers covered disjoint slices against
-one shared brief, checking claims against the shipped files, the Extension
-packages, the Framework and CLI documents, and scratch runs of the CLI. The
-lead redesigned the diagram and revised the homepage and the README.
+**Now:** The earlier documentation pass is integrated, with its release and site-verification receipts recorded in Task59. Task61 now owns current documentation reconciliation for the accepted next-beta stabilization. Task69 owns qualification of the resulting candidate.
 
 **Shipped content changed:** the `open-forge-cli` Skill said to read "the
 status that ends each result", but text output has no status line. It now

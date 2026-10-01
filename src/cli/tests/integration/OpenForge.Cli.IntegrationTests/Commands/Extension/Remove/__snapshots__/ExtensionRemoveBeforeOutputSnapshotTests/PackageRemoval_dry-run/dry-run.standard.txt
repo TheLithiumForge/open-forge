@@ -17,3 +17,4 @@ Workspace: <workspace>
     owners before: toolkit; owners after: none
   Removal order: toolkit
   .agents/open-forge.lock.json  would update
+  No files were changed.

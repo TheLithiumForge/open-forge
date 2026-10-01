@@ -1,5 +1,5 @@
 Workspace: <workspace>
-  Warning  <workspace>  applyTo conditions are pending [context.applicability-pending]
+  Warning  context  applyTo conditions are pending [context.applicability-pending]
          Some applyTo conditions could not be evaluated because no --for path was supplied.
 AGENTS.md
 .agents/loader.md

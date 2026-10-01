@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Commands.Extension.List;
 using OpenForge.Cli.Core.Commands.Extension.List.Models;
 using OpenForge.Cli.Core.Commands.Extension.List.Shared.Result;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Presentation.Extension.List;
 using OpenForge.Cli.Core.Presentation.Extension.List.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
@@ -176,6 +178,46 @@ public sealed class ExtensionListApplicationIntegrationTests
                 Assert.True(package.TryGetProperty("coverage", out _));
             });
         Assert.Contains("status=completed", verbose.StandardError, StringComparison.Ordinal);
+        Assert.Equal(before, workspace.Snapshot());
+    }
+
+    [Trait("Boundary", "Host")]
+    [Theory(DisplayName = "Composed Extension List treats trustworthy empty ownership as a known empty installation"), Trait("Feature", "extension-list"), Trait("Evidence", "Integration")]
+    [InlineData("codec-empty")]
+    [InlineData("framework-only")]
+    public async Task ComposedListReportsTrustworthyEmptyOwnershipWithoutWrites(string scenario)
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create($"extension-list-empty-{scenario}");
+        if (scenario == "codec-empty")
+        {
+            workspace.CreateDirectory(".agents");
+            File.WriteAllBytes(
+                workspace.Combine(ExtensionInstallIntegrationWorkspace.OwnershipPath),
+                WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty));
+        }
+        else
+        {
+            await workspace.SeedFrameworkAsync();
+        }
+
+        var before = workspace.Snapshot();
+        var human = await workspace.RunAsync(["extension", "list", "--installed"]);
+        var json = await workspace.RunAsync(["extension", "list", "--installed", "--format", "json"]);
+
+        Assert.Equal(0, human.ExitCode);
+        Assert.Equal(string.Empty, human.StandardError);
+        Assert.Contains("Installed", human.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("none", human.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("no ownership record", human.StandardOutput, StringComparison.OrdinalIgnoreCase);
+
+        Assert.Equal(0, json.ExitCode);
+        Assert.Equal(string.Empty, json.StandardError);
+        using var document = JsonDocument.Parse(json.StandardOutput);
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        Assert.Empty(document.RootElement.GetProperty("data").GetProperty("installed").EnumerateArray());
+        Assert.Empty(document.RootElement.GetProperty("findings").EnumerateArray());
+        Assert.DoesNotContain("no ownership record", json.StandardOutput, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("extension-list.ownership-observation", json.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(before, workspace.Snapshot());
     }
 

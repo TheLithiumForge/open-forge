@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
@@ -30,11 +31,11 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
     private readonly GeneratedNavigationProjector _projector = new();
-    private readonly UpdateComparisonReader _targetReader = new(physicalPathResolver);
 
     internal async ValueTask<UpdateGeneratedNavigationBuild> BuildAsync(
         UpdateRequest request,
         FrameworkPayload payload,
+        WorkspaceOwnershipDocument ownershipDocument,
         WorkspaceSettingsDocument settings,
         IReadOnlyList<FrameworkPayloadAsset> selectedAssets,
         IReadOnlySet<string> retiredTargetPaths,
@@ -106,13 +107,17 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 asset => asset.Path,
                 asset => StrictUtf8.GetString(asset.Bytes.AsSpan()),
                 StringComparer.Ordinal);
+            var projectionInputReader = new UpdateProjectionInputReader(
+                physicalPathResolver,
+                ownershipDocument);
             var projectionInputs = new List<FileStateSnapshot>();
             foreach (var source in intendedSources.Where(source =>
                          !payloadSources.ContainsKey(source.Identity.CanonicalBasePath)))
             {
                 var baseRead = await ReadProjectionInputAsync(
                         request,
-                        source.Base.CanonicalPath,
+                        source.Base,
+                        projectionInputReader,
                         cancellationToken)
                     .ConfigureAwait(false);
                 if (baseRead.Build is { } baseBoundary)
@@ -134,7 +139,8 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
 
                 var overwriteRead = await ReadProjectionInputAsync(
                         request,
-                        overwrite.CanonicalPath,
+                        overwrite,
+                        projectionInputReader,
                         cancellationToken)
                     .ConfigureAwait(false);
                 if (overwriteRead.Build is { } overwriteBoundary)
@@ -222,11 +228,12 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
 
     private async ValueTask<UpdateProjectionInputRead> ReadProjectionInputAsync(
         UpdateRequest request,
-        string path,
+        SourceLayer layer,
+        UpdateProjectionInputReader projectionInputReader,
         CancellationToken cancellationToken)
     {
-        var read = await _targetReader
-            .ReadAsync(request.Workspace, path, cancellationToken)
+        var read = await projectionInputReader
+            .ReadAsync(request.Workspace, layer, cancellationToken)
             .ConfigureAwait(false);
         return read.State switch
         {
@@ -237,12 +244,15 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 Interrupted()),
             UpdateTargetReadState.Unavailable => new UpdateProjectionInputRead(
                 Snapshot: null,
-                Incomplete(read.RelativePath, read.Cause
+                Incomplete(layer.CanonicalPath, read.Cause
                     ?? "A current authored source is unavailable for intended navigation projection.")),
             _ => new UpdateProjectionInputRead(
                 Snapshot: null,
-                Blocked(read.Cause
-                    ?? "A current authored source changed or became unsafe during intended navigation projection.")),
+                Blocked(
+                    UpdateFindingCode.TargetUnsafe,
+                    layer.CanonicalPath,
+                    read.Cause
+                        ?? "A current authored source changed or became unsafe during intended navigation projection.")),
         };
     }
 

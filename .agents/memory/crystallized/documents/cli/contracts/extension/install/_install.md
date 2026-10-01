@@ -10,9 +10,11 @@ open-forge:
 ## Status And Authority
 
 This entrypoint routes the accepted current Crystallized Interface and Behavior
-contracts for `open-forge extension install`. The new CLI does not ship yet.
-Install establishes managed ownership for selected absent package IDs and
-verifies exact managed no-ops. Managed divergence directs to `extension update`.
+contracts for `open-forge extension install`. The CLI is available as a public
+beta. CLI Distribution records qualified platforms and published versions. CLI
+Development records current implementation and release work. Install
+establishes managed ownership for selected absent package IDs and verifies exact
+managed no-ops. Managed divergence directs to `extension update`.
 
 ## Contract Roles
 

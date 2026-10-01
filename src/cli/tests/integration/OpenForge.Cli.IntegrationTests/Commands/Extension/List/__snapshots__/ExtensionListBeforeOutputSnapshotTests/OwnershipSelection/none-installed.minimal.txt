@@ -1,4 +1,4 @@
-Installed  (no ownership record, so installed packages cannot be listed)
+Installed  none
 
 Available (bundled with this CLI)
   collaboration              0.4.0  Explore ideas, compare alternatives, and clarify decisions through discussion and a brainstorming template

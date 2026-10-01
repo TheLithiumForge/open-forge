@@ -9,10 +9,12 @@ open-forge:
 
 ## Status And Authority
 
-This routed set is the accepted current Crystallized authority for the non-shipping
-`doctor` command. Its sibling Interface and Behavior files are the detailed
-authorities for the public surface and technology-neutral operation. This
-entrypoint provides navigation only.
+This routed set is the accepted current Crystallized authority for the current
+`doctor` command. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. Its sibling Interface and
+Behavior files are the detailed authorities for the public surface and
+technology-neutral operation. This entrypoint provides navigation only.
 
 Doctor is always read-only and stateless. It does not create a plan, backup,
 temporary file, Git change, lifecycle effect, or repair effect. It does not

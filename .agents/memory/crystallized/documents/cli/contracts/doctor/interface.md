@@ -10,7 +10,9 @@ open-forge:
 ## Status And Authority
 
 This file is the accepted current Crystallized authority for the public `doctor`
-Interface Contract. The command does not ship yet. This contract owns the exact
+Interface Contract. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. This contract owns the exact
 syntax, accepted global flags, fixed diagnostic domains, finite detectable
 catalogue, coverage and status meanings, output projections, errors, examples,
 non-goals, and public verification.
@@ -25,10 +27,13 @@ The [Shared Result Coordinates](../shared/result-coordinates/interface.md) defin
 the exact shared JSON result schema and numeric exit mapping. The accepted [CLI
 Architecture](../../architecture.md) defines parser roles, filesystem identity,
 hashing and concurrency constraints, resource boundaries, and C# and .NET Native
-AOT structure. Gate 5 must prove source-generated
+AOT structure. The required evidence boundary covers source-generated
 YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
-Native AOT, OS locking, isolated tests, and package journeys. No Technical Design
-file exists for Doctor, and this contract does not duplicate those mechanics.
+Native AOT, OS locking, isolated tests, and package journeys. [CLI Distribution](../../distribution.md)
+records qualified platforms and publication evidence, and [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. No Technical Design file exists
+for Doctor, and this contract does not duplicate those mechanics or constitute
+execution proof.
 
 ## Purpose And Boundary
 
@@ -344,6 +349,11 @@ a presentation dependency, or a generic bag.
 
 ### Routes, Metadata, Overwrites, And Generated Navigation
 
+Applicability for `route.axioms-invalid`: Loader requires its `Axioms` section.
+Compatible local entrypoints may omit `Axioms` or have empty local sections,
+which add no local rules. A missing local inherited sentinel is not itself
+invalid. Malformed or duplicate `Axioms` headings are still diagnosed.
+
 | Kind                                | Detectable condition                                                                                                                                   | Resolution or next action                                                                                                                      |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `route.entrypoint-missing`          | A routed folder lacks its one recognized entrypoint.                                                                                                   | `manual-decision`; route authoring is not general repair.                                                                                      |
@@ -353,7 +363,7 @@ a presentation dependency, or a generic bag.
 | `route.detached`                    | A complete-looking route tree is detached from the Loader or selected root.                                                                            | `manual-decision`; detached content is not adopted.                                                                                            |
 | `route.metadata-required-missing`   | Required route metadata is absent.                                                                                                                     | `manual-decision`; authored meaning is not invented.                                                                                           |
 | `route.title-invalid`               | A required route title is missing or structurally invalid.                                                                                             | `manual-decision`; do not derive authored meaning from a filename.                                                                             |
-| `route.axioms-invalid`              | Required `Axioms` structure or inherited sentinel is missing or malformed; route coverage is `blocked` when active rules cannot be established safely. | `manual-decision`; do not rewrite active rules automatically.                                                                                  |
+| `route.axioms-invalid`              | Required Loader `Axioms` are missing or empty, or the `Axioms` structure is malformed; route coverage is `blocked` when active rules cannot be established safely. | `manual-decision`; do not rewrite active rules automatically.                                                                                  |
 | `route.generated-region-stale`      | A valid generated region does not match current route facts.                                                                                           | `targeted-operation`; use accepted `index` behavior, not general Repair.                                                                       |
 | `route.generated-region-missing`    | A required generated region is absent; route coverage is `blocked` when its boundary cannot be established safely.                                     | `targeted-operation`; use accepted `index` behavior only after the route boundary is valid; generated-region authoring remains outside Repair. |
 | `route.generated-region-malformed`  | A generated region cannot be parsed as one valid bounded region.                                                                                       | `blocked-repair`; do not repair Entries headings through general Repair.                                                                       |
@@ -904,10 +914,10 @@ The [Shared Result Coordinates](../shared/result-coordinates/interface.md) defin
 the exact JSON schema and numeric exits. The accepted [CLI
 Architecture](../../architecture.md) defines parser roles, filesystem alias and
 physical-identity structure, hashing and concurrency constraints, resource
-limits, and lifecycle mutation boundaries. Gate 5 must prove source-generated YamlDotNet and STJ serialization,
-fixed Markdig where used, real `System.IO`, Native AOT, OS locking, isolated
-tests, and package journeys. Doctor remains non-shipping and does not claim that
-proof.
+limits, and lifecycle mutation boundaries. The required evidence boundary covers
+source-generated YamlDotNet and STJ serialization, fixed Markdig where used, real
+`System.IO`, Native AOT, OS locking, isolated tests, and package journeys. This
+Interface Contract is not execution proof.
 
 ## Public Verification
 

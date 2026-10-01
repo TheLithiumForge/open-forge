@@ -15,9 +15,9 @@ public sealed class DoctorFrameworkNavigationDriftTests
     private const string ChangedPath = ".agents/changed.md";
 
     [Trait("Boundary", "Processing")]
-    [Fact(DisplayName = "Readable generated navigation drift keeps target evidence without establishing partial Framework lifecycle")]
+    [Fact(DisplayName = "Readable generated navigation drift keeps root-boundary evidence without establishing partial Framework lifecycle")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
-    public void ReadableGeneratedNavigationDriftKeepsTargetEvidenceWithoutPartialLifecycle()
+    public void ReadableGeneratedNavigationDriftKeepsRootBoundaryEvidenceWithoutPartialLifecycle()
     {
         var targets = new[] { CurrentTarget(), ChangedGeneratedTarget() };
 
@@ -25,7 +25,7 @@ public sealed class DoctorFrameworkNavigationDriftTests
             targets,
             FrameworkManagedSetState.Mixed,
             currentNavigationPaths: new HashSet<string>(StringComparer.Ordinal));
-        AssertGeneratedNavigationEvidence(withoutCurrentRoute);
+        AssertGeneratedNavigationBoundaryEvidence(withoutCurrentRoute);
 
         var withCurrentRoute = Inspect(
             targets,
@@ -82,9 +82,9 @@ public sealed class DoctorFrameworkNavigationDriftTests
     }
 
     [Trait("Boundary", "Processing")]
-    [Fact(DisplayName = "Unavailable Framework source does not suppress changed-target evidence")]
+    [Fact(DisplayName = "Unavailable Framework source retains generated root-boundary evidence")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
-    public void UnavailableSourceRetainsChangedTargetEvidence()
+    public void UnavailableSourceRetainsGeneratedRootBoundaryEvidence()
     {
         var report = Inspect(
             [CurrentTarget(), ChangedGeneratedTarget()],
@@ -92,25 +92,23 @@ public sealed class DoctorFrameworkNavigationDriftTests
             OperationalSourceAvailability.Unavailable,
             new HashSet<string>([GeneratedPath], StringComparer.Ordinal));
 
-        Assert.DoesNotContain(report.Findings, finding =>
-            finding.Kind == DoctorFindingKind.FrameworkPartialLifecycle);
-        Assert.Contains(report.Findings, finding =>
-            finding.Kind == DoctorFindingKind.FrameworkManagedChanged
-            && finding.Provenance.Path == GeneratedPath);
+        AssertGeneratedNavigationBoundaryEvidence(report);
         Assert.Equal(OperationalSourceAvailability.Unavailable, report.SourceAvailability);
     }
 
-    private static void AssertGeneratedNavigationEvidence(DoctorDomainReport report)
+    private static void AssertGeneratedNavigationBoundaryEvidence(DoctorDomainReport report)
     {
         Assert.DoesNotContain(report.Findings, finding =>
             finding.Kind == DoctorFindingKind.FrameworkPartialLifecycle);
         var finding = Assert.Single(report.Findings, candidate =>
+            candidate.Kind == DoctorFindingKind.FrameworkRootRegionBoundary
+            && candidate.Provenance.Path == GeneratedPath);
+        Assert.DoesNotContain(report.Findings, candidate =>
             candidate.Kind == DoctorFindingKind.FrameworkManagedChanged
             && candidate.Provenance.Path == GeneratedPath);
-        Assert.Contains(finding.Evidence, evidence => evidence is DoctorComparisonEvidence);
-        Assert.Contains(report.Findings, finding =>
-            finding.Kind == DoctorFindingKind.FrameworkRootRegionBoundary
-            && finding.Provenance.Path == GeneratedPath);
+        var evidence = Assert.Single(finding.Evidence);
+        var state = Assert.IsType<DoctorStateEvidence>(evidence);
+        Assert.Equal(DoctorObservedState.Changed, state.State);
     }
 
     private static void AssertNormalizedGeneratedNavigation(DoctorDomainReport report)

@@ -117,7 +117,7 @@ internal static class LibraryDetachPlanner
         var links = EvaluateMappings(input, selected, findings);
         if (LibraryMutationPlanningPolicy.TryFindOwnershipConflict(
             input.Ownership,
-            destinations.Concat(RelativePaths(input)),
+            destinations,
             out var ownershipConflict))
         {
             Add(findings, LibraryDetachFindingCode.OwnershipConflict, CliSemanticStatus.Blocked,

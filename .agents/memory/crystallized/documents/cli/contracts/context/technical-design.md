@@ -17,9 +17,10 @@ boundaries, BCL-first filesystem structure, and recovery identity relationships.
 Contract](interface.md) and [Behavior Contract](behavior.md) remain authoritative
 for public and technology-neutral meaning.
 
-The CLI is non-shipping. This file defines the accepted Context implementation.
-Implementation and executable evidence are tracked in
-[CLI Development](../../../../../working/cli-development/_cli-development.md).
+The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. This file defines the accepted
+Context implementation. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation, release work, and executable evidence.
 
 ## Accepted Design
 

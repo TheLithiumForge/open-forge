@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted non-shipping Interface for establishing and verifying the managed root Framework lifecycle
+  description: Accepted current Interface for establishing and verifying the managed root Framework lifecycle
   responsibility: Define install's exact syntax, management-establishment boundary, initial force rule, results, and read/write surface
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Install, Framework, Interface, Lifecycle, Safety, Recovery, CurrentTruth]
 ---
@@ -28,11 +28,12 @@ effect when needed.
 
 ## Status And Authority
 
-This is the accepted current Crystallized Interface Contract for the non-shipping
-root `install` command. It owns the public purpose, syntax, flags, exact
+This is the accepted current Crystallized Interface Contract for the root
+`install` command. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. It owns the public purpose, syntax, flags, exact
 Framework footprint, management-establishment states, observable effects,
 results, errors, examples, non-goals, and caller-visible conformance boundary.
-The new CLI does not ship yet.
 
 The sibling [Behavior Contract](behavior.md) defines technology-neutral request
 resolution, lifecycle classification, planning, verification, recovery, and

@@ -23,7 +23,7 @@ internal static class UpdateDefinitions
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         "--force",
-        "Replace changed or restore missing managed content.",
+        "Accepted for compatibility; ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
         CliOptionArity.None,
         false);
 

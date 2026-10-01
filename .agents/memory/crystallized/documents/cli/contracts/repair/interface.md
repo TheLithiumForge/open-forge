@@ -10,8 +10,9 @@ open-forge:
 ## Status And Authority
 
 This file is the accepted current Crystallized authority for the public `repair`
-Interface Contract. The command does not ship yet; implementation and executable evidence are tracked in
-[CLI Development](../../../../../working/cli-development/_cli-development.md). This contract owns the exact
+Interface Contract. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. This contract owns the exact
 syntax, flags, value grammar, repetition and composition, interactive and
 non-interactive selection paths, admitted repair catalogue, output projections,
 semantic results, errors, examples, non-goals, and public verification.

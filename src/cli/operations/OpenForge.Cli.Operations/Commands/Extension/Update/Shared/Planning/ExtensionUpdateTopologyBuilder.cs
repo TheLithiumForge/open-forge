@@ -11,6 +11,10 @@ using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
@@ -19,6 +23,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 
@@ -28,12 +33,19 @@ internal sealed class ExtensionUpdateTopologyAliasException(string message)
 internal sealed class ExtensionUpdateTopologyBuilder
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
+    private readonly FileExpectationValidator _validator;
     private readonly SourceCatalogueReader _catalogueReader = new();
     private readonly GeneratedNavigationFormationBuilder _formationBuilder = new();
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
     private readonly GeneratedNavigationProjector _projector = new();
     private readonly ExtensionUpdateIndependentMetadataProof _independentMetadataProof = new();
+
+    internal ExtensionUpdateTopologyBuilder(FileExpectationValidator validator)
+    {
+        ArgumentNullException.ThrowIfNull(validator);
+        _validator = validator;
+    }
 
     internal async ValueTask<ExtensionUpdateTopology> BuildAsync(
         ExtensionUpdateTopologyInput input,
@@ -187,9 +199,14 @@ internal sealed class ExtensionUpdateTopologyBuilder
                 continue;
             }
 
+            var actual = await ObserveDestinationAsync(
+                request.Workspace,
+                region.CanonicalPath,
+                cancellationToken).ConfigureAwait(false);
+
             regions.Add(new ExtensionUpdateGeneratedRegion(
                 region.CanonicalPath,
-                change.IsUnchanged
+                IsGeneratedRegionUnchanged(region, actual)
                     ? ExtensionUpdateGeneratedRegionState.Unchanged
                     : ExtensionUpdateGeneratedRegionState.Changed));
             generatedEntries.Add(region.CanonicalPath, region.Entries);
@@ -214,6 +231,70 @@ internal sealed class ExtensionUpdateTopologyBuilder
                 .ToHashSet(StringComparer.Ordinal),
             ExcludedPaths = excludedHostPaths.Order(StringComparer.Ordinal).ToArray(),
         };
+    }
+
+    private async ValueTask<FileStateSnapshot> ObserveDestinationAsync(
+        CliWorkspace workspace,
+        string canonicalPath,
+        CancellationToken cancellationToken)
+    {
+        var logicalPath = Path.GetFullPath(Path.Combine(
+            workspace.LexicalRoot,
+            canonicalPath.Replace('/', Path.DirectorySeparatorChar)));
+        var check = await _validator.ValidateAsync(
+            workspace,
+            FileExpectation.Missing(logicalPath),
+            cancellationToken).ConfigureAwait(false);
+        if (check.State == FileExpectationValidationState.Cancelled)
+        {
+            throw new OperationCanceledException(cancellationToken);
+        }
+
+        if (check.State is not (FileExpectationValidationState.Matched
+            or FileExpectationValidationState.Mismatched)
+            || check.Actual is not { } actual)
+        {
+            throw new InvalidDataException(
+                check.Failure?.DirectCause
+                    ?? check.Cause
+                    ?? "The generated navigation destination is unsafe or unavailable.");
+        }
+
+        return actual;
+    }
+
+    private bool IsGeneratedRegionUnchanged(
+        GeneratedNavigationRegion region,
+        FileStateSnapshot actual)
+    {
+        if (actual.Kind == FileExpectationKind.Missing)
+        {
+            return false;
+        }
+
+        if (actual.Kind != FileExpectationKind.File)
+        {
+            throw new InvalidDataException(
+                "The generated navigation destination is not an ordinary file.");
+        }
+
+        MarkdownDocumentFacts document;
+        try
+        {
+            document = _markdownParser.Parse(StrictUtf8.GetString(actual.Bytes.AsSpan()));
+        }
+        catch (Exception exception) when (exception is DecoderFallbackException
+            or ArgumentException
+            or InvalidOperationException)
+        {
+            return false;
+        }
+
+        var projected = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(
+            new GeneratedNavigationRegionInput(region.Source, document),
+            region.Entries);
+        return projected.State == GeneratedNavigationRegionState.Available
+            && projected.Change is { IsUnchanged: true };
     }
 
     private static bool IsExcluded(string path, OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument settings)
@@ -271,7 +352,7 @@ internal sealed class ExtensionUpdateTopologyBuilder
         return canonical;
     }
 
-    private static SourceLogicalSource CreatePackageSource(
+    internal static SourceLogicalSource CreatePackageSource(
         ExtensionUpdateRequest request,
         string path)
     {

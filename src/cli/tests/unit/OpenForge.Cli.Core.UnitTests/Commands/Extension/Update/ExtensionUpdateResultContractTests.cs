@@ -117,14 +117,13 @@ public sealed class ExtensionUpdateResultContractTests
             var text = CliRenderingStage.Render(textRequest, ExtensionUpdatePresentation.Rendering).PrimaryContent;
             Assert.Contains("Cannot update toolkit:", text, StringComparison.Ordinal);
             Assert.Contains(".agents/unsafe.md", text, StringComparison.Ordinal);
-            Assert.Equal(
-                view >= CliDetail.Standard,
-                text.Contains("1 Entries section updated", StringComparison.Ordinal));
+            Assert.DoesNotContain("1 Entries section updated", text, StringComparison.Ordinal);
             var jsonRequest = textRequest with { Presentation = textRequest.Presentation with { Format = CliFormat.Json } };
             var json = CliRenderingStage.Render(jsonRequest, ExtensionUpdatePresentation.Rendering).PrimaryContent;
             using var document = System.Text.Json.JsonDocument.Parse(json);
             Assert.Equal("extension update", document.RootElement.GetProperty("command").GetString());
             Assert.Equal("blocked", document.RootElement.GetProperty("status").GetString());
+            Assert.Equal(0, document.RootElement.GetProperty("counts").GetProperty("sectionsUpdated").GetInt32());
         }
 
     }

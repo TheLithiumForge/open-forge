@@ -10,8 +10,10 @@ open-forge:
 ## Status And Authority
 
 This entrypoint routes the accepted current Crystallized Interface and Behavior
-contracts for `open-forge extension update`. The new CLI does not ship yet.
-Update reconciles trusted managed package IDs with one explicitly selected
+contracts for `open-forge extension update`. The CLI is available as a public beta.
+[CLI Distribution](../../../distribution.md) records qualified platforms and published
+versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. Update reconciles trusted managed package IDs with one explicitly selected
 current source. It is separate from install because source intent and managed
 reconciliation are different operations.
 

@@ -190,6 +190,15 @@ The region and route chain must already exist and authored bytes remain intact.
 External Markdown remains opaque content. No source entrypoint, Loader, missing
 route or generated region is created.
 
+A bounded generated `Entries` update is distinct from mapped-leaf ownership.
+Library may reconcile an existing host `Entries` region, including in a
+Framework- or Extension-owned host file, without claiming the host file.
+Framework or Extension claims on actual mapped destination leaves still block.
+The existing host route boundary, source and destination protection, authored
+prefix and suffix preservation, and under-lease revalidation remain required.
+This boundary applies equally to `library attach`, `library sync`, and
+`library detach`; sibling contracts use it without duplicating the rule.
+
 ## Intended Record And Plan
 
 Attach forms the intended versioned record by inserting the new sorted library

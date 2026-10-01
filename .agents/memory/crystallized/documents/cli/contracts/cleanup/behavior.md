@@ -9,8 +9,10 @@ open-forge:
 
 ## Status And Boundary
 
-This is the accepted current Crystallized Behavior Contract for the non-shipping
-root `open-forge cleanup` operation. It defines deterministic request and
+This is the accepted current Crystallized Behavior Contract for the root
+`open-forge cleanup` operation. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. It defines deterministic request and
 workspace resolution, recognized bundle/draft catalogue formation, complete planning,
 preflight, dry-run, deletion, verification, the cleanup-specific monotonic
 recovery exception, result formation, and technology-neutral conformance.

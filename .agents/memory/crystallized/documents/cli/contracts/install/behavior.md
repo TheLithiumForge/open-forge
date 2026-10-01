@@ -27,8 +27,10 @@ when needed, but it is excluded from that count.
 
 ## Status And Boundary
 
-This is the accepted current Crystallized Behavior Contract for the non-shipping
-root `open-forge install` operation. It defines technology-neutral request
+This is the accepted current Crystallized Behavior Contract for the root
+`open-forge install` operation. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. It defines technology-neutral request
 resolution, exact workspace and payload facts, management classification,
 semantic identity, intended state, generated projection, complete planning,
 preflight, dry-run and application, verification, lifecycle publication,

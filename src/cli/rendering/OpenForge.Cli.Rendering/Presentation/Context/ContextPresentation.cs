@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Context.Models.Result;
 using OpenForge.Cli.Core.Presentation.Context.Models;
 using OpenForge.Cli.Core.Presentation.Context.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Context.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -24,13 +25,19 @@ internal static class ContextPresentation
         DataTextRenderer = ContextDataTextRenderer.Render,
         DataJsonTypeInfo = JsonContext.ContextData,
         Shape = CliCommandShape.Data,
-        SelectText = selected => selected with
+        SelectText = static selected => selected with
         {
             ShowHeadline = selected.Report.Status is CliSemanticStatus.Invalid
                 or CliSemanticStatus.Blocked
                 or CliSemanticStatus.Failed
                 or CliSemanticStatus.Interrupted
                 || selected.Report.Data.EmptyAdditions,
+            TextFindings = selected.TextFindings
+                .Select(finding => finding.Code == "context.applicability-pending"
+                    && finding.Subject.Kind == CliSubjectKind.Workspace
+                        ? finding with { Subject = new CliSubject(CliSubjectKind.Identifier, Id: "context") }
+                        : finding)
+                .ToArray(),
             TextCounts = [],
         },
     };

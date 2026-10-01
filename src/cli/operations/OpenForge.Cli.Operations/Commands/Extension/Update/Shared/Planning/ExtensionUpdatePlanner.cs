@@ -48,7 +48,7 @@ internal sealed class ExtensionUpdatePlanner
     private readonly ExtensionSourceReader _sourceReader;
     private readonly FileExpectationValidator _validator;
     private readonly PhysicalPathResolver _physicalPathResolver;
-    private readonly ExtensionUpdateTopologyBuilder _topologyBuilder = new();
+    private readonly ExtensionUpdateTopologyBuilder _topologyBuilder;
     private readonly ExtensionUpdateReconciler _reconciler;
     private readonly WorkspaceOwnershipStore _ownershipStore = new();
     private readonly CliPrompt<CliMultiSelectQuestion<string>, CliMultiSelection<string>> _selectionPrompt;
@@ -69,6 +69,7 @@ internal sealed class ExtensionUpdatePlanner
         _sourceReader = sourceReader;
         _validator = validator;
         _physicalPathResolver = physicalPathResolver;
+        _topologyBuilder = new ExtensionUpdateTopologyBuilder(validator);
         _reconciler = new ExtensionUpdateReconciler(validator);
         _selectionPrompt = selectionPrompt;
         _selectionQuestion = selectionQuestion;

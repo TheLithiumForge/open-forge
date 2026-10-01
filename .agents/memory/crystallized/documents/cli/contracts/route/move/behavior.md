@@ -326,6 +326,15 @@ External URLs are not local targets and are not rewritten. Unsupported or
 ambiguous forms that could apply to the moved meaning prevent complete coverage
 and form `incomplete`; unsafe paths or aliases form `blocked`.
 
+An unrelated already-missing local target may remain unchanged only when its
+authoring source is literally stationary, its canonical missing-target
+coordinates cannot intersect the old/new leaf-plus-overwrite or category
+coordinate trees, and its existing target ancestry is proven ordinary and
+contained. The planner preserves the literal link and missing-target meaning
+for verification. This carveout does not apply to moved-source outgoing missing
+links, affected coordinates, unsafe or dangling aliases, malformed targets, or
+unproved ancestry; those retain the existing `incomplete` or `blocked` refusal.
+
 Each intended rewrite preserves the visible label, fragment, valid encoding,
 surrounding Markdown, and every unrelated byte. The intended file state is the
 complete current source bytes with only the exact supported destination literal

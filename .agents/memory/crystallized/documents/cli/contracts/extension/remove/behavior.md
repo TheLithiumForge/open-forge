@@ -9,8 +9,10 @@ open-forge:
 
 ## Status And Boundary
 
-This is the accepted current Crystallized Behavior Contract for non-shipping
-`open-forge extension remove`. It defines exact ID and workspace resolution,
+This is the accepted current Crystallized Behavior Contract for current
+`open-forge extension remove`. The CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. It defines exact ID and workspace resolution,
 trusted ownership and route facts, dependency and shared-owner checks,
 final-owner removal classification and intent, generated
 projection, complete planning, dry-run/application, verification, lifecycle

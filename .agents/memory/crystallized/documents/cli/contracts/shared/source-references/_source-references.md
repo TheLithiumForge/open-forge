@@ -10,9 +10,9 @@ open-forge:
 ## Status And Authority
 
 This routed set is the accepted current Crystallized authority for shared CLI
-source references. It defines current behavior for the new CLI and does not ship
-yet. Implementation and executable evidence are tracked in
-[CLI Development](../../../../../../working/cli-development/_cli-development.md).
+source references. The CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work.
 This entrypoint provides navigation only. Consumers link directly to the
 Interface for public definitions and to the Behavior file for technology-neutral
 resolution and conformance.

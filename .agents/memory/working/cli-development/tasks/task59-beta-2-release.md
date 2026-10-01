@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 59 to publish 0.9.0-beta.2 once the documentation site is merged, so the npm package shows the README, the website, and the repository
-  tags: [Memory, Working, Task, Release, Beta, Package, Contextual, Active]
+  description: Record the beta 2 release, package publication, and documentation verification
+  tags: [Memory, Working, Task, Release, Beta, Package, Contextual, Complete]
 ---
 
 # Task 59 — Beta 2 release
@@ -17,11 +17,12 @@ link, so its npm page tells a visitor almost nothing. Beta 2 ships the
 documentation site work and a package page that explains Open Forge and links
 to the site and GitHub.
 
-**Original direction:** the maintainer asked for the package fix and for a beta 2 after
-the documentation work is merged. Merging, tagging, and publishing are the
-maintainer's steps. This record authorizes none of them.
+**Original direction (2026-09-25):** the maintainer asked for the package fix
+and for beta 2 after the documentation work was merged. At that point, merging,
+tagging, and publishing remained maintainer steps. The later release
+authorization is recorded below.
 
-**Already integrated** into local `develop` and `main` with Task 57:
+**Beta 2 package changes, folded in from Task 57:**
 
 - The wrapper package now includes the repository `README.md` and declares
   `homepage` (the documentation site), `repository`, `bugs`, and `keywords`.
@@ -35,16 +36,16 @@ maintainer's steps. This record authorizes none of them.
 
 **Done when:**
 
-- [ ] The documentation work (Tasks 52 and 57) is merged into `develop` and
+- [x] The documentation work (Tasks 52 and 57) is merged into `develop` and
       `main`, and GitHub Pages serves the site.
-- [ ] The version is bumped with `npm run version:bump -- prerelease --preid beta`,
+- [x] The version is bumped with `npm run version:bump -- prerelease --preid beta`,
       reviewed, and committed.
-- [ ] A `v0.9.0-beta.2` tag runs the release workflow, and all six native hosts
+- [x] A `v0.9.0-beta.2` tag runs the release workflow, and all six native hosts
       qualify.
-- [ ] The npm page shows the README, the website, and the repository, and
+- [x] The versioned npm page shows the README, website, and repository links, and
       `npm install -g @thelithiumforge/open-forge@beta` installs beta 2.
 
-## Current State
+## Historical preparation and repair
 
 ### Build and test repair, 2026-09-28
 
@@ -99,12 +100,12 @@ The workspace doctor check remains blocked by 12 existing
 Those paths and references are unchanged by this repair.
 
 **Prior checkpoint:** the package fix and verified integration snapshot refresh
-are included locally. The release authorization and current state follow below.
+were included locally. The later release authorization and final state follow.
 
-**Check on the published page:** npm resolves relative README links and images
-against the `repository` field. The README's diagram uses a `<picture>` element
-with relative paths. If npm doesn't show it, switch its image paths to absolute
-`raw.githubusercontent.com` URLs.
+**Package README rendering:** the packaged README uses absolute documentation
+site URLs for its diagram assets, so npm does not resolve those image paths
+relative to the repository metadata. The exact-version npm page is verified
+below.
 
 ## Folded in on 2026-09-28
 
@@ -113,24 +114,27 @@ with relative paths. If npm doesn't show it, switch its image paths to absolute
   The local build and test repair above refreshes them after
   [Task 61](task61-documentation-accuracy-and-voice.md), with complete managed
   evidence. The repair is included in the local `develop` commit.
-- **The npm page shows the `latest` version's README.** `latest` still points at
-  `0.9.0-beta.1`, which has no README. See the
-  [review](../../../emerging/analysis/open-task-review/task59-beta-2-release.md) for the dist-tag options.
+- **Historical npm state on 2026-09-28:** the `latest` tag pointed at
+  `0.9.0-beta.1`, which had no README. The publication receipt below confirms
+  that the public `beta` and `latest` tags now point at `0.9.0-beta.2`. See the
+  [review](../../../emerging/analysis/open-task-review/task59-beta-2-release.md)
+  for the original dist-tag options.
 
-## Authorized delivery, 2026-09-29
+## Release authorization and delivery, 2026-09-29
 
 The maintainer explicitly authorized confirming the documentation and website,
 squash merging Task 62 into `develop`, pushing `develop`, and checking the full
-build and test results. Beta 2 may be released only after those checks pass.
-After publication, assess what remains for a good 1.0.0 release. This direction
-supersedes the earlier record's withheld integration and publication boundary.
+build and test results. Beta 2 could be released only after those checks passed.
+After publication, the remaining work for a good 1.0.0 release would be assessed.
+This direction superseded the earlier record's withheld integration and
+publication boundary.
 
 Execution uses Managed Delivery with root retaining integration and publication.
 The completed Task 62 implementation and independent review are retained without
 another whole-change review. A Luna max read-only helper checks the release
 procedure. No parallel worker may mutate Git refs, version files or release state.
 
-Task 59 “Beta 2 release” (phase 1/3): milestone 1/5.
+Task 59 “Beta 2 release” (phase 3/3): milestone 5/5.
 
 The phases are integration, release qualification/publication, and published
 verification. Milestones are documentation readiness, develop integration,
@@ -146,21 +150,17 @@ review, and the native CLI smoke journey. All 9331 test executions passed with
 [Task 62 execution](task62/execution.md).
 
 The repository's Build workflow qualifies six native targets and packaging.
-Documentation deploys only from `main`. After verified develop integration,
-promote the accepted release candidate to `main` as part of the authorized beta
-release and website update. Preserve unrelated local files. Publish through the
-existing Release workflow, which requires successful builds and publishes the
-six native npm packages before the wrapper. Do not bypass its gates or change
-release-channel policy. The intended version/tag are `0.9.0-beta.2` and
+Documentation deploys only from `main`. The accepted candidate was promoted to
+`main` after develop qualification, and the unrelated local files were
+preserved. Publication used the existing Release workflow and its six-host
+qualification gates. The intended version and tag were `0.9.0-beta.2` and
 `v0.9.0-beta.2`.
 
-Current boundary: docs/site source verified; packaging preflight and integration
-preparation active. No beta 2 tag or package has been published. Record exact
-commit, CI run, release URL, package versions and website evidence as they become
-available. Existing repository Doctor findings are unrelated to this release
-candidate and were not increased by Task 62.
+Current boundary: `0.9.0-beta.2` is published, and all five release milestones
+are complete. The final receipts below record release qualification and
+published-package verification.
 
-### Candidate preparation
+### Pre-integration candidate preparation
 
 The committed Task 62 candidate `e11109d09c3e7cea5fb60e70cdf0a8504b202087`
 passed a fresh Windows native build, all six test modes (9331 passes and 34
@@ -168,16 +168,89 @@ expected platform exclusions), packing, and installation of the generated npm
 packages. Delivery checks passed 55 tests, package-layout checks passed seven,
 and the documentation type check and production build passed.
 
-Prepare `0.9.0-beta.2` before the final CI run so that CI qualifies the version
-to be published. The normal version command changed only `package.json`,
+The version was prepared before the final CI run so that CI qualified the
+version to be published. The normal version command changed only `package.json`,
 `package-lock.json`, and `Directory.Build.props`, with no dependency changes or
-tag creation. The prepared candidate is undergoing version-specific local
-qualification before squash integration. The release remains conditional on the
-complete CI gate and the documentation deployment.
+tag creation. The prepared candidate passed version-specific local
+qualification before squash integration. At that stage, publication still
+depended on the complete CI gate and documentation deployment. Both have since
+passed, as recorded below.
 
 The existing publication policy assigns the `beta` tag and also advances
-`latest` while no stable version exists. Verify both tags after publication.
-The normal tag-triggered Release workflow will perform its own six-host
-qualification before publishing. The checked remote `main` is behind the
-candidate, so earlier statements that it already contains the current
-documentation do not establish deployment readiness.
+`latest` while no stable version exists. Both tags now point to `0.9.0-beta.2`,
+as verified below. The tag-triggered Release workflow performed its own
+six-host qualification before publishing. At candidate preparation, remote
+`main` had not yet received the candidate, so documentation deployment still
+needed separate verification. The later promotion and successful deployment
+are recorded below.
+
+### Branch integration and CI qualification
+
+The prepared beta 2 candidate passed all six local test modes, with 9331 passes
+and 34 expected platform exclusions. Its native build reported no warnings or
+errors. Packing and installation of the generated npm packages also passed.
+The staged squash tree matched the isolated candidate exactly. Unrelated local
+notes remained untouched and outside the commit.
+
+The resulting commit is `00e3ba0294679163d95b42a81295091254debfb7`, pushed to
+`develop`. [Build 36511732462](https://github.com/TheLithiumForge/open-forge/actions/runs/36511732462)
+completed successfully for that exact commit. All seven jobs passed, including
+the six platform jobs and shared verification. The same commit was pushed to
+`main`, where [Build 36514567157](https://github.com/TheLithiumForge/open-forge/actions/runs/36514567157)
+also completed successfully.
+
+The annotated tag `v0.9.0-beta.2` points to the same commit and was pushed.
+That tag triggered the Release workflow, which passed all nine jobs and
+published beta 2. The publication receipt follows.
+
+### Documentation deployment
+
+The same candidate was fast-forwarded to `main` and pushed while the last
+platform job continued. This allowed the independently verified documentation
+to deploy in parallel.
+
+[Documentation 36514567184](https://github.com/TheLithiumForge/open-forge/actions/runs/36514567184)
+passed for the candidate. Both the live
+[loading guide](https://thelithiumforge.github.io/open-forge/docs/concepts/loading-and-tags)
+and [CLI reference](https://thelithiumforge.github.io/open-forge/guides/cli)
+returned HTTP 200 and contain `applyTo` and `--for`. Both deployed Framework
+diagram files match the verified build byte for byte. The unrelated temporary
+directory in the local `main` checkout was preserved.
+
+### Publication and post-publication verification
+
+[Release 36515807876](https://github.com/TheLithiumForge/open-forge/actions/runs/36515807876)
+completed successfully with all nine jobs, including all six platform jobs.
+GitHub published [release `v0.9.0-beta.2`](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.2)
+at `2026-09-29T03:50:16Z`. The release contains six portable archives and
+`SHA256SUMS`. All six archive checksums verified, and the Windows portable and
+npm executables are byte-identical.
+
+Registry verification at `2026-09-29T03:51:34Z` confirmed `0.9.0-beta.2` for
+the wrapper and all six native packages. The wrapper's `beta` and `latest` tags
+point to `0.9.0-beta.2`. All seven packages have the expected homepage,
+repository, and bugs metadata, and the wrapper declares the six expected
+optional platform dependencies.
+
+A fresh Windows install of the exact version installed Framework and Core
+templates. CLI status and Doctor reported zero errors and warnings. A separate
+workspace upgraded from public beta 1 through `@beta`. The upgrade completed
+with zero errors, preserved custom-file and overwrite hashes, updated the
+Loader with `applyTo`, and retained a recovery ZIP whose previous Loader hash
+matched the baseline. Upgrade Doctor reported zero errors, zero warnings, and
+one informational retained-bundle result. This records the observed upgrade
+output without resolving the separate upgrade-contract wording question.
+
+An isolated global `@beta` install reported beta 2 without changing the normal
+global installation. The README in both installed packages matched SHA-256
+`B52A4A5499D75994AD87828D786BC923167ABA95A33322824DD1D00B4A760717`.
+The [exact-version npm page](https://www.npmjs.com/package/@thelithiumforge/open-forge/v/0.9.0-beta.2)
+displayed the README, diagram, homepage, and repository links. Checks at 05:58
+and around 06:07 local time still showed cached beta 1 content at the bare npm
+package URL even though registry `latest` pointed to beta 2. The exact-version
+page and registry checks passed. The bare-page display was a transient UI cache
+limitation, not a publication failure.
+
+The requested post-release assessment is recorded in the root-authored
+[1.0 release readiness analysis](../../../emerging/analysis/one-zero-release-readiness.md).
+It is contextual input and does not authorize implementation.

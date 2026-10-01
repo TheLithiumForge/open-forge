@@ -18,6 +18,9 @@ public sealed class UpdateDefinitionsAndRequestContractTests
         Assert.Empty(parse.Errors);
         Assert.Empty(symbols.UpdateCommand.Arguments);
         Assert.Equal(4, symbols.UpdateCommand.Options.Count);
+        Assert.Equal(
+            "Accepted for compatibility; ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
+            UpdateDefinitions.Force.Description);
     }
 
     [Trait("Boundary", "Input")]

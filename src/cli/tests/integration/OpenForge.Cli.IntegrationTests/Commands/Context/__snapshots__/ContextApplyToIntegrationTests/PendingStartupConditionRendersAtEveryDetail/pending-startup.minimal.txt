@@ -1,4 +1,4 @@
-  Warning  <workspace>  applyTo conditions are pending
+  Warning  context  applyTo conditions are pending
          Some applyTo conditions could not be evaluated because no --for path was supplied.
 === AGENTS.md ===
 # Workspace

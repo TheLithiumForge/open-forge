@@ -41,19 +41,17 @@ hand-writing an undocumented schema recovered from the C# source.
 A workspace keeps **two** files, distinguished by nature and named in the
 convention a reader already knows from npm:
 
-- **`.agents/open-forge.json`** — authored. Hand-editable, reviewed in a diff,
-  and never rewritten by a lifecycle mutation. Holds `allowInstallPaths` and
-  `removedCategories`.
+- **`.agents/open-forge.json`** — authored. Hand-editable and reviewable in a
+  diff. Its settings are described below.
 - **`.agents/open-forge.lock.json`** — generated. Machine-owned, documented as
   "do not edit", covering Framework, Extension, and Library records in one file.
 
-Both live under `.agents/`. The directory is already the workspace marker, since
-workspace selection walks up looking for it, so placing either at the repository
-root would buy no discoverability that the marker does not already provide.
+Both live under `.agents/`. Workspace selection uses the current directory or
+exact `--workspace` directory; it does not search parents.
 
-**The lock file is never a gate.** No command refuses because of it. Missing,
-stale, or unreadable, it is rebuilt best-effort from the workspace and the
-embedded payload, and the command proceeds saying so.
+The lock records ownership rather than content-integrity baselines. Missing or
+unusable ownership does not authorize inferred deletion; each command’s contract
+defines its resulting boundary.
 
 It records **ownership, not integrity**, and it records it as a **receipt rather
 than a claim**. Every entry is written from a verified mutation receipt at the
@@ -99,14 +97,35 @@ terminal the CLI asks — allow always, allow once, cancel. Outside a terminal
 `--allow-path` grants the same thing and the block message names it, so the
 absence of a TTY is never the reason a workflow is impossible.
 
-**`removedCategories`** records the root categories a user deleted, so install
-and update do not reinstate them.
+Authored settings contain `allowInstallPaths` and the optional removal lists
+`removedCategories`, `removedFiles`, `removedDirectories`, `removedExtensions`
+and `removedLibraries`. CLI commands may update the settings for explicit grants
+and removal choices while preserving unknown properties. JSON comments need not
+survive.
 
-There is **no migration and no legacy reader**. The old files are not read, not
-converted, and not honoured. This is available because the CLI has no released
-users.
+File exclusions name exact workspace-relative destinations. Directory exclusions
+cover descendants, including future files. Package and Library exclusions name
+stable IDs. Explicit file removal releases all matching ownership claims. Package
+removal preserves files still owned by another package. Library removal preserves
+its source files.
 
-## Rationale
+Install/update and Library attach/sync respect these exclusions. Force, prune and
+automatic mode do not override them. Restoring content requires clearing every
+applicable exclusion and running the relevant operation. Clearing an exclusion
+does not recover deleted bytes.
+
+Hand deletion does not record removal intent. A missing registered Library link
+remains eligible for restoration with `registered-link-restored`; a link
+deliberately removed through Open Forge is excluded instead.
+
+The superseded pre-beta files are not read or converted. That reset was accepted
+before the public beta and does not establish a policy for migrating released
+versions.
+
+## Historical Rationale
+
+The following rationale is retained as historical context for the earlier
+integrity-baseline design. Each command contract defines the current boundary.
 
 Splitting by nature rather than by feature is what fixes the original confusion:
 one file a person owns, one file the tool owns, and a naming convention that says

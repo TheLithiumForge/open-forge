@@ -1,3 +1,4 @@
 Would remove the toolkit Extension.
   .agents/open-forge.json  would record the removal in workspace settings
   .agents/toolkit.md       would delete
+  No files were changed.

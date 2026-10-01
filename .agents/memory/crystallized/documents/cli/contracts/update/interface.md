@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted non-shipping Interface for trusted managed Framework reconciliation with force and prune boundaries
+  description: Accepted current Interface for trusted managed Framework reconciliation with force and prune boundaries
   responsibility: Define update's exact syntax, current/intended comparison, bounded authority, results, errors, and read-only boundaries
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Update, Framework, Interface, Lifecycle, Safety, Recovery, CurrentTruth]
 ---
@@ -19,8 +19,10 @@ unwritable lock does not authorize wider ownership or block the operation.
 
 ## Status And Authority
 
-This is the accepted current Crystallized Interface Contract for the non-shipping
-root `update` command. It owns the public purpose, exact syntax, input and flag
+This is the accepted current Crystallized Interface Contract for the root
+`update` command. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. It owns the public purpose, exact syntax, input and flag
 meaning, ownership and current content facts, normal/force/prune/automatic behavior,
 observable effects, output, statuses, errors, examples, non-goals, and public
 conformance.
@@ -30,7 +32,7 @@ operation behind this surface. The [Install Interface](../install/interface.md)
 owns management establishment and exact install no-op behavior. The shared
 [Global CLI Flags](../shared/global-flags/interface.md), current [Index
 Interface](../index-candidate/interface.md), and Framework sources own their
-shared meanings. The new CLI remains non-shipping.
+shared meanings.
 
 The generated ownership lock is `.agents/open-forge.lock.json`, schema v1.
 It has a common envelope and separate `framework`, `extensions`, and `libraries`
@@ -46,8 +48,8 @@ The [Shared Result Coordinates](../shared/result-coordinates/interface.md) defin
 the exact structured JSON result schema and numeric exit mapping. This Interface uses those shared definitions without
 duplicating implementation mechanics. Gate 5 must prove source-generated
 YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
-Native AOT, OS locking, isolated tests, and package journeys. The new CLI remains
-non-shipping and this contract does not claim that implementation or proof.
+Native AOT, OS locking, isolated tests, and package journeys. This contract does not
+claim that implementation or proof.
 
 ## Purpose And Boundary
 
@@ -237,11 +239,12 @@ ZIP forms the opaque `RecoveryBundlePreparation`; the draft remains
 preparation completes before the first target effect.
 
 After final verification, reopen and verify the created bundle identity and
-retain it. Successful retention is complete with the exact bundle path. The
-next action advises `git diff` when an ordinary `.git` directory exists, or
-points at the recovery bundle otherwise. No Git executable runs. Partial
-failure and interruption retain observed recovery and do not restore targets
-automatically. Explicit Cleanup owns deletion under its separate contract.
+retain it. Successful verified retention of a finalized recovery bundle is an
+ordinary `completed` result with exit `0` and the exact bundle path. When an
+ordinary `.git` directory exists, Next is `git diff`; otherwise Next is `Review previous content in the recovery bundle at <path>.` No Git executable runs. Actual failure
+or unsafe-residual diagnostics retain priority. Partial failure and interruption
+retain observed recovery and do not restore targets automatically. Explicit
+Cleanup owns deletion under its separate contract.
 A workspace move is outside
 the automatic guarantee; Doctor/Cleanup may report orphaned original-root
 bundles but never auto-binds or restores them.
@@ -259,7 +262,7 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 | completed (dry run)     | changes planned                                           | `Would update <N> Framework files.`                                                                                                                            |    0 | stdout |
 | completed               | no ownership record (Info observation)                    | `No ownership record exists, so update cannot tell which files it manages. Nothing was changed.`                                                               |    0 | stdout |
 | completed-with-warnings | retired files kept without `--prune`                      | `Updated <N> Framework files. <K> files from an earlier version were kept.` or `The Framework is up to date, but <K> files from an earlier version were kept.` |    2 | stdout |
-| completed-with-warnings | recovery bundle retained                                  | + family row                                                                                                                                                   |    2 | stdout |
+| completed               | verified finalized recovery bundle retained               | + recovery family row                                                                                                                                          |    0 | stdout |
 | incomplete              | bundled Framework, record, target or recovery unreadable  | `Update could not start: <limitation>. Nothing was changed.`                                                                                                   |    3 | stdout |
 | invalid-input           | bad input; confirmation unavailable                       | families                                                                                                                                                       |    4 | stderr |
 | blocked                 | invalid record, conflict, unsafe target, prune ineligible | `Cannot update: <reason>.`                                                                                                                                     |    5 | stderr |
@@ -384,8 +387,13 @@ and is omitted otherwise.
 ### Next rules
 
 Retired kept -> `open-forge update --prune --dry-run`; confirmation ->
-`--automatic`; partial or retained recovery -> `open-forge doctor` /
+`--automatic`; successful retained recovery -> `git diff` when an ordinary
+`.git` directory exists, otherwise `Review previous content in the recovery bundle at <path>.`; actual failure or unsafe residual -> `open-forge doctor` /
 `open-forge cleanup`; no record -> `open-forge doctor`; otherwise none.
+
+The `update.recovery-artifact-retained` warning applies to recovery retained
+after a partial or failed operation; successful verified retention uses the
+`completed` result above.
 
 ## Errors And Boundaries
 

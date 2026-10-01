@@ -286,12 +286,24 @@ internal sealed class ExtensionUpdateOperation(
             var gitPath = Path.Combine(plan.Request.Workspace.LexicalRoot, ".git");
             var hasGitDirectory = Directory.Exists(gitPath)
                 && (File.GetAttributes(gitPath) & FileAttributes.ReparsePoint) == 0;
+            if (hasGitDirectory)
+            {
+                return result with
+                {
+                    Next = new CliNextAction(
+                        "git diff",
+                        $"Review the changes with git diff. Previous content remains in {bundlePath}."),
+                };
+            }
+
             return result with
             {
-                Next = new CliNextAction(hasGitDirectory ? "git diff" : "open-forge doctor",
-                    hasGitDirectory
-                        ? $"Review the changes with git diff. Previous content remains in {bundlePath}."
-                        : $"Review previous content in the recovery bundle at {bundlePath}."),
+                Next = new CliNextAction(
+                    $"Review previous content in the recovery bundle at {bundlePath}.",
+                    "Previous content remains available for review.")
+                {
+                    Kind = CliNextActionKind.Sentence,
+                },
             };
         }
         return result;

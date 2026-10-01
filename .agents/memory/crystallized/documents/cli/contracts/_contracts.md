@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted detailed command contracts for the non-shipping replacement Open Forge CLI after Gate 2 and Gate 3 closeout
+  description: Accepted detailed command contracts for the current replacement Open Forge CLI after Gate 2 and Gate 3 closeout
   responsibility: Route current command behavior and implementation-boundary contracts without presenting unfinished commands as implemented
   tags: [Memory, Crystallized, CLI, Release, Command, Interface, Contract, CurrentTruth, Evergreen, Architecture]
 ---
@@ -10,12 +10,12 @@ open-forge:
 This route contains the detailed command contracts for the accepted replacement
 CLI. Gate 2 command definition, Gate 3 Architecture, and current-source
 reconciliation are complete. These contracts define accepted behavior and do
-not duplicate current executable state. The replacement remains non-shipping.
-The command set includes root `remove` alongside the retained commands. Complete
-six-target delivery evidence, final acceptance, and release remain pending.
-The active [CLI
-Development](../../../../working/cli-development/_cli-development.md) route
-records exact execution state.
+not duplicate current executable state. The command set includes root `remove`
+alongside the retained commands.
+
+The CLI is available as a public beta. CLI Distribution records qualified
+platforms and published versions. CLI Development records current
+implementation and release work.
 
 Shared interfaces such as global flags live beside command contracts so every
 command can link to one accepted definition.
@@ -62,13 +62,13 @@ active development records track execution without replacing these contracts.
 
 ## Entries
 
-- [Route the accepted non-shipping root cleanup contracts for lease-validated recovery-bundle and draft deletion](cleanup/_cleanup.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Mutation #Recovery #Safety #CurrentTruth
+- [Route the accepted current root cleanup contracts for lease-validated recovery-bundle and draft deletion](cleanup/_cleanup.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Mutation #Recovery #Safety #CurrentTruth
 - [Current Crystallized contract set for stateless ordered context resolution, projection, and explicit link expansion](context/_context.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #CurrentTruth
 - [Route the accepted current read-only Doctor Interface and Behavior contracts](doctor/_doctor.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Doctor #CurrentTruth
-- [Route the accepted non-shipping Extension list, inspect, create, install, update, and remove contracts](extension/_extension.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Lifecycle #CurrentTruth
+- [Route the accepted current Extension list, inspect, create, install, update, and remove contracts](extension/_extension.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Lifecycle #CurrentTruth
 - [Route the accepted current `find` contracts for deterministic source inventory and typed tag or heading discovery](find/_find.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Find #Discovery #Tag #Heading #CurrentTruth
 - [Route the current Crystallized non-shipping `index` contracts for its public interface, deterministic behavior, and accepted technical design](index-candidate/_index-candidate.md) - #Memory #Crystallized #CLI #Release #Command #Index #Contract #CurrentTruth
-- [Route the accepted non-shipping root Framework management-establishment and exact-no-op contracts for `install`](install/_install.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Lifecycle #CurrentTruth
+- [Route the accepted current root Framework management-establishment and exact-no-op contracts for `install`](install/_install.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Lifecycle #CurrentTruth
 - [Route the accepted current Workspace Library list, inspect, attach, sync, and detach contracts](library/_library.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Library #Workspace #CurrentTruth
 - [Routing-only entrypoint for the accepted current `references` command contracts](references-candidate/_references-candidate.md) - #Memory #Crystallized #CLI #Release #Command #Contract #References #CurrentTruth
 - [Remove workspace content through one root command and keep Open Forge from restoring it](remove/_remove.md) - #Memory #Document #CLI #Contract #Remove #CurrentTruth
@@ -76,4 +76,4 @@ active development records track execution without replacing these contracts.
 - [Routing-only group entrypoint for the `route` command family](route/_route.md) - #Memory #Crystallized #CLI #Release #Command #Route #Contract #CurrentTruth
 - [Permanent route for accepted shared CLI contract sets](shared/_shared.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #CurrentTruth
 - [Current Crystallized contract set for workspace status, context-size comparison, root customization, managed Extensions, and recognized recovery bundles](status/_status.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Status #CurrentTruth
-- [Route the accepted non-shipping root Framework update contracts for trusted managed reconciliation](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Lifecycle #CurrentTruth
+- [Route the accepted current root Framework update contracts for trusted managed reconciliation](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Lifecycle #CurrentTruth

@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Result;
 
@@ -37,11 +38,24 @@ internal static class UpdateResultBuilder
         {
             var gitPath = Path.Combine(execution.Request.Workspace.LexicalRoot, ".git");
             var hasGitDirectory = Directory.Exists(gitPath) && (File.GetAttributes(gitPath) & FileAttributes.ReparsePoint) == 0;
+            if (hasGitDirectory)
+            {
+                return result with
+                {
+                    Next = new(
+                        "git diff",
+                        $"Review the changes with git diff. Previous content remains in {bundlePath}."),
+                };
+            }
+
             return result with
             {
-                Next = new(hasGitDirectory ? "git diff" : "open-forge doctor",
-                    hasGitDirectory ? $"Review the changes with git diff. Previous content remains in {bundlePath}."
-                        : $"Review previous content in the recovery bundle at {bundlePath}."),
+                Next = new CliNextAction(
+                    $"Review previous content in the recovery bundle at {bundlePath}.",
+                    "Previous content remains available for review.")
+                {
+                    Kind = CliNextActionKind.Sentence,
+                },
             };
         }
         return result;

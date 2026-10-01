@@ -1,3 +1,4 @@
+using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
@@ -7,8 +8,11 @@ using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning.Reconciliation;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.GeneratedNavigation;
+using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -21,8 +25,10 @@ namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 
 internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validator)
 {
+    private static readonly UTF8Encoding StrictUtf8 = new(false, true);
     private readonly FileExpectationValidator _validator = validator;
     private readonly FrameworkContentIdentity _contentIdentity = new();
+    private readonly MarkdownDocumentParser _markdownParser = new();
 
     internal async ValueTask<ExtensionUpdateReconciliation> BuildAsync(
         ExtensionUpdateReconciliationInput input,
@@ -218,13 +224,13 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         ExtensionUpdateReconciliation reconciliation,
         CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var effects = reconciliation.Effects
             .Where(effect => effect.Result.Kind == ExtensionUpdateEffectKind.PackageFile)
             .ToList();
-        if (effects.Count == 0)
-        {
-            return reconciliation with { Effects = effects };
-        }
+        var packageEffectPaths = effects
+            .Select(effect => effect.Result.Path)
+            .ToHashSet(StringComparer.Ordinal);
 
         foreach (var generated in topology.GeneratedTargetBytes.OrderBy(
                      pair => pair.Key,
@@ -232,6 +238,7 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
         {
             var snapshot = await ObserveAsync(request, generated.Key, cancellationToken)
                 .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             if (snapshot is null || snapshot.Kind != FileExpectationKind.File)
             {
                 return reconciliation with
@@ -268,6 +275,97 @@ internal sealed class ExtensionUpdateReconciler(FileExpectationValidator validat
                     ExtensionUpdateEffectResidual.None),
                 FileChange = change,
                 RecoveryTarget = RecoveryBundleTarget.Create(change, snapshot),
+            });
+        }
+
+        foreach (var generated in topology.GeneratedEntries
+                     .Where(pair => topology.IntendedTargetBytes.ContainsKey(pair.Key))
+                     .OrderBy(pair => pair.Key, StringComparer.Ordinal))
+        {
+            if (packageEffectPaths.Contains(generated.Key))
+            {
+                continue;
+            }
+
+            var snapshot = await ObserveAsync(request, generated.Key, cancellationToken)
+                .ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (snapshot is null || snapshot.Kind != FileExpectationKind.File)
+            {
+                return reconciliation with
+                {
+                    Effects = effects,
+                    Finding = new ExtensionUpdateFinding(
+                        ExtensionUpdateFindingCode.GeneratedRegionUnsafe,
+                        "A generated navigation host is unsafe or unavailable.",
+                        generated.Key),
+                };
+            }
+
+            GeneratedNavigationRegion projected;
+            try
+            {
+                var document = _markdownParser.Parse(
+                    StrictUtf8.GetString(snapshot.Bytes.AsSpan()));
+                projected = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(
+                    new GeneratedNavigationRegionInput(
+                        ExtensionUpdateTopologyBuilder.CreatePackageSource(request, generated.Key),
+                        document),
+                    generated.Value);
+            }
+            catch (Exception exception) when (exception is DecoderFallbackException
+                or ArgumentException
+                or InvalidOperationException)
+            {
+                return reconciliation with
+                {
+                    Effects = effects,
+                    Finding = new ExtensionUpdateFinding(
+                        ExtensionUpdateFindingCode.GeneratedRegionUnsafe,
+                        exception.Message,
+                        generated.Key),
+                };
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            if (projected.State != GeneratedNavigationRegionState.Available
+                || projected.Change is not { } change)
+            {
+                return reconciliation with
+                {
+                    Effects = effects,
+                    Finding = new ExtensionUpdateFinding(
+                        ExtensionUpdateFindingCode.GeneratedRegionUnsafe,
+                        projected.Cause
+                            ?? "The generated navigation host is unsafe or unavailable.",
+                        generated.Key),
+                };
+            }
+
+            if (change.IsUnchanged)
+            {
+                continue;
+            }
+
+            var fileChange = PlannedFileChange.ReplaceGeneratedRegion(
+                snapshot.Expectation,
+                change.ExpectedDocumentBytes.AsSpan());
+            effects.Add(new ExtensionUpdatePlannedEffect
+            {
+                Result = new ExtensionUpdateEffect(
+                    generated.Key,
+                    packageId: null,
+                    ExtensionUpdateEffectKind.GeneratedRegion,
+                    ExtensionUpdateEffectAction.Replace,
+                    [new ExtensionUpdateLogicalChange(
+                        ExtensionUpdateComparisonTargetKind.GeneratedRegion,
+                        ExtensionUpdateChangeAction.Replace,
+                        generated.Key,
+                        sourceAssetPath: null)],
+                    ExtensionUpdateEffectOutcome.Planned,
+                    ExtensionUpdateEffectResidual.None),
+                FileChange = fileChange,
+                RecoveryTarget = RecoveryBundleTarget.Create(fileChange, snapshot),
             });
         }
 

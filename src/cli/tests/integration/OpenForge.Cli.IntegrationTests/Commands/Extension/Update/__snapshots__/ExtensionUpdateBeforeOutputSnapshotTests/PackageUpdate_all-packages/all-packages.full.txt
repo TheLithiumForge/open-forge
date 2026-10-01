@@ -11,5 +11,5 @@ Workspace: <workspace>
   Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
   Verification: targets verified; Entries verified; Extension record verified
   The recovery bundle was retained at <recovery-bundle>.
-  Review previous content in the recovery bundle at <recovery-bundle>.
-Next: open-forge doctor
+  Previous content remains available for review.
+Next: Review previous content in the recovery bundle at <recovery-bundle>.

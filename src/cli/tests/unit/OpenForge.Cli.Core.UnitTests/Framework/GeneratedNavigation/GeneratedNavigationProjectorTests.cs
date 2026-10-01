@@ -848,6 +848,148 @@ public sealed class GeneratedNavigationProjectorTests
     }
 
     [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Generated navigation projected entries preserve typed document failures")]
+    [InlineData(
+        "unsupported-source",
+        (int)GeneratedNavigationRegionUnavailableReason.RegionSourceUnsupported,
+        "Generated navigation can only target the Loader or a recognized entrypoint.")]
+    [InlineData(
+        "unavailable-document",
+        (int)GeneratedNavigationRegionUnavailableReason.SourceDocumentUnavailable,
+        "The source read failed strict UTF-8 validation.")]
+    [InlineData(
+        "missing-entries",
+        (int)GeneratedNavigationRegionUnavailableReason.GeneratedRegionMissing,
+        "The document does not contain one complete generated Entries section.")]
+    [InlineData(
+        "invalid-entries",
+        (int)GeneratedNavigationRegionUnavailableReason.GeneratedRegionInvalid,
+        "The document must contain exactly one ## Entries section.")]
+    [InlineData(
+        "unavailable-region",
+        (int)GeneratedNavigationRegionUnavailableReason.GeneratedRegionUnavailable,
+        "The Markdown body boundary is unavailable.")]
+    [InlineData(
+        "bare-cr-entries",
+        (int)GeneratedNavigationRegionUnavailableReason.GeneratedRegionLineEndingUnsupported,
+        "The generated Entries section uses an unsupported line ending.")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void ProjectedEntriesPreserveTypedDocumentFailures(
+        string scenario,
+        int expectedReason,
+        string expectedCause)
+    {
+        var root = Source(RootPath, "root", SourceDocumentForm.CanonicalEntrypoint);
+        var input = scenario switch
+        {
+            "unsupported-source" => Region(
+                Source(".agents/ordinary.md", "ordinary"),
+                OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale")),
+            "unavailable-document" => new GeneratedNavigationRegionInput(root, expectedCause),
+            "missing-entries" => Region(root, "# Root\n"),
+            "invalid-entries" => Region(root, "# Root\n\n## Entries\n\n## Entries\n\nstale\n"),
+            "unavailable-region" => Region(root, "---\nopen-forge:\n  tags: [Root]\n# Root\n"),
+            "bare-cr-entries" => Region(
+                root,
+                OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+                {
+                    Entries = "- stale",
+                    LineEnding = "\r",
+                })),
+            _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "The document failure scenario is not defined."),
+        };
+
+        var region = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(input, []);
+
+        Assert.Equal(GeneratedNavigationRegionState.Unavailable, region.State);
+        Assert.Equal((GeneratedNavigationRegionUnavailableReason)expectedReason, region.UnavailableReason);
+        Assert.Equal(expectedCause, region.Cause);
+        Assert.Null(region.Change);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation validates the document before topology")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void PlanPreservesDocumentBeforeTopologyFailurePrecedence()
+    {
+        var root = Source(RootPath, "root", SourceDocumentForm.CanonicalEntrypoint);
+        var request = Request(new SourceRouteTopology([], []), [], [], []);
+        var planner = new GeneratedNavigationRegionPlanner();
+
+        var missing = planner.Plan(request, Region(root, "# Root\n"));
+        Assert.Equal(GeneratedNavigationRegionUnavailableReason.GeneratedRegionMissing, missing.UnavailableReason);
+
+        var bareCr = planner.Plan(
+            request,
+            Region(
+                root,
+                OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+                {
+                    Entries = "- stale",
+                    LineEnding = "\r",
+                })));
+        Assert.Equal(
+            GeneratedNavigationRegionUnavailableReason.GeneratedRegionLineEndingUnsupported,
+            bareCr.UnavailableReason);
+
+        var valid = planner.Plan(
+            request,
+            Region(root, OpenForgeDocumentSeed.GeneratedEntries(entries: "- stale")));
+        Assert.Equal(GeneratedNavigationRegionUnavailableReason.TopologyUnavailable, valid.UnavailableReason);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Generated navigation projected entries match ordinary projection bytes")]
+    [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
+    public void ProjectedEntriesMatchPlanAndPreserveAuthoredBytes()
+    {
+        var parent = Source(
+            RootPath,
+            "root",
+            SourceDocumentForm.CanonicalEntrypoint);
+        var child = Source(".agents/root/child.md", "root/child");
+        var topology = new SourceRouteTopology(
+            [
+                Node(parent, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
+                Node(child, SourceRouteParentState.Resolved, [parent.Identity.CanonicalBasePath], []),
+            ],
+            []);
+        var source = OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+        {
+            Entries = "- stale",
+            LineEnding = "\r\n",
+            Prefix = "# Root 😀\r\nauthored before",
+        }) + "\r\n## Notes\r\nauthored after\r\n";
+        var document = new MarkdownDocumentParser().Parse(source);
+        var request = Request(
+            topology,
+            [parent, child],
+            [Region(parent, document)],
+            [Metadata(child, "Café", ["Docs"])]);
+
+        var ordinary = Assert.Single(new GeneratedNavigationProjector().Project(request).Regions);
+        var ordinaryChange = Assert.IsType<GeneratedNavigationBoundedChange>(ordinary.Change);
+        var projected = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(
+            Region(parent, document),
+            ordinary.Entries);
+        var projectedChange = Assert.IsType<GeneratedNavigationBoundedChange>(projected.Change);
+
+        Assert.Equal(ordinaryChange.ExpectedDocumentBytes.ToArray(), projectedChange.ExpectedDocumentBytes.ToArray());
+        Assert.Equal(ordinaryChange.BeforeDocumentBytes.ToArray(), projectedChange.BeforeDocumentBytes.ToArray());
+        Assert.Equal(ordinaryChange.ContentLocation, projectedChange.ContentLocation);
+        Assert.Equal(ordinaryChange.Prefix, projectedChange.Prefix);
+        Assert.Equal(ordinaryChange.Suffix, projectedChange.Suffix);
+
+        var reparsedDocument = new MarkdownDocumentParser().Parse(
+            Encoding.UTF8.GetString(projectedChange.ExpectedDocumentBytes.ToArray()));
+        var reparsed = new GeneratedNavigationRegionPlanner().PlanProjectedEntries(
+            Region(parent, reparsedDocument),
+            ordinary.Entries);
+
+        Assert.True(Assert.IsType<GeneratedNavigationBoundedChange>(reparsed.Change).IsUnchanged);
+    }
+
+    [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Generated navigation distinguishes invalid metadata and unsafe destinations")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
     public void MetadataAndDestinationRejectionsAssignTypedReasons()

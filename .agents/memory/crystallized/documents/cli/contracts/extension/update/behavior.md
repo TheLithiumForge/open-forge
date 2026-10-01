@@ -9,8 +9,10 @@ open-forge:
 
 ## Status And Boundary
 
-This is the accepted current Crystallized Behavior Contract for non-shipping
-`open-forge extension update`. It defines exact request and source resolution,
+This is the accepted current Crystallized Behavior Contract for current
+`open-forge extension update`. The CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. It defines exact request and source resolution,
 Framework-anchor and route-host gating, trusted lifecycle facts, dependency
 closure, current/intended comparison, semantic fingerprints, ownership,
 normal/force/prune planning, generated navigation, dry-run/application,

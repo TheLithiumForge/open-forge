@@ -13,8 +13,10 @@ This is the accepted current Crystallized Interface Contract for
 `open-forge extension install`. It owns the public syntax, exact source and
 selection rules, Framework-anchor prerequisite, dependency closure, initial
 force boundary, automatic and wizard behavior, ownership and generated effects,
-output, statuses, errors, examples, non-goals, and public conformance. The new
-CLI does not ship yet.
+output, statuses, errors, examples, non-goals, and public conformance. The CLI is
+available as a public beta. [CLI Distribution](../../../distribution.md) records
+qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work.
 
 The sibling [Behavior Contract](behavior.md) defines deterministic,
 technology-neutral resolution and mutation behavior. The [Extension group
@@ -258,15 +260,20 @@ exact eligible initial occupants displayed for that request.
 End-of-input during either prompt is a no-write `invalid-input` result. Caller
 cancellation during either prompt is a no-write `cancelled` result. A caller
 may decline eligible initial force; that leaves the occupants unchanged and
-returns `blocked`. There is no generic confirmation before applying an already
-authorized plan.
+returns `blocked`. After selection, any required permission approval, and any
+initial-force consent, an effectful non-dry-run plan asks
+`Apply these changes? [y/N]` unless `--automatic`. `--force` supplies only
+initial-force authority; it does not supply the final apply confirmation. Dry-run
+and a verified no-op bypass write confirmation.
 
-JSON, `--automatic`, and other non-interactive requests never prompt. Missing
-package selection in a multi-package source is `invalid-input`; an eligible occupant
-without explicit `--force` is `blocked`. `--automatic` uses only explicit IDs,
-explicit `--all`, or the permitted single-package manifest-ID inference plus
-deterministic safe effects. It grants neither selection nor force and never
-broadens selection, adds replacement, adoption, ownership, or a safety bypass.
+JSON, `--automatic`, and other non-interactive requests never prompt. An effectful
+apply in JSON or another non-interactive mode requires `--automatic`; missing
+package selection in a multi-package source is `invalid-input`, and an eligible
+occupant without explicit `--force` is `blocked`. `--automatic` never asks these
+missing-input or force questions. It uses only explicit IDs, explicit `--all`, or
+the permitted single-package manifest-ID inference plus deterministic safe effects.
+It grants neither selection nor force and never broadens selection, adds
+replacement, adoption, ownership, or a safety bypass.
 
 ## Lifecycle Identity, Ownership, And Generated Navigation
 
@@ -452,10 +459,12 @@ unsafe boundary as skippable.
 
 ### Prompts
 
-Per [04](../../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md): multi-select when the source has several
-packages and no ID was given; Permission for paths outside `.agents`; Confirm
-for existing files (`Replace the 1 existing file listed above? [y/N]`); plan
-review; `Apply these changes? [y/N]`.
+Per [04](../../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md), when applicable the prompt order is:
+multi-select when the source has several packages and no ID was given; Permission
+for paths outside `.agents`; initial-force consent for eligible existing files
+(`Replace the 1 existing file listed above? [y/N]`); plan review; and final apply
+confirmation (`Apply these changes? [y/N]`). Initial-force consent and final apply
+confirmation are distinct; `--force` skips only the former.
 
 ### Representative transcripts by status
 

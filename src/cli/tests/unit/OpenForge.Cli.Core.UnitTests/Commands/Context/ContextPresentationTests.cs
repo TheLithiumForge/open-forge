@@ -93,11 +93,48 @@ public sealed class ContextPresentationTests
             findings: [finding]);
 
         var report = ContextReportSelector.Select(result, new CliSelection(CliDetail.Standard, null));
+        var workspacePath = result.WorkspacePath
+            ?? throw new InvalidOperationException("Context presentation test data must include a workspace path.");
 
         var subject = Assert.Single(report.Findings).Subject;
         Assert.Equal(CliSubjectKind.Workspace, subject.Kind);
-        Assert.Equal(result.WorkspacePath, subject.Path);
+        Assert.Equal(workspacePath, subject.Path);
         Assert.Null(subject.Id);
+
+        foreach (var detail in Enum.GetValues<CliDetail>())
+        {
+            var json = RenderJson(result, detail);
+            using (var document = JsonDocument.Parse(json))
+            {
+                var jsonSubject = document.RootElement.GetProperty("findings")[0].GetProperty("subject");
+                Assert.Equal("workspace", jsonSubject.GetProperty("kind").GetString());
+                Assert.Equal(workspacePath, jsonSubject.GetProperty("path").GetString());
+                Assert.Equal(JsonValueKind.Null, jsonSubject.GetProperty("id").ValueKind);
+            }
+
+            var text = RenderText(result, detail);
+            if ((ContextFindingCode)code == ContextFindingCode.ApplicabilityPending)
+            {
+                var pendingLine = Assert.Single(
+                    text.Split('\n', StringSplitOptions.RemoveEmptyEntries),
+                    line => line.Contains("  Warning  ", StringComparison.Ordinal)
+                        && line.Contains("applyTo conditions are pending", StringComparison.Ordinal));
+                Assert.Contains("  Warning  context  ", pendingLine, StringComparison.Ordinal);
+                Assert.DoesNotContain(workspacePath, pendingLine, StringComparison.Ordinal);
+                Assert.Contains(
+                    "Some applyTo conditions could not be evaluated because no --for path was supplied.",
+                    text,
+                    StringComparison.Ordinal);
+                Assert.Contains(
+                    "Next: open-forge context \"projects/guide\" --for <path>",
+                    text,
+                    StringComparison.Ordinal);
+            }
+            else
+            {
+                Assert.Contains($"  {workspacePath}  ", text, StringComparison.Ordinal);
+            }
+        }
     }
 
     [Trait("Boundary", "Output")]

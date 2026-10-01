@@ -220,7 +220,14 @@ internal sealed partial class RouteMoveReferenceScanner(
     {
         var facts = await ResolveLinkAsync(input, sourcePath, link, cancellationToken)
             .ConfigureAwait(false);
-        var boundary = ReadLinkBoundary(input, sourcePath, facts);
+        var boundary = IsProvenUnaffectedMissing(
+            input,
+            sourcePath,
+            intendedSourcePath,
+            facts,
+            cancellationToken)
+            ? null
+            : ReadLinkBoundary(input, sourcePath, facts);
         return boundary is null
             ? ProjectReplacement(input, sourcePath, intendedSourcePath, link, facts) with
             {

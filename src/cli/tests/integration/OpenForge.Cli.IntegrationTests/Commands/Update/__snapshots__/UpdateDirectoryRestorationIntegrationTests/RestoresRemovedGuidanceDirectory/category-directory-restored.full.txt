@@ -16,5 +16,5 @@ Workspace: <workspace>
   .agents/loader.md bundled Framework: id=framework; version=unavailable; fingerprint=<sha256>
   All written targets were verified.
   Recovery data: <recovery-bundle>
-  Review previous content in the recovery bundle at <recovery-bundle>.
-Next: open-forge doctor
+  Previous content remains available for review.
+Next: Review previous content in the recovery bundle at <recovery-bundle>.

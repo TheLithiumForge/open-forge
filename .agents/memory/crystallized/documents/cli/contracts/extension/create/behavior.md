@@ -60,9 +60,10 @@ a complete explicit request asks none. Blank or invalid input may be explained
 and asked again while input remains available. There is no arbitrary attempt
 limit or shared retry abstraction. End of input leaves the request `invalid-input`
 and writes nothing; caller cancellation is `cancelled` and writes nothing.
-Automatic mode suppresses interaction only when ID and path are already explicit.
-No recommendation, current folder, workspace, or source resemblance fills a
-missing value.
+`--automatic` never asks for missing inputs; both ID and path must be explicit. It
+also suppresses the final inline apply confirmation without bypassing planning,
+validation, or safety. No recommendation, current folder, workspace, or source
+resemblance fills a missing value.
 
 After the two required inputs resolve, form the manifest deterministically. The
 ID is exact. The default name splits the ID at hyphens, uppercases the first
@@ -111,6 +112,12 @@ identity, parent containment, existing-state collision, expected state, and
 verification. The standalone create path has no Replace or Delete effect, no
 workspace lease, and no recovery bundle. One unsafe, ambiguous, or unavailable
 selected fact blocks or incompletes the whole plan.
+
+A prompt-capable human effectful apply presents the plan and requires final inline
+confirmation unless `--automatic`. JSON and other non-interactive effectful applies
+require `--automatic`; without it they do not apply and write nothing. Dry-run and
+a verified no-op bypass write confirmation. Automatic mode does not bypass
+planning, validation, or safety.
 
 Dry-run and application share the same request, facts, plan, and preflight.
 Dry-run writes no directory, scaffold file, recovery bundle, temporary artifact,

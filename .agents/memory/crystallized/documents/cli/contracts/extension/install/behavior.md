@@ -9,8 +9,10 @@ open-forge:
 
 ## Status And Boundary
 
-This is the accepted current Crystallized Behavior Contract for non-shipping
-`open-forge extension install`. It defines request resolution, one exact source
+This is the accepted current Crystallized Behavior Contract for current
+`open-forge extension install`. The CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. It defines request resolution, one exact source
 universe, dependency closure, Framework-anchor and route-host facts, lifecycle
 trust, semantic identity, intended topology, ownership planning, initial force,
 dry-run/application, verification, recovery, result formation, and conformance.
@@ -365,8 +367,14 @@ exact eligible initial occupants displayed for that request. Invalid answers
 retry locally. Declining leaves the occupants unchanged and returns `blocked`.
 End-of-input is no-write `invalid-input`, and caller cancellation is no-write
 `cancelled`. Automatic and non-interactive requests never ask and remain
-`blocked` without explicit `--force`. No later generic apply confirmation
-exists.
+`blocked` without explicit `--force`. After selection, any required permission
+approval, and any initial-force consent, a prompt-capable human effectful apply
+asks final inline confirmation unless `--automatic`. Explicit `--force` supplies
+only initial-force authority; it does not supply final apply confirmation.
+Dry-run and a verified no-op bypass write confirmation. JSON and other
+non-interactive effectful applies require `--automatic`; without it they do not
+apply and write nothing. `--automatic` suppresses these questions without
+bypassing planning, validation, or safety.
 
 ## Preflight, Dry-Run, Application, And Recovery
 

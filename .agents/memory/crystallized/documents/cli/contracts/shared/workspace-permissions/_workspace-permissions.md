@@ -9,7 +9,9 @@ open-forge:
 These contracts define shared authored destination grants and the common approval
 and persistence boundary. A command explicitly opts into this capability and
 owns its required grants, findings, results and effects. Permission is separate
-from content ownership. The replacement CLI does not ship yet.
+from content ownership. The CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work.
 
 ## Axioms
 

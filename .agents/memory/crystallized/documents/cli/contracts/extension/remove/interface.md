@@ -14,7 +14,9 @@ This is the accepted current Crystallized Interface Contract for
 source-independent behavior, dependency and ownership boundaries,
 final-owner deletion, retained recovery, automatic and wizard
 behavior, effects, output, statuses, errors, examples, non-goals, and public
-conformance. The new CLI does not ship yet.
+conformance. The CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work.
 
 The sibling [Behavior Contract](behavior.md) defines technology-neutral
 resolution and mutation. The [Extension group entrypoint](../_extension.md),

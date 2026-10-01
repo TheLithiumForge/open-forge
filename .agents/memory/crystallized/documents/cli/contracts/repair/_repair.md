@@ -9,11 +9,12 @@ open-forge:
 
 ## Status And Authority
 
-This routed set is the accepted current Crystallized authority for the
-non-shipping `repair` command. Its sibling Interface and Behavior files are the
+This routed set is the accepted current Crystallized authority for the current
+`repair` command. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. Its sibling Interface and Behavior files are the
 detailed authorities for the public surface and technology-neutral operation.
-This entrypoint provides navigation only. Implementation and executable evidence are tracked in
-[CLI Development](../../../../../working/cli-development/_cli-development.md).
+This entrypoint provides navigation only.
 
 Repair is a constrained mutation operation. It does not promise to resolve every
 Doctor finding and does not author content, choose ownership, or replace a

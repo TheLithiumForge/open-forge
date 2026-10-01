@@ -15,10 +15,13 @@ the [Shared Source-Universe Filters](source-universe-filters/_source-universe-fi
 [Workspace Permissions](workspace-permissions/_workspace-permissions.md),
 and [Shared Result Coordinates](result-coordinates/_result-coordinates.md) child
 entrypoints route their accepted current Interface and Behavior contracts. These
-contracts define current behavior for the new CLI; they do not ship yet.
-Implementation and executable evidence are tracked in
-[CLI Development](../../../../../working/cli-development/_cli-development.md). The [CLI
-Architecture](../../architecture.md) defines the accepted shared implementation
+contracts define current behavior for the new CLI.
+
+The CLI is available as a public beta. CLI Distribution records qualified
+platforms and published versions. CLI Development records current
+implementation and release work.
+
+The [CLI Architecture](../../architecture.md) defines the accepted shared implementation
 boundaries; these contracts remain technology-neutral.
 The shared source-universe filter contract is a permanent shared contract set,
 but it is not a global-flag contract: its flags apply only where a consuming

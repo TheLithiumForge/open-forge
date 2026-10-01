@@ -1,18 +1,17 @@
 ---
 open-forge:
-  description: Implement the accepted greenfield replacement CLI below src/cli through architecture-owned foundations and closed Tasks
+  description: Implement the current CLI below src/cli through its accepted architecture and bounded Tasks
   tags: [LoadNow, Directive, CLI, Implementation, Architecture, Task, CSharp, DotNet, NativeAOT, Filesystem, Testing]
 ---
 
-# Greenfield CLI Implementation
+# CLI Implementation
 
 ## Instructions
 
 ### Authority And Readiness
 
-- Apply these instructions only to the non-shipping replacement CLI after the
-  parent CLI route is selected. Do not use them for the frozen MVP or unrelated
-  repository work.
+- Apply these instructions to the current CLI below `src/cli/`. Exclude the
+  frozen MVP and unrelated repository work.
 - Read the current CLI Architecture, active Plan, selected parent Task, and active
   leaf Task before changing source. The command contracts define behavior. The
   Architecture defines structure. The Task defines the bounded outcome and
@@ -83,12 +82,14 @@ open-forge:
 
 ### Physical Workspace And Projects
 
-- Keep replacement source, projects, and tests below `src/cli/`. Keep the
-  replacement `.slnx`, `global.json`, `NuGet.Config`, `Directory.Build.props`,
-  and `Directory.Packages.props` at the repository root so ordinary .NET and IDE
+- Keep current CLI source, projects, and tests below `src/cli/`. Keep the
+  `.slnx`, `global.json`, `NuGet.Config`, `Directory.Build.props`, and
+  `Directory.Packages.props` at the repository root so ordinary .NET and IDE
   workflows discover one workspace without changing directories.
-- Use the accepted `root/`, `core/`, and `tests/` physical boundaries. The root
-  executable depends on Core. Core never depends on the root. Keep exactly three
+- Use the accepted `root/`, `framework/`, `shell/`, `operations/`,
+  `rendering/`, `output-text/`, and `tests/` physical boundaries. The current
+  [CLI Architecture](../../../memory/crystallized/documents/cli/architecture.md)
+  defines the exact project layout and dependency graph. Keep exactly three
   runnable test projects and one test-support library unless the maintainer
   accepts a later Architecture change.
 - Keep solution membership direct. Do not create solution-only folders. Use SDK
@@ -117,10 +118,10 @@ open-forge:
 
 ### Source And Dependency Direction
 
-- Keep process arguments, environment, streams, cancellation hookup, and explicit
-  command registration in the root host. Keep parser mechanics, invocation,
-  pipeline, presentation, output, Framework capabilities, commands, and concrete
-  results in Core according to the Architecture.
+- Keep process arguments, environment, streams, cancellation hookup, explicit
+  command registration, and host process composition in the root host. Keep
+  commands in Operations, the pipeline in Shell, Framework capabilities in
+  Framework, presentation in Rendering, and authored wording in OutputText.
 - Keep Shell free of concrete command dependencies. Keep Framework capabilities
   free of parser symbols, command requests and results, renderers, and process
   writers. Let commands depend on Shell contracts and Framework facts.
@@ -173,10 +174,10 @@ open-forge:
   required by the Architecture. The maintainer must explicitly accept any
   resulting product behavior.
 - Remove resolved exceptions from the active ledger, comments and instructions.
-  Keep useful investigation history in its work record. This unreleased CLI does
-  not require speculative migration paths or compatibility prose for superseded
-  internal package shapes. Existing accepted interface and safety contracts still
-  apply; changing them requires accepted direction.
+  Keep useful investigation history in its work record. Superseded internal
+  package shapes do not require speculative compatibility paths or compatibility
+  prose. Public-beta interfaces and safety contracts remain binding; changing
+  them requires accepted direction.
 
 ### Construction, Parsing, And Pipeline
 
@@ -220,7 +221,8 @@ open-forge:
   the operation at most once, select one cached concrete renderer, write one
   primary result, and return one fixed process completion.
 - Pass output writers and cancellation explicitly. Do not cache ambient console
-  state or terminate the process inside Core.
+  state or terminate the process inside the Shell, Operations, Framework,
+  Rendering, or OutputText libraries; the root host owns process termination.
 - Let the accepted YAML serializer and Markdown parser own their format syntax.
   Consume typed models, tokens, syntax trees and source spans before applying
   Framework rules. Keep product-defined marker or value grammars at their declared
@@ -257,9 +259,10 @@ open-forge:
   contract, not an incidental serializer optimization.
 - Apply the shared automatic-colour policy at generated rendering sites using
   typed status or severity. Keep written labels and restore foreground styling
-  before source data. The host supplies per-stream capability; Core does not
-  discover it from ambient Console state. Test terminal, redirected and plain
-  preference behavior. JSON and selected authored content receive no colour.
+  before source data. The root host supplies per-stream capability; Shell,
+  Operations, Framework, Rendering, and OutputText do not discover it from
+  ambient Console state. Test terminal, redirected and plain preference
+  behavior. JSON and selected authored content receive no colour.
 - Preserve shared prompt, noninteractive, stream and exit behavior. Detail
   never grants write authority, reruns an operation, changes its result or turns
   a preview into an effect. `CliPrompts` uses arrow-key single select and
@@ -308,7 +311,7 @@ open-forge:
   and record accepted lifecycle or recovery facts.
 - Shared mutation support provides primitives, not product decisions. Every
   command retains its command-local plan, policy, ordering, findings,
-  residual-state reporting, and result. The replacement CLI never automatically
+  residual-state reporting, and result. The current CLI never automatically
   restores a target, rolls back an effect, or compensates for target effects.
 
 ### Dependencies And Native AOT

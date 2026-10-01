@@ -10,9 +10,10 @@ open-forge:
 ## Status And Authority
 
 This is the permanent Crystallized route for the shared source-universe filter
-contract set. The command contracts that explicitly apply it remain
-non-shipping. Implementation and executable evidence are tracked in
-[CLI Development](../../../../../../working/cli-development/_cli-development.md). The
+contract set. The CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. The command contracts that explicitly apply it remain
+the authorities for their own operation status. The
 accepted implementation boundaries are defined by the [CLI
 Architecture](../../../architecture.md), while this route remains
 technology-neutral.

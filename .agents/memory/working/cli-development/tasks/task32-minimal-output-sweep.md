@@ -69,7 +69,7 @@ of the time.
 - A recorded decision for the `Workspace:` echo and for `Next:` at `minimal`,
   with the reasoning and the situations each applies to.
 - If the rule changes, C12 and the shared presentation rules in
-  [00 — conventions](../../../archived/cli-development/tasks/task30-g4/00-conventions.md) are amended, every affected
+  [Human Presentation](../../../crystallized/documents/cli/shared-operation-contract.md#human-presentation) are amended, every affected
   catalogue's `Text by level` examples agree with the code, and every capture is
   regenerated and reviewed.
 - If the rule stands, the two catalogues whose examples omitted the echo are
@@ -79,3 +79,10 @@ of the time.
 ## Axioms
 
 - inherited - No local axioms; loaded ancestor axioms remain active.
+
+## Current State
+
+**Now:** Active for bounded pending/next-action polish within the authorized
+beta-stabilization horizon in [Task 69](task69-next-beta-stabilization-release.md).
+The existing sweep scope is unchanged, and the full 28-command sweep remains
+queued.

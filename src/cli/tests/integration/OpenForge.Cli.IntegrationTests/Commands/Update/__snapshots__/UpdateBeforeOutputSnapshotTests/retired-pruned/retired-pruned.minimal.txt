@@ -1,4 +1,4 @@
 Updated 1 Framework file.
 Workspace: <workspace>
   .agents/guidance/retired-framework.md  deleted (no longer part of this release)
-Next: open-forge doctor
+Next: Review previous content in the recovery bundle at <recovery-bundle>.

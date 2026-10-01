@@ -49,8 +49,14 @@ Existing `.agents/` behavior remains the current product contract.
 
 ## Current state
 
-Open and unstarted under the restored scope. No new APM investigation or
-prototype was run during Task 62 planning. Schedule this independently.
+Preliminary bounded local triage is recorded: `apm.yml` targets `opencode` and
+`codex`. Future options are instruction export, a separately evaluated
+alternative root, or package transport. No external APM semantics were
+verified, and no implementation or POC was performed. The full Task 55
+investigation remains open.
+
+Open under the restored scope. The preliminary triage above is the only work
+recorded. Schedule the full investigation independently.
 
 ## Done when
 

@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Current Crystallized contract set for workspace status, context-size comparison, root customization, managed Extensions, and recognized recovery bundles
-  responsibility: Route the current Status Interface and Behavior contracts while the command remains non-shipping
+  responsibility: Route the current Status Interface and Behavior contracts
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Status, CurrentTruth]
 ---
 
@@ -10,7 +10,9 @@ open-forge:
 ## Status And Authority
 
 This routed contract set is the current Crystallized authority for the accepted
-`status` meaning. The command does not ship yet. Its sibling Interface and
+`status` meaning. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. Its sibling Interface and
 Behavior contracts are the detailed authorities for the public surface and
 technology-neutral operation.
 

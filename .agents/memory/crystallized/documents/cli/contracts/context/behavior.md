@@ -14,8 +14,9 @@ command. This file is authoritative for the technology-neutral resolution,
 graph, projection, ordering, completeness, result, read-only safety, and
 conformance mechanics behind the [Interface Contract](interface.md). It does
 not add public flags, statuses, output fields, schemas, or implementation
-choices. The command does not ship yet; implementation and executable evidence are tracked in
-[CLI Development](../../../../../working/cli-development/_cli-development.md).
+choices. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work.
 
 The [Technical Design](technical-design.md) is subordinate to the [CLI
 Architecture](../../architecture.md) and records the accepted context

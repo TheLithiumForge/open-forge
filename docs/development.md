@@ -109,6 +109,19 @@ Use `npm run check:delivery` for delivery TypeScript, lint and formatting,
 `npm run test:delivery` for the delivery helpers. `npm run test:agent-tooling`
 checks the separate repository agent tools.
 
+Use `npm run check:docs` for the offline documentation gate. It reuses the
+pinned .NET Markdown parser to check local links and anchors in `README.md`,
+current Markdown under `docs/` except `docs/cli-experience-fixtures/` and
+`docs/extension-candidates/`, public Docusaurus docs under
+`src/docusaurus/docs/` including demos, Extension READMEs under
+`src/extensions/`, `.agents/maps/`, the current CLI contracts, layers and
+technical designs, and the [Workspace State Files decision](../.agents/memory/crystallized/decisions/framework/workspace-state-files.md).
+The gate does not fetch external HTTP links. The Docusaurus build checks site
+routes, assets and rendered anchors. Destinations in excluded source trees are
+still checked, unsupported local anchors fail instead of being silently
+accepted, and Docusaurus `/docs/`, `/guides/` and `/img/` routes delegate to the
+site build.
+
 After a build, invoke that worktree's development artifact directly:
 
 ```sh

@@ -10,8 +10,9 @@ open-forge:
 ## Status And Authority
 
 This routed contract set is the current Crystallized authority for the accepted
-`context` meaning. The command does not ship yet; implementation and executable evidence are tracked in
-[CLI Development](../../../../../working/cli-development/_cli-development.md). The sibling Interface and Behavior contracts define
+`context` meaning. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. The sibling Interface and Behavior contracts define
 the public and technology-neutral meaning. The Technical Design is subordinate
 to the [CLI Architecture](../../architecture.md) and records the accepted
 context-specific realization without redefining either contract.

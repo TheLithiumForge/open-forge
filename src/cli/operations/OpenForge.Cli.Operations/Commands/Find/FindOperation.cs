@@ -211,11 +211,9 @@ internal sealed class FindOperation(
             && metadataProjectionRequested
             && !cancellationToken.IsCancellationRequested)
         {
-            if (applicabilityRouteFacts is not null
-                && request.UniverseFilter.Include.Count == 0
-                && request.UniverseFilter.Exclude.Count == 0)
+            if (applicabilityRouteFacts is not null)
             {
-                // With no selectors, the full catalogue is the existing Find universe too.
+                // Applicability route facts cover metadata for the filtered universe too.
                 projectionRouteFacts = applicabilityRouteFacts;
             }
             else
@@ -224,13 +222,11 @@ internal sealed class FindOperation(
                 {
                     var establishedSourceSession = sourceSession
                         ?? throw new InvalidOperationException("A Find source context is required for route facts.");
-                    var selectedUniverse = universeResolution
-                        ?? throw new InvalidOperationException("A Find universe selection is required for route facts.");
                     projectionRouteFacts = await _sourceResolver
                         .ReadRouteFactsAsync(
                             new FindRouteFactsInput(
                                 establishedSourceSession,
-                                selectedUniverse.Selection),
+                                establishedSourceSession.Catalogue.SelectAll()),
                             cancellationToken)
                         .ConfigureAwait(false);
                     if (projectionRouteFacts.IsCancelled)

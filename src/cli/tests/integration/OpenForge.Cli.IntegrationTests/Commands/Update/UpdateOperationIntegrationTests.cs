@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 using OpenForge.Cli.IntegrationTests.Commands.Update.Shared.Interaction;
 
@@ -277,6 +278,65 @@ public sealed class UpdateOperationIntegrationTests
             ],
             result.Recovery.ProtectedPaths);
         Assert.False(workspace.Exists(UpdateIntegrationWorkspace.HistoricalTargetPath));
+    }
+
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Update offers repository or recovery-bundle review after verified retention"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task VerifiedRetentionOffersRepositoryOrRecoveryBundleReview(bool hasGitDirectory)
+    {
+        using var workspace = UpdateIntegrationWorkspace.Create(
+            hasGitDirectory
+                ? "update-operation-retained-review-git"
+                : "update-operation-retained-review-bundle");
+        if (hasGitDirectory) workspace.CreateDirectory(".git");
+        await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
+        workspace.MutateManagedContent();
+
+        var result = await workspace.ExecuteAsync(workspace.Request());
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(UpdateVerificationState.Verified, result.Verification);
+        Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
+        var bundlePath = Assert.IsType<string>(result.Recovery.ResidualPath);
+        var next = Assert.IsType<CliNextAction>(result.Next);
+        if (hasGitDirectory)
+        {
+            Assert.Equal("git diff", next.Command);
+            Assert.Equal(
+                $"Review the changes with git diff. Previous content remains in {bundlePath}.",
+                next.Reason);
+            Assert.Equal(CliNextActionKind.Command, next.Kind);
+        }
+        else
+        {
+            Assert.Equal(
+                $"Review previous content in the recovery bundle at {bundlePath}.",
+                next.Command);
+            Assert.Equal("Previous content remains available for review.", next.Reason);
+            Assert.Equal(CliNextActionKind.Sentence, next.Kind);
+        }
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Update preserves an existing next action over recovery-bundle review"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    public async Task ExistingNextActionTakesPrecedenceOverRecoveryBundleReview()
+    {
+        using var workspace = UpdateIntegrationWorkspace.Create("update-operation-retained-review-precedence");
+        await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
+        workspace.MutateManagedContent();
+        workspace.SeedHistoricalRetiredTarget();
+
+        var result = await workspace.ExecuteAsync(workspace.Request());
+
+        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(UpdateVerificationState.Verified, result.Verification);
+        Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
+        var next = Assert.IsType<CliNextAction>(result.Next);
+        Assert.Equal("open-forge update --prune --dry-run", next.Command);
+        Assert.Equal("Preview deleting the retained files before applying the prune.", next.Reason);
+        Assert.Equal(CliNextActionKind.Command, next.Kind);
     }
 
     [Trait("Boundary", "OS")]

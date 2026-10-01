@@ -14,8 +14,10 @@ This is the current Crystallized Interface Contract for read-only
 source selection, installed and available projections, dependency facts,
 comparison result, generated-navigation boundary, finding vocabulary, status,
 `next` values, structured result graph, examples, and public conformance. The
-command does not ship yet; this contract does not claim implementation or
-Gate-5 evidence.
+CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work; this contract does not claim
+implementation or Gate-5 evidence.
 
 The sibling [Behavior Contract](behavior.md) defines technology-neutral
 resolution, fingerprint formation, comparison, retention, and result

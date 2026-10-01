@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Route the accepted current `find` contracts for deterministic source inventory and typed tag or heading discovery
-  responsibility: Route the accepted current `find` contracts while keeping the command non-shipping
+  responsibility: Route the accepted current `find` contracts
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Find, Discovery, Tag, Heading, CurrentTruth]
 ---
 
@@ -10,7 +10,9 @@ open-forge:
 ## Status And Authority
 
 This folder is the routed Crystallized contract set for the accepted current
-non-shipping `find` command. Its Interface and Behavior files are the current
+`find` command. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. Its Interface and Behavior files are the current
 authorities for public and technology-neutral meaning. Its Technical Design
 records the accepted implementation design and remains subordinate to those
 contracts and the [CLI Architecture](../../architecture.md). The command does not

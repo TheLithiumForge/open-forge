@@ -156,14 +156,14 @@ The selected leaf is not eligible when it is any of the following:
 - a routed native source such as `SKILL.md`, a non-Markdown resource, or an
   unsupported source kind;
 - an orphan or ambiguous overwrite companion;
-- a source with any trusted Framework or Extension lifecycle ownership claim;
 - a source whose identity, route, containment, collision, reference, or recovery
   boundary cannot be established completely; or
 - a source whose removal would leave a supported incoming reference that cannot
   be safely detached.
 
-The command does not adopt an existing file, release lifecycle ownership, repair
-route meaning, or reinterpret a generated entry as an authored source.
+Removal releases the matching ownership claims and records persistent removal
+intent. It does not adopt an existing file, repair route meaning, or reinterpret
+a generated entry as an authored source.
 
 ## Eligible Category
 
@@ -519,7 +519,7 @@ The finding catalogue is:
 | route-remove.route-ambiguous               | error    | route-ambiguous             |                                                                                                    |                                                          |
 | route-remove.identity-collision            | error    | identity-collision          | (the prompt resolves it in a terminal)                                                             |                                                          |
 | route-remove.overwrite-ambiguous           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.overwrite-ambiguous`).                                     | fix by hand                                              |
-| route-remove.ownership-claimed             | error    | ownership-claimed           |                                                                                                    | `open-forge update` / `open-forge extension remove <id>` |
+| route-remove.ownership-claimed             | error    | ownership-claimed           | Ownership claims remain beyond the accepted removal plan.                                      | Inspect the reported ownership conflict and rerun the same removal after resolving it. |
 | route-remove.reference-unsafe              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.reference-unsafe`).                                      | fix by hand                                              |
 | route-remove.generated-region-unsafe       | error    | generated-region-unsafe     |                                                                                                    |                                                          |
 | route-remove.workspace-lock-unavailable    | error    | workspace-lock-unavailable  |                                                                                                    |                                                          |

@@ -172,6 +172,10 @@ Rules:
 - Show accepted operands, flags, defaults, examples, and related commands.
 - A group shows its child operations and performs no domain operation.
 - Help text uses the canonical command and flag vocabulary.
+- Help uses the host terminal width when available and 80 columns for redirected
+  output or a nonpositive width. Built-in help and appended
+  command-specific prose wrap to that width; appended prose uses two-space
+  indentation. Long unbreakable tokens may exceed the selected width.
 - Write help to stdout and return exit `0`. Composed `--format`, `--detail`,
   and `--detail-filter` flags are no-ops in this terminal mode; help remains
   ordinary text rather than an operation result envelope.

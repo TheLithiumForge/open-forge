@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Accepted public package graph, x64 and ARM64 platform horizon, staging, packing, checksum, proof, and publication boundary for the replacement CLI
-  responsibility: Define durable replacement CLI distribution meaning without presenting incomplete platform work or release evidence as complete
+  description: Accepted public package graph, x64 and ARM64 platform horizon, staging, packing, checksum, proof, and publication boundary for the Open Forge CLI
+  responsibility: Define durable CLI distribution meaning without presenting incomplete platform work or release evidence as complete
   tags: [Memory, Crystallized, Document, CurrentTruth, Evergreen, CLI, Distribution, Npm, NativeAOT, Release]
 ---
 
@@ -47,6 +47,44 @@ systems, architectures, RIDs, libc variants,
 channels, or support-floor claims require a new maintainer decision.
 
 ## Current Implementation And Delivery State
+
+### Beta 3
+
+On 2026-10-01, the npm `beta` and `latest` tags identified `0.9.0-beta.3`, as
+did the [GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.3).
+This receipt records no six-host or portable-archive
+verification. Qualification of the current beta 4 candidate remains pending in
+[Task 69](../../../working/cli-development/tasks/task69-next-beta-stabilization-release.md).
+
+### Beta 2
+
+Version `0.9.0-beta.2` uses source
+`00e3ba0294679163d95b42a81295091254debfb7`, pushed to `develop` and `main`.
+[Build 36511732462](https://github.com/TheLithiumForge/open-forge/actions/runs/36511732462)
+and [Release 36515807876](https://github.com/TheLithiumForge/open-forge/actions/runs/36515807876)
+passed shared checks and all six matching-host build, test and package jobs.
+The Release workflow published all seven npm packages and the
+[GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.2).
+
+The beta 2 release receipt verified that all seven exact-version registry records
+and the `beta` and `latest` tags published at that release agreed on beta 2. The
+wrapper names all six native packages at that exact version.
+The six downloaded portable archives match `SHA256SUMS`, and the Windows x64
+archive executable matches the public npm executable byte for byte.
+
+Fresh exact-version and `@beta` npm installs passed on Windows x64. The exact
+install passed Framework and Core Templates installation, `status`, and
+`doctor`. An isolated global `@beta` install also ran the command successfully.
+Updating a public beta 1 workspace with beta 2 preserved an overwrite companion
+and a custom file. Recovery preserved the previous Loader bytes, and Doctor
+verified the retained bundle with no errors or warnings.
+
+The published wrapper includes the verified README and package links. The
+versioned npm page renders its README and diagram. The updated documentation
+site is deployed. [Task 59](../../../working/cli-development/tasks/task59-beta-2-release.md)
+retains the publication checks and the default npm page's cache limitation.
+
+### Earlier beta qualification
 
 The maintainer authorized hosted pipeline fixes and public beta publication on
 2026-09-24. Version `0.9.0-beta.1` uses source
@@ -198,18 +236,18 @@ therefore fills missing packages in native-first order. Availability checks do
 not prove remote byte equality or make uploads atomic. Dry runs stay offline.
 A skip warning is a publication status, not a warning-bearing build artifact.
 Current CI authentication remains NPM_TOKEN.
-The replacement is shipping only after all selected destination results agree.
+A release is complete only after all selected destination results agree.
 Prerelease versions use a prerelease channel; stable versions use latest.
 
 Credentials, registry contact, remote publication, signatures, SBOM, provenance,
 OIDC attestation, and support-floor matrices remain outside local preparation
 unless their exact release Task authorizes them. The package graph, checksums,
 documentation, native proof, and publication result must agree before the
-maintainer accepts the replacement as shipping.
+maintainer accepts the release as complete.
 
 ## Related Current Sources
 
-- [Replacement CLI Architecture](architecture.md)
+- [CLI Architecture](architecture.md)
 - [Task 7: npm Package Manager Release and Local Linking](../../../archived/cli-development/tasks/delivery/01-npm-packages.md)
 - [Task 13: Native CI and Reproducible Artifacts](../../../archived/cli-development/tasks/delivery/02-native-ci.md)
 - [CLI Delivery](../../../archived/cli-development/tasks/delivery/_delivery.md)

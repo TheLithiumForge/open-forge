@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
@@ -93,7 +94,15 @@ internal sealed class UpdateIntendedStateBuilder(
         targets = targets.Where(target => target.Region != "entries" || !retiredWholeHosts.Contains(target.Path)).ToArray();
         var generatedHosts = targets.Where(target => target.Region == "entries").Select(target => target.Path).ToHashSet(StringComparer.Ordinal);
         var navigation = await _navigationPlanner
-            .BuildAsync(request, payload, settings, mappedAssets, retiredTargetPaths, generatedHosts, cancellationToken)
+            .BuildAsync(
+                request,
+                payload,
+                ownership.Document,
+                settings,
+                mappedAssets,
+                retiredTargetPaths,
+                generatedHosts,
+                cancellationToken)
             .ConfigureAwait(false);
         if (navigation.Finding is { } navigationFinding)
         {

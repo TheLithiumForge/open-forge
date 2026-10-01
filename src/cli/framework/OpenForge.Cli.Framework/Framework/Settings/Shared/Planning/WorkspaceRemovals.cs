@@ -5,7 +5,7 @@ namespace OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 /// <summary>
 /// Applies the persistent exclusion policy defined in
-/// <c>.agents/memory/working/cli-development/tasks/task50-unified-remove.md</c>.
+/// <c>.agents/memory/archived/cli-development/tasks/task50-unified-remove.md</c>.
 /// </summary>
 internal static class WorkspaceRemovals
 {

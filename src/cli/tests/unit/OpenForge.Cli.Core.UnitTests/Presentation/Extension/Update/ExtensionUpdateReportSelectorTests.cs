@@ -153,6 +153,86 @@ public sealed class ExtensionUpdateReportSelectorTests
             applied.Report.Headline.Sentence);
     }
 
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Extension Update matching changed regions claim one planned or verified section without a synthetic effect"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
+    [InlineData((int)ExtensionUpdateMode.DryRun, (int)ExtensionUpdateEffectOutcome.Planned)]
+    [InlineData((int)ExtensionUpdateMode.Apply, (int)ExtensionUpdateEffectOutcome.Verified)]
+    public void MatchingChangedRegionClaimsOneSectionWithoutSyntheticEffect(
+        int mode,
+        int outcome)
+    {
+        var selected = Select(
+            Result(
+                (ExtensionUpdateMode)mode,
+                WorkspacePermissionResult.NotEvaluated,
+                [(ExtensionUpdateEffectOutcome)outcome],
+                generatedRegions: [new ExtensionUpdateGeneratedRegion(
+                    ".agents/aaa.md",
+                    ExtensionUpdateGeneratedRegionState.Changed)]),
+            CliDetail.Full);
+
+        var sections = Assert.IsAssignableFrom<IReadOnlyList<string>>(selected.Report.Data.Sections);
+
+        Assert.Equal(".agents/aaa.md", Assert.Single(sections));
+        Assert.Equal(1, selected.Report.Counts.Single(count => count.Name == "sectionsUpdated").Value);
+        var effect = Assert.Single(selected.Report.Effects);
+        Assert.Equal(CliEffectKind.File, effect.Kind);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Extension Update changed generated regions without matching effects make no section claim"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
+    public void ChangedGeneratedRegionsWithoutMatchingEffectsMakeNoSectionClaim()
+    {
+        var result = Result(
+            ExtensionUpdateMode.Apply,
+            WorkspacePermissionResult.NotEvaluated,
+            [],
+            generatedRegions: [new ExtensionUpdateGeneratedRegion(
+                ".agents/toolkit.md",
+                ExtensionUpdateGeneratedRegionState.Changed)]);
+
+        var selected = Select(result, CliDetail.Full);
+        var sections = Assert.IsAssignableFrom<IReadOnlyList<string>>(selected.Report.Data.Sections);
+
+        Assert.DoesNotContain(selected.Report.Effects, effect => effect.Kind == CliEffectKind.Section);
+        Assert.Empty(sections);
+        Assert.Equal(0, selected.Report.Counts.Single(count => count.Name == "sectionsUpdated").Value);
+        Assert.DoesNotContain(
+            selected.Report.Data.TextDetails,
+            detail => detail.Contains("Entries section", StringComparison.Ordinal));
+    }
+
+    [Trait("Boundary", "Output")]
+    [Theory(DisplayName = "Extension Update failed or not-started apply rows do not claim updated sections"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
+    [InlineData((int)ExtensionUpdateEffectOutcome.VerificationFailed, (int)CliEffectOutcome.Failed)]
+    [InlineData((int)ExtensionUpdateEffectOutcome.NotStarted, (int)CliEffectOutcome.NotStarted)]
+    public void FailedOrNotStartedApplyRowsDoNotClaimUpdatedSections(
+        int outcome,
+        int expectedReportOutcome)
+    {
+        var result = Result(
+            ExtensionUpdateMode.Apply,
+            WorkspacePermissionResult.NotEvaluated,
+            [(ExtensionUpdateEffectOutcome)outcome],
+            [new ExtensionUpdateFinding(
+                ExtensionUpdateFindingCode.WriteFailed,
+                "The target could not be written.",
+                ".agents/aaa.md")],
+            generatedRegions: [new ExtensionUpdateGeneratedRegion(
+                ".agents/aaa.md",
+                ExtensionUpdateGeneratedRegionState.Changed)]);
+
+        var selected = Select(result, CliDetail.Full);
+        var sections = Assert.IsAssignableFrom<IReadOnlyList<string>>(selected.Report.Data.Sections);
+        var row = Assert.Single(selected.Report.Data.TextRows);
+        var effect = Assert.Single(selected.Report.Effects);
+
+        Assert.NotEmpty(row.Text);
+        Assert.Equal((CliEffectOutcome)expectedReportOutcome, effect.Outcome);
+        Assert.Empty(sections);
+        Assert.Equal(0, selected.Report.Counts.Single(count => count.Name == "sectionsUpdated").Value);
+    }
+
     private static CliSelectedReport<ExtensionUpdateData> Select(
         ExtensionUpdateResult result,
         CliDetail detail)
@@ -171,7 +251,8 @@ public sealed class ExtensionUpdateReportSelectorTests
         WorkspacePermissionResult permissions,
         IReadOnlyList<ExtensionUpdateEffectOutcome> outcomes,
         IReadOnlyList<ExtensionUpdateFinding>? findings = null,
-        bool includeRetainedFile = false)
+        bool includeRetainedFile = false,
+        IReadOnlyList<ExtensionUpdateGeneratedRegion>? generatedRegions = null)
     {
         var paths = outcomes
             .Select((_, index) => index == 0 ? ".agents/aaa.md" : ".agents/toolkit.md")
@@ -232,7 +313,7 @@ public sealed class ExtensionUpdateReportSelectorTests
                 packageCount: 1),
             Packages = [package],
             Comparisons = comparisons,
-            GeneratedNavigation = new ExtensionUpdateGeneratedNavigation([]),
+            GeneratedNavigation = new ExtensionUpdateGeneratedNavigation(generatedRegions ?? []),
             Effects = effects,
             Permissions = permissions,
             Lifecycle = new ExtensionUpdateLifecycle(

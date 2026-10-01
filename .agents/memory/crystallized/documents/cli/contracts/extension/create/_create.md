@@ -10,9 +10,11 @@ open-forge:
 ## Status And Authority
 
 This entrypoint routes the accepted current Crystallized Interface and Behavior
-contracts for `open-forge extension create`. The new CLI does not ship yet.
-Create authors a package scaffold in a catalogue and does not install it into a
-workspace or write lifecycle state.
+contracts for `open-forge extension create`. The CLI is available as a public
+beta. CLI Distribution records qualified platforms and published versions. CLI
+Development records current implementation and release work. Create authors a
+package scaffold in a catalogue and does not install it into a workspace or
+write lifecycle state.
 
 ## Contract Roles
 

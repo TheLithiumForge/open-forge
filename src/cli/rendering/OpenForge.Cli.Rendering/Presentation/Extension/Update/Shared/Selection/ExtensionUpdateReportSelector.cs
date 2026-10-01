@@ -36,16 +36,19 @@ internal static class ExtensionUpdateReportSelector
             .Where(comparison => projected.All(effect => !string.Equals(effect.Path, comparison.Path, StringComparison.Ordinal)))
             .Select(comparison => ProjectKept(comparison, result.Mode == ExtensionUpdateMode.DryRun, full))
             .ToArray();
-        var navigation = result.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention
-            ? result.GeneratedNavigation?.Regions
-                .Where(region => region.State != ExtensionUpdateGeneratedRegionState.Unchanged)
-                .Where(region => projected.All(effect => !string.Equals(effect.Path, region.Path, StringComparison.Ordinal)))
-                .Select(region => ProjectSection(region, result.Mode == ExtensionUpdateMode.DryRun, full))
-                .ToArray() ?? []
-            : [];
+        var expectedSectionOutcome = result.Mode == ExtensionUpdateMode.DryRun
+            ? ExtensionUpdateEffectOutcome.Planned
+            : ExtensionUpdateEffectOutcome.Verified;
+        var sections = result.GeneratedNavigation?.Regions
+            .Where(region => region.State == ExtensionUpdateGeneratedRegionState.Changed)
+            .Where(region => result.Effects.Any(effect =>
+                string.Equals(effect.Path, region.Path, StringComparison.Ordinal)
+                && effect.Outcome == expectedSectionOutcome))
+            .Select(region => region.Path)
+            .Order(StringComparer.Ordinal)
+            .ToArray() ?? [];
         var allEffects = projected
             .Concat(kept)
-            .Concat(navigation)
             .OrderBy(effect => effect.Path, StringComparer.Ordinal)
             .ToArray();
         var rows = allEffects
@@ -68,11 +71,6 @@ internal static class ExtensionUpdateReportSelector
             .Distinct(StringComparer.Ordinal)
             .Order(StringComparer.Ordinal)
             .ToArray();
-        var sections = result.GeneratedNavigation?.Regions
-            .Where(region => region.State != ExtensionUpdateGeneratedRegionState.Unchanged)
-            .Select(region => region.Path)
-            .Order(StringComparer.Ordinal)
-            .ToArray() ?? [];
         var dependencies = result.Packages
             .Select(package => new ExtensionUpdateDataDependency
             {
@@ -225,40 +223,6 @@ internal static class ExtensionUpdateReportSelector
                 Owner = comparison.PackageId,
                 Before = comparison.CurrentFingerprint,
                 After = null,
-            },
-        };
-
-    private static ExtensionUpdateProjectedEffect ProjectSection(
-        ExtensionUpdateGeneratedRegion region,
-        bool planned,
-        bool full)
-        => new()
-        {
-            Path = region.Path,
-            ChangeAction = ExtensionUpdateChangeAction.Replace,
-            Text = ExtensionUpdateWording.EntriesUpdated(),
-            Detail = full ? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdatePhrases.FormatState($"{Name(region.State)}") : null,
-            Data = new ExtensionUpdateDataEffect
-            {
-                Path = region.Path,
-                Before = null,
-                After = null,
-                Relation = new ExtensionUpdateDataRelation
-                {
-                    Current = "unknown",
-                    Shipped = Name(region.State),
-                },
-                Verification = Verification(null),
-                Recovery = Recovery(null),
-            },
-            Effect = new CliEffect
-            {
-                Path = region.Path,
-                Kind = CliEffectKind.Section,
-                Action = CliEffectAction.Rewritten,
-                Outcome = planned ? CliEffectOutcome.Planned : CliEffectOutcome.Done,
-                Reason = ExtensionUpdateWording.EntriesUpdated(),
-                Owner = null,
             },
         };
 

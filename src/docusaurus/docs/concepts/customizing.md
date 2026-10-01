@@ -63,7 +63,7 @@ The CLI records exclusions in `.agents/open-forge.json`:
 }
 ```
 
-Deleting a file by hand doesn't record an exclusion, so a later update may restore it. If you delete a managed file by hand, add its path to `removedFiles` before the next update. To bring removed content back, clear its exclusion and run the relevant install or update.
+Use `open-forge remove <path> --dry-run`, then apply the reviewed removal so later updates respect it. Deleting a file by hand does not record an exclusion. To restore managed content, clear every applicable exclusion and run the relevant install or update operation.
 
 ## Files the CLI keeps for itself
 

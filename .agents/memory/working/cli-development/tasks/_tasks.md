@@ -18,6 +18,19 @@ evidence and may narrow, but never broaden, its parent Task.
 The [Potential CLI Tasks](potential/_potential.md) route is a candidate queue,
 not active execution authority.
 
+Beta 2 was published on 2026-09-29. [Task 59](task59-beta-2-release.md) retains
+the completed release and published-package verification receipts.
+
+## Accepted beta-stabilization horizon
+
+Accepted on 2026-10-01, [Task 69 — Next beta stabilization and
+release](task69-next-beta-stabilization-release.md) coordinates the bounded
+implementation, qualification, and release boundary. Its current boundary is
+phase 1/3, milestone 0/5, with Root active and execution via Worker Watch.
+[Task 68 — Repository link validation](task68-repository-link-validation.md)
+is the phase 1/2, milestone 0/3 offline link-gate packet. No checks have passed
+and no completion grace has been consumed.
+
 ## Current order
 
 Accepted on 2026-09-28 from the
@@ -25,16 +38,16 @@ Accepted on 2026-09-28 from the
 The ordering that came before it is preserved in
 [Task ordering before 2026-09-28](../../../archived/cli-development/tasks/ordering-2026-09-25.md).
 
-1. **Unblock the release.** Merge [61](task61-documentation-accuracy-and-voice.md),
-   refresh the integration snapshots, and release beta 2 through
-   [59](task59-beta-2-release.md).
+1. **Review 1.0 release readiness.** Use the root-authored
+   [assessment](../../../emerging/analysis/one-zero-release-readiness.md) as
+   contextual input. It does not authorize implementation.
 2. **Do next:** [53](task53-loading-and-scoping-audit.md) and
-   [64](task64-cli-defects-and-contract-drift.md).
+   [64](task64-cli-defects-and-contract-drift.md), after the 1.0 direction is
+   accepted.
    [66](task66-council-polish.md) is committed on its own branch and awaits review.
    [67](task67-diagram-labels.md) builds on it.
 3. **Decide before 1.0:** [36](task36-extension-merge-and-guards.md),
    [37](task37-wording-review-against-proposals.md),
-   [62](task62-glob-scoped-loading.md),
    [63](task63-keeping-edits-through-updates.md), and
    [65](task65-where-open-tasks-live.md).
 4. **Before 1.0:** [53](task53-loading-and-scoping-audit.md), then
@@ -54,10 +67,11 @@ the [candidate queue](potential/_potential.md) holds work not yet selected.
 
 On 2026-09-29, the maintainer restored [Task 55](task55-alternative-root.md)
 as a separate open investigation of alternative roots and APM interoperability.
-Its scheduling is independent. [Task 62](task62-glob-scoped-loading.md) now
-covers optional `applyTo` loading and CLI filtering. Implementation and local
-qualification are complete. The maintainer authorized squash integration into
-`develop`, a push, and beta 2 publication after the complete CI gate passes.
+It remains open and unstarted, and its scheduling is independent. [Task 62](task62-glob-scoped-loading.md)
+covers optional `applyTo` loading and CLI filtering. Its implementation and
+qualification are complete in candidate
+`00e3ba0294679163d95b42a81295091254debfb7`, now pushed to `develop` and `main`.
+Task 59 completed beta 2 publication and package/site verification.
 
 ## Archived on 2026-09-28
 
@@ -109,12 +123,14 @@ Their links from open Tasks now point there.
 - [Open Task 54 to trim tags that add no selection, search, or loading value before 1.0, in shipped files first and then in this workspace](task54-tag-trimming.md) - #Memory #Working #Task #Framework #Tags #Release #Contextual #Active
 - [Investigate alternative Framework roots such as .apm and APM interoperability separately from applyTo loading](task55-alternative-root.md) - #Memory #Working #Task #Framework #Root #APM #Investigation #Contextual
 - [Open Task 58 to turn the demos into a repeatable evaluation comparing Open Forge with other setups, agents, and models](task58-demo-evals.md) - #Memory #Working #Task #Evaluation #Demo #Contextual #Active
-- [Open Task 59 to publish 0.9.0-beta.2 once the documentation site is merged, so the npm package shows the README, the website, and the repository](task59-beta-2-release.md) - #Memory #Working #Task #Release #Beta #Package #Contextual #Active
+- [Record the beta 2 release, package publication, and documentation verification](task59-beta-2-release.md) - #Memory #Working #Task #Release #Beta #Package #Contextual #Complete
 - [Task 61 accuracy and voice pass over the documentation site, the README, and the repository guides, with a diagram that separates Core from Extensions and startup from on-demand loading](task61-documentation-accuracy-and-voice.md) - #Memory #Working #Task #Documentation #Site #Diagram #Writing #Contextual #Active
-- [Implement optional applyTo file conditions, loading rules, Entries display, and CLI context filtering through accepted execution packets](task62-glob-scoped-loading.md) - #Memory #Working #Task #Framework #Loading #Frontmatter #CLI #Contextual #Active
+- [Implement optional applyTo file conditions, loading rules, Entries display, and CLI context filtering through accepted execution packets](task62-glob-scoped-loading.md) - #Memory #Working #Task #Framework #Loading #Frontmatter #CLI #Contextual #Complete
 - [Task 62 execution decisions, foundation packets, command packets, and documentation ownership](task62/_task62.md) - #Memory #Working #Task #Plan #CLI #Contextual #Active
 - [Open Task 63 to decide whether and how a direct edit to a managed file can survive updates, since removedFiles already keeps such a file untouched as an undocumented side effect](task63-keeping-edits-through-updates.md) - #Memory #Working #Task #CLI #Update #Removal #Customization #Investigation #Contextual #Active
 - [Open Task 64 to fix the CLI defects, wording errors, and contract contradictions found by the documentation review, and the leftovers of the closed removal and remediation Tasks](task64-cli-defects-and-contract-drift.md) - #Memory #Working #Task #CLI #Defect #Contract #Wording #Contextual #Active
 - [Open Task 65 to decide where long-running open Tasks should live, in Working Memory as now, in a Planning backlog, or split between them](task65-where-open-tasks-live.md) - #Memory #Working #Task #Planning #Backlog #Contextual #Active
 - [Task 66 council review of the published documentation for overclaims and polish, and of the shipped Framework and Extension files for consistency, redundancy, order, and readability](task66-council-polish.md) - #Memory #Working #Task #Documentation #Framework #Extensions #Council #Writing #Contextual #Active
 - [Task 67 council redesign of the framework diagram's labels, so what loads when and where content comes from reads at a glance and stays accurate](task67-diagram-labels.md) - #Memory #Working #Task #Documentation #Diagram #Loading #Council #Writing #Contextual #Active
+- [Offline validation of current README, public guides, and routed Markdown local paths and anchors](task68-repository-link-validation.md) - #Memory #Working #Task #CLI #Contextual #Active
+- [Coordinate the next beta stabilization, qualification, merge, and release boundary](task69-next-beta-stabilization-release.md) - #Memory #Working #Task #CLI #Contextual #Active

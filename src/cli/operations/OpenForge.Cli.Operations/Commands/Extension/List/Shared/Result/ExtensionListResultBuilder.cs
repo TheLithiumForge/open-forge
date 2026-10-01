@@ -189,7 +189,6 @@ internal static class ExtensionListResultBuilder
         => ownership is null ? null
             : ownership.State == WorkspaceOwnershipReadState.Absent ? ExtensionListOwnershipTrust.Absent
             : !ownership.IsTrustworthy ? ExtensionListOwnershipTrust.Incomplete
-            : ownership.Document.Extensions.IsEmpty ? ExtensionListOwnershipTrust.Absent
             : ExtensionListOwnershipTrust.Trusted;
 
     private static ExtensionListCoverage ReadInstalledCoverage(

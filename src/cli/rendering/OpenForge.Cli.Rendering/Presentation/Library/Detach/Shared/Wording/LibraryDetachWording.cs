@@ -146,7 +146,7 @@ internal static class LibraryDetachWording
     internal static string NoFilesChanged() => global::OpenForge.Cli.OutputText.Shared.SharedText.MessageNoFilesWereChanged();
 
     internal static string SectionRow(string path, bool dryRun)
-        => global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachPhrases.FormatTheEntriesSectionOf($"{(dryRun ? "Would" : "Updated")}", $"{path}");
+        => global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachPhrases.FormatTheEntriesSectionOf($"{(dryRun ? "Would update" : "Updated")}", $"{path}");
 
     internal static string LockRow(bool dryRun)
         => dryRun ? global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachText.LabelRegistrationWouldBeRemoved() : global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachText.LabelRegistrationRemoved();

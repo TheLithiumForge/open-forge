@@ -25,40 +25,13 @@ internal sealed class GeneratedNavigationRegionPlanner
         GeneratedNavigationProjectionRequest request,
         GeneratedNavigationRegionInput input)
     {
-        if (!IsRegionSource(input.Source))
+        var document = ReadRegionDocument(input);
+        if (!document.IsComplete)
         {
             return GeneratedNavigationRegion.Unavailable(
                 input.Source,
-                GeneratedNavigationRegionUnavailableReason.RegionSourceUnsupported,
-                "Generated navigation can only target the Loader or a recognized entrypoint.");
-        }
-
-        if (input.Document is not { } document)
-        {
-            return GeneratedNavigationRegion.Unavailable(
-                input.Source,
-                GeneratedNavigationRegionUnavailableReason.SourceDocumentUnavailable,
-                input.UnavailableCause
-                    ?? "The generated navigation source document is unavailable.");
-        }
-
-        if (document.GeneratedRegion.State != MarkdownGeneratedRegionState.Complete
-            || document.GeneratedRegion.EntriesBlock is not { } block)
-        {
-            return GeneratedNavigationRegion.Unavailable(
-                input.Source,
-                ReadGeneratedRegionReason(document.GeneratedRegion.State),
-                document.GeneratedRegion.Cause
-                    ?? "The document does not contain one complete generated Entries section.");
-        }
-
-        var beforeBody = document.Source[block.Span.Start..block.Span.End];
-        if (ContainsUnsupportedLineEnding(beforeBody) || ContainsUnsupportedLineEnding(block.LineEnding))
-        {
-            return GeneratedNavigationRegion.Unavailable(
-                input.Source,
-                GeneratedNavigationRegionUnavailableReason.GeneratedRegionLineEndingUnsupported,
-                "The generated Entries section uses an unsupported line ending.");
+                document.ReadUnavailableReason(),
+                document.ReadCause());
         }
 
         var childProjection = ReadChildren(request, input.Source);
@@ -79,17 +52,78 @@ internal sealed class GeneratedNavigationRegionPlanner
                 entryProjection.ReadCause());
         }
 
+        return BuildRegion(input.Source, document.ReadValue(), entryProjection.ReadValue());
+    }
+
+    internal GeneratedNavigationRegion PlanProjectedEntries(
+        GeneratedNavigationRegionInput input,
+        IReadOnlyList<GeneratedNavigationEntry> entries)
+    {
+        var document = ReadRegionDocument(input);
+        if (!document.IsComplete)
+        {
+            return GeneratedNavigationRegion.Unavailable(
+                input.Source,
+                document.ReadUnavailableReason(),
+                document.ReadCause());
+        }
+
+        return BuildRegion(input.Source, document.ReadValue(), entries);
+    }
+
+    private static GeneratedNavigationProjectionStage<MarkdownDocumentFacts> ReadRegionDocument(
+        GeneratedNavigationRegionInput input)
+    {
+        if (!IsRegionSource(input.Source))
+        {
+            return GeneratedNavigationProjectionStage<MarkdownDocumentFacts>.Unavailable(
+                GeneratedNavigationRegionUnavailableReason.RegionSourceUnsupported,
+                "Generated navigation can only target the Loader or a recognized entrypoint.");
+        }
+
+        if (input.Document is not { } document)
+        {
+            return GeneratedNavigationProjectionStage<MarkdownDocumentFacts>.Unavailable(
+                GeneratedNavigationRegionUnavailableReason.SourceDocumentUnavailable,
+                input.UnavailableCause
+                    ?? "The generated navigation source document is unavailable.");
+        }
+
+        if (document.GeneratedRegion.State != MarkdownGeneratedRegionState.Complete
+            || document.GeneratedRegion.EntriesBlock is not { } block)
+        {
+            return GeneratedNavigationProjectionStage<MarkdownDocumentFacts>.Unavailable(
+                ReadGeneratedRegionReason(document.GeneratedRegion.State),
+                document.GeneratedRegion.Cause
+                    ?? "The document does not contain one complete generated Entries section.");
+        }
+
+        var beforeBody = document.Source[block.Span.Start..block.Span.End];
+        if (ContainsUnsupportedLineEnding(beforeBody) || ContainsUnsupportedLineEnding(block.LineEnding))
+        {
+            return GeneratedNavigationProjectionStage<MarkdownDocumentFacts>.Unavailable(
+                GeneratedNavigationRegionUnavailableReason.GeneratedRegionLineEndingUnsupported,
+                "The generated Entries section uses an unsupported line ending.");
+        }
+
+        return GeneratedNavigationProjectionStage<MarkdownDocumentFacts>.Complete(document);
+    }
+
+    private static GeneratedNavigationRegion BuildRegion(
+        SourceLogicalSource source,
+        MarkdownDocumentFacts document,
+        IReadOnlyList<GeneratedNavigationEntry> entries)
+    {
         try
         {
-            var entries = entryProjection.ReadValue();
             var expectedBody = BuildExpectedBlock(document, entries);
             var change = BuildGeneratedChange(document, expectedBody);
-            return GeneratedNavigationRegion.Available(input.Source, entries, change);
+            return GeneratedNavigationRegion.Available(source, entries, change);
         }
         catch (ArgumentException exception)
         {
             return GeneratedNavigationRegion.Unavailable(
-                input.Source,
+                source,
                 GeneratedNavigationRegionUnavailableReason.ProjectionUnavailable,
                 exception.Message);
         }

@@ -20,6 +20,8 @@ internal static class FrameworkManagedTargetDoctorInspector
         var descriptor = target.State switch
         {
             OperationalTargetState.Current => null,
+            OperationalTargetState.Changed
+                when target.Kind == FrameworkManagedTargetKind.GeneratedRegion => null,
             OperationalTargetState.Changed => TargetFinding(
                 DoctorFindingKind.FrameworkManagedChanged,
                 "A Framework-managed target differs from the current intended payload."),

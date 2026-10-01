@@ -33,7 +33,7 @@ internal static class ExtensionUpdateDefinitions
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         name: "--force",
-        description: "Replace changed or restore missing managed content when eligible.",
+        description: "Accepted for compatibility; ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
         arity: CliOptionArity.None,
         defaultValue: false);
 

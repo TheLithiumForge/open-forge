@@ -12,7 +12,9 @@ open-forge:
 This is the current Crystallized Interface Contract for the accepted `status`
 command. This file is authoritative for the command's public syntax, observable
 facts, output, semantic result names, errors, non-goals, examples, and public
-verification. The command does not ship yet. The sibling Behavior Contract
+verification. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. The sibling Behavior Contract
 defines the technology-neutral operation behind this public surface.
 
 The accepted [Shared Result

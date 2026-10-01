@@ -19,6 +19,9 @@ public sealed class ExtensionUpdateDefinitionsTests
         Assert.Equal("--source", ExtensionUpdateDefinitions.Source.Name);
         Assert.Equal("--all", ExtensionUpdateDefinitions.All.Name);
         Assert.Equal("--force", ExtensionUpdateDefinitions.Force.Name);
+        Assert.Equal(
+            "Accepted for compatibility; ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
+            ExtensionUpdateDefinitions.Force.Description);
         Assert.Equal("--prune", ExtensionUpdateDefinitions.Prune.Name);
         Assert.Equal("--automatic", ExtensionUpdateDefinitions.Automatic.Name);
         Assert.Equal("--dry-run", ExtensionUpdateDefinitions.DryRun.Name);

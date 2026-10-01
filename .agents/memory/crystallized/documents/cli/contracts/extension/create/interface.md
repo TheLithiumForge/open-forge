@@ -13,7 +13,9 @@ This is the accepted current Crystallized Interface Contract for
 `open-forge extension create`. It owns the exact public syntax, stable-ID and
 catalogue destination inputs, wizard/direct behavior, scaffold effects, global
 flag applicability, statuses, output, errors, examples, non-goals, and public
-conformance. The command does not ship yet.
+conformance. The CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work.
 
 The sibling [Behavior Contract](behavior.md) defines the technology-neutral
 scaffold plan and safe application. The [Extension group entrypoint](../_extension.md)
@@ -114,14 +116,17 @@ manifest metadata never adds a wizard question. Human planning shows the
 resolved manifest before application.
 
 JSON and other non-interactive modes never prompt. Missing ID or destination is
-`invalid-input`. `--automatic` suppresses the wizard only after both semantic inputs
-are explicit. It selects no package, source, workspace, dependency, or
-authority by inference. Repeating it is idempotent.
+`invalid-input`. For an effectful apply, JSON and other non-interactive modes
+require `--automatic`. `--automatic` never asks missing-input questions: both
+semantic inputs must be explicit, and it suppresses the final inline apply
+confirmation without bypassing planning, validation, or safety. It selects no
+package, source, workspace, dependency, or authority by inference. Repeating it
+is idempotent.
 
 The human flow validates the ID and destination, presents the scaffold plan, and
-uses the explicit create invocation as the operation authority. `--dry-run`
-previews the same plan and writes nothing. There is no saved plan or second
-confirmation operation.
+requires final inline confirmation before an effectful apply unless `--automatic`.
+`--dry-run` and a verified no-op bypass that write confirmation and write nothing.
+There is no saved plan or replayed plan.
 
 ## Catalogue Destination And Scaffold
 

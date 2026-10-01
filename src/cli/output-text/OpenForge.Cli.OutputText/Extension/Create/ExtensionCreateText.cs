@@ -94,7 +94,7 @@ internal static class ExtensionCreateText
 
     // @OpenForgeText extension.create.help.required-input-and-interaction
     internal static string HelpRequiredInputAndInteraction()
-        => "Stable ID and --path are required to plan creation. Interactive text requests ask for missing values and let you correct invalid input.\n  Supplying both required values avoids prompts. --automatic, --format json, and redirected requests return invalid if either value is missing.";
+        => "Stable ID and --path are required to plan creation. Interactive text requests ask for missing values and let you correct invalid input.\n  Supplying both required values avoids input questions. When the plan would create files, apply asks for confirmation unless --automatic is supplied; --dry-run and a verified no-op need no write confirmation.\n  --automatic, --format json, and redirected requests return invalid if either required value is missing. Non-interactive apply that would create files requires --automatic.";
 
     // @OpenForgeText extension.create.help.heading.manifest
     internal static string HelpHeadingManifest()

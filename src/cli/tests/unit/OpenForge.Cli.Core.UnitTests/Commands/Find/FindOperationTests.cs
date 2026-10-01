@@ -69,9 +69,9 @@ public sealed class FindOperationTests
     }
 
     [Trait("Boundary", "Processing")]
-    [Theory(DisplayName = "Find operation reads route facts for applicability and matched metadata projections"),
+    [Theory(DisplayName = "Find operation reuses shared route facts for applicability and matched metadata projections"),
         InlineData("", (int)CliDetail.Standard, 1, false),
-        InlineData("metadata", (int)CliDetail.Standard, 2, true),
+        InlineData("metadata", (int)CliDetail.Standard, 1, true),
         InlineData("", (int)CliDetail.Minimal, 0, false)]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public async Task OperationReadsRouteFactsForApplicabilityAndMatchedMetadataProjections(

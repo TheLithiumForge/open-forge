@@ -272,7 +272,7 @@ Human dry-run output includes the exact bounded generated-region diff for every
 planned update. Structured output includes the exact expected generated change
 through typed before-and-after generated-interior bodies. Human diff formation
 uses the exact JSON-escaped header and non-truncating token rules in the
-[Interface Contract](interface.md#dry-run): before tokens first with `- `,
+[Interface Contract](interface.md#human-output): before tokens first with `- `,
 expected tokens second with `+`, newline-preserving LF/CRLF tokenization, one
 tail token, and one `""` token for an empty body. It emits no context, authored
 prefix/suffix, whole-file bytes, heuristic, elision, limit, or truncation. The

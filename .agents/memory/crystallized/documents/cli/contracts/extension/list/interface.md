@@ -12,8 +12,11 @@ open-forge:
 This is the accepted current Crystallized Interface Contract for
 `open-forge extension list`. It owns the public syntax, source selection,
 section filters, installed lifecycle facts, available package facts, output,
-semantic results, errors, examples, non-goals, and public conformance. The
-command does not ship yet.
+semantic results, errors, examples, non-goals, and public conformance.
+
+The CLI is available as a public beta. CLI Distribution records qualified
+platforms and published versions. CLI Development records current
+implementation and release work.
 
 The sibling [Behavior Contract](behavior.md) defines deterministic,
 technology-neutral read-only behavior. The [Extension group entrypoint](../_extension.md)
@@ -27,7 +30,7 @@ It keeps those facts in separate sections. Availability never implies
 installation, a matching ID never proves ownership, and an installed fact does
 not disappear because its package source is unavailable.
 
-`list` is stateless, read-only, deterministic, and non-shipping. It does not
+The current `list` operation is stateless, read-only, and deterministic. It does not
 inspect package contents beyond the selected source facts needed for the list,
 does not form a mutation plan, and does not replace `status` or `doctor`.
 
@@ -156,20 +159,15 @@ Failures without these manifest facts retain their existing messages.
 
 `minimal`:
 
-```text
-Installed
-  development 0.1.0
+Illustrative single row, not the complete catalogue:
 
-Available (bundled with this CLI)
-  development-toolkit 0.1.0   An optional bundle of project documents, Memory starters, planning, and development packages   (5 packages)
-  memory-starters 0.1.0       Copy-ready Memory Templates for decisions, ideas, analyses, observations, and handoffs
-  orchestration 0.1.0         Coordinate dependent tasks through one optional managed-delivery workflow   (3 packages)
-  planning 0.1.0              An optional planning Workflow, Work Records Pattern, and Templates for tasks, plans, backlogs, and checkpoints
-  project-documents 0.1.0     Optional Vision and Architecture Workflows with document Templates for a project's direction and structure
-Next: open-forge extension install <id>
+```text
+planning 0.4.0  Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and checkpoints
 ```
 
-`Installed  none` when nothing is installed. The `Available` heading names
+The complete bundled inventory is in the [first-party Extension catalogue](../../../../../../../../src/extensions/README.md).
+
+`Installed  none` is shown when nothing is installed. The `Available` heading names
 the source: `(bundled with this CLI)` or `(from <path>)`. An installed
 package already in the available list is shown once in each block; the
 Available row adds `installed` when versions match or `installed: 0.1.0`

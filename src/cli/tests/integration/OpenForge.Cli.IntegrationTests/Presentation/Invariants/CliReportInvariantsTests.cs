@@ -628,12 +628,21 @@ public sealed class CliReportInvariantsTests
     private static void AssertTextJsonParity(string text, JsonElement root, string path)
     {
         var cursor = 0;
+        var command = RequiredString(root, "command");
         var detail = RequiredString(root, "detail");
         var headline = Required(root, "summary").GetProperty("headline").GetString() ?? string.Empty;
         var findingCount = Required(root, "findings").GetArrayLength();
         foreach (var finding in Required(root, "findings").EnumerateArray())
         {
-            var subject = TextIdentity(SubjectText(Required(finding, "subject")));
+            var jsonSubject = Required(finding, "subject");
+            var subject = TextIdentity(SubjectText(jsonSubject));
+            if (command == "context" && RequiredString(finding, "code") == "context.applicability-pending")
+            {
+                Assert.Equal("workspace", RequiredString(jsonSubject, "kind"));
+                Assert.False(string.IsNullOrWhiteSpace(RequiredString(jsonSubject, "path")));
+                subject = "context";
+            }
+
             var title = RequiredString(finding, "title");
             var marker = $"{CliText.Escape(subject)}  {CliText.Escape(title)}";
             var found = text.IndexOf(marker, cursor, StringComparison.Ordinal);

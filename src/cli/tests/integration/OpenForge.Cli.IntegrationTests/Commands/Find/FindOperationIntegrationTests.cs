@@ -42,6 +42,48 @@ public sealed class FindOperationIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Filtered Find metadata uses complete route facts for Docs at every detail level")]
+    [InlineData((int)CliDetail.Minimal, "include-docs", 1)]
+    [InlineData((int)CliDetail.Standard, "include-docs", 1)]
+    [InlineData((int)CliDetail.Minimal, "include-overwrite", 1)]
+    [InlineData((int)CliDetail.Standard, "include-overwrite", 1)]
+    [InlineData((int)CliDetail.Minimal, "exclude-unrouted", 2)]
+    [InlineData((int)CliDetail.Standard, "exclude-unrouted", 2)]
+    [Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
+    public async Task FilteredMetadataUsesCompleteRouteFactsForDocsAtEveryDetailLevel(
+        int detail,
+        string selectorScenario,
+        int expectedCandidateCount)
+    {
+        using var workspace = FindOperationIntegrationWorkspace.New();
+        var before = workspace.SnapshotBytes();
+        var result = await FindOperationFactory.Create()
+            .ExecuteAsync(
+                workspace.CreateRequest(selectorScenario, (CliDetail)detail),
+                TestContext.Current.CancellationToken);
+
+        AssertFilteredMetadata(result, selectorScenario, expectedCandidateCount);
+        Assert.Equal(before, workspace.SnapshotBytes());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Find preserves incomplete metadata when the Loader is genuinely unreadable")]
+    [Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
+    public async Task UnreadableLoaderKeepsMetadataProjectionIncomplete()
+    {
+        using var workspace = FindOperationIntegrationWorkspace.New();
+        workspace.MakeLoaderUnreadable();
+        var before = workspace.SnapshotBytes();
+        var result = await FindOperationFactory.Create()
+            .ExecuteAsync(
+                workspace.CreateRequest("projection"),
+                TestContext.Current.CancellationToken);
+
+        AssertUnavailableLoaderProjection(result);
+        Assert.Equal(before, workspace.SnapshotBytes());
+    }
+
+    [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Repeated and pre-cancelled Find operation calls stay deterministic, fresh, and read-only")]
     [InlineData("repeated")]
     [InlineData("pre-cancelled")]
@@ -229,18 +271,15 @@ public sealed class FindOperationIntegrationTests
     private static void AssertProjection(FindResult result)
     {
         Assert.Equal("find", result.Command);
-        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
-        Assert.Equal(FindCoverageState.Incomplete, result.Coverage.State);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(FindCoverageState.Complete, result.Coverage.State);
         Assert.Equal(FindCoverageState.Complete, result.Coverage.Matching);
-        Assert.Equal(FindProjectionCoverageState.Incomplete, result.Coverage.Projection);
+        Assert.Equal(FindProjectionCoverageState.Complete, result.Coverage.Projection);
         Assert.Equal(1, result.Universe.CandidateCount);
         Assert.Equal(1, result.Universe.InspectedCount);
         Assert.Equal(1, result.Universe.MatchedCount);
-        Assert.Contains(
-            result.Findings,
-            finding => finding.Code == FindFindingCode.ProjectionUnavailable
-                && finding.Status == CliSemanticStatus.Incomplete);
-        Assert.NotNull(result.Next);
+        Assert.Empty(result.Findings);
+        Assert.Null(result.Next);
 
         Assert.Equal(
             new[] { "section:Target", "metadata", "headings" },
@@ -255,10 +294,7 @@ public sealed class FindOperationIntegrationTests
         var metadata = Assert.Single(
             match.Projections,
             projection => projection.Part == FindContentPartKind.Metadata);
-        Assert.Equal(FindProjectionState.Unavailable, metadata.State);
-        Assert.Null(metadata.Metadata);
-        Assert.Null(metadata.Text);
-        Assert.Null(metadata.Location);
+        AssertAvailableMetadata(metadata);
 
         var headings = match.Projections
             .Where(projection => projection.Part == FindContentPartKind.Headings)
@@ -288,6 +324,119 @@ public sealed class FindOperationIntegrationTests
             Assert.Contains("## Target", projection.Text, StringComparison.Ordinal);
             Assert.NotNull(projection.Location);
         });
+    }
+
+    private static void AssertFilteredMetadata(
+        FindResult result,
+        string selectorScenario,
+        int expectedCandidateCount)
+    {
+        Assert.Equal("find", result.Command);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(FindCoverageState.Complete, result.Coverage.State);
+        Assert.Equal(FindCoverageState.Complete, result.Coverage.Matching);
+        Assert.Equal(FindProjectionCoverageState.Complete, result.Coverage.Projection);
+        Assert.Equal(FindUniverseMode.Filtered, result.Universe.Mode);
+        Assert.Equal(expectedCandidateCount, result.Universe.CandidateCount);
+        Assert.Equal(expectedCandidateCount, result.Universe.InspectedCount);
+        Assert.Equal(1, result.Universe.MatchedCount);
+        Assert.Empty(result.Findings);
+        Assert.Null(result.Next);
+
+        var expectedInclude = selectorScenario switch
+        {
+            "include-docs" => new[] { "docs" },
+            "include-overwrite" => new[] { ".agents/docs/_docs.overwrite.md" },
+            "exclude-unrouted" => Array.Empty<string>(),
+            _ => throw new ArgumentOutOfRangeException(nameof(selectorScenario), selectorScenario),
+        };
+        var expectedExclude = selectorScenario switch
+        {
+            "exclude-unrouted" => new[] { ".agents/unrouted.md" },
+            "include-docs" or "include-overwrite" => Array.Empty<string>(),
+            _ => throw new ArgumentOutOfRangeException(nameof(selectorScenario), selectorScenario),
+        };
+        Assert.Equal(
+            expectedInclude,
+            result.Universe.Include.Select(selector => selector.Value).ToArray());
+        Assert.Equal(
+            expectedExclude,
+            result.Universe.Exclude.Select(selector => selector.Value).ToArray());
+        Assert.All(
+            result.Universe.Include.Concat(result.Universe.Exclude),
+            selector => Assert.Equal(FindSelectorResolution.Resolved, selector.Resolution));
+        if (selectorScenario == "exclude-unrouted")
+        {
+            var exclude = Assert.Single(result.Universe.Exclude);
+            Assert.Equal(SourceReferenceKind.SourcePath, exclude.Form);
+            Assert.Equal(FindSourceKind.Ordinary, exclude.SourceKind);
+            var identity = Assert.IsType<FindSourceIdentity>(exclude.Identity);
+            Assert.Equal("unrouted", identity.Id);
+            Assert.Equal(".agents/unrouted.md", identity.Path);
+        }
+
+        var predicate = Assert.Single(result.Query.Predicates);
+        Assert.Equal(FindPredicateKind.Tag, predicate.Kind);
+        Assert.Equal("Architecture", predicate.SuppliedValue);
+
+        var match = Assert.Single(result.Matches);
+        Assert.Equal("docs", match.Id);
+        Assert.Equal(".agents/docs/_docs.md", match.Path);
+        var metadata = Assert.Single(match.Projections);
+        AssertAvailableMetadata(metadata);
+    }
+
+    private static void AssertAvailableMetadata(FindProjection projection)
+    {
+        Assert.Equal(FindContentPartKind.Metadata, projection.Part);
+        Assert.Equal(FindProjectionState.Available, projection.State);
+        var metadata = Assert.IsType<FindMetadata>(projection.Metadata);
+        Assert.Equal(1, metadata.Position);
+        Assert.Equal("docs", metadata.Id);
+        Assert.Equal(".agents/docs/_docs.md", metadata.Path);
+        Assert.Equal(FindRouteState.Routed, metadata.RouteState);
+        Assert.Equal("docs", metadata.Route);
+        Assert.Equal(
+            new[] { SourceLayerKind.Base, SourceLayerKind.Overwrite },
+            metadata.Layers.Select(layer => layer.Kind).ToArray());
+        Assert.Equal(
+            new[] { ".agents/docs/_docs.md", ".agents/docs/_docs.overwrite.md" },
+            metadata.Layers.Select(layer => layer.Path).ToArray());
+        Assert.Null(projection.Text);
+        Assert.Empty(projection.Headings);
+        Assert.Null(projection.Location);
+    }
+
+    private static void AssertUnavailableLoaderProjection(FindResult result)
+    {
+        Assert.Equal("find", result.Command);
+        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
+        Assert.Equal(FindCoverageState.Incomplete, result.Coverage.State);
+        Assert.Equal(FindCoverageState.Complete, result.Coverage.Matching);
+        Assert.Equal(FindProjectionCoverageState.Incomplete, result.Coverage.Projection);
+        Assert.Equal(1, result.Universe.CandidateCount);
+        Assert.Equal(1, result.Universe.InspectedCount);
+        Assert.Equal(1, result.Universe.MatchedCount);
+        Assert.Contains(
+            result.Findings,
+            finding => finding.Code == FindFindingCode.ProjectionUnavailable
+                && finding.Status == CliSemanticStatus.Incomplete);
+        Assert.NotNull(result.Next);
+
+        var match = Assert.Single(result.Matches);
+        Assert.Equal("docs", match.Id);
+        Assert.Equal(5, match.Projections.Count);
+        var metadata = Assert.Single(
+            match.Projections,
+            projection => projection.Part == FindContentPartKind.Metadata);
+        Assert.Equal(FindProjectionState.Unavailable, metadata.State);
+        Assert.Null(metadata.Metadata);
+        Assert.Null(metadata.Text);
+        Assert.Empty(metadata.Headings);
+        Assert.Null(metadata.Location);
+        Assert.All(
+            match.Projections.Where(projection => projection.Part != FindContentPartKind.Metadata),
+            projection => Assert.Equal(FindProjectionState.Available, projection.State));
     }
 
     private static void AssertAttention(FindResult result)
@@ -592,16 +741,26 @@ public sealed class FindOperationIntegrationTests
             return new FindOperationIntegrationWorkspace();
         }
 
+        internal void MakeLoaderUnreadable()
+        {
+            _temporary.ReplaceBytes(".agents/loader.md", [0xC3, 0x28]);
+        }
+
         private CliWorkspace Workspace => new(
             _temporary.Path,
             _temporary.Path,
             CliWorkspaceSelectionMethod.ExplicitWorkspace);
 
-        internal FindRequest CreateRequest(string scenario)
+        internal FindRequest CreateRequest(
+            string scenario,
+            CliDetail effectiveView = CliDetail.Standard)
         {
             var (include, exclude) = scenario switch
             {
                 "predicate-match" or "projection" => (["docs"], Array.Empty<string>()),
+                "include-docs" => (["docs"], Array.Empty<string>()),
+                "include-overwrite" => ([".agents/docs/_docs.overwrite.md"], Array.Empty<string>()),
+                "exclude-unrouted" => (Array.Empty<string>(), [".agents/unrouted.md"]),
                 "zero-candidates" => (["docs"], ["docs"]),
                 _ => (Array.Empty<string>(), Array.Empty<string>()),
             };
@@ -611,6 +770,14 @@ public sealed class FindOperationIntegrationTests
                 {
                     new FindPredicate(FindPredicateKind.Tag, "Architecture", "Architecture"),
                     new FindPredicate(FindPredicateKind.Heading, "Overwrite Heading", "Overwrite Heading"),
+                },
+                "include-docs" or "include-overwrite" => new[]
+                {
+                    new FindPredicate(FindPredicateKind.Tag, "Architecture", "Architecture"),
+                },
+                "exclude-unrouted" => new[]
+                {
+                    new FindPredicate(FindPredicateKind.Tag, "Architecture", "Architecture"),
                 },
                 "zero-matches" => new[]
                 {
@@ -643,6 +810,24 @@ public sealed class FindOperationIntegrationTests
                             "Target",
                             "section:Target"),
                     }),
+                "include-docs" or "include-overwrite" => (
+                    new[]
+                    {
+                        new FindContentPart(FindContentPartKind.Metadata, null, "metadata"),
+                    },
+                    new[]
+                    {
+                        new FindContentPart(FindContentPartKind.Metadata, null, "metadata"),
+                    }),
+                "exclude-unrouted" => (
+                    new[]
+                    {
+                        new FindContentPart(FindContentPartKind.Metadata, null, "metadata"),
+                    },
+                    new[]
+                    {
+                        new FindContentPart(FindContentPartKind.Metadata, null, "metadata"),
+                    }),
                 "attention" => (
                     new[]
                     {
@@ -671,7 +856,7 @@ public sealed class FindOperationIntegrationTests
                     NaturalRegions()),
                 new FindPresentationSelection(
                     suppliedDetail: null,
-                    effectiveView: CliDetail.Standard,
+                    effectiveView,
                     new FindContentSelection(content.Item1, content.Item2)));
         }
 

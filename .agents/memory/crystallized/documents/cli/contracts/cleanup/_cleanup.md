@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Route the accepted non-shipping root cleanup contracts for lease-validated recovery-bundle and draft deletion
+  description: Route the accepted current root cleanup contracts for lease-validated recovery-bundle and draft deletion
   responsibility: Route cleanup's public Interface and technology-neutral Behavior without adding bundle policy or another activity mechanism
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Cleanup, Mutation, Recovery, Safety, CurrentTruth]
 ---
@@ -16,11 +16,13 @@ selection surface, or a Technical Design.
 
 ## Status And Authority
 
-This is the accepted current Crystallized contract set for the non-shipping root
-`cleanup` operation. The local Interface Contract defines what a caller may
+This is the accepted current Crystallized contract set for the root `cleanup`
+operation. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. The local Interface Contract defines what a caller may
 enter and observe. The local Behavior Contract defines deterministic catalogue
-formation, deletion, safety, recovery-bundle handling, and conformance. The new
-CLI does not ship yet. Its development implementation provides this operation;
+formation, deletion, safety, recovery-bundle handling, and conformance. Its
+development implementation provides this operation;
 [Task 20: Cleanup](../../../../../archived/cli-development/tasks/operations/cleanup.md)
 records the implementation and execution evidence.
 
@@ -50,4 +52,4 @@ public and technology-neutral meanings.
 ## Entries
 
 - [Accepted technology-neutral catalogue, deletion, safety, monotonic recovery, and conformance for cleanup](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Behavior #Mutation #Recovery #Safety #Determinism #CurrentTruth
-- [Accepted non-shipping public interface for operand-free, lease-validated cleanup of recognized recovery bundles and drafts](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Interface #Mutation #Recovery #Safety #CurrentTruth
+- [Accepted current public interface for operand-free, lease-validated cleanup of recognized recovery bundles and drafts](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Interface #Mutation #Recovery #Safety #CurrentTruth

@@ -10,8 +10,10 @@ open-forge:
 ## Status And Authority
 
 This file is the current Crystallized authority for the technology-neutral
-`find` Behavior Contract. The command is a current non-shipping contract and
-does not claim executable behavior.
+`find` Behavior Contract. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. This contract does not claim
+executable behavior.
 
 This contract defines only the technology-neutral operation flow and conformance
 mechanics behind the [Interface Contract](interface.md). The Interface Contract
@@ -271,6 +273,9 @@ requiring one implementation stage or one source module.
   overwrite pair remains one logical source with both layers. Expansion follows
   neither routed descendants nor links and infers neither authority nor
   lifecycle.
+- Loader, `entrypoint`, and `SKILL.md` physical-folder expansion remains
+  unchanged. Excluding the Loader can produce an empty effective universe,
+  which is not a defect.
 - Effective-universe formation applies the shared set
   algebra: it uses the union of all include expansions, or Find's normal
   complete eligible `.agents` Markdown universe when no include occurs, then
@@ -282,10 +287,18 @@ requiring one implementation stage or one source module.
   neither resolve nor compose source selectors. A bare inventory may form an
   effective universe without any predicate, and predicates evaluate only over
   that formed universe.
+- Candidate predicates, projected result contents, and candidate, inspected, and
+  matched counts remain confined to the effective include/exclude/`--for`
+  universe. Required metadata and applicability route facts may read supporting
+  ancestor or Loader source data from the complete catalogue outside that query
+  universe; those contextual reads never add candidates or matches.
 - Enumeration and candidate-record formation admit only the
   effective logical sources. Excluded files and folders are outside the
-  invocation's candidate universe and need not be parsed or inspected. The
-  operation does not treat omission of excluded areas as an incomplete scan.
+  invocation's candidate universe and need not be parsed or inspected for
+  predicates, so excluded query contents are not searched for predicates.
+  Required metadata and applicability reads report unavailable
+  source facts honestly. The operation does not treat omission of excluded
+  areas as an incomplete scan.
 - Inspection, layer resolution, parsing, region resolution,
   and predicate evaluation run only for effective candidates. Existing
   base/overwrite, UTF-8, Markdown, section, safety, and authored-occurrence

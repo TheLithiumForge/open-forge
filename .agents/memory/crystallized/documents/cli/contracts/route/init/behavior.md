@@ -558,7 +558,7 @@ diagnostics use stderr, and human text is not mixed into JSON stdout.
 ## Conformance Evidence
 
 Implementation evidence must cover the following behavior and safety obligations
-in addition to the public checks in [Interface Verification](interface.md#verification):
+in addition to the caller-visible [Interface Contract](interface.md):
 
 - ID and exact canonical-path target resolution, including spaces, Unicode, and
   unsafe segments.

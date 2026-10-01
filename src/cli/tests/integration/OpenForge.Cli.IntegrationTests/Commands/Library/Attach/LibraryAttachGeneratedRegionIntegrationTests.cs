@@ -1,7 +1,12 @@
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Attach;
+using OpenForge.Cli.Core.Commands.Library.Detach;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
+using OpenForge.Cli.Core.Commands.Library.Sync;
+using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Libraries.Operational.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
@@ -10,6 +15,143 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Library.Attach;
 
 public sealed class LibraryAttachGeneratedRegionIntegrationTests
 {
+    private const string HostPath = ".agents/directives/_directives.md";
+    private const string AdditionalLeaf = ".agents/directives/guide.md";
+
+    [Trait("Boundary", "OS")]
+    [Fact(DisplayName = "Framework-owned generated host reconciles across Library attach, sync, and detach"), Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    public static async Task FrameworkOwnedGeneratedHostReconcilesAcrossLibraryLifecycle()
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        try
+        {
+            workspace.ConsumerRoute();
+            workspace.RoutedSource();
+            workspace.Replace(HostPath, """
+                ---
+                open-forge:
+                  description: Directives
+                  tags: [Directive]
+                ---
+                # Authored prefix
+
+                ## Entries
+                - [Stale](stale.md) - #Directive
+
+                ## Notes
+
+                Authored suffix.
+                """);
+            WriteOwnership(workspace, new FrameworkOwnership(
+                new OwnedSource("framework", null),
+                [HostPath],
+                [new OwnedRegion(HostPath, "entries")]));
+
+            var attach = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(
+                workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+            Assert.Equal(CliSemanticStatus.Complete, attach.Status);
+            Assert.Equal(HostPath, Assert.Single(attach.Result.Plan.GeneratedRegions).Path);
+            AssertHostAuthorship(workspace);
+            Assert.Contains("review.md", File.ReadAllText(workspace.Absolute(HostPath)), StringComparison.Ordinal);
+            Assert.DoesNotContain("stale.md", File.ReadAllText(workspace.Absolute(HostPath)), StringComparison.Ordinal);
+            AssertLibraryPaths(workspace, LibraryMutationWorkspace.Leaf);
+            AssertFrameworkHostOwnership(ReadOwnership(workspace));
+            Assert.NotNull(new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
+
+            workspace.Write($"{LibraryMutationWorkspace.SourceRoot}/{AdditionalLeaf}", """
+                ---
+                open-forge:
+                  description: Guide
+                  tags: [Directive]
+                ---
+                # Guide
+
+                Guide source bytes.
+                """);
+            var sync = await new LibrarySyncOperation(workspace.Permissions).ExecuteAsync(
+                workspace.Sync(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+            Assert.Equal(CliSemanticStatus.Complete, sync.Status);
+            Assert.Equal(HostPath, Assert.Single(sync.Result.Plan.GeneratedRegions).Path);
+            AssertHostAuthorship(workspace);
+            Assert.Contains("guide.md", File.ReadAllText(workspace.Absolute(HostPath)), StringComparison.Ordinal);
+            AssertLibraryPaths(workspace, AdditionalLeaf, LibraryMutationWorkspace.Leaf);
+            AssertFrameworkHostOwnership(ReadOwnership(workspace));
+            Assert.NotNull(new FileInfo(workspace.Absolute(AdditionalLeaf)).LinkTarget);
+
+            var detach = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(
+                workspace.Detach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+            Assert.Equal(CliSemanticStatus.Complete, detach.Status);
+            Assert.Equal(HostPath, Assert.Single(detach.Result.Plan.GeneratedRegions).Path);
+            var detachedHost = File.ReadAllText(workspace.Absolute(HostPath));
+            AssertHostAuthorship(workspace);
+            Assert.DoesNotContain("review.md", detachedHost, StringComparison.Ordinal);
+            Assert.DoesNotContain("guide.md", detachedHost, StringComparison.Ordinal);
+            AssertLibraryPaths(workspace);
+            AssertFrameworkHostOwnership(ReadOwnership(workspace));
+            Assert.Null(new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
+            Assert.Null(new FileInfo(workspace.Absolute(AdditionalLeaf)).LinkTarget);
+        }
+        finally
+        {
+            var reviewLinkPath = workspace.Absolute(LibraryMutationWorkspace.Leaf);
+            if (new FileInfo(reviewLinkPath).LinkTarget is not null)
+            {
+                File.Delete(reviewLinkPath);
+            }
+
+            var guideLinkPath = workspace.Absolute(AdditionalLeaf);
+            if (new FileInfo(guideLinkPath).LinkTarget is not null)
+            {
+                File.Delete(guideLinkPath);
+            }
+        }
+    }
+
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "A mapped leaf owned by another manager blocks Library attach"), Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
+    [InlineData("framework")]
+    [InlineData("extension")]
+    public static async Task ActualMappedLeafOwnershipConflictStillBlocksAttach(string owner)
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        workspace.ConsumerRoute();
+        workspace.RoutedSource();
+        switch (owner)
+        {
+            case "framework":
+                WriteOwnership(workspace, new FrameworkOwnership(
+                    new OwnedSource("framework", null),
+                    [LibraryMutationWorkspace.Leaf],
+                    []));
+                break;
+            case "extension":
+                WriteOwnership(workspace, null, new ExtensionOwnership(
+                    "extension",
+                    null,
+                    "fixture",
+                    [],
+                    [LibraryMutationWorkspace.Leaf],
+                    []));
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(owner), owner, "The ownership fixture is not defined.");
+        }
+
+        var before = workspace.Snapshot();
+        var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(
+            workspace.Attach(LibraryMode.Apply), TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+        Assert.Contains(result.Result.Findings, finding =>
+            finding.Code == LibraryAttachFindingCode.OwnershipConflict
+            && finding.Path == LibraryMutationWorkspace.Leaf);
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Null(new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
+    }
+
     [Trait("Boundary", "OS")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Integration")]
     [InlineData(true), InlineData(false)]
@@ -34,6 +176,10 @@ public sealed class LibraryAttachGeneratedRegionIntegrationTests
         }
 
         File.WriteAllText(parentPath, parent);
+        WriteOwnership(workspace, new FrameworkOwnership(
+            new OwnedSource("framework", null),
+            [HostPath],
+            [new OwnedRegion(HostPath, "entries")]));
         var before = workspace.Snapshot();
         var result = await new LibraryAttachOperation(workspace.Permissions).ExecuteAsync(workspace.Attach(), TestContext.Current.CancellationToken);
         Assert.Equal(validRegion ? CliSemanticStatus.Complete : CliSemanticStatus.Blocked, result.Status);
@@ -169,5 +315,55 @@ public sealed class LibraryAttachGeneratedRegionIntegrationTests
                 File.Delete(ownershipPath);
             }
         }
+    }
+
+    private static void WriteOwnership(
+        LibraryMutationWorkspace workspace,
+        FrameworkOwnership? framework,
+        params ExtensionOwnership[] extensions)
+    {
+        var document = new WorkspaceOwnershipDocument(
+            WorkspaceOwnershipDefinitions.SchemaVersion,
+            framework,
+            [.. extensions],
+            []);
+        File.WriteAllBytes(
+            workspace.Absolute(LibraryMutationWorkspace.RecordPath),
+            WorkspaceOwnershipCodec.Write(document));
+    }
+
+    private static WorkspaceOwnershipDocument ReadOwnership(LibraryMutationWorkspace workspace)
+        => WorkspaceOwnershipCodec.Read(
+            File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.RecordPath))).Document
+            ?? throw new InvalidOperationException("The ownership fixture did not produce a readable document.");
+
+    private static void AssertLibraryPaths(LibraryMutationWorkspace workspace, params string[] expected)
+    {
+        var libraries = ReadOwnership(workspace).Libraries;
+        if (expected.Length == 0)
+        {
+            Assert.Empty(libraries);
+            return;
+        }
+
+        var library = Assert.Single(libraries);
+        Assert.Equal(expected, library.Paths);
+    }
+
+    private static void AssertFrameworkHostOwnership(WorkspaceOwnershipDocument document)
+    {
+        var framework = document.Framework
+            ?? throw new InvalidOperationException("The Framework ownership fixture was not retained.");
+        Assert.Equal("framework", framework.Source.Id);
+        Assert.Contains(HostPath, framework.Paths);
+        Assert.Contains(framework.Regions, region =>
+            region.Path == HostPath && region.Region == "entries");
+    }
+
+    private static void AssertHostAuthorship(LibraryMutationWorkspace workspace)
+    {
+        var host = File.ReadAllText(workspace.Absolute(HostPath));
+        Assert.Contains("# Authored prefix\n\n## Entries\n", host, StringComparison.Ordinal);
+        Assert.Contains("## Notes\n\nAuthored suffix.", host, StringComparison.Ordinal);
     }
 }

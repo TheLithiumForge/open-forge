@@ -14,7 +14,9 @@ This is the accepted current Crystallized Interface Contract for
 trusted-state and Framework-anchor requirements, dependency closure, normal,
 force, prune, force-plus-prune, and automatic meaning, generated and ownership
 boundaries, output, statuses, errors, examples, non-goals, and public
-conformance. The new CLI does not ship yet.
+conformance. The CLI is available as a public beta. [CLI Distribution](../../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work.
 
 The sibling [Behavior Contract](behavior.md) defines deterministic,
 technology-neutral resolution and mutation. The [Extension group

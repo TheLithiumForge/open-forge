@@ -10,9 +10,11 @@ open-forge:
 ## Status And Authority
 
 This entrypoint routes the accepted current Crystallized Interface and Behavior
-contracts for read-only `open-forge extension list`. The command does not ship
-yet and never mutates a workspace, package source, ownership lock, or
-generated navigation.
+contracts for read-only `open-forge extension list`. The CLI is available as a
+public beta. CLI Distribution records qualified platforms and published
+versions. CLI Development records current implementation and release work. The
+command never mutates a workspace, package source, ownership lock, or generated
+navigation.
 
 ## Contract Roles
 

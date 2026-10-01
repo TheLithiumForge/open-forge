@@ -305,6 +305,11 @@ internal static class ExtensionRemoveReportSelector
 
     private static string AttentionHeadline(ExtensionRemoveResult result, string id)
     {
+        if (result.Mode == ExtensionRemoveMode.DryRun)
+        {
+            return ExtensionRemoveWording.WouldRemove(id);
+        }
+
         var dependency = result.Findings.FirstOrDefault(finding => finding.Code == ExtensionRemoveFindingCode.LifecycleObservation)?.Target;
         return dependency is null
             ? ExtensionRemoveWording.Removed(result.Selection?.Ids ?? [id])
@@ -473,6 +478,11 @@ internal static class ExtensionRemoveReportSelector
         if (result.Recovery.ResidualPath is { } path)
         {
             details.Add(ExtensionRemoveWording.Recovery(path));
+        }
+
+        if (result.Mode == ExtensionRemoveMode.DryRun)
+        {
+            details.Add(global::OpenForge.Cli.OutputText.Shared.SharedText.MessageNoFilesWereChanged());
         }
 
         return details;

@@ -131,8 +131,8 @@
     "disposition": "retained"
   },
   "next": {
-    "kind": "command",
-    "command": "open-forge doctor",
-    "reason": "Review previous content in the recovery bundle at <recovery-bundle>."
+    "kind": "sentence",
+    "command": "Review previous content in the recovery bundle at <recovery-bundle>.",
+    "reason": "Previous content remains available for review."
   }
 }

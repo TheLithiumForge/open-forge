@@ -11,8 +11,10 @@ is preserved as [historical backlog](../archived/cli-development/backlog-pre-cle
 
 ## Current priorities
 
-1. Release beta 2 once the integration snapshots are refreshed and the Build
-   is green. See [Task 59](cli-development/tasks/task59-beta-2-release.md).
+1. Beta 2 is published and verified in
+   [Task 59](cli-development/tasks/task59-beta-2-release.md). Review the
+   [1.0 readiness analysis](../emerging/analysis/one-zero-release-readiness.md)
+   before selecting further implementation. Its recommendations remain proposals.
 2. Work through the open Tasks in the
    [current order](cli-development/tasks/_tasks.md#current-order), accepted on
    2026-09-28 from the

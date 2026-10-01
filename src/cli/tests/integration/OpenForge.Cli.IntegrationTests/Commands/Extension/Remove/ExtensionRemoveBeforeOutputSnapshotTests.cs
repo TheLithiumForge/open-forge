@@ -5,8 +5,12 @@ using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
 using OpenForge.Cli.Core.Presentation.Extension.Remove;
+using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Prompts;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
@@ -123,5 +127,69 @@ public sealed class ExtensionRemoveBeforeOutputSnapshotTests
             result.Recovery.ResidualPath,
             source.Path,
             testName: $"{nameof(PackageRemoval)}_{situation}");
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Extension remove dry-run warnings keep the preview headline")]
+    public async Task DryRunOrphanedDependencyKeepsPreviewHeadline()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create(
+            "extension-remove-dry-run-orphaned-dependency");
+        await workspace.SeedFrameworkAsync();
+        using var source = ExtensionInstallCatalogue.Create(
+            "extension-remove-dry-run-orphaned-dependency-source");
+        source.AddPackage(
+            "toolkit",
+            ["base"],
+            (".agents/toolkit.md", "# Toolkit\n"));
+        source.AddPackage("base", [], (".agents/base.md", "# Base\n"));
+
+        var installed = await workspace.RunAsync(["extension", "install", "--all", "--source", source.Path, "--automatic"]);
+        Assert.Equal(0, installed.ExitCode);
+
+        var before = workspace.Snapshot();
+        var sourceBefore = source.Snapshot();
+        var scripted = ScriptedCliTerminal.Lines([], canPrompt: false);
+        var prompts = new CliPrompts(scripted.Terminal);
+        var result = await ExtensionRemoveOperationFactory.Create(
+                ExtensionInteractionTestFactory.ForRemove(prompts), workspace.LockStoreRoot)
+            .ExecuteAsync(
+                new ExtensionRemoveRequest(
+                    workspace.Workspace,
+                    ExtensionRemoveMode.DryRun,
+                    ["toolkit"],
+                    automatic: true,
+                    allowInteraction: false),
+                TestContext.Current.CancellationToken);
+
+        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        var retainedDependency = Assert.Single(
+            result.Findings,
+            finding => finding.Code == ExtensionRemoveFindingCode.LifecycleObservation);
+        Assert.Equal("base", retainedDependency.Target);
+        Assert.Equal(CliSemanticStatus.Attention, retainedDependency.Status);
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(sourceBefore, source.Snapshot());
+
+        const string noFilesWereChanged = "No files were changed.";
+        foreach (var detail in CommandOutputDetailVocabulary.All)
+        {
+            var selected = CliReportSelection.Select(
+                result,
+                new CliSelection(detail),
+                ExtensionRemovePresentation.Rendering);
+            Assert.Equal(CliHeadlineKind.Warnings, selected.Report.Headline.Kind);
+            Assert.Equal("Would remove the toolkit Extension.", selected.Report.Headline.Sentence);
+            Assert.Equal("open-forge extension remove base", selected.Report.Next?.Command);
+
+            var rendered = CommandOutputRenderers<ExtensionRemoveResult>.Render(
+                new CliPresentationRequest<ExtensionRemoveResult>(
+                    result,
+                    new(CliFormat.Text, detail, null)),
+                ExtensionRemovePresentation.Rendering);
+            Assert.Contains("Would remove the toolkit Extension.", rendered, StringComparison.Ordinal);
+            Assert.DoesNotContain("Removed the toolkit Extension.", rendered, StringComparison.Ordinal);
+            Assert.Equal(1, rendered.Split(noFilesWereChanged, StringSplitOptions.None).Length - 1);
+        }
     }
 }

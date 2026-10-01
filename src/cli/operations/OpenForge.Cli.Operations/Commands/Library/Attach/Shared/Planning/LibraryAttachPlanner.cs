@@ -149,7 +149,7 @@ internal static class LibraryAttachPlanner
         var links = EvaluateMappings(input, entries, findings);
         if (LibraryMutationPlanningPolicy.TryFindOwnershipConflict(
             input.Ownership,
-            destinationPaths.Concat(RelativePaths(input)),
+            destinationPaths,
             out var ownershipConflict))
         {
             Add(findings, LibraryAttachFindingCode.OwnershipConflict, CliSemanticStatus.Blocked,

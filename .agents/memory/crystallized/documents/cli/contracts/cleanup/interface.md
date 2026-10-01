@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted non-shipping public interface for operand-free, lease-validated cleanup of recognized recovery bundles and drafts
+  description: Accepted current public interface for operand-free, lease-validated cleanup of recognized recovery bundles and drafts
   responsibility: Define cleanup's exact syntax, default-all catalogue, deletion authority, observable effects, statuses, and boundaries
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Cleanup, Interface, Mutation, Recovery, Safety, CurrentTruth]
 ---
@@ -10,7 +10,7 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized Interface Contract for the
-non-shipping root `open-forge cleanup` operation. It owns the public purpose, exact syntax,
+root `open-forge cleanup` operation. It owns the public purpose, exact syntax,
 operand and flag boundary, recognized catalogue, consent, observable effects,
 statuses, output, errors, examples, non-goals, and public verification.
 
@@ -29,7 +29,10 @@ BCL-first filesystem structure, the workspace-lock boundary, and recovery
 identity relationships. This Interface Contract remains the authority for cleanup's public
 meaning. The development implementation provides this operation;
 [Task 20: Cleanup](../../../../../archived/cli-development/tasks/operations/cleanup.md)
-records its implementation and execution evidence. The CLI remains non-shipping.
+records its implementation and execution evidence. The CLI is available as a public beta.
+[CLI Distribution](../../distribution.md) records qualified platforms and published versions.
+[CLI Development](../../../../../working/cli-development/_cli-development.md) records current
+implementation and release work.
 
 ## Purpose And Operation Boundary
 

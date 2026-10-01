@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Route the accepted non-shipping Extension list, inspect, create, install, update, and remove contracts
+  description: Route the accepted current Extension list, inspect, create, install, update, and remove contracts
   responsibility: Provide Extension group help and route child contract sets without defining lifecycle behavior
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Extension, Lifecycle, CurrentTruth]
 ---
@@ -10,8 +10,10 @@ open-forge:
 ## Status And Authority
 
 This is the accepted current Crystallized routing-only entrypoint for the
-`open-forge extension` command family. The new CLI does not ship yet. The group
-has several actual operations and therefore is a real operation family, not a
+`open-forge extension` command family. The CLI is available as a public beta.
+CLI Distribution records qualified platforms and published versions. CLI
+Development records current implementation and release work. The group has
+several actual operations and therefore is a real operation family, not a
 ceremonial namespace.
 
 The group performs no package, catalogue, wizard, lifecycle, or mutation work.

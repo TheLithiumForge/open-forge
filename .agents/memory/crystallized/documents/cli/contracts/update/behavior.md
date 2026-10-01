@@ -20,8 +20,8 @@ lock write without blocking the operation.
 
 ## Status And Boundary
 
-This is the accepted current Crystallized Behavior Contract for non-shipping root
-`open-forge update`. It defines deterministic request resolution,
+This is the accepted current Crystallized Behavior Contract for the current
+`open-forge update` command. It defines deterministic request resolution,
 Framework ownership receipts, current/intended comparison, semantic
 fingerprints, generated projection, normal/force/prune planning, preflight,
 dry-run, application, verification, recovery, result formation, and

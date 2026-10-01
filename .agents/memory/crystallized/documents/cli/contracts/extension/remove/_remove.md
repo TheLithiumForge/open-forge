@@ -10,8 +10,10 @@ open-forge:
 ## Status And Authority
 
 This entrypoint routes the accepted current Crystallized Interface and Behavior
-contracts for `open-forge extension remove`. The new CLI does not ship yet.
-Remove is an explicit package-ownership release operation. It does not remove a
+contracts for `open-forge extension remove`. The CLI is available as a public beta.
+[CLI Distribution](../../../distribution.md) records qualified platforms and published
+versions. [CLI Development](../../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. Remove is an explicit package-ownership release operation. It does not remove a
 package source and has no Framework equivalent.
 
 ## Contract Roles

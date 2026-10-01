@@ -9,7 +9,7 @@ open-forge:
 
 ## Status And Authority
 
-This is the current Crystallized Technical Design for the non-shipping `find`
+This is the current Crystallized Technical Design for the `find`
 command. The [Interface](interface.md) and [Behavior](behavior.md) files are
 the current authorities for public and technology-neutral meaning. This design
 is subordinate to those contracts and the [CLI Architecture](../../architecture.md).
@@ -17,9 +17,10 @@ It cannot add public syntax, weaken a safety guarantee, change a semantic result
 or make an implementation artifact authoritative for user-authored meaning.
 
 The accepted implementation direction is a C# CLI on .NET 10 or newer with
-Native AOT. The command does not ship. The [CLI Development](../../../../../working/cli-development/_cli-development.md)
-route records implementation and executable evidence, including the current
-native-target limits.
+Native AOT. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation, release work, and executable evidence, including
+the current native-target limits.
 
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
 the shared schema-3 JSON envelope, source-location primitive, and status/process

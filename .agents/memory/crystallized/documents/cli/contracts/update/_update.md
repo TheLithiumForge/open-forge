@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Route the accepted non-shipping root Framework update contracts for trusted managed reconciliation
+  description: Route the accepted current root Framework update contracts for trusted managed reconciliation
   responsibility: Route the root update Interface and Behavior files without adding lifecycle meaning or implementation detail
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Update, Framework, Lifecycle, CurrentTruth]
 ---
@@ -11,7 +11,11 @@ open-forge:
 
 This is the routing-only contract-set entrypoint for the direct root Framework
 `update` command. Its sibling Interface and Behavior files define trusted
-managed Framework reconciliation. The new CLI does not ship yet.
+managed Framework reconciliation.
+
+The CLI is available as a public beta. CLI Distribution records qualified
+platforms and published versions. CLI Development records current
+implementation and release work.
 
 `install` establishes management and verifies an exact managed no-op. Managed
 divergence belongs to this `update` operation. There is no Framework group and no
@@ -38,4 +42,4 @@ Framework uninstall or remove leaf.
 ## Entries
 
 - [Accepted technology-neutral behavior for Framework ownership update planning, ordinary replacement, explicit prune deletion, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Behavior #Determinism #Lifecycle #Safety #Recovery #CurrentTruth
-- [Accepted non-shipping Interface for trusted managed Framework reconciliation with force and prune boundaries](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Interface #Lifecycle #Safety #Recovery #CurrentTruth
+- [Accepted current Interface for trusted managed Framework reconciliation with force and prune boundaries](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Interface #Lifecycle #Safety #Recovery #CurrentTruth

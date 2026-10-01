@@ -100,6 +100,65 @@ public sealed class ExtensionUpdatePlanningIntegrationTests
         Assert.Equal(beforeSource, source.Snapshot());
     }
 
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Installed generated catalogue does not claim an update"), InlineData(false), InlineData(true)]
+    public async Task InstalledGeneratedCatalogueDoesNotClaimAnUpdate(bool dryRun)
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create(
+            $"extension-update-installed-generated-catalogue-{dryRun}");
+        await workspace.SeedFrameworkAsync();
+        using var source = ExtensionInstallCatalogue.Create(
+            $"extension-update-installed-generated-catalogue-source-{dryRun}");
+        source.AddPackage(
+            "toolkit",
+            [],
+            (".agents/toolkit/_toolkit.md", CatalogueDocument()),
+            (".agents/toolkit/note.md", Document("Note")));
+
+        var install = await workspace.RunAsync(
+        [
+            "extension", "install", "toolkit",
+            "--source", source.Path,
+            "--automatic", "--format", "json",
+        ]);
+        Assert.Equal(0, install.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, install.Status);
+        Assert.Equal(string.Empty, install.StandardError);
+        Assert.Contains("- [Note](note.md)", workspace.ReadText(".agents/toolkit/_toolkit.md"), StringComparison.Ordinal);
+
+        var destinationBytes = File.ReadAllBytes(workspace.Combine(".agents/toolkit/_toolkit.md"));
+        var ownershipBytes = File.ReadAllBytes(workspace.Combine(ExtensionInstallIntegrationWorkspace.OwnershipPath));
+        var beforeWorkspace = workspace.Snapshot();
+        var beforeSource = source.Snapshot();
+
+        var arguments = new List<string>
+        {
+            "extension", "update", "toolkit",
+            "--source", source.Path,
+            "--automatic", "--format", "json", "--detail", "full",
+        };
+        if (dryRun)
+        {
+            arguments.Add("--dry-run");
+        }
+
+        var run = await workspace.RunAsync([.. arguments]);
+
+        Assert.Equal(0, run.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, run.Status);
+        Assert.Equal(string.Empty, run.StandardError);
+        using var document = JsonDocument.Parse(run.StandardOutput);
+        var root = document.RootElement;
+        Assert.Equal("completed", root.GetProperty("status").GetString());
+        Assert.Empty(root.GetProperty("effects").EnumerateArray());
+        Assert.Empty(root.GetProperty("data").GetProperty("sections").EnumerateArray());
+        Assert.Equal(0, root.GetProperty("counts").GetProperty("sectionsUpdated").GetInt32());
+        Assert.Equal(destinationBytes, File.ReadAllBytes(workspace.Combine(".agents/toolkit/_toolkit.md")));
+        Assert.Equal(ownershipBytes, File.ReadAllBytes(workspace.Combine(ExtensionInstallIntegrationWorkspace.OwnershipPath)));
+        Assert.Equal(beforeWorkspace, workspace.Snapshot());
+        Assert.Equal(beforeSource, source.Snapshot());
+    }
+
     private static async Task InstallAllAsync(
         ExtensionInstallIntegrationWorkspace workspace,
         ExtensionInstallCatalogue source)
@@ -121,4 +180,14 @@ public sealed class ExtensionUpdatePlanningIntegrationTests
             heading,
             ["Extension"],
             $"# {heading}\n");
+
+    private static string CatalogueDocument()
+        => OpenForgeDocumentSeed.Metadata(
+            "Toolkit",
+            ["Extension"],
+            OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
+            {
+                Prefix = "# Toolkit",
+                Entries = "- none - No entries - #Empty",
+            }));
 }

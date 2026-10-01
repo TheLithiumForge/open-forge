@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted current shared operation contract for the non-shipping Open Forge CLI
+  description: Accepted current shared operation contract for the Open Forge CLI
   responsibility: Define cross-command input, modifier, execution, result, safety, and locality boundaries without choosing implementation
   tags: [Memory, Crystallized, CLI, Release, Document, Evergreen, CurrentTruth, Contract, Operation, Shared, Interface, Behavior, Determinism, Output, Safety, Locality]
 ---
@@ -26,7 +26,7 @@ compatibility used by those results.
 
 This Contract does not replace or duplicate those definitions. It is a
 Crystallized Document/Contract, not a Pattern, Directive, Architecture, or
-implementation design. The replacement does not ship yet. The accepted [CLI
+implementation design. The CLI is available as a public beta; [Distribution](distribution.md) defines publication and qualification requirements. The accepted [CLI
 Architecture](architecture.md) controls high-level implementation choices while
 the routed [Technical Designs](technical-designs/_technical-designs.md) define
 exact shared-capability realization. This Contract remains technology-neutral
@@ -291,7 +291,142 @@ result. Planning or read failures and caller cancellation before effects retain
 their own event meaning. Dry-run and application use the same status
 conditions; planned changes alone do not create `completed-with-warnings`.
 
-## Repetition, Results, And Streams
+## Human Presentation
+
+### Message style
+
+Every user-facing sentence follows the
+[Writing Standard](../maintenance/writing.md):
+
+- Say what happened, name the affected item, and give the next action when
+  useful.
+- Use short sentences and familiar words. Do not use internal vocabulary:
+  never `lifecycle`, `residual`, `preflight`, `projection`, `lease`,
+  `occupant`, `provenance`, `topology`, `semantic`, `trusted`, or
+  `payload` in text. The [Open Forge
+  Dictionary](../maintenance/helpers/dictionary.md) defines the replacement
+  words.
+- Name paths workspace-relative, with `:line:column` when known.
+- Never print an enum value as a word. `not-requested`, `not-applicable`,
+  `residual: none`, and `verified` as a bare word are all defects.
+- Write counts as words and numbers: `3 files`, `1 file`. Never `1 files`.
+- Dry runs say `Would ...` and end with `No files were changed.`
+- A no-op says `Nothing to do.`
+
+The current `Next:` rule is defined in
+[Repetition, Results, And Streams](#repetition-results-and-streams).
+
+### Shared presentation rules
+
+These are the rules the shared renderer enforces once. Command catalogues rely
+on them and do not restate them.
+
+| Rule            | Content                                                                                                                                                                                                                                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Headline        | The first line is one complete sentence stating the outcome. There is no `Status:` line, ever.                                                                                                                                                                                                             |
+| Levels          | The [Global CLI Flags Interface Contract](contracts/shared/global-flags/interface.md) defines `minimal` (the default), `standard`, `full`, and `debug`, and the detail each level adds.                                                                                                                  |
+| Listing ladder  | `minimal` lists errors and, except for `doctor`, warnings. `standard` lists warnings for `doctor` too. `full` and `debug` list info. Everything not listed is counted.                                                                                                                       |
+| Filter          | The [Global CLI Flags Interface Contract](contracts/shared/global-flags/interface.md) defines repeatable `--detail-filter <severity>`; it replaces the listing ladder with exactly the given severities at any level. `all` lists everything. The per-finding depth still follows the level. Counts are never affected. |
+| Depth per level | `minimal`: subject, one-line cause, one action. `standard`: adds the reason for the action and per-finding actions. `full`: adds evidence, candidates with why they were included, provenance, hashes, codes. `debug`: adds run diagnostics on stderr.                                                     |
+| Payload         | Requested rows, content and mutation receipts are never shortened by a level. Every replaced, restored, deleted, kept or rewritten path is listed at `minimal`. Created paths are listed at `minimal` except in Framework `install`, which summarizes them by count and directory and names the lock file. |
+| Ordering        | Headline, workspace line (when shown), errors, warnings, what changed, what was kept, what could not be checked, counts, `Next`. Within one severity by path, then line, then column.                                                                                                                      |
+| Subjects        | Every listed finding names a workspace-relative path with `:line:column` when known, or an identifier. Nothing without either is listed or blocks.                                                                                                                                                         |
+| Empty           | Zero counts are not printed unless zero is the answer, said in words. `not-applicable`, `not-requested`, `none observed` and similar never appear. A fact that could not be obtained is one sentence naming the cause. An empty listing is one sentence repeating the query. |
+| Workspace echo  | When workspace facts exist, text prints `Workspace: <path>` at `minimal` detail when `--workspace` was supplied or the result is blocked, failed or cancelled. `standard` and higher detail always show it. Text never prints `Selected by:`. JSON retains its workspace representation. |
+| Codes           | Finding codes appear in text only at `full` and `debug`, in brackets after the title. JSON carries them at every level.                                                                                                                                                                                   |
+| Streams         | The [Repetition, Results, And Streams](#repetition-results-and-streams) subsection defines the shared status and primary-stream mapping. Diagnostics and prompts go to stderr. Parser failures before binding stay text on stderr with no envelope. |
+| Exits           | The [Result Coordinates Interface Contract](contracts/shared/result-coordinates/interface.md#status-exit-and-stream-coordinates) defines the shared exit table. `route init` scaffold is complete (0). Read-only commands never print `No files changed.` |
+| Formatting      | Two-space indentation, aligned columns for rows, ASCII framing only, paths and identifiers never truncated, no JSON escapes in text, colour only on supported terminals, none in JSON or authored content.                                                                                                 |
+
+### One code, one situation
+
+**A finding code names one situation and renders one sentence.** When a code is
+reached from several situations that need different sentences, no message can
+be right for all of them, and the wording ends up hedging: a generic fallback,
+a cause passed through raw, or an alternation standing in for facts the result
+does not carry. That hedging is the symptom. The overloaded code is the defect.
+
+Two different commands may share a sentence: that is what the families below
+are for, and a held workspace lock reads identically in thirteen commands.
+**Two codes of the same command sharing a sentence is the signature of an
+overload**, and
+`CliReportInvariantsTests.NoTwoFindingCodesOfOneCommandRenderTheSameMessage`
+fails on it across every captured situation.
+
+Note what that test cannot see: a situation with no capture is not checked. When
+a finding code has no fixture, the invariant is silent about it, so record the
+gap rather than assuming it is covered.
+
+Splitting an overloaded code is a behaviour change. It adds codes to JSON and
+can move an exit code where the severity differs, so it is a maintainer
+decision, not an implementer's.
+
+### Shared message families
+
+Most finding codes across the 28 commands belong to a family with one meaning.
+The family's sentence is written once here, and command catalogues reference it
+by family name with the command's subject filled in. `<command>` is the
+command's verb phrase ("install", "update the Framework", "move the route").
+`<path>` is the affected workspace-relative path.
+
+| Family                       | Severity | Sentence                                                                                                                             | Next                                                                              |
+| ---------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| invalid-input                | error    | `Cannot <command>: <the exact input problem>.`                                                                                       | The corrected command when it can be formed, otherwise `open-forge <cmd> --help`. |
+| confirmation-required        | error    | `<Command> needs confirmation, and this session cannot ask.`                                                                         | `open-forge <cmd> --automatic` (or `--dry-run` to preview)                        |
+| workspace-unavailable        | error    | `Cannot use <path> as the workspace: it does not exist or cannot be read.`                                                           | none                                                                              |
+| workspace-not-directory      | error    | `Cannot use <path> as the workspace: it is not a directory.`                                                                         | none                                                                              |
+| workspace-unsafe             | error    | `Cannot use <path> as the workspace: its location could not be verified (<a link leaves it \| its identity is ambiguous>).`          | none                                                                              |
+| workspace-lock-unavailable   | error    | `Another Open Forge command holds the workspace lock. Nothing was changed.`                                                          | `open-forge <cmd> ...` (retry when it finishes)                                   |
+| target-changed               | error    | `<path> changed after the plan was made. Nothing was changed.`                                                                       | rerun the same command                                                            |
+| target-changed-during-apply  | error    | `<path> changed while changes were being written. Stopped after <n> of <m> changes.`                                                 | `open-forge doctor`                                                               |
+| target-unsafe                | error    | `<path> cannot be written safely: <it is a link \| its location could not be verified \| it is reserved>.`                           | none                                                                              |
+| target-occupied              | error    | `<path> already exists and is not managed by Open Forge.`                                                                            | `--force --dry-run` where the command supports force                              |
+| generated-region-unsafe      | error    | `The Entries section of <path> could not be identified: <it is missing \| there is more than one \| it is malformed>.`               | `open-forge doctor`                                                               |
+| projection-unavailable       | warning  | `The Entries content for <path> could not be computed because <child metadata could not be read>.`                                   | `open-forge doctor`                                                               |
+| metadata-incomplete          | warning  | `The frontmatter of <path> could not be read completely.`                                                                            | `open-forge doctor`                                                               |
+| metadata-unsafe              | error    | `The frontmatter of <path> cannot be used: <reason>.`                                                                                | edit the file                                                                     |
+| inspection-incomplete        | warning  | `<path> could not be read completely.`                                                                                               | `open-forge doctor`                                                               |
+| recovery-unavailable         | warning  | `Recovery data could not be prepared at <store>. Nothing was changed.`                                                               | check the recovery store location                                                 |
+| recovery-conflict            | error    | `Recovery data from an earlier run exists at <path> and blocks this change. Nothing was changed.`                                    | `open-forge cleanup --dry-run`                                                    |
+| recovery-artifact-retained   | warning  | `The changes were applied, but the recovery bundle at <path> could not be removed.`                                                  | `open-forge cleanup`                                                              |
+| recovery-failed              | error    | `The changes were applied, but the final state of the recovery bundle is unknown.`                                                   | `open-forge doctor`                                                               |
+| write-failed                 | error    | `Writing <path> failed. Stopped after <n> of <m> changes. Recovery data: <path>.`                                                    | `open-forge doctor`                                                               |
+| verification-failed          | error    | `<path> did not verify after it was written. Recovery data: <path>.`                                                                 | `open-forge doctor`                                                               |
+| lifecycle-publication-failed | error    | `The changes were applied, but the ownership record .agents/open-forge.lock.json could not be written.`                              | `open-forge doctor`                                                               |
+| lifecycle-unavailable        | warning  | `.agents/open-forge.lock.json could not be read completely.`                                                                         | `open-forge doctor`                                                               |
+| lifecycle-blocked            | error    | `.agents/open-forge.lock.json is invalid: <reason>.`                                                                                 | fix or remove the file                                                            |
+| ownership-observation        | info     | `No ownership record exists, so <what cannot be listed> cannot be read from it.`                                                     | none                                                                              |
+| ownership-conflict           | error    | `<path> is owned by <owner>, so <command> cannot change it.`                                                                         | none                                                                              |
+| ownership-claimed            | error    | `<path> is managed by <the Framework \| the <id> Extension \| the <id> Library>, so <command> cannot <verb> it.`                     | the owning command                                                                |
+| managed-divergence           | error    | `<path> has changed since it was installed.`                                                                                         | `open-forge update` or `open-forge extension update <id>`                         |
+| permission-required          | error    | `Cannot <command>: it writes outside .agents and no grant allows that.` then one line per path                                       | `open-forge <cmd> ... --allow-path <path>`; also the settings file                |
+| permission-declined          | error    | `You declined the destinations, so nothing was changed.`                                                                             | none                                                                              |
+| permissions-invalid          | error    | `.agents/open-forge.json cannot be used: <reason>.`                                                                                  | fix the file                                                                      |
+| permissions-unavailable      | warning  | `.agents/open-forge.json could not be read.`                                                                                         | none                                                                              |
+| permissions-changed          | error    | `.agents/open-forge.json changed after the plan was made. Nothing was changed.`                                                      | rerun                                                                             |
+| permission-write-failed      | error    | `The grant could not be saved to .agents/open-forge.json.`                                                                           | `open-forge doctor`                                                               |
+| identity-collision           | warning  | `The ID <id> matches more than one file. Use the exact path.` then one line per path                                                 | none                                                                              |
+| route-ambiguous              | error    | `<id> could match more than one route.` then one line per path                                                                       | use the exact path                                                                |
+| source-ambiguous             | error    | `<reference> matches more than one source. Use the exact path.` then one line per path                                               | use the exact path                                                                |
+| source-unsafe                | error    | `<path> could not be verified to be inside the workspace.`                                                                           | none                                                                              |
+| selector-ambiguous           | error    | `--include or --exclude <value> matches more than one source. Use the exact path.`                                                   | none                                                                              |
+| selector-unsafe              | error    | `--include or --exclude <value> points outside the workspace.`                                                                       | none                                                                              |
+| payload-unavailable          | warning  | `The Framework bundled in this CLI could not be read completely.`                                                                    | reinstall the CLI                                                                 |
+| payload-invalid              | error    | `The Framework bundled in this CLI is invalid.`                                                                                        | reinstall the CLI                                                                 |
+| framework-unavailable        | warning  | `The Framework files this command needs could not be read completely.`                                                               | `open-forge doctor`                                                               |
+| framework-unsafe             | error    | `The Framework files this command needs could not be verified.`                                                                      | `open-forge doctor`                                                               |
+| selection-required           | error    | `<Command> needs to know which packages. Pass their IDs or --all.` (add `This session cannot ask.` when a prompt would have applied) | `open-forge extension list`                                                       |
+| interaction-ended            | error    | `Input ended before a choice was made. Nothing was changed.`                                                                         | none                                                                              |
+| operation-failed             | error    | `<Command> stopped because of an unexpected error: <bounded reason>.`                                                                | `open-forge <cmd> ... --detail debug`                                             |
+| interrupted                  | error    | `<Command> was cancelled. Nothing was changed.` or `... Stopped after <n> of <m> changes.`                                           | rerun                                                                             |
+| unknown-id                   | error    | `No <Library \| Extension> has the ID <id>.`                                                                                         | the list command                                                                  |
+| unknown-source               | error    | `No source has the ID <id>.`                                                                                                         | `open-forge route list --depth=all`                                               |
+
+The family names above are the vocabulary used in the `Family` column of each
+command catalogue. A code whose family is `local` has its complete sentence in
+the command file.
+
+### Repetition, Results, And Streams
 
 Keep repetition rules structural and explicit:
 

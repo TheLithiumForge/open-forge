@@ -2,6 +2,7 @@ using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Update;
 
@@ -126,8 +127,20 @@ public sealed class UpdateOwnershipSafetyIntegrationTests
         Assert.Equal(settings, workspace.ReadText(".agents/open-forge.json"));
         Assert.Equal(UpdateVerificationState.Verified, result.Verification);
         Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
-        Assert.NotNull(result.Next);
-        Assert.Contains(result.Recovery.ResidualPath!, result.Next.Reason);
-        Assert.Equal(hasGit ? "git diff" : "open-forge doctor", result.Next.Command);
+        var next = Assert.IsType<CliNextAction>(result.Next);
+        if (hasGit)
+        {
+            Assert.Contains(result.Recovery.ResidualPath!, next.Reason);
+            Assert.Equal("git diff", next.Command);
+        }
+        else
+        {
+            var bundlePath = Assert.IsType<string>(result.Recovery.ResidualPath);
+            Assert.Equal(
+                $"Review previous content in the recovery bundle at {bundlePath}.",
+                next.Command);
+            Assert.Equal("Previous content remains available for review.", next.Reason);
+            Assert.Equal(CliNextActionKind.Sentence, next.Kind);
+        }
     }
 }

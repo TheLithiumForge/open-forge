@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Implement optional applyTo file conditions, loading rules, Entries display, and CLI context filtering through accepted execution packets
-  tags: [Memory, Working, Task, Framework, Loading, Frontmatter, CLI, Contextual, Active]
+  tags: [Memory, Working, Task, Framework, Loading, Frontmatter, CLI, Contextual, Complete]
 ---
 
 # Task 62: Glob-scoped loading
@@ -29,7 +29,8 @@ The maintainer clarified this scope on 2026-09-29:
   [Task 55](task55-alternative-root.md).
 - The subsequent maintainer acceptance authorized all recommendations, detailed action planning, and parallel implementation.
 
-These requirements are implemented in the isolated `task62-applyto` worktree.
+These requirements are implemented and squash-integrated into `develop`, then
+promoted to `main`.
 The full managed and Windows Native AOT gates passed. Root-level `description`, `tags`, and
 `responsibility` were not accepted by this clarification.
 
@@ -37,9 +38,12 @@ The full managed and Windows Native AOT gates passed. Root-level `description`, 
 
 The maintainer accepted all recommendations on 2026-09-29 and authorized
 parallel implementation. The command, Framework and documentation slices are
-integrated, reviewed and verified. The worktree is ready for maintainer review
-and local integration. No commit, merge or release was performed. The [execution packet](task62/_task62.md) records
-frozen decisions, detailed steps, ownership, dependencies and verification.
+integrated, reviewed and verified. Commit
+`00e3ba0294679163d95b42a81295091254debfb7` includes the squash and beta 2
+version preparation and is pushed to `develop` and `main`. The documentation
+deployment passed; [Task 59](task59-beta-2-release.md) records the completed
+release and published-package/site verification. The [execution packet](task62/_task62.md)
+records frozen decisions, detailed steps, ownership, dependencies and verification.
 The [analysis](../../../emerging/analysis/glob-scoped-loading.md) is frozen as
 accepted design input. Subsequent discoveries and decisions belong in the
 execution packet and affected current contracts.
@@ -81,7 +85,9 @@ Documentation is part of every stage. It is not deferred to the final stage.
 An implementation packet must inspect current source paths and verification
 commands rather than reuse the older analysis's pre-migration code paths.
 
-Delivery status: Task 62 “Glob-scoped loading” (phase 3/3): milestone 6/6.
+State: Complete.
+
+Task 62 “Glob-scoped loading” (phase 3/3): milestone 6/6.
 
 The [final receipts](task62/execution.md#final-gate-receipts) record 9331 passing
 test executions across six modes, the native CLI smoke journey, documentation

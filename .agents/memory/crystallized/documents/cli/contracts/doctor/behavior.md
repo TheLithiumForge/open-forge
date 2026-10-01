@@ -13,7 +13,9 @@ This file is the accepted current Crystallized Behavior Contract for
 `open-forge doctor`. It defines deterministic request resolution, six-domain
 diagnosis, coverage, finding and candidate formation, result formation,
 read-only safety, and conformance without choosing implementation technology.
-The command does not ship yet.
+The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work.
 
 The [Interface Contract](interface.md) owns the complete public grammar,
 catalogue, observable projections, semantic result names, errors, examples, and

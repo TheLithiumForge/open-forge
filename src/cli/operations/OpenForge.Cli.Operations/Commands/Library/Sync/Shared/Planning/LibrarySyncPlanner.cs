@@ -161,7 +161,7 @@ internal static class LibrarySyncPlanner
         var links = EvaluateMappings(input, selected, currentPaths, registeredPaths, findings);
         if (LibraryMutationPlanningPolicy.TryFindOwnershipConflict(
             input.Ownership,
-            destinations.Concat(RelativePaths(input)),
+            destinations,
             out var ownershipConflict))
         {
             Add(findings, LibrarySyncFindingCode.OwnershipConflict, CliSemanticStatus.Blocked,

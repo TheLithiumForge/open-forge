@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Library.Detach.Models.Result;
 using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Effects;
 using OpenForge.Cli.Core.Presentation.Library.Detach;
+using OpenForge.Cli.Core.Presentation.Library.Detach.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -216,6 +217,13 @@ public sealed class LibraryDetachPresentationTests
         Assert.Contains("Would detach team-knowledge", text, StringComparison.Ordinal);
         Assert.DoesNotContain("Detached team-knowledge", text, StringComparison.Ordinal);
     }
+
+    [Trait("Boundary", "Output")]
+    [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    [InlineData(true, "Would update the Entries section of .agents/catalogue/_catalogue.md")]
+    [InlineData(false, "Updated the Entries section of .agents/catalogue/_catalogue.md")]
+    public void SectionRowsUsePreviewAndApplyTense(bool dryRun, string expected)
+        => Assert.Equal(expected, LibraryDetachWording.SectionRow(".agents/catalogue/_catalogue.md", dryRun));
 
     [Trait("Boundary", "Output")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]

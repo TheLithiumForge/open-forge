@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Route the accepted non-shipping root Framework management-establishment and exact-no-op contracts for `install`
+  description: Route the accepted current root Framework management-establishment and exact-no-op contracts for `install`
   responsibility: Route the root install Interface and Behavior files without adding lifecycle meaning or implementation detail
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Install, Framework, Lifecycle, CurrentTruth]
 ---
@@ -16,12 +16,14 @@ not create a root `init` operation.
 
 ## Status And Authority
 
-This is the accepted current Crystallized contract set for the non-shipping root
-Framework `install` operation. `install` may establish a safely absent or
+This is the accepted current Crystallized contract set for the root Framework
+`install` operation. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. `install` may establish a safely absent or
 eligible initial state and verify an exact managed state. Managed divergence is
 not install work and directs to root `update`. Its sibling Interface and
 Behavior files are the detailed authorities for the public surface and the
-technology-neutral operation behind it. The new CLI does not ship yet.
+technology-neutral operation behind it.
 
 Install owns the closed base Framework subset and consumes the neutral embedded
 Framework distribution. It preserves trusted scoped Framework targets created by
@@ -51,4 +53,4 @@ journeys. This contract set does not claim that implementation or proof.
 ## Entries
 
 - [Accepted technology-neutral install behavior for management establishment, exact no-op, initial force, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Behavior #Determinism #Lifecycle #Safety #Recovery #CurrentTruth
-- [Accepted non-shipping Interface for establishing and verifying the managed root Framework lifecycle](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Interface #Lifecycle #Safety #Recovery #CurrentTruth
+- [Accepted current Interface for establishing and verifying the managed root Framework lifecycle](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Interface #Lifecycle #Safety #Recovery #CurrentTruth

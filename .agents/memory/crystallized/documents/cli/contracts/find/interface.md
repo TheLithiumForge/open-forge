@@ -10,8 +10,10 @@ open-forge:
 ## Status And Authority
 
 This file is the current Crystallized authority for the caller-visible `find`
-Interface Contract. The command is a current non-shipping contract and does not
-claim executable behavior.
+Interface Contract. The CLI is available as a public beta. [CLI Distribution](../../distribution.md)
+records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
+records current implementation and release work. This contract does not claim
+executable behavior.
 
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md)
 defines only the shared JSON envelope, source-location primitive, and
@@ -397,7 +399,7 @@ form, at every level.
 
 `--content=<part>[,<part>...]` requests exact per-source content after the match rows. Supported parts are `metadata`, `frontmatter`, `headings`, `body`, and `section:<name>`. The value is a singleton input; compose several parts in its comma-separated value. The context-specific `paths` part is invalid for `find`.
 
-When a requested section is known to be absent, the source remains in the result with `find.projection-missing` and completed-with-warnings status. An ambiguous or unavailable requested projection keeps the safe matches and forms incomplete status. Find does not widen the effective source universe to resolve route facts or infer a Framework scope.
+When a requested section is known to be absent, the source remains in the result with `find.projection-missing` and completed-with-warnings status. An ambiguous or unavailable requested projection keeps the safe matches and forms incomplete status. Candidate predicates, projected result contents, and candidate, inspected, and matched counts remain confined to the effective include/exclude/`--for` universe. Required metadata and applicability route facts may read supporting ancestor or Loader source data from the complete catalogue outside that query universe. These contextual reads never add candidates or matches, excluded query contents are not searched for predicates, and metadata reports unavailable source facts honestly.
 ## Structured Output
 
 `--format json` writes one schema-3 envelope to stdout for every report status. The envelope carries the command, status, workspace, detail, filter, command data, findings, effects, counts, limitations, recovery facts and next action as applicable. It is the same typed result as the text report; no ordinary text is mixed into the JSON document. If parsing fails before binding, the raw parser diagnostic remains text on stderr and no report envelope exists.
@@ -600,6 +602,9 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
   establish search completeness.
 - The CLI enumerates the source universe for every invocation. It
   does not require a persistent search index or the complete context graph.
+- Loader, `entrypoint`, and `SKILL.md` physical-folder expansion remains
+  unchanged. Excluding the Loader can produce an empty effective universe,
+  which is not a defect.
 - Routed navigation may accelerate or cross-check enumeration,
   but it cannot hide an eligible Markdown source.
 
