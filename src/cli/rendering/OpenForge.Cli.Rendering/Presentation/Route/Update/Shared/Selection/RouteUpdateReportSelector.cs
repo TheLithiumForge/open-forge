@@ -315,6 +315,11 @@ internal static class RouteUpdateReportSelector
 
     private static CliSubject Subject(RouteUpdateResult result, RouteUpdateFinding finding)
     {
+        if (finding.Code == RouteUpdateFindingCode.RecoveryConflict)
+        {
+            return new CliSubject(CliSubjectKind.File, Path: RecoveryConflictPath(finding));
+        }
+
         if (finding.Code is RouteUpdateFindingCode.WorkspaceUnavailable
             or RouteUpdateFindingCode.WorkspaceUnsafe)
         {
@@ -355,6 +360,11 @@ internal static class RouteUpdateReportSelector
             return global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateText.MessageTheRouteUpdateResultDidNotContainAFinding();
         }
 
+        if (finding.Code == RouteUpdateFindingCode.RecoveryConflict)
+        {
+            return CliFindingWording.RecoveryConflict(RecoveryConflictPath(finding));
+        }
+
         var target = result.Target.Id ?? result.Target.Requested;
         var path = result.Target.Path ?? result.Target.Requested;
         var template = result.Template?.Requested
@@ -381,7 +391,6 @@ internal static class RouteUpdateReportSelector
             RouteUpdateFindingCode.GeneratedRegionUnsafe => CliFindingWording.GeneratedRegionUnsafe(path, cause),
             RouteUpdateFindingCode.WorkspaceLockUnavailable => CliFindingWording.WorkspaceLockUnavailable(),
             RouteUpdateFindingCode.TargetChanged => CliFindingWording.TargetChanged(path),
-            RouteUpdateFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(path),
             RouteUpdateFindingCode.InspectionIncomplete => CliFindingWording.InspectionIncomplete(path),
             RouteUpdateFindingCode.ProjectionIncomplete => CliFindingWording.ProjectionUnavailable(path, cause),
             RouteUpdateFindingCode.TemplateUnavailable => global::OpenForge.Cli.OutputText.Route.Update.RouteUpdatePhrases.FormatTheTemplateCouldNotBeRead($"{template}"),
@@ -427,6 +436,9 @@ internal static class RouteUpdateReportSelector
             RouteUpdateFindingCode.InvalidTemplate => new CliNextAction(
                 "open-forge find --tag Template",
                 RouteUpdateWording.FindTemplateReason()),
+            RouteUpdateFindingCode.RecoveryConflict => new CliNextAction(
+                "open-forge cleanup --dry-run",
+                global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.NextRecoveryConflictReason()),
             RouteUpdateFindingCode.RouteAmbiguous => new CliNextAction(
                 "open-forge route list --depth=all",
                 RouteUpdateWording.ChooseSourceReason()),
@@ -564,4 +576,16 @@ internal static class RouteUpdateReportSelector
             : RouteUpdateWireVocabulary.RouteUpdateHelpCommand;
 
     private static string TrimSentence(string value) => value.Trim().TrimEnd('.');
+
+    private static string RecoveryConflictPath(RouteUpdateFinding finding)
+    {
+        var target = finding.Target;
+        if (string.IsNullOrWhiteSpace(target))
+        {
+            throw new InvalidOperationException(
+                "A recovery-conflict finding must carry its observed recovery file path.");
+        }
+
+        return target;
+    }
 }

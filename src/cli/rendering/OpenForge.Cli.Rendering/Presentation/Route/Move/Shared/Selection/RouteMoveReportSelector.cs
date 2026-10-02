@@ -311,6 +311,11 @@ internal static class RouteMoveReportSelector
 
     private static CliSubject Subject(RouteMoveResult result, RouteMoveFinding finding)
     {
+        if (finding.Code == RouteMoveFindingCode.RecoveryConflict)
+        {
+            return new CliSubject(CliSubjectKind.File, Path: RecoveryConflictPath(finding));
+        }
+
         var target = finding.Target
             ?? result.Source.Path
             ?? result.Source.Id
@@ -355,6 +360,11 @@ internal static class RouteMoveReportSelector
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.LabelTheBlockingConditionIsNotDefined();
+        }
+
+        if (finding.Code == RouteMoveFindingCode.RecoveryConflict)
+        {
+            return CliFindingWording.RecoveryConflict(RecoveryConflictPath(finding));
         }
 
         var target = finding.Target
@@ -405,7 +415,6 @@ internal static class RouteMoveReportSelector
                 GeneratedReason(finding.Cause)),
             RouteMoveFindingCode.WorkspaceLockUnavailable => CliFindingWording.WorkspaceLockUnavailable(),
             RouteMoveFindingCode.TargetChanged => CliFindingWording.TargetChanged(target),
-            RouteMoveFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(target),
             RouteMoveFindingCode.OwnershipUnavailable => CliFindingWording.LifecycleUnavailable(),
             RouteMoveFindingCode.InspectionIncomplete => CliFindingWording.InspectionIncomplete(target),
             RouteMoveFindingCode.CategoryInventoryIncomplete => RouteMoveWording.CategoryInventoryIncomplete(
@@ -464,6 +473,10 @@ internal static class RouteMoveReportSelector
                 => new CliNextAction(
                     "open-forge route move --help",
                     global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.MessageCorrectTheNamedRouteMoveInputThenRerunTheRequest()),
+            RouteMoveFindingCode.RecoveryConflict
+                => new CliNextAction(
+                    "open-forge cleanup --dry-run",
+                    global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.NextRecoveryConflictReason()),
             RouteMoveFindingCode.DestinationOccupied
                 => new CliNextAction(
                     global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.LabelChooseAnotherDestination(),
@@ -563,8 +576,7 @@ internal static class RouteMoveReportSelector
             or RouteMoveFindingCode.DestinationUnsafe
             or RouteMoveFindingCode.RouteAmbiguous
             or RouteMoveFindingCode.IdentityCollision
-            or RouteMoveFindingCode.GeneratedRegionUnsafe
-            or RouteMoveFindingCode.RecoveryConflict;
+            or RouteMoveFindingCode.GeneratedRegionUnsafe;
 
     private static CliEffect Effect(RouteMoveEffect effect, CliDetail detail)
         => new()
@@ -817,4 +829,16 @@ internal static class RouteMoveReportSelector
         string To,
         string? OverwriteFrom,
         string? OverwriteTo);
+
+    private static string RecoveryConflictPath(RouteMoveFinding finding)
+    {
+        var target = finding.Target;
+        if (string.IsNullOrWhiteSpace(target))
+        {
+            throw new InvalidOperationException(
+                "A recovery-conflict finding must carry its observed recovery file path.");
+        }
+
+        return target;
+    }
 }

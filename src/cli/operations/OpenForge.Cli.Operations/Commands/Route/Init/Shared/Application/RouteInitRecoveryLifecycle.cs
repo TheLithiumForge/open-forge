@@ -84,7 +84,9 @@ internal static class RouteInitRecoveryLifecycle
             return new RouteInitRecoveryPreparationResult(
                 RouteInitRecoveryPreparationState.Blocked,
                 Preparation: null,
-                new RouteInitRecovery(RouteInitRecoveryState.NotCreated, ResidualPath: null),
+                new RouteInitRecovery(
+                    RouteInitRecoveryState.Retained,
+                    catalogue.Candidates[0].Path),
                 "An existing recovery candidate conflicts with this Route Init application.");
         }
 
@@ -113,9 +115,21 @@ internal static class RouteInitRecoveryLifecycle
             return FailedAfterStoreEntry();
         }
 
+        return FromPreparation(preparation);
+    }
+
+    internal static RouteInitRecoveryPreparationResult FromPreparation(
+        RecoveryBundlePreparationResult preparation)
+    {
         var resultState = ReadPreparationState(
             preparation.State,
             preparation.Preparation is not null);
+        if (resultState == RouteInitRecoveryPreparationState.Blocked
+            && preparation.ResidualPath is null)
+        {
+            resultState = RouteInitRecoveryPreparationState.Incomplete;
+        }
+
         return resultState switch
         {
             RouteInitRecoveryPreparationState.Prepared when preparation.Preparation is { } verified =>

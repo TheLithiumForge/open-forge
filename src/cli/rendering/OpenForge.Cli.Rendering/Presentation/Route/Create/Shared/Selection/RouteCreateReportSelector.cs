@@ -273,7 +273,8 @@ internal static class RouteCreateReportSelector
                 or RouteCreateFindingCode.TemplateUnsafe
                 or RouteCreateFindingCode.TemplateUnavailable
                 or RouteCreateFindingCode.IdentityCollision
-                or RouteCreateFindingCode.WorkspaceLockUnavailable => Message(result, finding),
+                or RouteCreateFindingCode.WorkspaceLockUnavailable
+                or RouteCreateFindingCode.RecoveryConflict => Message(result, finding),
             _ => TrimSentence(finding.Cause),
         };
     }
@@ -316,6 +317,11 @@ internal static class RouteCreateReportSelector
 
     private static CliSubject Subject(RouteCreateResult result, RouteCreateFinding finding)
     {
+        if (finding.Code == RouteCreateFindingCode.RecoveryConflict)
+        {
+            return new CliSubject(CliSubjectKind.File, Path: RecoveryConflictPath(finding));
+        }
+
         if (finding.Code is RouteCreateFindingCode.WorkspaceUnavailable
             or RouteCreateFindingCode.WorkspaceUnsafe)
         {
@@ -353,6 +359,11 @@ internal static class RouteCreateReportSelector
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Route.Create.RouteCreateText.MessageTheRouteCreateResultDidNotContainAFinding();
+        }
+
+        if (finding.Code == RouteCreateFindingCode.RecoveryConflict)
+        {
+            return CliFindingWording.RecoveryConflict(RecoveryConflictPath(finding));
         }
 
         var path = finding.Target
@@ -396,8 +407,6 @@ internal static class RouteCreateReportSelector
                 => CliFindingWording.WorkspaceLockUnavailable(),
             RouteCreateFindingCode.TargetChanged
                 => CliFindingWording.TargetChanged(path),
-            RouteCreateFindingCode.RecoveryConflict
-                => CliFindingWording.RecoveryConflict(path),
             RouteCreateFindingCode.InspectionIncomplete
                 => CliFindingWording.InspectionIncomplete(path),
             RouteCreateFindingCode.MetadataIncomplete
@@ -449,6 +458,10 @@ internal static class RouteCreateReportSelector
                 => new CliNextAction(
                     $"open-forge route update {TargetId(result)}",
                     RouteCreateWording.UpdateReason()),
+            RouteCreateFindingCode.RecoveryConflict
+                => new CliNextAction(
+                    "open-forge cleanup --dry-run",
+                    global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.NextRecoveryConflictReason()),
             RouteCreateFindingCode.RecoveryArtifactRetained
                 => new CliNextAction("open-forge cleanup", RouteCreateWording.CleanupReason()),
             RouteCreateFindingCode.OptionalMetadata
@@ -651,4 +664,16 @@ internal static class RouteCreateReportSelector
     }
 
     private static string TrimSentence(string value) => value.Trim().TrimEnd('.');
+
+    private static string RecoveryConflictPath(RouteCreateFinding finding)
+    {
+        var target = finding.Target;
+        if (string.IsNullOrWhiteSpace(target))
+        {
+            throw new InvalidOperationException(
+                "A recovery-conflict finding must carry its observed recovery file path.");
+        }
+
+        return target;
+    }
 }

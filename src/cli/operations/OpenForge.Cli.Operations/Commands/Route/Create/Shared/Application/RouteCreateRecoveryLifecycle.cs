@@ -72,7 +72,7 @@ internal static class RouteCreateRecoveryLifecycle
             {
                 State = RouteCreateRecoveryPreparationState.Blocked,
                 Preparation = null,
-                Recovery = NotCreated(),
+                Recovery = Retained(catalogue.Candidates[0].Path),
                 Cause = "An existing recovery candidate conflicts with this Route Create application.",
             };
         }
@@ -100,6 +100,24 @@ internal static class RouteCreateRecoveryLifecycle
         catch (Exception)
         {
             return FailedAfterStoreEntry();
+        }
+
+        return FromPreparation(preparation);
+    }
+
+    internal static RouteCreateRecoveryPreparationResult FromPreparation(
+        RecoveryBundlePreparationResult preparation)
+    {
+        if (preparation.State == RecoveryBundlePreparationState.Blocked
+            && preparation.ResidualPath is null)
+        {
+            return new RouteCreateRecoveryPreparationResult
+            {
+                State = RouteCreateRecoveryPreparationState.Incomplete,
+                Preparation = null,
+                Recovery = Residual(residualPath: null),
+                Cause = preparation.Cause ?? "Route Create recovery preparation is incomplete.",
+            };
         }
 
         return preparation.State switch

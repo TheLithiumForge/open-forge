@@ -19,6 +19,11 @@ internal sealed record RouteInitFinding
                 nameof(target));
         }
 
+        if (code == RouteInitFindingCode.RecoveryConflict)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(target);
+        }
+
         Code = code;
         Status = RouteInitDefinitions.ReadStatus(code);
         Target = target;

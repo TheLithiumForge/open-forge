@@ -56,9 +56,15 @@ internal static class PublishedProcessTestSupport
             .Select(pair => pair.Key)
             .Order(StringComparer.Ordinal)
             .ToArray();
+        var differences = missing.Select(path =>
+            $"{path}: before=[{before[path]}]; after=[{(after.TryGetValue(path, out var value) ? value : "<missing>")}]");
         Assert.True(
             missing.Length == 0 && added.Length == 0,
-            $"The process changed its read-only snapshot. Missing or changed: {string.Join(", ", missing)}; added: {string.Join(", ", added)}. Exit: {result.ExitCode}; stdout: {result.StandardOutput}; stderr: {result.StandardError}.");
+            $"""
+            The process changed its read-only snapshot.
+            Missing or changed: {string.Join("; ", differences)}; added: {string.Join(", ", added)}.
+            Exit: {result.ExitCode}; stdout: {result.StandardOutput}; stderr: {result.StandardError}.
+            """);
         return result;
     }
 }

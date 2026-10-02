@@ -565,7 +565,7 @@ internal sealed class RouteInitApplicationOperation
             cause,
             uncertainAttempt);
 
-    private static RouteInitApplicationOutcome Finish(
+    internal static RouteInitApplicationOutcome Finish(
         RouteInitPlan plan,
         IReadOnlyList<DirectoryCreationReceipt> directories,
         IReadOnlyList<FileChangeReceipt> files,
@@ -574,14 +574,20 @@ internal sealed class RouteInitApplicationOperation
         RouteInitFindingCode code,
         string cause,
         RouteInitApplicationAttempt? uncertainAttempt = null)
-        => RouteInitApplicationResultFactory.Build(
+    {
+        var finding = code == RouteInitFindingCode.RecoveryConflict
+            ? new RouteInitFinding(code, cause, recovery.ResidualPath)
+            : RouteInitApplicationResultFactory.Finding(plan, code, cause);
+
+        return RouteInitApplicationResultFactory.Build(
             plan,
             directories,
             files,
             recovery,
             verification,
-            RouteInitApplicationResultFactory.Finding(plan, code, cause),
+            finding,
             uncertainAttempt);
+    }
 
     private static RouteInitRecovery RecoveryAfterPreparation(
         RecoveryBundlePreparation? preparation)

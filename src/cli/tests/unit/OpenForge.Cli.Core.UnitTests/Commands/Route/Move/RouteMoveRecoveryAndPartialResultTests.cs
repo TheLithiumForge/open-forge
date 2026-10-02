@@ -124,9 +124,9 @@ public sealed class RouteMoveRecoveryAndPartialResultTests
             },
             "recovery-conflict-before-effects" => new RouteMoveRecovery
             {
-                State = RouteMoveRecoveryState.NotCreated,
+                State = RouteMoveRecoveryState.Retained,
                 ProtectedPaths = ["README.md", RouteMoveTestData.SourcePath],
-                ResidualPath = null,
+                ResidualPath = RecoveryPath,
             },
             _ => throw new ArgumentOutOfRangeException(nameof(scenario), scenario, "Unknown recovery scenario."),
         };
@@ -146,7 +146,13 @@ public sealed class RouteMoveRecoveryAndPartialResultTests
             "recovery-unavailable-before-effects" =>
             [RouteMoveTestData.Finding(RouteMoveFindingCode.RecoveryUnavailable, CliSemanticStatus.Incomplete)],
             "recovery-conflict-before-effects" =>
-            [RouteMoveTestData.Finding(RouteMoveFindingCode.RecoveryConflict, CliSemanticStatus.Blocked)],
+            [
+                new RouteMoveFinding(
+                    RouteMoveFindingCode.RecoveryConflict,
+                    CliSemanticStatus.Blocked,
+                    RecoveryPath,
+                    "The synthetic recovery candidate blocks the request."),
+            ],
             "cancellation-with-stronger-failure" =>
             [
                 RouteMoveTestData.Finding(RouteMoveFindingCode.VerificationFailed, CliSemanticStatus.Failed),

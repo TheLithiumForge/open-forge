@@ -329,9 +329,15 @@ internal static class RouteInitReportSelector
             return global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.LabelTheRouteInitResultDidNotContainAFinding();
         }
 
+        if (finding.Code == RouteInitFindingCode.RecoveryConflict)
+        {
+            return CliFindingWording.RecoveryConflict(RecoveryConflictPath(finding));
+        }
+
+        var target = finding.Target ?? result.Target.Requested;
         return RouteInitWording.Message(
             finding.Code,
-            finding.Target ?? result.Target.Requested,
+            target,
             result.WorkspacePath ?? finding.Target ?? result.Target.Requested,
             finding.Cause,
             ProgressedCount(result),
@@ -367,14 +373,16 @@ internal static class RouteInitReportSelector
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = RouteInitWireVocabulary.Name(finding.Code),
             Title = RouteInitWording.FindingTitle(finding.Code),
-            Message = RouteInitWording.Message(
-                finding.Code,
-                target,
-                result.WorkspacePath ?? target,
-                finding.Cause,
-                ProgressedCount(result),
-                result.Effects.Length,
-                result.Recovery.ResidualPath),
+            Message = finding.Code == RouteInitFindingCode.RecoveryConflict
+                ? Message(result, finding)
+                : RouteInitWording.Message(
+                    finding.Code,
+                    target,
+                    result.WorkspacePath ?? target,
+                    finding.Cause,
+                    ProgressedCount(result),
+                    result.Effects.Length,
+                    result.Recovery.ResidualPath),
             Subject = Subject(result, finding, target),
             Resolution = finding.Code == RouteInitFindingCode.NeedsAuthoring
                 ? CliResolution.Informational
@@ -388,6 +396,11 @@ internal static class RouteInitReportSelector
         RouteInitFinding finding,
         string target)
     {
+        if (finding.Code == RouteInitFindingCode.RecoveryConflict)
+        {
+            return new CliSubject(CliSubjectKind.File, Path: RecoveryConflictPath(finding));
+        }
+
         if (finding.Code is RouteInitFindingCode.WorkspaceUnavailable
             or RouteInitFindingCode.WorkspaceUnsafe)
         {
@@ -443,6 +456,10 @@ internal static class RouteInitReportSelector
                 => new CliNextAction("open-forge route init", RouteInitWording.RetryReason()),
             RouteInitFindingCode.RecoveryArtifactRetained
                 => new CliNextAction("open-forge cleanup", RouteInitWording.CleanupReason()),
+            RouteInitFindingCode.RecoveryConflict
+                => new CliNextAction(
+                    "open-forge cleanup --dry-run",
+                    global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.NextRecoveryConflictReason()),
             RouteInitFindingCode.Interrupted
                 => new CliNextAction("open-forge route init", RouteInitWording.RerunReason()),
             _ => null,
@@ -589,4 +606,16 @@ internal static class RouteInitReportSelector
             result.Mode == RouteInitMode.DryRun
                 ? effect.Outcome == RouteInitEffectOutcome.Planned
                 : effect.Outcome == RouteInitEffectOutcome.Verified);
+
+    private static string RecoveryConflictPath(RouteInitFinding finding)
+    {
+        var target = finding.Target;
+        if (string.IsNullOrWhiteSpace(target))
+        {
+            throw new InvalidOperationException(
+                "A recovery-conflict finding must carry its observed recovery file path.");
+        }
+
+        return target;
+    }
 }

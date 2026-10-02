@@ -326,7 +326,7 @@ internal sealed class RouteCreateApplicationOperation
                 "The mutation validation state is not defined."),
         };
 
-    private static RouteCreateFindingCode PreparationFinding(
+    internal static RouteCreateFindingCode PreparationFinding(
         RouteCreateRecoveryPreparationState state)
         => state switch
         {
@@ -347,12 +347,17 @@ internal sealed class RouteCreateApplicationOperation
                 "The Route Create recovery preparation state is not defined."),
         };
 
-    private static RouteCreateResultFormation Failure(
+    internal static RouteCreateResultFormation Failure(
         RouteCreatePlan plan,
         RouteCreateFindingCode code,
         string cause,
         RouteCreateRecovery? recovery = null)
-        => RouteCreateApplicationResultFactory.Build(
+    {
+        var finding = code == RouteCreateFindingCode.RecoveryConflict
+            ? new RouteCreateFinding(code, cause, recovery?.ResidualPath)
+            : RouteCreateEffectApplication.Finding(plan, code, cause);
+
+        return RouteCreateApplicationResultFactory.Build(
             plan,
             new RouteCreateApplicationProgress
             {
@@ -362,6 +367,7 @@ internal sealed class RouteCreateApplicationOperation
                 UncertainAttempt = null,
                 Recovery = recovery ?? RouteCreateEffectApplication.BaseRecovery(plan),
                 Verification = RouteCreateVerificationState.NotRequested,
-                Findings = [RouteCreateEffectApplication.Finding(plan, code, cause)],
+                Findings = [finding],
             });
+    }
 }

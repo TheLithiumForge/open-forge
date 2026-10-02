@@ -75,7 +75,7 @@ internal sealed partial class RouteUpdateApplicationPreparer
                 "The mutation validation state is not defined."),
         };
 
-    private static RouteUpdateApplicationPreparation RecoveryBoundary(
+    internal static RouteUpdateApplicationPreparation RecoveryBoundary(
         RouteUpdatePlan plan,
         RouteUpdateRecoveryPreparationResult recovery,
         MutationValidationResult validation)
@@ -104,16 +104,18 @@ internal sealed partial class RouteUpdateApplicationPreparer
                 recovery.State,
                 "The Route Update recovery preparation state is not defined."),
         };
+        var cause = recovery.Cause ?? "Route Update recovery preparation did not complete.";
+        var finding = mapped.Item2 == RouteUpdateFindingCode.RecoveryConflict
+            ? new RouteUpdateFinding(mapped.Item2, cause, recovery.Recovery.ResidualPath)
+            : Finding(plan, mapped.Item2, cause);
+
         return new RouteUpdateApplicationPreparation
         {
             State = mapped.Item1,
             RecoveryPreparation = null,
             Validation = validation,
             Recovery = recovery.Recovery,
-            Finding = Finding(
-                plan,
-                mapped.Item2,
-                recovery.Cause ?? "Route Update recovery preparation did not complete."),
+            Finding = finding,
         };
     }
 

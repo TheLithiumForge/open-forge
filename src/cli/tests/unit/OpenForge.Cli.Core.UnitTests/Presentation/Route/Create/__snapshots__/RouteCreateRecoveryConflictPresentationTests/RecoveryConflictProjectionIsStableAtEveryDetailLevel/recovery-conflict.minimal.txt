@@ -1,0 +1,2 @@
+Cannot create .agents/memory/project-alpha/overview.md: Recovery data from an earlier run exists at recovery/open-forge/recovery-candidate.zip and blocks this change. Nothing was changed.
+Next: open-forge cleanup --dry-run

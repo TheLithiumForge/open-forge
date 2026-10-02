@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Ownership.Models;
+using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -99,7 +100,10 @@ internal sealed class RouteInitPlanFinalizer
                 inspection,
                 RouteInitFindingCode.RecoveryConflict,
                 "A recognized recovery candidate conflicts with this Route Init plan.",
-                incomplete: false),
+                incomplete: false) with
+            {
+                FindingTarget = recovery.Candidates[0].Path,
+            },
             RecoveryBundleCatalogueState.Unavailable => Boundary(
                 inspection,
                 RouteInitFindingCode.RecoveryUnavailable,

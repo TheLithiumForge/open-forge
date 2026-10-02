@@ -60,7 +60,18 @@ internal static class RouteUpdateRecoveryResultProjector
 
     internal static RouteUpdateRecoveryPreparationResult FromPreparation(
         RecoveryBundlePreparationResult result)
-        => result.State switch
+    {
+        if (result.State == RecoveryBundlePreparationState.Blocked
+            && result.ResidualPath is null)
+        {
+            return Preparation(
+                RouteUpdateRecoveryPreparationState.Incomplete,
+                preparation: null,
+                Residual(residualPath: null),
+                result.Cause ?? "Route Update recovery preparation is incomplete.");
+        }
+
+        return result.State switch
         {
             RecoveryBundlePreparationState.Prepared when result.Preparation is { } verified =>
                 Preparation(
@@ -94,6 +105,7 @@ internal static class RouteUpdateRecoveryResultProjector
                 result.State,
                 "The recovery preparation state is not defined."),
         };
+    }
 
     internal static RouteUpdateRecoveryCompletionResult FromDeletion(
         RecoveryBundlePreparation preparation,

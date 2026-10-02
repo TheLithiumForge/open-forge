@@ -263,6 +263,11 @@ internal sealed class RouteUpdateFinding
                 nameof(target));
         }
 
+        if (code == RouteUpdateFindingCode.RecoveryConflict)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(target);
+        }
+
         RouteUpdateDefinitions.ReadStatus(code);
         Code = code;
         Target = target;

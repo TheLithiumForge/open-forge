@@ -618,7 +618,13 @@ The finding catalogue is:
 | route-move.interrupted                   | error    | interrupted                 |                                                                                                        |                                     |
 
 Findings retain code, severity, family, message, subject, cause, and next
-action when available. Counts are:
+action when available. For `recovery-conflict`, the exact positively observed
+recovery candidate appears in the file subject's `path` and message. The
+requested route remains the command subject. The finding action and report next
+action are `open-forge cleanup --dry-run` so users can review cleanup eligibility
+and proposed removals. The exact reason is
+`Review the recovery file and preview what cleanup would remove before deleting anything.`
+Recovery-bundle admission is unchanged. Counts are:
 
 `filesMoved`, `sectionsUpdated`, `linksRewritten`, `filesScanned`.
 

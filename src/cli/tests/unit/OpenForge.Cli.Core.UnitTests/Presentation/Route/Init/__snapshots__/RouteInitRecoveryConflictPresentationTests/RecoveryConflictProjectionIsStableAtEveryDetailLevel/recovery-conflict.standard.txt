@@ -1,0 +1,8 @@
+Cannot initialize .agents/memory/project-alpha/documents/_documents.md: Recovery data from an earlier run exists at recovery/open-forge/recovery-candidate.zip and blocks this change. Nothing was changed.
+  Error  recovery/open-forge/recovery-candidate.zip  Recovery data blocks the change
+         Recovery data from an earlier run exists at recovery/open-forge/recovery-candidate.zip and blocks this change. Nothing was changed.
+         open-forge cleanup --dry-run
+         Review the recovery file and preview what cleanup would remove before deleting anything.
+  Scaffold: generic
+  Review the recovery file and preview what cleanup would remove before deleting anything.
+Next: open-forge cleanup --dry-run

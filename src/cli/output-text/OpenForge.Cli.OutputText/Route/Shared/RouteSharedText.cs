@@ -8,6 +8,10 @@ internal static class RouteSharedText
     internal static string LabelTheBlockingConditionIsNotDefined()
         => "the blocking condition is not defined";
 
+    // @OpenForgeText route.shared.next.recovery-conflict
+    internal static string NextRecoveryConflictReason()
+        => "Review the recovery file and preview what cleanup would remove before deleting anything.";
+
     // @OpenForgeText route.shared.title.invalid-target
     internal static string TitleInvalidTarget()
         => "Invalid target";

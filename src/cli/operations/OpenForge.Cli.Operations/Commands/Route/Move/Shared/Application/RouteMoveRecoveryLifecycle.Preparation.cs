@@ -94,10 +94,10 @@ internal static partial class RouteMoveRecoveryLifecycle
             RouteMoveRecoveryPreparationState.Blocked,
             RouteMoveRecoveryState.Retained,
             path,
-            Finding(
-                plan,
+            new RouteMoveFinding(
                 RouteMoveFindingCode.RecoveryConflict,
                 CliSemanticStatus.Blocked,
+                path,
                 "An existing recovery candidate conflicts with this Route Move application."));
 
     private static RouteMoveRecoveryPreparationResult FromCatalogue(
@@ -116,10 +116,17 @@ internal static partial class RouteMoveRecoveryLifecycle
                     CliSemanticStatus.Incomplete,
                     catalogue.Cause ?? "The Route Move recovery catalogue is unavailable."));
 
-    private static RouteMoveRecoveryPreparationResult FromStored(
+    internal static RouteMoveRecoveryPreparationResult FromStored(
         RouteMovePlan plan,
         RecoveryBundlePreparationResult stored)
-        => stored.State switch
+    {
+        if (stored.State == RecoveryBundlePreparationState.Blocked
+            && stored.ResidualPath is null)
+        {
+            return IncompletePreparation(plan, stored);
+        }
+
+        return stored.State switch
         {
             RecoveryBundlePreparationState.Prepared when stored.Preparation is { } preparation =>
                 CompletePreparation(
@@ -136,6 +143,7 @@ internal static partial class RouteMoveRecoveryLifecycle
             _ => throw new ArgumentOutOfRangeException(
                 nameof(stored), stored.State, "The recovery preparation state is not defined."),
         };
+    }
 
     private static RouteMoveRecoveryPreparationResult IncompletePreparation(
         RouteMovePlan plan,
@@ -161,10 +169,10 @@ internal static partial class RouteMoveRecoveryLifecycle
                 ? RouteMoveRecoveryState.NotCreated
                 : RouteMoveRecoveryState.Retained,
             stored.ResidualPath,
-            Finding(
-                plan,
+            new RouteMoveFinding(
                 RouteMoveFindingCode.RecoveryConflict,
                 CliSemanticStatus.Blocked,
+                stored.ResidualPath,
                 stored.Cause ?? "Route Move recovery preparation is blocked."));
 
     private static RouteMoveRecoveryPreparationResult InterruptedPreparation(

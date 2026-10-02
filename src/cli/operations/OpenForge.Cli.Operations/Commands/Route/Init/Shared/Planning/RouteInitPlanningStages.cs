@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Ownership.Models;
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
@@ -7,15 +8,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
-
-internal sealed record RouteInitPlanningBoundary(
-    RouteInitFindingCode Code,
-    string Cause,
-    bool Incomplete,
-    RouteInitTargetFacts? Target = null,
-    string? Requested = null,
-    RouteInitFrameworkAlignment? Alignment = null,
-    FrameworkPayload? Payload = null);
 
 internal sealed record RouteInitFrameworkPlanningBasis(
     RouteInitFrameworkAlignment Alignment,

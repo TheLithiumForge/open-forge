@@ -1,0 +1,3 @@
+Cannot move memory/guides/old guide: Recovery data from an earlier run exists at recovery/open-forge/recovery-candidate.zip and blocks this change. Nothing was changed.
+  .agents/memory/guides/old guide.md -> .agents/memory/archive/new guide.md
+Next: open-forge cleanup --dry-run

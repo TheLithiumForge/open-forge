@@ -59,7 +59,9 @@ internal sealed class RouteInitPlanResultProjector
             [new RouteInitFinding(
                 boundary.Code,
                 boundary.Cause,
-                target?.Id ?? request.RouteTarget)]);
+                boundary.Code == RouteInitFindingCode.RecoveryConflict
+                    ? boundary.FindingTarget
+                    : boundary.FindingTarget ?? target?.Id ?? request.RouteTarget)]);
         return new RouteInitPlanBuild(Plan: null, formation);
     }
 

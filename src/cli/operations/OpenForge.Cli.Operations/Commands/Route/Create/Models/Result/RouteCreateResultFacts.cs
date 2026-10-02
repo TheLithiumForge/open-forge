@@ -107,6 +107,11 @@ internal sealed class RouteCreateFinding
                 nameof(target));
         }
 
+        if (code == RouteCreateFindingCode.RecoveryConflict)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(target);
+        }
+
         RouteCreateDefinitions.ReadStatus(code);
         Code = code;
         Target = target;

@@ -36,6 +36,11 @@ internal sealed record RouteMoveFinding
         }
 
         ArgumentException.ThrowIfNullOrWhiteSpace(cause);
+        if (code == RouteMoveFindingCode.RecoveryConflict)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(target);
+        }
+
         Code = code;
         Status = status;
         Target = target;
