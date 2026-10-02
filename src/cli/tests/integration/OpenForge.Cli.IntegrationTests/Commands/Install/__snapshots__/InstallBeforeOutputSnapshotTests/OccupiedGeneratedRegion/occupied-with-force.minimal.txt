@@ -1,5 +1,7 @@
 Installed the Open Forge Framework into <workspace>, replacing 1 existing file.
 Workspace: <workspace>
-  .agents/memory/_memory.md  replaced
-  Created 12 files and 11 directories under .agents (listed in .agents/open-forge.lock.json).
+  .agents/memory/_memory.md            replaced
+  .agents/memory/_memory.overwrite.md  Migrated: content preserved
+  Created 13 files and 11 directories under .agents.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
+  Migrated 1 source.

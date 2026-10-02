@@ -46,6 +46,10 @@ public sealed class LayerBoundaryTests
                 if (imported.StartsWith("Framework.", StringComparison.Ordinal)) offences.Add($"{path}: {imported}");
                 if (imported.StartsWith("Commands.", StringComparison.Ordinal))
                 {
+                    var sharedMigrationResult = imported == "Commands.Shared.WorkspaceAdoption.Models.Result"
+                        && (path.StartsWith("Presentation/Install/", StringComparison.Ordinal)
+                            || path.StartsWith("Presentation/Update/", StringComparison.Ordinal));
+                    if (sharedMigrationResult) continue;
                     var segments = imported.Split('.');
                     var models = Array.IndexOf(segments, "Models");
                     var owner = models < 0 ? string.Empty : string.Join('/', segments[1..models]);

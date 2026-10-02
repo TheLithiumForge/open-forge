@@ -6,7 +6,12 @@ namespace OpenForge.Cli.Core.Commands.Update.Models.Planning;
 internal sealed record UpdateGeneratedNavigationBuild(
     IReadOnlyDictionary<string, byte[]> TargetBytes,
     IReadOnlyList<FileStateSnapshot> ProjectionInputs,
-    UpdateFinding? Finding);
+    UpdateFinding? Finding)
+{
+    public IReadOnlyList<UpdateAdoptionTarget> AdoptionTargets { get; init; } = [];
+
+    public IReadOnlyList<UpdateMigrationPlan> Migrations { get; init; } = [];
+}
 
 internal sealed record UpdateProjectionInputRead(
     FileStateSnapshot? Snapshot,

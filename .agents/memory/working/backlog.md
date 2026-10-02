@@ -11,26 +11,33 @@ is preserved as [historical backlog](../archived/cli-development/backlog-pre-cle
 
 ## Current priorities
 
-1. Beta 2 is published and verified in
-   [Task 59](cli-development/tasks/task59-beta-2-release.md). Review the
-   [1.0 readiness analysis](../emerging/analysis/one-zero-release-readiness.md)
-   before selecting further implementation. Its recommendations remain proposals.
-2. Work through the open Tasks in the
-   [current order](cli-development/tasks/_tasks.md#current-order), accepted on
-   2026-09-28 from the
-   [open task review](../emerging/analysis/open-task-review/_open-task-review.md).
-3. Close the remaining items in
-   [Beta follow-ups](cli-development/tasks/beta-follow-ups.md) and the open CLI
-   Tasks in their recorded order.
-4. Use the protected [Authors' Findings](../emerging/authors-findings/_authors-findings.md) route
-   for maintainer notes that must not be archived or pruned without explicit
-   direction.
-5. Complete [Local Planning](local-planning.md) before changing the loader
-   rules, Analysis placement, Planning Extension/templates, task completion
-   tracking, or archival semantics.
-
-Future CLI work is not active until it receives a new Task and acceptance
-boundary.
+1. The current public release remains beta4. [Task 69](cli-development/tasks/task69-next-beta-stabilization-release.md) records its
+   completed qualification and release, and [Task 68](cli-development/tasks/task68-repository-link-validation.md) records
+   the completed link gate. Beta5 is selected. Publication is authorized only
+   after a green, clean squash integration on `develop` and the exact six-host,
+   package, site, and user-journey gates pass. The [wave capsule](cli-development/one-zero-polish-wave.md) and
+   [project-control ledger](cli-development/project-control.md#active-task-ledger) carry the release boundary and task details.
+2. [Task 70 — Existing workspace adoption during
+   installation](cli-development/tasks/task70-existing-workspace-adoption-during-installation.md) is the top beta5
+   priority. Its local v9 qualification and the one fresh review with grouped
+   F1–F5 corrections are complete; the guarded 77-source handoff is verified.
+   It remains unintegrated. Combined managed/native/package/site and actual
+   published beta4-to-beta5 upgrade gates, develop squash/push, final Root
+   acceptance, release and public postchecks remain pending.
+   Tasks 32 Minimal Output Sweep, 47 Entrypoint reachability and its default
+   Skill indexing follow-up, 54 Tag trimming, and 64 CLI defects and contract
+   drift are independently qualified and squash-integrated locally on
+   `develop`; final combined qualification remains pending.
+3. Tasks 39 Output Audit and 34 Interpolated Value Markup are paused with saved
+   worktree state. Task 48 Scoping for Extension routes is deferred beyond beta5
+   but remains required before 1.0. Follow the [wave capsule](cli-development/one-zero-polish-wave.md) for postponed and
+   unselected work and the release boundary.
+4. Other beta work stays in [Beta follow-ups](cli-development/tasks/beta-follow-ups.md). Use the protected
+   [Authors' Findings](../emerging/authors-findings/_authors-findings.md) route for maintainer notes that must not be
+   archived or pruned without explicit direction.
+5. The Task 65 placement question is closed. The broader [Local Planning review](local-planning.md) remains open
+   before changes to task lifecycle, completion tracking, organization, or
+   archival semantics.
 
 ## Archived on 2026-09-25
 

@@ -54,7 +54,7 @@ public sealed class InstallDefinitionsContractTests
             ["apply", "dry-run"],
             Enum.GetValues<InstallMode>().Select(InstallDefinitions.ReadMachineName));
         Assert.Equal(
-            ["safe-absence", "trusted-exact", "managed-divergence", "eligible-initial-occupant"],
+            ["safe-absence", "trusted-exact", "managed-divergence", "eligible-initial-occupant", "managed-adoption"],
             Enum.GetValues<InstallManagementClassification>().Select(InstallDefinitions.ReadMachineName));
         Assert.Equal(
             ["directory", "file", "managed-region", "generated-region"],

@@ -1,8 +1,24 @@
-Cannot install: 1 file already exists where the Framework would write.
+Installed the Open Forge Framework into <workspace>, replacing 1 existing file.
 Workspace: <workspace>
-  Error  .agents/memory/_memory.md  Target is occupied
-         .agents/memory/_memory.md already exists and is not managed by Open Forge.
-         open-forge install --force --dry-run
-         Preview replacing the occupied Framework targets.
-  Preview replacing the occupied Framework targets.
-Next: open-forge install --force --dry-run
+  .agents/directives/_directives.md             created
+  .agents/guidance/_guidance.md                 created
+  .agents/loader.md                             created
+  .agents/maps/_maps.md                         created
+  .agents/memory/_memory.md                     replaced
+  .agents/memory/_memory.overwrite.md           created
+  .agents/memory/archived/_archived.md          created
+  .agents/memory/crystallized/_crystallized.md  created
+  .agents/memory/emerging/_emerging.md          created
+  .agents/memory/working/_working.md            created
+  .agents/patterns/_patterns.md                 created
+  .agents/skills/_skills.md                     created
+  .agents/skills/open-forge-cli/SKILL.md        created
+  .agents/templates/_templates.md               created
+  AGENTS.md                                     created with an Open Forge section
+  CLAUDE.md                                     created with an Open Forge section
+  .agents/open-forge.lock.json                  created as the ownership receipt
+  .agents/memory/_memory.overwrite.md           Migrated: content preserved
+  Created 13 files and 11 directories under .agents.
+  Created AGENTS.md and CLAUDE.md with an Open Forge section.
+  Created 11 directories.
+  Migrated 1 source.

@@ -1,6 +1,8 @@
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Distribution.Models.Content;
 using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
@@ -24,8 +26,22 @@ internal sealed class InstallContentIdentity
         {
             if (!currentTargets.TryGetValue(target.Key, out var read)
                 || read.State != InstallTargetReadState.File
-                || read.Snapshot is not { HasBytes: true } snapshot
-                || !string.Equals(ReadSourceFingerprint(snapshot.Bytes.AsSpan()),
+                || read.Snapshot is not { HasBytes: true } snapshot)
+            {
+                return false;
+            }
+
+            if (intended.UserOwnedPaths.Contains(target.Key))
+            {
+                if (!snapshot.Bytes.AsSpan().SequenceEqual(target.Value))
+                {
+                    return false;
+                }
+
+                continue;
+            }
+
+            if (!string.Equals(ReadSourceFingerprint(snapshot.Bytes.AsSpan()),
                     ReadSourceFingerprint(target.Value), StringComparison.Ordinal)
                 || (intended.GeneratedRegionPaths.Contains(target.Key)
                     && !string.Equals(ReadGeneratedFingerprint(snapshot.Bytes.AsSpan()),
@@ -56,6 +72,69 @@ internal sealed class InstallContentIdentity
 
         return true;
     }
+
+    internal bool IsManagedBaseAdmissible(
+        IReadOnlyDictionary<string, InstallTargetRead> currentTargets,
+        InstallIntendedState intended)
+    {
+        foreach (var target in intended.TargetBytes)
+        {
+            if (intended.UserOwnedPaths.Contains(target.Key))
+            {
+                continue;
+            }
+
+            if (!currentTargets.TryGetValue(target.Key, out var read)
+                || read.State != InstallTargetReadState.File
+                || read.Snapshot is not { HasBytes: true } snapshot
+                || !string.Equals(ReadSourceFingerprint(snapshot.Bytes.AsSpan()),
+                    ReadSourceFingerprint(target.Value), StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (!intended.GeneratedRegionPaths.Contains(target.Key))
+            {
+                continue;
+            }
+
+            var currentGenerated = ReadGeneratedFingerprint(snapshot.Bytes.AsSpan());
+            var intendedGenerated = ReadGeneratedFingerprint(target.Value);
+            if (!string.Equals(currentGenerated, intendedGenerated, StringComparison.Ordinal)
+                && !HasNavigationMigration(intended, target.Key))
+            {
+                return false;
+            }
+        }
+
+        foreach (var block in intended.ManagedBlockBytes)
+        {
+            if (!currentTargets.TryGetValue(block.Key, out var read)
+                || read.State != InstallTargetReadState.File
+                || read.Snapshot is not { HasBytes: true } snapshot)
+            {
+                return false;
+            }
+
+            var resolution = ResolveManagedBlock(snapshot.Bytes.AsSpan(), block.Value);
+            if (resolution.State != ManagedBlockState.Present
+                || resolution.ExistingBlockBytes is not { } bytes
+                || !string.Equals(ReadSourceFingerprint(bytes),
+                    ReadSourceFingerprint(block.Value), StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool HasNavigationMigration(
+        InstallIntendedState intended,
+        string path)
+        => intended.Migrations.Any(migration =>
+            string.Equals(migration.Path, path, StringComparison.Ordinal)
+            && migration.Actions.Contains(WorkspaceAdoptionAction.NavigationUpdated));
 
     internal ManagedBlockResolution ResolveManagedBlock(
         ReadOnlySpan<byte> currentBytes,

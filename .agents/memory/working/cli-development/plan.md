@@ -6,75 +6,72 @@ open-forge:
 
 # Development Plan
 
-## Accepted beta-stabilization selection
+## 2026-10-02 execution window
 
-On 2026-10-01, the maintainer accepted [Task 69 — Next beta stabilization and
-release](tasks/task69-next-beta-stabilization-release.md) as the bounded next
-horizon. [Task 68 — Repository link validation](tasks/task68-repository-link-validation.md)
-is its offline link-gate packet. Root is the active owner, execution is through
-Worker Watch, and no completion grace has been consumed. The current boundary
-is Task 69 phase 3/3, milestone 5/5: implementation, qualification, clean
-squash, hosted six-host gate, publication, package, documentation, upgrade,
-and demonstration receipts are complete. Beta4 is the current public release.
-The detailed final receipt is in [Task 69's candidate and merge receipt](tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
-The proposed B6
-recovery-coexistence relaxation is explicitly deferred pending maintainer
-direction. Beta4 preserves current recovery blocking behavior, and this
-separate follow-up does not block shipping the accepted concrete fixes.
+The maintainer requested the first-install preservation fixes on a branch by
+12:00, with squash commit, push, and release permitted only from 12:00 through
+13:00 Europe/Zurich. The candidate is therefore qualified before committing,
+using its actual HEAD, complete source-change fingerprint, and immutable built
+artifacts. Freeze its complete file tree for exact comparison with the develop
+squash. This timing instruction supersedes the earlier requirement to commit
+candidate C before local qualification; every qualification gate remains.
+The [Task 70 record](tasks/task70-existing-workspace-adoption-during-installation.md)
+tracks the current correction and evidence. No individual requalification of
+Tasks 32, 47, 54, or 64 was requested.
 
-- Task 64 remains open for the separate B6 follow-up after its accepted bounded
-  fixes. Task 61 covers stale documentation and its maintainer review remains
-  unchecked. Task 32 owns bounded pending/next-action polish while its full
-  sweep remains queued.
-- Task 68 is complete at phase 2/2, milestone 3/3. Its exact specification,
-  named-root scope, parser/resolver boundary, checker, tests, and wiring remain
-  frozen and accepted. The two stale anchors are fixed, and no source beyond
-  the named roots is silently excluded.
-- The confirmation discussion is closed by preserving existing runtime final
-  confirmations and correcting Create and Install help and contracts. This
-  makes no runtime policy change.
-- The current public release on npm and GitHub is `0.9.0-beta.4`. The detailed
-  qualification, review, merge, hosted-run, package, upgrade, documentation,
-  and publication receipts are in [Task 69's candidate and merge receipt](tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
-  One whole-candidate review and one focused recheck were consumed. One grouped
-  correction pass was consumed, with zero completion grace consumed.
-- Task 53's full loading audit remains outside this horizon. Task 55's full
-  investigation remains open outside this horizon; its bounded local triage is
-  recorded, and no APM implementation is authorized. Task 59's beta 2 receipt
-  remains historical and unchanged.
+## Completed beta4 stabilization horizon
 
-## Current selection
+[Task 69](tasks/task69-next-beta-stabilization-release.md) completed beta4
+qualification and release. [Task 68](tasks/task68-repository-link-validation.md)
+completed the offline link-validation gate. Their phase, milestone, package,
+hosted-run, documentation, upgrade, and demonstration receipts remain in those
+Task records. `0.9.0-beta.4` remains the current public release. The selected
+beta5 release target is `0.9.0-beta.5`, and its version preparation is
+complete. Tasks 47, 54, 32, and 64 are squash-integrated into clean local
+`develop`; beta4 remains public, and beta5 has not been pushed or published.
+See the [wave
+capsule](one-zero-polish-wave.md) for the preparation receipt and current
+release boundary.
 
-Version `0.9.0-beta.4` is public on npm and GitHub, and the documentation site
-is deployed. Task 69 retains the completed beta4 release receipt. Task 59
-retains the historical beta 2 release and package verification receipt. On 2026-09-28 the maintainer accepted the
-[open task review](../../emerging/analysis/open-task-review/_open-task-review.md):
-ten Tasks closed, two folded into others, and one order for the rest.
+## Beta5 qualification horizon
 
-- [Task 61](tasks/task61-documentation-accuracy-and-voice.md) tracks the current
-  documentation reconciliation. Its local documentation gates are green, and
-  the maintainer review checkbox remains unchecked.
-- The root-authored [1.0 release readiness assessment](../../emerging/analysis/one-zero-release-readiness.md)
-  remains contextual input and does not authorize implementation.
-- [Task 64](tasks/task64-cli-defects-and-contract-drift.md) remains open for its
-  separate B6 follow-up after the accepted bounded fixes. The full [Task 53](tasks/task53-loading-and-scoping-audit.md) audit remains outside the current horizon.
-- [Task 68](tasks/task68-repository-link-validation.md) is complete at phase
-  2/2, milestone 3/3. Its exact named-root scope and checker contract remain
-  accepted, including the two explicit exclusions and no arbitrary directory
-  filtering. Task 69 is complete at phase 3/3, milestone 5/5; its release
-  receipt records the hosted qualification and publication.
-- Decisions before 1.0 are pending on Tasks 36, 37, 63, and 65.
-- On 2026-09-29, [Task 62](tasks/task62-glob-scoped-loading.md) was narrowed to
-  optional `applyTo` loading and CLI filtering. The maintainer accepted the
-  recommendations and authorized implementation. Its implementation is
-  complete and integrated in the verified candidate on `develop` and `main`.
-  The [execution packets](tasks/task62/_task62.md) record the passing
-  managed/native qualification as historical evidence, not current beta 4
-  qualification. Task 59 retains the completed beta 2 release checks.
-- [Task 55](tasks/task55-alternative-root.md) remains a separate open
-  investigation of alternative roots and APM interoperability outside the
-  current horizon. Its bounded local triage is recorded; the full investigation
-  remains open.
+The selected beta5 scope is Tasks 32, 47, 54, 64, and 70. All local combined
+gates now pass: 10,360 runtime checks, 34 platform exclusions, package/site
+qualification, and the actual published-beta4 upgrade journey. The
+[Task 70 record](tasks/task70-existing-workspace-adoption-during-installation.md)
+records final identities and evidence. Root accepts the candidate for integration.
+Tasks 32, 47, 54, and 64 already have their individual squash commits on develop.
+Task 70 and the beta5 version preparation remain on the qualified branch.
+
+During the authorized noon window, squash the frozen candidate into develop as
+M and require exact tree equality. Push develop, require a green exact-M
+six-host hosted Build, then follow normal main/release integration and public
+postchecks. Do not repeat the completed local suites without a new failure or
+source change. Beta4 remains public until publication succeeds; no release notes
+are required. Tasks 34 and 39 stay paused. Task 48 remains deferred beyond beta5
+and required before 1.0. Task closure remains pending release acceptance.
+
+## Original 1.0 polish selection
+
+On 2026-10-01, the maintainer selected the 1.0 polish wave recorded in the
+[wave capsule](one-zero-polish-wave.md) and [Task index](tasks/_tasks.md#current-order).
+Current task states and lane ownership are in the
+[project-control ledger](project-control.md#active-task-ledger); frozen
+decisions, selection boundaries, and deferred work are in the [wave
+capsule](one-zero-polish-wave.md).
+
+Task 32 remains included on the assumption that the spoken reference to 42
+meant Task 32; optional clarification is not a blocker.
+
+Task 55 is complete at phase 1/1, milestone 1/1. The maintainer retained the
+current root; APM coexistence remains product direction, not certification.
+Task 65 is complete at phase 1/1, milestone 1/1. It closes only the placement
+question; the broader [Local Planning review](../local-planning.md) remains
+open.
+
+Frozen decisions, name mappings, and deferred work are in the wave capsule. Task 59
+retains the historical beta2 release receipt. Tasks 68 and 69 retain their
+completed beta4 and link-validation receipts unchanged.
 
 ## Open work
 

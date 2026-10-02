@@ -112,6 +112,7 @@ internal static class UpdatePlanResultFactory
             Lifecycle = lifecycle,
             Recovery = recovery,
             Verification = verification,
+            Migrations = UpdateMigrationFacts.Create(completion.Intended.Migrations, resultEffects),
             Findings = findings,
         });
     }

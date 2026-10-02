@@ -110,7 +110,20 @@ YAML implementation does not make arbitrary YAML part of the Framework.
 
 Authored frontmatter must be semantically complete: a non-empty natural-language `description` must describe the routed file accurately enough to select or skip it, and tags must accurately classify its loading, role, state, scope, or useful topic. Tools and review fail closed when required authored metadata is missing, malformed, ambiguous, or semantically inconsistent with the routed source rather than inventing meaning from filenames or bodies.
 
-The frozen MVP has not implemented this enforcement yet. It may fabricate a fallback description and tags; the [MVP Architecture](../../cli/mvp-architecture.md#metadata-and-overwrite-integrity) records that temporary liability without changing the canonical contract.
+The root Install contract defines bounded initial and verified-managed-base
+adoption. Install completes only selected missing compatible required metadata
+in prospective source bytes before its existing navigation projection. Managed
+adoption first verifies authored managed payload identity and may update only
+the generated navigation required by those scoped sources. This does not relax
+the shared parser, Index selector, or projector, and it does not change how
+other operations handle incomplete metadata. The [Install Interface](../../cli/contracts/install/interface.md#initial-workspace-adoption)
+defines the candidate boundary, preservation rules, and permitted derivations.
+
+The released beta 4 baseline predates this enforcement. Task70 remains in
+authoring and qualification; no shipping claim is implied here. The [MVP
+Architecture](../../cli/mvp-architecture.md#metadata-and-overwrite-integrity)
+records the temporary baseline liability without changing the canonical
+contract.
 
 The `description` helps a reader decide whether to open the file. It provides enough purpose, trigger, or outcome to select or skip the route before loading its body. It is natural and suggestive rather than a repeated formula.
 
@@ -119,6 +132,13 @@ The optional `responsibility` helps an editor decide what belongs in the file. I
 Use `responsibility` only when it adds a useful boundary beyond the route and description. Category entrypoints normally do not need it because their route, definition, primary question, and generated entries already express their responsibility.
 
 Direct-load files that are never indexed do not need Open Forge metadata unless another tool or contract requires it. Standard files such as `SKILL.md` keep the metadata required by their active runtime.
+
+Native `SKILL.md` frontmatter remains governed by its native contract.
+Install may complete a missing required native name or description under the
+bounded initial or verified-managed-base adoption rule. It preserves existing
+native fields, leaves an absent optional `license` absent, and does not wrap the
+Skill in `open-forge:` metadata or add generated `Entries` to it. The Install
+contract defines its permitted derivations and revalidation boundary.
 
 ### File Conditions
 
@@ -208,6 +228,10 @@ Open Forge-authored tags:
 - Appear only when they improve selection, classification, loading, or retrieval
 
 The [loader](../../../../../loader.md#defined-tags) is authoritative for reserved tag meanings. Ordinary tags remain routing and search signals unless a loaded source explicitly defines more.
+
+Install may add the `Workspace` search tag only when a new required ordinary
+completion needs classification. It does not synthesize loading, behavior,
+authority, or state tags. The Install Interface defines this narrow exception.
 
 ## Headings And Semantic Sections
 

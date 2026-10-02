@@ -35,6 +35,9 @@ internal sealed record UpdateData
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Verification { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<UpdateDataMigration>? Migrations { get; init; }
+
     [JsonIgnore]
     internal IReadOnlyList<UpdateDataTextRow> TextRows { get; init; } = [];
 
@@ -151,6 +154,26 @@ internal sealed record UpdateDataEffect
 
     [JsonIgnore]
     internal string? Reason { get; init; }
+}
+
+internal sealed record UpdateDataMigration
+{
+    public required string Path { get; init; }
+
+    public required IReadOnlyList<string> Actions { get; init; }
+
+    public required IReadOnlyList<string> Fields { get; init; }
+
+    public required IReadOnlyList<UpdateDataMigrationDerivation> Derivation { get; init; }
+
+    public required string Outcome { get; init; }
+}
+
+internal sealed record UpdateDataMigrationDerivation
+{
+    public required string Field { get; init; }
+
+    public required string Source { get; init; }
 }
 
 internal sealed record UpdateDataRelation

@@ -611,6 +611,13 @@ operands it uses the supplied source IDs or exact `.agents` paths: an
 entrypoint selects its subtree and the parent that lists it, and a routed file
 selects the parent that lists it.
 
+Default Index and explicit Loader or entrypoint selections also maintain
+recognized catalogues in the immediate child directories of native Skills
+already reachable beneath `.agents/skills`, including their catalogue
+subtrees. This updates navigation without changing runtime loading or
+activating a Skill. Selecting a native `SKILL.md` alone still selects only its
+exposing parent.
+
 ```sh
 open-forge index --dry-run
 open-forge index memory/crystallized/documents --dry-run
@@ -670,8 +677,44 @@ replacement and deletion.
 
 ```sh
 open-forge install --dry-run
+open-forge install
 open-forge install --automatic --dry-run
 ```
+
+`--dry-run` changes nothing. A plain `install` shows the same plan and asks for
+the normal confirmation.
+
+Install can also adopt an existing `.agents/` tree in the selected standard
+routes. It completes missing `name` and `description` fields in native
+`SKILL.md` frontmatter and creates needed navigation entrypoints. Ordinary
+Markdown without optional frontmatter stays unchanged. Valid native metadata,
+unknown YAML fields, Skill bodies, references, scripts, assets, and other
+support-file bytes stay intact. Skills remain native `SKILL.md` packages,
+without an Open Forge wrapper or competing Skill-root entrypoint. New resource
+catalogues and migrated original Skill files remain user-owned. Framework
+manages only its generated navigation regions in those catalogues.
+
+During first installation, an unowned file at a bundled category entrypoint
+path is preserved in its adjacent overwrite companion. For example, existing
+content in `.agents/guidance/_guidance.md` moves to
+`_guidance.overwrite.md`, and the Framework base is installed at `_guidance.md`.
+Existing overwrite content stays last, and generated `Entries` are rebuilt in
+the base. An unowned native Skill at the bundled `SKILL.md` path stays in place.
+These preservation cases do not require `--force`.
+
+Previews report planned migration paths. Applied results report migration paths
+only after verification. JSON results include `data.migrations` only when
+migration rows exist. Safe adoption needs no special migration flag or
+`--force`. After adding a downloaded Skill, run `install` again when the
+managed Framework matches the embedded payload to adopt its missing metadata
+or navigation. After a successful migration, another install makes no
+migration changes. `install` does not reconcile a divergent managed payload;
+after upgrading the CLI, use `update` for that reconciliation and compatible
+Skill adoption.
+
+Install reports malformed or ambiguous metadata and unsafe conflicts with the
+affected paths. It does not repair arbitrary invalid YAML or overwrite edited
+managed content. Existing `--force` and update boundaries still apply.
 
 `--force` permits eligible existing files to be replaced while management
 is being established. It does not adopt arbitrary existing content or bypass a
@@ -683,8 +726,21 @@ conflict. `--automatic` removes prompting but adds no force or safety authority.
 
 ```sh
 open-forge update --dry-run
+open-forge update
 open-forge update --prune --dry-run
 ```
+
+After upgrading the CLI, use `update --dry-run` and then plain `update` for an
+already managed Framework. `update` also adopts compatible native Skills while
+reconciling older or edited Framework content it owns, under the same metadata,
+navigation, ownership, and conflict rules described under `install`. Previews
+report planned migration paths. Applied paths appear only after verification.
+JSON results include `data.migrations` only when rows exist. Normal Update
+confirmation, recovery, verification, exclusions, and foreign-owner boundaries
+apply. `--automatic` skips confirmation but grants no force. After a successful
+migration, repeating `update` makes no further migration changes. `update` does
+not establish management for an absent or unknown installation. Safe adoption
+needs no migration flag or `--force`.
 
 Managed `AGENTS.md` and `CLAUDE.md` hosts use a visible boundary. The
 canonical form starts with a top-level `# Open Forge` heading and ends with a

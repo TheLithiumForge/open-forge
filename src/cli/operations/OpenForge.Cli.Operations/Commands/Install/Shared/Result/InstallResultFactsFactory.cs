@@ -73,7 +73,8 @@ internal static class InstallResultFactsFactory
             Completion(
                 lifecycle,
                 new InstallRecovery(InstallResultRecoveryState.NotRequired, residualPath: null),
-                InstallResultVerificationState.NotRequested));
+                InstallResultVerificationState.NotRequested),
+            Migrations(build.Evidence.IntendedState, []));
     }
 
     internal static InstallResultFacts PlanBoundary(InstallPlan plan)
@@ -106,14 +107,16 @@ internal static class InstallResultFactsFactory
                     InstallLifecycleAction.Preserve,
                     InstallLifecycleOutcome.AlreadyCurrent),
                 new InstallRecovery(InstallResultRecoveryState.NotRequired, residualPath: null),
-                InstallResultVerificationState.Verified));
+                InstallResultVerificationState.Verified),
+            migrations: []);
 
     internal static InstallResultFacts ApplicationUnknown(InstallPlan plan)
     {
         var effects = plan.Effects.Select(identity => Effect(
             identity,
             InstallEffectOutcome.CompletionUnknown,
-            InstallEffectResidual.Unknown));
+            InstallEffectResidual.Unknown,
+            plan.IntendedState.UserOwnedPaths));
         return Create(
             Evidence(plan),
             plan.ManagementState,
@@ -127,7 +130,8 @@ internal static class InstallResultFactsFactory
                         ? InstallResultRecoveryState.Unknown
                         : InstallResultRecoveryState.NotRequired,
                     residualPath: null),
-                InstallResultVerificationState.Unknown));
+                InstallResultVerificationState.Unknown),
+            Migrations(plan.IntendedState, effects));
     }
 
     internal static InstallResultFacts FromApplication(
@@ -158,8 +162,12 @@ internal static class InstallResultFactsFactory
                         outcome,
                         "The Install effect outcome is not defined."),
                 };
-            return Effect(identity, outcome, residual);
-        });
+            return Effect(
+                identity,
+                outcome,
+                residual,
+                plan.IntendedState.UserOwnedPaths);
+        }).ToArray();
 
         var lifecycleOutcome = plan.OwnershipEffect is null
             ? InstallLifecycleOutcome.NotRequested
@@ -181,7 +189,8 @@ internal static class InstallResultFactsFactory
             Completion(
                 Lifecycle(plan, lifecycleOutcome),
                 Recovery(recovery),
-                Verification(progress)));
+                Verification(progress)),
+            Migrations(plan.IntendedState, effects));
     }
 
     private static InstallResultFacts PlanStage(
@@ -191,24 +200,28 @@ internal static class InstallResultFactsFactory
         InstallResultRecoveryState recoveryState,
         InstallResultVerificationState verification)
     {
+        var effects = plan.Effects.Select(identity => Effect(
+            identity,
+            effectOutcome,
+            InstallEffectResidual.None,
+            plan.IntendedState.UserOwnedPaths)).ToArray();
         return Create(
             Evidence(plan),
             plan.ManagementState,
-            plan.Effects.Select(identity => Effect(
-                identity,
-                effectOutcome,
-                InstallEffectResidual.None)),
+            effects,
             Completion(
                 Lifecycle(plan, lifecycleOutcome),
                 new InstallRecovery(recoveryState, residualPath: null),
-                verification));
+                verification),
+            Migrations(plan.IntendedState, effects));
     }
 
     private static InstallResultFacts Create(
         InstallPlanningEvidence evidence,
         InstallManagementState? managementState,
         IEnumerable<InstallEffect> effects,
-        InstallResultCompletion completion)
+        InstallResultCompletion completion,
+        IEnumerable<InstallMigration>? migrations = null)
         => new(new InstallResultFactsInput
         {
             Source = evidence.Payload is { } payload
@@ -217,15 +230,75 @@ internal static class InstallResultFactsFactory
             Classification = Classification(managementState),
             Footprint = evidence.IntendedState is { } intended
                 ? new InstallFootprint(
-                    payloadFiles: intended.TargetBytes.Count,
+                    payloadFiles: PayloadFileCount(intended),
                     managedRegions: intended.ManagedBlockBytes.Count,
                     generatedRegions: intended.GeneratedRegionPaths.Count)
                 : null,
             Effects = effects,
+            Migrations = migrations ?? [],
             Lifecycle = completion.Lifecycle,
             Recovery = completion.Recovery,
             Verification = new InstallVerification(completion.Verification),
         });
+
+    internal static int PayloadFileCount(InstallIntendedState intended)
+    {
+        ArgumentNullException.ThrowIfNull(intended);
+        return intended.TargetBytes.Keys.Count(path => !intended.UserOwnedPaths.Contains(path));
+    }
+
+    internal static InstallMigrationOutcome MigrationOutcomeForPath(
+        string path,
+        IEnumerable<InstallEffect> effects)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        ArgumentNullException.ThrowIfNull(effects);
+        var matching = effects
+            .Where(effect => effect.Kind != InstallEffectKind.Directory
+                && string.Equals(effect.Path, path, StringComparison.Ordinal))
+            .ToArray();
+        return matching.Length > 0
+            && matching.All(effect => effect.Outcome == InstallEffectOutcome.Verified)
+                ? InstallMigrationOutcome.Applied
+                : InstallMigrationOutcome.Planned;
+    }
+
+    internal static string? SourceAssetPathFor(
+        InstallEffectIdentity identity,
+        IReadOnlySet<string> userOwnedPaths)
+    {
+        ArgumentNullException.ThrowIfNull(identity);
+        ArgumentNullException.ThrowIfNull(userOwnedPaths);
+        return userOwnedPaths.Contains(identity.Path)
+            ? null
+            : identity.SourceAssetPath;
+    }
+
+    private static IReadOnlyList<InstallMigration> Migrations(
+        InstallIntendedState? intended,
+        IEnumerable<InstallEffect> effects)
+    {
+        if (intended is null || intended.Migrations.Count == 0)
+        {
+            return [];
+        }
+
+        var effectValues = effects.ToArray();
+        var migrationPaths = effectValues
+            .Where(effect => effect.Kind != InstallEffectKind.Directory)
+            .Select(effect => effect.Path)
+            .ToHashSet(StringComparer.Ordinal);
+        return intended.Migrations
+            .Where(migration => migrationPaths.Contains(migration.Path))
+            .OrderBy(migration => migration.Path, StringComparer.Ordinal)
+            .Select(migration => new InstallMigration(
+                migration.Path,
+                migration.Actions,
+                migration.Fields,
+                migration.Derivation,
+                MigrationOutcomeForPath(migration.Path, effectValues)))
+            .ToArray();
+    }
 
     private static InstallResultCompletion Completion(
         InstallLifecycle lifecycle,
@@ -251,6 +324,7 @@ internal static class InstallResultFactsFactory
         {
             InstallManagementState.SafelyAbsent => InstallManagementClassification.SafeAbsence,
             InstallManagementState.TrustedExact => InstallManagementClassification.TrustedExact,
+            InstallManagementState.ManagedAdoption => InstallManagementClassification.ManagedAdoption,
             InstallManagementState.ManagedDivergence => InstallManagementClassification.ManagedDivergence,
             InstallManagementState.EligibleInitialOccupant => InstallManagementClassification.EligibleInitialOccupant,
             InstallManagementState.Incomplete
@@ -266,13 +340,14 @@ internal static class InstallResultFactsFactory
     private static InstallEffect Effect(
         InstallEffectIdentity identity,
         InstallEffectOutcome outcome,
-        InstallEffectResidual residual)
+        InstallEffectResidual residual,
+        IReadOnlySet<string> userOwnedPaths)
         => new(new InstallEffectInput
         {
             Path = identity.Path,
             Kind = identity.Kind,
             Action = identity.Action,
-            SourceAssetPath = identity.SourceAssetPath,
+            SourceAssetPath = SourceAssetPathFor(identity, userOwnedPaths),
             Outcome = outcome,
             Residual = residual,
         });

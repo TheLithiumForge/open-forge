@@ -184,6 +184,93 @@ internal static class UpdateText
     internal static string LabelRestored()
         => "restored";
 
+    // @OpenForgeText update.label.migration-metadata-completed
+    internal static string LabelMigrationMetadataCompleted()
+        => "metadata updated";
+
+    // @OpenForgeText update.label.migration-entrypoint-created
+    internal static string LabelMigrationEntrypointCreated()
+        => "local entrypoint created";
+
+    // @OpenForgeText update.label.migration-entries-section-added
+    internal static string LabelMigrationEntriesSectionAdded()
+        => "Entries section added";
+
+    // @OpenForgeText update.label.migration-navigation-updated
+    internal static string LabelMigrationNavigationUpdated()
+        => "navigation updated";
+
+    // @OpenForgeText update.label.migration-content-preserved
+    internal static string LabelMigrationContentPreserved()
+        => "content preserved";
+
+    // @OpenForgeText update.migration.actions
+    internal static string FormatMigrationActions(IEnumerable<string> actions)
+        => string.Join(", ", actions.Select(MigrationActionLabel));
+
+    // @OpenForgeText update.migration.row
+    internal static string FormatMigrationRow(bool applied, string actions)
+        => applied
+            ? $"Migrated: {actions}"
+            : $"Planned migration: {actions}";
+
+    // @OpenForgeText update.migration.summary
+    internal static string FormatMigrationSummary(bool applied, int count)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(count);
+
+        if (applied && count == 1)
+        {
+            return "Migrated 1 source.";
+        }
+
+        if (applied)
+        {
+            return string.Create(CultureInfo.InvariantCulture, $"Migrated {count} sources.");
+        }
+
+        if (count == 1)
+        {
+            return "Planned migration for 1 source.";
+        }
+
+        return string.Create(CultureInfo.InvariantCulture, $"Planned migrations for {count} sources.");
+    }
+
+    // @OpenForgeText update.migration.headline
+    internal static string FormatMigrationHeadline(int appliedCount, int plannedCount)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(appliedCount);
+        ArgumentOutOfRangeException.ThrowIfNegative(plannedCount);
+        if (appliedCount == 0 && plannedCount == 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(appliedCount));
+        }
+
+        if (appliedCount > 0 && plannedCount > 0)
+        {
+            return $"{FormatMigrationSummary(true, appliedCount)} {FormatMigrationSummary(false, plannedCount)}";
+        }
+
+        if (appliedCount > 0)
+        {
+            return FormatMigrationSummary(true, appliedCount);
+        }
+
+        return FormatMigrationSummary(false, plannedCount);
+    }
+
+    private static string MigrationActionLabel(string action)
+        => action switch
+        {
+            "metadata-completed" => LabelMigrationMetadataCompleted(),
+            "entrypoint-created" => LabelMigrationEntrypointCreated(),
+            "entries-section-added" => LabelMigrationEntriesSectionAdded(),
+            "navigation-updated" => LabelMigrationNavigationUpdated(),
+            "content-preserved" => LabelMigrationContentPreserved(),
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "The Update migration action is not defined."),
+        };
+
     // @OpenForgeText update.title.update
     internal static string TitleUpdate()
         => "Update";
@@ -222,5 +309,5 @@ internal static class UpdateText
 
     // @OpenForgeText update.help.notes
     internal static string HelpNotes()
-        => "Update uses local ownership observations and the Framework payload embedded in the running CLI. It does not fetch content, adopt unmanaged files, manipulate Git, or remove recovery artifacts owned by Cleanup.";
+        => "Update requires complete Framework management and uses the payload embedded in the running CLI. It can adopt compatible missing metadata or required entrypoints in selected standard local routes. It does not establish absent or unknown Framework management, claim whole-file ownership of adopted files, fetch content, manipulate Git, or remove recovery artifacts owned by Cleanup.";
 }

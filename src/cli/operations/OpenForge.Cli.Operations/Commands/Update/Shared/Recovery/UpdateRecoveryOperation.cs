@@ -19,19 +19,7 @@ internal static class UpdateRecoveryOperation
         Guid operationId,
         CancellationToken cancellationToken)
     {
-        var targets = execution.Effects
-            .Select(effect => RecoveryBundleTarget.Create(
-                effect.FileChange,
-                ReadObservationSnapshot(effect, execution.Observations)))
-            .ToList();
-        if (execution.OwnershipChange is { } ownership)
-        {
-            targets.Add(RecoveryBundleTarget.Create(
-                ownership,
-                execution.OwnershipRead.Snapshot
-                    ?? throw new InvalidOperationException(
-                        "A planned Update ownership change requires its exact source snapshot.")));
-        }
+        var targets = ReadTargets(execution);
 
         return RecoveryBundleStore.PrepareAsync(
             RecoveryBundleInput.Create(
@@ -44,6 +32,25 @@ internal static class UpdateRecoveryOperation
                 operationId,
                 targets),
             cancellationToken);
+    }
+
+    internal static IReadOnlyList<RecoveryBundleTarget> ReadTargets(UpdatePlanExecution execution)
+    {
+        var targets = execution.Effects
+            .Select(effect => RecoveryBundleTarget.Create(
+                effect.FileChange,
+                ReadCapturedSnapshot(effect, execution)))
+            .ToList();
+        if (execution.OwnershipChange is { } ownership)
+        {
+            targets.Add(RecoveryBundleTarget.Create(
+                ownership,
+                execution.OwnershipRead.Snapshot
+                    ?? throw new InvalidOperationException(
+                        "A planned Update ownership change requires its exact source snapshot.")));
+        }
+
+        return targets;
     }
 
     internal static async ValueTask<UpdateRecoveryCleanup> VerifyRetainedAsync(
@@ -117,9 +124,31 @@ internal static class UpdateRecoveryOperation
             },
             new UpdateFinding(code, target: null, cause));
 
-    private static FileStateSnapshot ReadObservationSnapshot(
+    private static FileStateSnapshot ReadCapturedSnapshot(
         UpdatePlannedEffect effect,
-        IReadOnlyList<UpdateComparisonObservation> observations)
-        => observations.First(value =>
-            value.Comparison.RelativePath == effect.ResultEffect.Path).Snapshot;
+        UpdatePlanExecution execution)
+    {
+        var observationSnapshot = execution.Observations
+            .Where(value => value.Comparison.RelativePath == effect.ResultEffect.Path)
+            .Select(value => value.Snapshot)
+            .FirstOrDefault();
+        if (observationSnapshot is not null)
+        {
+            return observationSnapshot;
+        }
+
+        var adoptionSnapshots = execution.AdoptionTargets
+            .Where(value => value.Path == effect.ResultEffect.Path)
+            .Select(value => value.Snapshot)
+            .Take(2)
+            .ToArray();
+        return adoptionSnapshots.Length switch
+        {
+            1 => adoptionSnapshots[0],
+            0 => throw new InvalidOperationException(
+                "A planned Update effect requires one exact source snapshot from comparison observations or adoption targets."),
+            _ => throw new InvalidOperationException(
+                "A planned Update effect requires one exact adoption target snapshot."),
+        };
+    }
 }

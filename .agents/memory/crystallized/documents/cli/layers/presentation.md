@@ -15,6 +15,11 @@ the facts for the requested detail, then writes that selection as text or JSON.
 Selection and rendering are separate responsibilities: a renderer never
 decides which facts to include.
 
+Install and Update presentation may consume the shared workspace-adoption
+result vocabulary in `Commands.Shared.WorkspaceAdoption.Models.Result` because
+both command results expose those migration facts. Shared planning models and
+behavior remain outside the Presentation dependency boundary.
+
 The [land Architecture](../architecture.md) records how this layer sits against
 the others.
 

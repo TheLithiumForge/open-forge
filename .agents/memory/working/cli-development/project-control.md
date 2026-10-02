@@ -6,39 +6,42 @@ open-forge:
 
 # CLI Project Control
 
-This ledger owns only current identity, queue state, ownership, and the next
-boundary. The ledger as it stood at the beta release is preserved as the
+This ledger owns current identity, queue state, ownership, and the next
+boundary. The [1.0 polish wave capsule](one-zero-polish-wave.md) records the
+selected task horizons and frozen decisions. The ledger as it stood at the beta
+release is preserved as the
 [beta control ledger](../../archived/cli-development/project-control-beta.md).
 Older receipts and retired queue state are in the
 [archived control ledger](../../archived/cli-development/project-control.md).
 
 ## Active task ledger
 
-| ID  | Task                                                                                 | State  | Current boundary                                                             | Owner                    |
-| --- | ------------------------------------------------------------------------------------ | ------ | ---------------------------------------------------------------------------- | ------------------------ |
-| 32  | [Minimal output sweep](tasks/task32-minimal-output-sweep.md)                         | Active | Bounded pending/next-action polish integrated under [Task 69](tasks/task69-next-beta-stabilization-release.md); full sweep remains queued | Root (Worker Watch) |
-| 34  | [Interpolated value markup](tasks/task34-interpolated-value-markup.md)               | Open   | Do before 1.0; write the rule down first                                     | Unassigned               |
-| 36  | [Extension merge and guards](tasks/task36-extension-merge-and-guards.md)             | Open   | Needs the maintainer's decision; now holds Task 30's heading direction       | Maintainer               |
-| 37  | [Wording review](tasks/task37-wording-review-against-proposals.md)                   | Open   | Needs the maintainer's scope decision; after 32 and 39                       | Maintainer               |
-| 39  | [Output audit](tasks/task39-output-audit.md)                                         | Open   | Do before 1.0; now holds Task 41's checks                                    | Unassigned               |
-| 40  | [Capture coverage](tasks/task40-capture-coverage.md)                                 | Open   | Do after 1.0; each fix lands with its capture meanwhile                      | Unassigned               |
-| 44  | [Template and core file content](tasks/task44-template-content.md)                   | Open   | Do before 1.0; after 53 and 54                                               | Unassigned               |
-| 47  | [Entrypoint reachability](tasks/task47-entrypoint-reachability.md)                   | Open   | Do before 1.0; its Skill indexing follow-up now holds Task 46                | Unassigned               |
-| 48  | [Scoping for Extension routes](tasks/task48-scoping-for-extension-routes.md)         | Open   | Do after 1.0                                                                 | Unassigned               |
-| 53  | [Loading and scoping audit](tasks/task53-loading-and-scoping-audit.md)               | Open   | Do next; now holds Task 60's loader question                                 | Unassigned               |
-| 54  | [Tag trimming](tasks/task54-tag-trimming.md)                                         | Open   | Do before 1.0, shipped files only; after 53                                  | Unassigned               |
-| 58  | [Demo-based evaluations](tasks/task58-demo-evals.md)                                 | Open   | Do after 1.0; needs a decision on cost and publication                       | Unassigned               |
-| 59 | [Beta 2 release](tasks/task59-beta-2-release.md) | Complete | `0.9.0-beta.2` published; final release and package/site verification are recorded in Task 59 | Root |
-| 61  | [Documentation accuracy and voice](tasks/task61-documentation-accuracy-and-voice.md) | Active | Current documentation reconciliation integrated under [Task 69](tasks/task69-next-beta-stabilization-release.md); maintainer review checkbox remains unchecked | Root (Worker Watch), parallel reviewers |
-| 55  | [Alternative workspace root such as `.apm`](tasks/task55-alternative-root.md)       | Open   | Restored separately on 2026-09-29; bounded local triage recorded, full investigation open | Unassigned               |
-| 62 | [Glob-scoped loading](tasks/task62-glob-scoped-loading.md) | Complete | Implementation reviewed and verified; candidate is integrated on `develop` and `main`. Publication remains in Task 59 | Root |
-| 63  | [Keeping edits through updates](tasks/task63-keeping-edits-through-updates.md)       | Open   | Needs the maintainer's decision before 1.0                                   | Maintainer               |
-| 64  | [CLI defects and contract drift](tasks/task64-cli-defects-and-contract-drift.md)     | Active | Accepted fixes integrated under [Task 69](tasks/task69-next-beta-stabilization-release.md); B6 follow-up remains open and current recovery blocking is preserved | Root (Worker Watch) |
-| 65  | [Where open Tasks live](tasks/task65-where-open-tasks-live.md)                       | Open   | Recorded; needs the maintainer's decision                                    | Maintainer               |
-| 66  | [Council polish](tasks/task66-council-polish.md)                                     | Active | Committed; answers to its questions on `task66-council-decisions`            | Root, council            |
-| 67  | [Diagram labels](tasks/task67-diagram-labels.md)                                     | Active | Committed on `task67-diagram-labels`; the maintainer reviews                 | Root, council            |
-| 68  | [Repository link validation](tasks/task68-repository-link-validation.md)             | Complete | Phase 2/2, milestone 3/3; exact scope and checker contract preserved, integrated/tested gate green, two stale anchors fixed | Root (Worker Watch) |
-| 69  | [Next beta stabilization and release](tasks/task69-next-beta-stabilization-release.md) | Complete | Phase 3/3, milestone 5/5; beta4 qualification, publication, package, documentation, upgrade, and demonstration receipts complete | Root (Worker Watch) |
+| ID | Task | State | Current boundary | Owner |
+|---|---|---|---|---|
+| 54 | [Tag trimming for 1.0](tasks/task54-tag-trimming.md) | Individually qualified and squash-integrated into `develop`; not closed | Wave phase 3/3, milestone 2/3; all six modes plus package qualified; accepted 89-path patch includes 64 numeric-only loading-cost captures; commit `29c22d5f651ebaf9fac11e16ca60049b7c8e762d` on 2026-10-02. Local combined gates pass; hosted release gates remain | Root (combined qualification) |
+| 39 | [Output Audit](tasks/task39-output-audit.md) | Paused by user, 2026-10-01 | Wave phase 2/3, milestone 1/3; final checkpoint `r_f4bdc49aa2c4` saved; all workers stopped; no beta5 integration or captures | Root; Worker Watch |
+| 34 | [Interpolated Value Markup](tasks/task34-interpolated-value-markup.md) | Paused by user, 2026-10-01 | Wave phase 2/3, milestone 1/3; final literal-correction checkpoint `r_b68ae7955e36` saved; all workers stopped; no beta5 integration or captures | Root; Worker Watch |
+| 47 | [Entrypoint reachability](tasks/task47-entrypoint-reachability.md); [Default Skill indexing follow-up](tasks/task47-default-skill-indexing.md) | Individually qualified and squash-integrated into `develop`; not closed | Wave phase 3/3, milestone 2/3; all six modes and package/planning journeys qualified; commit `27a916dcd1c165f2610dd20b625dbe10beb0491b` on 2026-10-02. Local combined gates pass; hosted release gates remain; no new Task ID | Root (combined qualification) |
+| 64 | [CLI defects and contract drift](tasks/task64-cli-defects-and-contract-drift.md) | Independently qualified in all required individual modes and Root-verified, squash-integrated into clean local `develop`; not closed | Wave phase 3/3, milestone 2/3; commit `292ab17bc641f4d7cd3933f976dc2586e78e9899`; local combined qualification passes; hosted release qualification remains | Root (combined qualification) |
+| 70 | [Existing workspace adoption during installation](tasks/task70-existing-workspace-adoption-during-installation.md) | Root accepts the locally qualified combined candidate; awaiting noon integration | Wave phase 3/3, milestone 2/3; first-install preservation correction complete; all six modes total 10,360 passes and 34 platform exclusions, zero failures; package/site and actual beta4 upgrade pass. Exact-tree develop squash, hosted Build, publication and postchecks remain | Root (release coordination) |
+| 48 | [Scoping for Extension routes](tasks/task48-scoping-for-extension-routes.md) | Frozen at A/B1; deferred beyond beta5; required before 1.0 | Wave phase 2/3, milestone 1/3; corrected Task 64 Init accepted for later resume; Core-first scope unchanged. Checkpoint receipts remain in wave capsule | Root; Worker Watch |
+| 32 | [Minimal Output Sweep](tasks/task32-minimal-output-sweep.md) | Independently qualified in all required individual modes and Root-verified, squash-integrated into clean local `develop`; not closed | Wave phase 3/3, milestone 2/3; commit `38956e8f77654127f15f98bb33384ddd616444f6`; local combined qualification passes; hosted release qualification remains | Root (combined qualification) |
+| 53 | [Loading and scoping audit](tasks/task53-loading-and-scoping-audit.md) | Open, deferred | Full audit postponed by the 2026-10-01 selection | Unassigned |
+| 44 | [Template and core file content](tasks/task44-template-content.md) | Open, deferred | Template and Core polish is not selected | Unassigned |
+| 36 | [Extension merge and guards](tasks/task36-extension-merge-and-guards.md) | Open, deferred | Partial merging is postponed | Maintainer |
+| 63 | [Keeping edits through updates](tasks/task63-keeping-edits-through-updates.md) | Open, deferred | Managed-file edit policy is postponed | Maintainer |
+| 61 | [Documentation accuracy and voice](tasks/task61-documentation-accuracy-and-voice.md) | Open | Current beta5 documentation reconciliation is Root-owned in this wave. Maintainer review remains postponed | Root |
+| 66 | [Council polish](tasks/task66-council-polish.md) | Open, deferred | Existing committed review material remains; prior review is postponed | Root |
+| 67 | [Diagram labels](tasks/task67-diagram-labels.md) | Open, deferred | Existing committed review material remains; prior review is postponed | Root |
+| 37 | [Wording review](tasks/task37-wording-review-against-proposals.md) | Open, unselected | Prior scope decision remains pending; no selection in this wave | Maintainer |
+| 40 | [Capture coverage](tasks/task40-capture-coverage.md) | Open, deferred | Broad capture expansion postponed until after 1.0 | Unassigned |
+| 58 | [Demo-based evaluations](tasks/task58-demo-evals.md) | Open, deferred | Remains after 1.0 | Unassigned |
+| 55 | [Alternative workspace root such as `.apm`](tasks/task55-alternative-root.md) | Complete | Phase 1/1, milestone 1/1; current root retained; APM coexistence is not certified | Root |
+| 65 | [Where open Tasks live](tasks/task65-where-open-tasks-live.md) | Complete | Phase 1/1, milestone 1/1; open Tasks stay in Working Memory; broader Local Planning review remains open | Root |
+| 59 | [Beta 2 release](tasks/task59-beta-2-release.md) | Complete | `0.9.0-beta.2` publication and package/site verification remain historical receipts | Root |
+| 62 | [Glob-scoped loading](tasks/task62-glob-scoped-loading.md) | Complete | Verified candidate and accepted implementation receipt remain unchanged | Root |
+| 68 | [Repository link validation](tasks/task68-repository-link-validation.md) | Complete | Phase 2/2, milestone 3/3; accepted checker and integration evidence remain unchanged | Root (Worker Watch) |
+| 69 | [Next beta stabilization and release](tasks/task69-next-beta-stabilization-release.md) | Complete | Phase 3/3, milestone 5/5; beta4 release receipts remain unchanged | Root (Worker Watch) |
 
 No completion grace has been consumed for Tasks 68 or 69.
 
@@ -69,37 +72,22 @@ Other records, such as the [beta follow-ups](tasks/beta-follow-ups.md) and the
 
 ## Current next action
 
-The current selection is the 1.0 polish queue following the completed
-[Task 69](tasks/task69-next-beta-stabilization-release.md) beta4 closeout. Root
-owns acceptance and execution runs through Worker Watch.
+The combined candidate for Tasks 32, 47, 54, 64, and 70 is locally qualified
+and accepted for integration. The [Task 70 record](tasks/task70-existing-workspace-adoption-during-installation.md)
+contains the final gate results and source/artifact identities. Local develop
+remains clean at `292ab17bc641f4d7cd3933f976dc2586e78e9899`, with Tasks 32,
+47, 54, and 64 already squash-integrated. Task 70 and beta5 version preparation
+remain on `ww/a_6ecaa48917f3` until the authorized window.
 
-1. Continue [Task 64](tasks/task64-cli-defects-and-contract-drift.md) for its
-   separate B6 follow-up, [Task 61](tasks/task61-documentation-accuracy-and-voice.md)
-   for current documentation reconciliation, and [Task 32](tasks/task32-minimal-output-sweep.md)
-   for bounded polish. Keep the full Task 32 sweep queued.
-2. [Task 68](tasks/task68-repository-link-validation.md) is complete at phase
-   2/2, milestone 3/3. Its exact named-root scope, parser/resolver boundary,
-   checker contract, tests, and wiring remain accepted. The two stale anchors
-   are fixed, and no source beyond the named roots is silently excluded. Task
-  69 is complete at phase 3/3, milestone 5/5. Its detailed release receipt is
-  linked above. The proposed B6 relaxation is deferred separately, and beta4
-  preserves current recovery blocking behavior.
-3. Treat `0.9.0-beta.4` as the current public release. Preserve Task 59's beta
-   2 receipt and the earlier beta3 limited-verification record as historical.
+From 12:00 through 13:00 Europe/Zurich on 2026-10-02, squash the frozen complete
+tree into develop, verify equality, push, require the exact-commit six-host
+hosted Build, complete normal release integration and publish beta5, then run
+public postchecks. Check the clock before each commit, merge, push, or release
+start. The one-time noon follow-up is scheduled in the current thread. Preserve
+the candidate and report any failed gate rather than bypassing it.
 
-The detailed candidate, test, package, upgrade, merge, hosted-run, and cleanup
-evidence is in [Task 69's candidate and merge receipt](tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
-Prior failed or stale-assertion runs are historical resolved evidence, not
-current blockers.
-
-Root applied the exact five generated hosts after rerunning index outside the
-worker lock restriction, and the second dry-run reported zero effects and
-findings. Scratch customization completed all five retry steps with exit 0 and
-no findings, and removal settings and ownership are correct.
-
-The exact final candidate, hosted-run boundary, and publication receipt are
-recorded in Task 69. One whole-candidate review and one focused recheck were
-consumed with no material findings. One grouped correction pass was consumed,
-with zero councils or completion grace consumed. Task 53's full loading audit
-remains outside this horizon. Task 55's bounded local triage is recorded, while
-its full investigation remains open outside the horizon.
+Tasks 34 and 39 remain paused with their worktrees preserved. Task 48 remains
+frozen at A/B1, deferred beyond beta5 and required before 1.0. Tasks 55 and 65
+remain complete. No additional task scope or individual test run is selected.
+Beta4 remains public until beta5 publication succeeds. No selected beta5 task
+is closed before release acceptance.

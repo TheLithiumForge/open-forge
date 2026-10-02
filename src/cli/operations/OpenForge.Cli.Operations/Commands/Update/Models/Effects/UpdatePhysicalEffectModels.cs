@@ -91,7 +91,10 @@ internal sealed record UpdateLogicalChange
                     nameof(region));
             }
 
-            if (!(action == UpdateLogicalChangeAction.Delete && sourceAssetPath is null)
+            var isLocalAdoption = sourceAssetPath is null
+                && action is (UpdateLogicalChangeAction.Create or UpdateLogicalChangeAction.Replace);
+            if (!isLocalAdoption
+                && !(action == UpdateLogicalChangeAction.Delete && sourceAssetPath is null)
                 && (string.IsNullOrWhiteSpace(sourceAssetPath)
                     || !UpdateValueSyntax.IsCanonicalRelative(sourceAssetPath)))
             {

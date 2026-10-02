@@ -1,6 +1,6 @@
-using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 
 namespace OpenForge.Cli.Core.Commands.Install.Models.Result;
 
@@ -10,6 +10,7 @@ internal enum InstallManagementClassification
     TrustedExact,
     ManagedDivergence,
     EligibleInitialOccupant,
+    ManagedAdoption,
 }
 
 internal enum InstallEffectKind
@@ -359,6 +360,7 @@ internal sealed record InstallResultFacts
             {
                 InstallManagementClassification.SafeAbsence
                     or InstallManagementClassification.TrustedExact
+                    or InstallManagementClassification.ManagedAdoption
                     or InstallManagementClassification.ManagedDivergence
                     or InstallManagementClassification.EligibleInitialOccupant => true,
                 _ => throw new ArgumentOutOfRangeException(
@@ -373,11 +375,18 @@ internal sealed record InstallResultFacts
                 "Install effects cannot contain null members.",
                 nameof(input)))
             .ToArray();
+        ArgumentNullException.ThrowIfNull(input.Migrations);
+        var migrationValues = input.Migrations
+            .Select(migration => migration ?? throw new ArgumentException(
+                "Install migrations cannot contain null members.",
+                nameof(input)))
+            .ToArray();
 
         Source = input.Source;
         Classification = input.Classification;
         Footprint = input.Footprint;
         Effects = new ReadOnlyCollection<InstallEffect>(effectValues);
+        Migrations = new ReadOnlyCollection<InstallMigration>(migrationValues);
         Lifecycle = input.Lifecycle;
         Recovery = input.Recovery;
         Verification = input.Verification;
@@ -390,6 +399,8 @@ internal sealed record InstallResultFacts
     internal InstallFootprint? Footprint { get; }
 
     internal IReadOnlyList<InstallEffect> Effects { get; }
+
+    internal IReadOnlyList<InstallMigration> Migrations { get; }
 
     internal InstallLifecycle Lifecycle { get; }
 
@@ -407,6 +418,8 @@ internal sealed record InstallResultFactsInput
     public required InstallFootprint? Footprint { get; init; }
 
     public required IEnumerable<InstallEffect> Effects { get; init; }
+
+    public IEnumerable<InstallMigration> Migrations { get; init; } = [];
 
     public required InstallLifecycle Lifecycle { get; init; }
 

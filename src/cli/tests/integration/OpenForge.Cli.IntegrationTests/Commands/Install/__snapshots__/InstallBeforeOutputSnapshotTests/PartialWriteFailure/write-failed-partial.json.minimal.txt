@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Install stopped after 15 of 27 changes.",
+    "headline": "Install stopped after 15 of 28 changes.",
     "kind": "failed"
   },
   "findings": [
@@ -157,8 +157,16 @@
     },
     {
       "path": ".agents/memory/_memory.md",
-      "kind": "section",
+      "kind": "file",
       "action": "replaced",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/_memory.overwrite.md",
+      "kind": "file",
+      "action": "created",
       "outcome": "not-started",
       "reason": null,
       "owner": null
@@ -264,13 +272,24 @@
     "mode": "apply",
     "force": true,
     "automatic": true,
-    "classification": "eligible-initial-occupant",
+    "classification": "safe-absence",
     "footprint": {
       "files": 13,
       "directories": 11,
       "sections": 2
     },
-    "lockPath": ".agents/open-forge.lock.json"
+    "lockPath": ".agents/open-forge.lock.json",
+    "migrations": [
+      {
+        "path": ".agents/memory/_memory.overwrite.md",
+        "actions": [
+          "content-preserved"
+        ],
+        "fields": [],
+        "derivation": [],
+        "outcome": "planned"
+      }
+    ]
   },
   "recovery": {
     "path": "<recovery-bundle>",

@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 65 to decide where long-running open Tasks should live, in Working Memory as now, in a Planning backlog, or split between them
-  tags: [Memory, Working, Task, Planning, Backlog, Contextual, Active]
+  description: Record the decision to keep Task records in Working Memory and use backlogs and ledgers as selection views
+  tags: [Memory, Working, Task, Planning, Backlog, Contextual, Complete]
 ---
 
 # Task 65 — Where open Tasks live
@@ -49,12 +49,36 @@ or Crystallized Memory.
 3. **A backlog file in Working** that replaces the index's ordering sections,
    with Task records staying where they are.
 
-## Done when
+## Decision (2026-10-01)
 
-- [ ] The maintainer chooses where candidate Tasks live and when they move.
-- [ ] The ledger, the Task index, and the plan follow the choice, and existing
-      records are moved with their links rebased.
+Task records remain in Working Memory when they are open, including when they
+are not currently active. A record may describe locally managed work or point
+to an external work system when that system is the appropriate place for its
+live facts.
+
+Do not move these Tasks to Emerging Memory or create another Memory category.
+The Working backlog and Task index remain selection views. The project-control
+ledger remains the source for permanent IDs, queue state, and ownership. These
+views link to Task records and do not duplicate Task scope, decisions, or
+implementation state. No file moves are needed for this decision. Existing
+archived records stay archived.
+
+This closes only the Task 65 placement question. The broader
+[Local Planning review](../../local-planning.md) remains open for task
+lifecycle, completion, organization, and archival rules. The options above are
+preserved as historical analysis, not as current alternatives.
 
 ## Current State
 
-**Now:** recorded, not started.
+**Status:** Task 65 "Where open Tasks live" (phase 1/1): milestone 1/1. The
+placement decision is recorded. The broader Local Planning review remains open.
+
+## Decision completion
+
+These checkboxes track decision capture and record reconciliation. They do not
+claim runtime tests or a file migration.
+
+- [x] The Working Memory placement and no-new-category decision is recorded.
+- [x] The ledger, Task index, plan, and backlog reflect that choice without
+      duplicating Task authority.
+- [x] The broader Local Planning review remains linked and open.

@@ -7,4 +7,9 @@ internal sealed record UpdateIntendedStateBuild(
     IReadOnlyList<UpdateComparisonObservation> Observations,
     IReadOnlyList<FileStateSnapshot> ProjectionInputs,
     UpdateFinding? Finding,
-    bool Cancelled);
+    bool Cancelled)
+{
+    public IReadOnlyList<UpdateAdoptionTarget> AdoptionTargets { get; init; } = [];
+
+    public IReadOnlyList<UpdateMigrationPlan> Migrations { get; init; } = [];
+}

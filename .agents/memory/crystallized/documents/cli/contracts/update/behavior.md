@@ -113,6 +113,19 @@ managed/generated boundaries remain safety checks. Current payload alignment
 identifies intended source at operation time; no source path, baseline hash,
 workspace binding or fingerprint policy is stored in ownership.
 
+### Local Route Adoption During Update
+
+Update may form local-route adoption candidates only when the ownership
+observation is complete and trustworthy and the Framework registration is
+present. It considers compatible documents under selected standard local
+routes. Candidate paths are filtered through
+`FrameworkPayloadSelection.IncludesPath`, including all exact-file,
+directory-descendant, and category exclusions. The complete source catalogue
+and strict projection inputs remain intact so excluded, malformed, foreign,
+ambiguous, or unsafe facts continue to produce the existing block diagnostics;
+they never become guessed effects. An absent, unknown, incomplete, or
+unregistered Framework state cannot be established through adoption.
+
 ## Semantic Comparison
 
 Compare fresh current content with intended embedded or generated content.
@@ -129,9 +142,22 @@ verification; no comparison hash is persisted in ownership.
 ## Intended State And Projection
 
 The planner forms one hypothetical post-update workspace from current authored
-content plus only the effects admitted by normal, force, or prune authority. It
-preserves user-added routes, overwrite companions, intentionally absent
-defaults, Extension paths, unknown files, and all outside bytes.
+content plus only the effects admitted by normal, force, prune, and bounded
+local-route adoption authority. It preserves user-added routes, overwrite
+companions, intentionally absent defaults, Extension paths, unknown files, and
+all outside bytes.
+
+For an eligible managed workspace, shared topology and document planners form
+adoption route facts and intended document bytes before generated projection.
+They complete only missing required native Skill fields and required resource
+catalogue documents, retaining valid or unknown frontmatter, optional fields,
+body bytes, encoding, newlines, and companion files. Metadata and generated
+Entries changes for one path become one exact physical effect. Adoption targets
+remain separate from owned Framework comparisons; local authored files have
+no Framework source-asset path, are not counted as bundled payload, and receive
+no whole-file Framework receipt. A verified generated Entries region may
+receive its own region receipt. This bounded stage does not change Index, the
+global parser, or the global projector.
 
 The current Index projection derives every affected generated `Entries` body from
 that intended authored topology and metadata. Generated lines never supply
@@ -159,9 +185,10 @@ authority.
 ## Normal Plan
 
 Ordinary Update replaces edited owned Framework content, restores missing owned
-current targets, creates safe absent current targets and projects affected
-navigation. Semantic equality preserves current formatting. For an owned root
-host in the exact legacy form, ordinary Update treats conversion to the
+current targets, creates safe absent current targets, adopts compatible local
+route documents under the admission above, and projects affected navigation.
+Semantic equality preserves current formatting. For an owned root host in the
+exact legacy form, ordinary Update treats conversion to the
 canonical heading and footer form as the normal replacement. `--automatic`
 selects that replacement under the same safety rules, and preview reports it
 without applying it. `removedCategories`
@@ -269,6 +296,10 @@ Framework projection, then publishes effect-backed Framework ownership atomicall
 unrelated sections in one canonical UTF-8 lock. Unchanged canonical receipts
 need no publication.
 
+Adoption uses this same complete preflight, lease, exact-byte revalidation,
+recovery, application, and verification pipeline. A user-authored adoption
+effect remains separate from Framework-owned payload comparisons and receipts.
+
 After target and ownership verification, reopen and verify the recovery bundle
 identity and retain it. Successful retention is complete with the exact bundle
 path. When an ordinary `.git` directory exists, advise `git diff`; otherwise
@@ -289,11 +320,18 @@ equality is an observation, not a lifecycle mutation.
 ## Result Formation
 
 One typed result records exact workspace and source, mode, trust and coverage,
-current/intended comparisons, safe and authority-selected effects,
-preserved retired content, generated projection, lifecycle publication,
+current/intended comparisons, safe and authority-selected effects, path-sorted
+adoption migrations, preserved retired content, generated projection,
+lifecycle publication,
 recovery-bundle facts, verification, residuals, status, and at most one next
 action.
 Human and JSON renderers consume it once.
+
+Each migration retains its path, actions, metadata fields, derivation sources,
+and `planned` or `applied` outcome. Only the matching verified non-directory
+physical effect permits `applied`; preview, cancellation, unstarted work, and
+unverified effects remain `planned`. Migration facts do not add findings,
+warnings, ownership, or history and do not change status.
 
 The typed result forms exactly the ordered command-local JSON graph frozen by
 the Interface: mode, force, prune, automatic, atomic nullable source,
@@ -301,11 +339,13 @@ comparisons, atomic nullable generated navigation, effects, lifecycle, recovery,
 verification, and findings. All top-level properties are present for every
 status, and arrays are empty rather than null. Each physical effect contains its
 ordered logical authored and generated changes, so one physical path has one
-application outcome, one receipt, and one recovery entry without hiding the
-logical comparison meaning. Findings expose exactly `code`, nullable `target`,
-and non-empty `cause`; their status comes from the finite Interface code map
-rather than a duplicated wire member. Finding order follows that declaration
-sequence, then null target before ordinal non-null target, then ordinal cause.
+application outcome and one recovery entry without hiding the logical
+comparison meaning. Ownership receipts remain limited to verified Framework
+payloads and authorized generated regions. Findings expose exactly `code`,
+nullable `target`, and non-empty `cause`; their status comes from the finite
+Interface code map rather than a duplicated wire member. Finding order follows
+that declaration sequence, then null target before ordinal non-null target,
+then ordinal cause.
 
 Result formation uses `invalid-input` before operation work; then ordinary
 precedence `blocked` > `incomplete` > `completed-with-warnings` > `completed`.
@@ -340,6 +380,15 @@ preview, source/dogfood parity, unchanged prefix and suffix bytes, and
 root-level parsed spans. Incomplete, reversed, duplicate, mixed, and otherwise
 ambiguous boundaries block without writes, and a heading without its footer
 never captures the user suffix or end-of-file.
+
+Local-route evidence proves complete-ownership and Framework-presence admission,
+full exclusion filtering with strict source and projection inputs, preservation
+of optional and unknown document content, one exact physical effect for
+combined metadata and Entries changes, and separation from Framework payload
+provenance/counts and whole-file ownership. Dry-run, cancellation, apply,
+partial failure, repeat Update, malformed or foreign facts, and excluded files
+retain the same lease, recovery, application, verification, and zero-effect
+block guarantees.
 
 Directory creation follows the installed-Framework and exclusion boundaries in
 [Normal Plan](#normal-plan). A missing retired path requires neither parent

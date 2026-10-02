@@ -29,6 +29,33 @@ internal sealed class InstallManagedStateEvaluator
             });
         }
 
+        bool managedBaseAdmissible;
+        try
+        {
+            managedBaseAdmissible = _contentIdentity.IsManagedBaseAdmissible(
+                basis.CurrentTargets,
+                basis.Context.IntendedState);
+        }
+        catch (Exception exception) when (exception is ArgumentException
+            or InvalidDataException
+            or InvalidOperationException)
+        {
+            return Stopped(
+                basis.Context,
+                InstallManagementState.Blocked,
+                InstallFindingCode.LifecycleBlocked,
+                $"The managed Framework state cannot be verified safely: {exception.Message}");
+        }
+
+        if (!managedBaseAdmissible)
+        {
+            return Stopped(
+                basis.Context,
+                InstallManagementState.ManagedDivergence,
+                InstallFindingCode.ManagedDivergence,
+                "The owned Framework targets differ from the current embedded payload.");
+        }
+
         bool exact;
         try
         {
@@ -47,16 +74,31 @@ internal sealed class InstallManagedStateEvaluator
                 $"The managed Framework state cannot be verified safely: {exception.Message}");
         }
 
-        if (!exact)
+        if (exact)
+        {
+            return new InstallManagedStateTrustedExact(basis.Context);
+        }
+
+        if (intended.Migrations.Count == 0)
         {
             return Stopped(
                 basis.Context,
                 InstallManagementState.ManagedDivergence,
                 InstallFindingCode.ManagedDivergence,
-                "The owned Framework targets differ from the current embedded payload.");
+                "The owned Framework targets differ from the current embedded payload without a planned workspace adoption.");
         }
 
-        return new InstallManagedStateTrustedExact(basis.Context);
+        var verifiedManagedTargetPaths = intended.TargetBytes.Keys
+            .Concat(intended.ManagedBlockBytes.Keys)
+            .Where(path => !intended.UserOwnedPaths.Contains(path))
+            .ToHashSet(StringComparer.Ordinal);
+        return new InstallManagedStateAdoption(new InstallEstablishmentPlanInput
+        {
+            Context = basis.Context,
+            Ownership = basis.Ownership,
+            CurrentTargets = basis.CurrentTargets,
+            VerifiedManagedTargetPaths = verifiedManagedTargetPaths,
+        });
     }
 
     private static InstallManagedStateStopped Stopped(

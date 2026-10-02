@@ -23,7 +23,9 @@ open-forge status
 
 `development-toolkit` is an optional Extension. It installs Project Documents, Planning, Flows and Scenarios, and Development, plus Workflow Support, which they depend on. Skip the two `extension install` commands if you want only the base.
 
-**Look for:** what each dry run will create. The install preview gives a count, and `--detail standard` lists every file. If you already have an `AGENTS.md` or `CLAUDE.md`, the install adds an Open Forge section and keeps your content. `status` shows how much context loads at startup, which Extensions are installed, and whether anything needs attention. Review everything with `git status` and `git diff`, then commit.
+**Look for:** what each dry run will change. The install preview gives a count, and `--detail standard` lists every file. If you already have an `AGENTS.md` or `CLAUDE.md`, the install adds an Open Forge section and keeps your content. `status` shows how much context loads at startup, which Extensions are installed, and whether anything needs attention. Review everything with `git status` and `git diff`, then commit.
+
+For an existing `.agents/` tree, also review any planned Skill migrations. The [installation guidance](../getting-started/installation.md#with-the-cli) explains compatible metadata and navigation adoption.
 
 **Why it helps:** you see what will be installed before any agent reads it. The CLI also records what it installed, so later updates can tell its files apart from yours.
 
@@ -135,6 +137,8 @@ open-forge cleanup --dry-run
 ```
 
 **Look for:** every shipped file the update would replace. That includes shipped files you edited: the update replaces them and keeps their previous content in a recovery bundle. Because you committed first, `git diff` shows those changes too. To keep a change through updates, move it into an [overwrite companion](../concepts/customizing.md#overwrite-companions) (`{name}.overwrite.md`), which updates never touch. After checking the result, `cleanup` removes the recovery copies the update kept.
+
+The plan also lists any compatible Skill metadata or navigation it will add. These additions preserve existing Skill content and keep the files user-owned.
 
 **Why it helps:** you get Framework improvements through a plan you've reviewed, and nothing is replaced without being listed first.
 

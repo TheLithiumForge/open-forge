@@ -1,10 +1,15 @@
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using System.Collections.Immutable;
+using System.Text;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership;
@@ -12,14 +17,18 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 
 internal sealed class InstallEstablishmentPlanner
 {
+    private static readonly UTF8Encoding StrictUtf8 = new(false, true);
     private readonly PhysicalPathResolver _physicalPathResolver;
     private readonly WorkspaceOwnershipStore _ownershipStore = new();
     private readonly InstallContentIdentity _contentIdentity = new();
+    private readonly MarkdownDocumentParser _markdownDocumentParser = new();
 
     internal InstallEstablishmentPlanner(
         PhysicalPathResolver physicalPathResolver)
@@ -38,6 +47,12 @@ internal sealed class InstallEstablishmentPlanner
         var findings = new List<InstallFinding>();
         var effects = new List<InstallFileEffect>();
         var hasEligibleOccupant = false;
+        var userOwnedPaths = intendedState.UserOwnedPaths
+            .Select(PortableWorkspacePath.CreatePortableKey)
+            .ToHashSet(StringComparer.Ordinal);
+        var migrationPaths = intendedState.Migrations
+            .Select(migration => migration.Path)
+            .ToHashSet(StringComparer.Ordinal);
         var extensionPaths = input.Ownership.Document.Extensions
             .SelectMany(extension => extension.Paths.Concat(extension.Regions.Select(region => region.Path)))
             .Select(PortableWorkspacePath.CreatePortableKey)
@@ -51,15 +66,43 @@ internal sealed class InstallEstablishmentPlanner
                     "An Extension owns a selected Framework destination.", conflict)]);
         }
 
+        var completedTargetBytes = intendedState.TargetBytes
+            .ToImmutableDictionary(StringComparer.Ordinal)
+            .ToBuilder();
+        var projectionTargetBytes = intendedState.ProjectionTargetBytes;
+
         foreach (var target in intendedState.TargetBytes.OrderBy(
                      value => value.Key,
                      StringComparer.Ordinal))
         {
             var read = input.CurrentTargets[target.Key];
             var isGeneratedRegion = intendedState.GeneratedRegionPaths.Contains(target.Key);
+            var isUserOwned = userOwnedPaths.Contains(
+                PortableWorkspacePath.CreatePortableKey(target.Key));
+            var isVerifiedManagedTarget = input.VerifiedManagedTargetPaths.Contains(target.Key);
+            var isPreservedEntrypoint = intendedState.PreservedEntrypointPaths.Contains(target.Key);
+            var canRebaseGeneratedRegion = isGeneratedRegion
+                && read.State == InstallTargetReadState.File
+                && !isUserOwned
+                && isVerifiedManagedTarget;
+            var isNewAdoptedEntrypoint = isUserOwned
+                && intendedState.Migrations.Any(migration =>
+                    string.Equals(migration.Path, target.Key, StringComparison.Ordinal)
+                    && migration.Actions.Contains(WorkspaceAdoptionAction.EntrypointCreated));
             if (read.State == InstallTargetReadState.File)
             {
+                if (isNewAdoptedEntrypoint)
+                {
+                    findings.Add(new InstallFinding(
+                        code: InstallFindingCode.TargetUnsafe,
+                        cause: "A planned local entrypoint destination became occupied before Install planning completed.",
+                        subject: target.Key));
+                    continue;
+                }
+
                 if (isGeneratedRegion
+                    && !isUserOwned
+                    && !isPreservedEntrypoint
                     && !HasSafeGeneratedRegion(read, out var generatedCause))
                 {
                     findings.Add(new InstallFinding(
@@ -69,29 +112,57 @@ internal sealed class InstallEstablishmentPlanner
                     continue;
                 }
 
-                hasEligibleOccupant = true;
-                if (!request.Force)
+                if (!isUserOwned && !isVerifiedManagedTarget && !isPreservedEntrypoint)
                 {
-                    findings.Add(new InstallFinding(
-                        code: InstallFindingCode.TargetOccupied,
-                        cause: "An exact current Framework destination is occupied before management establishment.",
-                        subject: target.Key));
-                    continue;
+                    hasEligibleOccupant = true;
+                    if (!request.Force)
+                    {
+                        findings.Add(new InstallFinding(
+                            code: InstallFindingCode.TargetOccupied,
+                            cause: "An exact current Framework destination is occupied before management establishment.",
+                            subject: target.Key));
+                        continue;
+                    }
+                }
+            }
+
+            var intendedEffectBytes = target.Value;
+            if (canRebaseGeneratedRegion
+                && !TryRebaseGeneratedRegion(
+                    read,
+                    target.Value,
+                    out intendedEffectBytes,
+                    out var rebaseCause))
+            {
+                findings.Add(new InstallFinding(
+                    code: InstallFindingCode.GeneratedRegionUnsafe,
+                    cause: rebaseCause,
+                    subject: target.Key));
+                continue;
+            }
+
+            if (canRebaseGeneratedRegion)
+            {
+                completedTargetBytes[target.Key] = intendedEffectBytes;
+                if (!intendedEffectBytes.AsSpan().SequenceEqual(target.Value))
+                {
+                    projectionTargetBytes ??= intendedState.TargetBytes
+                        .ToImmutableDictionary(StringComparer.Ordinal);
                 }
             }
 
             if (CreateEffect(new InstallFileEffectInput
             {
                 Read = read,
-                IntendedBytes = target.Value,
-                Kind = isGeneratedRegion && read.State == InstallTargetReadState.File
+                IntendedBytes = intendedEffectBytes,
+                Kind = canRebaseGeneratedRegion
                         ? InstallEffectKind.GeneratedRegion
                         : InstallEffectKind.File,
                 Action = read.State == InstallTargetReadState.Missing
                         ? InstallEffectAction.Create
                         : InstallEffectAction.Replace,
-                SourceAssetPath = isGeneratedRegion
-                        && read.State == InstallTargetReadState.File
+                SourceAssetPath = isUserOwned
+                        || (isGeneratedRegion && read.State == InstallTargetReadState.File)
                             ? null
                             : target.Key,
             }) is { } effect)
@@ -141,6 +212,11 @@ internal sealed class InstallEstablishmentPlanner
 
             if (blockResolution.State == ManagedBlockState.Present)
             {
+                if (input.VerifiedManagedTargetPaths.Contains(block.Key))
+                {
+                    continue;
+                }
+
                 hasEligibleOccupant = true;
                 if (!request.Force)
                 {
@@ -187,7 +263,10 @@ internal sealed class InstallEstablishmentPlanner
                 effects
                     .Where(effect => effect.Identity.Kind == InstallEffectKind.File)
                     .Select(effect => effect.RelativePath)
+                    .Concat(intendedState.PreservedEntrypointPaths)
                     .Concat(input.Ownership.Document.Framework?.Paths ?? [])
+                    .Where(path => !userOwnedPaths.Contains(
+                        PortableWorkspacePath.CreatePortableKey(path)))
                     .Where(path => path is not (FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath))
                     .Distinct(StringComparer.Ordinal)
                     .ToImmutableArray(),
@@ -240,11 +319,34 @@ internal sealed class InstallEstablishmentPlanner
                     exception.Message)]);
         }
 
+        var hasPhysicalEffects = effects.Count > 0
+            || ownershipEffect is not null
+            || directories.Count > 0;
+        var managementState = hasEligibleOccupant
+            ? InstallManagementState.EligibleInitialOccupant
+            : InstallManagementState.SafelyAbsent;
+        if (input.VerifiedManagedTargetPaths.Count > 0 && !hasPhysicalEffects)
+        {
+            managementState = InstallManagementState.TrustedExact;
+        }
+        else if (input.VerifiedManagedTargetPaths.Count > 0
+                 && effects.Any(effect => migrationPaths.Contains(effect.RelativePath)))
+        {
+            managementState = InstallManagementState.ManagedAdoption;
+        }
+
+        var completedContext = context with
+        {
+            IntendedState = intendedState with
+            {
+                TargetBytes = completedTargetBytes.ToImmutable(),
+                ProjectionTargetBytes = projectionTargetBytes,
+            },
+        };
+
         return new InstallPlanningCompleted(
-            context,
-            hasEligibleOccupant
-                ? InstallManagementState.EligibleInitialOccupant
-                : InstallManagementState.SafelyAbsent,
+            completedContext,
+            managementState,
             new InstallPlanEffects
             {
                 DirectoryCreations = directories,
@@ -358,6 +460,96 @@ internal sealed class InstallEstablishmentPlanner
                 RecoveryTarget = RecoveryBundleTarget.Create(change, before),
             };
     }
+
+    private bool TryRebaseGeneratedRegion(
+        InstallTargetRead read,
+        ReadOnlySpan<byte> intendedDocumentBytes,
+        out byte[] expectedDocumentBytes,
+        out string cause)
+    {
+        expectedDocumentBytes = [];
+        try
+        {
+            if (read.State != InstallTargetReadState.File
+                || read.Snapshot is not { HasBytes: true } snapshot)
+            {
+                throw new InvalidDataException(
+                    "A verified managed Entries target requires its captured current bytes.");
+            }
+
+            var currentDocument = StrictUtf8.GetString(snapshot.Bytes.AsSpan());
+            var intendedDocument = StrictUtf8.GetString(intendedDocumentBytes);
+            var currentFacts = _markdownDocumentParser.Parse(currentDocument);
+            var intendedFacts = _markdownDocumentParser.Parse(intendedDocument);
+            if (currentFacts.GeneratedRegion.State != MarkdownGeneratedRegionState.Complete
+                || intendedFacts.GeneratedRegion.State != MarkdownGeneratedRegionState.Complete)
+            {
+                throw new InvalidDataException(
+                    "Both current and intended managed Entries regions must be complete and unique.");
+            }
+
+            var currentEntries = currentFacts.GeneratedRegion.EntriesBlock
+                ?? throw new InvalidDataException(
+                    "The current managed Entries region has no established list span.");
+            var intendedEntries = intendedFacts.GeneratedRegion.EntriesBlock
+                ?? throw new InvalidDataException(
+                    "The intended managed Entries region has no established list span.");
+            if (!IsSupportedGeneratedLineEnding(currentEntries.LineEnding)
+                || !IsSupportedGeneratedLineEnding(intendedEntries.LineEnding))
+            {
+                throw new InvalidDataException(
+                    "Managed Entries rebasing requires an LF or CRLF list line ending.");
+            }
+
+            var currentSpan = currentEntries.Span;
+            var intendedSpan = intendedEntries.Span;
+            var beforeBody = currentDocument.Substring(
+                currentSpan.Start,
+                currentSpan.Length);
+            var intendedBody = intendedDocument.Substring(
+                intendedSpan.Start,
+                intendedSpan.Length);
+            var expectedBody = NormalizeGeneratedListLineEndings(
+                intendedBody,
+                currentEntries.LineEnding);
+            var change = new GeneratedNavigationBoundedChange(
+                new GeneratedNavigationBoundedChangeInput
+                {
+                    ContentLocation = new Utf8SourceMap(currentDocument).Map(
+                        currentSpan.Start,
+                        currentSpan.Length),
+                    BeforeBody = beforeBody,
+                    ExpectedBody = expectedBody,
+                    Prefix = currentDocument[..currentSpan.Start],
+                    Suffix = currentDocument[(currentSpan.Start + currentSpan.Length)..],
+                });
+            expectedDocumentBytes = change.ExpectedDocumentBytes.AsSpan().ToArray();
+            cause = string.Empty;
+            return true;
+        }
+        catch (Exception exception) when (exception is ArgumentException
+            or InvalidDataException
+            or InvalidOperationException)
+        {
+            cause = $"The verified managed Entries target could not be safely rebased: {exception.Message}";
+            return false;
+        }
+    }
+
+    private static string NormalizeGeneratedListLineEndings(
+        string generatedList,
+        string lineEnding)
+    {
+        var normalized = generatedList
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace('\r', '\n');
+        return lineEnding == "\r\n"
+            ? normalized.Replace("\n", "\r\n", StringComparison.Ordinal)
+            : normalized;
+    }
+
+    private static bool IsSupportedGeneratedLineEnding(string lineEnding)
+        => lineEnding is "\n" or "\r\n";
 
     private bool HasSafeGeneratedRegion(
         InstallTargetRead read,

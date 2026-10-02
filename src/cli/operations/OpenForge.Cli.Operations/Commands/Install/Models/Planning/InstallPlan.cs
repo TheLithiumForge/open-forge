@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
@@ -15,6 +16,7 @@ internal enum InstallManagementState
     SafelyAbsent,
     EligibleInitialOccupant,
     TrustedExact,
+    ManagedAdoption,
     ManagedDivergence,
     Incomplete,
     Blocked,
@@ -153,6 +155,18 @@ internal sealed record InstallIntendedState
 {
     public required IReadOnlyDictionary<string, byte[]> TargetBytes { get; init; }
 
+    public IReadOnlyDictionary<string, byte[]>? ProjectionTargetBytes { get; init; }
+
+    public IReadOnlySet<string> UserOwnedPaths { get; init; }
+        = ImmutableHashSet<string>.Empty.WithComparer(StringComparer.Ordinal);
+
+    public IReadOnlyList<InstallMigrationPlan> Migrations { get; init; } = [];
+
+    public IReadOnlySet<string> PreservedEntrypointPaths { get; init; }
+        = ImmutableHashSet<string>.Empty.WithComparer(StringComparer.Ordinal);
+
+    public FileExpectation? AdoptionOwnershipExpectation { get; init; }
+
     public required IReadOnlyDictionary<string, byte[]> ManagedBlockBytes { get; init; }
 
     public required IReadOnlySet<string> GeneratedRegionPaths { get; init; }
@@ -211,6 +225,8 @@ internal sealed record InstallEstablishmentPlanInput
 {
     public required InstallPlanContext Context { get; init; }
 
+    public IReadOnlySet<string> VerifiedManagedTargetPaths { get; init; }
+        = ImmutableHashSet<string>.Empty.WithComparer(StringComparer.Ordinal);
 
     public required WorkspaceOwnershipRead Ownership { get; init; }
 

@@ -273,7 +273,7 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Equal(canonicalAgents, File.ReadAllBytes(workspace.Combine(AgentsPath)));
         Assert.Equal(canonicalClaude, File.ReadAllBytes(workspace.Combine(ClaudePath)));
 
-        const string authoredPrefix = "# Préface 🧭\r\n\r\nKeep this user-owned introduction.\r\n";
+        const string authoredPrefix = "# PrÃ©face ðŸ§­\r\n\r\nKeep this user-owned introduction.\r\n";
         const string authoredSuffix = "\r\n## User notes\r\nKeep this suffix exactly.\r\n";
         var legacyAgents = authoredPrefix
             + LegacyManagedStart + "\n\n"
@@ -327,11 +327,12 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Equal(expectedClaude, File.ReadAllBytes(workspace.Combine(ClaudePath)));
     }
 
-    [Fact(DisplayName = "F01 blocks an eligible occupied target, previews force, then replaces only that target"),
+    [Fact(DisplayName = "F01 previews and preserves an existing category entrypoint without force"),
      Trait("Feature", "install-readiness"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F01")]
-    public async Task OccupiedTargetRequiresDeliberateForce()
+    public async Task ExistingCategoryEntrypointIsPreservedWithoutForce()
     {
         using var workspace = PublishedJourneyWorkspace.Create("f01-occupied");
+        workspace.ExpectFiles(".agents/guidance/_guidance.overwrite.md");
         const string readme = "# Occupied target workspace\n";
         const string unrelated = "Do not replace this unrelated authored file.\n";
         const string occupant = """
@@ -352,22 +353,9 @@ public sealed class F01InstallReadinessJourneyTests
         workspace.ExpectCoreInstall();
         var readmeBytes = File.ReadAllBytes(workspace.Combine(ReadmePath));
         var unrelatedBytes = File.ReadAllBytes(workspace.Combine("notes/unrelated.txt"));
-        var beforeBlocked = workspace.SnapshotState();
-        var externalBeforeBlocked = SnapshotExternalStore(workspace);
-
-        var blocked = await workspace.RunAsync("install", "--automatic");
-        Assert.Equal(5, blocked.ExitCode);
-        Assert.Equal(string.Empty, blocked.StandardOutput);
-        Assert.NotEqual(string.Empty, blocked.StandardError);
-        Assert.Contains(OccupiedPath, blocked.StandardError, StringComparison.Ordinal);
-        Assert.Contains("open-forge install --force --dry-run", blocked.StandardError, StringComparison.Ordinal);
-        Assert.Equal(beforeBlocked, workspace.SnapshotState());
-        Assert.Equal(externalBeforeBlocked, SnapshotExternalStore(workspace));
-        workspace.LockStore.AssertNoInfrastructure();
-
         var beforePreview = workspace.SnapshotState();
         var externalBeforePreview = SnapshotExternalStore(workspace);
-        var preview = await workspace.RunAsync("install", "--force", "--dry-run");
+        var preview = await workspace.RunAsync("install", "--dry-run");
         AssertCompleted(preview);
         Assert.Contains("Would install the Open Forge Framework into", preview.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("replacing 1 existing file", preview.StandardOutput, StringComparison.Ordinal);
@@ -377,7 +365,7 @@ public sealed class F01InstallReadinessJourneyTests
         workspace.LockStore.AssertNoInfrastructure();
 
         var beforeForce = CaptureEntryKinds(workspace.Path);
-        var forced = await workspace.RunAsync("install", "--force", "--automatic");
+        var forced = await workspace.RunAsync("install", "--automatic");
         AssertCompleted(forced);
         Assert.Contains("replacing 1 existing file", forced.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(OccupiedPath, forced.StandardOutput, StringComparison.Ordinal);
@@ -401,7 +389,9 @@ public sealed class F01InstallReadinessJourneyTests
             .ToArray();
         Assert.Equal(
             ExpectedPayloadPaths()
-                .Where(path => !string.Equals(path, OccupiedPath, StringComparison.Ordinal)),
+                .Where(path => !string.Equals(path, OccupiedPath, StringComparison.Ordinal))
+                .Append(".agents/guidance/_guidance.overwrite.md")
+                .Order(StringComparer.Ordinal),
             createdPayload);
         Assert.Equal(
             ExpectedPayloadDirectories().Where(path => !beforeForce.ContainsKey(path)),
@@ -417,6 +407,9 @@ public sealed class F01InstallReadinessJourneyTests
             ExpectedGuidancePayloadSha256,
             Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(occupiedPath))).ToLowerInvariant());
         Assert.NotEqual(occupant, File.ReadAllText(occupiedPath));
+        var preserved = File.ReadAllText(workspace.Combine(".agents/guidance/_guidance.overwrite.md"));
+        Assert.Contains("# Distinctive occupied guidance", preserved, StringComparison.Ordinal);
+        Assert.DoesNotContain("occupied-entry.md", preserved, StringComparison.Ordinal);
         Assert.Equal(readmeBytes, File.ReadAllBytes(workspace.Combine(ReadmePath)));
         Assert.Equal(unrelatedBytes, File.ReadAllBytes(workspace.Combine("notes/unrelated.txt")));
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);

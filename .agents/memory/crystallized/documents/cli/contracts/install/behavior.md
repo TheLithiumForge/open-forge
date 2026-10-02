@@ -151,9 +151,10 @@ against stored integrity facts.
 ## Ownership Observation And Publication
 
 The generated `.agents/open-forge.lock.json` is the only state input and output.
-Read its ownership receipts with the forgiving workspace reader. Missing,
-malformed, unreadable or unsupported ownership never becomes an integrity gate.
-A readable lock supplies ownership; unavailable ownership supplies no claims.
+Read its ownership receipts with the forgiving workspace reader. An absent
+ownership file is known empty. Malformed, unreadable or unsupported ownership
+never becomes a general integrity gate; unavailable facts do not authorize
+adoption when a competing claim cannot be ruled out.
 Do not read, migrate, delete, or honour leftover records from earlier formats.
 A matching file does not establish an ownership receipt.
 
@@ -174,6 +175,103 @@ former state-file subject rather than adding another outcome.
 A known Extension claim at a selected Framework path remains an ownership
 conflict, including portable case aliases and claims on a region's host.
 Force cannot overwrite that destination.
+
+## Initial Workspace Adoption
+
+During safe initial establishment, ordinary Install automatically completes
+missing compatible required metadata and route entrypoints in the selected
+standard route subtree when they are needed for routability. It does not require
+a new flag or `--force`. A trusted exact managed state stays a no-op and is
+classified `TrustedExact`. When a previously verified managed authored base
+needs only scoped workspace adoption or the generated navigation required by
+that adoption, Install proceeds without `--force` and is classified internally
+as `ManagedAdoption` and publicly as `managed-adoption`. It is not reported as
+an exact no-op. Missing, replaced, or divergent authored managed payload remains
+managed divergence and directs the caller to `open-forge update`.
+
+For managed-base admission, independently verify each selected non-user payload
+target's authored source fingerprint and required managed-block contents using
+the existing readers. Exclude `UserOwnedPaths` from this base-admission check,
+but include every intended target in final exact applied verification. For a
+managed generated target projected from scoped adoption, its generated `Entries`
+fingerprint may differ only when its authored fingerprint still matches and the
+plan records the corresponding navigation migration. Retain the existing
+bounded generated-span safety check before any write. Only the verified managed
+target set, planned `UserOwnedPaths`, and explicitly preserved unowned category
+entrypoints receive the occupancy exception. Other occupied payload files keep
+their existing `--force` boundary.
+
+Ownership observation precedes candidate formation. An absent ownership file is
+known empty. A known Framework, Extension, or Library claim is checked under
+its existing lifecycle rules. Malformed, unreadable, or unsupported ownership
+does not license migration when a competing claim cannot be ruled out; the
+affected candidate is blocked. This does not turn ownership-file availability
+into a general Install gate for unrelated safe effects.
+
+The candidate set is limited to existing Markdown sources and missing
+entrypoints in the selected standard route subtree that are required for
+routability. During first establishment, it reuses a unique recognized
+entrypoint in place unless that unowned file occupies the exact shipped category entrypoint path. At that exact
+path, Install preserves its authored content in the adjacent `.overwrite.md`
+companion and installs the Framework base without requiring `--force`.
+Recognized generated navigation and its heading are omitted from the preserved
+content; ambiguous sections remain intact rather than being discarded. An
+existing companion is retained after the preserved content so its precedence
+survives. The companion remains user owned, while the installed base receives
+Framework ownership. Both effects use exact observations and the existing
+recovery and verification pipeline. A repeated Install does not migrate the
+content again. Excluded or unsafe preservation destinations block preflight.
+It creates only the
+missing canonical `_{folder-name}.md` route source required by the selected
+topology, or adds a missing `## Entries` section where required. It honors
+`removedFiles` and removed defaults. Ordinary catalogue observation may read
+other safe sources under its existing selection rules, but unrelated content is
+not adopted or normalized. Outside junction targets are never followed.
+
+The prospective metadata edit adds only missing compatible required fields.
+It preserves existing valid fields, unknown YAML members, body bytes, encoding,
+newline style, overwrite companions, binary content, and user ownership. It
+does not fill optional fields that remain allowed to be absent. Malformed,
+ambiguous, conflicting, or unsafe inputs block the complete preflight with a
+finding tied to the affected path or field.
+
+For native `SKILL.md` files, use native semantics. A missing required
+`name` is derived from the Skill directory basename. A missing `description`
+uses an existing usable description, then an existing usable title, then the
+first top-level H1 heading, then the workspace-relative path. Install does not
+add an `open-forge:` wrapper or `Entries` to a native Skill. It leaves
+complete native fields, including optional `license`, untouched. This also
+applies to an unowned native Skill at a bundled `SKILL.md` destination: preserve
+that Skill instead of installing the bundled file or requiring `--force`. Resource
+catalogues under `references` remain within the accepted Task 47 selection
+boundary.
+
+Other required route descriptions use an existing usable description, then an
+existing usable title, then the first top-level H1 heading, then the
+workspace-relative path. A required tag is added only if the new completion
+actually needs ordinary classification. The only permitted synthesized search
+tag is `Workspace`. Do not infer loading, behavior, authority, or state tags.
+
+The final prospective document must have one unique safe `Entries` boundary.
+Authorized adoption may first append a missing section; duplicate or ambiguous
+boundaries still block. Install forms prospective source bytes and topology
+before its existing generated-navigation projection. The shared Index parser,
+selector, and projector do not change. Payload-owned targets remain separate
+from user-adoption targets. Migrated sources and new local resource entrypoints
+do not receive whole-file Framework ownership. A verified generated
+`Entries` region may retain its separate region receipt.
+
+The metadata and entrypoint effects join the same complete Install plan. An
+existing source edit uses exact prior bytes, revalidation, the existing recovery
+bundle, application, and post-verification. A created entrypoint uses the
+existing create effect. Install does not add automatic rollback or change
+recovery retention.
+
+On a managed root, a generated Entries host updated to expose a newly observed
+selected-route source records a `navigation-updated` migration at that host,
+even when the native source itself needed no metadata edit. Preserve the host's
+existing ownership in its current region or whole-file form. `UserOwnedPaths`
+describes ownership classification; it is not a synonym for migration rows.
 
 ## Semantic Fingerprints And Current Bytes
 
@@ -235,12 +333,38 @@ a verified no-op and preserves unrelated scoped ownership and content. It does n
 provenance, or unrelated bytes. `--force` and `--automatic` do not change the
 no-op.
 
+### Bounded adoption from a verified managed base
+
+When a previously managed workspace gains a selected compatible source,
+ordinary Install may complete only the scoped adoption and generated navigation
+needed for that source. First verify each selected non-user payload target's
+authored source fingerprint and required managed-block contents with the
+existing readers. A missing, replaced, or divergent authored managed target
+does not qualify. For a generated target, permit a different `Entries`
+fingerprint only when its authored fingerprint still matches and the intended
+projection carries `navigation-updated` for that path. Keep the existing
+bounded generated-span safety check before writing.
+
+If this verified base has migration effects, classify the plan as
+`ManagedAdoption` internally and set schema-3 `data.classification` to
+`managed-adoption`; do not short circuit it as `TrustedExact`. Exempt only the
+verified managed target set and planned `UserOwnedPaths` from the initial
+occupancy/force boundary. Continue
+exact final-byte verification for every user-owned target, ownership snapshot
+revalidation, lease-time rebuild, and all existing application checks. A
+generated managed `Entries` host may have a `navigation-updated` migration row
+while retaining its prior ownership. `UserOwnedPaths` is an ownership
+classification, not a list of every migration path. If there are no effects or
+migrations, retain `TrustedExact` and the existing no-op result.
+
 ### Managed divergence
 
-A selected owned target or region is divergent when current content differs
-from the running payload or intended generated projection, or a selected expected
-path is missing. A stale source version or an unselected scoped claim does not
-establish divergence.
+A selected authored managed target is divergent when its content differs from
+the running payload or a selected expected path is missing. A generated region
+that differs from the intended projection is also divergent unless its authored
+host verifies and the difference is exactly the bounded navigation migration
+for the scoped adoption above. A stale source version or an unselected scoped
+claim does not establish divergence.
 Install does not reconcile any of these states. It forms no mutation plan,
 returns `blocked`, preserves current bytes, and directs the caller to
 `open-forge update`. The same result applies when `--force` is present. Initial
@@ -265,21 +389,26 @@ because a no-op verifies their bytes.
 ## Intended State And Generated Projection
 
 For a safe establishment or eligible force request, the planner first forms one
-hypothetical post-install workspace from current authored content and the effects
-permitted by the request. It preserves user routes, Memory, overwrite
-companions, intentionally absent defaults, Extension content, and all bytes
-outside exact managed regions.
+hypothetical post-install workspace from current authored content, permitted
+payload effects, and eligible prospective metadata and route completions. It
+preserves user routes, Memory, overwrite companions, intentionally absent
+defaults, Extension content, and all bytes outside exact planned target or
+generated-region spans.
 
-The generated-navigation projector then uses the current Index rules to derive
-every affected `Entries` body from that hypothetical authored topology and
-metadata. It does not use current generated lines as topology or metadata and
-does not copy generated interiors from the embedded payload. A lifecycle plan
-cannot invoke a hidden `index` operation.
+After adoption candidates have their prospective bytes and source facts, the
+generated-navigation projector uses the current Index rules to derive every
+affected `Entries` body from that hypothetical authored topology and metadata.
+It does not use current generated lines as topology or metadata and does not
+copy generated interiors from the embedded payload. A lifecycle plan cannot
+invoke a hidden `index` operation or change shared Index acceptance.
 
-Only the body of one unique top-level `## Entries` section may change. A missing
-or duplicate heading boundary blocks before any write. The heading and all
-bytes outside the body remain unchanged; retired guard comments inside it are
-removed by the shared generated-navigation projection.
+For an existing section, only the body of one unique top-level `## Entries`
+section may change. A missing section may be added only by a planned
+`entries-section-added` action on an eligible route source with an unambiguous
+insertion point. A duplicate or ambiguous heading boundary blocks before any
+write. Existing headings and all bytes outside a changed body remain unchanged.
+Retired guard comments inside a rewritten body are removed by the shared
+generated-navigation projection.
 
 Root and provider resolution admits only an absent host where creation is
 supported, an existing host with no boundary candidate for bounded append, or
@@ -324,18 +453,20 @@ never writes metadata, truncates, or deletes the lock file. An active handle
 blocks the plan; lock state is not lifecycle authority, history, or recovery
 evidence.
 
-`--automatic` admits only safe absent creation or exact no-op effects already
-selected by the explicit operation. It cannot admit an eligible initial occupant
-without explicit `--force`. It never admits divergence, deletion, adoption,
-ownership, or managed-host boundary repair.
+`--automatic` admits only deterministic safe effects already selected by
+ordinary Install, including eligible bounded metadata and route completion. It
+cannot admit an eligible initial payload occupant without explicit
+`--force`. It never admits divergence, deletion, ownership, or managed-host
+boundary repair.
 
 ## Dry-Run Parity
 
-Dry-run uses the same normalized request, fresh current facts, ownership receipts,
-classification, intended state, generated projection, complete plan, and
-preflight as application. It reports all safe creations, eligible force effects,
-bounded generated and managed-region changes, lifecycle publication that would
-occur after verification, preserved content, and recovery readiness.
+Dry-run uses the same normalized request, fresh current facts, ownership
+receipts, classification, intended state, prospective adoption bytes, generated
+projection, complete plan, and preflight as application. It reports all safe
+creations, eligible force effects, planned migrations, bounded generated and
+managed-region changes, lifecycle publication that would occur after
+verification, preserved content, and recovery readiness.
 
 At minimal detail, the preview identifies the planned
 `.agents/open-forge.lock.json` state-file effect when ownership publication
@@ -443,33 +574,36 @@ The operation forms one typed result after invalid input, classification,
 preflight, dry-run, verified application, interruption, or recovery. Human and
 JSON renderers consume that result and do not rerun lifecycle work.
 
-The typed result forms exactly the ordered command-local JSON graph frozen by
+The typed result forms exactly the ordered command-local result graph frozen by
 the Interface: mode, force, automatic, atomic nullable embedded-source identity,
 atomic nullable destination classification, atomic nullable managed-footprint
-counts, exact ordered effects, lifecycle, recovery, verification, and ordered
-findings. Managed-footprint counts distinguish named installed content files
-from child directories below `.agents`; the `.agents` container effect is
+counts, exact ordered effects, the internal migration collection, lifecycle,
+recovery, verification, and ordered findings. Managed-footprint counts distinguish
+named installed content files from child directories below `.agents`; the
+`.agents` container effect is
 not included in the directory count, and the generated lock file and host
-regions remain separate populations. All top-level properties are present for every status, arrays are
-non-null, and the shared envelope's command, status, workspace, and next action
-are not duplicated. Effect residual state remains the typed value `none`,
+regions remain separate populations. All required top-level properties are
+present for every status and collections are non-null. Public schema-3
+`data.migrations` is omitted when the internal collection is empty and appears
+at every detail level when rows exist. The shared envelope's command, status,
+workspace, and next action are not duplicated. Effect residual state remains the typed value `none`,
 `retained`, or `unknown`, so dry-run, retained state, partial failure, and
 uncertain completion cannot be collapsed into a Boolean.
 
-The result retains exact workspace and selection method, normalized flags, source
-identity, recognized footprint, ownership and management classification, semantic
-current/intended facts, generated projection, effects, preserved
-content, lifecycle publication, recovery-bundle facts, verification, residuals,
-and at most
-one next action.
+The result retains exact workspace and selection method, normalized flags,
+source identity, recognized payload footprint, separate user-adoption targets,
+ownership and management classification, semantic current and intended facts,
+generated projection, effects, migrations, preserved content, lifecycle
+publication, recovery-bundle facts, verification, residuals, and at most one
+next action.
 
 Use the Interface status meanings and ordinary precedence `blocked` >
 `incomplete` > `completed-with-warnings` > `completed`. `completed` includes safe application,
 eligible force, dry-run, and exact no-op. Ordinary managed divergence is
 `blocked`, not `completed-with-warnings`, because install does not own update authority.
-Planned effects, format-only facts, force presence, automatic mode, and managed
-divergence do not form `completed-with-warnings`; managed divergence directs the caller to
-`update`. Post-verification recovery deletion `Failed` with positively observed
+Planned effects, migration rows, format-only facts, force presence, automatic
+mode, and managed divergence do not form `completed-with-warnings`. Managed
+divergence directs the caller to `update`. Post-verification recovery deletion `Failed` with positively observed
 disposition `Retained` is the only current install `completed-with-warnings` condition.
 
 Primary human `completed`, `completed-with-warnings`, and `incomplete` results go to stdout.
@@ -480,6 +614,102 @@ shipping evidence.
 
 ## Behavioral Conformance
 
+The pinned Skill Creator process acceptance uses the public read-only fixture
+from `anthropics/skills` commit
+`8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4`, subtree `skills/skill-creator`,
+tree `d482eba557f7b2035c8a83589809628b96f6f40e`. Its verified manifest SHA256
+is `DEE669A0BE312D756B0F0E7EC00294F4D7FB71557C99B1EDA93F53086333C064`; it
+contains 18 regular blobs totaling 224,992 bytes. The upstream root `LICENSE`
+is absent at this commit. Preserve its provenance evidence and do not require
+or substitute one. The actual subtree `LICENSE.txt` is retained (SHA256
+`BC6B3AF2F331CBC7FB0DA1344EFB2CBE5877A31498B4D70DBC7000F3405A1362`). The
+original native `SKILL.md` has `name` and `description`, no `license`, and
+SHA256 `DCD4803E61E913E6FC27294184CD3A71F09F5E924FF20C8A9A20173E7B3C2BCF`.
+The first ordinal Markdown reference is
+`.agents/skills/skill-creator/references/schemas.md` with original SHA256
+`8E8876180A8989B406A4D3EDDDf875B04CDFD5805CC8616686D552B11CE4455F`. Use the
+separate ready cache/manifest, never execute downloaded instructions or
+scripts, and do not edit the immutable cache. The allowed public read-only
+sources are `api.github.com` and `raw.githubusercontent.com`.
+
+The following exact argv are confirmed by installed CLI help. The process
+harness sets cwd to the isolated workspace and uses an artifact-owned
+`OPENFORGE_DATA_HOME`:
+
+```text
+install --automatic --dry-run --format json --detail full
+install --automatic --format json --detail full
+install
+index --dry-run --format json --detail full
+index --format json --detail full
+context .agents/skills/skill-creator/SKILL.md --content frontmatter,body --format json --detail full
+route list .agents/skills/skill-creator/SKILL.md --depth=all --format json --detail full
+route inspect .agents/skills/skill-creator/SKILL.md --format json --detail full
+context .agents/skills/skill-creator/references/schemas.md --content body --format json --detail full
+```
+
+Index applies when `--dry-run` is omitted and has no `--automatic` option. A
+`references .agents/skills/skill-creator/SKILL.md --direction both --format
+json --detail full` call may supplement authored-link inspection; it does not
+replace the explicit reference-body Context command. Inspect only actual
+Markdown links and report unresolved upstream links without altering valid
+third-party content.
+
+**A, brownfield:** use the intact 18-file subtree in a pre-existing workspace
+with no Open Forge entrypoints. Automatic JSON dry-run must write nothing;
+plain interactive Install runs through the Windows TTY harness with cwd set to
+the workspace and input `y\r`. Verify exit, text `Migrated` paths, source
+preservation, native semantics, and additive catalogue files. Read Skill
+Context, route list/inspect, and the explicit `schemas.md` body. Automatic JSON
+repeat must have zero effects and absent-or-empty `data.migrations`; default
+Index dry-run must require no additional catalogue repair. A separate intact
+copy runs the automatic JSON dry-run/apply pair to prove planned and applied
+schema-3 migration facts. Hash all upstream files after Install and Index and
+list additive catalogues separately.
+
+Use separate explicit test mutations of the native Skill frontmatter only:
+`missingFM` removes the original frontmatter while retaining the original body;
+`mutated-pinned-skill-partial-name-license` retains the original `name`, adds
+`license: Task70-fixture-sentinel`, and omits `description`. The sentinel is a
+preservation probe, not upstream license metadata. Every other fixture byte,
+including `LICENSE.txt`, stays unchanged. The earlier minimal MIT-license
+regression remains separately identified.
+
+**B, managed root:** in a separate workspace, perform a normal fresh Framework
+Install with plain interactive `install` through the Windows TTY harness and
+input `y\r`, then copy the intact subtree under
+`.agents/skills/skill-creator`. Before adoption, capture these commands in
+order, with streams, exits, and per-file source hashes:
+
+```text
+index --dry-run --format json --detail full
+index --format json --detail full
+context .agents/skills/skill-creator/SKILL.md --content frontmatter,body --format json --detail full
+route inspect .agents/skills/skill-creator/SKILL.md --format json --detail full
+route list .agents/skills/skill-creator/SKILL.md --depth=all --format json --detail full
+context .agents/skills/skill-creator/references/schemas.md --content body --format json --detail full
+```
+
+Promptly report any failed or incomplete pre-Install result with exact argv,
+exit, and findings. Do not waive it, add metadata or entrypoints manually, or
+change Index. Continue evidence-only adoption when safe. Run automatic JSON
+Install dry-run and plain interactive Install with `y\r` through the Windows
+TTY harness. Plain Install must adopt through the verified managed-base path
+without force. After Install, rerun Skill Context, route inspect/list, and the
+explicit `schemas.md` body read. Verify source preservation and catalogues.
+Automatic JSON repeat must have zero effects and no migration rows; default
+Index dry-run must show zero additional catalogue repair. Capture cwd, argv,
+TTY mode, input, raw streams, numeric exits, before/after hashes, and candidate
+runtime/source hashes. Candidate provenance includes the selected executable,
+every published `OpenForge.Cli*.dll`, runtime configuration and dependency
+files, version marker, test assembly, and full candidate source inventory. At
+least one plain Install uses a real TTY.
+
+Before QA, the Task70 owner freezes both scenarios, fixture provenance, and
+these exact command forms in the task acceptance record. Do not rerun the
+historical public beta 4 baseline in this packet. The historical
+`r_b714963066ce` ambiguity remains unresolved.
+
 A conforming implementation must demonstrate:
 
 - exact request normalization, terminal handling, Boolean repetition, and workspace
@@ -488,16 +718,27 @@ A conforming implementation must demonstrate:
   operands, route coincidence, tags, and matching-byte ownership inference;
 - source/payload set and byte parity plus published Native AOT resource access
   away from the checkout;
-- all four safe-absence facts, trusted exact no-op, managed-divergence block with
-  `update` next action, eligible initial occupant, and force-only initial
-  replacement;
+- all four safe-absence facts, trusted exact no-op, verified managed-base
+  adoption with `ManagedAdoption` / `managed-adoption`, managed authored
+  divergence block with `update` next action, eligible initial occupant, and
+  force-only initial replacement;
 - forgiving ownership observation and isolation, including absent and unreadable
   states, source-unavailable facts, and unsupported or ambiguous schema handling;
+- bounded initial workspace adoption, with ownership observed before candidate
+  formation, required fields only, exact description and native name derivation,
+  no invented reserved tags, no outside-junction traversal, and precise
+  malformed, ambiguous, conflicting, and colliding input blocks;
 - nullable operation-time `sourceAssetPath` on selected effects, separate
   whole-file and region receipts, and preservation of unselected scoped claims;
 - syntax-aware semantic fingerprints, exact operation-time bytes, format-only
   observations, generated-interior exclusion, and fail-closed equivalence;
 - one intended topology and current Index projection;
+- prospective adoption bytes formed before that projection, with payload-owned
+  targets separate from user-adoption targets and no shared Index or parser
+  relaxation;
+- managed-base verification that separates authored payload identity from
+  scoped generated navigation, preserves existing ownership, and keeps the
+  force exception limited to verified managed targets and `UserOwnedPaths`;
 - bounded generated sections and canonical or legacy root/provider boundaries;
   no hidden subprocess;
 - canonical `# Open Forge` and standalone footer output for both hosts, exact
@@ -520,6 +761,12 @@ A conforming implementation must demonstrate:
   revalidation and verification, pre-effect cancellation/contention, and
   retained residuals after later failure;
 - dry-run/application parity with no persistent dry-run effects;
+- pinned real Skill Creator brownfield and already-managed-root process
+  acceptance, including the pre-Install default Index result, plain TTY
+  confirmation, automatic JSON dry-run/apply, Context and route/reference
+  inspection, repeated zero-effect Install, and zero-repair default Index dry-run;
+- schema-3 migration rows with exact actions, fields, derivation sources,
+  planned/applied outcomes, omitted public no-op migrations, and verified-only applied rows;
 - seven statuses, including `Failed`/positively observed `Retained` recovery
   `completed-with-warnings` and `Failed`/`Unknown` recovery `failed`, streams, one typed result,
   JSON stdout, bounded diagnostics, and one next action;
@@ -530,11 +777,11 @@ A conforming implementation must demonstrate:
 
 ## Deliberately Removed Framework Destinations
 
-Read `removedCategories`, `removedFiles` and `removedDirectories` from authored settings. A category
-such as `skills` excludes embedded targets beneath `.agents/skills/`. Each
-`removedFiles` entry is one exact canonical workspace-relative file destination;
-it has no glob or recursive-directory meaning. A `removedDirectories` entry
-excludes that canonical directory and all descendants, including future files.
+Apply `removedCategories`, `removedFiles`, and removed defaults from authored
+settings. A category such as `skills` excludes embedded targets beneath
+`.agents/skills/`. Each `removedFiles` entry is one exact canonical
+workspace-relative file destination; it has no glob or recursive-directory
+meaning.
 The concrete destination is
 excluded from whole-file and generated-region planning, including root managed
 hosts. Do not recreate excluded files, change settings, or infer new ownership

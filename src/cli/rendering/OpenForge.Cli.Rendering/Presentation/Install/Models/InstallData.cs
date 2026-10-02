@@ -34,6 +34,9 @@ internal sealed record InstallData
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Verification { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<InstallDataMigration>? Migrations { get; init; }
+
     [JsonIgnore]
     internal IReadOnlyList<InstallDataTextRow> TextRows { get; init; } = [];
 
@@ -148,4 +151,24 @@ internal sealed record InstallDataLifecycle
     public required string Action { get; init; }
 
     public required string Outcome { get; init; }
+}
+
+internal sealed record InstallDataMigration
+{
+    public required string Path { get; init; }
+
+    public required IReadOnlyList<string> Actions { get; init; }
+
+    public required IReadOnlyList<string> Fields { get; init; }
+
+    public required IReadOnlyList<InstallDataMigrationDerivation> Derivation { get; init; }
+
+    public required string Outcome { get; init; }
+}
+
+internal sealed record InstallDataMigrationDerivation
+{
+    public required string Field { get; init; }
+
+    public required string Source { get; init; }
 }

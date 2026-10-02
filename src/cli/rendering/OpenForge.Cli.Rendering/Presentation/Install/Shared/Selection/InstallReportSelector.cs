@@ -51,7 +51,13 @@ internal static class InstallReportSelector
             result.Status,
             preview,
             suppressInterruptedFinding,
-            blockedPaths);
+            blockedPaths,
+            facts.Migrations.Count > 0)
+            .Concat(facts.Migrations.Select(MigrationTextRow))
+            .ToArray();
+        var migrations = facts.Migrations.Count > 0
+            ? facts.Migrations.Select(ProjectMigration).ToArray()
+            : null;
         var data = new InstallData
         {
             Mode = InstallWireVocabulary.Name(result.Mode),
@@ -88,9 +94,11 @@ internal static class InstallReportSelector
             Verification = selection.Detail >= CliDetail.Full
                 ? InstallWireVocabulary.Name(facts.Verification.State)
                 : null,
+            Migrations = migrations,
             TextRows = textRows,
             TextSummaryLines = SelectTextSummaryLines(
                 effects,
+                facts.Migrations,
                 selection.Detail,
                 result.Status,
                 preview,
@@ -395,7 +403,8 @@ internal static class InstallReportSelector
         CliSemanticStatus status,
         bool preview,
         bool suppressInterruptedRows,
-        IReadOnlyList<string> blockedPaths)
+        IReadOnlyList<string> blockedPaths,
+        bool hasMigrations)
     {
         if (suppressInterruptedRows)
             return [];
@@ -430,7 +439,7 @@ internal static class InstallReportSelector
                 }
             }
 
-            var wording = RowWording(effect, preview, isLock);
+            var wording = RowWording(effect, preview, isLock, hasMigrations);
             if (full && effect.SourceAssetPath is { } source)
                 wording += $"; {InstallWording.SourceAsset(source)}";
             rows.Add(new InstallDataTextRow(effect.Path, wording));
@@ -441,6 +450,7 @@ internal static class InstallReportSelector
 
     private static IReadOnlyList<string> SelectTextSummaryLines(
         IReadOnlyList<InstallDataEffect> effects,
+        IReadOnlyList<InstallMigration> migrations,
         CliDetail detail,
         CliSemanticStatus status,
         bool preview,
@@ -453,7 +463,7 @@ internal static class InstallReportSelector
         string? recoveryPath)
     {
         if (status is CliSemanticStatus.Invalid or CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete)
-            return [];
+            return MigrationSummaryLines(migrations);
 
         var partial = status is CliSemanticStatus.Failed or CliSemanticStatus.Interrupted;
         var hostCreateCount = HostCreateCount(effects, preview);
@@ -467,7 +477,8 @@ internal static class InstallReportSelector
         {
             lines.Add(preview
                 ? InstallWording.WouldCreateSummary(createdFiles, createdDirectories, hostCreateCount == 2)
-                : InstallWording.CreatedSummary(createdFiles, createdDirectories, effects.Any(IsVerifiedOwnershipRecord)));
+                : InstallWording.CreatedSummary(createdFiles, createdDirectories,
+                    migrations.Count == 0 && effects.Any(IsVerifiedOwnershipRecord)));
         }
 
         if (!partial && hostCreateCount == 2 && !preview)
@@ -482,6 +493,8 @@ internal static class InstallReportSelector
 
         if (detail >= CliDetail.Standard && addedSections > 0)
             lines.Add(InstallWording.SectionsSummary(addedSections, preview));
+
+        lines.AddRange(MigrationSummaryLines(migrations));
 
         if (preview && replacementCount == 0 && effects.Count > 0)
             lines.Add(InstallWording.NoExistingChanges());
@@ -513,7 +526,11 @@ internal static class InstallReportSelector
         return lines;
     }
 
-    private static string RowWording(InstallDataEffect effect, bool preview, bool isLock)
+    private static string RowWording(
+        InstallDataEffect effect,
+        bool preview,
+        bool isLock,
+        bool hasMigrations)
     {
         if (effect.ResultOutcome is InstallEffectOutcome.NotStarted)
             return InstallWording.NotStartedFile();
@@ -523,6 +540,14 @@ internal static class InstallReportSelector
 
         if (effect.ResultOutcome is InstallEffectOutcome.VerificationFailed)
             return InstallWording.FailedFile();
+
+        if (isLock
+            && effect.ResultAction == InstallEffectAction.Create
+            && hasMigrations
+            && effect.ResultOutcome == InstallEffectOutcome.Verified)
+        {
+            return global::OpenForge.Cli.OutputText.Install.InstallText.LabelOwnershipReceiptCreated();
+        }
 
         if (isLock && effect.ResultAction == InstallEffectAction.Create)
             return InstallWording.LockCreated(preview);
@@ -558,6 +583,54 @@ internal static class InstallReportSelector
     private static bool IsVerifiedOwnershipRecord(InstallDataEffect effect)
         => IsOwnershipRecord(effect)
             && effect.ResultOutcome == InstallEffectOutcome.Verified;
+
+    private static InstallDataMigration ProjectMigration(InstallMigration migration)
+        => new()
+        {
+            Path = migration.Path,
+            Actions = migration.Actions.Select(InstallWireVocabulary.Name).ToArray(),
+            Fields = migration.Fields.ToArray(),
+            Derivation = migration.Derivation.Select(value => new InstallDataMigrationDerivation
+            {
+                Field = value.Field,
+                Source = InstallWireVocabulary.Name(value.Source),
+            }).ToArray(),
+            Outcome = InstallWireVocabulary.Name(migration.Outcome),
+        };
+
+    private static InstallDataTextRow MigrationTextRow(InstallMigration migration)
+    {
+        var actionLabels = migration.Actions
+            .Select(InstallWireVocabulary.Name)
+            .Select(global::OpenForge.Cli.OutputText.Install.InstallText.MigrationActionLabel);
+        var actions = global::OpenForge.Cli.OutputText.Install.InstallText.FormatMigrationActions(actionLabels);
+        var wording = global::OpenForge.Cli.OutputText.Install.InstallText.FormatMigrationRow(
+            InstallWireVocabulary.Name(migration.Outcome),
+            actions);
+        return new InstallDataTextRow(migration.Path, wording);
+    }
+
+    private static IReadOnlyList<string> MigrationSummaryLines(IReadOnlyList<InstallMigration> migrations)
+    {
+        if (migrations.Count == 0)
+        {
+            return [];
+        }
+
+        var lines = new List<string>();
+        foreach (var outcome in new[] { InstallMigrationOutcome.Applied, InstallMigrationOutcome.Planned })
+        {
+            var count = migrations.Count(migration => migration.Outcome == outcome);
+            if (count > 0)
+            {
+                lines.Add(global::OpenForge.Cli.OutputText.Install.InstallText.FormatMigrationSummary(
+                    InstallWireVocabulary.Name(outcome),
+                    count));
+            }
+        }
+
+        return lines;
+    }
 
     private static bool HasCancellationProgress(IReadOnlyList<InstallDataEffect> effects)
         => effects.Any(effect => effect.ResultOutcome is

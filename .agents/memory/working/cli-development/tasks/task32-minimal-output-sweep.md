@@ -4,7 +4,7 @@ open-forge:
   tags: [Memory, Working, CLI, Task, Presentation, Minimal, Contextual, Active]
 ---
 
-# Task 32 â€” Minimal Output Sweep
+# Task 32: Minimal Output Sweep
 
 **Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task32-minimal-output-sweep.md). Recommendation:
 Do before 1.0. The review names any details in this record that are out of date.
@@ -16,8 +16,8 @@ Do before 1.0. The review names any details in this record that are out of date.
   Root owns scheduled integration and combined beta5 qualification.
 - Owner: Task32 completion owner. Root owns integration and final acceptance.
 - Trigger: the maintainer's ruling on
-  [40 â€” verification](../../../archived/cli-development/tasks/task30-g4/40-verification.md) divergence 6 and
-  [30 â€” extension install](../../../archived/cli-development/tasks/task30-g4/30-extension-install.md), recorded
+  [40: verification](../../../archived/cli-development/tasks/task30-g4/40-verification.md) divergence 6 and
+  [30: extension install](../../../archived/cli-development/tasks/task30-g4/30-extension-install.md), recorded
   2026-09-16. Both were settled in favour of the shared presentation rule for
   now, with this sweep queued to revisit the underlying question.
 
@@ -53,7 +53,7 @@ of the time.
 - Use the frozen inventory of all 29 operations, including root `remove`. The
   former 28-command sweep count is historical. This receipt does not authorize
   a fresh audit.
-- A `Workspace:` echo earns its place where the workspace is ambiguous â€” where
+- A `Workspace:` echo earns its place where the workspace is ambiguous, where
   the command may have resolved a different workspace than the reader expects.
   It does not earn its place merely because a rule requires it.
 - A `Next:` line earns its place where there is a genuine next step. A next
@@ -193,7 +193,7 @@ Frozen design `r_5f32c13b1dee`; base commit
 `2e0da10a5657c084b2847245775858123e09a5ed`.
 
 
-## Root integration acceptance addendum â€” 2026-10-01
+## Root integration acceptance addendum: 2026-10-01
 
 Root accepted the frozen Task 32 candidate for inclusion in beta5 combined
 qualification after exact integration r_7e676fedfbd6. The earlier attempt

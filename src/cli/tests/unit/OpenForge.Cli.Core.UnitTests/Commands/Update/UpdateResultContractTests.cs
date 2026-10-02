@@ -1,9 +1,11 @@
-using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Commands.Update;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
+using OpenForge.Cli.Core.Framework.Ownership;
 
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -54,11 +56,24 @@ public sealed class UpdateResultContractTests
             ["docs/a.md", "docs/z.md", WorkspaceOwnershipDefinitions.RelativePath],
             result.Recovery.ProtectedPaths);
         Assert.Empty(result.Findings);
+        Assert.Empty(result.Migrations);
         Assert.NotNull(result.Lifecycle);
         Assert.NotNull(result.Recovery);
         Assert.Throws<ArgumentException>(() => new UpdateResult(CompleteFormation() with
         {
             Effects = [Effect("docs/a.md"), Effect("docs/a.md")],
+        }));
+        Assert.Throws<ArgumentException>(() => new UpdateResult(CompleteFormation() with
+        {
+            Migrations =
+            [
+                Migration("docs/a.md", UpdateMigrationOutcome.Planned),
+                Migration("docs/a.md", UpdateMigrationOutcome.Applied),
+            ],
+        }));
+        Assert.Throws<ArgumentNullException>(() => new UpdateResult(CompleteFormation() with
+        {
+            Migrations = null!,
         }));
     }
 
@@ -72,6 +87,7 @@ public sealed class UpdateResultContractTests
             Force = true,
             Prune = true,
             Automatic = false,
+            Migrations = [Migration("docs/local.md", UpdateMigrationOutcome.Applied)],
         });
 
         var review = applied.ForPlanReview();
@@ -84,6 +100,9 @@ public sealed class UpdateResultContractTests
         Assert.Equal(applied.Comparisons, review.Comparisons);
         Assert.Equal(applied.GeneratedNavigation, review.GeneratedNavigation);
         Assert.Equal(applied.Effects, review.Effects);
+        Assert.Equal(UpdateMigrationOutcome.Applied, Assert.Single(applied.Migrations).Outcome);
+        Assert.Equal(UpdateMigrationOutcome.Planned, Assert.Single(review.Migrations).Outcome);
+        Assert.Equal("docs/local.md", Assert.Single(review.Migrations).Path);
         Assert.Equal(applied.Lifecycle, review.Lifecycle);
         Assert.Equal(applied.Recovery.State, review.Recovery.State);
         Assert.Equal(
@@ -139,12 +158,63 @@ public sealed class UpdateResultContractTests
             UpdateLogicalChangeAction.Replace,
             "entries",
             "assets/index.md"));
+        Assert.Throws<ArgumentException>(() => new UpdateLogicalChange(
+            UpdateComparisonTargetKind.File,
+            UpdateLogicalChangeAction.Restore,
+            null,
+            null));
         Assert.Throws<ArgumentException>(() => new UpdatePhysicalEffect(
             "docs/index.md",
             UpdatePhysicalEffectAction.Replace,
             [managed, managed],
             UpdatePhysicalEffectOutcome.Planned,
             UpdatePhysicalEffectResidual.None));
+    }
+
+    [Trait("Boundary", "Processing")]
+    [Fact(DisplayName = "Source-less Update file creates and replacements require same-path migration facts"), Trait("Feature", "update"), Trait("Evidence", "UnitContract")]
+    public void RequiresMigrationFactsForLocalAdoptionFileEffects()
+    {
+        var create = LocalFileEffect("docs/new.md", UpdateLogicalChangeAction.Create);
+        var replace = LocalFileEffect("docs/edited.md", UpdateLogicalChangeAction.Replace);
+
+        var missingBacking = Assert.Throws<ArgumentException>(() => new UpdateResult(CompleteFormation() with
+        {
+            Effects = [create],
+        }));
+        Assert.Equal("migrations", missingBacking.ParamName);
+
+        var result = new UpdateResult(CompleteFormation() with
+        {
+            Effects = [create, replace],
+            Migrations =
+            [
+                Migration("docs/edited.md", UpdateMigrationOutcome.Planned),
+                Migration("docs/new.md", UpdateMigrationOutcome.Planned),
+            ],
+        });
+
+        Assert.Equal(["docs/edited.md", "docs/new.md"], result.Effects.Select(effect => effect.Path));
+        Assert.Equal(["docs/edited.md", "docs/new.md"], result.Migrations.Select(migration => migration.Path));
+
+        var frameworkChange = new UpdateLogicalChange(
+            UpdateComparisonTargetKind.File,
+            UpdateLogicalChangeAction.Replace,
+            region: null,
+            sourceAssetPath: "assets/framework.md");
+        var frameworkResult = new UpdateResult(CompleteFormation() with
+        {
+            Effects =
+            [
+                new UpdatePhysicalEffect(
+                    "docs/framework.md",
+                    UpdatePhysicalEffectAction.Replace,
+                    [frameworkChange],
+                    UpdatePhysicalEffectOutcome.Planned,
+                    UpdatePhysicalEffectResidual.None),
+            ],
+        });
+        Assert.Empty(frameworkResult.Migrations);
     }
 
     [Trait("Boundary", "Processing")]
@@ -558,5 +628,23 @@ public sealed class UpdateResultContractTests
                 $"assets/{path[6..]}")],
             UpdatePhysicalEffectOutcome.Planned,
             UpdatePhysicalEffectResidual.None);
+
+    private static UpdatePhysicalEffect LocalFileEffect(string path, UpdateLogicalChangeAction action)
+        => new(
+            path,
+            action == UpdateLogicalChangeAction.Create
+                ? UpdatePhysicalEffectAction.Create
+                : UpdatePhysicalEffectAction.Replace,
+            [new UpdateLogicalChange(UpdateComparisonTargetKind.File, action, region: null, sourceAssetPath: null)],
+            UpdatePhysicalEffectOutcome.Planned,
+            UpdatePhysicalEffectResidual.None);
+
+    private static UpdateMigration Migration(string path, UpdateMigrationOutcome outcome)
+        => new(
+            path,
+            [WorkspaceAdoptionAction.MetadataCompleted],
+            ["description"],
+            [new WorkspaceAdoptionDerivation("description", WorkspaceAdoptionDerivationSource.RelativePath)],
+            outcome);
 
 }

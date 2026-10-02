@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Operation;
@@ -120,6 +122,8 @@ internal sealed class UpdatePlanRevalidator(
                 ComparisonMatches(pair.First.Comparison, pair.Second.Comparison)
                 && SnapshotMatches(pair.First.Snapshot, pair.Second.Snapshot)
                 && BytesMatch(pair.First.IntendedDocumentBytes, pair.Second.IntendedDocumentBytes))
+            && AdoptionTargetsMatch(expected.AdoptionTargets, actual.AdoptionTargets)
+            && MigrationsMatch(expected.Migrations, actual.Migrations)
             && expected.ProjectionInputs.Count == actual.ProjectionInputs.Count
             && expected.ProjectionInputs.Zip(actual.ProjectionInputs).All(pair =>
                 SnapshotMatches(pair.First, pair.Second))
@@ -136,6 +140,35 @@ internal sealed class UpdatePlanRevalidator(
                 && ChangeMatches(pair.First.FileChange, pair.Second.FileChange))
             && DirectoryCreationsMatch(expected.DirectoryCreations, actual.DirectoryCreations)
             && ChangeMatches(expected.OwnershipChange, actual.OwnershipChange);
+
+    private static bool AdoptionTargetsMatch(
+        IReadOnlyList<UpdateAdoptionTarget> expected,
+        IReadOnlyList<UpdateAdoptionTarget> actual)
+        => expected.Count == actual.Count
+            && expected.Zip(actual).All(pair =>
+                pair.First.Path == pair.Second.Path
+                && pair.First.OwnsGeneratedEntries == pair.Second.OwnsGeneratedEntries
+                && SnapshotMatches(pair.First.Snapshot, pair.Second.Snapshot)
+                && pair.First.IntendedDocumentBytes.AsSpan()
+                    .SequenceEqual(pair.Second.IntendedDocumentBytes.AsSpan()));
+
+    private static bool MigrationsMatch(
+        IReadOnlyList<UpdateMigrationPlan> expected,
+        IReadOnlyList<UpdateMigrationPlan> actual)
+        => expected.Count == actual.Count
+            && expected.Zip(actual).All(pair =>
+                pair.First.Path == pair.Second.Path
+                && pair.First.Actions.SequenceEqual(pair.Second.Actions)
+                && pair.First.Fields.SequenceEqual(pair.Second.Fields, StringComparer.Ordinal)
+                && DerivationsMatch(pair.First.Derivation, pair.Second.Derivation));
+
+    private static bool DerivationsMatch(
+        IReadOnlyList<WorkspaceAdoptionDerivation> expected,
+        IReadOnlyList<WorkspaceAdoptionDerivation> actual)
+        => expected.Count == actual.Count
+            && expected.Zip(actual).All(pair =>
+                pair.First.Field == pair.Second.Field
+                && pair.First.Source == pair.Second.Source);
 
     private static bool SourceMatches(UpdatePlanExecution expected, UpdatePlanExecution actual)
         => expected.Payload.InventoryFingerprint == actual.Payload.InventoryFingerprint

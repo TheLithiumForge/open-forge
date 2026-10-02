@@ -1,4 +1,6 @@
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared;
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Update.Models.Planning;
@@ -166,6 +168,46 @@ internal static class UpdateDefinitions
             UpdatePhysicalEffectResidual.Retained => "retained",
             UpdatePhysicalEffectResidual.Unknown => "unknown",
             _ => Undefined(nameof(value), value),
+        };
+
+    internal static string ReadMachineName(UpdateMigrationOutcome value)
+        => value switch
+        {
+            UpdateMigrationOutcome.Planned => "planned",
+            UpdateMigrationOutcome.Applied => "applied",
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(value),
+                value,
+                "The Update migration outcome is not defined."),
+        };
+
+    internal static string ReadMachineName(WorkspaceAdoptionAction value)
+        => value switch
+        {
+            WorkspaceAdoptionAction.MetadataCompleted => "metadata-completed",
+            WorkspaceAdoptionAction.EntrypointCreated => "entrypoint-created",
+            WorkspaceAdoptionAction.EntriesSectionAdded => "entries-section-added",
+            WorkspaceAdoptionAction.NavigationUpdated => "navigation-updated",
+            WorkspaceAdoptionAction.ContentPreserved => "content-preserved",
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(value),
+                value,
+                "The Update migration action is not defined."),
+        };
+
+    internal static string ReadMachineName(WorkspaceAdoptionDerivationSource value)
+        => value switch
+        {
+            WorkspaceAdoptionDerivationSource.ExistingDescription => "existing-description",
+            WorkspaceAdoptionDerivationSource.ExistingTitle => "existing-title",
+            WorkspaceAdoptionDerivationSource.Heading => "heading",
+            WorkspaceAdoptionDerivationSource.RelativePath => "relative-path",
+            WorkspaceAdoptionDerivationSource.DirectoryName => "directory-name",
+            WorkspaceAdoptionDerivationSource.RequiredTag => "required-tag",
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(value),
+                value,
+                "The Update migration derivation source is not defined."),
         };
 
     internal static string ReadMachineName(UpdateLifecycleTrust value)

@@ -137,10 +137,41 @@ internal sealed class InstallApplicationPreconditionValidator(
     private static bool IntendedStateEquals(
         InstallIntendedState planned,
         InstallIntendedState current)
-        => DictionaryEquals(planned.TargetBytes, current.TargetBytes)
+        => DictionaryEquals(
+                planned.ProjectionTargetBytes ?? planned.TargetBytes,
+                current.ProjectionTargetBytes ?? current.TargetBytes)
             && DictionaryEquals(planned.ManagedBlockBytes, current.ManagedBlockBytes)
             && planned.GeneratedRegionPaths.SetEquals(current.GeneratedRegionPaths)
+            && planned.UserOwnedPaths.SetEquals(current.UserOwnedPaths)
+            && planned.PreservedEntrypointPaths.SetEquals(current.PreservedEntrypointPaths)
+            && Equals(planned.AdoptionOwnershipExpectation, current.AdoptionOwnershipExpectation)
+            && MigrationRowsEqual(planned.Migrations, current.Migrations)
             && planned.ProjectionInputs.SequenceEqual(current.ProjectionInputs);
+
+    private static bool MigrationRowsEqual(
+        IReadOnlyList<InstallMigrationPlan> planned,
+        IReadOnlyList<InstallMigrationPlan> current)
+    {
+        if (planned.Count != current.Count)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < planned.Count; index++)
+        {
+            var plannedRow = planned[index];
+            var currentRow = current[index];
+            if (!string.Equals(plannedRow.Path, currentRow.Path, StringComparison.Ordinal)
+                || !plannedRow.Actions.SequenceEqual(currentRow.Actions)
+                || !plannedRow.Fields.SequenceEqual(currentRow.Fields, StringComparer.Ordinal)
+                || !plannedRow.Derivation.SequenceEqual(currentRow.Derivation))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     private static bool DictionaryEquals(
         IReadOnlyDictionary<string, byte[]> planned,

@@ -69,10 +69,12 @@ Use `open-forge remove <path> --dry-run`, then apply the reviewed removal so lat
 
 | File                           | Purpose                                                                                                | Agent context? |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------ | -------------- |
-| `.agents/open-forge.lock.json` | Which files the Framework and each Extension installed and manage, so updates change only those files. | No             |
+| `.agents/open-forge.lock.json` | Records files and generated navigation regions managed by the Framework and each Extension. | No             |
 | `.agents/open-forge.json`      | Your settings, including removal exclusions and path grants for files outside `.agents/`.              | No             |
 
 Neither file gives content any authority. They exist for file maintenance only.
+
+Compatible Skill adoption can add missing metadata and navigation to user-owned content without claiming whole-file management. See the [installation guidance](../getting-started/installation.md#with-the-cli).
 
 ## Moving and renaming
 

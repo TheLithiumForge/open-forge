@@ -38,7 +38,16 @@ Four principles guide adoption:
 
 ### Step by step
 
-1. **Install with a dry run and review the diff.** If you already have an `AGENTS.md` or `CLAUDE.md`, installation adds an Open Forge section and keeps your content. The last two commands preview and install the Development Toolkit, which brings Planning for Decisions. Skip them if you don't want it yet.
+1. **Install with a dry run and review the diff.** If you already have an
+   `AGENTS.md` or `CLAUDE.md`, installation adds an Open Forge section and keeps
+   your content. For a first install into an unmanaged project, the CLI can
+   adopt missing metadata and navigation for native Skills in an existing
+   `.agents/` tree. After upgrading the CLI in an already managed project, use
+   `open-forge update --dry-run` and then plain `open-forge update`. It also
+   adopts compatible Skills while reconciling owned Framework content. See
+   [With the CLI](installation.md#with-the-cli) for details. The last two
+   commands preview and install the Development Toolkit, which brings Planning
+   for Decisions. Skip them if you don't want it yet.
 
    ```sh
    open-forge install --dry-run

@@ -39,7 +39,14 @@ Scenarios: [C03-04](../scenarios/commands/c03-install.md#c03-04).
 
 ### Occupied target
 
-First stop with no writes. Inspect the force dry run and deliberately choose eligible replacement; never force an unsafe or other-owned path.
+An existing unowned category entrypoint at its bundled path is preserved in
+its overwrite companion while the Framework base is installed. An existing
+native Skill remains in place. Preview these adoption effects without force,
+apply, and verify that a repeated Install is a no-op.
+
+For other eligible occupied targets, first stop with no writes. Inspect the
+force dry run and deliberately choose eligible replacement; never force an
+unsafe or other-owned path.
 
 Scenarios: [C03-05](../scenarios/commands/c03-install.md#c03-05), [C03-06](../scenarios/commands/c03-install.md#c03-06).
 

@@ -5,6 +5,7 @@ Workspace: <workspace>
   .agents/loader.md                             created
   .agents/maps/_maps.md                         created
   .agents/memory/_memory.md                     replaced
+  .agents/memory/_memory.overwrite.md           created
   .agents/memory/archived/_archived.md          created
   .agents/memory/crystallized/_crystallized.md  created
   .agents/memory/emerging/_emerging.md          created
@@ -15,7 +16,9 @@ Workspace: <workspace>
   .agents/templates/_templates.md               created
   AGENTS.md                                     created with an Open Forge section
   CLAUDE.md                                     created with an Open Forge section
-  .agents/open-forge.lock.json                  created; records the files above
-  Created 12 files and 11 directories under .agents (listed in .agents/open-forge.lock.json).
+  .agents/open-forge.lock.json                  created as the ownership receipt
+  .agents/memory/_memory.overwrite.md           Migrated: content preserved
+  Created 13 files and 11 directories under .agents.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Created 11 directories.
+  Migrated 1 source.

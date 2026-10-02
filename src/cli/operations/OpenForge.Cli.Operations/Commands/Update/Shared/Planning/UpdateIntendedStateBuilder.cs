@@ -97,7 +97,7 @@ internal sealed class UpdateIntendedStateBuilder(
             .BuildAsync(
                 request,
                 payload,
-                ownership.Document,
+                ownership,
                 settings,
                 mappedAssets,
                 retiredTargetPaths,
@@ -112,6 +112,15 @@ internal sealed class UpdateIntendedStateBuilder(
                 navigationFinding,
                 Cancelled: navigationFinding.Code == UpdateFindingCode.Interrupted);
         }
+
+        mappedAssets = mappedAssets
+            .Where(asset => !asset.Path.StartsWith(".agents/", StringComparison.Ordinal)
+                || navigation.TargetBytes.ContainsKey(asset.Path))
+            .ToArray();
+        selectedAssets = selectedAssets
+            .Where(asset => !asset.Path.StartsWith(".agents/", StringComparison.Ordinal)
+                || navigation.TargetBytes.ContainsKey(asset.Path))
+            .ToArray();
 
         var generated = targets.Where(target => target.Region == "entries")
             .Select(target => (target.Path, target.Region)).ToHashSet();
@@ -231,7 +240,15 @@ internal sealed class UpdateIntendedStateBuilder(
                 snapshot));
         }
 
-        return Complete(observations, navigation.ProjectionInputs);
+        return new UpdateIntendedStateBuild(
+            Observations: observations,
+            ProjectionInputs: navigation.ProjectionInputs,
+            Finding: null,
+            Cancelled: false)
+        {
+            AdoptionTargets = navigation.AdoptionTargets,
+            Migrations = navigation.Migrations,
+        };
     }
 
     private static bool IsAdmittedTarget(UpdateRequest request, WorkspaceSettingsDocument settings, string path)

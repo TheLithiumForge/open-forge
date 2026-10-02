@@ -84,6 +84,7 @@ internal static class InstallDefinitions
         {
             InstallManagementClassification.SafeAbsence => "safe-absence",
             InstallManagementClassification.TrustedExact => "trusted-exact",
+            InstallManagementClassification.ManagedAdoption => "managed-adoption",
             InstallManagementClassification.ManagedDivergence => "managed-divergence",
             InstallManagementClassification.EligibleInitialOccupant => "eligible-initial-occupant",
             _ => throw Undefined(nameof(classification), classification),

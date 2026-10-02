@@ -22,7 +22,7 @@ public sealed class InstallBeforeOutputSnapshotTests
     private const string OccupiedPath = ".agents/memory/_memory.md";
 
     [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Install output preserves the force boundary for an occupied generated region")]
+    [Fact(DisplayName = "Install output preserves an existing category entrypoint with or without force")]
     public async Task OccupiedGeneratedRegion()
     {
         var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -34,23 +34,18 @@ public sealed class InstallBeforeOutputSnapshotTests
         {
             using var workspace = InstallOperationWorkspace.Create("install-output-occupied");
             var intended = SeedOccupiedGeneratedRegion(workspace);
-            var before = workspace.SnapshotHashes();
             var result = await Execute(workspace, workspace.Request(force: force));
-            Assert.Equal(force ? CliSemanticStatus.Complete : CliSemanticStatus.Blocked, result.Status);
-            if (force)
-            {
-                Assert.Equal(intended, File.ReadAllText(workspace.Combine(OccupiedPath)));
-                Assert.True(File.Exists(workspace.Combine(InstallOperationWorkspace.OwnershipPath)));
-                Assert.Equal(InstallResultRecoveryState.Removed, result.Facts.Recovery.State);
-                Assert.Equal(0, await workspace.ReadRecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
-                Assert.Contains(result.Facts.Effects, effect => effect.Path == OccupiedPath
-                    && effect.Action == InstallEffectAction.Replace && effect.Outcome == InstallEffectOutcome.Verified);
-            }
-            else
-            {
-                Assert.Equal(before, workspace.SnapshotHashes());
-                Assert.Contains(result.Findings, finding => finding.Code == InstallFindingCode.TargetOccupied);
-            }
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Equal(intended, File.ReadAllText(workspace.Combine(OccupiedPath)));
+            var preserved = File.ReadAllText(workspace.Combine(".agents/memory/_memory.overwrite.md"));
+            Assert.Contains("# Memory", preserved, StringComparison.Ordinal);
+            Assert.DoesNotContain("stale.md", preserved, StringComparison.Ordinal);
+            Assert.DoesNotContain("## Entries", preserved, StringComparison.Ordinal);
+            Assert.True(File.Exists(workspace.Combine(InstallOperationWorkspace.OwnershipPath)));
+            Assert.Equal(InstallResultRecoveryState.Removed, result.Facts.Recovery.State);
+            Assert.Equal(0, await workspace.ReadRecoveryCandidateCountAsync(TestContext.Current.CancellationToken));
+            Assert.Contains(result.Facts.Effects, effect => effect.Path == OccupiedPath
+                && effect.Action == InstallEffectAction.Replace && effect.Outcome == InstallEffectOutcome.Verified);
 
             Renderers.MatchDetails(result, situation, snapshotCollector: snapshots);
         }

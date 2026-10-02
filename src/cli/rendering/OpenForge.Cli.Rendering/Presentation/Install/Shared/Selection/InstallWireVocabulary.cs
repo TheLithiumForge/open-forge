@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 
@@ -49,6 +50,7 @@ internal static class InstallWireVocabulary
         {
             InstallManagementClassification.SafeAbsence => "safe-absence",
             InstallManagementClassification.TrustedExact => "trusted-exact",
+            InstallManagementClassification.ManagedAdoption => "managed-adoption",
             InstallManagementClassification.ManagedDivergence => "managed-divergence",
             InstallManagementClassification.EligibleInitialOccupant => "eligible-initial-occupant",
             _ => throw Undefined(nameof(classification), classification),
@@ -134,6 +136,37 @@ internal static class InstallWireVocabulary
             InstallResultVerificationState.Failed => "failed",
             InstallResultVerificationState.Unknown => "unknown",
             _ => throw Undefined(nameof(state), state),
+        };
+
+    internal static string Name(WorkspaceAdoptionAction action)
+        => action switch
+        {
+            WorkspaceAdoptionAction.MetadataCompleted => "metadata-completed",
+            WorkspaceAdoptionAction.EntrypointCreated => "entrypoint-created",
+            WorkspaceAdoptionAction.EntriesSectionAdded => "entries-section-added",
+            WorkspaceAdoptionAction.NavigationUpdated => "navigation-updated",
+            WorkspaceAdoptionAction.ContentPreserved => "content-preserved",
+            _ => throw Undefined(nameof(action), action),
+        };
+
+    internal static string Name(WorkspaceAdoptionDerivationSource source)
+        => source switch
+        {
+            WorkspaceAdoptionDerivationSource.ExistingDescription => "existing-description",
+            WorkspaceAdoptionDerivationSource.ExistingTitle => "existing-title",
+            WorkspaceAdoptionDerivationSource.Heading => "heading",
+            WorkspaceAdoptionDerivationSource.RelativePath => "relative-path",
+            WorkspaceAdoptionDerivationSource.DirectoryName => "directory-name",
+            WorkspaceAdoptionDerivationSource.RequiredTag => "required-tag",
+            _ => throw Undefined(nameof(source), source),
+        };
+
+    internal static string Name(InstallMigrationOutcome outcome)
+        => outcome switch
+        {
+            InstallMigrationOutcome.Planned => "planned",
+            InstallMigrationOutcome.Applied => "applied",
+            _ => throw Undefined(nameof(outcome), outcome),
         };
 
     private static ArgumentOutOfRangeException Undefined<T>(string name, T value)

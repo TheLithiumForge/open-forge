@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
+using OpenForge.Cli.Core.Commands.Update.Models.Effects;
 using System.Text;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Update.Models.Planning;
@@ -196,7 +197,20 @@ internal sealed class UpdatePlanBuilder
             return new UpdatePlanResolution(new UpdatePlanBuild(plan, preview), Execution: null);
         }
 
-        var effects = UpdatePhysicalEffectPlanner.Plan(plan, observations);
+        var effects = UpdatePhysicalEffectPlanner.Plan(
+            plan,
+            observations,
+            intended.AdoptionTargets);
+        var plannedFilePaths = effects
+            .Where(effect => effect.ResultEffect.Kind == UpdatePhysicalEffectKind.File)
+            .Select(effect => effect.ResultEffect.Path)
+            .ToHashSet(StringComparer.Ordinal);
+        intended = intended with
+        {
+            Migrations = intended.Migrations
+                .Where(migration => plannedFilePaths.Contains(migration.Path))
+                .ToArray(),
+        };
         var directoryCreations = PlanRequiredDirectories(
             request,
             ownership,
@@ -218,7 +232,9 @@ internal sealed class UpdatePlanBuilder
 
         var ownershipPlan = effects.Count == 0 && ownership.Document.Framework is null
             ? OwnershipWritePlanResult.Skipped("No verified Framework writes established ownership.")
-            : _ownershipStore.PlanFrameworkOwnership(ownership, BuildOwnership(ownership, observations, plan));
+            : _ownershipStore.PlanFrameworkOwnership(
+                ownership,
+                BuildOwnership(ownership, observations, plan, intended.AdoptionTargets));
         var ownershipChange = ownershipPlan.Change;
         var completion = new UpdatePlanCompletion
         {
@@ -245,7 +261,11 @@ internal sealed class UpdatePlanBuilder
                 intended.ProjectionInputs,
                 effects,
                 directoryCreations,
-                ownershipChange));
+                ownershipChange)
+            {
+                AdoptionTargets = intended.AdoptionTargets,
+                Migrations = intended.Migrations,
+            });
     }
 
     private IReadOnlyList<PlannedDirectoryCreation> PlanRequiredDirectories(
@@ -365,7 +385,8 @@ internal sealed class UpdatePlanBuilder
     private static FrameworkOwnership BuildOwnership(
         WorkspaceOwnershipRead ownership,
         IReadOnlyList<UpdateComparisonObservation> observations,
-        UpdatePlanningPlan plan)
+        UpdatePlanningPlan plan,
+        IReadOnlyList<UpdateAdoptionTarget> adoptionTargets)
     {
         var existing = ownership.Document.Framework;
         var paths = (existing?.Paths ?? []).ToHashSet(StringComparer.Ordinal);
@@ -394,6 +415,10 @@ internal sealed class UpdatePlanBuilder
             if (path.StartsWith(".agents/", StringComparison.Ordinal) && observation.IntendedDocumentBytes is { } bytes
                 && new MarkdownDocumentParser().Parse(Encoding.UTF8.GetString(bytes)).GeneratedRegion.State == MarkdownGeneratedRegionState.Complete)
                 regions.Add(new OwnedRegion(path, "entries"));
+        }
+        foreach (var target in adoptionTargets.Where(target => target.OwnsGeneratedEntries))
+        {
+            regions.Add(new OwnedRegion(target.Path, "entries"));
         }
         return new FrameworkOwnership(existing?.Source ?? new OwnedSource("framework", null),
             [.. paths.Order(StringComparer.Ordinal)],

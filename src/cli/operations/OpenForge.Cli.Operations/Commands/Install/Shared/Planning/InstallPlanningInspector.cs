@@ -56,9 +56,16 @@ internal sealed class InstallPlanningInspector
                 payloadRead.Cause ?? "The embedded Framework payload is unavailable.");
         }
 
+        var ownership = await WorkspaceOwnershipReader.ReadAsync(
+                _physicalPathResolver,
+                request.Workspace,
+                cancellationToken)
+            .ConfigureAwait(false);
+
         var intendedBuild = await _intendedStateBuilder.BuildAsync(
                 request,
                 payload,
+                ownership,
                 cancellationToken)
             .ConfigureAwait(false);
         if (intendedBuild.State != InstallIntendedStateBuildState.Complete
@@ -66,12 +73,6 @@ internal sealed class InstallPlanningInspector
         {
             return new InstallInspectionStopped(ReadIntendedBoundary(intendedBuild, payload));
         }
-
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(
-                _physicalPathResolver,
-                request.Workspace,
-                cancellationToken)
-            .ConfigureAwait(false);
 
         var recovery = await RecoveryBundleCatalogue.ReadAsync(
                 request.Workspace,

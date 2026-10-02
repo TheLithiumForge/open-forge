@@ -31,6 +31,7 @@ internal static class UpdateResultBuilder
             Lifecycle = lifecycle,
             Recovery = recovery,
             Verification = verification,
+            Migrations = UpdateMigrationFacts.Create(execution.Migrations, effects),
             Findings = preview.Findings.Concat(findings).Distinct().ToArray(),
         });
         if (result.Next is null && verification == UpdateVerificationState.Verified

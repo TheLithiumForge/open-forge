@@ -139,7 +139,10 @@ Compare authored bytes and any inserted bounded region separately; count files b
 
 ### Starting point
 
-One install target is occupied by an eligible unowned file with different bytes; other targets are absent.
+One install target outside category-entrypoint and native-Skill adoption is
+occupied by an eligible unowned file with different bytes; other targets are
+absent. Category entrypoints and native Skills instead follow the preservation
+behavior in the [Install Behavior Contract](../../../contracts/install/behavior.md).
 
 Fixture: `W0`. fixture recipe; not instantiated.
 

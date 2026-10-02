@@ -132,6 +132,62 @@ internal static class InstallText
     internal static string LabelCreatedRecordsTheFilesAbove()
         => "created; records the files above";
 
+    // @OpenForgeText install.label.ownership-receipt-created
+    internal static string LabelOwnershipReceiptCreated()
+        => "created as the ownership receipt";
+
+    // @OpenForgeText install.migration.action-label
+    internal static string MigrationActionLabel(string action)
+        => action switch
+        {
+            "metadata-completed" => "metadata updated",
+            "entrypoint-created" => "entrypoint created",
+            "entries-section-added" => "Entries section added",
+            "navigation-updated" => "navigation updated",
+            "content-preserved" => "content preserved",
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "The Install migration action is not defined."),
+        };
+
+    // @OpenForgeText install.migration.actions
+    internal static string FormatMigrationActions(IEnumerable<string> actions)
+    {
+        ArgumentNullException.ThrowIfNull(actions);
+        var values = actions
+            .Select(action => action ?? throw new ArgumentException(
+                "Install migration action labels cannot contain null members.",
+                nameof(actions)))
+            .ToArray();
+        if (values.Length == 0)
+        {
+            throw new ArgumentException("An Install migration row must contain an action.", nameof(actions));
+        }
+
+        return string.Join(", ", values);
+    }
+
+    // @OpenForgeText install.migration.row
+    internal static string FormatMigrationRow(string outcome, string actions)
+        => outcome switch
+        {
+            "planned" => $"Planned migration: {actions}",
+            "applied" => $"Migrated: {actions}",
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The Install migration outcome is not defined."),
+        };
+
+    // @OpenForgeText install.migration.summary
+    internal static string FormatMigrationSummary(string outcome, int count)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(count);
+        var countText = count.ToString(CultureInfo.InvariantCulture);
+        var source = count == 1 ? "source" : "sources";
+        return outcome switch
+        {
+            "planned" => $"Planned migration for {countText} {source}.",
+            "applied" => $"Migrated {countText} {source}.",
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The Install migration outcome is not defined."),
+        };
+    }
+
     // @OpenForgeText install.message.count-1-file-was-created
     internal static string MessageCount1FileWasCreated()
         => "1 file was created.";

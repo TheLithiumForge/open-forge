@@ -6,11 +6,13 @@ using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
@@ -31,8 +33,10 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
     private readonly GeneratedNavigationProjector _projector = new();
+    private readonly UpdateWorkspaceAdoptionBuilder _adoptionBuilder = new(physicalPathResolver);
+    private readonly UpdateComparisonReader _targetReader = new(physicalPathResolver);
 
-    internal async ValueTask<UpdateGeneratedNavigationBuild> BuildAsync(
+    internal ValueTask<UpdateGeneratedNavigationBuild> BuildAsync(
         UpdateRequest request,
         FrameworkPayload payload,
         WorkspaceOwnershipDocument ownershipDocument,
@@ -41,11 +45,55 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
         IReadOnlySet<string> retiredTargetPaths,
         IReadOnlySet<string> generatedHosts,
         CancellationToken cancellationToken)
+        => BuildCoreAsync(
+            request,
+            payload,
+            ownershipDocument,
+            ownershipRead: null,
+            settings,
+            selectedAssets,
+            retiredTargetPaths,
+            generatedHosts,
+            cancellationToken);
+
+    internal ValueTask<UpdateGeneratedNavigationBuild> BuildAsync(
+        UpdateRequest request,
+        FrameworkPayload payload,
+        WorkspaceOwnershipRead ownership,
+        WorkspaceSettingsDocument settings,
+        IReadOnlyList<FrameworkPayloadAsset> selectedAssets,
+        IReadOnlySet<string> retiredTargetPaths,
+        IReadOnlySet<string> generatedHosts,
+        CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(ownership);
+        return BuildCoreAsync(
+            request,
+            payload,
+            ownership.Document,
+            ownership,
+            settings,
+            selectedAssets,
+            retiredTargetPaths,
+            generatedHosts,
+            cancellationToken);
+    }
+
+    private async ValueTask<UpdateGeneratedNavigationBuild> BuildCoreAsync(
+        UpdateRequest request,
+        FrameworkPayload payload,
+        WorkspaceOwnershipDocument ownershipDocument,
+        WorkspaceOwnershipRead? ownershipRead,
+        WorkspaceSettingsDocument settings,
+        IReadOnlyList<FrameworkPayloadAsset> selectedAssets,
+        IReadOnlySet<string> retiredTargetPaths,
+        IReadOnlySet<string> generatedHosts,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(ownershipDocument);
+        ArgumentNullException.ThrowIfNull(settings);
+        ArgumentNullException.ThrowIfNull(selectedAssets);
         ArgumentNullException.ThrowIfNull(retiredTargetPaths);
-        var payloadAssets = selectedAssets
-            .Where(asset => asset.Path.StartsWith(".agents/", StringComparison.Ordinal))
-            .ToDictionary(asset => asset.Path, StringComparer.Ordinal);
         SourceCatalogue catalogue;
         try
         {
@@ -74,17 +122,28 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
 
         try
         {
-            var payloadSources = payloadAssets.Values
-                .Select(asset => FrameworkPayloadSourceProjection.Create(request.Workspace, asset))
+            var sourcePlan = _adoptionBuilder.PlanSources(
+                request.Workspace,
+                catalogue,
+                selectedAssets,
+                settings,
+                retiredTargetPaths,
+                ownershipRead);
+            if (sourcePlan.Cause is { } sourceCause)
+            {
+                return Blocked(UpdateFindingCode.TargetUnsafe, target: null, sourceCause);
+            }
+
+            var payloadAssets = sourcePlan.PayloadAssets.ToDictionary(
+                asset => asset.Path,
+                StringComparer.Ordinal);
+
+            var payloadSources = sourcePlan.PayloadSources
                 .ToDictionary(
                     source => source.Identity.CanonicalBasePath,
                     StringComparer.Ordinal);
-            var intendedSources = catalogue.Sources
-                .Where(source => !payloadSources.ContainsKey(
-                        source.Identity.CanonicalBasePath)
-                    && !retiredTargetPaths.Contains(
-                        source.Identity.CanonicalBasePath))
-                .Concat(payloadSources.Values)
+            var intendedSources = sourcePlan.IntendedSources
+                .Where(source => !retiredTargetPaths.Contains(source.Identity.CanonicalBasePath))
                 .ToArray();
             var formation = _formationBuilder.Build(catalogue, intendedSources);
             if (formation.Ambiguities.Count > 0
@@ -111,8 +170,11 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 physicalPathResolver,
                 ownershipDocument);
             var projectionInputs = new List<FileStateSnapshot>();
+            var observedBytes = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+            var observedSnapshots = new Dictionary<string, FileStateSnapshot>(StringComparer.Ordinal);
             foreach (var source in intendedSources.Where(source =>
-                         !payloadSources.ContainsKey(source.Identity.CanonicalBasePath)))
+                         !payloadSources.ContainsKey(source.Identity.CanonicalBasePath)
+                         && !sourcePlan.CreatedEntrypointPaths.Contains(source.Identity.CanonicalBasePath)))
             {
                 var baseRead = await ReadProjectionInputAsync(
                         request,
@@ -129,6 +191,8 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                     ?? throw new InvalidOperationException(
                         "A complete Update projection input requires its exact snapshot.");
                 projectionInputs.Add(baseSnapshot);
+                observedSnapshots.Add(source.Identity.CanonicalBasePath, baseSnapshot);
+                observedBytes.Add(source.Identity.CanonicalBasePath, baseSnapshot.Bytes.ToArray());
                 documents.Add(
                     source.Identity.CanonicalBasePath,
                     StrictUtf8.GetString(baseSnapshot.Bytes.AsSpan()));
@@ -153,6 +217,54 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                         "A complete Update overwrite input requires its exact snapshot."));
             }
 
+            var createdSnapshots = new Dictionary<string, FileStateSnapshot>(StringComparer.Ordinal);
+            foreach (var path in sourcePlan.CreatedEntrypointPaths.Order(StringComparer.Ordinal))
+            {
+                var read = await _targetReader.ReadAsync(
+                        request.Workspace,
+                        path,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+                if (read.State == UpdateTargetReadState.Cancelled)
+                {
+                    return Interrupted();
+                }
+
+                if (read.State == UpdateTargetReadState.Unavailable)
+                {
+                    return Incomplete(path, read.Cause
+                        ?? "The planned local entrypoint target is unavailable for exact observation.");
+                }
+
+                if (read.State != UpdateTargetReadState.Missing
+                    || read.Snapshot is not { Kind: FileExpectationKind.Missing } missing)
+                {
+                    return Blocked(
+                        UpdateFindingCode.TargetUnsafe,
+                        path,
+                        read.Cause
+                            ?? "The planned local entrypoint is no longer physically missing and safe.");
+                }
+
+                createdSnapshots.Add(path, missing);
+            }
+
+            var adoptionDocuments = _adoptionBuilder.PlanDocuments(
+                sourcePlan,
+                documents,
+                observedBytes,
+                observedSnapshots,
+                createdSnapshots);
+            if (adoptionDocuments.Cause is { } adoptionCause)
+            {
+                return Blocked(UpdateFindingCode.GeneratedRegionUnsafe, target: null, adoptionCause);
+            }
+
+            documents = adoptionDocuments.Documents.ToDictionary(
+                pair => pair.Key,
+                pair => pair.Value,
+                StringComparer.Ordinal);
+
             var parsedDocuments = new Dictionary<string, MarkdownDocumentFacts>(StringComparer.Ordinal);
             var metadata = new List<GeneratedNavigationMetadata>();
             foreach (var source in intendedSources)
@@ -171,7 +283,8 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
             }
 
             var regionSources = payloadSources.Values
-                .Concat(intendedSources.Where(source => generatedHosts.Contains(source.Identity.CanonicalBasePath)))
+                .Concat(intendedSources.Where(source => generatedHosts.Contains(source.Identity.CanonicalBasePath)
+                    || sourcePlan.AdoptionSourcePaths.Contains(source.Identity.CanonicalBasePath)))
                 .DistinctBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
                 .Where(source => source.Base.Form == SourceDocumentForm.Loader
                     || SourceFormClassifier.IsEntrypoint(source.Base.Form))
@@ -189,17 +302,106 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                     unavailable.Cause
                         ?? "The intended Update generated-navigation projection is unavailable.");
             }
+            var projectedEntryPaths = projection.Regions
+                .Select(region => region.CanonicalPath)
+                .ToHashSet(StringComparer.Ordinal);
 
             var targetBytes = payloadAssets.Values.ToDictionary(
                 asset => asset.Path,
                 asset => asset.Bytes.ToArray(),
                 StringComparer.Ordinal);
+            foreach (var target in adoptionDocuments.TargetBytes)
+            {
+                targetBytes[target.Key] = target.Value.ToArray();
+            }
+
+            var migrationPlans = new UpdateMigrationPlanAccumulator();
+            foreach (var migration in adoptionDocuments.Migrations)
+            {
+                migrationPlans.Add(
+                    migration.Path,
+                    migration.Actions,
+                    migration.Fields,
+                    migration.Derivation);
+            }
+
+            var changedPaths = new HashSet<string>(StringComparer.Ordinal);
+            var hasScopedAdoption = sourcePlan.Topology.EligibleSourcePaths.Count > 0
+                || sourcePlan.Topology.ReusedEntrypoints.Count > 0
+                || sourcePlan.Topology.CreatedEntrypointPaths.Count > 0;
             foreach (var region in projection.Regions)
             {
                 var change = region.Change
                     ?? throw new InvalidOperationException(
                         "An available Update generated region requires a bounded change.");
-                targetBytes[region.CanonicalPath] = change.ExpectedDocumentBytes.ToArray();
+                var finalBytes = change.ExpectedDocumentBytes.ToArray();
+                var priorBytes = StrictUtf8.GetBytes(documents[region.CanonicalPath]);
+                if (!priorBytes.AsSpan().SequenceEqual(finalBytes))
+                {
+                    changedPaths.Add(region.CanonicalPath);
+                    if (hasScopedAdoption
+                        && (generatedHosts.Contains(region.CanonicalPath)
+                            || sourcePlan.AdoptionSourcePaths.Contains(region.CanonicalPath)))
+                    {
+                        migrationPlans.AddNavigationUpdated(region.CanonicalPath);
+                    }
+                }
+
+                targetBytes[region.CanonicalPath] = finalBytes;
+            }
+
+            var sourceByPath = sourcePlan.IntendedSources.ToDictionary(
+                source => source.Identity.CanonicalBasePath,
+                StringComparer.Ordinal);
+            var wholeFileFrameworkPaths = ownershipDocument.Framework?.Paths
+                .ToHashSet(StringComparer.Ordinal)
+                ?? new HashSet<string>(StringComparer.Ordinal);
+            var userOwnedSourceMigrationPaths = sourcePlan.AdoptionSourcePaths
+                .Where(path => !sourcePlan.PayloadSourcePaths.Contains(path)
+                    && !wholeFileFrameworkPaths.Contains(path))
+                .ToHashSet(StringComparer.Ordinal);
+            var adoptionTargets = new List<UpdateAdoptionTarget>();
+            foreach (var path in sourcePlan.AdoptionSourcePaths.Order(StringComparer.Ordinal))
+            {
+                if (!targetBytes.TryGetValue(path, out var finalBytes)
+                    || !adoptionDocuments.OriginalSnapshots.TryGetValue(path, out var snapshot))
+                {
+                    continue;
+                }
+
+                if (snapshot.Kind == FileExpectationKind.Directory)
+                {
+                    return Blocked(
+                        UpdateFindingCode.TargetUnsafe,
+                        path,
+                        "A planned local adoption target is an ordinary directory, not a file.");
+                }
+
+                var changed = snapshot.Kind == FileExpectationKind.Missing
+                    || !snapshot.Bytes.AsSpan().SequenceEqual(finalBytes);
+                if (!changed)
+                {
+                    continue;
+                }
+
+                if (!sourceByPath.TryGetValue(path, out var source))
+                {
+                    return Blocked(
+                        UpdateFindingCode.TargetUnsafe,
+                        path,
+                        "A changed local adoption target is absent from prospective Update topology.");
+                }
+
+                var ownsGeneratedEntries = SourceFormClassifier.IsEntrypoint(source.Base.Form)
+                    && projectedEntryPaths.Contains(path)
+                    && _markdownParser.Parse(StrictUtf8.GetString(finalBytes)).GeneratedRegion.State
+                        == MarkdownGeneratedRegionState.Complete;
+                adoptionTargets.Add(new UpdateAdoptionTarget(
+                    path,
+                    snapshot,
+                    finalBytes.ToArray(),
+                    ownsGeneratedEntries));
+                changedPaths.Add(path);
             }
 
             return new UpdateGeneratedNavigationBuild(
@@ -207,7 +409,16 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 projectionInputs
                     .OrderBy(snapshot => snapshot.LogicalPath, StringComparer.Ordinal)
                     .ToArray(),
-                Finding: null);
+                Finding: null)
+            {
+                AdoptionTargets = adoptionTargets,
+                Migrations = migrationPlans.Build(changedPaths)
+                    .Select(migration => migration with
+                    {
+                        IsUserOwnedSource = userOwnedSourceMigrationPaths.Contains(migration.Path),
+                    })
+                    .ToArray(),
+            };
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

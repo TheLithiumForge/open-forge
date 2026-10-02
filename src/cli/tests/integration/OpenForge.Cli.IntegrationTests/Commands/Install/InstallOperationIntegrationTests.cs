@@ -282,8 +282,8 @@ public sealed class InstallOperationIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Install force dry-run reports an existing safe generated target as one bounded replacement"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
-    public async Task EligibleForceReportsBoundedGeneratedRegionReplacement()
+    [Fact(DisplayName = "Install dry-run preserves an existing category entrypoint before replacing the base"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task ExistingEntrypointReportsPreservationAndBaseReplacement()
     {
         using var workspace = InstallOperationWorkspace.Create("install-generated-replacement");
         var payload = EmbeddedFrameworkPayloadReader.Read().Payload
@@ -310,12 +310,12 @@ public sealed class InstallOperationIntegrationTests
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(
-            InstallManagementClassification.EligibleInitialOccupant,
+            InstallManagementClassification.SafeAbsence,
             result.Facts.Classification);
         var effect = Assert.Single(
             result.Facts.Effects,
             candidate => candidate.Path == GeneratedTargetPath);
-        Assert.Equal(InstallEffectKind.GeneratedRegion, effect.Kind);
+        Assert.Equal(InstallEffectKind.File, effect.Kind);
         Assert.Equal(InstallEffectAction.Replace, effect.Action);
         Assert.Null(effect.SourceAssetPath);
         Assert.Equal(InstallEffectOutcome.Planned, effect.Outcome);

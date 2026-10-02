@@ -16,6 +16,7 @@ Workspace: <workspace>
   .agents/loader.md                             created; source: .agents/loader.md
   .agents/maps/_maps.md                         created; source: .agents/maps/_maps.md
   .agents/memory/_memory.md                     replaced
+  .agents/memory/_memory.overwrite.md           created
   .agents/memory/archived/_archived.md          created; source: .agents/memory/archived/_archived.md
   .agents/memory/crystallized/_crystallized.md  created; source: .agents/memory/crystallized/_crystallized.md
   .agents/memory/emerging/_emerging.md          created; source: .agents/memory/emerging/_emerging.md
@@ -26,9 +27,11 @@ Workspace: <workspace>
   .agents/templates/_templates.md               created; source: .agents/templates/_templates.md
   AGENTS.md                                     created with an Open Forge section; source: AGENTS.md
   CLAUDE.md                                     created with an Open Forge section; source: CLAUDE.md
-  .agents/open-forge.lock.json                  created; records the files above
-  Created 12 files and 11 directories under .agents (listed in .agents/open-forge.lock.json).
+  .agents/open-forge.lock.json                  created as the ownership receipt
+  .agents/memory/_memory.overwrite.md           Migrated: content preserved
+  Created 13 files and 11 directories under .agents.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
+  Migrated 1 source.
   Bundled Framework fingerprint: <sha256> (15 assets).
   The ownership record was published and verified.
   The recovery bundle was removed.

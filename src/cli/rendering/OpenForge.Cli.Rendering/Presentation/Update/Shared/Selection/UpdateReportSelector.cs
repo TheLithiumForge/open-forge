@@ -1,7 +1,8 @@
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Effects;
-using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
+using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
@@ -27,8 +28,15 @@ internal static class UpdateReportSelector
             .ToArray();
         var unchanged = Unchanged(result, effects);
         var entries = Entries(result);
+        var migrations = result.Migrations;
         var keptFiles = result.Findings.Count(finding => IsCode(finding, "RetiredContentPreserved"));
-        var fileEffects = effects.Where(effect => !effect.IsDirectory).ToArray();
+        var userOwnedSourcePaths = migrations
+            .Where(migration => migration.IsUserOwnedSource)
+            .Select(migration => migration.Path)
+            .ToHashSet(StringComparer.Ordinal);
+        var fileEffects = effects
+            .Where(effect => !effect.IsDirectory && !userOwnedSourcePaths.Contains(effect.Path))
+            .ToArray();
         var changedFiles = fileEffects.Length;
         var replacedFiles = fileEffects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Replace && !effect.IsRestore);
         var restoredFiles = fileEffects.Count(effect => effect.IsRestore);
@@ -38,6 +46,9 @@ internal static class UpdateReportSelector
         var completedChanges = effects.Count(effect => effect.ResultOutcome == UpdatePhysicalEffectOutcome.Verified);
         var suppressInterruptedFinding = result.Status == CliSemanticStatus.Interrupted && completedChanges == 0;
         var previousContent = result.PreviousContentAvailable ? "git-diff" : null;
+        var migrationSummaryInHeadline = result.Status == CliSemanticStatus.Complete
+            && migrations.Count > 0
+            && changedFiles == 0;
         var data = new UpdateData
         {
             Mode = CliReportVocabulary.Name(result.Mode),
@@ -50,6 +61,7 @@ internal static class UpdateReportSelector
             EntriesSections = selection.Detail >= CliDetail.Standard ? entries : null,
             Effects = includeDetails ? effects : null,
             Verification = includeDetails ? CliReportVocabulary.Name(result.Verification) : null,
+            Migrations = migrations.Count == 0 ? null : migrations.Select(ProjectMigration).ToArray(),
             TextRows = TextRows(result, effects, unchanged, entries, selection.Detail, preview),
             TextSummaryLines = TextSummaryLines(
                 result,
@@ -57,7 +69,8 @@ internal static class UpdateReportSelector
                 unchanged,
                 previousContent,
                 selection.Detail,
-                preview),
+                preview,
+                includeMigrationSummary: !migrationSummaryInHeadline),
             TextDetailLines = TextDetailLines(result, effects, selection.Detail),
             ShowNoChanges = preview && effects.Length > 0,
             SuppressInterruptedFinding = suppressInterruptedFinding,
@@ -76,7 +89,7 @@ internal static class UpdateReportSelector
             RecoveryState = result.Recovery.State,
             RecoveryPath = result.Recovery.ResidualPath,
             VerificationState = result.Verification,
-            IsNoOp = effects.Length == 0 && keptFiles == 0,
+            IsNoOp = effects.Length == 0 && keptFiles == 0 && migrations.Count == 0,
         };
 
         return new CliReport<UpdateData>
@@ -111,10 +124,13 @@ internal static class UpdateReportSelector
 
     private static UpdateDataEffect Project(UpdatePhysicalEffect effect, UpdateResult result, bool includeDetails)
     {
-        var comparison = Comparison(effect, result);
+        var isUserOwnedMigration = result.Migrations.Any(migration =>
+            migration.Path == effect.Path && migration.IsUserOwnedSource);
+        var comparison = isUserOwnedMigration ? null : Comparison(effect, result);
         var isRestore = effect.Changes.Any(change => change.Action == UpdateLogicalChangeAction.Restore);
-        var isSection = effect.Changes.Any(change => change.Kind != UpdateComparisonTargetKind.File);
-        var source = result.Source is { } sourceFacts
+        var isSection = !isUserOwnedMigration
+            && effect.Changes.Any(change => change.Kind != UpdateComparisonTargetKind.File);
+        var source = !isUserOwnedMigration && result.Source is { } sourceFacts
             ? new UpdateDataSource
             {
                 Id = sourceFacts.Id,
@@ -128,7 +144,7 @@ internal static class UpdateReportSelector
             Path = effect.Path,
             Before = includeDetails ? comparison?.CurrentFingerprint : null,
             After = includeDetails ? comparison?.IntendedFingerprint : null,
-            SourceAssetPath = includeDetails
+            SourceAssetPath = includeDetails && !isUserOwnedMigration
                 ? comparison?.SourceAssetPath ?? effect.Changes.Select(change => change.SourceAssetPath).FirstOrDefault(path => path is not null)
                 : null,
             Relation = new UpdateDataRelation
@@ -144,7 +160,7 @@ internal static class UpdateReportSelector
             IsRestore = isRestore,
             IsSection = isSection,
             IsDirectory = effect.Kind == UpdatePhysicalEffectKind.Directory,
-            Reason = Reason(effect, comparison),
+            Reason = isUserOwnedMigration ? null : Reason(effect, comparison),
         };
     }
 
@@ -240,6 +256,79 @@ internal static class UpdateReportSelector
             .ToArray()
             ?? [];
 
+    private static UpdateDataMigration ProjectMigration(UpdateMigration migration)
+        => new()
+        {
+            Path = migration.Path,
+            Actions = migration.Actions.Select(ActionMachineName).ToArray(),
+            Fields = migration.Fields.ToArray(),
+            Derivation = migration.Derivation.Select(value => new UpdateDataMigrationDerivation
+            {
+                Field = value.Field,
+                Source = DerivationSourceMachineName(value.Source),
+            }).ToArray(),
+            Outcome = global::OpenForge.Cli.Core.Commands.Update.UpdateDefinitions.ReadMachineName(migration.Outcome),
+        };
+
+    private static UpdateDataTextRow MigrationTextRow(UpdateMigration migration)
+    {
+        var actions = migration.Actions.Select(ActionMachineName);
+        var formattedActions = global::OpenForge.Cli.OutputText.Update.UpdateText.FormatMigrationActions(actions);
+        return new UpdateDataTextRow(
+            migration.Path,
+            global::OpenForge.Cli.OutputText.Update.UpdateText.FormatMigrationRow(
+                migration.Outcome == UpdateMigrationOutcome.Applied,
+                formattedActions));
+    }
+
+    private static IReadOnlyList<string> MigrationSummaryLines(IReadOnlyList<UpdateMigration> migrations)
+    {
+        var lines = new List<string>();
+        foreach (var outcome in new[] { UpdateMigrationOutcome.Applied, UpdateMigrationOutcome.Planned })
+        {
+            var count = migrations.Count(migration => migration.Outcome == outcome);
+            if (count > 0)
+            {
+                lines.Add(global::OpenForge.Cli.OutputText.Update.UpdateText.FormatMigrationSummary(
+                    outcome == UpdateMigrationOutcome.Applied,
+                    count));
+            }
+        }
+
+        return lines;
+    }
+
+    private static CliHeadline MigrationHeadline(IReadOnlyList<UpdateMigration> migrations)
+    {
+        var applied = migrations.Count(migration => migration.Outcome == UpdateMigrationOutcome.Applied);
+        var planned = migrations.Count(migration => migration.Outcome == UpdateMigrationOutcome.Planned);
+        var wording = global::OpenForge.Cli.OutputText.Update.UpdateText.FormatMigrationHeadline(applied, planned);
+        return new(wording, planned > 0 && applied == 0 ? CliHeadlineKind.Preview : CliHeadlineKind.Done);
+    }
+
+    private static string ActionMachineName(WorkspaceAdoptionAction action)
+        => action switch
+        {
+            WorkspaceAdoptionAction.MetadataCompleted => "metadata-completed",
+            WorkspaceAdoptionAction.EntrypointCreated => "entrypoint-created",
+            WorkspaceAdoptionAction.EntriesSectionAdded => "entries-section-added",
+            WorkspaceAdoptionAction.NavigationUpdated => "navigation-updated",
+            WorkspaceAdoptionAction.ContentPreserved => "content-preserved",
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "The Update migration action is not defined."),
+        };
+
+    private static string DerivationSourceMachineName(WorkspaceAdoptionDerivationSource source)
+        => source switch
+        {
+            WorkspaceAdoptionDerivationSource.ExistingDescription => "existing-description",
+            WorkspaceAdoptionDerivationSource.ExistingTitle => "existing-title",
+            WorkspaceAdoptionDerivationSource.Heading => "heading",
+            WorkspaceAdoptionDerivationSource.RelativePath => "relative-path",
+            WorkspaceAdoptionDerivationSource.DirectoryName => "directory-name",
+            WorkspaceAdoptionDerivationSource.RequiredTag => "required-tag",
+            _ => throw new ArgumentOutOfRangeException(nameof(source), source, "The Update migration derivation source is not defined."),
+        };
+
     private static IReadOnlyList<UpdateDataTextRow> TextRows(
         UpdateResult result,
         IReadOnlyList<UpdateDataEffect> effects,
@@ -248,48 +337,72 @@ internal static class UpdateReportSelector
         CliDetail detail,
         bool preview)
     {
-        if (result.Status is CliSemanticStatus.Invalid or CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete)
+        var suppressEffectRows = result.Status is CliSemanticStatus.Invalid
+            or CliSemanticStatus.Blocked
+            or CliSemanticStatus.Incomplete;
+        if (suppressEffectRows && result.Migrations.Count == 0)
         {
             return [];
         }
 
-        var rows = effects
-            .Select(effect => new UpdateDataTextRow(
-                effect.Path,
-                RowWording(effect, preview)))
-            .ToList();
-        if (result.Status == CliSemanticStatus.Attention)
+        var migrationsByPath = result.Migrations.ToDictionary(migration => migration.Path, StringComparer.Ordinal);
+        var rows = new List<UpdateDataTextRow>();
+        if (suppressEffectRows)
         {
-            rows.AddRange(result.Findings
-                .Where(finding => IsCode(finding, "RetiredContentPreserved") && finding.Target is not null)
-                .Select(finding => new UpdateDataTextRow(finding.Target!, UpdateWording.RetainedRow())));
+            rows.AddRange(result.Migrations.Select(MigrationTextRow));
         }
-
-        if (detail >= CliDetail.Standard)
+        else
         {
-            rows.AddRange(entries.Select(entry => new UpdateDataTextRow(
-                entry.Path,
-                UpdateWording.EntriesSectionUpdated())));
-
-            if (result.Lifecycle.Action == UpdateLifecycleAction.Publish && effects.Count > 0)
+            foreach (var effect in effects)
             {
-                rows.Add(new UpdateDataTextRow(UpdateWording.OwnershipRecordPath, UpdateWording.LockUpdated()));
+                if (migrationsByPath.TryGetValue(effect.Path, out var migration))
+                {
+                    rows.Add(MigrationTextRow(migration));
+                    continue;
+                }
+
+                rows.Add(new UpdateDataTextRow(effect.Path, RowWording(effect, preview)));
             }
 
-            if (detail == CliDetail.Standard && unchanged.Count > 0)
+            var effectPaths = effects.Select(effect => effect.Path).ToHashSet(StringComparer.Ordinal);
+            rows.AddRange(result.Migrations
+                .Where(migration => !effectPaths.Contains(migration.Path))
+                .Select(MigrationTextRow));
+            if (result.Status == CliSemanticStatus.Attention)
             {
-                rows.Add(new UpdateDataTextRow(string.Empty, UpdateWording.UnchangedCount(unchanged.Count)));
+                rows.AddRange(result.Findings
+                    .Where(finding => IsCode(finding, "RetiredContentPreserved") && finding.Target is not null)
+                    .Select(finding => new UpdateDataTextRow(finding.Target!, UpdateWording.RetainedRow())));
             }
-        }
 
-        if (detail >= CliDetail.Full)
-        {
-            rows.AddRange(result.Comparisons
-                .Where(comparison => comparison.CurrentState == UpdateComparisonCurrentState.FormatOnly
-                    && comparison.IntendedState == UpdateComparisonIntendedState.Same)
-                .Select(comparison => new UpdateDataTextRow(
-                    comparison.RelativePath,
-                    UpdateWording.FormatOnlyRow())));
+            if (detail >= CliDetail.Standard)
+            {
+                rows.AddRange(entries
+                    .Where(entry => !migrationsByPath.ContainsKey(entry.Path))
+                    .Select(entry => new UpdateDataTextRow(
+                        entry.Path,
+                        UpdateWording.EntriesSectionUpdated())));
+
+                if (result.Lifecycle.Action == UpdateLifecycleAction.Publish && effects.Count > 0)
+                {
+                    rows.Add(new UpdateDataTextRow(UpdateWording.OwnershipRecordPath, UpdateWording.LockUpdated()));
+                }
+
+                if (detail == CliDetail.Standard && unchanged.Count > 0)
+                {
+                    rows.Add(new UpdateDataTextRow(string.Empty, UpdateWording.UnchangedCount(unchanged.Count)));
+                }
+            }
+
+            if (detail >= CliDetail.Full)
+            {
+                rows.AddRange(result.Comparisons
+                    .Where(comparison => comparison.CurrentState == UpdateComparisonCurrentState.FormatOnly
+                        && comparison.IntendedState == UpdateComparisonIntendedState.Same)
+                    .Select(comparison => new UpdateDataTextRow(
+                        comparison.RelativePath,
+                        UpdateWording.FormatOnlyRow())));
+            }
         }
 
         return rows;
@@ -352,14 +465,19 @@ internal static class UpdateReportSelector
         IReadOnlyList<UpdateDataPath> unchanged,
         string? previousContent,
         CliDetail detail,
-        bool preview)
+        bool preview,
+        bool includeMigrationSummary)
     {
         if (result.Status is CliSemanticStatus.Invalid or CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete)
         {
-            return [];
+            return MigrationSummaryLines(result.Migrations);
         }
 
         var lines = new List<string>();
+        if (includeMigrationSummary)
+        {
+            lines.AddRange(MigrationSummaryLines(result.Migrations));
+        }
         if (previousContent == "git-diff")
         {
             lines.Add(UpdateWording.PreviousContent());
@@ -427,6 +545,8 @@ internal static class UpdateReportSelector
         var noOwnership = result.Findings.Any(finding => IsCode(finding, "OwnershipObservation"));
         return result.Status switch
         {
+            CliSemanticStatus.Complete when result.Migrations.Count > 0 && data.ChangedFiles == 0
+                => MigrationHeadline(result.Migrations),
             CliSemanticStatus.Complete when noOwnership => new(UpdateWording.NoOwnership(), CliHeadlineKind.Done),
             CliSemanticStatus.Complete when data.IsNoOp => new(UpdateWording.UpToDate(), CliHeadlineKind.NothingToDo),
             CliSemanticStatus.Complete when data.ResultMode == UpdateMode.DryRun => new(UpdateWording.WouldUpdate(data.ChangedFiles), CliHeadlineKind.Preview),

@@ -60,16 +60,20 @@ lifecycle direction does not claim that implementation or proof.
 ## Purpose And Boundary
 
 `install` establishes management of the embedded Framework in one exact
-workspace. It creates a safely absent recognized Framework state or verifies an
-exact trusted managed state as a no-op. It does not reconcile managed
-divergence. Existing managed divergence directs the caller to the root
-`update` operation.
+workspace. It establishes a safely absent Framework state or completes the
+bounded initial workspace adoption described below before verifying the
+resulting state. It verifies an exact trusted managed state as a no-op. It does
+not reconcile divergence in authored managed payload. Existing authored
+managed divergence directs the caller to the root `update` operation.
 
 The command has one stable root operation. Its request, current facts, intended
 state, generated-navigation projection, complete plan, preflight, status model,
-verification, and recovery remain the same for normal mode, initial force, and
-dry-run. `--force` widens only the eligible initial-occupant boundary; it never
-turns `install` into managed update, adoption, or generic replacement.
+verification, and recovery remain the same for safe absence, bounded initial
+adoption, initial force, exact managed no-op, and dry-run. Ordinary install
+does not require a new flag or `--force` for the bounded adoption below.
+`--force` widens only the existing eligible initial-occupant boundary. It
+does not authorize adoption and does not turn `install` into managed update
+or generic replacement.
 
 `install` may establish lifecycle facts only after the complete selected plan
 has applied and verified. A dry run, incomplete result, blocked result, failed
@@ -164,6 +168,87 @@ Framework-aware Route Init remain outside Install's selected effects and must be
 preserved exactly. Their presence alone is not divergence and does not prevent an
 otherwise exact root no-op.
 
+The embedded payload footprint remains closed. During safe initial
+establishment, Install may form a separate set of user-adoption targets for
+missing compatible required metadata and route entrypoints in the selected
+standard route subtree. These targets do not become embedded payload targets
+or Framework-owned whole files. The following section defines this separate
+population.
+
+## Initial Workspace Adoption
+
+Ordinary root Install automatically adds missing compatible required metadata
+and route entrypoints in the selected standard route subtree when they are
+needed for routability. This is part of initial establishment and requires no
+new flag or `--force`. An exact managed state with no effects remains
+`TrustedExact`. When its authored managed base verifies and scoped workspace
+adoption or the generated navigation required by that adoption has effects,
+Install completes those effects without `--force` and sets schema-3
+`data.classification` to `managed-adoption`; this does not reconcile authored
+managed payload divergence. Existing embedded payload collisions keep the
+current occupancy and explicit force rules.
+
+Managed-base admission verifies each selected non-user payload target's
+authored source fingerprint and required managed-block contents through the
+existing readers. Planned user-owned targets are excluded only from this base
+admission and remain subject to exact intended-byte verification after apply.
+A generated `Entries` fingerprint may differ only for a safely projected
+adoption change whose authored fingerprint still matches. Preserve bounded
+generated-span checks before writes. The occupancy exception covers only
+verified managed targets and planned user-owned targets; it does not broaden
+initial-establishment `--force`.
+
+Install reuses a unique recognized entrypoint. It creates a missing canonical
+`_{folder-name}.md` entrypoint only when the selected standard route needs it,
+or adds a missing `## Entries` section when that section is required for the
+selected route. It honors `removedFiles` and removed defaults and does not restore an
+intentionally absent route or destination. Ordinary catalogue observation may
+read other safe sources under its existing selection rules, but Install does not
+adopt or normalize unrelated content. It never follows an outside junction
+target. Binary files, overwrite companions, and content outside selected routes
+remain unchanged.
+
+Metadata completion adds only missing compatible required fields. Existing
+valid fields stay byte-for-byte unchanged. Optional or absent metadata that is
+already allowed remains absent. Completion preserves original bodies, unknown
+YAML fields, encoding, newline style, and user content. It does not normalize
+the file or reorder existing metadata.
+
+A native `SKILL.md` keeps its native format and semantics. Install completes a
+missing required native `name` or `description` when its value is derivable.
+It does not add an `open-forge:` wrapper or an `Entries` section to a Skill.
+Existing complete
+native fields, including optional `license`, remain untouched. A missing
+native `name` comes from the containing Skill directory name. A missing
+description uses an existing usable description, then an existing usable
+title, then the first top-level H1 heading, then the workspace-relative path.
+Routed resource catalogues below `references` follow the accepted Task 47
+selection boundary.
+
+For other required route descriptions, Install uses an existing usable
+description, then an existing usable title, then the first top-level H1 heading,
+then the workspace-relative path. A required tag may be added only when the
+new completion actually needs ordinary classification. In that case
+`Workspace` is a search tag. Install does not invent loading, behavior,
+authority, or state tags, and it does not add optional fields just because a
+candidate lacks them.
+
+Install observes Framework, Extension, and Library ownership before forming
+adoption candidates. An absent ownership file is known empty. A malformed,
+unreadable, or unsupported ownership observation does not license adoption when
+a competing claim cannot be ruled out; this does not gate unrelated safe
+effects. A known competing claim, payload collision, ambiguous entrypoint,
+malformed metadata, conflicting input, or unsafe physical boundary blocks the
+affected plan with a precise finding before any write. Ownership never grants
+ownership or expands the candidate set.
+
+Install forms prospective source bytes and route facts after these planned
+completions, then derives affected navigation through the existing Index
+projection. This exception does not relax the shared Index parser, selector,
+or projector. Extension adoption is not part of this change. Any later
+Extension behavior requires a separate bounded decision over its affected
+projection closure.
+
 ## Operands
 
 No operands are accepted. A directory, source reference, provider name, glob,
@@ -198,7 +283,8 @@ Force does not:
 
 - reconcile an already managed changed, missing, retired, or source-divergent
   state;
-- adopt an unowned or another-manager-owned path;
+- select or widen bounded initial adoption, or adopt a path claimed by another
+  manager;
 - bypass route, source, physical-identity, containment, ownership, marker,
   expected-state, bundle, verification, or recovery checks;
 - repair malformed Entries headings or managed workspace markers;
@@ -213,9 +299,10 @@ return `blocked`, make no write, and provide one useful `Next:` action for
 
 `--automatic` suppresses the human inspection and confirmation flow. It selects
 only the documented deterministic safe effects for the explicit `install`
-operation. It never supplies initial force authority, replaces divergence,
-restores missing managed content, deletes retired content, adopts content,
-takes ownership, or bypasses a safety boundary.
+operation, including eligible bounded initial metadata and route completion. It
+never supplies initial force authority, replaces divergence, restores missing
+managed content, deletes retired content, changes adoption eligibility or
+widens its candidate set, takes ownership, or bypasses a safety boundary.
 
 For a safely absent workspace, automatic mode may establish the ordinary
 installation. For an exact managed state, it may verify the no-op. For an
@@ -315,7 +402,8 @@ path, tag, route, matching bytes, or matching fingerprint:
 | Trusted managed state is semantically exact                                                                                                | Verified no-op; do not rewrite format-only bytes                  | Same no-op                                                             | `completed`                                                     |
 | Selected owned state differs from the running payload or is missing                                                                        | Do not reconcile; direct the caller to `update`                   | Same; force does not change the operation                              | `blocked`, no writes                                           |
 | Exact current destination is an eligible initial occupant                                                                                  | Preserve it                                                       | Replace the exact occupant and establish management after verification | Normal `blocked`; eligible force `completed`                    |
-| User-owned, Extension-owned, unknown, colliding, or unsafe content intersects the footprint                                                | Preserve and stop                                                 | Preserve and stop                                                      | `blocked`, no writes                                           |
+| Non-adoptable user-owned, Extension-owned, unknown, colliding, or unsafe content intersects the embedded payload footprint                 | Preserve and stop                                                 | Preserve and stop                                                      | `blocked`, no writes                                           |
+| Safe initial adoption targets require compatible metadata or route completion                                                             | Complete the required fields and routes, then verify              | Same bounded plan                                                       | `completed` after verified apply or complete pre-effect dry-run |
 | Required target or source coverage is safely unavailable                                                                                   | Do not guess                                                      | Do not broaden the footprint                                           | `incomplete`, no writes                                        |
 | Required target identity, markers, or containment is malformed or ambiguous                                                                | Do not write                                                      | Do not repair or bypass                                                | `blocked`, no writes                                           |
 
@@ -330,6 +418,8 @@ lock supplies no ownership claims and never blocks because of its own state.
 Existing destination occupants and actual source, marker, containment, lease,
 and recovery conflicts retain their ordinary protection. Matching bytes do not
 establish ownership or authorize force over an Extension-owned destination.
+For initial adoption, missing or unusable ownership facts never act as proof
+that a candidate has no competing manager.
 
 For selected owned targets, currentness compares current disk content with the
 running payload in the same invocation. Source metadata recorded by an older
@@ -354,13 +444,16 @@ publication plans no effect and reports `not-requested`.
 ## Generated Navigation And Ownership
 
 Install forms one hypothetical post-install workspace from current authored
-content plus permitted payload and bounded-block effects. It then projects every
-affected generated region from that topology and metadata, preserving user-added
-routes and intentionally absent defaults. It changes only the valid generated
-body beneath the unique top-level `## Entries` heading and preserves the
-heading and outside bytes. Retired generated guards inside that body are removed
-when it is rewritten. A missing or duplicate Entries section blocks the plan;
-force does not repair it.
+content, permitted payload and bounded-block effects, and eligible prospective
+metadata and route completions. It then projects every affected generated
+region from that topology and metadata, preserving user-added routes and
+intentionally absent defaults. It changes only the valid generated body beneath
+the unique top-level `## Entries` heading and preserves the heading and outside
+bytes. Retired generated guards inside that body are removed when it is
+rewritten. The final prospective document must have one unique safe Entries
+boundary. Authorized adoption may append a missing section first; duplicate or
+ambiguous boundaries still block. This does not relax the shared Index parser,
+selector, or projector.
 
 Extension ownership, Framework ownership, user ownership, and external-manager
 claims remain distinct. Matching semantic fingerprints do not adopt an unowned
@@ -508,12 +601,35 @@ In a terminal without `--automatic`: plan review at `minimal` on stderr, then
 
 | Level    | `data`                                                                                                                                      |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| minimal  | `{ mode, force, automatic, classification, footprint { files, directories, sections }, lockPath }`                                          |
+| minimal  | `{ mode, force, automatic, classification, footprint { files, directories, sections }, lockPath, [migrations] }`                          |
 | standard | same                                                                                                                                        |
 | full     | + `source { inventoryFingerprint }`, per-effect `sourceAssetPath` in `effects`, `lifecycle { action, outcome }`, `verification` |
 
 `effects` lists every planned effect at every level (receipts are complete in
-JSON).
+JSON). Internally, the migration collection is empty on a no-op. Public
+schema-3 `data.migrations` is optional and omitted when there are no migration
+rows, preserving existing no-op JSON snapshots. When rows exist, the array is
+present at every detail level.
+
+Each migration row has exactly these fields: `path`, `actions`, `fields`,
+`derivation`, and `outcome`. All keys are present, and the `actions`,
+`fields`, and `derivation` arrays are non-null. `path` is a canonical
+workspace-relative path.
+`actions` contains the applicable values from `metadata-completed`,
+`entrypoint-created`, `entries-section-added`, `navigation-updated`, and
+`content-preserved`. The last action identifies the user-owned overwrite
+companion that preserves an existing category entrypoint's authored content.
+`fields` lists only the metadata fields actually affected, such as `name`,
+`description`, or `open-forge.description`. `derivation` is an array of
+`{ field, source }` rows. Its source values are `existing-description`,
+`existing-title`, `heading`, `relative-path`, `directory-name`, and
+`required-tag`. `outcome` is `planned` or `applied`. A row reports
+`applied` only after every effect it represents has verified. Unapplied or
+failed rows remain `planned`, while the underlying effect outcomes remain
+authoritative.
+
+Migration rows are informational. They do not form warning or error findings
+and do not change status.
 
 ## Semantic Results
 
@@ -531,6 +647,13 @@ The status and exit mapping above are unchanged by detail or format. Root effect
 | create lock                          | named in the applied count sentence; explicit state-file row in preview                                        | `.agents/open-forge.lock.json  created; records the files above` |
 | planned (dry run)                    | `Would ...` forms of the above                                               | same                                                             |
 | not started, unknown (partial)       | listed under the partial headline with `not started` / `final state unknown` | same                                                             |
+
+### Migration wording
+
+When text detail includes a migration row, a dry run reports it as
+`Planned migration: <path> (<summary>).` A verified apply reports it as
+`Migrated <path>: <summary>.` The summary names the affected fields or route
+change. These informational lines do not change status or become findings.
 
 ### Counts and limitations
 
@@ -600,8 +723,9 @@ Install does not:
   state, restoration of a missing managed target, or retired-content deletion;
 - create a Framework group, root `init`, update/reinstall/replace/restore/recover
   alias, uninstall/remove leaf, generic apply, saved plan, session, or journal;
-- discover providers, routes, package sources, Extension paths, or arbitrary
-  workspace files;
+- discover providers, package sources, Extension paths, or arbitrary workspace
+  files. Route discovery is limited to the selected standard route subtree
+  needed for the bounded initial adoption above;
 - adopt matching bytes, repair markers, replace overwrite companions, or change
   user content outside valid managed regions;
 - execute a formatter or persist formatter state;
@@ -643,6 +767,20 @@ Future evidence must cover:
   parser-proven fingerprint boundaries, and fail-closed equivalence;
 - intended-topology generated projection, bounded headings, outside-byte
   preservation, and one complete lifecycle plan;
+- safe initial metadata and route completion in an existing workspace,
+  preserving native Skill semantics, valid metadata, unknown YAML, bodies,
+  encoding, newlines, user routes, and ownership; preserve exact unowned
+  category-entrypoint collisions in overwrite companions and unowned native
+  Skills in place, while other payload collisions retain the force boundary;
+  verified managed-base adoption
+  must classify as `managed-adoption`, preserve owned navigation-host role, and
+  leave genuine authored managed divergence blocked;
+- the pinned Skill Creator brownfield and already-managed-root process
+  acceptance, with exact commands and fixture hashes in the Behavior Contract
+  and Task70 acceptance record;
+- exact migration rows in schema 3, omitted public no-op migrations, planned dry-run
+  outcomes, verified-only applied outcomes, and informational text that never
+  changes status;
 - one verified immutable external schema-v1 ZIP bundle for the complete
   operation, exact prior-byte and provenance facts, expected-state
   revalidation, per-effect and whole-operation verification, all three

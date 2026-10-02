@@ -6,10 +6,11 @@ open-forge:
 
 # CLI Development
 
-This route records the current selection, open Task state, and the Tasks
-recorded for 1.0 polish, with other open tasks available on demand. Completed CLI work, old plans,
-handoffs and coordination history live in
-[Archived CLI Development](../../archived/cli-development/_cli-development.md).
+This route records the current selection, open Task state, and task-owned
+evidence, with other Tasks available on demand. The [1.0 polish wave](one-zero-polish-wave.md)
+records the current wave horizons and frozen decisions without replacing its
+Task records. Historical CLI implementation work, old plans, handoffs and
+coordination history live in [Archived CLI Development](../../archived/cli-development/_cli-development.md).
 
 The two evidence scopes remain in Emerging while their conclusions are checked
 against the open Tasks. Their provenance remains available here:
@@ -36,6 +37,7 @@ Emerging analyses are not rewritten into a second execution plan.
 
 ## Entries
 
+- [Accepted 1.0 polish selection, current wave horizons, and frozen decisions](one-zero-polish-wave.md) - #Memory #Working #CLI #Task #Contextual #Active #KeepInMind
 - [Current selection and order of open work after the public beta](plan.md) - #LoadNow #Memory #Working #CLI #Plan #Contextual #Active
 - [Current CLI task selection and retained task ownership](project-control.md) - #LoadNow #Memory #Working #CLI #Task #Contextual #Active
 - [Open CLI tasks, the selected migration and on-demand follow-ups](tasks/_tasks.md) - #Memory #Working #CLI #Task #Contextual #Active

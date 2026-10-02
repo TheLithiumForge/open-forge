@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Identity;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
@@ -178,6 +179,10 @@ internal sealed class InstallOperationWorkspace : IDisposable
     private void DeleteInstallArtifacts()
     {
         foreach (var path in EmbeddedPayloadPaths
+                     .Concat(EmbeddedPayloadPaths.Where(path =>
+                         SourceFormClassifier.TryClassify(path, out var form)
+                         && SourceFormClassifier.IsEntrypoint(form))
+                         .Select(SourceOverwritePath.ReadAdjacentPath))
                      .Append(LifecyclePath)
                      .Append(OwnershipPath)
                      .Append(AgentsPath)

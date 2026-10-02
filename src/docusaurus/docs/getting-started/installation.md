@@ -75,6 +75,28 @@ open-forge install
 
 The dry run lists what will be written and changes nothing. The second command shows the same plan and asks before it writes.
 
+An existing category entrypoint does not prevent first installation. If a file
+already occupies a bundled path such as `.agents/guidance/_guidance.md`, Install
+preserves its authored content in `_guidance.overwrite.md` and installs the
+Framework base. Existing overwrite content is kept after it. The base gets
+rebuilt navigation, while the overwrite remains yours. An existing native
+Skill at a bundled `SKILL.md` path also stays yours. Neither case requires
+`--force`.
+
+If your project already has `.agents/`, install can adopt its existing native
+Skills by filling missing metadata and adding navigation while preserving Skill
+bodies and support files. The plan shows the migration paths. No special
+migration flag or `--force` is needed for safe adoption. When the managed
+Framework still matches the embedded payload, run `open-forge install` again
+after adding a downloaded Skill to fill missing metadata or navigation.
+
+After upgrading the CLI in an already managed project, run
+`open-forge update --dry-run` and then plain `open-forge update`. Update
+reconciles older or edited Framework content it owns and also adopts compatible
+native Skills. It does not establish management, so use the install commands
+above for a first install into an unmanaged project, even when `.agents/`
+already exists.
+
 ### Manually, from a clone
 
 No CLI needed. The Framework is complete in [`src/open-forge`](../../../open-forge/). Clone the repository and copy it into your project:

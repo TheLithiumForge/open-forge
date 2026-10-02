@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Investigate alternative Framework roots such as .apm and APM interoperability separately from applyTo loading
-  tags: [Memory, Working, Task, Framework, Root, APM, Investigation, Contextual]
+  description: Record the decision to retain .agents as the sole Framework root and define the APM coexistence boundary
+  tags: [Memory, Working, Task, Framework, Root, APM, Decision, Contextual, Complete]
 ---
 
 # Task 55: Alternative workspace root such as `.apm`
@@ -26,6 +26,10 @@ Existing `.agents/` behavior remains the current product contract.
 
 ## Scope
 
+This is the investigation scope recorded when the Task was restored. The
+decision below closes the product question without requiring every listed
+research step.
+
 - Inventory assumptions about `.agents/` in discovery, Loader references,
   source IDs, containment, settings and locks, packages, tests, and docs.
 - Compare a configurable single root, direct placement inside `.apm/`, optional
@@ -41,26 +45,40 @@ Existing `.agents/` behavior remains the current product contract.
 
 ## Proposed plan
 
+This plan preserves the scope that prompted the investigation. The maintainer's
+decision below closes the product question without requiring these research
+steps or a proof of concept.
+
 1. Confirm current APM behavior and inventory root assumptions.
 2. Compare options, compatibility, migration cost, and loading behavior.
 3. Propose a bounded scratch experiment and identify any installation or external
    effects before execution. The historical prototype remains a candidate.
 4. Present a recommendation for a separate maintainer decision.
 
+## Decision (2026-10-01)
+
+The maintainer chose to retain `.agents/` as the current and sole Framework
+root. Multiple concurrent roots and dedicated APM adapters are not selected.
+Ordinary coexistence with APM remains product direction, like coexistence with
+other harnesses. This is not an APM compatibility certification.
+
+No proof of concept, APM installation, or code change is required by this
+decision. The earlier scope, comparison questions, and preliminary local
+triage remain as historical context. That triage recorded that `apm.yml`
+targets `opencode` and `codex`. It did not verify external APM behavior.
+
 ## Current state
 
-Preliminary bounded local triage is recorded: `apm.yml` targets `opencode` and
-`codex`. Future options are instruction export, a separately evaluated
-alternative root, or package transport. No external APM semantics were
-verified, and no implementation or POC was performed. The full Task 55
-investigation remains open.
+**Status:** Task 55 "Alternative workspace root such as .apm" (phase 1/1):
+milestone 1/1. The maintainer's decision is recorded and the Task is closed.
 
-Open under the restored scope. The preliminary triage above is the only work
-recorded. Schedule the full investigation independently.
+## Decision completion
 
-## Done when
+These checkboxes track decision capture and record reconciliation. They do not
+claim that an APM installation, compatibility test, proof of concept, or
+external certification was performed.
 
-- [ ] Current root assumptions and external evidence are recorded.
-- [ ] Alternatives and compatibility consequences are compared.
-- [ ] Any accepted prototype has inspected results and a stated disposition.
-- [ ] The maintainer accepts, rejects, or defers the recommendation.
+- [x] The maintainer's root and APM direction is recorded with its evidence
+      boundary.
+- [x] The project-control ledger, plan, Task index, and backlog reflect the
+      closure without moving this Task or creating another category.

@@ -28,11 +28,13 @@ public sealed class InstallPresentationContractTests
     public void NativeDataPreservesPropertyOrderAndNullableBoundaries()
     {
         AssertProperties<InstallData>(
-            "Mode", "Force", "Automatic", "Classification", "Footprint", "LockPath", "Effects", "Source", "Lifecycle", "Verification");
+            "Mode", "Force", "Automatic", "Classification", "Footprint", "LockPath", "Effects", "Source", "Lifecycle", "Verification", "Migrations");
         AssertProperties<InstallDataFootprint>("Files", "Directories", "Sections");
         AssertProperties<InstallDataSource>("InventoryFingerprint", "AssetCount");
         AssertProperties<InstallDataEffect>("Path", "Kind", "Action", "SourceAssetPath", "Outcome", "Residual");
         AssertProperties<InstallDataLifecycle>("Action", "Outcome");
+        AssertProperties<InstallDataMigration>("Path", "Actions", "Fields", "Derivation", "Outcome");
+        AssertProperties<InstallDataMigrationDerivation>("Field", "Source");
 
         AssertNotNullable<InstallData>(nameof(InstallData.Mode));
         AssertNotNullable<InstallData>(nameof(InstallData.Force));
@@ -44,11 +46,14 @@ public sealed class InstallPresentationContractTests
         AssertNullable<InstallData>(nameof(InstallData.Source));
         AssertNullable<InstallData>(nameof(InstallData.Lifecycle));
         AssertNullable<InstallData>(nameof(InstallData.Verification));
+        AssertNullable<InstallData>(nameof(InstallData.Migrations));
         AssertNullable<InstallDataFootprint>(nameof(InstallDataFootprint.Directories));
         AssertNullable<InstallDataEffect>(nameof(InstallDataEffect.SourceAssetPath));
 
         var effects = Property<InstallData>(nameof(InstallData.Effects));
         Assert.Equal(typeof(IReadOnlyList<InstallDataEffect>), effects.PropertyType);
+        var migrations = Property<InstallData>(nameof(InstallData.Migrations));
+        Assert.Equal(typeof(IReadOnlyList<InstallDataMigration>), migrations.PropertyType);
     }
 
     [Trait("Boundary", "Output")]

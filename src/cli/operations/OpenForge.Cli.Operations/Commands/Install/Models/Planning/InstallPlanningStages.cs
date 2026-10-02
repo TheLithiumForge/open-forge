@@ -52,6 +52,9 @@ internal sealed record InstallManagedStateTrustedExact(InstallPlanContext Contex
 internal sealed record InstallManagedStateEstablishment(InstallEstablishmentPlanInput Input)
     : InstallManagedStateResult;
 
+internal sealed record InstallManagedStateAdoption(InstallEstablishmentPlanInput Input)
+    : InstallManagedStateResult;
+
 internal sealed record InstallManagedStateStopped(InstallPlanningBoundary Boundary)
     : InstallManagedStateResult;
 

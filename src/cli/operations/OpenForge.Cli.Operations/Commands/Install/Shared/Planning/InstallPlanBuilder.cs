@@ -55,6 +55,8 @@ internal sealed class InstallPlanBuilder
                 _resultProjector.ProjectBoundary(stopped.Boundary),
             InstallManagedStateTrustedExact trustedExact =>
                 _resultProjector.ProjectTrustedExact(trustedExact.Context),
+            InstallManagedStateAdoption adoption =>
+                _resultProjector.Project(_establishmentPlanner.Build(adoption.Input)),
             InstallManagedStateEstablishment establishment =>
                 _resultProjector.Project(_establishmentPlanner.Build(establishment.Input)),
             _ => throw InvalidManagedState(managedState),

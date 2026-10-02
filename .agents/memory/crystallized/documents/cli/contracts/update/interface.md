@@ -63,6 +63,13 @@ was selected. `--force` grants no additional authority. Shared destination,
 ownership, physical and managed-region checks apply in every mode. Removed
 categories stay excluded, and unrelated user content remains unchanged.
 
+When a complete ownership observation and an existing Framework registration
+establish a managed workspace, ordinary Update may also adopt compatible
+documents already under the selected standard local routes. This completes
+only required metadata or route structures in those local documents. It does
+not establish an absent or unknown Framework installation, or treat local
+documents as embedded Framework payload.
+
 ## Syntax
 
 The complete public command form is:
@@ -127,6 +134,28 @@ Only verified file/region effects establish new receipts. The existing single
 when unchanged, none/not-requested when skipped. Unaffected receipts and other
 sections remain. No stored baseline, policy or workspace binding survives.
 
+### Local Route Adoption During Update
+
+Adoption is eligible only with complete, trustworthy Framework ownership and
+an existing Framework registration. It is limited to compatible documents in
+selected standard local routes. Candidate paths use
+`FrameworkPayloadSelection.IncludesPath` with the complete file, directory, and
+category exclusions. The full source catalogue and projection inputs remain
+available to strict validation: excluded, malformed, foreign, ambiguous, and
+unsafe facts are not hidden or guessed around, and any blocking fact prevents
+all effects.
+
+Before generated navigation is projected, Update forms intended bytes for
+missing required native Skill fields and required resource catalogue
+documents. It preserves valid and unknown frontmatter, optional fields, body
+bytes, encoding, newline style, and companions. Metadata and generated Entries
+changes for one path are coalesced into one exact physical effect. Local
+adoption targets remain distinct from owned Framework comparisons and do not
+gain a Framework source-asset path, count as bundled payload, or receive
+whole-file Framework ownership. A generated Entries region may receive its own
+region receipt; updating navigation in an existing Framework host preserves
+that host's existing ownership.
+
 ## Current And Intended Comparison
 
 | Current fact                   | Ordinary Update                              | With `--prune`                                |
@@ -139,6 +168,7 @@ sections remain. No stored baseline, policy or workspace binding survives.
 | Present retired whole file     | Preserve with a warning; result is `completed-with-warnings` | Delete only inside the shared safety boundary |
 | Absent retired path            | No deletion or recreation                    | May release obsolete receipt; no deletion     |
 | Region-only receipt            | Rewrite named region; preserve outside bytes | Never delete the host                         |
+| Eligible local route needs required metadata or route structure | Plan its exact local document bytes without claiming Framework payload ownership | Same |
 
 Current states use `same`, `changed`, `missing` and `format-only` from fresh
 current/intended comparison. Exact bytes support recovery and expected-state
@@ -185,10 +215,12 @@ region-only hosts are never deleted. Edited retired content remains eligible.
 ## Generated Navigation
 
 Update forms the hypothetical post-update authored workspace, including only
-permitted payload, bounded-region, force, and prune effects. It preserves
-user-added routes and intentionally absent defaults. It projects affected
-generated `Entries` bodies from that intended authored topology and metadata
-using the current Index contracts.
+permitted payload, bounded-region, local adoption, force, and prune effects. It
+preserves user-added routes and intentionally absent defaults. For eligible
+local adoption, the shared topology and document planners form route facts and
+intended source bytes before generated navigation is projected. Update projects
+affected generated `Entries` bodies from that intended authored topology and
+metadata using the current Index contracts.
 
 Generated interiors are derived navigation, not Framework authored payload
 identity and not a package-owned file. Update changes only valid bounded
@@ -300,6 +332,13 @@ Would update 3 Framework files.
 No files were changed.
 ```
 
+When migrations exist, every text detail level also summarizes their source
+count and names each path with its planned action. A migration whose matching
+non-directory file effect verified is labelled `Migrated`; every preview,
+unstarted, or otherwise unverified migration is labelled `Planned migration`.
+The result mode alone never determines that a migration was applied. Successful
+informational adoption adds no warning or incomplete status.
+
 `standard` adds `Workspace:`, every other Framework file as `  <path>  unchanged`
 grouped after the changed rows as one count line (`18 files unchanged`), the
 Entries sections rewritten as rows, and the lock row.
@@ -355,6 +394,17 @@ files listed above? [y/N]`.
 | minimal  | `{ mode, force, prune, automatic, previousContent: "git-diff" \| null, lockPath }`                                                        |
 | standard | + `unchanged: [ { path } ]`, `entriesSections: [ { path, state } ]`                                                                       |
 | full     | + per-effect `before`, `after`, `sourceAssetPath`, `relation { current, shipped }`, `source { id, version, fingerprint }`, `verification` |
+
+If there are migration rows, `data.migrations` is present at every detail level;
+when there are none, the property is omitted. The schema-3 array is sorted by
+ordinal path and each row has exactly `path`, `actions`, `fields`, `derivation`,
+and `outcome`, in that order. Actions use `metadata-completed`,
+`entrypoint-created`, `entries-section-added`, and `navigation-updated`.
+Derivation items have `field` and `source`; sources use
+`existing-description`, `existing-title`, `heading`, `relative-path`,
+`directory-name`, and `required-tag`. Outcomes are `planned` or `applied`.
+Fields and derivation describe metadata keys only; migration rows carry no
+authored metadata values and are not ownership receipts or history.
 
 ## Semantic Results
 
@@ -450,12 +500,13 @@ The native up-to-date report includes a `Workspace: <workspace>` echo when `--wo
 
 Update does not:
 
-- establish an absent Framework state, adopt an untracked installation, or turn
-  `install --force` into a managed update;
+- establish an absent or unknown Framework state, adopt an untracked
+  installation, or turn `install --force` into a managed update;
 - accept a source operand, package version, range, network source, registry,
   cache, generic apply, saved plan, `--yes`, or Framework remove/uninstall;
 - replace arbitrary user, Extension, shared, unknown, retired-only, or
-  route-unsafe content;
+  route-unsafe content; adoption remains limited to compatible documents in
+  selected standard local routes of an already established managed workspace;
 - repair lifecycle or Entries headings, rewrite overwrite companions, or run a
   formatter;
 - mutate the `extensions` section, an external source, or `.temp/`; or

@@ -189,6 +189,8 @@ internal sealed record UpdateResultFormation
 
     public required IReadOnlyList<UpdatePhysicalEffect> Effects { get; init; }
 
+    public IReadOnlyList<UpdateMigration> Migrations { get; init; } = [];
+
     public required UpdateLifecycle Lifecycle { get; init; }
 
     public required UpdateRecovery Recovery { get; init; }
@@ -210,11 +212,14 @@ internal sealed record UpdateResult : ICliCommandResult
 
         ArgumentNullException.ThrowIfNull(formation.Comparisons);
         ArgumentNullException.ThrowIfNull(formation.Effects);
+        ArgumentNullException.ThrowIfNull(formation.Migrations);
         ArgumentNullException.ThrowIfNull(formation.Findings);
         ArgumentNullException.ThrowIfNull(formation.Lifecycle);
         ArgumentNullException.ThrowIfNull(formation.Recovery);
         var comparisons = NormalizeComparisons(formation.Comparisons);
         var effects = NormalizeEffects(formation.Effects);
+        var migrations = NormalizeMigrations(formation.Migrations);
+        ValidateMigrationBacking(effects, migrations);
         var findings = formation.Findings
             .Select(finding => finding ?? throw new ArgumentException("Update findings cannot contain null members."))
             .OrderBy(finding => (int)finding.Code)
@@ -239,6 +244,7 @@ internal sealed record UpdateResult : ICliCommandResult
         Comparisons = new ReadOnlyCollection<UpdateComparison>(comparisons);
         GeneratedNavigation = generatedNavigation;
         Effects = new ReadOnlyCollection<UpdatePhysicalEffect>(effects);
+        Migrations = new ReadOnlyCollection<UpdateMigration>(migrations);
         Lifecycle = formation.Lifecycle;
         Recovery = recovery;
         Verification = formation.Verification;
@@ -277,6 +283,8 @@ internal sealed record UpdateResult : ICliCommandResult
 
     internal IReadOnlyList<UpdatePhysicalEffect> Effects { get; }
 
+    internal IReadOnlyList<UpdateMigration> Migrations { get; }
+
     internal UpdateLifecycle Lifecycle { get; }
 
     internal UpdateRecovery Recovery { get; }
@@ -298,6 +306,14 @@ internal sealed record UpdateResult : ICliCommandResult
             Comparisons = Comparisons,
             GeneratedNavigation = GeneratedNavigation,
             Effects = Effects,
+            Migrations = Migrations
+                .Select(migration => new UpdateMigration(
+                    migration.Path,
+                    migration.Actions,
+                    migration.Fields,
+                    migration.Derivation,
+                    UpdateMigrationOutcome.Planned))
+                .ToArray(),
             Lifecycle = Lifecycle,
             Recovery = Recovery,
             Verification = Verification,
@@ -350,6 +366,59 @@ internal sealed record UpdateResult : ICliCommandResult
         return materialized
             .OrderBy(effect => effect.Path, StringComparer.Ordinal)
             .ToArray();
+    }
+
+    private static UpdateMigration[] NormalizeMigrations(IReadOnlyList<UpdateMigration> migrations)
+    {
+        var materialized = migrations
+            .Select(migration => migration ?? throw new ArgumentException(
+                "Update migrations cannot contain null members.",
+                nameof(migrations)))
+            .ToArray();
+        var paths = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var migration in materialized)
+        {
+            if (!paths.Add(migration.Path))
+            {
+                throw new ArgumentException(
+                    "Update migrations cannot contain duplicate paths.",
+                    nameof(migrations));
+            }
+        }
+
+        return materialized
+            .OrderBy(migration => migration.Path, StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    private static void ValidateMigrationBacking(
+        IReadOnlyList<UpdatePhysicalEffect> effects,
+        IReadOnlyList<UpdateMigration> migrations)
+    {
+        var migrationPaths = migrations
+            .Where(migration => migration.Actions.Count > 0)
+            .Select(migration => migration.Path)
+            .ToHashSet(StringComparer.Ordinal);
+        foreach (var effect in effects)
+        {
+            if (effect.Kind != UpdatePhysicalEffectKind.File)
+            {
+                continue;
+            }
+
+            foreach (var change in effect.Changes)
+            {
+                var requiresMigration = change.Kind == UpdateComparisonTargetKind.File
+                    && change.SourceAssetPath is null
+                    && change.Action is (UpdateLogicalChangeAction.Create or UpdateLogicalChangeAction.Replace);
+                if (requiresMigration && !migrationPaths.Contains(effect.Path))
+                {
+                    throw new ArgumentException(
+                        "A source-less Update file create or replace effect requires nonempty migration facts for the same path.",
+                        nameof(migrations));
+                }
+            }
+        }
     }
 
     private static void ValidateEffect(UpdatePhysicalEffect effect)

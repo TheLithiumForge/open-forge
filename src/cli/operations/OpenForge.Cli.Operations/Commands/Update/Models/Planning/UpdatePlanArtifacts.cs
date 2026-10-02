@@ -43,7 +43,12 @@ internal sealed record UpdatePlanExecution(
     IReadOnlyList<FileStateSnapshot> ProjectionInputs,
     IReadOnlyList<UpdatePlannedEffect> Effects,
     IReadOnlyList<PlannedDirectoryCreation> DirectoryCreations,
-    PlannedFileChange? OwnershipChange);
+    PlannedFileChange? OwnershipChange)
+{
+    public IReadOnlyList<UpdateAdoptionTarget> AdoptionTargets { get; init; } = [];
+
+    public IReadOnlyList<UpdateMigrationPlan> Migrations { get; init; } = [];
+}
 
 internal sealed record UpdatePlanResolution(
     UpdatePlanBuild Build,

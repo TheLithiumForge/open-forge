@@ -410,9 +410,9 @@ validated before any upload begins.
 
 The npm tooling under `scripts/delivery/npm/` can prepare the native
 package for the current host on Linux (glibc), macOS, or Windows, on x64 or
-ARM64. The accepted distribution contains all six target packages. Package
-layout, packing, native execution and installed-launcher journeys are qualified
-on all six matching hosts for `0.9.0-beta.1`.
+ARM64. The accepted distribution contains all six target packages. Qualify
+package layout, packing, native execution, and installed-launcher journeys on
+all six matching hosts before each release.
 See [CLI Distribution](../.agents/memory/crystallized/documents/cli/distribution.md).
 
 The root link command publishes the current host in Release mode without
