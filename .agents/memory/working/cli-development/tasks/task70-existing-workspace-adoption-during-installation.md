@@ -6,6 +6,27 @@ open-forge:
 
 # Task 70 — Existing workspace adoption during installation
 
+## Noon integration and hosted qualification
+
+At 12:01 Europe/Zurich, Root squash-integrated the qualified complete tree into
+develop as `4bb4059e319e5bf536aa7f0a0969a5fd246547f4` and pushed it. Tree
+`3f8c9e4b251c594e736d69ed2d65cc010be60942` exactly matched the frozen local candidate.
+Hosted Build `36993142714` passed repository checks and both Linux unit and
+Integration modes. Its public modes stopped at report qualification: two
+Windows ConPTY Update journeys deliberately skipped on Unix, but their exact
+skip reason was absent from the delivery platform-exclusion list. The Linux
+x64 public report has 254 passes, 18 OS exclusions, and zero failed tests.
+
+The follow-up adds that one exact reason and regression coverage proving it is
+accepted only on Linux/macOS and still rejected on Windows or an unknown host.
+All six focused report checks, delivery typecheck, lint and formatting pass;
+the captured Linux report also qualifies with the corrected policy. Runtime
+source, fixtures and assertions are unchanged. This is a delivery-gate correction,
+not permission to ignore unexpected skips. The original qualified worktree and
+its immutable evidence remain preserved. A new exact-commit hosted Build is
+required before publication. Beta5 remains unpublished; main remains unchanged.
+The 13:00 cutoff still applies to every commit, merge, push and release start.
+
 ## Accepted first-install correction on 2026-10-02
 
 The maintainer clarified that existing `.agents` content must be adopted during

@@ -21,6 +21,7 @@ const unixOnly = new Set([
 ]);
 
 const publicWindowsOnly = new Set([
+  "This confirmation journey requires the repository's Windows ConPTY harness.",
   "This public-create boundary requires an owned Windows directory ACL.",
   "C07-06 requires the Windows directory-enumeration ACL capability.",
   "F14 terminal and sharing cases require the accepted Windows transport/filesystem capability.",

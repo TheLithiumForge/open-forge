@@ -87,3 +87,14 @@ test("public Windows journeys are exclusions only on Unix, never lost required e
   assert.throws(() => qualifyReport(report, "win32"));
   assert.throws(() => qualifyReport(report, "linux"));
 });
+
+test("Update confirmation journeys require Windows ConPTY evidence and exclude only Unix", () => {
+  const report = platformReport("This confirmation journey requires the repository's Windows ConPTY harness.");
+  const skipped = report.results.tests[1];
+  assert.ok(skipped?.extra);
+  skipped.extra.type = "OpenForge.Cli.EndToEndTests.PublishedUpdateAdoptionProcessTests";
+  assert.deepEqual(qualifyReport(report, "linux"), { passed: 1, skipped: 1 });
+  assert.deepEqual(qualifyReport(report, "darwin"), { passed: 1, skipped: 1 });
+  assert.throws(() => qualifyReport(report, "win32"));
+  assert.throws(() => qualifyReport(report));
+});

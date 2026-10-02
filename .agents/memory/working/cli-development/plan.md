@@ -6,6 +6,15 @@ open-forge:
 
 # Development Plan
 
+## Noon hosted correction
+
+The qualified candidate was squash-integrated and pushed to develop at 12:01 as
+`4bb4059e319e5bf536aa7f0a0969a5fd246547f4`. The first hosted Build exposed one
+missing explicit Windows ConPTY exclusion reason in the delivery report gate.
+The narrow correction passes focused evidence and delivery checks. Publication
+now waits for a successful hosted Build of the corrected commit; the 13:00
+cutoff remains binding. See the Task 70 noon record for exact results.
+
 ## 2026-10-02 execution window
 
 The maintainer requested the first-install preservation fixes on a branch by

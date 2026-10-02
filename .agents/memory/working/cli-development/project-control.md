@@ -14,6 +14,16 @@ release is preserved as the
 Older receipts and retired queue state are in the
 [archived control ledger](../../archived/cli-development/project-control.md).
 
+## Noon release state
+
+The frozen candidate was integrated and pushed at 12:01 as
+`4bb4059e319e5bf536aa7f0a0969a5fd246547f4`. Hosted qualification found a missing
+Windows ConPTY skip reason in the delivery exclusion list. The exact reason and
+its regression check are corrected; delivery checks pass. A new hosted Build
+must pass before publication. Beta5 is not released, and main has not moved.
+The Task 70 noon record owns this correction and evidence. The original local
+qualification remains intact; its complete tree is the initial squash tree.
+
 ## Active task ledger
 
 | ID | Task | State | Current boundary | Owner |
