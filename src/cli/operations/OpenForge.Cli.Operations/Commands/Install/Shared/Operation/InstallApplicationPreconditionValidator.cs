@@ -2,10 +2,10 @@ using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Install.Shared.Recovery;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
@@ -45,7 +45,7 @@ internal sealed class InstallApplicationPreconditionValidator(
                 InstallFindingCode.TargetUnsafe);
         }
 
-        var recovery = await RecoveryBundleCatalogue.ReadAsync(
+        var recovery = await InstallRecoveryCatalogueReader.ReadBlockingAsync(
                 plan.Request.Workspace,
                 cancellationToken)
             .ConfigureAwait(false);

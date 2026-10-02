@@ -6,6 +6,27 @@ open-forge:
 
 # Development Plan
 
+## Current release hold, 2026-10-02
+
+The maintainer stopped publication after reporting a stale issue when switching
+branches in a reused worktree. All six hosted platforms passed Build
+`36995867259` on `634ab07051e670e3f9bcc1b6603ac39a91f4febc`. Main had already
+advanced and Release `37003970027` had started when the stop arrived.
+Cancellation raced publication: npm beta5 was published, and the GitHub
+prerelease was subsequently returned to draft. Local npm authentication is
+unavailable, so its published versions and tags have not been reverted.
+The release automation is paused. No further publication is authorized.
+
+The issue was independently reproduced and corrected locally on
+`fix/beta5-stale-worktree-state`. Install checks current file identities before
+treating a retained recovery record as a blocker. One complete managed run
+passed 7,087 checks with 17 accepted platform exclusions, and all 79 focused
+Native AOT Install checks passed. The correction remains uncommitted on its
+branch; publication remains held pending renewed authorization.
+The Task 70 record tracks this release blocker. The earlier noon schedule and pending
+integration statements below are historical. The maintainer had removed the
+13:00 cutoff before the subsequent explicit publication stop.
+
 ## Noon hosted correction
 
 The qualified candidate was squash-integrated and pushed to develop at 12:01 as

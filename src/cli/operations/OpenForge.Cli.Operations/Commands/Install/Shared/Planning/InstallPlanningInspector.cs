@@ -1,12 +1,12 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
+using OpenForge.Cli.Core.Commands.Install.Shared.Recovery;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
-using OpenForge.Cli.Core.Framework.Recovery;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
@@ -74,7 +74,7 @@ internal sealed class InstallPlanningInspector
             return new InstallInspectionStopped(ReadIntendedBoundary(intendedBuild, payload));
         }
 
-        var recovery = await RecoveryBundleCatalogue.ReadAsync(
+        var recovery = await InstallRecoveryCatalogueReader.ReadBlockingAsync(
                 request.Workspace,
                 cancellationToken)
             .ConfigureAwait(false);

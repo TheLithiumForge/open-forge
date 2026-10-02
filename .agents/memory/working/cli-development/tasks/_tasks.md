@@ -6,6 +6,15 @@ open-forge:
 
 # Open CLI Tasks
 
+## Current release hold
+
+The maintainer stopped beta5 publication after reporting a stale issue in a
+reused worktree. [Task 70](task70-existing-workspace-adoption-during-installation.md#current-release-hold-2026-10-02)
+records the investigation and publication cancellation race. No further release
+is authorized. [Task 71](task71-streamline-build-release-pipeline.md) records
+the requested pipeline follow-up. Older release boundary statements below are
+historical checkpoints until this hold is resolved.
+
 The [wave capsule](../one-zero-polish-wave.md) and
 [project-control ledger](../project-control.md#active-task-ledger) record the
 release boundary, task horizons, frozen decisions, and queue ownership. Open
@@ -113,7 +122,7 @@ Their links from open Tasks now point there.
 - [Remaining beta product work and delivery verification after the CLI migration](beta-follow-ups.md) - #Memory #Working #Backlog #CLI #Beta #Contextual
 - [Specifications for actionable errors, stale Core documentation and Skill navigation follow-ups](beta-follow-ups/_beta-follow-ups.md) - #Memory #Working #Plan #CLI #Contextual
 - [Candidate follow-up tasks distilled from the reviewed CLI analyses; not active execution authority](potential/_potential.md) - #Memory #Working #CLI #Task #Potential #Contextual
-- [Open Task 32 to review whether the Workspace echo and the Next action belong in minimal output across all 28 commands](task32-minimal-output-sweep.md) - #Memory #Working #CLI #Task #Presentation #Minimal #Contextual #Active
+- [Open Task 32 to reconcile minimal output across all 29 operations, including root Remove](task32-minimal-output-sweep.md) - #Memory #Working #CLI #Task #Presentation #Minimal #Contextual #Active
 - [Open Task 34 to visually distinguish command names, paths, identifiers and arguments interpolated into user-facing sentences, and to establish it as an authoring rule](task34-interpolated-value-markup.md) - #Memory #Working #CLI #Task #Presentation #Wording #Accessibility #Contextual #Active
 - [Open Task 36 to design partial file merging by Extensions and to replace the comment guards in authored Markdown with a boundary an agent still reads as an instruction](task36-extension-merge-and-guards.md) - #Memory #Working #CLI #Task #Extensions #Markers #Authoring #Contextual #Active
 - [Open Task 37 to compare every shipped CLI sentence against the unaccepted G4 output proposals and adopt, merge or reject each on its merits](task37-wording-review-against-proposals.md) - #Memory #Working #CLI #Task #Wording #Review #Contextual #Active
@@ -124,7 +133,7 @@ Their links from open Tasks now point there.
 - [Open Task 47 to make index and route navigation reach every recognized entrypoint form from the loader, so a catalogue does not need to be named by hand to stay current](task47-entrypoint-reachability.md) - #Memory #Working #CLI #Task #Routing #Navigation #Index #Beta #Contextual #Active
 - [Open Task 48 to extend Framework route scaffolding and scope insertion to routes an Extension created, so scoping is a property of the routing model rather than of whatever Core happens to ship](task48-scoping-for-extension-routes.md) - #Memory #Working #CLI #Task #Routing #Scopes #Extensions #RouteInit #Contextual #Active
 - [Open Task 53 to audit every LoadNow and KeepInMind entry and the default scoping before 1.0, so startup context holds only what omission would cost more than reading](task53-loading-and-scoping-audit.md) - #Memory #Working #Task #Framework #Loading #Scope #Release #Contextual #Active
-- [Open Task 54 to trim tags that add no selection, search, or loading value before 1.0, in shipped files first and then in this workspace](task54-tag-trimming.md) - #Memory #Working #Task #Framework #Tags #Release #Contextual #Active
+- [Completed Task 54 tag trimming, frozen scope, independent validation, and merge-ready receipt](task54-tag-trimming.md) - #Memory #Working #Task #Framework #Tags #Release #Contextual #Active
 - [Record the decision to retain .agents as the sole Framework root and define the APM coexistence boundary](task55-alternative-root.md) - #Memory #Working #Task #Framework #Root #APM #Decision #Contextual #Complete
 - [Open Task 58 to turn the demos into a repeatable evaluation comparing Open Forge with other setups, agents, and models](task58-demo-evals.md) - #Memory #Working #Task #Evaluation #Demo #Contextual #Active
 - [Record the beta 2 release, package publication, and documentation verification](task59-beta-2-release.md) - #Memory #Working #Task #Release #Beta #Package #Contextual #Complete
@@ -132,10 +141,11 @@ Their links from open Tasks now point there.
 - [Implement optional applyTo file conditions, loading rules, Entries display, and CLI context filtering through accepted execution packets](task62-glob-scoped-loading.md) - #Memory #Working #Task #Framework #Loading #Frontmatter #CLI #Contextual #Complete
 - [Task 62 execution decisions, foundation packets, command packets, and documentation ownership](task62/_task62.md) - #Memory #Working #Task #Plan #CLI #Contextual #Active
 - [Open Task 63 to decide whether and how a direct edit to a managed file can survive updates, since removedFiles already keeps such a file untouched as an undocumented side effect](task63-keeping-edits-through-updates.md) - #Memory #Working #Task #CLI #Update #Removal #Customization #Investigation #Contextual #Active
-- [Open Task 64 to fix the CLI defects, wording errors, and contract contradictions found by the documentation review, and the leftovers of the closed removal and remediation Tasks](task64-cli-defects-and-contract-drift.md) - #Memory #Working #Task #CLI #Defect #Contract #Wording #Contextual #Active
+- [Record completed Task 64 CLI defect and contract corrections with independent managed, native, package and qualification-closure evidence](task64-cli-defects-and-contract-drift.md) - #Memory #Working #Task #CLI #Defect #Contract #Wording #Contextual #Complete
 - [Record the decision to keep Task records in Working Memory and use backlogs and ledgers as selection views](task65-where-open-tasks-live.md) - #Memory #Working #Task #Planning #Backlog #Contextual #Complete
 - [Task 66 council review of the published documentation for overclaims and polish, and of the shipped Framework and Extension files for consistency, redundancy, order, and readability](task66-council-polish.md) - #Memory #Working #Task #Documentation #Framework #Extensions #Council #Writing #Contextual #Active
 - [Task 67 council redesign of the framework diagram's labels, so what loads when and where content comes from reads at a glance and stays accurate](task67-diagram-labels.md) - #Memory #Working #Task #Documentation #Diagram #Loading #Council #Writing #Contextual #Active
 - [Offline validation of current README, public guides, and routed Markdown local paths and anchors](task68-repository-link-validation.md) - #Memory #Working #Task #CLI #Contextual #Complete
 - [Coordinate the next beta stabilization, qualification, merge, and release boundary](task69-next-beta-stabilization-release.md) - #Memory #Working #Task #CLI #Contextual #Complete
 - [Define bounded adoption of compatible existing workspace metadata and route entrypoints during ordinary Framework installation and ordinary managed Update](task70-existing-workspace-adoption-during-installation.md) - #Memory #Working #Task #CLI #Install #Metadata #Contextual #Active
+- [Streamline hosted build and release delivery while preserving required platform coverage and making stalled suites diagnosable](task71-streamline-build-release-pipeline.md) - #Memory #Working #Task #CLI #Pipeline #Build #Release #Contextual #Active

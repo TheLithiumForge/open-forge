@@ -95,17 +95,20 @@ public sealed class InstallRevalidationIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Install blocks and preserves a recognized recovery candidate that appears after confirmation"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
-    public async Task RecognizedRecoveryAppearanceInvalidatesTheConfirmedPlan()
+    [Fact(DisplayName = "Install blocks and preserves a current partial recovery candidate that appears after confirmation"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task CurrentPartialRecoveryAppearanceInvalidatesTheConfirmedPlan()
     {
         using var workspace = InstallOperationWorkspace.Create("install-recovery-appearance");
         var inputPath = workspace.Combine(RecoveryInputPath);
+        var secondInputPath = workspace.Combine("second-recovery-race-input.md");
         var priorBytes = "recovery race prior bytes\n"u8.ToArray();
         workspace.WriteText(RecoveryInputPath, Encoding.UTF8.GetString(priorBytes));
+        workspace.WriteText("second-recovery-race-input.md", Encoding.UTF8.GetString(priorBytes));
         RecoveryBundlePreparation? preparation = null;
         try
         {
             var before = FileStateSnapshot.File(inputPath, inputPath, priorBytes);
+            var secondBefore = FileStateSnapshot.File(secondInputPath, secondInputPath, priorBytes);
             var recoveryInput = RecoveryBundleInput.Create(
                 workspace.Workspace,
                 command: IndexDefinitions.CommandIdentity,
@@ -121,6 +124,9 @@ public sealed class InstallRevalidationIntegrationTests
                             before.Expectation,
                             "recovery race intended bytes\n"u8),
                         before),
+                    RecoveryBundleTarget.Create(
+                        PlannedFileChange.Replace(secondBefore.Expectation, "recovery race intended bytes\n"u8),
+                        secondBefore),
                 ]);
             var prepared = await RecoveryBundleStore.PrepareAsync(
                 recoveryInput,
@@ -131,7 +137,7 @@ public sealed class InstallRevalidationIntegrationTests
                 preparation.BundlePath,
                 TestContext.Current.CancellationToken);
             File.Delete(preparation.BundlePath);
-            File.Delete(inputPath);
+            await File.WriteAllBytesAsync(inputPath, "recovery race intended bytes\n"u8.ToArray(), TestContext.Current.CancellationToken);
             Directory.CreateDirectory(workspace.Combine(".agents"));
 
             var result = await RunPromptedAsync(

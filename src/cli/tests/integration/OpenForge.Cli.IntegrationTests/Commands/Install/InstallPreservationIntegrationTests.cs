@@ -93,14 +93,16 @@ public sealed class InstallPreservationIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Install blocks a recognized Framework recovery bundle and preserves it"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
-    public async Task AutomaticInstallBlocksRecognizedFrameworkRecoveryCandidate()
+    [Fact(DisplayName = "Install blocks a current partial recovery bundle and preserves it"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    public async Task AutomaticInstallBlocksCurrentPartialRecoveryCandidate()
     {
         using var workspace = InstallOperationWorkspace.Create("install-foreign-recovery");
         const string foreignPath = "foreign-install-input.md";
         var priorBytes = "foreign prior content\n"u8.ToArray();
         var intendedBytes = "foreign intended content\n"u8.ToArray();
         workspace.WriteText(foreignPath, Encoding.UTF8.GetString(priorBytes));
+        const string secondForeignPath = "second-foreign-install-input.md";
+        workspace.WriteText(secondForeignPath, Encoding.UTF8.GetString(priorBytes));
 
         var physicalForeignPath = workspace.Combine(foreignPath);
         var before = FileStateSnapshot.File(
@@ -110,6 +112,8 @@ public sealed class InstallPreservationIntegrationTests
         var change = PlannedFileChange.Replace(
             before.Expectation,
             intendedBytes);
+        var secondPhysicalPath = workspace.Combine(secondForeignPath);
+        var secondBefore = FileStateSnapshot.File(secondPhysicalPath, secondPhysicalPath, priorBytes);
         var input = RecoveryBundleInput.Create(
             workspace.Workspace,
             command: IndexDefinitions.CommandIdentity,
@@ -121,12 +125,14 @@ public sealed class InstallPreservationIntegrationTests
             targets:
             [
                 RecoveryBundleTarget.Create(change, before),
+                RecoveryBundleTarget.Create(PlannedFileChange.Replace(secondBefore.Expectation, intendedBytes), secondBefore),
             ]);
         var preparationResult = await RecoveryBundleStore.PrepareAsync(
             input,
             TestContext.Current.CancellationToken);
         Assert.Equal(RecoveryBundlePreparationState.Prepared, preparationResult.State);
         var preparation = Assert.IsType<RecoveryBundlePreparation>(preparationResult.Preparation);
+        await File.WriteAllBytesAsync(physicalForeignPath, intendedBytes, TestContext.Current.CancellationToken);
         var bundleBeforeInstall = await File.ReadAllBytesAsync(
             preparation.BundlePath,
             TestContext.Current.CancellationToken);

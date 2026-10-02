@@ -317,7 +317,17 @@ all four facts:
 2. No exact current payload destination is occupied.
 3. No recognized canonical or exact legacy `AGENTS.md` or supported `CLAUDE.md`
    managed host exists.
-4. No recognized Framework recovery or residual evidence exists.
+4. No current unresolved or uninspectable recovery evidence blocks Install.
+
+Recheck each verified recovery final against its recorded prior and intended
+file identities. A complete prior state is restored. A complete intended state
+is applied. A safely observed different identity supersedes the old recovery
+snapshot. These finals remain available as history and do not block Install.
+A mixture of exact prior and intended states still represents partial recovery
+and blocks. Incomplete drafts, invalid finals, unavailable observations and
+unsafe target objects also block. Apply this check during planning and again
+under the workspace lease. Do not use age, timestamps or a Git branch name to
+decide relevance. Install does not delete or replay historical bundles.
 
 Existing hosts with no managed-host boundary candidate and unrelated user-owned
 `.agents` content do not alone defeat this state. An unavailable absence fact
@@ -495,7 +505,7 @@ When application is selected:
    normalized physical workspace path. Cancellation before acquisition creates
    no workspace effect.
 3. Revalidate the complete plan and all volatile source, target, ownership,
-    containment, managed-host boundary, section, and expected-state facts.
+   containment, managed-host boundary, section, and expected-state facts.
 4. Prepare and verify the one complete external recovery bundle when the plan
    contains an existing-target effect. Complete preparation before any workspace
    effect.

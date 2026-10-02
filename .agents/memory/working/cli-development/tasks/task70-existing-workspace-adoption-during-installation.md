@@ -6,6 +6,84 @@ open-forge:
 
 # Task 70 — Existing workspace adoption during installation
 
+## Immediate stale-recovery reproduction
+
+The independent reproduction failed in both immediate replacement and immediate
+deletion cases: expected `Complete`, actual `Blocked`. The record was verified,
+and its current target was independently classified `Third`, so its presence
+did not prove a current recovery problem. No waiting period was used.
+
+Install now inspects verified entries during both initial planning and
+under-lease revalidation. All-prior, all-intended and safely superseded snapshots
+remain as history and stop blocking. A current mixed prior/intended snapshot,
+unsafe or unavailable target, incomplete draft or untrusted final still blocks.
+Historical bytes are neither replayed nor deleted. This policy is local to
+Install and reuses neutral shared observation. Other commands retain their
+policies. The first focused run after fixture corrections passed all 77 Install
+checks. The final candidate adds unsafe-target and untrusted-draft guards.
+One complete managed run passed 4,070 unit checks, 2,745 Integration checks
+with 17 accepted platform exclusions, and 272 public CLI journeys. All 79
+focused Native AOT Install checks passed without exclusions. The fresh Windows
+native build and affected C# formatting/analyzer checks also passed.
+
+The frozen runtime source-change fingerprint is
+`92d4e76ac098325b279420871c4a88a796df2041580e89e03f96b3633feb0f77`
+over HEAD `634ab07051e670e3f9bcc1b6603ac39a91f4febc`. The local evidence,
+report hashes, binary identities and independent reproduction receipt are
+preserved in `artifacts/stale-recovery-qualification/qualification.json` in
+the primary repository. This is local validation of the correction, not a new
+six-host release qualification. No commit, push or publication occurred during
+this correction. Publication remains held pending renewed authorization.
+
+The maintainer requested an independent reproduction without relying on their
+worktree. A valid recovery final is prepared in an owned temporary workspace,
+its recorded intended file is established, and that file is immediately
+replaced or removed. No elapsed-time rule is used. The evidence checks that the
+record remains valid while its current target identity becomes unrelated, then
+exercises ordinary Install against those current facts.
+
+This is Standard-profile local filesystem evidence with temporary workspace,
+lock and recovery stores. It reuses the existing bundle writer, verified
+catalogue and exact-byte observer. No exceptional machinery is selected.
+Focused Integration evidence is the cheapest decisive boundary. The immediate
+scope is reproduction and the affected Install behavior. Publication remains
+stopped. A shared lifecycle change would invalidate broader dependent evidence
+and must be recorded before expanding the implementation.
+
+## Current release hold, 2026-10-02
+
+The maintainer reported that Install in a reused worktree still points to an
+issue from a previous branch after that issue no longer exists. Publication
+is stopped pending validation. The independent reproduction and local correction
+are recorded above. Recovery bundles persist outside Git and are keyed by the
+physical workspace directory. The qualified beta5 version blocked on any
+recognized residual. The correction checks current file identities instead.
+No recovery data has been deleted. The correction is on
+`fix/beta5-stale-worktree-state`.
+
+The maintainer had extended execution beyond 13:00. Hosted Build
+`36995867259` passed all six hosts on `634ab07051e670e3f9bcc1b6603ac39a91f4febc`.
+The original Linux ARM64 job timed out. Only that host was retried, and its
+tests and package qualification passed without source changes. Main advanced
+to the qualified commit and Release `37003970027` was dispatched at 13:58:25.
+The stop arrived after dispatch. Normal cancellation and force cancellation
+were requested, but the worker completed npm publication and the GitHub release
+before stopping. Early registry checks returned no beta5, then publication
+became visible. The initial unpublished report was corrected immediately.
+
+GitHub release `401777979` was returned to draft. npm versions and tags remain
+published because this machine has no npm authentication. Main and develop
+remain at the qualified commit. Documentation deployment `37003970650` also
+completed. No history or artifacts were deleted. The release automation is
+paused, and the saved publication helper now refuses execution. No further
+publication is authorized. Public smoke was not run after the stop.
+
+Evidence is preserved under `artifacts/root-beta5-qualification/` in worktree
+`a_6ecaa48917f3`: `noon-release-progress.json`,
+`cancelled-release-publish.log`, `release-cancellation-race.json`, and
+`stopped-release-registry-state.json`. Earlier pending integration, publication,
+and time-window statements below describe prior checkpoints.
+
 ## Noon integration and hosted qualification
 
 At 12:01 Europe/Zurich, Root squash-integrated the qualified complete tree into
@@ -61,17 +139,17 @@ The final candidate is branch `ww/a_6ecaa48917f3`, based on actual HEAD
 It remains uncommitted until the authorized noon window. Its complete tree and
 integration patch are frozen separately from the normal Git index.
 
-| Gate | Final result |
-|---|---|
-| Managed unit | 4,070 passed |
-| Managed Integration | 2,737 passed; 17 platform exclusions |
-| Managed public | 272 passed |
-| Native Integration | 2,737 passed; 17 platform exclusions |
-| Native public | 272 passed |
-| Managed public against native | 272 passed |
-| Installed npm package | Passed against the qualified native bytes |
-| Published beta4 upgrade | One complete journey passed; 13 process invocations |
-| Website | Typecheck and build passed |
+| Gate                          | Final result                                        |
+| ----------------------------- | --------------------------------------------------- |
+| Managed unit                  | 4,070 passed                                        |
+| Managed Integration           | 2,737 passed; 17 platform exclusions                |
+| Managed public                | 272 passed                                          |
+| Native Integration            | 2,737 passed; 17 platform exclusions                |
+| Native public                 | 272 passed                                          |
+| Managed public against native | 272 passed                                          |
+| Installed npm package         | Passed against the qualified native bytes           |
+| Published beta4 upgrade       | One complete journey passed; 13 process invocations |
+| Website                       | Typecheck and build passed                          |
 
 The six runtime modes total 10,360 passes, 34 platform exclusions, and zero
 failures. The final native build has zero warnings/errors. The existing full
@@ -178,14 +256,14 @@ not product or tracked repository files.
 
 **Final v9 qualification.** One shared full Release v9 build exited 0 with zero warnings/errors. All six isolated read-only lanes passed with numeric exit 0 and zero failures/skips: CORE 128, REGRESSION 16, TYPES 65, APPLICATION 77, PRESENTATION 32, PROCESS 15 (**333/333 hermetic**). The separate pinned local Skill Creator journey passed **10/10**. Bounded Extension regression coverage passed 19 tests; this is not a broader Extension feature claim.
 
-| Lane | Tests | Receipt SHA256 |
-|---|---:|---|
-| CORE | 128/128 | `118B5CF01362C326B94005E4D2AAE5D093EEC267B2B8FCA47503A1C20B538101` |
-| REGRESSION | 16/16 | `6759272C186C4E7FE9D779FD53C86C47D97A0461749E59ED526B8E78D7D8E14E` |
-| TYPES | 65/65 | `00C252E813D787B513EC2F33FC21AAFA131CAA6B5E84E2DB4E3DC29A712FF8B0` |
-| APPLICATION | 77/77 | `5244F61B08EF127AAD6E1D4A4A8E4688A614FD57723CDFA1556076EE3FF192F4` |
-| PRESENTATION | 32/32 | `5679C87471E82C4A78FE890F3F1CDB1E5E5F8FB716EDB6ED423E835235C92FF0` |
-| PROCESS | 15/15 | `415E7B29EB410AC456EE8AFAF5DD5C6A758E716FABE896CFAF7C42CB5C7097E0` |
+| Lane         |   Tests | Receipt SHA256                                                     |
+| ------------ | ------: | ------------------------------------------------------------------ |
+| CORE         | 128/128 | `118B5CF01362C326B94005E4D2AAE5D093EEC267B2B8FCA47503A1C20B538101` |
+| REGRESSION   |   16/16 | `6759272C186C4E7FE9D779FD53C86C47D97A0461749E59ED526B8E78D7D8E14E` |
+| TYPES        |   65/65 | `00C252E813D787B513EC2F33FC21AAFA131CAA6B5E84E2DB4E3DC29A712FF8B0` |
+| APPLICATION  |   77/77 | `5244F61B08EF127AAD6E1D4A4A8E4688A614FD57723CDFA1556076EE3FF192F4` |
+| PRESENTATION |   32/32 | `5679C87471E82C4A78FE890F3F1CDB1E5E5F8FB716EDB6ED423E835235C92FF0` |
+| PROCESS      |   15/15 | `415E7B29EB410AC456EE8AFAF5DD5C6A758E716FABE896CFAF7C42CB5C7097E0` |
 
 **Candidate bindings.** Full build receipt `artifacts/task70/shared-build-receipt-v9.json` SHA `3C6424D48641799E6B46DE9E65F969EEC5E4AED1CBD765BE065542F47DBEED49`; assembly receipt `artifacts/task70/single-assembly-receipt-v9.json` SHA `7F5096812883362EAB33F7B8FF628BBB35FBC669B6D760C441EF14BB8A47E090`; source inventory `artifacts/task70/final-candidate-source-inventory-v9.json` SHA `3659A8CE09764C7F2D0C35BB90891CEE25A8321373DCF045F8E834E8B69CDDA8`. The inventory has 79 rows: 76 Task70 paths, two separately owned Task47 prerequisites, and a record row frozen at SHA `297AD8F4F825D4E856E41B5D40602C519E9BC31BCB084F5D5452E748274AD425`. The final 77-item a6e handoff comprises 74 unchanged tested Task70 files, two documentation-only Install contract files from the original INSTALL owner, and this separately reconciled Working record. Those three documentation-only closeout inputs do not change the qualified v9 runtime; the tested 79-row inventory and candidate remain immutable. The verified runtime identities are Unit DLL `A9BAC71D132B54DAE5798B45BCC1E42F9CEACA2BD8F34A17FD12449C0F07CE9C`, Integration DLL `AE8B8282473CC4F811903D30DB662FF5BE904912BE27F9949DD5866A832F71B1`, EndToEnd DLL `B3B27E8B23D66CFF2DA2EC2CE0246885A74736621D26BEDE4DF58FE8A6A4B0B4`, Operations DLL `3BE4C0EEF2035B259457835BE7D734CC3BBE7733044C411500A71880FE194002`, and published CLI DLL `BA8E7D8E022144F1AFE07AF5845E1B159F3E3D07BEBE25BEDF7926DE1AF9F002` with a 33-file closure. Parent QA verified 79 source rows, 328 test-output files, and runtime bindings with zero mismatches. Install contract wording was clarified after qualification only: the original INSTALL owner changed exactly four fallback-phrase occurrences (two in each document) from “first top-level heading” to “first top-level H1 heading”; no other bytes, code, tests, or policy changed. The source-ready receipt C:/Users/Tedy/.worker-watch/worktrees/a_0f9f108d71df/artifacts/task70/contracts-h1-closeout-v9.json has SHA 2003675D10378A610483CB98F3CE8E272EC9FBB896854215B04F94E2E52DEAF7. Final Install Interface SHA 6882EA7DF003B043538F4AC9593FB1072AAA809D75DFEBCA2B53B450E2973014 differs only by those two H1 words from tested SHA 578D6CCDDCD139F9EAF7361B469346E2789E6207E8AD7DC7CDF18129DFFE7166; final Install Behavior SHA 0D136B495E50C2261FC0809878AF0344CD58A18DC471267DD96B1EDE76BF8C03 differs only by those two H1 words from tested SHA 3631016F2AFFF97F747E75809E95A2B0B76A216D0C8B5C152C40181C55A02FD4.
 
@@ -289,13 +367,13 @@ entry and project-control record.
    Markdown syntax, lifecycle provenance, and this Working task record; author
    the bounded document and topology helper APIs under the frozen contracts.
 2. **Root Install integration:** form prospective adoption bytes and sources,
-  distinguish user-owned targets from payload targets, plan and verify exact
-  effects, preserve ownership boundaries, independently verify an existing
-  managed authored base, classify non-empty bounded adoption as
-  `ManagedAdoption`, and produce migration facts without changing global Index,
-  parser, or projector behavior. Generated navigation updates may have a
-  migration row on an existing managed host while retaining that host's
-  current ownership. `UserOwnedPaths` is not synonymous with migration rows.
+   distinguish user-owned targets from payload targets, plan and verify exact
+   effects, preserve ownership boundaries, independently verify an existing
+   managed authored base, classify non-empty bounded adoption as
+   `ManagedAdoption`, and produce migration facts without changing global Index,
+   parser, or projector behavior. Generated navigation updates may have a
+   migration row on an existing managed host while retaining that host's
+   current ownership. `UserOwnedPaths` is not synonymous with migration rows.
 3. **Presentation and process qualification:** conditionally expose schema-3
    migration rows, preserve existing no-op JSON snapshots, verify text streams,
    and qualify dry-run/apply and repeat-install behavior.
@@ -551,6 +629,7 @@ interface contracts, this Task record, and the necessary lifecycle-provenance
 clauses. It does not own Install rendering or shared adoption helpers.
 
 Acceptance covers the older-loader no-Skill and complete-Skill controls; missing and partial native Skill metadata through Update dry-run and automatic Apply; confirmation and cancellation without writes; preservation of body, optional license, references, and unrelated catalogue bytes; local catalogues remaining user-owned; excluded paths and categories remaining unchanged or causing a strict block; and a second Update with no effects or migrations. Malformed, foreign, or incomplete-management cases block. Existing Update and Install suites remain required, as do pinned real Skill A/B and hermetic published-process checks. The pinned local A/B run has passed in v5; Root's actual beta 4 to combined candidate gate remains separate and pending.The frozen consumer API and presentation remain within the v6 source inventory. An earlier presentation report at artifacts/task70/PRESENTATION-shared-qualification.json (SHA256 D21A83416EB218C8BC1BC63402ED12B846D4922BB2EA818C609B6B0AD85EA1A9) is retained as stage history. The later claim under run r_d7ac2f82ae43 was rejected as unrun: no v5 receipt or command_execution events existed, and the claimed FFBEE hash was the unchanged v4 receipt. Do not count that claim. The actual v5 direct-DLL run r901 passed the four presentation classes 28/28 with zero failures or skips; its receipt is artifacts/task70/LANE-shared-qualification-v5.json, SHA256 68E7BD03D7789A8A258C38D9CD2F4C1D11262BEE7969D4C51E21710C1694D69B. The correct breakdown is 6 Update migration, 3 Update wording, 8 Install migration, and 11 Install presentation contract tests. This lane result is not whole-task acceptance.
+
 ### Historical seven-lane source freeze — 2026-10-01
 
 The user explicitly authorized seven disjoint Luna/max source-ownership lanes
@@ -596,7 +675,7 @@ Frozen cross-lane API and invariants:
   `Actions`, `Fields`, and `Derivation` with the Install-plan shape.
 - `UpdateAdoptionTarget` is the positional record
   `(string Path, FileStateSnapshot Snapshot, byte[] IntendedDocumentBytes,
-  bool OwnsGeneratedEntries)`. Its snapshot is the exact original state,
+bool OwnsGeneratedEntries)`. Its snapshot is the exact original state,
   including missing state; bytes are the final coalesced document; the boolean
   is true only for a verified complete generated-Entries receipt candidate.
   It never represents whole-file ownership.
@@ -644,13 +723,13 @@ grouped repair remain unused.
 
 ## Historical v2 qualification snapshot — 2026-10-02 (superseded by v6 below)
 
-| Area | State at that snapshot | Remaining at that snapshot |
-|---|---|---|
-| Candidate | v2 inventory has 78 verified rows, SHA256 `E415A577749C003FB4BB78A004C8B895E51E8A8839E47AB34C0D374DB9390394`; full Release build exit 0, warnings 0, errors 0, receipt SHA256 `BC4951DF919E7F9410206AF5CD83C8BD357956FE8DC4A6109322C3258CF7AF7B`. | Guarded v3 assembly and a fresh nonincremental Release build. |
-| v2 test lanes | CORE 125/125; TYPES 63/63; PRESENTATION 28/28. | Requalify affected filters against v3. |
-| PROCESS and REGRESSION | Their v2 evidence exposed the unexpected planning and invalid fixture described above. | APPLICATION correction, REGRESSION fixture correction, and affected v3 filters; REGRESSION's nine boundary cases have not run. |
-| Fixed v3 filters | The six-lane filter set remains CORE 13 classes/125, TYPES 4/63, PRESENTATION 4/28, REGRESSION 2/13, APPLICATION 6 classes (shared topology 19 + document 25 + Update 4), and PROCESS 4 hermetic classes/15 plus 10 real-pinned archive journeys. | Execute against the final v3 candidate with zero Windows skips and preserve required streams, status, hashes, TTY, and archive evidence. |
-| Final gates | The source freeze and accepted policy are recorded here. | One fresh whole-task GPT-6.1 Sol high review, one grouped repair if findings require it, and Root's combined beta 5 native/package and real beta 4 upgrade acceptance. |
+| Area                   | State at that snapshot                                                                                                                                                                                                                            | Remaining at that snapshot                                                                                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Candidate              | v2 inventory has 78 verified rows, SHA256 `E415A577749C003FB4BB78A004C8B895E51E8A8839E47AB34C0D374DB9390394`; full Release build exit 0, warnings 0, errors 0, receipt SHA256 `BC4951DF919E7F9410206AF5CD83C8BD357956FE8DC4A6109322C3258CF7AF7B`. | Guarded v3 assembly and a fresh nonincremental Release build.                                                                                                          |
+| v2 test lanes          | CORE 125/125; TYPES 63/63; PRESENTATION 28/28.                                                                                                                                                                                                    | Requalify affected filters against v3.                                                                                                                                 |
+| PROCESS and REGRESSION | Their v2 evidence exposed the unexpected planning and invalid fixture described above.                                                                                                                                                            | APPLICATION correction, REGRESSION fixture correction, and affected v3 filters; REGRESSION's nine boundary cases have not run.                                         |
+| Fixed v3 filters       | The six-lane filter set remains CORE 13 classes/125, TYPES 4/63, PRESENTATION 4/28, REGRESSION 2/13, APPLICATION 6 classes (shared topology 19 + document 25 + Update 4), and PROCESS 4 hermetic classes/15 plus 10 real-pinned archive journeys. | Execute against the final v3 candidate with zero Windows skips and preserve required streams, status, hashes, TTY, and archive evidence.                               |
+| Final gates            | The source freeze and accepted policy are recorded here.                                                                                                                                                                                          | One fresh whole-task GPT-6.1 Sol high review, one grouped repair if findings require it, and Root's combined beta 5 native/package and real beta 4 upgrade acceptance. |
 
 The v2 source inventory and build receipts are in the executor worktree. The
 APPLICATION correction receipt is `C:/Users/Tedy/.worker-watch/worktrees/a_be46715e1b33/artifacts/task70/application-path-correction.json`
@@ -858,8 +937,7 @@ The separate diagnostic at
 C:/Users/Tedy/.worker-watch/worktrees/a_4497d8f827b6/artifacts/t70/exclusion-proof-6ec5cef9/exclusion-proof.json (SHA256
 53E2CB28716A61005F0D306E2356A06842A73F99BAF3616F08EAD640EAFE2142)
 used a v5 Install followed by an authored loader-comment edit. It is not an
-actual beta 4 binary upgrade. Install, Update dry-run, and Update apply exited
-0. Update planned/applied exactly .agents/loader.md and the unexcluded
+actual beta 4 binary upgrade. Install, Update dry-run, and Update apply exited 0. Update planned/applied exactly .agents/loader.md and the unexcluded
 parent .agents/skills/_skills.md; verification succeeded with no
 creations/deletions and no migrations collection. The excluded Skill subtree
 (native Skill, guide, and directory bytes) remained unchanged, and no local
@@ -1080,6 +1158,7 @@ The bounded correction changes only those two test fixtures to pass null source 
 REGRESSION v7 is separate historical evidence: receipt `CB9C28AD5B53DFE2FD480042F07F5A276F404B215889498DD4FFFF57369E743B`, 5 cases with 4 passed and 1 failed, exit 2; its boundary cases were unrun. Its author is correcting only the expected ordered actions for newly added catalogues (`EntrypointCreated`, then `NavigationUpdated`); no REGRESSION file is changed here.
 
 After all v7 readers stop, the sole assembler may guarded-copy the two corrected test files and this record, keep the 79-row inventory shape (76 Task70 paths, two separate Task47 prerequisites, and the record), compile only the affected test projects with `BuildProjectReferences=false`, Release, `--no-restore`, `--no-incremental`, and disabled build servers, while preserving the v7 production CLI closure and Operations identity. Existing green v7 CORE/TYPES/APPLICATION/PROCESS results remain bound to their unchanged binaries; only corrected PRESENTATION 32 and REGRESSION 16 filters are to be rerun. This is not a full solution v8 build or a claim that all 333 filters ran against one v8 test-binary set. Final qualification remains pending.
+
 ### Historical INSTALL F1 expected-state freeze — superseded by v9 lifecycle packet
 
 The v7 CORE result exposed a required production correction, superseding the earlier test-only v8 assembly plan above. Preserve the prior v7 receipts and failures as history. The v7 CORE execution reported 109 total, 108 passed, 1 failed, 0 skipped, exit 2; 18-case Install class was 17 passed and 1 failed, and the 19 Extension cases were unrun. The failure was `CrLfHostOutsideEntriesSurvivesDryRunApplyAndRepeat`: apply reached `Failed` after a completed dry run. The sealed v7 candidate and all prior stage evidence remain unchanged; PROCESS run `r_440027419c3f` was stopped before further tests and has no owned process remaining.
@@ -1089,6 +1168,7 @@ Frozen production ownership remains only `src/cli/operations/OpenForge.Cli.Opera
 The source-derived cause is that `FrameworkContentIdentity.ReadGeneratedEntriesFingerprint` hashes raw Entries bytes. Establishment planning rebases the physical effect for a CRLF host, but the completion context still carries embedded LF-derived target bytes; `InstallAppliedVerifier` then compares the current CRLF fingerprint against that stale target. The fix must coalesce those final bytes across planning and completion without changing admission authority. Existing CRLF prefix/suffix, native/reference bytes, ownership and region receipts, dry-run/apply/repeat-zero-effect assertions remain required. The INSTALL author will first reproduce the failure using the frozen v7 CLI in a disposable artifact fixture and record numeric exit/status/hash evidence; this is not a beta 4 baseline run.
 
 The PRESENTATION test fixture is source-ready at `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Presentation/Update/UpdateMigrationPresentationTests.cs` SHA `1CBC6244BEDC700A235D8B2768A7DB7BC96D0F4CF5355DFB6F2B1E9C9A23527D`; the separate REGRESSION fixture is reported source-ready by its owner; its exact SHA remains in that owner's receipt. Together with the one INSTALL production file and this record, the corrected inventory remains 79 rows (76 Task70 paths, two separate Task47 prerequisites, one record). The sole assembler must wait for all readers, then make one full Release v8 build with `--no-restore`, `--no-incremental`, and disabled build servers. All six read-only lanes (333 hermetic cases) and the 10 pinned journeys must run against that final candidate/runtime. Earlier green or failed v7 results remain stage history and do not qualify v8. Final Task70 qualification, Root acceptance, and actual beta 4 to combined beta 5 acceptance remain pending.
+
 ### Historical F1 lifecycle completion freeze — v8 findings, superseded by v9 qualification
 
 The sealed v8 candidate is stage evidence, not final qualification. Its full build receipt is `97B18D550E00B20F04C6CC62FC42B6714172883505325F6E47B31185A744208D`; inventory is `7940ADDCC2F317FC6D419FF5DAC4579CDEDA414326643A5C0263CBD886AE4E94`. Reported v8 stage outcomes: TYPES 65, APPLICATION 77, REGRESSION 16, and PROCESS 15 plus 10 pinned journeys passed. CORE reported 109 total, 108 passed, 1 failed, 0 skipped, exit 2; the Install class was 17/18 and Extension’s 19 cases were unrun. PRESENTATION’s actual v8 receipt is `artifacts/task70/LANE-shared-qualification-v8.json` SHA `D4D94FF04A700AECA1A56AD2D7EC46A138A64CCBA79E7711D4DCBA8C14D16203`: its first filter ran 8 cases, 7 passed, 1 failed, 0 skipped, exit 2; the remaining 24 expected cases were not run under the stop rule. `NavigationOnlyFrameworkSkillsCatalogueKeepsPayloadAttribution` now fails because the Framework-owned generated host first fails at line 362: `ChangedFiles` was expected 0 but actual was 1. The later `filesReplaced` assertion was not reached; the corrected fixture expects 1 because the selector counts this Framework-owned non-directory file effect. The v7 failures and stops remain historical and are preserved.

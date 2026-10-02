@@ -853,6 +853,12 @@ defines the complete selection and recovery boundary.
 the selected workspace. The bundles are stored outside the workspace, and
 `status` reports the ones that remain.
 
+Install compares a verified bundle with the current files before deciding
+whether it blocks the operation. Fully restored, fully applied and superseded
+snapshots remain as history. A current partial operation or an unsafe or
+uninspectable record still blocks. Reusing a worktree or changing its files can
+make a record obsolete immediately. There is no waiting period.
+
 ```sh
 open-forge cleanup --dry-run
 open-forge cleanup
