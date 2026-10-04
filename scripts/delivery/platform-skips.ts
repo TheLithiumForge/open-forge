@@ -8,6 +8,8 @@ const windowsOnly = new Set([
   "This deterministic record replacement failure requires Windows file sharing.",
   "This replacement denial requires Windows file sharing.",
   "This evidence requires Windows file sharing.",
+  "This owned-file read denial requires Windows file sharing.",
+  "This deterministic replacement denial requires Windows file sharing.",
 ]);
 const unixOnly = new Set([
   "This copy failure uses Unix directory permissions.",
@@ -35,6 +37,8 @@ const publicWindowsOnly = new Set([
   "F07 C09-09/X28 requires Windows FileShare.None read-denial semantics; this is not a product verdict on another OS.",
   "C16-11 requires Windows FileShare.None read denial.",
   "F15 source read denial requires the Windows share boundary.",
+  "Library terminal choice evidence requires Windows ConPTY.",
+  "Selection viewport terminal evidence requires Windows ConPTY.",
 ]);
 
 // Only explicit OS exclusions in the integration and public suites qualify. Capability failures,
