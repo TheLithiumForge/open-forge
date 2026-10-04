@@ -17,10 +17,11 @@ Emerging Idea rather than moving to historical Memory.
 
 The current Workflow contract already permits a complete recipe-bearing
 `entrypoint` to expose descendant Workflows through ordinary generated
-`Entries`. This workspace now dogfoods that accepted shape locally:
+`Entries`. The original local trial used that shape under `.agents/workflows/`.
+Its current successor is in the selector Skill's references:
 
 ```text
-.agents/workflows/development/
+.agents/skills/use-workflow/references/open-forge/development/
 ├── _development.md        orchestration recipe and generated Entries
 ├── phase-0-preflight.md   read-only Task blueprint and decision frontier
 ├── phase-1-contract.md    Gray callable contract and skeleton authority
@@ -38,8 +39,10 @@ phases. This
 is current local behavior, not a candidate primitive, hidden dependency graph,
 or new loading rule.
 
-The generic shipped Development Workflow remains one direct complete recipe
-for people and agents that do not want this phase-separated method.
+The shipped [Development catalogue](../../../skills/use-workflow/references/development/_development.md)
+offers generic methods through the `use-workflow` Skill. The repository-local
+phase method remains a separate specialization. Neither creates a Workflow
+root route or a new loading rule.
 
 ## Promotion Opportunity
 
@@ -48,14 +51,9 @@ shipped specialization example or optional Extension. Ordinary routing should
 continue to provide the experience:
 
 ```text
-open-forge find workflows/development
-  -> shows the generic Workflow and its visible variants
-
-open-forge context workflows/development
-  -> returns the generic recipe and the Entries needed to discover variants
-
-open-forge context workflows/development/phase-2-red
-  -> returns the independently delegable Red phase with its routed context
+1. Read the use-workflow Skill and select the Development catalogue.
+2. Compare the generic method with an explicitly selected specialization.
+3. Read the selected method and its required phase sources.
 ```
 
 Exact `context` closure remains governed by the accepted CLI and routing
@@ -93,10 +91,11 @@ linked explicitly.
 
 ## Distribution Boundary
 
-The Development Toolkit still deliberately ships six direct Workflow files
-with no per-Workflow folders or generated `Entries`. Promotion requires real
-evidence and a deliberate source change. It does not require new Framework or
-CLI semantics.
+Development Toolkit is a dependency bundle for Development, Planning, Project
+Documents, and Flows and Scenarios. Method files are supplied by their packages
+through the selector Skill. Promotion of the local nested specialization still
+requires evidence and a deliberate package decision. It does not require new
+Framework or CLI semantics.
 
 ## Evidence Before Promotion
 

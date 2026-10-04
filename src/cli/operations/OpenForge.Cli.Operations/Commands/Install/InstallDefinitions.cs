@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
+using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared;
@@ -210,6 +211,16 @@ internal static class InstallDefinitions
         where T : struct, Enum
         => new(name, value, $"The Install {name} value is not defined.");
 
+    private static string AutomaticCommand(InstallBindingInput input)
+    {
+        var command = input.Force ? "open-forge install --force --automatic" : "open-forge install --automatic";
+        if (input.Setup is not { } setup) return command;
+        if (setup.Configure) command += " --configure";
+        if (setup.Preset is { } preset) command += " --preset " + InstallConfigurationChoices.Name(preset);
+        foreach (var row in setup.Overrides) command += " --route " + row.Id + "=" + InstallConfigurationChoices.Name(row.Action);
+        return command;
+    }
+
     internal static CliNextAction? ReadNextAction(
         CliSemanticStatus status,
         IReadOnlyList<InstallFinding> findings,
@@ -220,9 +231,7 @@ internal static class InstallDefinitions
             CliSemanticStatus.Complete => null,
             CliSemanticStatus.Invalid when findings.Any(
                 finding => finding.Code == InstallFindingCode.ConfirmationRequired) => new CliNextAction(
-                command: input.Force
-                    ? "open-forge install --force --automatic"
-                    : "open-forge install --automatic",
+                command: AutomaticCommand(input),
                 reason: "Rerun the same Install request with explicit automatic mode."),
             CliSemanticStatus.Invalid => new CliNextAction(
                 command: "open-forge install --help",

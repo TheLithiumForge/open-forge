@@ -89,6 +89,9 @@ internal sealed record LibrarySyncDataEffect
     internal bool IsSettings { get; init; }
 
     [JsonIgnore]
+    internal bool IsFile { get; init; }
+
+    [JsonIgnore]
     internal string? Suffix { get; init; }
 }
 

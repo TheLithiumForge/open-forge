@@ -67,7 +67,7 @@ operand and never creates a second route identity.
 ## Syntax
 
 ```text
-open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--dry-run] [--automatic] [global flags]
+open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--git-ignore <true|false>] [--allow-path <path>...] [--dry-run] [--automatic] [global flags]
 ```
 
 The command path selects the attach operation. The shared [Global CLI Flags](../../shared/global-flags/interface.md)
@@ -90,12 +90,15 @@ or generic mutation dispatcher.
 | `<library-id>`                        | Select the new management identity                             | One value matching the library-ID grammar below                                | Required and singleton. A repeated positional value is invalid. An already registered ID is blocked, not last-wins.             |
 | `<source-root>`                       | Select the source directory relative to the selected workspace | One portable workspace-relative path satisfying the source-root boundary below | Required and singleton. A repeated positional value is invalid.                                                                 |
 | `--to <workspace-relative-directory>` | Destination root                                               | `.` or a canonical portable child directory                                    | Defaults to `.`. Singleton; repetition is invalid. Native spaced, equals and colon option-value forms follow the pinned parser. |
+| `--git-ignore <true\|false>`          | Select owned ignore rules for projected links                  | One Boolean value                                                              | Singleton; repetition is invalid. Interactive omission asks with No as default; unattended and dry-run omission means false.    |
+| `--allow-path <path>`                 | Persist shared destination permission                          | A supported workspace-relative file or directory                               | Repeat for additional grants; omission uses existing permission or an eligible interactive approval.                            |
 | `--dry-run`                           | Write policy                                                   | Boolean flag with no value                                                     | Application is selected when omitted. Repetition is accepted and idempotent.                                                    |
-| `--automatic`                         | Confirmation policy                                            | Boolean flag with no value                                                     | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
+| `--automatic`                         | Prompt and confirmation policy                                 | Boolean flag with no value                                                     | Suppress prompts and default omitted ignore intent to false. Bypass final confirmation. Repetition is accepted and idempotent.  |
 | Shared global flags                   | Workspace and presentation                                     | Defined by the shared global contract                                          | Shared defaults and repetition rules apply.                                                                                     |
 
-`--to` selects the recorded destination root. No flag changes source selection, ownership, collision,
-containment, record, recovery, or route authority. A dry run does not grant
+`--to` selects the recorded destination root; `--git-ignore` selects remembered
+ignore intent. Source selection, ownership, collision, containment, recovery
+and route-authority checks remain required. A dry run does not grant
 application authority.
 
 ## Library-ID Grammar And Identity
@@ -209,6 +212,49 @@ Invalid or unavailable required ownership blocks the request before effects;
 Attach does not replace malformed ownership with a newly inferred inventory.
 Matching files, matching links and legacy records create no claims.
 
+## Library Git-Ignore Choice
+
+During prompt-capable interactive application, omission of `--git-ignore` asks
+whether to ignore projected links. No is the default. Explicit true or false
+skips that question. Automatic, JSON, redirected and dry-run requests do not
+ask it; omission means false. Resolve the choice after structural admission
+and before the single complete permission stage, preview and final confirmation.
+Cancellation before application applies nothing.
+
+True persists `gitIgnore: true` in the new Library claim. Missing or false
+creates no owned rules and preserves the existing no-ignore serialized shape.
+Rules name only exact mapped leaves, anchored to the consumer workspace with
+Git metacharacters escaped literally. Default root destinations and shared
+folders are supported without ignoring a source tree or unrelated sibling.
+The separate Library-owned section contains the ordered union of opted-in
+registrations' projected paths. Preserve authored rules outside it, including
+equivalent patterns, existing line endings, BOM and the Install-owned section.
+Ambiguous, malformed or unsupported owned content blocks a required change.
+
+A required `.gitignore` Create or Replace belongs to the complete plan and
+requires its shared destination grant, or explicit `--allow-path .gitignore`.
+The ignore choice supplies no permission grant. Reject overlapping planned
+link/file targets before prompting, including projection of a root `.gitignore`
+that would collide with the required ordinary ignore write. Respect saved
+ignore-file removal exclusions rather than recreating it silently.
+
+For a projected root `.gitignore`, explicit true and prompt-capable interactive
+omission block before prompts. Report the exact conflict and explicit
+`--git-ignore false` next step. Explicit false and unattended omission remain
+eligible; they require no ordinary ignore-file write.
+
+Preview reports the actual patterns and ignore-file effect. Guard, recover,
+apply and verify that ordinary-file change with the other effects before
+publishing ownership last. No source bytes or Git index state are changed.
+Git's normal precedence applies, and already tracked files stay tracked.
+Ignoring changes neither Open Forge loading nor indexing.
+
+Sync remembers intent and reconciles owned rules with recorded membership.
+Detach and root Library Remove release selected owned entries. Root path
+Remove releases entries for individual links or a selected directory as
+companion metadata under its existing complete confirmed plan. Other owners
+and authored rules survive; an explicitly removed ignore file remains removed.
+
 ## Consumer Permission
 
 The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPaths`
@@ -276,9 +322,10 @@ true effects, the record is not published early, and the result reports exact
 residual state and retained recovery evidence. A later invocation plans from
 current facts; it does not replay a saved plan or claim an automatic rollback.
 
-Library recovery distinguishes a prior-missing ordinary consumer-record
-`Create` from relative-file-link `Create` and `Delete` entries. It retains
-consumer record bytes and exact relative-link identity only. It never stores,
+Library recovery distinguishes ordinary consumer-file `Create` and `Replace`
+from relative-file-link `Create` and `Delete` entries. It retains prior consumer
+record and permission bytes or absence, prior ignore-file bytes or absence for
+required changes, and exact relative-link identity. It never stores,
 opens, follows, restores, or deletes source bytes. Strong no-follow recovery
 can remove an exact created link or recreate an exact deleted link when its
 recorded relative target is still the same, including a dangling target. The
@@ -296,12 +343,13 @@ bounded facts, and debug adds bounded diagnostics on stderr. Detail does not
 change semantics, effects, counts, or status. Filters select finding severities;
 all is the default filter.
 
-Library attach shows a plan review before final confirmation. --automatic bypasses the final confirmation only; without it the confirmation is Apply these changes? [y/N]. Permission prompts remain separate and use Allow always / Allow once / Cancel.
+Library attach resolves its ignore choice and permissions, then shows a plan review before final confirmation. --automatic suppresses prompts and defaults omitted ignore intent to false; without it the final confirmation is Apply these changes? [y/N]. Permission prompts use Allow always / Allow once / Cancel.
 
 When the final confirmation is required but the invocation is noninteractive or
 redirected, Attach returns `invalid-input` (Invalid4) with
 `library-attach.confirmation-required` and applies no effect. It never silently
-applies a plan. `--automatic` bypasses this final confirmation only; it does not
+applies a plan. `--automatic` bypasses final confirmation and suppresses the
+ignore question, defaulting omitted intent to false. It does not
 bypass destination permission, ownership, collision, or safety checks.
 
 The catalogue text by detail level is:
@@ -347,7 +395,7 @@ A parser failure is text on stderr without a result envelope.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -364,7 +412,7 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly library attach; data follows the catalogue:
 
@@ -378,19 +426,43 @@ Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON
 projection.
 
+When a concrete ignore-file change is planned, every detail includes optional
+`data.gitIgnore { path, action, paths }`. `path` is `.gitignore`, `action` is
+`create` or `replace`, and `paths` is the intended opted-in mapped-path union.
+This describes the plan; it does not prove a write occurred. The shared file
+effect and verification coordinates report actual application. The member is
+omitted when no ignore-file change is planned, preserving the no-ignore shape.
+
+The shared `counts` object adds `gitIgnoreFilesUpdated` only for a concrete
+ordinary ignore plan. Preview counts the planned update; application counts
+verified updates, including zero when the file update has not verified.
+
+Retained or unknown ignore progress during failed or cancelled application uses
+the complete effect plan and verified receipts for both headline and finding.
+Zero new links cannot imply that nothing changed. The ordinary ignore target is
+described as a file; unknown application remains explicit in its effect row.
+
+`library-attach.git-ignore-blocked` reports unsafe, ambiguous, excluded or
+overlapping required ignore state as `blocked`. `library-attach.git-ignore-unavailable`
+reports unavailable required facts as `incomplete`. Both follow the existing
+finding detail/filter rules and expose the ordinary ignore-file subject.
+
 ## Semantic Results
 
-| Status                  | When                                                                          | Headline                                                                                     | Exit | Stream |
-| ----------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ---: | ------ |
-| completed               | registered and linked, including a new claim formed when the ownership lock was absent | `Registered the <id> Library from <source>.`                         |    0 | stdout |
-| completed               | registered, source empty                                                      | `Registered the <id> Library from <source>. It has no eligible files yet.`                   |    0 | stdout |
-| completed (dry run)     | planned                                                                       | `Would register the <id> Library from <source>.`                                             |    0 | stdout |
-| completed-with-warnings | recovery bundle retained                                                      | + family row                                                                                 |    2 | stdout |
-| incomplete              | source, inventory, Entries or recovery unreadable                             | `The <id> Library could not be attached: <limitation>. Nothing was changed.`                 |    3 | stdout |
-| invalid-input           | bad ID, missing or non-folder source, bad `--to`, or required final confirmation unavailable without `--automatic` | `Cannot attach <id>: <problem>.`                                             |    4 | stderr |
-| blocked                 | ID already registered, collision, unsafe, links unsupported, permission, lock | `Cannot attach <id>: <reason>.`                                                              |    5 | stderr |
-| failed                  | after effects                                                                 | `Library attach stopped after <n> of <m> links were created.`                                |    1 | stderr |
-| cancelled               | prompt cancelled, Ctrl+C                                                      | `Library attach was cancelled. Nothing was changed.` / `... Stopped after <n> of <m> links.` |  130 | stderr |
+An application-failure finding uses `Writing failed` when the ignore-file write
+fails, or a later failure follows retained or unknown ignore progress.
+
+| Status                  | When                                                                                                               | Headline                                                                                                                                                                              | Exit | Stream |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | registered and linked, including a new claim formed when the ownership lock was absent                             | `Registered the <id> Library from <source>.`                                                                                                                                          |    0 | stdout |
+| completed               | registered, source empty                                                                                           | `Registered the <id> Library from <source>. It has no eligible files yet.`                                                                                                            |    0 | stdout |
+| completed (dry run)     | planned                                                                                                            | `Would register the <id> Library from <source>.`                                                                                                                                      |    0 | stdout |
+| completed-with-warnings | recovery bundle retained                                                                                           | + family row                                                                                                                                                                          |    2 | stdout |
+| incomplete              | source, inventory, Entries or recovery unreadable                                                                  | `The <id> Library could not be attached: <limitation>. Nothing was changed.`                                                                                                          |    3 | stdout |
+| invalid-input           | bad ID, missing or non-folder source, bad `--to`, or required final confirmation unavailable without `--automatic` | `Cannot attach <id>: <problem>.`                                                                                                                                                      |    4 | stderr |
+| blocked                 | ID already registered, collision, unsafe, links unsupported, permission, lock                                      | `Cannot attach <id>: <reason>.`                                                                                                                                                       |    5 | stderr |
+| failed                  | after effects                                                                                                      | Existing family wording; with retained or unknown ignore progress: `Library attach stopped after <n> of <m> changes were verified.`                                                   |    1 | stderr |
+| cancelled               | prompt cancellation or Ctrl+C                                                                                      | Before effects: `Library attach was cancelled. Nothing was changed.` With retained or unknown ignore progress: `Library attach was cancelled after <n> of <m> changes were verified.` |  130 | stderr |
 
 ### Current merged behavior and open questions
 
@@ -411,44 +483,46 @@ illustrative count should change.
 
 The finding catalogue is:
 
-| Code                                           | Severity | Family                     | Message                                                                         | Next                              |
-| ---------------------------------------------- | -------- | -------------------------- | ------------------------------------------------------------------------------- | --------------------------------- |
-| library-attach.invalid-input                   | error    | invalid-input              |                                                                                 |                                   |
-| library-attach.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.confirmation-required`).              | `open-forge library attach --automatic` |
-| library-attach.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.invalid-id`). | none                              |
-| library-attach.library-removed | error | local | The selected Library ID is excluded by workspace settings. | Remove the named ID from `removedLibraries` in `.agents/open-forge.json`, then rerun the command. |
-| library-attach.path-excluded | info | local | The mapped destination is excluded and remains untouched. | none |
-| library-attach.duplicate-id                    | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.duplicate-id`).                             | `open-forge library inspect <id>` |
-| library-attach.source-root-invalid             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-invalid`).                                | none                              |
-| library-attach.source-root-unavailable         | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-unavailable`).                                                      | none                              |
-| library-attach.source-root-blocked             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-blocked`).                                      | none                              |
-| library-attach.destination-root-invalid        | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.destination-root-invalid`).                           | none                              |
-| library-attach.destination-collision           | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.destination-collision`).            | choose another `--to` folder      |
-| library-attach.inventory-incomplete            | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.inventory-incomplete`).                                | none                              |
-| library-attach.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.mapping-unavailable`).                  | `open-forge doctor`               |
-| library-attach.mapping-blocked                 | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.mapping-blocked`).                                     | none                              |
-| library-attach.link-capability-unavailable     | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.link-capability-unavailable`).                      | none                              |
-| library-attach.consumer-blocked                | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.consumer-blocked`).             | none                              |
-| library-attach.ownership-conflict              | error    | ownership-conflict         |                                                                                 |                                   |
-| library-attach.ownership-observation           | info     | ownership-observation      |                                                                                 |                                   |
-| library-attach.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.record-invalid`).     | `open-forge doctor`               |
-| library-attach.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                 |                                   |
-| library-attach.record-blocked                  | error    | lifecycle-blocked          |                                                                                 |                                   |
-| library-attach.permission-required             | error    | permission-required        |                                                                                 |                                   |
-| library-attach.permission-declined             | error    | permission-declined        |                                                                                 |                                   |
-| library-attach.permission-invalid              | error    | permissions-invalid        |                                                                                 |                                   |
-| library-attach.permission-unavailable          | warning  | permissions-unavailable    |                                                                                 |                                   |
-| library-attach.permission-changed              | error    | permissions-changed        |                                                                                 |                                   |
-| library-attach.permission-write-failed         | error    | permission-write-failed    |                                                                                 |                                   |
-| library-attach.generated-navigation-blocked    | error    | generated-region-unsafe    |                                                                                 |                                   |
-| library-attach.generated-navigation-incomplete | warning  | projection-unavailable     |                                                                                 |                                   |
-| library-attach.lock-unavailable                | error    | workspace-lock-unavailable |                                                                                 |                                   |
-| library-attach.recovery-unavailable            | warning  | recovery-unavailable       |                                                                                 |                                   |
-| library-attach.recovery-retained               | warning  | recovery-artifact-retained |                                                                                 |                                   |
-| library-attach.application-failed              | error    | write-failed               | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.application-failed`).              |                                   |
-| library-attach.verification-failed             | error    | verification-failed        |                                                                                 |                                   |
-| library-attach.operation-failed                | error    | operation-failed           |                                                                                 |                                   |
-| library-attach.interrupted                     | error    | interrupted                |                                                                                 |                                   |
+| Code                                           | Severity | Family                     | Message                                                                                                                                                                                                                                                                                                                                                                 | Next                                                                                              |
+| ---------------------------------------------- | -------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| library-attach.git-ignore-blocked              | error    | local                      | [Library Git-ignore wording](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Shared/LibraryGitIgnoreText.cs) (unsafe required ignore state).                                                                                                                                                                                               |                                                                                                   |
+| library-attach.git-ignore-unavailable          | warning  | local                      | [Library Git-ignore wording](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Shared/LibraryGitIgnoreText.cs) (unavailable required ignore facts).                                                                                                                                                                                          |                                                                                                   |
+| library-attach.invalid-input                   | error    | invalid-input              |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.confirmation-required`).       | `open-forge library attach --automatic`                                                           |
+| library-attach.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.invalid-id`).                  | none                                                                                              |
+| library-attach.library-removed                 | error    | local                      | The selected Library ID is excluded by workspace settings.                                                                                                                                                                                                                                                                                                              | Remove the named ID from `removedLibraries` in `.agents/open-forge.json`, then rerun the command. |
+| library-attach.path-excluded                   | info     | local                      | The mapped destination is excluded and remains untouched.                                                                                                                                                                                                                                                                                                               | none                                                                                              |
+| library-attach.duplicate-id                    | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.duplicate-id`).                | `open-forge library inspect <id>`                                                                 |
+| library-attach.source-root-invalid             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-invalid`).         | none                                                                                              |
+| library-attach.source-root-unavailable         | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-unavailable`).     | none                                                                                              |
+| library-attach.source-root-blocked             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.source-root-blocked`).         | none                                                                                              |
+| library-attach.destination-root-invalid        | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.destination-root-invalid`).    | none                                                                                              |
+| library-attach.destination-collision           | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.destination-collision`).       | choose another `--to` folder                                                                      |
+| library-attach.inventory-incomplete            | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.inventory-incomplete`).        | none                                                                                              |
+| library-attach.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.mapping-unavailable`).         | `open-forge doctor`                                                                               |
+| library-attach.mapping-blocked                 | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.mapping-blocked`).             | none                                                                                              |
+| library-attach.link-capability-unavailable     | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.link-capability-unavailable`). | none                                                                                              |
+| library-attach.consumer-blocked                | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.consumer-blocked`).            | none                                                                                              |
+| library-attach.ownership-conflict              | error    | ownership-conflict         |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.ownership-observation           | info     | ownership-observation      |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.record-invalid`).              | `open-forge doctor`                                                                               |
+| library-attach.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.record-blocked                  | error    | lifecycle-blocked          |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.permission-required             | error    | permission-required        |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.permission-declined             | error    | permission-declined        |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.permission-invalid              | error    | permissions-invalid        |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.permission-unavailable          | warning  | permissions-unavailable    |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.permission-changed              | error    | permissions-changed        |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.permission-write-failed         | error    | permission-write-failed    |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.generated-navigation-blocked    | error    | generated-region-unsafe    |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.generated-navigation-incomplete | warning  | projection-unavailable     |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.lock-unavailable                | error    | workspace-lock-unavailable |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.recovery-unavailable            | warning  | recovery-unavailable       |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.recovery-retained               | warning  | recovery-artifact-retained |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.application-failed              | error    | write-failed               | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Attach/Shared/Wording/LibraryAttachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-attach.application-failed`).          |                                                                                                   |
+| library-attach.verification-failed             | error    | verification-failed        |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.operation-failed                | error    | operation-failed           |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
+| library-attach.interrupted                     | error    | interrupted                |                                                                                                                                                                                                                                                                                                                                                                         |                                                                                                   |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. Counts are:
@@ -472,55 +546,55 @@ Permission (`Allow always / Allow once / Cancel`) for destinations outside
 
 ### completed
 
-~~~text
+```text
 Registered the team-knowledge Library from shared/team-knowledge.
   Created 1 link under .agents/directives
-~~~
+```
 
 ### completed-with-warnings
 
-~~~text
+```text
 Registered the team-knowledge Library from shared/team-knowledge.
   Warning  <recovery-bundle>  Recovery artifact retained
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 The team-knowledge Library could not be attached: <limitation>. Nothing was changed.
-~~~
+```
 
 ### invalid-input
 
-~~~text
+```text
 Cannot attach team-knowledge: shared/missing is not a folder inside the workspace.
-~~~
+```
 
 ### blocked
 
-~~~text
+```text
 Cannot attach team-knowledge: A Library with the ID team-knowledge is already registered.
 Workspace: <workspace>
 Next: open-forge library inspect team-knowledge
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Library attach stopped after 0 of 1 links were created.
 Workspace: <workspace>
   .agents/directives/review.md  not started
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Library attach was cancelled. Stopped after 1 of 1 links were created.
 Workspace: <workspace>
   .agents/directives/review.md  created
   The Library was not recorded. Recovery data: <recovery-bundle>
 Next: open-forge doctor
-~~~
+```
 
 ## Related Current Sources
 

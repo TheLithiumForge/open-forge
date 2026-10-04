@@ -18,7 +18,7 @@ Naming follow-up: the user is considering shorter alternatives to --projection a
 
 I did fall into the trap you identified. The first draft kept --view compact|expanded, retained a separate --verbose flag, and recommended the existing large Doctor JSON graph as the default. That contradicted the intended change. This revision supersedes those recommendations throughout the proposed interface, examples, JSON packet, and handoff.
 
-Your recollection has a source basis. [Lifecycle and architecture analysis](../../../../../memory/emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md) proposes --detail brief|normal|full and the smallest useful default. [The later revised presentation note](../../../../../memory/emerging/analysis/cli-experience-audit/structural-requirements-and-markers.md) records --detail absorbing --verbose and defaulting to brief. [The layering analysis](../../../../../memory/emerging/analysis/cli-experience-audit/layers-and-sequencing.md) places selection before the format-specific presentation. Those records explain the direction; your clarification now makes that direction explicit for this report. They do not establish that the current CLI already implements it.
+Your recollection has a source basis. [Lifecycle and architecture analysis](../../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md) proposes --detail brief|normal|full and the smallest useful default. [The later revised presentation note](../../analysis/cli-experience-audit/structural-requirements-and-markers.md) records --detail absorbing --verbose and defaulting to brief. [The layering analysis](../../analysis/cli-experience-audit/layers-and-sequencing.md) places selection before the format-specific presentation. Those records explain the direction; your clarification now makes that direction explicit for this report. They do not establish that the current CLI already implements it.
 
 Recommend two independent choices: --detail brief|normal|full chooses information, and --projection text|json chooses its format. Defaults are brief and text. Changing the renderer must never silently increase detail. These are proposed flags; they are not runnable against today's parser yet.
 
@@ -52,17 +52,17 @@ All these renderings retain attention, exit 2, and complete diagnosis coverage f
 
 ## Findings from this review
 
-| ID | Finding and evidence | Consequence for this design |
-| --- | --- | --- |
-| ASTRA-01 | You report a 258 MB Doctor result. I did not reproduce it. The historical audit contains smaller measurements on other fixtures, including an 8.8 MB example. | Treat the scale as a serious reported problem, but do not claim a measured reduction or a proven cause for the particular 258 MB result. |
-| ASTRA-02 | The current global contract and CliSyntaxDefinitions default to expanded. DoctorHumanRenderer traverses every domain, and DoctorFindingHumanRenderer prints every finding group and every candidate even in compact mode. Expanded also prints evidence and provenance. | Replacing that default requires a real detail-selection stage before either text or JSON is built. A new flag name or minification alone cannot bound the output. |
-| ASTRA-03 | Both existing local executables inspected here report the removed Libraries state file and require retired Entries markers. The current source and reconciled contracts use the ownership lock and heading-based Entries. | Neither executable can establish a trustworthy before baseline for current G4 source. Do not snapshot them as current behavior. |
-| ASTRA-04 | Current source contains RepairWizard, RepairLibraryRecoveryWizard, Extension creation prompts, Extension selection prompts, and Route Inspect disambiguation. | The blanket statement that no wizard exists is stale for this checkout. The quality and completeness of each interactive journey still need verification against a matching executable. |
-| ASTRA-05 | Public docs still name the retired lifecycle file, describe old Update preservation behavior, and advertise Extension Remove --prune. Current narrower contracts and source disagree. | Examples must follow current command-local contracts and source. Include these public-doc corrections in a later accepted implementation packet; they were not edited here. |
-| ASTRA-06 | Current compact JSON already has schemaVersion 2. It deliberately retains all mutation receipts, and Doctor retains its findings and candidate sets. | That existing projection is unsuitable as the new brief default. Propose one new detail-aware schema; preserve essential original mutation effects without forcing the complete diagnostic graph into brief results. |
-| ASTRA-07 | Shared result contracts describe JSON operation envelopes, but CliCoreApplication writes shell/parser failures directly to stderr. Route Move explicitly documents this exception. | Do not promise JSON for every rejected argv combination without separately changing the shell contract and implementation. |
-| ASTRA-08 | The handover requires maintaining G4 records and obtaining approval. Your test request instead permits only a report and asks for all analysis at once. | This report carries proposals, evidence, and pending decisions. Existing G4 records remain untouched, and no approval is inferred. |
-| ASTRA-09 | The first draft anchored its recommendations to current view names and current JSON membership despite the earlier detail-selection analysis. Your follow-up exposed that error. | Corrected to brief/normal/full selection shared by renderers, brief by default in both formats, and full detail absorbing diagnostic verbosity. Current interfaces remain evidence of the starting point, not a reason to preserve the rejected model. |
+| ID       | Finding and evidence                                                                                                                                                                                                                                                    | Consequence for this design                                                                                                                                                                                                                            |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ASTRA-01 | You report a 258 MB Doctor result. I did not reproduce it. The historical audit contains smaller measurements on other fixtures, including an 8.8 MB example.                                                                                                           | Treat the scale as a serious reported problem, but do not claim a measured reduction or a proven cause for the particular 258 MB result.                                                                                                               |
+| ASTRA-02 | The current global contract and CliSyntaxDefinitions default to expanded. DoctorHumanRenderer traverses every domain, and DoctorFindingHumanRenderer prints every finding group and every candidate even in compact mode. Expanded also prints evidence and provenance. | Replacing that default requires a real detail-selection stage before either text or JSON is built. A new flag name or minification alone cannot bound the output.                                                                                      |
+| ASTRA-03 | Both existing local executables inspected here report the removed Libraries state file and require retired Entries markers. The current source and reconciled contracts use the ownership lock and heading-based Entries.                                               | Neither executable can establish a trustworthy before baseline for current G4 source. Do not snapshot them as current behavior.                                                                                                                        |
+| ASTRA-04 | Current source contains RepairWizard, RepairLibraryRecoveryWizard, Extension creation prompts, Extension selection prompts, and Route Inspect disambiguation.                                                                                                           | The blanket statement that no wizard exists is stale for this checkout. The quality and completeness of each interactive journey still need verification against a matching executable.                                                                |
+| ASTRA-05 | Public docs still name the retired lifecycle file, describe old Update preservation behavior, and advertise Extension Remove --prune. Current narrower contracts and source disagree.                                                                                   | Examples must follow current command-local contracts and source. Include these public-doc corrections in a later accepted implementation packet; they were not edited here.                                                                            |
+| ASTRA-06 | Current compact JSON already has schemaVersion 2. It deliberately retains all mutation receipts, and Doctor retains its findings and candidate sets.                                                                                                                    | That existing projection is unsuitable as the new brief default. Propose one new detail-aware schema; preserve essential original mutation effects without forcing the complete diagnostic graph into brief results.                                   |
+| ASTRA-07 | Shared result contracts describe JSON operation envelopes, but CliCoreApplication writes shell/parser failures directly to stderr. Route Move explicitly documents this exception.                                                                                      | Do not promise JSON for every rejected argv combination without separately changing the shell contract and implementation.                                                                                                                             |
+| ASTRA-08 | The handover requires maintaining G4 records and obtaining approval. Your test request instead permits only a report and asks for all analysis at once.                                                                                                                 | This report carries proposals, evidence, and pending decisions. Existing G4 records remain untouched, and no approval is inferred.                                                                                                                     |
+| ASTRA-09 | The first draft anchored its recommendations to current view names and current JSON membership despite the earlier detail-selection analysis. Your follow-up exposed that error.                                                                                        | Corrected to brief/normal/full selection shared by renderers, brief by default in both formats, and full detail absorbing diagnostic verbosity. Current interfaces remain evidence of the starting point, not a reason to preserve the rejected model. |
 
 These are design findings, not a new implementation task or accepted defect disposition. ASTRA-03 and ASTRA-05 are material reasons to strengthen the prompt's evidence requirements.
 
@@ -72,14 +72,14 @@ These are design findings, not a new implementation task or accepted defect disp
 
 Use --detail brief|normal|full for every domain command. The default is brief. Use --projection text|json to choose the renderer, defaulting to text. The proposed interface replaces --view, --verbose, and --json with those two options. Do not retain the old concepts internally as two independent content-selection paths. A temporary compatibility alias, if actually needed by an identified consumer, must resolve to these same choices and must never restore a larger default.
 
-| Form | Selected information | Format |
-| --- | --- | --- |
-| open-forge COMMAND | Brief: outcome and the smallest complete useful answer | Text |
-| open-forge COMMAND --detail normal | Brief facts plus actionable explanation and relevant comparisons | Text |
-| open-forge COMMAND --detail full | Complete applicable result facts and supporting evidence; bounded diagnostics when available | Text |
-| open-forge COMMAND --projection json | Exactly the brief information selection | Minified JSON |
-| open-forge COMMAND --detail normal --projection json | Exactly the normal information selection | Minified JSON |
-| open-forge COMMAND --detail full --projection json | Exactly the full information selection | Minified JSON |
+| Form                                                 | Selected information                                                                         | Format        |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------- |
+| open-forge COMMAND                                   | Brief: outcome and the smallest complete useful answer                                       | Text          |
+| open-forge COMMAND --detail normal                   | Brief facts plus actionable explanation and relevant comparisons                             | Text          |
+| open-forge COMMAND --detail full                     | Complete applicable result facts and supporting evidence; bounded diagnostics when available | Text          |
+| open-forge COMMAND --projection json                 | Exactly the brief information selection                                                      | Minified JSON |
+| open-forge COMMAND --detail normal --projection json | Exactly the normal information selection                                                     | Minified JSON |
+| open-forge COMMAND --detail full --projection json   | Exactly the full information selection                                                       | Minified JSON |
 
 The pipeline is: complete typed operation result -> detail selection -> chosen renderer -> output. Selection owns inclusion, finding ordering, limits, and omitted counts. Renderers own syntax, human wording, escaping, and structural line endings. They must not independently decide which findings or effects to include. JSON carries stable codes and typed coordinates; text expresses those same selected facts naturally. Format metadata is allowed to differ; substantive result selection is not.
 
@@ -93,10 +93,10 @@ The historical note also considers TSV. This report settles text and JSON. TSV i
 
 Use one of three shapes according to what the command actually returns:
 
-| Shape | Commands | Default content |
-| --- | --- | --- |
-| Summary | status, doctor | Outcome; a few useful counts; the reason for incomplete or unsafe coverage; a next action only when necessary to act on that condition |
-| Data | context, find, references, route list/inspect, extension list/inspect, library list/inspect | The requested identities, content, rows, or comparison, plus honest coverage and actionable findings |
+| Shape         | Commands                                                                                         | Default content                                                                                                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Summary       | status, doctor                                                                                   | Outcome; a few useful counts; the reason for incomplete or unsafe coverage; a next action only when necessary to act on that condition                                          |
+| Data          | context, find, references, route list/inspect, extension list/inspect, library list/inspect      | The requested identities, content, rows, or comparison, plus honest coverage and actionable findings                                                                            |
 | Change report | install, update, index, repair, cleanup, Route mutations, Extension mutations, Library mutations | Outcome; every selected changed path once; retained or unresolved paths; partial effects and recovery when present. Omit internal planning/verification detail until requested. |
 
 An inventory is not replaced by “found 40 items”: the identities are its answer. Context is not summarized: its selected authored content is its answer. A write receipt is not replaced by “updated 40 files”: the affected paths may be impossible to reconstruct by rerunning after the change.
@@ -109,15 +109,15 @@ For successful mutations, use one short physical-path row per changed file and l
 
 Retain the seven accepted semantic statuses and numeric exits. A warning is a finding severity; attention is an operation result. A no-op is a successful outcome when the command can prove it, not an eighth status.
 
-| Result | Exit | Human primary stream | Proposed wording pattern |
-| --- | ---: | --- | --- |
-| complete | 0 | stdout | “Updated 2 files.” / “Already current. No changes.” |
-| attention | 2 | stdout | Say what succeeded, then what remains: “Updated 2 files. 1 retired file was kept.” |
-| incomplete | 3 | stdout | “The result is incomplete.” Identify the unavailable fact and which returned facts remain usable. |
-| invalid | 4 | stderr | “The request is invalid: …” Identify the missing operand or invalid value. |
-| blocked | 5 | stderr | “Cannot …” Identify the exact safety, identity, collision, or permission boundary. |
-| failed | 1 | stderr | “The update failed …” State verified changes and uncertain or remaining effects. |
-| interrupted | 130 | stderr | “The update was cancelled …” State whether effects started and what is known. |
+| Result      | Exit | Human primary stream | Proposed wording pattern                                                                          |
+| ----------- | ---: | -------------------- | ------------------------------------------------------------------------------------------------- |
+| complete    |    0 | stdout               | “Updated 2 files.” / “Already current. No changes.”                                               |
+| attention   |    2 | stdout               | Say what succeeded, then what remains: “Updated 2 files. 1 retired file was kept.”                |
+| incomplete  |    3 | stdout               | “The result is incomplete.” Identify the unavailable fact and which returned facts remain usable. |
+| invalid     |    4 | stderr               | “The request is invalid: …” Identify the missing operand or invalid value.                        |
+| blocked     |    5 | stderr               | “Cannot …” Identify the exact safety, identity, collision, or permission boundary.                |
+| failed      |    1 | stderr               | “The update failed …” State verified changes and uncertain or remaining effects.                  |
+| interrupted |  130 | stderr               | “The update was cancelled …” State whether effects started and what is known.                     |
 
 Typed domain JSON results go to stdout for every one of these statuses, with selected diagnostics on stderr. Preserve the current exception for shell/parser failures before command binding: stderr, exit 4, and no operation envelope. Help and version remain text-only terminal modes with stdout and exit 0 even when JSON is selected. They are CLI instructions and version text, not command-result renderers. The current --json spelling and proposed --projection json spelling do not change that terminal boundary.
 
@@ -146,17 +146,17 @@ Never advise rerunning a mutation merely to see its original receipt at greater 
 
 ### Empty, unknown, and not applicable
 
-| Actual fact | Human presentation |
-| --- | --- |
-| A complete search found no matches | “No sources matched.” |
-| An incomplete search returned no safe matches | “No matches could be confirmed. The search is incomplete.” |
-| No Library claims in a readable lock | “No Libraries are registered.” |
-| Ownership unavailable or absent | “No Library registrations could be read. Ownership information is unavailable.” Keep its actual informational status. |
-| A field genuinely does not apply | Omit it from the brief selection; explain it at normal/full detail only when that distinction matters |
-| A requested section is absent | Name the source and missing section; preserve the command's attention result |
-| Recovery is not required and no artifact exists | Omit the empty recovery section |
-| Recovery remains or its disposition is unknown | Show the exact known path and disposition at every detail level, in both formats |
-| A source or package was not inspected | Say “not checked” or “unavailable”; never print an empty inventory instead |
+| Actual fact                                     | Human presentation                                                                                                    |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| A complete search found no matches              | “No sources matched.”                                                                                                 |
+| An incomplete search returned no safe matches   | “No matches could be confirmed. The search is incomplete.”                                                            |
+| No Library claims in a readable lock            | “No Libraries are registered.”                                                                                        |
+| Ownership unavailable or absent                 | “No Library registrations could be read. Ownership information is unavailable.” Keep its actual informational status. |
+| A field genuinely does not apply                | Omit it from the brief selection; explain it at normal/full detail only when that distinction matters                 |
+| A requested section is absent                   | Name the source and missing section; preserve the command's attention result                                          |
+| Recovery is not required and no artifact exists | Omit the empty recovery section                                                                                       |
+| Recovery remains or its disposition is unknown  | Show the exact known path and disposition at every detail level, in both formats                                      |
+| A source or package was not inspected           | Say “not checked” or “unavailable”; never print an empty inventory instead                                            |
 
 Define JSON presence and nullability for each new detail selection. A field excluded by brief detail is not an assertion that its value is empty, zero, or unavailable. For selected facts, preserve the difference between known empty and unknown. Suppress irrelevant healthy sections before either renderer; within selected counts, JSON can retain explicit zero values while text omits the redundant phrase. Do not populate a selected array with [] when its inspection did not finish.
 
@@ -164,10 +164,10 @@ Define JSON presence and nullability for each new detail selection. A field excl
 
 The three detail levels are sufficient for ordinary use. Propose two additional Doctor-only selection options for targeted investigation. They affect both renderers identically and do not change diagnosis:
 
-| Option | Exact proposed behavior |
-| --- | --- |
+| Option                            | Exact proposed behavior                                                                                                                                                                                                 |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | --severity error / warning / info | Repeatable union of exact severities; repeats deduplicate. Requires an explicit normal or full detail level. Brief plus this option is invalid, including when brief was defaulted. It never silently increases detail. |
-| --limit positive-integer / all | Maximum returned finding records after severity selection and shared ordering. Normal defaults to 20; full defaults to all. Requires normal or full detail. Zero, negative, malformed, and repeated values are invalid. |
+| --limit positive-integer / all    | Maximum returned finding records after severity selection and shared ordering. Normal defaults to 20; full defaults to all. Requires normal or full detail. Zero, negative, malformed, and repeated values are invalid. |
 
 Normal without --severity selects errors and warnings; full without --severity selects every severity. --severity info selects only information; repeating it with --severity warning selects those two sets. “Warning” is an exact selection, not a minimum threshold. These defaults and overrides mean the same thing with text or JSON. Reject brief plus a finding-control option because brief does not return a finding list; explain that normal/full detail is required.
 
@@ -177,18 +177,18 @@ If 20 of 78 matching findings are shown, text says “Showing 20 of 78 matching 
 
 The limit counts finding records, not grouped headings. Normal includes finding identity, severity, subject/location, message, and applicable direct action; candidate rosters, evidence excerpts, and provenance require full. Full with no explicit limit includes all selected findings and their complete available support. With a finite limit at full detail, cap each displayed candidate set at 3 identities and one bounded excerpt per displayed candidate, preserving order and explicit shown/total counts in both formats. --limit all removes those display caps. Never label a filtered or capped payload as the complete diagnosis. Repeated supporting sets can be represented once with stable references, provided the information selected by each level is identical in both renderers.
 
-| Output class | Proposed budget for named synthetic fixtures | Qualification |
-| --- | --- | --- |
-| Doctor brief text, complete coverage | 1 line, at most 160 UTF-8 bytes | Outcome and relevant counts; no finding rows or routine Next hint |
-| Doctor brief JSON, complete coverage | One minified envelope, at most 512 UTF-8 bytes | Counts and coverage; no findings, domains, candidates, evidence, or diagnostic payload |
-| Doctor brief, incomplete/blocked/failed | Normally 2–4 text lines; selected reasons in JSON | Every indispensable trust boundary survives; exact necessary paths may exceed fixture budgets |
-| Doctor normal, either format | At most 20 finding records by default; target 12 KiB in the bounded fixture | No supporting evidence graph; --limit all explicitly requests more rows |
-| Doctor full, either format | No default finding cap | Explicit request for all available detail; bounded diagnostic values still apply |
-| Status, healthy fixture | At most 6 lines, 512 bytes of generated framing | No full list of healthy managed files |
-| Other empty/no-op results | Normally 1–3 lines | Preserve an applicable attention or uncertainty condition |
-| Lists | At most 2 framing lines plus one brief row per returned item | No unaccepted item cap; requested identities remain complete |
-| Mutation reports | At most 4 framing lines plus path/effect and necessary finding rows | No cap that loses the original receipt |
-| Context/content projections | Small framing plus the complete selected content | Selected content is exempt from display budgets |
+| Output class                            | Proposed budget for named synthetic fixtures                                | Qualification                                                                                 |
+| --------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Doctor brief text, complete coverage    | 1 line, at most 160 UTF-8 bytes                                             | Outcome and relevant counts; no finding rows or routine Next hint                             |
+| Doctor brief JSON, complete coverage    | One minified envelope, at most 512 UTF-8 bytes                              | Counts and coverage; no findings, domains, candidates, evidence, or diagnostic payload        |
+| Doctor brief, incomplete/blocked/failed | Normally 2–4 text lines; selected reasons in JSON                           | Every indispensable trust boundary survives; exact necessary paths may exceed fixture budgets |
+| Doctor normal, either format            | At most 20 finding records by default; target 12 KiB in the bounded fixture | No supporting evidence graph; --limit all explicitly requests more rows                       |
+| Doctor full, either format              | No default finding cap                                                      | Explicit request for all available detail; bounded diagnostic values still apply              |
+| Status, healthy fixture                 | At most 6 lines, 512 bytes of generated framing                             | No full list of healthy managed files                                                         |
+| Other empty/no-op results               | Normally 1–3 lines                                                          | Preserve an applicable attention or uncertainty condition                                     |
+| Lists                                   | At most 2 framing lines plus one brief row per returned item                | No unaccepted item cap; requested identities remain complete                                  |
+| Mutation reports                        | At most 4 framing lines plus path/effect and necessary finding rows         | No cap that loses the original receipt                                                        |
+| Context/content projections             | Small framing plus the complete selected content                            | Selected content is exempt from display budgets                                               |
 
 These are proposed acceptance budgets, not measured performance claims or universal hard byte cutoffs. Measure UTF-8 bytes, lines, elapsed time, and peak memory separately. Suppressing printed evidence does not prove that the operation stopped allocating a large finding graph. Preserve that distinction when investigating the reported 258 MB case.
 
@@ -248,13 +248,13 @@ Normal detail adds the measured startup comparison, continuity size, total avail
 
 This normal-detail example illustrates the major sections; the complete fixture must also include any applicable nonempty baseline comparison, root changes, and detailed observations. Do not claim exact token counts: label estimates. Characters and UTF-8 bytes are different measurements, even if they happen to agree on ASCII fixtures.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Framework absent | “Open Forge is not installed.” Preserve the actual installation and status facts. |
-| Attention | “Open Forge needs attention. 2 generated Entries sections are stale.” Name their paths; Next: open-forge doctor. |
-| Incomplete | “Workspace status is incomplete. Could not read .agents/guidance/_guidance.md.” Include the safe measurements that did finish. |
-| Blocked | “Cannot inspect this workspace. The .agents path resolves outside the selected workspace.” |
-| Recovery present | Show each recognized residual path and its actual integrity. A malformed final is not a verified bundle. |
+| Scenario         | Proposed default output                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Framework absent | “Open Forge is not installed.” Preserve the actual installation and status facts.                                              |
+| Attention        | “Open Forge needs attention. 2 generated Entries sections are stale.” Name their paths; Next: open-forge doctor.               |
+| Incomplete       | “Workspace status is incomplete. Could not read .agents/guidance/_guidance.md.” Include the safe measurements that did finish. |
+| Blocked          | “Cannot inspect this workspace. The .agents path resolves outside the selected workspace.”                                     |
+| Recovery present | Show each recognized residual path and its actual integrity. A malformed final is not a verified bundle.                       |
 
 Read-only “no change” is simply another observation, not a verification that all files are unchanged. Never make a missing ownership lock mean the Framework is broken or absent.
 
@@ -329,15 +329,15 @@ Every other changed path must appear in a complete result. Normal detail adds em
 
 This preview is the matching excerpt. The complete plan includes every effect before any confirmation.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Exact managed no-op | “The Open Forge Framework is already installed. No changes.” |
-| Existing managed divergence | “Cannot install over changed managed Framework content. Review an update.” Name the target; Next: open-forge update --dry-run. |
-| Initial collision requiring authority | “Cannot replace .agents/loader.md without explicit permission.” State the actual initial --force boundary; do not add it automatically. |
-| Noninteractive confirmation required | “Installation needs an explicit noninteractive choice. Use --automatic to apply the reviewed request, or --dry-run to preview it.” Preserve the current invalid status for this condition. |
-| Recovery unavailable before writing | “Installation is incomplete. Recovery storage could not be prepared. No files changed.” |
-| Recovery cleanup failed, positively retained | “Installed the Framework. Recovery data could not be removed.” Show the exact path and Next: open-forge cleanup --dry-run. Status attention. |
-| Failure after effects | “Installation failed after 3 verified file changes.” List verified, failed/uncertain, and not-started paths. Never claim nothing changed. |
+| Scenario                                     | Proposed default output                                                                                                                                                                    |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Exact managed no-op                          | “The Open Forge Framework is already installed. No changes.”                                                                                                                               |
+| Existing managed divergence                  | “Cannot install over changed managed Framework content. Review an update.” Name the target; Next: open-forge update --dry-run.                                                             |
+| Initial collision requiring authority        | “Cannot replace .agents/loader.md without explicit permission.” State the actual initial --force boundary; do not add it automatically.                                                    |
+| Noninteractive confirmation required         | “Installation needs an explicit noninteractive choice. Use --automatic to apply the reviewed request, or --dry-run to preview it.” Preserve the current invalid status for this condition. |
+| Recovery unavailable before writing          | “Installation is incomplete. Recovery storage could not be prepared. No files changed.”                                                                                                    |
+| Recovery cleanup failed, positively retained | “Installed the Framework. Recovery data could not be removed.” Show the exact path and Next: open-forge cleanup --dry-run. Status attention.                                               |
+| Failure after effects                        | “Installation failed after 3 verified file changes.” List verified, failed/uncertain, and not-started paths. Never claim nothing changed.                                                  |
 
 An unavailable ownership receipt does not create the old missing-lock installation gate.
 
@@ -365,14 +365,14 @@ Normal detail adds the same paths' old/current-to-intended comparison, source ve
     A recovery bundle will protect the changed existing content.
     No files changed.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| No-op | “The Framework is current. No changes.” |
-| Retired content kept | “Updated 2 Framework files. Kept 1 retired file: .agents/guidance/old-review.md.” Next: open-forge update --prune --dry-run. Status attention. |
+| Scenario                      | Proposed default output                                                                                                                                                 |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No-op                         | “The Framework is current. No changes.”                                                                                                                                 |
+| Retired content kept          | “Updated 2 Framework files. Kept 1 retired file: .agents/guidance/old-review.md.” Next: open-forge update --prune --dry-run. Status attention.                          |
 | No safe ownership information | “No owned Framework targets could be selected. Ownership information is unavailable.” Preserve the actual informational/no-effect result, not a fabricated repair gate. |
-| Incomplete source or recovery | Name the unavailable fact and say no files changed when pre-effect evidence proves that. |
-| Blocked | Name the cross-owner collision, unsafe target, or invalid generated boundary. |
-| Partial failure/cancellation | Name verified replacements/restorations/deletions, ownership-publication state, remaining work, and recovery. |
+| Incomplete source or recovery | Name the unavailable fact and say no files changed when pre-effect evidence proves that.                                                                                |
+| Blocked                       | Name the cross-owner collision, unsafe target, or invalid generated boundary.                                                                                           |
+| Partial failure/cancellation  | Name verified replacements/restorations/deletions, ownership-publication state, remaining work, and recovery.                                                           |
 
 Do not classify an intentionally retained verified recovery bundle as a failed cleanup. The public documentation's old baseline-preservation explanation needs reconciliation with this source policy.
 
@@ -399,14 +399,14 @@ Added/removed entry counts may be shown only if available from the accepted resu
       .agents/guidance/_guidance.md
     No files changed.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| All current | “Generated Entries are current. 12 sections checked.” |
-| No selected regions | “No generated Entries sections were selected.” State whether this is a valid empty selection or incomplete discovery. |
-| Bad child metadata | “Cannot rebuild .agents/guidance/_guidance.md. Invalid metadata in .agents/guidance/team.md.” Include the actual parse location/cause and “No files changed” if pre-effect. |
-| Incomplete discovery | “Entries could not be rebuilt completely. Could not read … No files changed.” |
-| Recovery retained after cleanup failure | The rebuild remains successful; show residual path and attention/2. |
-| Apply failure | Identify already verified sections and the exact failed/uncertain target. |
+| Scenario                                | Proposed default output                                                                                                                                                     |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| All current                             | “Generated Entries are current. 12 sections checked.”                                                                                                                       |
+| No selected regions                     | “No generated Entries sections were selected.” State whether this is a valid empty selection or incomplete discovery.                                                       |
+| Bad child metadata                      | “Cannot rebuild .agents/guidance/_guidance.md. Invalid metadata in .agents/guidance/team.md.” Include the actual parse location/cause and “No files changed” if pre-effect. |
+| Incomplete discovery                    | “Entries could not be rebuilt completely. Could not read … No files changed.”                                                                                               |
+| Recovery retained after cleanup failure | The rebuild remains successful; show residual path and attention/2.                                                                                                         |
+| Apply failure                           | Identify already verified sections and the exact failed/uncertain target.                                                                                                   |
 
 Heading-based Entries and automatic retirement of old generated guards already exist. This design does not introduce them again. Keep Index's current all-plan safety boundary; do not silently update the other 11 regions after one required region blocks.
 
@@ -431,15 +431,15 @@ Question: Which selected repairs were applied, and which still need a choice? [C
 
 The fragment example assumes an actual safe-exact canonical correction in the fixture, not a guessed heading.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Complete selected no-op | “No repairs are needed in the selected scope.” |
-| Applied | “Repaired 1 link.” Show the occurrence and destination change. |
-| Safe selected work with unresolved choices | “Repaired 1 link. 2 findings still need a choice.” Show the unresolved subjects. Preserve attention when coverage is complete. |
-| No automatic repair available | “No automatic repairs were selected. 2 findings need a choice.” Do not say the workspace is healthy or fixed. |
-| Incomplete required diagnosis | “Repair could not establish a complete plan. Could not inspect … No files changed.” |
-| Stale explicit relink | “Cannot repair .agents/guidance/team.md:12:8. The destination no longer matches the supplied old value.” |
-| Post-effect failure or cancellation | Report actual verified edits, uncertain effects, remaining findings, and recovery. A failed post-diagnosis does not erase applied edits. |
+| Scenario                                   | Proposed default output                                                                                                                  |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Complete selected no-op                    | “No repairs are needed in the selected scope.”                                                                                           |
+| Applied                                    | “Repaired 1 link.” Show the occurrence and destination change.                                                                           |
+| Safe selected work with unresolved choices | “Repaired 1 link. 2 findings still need a choice.” Show the unresolved subjects. Preserve attention when coverage is complete.           |
+| No automatic repair available              | “No automatic repairs were selected. 2 findings need a choice.” Do not say the workspace is healthy or fixed.                            |
+| Incomplete required diagnosis              | “Repair could not establish a complete plan. Could not inspect … No files changed.”                                                      |
+| Stale explicit relink                      | “Cannot repair .agents/guidance/team.md:12:8. The destination no longer matches the supplied old value.”                                 |
+| Post-effect failure or cancellation        | Report actual verified edits, uncertain effects, remaining findings, and recovery. A failed post-diagnosis does not erase applied edits. |
 
 Correct explicit-relink grammar uses three values:
 
@@ -467,13 +467,13 @@ These are illustrative result paths, not an assertion about generated naming.
 
 Brief application retains those exact paths with shorter labels. Do not invent freed-byte totals unless the command actually measures them.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Empty complete catalogue | “No recovery data to remove.” No lease or new recovery state is needed. |
-| Incomplete catalogue | “Could not inspect all recovery data. Nothing was removed.” |
-| Malformed recognized candidate | “Cannot remove the recovery catalogue safely. This candidate is malformed: …” Do not silently skip a blocking exact-name candidate. |
-| Failure after one deletion | “Cleanup failed after removing 1 of 2 artifacts.” Show removed and remaining paths. |
-| Cancellation after one deletion | “Cleanup was cancelled after removing 1 of 2 artifacts.” Show the same residual truth. |
+| Scenario                        | Proposed default output                                                                                                             |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Empty complete catalogue        | “No recovery data to remove.” No lease or new recovery state is needed.                                                             |
+| Incomplete catalogue            | “Could not inspect all recovery data. Nothing was removed.”                                                                         |
+| Malformed recognized candidate  | “Cannot remove the recovery catalogue safely. This candidate is malformed: …” Do not silently skip a blocking exact-name candidate. |
+| Failure after one deletion      | “Cleanup failed after removing 1 of 2 artifacts.” Show removed and remaining paths.                                                 |
+| Cancellation after one deletion | “Cleanup was cancelled after removing 1 of 2 artifacts.” Show the same residual truth.                                              |
 
 Cleanup has no current attention case, no ID/path selector, no rollback, and no replacement recovery bundle. Unknown unrelated files remain outside its recognized catalogue. Do not suggest that cleanup will restore anything.
 
@@ -503,13 +503,13 @@ The delimiter is generated framing. It is not part of the source. Normal detail 
 
 Actual closure may include other required sources; this fixture assumes the selected additional closure contains just that one source. With no --content, preserve the existing frontmatter/body default. With no operands, return startup context. Do not remove source comments, empty sections, loading rules, or frontmatter to reduce output.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Complete empty additions | “No additional context. The selected sources are already included at startup.” Only when that is the actual reason. |
-| Requested section absent | “Section 'Decisions' was not found in .agents/guidance/team.md.” Retain attention and any other selected content. |
+| Scenario                   | Proposed default output                                                                                                    |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Complete empty additions   | “No additional context. The selected sources are already included at startup.” Only when that is the actual reason.        |
+| Requested section absent   | “Section 'Decisions' was not found in .agents/guidance/team.md.” Retain attention and any other selected content.          |
 | Incomplete closure/content | “Context is incomplete. Could not read …” Then emit safe selected content without pretending the omitted source was empty. |
-| Invalid additions-only | “--additions-only requires at least one source.” |
-| Unsafe source | “Cannot read this context safely. The selected path resolves outside the workspace.” |
+| Invalid additions-only     | “--additions-only requires at least one source.”                                                                           |
+| Unsafe source              | “Cannot read this context safely. The selected path resolves outside the workspace.”                                       |
 
 Keep the primary stream rules. Moving operation findings or a summary to stderr would be a separate stream-contract change, not an incidental way to clean up the body stream. JSON remains the reliable structured way to separate content, source identity, coverage, and findings. Selected content is never subject to the Doctor detail cap.
 
@@ -536,15 +536,15 @@ Question: Which sources match the supplied tag/heading predicates? [Current inte
 
 Preserve the current ordinal match ordering by source ID and its existing tie-breakers. --content adds the complete requested projection, with exact content and projection state.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| No matches, complete search | “No sources matched.” |
-| Bare inventory empty | “No Markdown sources were found.” Only for a complete valid inventory. |
-| Known missing projection | “Found 1 matching source. Section 'Decisions' is absent.” Preserve attention and the source identity. |
-| Partial search | “Found 2 matching sources. The search is incomplete.” Name the unavailable source or projection. |
-| No safe matches in incomplete search | “No matches could be confirmed. The search is incomplete.” |
-| Invalid predicate | Name the exact invalid tag, heading, region, or repeated singleton option. |
-| Blocked universe | Name the unsafe selector/source boundary; do not silently search a broader universe. |
+| Scenario                             | Proposed default output                                                                               |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| No matches, complete search          | “No sources matched.”                                                                                 |
+| Bare inventory empty                 | “No Markdown sources were found.” Only for a complete valid inventory.                                |
+| Known missing projection             | “Found 1 matching source. Section 'Decisions' is absent.” Preserve attention and the source identity. |
+| Partial search                       | “Found 2 matching sources. The search is incomplete.” Name the unavailable source or projection.      |
+| No safe matches in incomplete search | “No matches could be confirmed. The search is incomplete.”                                            |
+| Invalid predicate                    | Name the exact invalid tag, heading, region, or repeated singleton option.                            |
+| Blocked universe                     | Name the unsafe selector/source boundary; do not silently search a broader universe.                  |
 
 This natural-text brief proposal replaces the current tab-separated result header and ID/path rows. That is an explicit G4 decision, not merely punctuation. I recommend natural human output and JSON for machines, but do not retire the TSV contract until approved. Do not add --paths, invent a tag catalogue from unmeasured data, or change default inventory/filter semantics in this output packet.
 
@@ -569,14 +569,14 @@ Question: Which direct authored links point into or out of this source? [Current
 
 The default direction remains both. Show incoming and outgoing sections separately. Filtering the incoming source universe does not affect outgoing links.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Complete empty both-directions scan | “No direct authored references found in the requested scope.” |
-| Outgoing-only empty result | “No outgoing authored references found.” Do not imply incoming coverage. |
-| Incomplete incoming scan | “Found 1 incoming reference. Incoming inspection is incomplete.” Name the unavailable scan source. |
+| Scenario                                | Proposed default output                                                                                         |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Complete empty both-directions scan     | “No direct authored references found in the requested scope.”                                                   |
+| Outgoing-only empty result              | “No outgoing authored references found.” Do not imply incoming coverage.                                        |
+| Incomplete incoming scan                | “Found 1 incoming reference. Incoming inspection is incomplete.” Name the unavailable scan source.              |
 | Safe non-blocking authored-form finding | Show the occurrence and cause; preserve attention. An external link not fetched is not automatically attention. |
-| Outgoing-only with --include | “--include requires incoming inspection. Use --direction in or both.” Invalid. |
-| Unsafe/ambiguous target | Name the source occurrence, raw destination, and unsafe or ambiguous boundary. |
+| Outgoing-only with --include            | “--include requires incoming inspection. Use --direction in or both.” Invalid.                                  |
+| Unsafe/ambiguous target                 | Name the source occurrence, raw destination, and unsafe or ambiguous boundary.                                  |
 
 Do not change “authored” into “all links.” Generated navigation is deliberately excluded by the current reference contract. Including it or adding --generated would be a separate behavior/interface change. Counts are occurrence counts; duplicate authored occurrences are not collapsed into one link.
 
@@ -605,14 +605,14 @@ Question: Which routed sources exist at the requested structural depth? [Current
 
 Default depth remains 1. --depth all requests the full descendant closure; --depth 0 remains valid. Retain actual hierarchy and order, using complete IDs where shortening would be ambiguous.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Complete empty roots | “No root routes are exposed by the Loader.” Only when that fact was established. |
-| Complete selected leaf | Show the one selected leaf; do not say “no routes” merely because it has no children. |
-| Partial topology | “Listed 2 confirmed routes. The requested route listing is incomplete.” Name the unresolved boundary. |
-| Non-blocking identity/authored-form finding | Keep rows and the specific finding; preserve attention. |
-| Bad depth | “Depth must be a non-negative integer or all.” |
-| Unsafe/ambiguous root | Name the exact root/entrypoint and boundary. |
+| Scenario                                    | Proposed default output                                                                               |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Complete empty roots                        | “No root routes are exposed by the Loader.” Only when that fact was established.                      |
+| Complete selected leaf                      | Show the one selected leaf; do not say “no routes” merely because it has no children.                 |
+| Partial topology                            | “Listed 2 confirmed routes. The requested route listing is incomplete.” Name the unresolved boundary. |
+| Non-blocking identity/authored-form finding | Keep rows and the specific finding; preserve attention.                                               |
+| Bad depth                                   | “Depth must be a non-negative integer or all.”                                                        |
+| Unsafe/ambiguous root                       | Name the exact root/entrypoint and boundary.                                                          |
 
 Do not print “2 of 100 routes” unless the unshown total was actually measured. A depth-limited complete result is complete for that request, not an incomplete scan. A useful optional footer is “Use --depth all to include all descendants”; it must not imply that hidden descendants definitely exist without evidence.
 
@@ -643,14 +643,14 @@ Question: Where does one source belong, and when is it loaded? [Current interfac
 
 Use the current result's actual measurement method and mark estimates. These numbers describe an illustrative measured fixture, not this repository. Retain overwrite layers, loading conditions, source kind, supported unrouted/detached states, and uncertainty when applicable.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Read-only repeated request | Repeat the observed profile; do not claim a no-op verification. |
-| Exact path resolves a non-unique ID | “This file was selected by exact path. Its source ID also identifies another file.” Attention; show both identities when available. |
-| Unreadable layer or incomplete route chain | Show the established identity and “The route profile is incomplete.” |
-| Loader selected | “Route Inspect requires a source other than the Loader.” Invalid under the current interface. |
-| Unknown source | “Source not found: guidance/missing.” Invalid; a bounded route list is a useful next inspection. |
-| Unsafe overwrite/route boundary | Name the conflicting files and cause. Blocked. |
+| Scenario                                   | Proposed default output                                                                                                             |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Read-only repeated request                 | Repeat the observed profile; do not claim a no-op verification.                                                                     |
+| Exact path resolves a non-unique ID        | “This file was selected by exact path. Its source ID also identifies another file.” Attention; show both identities when available. |
+| Unreadable layer or incomplete route chain | Show the established identity and “The route profile is incomplete.”                                                                |
+| Loader selected                            | “Route Inspect requires a source other than the Loader.” Invalid under the current interface.                                       |
+| Unknown source                             | “Source not found: guidance/missing.” Invalid; a bounded route list is a useful next inspection.                                    |
+| Unsafe overwrite/route boundary            | Name the conflicting files and cause. Blocked.                                                                                      |
 
 Keep the existing explanatory section names where useful. Avoid adding authored body output to this command.
 
@@ -674,15 +674,15 @@ Assume the parent route already exists:
         Added the new route to Entries.
     Both file changes were verified.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Matching route already initialized | “The requested route is already initialized. No changes.” |
-| Default placeholder created | “Created the route. Its description and tags still need authoring.” Show every NeedsAuthoring entrypoint and preserve attention/2. |
-| Preview | “Preview: create 1 route entrypoint.” List created entrypoints and affected ancestor Entries, then “No files changed.” |
-| Framework scaffold mode | Name --framework and the selected scoped route; show any actual ownership publication. Do not imply it installs the root Framework. |
-| Invalid mixed scaffold options | Explain that --framework conflicts with explicit description/responsibility/tags. |
-| Incomplete/blocked chain | Name the first unresolved or unsafe route fact; keep any planned safe rows clearly unapplied. |
-| Post-effect failure | Distinguish created entrypoints from ancestor navigation or ownership effects that did not finish. |
+| Scenario                           | Proposed default output                                                                                                             |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Matching route already initialized | “The requested route is already initialized. No changes.”                                                                           |
+| Default placeholder created        | “Created the route. Its description and tags still need authoring.” Show every NeedsAuthoring entrypoint and preserve attention/2.  |
+| Preview                            | “Preview: create 1 route entrypoint.” List created entrypoints and affected ancestor Entries, then “No files changed.”              |
+| Framework scaffold mode            | Name --framework and the selected scoped route; show any actual ownership publication. Do not imply it installs the root Framework. |
+| Invalid mixed scaffold options     | Explain that --framework conflicts with explicit description/responsibility/tags.                                                   |
+| Incomplete/blocked chain           | Name the first unresolved or unsafe route fact; keep any planned safe rows clearly unapplied.                                       |
+| Post-effect failure                | Distinguish created entrypoints from ancestor navigation or ownership effects that did not finish.                                  |
 
 This is an explicit non-wizard leaf. Do not add --automatic or silently accept an invented current scope.
 
@@ -703,15 +703,15 @@ Question: Was this ordinary Markdown source created and listed? [Current interfa
 
 With --template, show which Template supplied the body and that the destination has its own metadata. The exact resulting body/diff, when the current result represents it, belongs at full detail in either format. Normal explains the relevant intended change. If authored content is explicitly requested by a command option, its complete selected content is required at every detail level.
 
-| Scenario | Proposed default output |
-| --- | --- |
+| Scenario                           | Proposed default output                                                                                                      |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | Verified identical intended target | “The requested file is already present with the intended content. No changes.” Preserve the contract's exact no-op boundary. |
-| Different existing content | “Cannot create .agents/guidance/team.md. A different file already exists.” Blocked, not an overwrite prompt. |
-| Missing metadata | “A nonblank description and at least one tag are required.” Invalid. |
-| Invalid target kind | Name why the destination is an entrypoint, overwrite companion, directory, or otherwise ineligible. |
-| Incomplete Template/source facts | Explain what cannot be read; do not substitute an empty body. |
-| Recovery cleanup problem | Keep the successful creation and exact retained recovery path; attention. |
-| Partial failure | Show whether the target file was created and whether parent Entries were updated. |
+| Different existing content         | “Cannot create .agents/guidance/team.md. A different file already exists.” Blocked, not an overwrite prompt.                 |
+| Missing metadata                   | “A nonblank description and at least one tag are required.” Invalid.                                                         |
+| Invalid target kind                | Name why the destination is an entrypoint, overwrite companion, directory, or otherwise ineligible.                          |
+| Incomplete Template/source facts   | Explain what cannot be read; do not substitute an empty body.                                                                |
+| Recovery cleanup problem           | Keep the successful creation and exact retained recovery path; attention.                                                    |
+| Partial failure                    | Show whether the target file was created and whether parent Entries were updated.                                            |
 
 Do not add force, arbitrary content replacement, or a wizard. Repeated creation is a no-op only when the exact intended-state rule is satisfied.
 
@@ -730,15 +730,15 @@ Question: Which explicit metadata or eligible Template changes were applied? [Cu
       Updated Entries in .agents/guidance/_guidance.md
     Both file changes were verified.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Exact metadata no-op | “The requested metadata is already current. No changes.” |
-| Empty responsibility value | “Removed the responsibility from .agents/guidance/team.md.” Only when the key was actually removed. |
-| Protected Template body | “The existing body was kept. The Template was not copied.” Name the source; preserve attention even when independent metadata changes succeeded. |
-| No patch supplied | “Provide a metadata change or --template.” Invalid. |
-| Incomplete source/Template | Name the unreadable or ambiguous content; no write begins. |
-| Unsafe/ambiguous target | Name the boundary and keep the target unchanged. |
-| Partial failure | Report metadata/body/navigation effects separately on their actual physical paths. |
+| Scenario                   | Proposed default output                                                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Exact metadata no-op       | “The requested metadata is already current. No changes.”                                                                                         |
+| Empty responsibility value | “Removed the responsibility from .agents/guidance/team.md.” Only when the key was actually removed.                                              |
+| Protected Template body    | “The existing body was kept. The Template was not copied.” Name the source; preserve attention even when independent metadata changes succeeded. |
+| No patch supplied          | “Provide a metadata change or --template.” Invalid.                                                                                              |
+| Incomplete source/Template | Name the unreadable or ambiguous content; no write begins.                                                                                       |
+| Unsafe/ambiguous target    | Name the boundary and keep the target unchanged.                                                                                                 |
+| Partial failure            | Report metadata/body/navigation effects separately on their actual physical paths.                                                               |
 
 Repeated tags replace the complete ordered tag list; output must not call them an append. Do not widen Template eligibility or add whole-body replacement as an output improvement.
 
@@ -761,13 +761,13 @@ Question: What moved, and which references/navigation changed with it? [Current 
 
 The two invocations represent alternatives from the same initial fixture, not a sequence in which the old source still exists after the first move.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Complete category move | Name old and new category roots and list every changed member/companion/reference/navigation path. |
-| Repeating the consumed old source | “Source not found: guidance/team.” Invalid, not “already moved.” |
-| Destination exists | “Cannot move to .agents/guidance/review-team.md. The destination already exists.” Blocked. |
-| Managed subject | Explain its actual owner and that Route Move cannot move it under this contract. |
-| Incomplete reference scan | “Cannot prepare the move because reference inspection is incomplete.” No writes. |
+| Scenario                           | Proposed default output                                                                                                     |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Complete category move             | Name old and new category roots and list every changed member/companion/reference/navigation path.                          |
+| Repeating the consumed old source  | “Source not found: guidance/team.” Invalid, not “already moved.”                                                            |
+| Destination exists                 | “Cannot move to .agents/guidance/review-team.md. The destination already exists.” Blocked.                                  |
+| Managed subject                    | Explain its actual owner and that Route Move cannot move it under this contract.                                            |
+| Incomplete reference scan          | “Cannot prepare the move because reference inspection is incomplete.” No writes.                                            |
 | Failure/cancellation after effects | State source/destination existence and verification as actually observed, plus rewritten/unwritten references and recovery. |
 
 There is no generic no-change result for rerunning a move. An extra positional operand can fail at the shell before a Route Move envelope exists. Preserve base/overwrite identity and category semantics; do not turn a category into independent partial leaf moves.
@@ -789,15 +789,15 @@ Question: What was removed, and what happened to incoming links? [Current interf
         Remove the source from Entries.
     No files changed.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Category removal | Name the category and show all selected member, companion, incoming-link, and Entries changes. |
-| Proven intended absence | “The requested target is already absent. No changes.” Only with independent complete proof accepted by the current contract. |
-| Merely missing source | “Source not found: guidance/team.” Invalid; do not infer earlier successful removal. |
-| Managed/unsafe source | Name the actual ownership or safety boundary. Blocked. |
-| Unsupported incoming transformation | Name the reference occurrence that cannot safely be detached. Blocked, not a blind text rewrite. |
-| Incomplete catalogue/reference scan | No deletion begins; explain the missing evidence. |
-| Failure/cancellation after effects | List deleted, retained, uncertain, and untouched paths plus recovery; do not claim rollback. |
+| Scenario                            | Proposed default output                                                                                                      |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Category removal                    | Name the category and show all selected member, companion, incoming-link, and Entries changes.                               |
+| Proven intended absence             | “The requested target is already absent. No changes.” Only with independent complete proof accepted by the current contract. |
+| Merely missing source               | “Source not found: guidance/team.” Invalid; do not infer earlier successful removal.                                         |
+| Managed/unsafe source               | Name the actual ownership or safety boundary. Blocked.                                                                       |
+| Unsupported incoming transformation | Name the reference occurrence that cannot safely be detached. Blocked, not a blind text rewrite.                             |
+| Incomplete catalogue/reference scan | No deletion begins; explain the missing evidence.                                                                            |
+| Failure/cancellation after effects  | List deleted, retained, uncertain, and untouched paths plus recovery; do not claim rollback.                                 |
 
 Removing link markup must preserve the link text only where the accepted reference transformation permits it. A source result that supports another bounded transformation needs its own faithful wording.
 
@@ -824,14 +824,14 @@ Question: Which packages are installed, and which are available from this source
 
 These are hypothetical package IDs and descriptive versions in an illustrative catalogue. They are not claimed bundled packages, and versions do not imply SemVer upgrade policy.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Both sections known empty | “No installed or available Extensions were found.” |
-| Installed section requested and empty | “No installed Extensions are recorded.” |
-| Ownership unavailable | “Installed Extensions could not be read from ownership information.” Preserve the informational/no-gate result and independently available packages. |
-| Available source unavailable | Name the selected source and retain available installed facts; do not print “no packages.” Use the actual attention/incomplete condition. |
-| Invalid source or flags | Name the exact input problem. |
-| Unsafe overlapping source/target | Name both boundaries; blocked. |
+| Scenario                              | Proposed default output                                                                                                                              |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Both sections known empty             | “No installed or available Extensions were found.”                                                                                                   |
+| Installed section requested and empty | “No installed Extensions are recorded.”                                                                                                              |
+| Ownership unavailable                 | “Installed Extensions could not be read from ownership information.” Preserve the informational/no-gate result and independently available packages. |
+| Available source unavailable          | Name the selected source and retain available installed facts; do not print “no packages.” Use the actual attention/incomplete condition.            |
+| Invalid source or flags               | Name the exact input problem.                                                                                                                        |
+| Unsafe overlapping source/target      | Name both boundaries; blocked.                                                                                                                       |
 
 Both sections are intentional. Do not merge identical IDs across Installed and Available or hide an available package because it is installed. --installed and --available retain their current meanings.
 
@@ -856,15 +856,15 @@ Question: What does this package provide, and how does it compare with recorded 
 
 Show the actual path relations and ownership information. Supporting current/intended fingerprints and provenance require full detail in both formats. Neither brief nor normal should add opaque fingerprints to an otherwise useful comparison.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Equal complete comparison | “team-guidance matches the selected package.” |
-| Available but not recorded installed | “team-guidance is available. No installed ownership is recorded.” |
+| Scenario                               | Proposed default output                                                |
+| -------------------------------------- | ---------------------------------------------------------------------- |
+| Equal complete comparison              | “team-guidance matches the selected package.”                          |
+| Available but not recorded installed   | “team-guidance is available. No installed ownership is recorded.”      |
 | Installed facts but unavailable source | State the installed facts and “The package comparison is unavailable.” |
-| Finite complete divergence | Show changed/missing/retired relations and preserve attention. |
-| Incomplete dependency/source facts | State exactly which comparison could not finish. |
-| Invalid/malformed ID | Name the ID grammar or cardinality problem. |
-| Ambiguous or colliding ownership | Name the actual identity conflict; blocked. |
+| Finite complete divergence             | Show changed/missing/retired relations and preserve attention.         |
+| Incomplete dependency/source facts     | State exactly which comparison could not finish.                       |
+| Invalid/malformed ID                   | Name the ID grammar or cardinality problem.                            |
+| Ambiguous or colliding ownership       | Name the actual identity conflict; blocked.                            |
 
 Unknown/unavailable ownership is not evidence that a path is safe to adopt or delete. “Not recorded” and “not present” are different claims.
 
@@ -886,14 +886,14 @@ This brief transcript is a heading excerpt: the complete receipt must also enume
 
 The final sentence marks this as an excerpt. Actual normal-detail output must print the path list, then “No files changed.”
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Identical intended scaffold | “The team-guidance scaffold already matches the request. No changes.” |
-| Different existing destination | “Cannot create team-guidance. Its destination contains different content.” Blocked. |
-| Missing ID/path in noninteractive mode | Name whichever required value is missing and provide a valid explicit example. Invalid. |
-| Unreadable catalogue fact | “The scaffold could not be planned completely. Could not inspect …” |
-| Failure halfway through create | Name created, failed, and remaining scaffold paths. Do not imply a workspace recovery bundle exists. |
-| User cancels | Describe whether input ended before planning or creation stopped after effects; preserve the actual result code. |
+| Scenario                               | Proposed default output                                                                                          |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Identical intended scaffold            | “The team-guidance scaffold already matches the request. No changes.”                                            |
+| Different existing destination         | “Cannot create team-guidance. Its destination contains different content.” Blocked.                              |
+| Missing ID/path in noninteractive mode | Name whichever required value is missing and provide a valid explicit example. Invalid.                          |
+| Unreadable catalogue fact              | “The scaffold could not be planned completely. Could not inspect …”                                              |
+| Failure halfway through create         | Name created, failed, and remaining scaffold paths. Do not imply a workspace recovery bundle exists.             |
+| User cancels                           | Describe whether input ended before planning or creation stopped after effects; preserve the actual result code. |
 
 No attention state is currently defined. --workspace is a valid no-op here; the catalogue is the subject. This operation creates content/ package layout and does not install the package into a workspace.
 
@@ -914,15 +914,15 @@ The fixture assumes destination admission is already granted. When it is not, sh
 
 Normal detail retains these effects and adds source catalogue, root selection versus dependency closure, versions, current/intended comparison, permission facts, verification, and recovery when applicable. Do not repeat a common dependency's files under every selected package.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Exact installed no-op | “team-guidance is already installed with the intended content. No changes.” |
-| Current managed divergence | “Cannot install over the changed team-guidance installation.” Name the path; Next: open-forge extension update team-guidance --source ../catalogue --dry-run. |
-| Explicit preview | Prefix “Preview: install …” and show the whole dependency/effect plan. No writes. |
-| No selection from a multi-package catalogue | Show that exact IDs or --all are required, and suggest extension list with the same source. Preserve the current typed selection-required status. |
-| Missing dependency | Name required package and requesting package, within the selected offline source universe. |
-| Missing permission | Name the exact destination scope. Do not silently add --force or --all. |
-| Partial application | Show package/file effects and ownership-publication state; a root package headline must not imply all dependencies installed. |
+| Scenario                                    | Proposed default output                                                                                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Exact installed no-op                       | “team-guidance is already installed with the intended content. No changes.”                                                                                   |
+| Current managed divergence                  | “Cannot install over the changed team-guidance installation.” Name the path; Next: open-forge extension update team-guidance --source ../catalogue --dry-run. |
+| Explicit preview                            | Prefix “Preview: install …” and show the whole dependency/effect plan. No writes.                                                                             |
+| No selection from a multi-package catalogue | Show that exact IDs or --all are required, and suggest extension list with the same source. Preserve the current typed selection-required status.             |
+| Missing dependency                          | Name required package and requesting package, within the selected offline source universe.                                                                    |
+| Missing permission                          | Name the exact destination scope. Do not silently add --force or --all.                                                                                       |
+| Partial application                         | Show package/file effects and ownership-publication state; a root package headline must not imply all dependencies installed.                                 |
 
 Keep current single-package inference where the resolver legitimately supports it. Do not invent an extra selection prompt for a request whose subject is already exact.
 
@@ -938,15 +938,15 @@ Question: Which selected installed packages changed against the selected source?
 
 Normal detail adds available/installed descriptive versions, selected dependency closure, exact current/intended/retired path relations, grants, verification, and recovery protection. A differing version string is not itself proof that content changed.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Verified no-op | “team-guidance already matches the selected package. No changes.” |
-| Retired content preserved | “Updated team-guidance. Kept 1 retired file: …” Status attention; suggest the same source/ID request with --prune --dry-run. |
-| Installed ownership cannot be established | “team-guidance could not be matched to installed ownership. No update effects were inferred.” Preserve the command's attention condition. |
-| Complete --all with no selected managed packages | Report the actual complete empty selection; do not infer packages from disk. |
-| Incomplete source/dependencies | Name the missing fact and show no writes for pre-effect failure. |
-| Cross-owner collision or unsafe projection | Name package, target, and conflicting owner. Blocked. |
-| Failure/cancellation | Retain exact verified paths, not-started paths, ownership publication, and recovery. |
+| Scenario                                         | Proposed default output                                                                                                                   |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Verified no-op                                   | “team-guidance already matches the selected package. No changes.”                                                                         |
+| Retired content preserved                        | “Updated team-guidance. Kept 1 retired file: …” Status attention; suggest the same source/ID request with --prune --dry-run.              |
+| Installed ownership cannot be established        | “team-guidance could not be matched to installed ownership. No update effects were inferred.” Preserve the command's attention condition. |
+| Complete --all with no selected managed packages | Report the actual complete empty selection; do not infer packages from disk.                                                              |
+| Incomplete source/dependencies                   | Name the missing fact and show no writes for pre-effect failure.                                                                          |
+| Cross-owner collision or unsafe projection       | Name package, target, and conflicting owner. Blocked.                                                                                     |
+| Failure/cancellation                             | Retain exact verified paths, not-started paths, ownership publication, and recovery.                                                      |
 
 --all is explicit and conflicts with explicit IDs. Keep source selection offline and exact. Do not revive baseline fingerprints or silently change force/prune semantics.
 
@@ -972,15 +972,15 @@ Question: Which ownership claims and final-owner files were removed? [Current in
 
 The preview uses a fixture with one shared file; it is a different result from the first example. It makes the shared-owner distinction concrete.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| No selected claims | “No ownership is recorded for team-guidance. No files were removed.” |
-| Ownership unavailable | Say ownership could not be read and no deletion was inferred. Do not call the package safely absent. |
-| Orphaned dependency remains | “Removed team-guidance. review-tools remains installed and is no longer required by it.” Preserve attention only under the actual orphan condition. |
-| Retained dependent blocks removal | Name the installed dependent that still needs the selected package. |
-| Missing permission | Name the denied destination scope; preserve claim/effect facts. |
-| Incomplete route/recovery facts | No mutation begins; identify the unavailable boundary. |
-| Partial removal | Show removed claims, deleted files, retained shared files, failed/unknown effects, and bundle path exactly as observed. |
+| Scenario                          | Proposed default output                                                                                                                             |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No selected claims                | “No ownership is recorded for team-guidance. No files were removed.”                                                                                |
+| Ownership unavailable             | Say ownership could not be read and no deletion was inferred. Do not call the package safely absent.                                                |
+| Orphaned dependency remains       | “Removed team-guidance. review-tools remains installed and is no longer required by it.” Preserve attention only under the actual orphan condition. |
+| Retained dependent blocks removal | Name the installed dependent that still needs the selected package.                                                                                 |
+| Missing permission                | Name the denied destination scope; preserve claim/effect facts.                                                                                     |
+| Incomplete route/recovery facts   | No mutation begins; identify the unavailable boundary.                                                                                              |
+| Partial removal                   | Show removed claims, deleted files, retained shared files, failed/unknown effects, and bundle path exactly as observed.                             |
 
 Current removal does not distinguish changed versus unchanged final-owner content through stored baselines. There is no --prune, --force, --all, or --source for this leaf. Its retained verified recovery is ordinary success, not cleanup failure.
 
@@ -1004,14 +1004,14 @@ Question: Which Library registrations and registered links can be observed? [Cur
 
 Normal detail should list actual abnormal registered-link observations and supporting record facts. A normal result must not imply that new or retired source files were checked; that belongs to inspect.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Known empty registration set | “No Libraries are registered.” |
-| Ownership missing/unusable | “No Library registrations could be read. Ownership information is unavailable.” Preserve complete plus informational finding where current policy does. |
-| Missing/changed registered link | “team-knowledge needs attention: 1 registered link is missing.” Show its destination. |
-| Unreadable registered-link fact | “Library observations are incomplete.” Name the ID/path. |
-| Invalid recorded source shape | Name the malformed source-root/claim condition; use the command's invalid result. |
-| Unsafe identity or containment | Name the boundary; blocked. |
+| Scenario                        | Proposed default output                                                                                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Known empty registration set    | “No Libraries are registered.”                                                                                                                          |
+| Ownership missing/unusable      | “No Library registrations could be read. Ownership information is unavailable.” Preserve complete plus informational finding where current policy does. |
+| Missing/changed registered link | “team-knowledge needs attention: 1 registered link is missing.” Show its destination.                                                                   |
+| Unreadable registered-link fact | “Library observations are incomplete.” Name the ID/path.                                                                                                |
+| Invalid recorded source shape   | Name the malformed source-root/claim condition; use the command's invalid result.                                                                       |
+| Unsafe identity or containment  | Name the boundary; blocked.                                                                                                                             |
 
 Do not print the removed Libraries record path. Registration evidence comes from the libraries section of .agents/open-forge.lock.json.
 
@@ -1032,15 +1032,15 @@ Question: How does the complete source inventory compare with this Library's pro
 
 The complete normal-detail result adds each ordered source/destination relation and actual link evidence. Do not show invented fingerprints for a link identity.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Complete empty source/registration | “team-knowledge is current. No eligible source files or registered links.” |
-| New source files | “team-knowledge has 2 source files that are not projected.” Show the mappings; attention, with a sync --dry-run recommendation when safe. |
-| Retired source files | “team-knowledge has 1 retired projection.” Show the exact registered destination. |
-| Missing/changed links | Show each actual relation; do not suggest sync can overwrite an ordinary replacement file. |
-| Source unavailable | “team-knowledge could not be fully inspected. Source unavailable: vendor/team-knowledge.” Incomplete, never an empty inventory. |
-| Unknown ID with established records | “Library not found: team-knowledge.” Invalid. |
-| Unsafe mapping/source/link | Name the exact boundary and preserve blocked. |
+| Scenario                            | Proposed default output                                                                                                                   |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Complete empty source/registration  | “team-knowledge is current. No eligible source files or registered links.”                                                                |
+| New source files                    | “team-knowledge has 2 source files that are not projected.” Show the mappings; attention, with a sync --dry-run recommendation when safe. |
+| Retired source files                | “team-knowledge has 1 retired projection.” Show the exact registered destination.                                                         |
+| Missing/changed links               | Show each actual relation; do not suggest sync can overwrite an ordinary replacement file.                                                |
+| Source unavailable                  | “team-knowledge could not be fully inspected. Source unavailable: vendor/team-knowledge.” Incomplete, never an empty inventory.           |
+| Unknown ID with established records | “Library not found: team-knowledge.” Invalid.                                                                                             |
+| Unsafe mapping/source/link          | Name the exact boundary and preserve blocked.                                                                                             |
 
 Unlike list, inspect claims a complete source inventory only when that inventory actually finished.
 
@@ -1068,15 +1068,15 @@ The grant-publication line is present only when this explicit grant changes sett
 
 That preview assumes the required destination grant is already present; otherwise report the missing grant rather than a ready-to-apply plan.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Empty eligible source | “Attached team-knowledge. The source contains no eligible files.” A verified registration can still be a change. |
-| Repeated registered ID | “Cannot attach team-knowledge. That Library ID is already registered.” Blocked, not an idempotent attach no-op. |
-| Missing source directory | “Source directory not found: vendor/team-knowledge.” Invalid. |
-| Incomplete source inventory | “The Library could not be attached because its source inventory is incomplete.” No writes. |
-| Destination collision | “Cannot create .agents/guidance/team.md. An unrelated file already exists.” |
-| Link capability unavailable | State the observed capability boundary; do not silently copy instead. |
-| Partial failure | State which links verified, whether settings/ownership published, which mappings remain, and exact recovery facts. |
+| Scenario                    | Proposed default output                                                                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Empty eligible source       | “Attached team-knowledge. The source contains no eligible files.” A verified registration can still be a change.   |
+| Repeated registered ID      | “Cannot attach team-knowledge. That Library ID is already registered.” Blocked, not an idempotent attach no-op.    |
+| Missing source directory    | “Source directory not found: vendor/team-knowledge.” Invalid.                                                      |
+| Incomplete source inventory | “The Library could not be attached because its source inventory is incomplete.” No writes.                         |
+| Destination collision       | “Cannot create .agents/guidance/team.md. An unrelated file already exists.”                                        |
+| Link capability unavailable | State the observed capability boundary; do not silently copy instead.                                              |
+| Partial failure             | State which links verified, whether settings/ownership published, which mappings remain, and exact recovery facts. |
 
 The source root is a portable relative directory strictly inside the workspace. Do not use an external ../ source root or claim Library attach is the same input model as Extension --source. Preserve source contents.
 
@@ -1100,15 +1100,15 @@ Question: Which added or retired mappings were reconciled against the current so
       Update .agents/open-forge.lock.json
     No files changed.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Verified no-op | “team-knowledge is current. No changes.” |
-| Ownership unavailable | “No Library changes were inferred. Ownership information is unavailable.” Current planner can return an informational complete no-effect result. |
-| Established record, unknown ID | “Library not found: team-knowledge.” Preserve invalid, distinct from missing ownership information. |
-| Missing/unreadable source | “Cannot complete the sync. Source unavailable: vendor/team-knowledge.” Incomplete; no retirements are inferred. |
-| Changed destination occupant | “Cannot replace .agents/guidance/team.md. It no longer matches the registered link.” Blocked. |
-| Recovery cleanup retained | Show successful links and exact residual path; attention. |
-| Partial failure/cancellation | Show actual link states and whether final registration publication occurred. |
+| Scenario                       | Proposed default output                                                                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Verified no-op                 | “team-knowledge is current. No changes.”                                                                                                         |
+| Ownership unavailable          | “No Library changes were inferred. Ownership information is unavailable.” Current planner can return an informational complete no-effect result. |
+| Established record, unknown ID | “Library not found: team-knowledge.” Preserve invalid, distinct from missing ownership information.                                              |
+| Missing/unreadable source      | “Cannot complete the sync. Source unavailable: vendor/team-knowledge.” Incomplete; no retirements are inferred.                                  |
+| Changed destination occupant   | “Cannot replace .agents/guidance/team.md. It no longer matches the registered link.” Blocked.                                                    |
+| Recovery cleanup retained      | Show successful links and exact residual path; attention.                                                                                        |
+| Partial failure/cancellation   | Show actual link states and whether final registration publication occurred.                                                                     |
 
 There is no --force, --automatic, or --prune for sync. Do not promise that a missing or changed registered link can always be repaired by sync; its exact preconditions control that result.
 
@@ -1131,15 +1131,15 @@ Question: Which exact registered projections and claims were removed? [Current i
     Source: vendor/team-knowledge; unchanged.
     No files changed.
 
-| Scenario | Proposed default output |
-| --- | --- |
-| Registration with no links | Report removal of the registration and any actual generated effect. Do not call it “nothing changed.” |
-| Ownership unavailable | “No Library files were removed. Ownership information is unavailable.” Preserve the current informational complete no-effect result. |
-| Unknown ID in established records | “Library not found: team-knowledge.” Invalid; a second detach is not automatically a no-op. |
-| Source absent but exact links provable | Detach can still complete because it is source-independent. |
+| Scenario                                     | Proposed default output                                                                                                                          |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Registration with no links                   | Report removal of the registration and any actual generated effect. Do not call it “nothing changed.”                                            |
+| Ownership unavailable                        | “No Library files were removed. Ownership information is unavailable.” Preserve the current informational complete no-effect result.             |
+| Unknown ID in established records            | “Library not found: team-knowledge.” Invalid; a second detach is not automatically a no-op.                                                      |
+| Source absent but exact links provable       | Detach can still complete because it is source-independent.                                                                                      |
 | Changed/missing/unproven registered occupant | “Cannot detach team-knowledge safely. The registered destination no longer has the expected link.” Name the path; no partial preflight deletion. |
-| Incomplete consumer/recovery facts | Explain which required fact cannot be established. |
-| Failure/cancellation after effects | State removed links, remaining/uncertain links, claim-publication state, and recovery. |
+| Incomplete consumer/recovery facts           | Explain which required fact cannot be established.                                                                                               |
+| Failure/cancellation after effects           | State removed links, remaining/uncertain links, claim-publication state, and recovery.                                                           |
 
 Detach does not remove source files. It does not ignore changed occupants or silently implement partial detach. Preserve other Framework, Extension, and Library claims when updating the shared lock.
 
@@ -1225,36 +1225,36 @@ If formatting or writing fails after effects, never rerun the operation to recon
 
 All 28 leaves retain invalid, failed, and interrupted in their current contracts. Every leaf can report a required-coverage incomplete result or an unsafe-boundary blocked result. Their exact producers and precedence remain command-local; these generic rows are not permission to broaden them.
 
-| Command | Complete empty or no-change case | Attention condition to retain | Partial effects when application fails/cancels |
-| --- | --- | --- | --- |
-| status | Complete observation, including accurately absent components | Established drift, relevant lifecycle observation, or recognized recovery | No writes |
-| doctor | Complete diagnosis without actionable warnings/errors | Actionable warnings/errors with complete coverage | No writes |
-| install | Exact managed installation | Positively retained recovery after cleanup failure | Yes |
-| update | Verified no selected changes | Kept retired content | Yes; intended recovery retention can still be complete |
-| index | All selected regions current | Positively retained recovery | Yes |
-| repair | No needed edits within the selected complete scope | Remaining selected-scope findings or retained cleanup residual | Yes; post-diagnosis also matters |
-| cleanup | Complete empty catalogue | Not currently reachable | Yes; verified deletions stay deleted |
-| context | Complete empty additions/projection | Known absent section or safe case mismatch | No writes |
-| find | Complete zero matches | Known projection omission or identity collision | No writes |
-| references | No authored occurrences in requested directions | Safe authored-form/identity findings | No writes |
-| route list | Complete empty roots or requested topology | Safe authored-form/identity findings | No writes |
-| route inspect | Complete observed profile | Resolved exact source with non-unique automatic ID | No writes |
-| route init | Already initialized, verified equivalent state | NeedsAuthoring or retained cleanup residual | Yes |
-| route create | Exactly matching intended target | Retained cleanup residual | Yes |
-| route update | Requested patch is already satisfied | Protected Template body or retained cleanup residual | Yes |
-| route move | Repeating a consumed source is invalid, not no-op | Retained cleanup residual | Yes |
-| route remove | Intended absence only if independently proven | Retained cleanup residual | Yes |
-| extension list | Known empty requested sections | Finite source/installed observations | No writes |
-| extension inspect | Complete equal or valid empty comparison | Finite complete comparison divergence | No writes |
-| extension create | Exact intended scaffold exists | Not currently reachable | Yes; no workspace bundle is implied |
-| extension install | Exact installed package content | Finite accepted observation or retained cleanup residual | Yes |
-| extension update | Exact complete selected source comparison | Retired content or ownership cannot be established | Yes |
-| extension remove | No selected claims; no inferred deletion | Finite orphaned-dependency observation | Yes |
-| library list | Known empty registrations or informational ownership absence | Missing/changed registered links | No writes |
-| library inspect | Complete empty or matching inventory/projection | Safe additions, retirements, missing/changed links | No writes |
-| library attach | Empty source can still require a new registration; duplicate ID is blocked | Retained cleanup residual | Yes |
-| library sync | Verified current projection or informational ownership absence | Retained cleanup residual | Yes |
-| library detach | Empty registration can still be removed; unknown ID is invalid | Retained cleanup residual | Yes |
+| Command           | Complete empty or no-change case                                           | Attention condition to retain                                             | Partial effects when application fails/cancels         |
+| ----------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------ |
+| status            | Complete observation, including accurately absent components               | Established drift, relevant lifecycle observation, or recognized recovery | No writes                                              |
+| doctor            | Complete diagnosis without actionable warnings/errors                      | Actionable warnings/errors with complete coverage                         | No writes                                              |
+| install           | Exact managed installation                                                 | Positively retained recovery after cleanup failure                        | Yes                                                    |
+| update            | Verified no selected changes                                               | Kept retired content                                                      | Yes; intended recovery retention can still be complete |
+| index             | All selected regions current                                               | Positively retained recovery                                              | Yes                                                    |
+| repair            | No needed edits within the selected complete scope                         | Remaining selected-scope findings or retained cleanup residual            | Yes; post-diagnosis also matters                       |
+| cleanup           | Complete empty catalogue                                                   | Not currently reachable                                                   | Yes; verified deletions stay deleted                   |
+| context           | Complete empty additions/projection                                        | Known absent section or safe case mismatch                                | No writes                                              |
+| find              | Complete zero matches                                                      | Known projection omission or identity collision                           | No writes                                              |
+| references        | No authored occurrences in requested directions                            | Safe authored-form/identity findings                                      | No writes                                              |
+| route list        | Complete empty roots or requested topology                                 | Safe authored-form/identity findings                                      | No writes                                              |
+| route inspect     | Complete observed profile                                                  | Resolved exact source with non-unique automatic ID                        | No writes                                              |
+| route init        | Already initialized, verified equivalent state                             | NeedsAuthoring or retained cleanup residual                               | Yes                                                    |
+| route create      | Exactly matching intended target                                           | Retained cleanup residual                                                 | Yes                                                    |
+| route update      | Requested patch is already satisfied                                       | Protected Template body or retained cleanup residual                      | Yes                                                    |
+| route move        | Repeating a consumed source is invalid, not no-op                          | Retained cleanup residual                                                 | Yes                                                    |
+| route remove      | Intended absence only if independently proven                              | Retained cleanup residual                                                 | Yes                                                    |
+| extension list    | Known empty requested sections                                             | Finite source/installed observations                                      | No writes                                              |
+| extension inspect | Complete equal or valid empty comparison                                   | Finite complete comparison divergence                                     | No writes                                              |
+| extension create  | Exact intended scaffold exists                                             | Not currently reachable                                                   | Yes; no workspace bundle is implied                    |
+| extension install | Exact installed package content                                            | Finite accepted observation or retained cleanup residual                  | Yes                                                    |
+| extension update  | Exact complete selected source comparison                                  | Retired content or ownership cannot be established                        | Yes                                                    |
+| extension remove  | No selected claims; no inferred deletion                                   | Finite orphaned-dependency observation                                    | Yes                                                    |
+| library list      | Known empty registrations or informational ownership absence               | Missing/changed registered links                                          | No writes                                              |
+| library inspect   | Complete empty or matching inventory/projection                            | Safe additions, retirements, missing/changed links                        | No writes                                              |
+| library attach    | Empty source can still require a new registration; duplicate ID is blocked | Retained cleanup residual                                                 | Yes                                                    |
+| library sync      | Verified current projection or informational ownership absence             | Retained cleanup residual                                                 | Yes                                                    |
+| library detach    | Empty registration can still be removed; unknown ID is invalid             | Retained cleanup residual                                                 | Yes                                                    |
 
 For each incomplete/blocked row, the corresponding command section names representative actual boundaries. The shared invalid/failure/cancellation templates supply the wording form, while snapshots must use that command's real result fields and finite findings. Do not create 196 nearly identical tests by multiplying 28 commands by seven statuses without checking reachability.
 
@@ -1401,36 +1401,36 @@ This matrix defines information selection for both renderers. Brief and normal c
 
 For every command, preserve its actual status, relevant coverage limits, exact requested payloads, indispensable subjects/actions, and essential mutation receipt. A full field list is a schema-freeze deliverable, not permission for the JSON renderer to serialize unselected internal objects. The following memberships are proposed semantics; the complete current wire graphs are evidence for mapping full detail, not the default payloads to keep unchanged.
 
-| Command | Brief: smallest useful answer | Normal adds | Full adds |
-| --- | --- | --- | --- |
-| status | Installed/usable state, startup estimate, route freshness summary, actionable boundaries and residuals | Context comparisons, continuity and available totals, meaningful Framework/Extension/Library summaries | Source-level measurements, full lifecycle/target observations, detailed coverage and supporting findings |
-| doctor | Diagnosis coverage, severity counts, indispensable inability-to-diagnose reasons | Selected error/warning finding identities, subjects, messages and direct actions; default limit 20 | Information findings by default; all domain facts, resolution counts, evidence, candidates, proposals and provenance; no default finding cap |
-| install | Outcome, every created/updated path and publication, unresolved effects/recovery | Source version/authority, relevant generated-region changes, verification summary | Full plan/comparison and verification evidence, exact protection/recovery observations |
-| update | Outcome, replaced/restored/deleted/retained paths, publication and recovery | Current-to-intended relations, mode and source version, why retired paths remain | Supporting comparison/fingerprint facts, complete plan/verification and recovery evidence |
-| index | Changed Entries hosts once, no-op when proved, unresolved host paths | Which entries changed and why a host was skipped or blocked | Complete per-host projection/comparison and verification evidence |
-| repair | Exact selected occurrence/replacement, effected files, unresolved choices and receipt | Applicable rule/choice explanation, admissibility and verification summary | Selected proposal evidence, candidate basis, precise input/output spans, full verification/recovery facts |
-| cleanup | Every deleted/retained/failed bundle or draft path and final state | Why each artifact was eligible or retained | Full catalogue admission/integrity facts, lease/removal verification, uncertain observations |
-| context | Selection identity and coverage, every requested source/layer and exact selected authored content | Why those sources/layers were included and applicable scope relationships | Complete selection provenance, inclusion reasoning and coordinate support; never add unrequested source body |
-| find | Every matching source identity/path and any explicitly requested content projections | Descriptions, tags, headings and matching explanation relevant to the query | Complete matching evidence and provenance; identical match membership and authored content |
-| references | Every selected occurrence, source location, written/resolved target and relevant state | Direction, target-resolution explanation and actionable findings | Full byte/layer coordinates, destination locations and provenance; no occurrence deduplication |
-| route list | Every row in the requested depth, preserving ID/path and hierarchy | Kind, description, tags, parent/depth and observed direct-child facts | Route/source provenance and complete supporting row observations; no depth expansion |
-| route inspect | Selected identity, route chain, effective layer identities and important ambiguity | Effective metadata, scope/overwrite explanation and applicable navigation relationships | Complete metadata/layer provenance and route explanations; no unsolicited authored body |
-| route init | Every created entrypoint and updated Entries/ownership path; NeedsAuthoring condition | Effective metadata/scaffold mode and verification summary | Complete chain/ancestor plan and validation/comparison/recovery evidence |
-| route create | Created subject and every changed parent/publication path | Effective metadata, Template identity and verification summary | Actual intended body/diff when represented, complete Template/plan/verification/recovery evidence |
-| route update | Subject, changed field names, all other affected paths, preserved-body condition | Before/after metadata values and explanation of eligible/protected Template body | Complete planned field/body comparisons, provenance, verification and recovery support |
-| route move | Exact old/new identity, all changed link/navigation/publication paths and unresolved effects | Each rewritten destination and explanation of applicability | Complete occurrence coordinates, planned edits, identity proof and verification/recovery evidence |
-| route remove | Removed subject, link/navigation effects, preserved authored labels and recovery | Exact affected occurrences and detached destination explanation | Complete occurrence/effect plan, guard/verification and recovery observations |
-| extension list | Every selected Installed/Available ID and descriptive version, independently honest availability | Package descriptions, source identities and abnormal observations | Full ownership/catalogue/dependency coverage and supporting findings; no new source scan |
-| extension inspect | Package identity/versions, meaningful path differences and unavailable comparison | Source, dependencies, current/intended/retired relations and owners | Supporting comparison fingerprints, package/source/ownership evidence and provenance |
-| extension create | Catalogue/package identity and every created scaffold path | Effective package metadata/dependencies, authoring reminder and validation summary | Full schema/content validation and operation evidence actually present in the result |
-| extension install | Selected roots/dependencies, every changed physical path, grants/publication and recovery | Source/version, why dependencies were selected, comparison and verification summary | Full dependency/permission/comparison plan, file verification and recovery evidence |
-| extension update | Selected packages, changed/retained paths, grants/publication and recovery | Versions, dependency closure and current/intended/retired relations | Full comparison/fingerprint, permission, verification and protection evidence |
-| extension remove | Removed packages, deleted/shared-kept paths, ownership publication, orphan condition and recovery | Why shared owners/dependencies require retained files or packages | Complete owner/dependency relationships, effect plan and verification/recovery evidence |
-| library list | Every registered Library ID and mapping, abnormal links or unavailable registration knowledge | Registered-link states and ownership-record/source boundary explanation | Full record and link observations/provenance; source inventory remains not-requested |
-| library inspect | Mapping, changed/new/retired/unsafe source-link relations and inventory coverage | Every source/destination relation and link-state explanation | Full source inventory and exact relative-target/link identity evidence; no invented fingerprints |
-| library attach | Library mapping, every created link, grants/ownership publication and unresolved recovery | Exact relative link targets, inventory and verification summary | Complete admission/permission/inventory facts, link verification and recovery evidence |
-| library sync | Added/removed/retained link paths, record publication, unchanged source boundary and recovery | Source/destination relations and reasons for differences | Complete source inventory, link/ownership comparisons, verification and recovery evidence |
-| library detach | Every removed link, record publication, source left in place and residuals | Exact registered mappings and why each link is removable | Complete no-follow identity/admission proof, verification and recovery evidence |
+| Command           | Brief: smallest useful answer                                                                          | Normal adds                                                                                            | Full adds                                                                                                                                    |
+| ----------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| status            | Installed/usable state, startup estimate, route freshness summary, actionable boundaries and residuals | Context comparisons, continuity and available totals, meaningful Framework/Extension/Library summaries | Source-level measurements, full lifecycle/target observations, detailed coverage and supporting findings                                     |
+| doctor            | Diagnosis coverage, severity counts, indispensable inability-to-diagnose reasons                       | Selected error/warning finding identities, subjects, messages and direct actions; default limit 20     | Information findings by default; all domain facts, resolution counts, evidence, candidates, proposals and provenance; no default finding cap |
+| install           | Outcome, every created/updated path and publication, unresolved effects/recovery                       | Source version/authority, relevant generated-region changes, verification summary                      | Full plan/comparison and verification evidence, exact protection/recovery observations                                                       |
+| update            | Outcome, replaced/restored/deleted/retained paths, publication and recovery                            | Current-to-intended relations, mode and source version, why retired paths remain                       | Supporting comparison/fingerprint facts, complete plan/verification and recovery evidence                                                    |
+| index             | Changed Entries hosts once, no-op when proved, unresolved host paths                                   | Which entries changed and why a host was skipped or blocked                                            | Complete per-host projection/comparison and verification evidence                                                                            |
+| repair            | Exact selected occurrence/replacement, effected files, unresolved choices and receipt                  | Applicable rule/choice explanation, admissibility and verification summary                             | Selected proposal evidence, candidate basis, precise input/output spans, full verification/recovery facts                                    |
+| cleanup           | Every deleted/retained/failed bundle or draft path and final state                                     | Why each artifact was eligible or retained                                                             | Full catalogue admission/integrity facts, lease/removal verification, uncertain observations                                                 |
+| context           | Selection identity and coverage, every requested source/layer and exact selected authored content      | Why those sources/layers were included and applicable scope relationships                              | Complete selection provenance, inclusion reasoning and coordinate support; never add unrequested source body                                 |
+| find              | Every matching source identity/path and any explicitly requested content projections                   | Descriptions, tags, headings and matching explanation relevant to the query                            | Complete matching evidence and provenance; identical match membership and authored content                                                   |
+| references        | Every selected occurrence, source location, written/resolved target and relevant state                 | Direction, target-resolution explanation and actionable findings                                       | Full byte/layer coordinates, destination locations and provenance; no occurrence deduplication                                               |
+| route list        | Every row in the requested depth, preserving ID/path and hierarchy                                     | Kind, description, tags, parent/depth and observed direct-child facts                                  | Route/source provenance and complete supporting row observations; no depth expansion                                                         |
+| route inspect     | Selected identity, route chain, effective layer identities and important ambiguity                     | Effective metadata, scope/overwrite explanation and applicable navigation relationships                | Complete metadata/layer provenance and route explanations; no unsolicited authored body                                                      |
+| route init        | Every created entrypoint and updated Entries/ownership path; NeedsAuthoring condition                  | Effective metadata/scaffold mode and verification summary                                              | Complete chain/ancestor plan and validation/comparison/recovery evidence                                                                     |
+| route create      | Created subject and every changed parent/publication path                                              | Effective metadata, Template identity and verification summary                                         | Actual intended body/diff when represented, complete Template/plan/verification/recovery evidence                                            |
+| route update      | Subject, changed field names, all other affected paths, preserved-body condition                       | Before/after metadata values and explanation of eligible/protected Template body                       | Complete planned field/body comparisons, provenance, verification and recovery support                                                       |
+| route move        | Exact old/new identity, all changed link/navigation/publication paths and unresolved effects           | Each rewritten destination and explanation of applicability                                            | Complete occurrence coordinates, planned edits, identity proof and verification/recovery evidence                                            |
+| route remove      | Removed subject, link/navigation effects, preserved authored labels and recovery                       | Exact affected occurrences and detached destination explanation                                        | Complete occurrence/effect plan, guard/verification and recovery observations                                                                |
+| extension list    | Every selected Installed/Available ID and descriptive version, independently honest availability       | Package descriptions, source identities and abnormal observations                                      | Full ownership/catalogue/dependency coverage and supporting findings; no new source scan                                                     |
+| extension inspect | Package identity/versions, meaningful path differences and unavailable comparison                      | Source, dependencies, current/intended/retired relations and owners                                    | Supporting comparison fingerprints, package/source/ownership evidence and provenance                                                         |
+| extension create  | Catalogue/package identity and every created scaffold path                                             | Effective package metadata/dependencies, authoring reminder and validation summary                     | Full schema/content validation and operation evidence actually present in the result                                                         |
+| extension install | Selected roots/dependencies, every changed physical path, grants/publication and recovery              | Source/version, why dependencies were selected, comparison and verification summary                    | Full dependency/permission/comparison plan, file verification and recovery evidence                                                          |
+| extension update  | Selected packages, changed/retained paths, grants/publication and recovery                             | Versions, dependency closure and current/intended/retired relations                                    | Full comparison/fingerprint, permission, verification and protection evidence                                                                |
+| extension remove  | Removed packages, deleted/shared-kept paths, ownership publication, orphan condition and recovery      | Why shared owners/dependencies require retained files or packages                                      | Complete owner/dependency relationships, effect plan and verification/recovery evidence                                                      |
+| library list      | Every registered Library ID and mapping, abnormal links or unavailable registration knowledge          | Registered-link states and ownership-record/source boundary explanation                                | Full record and link observations/provenance; source inventory remains not-requested                                                         |
+| library inspect   | Mapping, changed/new/retired/unsafe source-link relations and inventory coverage                       | Every source/destination relation and link-state explanation                                           | Full source inventory and exact relative-target/link identity evidence; no invented fingerprints                                             |
+| library attach    | Library mapping, every created link, grants/ownership publication and unresolved recovery              | Exact relative link targets, inventory and verification summary                                        | Complete admission/permission/inventory facts, link verification and recovery evidence                                                       |
+| library sync      | Added/removed/retained link paths, record publication, unchanged source boundary and recovery          | Source/destination relations and reasons for differences                                               | Complete source inventory, link/ownership comparisons, verification and recovery evidence                                                    |
+| library detach    | Every removed link, record publication, source left in place and residuals                             | Exact registered mappings and why each link is removable                                               | Complete no-follow identity/admission proof, verification and recovery evidence                                                              |
 
 A mutation's brief receipt is complete about user-relevant effects, not about every internal planning field. It must retain physical paths, effect kind, verified/failed/unknown/not-started distinctions when relevant, exact move/link identities, ownership/settings publication, retained subjects, and recovery location/disposition. Normal/full add explanation and support. Both brief text and brief JSON use this same minimum. Do not justify a huge default JSON graph by calling all diagnostic support an indispensable receipt.
 
@@ -1543,37 +1543,37 @@ No prompts when --projection json is selected, in redirected/non-prompt-capable 
 
 ### Fields that every command must settle
 
-| G4 item | Decision in this report |
-| --- | --- |
-| User question | Stated in each of the 28 command sections |
-| Default tier | Brief for every domain command and renderer; normal/full add information |
-| Selected fields | One selection stage; summary/data/change-report rules and all 28 rows of the shared selection matrix |
-| Healthy/zero/not-applicable suppression | Exclude irrelevant sections before rendering; retain explicit unknown-versus-empty distinctions for selected facts |
-| Ordering | Shared selected order for both formats; Doctor severity-first detail is an explicit presentation change |
-| Subject | Exact source path/location, package ID, Library ID, or workspace boundary |
-| Next | At most one useful action; preserve subject/source/workspace and avoid unsafe or irrecoverable replays |
-| Context echo | Explicit workspace or uncertain/failed boundary; normal/full text adds useful source/target context; JSON retains workspace metadata |
-| Size budget | Named fixture budgets with content/identity/receipt exceptions and Doctor detail limits |
-| JSON projection | New schema 3 for all levels; brief is actually small, normal is selected detail, full supplies support; parser exception retained |
-| Exit/stream meaning | Seven current results and terminal/shell exceptions retained |
-| Escaping/line endings | One human scalar rule, serializer-owned JSON, host structure normalization, exact authored content |
-| Acceptance | The user has clarified the shared detail model and lightweight default; exact flags/schemas/transcripts still need the later explicit freeze |
+| G4 item                                 | Decision in this report                                                                                                                      |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| User question                           | Stated in each of the 28 command sections                                                                                                    |
+| Default tier                            | Brief for every domain command and renderer; normal/full add information                                                                     |
+| Selected fields                         | One selection stage; summary/data/change-report rules and all 28 rows of the shared selection matrix                                         |
+| Healthy/zero/not-applicable suppression | Exclude irrelevant sections before rendering; retain explicit unknown-versus-empty distinctions for selected facts                           |
+| Ordering                                | Shared selected order for both formats; Doctor severity-first detail is an explicit presentation change                                      |
+| Subject                                 | Exact source path/location, package ID, Library ID, or workspace boundary                                                                    |
+| Next                                    | At most one useful action; preserve subject/source/workspace and avoid unsafe or irrecoverable replays                                       |
+| Context echo                            | Explicit workspace or uncertain/failed boundary; normal/full text adds useful source/target context; JSON retains workspace metadata         |
+| Size budget                             | Named fixture budgets with content/identity/receipt exceptions and Doctor detail limits                                                      |
+| JSON projection                         | New schema 3 for all levels; brief is actually small, normal is selected detail, full supplies support; parser exception retained            |
+| Exit/stream meaning                     | Seven current results and terminal/shell exceptions retained                                                                                 |
+| Escaping/line endings                   | One human scalar rule, serializer-owned JSON, host structure normalization, exact authored content                                           |
+| Acceptance                              | The user has clarified the shared detail model and lightweight default; exact flags/schemas/transcripts still need the later explicit freeze |
 
 ### Decisions to approve before freeze
 
-| ID | Recommendation | What remains to approve |
-| --- | --- | --- |
-| D1 | --detail brief/normal/full; default brief; full absorbs --verbose | Exact grammar and per-command membership, following the clarified direction |
-| D2 | --projection text/json; same detail selection in both; one new schema 3 | Exact schema mappings, diagnostic-record format, and any evidence-based compatibility migration |
-| D3 | One-line Doctor brief, small brief JSON; normal error/warning rows capped at 20; full includes information and support | Proposed severity/limit options applying identically to both formats and exact normal/full budgets |
-| D4 | Keep exact command-specific status, exit, safety, ownership, and recovery behavior | Any separately identified behavior change; none is implied by wording |
-| D5 | Natural brief Find rows and a sentence summary; format is independent of detail | Retirement of current implicit TSV behavior, or a separately specified explicit TSV projection if required |
-| D6 | Useful Next actions with original subject/workspace/format; no routine Doctor brief hint | Exact computed next values for limited detail and actionable conditions, and the accepted quoting policy |
-| D7 | Human control-character escaping and serializer-owned JSON | Exact M3 before/after values, diagnostic truncation unit/marker, and line-ending fixtures |
-| D8 | Keep current finding categories and counts during G4 | Separate finding-model/category changes, including candidate-warning classification |
-| D9 | Keep essential original mutation receipts at every level; move supporting evidence to full; no replay to recover an earlier receipt | Exact selected effect/recovery fields shared by brief text and JSON, without retaining the whole diagnostic graph |
-| D10 | Improve existing wizard text and plan-before-confirmation presentation | Which changes fit G4 versus the later interaction phase; event semantics remain separate |
-| D11 | Preserve the shell/parser JSON exception for now | A separately scoped shell-error JSON normalization, if desired |
+| ID  | Recommendation                                                                                                                      | What remains to approve                                                                                           |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| D1  | --detail brief/normal/full; default brief; full absorbs --verbose                                                                   | Exact grammar and per-command membership, following the clarified direction                                       |
+| D2  | --projection text/json; same detail selection in both; one new schema 3                                                             | Exact schema mappings, diagnostic-record format, and any evidence-based compatibility migration                   |
+| D3  | One-line Doctor brief, small brief JSON; normal error/warning rows capped at 20; full includes information and support              | Proposed severity/limit options applying identically to both formats and exact normal/full budgets                |
+| D4  | Keep exact command-specific status, exit, safety, ownership, and recovery behavior                                                  | Any separately identified behavior change; none is implied by wording                                             |
+| D5  | Natural brief Find rows and a sentence summary; format is independent of detail                                                     | Retirement of current implicit TSV behavior, or a separately specified explicit TSV projection if required        |
+| D6  | Useful Next actions with original subject/workspace/format; no routine Doctor brief hint                                            | Exact computed next values for limited detail and actionable conditions, and the accepted quoting policy          |
+| D7  | Human control-character escaping and serializer-owned JSON                                                                          | Exact M3 before/after values, diagnostic truncation unit/marker, and line-ending fixtures                         |
+| D8  | Keep current finding categories and counts during G4                                                                                | Separate finding-model/category changes, including candidate-warning classification                               |
+| D9  | Keep essential original mutation receipts at every level; move supporting evidence to full; no replay to recover an earlier receipt | Exact selected effect/recovery fields shared by brief text and JSON, without retaining the whole diagnostic graph |
+| D10 | Improve existing wizard text and plan-before-confirmation presentation                                                              | Which changes fit G4 versus the later interaction phase; event semantics remain separate                          |
+| D11 | Preserve the shell/parser JSON exception for now                                                                                    | A separately scoped shell-error JSON normalization, if desired                                                    |
 
 Your instruction establishes the shared detail model, its effect on every renderer, and the lightweight default. This revision applies that direction now. The table records remaining concrete interface/schema details for a later freeze; it is not a request to confirm the direction again, and silence does not approve implementation.
 
@@ -1610,15 +1610,15 @@ Doctor was prohibited for this report. Any continuing prohibition must remain in
 
 ### Material deviations from the pasted handover
 
-| Planned in the handover | Found during this task | Treatment and reason |
-| --- | --- | --- |
-| Maintain the active G4/task records | This test permits report-only writing | Saved proposals here; left active records and contracts unchanged |
-| Capture fresh representative output as current | Both prepared executables are stale | Kept limited captures as negative provenance evidence, used source/contracts for the design, and did not rebuild |
-| Assume no wizard exists | Current source includes several concrete interactive paths | Reframed the issue as quality/coverage verification of existing journeys |
-| End with an approved specification | User clarified the design direction, but no exact specification freeze was supplied | Delivered the corrected proposal and conditional implementation handoff, preserving the distinction between direction and a frozen specification |
-| Start a sequential interactive decision session | User requested all analysis/examples in one saved report | Supplied the representative first decision and the full catalogue without a questionnaire |
-| Historical proposals supply examples | Several examples are obsolete or change behavior | Preserved history and replaced them only in this report with current-boundary proposals |
-| First draft preserved current views and full default JSON | User clarified the earlier shared-detail direction; relevant analyses support it | Replaced the recommendation with brief/normal/full across renderers, small default JSON, and full-level diagnostics; revised examples, schema, tests, and prompt together |
+| Planned in the handover                                   | Found during this task                                                              | Treatment and reason                                                                                                                                                      |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Maintain the active G4/task records                       | This test permits report-only writing                                               | Saved proposals here; left active records and contracts unchanged                                                                                                         |
+| Capture fresh representative output as current            | Both prepared executables are stale                                                 | Kept limited captures as negative provenance evidence, used source/contracts for the design, and did not rebuild                                                          |
+| Assume no wizard exists                                   | Current source includes several concrete interactive paths                          | Reframed the issue as quality/coverage verification of existing journeys                                                                                                  |
+| End with an approved specification                        | User clarified the design direction, but no exact specification freeze was supplied | Delivered the corrected proposal and conditional implementation handoff, preserving the distinction between direction and a frozen specification                          |
+| Start a sequential interactive decision session           | User requested all analysis/examples in one saved report                            | Supplied the representative first decision and the full catalogue without a questionnaire                                                                                 |
+| Historical proposals supply examples                      | Several examples are obsolete or change behavior                                    | Preserved history and replaced them only in this report with current-boundary proposals                                                                                   |
+| First draft preserved current views and full default JSON | User clarified the earlier shared-detail direction; relevant analyses support it    | Replaced the recommendation with brief/normal/full across renderers, small default JSON, and full-level diagnostics; revised examples, schema, tests, and prompt together |
 
 ## Naming alternatives
 
@@ -1626,22 +1626,22 @@ The user's follow-up asks for a shorter format option and a detail scale resembl
 
 ### A shorter format option
 
-| Candidate | Example | Assessment |
-| --- | --- | --- |
-| --format | open-forge doctor --format json | Recommended: directly names the choice between text and JSON |
-| --as | open-forge doctor --as json | Shortest readable alternative; the command reads like a sentence |
-| --output | open-forge doctor --output json | Understandable, but may be read as an output destination rather than a format |
-| --out | open-forge doctor --out json | Short, with the same destination ambiguity |
+| Candidate | Example                         | Assessment                                                                    |
+| --------- | ------------------------------- | ----------------------------------------------------------------------------- |
+| --format  | open-forge doctor --format json | Recommended: directly names the choice between text and JSON                  |
+| --as      | open-forge doctor --as json     | Shortest readable alternative; the command reads like a sentence              |
+| --output  | open-forge doctor --output json | Understandable, but may be read as an output destination rather than a format |
+| --out     | open-forge doctor --out json    | Short, with the same destination ambiguity                                    |
 
 Recommend --format, optionally with -f as its short spelling. A source search found no literal -f/--format/--as option declaration in the inspected C# tree; a later composed-parser check must still confirm that the chosen alias is available. --as is a reasonable alternative if shorter typing matters more than naming the format explicitly. The choice affects spelling only: every format still receives the same detail selection.
 
 ### Detail-name families
 
-| Family | Smallest to largest | Tradeoff |
-| --- | --- | --- |
-| Familiar amount labels | minimal -> standard -> verbose | Closest to the user's preference; standard must not be mistaken for the configured default |
-| Describe the returned information | summary -> details -> all | Clear for diagnosis; summary can misdescribe commands whose actual answer is a list or authored content |
-| Describe granularity | coarse -> medium -> fine -> full | Expresses the scale, but gives less guidance about which facts each level contains |
+| Family                            | Smallest to largest              | Tradeoff                                                                                                |
+| --------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Familiar amount labels            | minimal -> standard -> verbose   | Closest to the user's preference; standard must not be mistaken for the configured default              |
+| Describe the returned information | summary -> details -> all        | Clear for diagnosis; summary can misdescribe commands whose actual answer is a list or authored content |
+| Describe granularity              | coarse -> medium -> fine -> full | Expresses the scale, but gives less guidance about which facts each level contains                      |
 
 Recommend starting the naming discussion with minimal -> standard -> verbose, defaulting to minimal. These levels mean the smallest useful answer, actionable explanation, and complete result detail respectively. Retain --detail as the option name because it says what is being increased.
 
@@ -1651,14 +1651,14 @@ The full potential ladder can be:
 
 This illustrates extension points, not a requirement to expose six levels immediately. Each added level must earn its place by selecting a useful intermediate amount of information. For Doctor, a possible distinction is:
 
-| Level | Selected information | Place in the proposed initial surface |
-| --- | --- | --- |
-| minimal | Outcome and aggregate counts, plus indispensable coverage limitations | Initial default |
-| summary | The same outcome with a short breakdown by category/domain | Possible intermediate level |
-| standard | Actionable findings and direct next actions, with the existing proposed bounded selection | Initial ordinary detail |
-| detailed | More explanation and evidence for those selected actionable findings | Possible intermediate level |
-| verbose | All result findings and their available evidence, including informational findings | Initial complete result detail |
-| debug | Verbose result detail plus execution diagnostics such as existing decision/phase observations | Optional highest diagnostic level |
+| Level    | Selected information                                                                          | Place in the proposed initial surface |
+| -------- | --------------------------------------------------------------------------------------------- | ------------------------------------- |
+| minimal  | Outcome and aggregate counts, plus indispensable coverage limitations                         | Initial default                       |
+| summary  | The same outcome with a short breakdown by category/domain                                    | Possible intermediate level           |
+| standard | Actionable findings and direct next actions, with the existing proposed bounded selection     | Initial ordinary detail               |
+| detailed | More explanation and evidence for those selected actionable findings                          | Possible intermediate level           |
+| verbose  | All result findings and their available evidence, including informational findings            | Initial complete result detail        |
+| debug    | Verbose result detail plus execution diagnostics such as existing decision/phase observations | Optional highest diagnostic level     |
 
 Default is a setting, not a level name. Calling the middle value default would contradict the requested minimal default; calling it standard is workable if help makes minimal's default status explicit. Debug describes execution diagnostics, while verbose describes how much result information is shown. Keep both under the same --detail option if both are offered; this does not revive independent --verbose/--debug controls or renderer-specific selection.
 
@@ -1818,8 +1818,8 @@ Primary design sources:
 - [Shared operation contract](../../../../../memory/crystallized/documents/cli/shared-operation-contract.md)
 - [All command contracts](../../../../../memory/crystallized/documents/cli/contracts/_contracts.md)
 - [G4 scenario/snapshot boundary](../../../../working/cli-development/tasks/task30/.agents/memory/working/cli-development/tasks/task30/phase-7-scenarios.md)
-- [Historical output proposals](../../../../../memory/emerging/analysis/cli-experience-audit/command-output-design.md), used as unaccepted provenance.
-- [Earlier detail/default proposal](../../../../../memory/emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md), [revised detail/projection note](../../../../../memory/emerging/analysis/cli-experience-audit/structural-requirements-and-markers.md), and [selection-stage analysis](../../../../../memory/emerging/analysis/cli-experience-audit/layers-and-sequencing.md), rechecked after your correction. These establish the history of the direction without changing today's source/contract facts.
+- [Historical output proposals](../../analysis/cli-experience-audit/command-output-design.md), used as unaccepted provenance.
+- [Earlier detail/default proposal](../../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md), [revised detail/projection note](../../analysis/cli-experience-audit/structural-requirements-and-markers.md), and [selection-stage analysis](../../analysis/cli-experience-audit/layers-and-sequencing.md), rechecked after your correction. These establish the history of the direction without changing today's source/contract facts.
 
 Focused current-source evidence:
 

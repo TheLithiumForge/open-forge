@@ -274,6 +274,7 @@ internal sealed class RouteInitAppliedVerifier(
                 expected.InventoryFingerprint,
                 actual.InventoryFingerprint,
                 StringComparison.Ordinal)
+            && expected.IsCanonicalRestoration == actual.IsCanonicalRestoration
             && expected.Segments.SequenceEqual(actual.Segments);
     }
 

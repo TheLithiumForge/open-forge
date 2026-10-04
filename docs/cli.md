@@ -20,6 +20,29 @@ For repository setup, build prerequisites, and a worktree-local executable,
 see [Development and setup](development.md). For package structure and manual
 Extension use, see [Extensions](extensions.md).
 
+## Start with the everyday commands
+
+After installing the Framework, give your agent a normal task. Reach for the
+CLI when you want to inspect or maintain its files:
+
+| Need                                              | Command                           |
+| ------------------------------------------------- | --------------------------------- |
+| Read startup context                              | `open-forge context`              |
+| Find rules                                        | `open-forge find --tag=Directive` |
+| Check links and navigation                        | `open-forge doctor`               |
+| Preview navigation updates after editing Markdown | `open-forge index --dry-run`      |
+
+Add `--detail standard` for more explanation, `--workspace <path>` for another
+project, or `--format json` for structured output. Run `open-forge index` after
+reviewing its preview to apply it. These are maintenance commands, not steps
+you must repeat before each agent task.
+
+The [compact CLI overview](https://thelithiumforge.github.io/open-forge/docs/cli#which-command-for-which-job)
+lists every command's available flags. Continue below for their exact rules,
+or jump to [reading the workspace](#read-the-workspace),
+[editing routes](#maintain-routes-and-markdown),
+[Extensions](#extension-operations), or [Libraries](#workspace-libraries).
+
 ## The command shape
 
 Commands use this general form:
@@ -101,8 +124,12 @@ listed above? [y/N]` when `--force` would replace files. Update asks
 `Delete the <K> files listed above? [y/N]` when `--prune` would delete retired
 files. Extension Create asks `Create these files? [y/N]`.
 
-These commands confirm this way and accept `--automatic`, which skips only that
-question and adds no force, prune, or other authority:
+Install can ask setup questions before building the plan on a first interactive
+apply or with `--configure`. Dry-run, automatic, JSON, and redirected requests
+skip those questions. Noninteractive Configure requires an explicit preset.
+
+These commands confirm this way and accept `--automatic`, which skips
+interaction and adds no force, prune, or other authority:
 
 - `install`, `update`, `remove`, `route remove`, and `repair`
 - `extension create`, `extension install`, `extension update`, and
@@ -165,6 +192,13 @@ exact paths to include the context you select. `context`, `find`, and
 `route inspect` accept repeated `--for <path>` values. Paths resolve against
 the selected workspace, may name planned files that do not exist yet, and must
 stay inside that workspace.
+
+Use `open-forge context skills/open-forge-cli` for an initial batch containing
+the default loading-tag closure and the CLI usage guide required by the Skills
+entrypoint. The default projection includes frontmatter and body. Plain
+`context` derives its closure from loading tags; explicit read instructions
+in returned files still apply. For subsequent selected route chains, batch
+source operands and add `--additions-only` to omit repeated startup context.
 
 ```sh
 open-forge context
@@ -499,6 +533,26 @@ different scaffold choices. Metadata options are valid only for a missing
 generic final entrypoint and cannot update an existing final target. `route init`
 does not initialize the Loader itself.
 
+To add an omitted Core category later, name its canonical root with
+`--framework`. This restores the category's packaged contents and necessary
+missing ancestors in the installed Framework:
+
+```sh
+open-forge route init patterns --framework --dry-run
+open-forge route init patterns --framework
+```
+
+Use `skills` to restore the bundled Skills payload, including the CLI Skill,
+or `memory/archived` to add just that Memory state. The plan clears only the
+selected root or state's exact exclusion. It retains unrelated descendant
+and file exclusions, existing authored files, and overwrite companions.
+If a broader ancestor is excluded, the command asks you to add that ancestor
+explicitly first. An orphan overwrite that prevents safe navigation blocks
+the plan without writes.
+
+These restoration semantics apply to unscoped canonical Core roots and Memory
+states. A scoped Framework target still creates its sparse entrypoint chain.
+
 The following examples use this scope. Apply each previewed creation before
 running a command that depends on the new path.
 
@@ -673,16 +727,112 @@ replacement and deletion.
 
 ### Install
 
-`install` establishes Framework management in the selected workspace.
+`install` establishes Framework management in the selected workspace. Explicit
+configuration selects built-in routes and restores eligible missing defaults.
 
-```sh
-open-forge install --dry-run
-open-forge install
-open-forge install --automatic --dry-run
+```text
+open-forge install [--configure] [--preset <essentials|full-core|custom>]
+  [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run]
 ```
 
-`--dry-run` changes nothing. A plain `install` shows the same plan and asks for
-the normal confirmation.
+The global options also apply. Install has no operands.
+
+```sh
+open-forge install
+open-forge install --preset essentials --dry-run
+open-forge install --preset essentials
+open-forge install --configure
+```
+
+First interactive Install offers Essentials, Full Core, or Custom before
+showing the selected plan and asking for confirmation. An explicit preset
+selects it without that first choice. `--dry-run` changes nothing and never
+asks setup questions. Naming the preset makes a preview use the intended
+selection.
+
+#### Setup choices
+
+| Preset       | Supplied defaults                                                                                                                       |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `essentials` | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus the complete ordinary Working route with its directory Git-ignored |
+| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                      |
+| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                      |
+
+Essentials omits Guidance, Maps, Templates, and Archived Memory. Full Core
+includes the base categories, not optional Extensions or an agent runtime.
+Presets select supplied defaults. Existing content in an omitted route remains
+in place and routable.
+
+`--configure` revisits the setup choices in an installed workspace. An explicit
+`--preset` on an already installed workspace requires `--configure`. Ordinary
+repeated Install keeps its quiet no-op or divergence behavior.
+
+Custom offers three actions for each row:
+
+| Action       | Effect                                                                                                                                               |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `add`        | Select the route and restore eligible missing packaged defaults                                                                                      |
+| `remove`     | Omit supplied defaults and release only their Framework management, preserving existing files, authored notes, overwrite companions, and routability |
+| `git-ignore` | Add the ordinary route and anchor its whole directory in the Install-owned section of the workspace `.gitignore`                                     |
+
+Repeat `--route <id>=<action>` to override Custom rows. It requires
+`--preset custom`. Accepted IDs are:
+
+```text
+directives
+guidance
+maps
+patterns
+skills
+templates
+memory/working
+memory/emerging
+memory/crystallized
+memory/archived
+```
+
+Unknown presets, row IDs, or actions are invalid input. Repeated identical
+presets or actions for one row are idempotent. Conflicting repeated values are
+invalid. Interactive Custom retains supplied overrides and reviews the
+remaining rows before planning. Noninteractive Custom applies its base plus
+the supplied overrides.
+
+For example, add Guidance and keep Working's directory out of ordinary Git
+commits while retaining the other current choices:
+
+```sh
+open-forge install --configure --preset custom \
+  --route guidance=add --route memory/working=git-ignore --dry-run
+open-forge install --configure --preset custom \
+  --route guidance=add --route memory/working=git-ignore --automatic
+```
+
+Dry-run, automatic, JSON, and redirected requests never ask setup questions.
+Noninteractive `--configure` requires `--preset`. Without explicit setup input,
+ordinary unattended first Install keeps Full Core and existing omissions.
+Applying a writing plan noninteractively also needs `--automatic`.
+
+Git-ignore changes Git's treatment of the directory, not Context or Index
+selection. Ignored files remain readable and indexed, and files already tracked
+by Git stay tracked. Add and Remove clear only that row's Install-owned ignore
+pattern. User rules and text outside the owned section stay unchanged. Malformed
+or duplicated section boundaries block the change.
+
+Explicit configuration can restore eligible missing packaged defaults,
+including ignored scaffolding after a checkout with or without the lock file.
+It preserves existing authored files, compatible route hosts, overwrite
+companions, and narrower omissions. Missing private notes need your own copy or
+backup. Configuration adds no Update, authored replacement, or deletion
+authority. Edited managed content outside that additive boundary still directs
+you to `update`.
+
+Only the selected root or Memory state's exact exclusions and necessary
+ancestor exclusions may change. Unselected ownership, unrelated omissions, and
+unknown settings members remain preserved. To add just one omitted canonical
+Core category, [`route init --framework`](#initialize-a-route-chain) remains
+available.
+
+#### Adopt an existing workspace
 
 Install can also adopt an existing `.agents/` tree in the selected standard
 routes. It completes missing `name` and `description` fields in native
@@ -695,7 +845,7 @@ catalogues and migrated original Skill files remain user-owned. Framework
 manages only its generated navigation regions in those catalogues.
 
 During first installation, an unowned file at a bundled category entrypoint
-path is preserved in its adjacent overwrite companion. For example, existing
+path in a selected route is preserved in its adjacent overwrite companion. For example, existing
 content in `.agents/guidance/_guidance.md` moves to
 `_guidance.overwrite.md`, and the Framework base is installed at `_guidance.md`.
 Existing overwrite content stays last, and generated `Entries` are rebuilt in
@@ -833,9 +983,13 @@ need not survive. Deleting a file by hand does not infer an exclusion.
 }
 ```
 
-To restore managed content, remove every applicable exclusion from that file and
-run the relevant install, update, attach or sync command. Use `update` to restore
-a removed Core category in an installed Framework. For individual Library
+To restore a selected built-in route, use [`install --configure`](#setup-choices)
+or [`route init <target> --framework`](#initialize-a-route-chain). Both preserve
+narrower omissions and authored content. A broader excluded ancestor requires
+an explicit add first for `route init`. Alternatively, remove every applicable
+exclusion from the settings and run the relevant install, update, attach, or
+sync command. Use `update` when managed Framework content needs reconciliation.
+For individual Library
 links whose registration remains, use `library sync <id>`. Use `library attach`
 when the registration was removed. Recreate ordinary user files
 from your own source or backup. Clearing an exclusion does not recover deleted
@@ -930,13 +1084,13 @@ project it into another workspace location through relative file links.
 open-forge library <operation>
 ```
 
-| Operation         | Syntax                                                                                       | Effect                                                                      |
-| ----------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `library list`    | `open-forge library list`                                                                    | List bounded Library records and link observations.                         |
-| `library inspect` | `open-forge library inspect <library-id>`                                                    | Inspect one complete Library inventory and projection.                      |
-| `library attach`  | `open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>]` | Register one contained source root and create its relative-link projection. |
-| `library sync`    | `open-forge library sync <library-id>`                                                       | Reconcile one registered projection from its complete source inventory.     |
-| `library detach`  | `open-forge library detach <library-id>`                                                     | Remove one local registration and its links while preserving its source.    |
+| Operation         | Syntax                                                                                                                    | Effect                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `library list`    | `open-forge library list`                                                                                                 | List bounded Library records and link observations.                         |
+| `library inspect` | `open-forge library inspect <library-id>`                                                                                 | Inspect one complete Library inventory and projection.                      |
+| `library attach`  | `open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--git-ignore <true\|false>]` | Register one contained source root and create its relative-link projection. |
+| `library sync`    | `open-forge library sync <library-id>`                                                                                    | Reconcile one registered projection from its complete source inventory.     |
+| `library detach`  | `open-forge library detach <library-id>`                                                                                  | Remove one local registration and its links while preserving its source.    |
 
 Add `--dry-run` to `attach`, `sync`, or `detach` to inspect the complete plan
 before writing. They also accept `--automatic` and `--allow-path <path>`.
@@ -947,6 +1101,45 @@ must already exist, and the command updates that entrypoint's `Entries`. A
 Library ID is a management identity. It is not a source ID.
 Use `doctor` when a record, source root, link capability, permission, or
 projection is blocked.
+
+### Keep projected links out of Git
+
+Interactive Attach asks whether to Git-ignore the projected links, with No as
+the default. Use `--git-ignore true` when the source folder supplies the files
+and you want each checkout to recreate its local links. Use
+`--git-ignore false` when you want to commit those links, or skip the question.
+
+The choice is explicit in scripts and previews:
+
+```sh
+open-forge library attach team-rules vendor/team-rules --to docs/team \
+  --git-ignore true --allow-path docs/team --allow-path .gitignore --dry-run
+open-forge library attach team-rules vendor/team-rules --to docs/team \
+  --git-ignore true --allow-path docs/team --allow-path .gitignore --automatic
+```
+
+The plan lists the projected paths and any `.gitignore` change. Writing that
+file needs the same shared path permission as other destinations; interactive
+use can approve it once or save the grant. Automatic, JSON, redirected and
+dry-run requests never ask the ignore question. When the flag is omitted in
+those modes, Attach leaves `.gitignore` unchanged.
+
+Rules cover exact projected paths, such as `/docs/team/review.md`, in a separate
+Library-owned section. They work with `--to .` and shared folders without hiding
+unrelated files or the source folder. Authored rules and the Install-owned
+section remain intact. Already tracked files stay tracked, and Git's normal
+rule precedence still applies. See the [Git ignore manual](https://git-scm.com/docs/gitignore).
+
+If the source itself projects a root `.gitignore`, opt-in would need to write
+that same path and is blocked. Interactive omission reports the conflict before
+asking; use `--git-ignore false` to attach that file as ordinary Library content.
+
+`library sync` remembers the choice and updates owned rules when source
+membership changes. Detach, `remove --kind library`, and removal of an individual
+projected link release the corresponding owned rules while preserving other
+Libraries. Sync and Detach need permission for `.gitignore` when they change it.
+An explicitly removed ignore file is not silently restored. Ignoring a link
+does not change Open Forge context loading or authorize writing its source.
 
 ## Source references
 

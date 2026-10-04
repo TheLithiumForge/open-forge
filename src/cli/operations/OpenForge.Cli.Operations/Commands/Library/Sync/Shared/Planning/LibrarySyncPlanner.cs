@@ -124,7 +124,7 @@ internal static class LibrarySyncPlanner
                 .Select(path => path.Value).ToHashSet(StringComparer.Ordinal)
             ?? new HashSet<string>(StringComparer.Ordinal);
         var projection = selected is null ? null : LibraryRegistration.Create(selected.Id, selected.SourceRoot, selected.DestinationRoot,
-            [.. currentPaths.Union(registeredPaths).Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create)]);
+            [.. currentPaths.Union(registeredPaths).Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create)], selected.GitIgnore);
         var destinations = projection is null ? [] : LibraryPathIdentity.Mappings(projection)
             .Select(mapping => mapping.DestinationPath.Value).ToImmutableArray();
         if (projection is not null && LibraryDestinationPolicy.FindConflict(input.Request.Workspace, projection, record, RelativePaths(input)) is { } conflict)
@@ -169,6 +169,14 @@ internal static class LibrarySyncPlanner
                 "The destination is already owned by another managed domain.");
         }
 
+        if (input.GitIgnore is { State: not OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreReadState.Complete } ignore)
+        {
+            Add(findings, ignore.State == OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreReadState.Blocked
+                ? LibrarySyncFindingCode.GitIgnoreBlocked : LibrarySyncFindingCode.GitIgnoreUnavailable,
+                ignore.State == OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreReadState.Blocked
+                    ? CliSemanticStatus.Blocked : CliSemanticStatus.Incomplete,
+                input.Request.LibraryId.Value, ".gitignore", ignore.Cause ?? "The Library Git-ignore target is unavailable.");
+        }
         var state = PlanState(findings);
         if (state != LibraryPlanState.Complete
             || selected is null
@@ -180,7 +188,7 @@ internal static class LibrarySyncPlanner
         var replacement = LibraryRegistration.Create(
             selected.Id,
             selected.SourceRoot, selected.DestinationRoot,
-            [.. currentPaths.Union(excludedRegisteredPaths).Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create)]);
+            [.. currentPaths.Union(excludedRegisteredPaths).Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create)], selected.GitIgnore);
         var intendedRecord = LibraryRegistrationSet.Create(
             [.. record.Libraries
                 .Select(library => library.Id == selected.Id ? replacement : library)
@@ -191,7 +199,7 @@ internal static class LibrarySyncPlanner
                 library.Id.Value,
                 library.SourceRoot.Value,
                 library.DestinationRoot.Value,
-                [.. library.Paths.Select(path => path.Value)]))]);
+                [.. library.Paths.Select(path => path.Value)], library.GitIgnore))]);
         return new LibrarySyncPlan
         {
             Permissions = null,
@@ -200,6 +208,7 @@ internal static class LibrarySyncPlanner
             Directories = boundary.Directories,
             Links = links,
             GeneratedRegions = OrderGenerated(input.GeneratedRegionChanges),
+            GitIgnore = input.GitIgnore?.Plan,
             OwnershipChange = ownershipChange,
             IntendedRecord = intendedRecord,
             Findings = Order(findings),

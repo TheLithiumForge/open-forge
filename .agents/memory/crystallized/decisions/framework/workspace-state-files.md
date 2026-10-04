@@ -225,8 +225,8 @@ an over-deletion: no claims means nothing to delete, and the command says so.
 - [Ownership And Source Alignment technical design](../../documents/cli/technical-designs/lifecycle-provenance.md)
 - [Workspace Libraries technical design](../../documents/cli/technical-designs/workspace-libraries.md)
 - [CLI Experience Remediation task, group G1](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md)
-- [Lifecycle baselines and architecture analysis](../../../emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md)
-- [Repository dogfood and configuration analysis](../../../emerging/analysis/cli-experience-audit/repository-dogfood-and-configuration.md)
+- [Lifecycle baselines and architecture analysis](../../../archived/cli-development/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md)
+- [Repository dogfood and configuration analysis](../../../archived/cli-development/analysis/cli-experience-audit/repository-dogfood-and-configuration.md)
 
 ## Decision Relationships
 

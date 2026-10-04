@@ -85,7 +85,7 @@ internal sealed record InstallResult : ICliCommandResult
             input: new InstallBindingInput(
                 Force: request.Force,
                 Automatic: request.Automatic,
-                Mode: request.Mode),
+                Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration),
             findings: findings,
             summary: summary);
     }
@@ -101,7 +101,7 @@ internal sealed record InstallResult : ICliCommandResult
             input: new InstallBindingInput(
                 Force: request.Force,
                 Automatic: request.Automatic,
-                Mode: request.Mode),
+                Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration),
             findings: findings,
             summary: summary,
             facts: facts);

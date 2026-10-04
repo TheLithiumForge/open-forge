@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.GitIgnore;
 using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Models.Permissions;
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
@@ -108,6 +110,12 @@ internal sealed class LibrarySyncOperation
         {
             return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
         }
+        observations = await ObserveIgnoreAsync(observations, plan, cancellationToken).ConfigureAwait(false);
+        plan = LibrarySyncPlanner.Plan(observations, cancellationToken);
+        if (plan.State != LibraryPlanState.Complete)
+        {
+            return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
+        }
         var selected = observations.Record.Record?.Libraries.Single(library => library.Id == request.LibraryId)
             ?? throw new InvalidOperationException("A complete Library sync plan requires its selected Library.");
         var livePaths = (observations.Source.Inventory?.Entries ?? []).Select(entry => entry.SourcePath).ToHashSet();
@@ -122,7 +130,9 @@ internal sealed class LibrarySyncOperation
             Workspace = request.Workspace,
             LibraryId = request.LibraryId,
             SettingsObservation = observations.Settings,
-            Targets = targets,
+            Targets = plan.GitIgnore is null ? targets : targets.Add(new LibraryPermissionTarget(
+                LibraryGitIgnoreSection.Path, LibraryPermissionTargetUse.Live)
+            { Effect = LibraryPermissionEffect.WriteGitIgnore }),
             ExplicitGrantPaths = request.Allow,
             AllowPrompt = request.AllowPrompt && !request.Automatic && request.Mode != LibraryMode.DryRun,
         }, cancellationToken).ConfigureAwait(false);
@@ -220,7 +230,7 @@ internal sealed class LibrarySyncOperation
         var navigationRecord = selected is null || record.Record is null
             ? record.Record
             : LibraryRegistrationSet.Create([.. record.Record.Libraries.Select(library => library.Id == selected.Id
-                ? LibraryRegistration.Create(library.Id, library.SourceRoot, library.DestinationRoot, [.. activeRegisteredPaths])
+                ? LibraryRegistration.Create(library.Id, library.SourceRoot, library.DestinationRoot, [.. activeRegisteredPaths], library.GitIgnore)
                 : library)]);
         var navigation = record.State == LibraryRegistrationReadState.Complete
             && selected is not null
@@ -229,7 +239,7 @@ internal sealed class LibrarySyncOperation
                 new LibraryGeneratedNavigationRequest
                 {
                     Workspace = request.Workspace,
-                    SelectedLibrary = LibraryRegistration.Create(selected.Id, selected.SourceRoot, selected.DestinationRoot, [.. activeRegisteredPaths]),
+                    SelectedLibrary = LibraryRegistration.Create(selected.Id, selected.SourceRoot, selected.DestinationRoot, [.. activeRegisteredPaths], selected.GitIgnore),
                     CurrentRecord = navigationRecord,
                     IntendedEntries = entries,
                     Settings = settings.Document,
@@ -314,6 +324,11 @@ internal sealed class LibrarySyncOperation
                     cancellationToken).ConfigureAwait(false),
             };
             var freshPlan = LibrarySyncPlanner.Plan(fresh, cancellationToken);
+            if (freshPlan.State == LibraryPlanState.Complete)
+            {
+                fresh = await ObserveIgnoreAsync(fresh, freshPlan, cancellationToken).ConfigureAwait(false);
+                freshPlan = LibrarySyncPlanner.Plan(fresh, cancellationToken);
+            }
             var permissions = plan.Permissions
                 ?? throw new InvalidOperationException("An admitted Library plan requires its permission observation.");
             if (freshPlan.State != LibraryPlanState.Complete || !Matches(plan, freshPlan)
@@ -335,6 +350,7 @@ internal sealed class LibrarySyncOperation
                     Permissions = plan.Permissions,
                     Links = plan.Links,
                     GeneratedRegions = plan.GeneratedRegions,
+                    GitIgnore = plan.GitIgnore,
                     Ownership = fresh.Ownership,
                     OwnershipChange = plan.OwnershipChange,
                     Mappings = fresh.Mappings,
@@ -428,6 +444,22 @@ internal sealed class LibrarySyncOperation
             IsComplete = false,
         };
 
+    private static async ValueTask<LibrarySyncPlanningInput> ObserveIgnoreAsync(
+        LibrarySyncPlanningInput input,
+        LibrarySyncPlan plan,
+        CancellationToken cancellationToken)
+        => input.Record.Record?.Libraries.SingleOrDefault(library => library.Id == input.Request.LibraryId)?.GitIgnore != true ? input : input with
+        {
+            GitIgnore = await LibraryGitIgnorePlanner.PlanAsync(new LibraryGitIgnoreRequest
+            {
+                Workspace = input.Request.Workspace,
+                Current = input.Record.Record,
+                Intended = plan.IntendedRecord,
+                IsExcluded = WorkspaceRemovals.IsPathRemoved(LibraryGitIgnoreSection.Path, input.Settings.Document),
+                IsRemoval = false,
+            }, cancellationToken).ConfigureAwait(false),
+        };
+
     private static bool Matches(LibrarySyncPlan expected, LibrarySyncPlan actual)
         => LibraryMutationOperationSupport.PlansMatch(expected.Effects, actual.Effects);
 
@@ -435,6 +467,7 @@ internal sealed class LibrarySyncOperation
         => plan.Directories.Length > 0
             || plan.Links.Length > 0
             || plan.GeneratedRegions.Length > 0
+            || plan.GitIgnore is not null
             || plan.OwnershipChange is not null
             || plan.Permissions?.Change is not null;
 

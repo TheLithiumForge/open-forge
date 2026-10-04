@@ -40,9 +40,9 @@ below are deliberately not presented as current measurements.
       accurate next action. Preserve detailed raw causes where the contract permits
       them. Review complete rendered messages, not isolated sentences.
 - [ ] **Finish the concise-output and wording review.**
-      [Task 32](task32-minimal-output-sweep.md) decides when the workspace echo and
-      next action help in minimal output. [Task 34](task34-interpolated-value-markup.md)
-      applies the accepted code-markup convention to command names and arguments.
+      [Task 32](../../../archived/cli-development/tasks/task32-minimal-output-sweep.md) completed its minimal-output
+      policy and qualification. [Task 34](task34-interpolated-value-markup.md)
+      retains the code-markup work but is paused by the maintainer.
       [Task 37](task37-wording-review-against-proposals.md) reviews wording against
       earlier proposals. Changes need explicit per-situation expectations and
       matching contracts; this is not permission for a bulk rewrite.
@@ -62,14 +62,16 @@ below are deliberately not presented as current measurements.
       four Core Memory states, optional deeper Memory roles and Skill-based recipes.
       Historical ownership-transfer and user-edited-file upgrade requirements remain
       unqualified; this documentation correction does not claim those guarantees.
-- [ ] **Settle the remaining Skill-resource navigation question.**
+- [x] **Settle the selected Skill-resource navigation question.**
       [Task 46](../../../archived/cli-development/tasks/task46-routed-skill-resources.md) and
-      [Task 47](task47-entrypoint-reachability.md) were rechecked against current
+      [Task 47](../../../archived/cli-development/tasks/task47-entrypoint-reachability.md) were rechecked against current
       fresh installs. Superseded reports are marked; Doctor now names the expected
       missing destination and advertises the owning catalogue's targeted Index.
       A published journey follows that advice successfully without changing recipe
-      or Skill bytes. The maintainer requested the [default Skill indexing follow-up](task47-default-skill-indexing.md);
-      its traversal contract remains to be specified. Default Index scope is unchanged.
+      or Skill bytes. The maintainer requested the [default Skill indexing follow-up](../../../archived/cli-development/tasks/task47-default-skill-indexing.md);
+      its bounded Index-only catalogue bridge is implemented and independently
+      qualified. No Task 47 requirement remains. This does not change startup
+      activation or shared runtime topology.
 - [ ] **Make more real failures visible to automated checks.**
       [Task 40](task40-capture-coverage.md) covers missing output captures. Recount
       against the current contracts and test tree, prioritize actionable blocking
@@ -88,9 +90,8 @@ These were recorded as later work. They are not automatically beta blockers.
 - [x] **Remove one managed file without the next update restoring it.** Done by
       Task 50's `remove`. Tasks 33 and 35 closed on 2026-09-28.
       [Task 33](../../../archived/cli-development/tasks/task33-managed-content-removal.md) records the accepted capability.
-      [Task 35](../../../archived/cli-development/tasks/task35-removal-and-suppression-model.md) must settle how removal is
-      remembered, reversed, reported and respected by Framework, Extensions and
-      Libraries before implementation.
+      [Task 35](../../../archived/cli-development/tasks/task35-removal-and-suppression-model.md) records the accepted
+      removal and suppression model. Task 63 retains the broader direct-edit policy.
 - [ ] **Create scopes under routes supplied by Extensions.**
       [Task 48](task48-scoping-for-extension-routes.md) extends route scaffolding
       beyond Core. Settle command naming, ownership and later Extension removal;
@@ -99,10 +100,10 @@ These were recorded as later work. They are not automatically beta blockers.
       [Task 36](task36-extension-merge-and-guards.md) holds partial merging and guard
       replacement. Reconcile earlier heading migration first and retain only the
       unresolved behavior. No general merge mechanism is approved by this list.
-- [ ] **Reassess the remaining implementation cleanup.**
-      [Task 31](../../../archived/cli-development/tasks/task31-implementation-duplication.md) retains M5 and the Route
-      Move/Remove boundary. Compare them with the completed project migration before
-      assigning work. Keep optional cleanup behind visible beta improvements.
+- [ ] **Select further implementation cleanup only from a current finding.**
+      [Task 31](../../../archived/cli-development/tasks/task31-implementation-duplication.md) is closed. Its selected
+      duplication work is complete, and the Route Move/Remove policy differences
+      were deliberately retained. Optional later cleanup needs a new bounded scope.
 - [ ] **Resolve unsafe Markdown unlinking only from a concrete example.**
       C17-07 remains deferred in Task 45. Supply an example where removing a link
       cannot preserve authored meaning, then agree on the expected refusal or edit.
@@ -110,25 +111,19 @@ These were recorded as later work. They are not automatically beta blockers.
 
 ## Delivery verification still open
 
-- [ ] Verify the latest platform corrections on hosted Windows, Linux and macOS,
-      for x64 and ARM64. Focus on Windows ACL fixture restoration and macOS physical
-      temporary paths, socket lengths and sharing failures. The latest local
-      Windows managed, Native AOT and package checks passed; latest hosted Windows
-      and macOS qualification remains outstanding.
-- [ ] Produce six downloadable binary archives from that same verified revision.
-      Check checksums, archive contents, architecture and executable smoke tests.
-      Keep them as workflow artifacts; creating releases is outside this task.
-      The previously verified six archives predate the final platform correction.
-- [ ] Refresh the task summaries after qualification, including the current
-      platform-exclusion policy and measured coverage. Preserve exclusions as
-      exclusions, separate from passing tests.
+The former six-host and downloadable-archive work completed in the recorded
+beta releases. [Task 69](../../../archived/cli-development/tasks/task69-next-beta-stabilization-release.md) retains the
+beta4 receipt. The subsequent beta5 candidate and cancellation race belong to
+[Task 70](task70-existing-workspace-adoption-during-installation.md#current-release-hold-2026-10-02).
+Publication remains held. Earlier qualification does not authorize another
+release or qualify a different source candidate.
 
 ## Suggested sequence and completion
 
-Start with Task 39's actionable-error inventory, then group the output and
-installed-content polish into bounded changes. Revalidate the older routing
-reports before selecting implementation. Add coverage for the accepted changes
-and chosen journeys, then finish platform and downloadable-artifact verification.
+Use the [current ledger](../project-control.md#active-task-ledger) for selection.
+Task 39 and Task 34 remain paused. Task 48 is frozen and deferred beyond beta5.
+The broader wording, installed-content, and capture work remains unselected or
+deferred in its owning Tasks. This backlog does not resume any of them.
 
 Each selected item needs a current reproduction or inventory, a bounded accepted
 outcome, reviewed changes, and appropriate verification. This file contains no

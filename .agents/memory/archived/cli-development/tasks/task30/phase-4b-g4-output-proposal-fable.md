@@ -35,7 +35,7 @@ Evidence boundary:
   proposals: the `--detail brief/normal/full` spelling and a schema-version-3
   mention. Nothing else from those files was read before this proposal was
   written. The same spelling is already proposed in the Emerging
-  [naming analysis](../../../../emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md#--view-is-granularity),
+  [naming analysis](../../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md#--view-is-granularity),
   so convergence on it is expected rather than borrowed.
 
 ## Sources used

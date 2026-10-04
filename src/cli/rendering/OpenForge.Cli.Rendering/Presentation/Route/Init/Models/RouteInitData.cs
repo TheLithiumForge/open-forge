@@ -29,6 +29,9 @@ internal sealed record RouteInitData
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Verification { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<RouteInitDataPayload>? Payload { get; init; }
+
     [JsonIgnore]
     internal IReadOnlyList<string> TextMetadata { get; init; } = [];
 
@@ -46,6 +49,13 @@ internal sealed record RouteInitData
 
     [JsonIgnore]
     internal string? TextRecovery { get; init; }
+}
+
+internal sealed record RouteInitDataPayload
+{
+    public required string Path { get; init; }
+    public required string SourceAssetPath { get; init; }
+    public required string Outcome { get; init; }
 }
 
 internal sealed record RouteInitDataTarget

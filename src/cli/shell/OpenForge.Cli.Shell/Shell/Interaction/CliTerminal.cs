@@ -8,9 +8,11 @@ internal sealed class CliTerminal
     private readonly CliTerminalWrite _write;
     private readonly CliTerminalReadLine _readLine;
     private readonly CliTerminalReadKey _readKey;
+    private readonly CliTerminalSelectionView? _selectionView;
+    private bool _redrawUnavailable;
 
     internal CliTerminal(CliTerminalCapabilities capabilities, CliTerminalWrite write,
-        CliTerminalReadLine readLine, CliTerminalReadKey readKey)
+        CliTerminalReadLine readLine, CliTerminalReadKey readKey, CliTerminalSelectionView? selectionView = null)
     {
         ArgumentNullException.ThrowIfNull(capabilities);
         ArgumentNullException.ThrowIfNull(write);
@@ -20,11 +22,33 @@ internal sealed class CliTerminal
         _write = write;
         _readLine = readLine;
         _readKey = readKey;
+        if (selectionView is not null)
+        {
+            ArgumentNullException.ThrowIfNull(selectionView.ReadViewport);
+            ArgumentNullException.ThrowIfNull(selectionView.Clear);
+        }
+        _selectionView = selectionView;
     }
 
     internal bool CanPrompt => _capabilities.CanPrompt;
     internal bool CanReadKeys => _capabilities.CanReadKeys;
-    internal bool CanRedraw => _capabilities.CanRedraw;
+    internal bool CanRedraw => _capabilities.CanRedraw && _selectionView is not null && !_redrawUnavailable;
+
+    internal CliTerminalViewport? ReadSelectionViewport()
+    {
+        if (!CanRedraw || _selectionView is null) return null;
+        var viewport = _selectionView.ReadViewport();
+        return viewport is { SupportsSelection: true } ? viewport : null;
+    }
+
+    internal bool ClearSelection(CancellationToken cancellationToken)
+    {
+        Validate(cancellationToken);
+        if (!CanRedraw || _selectionView is null) return false;
+        if (_selectionView.Clear()) return true;
+        _redrawUnavailable = true;
+        return false;
+    }
 
     internal ValueTask WriteAsync(ReadOnlyMemory<char> content, CancellationToken cancellationToken)
     {

@@ -1,16 +1,22 @@
 ---
 open-forge:
-  description: Define the accepted `--verbose` diagnostic content after ordinary human-readable failures and dogfood evidence exist
+  description: Explore diagnostic refinements beyond accepted debug-detail output through observed CLI failures
   tags: [Memory, Idea, Contextual, Candidate, CLI, Debug, Diagnostics, Dogfood, Brownfield]
 ---
 
-# CLI Verbose Diagnostics Details
+# CLI Diagnostic Refinements
 
 ## Current Direction
 
-The new CLI will provide `--verbose`. Ordinary failures remain complete and
-human readable without it. The exact diagnostic content, redaction, and
-unavailable-stream behavior remain open until the CLI can dogfood real failures.
+The current CLI requests diagnostics with `--detail debug`. The
+[global-flags contract](../../crystallized/documents/cli/contracts/shared/global-flags/interface.md)
+defines bounded diagnostics on stderr alongside the full primary result.
+There is no separate `--verbose` flag. Ordinary failures remain complete and
+human readable without debug detail.
+
+The former `--verbose` premise is superseded. The questions below remain
+candidate refinements to evaluate through observed failures. They do not change
+the accepted diagnostic contract or authorize another activation mechanism.
 
 Deleted CLI v2 explored a safe failure boundary. Its material now lives in the
 [CLI-v2 archive](../../archived/cli-v2/_cli-v2.md) and is raw input only. This
@@ -26,7 +32,8 @@ without coupling handlers to process streams or caught exceptions.
 
 Questions to answer through dogfooding include:
 
-- Whether `--verbose` needs an environment-based equivalent.
+- Whether debug detail needs an environment-based equivalent, which would
+  require a separate accepted change to the current activation contract.
 - Which unexpected failure stages may expose stacks and which failures have no
   safe diagnostic stream left.
 - Whether requested diagnostics use stderr in both human and JSON modes while
@@ -40,6 +47,6 @@ Questions to answer through dogfooding include:
 
 ## Revisit Point
 
-Re-examine these details when the new CLI can be exercised against an existing
-Open Forge workspace. Promotion requires focused interface and safety evidence
-rather than a speculative implementation hook.
+Re-examine a detail when an observed failure in an existing workspace shows a
+gap in the accepted diagnostics. Promotion requires focused interface and safety
+evidence rather than a speculative implementation hook.

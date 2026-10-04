@@ -153,6 +153,8 @@ internal sealed record InstallTargetRead
 
 internal sealed record InstallIntendedState
 {
+    public InstallConfigurationPlan? Configuration { get; init; }
+
     public required IReadOnlyDictionary<string, byte[]> TargetBytes { get; init; }
 
     public IReadOnlyDictionary<string, byte[]>? ProjectionTargetBytes { get; init; }

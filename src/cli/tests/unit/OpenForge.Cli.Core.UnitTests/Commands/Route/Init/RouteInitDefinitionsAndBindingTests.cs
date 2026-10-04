@@ -307,7 +307,7 @@ public sealed class RouteInitDefinitionsAndBindingTests
         Assert.Equal(["default-omitted", "explicit-omitted", "explicit", "embedded"], Enum.GetValues<RouteInitResponsibilitySource>().Select(RouteInitDefinitions.ReadMachineName));
         Assert.Equal(["draft", "explicit", "mixed", "embedded"], Enum.GetValues<RouteInitTagsSource>().Select(RouteInitDefinitions.ReadMachineName));
         Assert.Equal(["unchanged", "planned", "not-started", "created", "verification-failed", "completion-unknown"], Enum.GetValues<RouteInitEntrypointOutcome>().Select(RouteInitDefinitions.ReadMachineName));
-        Assert.Equal(["directory", "entrypoint", "generated-region"], Enum.GetValues<RouteInitEffectKind>().Select(RouteInitDefinitions.ReadMachineName));
+        Assert.Equal(["directory", "entrypoint", "generated-region", "payload", "settings"], Enum.GetValues<RouteInitEffectKind>().Select(RouteInitDefinitions.ReadMachineName));
         Assert.Equal(["create", "replace"], Enum.GetValues<RouteInitEffectAction>().Select(RouteInitDefinitions.ReadMachineName));
         Assert.Equal(["planned", "not-started", "verified", "verification-failed", "completion-unknown"], Enum.GetValues<RouteInitEffectOutcome>().Select(RouteInitDefinitions.ReadMachineName));
         Assert.Equal(["none", "retained", "unknown"], Enum.GetValues<RouteInitEffectResidual>().Select(RouteInitDefinitions.ReadMachineName));

@@ -74,10 +74,10 @@ Check a pattern against specific paths with `route inspect <source> --for <path>
 
 An agent enters through `AGENTS.md` (or `CLAUDE.md` in Claude Code), which points it to the loader. Both are read in full. Everything below them is reached through entrypoints, and the table uses two terms for them. They describe the instructions, not a record of what an agent actually read:
 
-- **Entrypoint at startup:** the entrypoint is read before the task begins. The entries it lists open on demand, unless their line is tagged.
+- **Entrypoint at startup:** the entrypoint is read before the task begins. Linked items open when selected, tagged to load, or explicitly required by a loaded rule.
 - **Entrypoint on demand:** the entrypoint isn't read until a task opens it.
 
-Paths are relative to `.agents/`.
+The table shows Full Core. Essentials and Custom use the same loading rules for the routes present. Git-ignore does not change context loading or indexing. See [Installation](../getting-started/installation.md#choose-the-installed-routes) for setup choices. Paths are relative to `.agents/`.
 
 | File                                   | Tag           | When it's read                                    |
 | -------------------------------------- | ------------- | ------------------------------------------------- |
@@ -91,17 +91,17 @@ Paths are relative to `.agents/`.
 | `memory/emerging/_emerging.md`         | `#KeepInMind` | Entrypoint at startup, and at every refresh point |
 | `patterns/_patterns.md`                | `#LoadNow`    | Entrypoint at startup                             |
 | `skills/_skills.md`                    | `#LoadNow`    | Entrypoint at startup                             |
-| `skills/open-forge-cli/SKILL.md`       | none          | On demand                                         |
+| `skills/open-forge-cli/SKILL.md`       | none          | At startup: required by the Skills entrypoint     |
 | `templates/_templates.md`              | none          | Entrypoint on demand                              |
 | `memory/archived/_archived.md`         | none          | Entrypoint on demand                              |
 
-Loading an entrypoint doesn't load what it lists. The agent reads the entrypoint itself: its purpose, its rules, and one line per item under `Entries`. The files and folders those lines point to stay closed until a task selects them, unless an entry is tagged `#LoadNow` or `#KeepInMind`. For example, at startup the agent sees the one-line entry for `open-forge-cli` in `skills/_skills.md`, but it doesn't read the Skill.
+Loading an entrypoint doesn't load everything it lists. The agent reads its purpose, rules, and one line per item under `Entries`. Linked files stay closed until selected, tagged to load, or explicitly required by a loaded rule. The Skills entrypoint has one such rule: read `open-forge-cli/SKILL.md` when present, so the agent has CLI usage advice from startup. If that Skill was deliberately omitted, use the loader's CLI summary. Other Skills stay on demand.
 
 The Memory rows show that exception. `memory/_memory.md` lists Working and Crystallized with `#LoadNow` and Emerging with `#KeepInMind`, so those three entrypoints load too. Archived has no loading tag, so it stays closed. Directives work the same way: each Directive file directly in `directives/` must carry `#LoadNow`, so it loads at startup once you add one. A fresh install has none.
 
 Extension Memory categories, such as Decisions from [Planning](../extensions/planning.md) or Documents from [Project Documents](../extensions/project-documents.md), aren't part of a fresh install and carry no loading tag. Once installed, only their one-line entry in the parent state's `Entries` is visible at startup. The category entrypoint and its records open on demand.
 
-Run `open-forge context` to see the startup context of your workspace. When task paths are unknown, only conditioned `#LoadNow` and `#KeepInMind` entries that a loaded parent exposes are reported as pending. Other conditioned entries stay on demand. If any entries are pending, the command returns `incomplete` with exit 3. Pass known or planned working paths with `--for` to check the matching entries.
+Run `open-forge context skills/open-forge-cli` to batch the tag-derived startup context and the required CLI guide. Plain `context` reports the loading-tag closure; it does not interpret explicit read instructions in prose. When task paths are unknown, only conditioned `#LoadNow` and `#KeepInMind` entries that a loaded parent exposes are reported as pending. Other conditioned entries stay on demand. If any entries are pending, the command returns `incomplete` with exit 3. Pass known or planned working paths with `--for` to check the matching entries.
 
 ## Status tags
 
@@ -139,7 +139,7 @@ Tags are plain text, so the files work without the CLI. The CLI reads them too:
 
 - `open-forge context` lists startup and selected-route context by following loaded routes, loading tags, and matching `applyTo` conditions. Pass each known or planned working path with `--for`.
 - `open-forge route inspect <source>` explains how one file loads, and why. Use `--for <path>` to check working paths, or `--matching-files` to preview current matches.
-- `open-forge status` reports how many tokens load at startup, and how many may load again at refresh points.
+- `open-forge status` estimates the token cost of tag-selected startup and refresh context. Explicit read instructions, such as the CLI Skill rule, can add reads beyond that estimate.
 - `open-forge route create --template` copies only from a file tagged `#Template`.
 - `open-forge find --tag` searches by any tag, including your own.
 

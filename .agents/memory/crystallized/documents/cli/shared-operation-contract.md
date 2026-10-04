@@ -132,7 +132,9 @@ selected merely because it was displayed. A recommendation may be emphasized
 for review, but the user or an explicit input must supply its authority.
 
 The host supplies three prompt capabilities: `CanPrompt`, `CanReadKeys`, and
-`CanRedraw`. When `CanPrompt` is false, the command reports the shared family
+`CanRedraw`, plus current viewport dimensions and a supported screen-clearing
+operation when redraw is available. The host owns Console access; reusable
+presentation consumes these supplied facts and callbacks. When `CanPrompt` is false, the command reports the shared family
 message for the missing answer: `confirmation-required`, `selection-required`,
 or `permission-required`, with the flag that supplies it. `--format json` and
 `--automatic` never prompt. Missing semantic input is `invalid-input`.
@@ -140,11 +142,33 @@ Missing authority or an unresolved choice is `blocked`.
 
 The host derives those capabilities as follows:
 
-| Capability    | Condition                                                        | Effect                                                          |
-| ------------- | ---------------------------------------------------------------- | --------------------------------------------------------------- |
-| `CanPrompt`   | stdin and stderr are not redirected                              | Any prompt is allowed.                                          |
-| `CanReadKeys` | `CanPrompt`, `TERM` is not `dumb`, and the console supports keys | Arrow, space, and Escape selection is used.                     |
-| `CanRedraw`   | `CanReadKeys` and the console accepts ANSI cursor movement      | Lists redraw in place; otherwise each change reprints the list. |
+| Capability    | Condition                                                        | Effect                                                                               |
+| ------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `CanPrompt`   | stdin and stderr are not redirected                              | Any prompt is allowed.                                                               |
+| `CanReadKeys` | `CanPrompt`, `TERM` is not `dumb`, and the console supports keys | Arrow, space, and Escape selection is used.                                          |
+| `CanRedraw`   | `CanReadKeys` and the host can clear the current console view    | Each selection frame replaces the current view; unavailable hosts retain line input. |
+
+### Selection viewport
+
+Key-based single, multi, and permission selection use one bounded current view.
+Keep the question, focused choice, selected/dependency markers, visible position
+and controls together. The full finite inventory remains navigable; it need not
+fit on screen simultaneously. Show details for the focused choice rather than
+every description. Clip or wrap through the actual viewport width and reserve
+enough rows for controls and a useful current choice, without terminal wrapping
+or scrolling stale rows into the current view. At small sizes, prioritize the
+question, focus, position and next action over secondary detail.
+
+Read viewport dimensions at each frame and refresh after a size change while
+awaiting input. Replace the entire current view through the supported host
+clearing operation rather than counting logical newlines in wrapped text.
+Permission frames retain the owner and path context with their choices. When
+paths exceed the viewport, page them with explicit position and PageUp/PageDown
+controls; every complete path remains accessible before an authority choice.
+Clearing is confined to capable interactive selection; never clear the final
+plan review or a confirmation waiting for authority. No terminal control enters
+JSON, redirected, automatic or dry-run report output. If key/geometry/clearing
+capability is unavailable, preserve the existing numbered line-input semantics.
 
 ### Prompt primitives
 
@@ -155,7 +179,7 @@ All prompt primitives have key and line modes with identical semantics:
   The flag equivalent is `--automatic`.
 - Single selection shows the possible paths or IDs, supports up/down, Enter,
   digits, and Escape, and has the line-mode question `Choose a number (1-2), or
-  press Enter to cancel:`. An exact path or ID is its flag equivalent.
+press Enter to cancel:`. An exact path or ID is its flag equivalent.
 - Multi-selection shows `[x]` chosen, `[+]` required by a chosen package, and
   `[ ]` not chosen, with a legend. Space toggles, `a` chooses all, `n` clears
   all, up/down moves, Enter continues, and Escape cancels. Direct dependencies
@@ -321,22 +345,22 @@ The current `Next:` rule is defined in
 These are the rules the shared renderer enforces once. Command catalogues rely
 on them and do not restate them.
 
-| Rule            | Content                                                                                                                                                                                                                                                                                                    |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Headline        | The first line is one complete sentence stating the outcome. There is no `Status:` line, ever.                                                                                                                                                                                                             |
-| Levels          | The [Global CLI Flags Interface Contract](contracts/shared/global-flags/interface.md) defines `minimal` (the default), `standard`, `full`, and `debug`, and the detail each level adds.                                                                                                                  |
-| Listing ladder  | `minimal` lists errors and, except for `doctor`, warnings. `standard` lists warnings for `doctor` too. `full` and `debug` list info. Everything not listed is counted.                                                                                                                       |
+| Rule            | Content                                                                                                                                                                                                                                                                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Headline        | The first line is one complete sentence stating the outcome. There is no `Status:` line, ever.                                                                                                                                                                                                                          |
+| Levels          | The [Global CLI Flags Interface Contract](contracts/shared/global-flags/interface.md) defines `minimal` (the default), `standard`, `full`, and `debug`, and the detail each level adds.                                                                                                                                 |
+| Listing ladder  | `minimal` lists errors and, except for `doctor`, warnings. `standard` lists warnings for `doctor` too. `full` and `debug` list info. Everything not listed is counted.                                                                                                                                                  |
 | Filter          | The [Global CLI Flags Interface Contract](contracts/shared/global-flags/interface.md) defines repeatable `--detail-filter <severity>`; it replaces the listing ladder with exactly the given severities at any level. `all` lists everything. The per-finding depth still follows the level. Counts are never affected. |
-| Depth per level | `minimal`: subject, one-line cause, one action. `standard`: adds the reason for the action and per-finding actions. `full`: adds evidence, candidates with why they were included, provenance, hashes, codes. `debug`: adds run diagnostics on stderr.                                                     |
-| Payload         | Requested rows, content and mutation receipts are never shortened by a level. Every replaced, restored, deleted, kept or rewritten path is listed at `minimal`. Created paths are listed at `minimal` except in Framework `install`, which summarizes them by count and directory and names the lock file. |
-| Ordering        | Headline, workspace line (when shown), errors, warnings, what changed, what was kept, what could not be checked, counts, `Next`. Within one severity by path, then line, then column.                                                                                                                      |
-| Subjects        | Every listed finding names a workspace-relative path with `:line:column` when known, or an identifier. Nothing without either is listed or blocks.                                                                                                                                                         |
-| Empty           | Zero counts are not printed unless zero is the answer, said in words. `not-applicable`, `not-requested`, `none observed` and similar never appear. A fact that could not be obtained is one sentence naming the cause. An empty listing is one sentence repeating the query. |
-| Workspace echo  | When workspace facts exist, text prints `Workspace: <path>` at `minimal` detail when `--workspace` was supplied or the result is blocked, failed or cancelled. `standard` and higher detail always show it. Text never prints `Selected by:`. JSON retains its workspace representation. |
-| Codes           | Finding codes appear in text only at `full` and `debug`, in brackets after the title. JSON carries them at every level.                                                                                                                                                                                   |
-| Streams         | The [Repetition, Results, And Streams](#repetition-results-and-streams) subsection defines the shared status and primary-stream mapping. Diagnostics and prompts go to stderr. Parser failures before binding stay text on stderr with no envelope. |
-| Exits           | The [Result Coordinates Interface Contract](contracts/shared/result-coordinates/interface.md#status-exit-and-stream-coordinates) defines the shared exit table. `route init` scaffold is complete (0). Read-only commands never print `No files changed.` |
-| Formatting      | Two-space indentation, aligned columns for rows, ASCII framing only, paths and identifiers never truncated, no JSON escapes in text, colour only on supported terminals, none in JSON or authored content.                                                                                                 |
+| Depth per level | `minimal`: subject, one-line cause, one action. `standard`: adds the reason for the action and per-finding actions. `full`: adds evidence, candidates with why they were included, provenance, hashes, codes. `debug`: adds run diagnostics on stderr.                                                                  |
+| Payload         | Requested rows, content and mutation receipts are never shortened by a level. Every replaced, restored, deleted, kept or rewritten path is listed at `minimal`. Created paths are listed at `minimal` except in Framework `install`, which summarizes them by count and directory and names the lock file.              |
+| Ordering        | Headline, workspace line (when shown), errors, warnings, what changed, what was kept, what could not be checked, counts, `Next`. Within one severity by path, then line, then column.                                                                                                                                   |
+| Subjects        | Every listed finding names a workspace-relative path with `:line:column` when known, or an identifier. Nothing without either is listed or blocks.                                                                                                                                                                      |
+| Empty           | Zero counts are not printed unless zero is the answer, said in words. `not-applicable`, `not-requested`, `none observed` and similar never appear. A fact that could not be obtained is one sentence naming the cause. An empty listing is one sentence repeating the query.                                            |
+| Workspace echo  | When workspace facts exist, text prints `Workspace: <path>` at `minimal` detail when `--workspace` was supplied or the result is blocked, failed or cancelled. `standard` and higher detail always show it. Text never prints `Selected by:`. JSON retains its workspace representation.                                |
+| Codes           | Finding codes appear in text only at `full` and `debug`, in brackets after the title. JSON carries them at every level.                                                                                                                                                                                                 |
+| Streams         | The [Repetition, Results, And Streams](#repetition-results-and-streams) subsection defines the shared status and primary-stream mapping. Diagnostics and prompts go to stderr. Parser failures before binding stay text on stderr with no envelope.                                                                     |
+| Exits           | The [Result Coordinates Interface Contract](contracts/shared/result-coordinates/interface.md#status-exit-and-stream-coordinates) defines the shared exit table. `route init` scaffold is complete (0). Read-only commands never print `No files changed.`                                                               |
+| Formatting      | Two-space indentation, aligned columns for rows, ASCII framing only, paths and identifiers never truncated, no JSON escapes in text, colour only on supported terminals, none in JSON or authored content.                                                                                                              |
 
 ### One code, one situation
 
@@ -412,7 +436,7 @@ command's verb phrase ("install", "update the Framework", "move the route").
 | selector-ambiguous           | error    | `--include or --exclude <value> matches more than one source. Use the exact path.`                                                   | none                                                                              |
 | selector-unsafe              | error    | `--include or --exclude <value> points outside the workspace.`                                                                       | none                                                                              |
 | payload-unavailable          | warning  | `The Framework bundled in this CLI could not be read completely.`                                                                    | reinstall the CLI                                                                 |
-| payload-invalid              | error    | `The Framework bundled in this CLI is invalid.`                                                                                        | reinstall the CLI                                                                 |
+| payload-invalid              | error    | `The Framework bundled in this CLI is invalid.`                                                                                      | reinstall the CLI                                                                 |
 | framework-unavailable        | warning  | `The Framework files this command needs could not be read completely.`                                                               | `open-forge doctor`                                                               |
 | framework-unsafe             | error    | `The Framework files this command needs could not be verified.`                                                                      | `open-forge doctor`                                                               |
 | selection-required           | error    | `<Command> needs to know which packages. Pass their IDs or --all.` (add `This session cannot ask.` when a prompt would have applied) | `open-forge extension list`                                                       |

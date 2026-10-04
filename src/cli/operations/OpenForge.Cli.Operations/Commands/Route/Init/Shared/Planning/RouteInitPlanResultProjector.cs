@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Settings;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -91,7 +92,11 @@ internal sealed class RouteInitPlanResultProjector
             effects.DirectoryCreations,
             effects.FileChanges,
             effects.RecoveryTargets,
-            inspection.Framework?.Trust.Ownership);
+            inspection.Framework?.Trust.Ownership)
+        {
+            Restoration = inspection.Restoration,
+            SourceSnapshots = [.. prospective.EffectSources.Select(content => content.Before)],
+        };
         return new RouteInitPlanBuild(plan, preview);
     }
 
@@ -124,7 +129,8 @@ internal sealed class RouteInitPlanResultProjector
             request,
             intended,
             prospective.Projection,
-            effects);
+            effects,
+            inspection.Restoration);
         var unchanged = entrypoints
             .Where(entrypoint => entrypoint.Outcome == RouteInitEntrypointOutcome.Unchanged)
             .Select(entrypoint => entrypoint.Path)
@@ -166,7 +172,8 @@ internal sealed class RouteInitPlanResultProjector
                     framework.Alignment.Segments.Select(segment => new RouteInitFrameworkSegment(
                         segment.IntendedSource.Identity.CanonicalBasePath,
                         segment.Role,
-                        segment.SourceAssetPath))),
+                        segment.SourceAssetPath)))
+                { IsCanonicalRestoration = framework.Alignment.IsCanonicalRestoration },
             entrypoints,
             resultEffects,
             unchanged,
@@ -182,7 +189,8 @@ internal sealed class RouteInitPlanResultProjector
         RouteInitRequest request,
         RouteInitIntendedChain intended,
         GeneratedNavigationProjection projection,
-        RouteInitProspectiveEffectPlan effects)
+        RouteInitProspectiveEffectPlan effects,
+        RouteInitRestoration? restoration)
     {
         var result = new List<RouteInitEffect>();
         result.AddRange(effects.DirectoryCreations.Select(directory => new RouteInitEffect(
@@ -205,6 +213,19 @@ internal sealed class RouteInitPlanResultProjector
         {
             if (IsOwnershipPath(request, change.LogicalPath))
             {
+                continue;
+            }
+
+            var canonicalPath = Relative(request, change.LogicalPath);
+            var payloadFile = restoration?.Files.FirstOrDefault(file => file.Asset.Path == canonicalPath);
+            if (payloadFile is not null || canonicalPath == WorkspaceSettingsDefinitions.RelativePath)
+            {
+                result.Add(new RouteInitEffect(canonicalPath,
+                    payloadFile is null ? RouteInitEffectKind.Settings : RouteInitEffectKind.Payload,
+                    change.Kind == PlannedFileChangeKind.Create ? RouteInitEffectAction.Create : RouteInitEffectAction.Replace,
+                    payloadFile?.Asset.Path,
+                    ReadRestorationTextChange(payloadFile, restoration, change),
+                    RouteInitEffectOutcome.Planned, RouteInitEffectResidual.None));
                 continue;
             }
 
@@ -245,6 +266,37 @@ internal sealed class RouteInitPlanResultProjector
         }
 
         return result;
+    }
+
+    private static RouteInitEffectChange? ReadRestorationTextChange(
+        RouteInitRestorationFile? payloadFile,
+        RouteInitRestoration? restoration,
+        PlannedFileChange change)
+    {
+        if (payloadFile is { Source: null })
+        {
+            return ReadPayloadTextChange(change);
+        }
+
+        string? before = null;
+        if (payloadFile is null && restoration?.Settings.Snapshot is { HasBytes: true } snapshot)
+        {
+            before = StrictUtf8.GetString(snapshot.Bytes.AsSpan());
+        }
+
+        return new RouteInitEffectChange(before, StrictUtf8.GetString(change.IntendedBytes.AsSpan()));
+    }
+
+    private static RouteInitEffectChange? ReadPayloadTextChange(PlannedFileChange change)
+    {
+        try
+        {
+            return new RouteInitEffectChange(Before: null, StrictUtf8.GetString(change.IntendedBytes.AsSpan()));
+        }
+        catch (DecoderFallbackException)
+        {
+            return null;
+        }
     }
 
     private static RouteInitLifecycleAction ReadLifecycleAction(

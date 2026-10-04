@@ -28,6 +28,7 @@ using OpenForge.Cli.Core.Presentation.Index.Shared.Help;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Presentation.Install;
@@ -190,7 +191,11 @@ internal static class CliStandaloneComposer
                 interaction.Prompts.PlanConfirmation<InstallResult, InstallData, InstallConfirmationFacts>(
                     InstallPresentation.Rendering,
                     static (InstallConfirmationFacts facts) => InstallPlanConfirmationQuestion.Create(facts)),
-                lockStoreRoot).ExecuteAsync), InstallPresentation.Rendering);
+                lockStoreRoot,
+                new InstallSetupInteraction(
+                    (initial, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Preset(initial), policy, token),
+                    (question, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Route(question), policy, token),
+                    (row, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Action(row), policy, token))).ExecuteAsync), InstallPresentation.Rendering);
 
     private static ICliCommandBinding BuildUpdate(
         UpdateSymbols symbols,

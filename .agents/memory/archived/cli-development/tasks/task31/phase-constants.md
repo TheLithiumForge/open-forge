@@ -29,5 +29,5 @@ The A4 snapshot receipts later in this file retain their original schema and
 flag vocabulary as historical evidence. They predate the completed G4 report
 migration and do not describe current CLI behavior.
 
-The source evidence is the sealed [Implementation Duplication analysis](../../../../emerging/analysis/cli-experience-audit/implementation-duplication.md);
+The source evidence is the sealed [Implementation Duplication analysis](../../analysis/cli-experience-audit/implementation-duplication.md);
 the current update rule is in [Task 31](../task31-implementation-duplication.md).

@@ -17,6 +17,12 @@ chosen combination with one declared authority for each piece of state.
 
 ## Candidate Modes
 
+The optional [Planning Extension](../../../../src/extensions/planning/README.md)
+already supplies the Planning Workflow, Work Records Pattern, and Task, Plan,
+Backlog, Checkpoint, Idea, Analysis, and Decision Templates. The open question
+here is whether distinct task modes and external-tracker exchange add useful
+behavior beyond those shipped starters.
+
 ### Simple Tasks
 
 The everyday mode uses a small backlog containing concise items or links to
@@ -88,34 +94,28 @@ context needed for work without gatekeeping how people organize that work.
 
 ## Orchestration Boundary
 
-The current [Development Workflow](../../../skills/use-workflow/references/open-forge/development/_development.md)
-and [Task Lifecycle](../../../skills/use-workflow/references/open-forge/development/task-lifecycle.md) give the
-mastermind sole authority to update Task state and commit accepted phase changes.
-Preflight, Gray, Red, Green, Blue, Purple, and Whole-Task Review agents return
-evidence and do not edit the Task source or create commits.
+The local [Assured Development recipe](../../../skills/use-workflow/references/open-forge/development/_development.md) and [Task Lifecycle](../../../skills/use-workflow/references/open-forge/development/task-lifecycle.md) define their own implementation ownership, frozen boundaries, evidence, and task-update process. Commit freeze points require authorization and useful isolation, review, or recovery value. Separate Blue and Purple passes are conditional.
 
-That rule belongs to the selected agent-TDD recipe. It is not a universal Task
-primitive rule. Another Workflow may define a different safe update policy,
-and an external tracker may enforce its own permissions.
+Those choices belong to the selected local method. They do not define a universal Task primitive. Another Workflow may define a different safe update policy, and an external tracker may enforce its own permissions.
 
 ## Current Trials
 
-The local [Task Template](../../../templates/memory/task.md) and [Plan
-Template](../../../templates/memory/plan.md) are experimental dogfood sources.
-They test whether one Task can define the problem, outcome, boundaries,
-hierarchy, and acceptance while a separate Plan defines the execution graph,
-parallel lanes, resources, verification, and continuity. They do not establish a
-standard Task `route`, a required lifecycle, or a shipped Template.
+The shipped [Task Template](../../../templates/planning/task.md) and
+[Plan Template](../../../templates/planning/plan.md) provide optional starting
+shapes. The Task defines the accepted outcome and current state. A separate
+Plan defines sequence when that detail needs its own source. Copying a starter
+does not establish a required Task route or one universal lifecycle.
 
 The historical [CLI Foundation](../../archived/cli-v2/implementation-history/cli-foundation.md) and [CLI
 Development Workflow Task](../../archived/cli-v2/implementation-history/cli-development-workflow.md) suggest
-two complete local trials. Whether the proven result becomes a shipped Template
-or a Simple Tasks Extension remains an evidence-driven promotion decision.
+two complete historical trials. Task and Plan starters have since shipped.
+Separate Simple Tasks or Sprint Tasks packages, and tracker import or export,
+remain candidates requiring their own evidence and acceptance.
 
 ## Evidence Before Promotion
 
 The accepted CLI Foundation satisfies the first item. The remaining evidence
-still governs any shipped promotion.
+still governs additional mode packaging and tracker integration.
 
 1. Use the provisional simple shape for at least one complete implementation
    cycle.

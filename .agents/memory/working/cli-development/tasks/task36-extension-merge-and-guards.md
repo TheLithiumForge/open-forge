@@ -6,7 +6,7 @@ open-forge:
 
 # Task 36 — Extension Partial Merge And Guard Replacement
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task36-extension-merge-and-guards.md). Recommendation:
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task36-extension-merge-and-guards.md). Recommendation:
 Needs the maintainer's decision first. The review names any details in this record that are out of date.
 
 ## Accepted execution on 2026-09-30
@@ -173,14 +173,14 @@ heading/footer and indefinite legacy input compatibility are complete. Question
 The clean development candidate `510545fc17167a39e19d3635119caf326d191808`
 passed the Windows x64 Native AOT delivery gate at version `0.9.0-beta.3`:
 
-| Test mode | Passed | Platform exclusions | Failed |
-| --- | ---: | ---: | ---: |
-| Unit | 3,747 | 0 | 0 |
-| Managed integration | 2,541 | 17 | 0 |
-| Managed public CLI | 260 | 0 | 0 |
-| Native integration | 2,541 | 17 | 0 |
-| Native public CLI | 260 | 0 | 0 |
-| Managed tests against native CLI | 260 | 0 | 0 |
+| Test mode                        | Passed | Platform exclusions | Failed |
+| -------------------------------- | -----: | ------------------: | -----: |
+| Unit                             |  3,747 |                   0 |      0 |
+| Managed integration              |  2,541 |                  17 |      0 |
+| Managed public CLI               |    260 |                   0 |      0 |
+| Native integration               |  2,541 |                  17 |      0 |
+| Native public CLI                |    260 |                   0 |      0 |
+| Managed tests against native CLI |    260 |                   0 |      0 |
 
 Reproduce with `npm run build:native -- --rid win-x64 --no-restore`,
 `npm run test:built -- --rid win-x64`, and `npm run pack -- --rid win-x64`.
@@ -285,11 +285,11 @@ Candidate boundaries, none chosen:
 **The risk the maintainer flagged is the one to test first, and it is not a
 parsing question.** A fenced code block is valid Markdown and easy to locate
 with the existing parser — but an agent reading the file may treat fenced
-content as an *example* rather than as an instruction it must follow. That would
+content as an _example_ rather than as an instruction it must follow. That would
 silently weaken every directive it wraps.
 
 So this cannot be decided on parser convenience. It needs evidence about how
-the content is *read*, not just how it is located:
+the content is _read_, not just how it is located:
 
 - Write the same instruction in each candidate form and check whether an agent
   actually follows it. More than one model, since this is a behavioural claim
@@ -330,8 +330,8 @@ the content is *read*, not just how it is located:
   asks the same question as Question 2 here. Treat them as one.
 - **Evidence against a heading-only boundary:** a `# Open Forge` region in this
   repository's `AGENTS.md` would absorb the `## Exact Mechanical Execution
-  Exception` section that follows it, and the next update would overwrite it.
-  See the [review](../../../emerging/analysis/open-task-review/task36-extension-merge-and-guards.md).
+Exception` section that follows it, and the next update would overwrite it.
+  See the [review](../../../archived/cli-development/analysis/open-task-review/task36-extension-merge-and-guards.md).
 
 ## Axioms
 

@@ -79,5 +79,5 @@ Pages source to GitHub Actions.
 
 **Maintenance duty:** the Extension and concept pages describe shipped files.
 [Task 53](../../../working/cli-development/tasks/task53-loading-and-scoping-audit.md) and
-[Task 54](../../../working/cli-development/tasks/task54-tag-trimming.md) must update the affected pages when they
+[Task 54](task54-tag-trimming.md) must update the affected pages when they
 change loading tags or tag sets.

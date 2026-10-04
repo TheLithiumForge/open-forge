@@ -20,6 +20,7 @@ internal sealed record LibraryAttachPlan
         Directories = Directories,
         Links = Links,
         GeneratedRegions = GeneratedRegions,
+        GitIgnore = GitIgnore,
         OwnershipChange = OwnershipChange,
     };
 
@@ -34,6 +35,8 @@ internal sealed record LibraryAttachPlan
     public required ImmutableArray<RelativeFileLinkEffect> Links { get; init; }
 
     public required ImmutableArray<PlannedFileChange> GeneratedRegions { get; init; }
+
+    internal OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnorePlan? GitIgnore { get; init; }
 
     internal PlannedFileChange? OwnershipChange { get; init; }
 

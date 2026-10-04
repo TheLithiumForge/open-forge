@@ -2,6 +2,8 @@ using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using System.Text;
+using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
@@ -101,7 +103,37 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                 "The workspace settings read state is not defined.");
         }
 
+        InstallConfigurationPlan? configurationPlan = null;
         var settings = settingsRead.Document;
+        if (request.Configuration is { } configuration)
+        {
+            var loaderRead = await _targetReader.ReadAsync(request.Workspace, FrameworkPayloadAsset.LoaderPath, cancellationToken).ConfigureAwait(false);
+            var initialAdoption = !configuration.Configure && ownership.Document.Framework is null
+                && loaderRead.State == InstallTargetReadState.Missing;
+            if (!initialAdoption)
+                return await new InstallConfigurationIntendedStateBuilder(physicalPathResolver)
+                    .BuildAsync(request, payload, ownership, settingsRead, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                var settingsChange = InstallConfigurationSettings.Plan(settingsRead, configuration);
+                if (settingsChange is { } change)
+                    settings = WorkspaceSettingsCodec.Read(change.IntendedBytes.ToArray()).Document
+                        ?? throw new InvalidDataException("The configured settings must decode.");
+                var ignoreRead = await _targetReader.ReadAsync(request.Workspace, InstallIgnoreSection.Path, cancellationToken).ConfigureAwait(false);
+                var before = ignoreRead.Snapshot ?? throw new InvalidDataException(ignoreRead.Cause ?? "The Git-ignore file is unsafe or unavailable.");
+                var intendedIgnore = InstallIgnoreSection.Rewrite(before.Bytes.AsSpan(), configuration.Routes);
+                PlannedFileChange? ignoreChange = null;
+                if (!before.Bytes.AsSpan().SequenceEqual(intendedIgnore))
+                    ignoreChange = ignoreRead.State == InstallTargetReadState.Missing
+                        ? PlannedFileChange.Create(before.Expectation, intendedIgnore)
+                        : PlannedFileChange.ReplaceGeneratedRegion(before.Expectation, intendedIgnore);
+                configurationPlan = new(settingsRead, ignoreRead, settingsChange, ignoreChange, UsesInitialAdoption: true);
+            }
+            catch (Exception exception) when (exception is ArgumentException or InvalidDataException or DecoderFallbackException)
+            {
+                return Blocked(exception.Message, InstallFindingCode.TargetUnsafe);
+            }
+        }
         var selectedPayloadAssets = payload.Assets
             .Where(asset => asset.Path.StartsWith(".agents/", StringComparison.Ordinal)
                 && FrameworkPayloadSelection.IncludesPath(asset.Path, settings))
@@ -439,6 +471,7 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
 
             var intendedState = new InstallIntendedState
             {
+                Configuration = configurationPlan,
                 TargetBytes = targetBytes,
                 UserOwnedPaths = adoption.UserOwnedPaths,
                 PreservedEntrypointPaths = preservedEntrypointBytes.Keys.ToHashSet(StringComparer.Ordinal),

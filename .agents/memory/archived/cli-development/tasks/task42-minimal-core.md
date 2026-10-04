@@ -7,7 +7,7 @@ open-forge:
 # Task 42 — Minimal core
 
 **Closed on 2026-09-28** by the maintainer, following the
-[review](../../../emerging/analysis/open-task-review/task42-minimal-core.md). The Core reduction shipped before
+[review](../analysis/open-task-review/task42-minimal-core.md). The Core reduction shipped before
 `0.9.0-beta.1`, the first public release, so no user had the old layout and no
 migration is promised. The eight maintenance contracts were repaired on
 2026-09-21. Whether each startup Core entrypoint is worth its startup cost moved

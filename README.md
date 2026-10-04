@@ -1,41 +1,39 @@
 # Open Forge
 
-Open Forge is a small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work. It's agent- and harness-agnostic, and the whole design comes from an idea I call **Adaptive Context Engineering (ACE)**. ACE takes progressive disclosure and spec-driven development and applies them to the workspace itself. Each task starts from what you want to achieve, pulls in the context it needs as the work unfolds, and leaves behind what's worth keeping for the next one.
+Open Forge is a small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work. It gives an agent a map to your rules and project knowledge, and a place to keep useful outcomes for the next task.
 
-An agent doesn't need to know everything, but it does need to know where everything is. Open Forge gives your workspace a loader and one short entrypoint per folder. At startup the rules have an agent read the loader and the entrypoints of most categories, plus any entries those entrypoints mark to load, such as the project's root rules. Everything else stays closed until a task needs it. A useful correction, a workflow that saves you time, or a decision you don't want to explain again gets a place in that structure. Scopes keep each piece within reach without bringing the whole collection into every task.
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="src/docusaurus/static/img/framework-map-dark.svg">
-    <img alt="How Open Forge fits together. With the default loading tags, the agent reads AGENTS.md or CLAUDE.md, the loader, and the indexes of Directives, Guidance, Patterns, Skills, Maps, Memory, Working, Emerging, and Crystallized at startup, plus any linked files those indexes tag to load. Templates and Archived open on demand. Each card shows a folder's index above the files it links to, which open on demand unless tagged to load. A file with applyTo patterns applies only while the task works on a matching file. Core holds six categories for how work gets done. Memory holds four states for what's worth remembering. Cards include examples of what optional Extensions add, such as Checkpoints and Decisions." src="src/docusaurus/static/img/framework-map-light.svg" width="900">
-  </picture>
-</p>
-
-The [loading page](https://thelithiumforge.github.io/open-forge/docs/concepts/loading-and-tags) walks through how an agent decides what to read, step by step.
-
-The base Framework has two parts. **Core** defines how work is done: a Directive must be followed, Guidance can be adapted, and a Template is copied and then maintained on its own. **Memory** keeps what's worth remembering and shows how far to trust it: current work, unconfirmed findings, accepted knowledge, and history each have their own state. Optional **Extensions** add categories and files inside both parts, such as Decisions from the Planning Extension.
-
-The base is 15 files and about 8.9k tokens, of which about 6.0k load at startup ([how it's measured](docs/development.md#measure-context-size)). From there, make it yours: keep your favorite tools, add your own ideas, and change the parts that don't fit. The CLI makes maintenance faster, but the files work on their own.
-
-I built Open Forge to work beside your harness, not to replace it or get in its way. It's plain Markdown that an agent reaches through `AGENTS.md`, so it never needs to take over your hooks, custom agents, or instruction files. Keep using them as much as you like, and set them up the way your harness expects. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
+At its core, it's Markdown, rules, and links. Install it in your project, then ask your agent to work as usual. Add a rule when a correction keeps coming up, link to knowledge you already have, and keep useful outcomes for later. You can add optional Extensions when you need them.
 
 ## Get started
 
-Full documentation here: https://thelithiumforge.github.io/open-forge/
-
-Setup has three steps: install the CLI, use it to install the Framework into your project, then review and commit the result. The CLI is optional. If you'd rather not use it, skip to [installing the Framework manually](#manually-from-a-clone).
-
-### Install the CLI
-
-The routes are listed from least to most setup.
-
-#### From npm
-
-Needs Node.js 22.18 or later.
+With Node.js 22.18 or later, install the CLI and run it from your project:
 
 ```sh
 npm install -g @thelithiumforge/open-forge@beta
+cd /path/to/your-project
+open-forge install
 ```
+
+Choose Essentials for a smaller start, Full Core for every built-in route, or Custom to choose each one. The installer shows your selected plan and asks before applying it. Review the new files with `git status` and `git diff`, then commit the result.
+
+Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with its whole directory Git-ignored. Working still loads normally, but new local records stay out of ordinary Git commits. Use `open-forge install --configure` to revisit an existing setup. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation) explains all choices and unattended commands.
+
+Now give your agent a normal task. For a small first try in an existing project:
+
+> Explain how this project runs its tests. Follow `AGENTS.md`, and name the Open Forge files you read.
+
+That's enough to start. The [ten-minute guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/ten-minute-guide) walks through adding a rule, keeping a useful fact, and finding the context for your next task. You don't need to choose a workflow, install Extensions, or write a specification first. The [demos](demos/) give you a project to try it on.
+
+<details>
+<summary>Other installation methods and setup details</summary>
+
+The CLI is optional. Use a native release without Node.js, build from source, or copy the Framework files manually.
+
+### Install the CLI
+
+#### From npm
+
+The quick start above uses the npm package. It needs Node.js 22.18 or later.
 
 #### From a GitHub release
 
@@ -54,18 +52,18 @@ Clone this repository and follow the [local setup guide](docs/development.md#lin
 
 ### Install the Framework
 
-Both routes install the same Framework files. The CLI also records what it installed, so it can update those files later.
+The CLI selects built-in routes and records what it manages, so it can update those files later. A manual copy supplies Full Core, which you can adapt by hand.
 
 #### With the CLI
 
 From your project (use `./tools/open-forge` instead if you kept the binary in your repository):
 
 ```sh
-open-forge install --dry-run
-open-forge install
+open-forge install --preset essentials --dry-run
+open-forge install --preset essentials
 ```
 
-The dry run lists what will be written.
+The dry run previews that exact selection without asking setup questions. Use `full-core` for every built-in route. An explicit preset on an installed workspace also needs `--configure`. For Custom rows and noninteractive configuration, see the [CLI reference](docs/cli.md#setup-choices).
 
 #### Manually, from a clone
 
@@ -87,7 +85,31 @@ Now give your agent a real task. It starts at `AGENTS.md`, reads the loader and 
 
 Adding it to an existing codebase? Point a Map at the docs you already have, and record Decisions (from the Planning Extension) starting with your next change. Choices made before you adopted Open Forge don't need to become Decisions after the fact, but every change from now on can keep its reasons. The [new or existing project guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/greenfield-and-brownfield) covers both cases, and the [demos](demos/) let you try each one.
 
+</details>
+
+## How it works
+
+```text
+You ask for a task
+        |
+AGENTS.md -> loader
+        |
+Startup rules + relevant links
+        |
+Work, keep useful outcomes
+```
+
+An agent doesn't need to know everything, but it does need to know where everything is. Each context folder has an `entrypoint`, a short Markdown file that lists what's inside. Startup reads the loader and the entrypoints tagged to load, plus the files their tags or rules require. The rest opens when a task needs it. Scopes keep specialized context with the work it applies to.
+
+I call this **Adaptive Context Engineering (ACE)**. It takes progressive disclosure and spec-driven development and applies them to the workspace itself. Start with what you want to achieve, add detail as the work unfolds, and keep what's worth knowing next time.
+
+Full Core supplies 15 Markdown files. Essentials selects fewer routes, and Custom lets you choose. Startup reads the installed entrypoints tagged to load and the files their rules require. The files work on their own. The optional CLI speeds up maintenance.
+
+I built Open Forge to work beside your harness, the tool that runs your agent. Anything that reads `AGENTS.md` (or the `CLAUDE.md` bridge) can use it. Keep your hooks, custom agents, and tools. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
+
 ## What you get
+
+This is the Full Core inventory. Essentials omits Guidance, Maps, Templates, and Archived Memory, and Custom follows your selection. Neither preset installs optional Extensions.
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first
@@ -98,7 +120,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
   guidance/_guidance.md           <- advice for recurring choices
   patterns/_patterns.md           <- reusable shapes for code, files, and documents
   skills/_skills.md               <- native SKILL.md capabilities
-  skills/open-forge-cli/SKILL.md  <- how to use the CLI, loaded when needed
+  skills/open-forge-cli/SKILL.md  <- how to use the CLI, read at startup
   templates/_templates.md         <- copy-ready starting files
   maps/_maps.md                   <- pointers to important local and external sources
   memory/
@@ -109,13 +131,15 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
     archived/_archived.md         <- history that no longer governs current work
 ```
 
-Each entrypoint says what its category is for and the rules for using it, then lists what's inside under `Entries`. Apart from Memory's four states and the `open-forge-cli` Skill, every category starts empty. The content comes from your work, or from Extensions you choose.
+Each installed entrypoint says what its category is for and the rules for using it, then lists what's inside under `Entries`. Apart from Memory state entrypoints and the `open-forge-cli` Skill, every selected category starts empty. The content comes from your work, or from Extensions you choose.
 
-At startup an agent reads `AGENTS.md`, the loader, and every entrypoint above except Templates and Archived. Reading an entrypoint doesn't open what it lists: those files open when a task needs them, unless their entry is tagged `LoadNow` or `KeepInMind`. The numbers above cover the base. Installed Extensions and your own content add to them.
+In Full Core, startup reads `AGENTS.md`, the loader, every entrypoint above except Templates and Archived, and the CLI usage guide required by Skills. Other linked files open when selected, tagged to load, or explicitly required by a loaded rule. Essentials and Custom use the same loading rules for the routes present. Git-ignored content remains readable and indexed.
 
 Read these files once now, and again after each update. They're short, and they become the instructions your agents are asked to follow.
 
 They're also yours. Add, adapt, replace, or remove the defaults as your needs change. A removed default stays removed unless you ask to restore it.
+
+Use `install --configure` to change the selected defaults later. Custom's Remove choice keeps existing files and notes routable while releasing their Framework management. Explicit configuration can restore eligible missing packaged scaffolding after a checkout, but missing private records need your own copy or backup. The [growth guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/grow-your-framework) covers changing choices and adding one omitted category.
 
 Edit a shipped file directly when you want a different version. Keep in mind that `open-forge update` brings changed Framework files back to the current version and reports each one it replaces. For a local change that should survive updates, put it in an adjacent `{name}.overwrite.md` instead. It loads right after its base file and shares that file's role, scope, and loading behavior. Where the two answer the same question, the overwrite wins, and updates leave it alone.
 
@@ -175,6 +199,20 @@ It also works with a mix of agents and tools. Each tool keeps its own interface,
 ## What goes where
 
 The Framework has two parts. **Core** defines routing, loading, and a few reusable content roles. **Memory** keeps useful context as the work evolves.
+
+<details>
+<summary>See the full framework map</summary>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="src/docusaurus/static/img/framework-map-dark.svg">
+    <img alt="Core holds six categories for how work gets done. Memory holds four states for useful context. The map distinguishes startup from on-demand reading. Skills requires its CLI usage guide at startup. Other linked files open when selected, tagged to load, or required by a loaded rule. Dashed examples come from optional Extensions." src="src/docusaurus/static/img/framework-map-light.svg" width="900">
+  </picture>
+</p>
+
+The [loading guide](https://thelithiumforge.github.io/open-forge/docs/concepts/loading-and-tags) explains the loading tags and file conditions step by step.
+
+</details>
 
 Each Core category answers one question:
 
@@ -242,7 +280,7 @@ The CLI is an accelerant, not a requirement. Everything it does, you can do by e
 
 | When you want to                       | Run                                                | Because                                                                           |
 | -------------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------- |
-| See what loads at startup              | `open-forge context`                               | You can confirm a new rule is set to load before blaming the model                |
+| See the tag-selected startup routes    | `open-forge context`                               | You can confirm a new rule is set to load before blaming the model                |
 | Find what the workspace already knows  | `open-forge find --tag=Decision`                   | An existing Decision is better reused than made again                             |
 | Add a scope or a record                | `open-forge route init`, `open-forge route create` | Frontmatter and navigation are right from the start                               |
 | Rebuild navigation after editing files | `open-forge index`                                 | Entries are how agents find things, so stale ones hide knowledge                  |
@@ -252,7 +290,21 @@ The CLI is an accelerant, not a requirement. Everything it does, you can do by e
 
 Commands that change files offer `--dry-run`, so you see the plan before anything is written.
 
-Your agent can use it too. The loader lists the main commands, and the base ships an `open-forge-cli` Skill that teaches an agent which command fits which job and how to use it safely. The Skill opens only when a task needs it. Harnesses without native Skill support still get the command list from the loader.
+The flags you'll reach for most often are:
+
+| Flag                                   | Use it to                                                                           |
+| -------------------------------------- | ----------------------------------------------------------------------------------- |
+| `--dry-run`                            | Preview a change                                                                    |
+| `--workspace <path>`                   | Choose a project without changing directories                                       |
+| `--detail standard` or `--detail full` | See more reasons and evidence                                                       |
+| `--format json`                        | Return structured output for a script or agent                                      |
+| `--automatic`                          | Skip confirmation on commands that support it, after reviewing the plan             |
+| `--for <path>`                         | Supply working files to `context`, `find`, or `route inspect`. Repeat for each file |
+| `--help`                               | See the selected command's arguments and flags                                      |
+
+`--automatic` adds no permission to overwrite or delete files. The [CLI overview](https://thelithiumforge.github.io/open-forge/docs/cli#which-command-for-which-job) lists every command's flags in one place.
+
+Your agent can use it too. The Skills entrypoint requires the `open-forge-cli` usage guide at startup. It lists each command's flags and useful cases, including batching initial reads with `open-forge context skills/open-forge-cli`. The loader and Skill are plain instructions a harness can read with its usual file tools.
 
 [Working with the CLI](https://thelithiumforge.github.io/open-forge/docs/cli) walks through these flows and when each one helps, and the [CLI reference](docs/cli.md) covers every command and option.
 

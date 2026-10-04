@@ -107,6 +107,7 @@ internal static class WorkspaceOwnershipCodec
                         SourceRoot = library.SourceRoot,
                         DestinationRoot = library.DestinationRoot,
                         Paths = SortPaths(library.Paths),
+                        GitIgnore = library.GitIgnore,
                     }),
             ],
         };
@@ -211,7 +212,8 @@ internal static class WorkspaceOwnershipCodec
                 entry.Id,
                 entry.SourceRoot,
                 entry.DestinationRoot,
-                ReadStrings(entry.Paths, WorkspaceOwnershipDefinitions.LibrariesProperty)));
+                ReadStrings(entry.Paths, WorkspaceOwnershipDefinitions.LibrariesProperty),
+                entry.GitIgnore));
         }
 
         return libraries.ToImmutable();

@@ -8,8 +8,10 @@ open-forge:
 
 ## Opportunity
 
-A future Docusaurus documentation site could make selected Open Forge commands
-interactive. A browser-loaded .NET WebAssembly module would run against a small
+The existing [documentation site](../../archived/cli-development/tasks/task52-documentation-site.md) could
+make selected Open Forge commands interactive. Task 52 completed the site.
+Browser execution remains an unaccepted extension idea. A browser-loaded .NET
+WebAssembly module would run against a small
 seeded workspace in the browser filesystem and render the same command result the
 native CLI would form. This could turn documentation examples into executable,
 inspectable journeys without granting access to a visitor's host filesystem.

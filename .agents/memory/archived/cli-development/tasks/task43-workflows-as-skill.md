@@ -7,9 +7,9 @@ open-forge:
 # Task 43 — Workflows as a skill
 
 **Closed on 2026-09-28** by the maintainer, following the
-[review](../../../emerging/analysis/open-task-review/task43-workflows-as-skill.md). All three acceptance criteria
+[review](../analysis/open-task-review/task43-workflows-as-skill.md). All three acceptance criteria
 hold in the shipped files. The manual `index` step for new recipes moved to the
-[default Skill indexing follow-up](../../../working/cli-development/tasks/task47-default-skill-indexing.md).
+[default Skill indexing follow-up](task47-default-skill-indexing.md).
 
 The sections below are the record as it stood before closing.
 

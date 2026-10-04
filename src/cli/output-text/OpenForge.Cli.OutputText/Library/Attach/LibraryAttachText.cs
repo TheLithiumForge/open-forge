@@ -18,7 +18,7 @@ internal static class LibraryAttachText
 
     // @OpenForgeText library.attach.help.syntax
     internal static string HelpSyntax()
-        => "open-forge library attach <library-id> <source-root> [--to <directory>] [--dry-run] [--automatic] [--allow-path <path>] [global options]";
+        => "open-forge library attach <library-id> <source-root> [--to <directory>] [--git-ignore <true|false>] [--dry-run] [--automatic] [--allow-path <path>] [global options]";
 
     // @OpenForgeText library.attach.help.source-and-destination
     internal static string HelpSourceAndDestination()
@@ -26,11 +26,11 @@ internal static class LibraryAttachText
 
     // @OpenForgeText library.attach.help.preview-and-permissions
     internal static string HelpPreviewAndPermissions()
-        => "Use --dry-run to inspect the complete plan without writing. Use --automatic for a non-interactive apply. Destinations outside .agents require the applicable workspace permission.";
+        => "Use --dry-run to inspect the complete plan without writing. Use --automatic for a non-interactive apply. Destinations outside .agents require the applicable workspace permission. --git-ignore true ignores exact projected leaves and requires permission for .gitignore. Interactive omission offers No or Yes. Unattended and dry-run omission means false.";
 
     // @OpenForgeText library.attach.help.examples
     internal static string HelpExamples()
-        => "open-forge library attach shared vendor/shared --dry-run\n  open-forge library attach shared vendor/shared --to docs --dry-run";
+        => "open-forge library attach shared vendor/shared --dry-run\n  open-forge library attach shared vendor/shared --to docs --dry-run\n  open-forge library attach shared vendor/shared --to .agents/libraries/shared --git-ignore true --allow-path .gitignore --automatic";
 
     // @OpenForgeText library.attach.message.inspect-the-registered-library-before-choosing-another-id
     internal static string MessageInspectTheRegisteredLibraryBeforeChoosingAnotherId()

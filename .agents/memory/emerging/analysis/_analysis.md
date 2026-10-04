@@ -20,8 +20,4 @@ Analysis preserves useful reasoning, investigation, or comparison that is not ac
 
 ## Entries
 
-- [Retrospective separating the original Framework design, the accepted CLI contracts, and what agents actually built, to learn what to design differently](cli-design-retrospective/_cli-design-retrospective.md) - #Memory #Analysis #Contextual #Candidate #CLI #Framework #Retrospective #Process #Design
-- [Hands-on audit of the CLI experience layer covering interoperability, interaction, presentation, and per-command output design](cli-experience-audit/_cli-experience-audit.md) - #Memory #Analysis #Contextual #Candidate #CLI #Experience #Presentation #Interaction #Interoperability #Audit
-- [Proposed applyTo loading rules, cross-file behavior, frontmatter forms, Entries alternatives, and CLI filtering for Task 62](glob-scoped-loading.md) - #Memory #Analysis #Framework #Loading #Frontmatter #CLI #Contextual #Candidate
-- [Post-beta-2 readiness analysis for finishing existing CLI journeys and defining evidence for a stable 1.0 release](one-zero-release-readiness.md) - #Memory #Analysis #Release #CLI #Contextual #Candidate
-- [Review of every open and unstarted CLI development Task on 2026-09-28, with a recommendation per Task, a suggested order, the blockers, and the stale records found](open-task-review/_open-task-review.md) - #Memory #Analysis #TaskReview #Planning #Contextual #Candidate
+- [Unaccepted Memory authority proposal with links to historical CLI retrospective evidence](cli-design-retrospective/_cli-design-retrospective.md) - #Memory #Analysis #Contextual #Candidate #CLI #Framework #Retrospective #Design

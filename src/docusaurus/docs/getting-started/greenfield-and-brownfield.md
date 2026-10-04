@@ -7,7 +7,7 @@ description: How to start Open Forge on a greenfield project, how to adopt it in
 
 Open Forge works the same way in a brand-new project and in a ten-year-old codebase. What differs is where the truth lives when you start, and so what you should write down first.
 
-The base Framework gives you routing, loading, the Core categories, and Memory's four states. Several things on this page come from optional Extensions: Decisions from [Planning](../extensions/planning.md), and Vision and Architecture documents from [Project Documents](../extensions/project-documents.md). The [Development Toolkit](../extensions/development-toolkit.md) installs both, plus the Development and Flows and Scenarios packages.
+The base Framework gives you routing, loading, and your selected Core categories and Memory states. [Installation](installation.md#choose-the-installed-routes) explains Essentials, Full Core, and Custom. Several things on this page come from optional Extensions: Decisions from [Planning](../extensions/planning.md), and Vision and Architecture documents from [Project Documents](../extensions/project-documents.md). The [Development Toolkit](../extensions/development-toolkit.md) installs both, plus the Development and Flows and Scenarios packages.
 
 |                                    | Greenfield: a new project                         | Brownfield: an existing codebase                         |
 | ---------------------------------- | ------------------------------------------------- | -------------------------------------------------------- |
@@ -45,13 +45,15 @@ Four principles guide adoption:
    `.agents/` tree. After upgrading the CLI in an already managed project, use
    `open-forge update --dry-run` and then plain `open-forge update`. It also
    adopts compatible Skills while reconciling owned Framework content. See
-   [With the CLI](installation.md#with-the-cli) for details. The last two
+   [With the CLI](installation.md#with-the-cli) for details. The example selects
+   Full Core, which includes Maps for the next step. If you prefer Essentials,
+   add Maps later with `install --configure`. The last two
    commands preview and install the Development Toolkit, which brings Planning
    for Decisions. Skip them if you don't want it yet.
 
    ```sh
-   open-forge install --dry-run
-   open-forge install
+   open-forge install --preset full-core --dry-run
+   open-forge install --preset full-core
    open-forge extension install development-toolkit --dry-run
    open-forge extension install development-toolkit
    ```
@@ -77,10 +79,10 @@ No. Start with a Map. Decisions begin with your next change, and rules grow from
 No. Installation adds a clearly marked Open Forge section and keeps everything you wrote. Other tools' rule files aren't touched. Read the combined instructions once, in case your rules and the loader's pull in different directions.
 
 **How much context does it add in a large repository?**
-The base adds about 6.0k tokens at startup: `AGENTS.md`, the loader, and the entrypoints tagged to load at startup. Reading an entrypoint gives the agent its rules and one line per item, and the items themselves stay closed until a task needs them. Specialized rules live in [scopes](../concepts/scopes.md) that load only when a task selects them, and Memory records open when they're relevant. Installed Extensions add only their one-line entries at startup. Adding knowledge doesn't mean every task reads more of it.
+Startup reads `AGENTS.md`, the loader, installed entrypoints tagged to load, and any files their rules require. Run `open-forge status` to estimate the tag-selected context in your workspace. Reading an entrypoint gives the agent its rules and one line per item. Linked files open when selected, tagged to load, or required by a loaded rule. Specialized rules live in [scopes](../concepts/scopes.md) that load when selected, and Memory records open when relevant. First-party Extensions add at most their entry lines at startup. Adding knowledge doesn't mean every task reads more of it.
 
 **What if the agent writes something wrong into Memory?**
-Everything is plain Markdown in your repository, so it shows up in `git diff` like any change. The rules keep unconfirmed findings in Emerging Memory and reserve Crystallized for what you accept. Tags alone never make something authoritative.
+Everything is plain Markdown that you can inspect and correct. Tracked changes appear in `git diff`. Essentials Git-ignores Working Memory, so review its local records directly. The rules keep unconfirmed findings in Emerging Memory and reserve Crystallized for what you accept. Tags alone never make something authoritative.
 
 **We already keep ADRs. Do we switch to Decisions?**
 You don't have to. Keep your ADRs and add a Map that points to them. Decisions from the Planning Extension are a convention, not a requirement.
@@ -89,4 +91,4 @@ You don't have to. Keep your ADRs and add a Map that points to them. Decisions f
 Give each package or service its own scope, so its rules load only for work on it. A task that touches two packages selects both.
 
 **Does it work for a team?**
-Yes. The files live in the repository and get reviewed like code, and everyone's agents read the same rules.
+Yes. Shared files live in the repository and get reviewed like code, and everyone's agents read the same rules. Git-ignored Working notes remain local unless you share them separately.

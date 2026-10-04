@@ -27,4 +27,14 @@ internal static class CliPromptWording
     internal static string OnceReason() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelThisRunOnly();
     internal static string Cancel() => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleCancel();
     internal static string PermissionLine() => global::OpenForge.Cli.OutputText.Shared.SharedText.HeadingAlwaysOnceCancel();
+    internal static string Position(int focus, int count) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.Position(focus, count);
+    internal static string MultiPosition(int focus, int count, int chosen, int required)
+        => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.MultiPosition(focus, count, chosen, required);
+    internal static string MoveControls() => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.MoveControls();
+    internal static string AcceptControls() => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.AcceptControls();
+    internal static string CompactLegend() => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.CompactLegend();
+    internal static string ToggleControls() => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.ToggleControls();
+    internal static string MultiMoveControls() => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.MultiMoveControls();
+    internal static string PathPage(int page, int count) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.PathPage(page, count);
+    internal static string PermissionHeading() => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.PermissionHeading();
 }

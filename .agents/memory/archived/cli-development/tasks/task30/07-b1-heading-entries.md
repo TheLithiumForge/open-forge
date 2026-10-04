@@ -30,7 +30,7 @@ inside heading-owned bodies, as accepted on continuation. The Prettier containme
 
 ## References
 
-Authorizing evidence: [Structural requirements and markers](../../../../emerging/analysis/cli-experience-audit/structural-requirements-and-markers.md),
+Authorizing evidence: [Structural requirements and markers](../../analysis/cli-experience-audit/structural-requirements-and-markers.md),
 section 2 — the same file that requires markers already locates `## Axioms` by
 heading with no markers at all, so two mechanisms exist for one job and the
 marker-based one is the one that breaks.

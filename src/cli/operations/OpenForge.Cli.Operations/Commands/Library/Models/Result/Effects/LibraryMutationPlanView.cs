@@ -22,6 +22,9 @@ internal sealed record LibraryMutationPlanView
 
     public required LibrarySettingsChangeEffectView? SettingsChange { get; init; }
 
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public LibraryGitIgnoreEffectView? GitIgnore { get; init; }
+
 }
 
 internal sealed record LibrarySettingsChangeEffectView

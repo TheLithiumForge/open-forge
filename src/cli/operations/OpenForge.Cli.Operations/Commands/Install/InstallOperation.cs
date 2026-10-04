@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
+using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
@@ -9,6 +10,7 @@ using OpenForge.Cli.Core.Commands.Install.Shared.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Install;
 
@@ -16,7 +18,8 @@ internal sealed class InstallOperation(
     CliPlanConfirmation<InstallResult, InstallConfirmationFacts> planConfirmation,
     InstallPlanBuilder planBuilder,
     MutationPreflight preflight,
-    InstallApplicationOperation applicationOperation)
+    InstallApplicationOperation applicationOperation,
+    InstallSetupResolver? setupResolver = null)
 {
     private readonly CliPlanConfirmation<InstallResult, InstallConfirmationFacts> _planConfirmation =
         planConfirmation ?? throw new ArgumentNullException(nameof(planConfirmation));
@@ -31,6 +34,18 @@ internal sealed class InstallOperation(
         InstallPlanBuild build;
         try
         {
+            if (setupResolver is { } resolver)
+            {
+                var setup = await resolver.ResolveAsync(request, cancellationToken).ConfigureAwait(false);
+                if (setup.Cancelled) return InitialResult(request, InstallManagementState.Interrupted, InstallFindingCode.Interrupted, "Setup was cancelled. Nothing was changed.");
+                if (setup.Boundary is { } boundary)
+                {
+                    var state = InstallDefinitions.ReadStatus(boundary.Code) == CliSemanticStatus.Incomplete
+                        ? InstallManagementState.Incomplete : InstallManagementState.Blocked;
+                    return InitialResult(request, state, boundary.Code, boundary.Cause);
+                }
+                request = request with { Configuration = setup.Configuration };
+            }
             build = await _planBuilder.BuildAsync(request, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -218,7 +233,7 @@ internal sealed class InstallOperation(
             input: new InstallBindingInput(
                 Force: plan.Request.Force,
                 Automatic: plan.Request.Automatic,
-                Mode: InstallMode.DryRun),
+                Mode: InstallMode.DryRun, Setup: plan.Request.Setup, Configuration: plan.Request.Configuration),
             findings: [],
             summary: Summary(
                 plan.ManagementState,

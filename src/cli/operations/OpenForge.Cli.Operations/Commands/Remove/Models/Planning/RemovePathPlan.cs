@@ -26,6 +26,8 @@ internal sealed record RemovePathPlan(
     ImmutableArray<FileStateSnapshot> Directories,
     RemoveNavigationPlan Navigation)
 {
+    internal RemovePathMetadataChange? GitIgnore { get; init; }
+
     internal bool IsNoOp
         => IsMissing
             && Files.IsEmpty
@@ -33,6 +35,7 @@ internal sealed record RemovePathPlan(
             && Directories.IsEmpty
             && SettingsChange is null
             && OwnershipChange is null
+            && GitIgnore is null
             && Navigation.Changes.IsEmpty;
 
     internal int FileCount => Files.Length + Links.Length;
@@ -56,6 +59,7 @@ internal sealed record RemovePathPlan(
             && Directories.Select(directory => directory.Expectation).SequenceEqual(actual.Directories.Select(directory => directory.Expectation))
             && MatchesChange(SettingsChange, actual.SettingsChange)
             && MatchesChange(OwnershipChange, actual.OwnershipChange)
+            && MatchesChange(GitIgnore, actual.GitIgnore)
             && (AgentsCreation?.Expectation == actual.AgentsCreation?.Expectation);
     }
 

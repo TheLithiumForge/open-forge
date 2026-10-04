@@ -22,6 +22,8 @@ internal static class LibraryDetachDefinitions
             LibraryDetachFindingCode.PermissionUnavailable => "library-detach.permission-unavailable",
             LibraryDetachFindingCode.PermissionChanged => "library-detach.permission-changed",
             LibraryDetachFindingCode.PermissionWriteFailed => "library-detach.permission-write-failed",
+            LibraryDetachFindingCode.GitIgnoreBlocked => "library-detach.git-ignore-blocked",
+            LibraryDetachFindingCode.GitIgnoreUnavailable => "library-detach.git-ignore-unavailable",
             LibraryDetachFindingCode.InvalidInput => "library-detach.invalid-input",
             LibraryDetachFindingCode.InvalidId => "library-detach.invalid-id",
             LibraryDetachFindingCode.RecordInvalid => "library-detach.record-invalid",

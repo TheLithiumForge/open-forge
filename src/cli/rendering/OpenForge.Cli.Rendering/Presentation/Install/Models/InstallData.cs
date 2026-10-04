@@ -37,6 +37,9 @@ internal sealed record InstallData
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<InstallDataMigration>? Migrations { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public InstallDataConfiguration? Configuration { get; init; }
+
     [JsonIgnore]
     internal IReadOnlyList<InstallDataTextRow> TextRows { get; init; } = [];
 
@@ -172,3 +175,6 @@ internal sealed record InstallDataMigrationDerivation
 
     public required string Source { get; init; }
 }
+
+internal sealed record InstallDataConfiguration(bool Configure, string Preset, IReadOnlyList<InstallDataRoute> Routes);
+internal sealed record InstallDataRoute(string Id, string Action);

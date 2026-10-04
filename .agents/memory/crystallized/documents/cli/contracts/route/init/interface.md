@@ -54,8 +54,9 @@ native-report rules below are accepted current behavior.
 
 `route init` makes one target folder routable by creating every missing
 entrypoint in its route chain. Generic mode uses one fixed draft entrypoint
-scaffold. Framework mode reuses embedded canonical Framework entrypoints while
-creating user-owned draft entrypoints for inserted scopes. Neither mode
+scaffold. Framework mode restores an explicitly selected canonical base route
+or reuses embedded canonical Framework entrypoints while creating user-owned
+draft entrypoints for inserted scopes. Neither mode
 instantiates a Template, creates the Loader, or infers semantic meaning from a
 folder name.
 
@@ -160,7 +161,7 @@ contract. This command does not copy their complete definitions.
 | `--description <text>`    | Authored metadata | One description value                                          | The final target uses its draft description unless another rule supplies an explicit description | Singleton. Repetition is invalid, including repetition with an equal value.                                                     |
 | `--responsibility <text>` | Authored metadata | One responsibility value, including the exact empty value `""` | No responsibility field is added to a missing target                                             | A non-empty value adds the field and `""` omits it. The flag is singleton; any repetition is invalid, including an equal value. |
 | `--tag=<tag>`             | Authored metadata | One tag without a `#` prefix                                   | The final target uses draft metadata and the `NeedsAuthoring` rule                               | Repeatable. Values retain argument order. Empty tags and duplicate exact tags are invalid.                                      |
-| `--apply-to <glob>`       | Authored metadata | One workspace-relative glob expression                         | No `applyTo` field is added to the final target                                                  | Repeatable. Each value may list comma-separated patterns. Patterns form a sorted ordinal-distinct set.                                        |
+| `--apply-to <glob>`       | Authored metadata | One workspace-relative glob expression                         | No `applyTo` field is added to the final target                                                  | Repeatable. Each value may list comma-separated patterns. Patterns form a sorted ordinal-distinct set.                          |
 | `--dry-run`               | Write policy      | No value                                                       | Application is selected                                                                          | Repetition is accepted and idempotent. It previews the same complete plan and preflight.                                        |
 
 `--description`, `--responsibility`, `--tag`, and `--apply-to` are valid only in
@@ -205,7 +206,36 @@ update` to change an existing source.
 
 ## Framework Mode
 
-`--framework` initializes one sparse scoped chain from the same canonical
+### Canonical base-route restoration
+
+An exact unscoped canonical Core root or Core Memory state also selects explicit
+restoration: for example `route init patterns --framework`,
+`route init skills --framework`, or `route init memory/archived --framework`.
+An installed, safe Loader is required; the command never creates it. The selected
+root may be absent. Restore missing embedded assets within the selected canonical
+subtree, including packaged native Skills, and necessary canonical ancestors.
+Preserve every existing occupant byte-for-byte except affected generated Entries;
+do not adopt an existing unowned file or replace an edited default. A present
+invalid or ambiguous occupant blocks when it prevents safe projection.
+
+The exact selection authorizes clearing its matching category exclusion, exact
+directory exclusion and selected entrypoint's exact file exclusion in
+`.agents/open-forge.json`. Preserve unrelated descendant/file exclusions and
+unknown settings properties. A broader excluded ancestor blocks and directs to
+explicitly restoring that ancestor first; selecting a child never enables its
+siblings silently. Preview lists settings effects, missing payload effects and
+affected navigation in one revalidated, recoverable plan. Cancellation and a
+blocked plan write nothing. Repeat restoration is a verified no-op.
+
+Restoration does not run whole-workspace Update, remove anything, install an
+Extension, add a separate mode registry, or change Git tracking. A selected root
+restores that root's eligible embedded subtree; selecting a Memory state restores
+only that state and necessary ancestors. Generic and scope-inserting requests
+retain the sparse-chain behavior below and do not clear persistent exclusions.
+
+### Sparse scoped initialization
+
+For other aligned targets, `--framework` initializes one sparse scoped chain from the same canonical
 Framework payload embedded for root Install. Root Install remains the producer
 of the base Framework files and route structure; there is no `install --route` spelling.
 
@@ -415,7 +445,8 @@ validated route target, mode, and applicable metadata
   -> one typed result
 ```
 
-The complete plan includes new directories, new entrypoint files, and bounded
+The complete plan includes new directories, new entrypoint files, selected
+restoration payload/settings effects when applicable, and bounded
 updates to existing generated regions. One blocked or incomplete target prevents
 every effect. The command has no best-effort or partial-application mode.
 
@@ -563,7 +594,7 @@ A parser failure is text on stderr without a result envelope.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -580,18 +611,29 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly route init; data follows the catalogue:
 
-| Level    | `data`                                                                                                            |
-| -------- | ----------------------------------------------------------------------------------------------------------------- |
-| minimal  | `{ mode, target { id, path }, scaffold, entrypoints: [ { path, outcome, needsAuthoring } ], listedIn: [ path ] }` |
+| Level    | `data`                                                                                                                         |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| minimal  | `{ mode, target { id, path }, scaffold, entrypoints: [ { path, outcome, needsAuthoring } ], listedIn: [ path ] }`              |
 | standard | + `metadata { description, responsibility, tags, sources }`. Include `applyTo` only when supplied. `lockPath` is also present. |
-| full     | + per entrypoint `content` (string), per section `before`, `after`, `frameworkFingerprint`, `verification`        |
+| full     | + per entrypoint `content` (string), per section `before`, `after`, `frameworkFingerprint`, `verification`                     |
 
 The shared schema-3 envelope is unchanged. The command-local `metadata` object
 omits `applyTo` when the flag was not supplied.
+
+Canonical restoration adds command-local effect kinds `payload` and `settings`
+alongside `directory`, `entrypoint`, and `generated-region`. A `payload` effect
+creates one missing embedded non-entrypoint asset and retains its canonical
+`sourceAssetPath` provenance at full detail. A `settings` effect creates or
+replaces only the reviewed settings file. Shared envelope effect kinds are
+`file` and `setting` respectively; its schema version stays 3.
+The `entrypoints` collection contains only actual route entrypoints, never a
+native Skill or a settings file. Restoration uses `Restored <id>.` or
+`Would restore <id>.`, followed by its exact planned/applied effects, rather
+than describing all file effects as entrypoint creation.
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON
@@ -626,42 +668,42 @@ open; this contract records both current forms.
 
 The finding catalogue is:
 
-| Code                                     | Severity | Family                       | Message                                                                                                                                  | Next                           |
-| ---------------------------------------- | -------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
-| route-init.invalid-input                 | error    | invalid-input                |                                                                                                                                          |                                |
-| route-init.invalid-target                | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.invalid-target`).                                  | `open-forge route init --help` |
-| route-init.invalid-metadata              | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.invalid-metadata`).                                                                   | corrected command              |
-| route-init.workspace-unavailable         | error    | workspace-unavailable        |                                                                                                                                          |                                |
-| route-init.workspace-unsafe              | error    | workspace-unsafe             |                                                                                                                                          |                                |
-| route-init.target-unsafe                 | error    | target-unsafe                |                                                                                                                                          |                                |
-| route-init.route-ambiguous               | error    | route-ambiguous              |                                                                                                                                          |                                |
-| route-init.identity-collision            | error    | identity-collision           | (blocking here: the new ID would collide)                                                                                                | choose another name            |
-| route-init.loader-unsafe                 | error    | local                        | [`route.init.message.agents-loader-md-could-not-be-verified-safely`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Init/RouteInitText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.loader-unsafe`).                                                                                        | `open-forge doctor`            |
-| route-init.framework-payload-invalid     | error    | payload-invalid              |                                                                                                                                          |                                |
-| route-init.framework-payload-unavailable | warning  | payload-unavailable          |                                                                                                                                          |                                |
-| route-init.framework-install-required    | error    | local                        | [`route.init.message.the-framework-scaffold-needs-an-installed-framework`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Init/RouteInitText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.framework-install-required`).                                                                                   | `open-forge install --dry-run` |
-| route-init.framework-update-required     | error    | local                        | [`route.init.message.the-installed-framework-is-older-than-the-one-this-cli-ships`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Init/RouteInitText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.framework-update-required`).                                                                          | `open-forge update`            |
-| route-init.framework-alignment-blocked   | error    | local                        | [`route.init.message.the-installed-framework-does-not-match-the-version-this-cli-ships-so-the-framework-scaffold-cannot-be-used`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Init/RouteInitText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.framework-alignment-blocked`).                           | `open-forge doctor`            |
-| route-init.metadata-unsafe               | error    | metadata-unsafe              |                                                                                                                                          |                                |
-| route-init.generated-region-unsafe       | error    | generated-region-unsafe      |                                                                                                                                          |                                |
-| route-init.lifecycle-blocked             | error    | lifecycle-blocked            |                                                                                                                                          |                                |
-| route-init.workspace-lock-unavailable    | error    | workspace-lock-unavailable   |                                                                                                                                          |                                |
-| route-init.target-changed                | error    | target-changed               |                                                                                                                                          |                                |
-| route-init.recovery-conflict             | error    | recovery-conflict            |                                                                                                                                          |                                |
-| route-init.inspection-incomplete         | warning  | inspection-incomplete        |                                                                                                                                          |                                |
-| route-init.metadata-incomplete           | warning  | metadata-incomplete          |                                                                                                                                          |                                |
-| route-init.projection-incomplete         | warning  | projection-unavailable       |                                                                                                                                          |                                |
-| route-init.lifecycle-unavailable         | warning  | lifecycle-unavailable        |                                                                                                                                          |                                |
-| route-init.recovery-unavailable          | warning  | recovery-unavailable         |                                                                                                                                          |                                |
-| route-init.needs-authoring               | info     | local                        | `Its description and tags are placeholders. Edit them before relying on this route.` (rendered as the advisory line, not as an Info row) | none                           |
-| route-init.recovery-artifact-retained    | warning  | recovery-artifact-retained   |                                                                                                                                          |                                |
-| route-init.target-changed-during-apply   | error    | target-changed-during-apply  |                                                                                                                                          |                                |
-| route-init.write-failed                  | error    | write-failed                 |                                                                                                                                          |                                |
-| route-init.verification-failed           | error    | verification-failed          |                                                                                                                                          |                                |
-| route-init.lifecycle-publication-failed  | error    | lifecycle-publication-failed |                                                                                                                                          |                                |
-| route-init.recovery-failed               | error    | recovery-failed              |                                                                                                                                          |                                |
-| route-init.operation-failed              | error    | operation-failed             |                                                                                                                                          |                                |
-| route-init.interrupted                   | error    | interrupted                  |                                                                                                                                          |                                |
+| Code                                     | Severity | Family                       | Message                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Next                           |
+| ---------------------------------------- | -------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
+| route-init.invalid-input                 | error    | invalid-input                |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.invalid-target                | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.invalid-target`).                                                                                                                                                                                                                                                   | `open-forge route init --help` |
+| route-init.invalid-metadata              | error    | local                        | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.invalid-metadata`).                                                                                                                                                                                                                                                 | corrected command              |
+| route-init.workspace-unavailable         | error    | workspace-unavailable        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.workspace-unsafe              | error    | workspace-unsafe             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.target-unsafe                 | error    | target-unsafe                |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.route-ambiguous               | error    | route-ambiguous              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.identity-collision            | error    | identity-collision           | (blocking here: the new ID would collide)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | choose another name            |
+| route-init.loader-unsafe                 | error    | local                        | [`route.init.message.agents-loader-md-could-not-be-verified-safely`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Init/RouteInitText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.loader-unsafe`).                                                                            | `open-forge doctor`            |
+| route-init.framework-payload-invalid     | error    | payload-invalid              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.framework-payload-unavailable | warning  | payload-unavailable          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.framework-install-required    | error    | local                        | [`route.init.message.the-framework-scaffold-needs-an-installed-framework`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Init/RouteInitText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.framework-install-required`).                                                         | `open-forge install --dry-run` |
+| route-init.framework-update-required     | error    | local                        | [`route.init.message.the-installed-framework-is-older-than-the-one-this-cli-ships`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Init/RouteInitText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.framework-update-required`).                                                 | `open-forge update`            |
+| route-init.framework-alignment-blocked   | error    | local                        | [`route.init.message.the-installed-framework-does-not-match-the-version-this-cli-ships-so-the-framework-scaffold-cannot-be-used`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Route/Init/RouteInitText.cs); [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Init/Shared/Wording/RouteInitWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-init.framework-alignment-blocked`). | `open-forge doctor`            |
+| route-init.metadata-unsafe               | error    | metadata-unsafe              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.generated-region-unsafe       | error    | generated-region-unsafe      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.lifecycle-blocked             | error    | lifecycle-blocked            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.workspace-lock-unavailable    | error    | workspace-lock-unavailable   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.target-changed                | error    | target-changed               |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.recovery-conflict             | error    | recovery-conflict            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.inspection-incomplete         | warning  | inspection-incomplete        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.metadata-incomplete           | warning  | metadata-incomplete          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.projection-incomplete         | warning  | projection-unavailable       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.lifecycle-unavailable         | warning  | lifecycle-unavailable        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.recovery-unavailable          | warning  | recovery-unavailable         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.needs-authoring               | info     | local                        | `Its description and tags are placeholders. Edit them before relying on this route.` (rendered as the advisory line, not as an Info row)                                                                                                                                                                                                                                                                                                                                                                                                                                                         | none                           |
+| route-init.recovery-artifact-retained    | warning  | recovery-artifact-retained   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.target-changed-during-apply   | error    | target-changed-during-apply  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.write-failed                  | error    | write-failed                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.verification-failed           | error    | verification-failed          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.lifecycle-publication-failed  | error    | lifecycle-publication-failed |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.recovery-failed               | error    | recovery-failed              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.operation-failed              | error    | operation-failed             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
+| route-init.interrupted                   | error    | interrupted                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. For `recovery-conflict`, the exact positively observed
@@ -672,7 +714,10 @@ and proposed removals. The exact reason is
 `Review the recovery file and preview what cleanup would remove before deleting anything.`
 Recovery-bundle admission is unchanged. Counts are:
 
-`entrypointsCreated`, `entrypointsPresent`, `sectionsUpdated`.
+`entrypointsCreated`, `entrypointsPresent`, `sectionsUpdated`. Canonical
+restoration additionally reports `payloadFilesCreated` and `settingsUpdated`,
+counting the corresponding completed or preview effects without changing the
+entrypoint counts.
 
 ## Scenarios
 
@@ -680,7 +725,6 @@ Recovery-bundle admission is unchanged. Counts are:
 `explicit-metadata`, `invalid-target`, `invalid-metadata`,
 `framework-not-installed` (blocked), `lock-held`, `write-failed-partial`,
 `cancelled`.
-
 
 Framework mode blocked -> `open-forge install --dry-run` or `open-forge
 update`; invalid -> the corrected command; otherwise none. The old `Next:
@@ -690,46 +734,46 @@ open-forge route update` without an operand is never printed.
 
 ### completed
 
-~~~text
+```text
 Created 2 entrypoints for documents/design.
 Workspace: <workspace>
   .agents/documents/_documents.md
   .agents/documents/design/_design.md
   Its description and tags are placeholders. Edit them before relying on this route.
-~~~
+```
 
 ### completed-with-warnings
 
-~~~text
+```text
 Created .agents/documents/_documents.md
   Warning  <recovery-bundle>  Recovery artifact retained
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 The route could not be initialized: <limitation>. Nothing was changed.
-~~~
+```
 
 ### invalid-input
 
-~~~text
+```text
 Cannot initialize documents: Route Init metadata is invalid.
 Workspace: <workspace>
 Next: open-forge route init documents --description "<one sentence>" --tag <Tag>
-~~~
+```
 
 ### blocked
 
-~~~text
+```text
 Cannot initialize .agents/memory/crystallized/documents/_documents.md: The Framework scaffold needs an installed Framework.
 Workspace: <workspace>
 Next: open-forge install --dry-run
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Route init stopped after 1 of 3 changes.
 Workspace: <workspace>
   Error  documents/design  Write failed
@@ -739,18 +783,18 @@ Workspace: <workspace>
   .agents/documents/design/_design.md  not started
   Its description and tags are placeholders. Edit them before relying on this route.
 Next: open-forge route init --detail debug
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Route init was cancelled. Nothing was changed.
 Workspace: <workspace>
   Error  documents  Route Init was cancelled
          Route Init was cancelled. Nothing was changed.
          open-forge route init
 Next: open-forge route init
-~~~
+```
 
 ## Related Current Sources
 

@@ -48,6 +48,27 @@ channels, or support-floor claims require a new maintainer decision.
 
 ## Current Implementation And Delivery State
 
+### Beta 6 candidate
+
+The maintainer authorized the corrected combined candidate for integration into
+`develop` and a new beta release on 2026-10-04. The selected version is
+`0.9.0-beta.6`. Local acceptance covers the onboarding guide, CLI usage Skill,
+installation presets and configuration, terminal selection layout, Library
+Git-ignore lifecycle and Memory cleanup. Hosted qualification and publication
+are pending; the local six-mode receipt is not six-platform release proof.
+[Task 70](../../../working/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#current-release-authorization-2026-10-04)
+owns that boundary.
+
+### Beta 5 publication hold
+
+Version `0.9.0-beta.5` was published to npm from
+`634ab07051e670e3f9bcc1b6603ac39a91f4febc`. The `beta` and `latest` npm tags
+identify that version. The GitHub release is draft following the maintainer's
+stop; the published npm version cannot be reused for corrected source.
+The reused-worktree recovery correction is committed in `de54c1d32` and
+included in the beta6 candidate. The dated cancellation race is retained in
+[Task 70's hold history](../../../working/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#current-release-hold-2026-10-02).
+
 ### Beta 4
 
 Version `0.9.0-beta.4` uses source
@@ -68,7 +89,7 @@ npm executables have identical SHA-256
 Fresh exact-version and `@beta` installs ran the actual `0.9.0-beta.4` npm
 shim; Framework, Core Templates, Context, Status, and Doctor passed. The
 published beta3-to-beta4 upgrade and the deployed Loading, Frontmatter,
-diagram, and Customizing guidance are recorded in [Task 69](../../../working/cli-development/tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
+diagram, and Customizing guidance are recorded in [Task 69](../../../archived/cli-development/tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
 Final public receipts are retained under `artifacts/beta4-public/` and
 `artifacts/beta4-published-upgrade/receipt.json`.
 
@@ -77,7 +98,8 @@ Final public receipts are retained under `artifacts/beta4-public/` and
 On 2026-10-01, the npm `beta` and `latest` tags identified `0.9.0-beta.3`, as
 did the [GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.3).
 Its receipt recorded no six-host or portable-archive verification. That limited
-verification fact remains historical; beta4 is the current public release.
+verification fact remains historical. Beta4 is the public GitHub prerelease;
+the current npm tags and beta5 hold are recorded above.
 
 ### Beta 2
 
@@ -104,7 +126,7 @@ verified the retained bundle with no errors or warnings.
 
 The published wrapper includes the verified README and package links. The
 versioned npm page renders its README and diagram. The updated documentation
-site is deployed. [Task 59](../../../working/cli-development/tasks/task59-beta-2-release.md)
+site is deployed. [Task 59](../../../archived/cli-development/tasks/task59-beta-2-release.md)
 retains the publication checks and the default npm page's cache limitation.
 
 ### Earlier beta qualification

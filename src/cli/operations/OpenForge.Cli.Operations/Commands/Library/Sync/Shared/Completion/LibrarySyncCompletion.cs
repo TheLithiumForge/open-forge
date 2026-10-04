@@ -122,7 +122,7 @@ internal static class LibrarySyncCompletion
     }
 
     private static int EffectCount(LibrarySyncPlan? plan)
-        => plan is null ? 0 : plan.Directories.Length + plan.Links.Length + plan.GeneratedRegions.Length
+        => plan is null ? 0 : plan.Directories.Length + plan.Links.Length + plan.GeneratedRegions.Length + (plan.GitIgnore is null ? 0 : 1)
             + (plan.OwnershipChange is null ? 0 : 1);
 
     private static void AddExecutionFindings(

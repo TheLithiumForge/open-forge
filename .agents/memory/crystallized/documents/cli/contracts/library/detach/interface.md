@@ -92,12 +92,12 @@ copy mode, saved plan, partial selector, or generic mutation dispatcher.
 
 ## Operand And Repetition
 
-| Operand or flag     | Role                                      | Accepted value                                  | Omission and repetition                                                                                        |
-| ------------------- | ----------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `<library-id>`      | Select one library management identity | One value matching the library-ID grammar below | Required and singleton. An unregistered ID records the exclusion; an absent, already excluded ID is a no-op. |
-| `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.                                   |
-| `--automatic`      | Confirmation policy                       | Boolean flag with no value                      | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
-| Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                                                    |
+| Operand or flag     | Role                                   | Accepted value                                  | Omission and repetition                                                                                                        |
+| ------------------- | -------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `<library-id>`      | Select one library management identity | One value matching the library-ID grammar below | Required and singleton. An unregistered ID records the exclusion; an absent, already excluded ID is a no-op.                   |
+| `--dry-run`         | Write policy                           | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.                                                   |
+| `--automatic`       | Confirmation policy                    | Boolean flag with no value                      | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
+| Shared global flags | Workspace and presentation             | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                                                                    |
 
 The library ID supplies record selection only. It does not select a source
 reference, route, or destination outside the selected workspace.
@@ -173,12 +173,12 @@ route or generated region is created.
 For each recorded mapping, detach distinguishes these current destination
 facts:
 
-| Destination fact                                                                                                                                  | Detach treatment                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Exact registered relative file symlink with the derived raw target                                                                                | Plan one link deletion. The target may exist or be dangling; detach does not follow it. |
-| Positively missing leaf with safe no-follow parents                                                                                               | `Attention2`; preserve the path and bytes, remove other exact links, and release the selected registration after remaining checks. |
-| Changed ordinary file with safe no-follow parents                                                                                                 | `Attention2`; preserve the ordinary bytes, remove other exact links, and release the selected registration after remaining checks. |
-| Directory, different link, junction, special entry, changed raw target, unsafe parent, alias, unknown state, or separately owned/conflicting occupant | Block the request and preserve every occupant and the record. |
+| Destination fact                                                                                                                                      | Detach treatment                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Exact registered relative file symlink with the derived raw target                                                                                    | Plan one link deletion. The target may exist or be dangling; detach does not follow it.                                            |
+| Positively missing leaf with safe no-follow parents                                                                                                   | `Attention2`; preserve the path and bytes, remove other exact links, and release the selected registration after remaining checks. |
+| Changed ordinary file with safe no-follow parents                                                                                                     | `Attention2`; preserve the ordinary bytes, remove other exact links, and release the selected registration after remaining checks. |
+| Directory, different link, junction, special entry, changed raw target, unsafe parent, alias, unknown state, or separately owned/conflicting occupant | Block the request and preserve every occupant and the record.                                                                      |
 
 An exact registered dangling link is still an exact registered link. Detach may
 remove it even when both source and target are absent because raw target
@@ -214,6 +214,22 @@ selected-registration release complete. An unsafe, aliased, conflicting, or
 otherwise unavailable occupant cannot authorize any effect.
 Library registrations carry identity, source root, destination root, and paths;
 link targets remain derived from those roots rather than stored baselines.
+
+## Owned Ignore Cleanup
+
+When the selected Library has the optional ignore intent established by
+[Attach](../attach/interface.md#library-git-ignore-choice), Detach releases its
+entries from the separate Library-owned section. Preserve authored rules, the
+Install section and entries for surviving Libraries. If the ignore file is
+already absent, removal can release the claim without recreating it.
+
+A required ordinary `.gitignore` Replace uses the complete Library permission
+stage, including its exact file grant or `--allow-path .gitignore`. Whole-Library
+root Remove delegates to this same contract. Unsafe or ambiguous required ignore
+facts produce `blocked`; unavailable required facts produce `incomplete`, without
+effects. Guard and recover exact prior bytes;
+apply and verify cleanup before final ownership publication. Dry-run reports
+the actual change without writing. No source inventory or Git operation is added.
 
 ## Consumer Permission
 
@@ -333,7 +349,7 @@ A parser failure is text on stderr without a result envelope.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -350,7 +366,7 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly library detach; data follows the catalogue:
 
@@ -364,23 +380,41 @@ Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON
 projection.
 
+A required ordinary `.gitignore` cleanup appears in `data.effects` and in the
+shared envelope's file effects. Full detail includes its expected state and
+verification facts. Planned effects do not prove application; verified cleanup
+precedes ownership publication.
+
+The shared `counts` object adds `gitIgnoreFilesUpdated` only for a concrete
+ordinary ignore plan. Preview counts the planned update; application counts
+verified updates, including zero when the file update has not verified.
+
+Retained or unknown ignore progress during failed or cancelled application uses
+the complete effect plan and verified receipts for both headline and finding.
+Zero removed links cannot imply that nothing changed. Unknown application
+remains explicit in its effect row.
+
+`library-detach.git-ignore-blocked` reports unsafe or ambiguous required ignore
+state as `blocked`. `library-detach.git-ignore-unavailable` reports unavailable
+required facts as `incomplete`. Both follow the existing detail and filter rules.
+
 ## Semantic Results
 
-| Status                  | When                                                   | Headline                                                                                    | Exit | Stream |
-| ----------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ---: | ------ |
-| completed               | detached                                               | `Detached <id>: removed <N> links under <destination>. Source files in <source> were kept.` |    0 | stdout |
-| completed               | zero links, removal already recorded and ownership readable | `Detached <id>. It had no links.`                                                        |    0 | stdout |
-| completed               | zero links and new removal intent                      | `Recorded removal intent for Library <id>.`                                                 |    0 | stdout |
-| completed (dry run)     | planned without a retained missing/changed-ordinary warning | `Would detach <id>: remove <N> links under <destination>.`                              |    0 | stdout |
-| completed (dry run)     | zero links and new removal intent                      | `Would record removal intent for Library <id>.`                                             |    0 | stdout |
-| completed               | no ownership record and ID already excluded            | `No ownership record exists, so <id> cannot be detached. Nothing was changed.`                |    0 | stdout |
-| completed-with-warnings | positively missing or changed ordinary destination retained; or recovery bundle retained | `Detached <id>: removed <N> links under <destination>.` + warning rows; retained bytes are named |    2 | stdout |
-| completed-with-warnings (dry run) | positively missing or changed ordinary destination observed | `Would detach <id>: remove <N> links under <destination>.` + warning rows; no writes |    2 | stdout |
-| incomplete              | record, Entries or recovery unreadable                 | `<id> could not be detached: <limitation>. Nothing was changed.`                            |    3 | stdout |
-| invalid-input           | malformed ID, extra operand, required final confirmation unavailable without `--automatic` | `Cannot detach <ref>: <problem>.`                                                           |    4 | stderr |
-| blocked                 | alternate/different link, directory, alias, unsafe or unknown state, separately owned/conflicting occupant, permission, lock | `Cannot detach <id>: <reason>. Nothing was changed.`                                        |    5 | stderr |
-| failed                  | after effects                                          | `Library detach stopped after <n> of <m> links were removed.`                               |    1 | stderr |
-| cancelled               | prompt cancelled, Ctrl+C                               | `Library detach was cancelled. Nothing was changed.`                                        |  130 | stderr |
+| Status                            | When                                                                                                                         | Headline                                                                                                                                                                              | Exit | Stream |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed                         | detached                                                                                                                     | `Detached <id>: removed <N> links under <destination>. Source files in <source> were kept.`                                                                                           |    0 | stdout |
+| completed                         | zero links, removal already recorded and ownership readable                                                                  | `Detached <id>. It had no links.`                                                                                                                                                     |    0 | stdout |
+| completed                         | zero links and new removal intent                                                                                            | `Recorded removal intent for Library <id>.`                                                                                                                                           |    0 | stdout |
+| completed (dry run)               | planned without a retained missing/changed-ordinary warning                                                                  | `Would detach <id>: remove <N> links under <destination>.`                                                                                                                            |    0 | stdout |
+| completed (dry run)               | zero links and new removal intent                                                                                            | `Would record removal intent for Library <id>.`                                                                                                                                       |    0 | stdout |
+| completed                         | no ownership record and ID already excluded                                                                                  | `No ownership record exists, so <id> cannot be detached. Nothing was changed.`                                                                                                        |    0 | stdout |
+| completed-with-warnings           | positively missing or changed ordinary destination retained; or recovery bundle retained                                     | `Detached <id>: removed <N> links under <destination>.` + warning rows; retained bytes are named                                                                                      |    2 | stdout |
+| completed-with-warnings (dry run) | positively missing or changed ordinary destination observed                                                                  | `Would detach <id>: remove <N> links under <destination>.` + warning rows; no writes                                                                                                  |    2 | stdout |
+| incomplete                        | record, Entries or recovery unreadable                                                                                       | `<id> could not be detached: <limitation>. Nothing was changed.`                                                                                                                      |    3 | stdout |
+| invalid-input                     | malformed ID, extra operand, required final confirmation unavailable without `--automatic`                                   | `Cannot detach <ref>: <problem>.`                                                                                                                                                     |    4 | stderr |
+| blocked                           | alternate/different link, directory, alias, unsafe or unknown state, separately owned/conflicting occupant, permission, lock | `Cannot detach <id>: <reason>. Nothing was changed.`                                                                                                                                  |    5 | stderr |
+| failed                            | after effects                                                                                                                | Existing family wording; with retained or unknown ignore progress: `Library detach stopped after <n> of <m> changes were verified.`                                                   |    1 | stderr |
+| cancelled                         | prompt cancellation or Ctrl+C                                                                                                | Before effects: `Library detach was cancelled. Nothing was changed.` With retained or unknown ignore progress: `Library detach was cancelled after <n> of <m> changes were verified.` |  130 | stderr |
 
 ### Current merged behavior and open questions
 
@@ -408,38 +442,40 @@ cancellation case. Maintainer decision remains open.
 
 The finding catalogue is:
 
-| Code                                           | Severity | Family                     | Message                                                                                                 | Next                              |
-| ---------------------------------------------- | -------- | -------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| library-detach.invalid-input                   | error    | invalid-input              |                                                                                                         |                                   |
-| library-detach.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.confirmation-required`).                                       | `open-forge library detach --automatic` |
-| library-detach.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.invalid-id`).                                                                    | `open-forge library list`         |
-| library-detach.unknown-id                      | error    | unknown-id                 |                                                                                                         | `open-forge library list`         |
-| library-detach.ownership-observation           | info     | ownership-observation      |                                                                                                         |                                   |
-| library-detach.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.record-invalid`).                             | `open-forge doctor`               |
-| library-detach.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                                         |                                   |
-| library-detach.record-blocked                  | error    | lifecycle-blocked          |                                                                                                         |                                   |
-| library-detach.registered-link-missing         | warning  | local                      | The registered destination is positively absent; no bytes were removed, safe exact links may still be removed, and registration may be released. | `open-forge library inspect <id>` |
-| library-detach.mapping-blocked                 | error    | local                      | `<path> is <an ordinary file \| a folder \| a different link> and is not the link the Library created.` Ordinary-file drift is an `Attention2` retained-destination warning; other kinds block. | `open-forge library inspect <id>` |
-| library-detach.destination-protected | error | local | `<path> is protected, owned by the source, or registered to another Library.` | `open-forge library list` |
-| library-detach.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.mapping-unavailable`).                                                  | `open-forge doctor`               |
-| library-detach.link-capability-unavailable     | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.link-capability-unavailable`).                                               | none                              |
-| library-detach.consumer-blocked                | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.consumer-blocked`).                                      | none                              |
-| library-detach.ownership-conflict              | error    | ownership-conflict         |                                                                                                         |                                   |
-| library-detach.permission-required             | error    | permission-required        |                                                                                                         |                                   |
-| library-detach.permission-declined             | error    | permission-declined        |                                                                                                         |                                   |
-| library-detach.permission-invalid              | error    | permissions-invalid        |                                                                                                         |                                   |
-| library-detach.permission-unavailable          | warning  | permissions-unavailable    |                                                                                                         |                                   |
-| library-detach.permission-changed              | error    | permissions-changed        |                                                                                                         |                                   |
-| library-detach.permission-write-failed         | error    | permission-write-failed    |                                                                                                         |                                   |
-| library-detach.generated-navigation-blocked    | error    | generated-region-unsafe    |                                                                                                         |                                   |
-| library-detach.generated-navigation-incomplete | warning  | projection-unavailable     |                                                                                                         |                                   |
-| library-detach.lock-unavailable                | error    | workspace-lock-unavailable |                                                                                                         |                                   |
-| library-detach.recovery-unavailable            | warning  | recovery-unavailable       |                                                                                                         |                                   |
-| library-detach.recovery-retained               | warning  | recovery-artifact-retained |                                                                                                         |                                   |
-| library-detach.application-failed              | error    | write-failed               |                                                                                                         |                                   |
-| library-detach.verification-failed             | error    | verification-failed        |                                                                                                         |                                   |
-| library-detach.operation-failed                | error    | operation-failed           |                                                                                                         |                                   |
-| library-detach.interrupted                     | error    | interrupted                |                                                                                                         |                                   |
+| Code                                           | Severity | Family                     | Message                                                                                                                                                                                                                                                                                                                                                                 | Next                                    |
+| ---------------------------------------------- | -------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| library-detach.git-ignore-blocked              | error    | local                      | [Library Git-ignore wording](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Shared/LibraryGitIgnoreText.cs) (unsafe required ignore state).                                                                                                                                                                                               |                                         |
+| library-detach.git-ignore-unavailable          | warning  | local                      | [Library Git-ignore wording](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Shared/LibraryGitIgnoreText.cs) (unavailable required ignore facts).                                                                                                                                                                                          |                                         |
+| library-detach.invalid-input                   | error    | invalid-input              |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.confirmation-required`).       | `open-forge library detach --automatic` |
+| library-detach.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.invalid-id`).                  | `open-forge library list`               |
+| library-detach.unknown-id                      | error    | unknown-id                 |                                                                                                                                                                                                                                                                                                                                                                         | `open-forge library list`               |
+| library-detach.ownership-observation           | info     | ownership-observation      |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.record-invalid`).              | `open-forge doctor`                     |
+| library-detach.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.record-blocked                  | error    | lifecycle-blocked          |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.registered-link-missing         | warning  | local                      | The registered destination is positively absent; no bytes were removed, safe exact links may still be removed, and registration may be released.                                                                                                                                                                                                                        | `open-forge library inspect <id>`       |
+| library-detach.mapping-blocked                 | error    | local                      | `<path> is <an ordinary file \| a folder \| a different link> and is not the link the Library created.` Ordinary-file drift is an `Attention2` retained-destination warning; other kinds block.                                                                                                                                                                         | `open-forge library inspect <id>`       |
+| library-detach.destination-protected           | error    | local                      | `<path> is protected, owned by the source, or registered to another Library.`                                                                                                                                                                                                                                                                                           | `open-forge library list`               |
+| library-detach.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.mapping-unavailable`).         | `open-forge doctor`                     |
+| library-detach.link-capability-unavailable     | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.link-capability-unavailable`). | none                                    |
+| library-detach.consumer-blocked                | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Detach/Shared/Wording/LibraryDetachWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-detach.consumer-blocked`).            | none                                    |
+| library-detach.ownership-conflict              | error    | ownership-conflict         |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.permission-required             | error    | permission-required        |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.permission-declined             | error    | permission-declined        |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.permission-invalid              | error    | permissions-invalid        |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.permission-unavailable          | warning  | permissions-unavailable    |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.permission-changed              | error    | permissions-changed        |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.permission-write-failed         | error    | permission-write-failed    |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.generated-navigation-blocked    | error    | generated-region-unsafe    |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.generated-navigation-incomplete | warning  | projection-unavailable     |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.lock-unavailable                | error    | workspace-lock-unavailable |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.recovery-unavailable            | warning  | recovery-unavailable       |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.recovery-retained               | warning  | recovery-artifact-retained |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.application-failed              | error    | write-failed               |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.verification-failed             | error    | verification-failed        |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.operation-failed                | error    | operation-failed           |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
+| library-detach.interrupted                     | error    | interrupted                |                                                                                                                                                                                                                                                                                                                                                                         |                                         |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. Counts are:
@@ -465,22 +501,22 @@ every link; `Remove the <N> links listed above? [y/N]` unless `--automatic`
 
 ### completed
 
-~~~text
+```text
 Detached team-knowledge: removed 1 link under .. Source files in shared/team-knowledge were kept.
-~~~
+```
 
 ### completed-with-warnings
 
-~~~text
+```text
 Detached team-knowledge: removed 1 link under ..
   Warning  <recovery-bundle>  Recovery artifact retained
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 team-knowledge could not be detached: <limitation>. Nothing was changed.
-~~~
+```
 
 ### invalid-input
 
@@ -488,27 +524,27 @@ Malformed Library IDs are invalid input. A valid unregistered ID records an excl
 
 ### blocked
 
-~~~text
+```text
 Cannot detach team-knowledge: .agents/directives/review.md is an ordinary file and is not the link the Library created. Nothing was changed.
 Workspace: <workspace>
 Next: open-forge library inspect team-knowledge
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Library detach stopped after 0 of 1 links were removed.
 Workspace: <workspace>
 Next: open-forge library detach team-knowledge --detail debug
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Library detach was cancelled. Nothing was changed.
 Workspace: <workspace>
 Next: open-forge library detach team-knowledge
-~~~
+```
 
 ## Related Current Sources
 

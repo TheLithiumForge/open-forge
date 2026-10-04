@@ -14,6 +14,17 @@ internal sealed class InstallManagedStateEvaluator
         cancellationToken.ThrowIfCancellationRequested();
 
         var intended = basis.Context.IntendedState;
+        if (basis.Context.Request.Configuration is not null && intended.Configuration?.UsesInitialAdoption != true)
+        {
+            return new InstallManagedStateEstablishment(new InstallEstablishmentPlanInput
+            {
+                Context = basis.Context,
+                Ownership = basis.Ownership,
+                CurrentTargets = basis.CurrentTargets,
+                VerifiedManagedTargetPaths = basis.CurrentTargets.Where(pair => pair.Value.State == InstallTargetReadState.File)
+                    .Select(pair => pair.Key).ToHashSet(StringComparer.Ordinal),
+            });
+        }
         var ownsBase = basis.CurrentFramework is { } framework
             && (framework.Paths.Any(intended.TargetBytes.ContainsKey)
                 || framework.Regions.Any(region =>

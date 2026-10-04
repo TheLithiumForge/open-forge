@@ -17,6 +17,9 @@ internal sealed record LibraryAttachData
     public required LibraryAttachDataPermissions Permissions { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public LibraryAttachDataGitIgnore? GitIgnore { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<LibraryAttachDataLink>? Links { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

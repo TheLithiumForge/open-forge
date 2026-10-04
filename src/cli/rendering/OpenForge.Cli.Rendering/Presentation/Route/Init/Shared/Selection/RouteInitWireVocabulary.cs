@@ -86,6 +86,8 @@ internal static class RouteInitWireVocabulary
             RouteInitEffectKind.Directory => "directory",
             RouteInitEffectKind.Entrypoint => "entrypoint",
             RouteInitEffectKind.GeneratedRegion => "generated-region",
+            RouteInitEffectKind.Payload => "payload",
+            RouteInitEffectKind.Settings => "settings",
             _ => throw Undefined(nameof(kind), kind),
         };
 

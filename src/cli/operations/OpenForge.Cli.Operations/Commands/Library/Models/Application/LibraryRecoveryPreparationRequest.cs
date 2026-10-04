@@ -21,5 +21,6 @@ internal sealed record LibraryRecoveryPreparationRequest
     public required ImmutableArray<PlannedFileChange> GeneratedRegions { get; init; }
     public WorkspaceOwnershipRead? Ownership { get; init; }
     public PlannedFileChange? OwnershipChange { get; init; }
+    public OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnorePlan? GitIgnore { get; init; }
     public required ImmutableArray<LibraryMappingObservation> Mappings { get; init; }
 }

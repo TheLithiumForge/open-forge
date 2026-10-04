@@ -6,7 +6,7 @@ open-forge:
 
 # Task 63 — Keeping edits to managed files through updates
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task63-keeping-edits-through-updates.md). Recommendation:
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task63-keeping-edits-through-updates.md). Recommendation:
 Needs the maintainer's decision before 1.0. The review names any details in this record that are out of date.
 
 ## Outcome

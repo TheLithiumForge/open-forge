@@ -46,10 +46,148 @@ code and seed records, and page structure and URLs.
 
 ## Current State
 
-**Now:** The earlier documentation pass remains integrated, with its release and
+**Now:** On 2026-10-02 the maintainer extended this isolated follow-up to
+autoload the CLI usage Skill, cover every command's flags and useful cases,
+and explain the product as Markdown, rules, and links. This new bounded
+horizon is complete at phase 2/2, milestone 2/2. The source and dogfood
+Skill, startup read rule, maintenance contract, public explanation, and
+diagram are aligned and verified. The broader maintainer review remains
+open; this receipt does not close the entire Task or qualify a release.
+The previous completed documentation horizon below remains historical evidence.
+
+The 2026-10-03 continuation is integrated in Root's isolated
+`docs/onboarding-and-presets` worktree from local develop `de54c1d`.
+[Task 73's active capsule](../../../archived/cli-development/tasks/task73-layered-adoption-and-installation-choices.md#active-execution-capsule-2026-10-03)
+owns this newer wave, the single ten-minute guide, restoration behavior,
+accepted installer choices and final combined qualification. Tasks 72 and 73
+are locally accepted, with six managed/native modes passing. Their changes
+remain uncommitted, unmerged and unpublished. Startup reading now
+explicitly respects an intentionally omitted CLI Skill. Actual help still
+confirms all 29 command paths and six globals; the site builds and formatting
+passes. Earlier worktree and qualification statements below describe the
+previous horizon, not a release or the final combined wave.
+
+The new scope explicitly includes `src/open-forge/.agents/skills/`, its
+repository counterpart, the Skills Maintenance contract, and affected
+public loading descriptions and diagrams. It changes authored instructions,
+not the CLI parser, loading-tag semantics, runtime Skill activation, or
+Extension wizard behavior. Use the existing Skills Axiom to require the
+native Skill at startup; do not introduce a second Skill metadata format.
+The exact flag guide earns its baseline cost through the maintainer's
+explicit request; report the measured increase. No release, remote action,
+or integration is selected. The primary agent retains ownership in the
+same worktree.
+
+The maintainer also requested a reminder after completion about an as-yet
+unrecalled concept to promote or showcase. Do not invent that concept.
+The reminder is included in the final handoff; the simplification direction is accepted
+independently of that pending idea.
+
+**Continuation verification and applicability:**
+
+- Both Skill copies match byte-for-byte, keep valid native frontmatter, and
+  expose the exact flag sets of all 29 current command paths plus six global
+  flags. Best-use cases cover initial batches, full working-file sets,
+  selected chains, additions-only reads, bounded links, discovery, and
+  reviewed changes. The existing native-metadata contract is unchanged.
+- The two focused managed embedded-payload checks and all 13 repository
+  documentation checks pass from the final worktree build. The actual Windows
+  x64 Native AOT CLI publishes and executes successfully. Its owned fresh
+  workspace passes install preview with no writes, automatic install, exact
+  installed Skill hash comparison, a 12-source startup batch with no duplicates,
+  additions-only selection, depth-one linked context, and doctor.
+- Both affected trees have current generated indexes. The source payload and
+  fresh installed fixture pass doctor. Repository doctor stops with exit 5
+  on 12 existing `reference.target-alias` findings involving historical
+  `beta-follow-ups` links; no broad repair is selected.
+- Startup reads 12 files and estimates 9,618 tokens, including 3,531 for the
+  complete CLI guide. All 15 base files estimate 10,288 tokens. These are the
+  CLI method's per-file character count divided by four and rounded up, not
+  tokenizer measurements. Plain context/status still derive an 11-file
+  loading-tag closure; explicit read instructions remain the agent's duty.
+  Public numbers and both generated SVGs reflect this distinction.
+- Site type checking and the production build pass. Browser inspection verifies
+  the startup Skill row and all seven compact CLI tables at phone width without
+  page overflow. The viewport is reset, and the local preview is preserved.
+  All 18 changed public/payload inputs match the build's source copy by SHA-256.
+- One coherent Writing Reviewer pass returned two meaning corrections:
+  preserve both working paths in the continuation example, and require a CLI
+  upgrade only when a newer bundled Framework is wanted. Both are corrected
+  and inspected by the primary owner. Required-read wording is aligned across
+  the introductions, glossary, loading pages, and diagram.
+- The Skill Creator Python validator was attempted but its local Python
+  environments lack PyYAML. Prepared js-yaml validates native metadata instead;
+  exact parity and flag coverage are checked separately. No dependencies are
+  downloaded. Formatting and whitespace checks pass.
+- Focused managed and native evidence is selected for changed payload prose
+  and its installed representation. No parser, serializer, dependency,
+  resource identity, or lifecycle implementation changes; the complete
+  release gate and six-platform qualification remain outside this horizon.
+
+Continuation evidence is in `artifacts/verification/skill-*.json` and
+`skill-*.log`, with the owned installed fixture in
+`artifacts/verification/skill-workspace/` and the native executable in
+`artifacts/verification/native-cli/`. The source remains uncommitted in
+`docs/cli-simplification`; no integration, push, or publication occurs.
+
+### Completed First Simplification Horizon
+
+**Now:** Task 61 “Documentation accuracy and voice” (phase 2/2): milestone
+2/2. The bounded documentation simplification follow-up is complete in its
+local worktree. The earlier maintainer review remains open, and this does not
+close the whole Task or accept a release. The maintainer
+requested a simpler introduction and clearer CLI flag
+discovery on 2026-10-02 after a successful demonstration. This follow-up puts
+setup and a normal first task before the taxonomy, gives the README and site
+a short task-flow diagram, makes the full map optional, and lists each
+command's flags in the compact CLI overview. The separate wizard issue is
+queued as [Task 72](../../../archived/cli-development/tasks/task72-extension-wizard-terminal-layout.md).
+
+The bounded horizon has two milestones: complete the public prose pack,
+then verify flags, examples, links, formatting, and the rendered site. The
+primary agent owns this work on `docs/cli-simplification` from
+`634ab07051e670e3f9bcc1b6603ac39a91f4febc`. Scope is the README, introduction,
+installation and first-task pages, CLI overview and flows, and the CLI
+reference introduction. Shipped payloads, CLI behavior, detailed command
+contracts, existing diagram assets, other tasks, and the other agent's
+checkout remain outside this follow-up. No integration or publication is
+selected.
+
+**Verification:**
+
+- The compact overview covers every command-specific flag in 29 command rows,
+  compared with the prepared beta5 executable's help. The globally installed
+  beta1 executable was not used as the current interface authority.
+- The existing managed repository documentation gate passes all 13 checks.
+  Site type checking and the production build pass, with broken links and
+  anchors failing the build. Formatting and `git diff --check` pass.
+- Ten documented CLI steps pass in a fresh owned example workspace: install
+  preview and apply, context, finding rules, doctor, index preview, and
+  Extension list, inspect, preview and apply. Install preview writes nothing.
+- Browser inspection verifies the expandable map and installation details,
+  links into those details, and the short diagram and flag tables at phone
+  width without page overflow. The default viewport is restored afterward.
+- All seven changed public source files are compared by SHA-256 with the
+  production build's source copy. Prepared dependencies are local to that
+  verification copy because sharing a dependency directory between worktrees
+  caused the initial static-rendering failure. No dependencies were downloaded.
+- Task navigation is regenerated. The broader workspace `doctor` exits 1,
+  reporting archived-reference ambiguity, historical missing targets,
+  unindexed support files, and installed Extension state/version warnings.
+  These remain outside this documentation follow-up. Directory paths in the
+  new wizard task are plain source pointers, not unsupported reference links.
+
+Evidence is retained under `artifacts/verification/`, including the flag
+inventory, copied managed test runner, and example-command JSON results.
+`artifacts/site-build.log` records the successful build, and
+`artifacts/site-verification/` contains its exact public prose inputs and
+rendered site. The local preview is available on port 4387 while its serve
+process remains running. Changes remain uncommitted in the isolated worktree.
+
+**Earlier baseline:** The earlier documentation pass remains integrated, with its release and
 site-verification receipts recorded in Task59. The current documentation
 reconciliation is qualified and deployed with beta4, and the site type-check/
-build gates are green. [Task 69](task69-next-beta-stabilization-release.md)
+build gates are green. [Task 69](../../../archived/cli-development/tasks/task69-next-beta-stabilization-release.md)
 records the completed qualification, publication, and documentation receipt.
 The maintainer review checkbox above remains unchecked.
 
@@ -114,6 +252,14 @@ did not count votes.
   is the source of that feedback.
 
 ## Findings for follow-up
+
+These are the original review observations, retained for provenance.
+[Task 64](../../../archived/cli-development/tasks/task64-cli-defects-and-contract-drift.md#historical-source-state)
+records the accepted behavior and wording fixes that shipped in beta4, plus
+later recovery-diagnostic work. Use its current state and
+[Project Control](../project-control.md#active-task-ledger) to determine what
+remains open. This list is not a current defect inventory, and the broader
+maintainer review of Task 61 remains pending.
 
 The reviewers found these while checking the documentation. They are outside a
 documentation pass, so nothing here was changed. The pages describe what the

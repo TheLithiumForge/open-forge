@@ -12,16 +12,16 @@ boundary. Historical receipts and retired queue state are preserved in the
 
 ## Active task ledger
 
-| ID  | Task                                                                             | State                       | Current boundary                                                                                           | Owner                                                  |
-| --- | -------------------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| 30  | [CLI Experience Remediation](tasks/task30-cli-experience-remediation.md)         | Active                      | G1/B1/G4 complete; Phase 5-D is next                                                                       | Root, direct sequential                                |
-| 31  | [Implementation Duplication Removal](tasks/task31-implementation-duplication.md) | Open                        | M1/M2/M3/M4 complete; M5 waits for stable structure                                                        | Root, direct sequential                                |
-| 38  | [Project And Test Split](tasks/task38-project-and-test-split.md)                 | Complete                    | G0–G4 accepted; implementation committed locally; preserved task/history edits remain                      | Root, Astra high overseer and direct stage coordinator |
-| 45  | [End-to-end observability](tasks/task45-end-to-end-observability.md)             | Complete for approved scope | G5/G6 accepted; post-G6 correction resolves all four failures;17platform skips and C17-07 deferment remain | Root, Astra high coordinator                           |
-| 52  | [Documentation site](tasks/task52-documentation-site.md)                         | Active                      | Integrated into local `develop`; the maintainer merges to `main`, pushes, and enables Pages                | Root, direct sequential                                |
-| 53  | [Loading and scoping audit](../../working/cli-development/tasks/task53-loading-and-scoping-audit.md)           | Open                        | Recorded for 1.0 polish; not started                                                                       | Unassigned                                             |
-| 54  | [Tag trimming](../../working/cli-development/tasks/task54-tag-trimming.md)                                     | Open                        | Recorded for 1.0 polish; not started                                                                       | Unassigned                                             |
-| 55  | [Alternative root](tasks/task55-alternative-root.md)                             | Open                        | Recorded for 1.0 polish; investigation not started                                                         | Unassigned                                             |
+| ID  | Task                                                                                                 | State                       | Current boundary                                                                                           | Owner                                                  |
+| --- | ---------------------------------------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| 30  | [CLI Experience Remediation](tasks/task30-cli-experience-remediation.md)                             | Active                      | G1/B1/G4 complete; Phase 5-D is next                                                                       | Root, direct sequential                                |
+| 31  | [Implementation Duplication Removal](tasks/task31-implementation-duplication.md)                     | Open                        | M1/M2/M3/M4 complete; M5 waits for stable structure                                                        | Root, direct sequential                                |
+| 38  | [Project And Test Split](tasks/task38-project-and-test-split.md)                                     | Complete                    | G0–G4 accepted; implementation committed locally; preserved task/history edits remain                      | Root, Astra high overseer and direct stage coordinator |
+| 45  | [End-to-end observability](tasks/task45-end-to-end-observability.md)                                 | Complete for approved scope | G5/G6 accepted; post-G6 correction resolves all four failures;17platform skips and C17-07 deferment remain | Root, Astra high coordinator                           |
+| 52  | [Documentation site](tasks/task52-documentation-site.md)                                             | Active                      | Integrated into local `develop`; the maintainer merges to `main`, pushes, and enables Pages                | Root, direct sequential                                |
+| 53  | [Loading and scoping audit](../../working/cli-development/tasks/task53-loading-and-scoping-audit.md) | Open                        | Recorded for 1.0 polish; not started                                                                       | Unassigned                                             |
+| 54  | [Tag trimming](tasks/task54-tag-trimming.md)                                                         | Open                        | Recorded for 1.0 polish; not started                                                                       | Unassigned                                             |
+| 55  | [Alternative root](tasks/task55-alternative-root.md)                                                 | Open                        | Recorded for 1.0 polish; investigation not started                                                         | Unassigned                                             |
 
 The maintainer selected Task 38 planning on 2026-09-19 and structural execution
 on 2026-09-20. Its
@@ -37,7 +37,7 @@ Tasks 28 and 29 and earlier completed records remain historical evidence.
   implementation reality.
 - A phase subtask may hold measured analysis data and acceptance evidence, but
   it cannot broaden the parent Task or create a second current plan.
-- The Emerging [CLI Experience Audit](../../emerging/analysis/cli-experience-audit/_cli-experience-audit.md)
+- The Emerging [CLI Experience Audit](analysis/cli-experience-audit/_cli-experience-audit.md)
   and [CLI Design Retrospective](../../emerging/analysis/cli-design-retrospective/_cli-design-retrospective.md)
   are contextual reasoning sources. Do not rewrite them into execution records
   when code findings change.
@@ -60,7 +60,7 @@ Remove](tasks/task50-unified-remove.md), was squash-integrated into `develop` at
 
 The selected work is the [lossless source wording proposal](../beta-preparation/src-wording-proposal.md)
 on a separate branch. The maintainer authorized applying its eight replacements; source and
-workspace counterparts are now aligned for review. The requested [default Skill indexing task](../../working/cli-development/tasks/task47-default-skill-indexing.md)
+workspace counterparts are now aligned for review. The requested [default Skill indexing task](tasks/task47-default-skill-indexing.md)
 is recorded under Task 47; no traversal implementation is released.
 
 The beta correction slices D1–D6, E1–E2 and N1–N3 are complete and squash-integrated

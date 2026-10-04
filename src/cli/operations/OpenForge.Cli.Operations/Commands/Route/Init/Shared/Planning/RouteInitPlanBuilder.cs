@@ -12,6 +12,7 @@ internal sealed class RouteInitPlanBuilder
     private readonly RouteInitProspectivePlanBuilder _prospectivePlanBuilder = new();
     private readonly RouteInitPlanResultProjector _resultProjector = new();
     private readonly RouteInitPlanFinalizer _finalizer;
+    private readonly RouteInitRestorationInspector _restorationInspector = new();
 
     internal RouteInitPlanBuilder()
     {
@@ -32,6 +33,12 @@ internal sealed class RouteInitPlanBuilder
         }
 
         var inspection = ((RouteInitInspectionCompleted)inspectionResult).Facts;
+        var restoration = await _restorationInspector.InspectAsync(request, inspection, cancellationToken).ConfigureAwait(false);
+        if (restoration is RouteInitInspectionStopped restorationStopped)
+        {
+            return _resultProjector.ProjectStopped(request, restorationStopped.Boundary);
+        }
+        inspection = ((RouteInitInspectionCompleted)restoration).Facts;
         var intendedResult = await _intendedChainBuilder.BuildAsync(
                 request,
                 inspection,

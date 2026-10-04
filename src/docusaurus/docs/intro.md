@@ -9,11 +9,45 @@ import FrameworkMap from "@site/src/components/framework-map/FrameworkMap";
 
 # What is Open Forge?
 
-Open Forge is a small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work. It's agent- and harness-agnostic. Anything that reads `AGENTS.md` (or `CLAUDE.md`) can use it.
+Open Forge is a small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work. It gives an agent a map to your rules and project knowledge, and a place to keep useful outcomes for the next task.
 
-Open Forge is built to work beside your harness, not to replace it or get in its way. Because it's plain Markdown, it never needs to take over your hooks, custom agents, or instruction files. Keep using them as much as you like, and set them up the way your harness expects. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
+At its core, it's Markdown, rules, and links. Install it, ask your agent to work as usual, and add only what makes the next task easier.
 
-The idea behind it is **Adaptive Context Engineering (ACE)**: an agent doesn't need to know everything, but it does need to know where everything is. Open Forge gives your workspace a loader and one short entrypoint per folder. An entrypoint is a Markdown file, named `_{folder-name}.md`, that says what its folder is for and lists what's inside, one line per item. The rules guide an agent from the task to the routes that matter, and the rest stays closed.
+## Start using it
+
+With Node.js 22.18 or later:
+
+```sh
+npm install -g @thelithiumforge/open-forge@beta
+cd /path/to/your-project
+open-forge install
+```
+
+Choose Essentials for a smaller start, Full Core for every built-in route, or Custom to choose each one. Review the selected plan before confirming, then check the new files with `git status` and `git diff` before committing. [Installation](getting-started/installation.md) explains the choices, other setup methods, and `install --configure` for an existing workspace.
+
+Now ask your agent for a normal task. For a first try in an existing project:
+
+> Explain how this project runs its tests. Follow `AGENTS.md`, and name the Open Forge files you read.
+
+You don't need to choose a workflow, install Extensions, or write a specification first. The [ten-minute guide](getting-started/ten-minute-guide.md) takes you through adding a rule, keeping a useful fact, and finding context for the next task. The [demos](demos/index.md) give you a project to try it on.
+
+## The basic flow
+
+```text
+Your request
+    |
+AGENTS.md -> loader
+    |
+Startup rules + relevant links
+    |
+Work, keep useful outcomes
+```
+
+An agent doesn't need to know everything, but it does need to know where everything is. Each context folder has a short `entrypoint`, a Markdown file named `_{folder-name}.md` that lists what's inside. The rules load startup context, then guide the agent to the branches the task needs. Other content opens when selected, tagged to load, or explicitly required by a loaded rule.
+
+This is **Adaptive Context Engineering (ACE)**: start from the task, bring in context as the work unfolds, and keep what's useful next time. [Loading and tags](concepts/loading-and-tags.md) explains the exact rules.
+
+Open Forge works with any harness, the tool that runs your agent, that reads `AGENTS.md` or the `CLAUDE.md` bridge. Keep your hooks, custom agents, and tools. A translator such as [APM](https://github.com/microsoft/apm) can help install harness-specific definitions in several tools.
 
 ## Three parts, one of them required
 
@@ -25,8 +59,6 @@ The idea behind it is **Adaptive Context Engineering (ACE)**: an agent doesn't n
 
 ## How it fits together
 
-<FrameworkMap />
-
 Everything in the workspace answers one of two questions:
 
 - **Core: how should this work be done?** Six roles, because a rule, a piece of advice, a reusable shape, a capability, a starting file, and a pointer each behave differently. A rule must be followed. Advice can be adapted. A Template is copied and then owned by you. Keeping them apart is what lets an agent know how seriously to take each file.
@@ -34,9 +66,19 @@ Everything in the workspace answers one of two questions:
 
 The [Concepts](concepts/index.md) section covers each part in depth.
 
+<details>
+<summary>See the full framework map</summary>
+
+<FrameworkMap />
+
+</details>
+
 ## What you actually install
 
-The base Framework is 15 plain Markdown files, about 8.9k tokens, of which about 6.0k load at startup ([how it's measured](/guides/development#measure-context-size)).
+Full Core supplies 15 Markdown files. Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with its whole directory Git-ignored. Working still loads normally, but new local records stay out of ordinary Git commits. Custom follows your selection. [Installation](getting-started/installation.md#choose-the-installed-routes) covers the exact choices.
+
+<details>
+<summary>See the Full Core files and startup details</summary>
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first
@@ -47,7 +89,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
   guidance/_guidance.md           <- advice for recurring choices
   patterns/_patterns.md           <- reusable shapes for code, files, and documents
   skills/_skills.md               <- native SKILL.md capabilities
-  skills/open-forge-cli/SKILL.md  <- how to use the CLI, loaded when needed
+  skills/open-forge-cli/SKILL.md  <- how to use the CLI, read at startup
   templates/_templates.md         <- copy-ready starting files
   maps/_maps.md                   <- pointers to important local and external sources
   memory/
@@ -58,13 +100,15 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
     archived/_archived.md         <- history that no longer governs current work
 ```
 
-Apart from Memory's four states and one Skill that teaches agents the CLI, every category starts empty. The content comes from your work, such as a correction you keep repeating or a decision you don't want to explain again, and from any Extensions you install. Decisions, Checkpoints, workflow recipes, and starter Templates all come from Extensions, not from the base.
+Apart from Memory state entrypoints and one Skill that teaches agents the CLI, every selected category starts empty. The content comes from your work, such as a correction you keep repeating or a decision you don't want to explain again, and from any Extensions you install. Decisions, Checkpoints, workflow recipes, and starter Templates all come from Extensions, not from the base.
 
-The startup rules select 11 of these files: `AGENTS.md`, the loader, and nine entrypoints. Reading an entrypoint doesn't load what it lists. Those items open when a task needs them, unless their entry is tagged `LoadNow` or `KeepInMind`. [Loading and tags](concepts/loading-and-tags.md) has the full table.
+In Full Core, startup reads `AGENTS.md`, the loader, nine entrypoints, and the CLI usage Skill required by Skills. Essentials and Custom use the same loading rules for the routes present. Reading an entrypoint doesn't load everything it lists. Other items open when selected, tagged to load, or required by a loaded rule. [Loading and tags](concepts/loading-and-tags.md) has the full table.
+
+</details>
 
 ## Where to go next
 
-- **New here?** Start with [Installation](getting-started/installation.md), then read [New or existing project](getting-started/greenfield-and-brownfield.md).
+- **New here?** Follow [Installation](getting-started/installation.md), then the [ten-minute guide](getting-started/ten-minute-guide.md). [New or existing project](getting-started/greenfield-and-brownfield.md) covers what to write down first in each case.
 - **Want to see it work?** Try a [demo](demos/index.md): build a small app from an idea, or add a feature to a half-built one.
 - **Wondering what's worth your attention?** The [Highlights](highlights.md) pick out the features that do the most work for particular kinds of users, starting with Decisions.
 - **Want to understand how it works?** Read the [Concepts](concepts/index.md), starting with [Routing](concepts/routing.md).

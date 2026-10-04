@@ -30,7 +30,8 @@ internal sealed record LibraryOwnership(
     string Id,
     string SourceRoot,
     string DestinationRoot,
-    ImmutableArray<string> Paths);
+    ImmutableArray<string> Paths,
+    bool GitIgnore = false);
 
 /// <summary>
 /// What the workspace lock says this tool wrote.

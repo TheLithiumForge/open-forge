@@ -133,7 +133,8 @@ internal sealed class RouteInitCurrentStateReader
     internal async ValueTask<RouteInitCurrentStateFacts> ReadChainAsync(
         RouteInitCurrentCatalogueFacts current,
         RouteInitTargetFacts target,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string? restorationDirectory = null)
     {
         ArgumentNullException.ThrowIfNull(current);
         ArgumentNullException.ThrowIfNull(target);
@@ -155,7 +156,7 @@ internal sealed class RouteInitCurrentStateReader
             })
             .ToArray();
 
-        var relevant = ReadRelevantSources(current, chain);
+        var relevant = ReadRelevantSources(current, chain, restorationDirectory);
         var reader = new SourceDocumentReader(current.Catalogue.Workspace);
         var reads = new List<RouteInitCurrentSourceRead>(relevant.Count);
         foreach (var source in relevant)
@@ -175,12 +176,25 @@ internal sealed class RouteInitCurrentStateReader
 
     private static IReadOnlyList<SourceLogicalSource> ReadRelevantSources(
         RouteInitCurrentCatalogueFacts current,
-        IReadOnlyList<RouteInitCurrentChainEntry> chain)
+        IReadOnlyList<RouteInitCurrentChainEntry> chain,
+        string? restorationDirectory)
     {
         var chainFolders = chain
             .Select(entry => SourceLogicalPath.ReadParent(entry.CanonicalMissingPath))
             .ToHashSet(StringComparer.Ordinal);
         var sources = new Dictionary<string, SourceLogicalSource>(StringComparer.Ordinal);
+        if (restorationDirectory is not null)
+        {
+            foreach (var source in current.ObservedSources.Where(source =>
+                source.Identity.CanonicalBasePath.StartsWith(restorationDirectory + "/", StringComparison.Ordinal)))
+            {
+                sources.TryAdd(source.Identity.CanonicalBasePath, source);
+                if (SourceFormClassifier.IsEntrypoint(source.Base.Form))
+                {
+                    chainFolders.Add(SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath));
+                }
+            }
+        }
 
         if (current.Formation?.Loader is { } loader)
         {

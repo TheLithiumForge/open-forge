@@ -48,7 +48,7 @@ internal static class LibraryRegistrationReader
             .Select(library => LibraryRegistration.Create(LibraryId.Create(library.Id),
                 WorkspaceRelativeDirectory.Create(library.SourceRoot),
                 LibraryDestinationRoot.Create(library.DestinationRoot),
-                library.Paths.Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create).ToArray()))
+                library.Paths.Order(StringComparer.Ordinal).Select(SourceRelativeEligiblePath.Create).ToArray(), library.GitIgnore))
             .ToArray());
 
     private static LibraryRegistrationRead Observation(WorkspaceOwnershipRead ownership, string cause)

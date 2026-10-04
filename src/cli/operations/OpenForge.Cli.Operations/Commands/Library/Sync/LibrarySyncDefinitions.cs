@@ -22,6 +22,8 @@ internal static class LibrarySyncDefinitions
             LibrarySyncFindingCode.PermissionUnavailable => "library-sync.permission-unavailable",
             LibrarySyncFindingCode.PermissionChanged => "library-sync.permission-changed",
             LibrarySyncFindingCode.PermissionWriteFailed => "library-sync.permission-write-failed",
+            LibrarySyncFindingCode.GitIgnoreBlocked => "library-sync.git-ignore-blocked",
+            LibrarySyncFindingCode.GitIgnoreUnavailable => "library-sync.git-ignore-unavailable",
             LibrarySyncFindingCode.InvalidInput => "library-sync.invalid-input",
             LibrarySyncFindingCode.InvalidId => "library-sync.invalid-id",
             LibrarySyncFindingCode.RecordInvalid => "library-sync.record-invalid",

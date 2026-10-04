@@ -6,12 +6,16 @@ open-forge:
 
 # Task 48 — Scoping for Extension routes
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task48-scoping-for-extension-routes.md). Recommendation:
-Do after 1.0. The review names any details in this record that are out of date.
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task48-scoping-for-extension-routes.md). Recommendation:
+The review proposed work after 1.0. The later accepted selection requires it
+before 1.0, deferred beyond beta5. Use the current state below.
 
 ## Task state
 
-- State: **Open, not started.** Raised by the maintainer on 2026-09-19.
+- State: **Open, frozen after the A/B1 implementation boundary.** The scoped
+  route-copy direction is selected. Remaining implementation and acceptance
+  are deferred beyond beta5 but required before 1.0. Preserve the frozen
+  worktree boundary. See the [current ledger](../project-control.md#active-task-ledger).
 - Owner: Root.
 - Caused by [Task 42](../../../archived/cli-development/tasks/task42-minimal-core.md) reducing Core: the nested managed
   routes that scoping was demonstrated on now live in Extensions.
@@ -65,11 +69,11 @@ Open questions worth settling before implementation:
 Retargeting the route-init suite on 2026-09-19 cost three cases outright,
 because no Core route can express them any more:
 
-| Case | Why it no longer fits |
-| --- | --- |
-| `memory/crystallized/release-notes/documents` | Scope inserted between two managed segments |
-| `memory/crystallized/release-notes/august/documents` | Two consecutive scopes in that position |
-| `memory/documents/crystallized` | Reordered managed segments needs two managed names |
+| Case                                                 | Why it no longer fits                              |
+| ---------------------------------------------------- | -------------------------------------------------- |
+| `memory/crystallized/release-notes/documents`        | Scope inserted between two managed segments        |
+| `memory/crystallized/release-notes/august/documents` | Two consecutive scopes in that position            |
+| `memory/documents/crystallized`                      | Reordered managed segments needs two managed names |
 
 The behaviour those cases guarded still exists in the model. Nothing exercises
 it right now. Restoring that coverage is part of this Task, not a separate

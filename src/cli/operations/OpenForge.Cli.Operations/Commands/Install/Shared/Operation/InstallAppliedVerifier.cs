@@ -27,6 +27,14 @@ internal sealed class InstallAppliedVerifier(
             return targetBoundary;
         }
 
+        foreach (var effect in plan.TargetEffects.Where(effect => effect.RelativePath is ".agents/open-forge.json" or ".gitignore"))
+        {
+            var read = await _targetReader.ReadAsync(plan.Request.Workspace, effect.RelativePath, cancellationToken).ConfigureAwait(false);
+            if (read.State != InstallTargetReadState.File || read.Snapshot is not { } snapshot
+                || !snapshot.Bytes.AsSpan().SequenceEqual(effect.Change.IntendedBytes.AsSpan()))
+                return Failed("A configuration settings or Git-ignore effect did not verify.");
+        }
+
         try
         {
             return _contentIdentity.IsCurrentBaseExact(

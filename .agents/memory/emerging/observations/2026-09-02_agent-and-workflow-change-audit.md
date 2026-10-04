@@ -8,6 +8,15 @@ open-forge:
 
 ## Observation
 
+Current orientation, 2026-10-04: the audit below describes its original
+baseline. Task 11 subsequently resolved the tooling placement question, and
+the current tree uses `scripts/agent-tooling/review/` and
+`scripts/agent-tooling/agent-projections/`. The older `src/agent-tooling/`
+paths in the later occurrence are historical. Workflow recipes now live under
+the `use-workflow` Skill's references. Task 9's architecture audit is retained
+as [historical evidence](../../archived/cli-development/analysis/2026-09-02_cli-architecture-authority-audit.md).
+Neither completed placement work nor that audit is an outstanding action.
+
 From 2026-08-28 through the current Route Update baseline, the meaningful
 agent/workflow change is concentrated in an opt-in review trial, a measured
 streamlined assured lane, and tighter task/delegation controls. The integrated
@@ -296,12 +305,12 @@ orchestration Extension remains planning-only.
   economics, and Extension packaging.
 - Keep generated `.codex`, `.opencode` agent projections and `apm.lock.yaml`
   synchronized through APM; use `open-forge index` for generated `Entries`
-  blocks. Decide whether the root review engine moves with future orchestration
-  Extension extraction; do not hand-edit projections or delete the local
-  engine merely because packaging remains deferred.
-- Route the maintainer's concern that some CLI `architecture.md` content may
-  belong in Decisions or linked sources to **Task 9** for a dedicated audit.
-  This observation deliberately does not perform that audit.
+  blocks. Tooling placement is resolved. Any future orchestration Extension
+  extraction remains a separate packaging proposal. Do not hand-edit
+  projections or delete the local engine merely because packaging is deferred.
+- Use the retained Task 9 architecture audit for its historical conclusions.
+  Recheck new architecture concerns against current documents before proposing
+  another audit. This Observation does not reopen the completed one.
 
 ## Related Records And Sources
 

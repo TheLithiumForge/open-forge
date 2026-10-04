@@ -8,7 +8,7 @@ open-forge:
 
 ## Accepted outcome and authority
 
-The maintainer accepted all recommendations in the [analysis](../../../../emerging/analysis/glob-scoped-loading.md)
+The maintainer accepted all recommendations in the [analysis](../../../../archived/cli-development/analysis/glob-scoped-loading.md)
 on 2026-09-29 and authorized detailed parallel planning followed by parallel
 implementation. [Task 62](../task62-glob-scoped-loading.md) retains the outcome.
 Task 55 remains separate. The accepted analysis is frozen as input evidence.
@@ -343,12 +343,12 @@ condition chain. This check is part of the same review correction group.
 
 The independent whole-change scan is complete. Stable correction dispositions:
 
-| Finding | Disposition | Evidence |
-| --- | --- | --- |
-| R1 Optional metadata independence | Corrected and rechecked | Ordinary and Skill metadata retain their own state, invalid conditions remain typed, Index rejects them |
-| R2 Create public application evidence | Corrected and rechecked | Repeated patterns, generated parent suffix, convergence and invalid no-write process tests |
-| R3 Loader root with ambiguous structural ancestry | Corrected and rechecked | Direct nested Loader targets are reachable, and competing parent entrypoints cannot be treated as no parent |
-| R4 Find route-facts read failure | Corrected and rechecked | Standard-detail applicability must not disappear behind a successful result when the required facts read throws |
+| Finding                                           | Disposition             | Evidence                                                                                                        |
+| ------------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
+| R1 Optional metadata independence                 | Corrected and rechecked | Ordinary and Skill metadata retain their own state, invalid conditions remain typed, Index rejects them         |
+| R2 Create public application evidence             | Corrected and rechecked | Repeated patterns, generated parent suffix, convergence and invalid no-write process tests                      |
+| R3 Loader root with ambiguous structural ancestry | Corrected and rechecked | Direct nested Loader targets are reachable, and competing parent entrypoints cannot be treated as no parent     |
+| R4 Find route-facts read failure                  | Corrected and rechecked | Standard-detail applicability must not disappear behind a successful result when the required facts read throws |
 
 The earlier missing-node candidate was withdrawn and is not R3. Remaining review
 work is limited to rechecking R3/R4 corrections. No second whole-change review
@@ -376,6 +376,7 @@ The final source is frozen for qualification. The canonical native command is
 the native delivery script directly without npm stopped at launcher compilation
 because that step requires npm's execution environment. The npm invocation uses
 the same existing script and needs no source or dependency change.
+
 ### Final gate receipts
 
 - Final `npm run check:dotnet`: exit zero for whitespace and warning-level
@@ -396,14 +397,14 @@ the same existing script and needs no source or dependency change.
   identity matches the current implementation. All failures from the earlier
   qualification attempt are resolved. No test expectations or timeouts were
   weakened to hide the earlier workspace-lock timeout.
-| Final execution mode | Passed | Failed | Expected platform exclusions |
-| --- | ---: | ---: | ---: |
-| Managed Unit | 3539 | 0 | 0 |
-| Managed Integration | 2515 | 0 | 17 |
-| Managed public CLI | 254 | 0 | 0 |
-| Native Integration | 2515 | 0 | 17 |
-| Native public CLI | 254 | 0 | 0 |
-| Managed public tests targeting native CLI | 254 | 0 | 0 |
+  | Final execution mode                      | Passed | Failed | Expected platform exclusions |
+  | ----------------------------------------- | -----: | -----: | ---------------------------: |
+  | Managed Unit                              |   3539 |      0 |                            0 |
+  | Managed Integration                       |   2515 |      0 |                           17 |
+  | Managed public CLI                        |    254 |      0 |                            0 |
+  | Native Integration                        |   2515 |      0 |                           17 |
+  | Native public CLI                         |    254 |      0 |                            0 |
+  | Managed public tests targeting native CLI |    254 |      0 |                            0 |
 
 This is 9331 passing executions across six modes on Windows, with 34 expected
 platform exclusions. It is not a claim about six operating systems. The runner
@@ -533,7 +534,7 @@ expressiveness and accepted these follow-ups from an independent council:
   only `entrypoint`, `entry`, and `axiom`. The authored loader is 100 lines.
 - A trailing `/` or other empty path segment in `--apply-to` now reads
   `--apply-to <glob> must contain a non-empty pattern with no empty path
-  segments. Use docs/** to match files under docs/.` One Operations owner words
+segments. Use docs/** to match files under docs/.` One Operations owner words
   every pattern failure for Route Create, Init, and Update. Create no longer
   prints the failure enum name. Doctor keeps its existing malformed-frontmatter
   finding, and a regression proves it for `docs/`.

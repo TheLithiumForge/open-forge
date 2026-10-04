@@ -20,6 +20,11 @@ internal sealed class InstallRequestBinder(InstallSymbols symbols)
         ArgumentNullException.ThrowIfNull(invocation);
 
         var input = InstallBindingInputReader.Read(parse.Result, _symbols);
+        if (input.SetupError is { } error)
+        {
+            return CliBindResult<InstallRequest, InstallResult>.Invalid(InstallResult.Invalid(input,
+                invocation.Workspace, [new InstallFinding(InstallFindingCode.InvalidInput, error)]));
+        }
         if (invocation.Workspace is not { } workspace)
         {
             return CliBindResult<InstallRequest, InstallResult>.Invalid(
@@ -45,6 +50,7 @@ internal sealed class InstallRequestBinder(InstallSymbols symbols)
                 mode: input.Mode,
                 force: input.Force,
                 automatic: input.Automatic,
-                allowsInteractiveConfirmation: allowsInteractiveConfirmation));
+                allowsInteractiveConfirmation: allowsInteractiveConfirmation)
+            { Setup = input.Setup });
     }
 }

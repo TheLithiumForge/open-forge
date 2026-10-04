@@ -12,6 +12,13 @@ is experimental evidence, not an accepted reusable Pattern.
 
 ## Observation
 
+Current orientation, 2026-10-04: the
+[Review Evidence Directive](../../../directives/review-evidence.md) now requires
+full rationale for consequential or reusable findings. A routine pass needs
+a concise conclusion, coverage, and residual risk. The initial hypothesis and
+occurrences below preserve their original evidence. They do not require every
+review to record the full comparison.
+
 Finding-only review summaries lose useful evidence about why independent roles
 converge, which alternatives recur, and which tradeoffs repeatedly decide the
 result. CLI dogfooding also exposes agent, packet, workflow, projection, and tool
@@ -53,7 +60,7 @@ local absolute path; or incidental environment fingerprint is retained here.
 
 ## Conclusion, Reasoning, And Tradeoffs
 
-The current best option is to require each review return to preserve conclusion,
+The initial best option was to require each review return to preserve conclusion,
 reasoning, strongest alternatives, tradeoffs, and change conditions, while the
 Mastermind owns sanitized persistence and post-review comparison. This keeps
 fresh reviews independent and avoids forcing read-only reviewers to mutate
@@ -310,7 +317,9 @@ later CLI Tasks.
 
 ## Follow-Up And Promotion Signals
 
-For each comparable review or anomaly, append:
+For a comparable review or anomaly whose consequence or reuse justifies
+preservation, append the relevant evidence below. Routine passes follow the
+current Directive's concise form.
 
 - bounded role and review scope;
 - conclusion and decisive reasoning;

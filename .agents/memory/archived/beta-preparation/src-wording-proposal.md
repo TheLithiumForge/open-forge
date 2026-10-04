@@ -22,7 +22,7 @@ rule, primitive, loading tag, mandatory document, permission or implementation
 behavior is proposed. Compression is useful only where the surviving sentence
 still carries each condition, exception and distinction.
 
-The separate [default Skill indexing task](../../working/cli-development/tasks/task47-default-skill-indexing.md)
+The separate [default Skill indexing task](../cli-development/tasks/task47-default-skill-indexing.md)
 records the requested future capability. Do not describe that capability as
 current behavior or fold it into this lossless wording change.
 

@@ -125,6 +125,14 @@ internal static class LibraryDetachPlanner
                 "The destination is also owned by another managed domain.");
         }
 
+        if (input.GitIgnore is { State: not OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreReadState.Complete } ignore)
+        {
+            Add(findings, ignore.State == OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreReadState.Blocked
+                ? LibraryDetachFindingCode.GitIgnoreBlocked : LibraryDetachFindingCode.GitIgnoreUnavailable,
+                ignore.State == OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreReadState.Blocked
+                    ? CliSemanticStatus.Blocked : CliSemanticStatus.Incomplete,
+                input.Request.LibraryId.Value, ".gitignore", ignore.Cause ?? "The Library Git-ignore target is unavailable.");
+        }
         var state = PlanState(findings);
         if (state != LibraryPlanState.Complete)
         {
@@ -143,7 +151,7 @@ internal static class LibraryDetachPlanner
                     library.Id.Value,
                     library.SourceRoot.Value,
                     library.DestinationRoot.Value,
-                    [.. library.Paths.Select(path => path.Value)]))]);
+                    [.. library.Paths.Select(path => path.Value)], library.GitIgnore))]);
         }
         return new LibraryDetachPlan
         {
@@ -153,6 +161,7 @@ internal static class LibraryDetachPlanner
             Directories = boundary.Directories,
             Links = links,
             GeneratedRegions = OrderGenerated(input.GeneratedRegionChanges),
+            GitIgnore = input.GitIgnore?.Plan,
             OwnershipChange = ownershipChange,
             IntendedRecord = intendedRecord,
             Findings = Order(findings),

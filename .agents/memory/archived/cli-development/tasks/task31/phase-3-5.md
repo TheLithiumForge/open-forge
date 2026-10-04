@@ -8,7 +8,7 @@ open-forge:
 
 ## Evidence source
 
-[Implementation Duplication](../../../../emerging/analysis/cli-experience-audit/implementation-duplication.md)
+[Implementation Duplication](../../analysis/cli-experience-audit/implementation-duplication.md)
 remains in Emerging. It measured 59 family-level groups at roughly 793 lines and 22
 cross-family groups at roughly 348 lines. The prior characterization baseline
 is 18 pre-existing unit failures of 3,365 and 297 disposable captures.

@@ -25,52 +25,17 @@ internal sealed partial class CliPrompts
             throw new ArgumentException("Dependency rows must reference displayed choices.", nameof(question));
         var chosen = new HashSet<T>();
         var cursor = 0;
-        var previousLines = 0;
         string? notice = null;
         while (true)
         {
             var required = RequiredBy(question, chosen);
-            var frame = new StringBuilder().Append(CliText.Escape(question.Question)).Append("\n\n");
-            for (var index = 0; index < question.Choices.Count; index++)
+            var viewport = _terminal.ReadSelectionViewport();
+            var keyMode = viewport is { } size && await DrawSelectionAsync(
+                MultiFrame(question, chosen, required, cursor, notice), size, cancellationToken).ConfigureAwait(false);
+            if (!keyMode)
             {
-                var row = question.Choices[index];
-                var disabled = question.Disabled.Contains(row.Value);
-                string mark;
-                if (chosen.Contains(row.Value))
-                    mark = "[x]";
-                else if (required.ContainsKey(row.Value) && !disabled)
-                    mark = "[+]";
-                else
-                    mark = "[ ]";
-
-                string prefix;
-                if (_terminal.CanReadKeys)
-                {
-                    if (index == cursor)
-                        prefix = "> ";
-                    else
-                        prefix = "  ";
-                }
-                else
-                    prefix = string.Create(CultureInfo.InvariantCulture, $"{index + 1}. ");
-                var text = $"  {prefix}{mark} {CliText.Escape(row.Label)}";
-                if (row.Description is { } description) text += "   " + CliText.Escape(description);
-                var related = Related(question, row.Value).Select(value => byId[value].Label).ToArray();
-                if (disabled) text += "   " + CliPromptWording.Installed();
-                else if (required.TryGetValue(row.Value, out var owners) && !chosen.Contains(row.Value))
-                    text += "   " + CliText.Escape(CliPromptWording.RequiredBy(Labels(question, owners)));
-                else if (related.Length > 0)
-                    text += "   " + CliText.Escape(question.Direction == CliDependencyDirection.Requires
-                        ? CliPromptWording.Needs(string.Join(", ", related)) : CliPromptWording.NeededBy(string.Join(", ", related)));
-                frame.Append(disabled ? _style.Dim(text) : text).Append('\n');
-            }
-            frame.Append('\n').Append(CliPromptWording.Legend()).Append('\n')
-                .Append(_terminal.CanReadKeys ? CliPromptWording.MultiKeys() : CliPromptWording.MultiLine()).Append('\n');
-            if (notice is not null) frame.Append(CliText.Escape(notice)).Append('\n');
-            previousLines = await DrawAsync(frame.ToString(), previousLines, cancellationToken).ConfigureAwait(false);
-            notice = null;
-            if (!_terminal.CanReadKeys)
-            {
+                await WriteFrameAsync(MultiLineFrame(question, chosen, required, notice), cancellationToken).ConfigureAwait(false);
+                notice = null;
                 var answer = await _terminal.ReadLineAsync(cancellationToken).ConfigureAwait(false);
                 if (string.IsNullOrWhiteSpace(answer)) return CliPromptReply<CliMultiSelection<T>>.Cancelled();
                 var values = new HashSet<T>();
@@ -100,6 +65,8 @@ internal sealed partial class CliPrompts
 
             var key = await _terminal.ReadKeyAsync(cancellationToken).ConfigureAwait(false);
             if (key is null || key.Value.Key == CliKey.Escape) return CliPromptReply<CliMultiSelection<T>>.Cancelled();
+            if (key.Value.Key == CliKey.Resize) continue;
+            notice = null;
             if (key.Value.Key == CliKey.Up) cursor = (cursor + question.Choices.Count - 1) % question.Choices.Count;
             else if (key.Value.Key == CliKey.Down) cursor = (cursor + 1) % question.Choices.Count;
             else if (key.Value.Key == CliKey.Enter)

@@ -25,9 +25,8 @@ Working Memory holds temporary context for continuing or resuming active work.
 
 ## Entries
 
-- [Minimal current backlog after the public beta and the 1.0 Memory trim](backlog.md) - #Memory #Working #Backlog #Contextual
+- [Selection of unfinished work after completed records retired](backlog.md) - #Memory #Working #Backlog #Contextual
 - [Current state, current step, and next steps for one active workstream](checkpoints/_checkpoints.md) - #Extension #Memory #Working #Checkpoint #Contextual
-- [Current CLI migration selection, retained task state and task-owned evidence](cli-development/_cli-development.md) - #Memory #Working #Contextual #Active #KeepInMind #CLI #Task
+- [Current CLI selection, unfinished task state and resume boundaries](cli-development/_cli-development.md) - #Memory #Working #Contextual #Active #KeepInMind #CLI #Task
 - [Sealed transfer snapshots that preserve one boundary for resumption](handoffs/_handoffs.md) - #Extension #Memory #Handoff #AgentCommunication #Contextual
-- [Installed beta user-flow verification on Windows and WSL, with platform limits and reproduction commands](installed-beta-flow-run.md) - #Memory #Working #CLI #RunRecord #Evidence #Contextual
 - [Review local planning around the Planning Extension, templates, task lifecycle, completion tracking, organization, and archival before any source change](local-planning.md) - #Memory #Working #Task #Contextual #Active #Framework #Planning #Templates #Lifecycle #Archival

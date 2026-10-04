@@ -33,7 +33,7 @@ That is the whole minimum viable version, and it costs one convention.
 
 **It closes the gap that made implementers skip Open Forge.** A task record does
 not carry an instruction to load the framework
-([taxonomy-and-adoption.md](../../emerging/analysis/cli-experience-audit/taxonomy-and-adoption.md)),
+([taxonomy-and-adoption.md](../../archived/cli-development/analysis/cli-experience-audit/taxonomy-and-adoption.md)),
 and neither does a source file. An agent opening `WorkspaceLockStore.cs` has no
 signal that a threat-boundary document governs it. A comment is the only place
 that signal can live, because it travels with the code.

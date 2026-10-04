@@ -146,7 +146,15 @@ internal sealed class InstallApplicationPreconditionValidator(
             && planned.PreservedEntrypointPaths.SetEquals(current.PreservedEntrypointPaths)
             && Equals(planned.AdoptionOwnershipExpectation, current.AdoptionOwnershipExpectation)
             && MigrationRowsEqual(planned.Migrations, current.Migrations)
-            && planned.ProjectionInputs.SequenceEqual(current.ProjectionInputs);
+            && planned.ProjectionInputs.SequenceEqual(current.ProjectionInputs)
+            && ConfigurationObservationsEqual(planned.Configuration, current.Configuration);
+
+    private static bool ConfigurationObservationsEqual(InstallConfigurationPlan? planned, InstallConfigurationPlan? current)
+    {
+        if (planned is null || current is null) return planned is null && current is null;
+        return planned.Settings.MatchesObservation(current.Settings)
+            && planned.Ignore.Snapshot?.Expectation == current.Ignore.Snapshot?.Expectation;
+    }
 
     private static bool MigrationRowsEqual(
         IReadOnlyList<InstallMigrationPlan> planned,

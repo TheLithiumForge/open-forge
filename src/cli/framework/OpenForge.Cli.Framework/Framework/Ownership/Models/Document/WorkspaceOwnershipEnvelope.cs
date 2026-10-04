@@ -67,6 +67,9 @@ internal sealed class ExtensionOwnershipEntry
 
 internal sealed class LibraryOwnershipEntry
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool GitIgnore { get; init; }
+
     public string? Id { get; init; }
 
     public string? SourceRoot { get; init; }

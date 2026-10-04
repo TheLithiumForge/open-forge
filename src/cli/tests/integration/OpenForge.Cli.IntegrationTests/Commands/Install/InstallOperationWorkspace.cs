@@ -183,6 +183,8 @@ internal sealed class InstallOperationWorkspace : IDisposable
                          SourceFormClassifier.TryClassify(path, out var form)
                          && SourceFormClassifier.IsEntrypoint(form))
                          .Select(SourceOverwritePath.ReadAdjacentPath))
+                     .Append(".agents/open-forge.json")
+                     .Append(".gitignore")
                      .Append(LifecyclePath)
                      .Append(OwnershipPath)
                      .Append(AgentsPath)

@@ -14,6 +14,8 @@ internal sealed record LibraryAttachSymbols
 
     public required Option<bool> DryRun { get; init; }
 
+    public required Option<bool> GitIgnore { get; init; }
+
     public required Option<bool> Automatic { get; init; }
 
     public required Option<string[]> Allow { get; init; }

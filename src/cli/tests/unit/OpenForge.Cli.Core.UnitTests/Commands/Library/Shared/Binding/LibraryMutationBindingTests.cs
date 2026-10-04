@@ -23,6 +23,35 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Binding;
 [Trait("Feature", "library-interaction"), Trait("Evidence", "Unit")]
 public sealed class LibraryMutationBindingTests
 {
+    [Theory(DisplayName = "Attach Git-ignore binds explicit typed yes and no"), Trait("Feature", "library-git-ignore"), Trait("Boundary", "Input")]
+    [InlineData("--git-ignore", "true", true)]
+    [InlineData("--git-ignore", "false", false)]
+    [InlineData("--git-ignore=true", null, true)]
+    [InlineData("--git-ignore:false", null, false)]
+    public void AttachGitIgnoreBindsTypedInput(string option, string? value, bool expected)
+    {
+        var symbols = LibraryAttachBinding.CreateSymbols(LibraryBinding.CreateGroup());
+        string[] arguments = value is null ? ["team", "shared/team", option] : ["team", "shared/team", option, value];
+        var parsed = symbols.Command.Parse(arguments);
+        Assert.Empty(parsed.Errors);
+        var bound = LibraryAttachRequestBinder.Bind(new CliBindingParse(parsed, arguments), Invocation(CliFormat.Text), symbols);
+        Assert.Equal(expected, Assert.IsType<LibraryAttachRequest>(bound.Request).GitIgnore);
+    }
+
+    [Theory(DisplayName = "Attach Git-ignore requires exactly one explicit singleton Boolean value"), Trait("Feature", "library-git-ignore"), Trait("Boundary", "Input")]
+    [InlineData("--git-ignore")]
+    [InlineData("--git-ignore", "yes")]
+    [InlineData("--git-ignore", "true", "false")]
+    [InlineData("--git-ignore", "true", "--git-ignore", "false")]
+    public void AttachGitIgnoreRejectsInvalidInput(params string[] flags)
+    {
+        var symbols = LibraryAttachBinding.CreateSymbols(LibraryBinding.CreateGroup());
+        string[] arguments = ["team", "shared/team", .. flags];
+        var parsed = symbols.Command.Parse(arguments);
+        var bound = LibraryAttachRequestBinder.Bind(new CliBindingParse(parsed, arguments), Invocation(CliFormat.Text), symbols);
+        Assert.True(parsed.Errors.Count > 0 || bound.Request is null);
+    }
+
     [Trait("Boundary", "Input")]
     [Fact(DisplayName = "Attach automatic option binds apply without interactive permission")]
     public void AttachAutomaticOptionBindsWithoutInteractivePermission()

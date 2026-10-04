@@ -15,6 +15,7 @@ internal sealed record LibraryExecutionEvidence
     public required ImmutableArray<RelativeFileLinkReceipt> Links { get; init; }
     public required ImmutableArray<FileChangeReceipt> GeneratedRegions { get; init; }
     public required FileChangeReceipt? Record { get; init; }
+    public FileChangeReceipt? GitIgnore { get; init; }
     public required RecoveryBundlePreparation? RecoveryPreparation { get; init; }
     public RecoveryBundlePreparationResult? RecoveryPreparationOutcome { get; init; }
     public required RecoveryBundleDeletionResult? RecoveryCleanup { get; init; }

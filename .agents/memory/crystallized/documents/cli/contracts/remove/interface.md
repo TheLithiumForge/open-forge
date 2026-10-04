@@ -59,6 +59,14 @@ ordinary authored links unchanged. Individual known Library links can be removed
 without detaching the registration; synchronization then respects the destination
 file exclusion.
 
+For an opted-in Library, removing individual projected links or a directory
+also releases their entries from the Library-owned ignore section. This is
+companion metadata in the complete confirmed root Remove plan, with no separate
+path-permission prompt. Preserve authored rules, the Install section and entries
+for surviving Library mappings. Explicit `.gitignore` removal never also
+rewrites that target. Whole-Library removal delegates to Detach and retains its
+permission requirements for any planned ignore-file change.
+
 ## Preview And Consent
 
 `--dry-run` reports the selected target, exclusions, content and navigation effects,
@@ -127,23 +135,23 @@ remains; it does not claim the operation was undone.
 Domain selections retain their Route, Extension or Library finding codes. The
 ordinary path operation uses these codes:
 
-| Code | Meaning |
-| --- | --- |
-| `remove.invalid-input` | The target or kind is invalid. |
-| `remove.protected-path` | The selection includes protected workspace state or a registered Library source. |
+| Code                                | Meaning                                                                                            |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `remove.invalid-input`              | The target or kind is invalid.                                                                     |
+| `remove.protected-path`             | The selection includes protected workspace state or a registered Library source.                   |
 | `remove.entry-point-requires-route` | A file operand selects a category entrypoint. Select the category directory or use `--kind route`. |
-| `remove.target-unavailable` | The selected target cannot be observed. |
-| `remove.target-unsafe` | The target's physical identity, spelling or link kind is unsafe for this request. |
-| `remove.target-changed` | An observed target changed before its planned effect. |
-| `remove.navigation-unavailable` | Affected generated navigation cannot be safely planned. |
-| `remove.settings-unavailable` | Required removal settings cannot be interpreted or safely observed. |
-| `remove.ownership-unavailable` | Required ownership cannot be interpreted or safely observed. |
-| `remove.workspace-lock-unavailable` | The workspace mutation lease is unavailable. |
-| `remove.confirmation-required` | Applying the plan requires confirmation or `--automatic`. |
-| `remove.permission-declined` | The user declined application. |
-| `remove.recovery-unavailable` | Required recovery evidence could not be prepared. |
-| `remove.write-failed` | A planned filesystem or settings effect failed. |
-| `remove.interrupted` | Execution was cancelled. |
+| `remove.target-unavailable`         | The selected target cannot be observed.                                                            |
+| `remove.target-unsafe`              | The target's physical identity, spelling or link kind is unsafe for this request.                  |
+| `remove.target-changed`             | An observed target changed before its planned effect.                                              |
+| `remove.navigation-unavailable`     | Affected generated navigation cannot be safely planned.                                            |
+| `remove.settings-unavailable`       | Required removal settings cannot be interpreted or safely observed.                                |
+| `remove.ownership-unavailable`      | Required ownership cannot be interpreted or safely observed.                                       |
+| `remove.workspace-lock-unavailable` | The workspace mutation lease is unavailable.                                                       |
+| `remove.confirmation-required`      | Applying the plan requires confirmation or `--automatic`.                                          |
+| `remove.permission-declined`        | The user declined application.                                                                     |
+| `remove.recovery-unavailable`       | Required recovery evidence could not be prepared.                                                  |
+| `remove.write-failed`               | A planned filesystem or settings effect failed.                                                    |
+| `remove.interrupted`                | Execution was cancelled.                                                                           |
 
 ## Examples
 

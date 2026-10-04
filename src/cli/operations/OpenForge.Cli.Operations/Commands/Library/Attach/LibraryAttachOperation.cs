@@ -1,4 +1,8 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Commands.Library.Attach.Models.Interaction;
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
+using OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.GitIgnore;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Request;
@@ -42,13 +46,16 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach;
 internal sealed class LibraryAttachOperation
 {
     private readonly LibraryPermissionOperation _permissions;
+    private readonly LibraryAttachIgnoreChoice? _ignoreChoice;
     private readonly CliPlanConfirmation<LibraryAttachResult, LibraryAttachPlan> _confirmation;
 
     internal LibraryAttachOperation(
         LibraryPermissionOperation permissions,
-        CliPlanConfirmation<LibraryAttachResult, LibraryAttachPlan>? confirmation = null)
+        CliPlanConfirmation<LibraryAttachResult, LibraryAttachPlan>? confirmation = null,
+        LibraryAttachIgnoreChoice? ignoreChoice = null)
     {
         _permissions = permissions;
+        _ignoreChoice = ignoreChoice;
         _confirmation = confirmation ?? MissingConfirmation;
     }
 
@@ -108,6 +115,42 @@ internal sealed class LibraryAttachOperation
         {
             return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
         }
+        if (request.GitIgnore is null && request.AllowPrompt && !request.Automatic && request.Mode == LibraryMode.Apply
+            && _ignoreChoice is { CanPrompt: true } choice)
+        {
+            if (plan.Links.Any(link => PortableWorkspacePath.CreatePortableKey(link.DestinationPath.Value)
+                == PortableWorkspacePath.CreatePortableKey(LibraryGitIgnoreSection.Path)))
+            {
+                plan = plan with
+                {
+                    State = LibraryPlanState.Blocked,
+                    Findings = plan.Findings.Add(new LibraryAttachFinding
+                    {
+                        Code = LibraryAttachFindingCode.GitIgnoreBlocked,
+                        Status = CliSemanticStatus.Blocked,
+                        LibraryId = request.LibraryId.Value,
+                        Path = LibraryGitIgnoreSection.Path,
+                        Cause = "The projected .gitignore link overlaps the ignore choice. Attach with --git-ignore false.",
+                    }),
+                };
+                return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
+            }
+            var answer = await choice.AskAsync(cancellationToken).ConfigureAwait(false);
+            if (answer.State == CliPromptState.Cancelled)
+            {
+                return Complete(request, plan, observations,
+                    LibraryMutationOperationSupport.Empty(new LibraryCancellationFact(LibraryExecutionStage.Preflight)));
+            }
+            request = request with { GitIgnore = answer.State == CliPromptState.Answered && answer.Value };
+            observations = observations with { Request = request };
+            plan = LibraryAttachPlanner.Plan(observations, cancellationToken);
+        }
+        observations = await ObserveIgnoreAsync(observations, plan, cancellationToken).ConfigureAwait(false);
+        plan = LibraryAttachPlanner.Plan(observations, cancellationToken);
+        if (plan.State != LibraryPlanState.Complete)
+        {
+            return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
+        }
         var selected = plan.IntendedRecord?.Libraries.Single(library => library.Id == request.LibraryId)
             ?? throw new InvalidOperationException("A complete Library attach plan requires its selected Library.");
         var targets = LibraryPathIdentity.Mappings(selected).Select(mapping =>
@@ -117,7 +160,9 @@ internal sealed class LibraryAttachOperation
             Workspace = request.Workspace,
             LibraryId = request.LibraryId,
             SettingsObservation = observations.Settings,
-            Targets = targets,
+            Targets = plan.GitIgnore is null ? targets : targets.Add(new LibraryPermissionTarget(
+                LibraryGitIgnoreSection.Path, LibraryPermissionTargetUse.Live)
+            { Effect = LibraryPermissionEffect.WriteGitIgnore }),
             ExplicitGrantPaths = request.Allow,
             AllowPrompt = request.AllowPrompt && !request.Automatic && request.Mode != LibraryMode.DryRun,
         }, cancellationToken).ConfigureAwait(false);
@@ -304,6 +349,11 @@ internal sealed class LibraryAttachOperation
                     cancellationToken).ConfigureAwait(false),
             };
             var freshPlan = LibraryAttachPlanner.Plan(fresh, cancellationToken);
+            if (freshPlan.State == LibraryPlanState.Complete)
+            {
+                fresh = await ObserveIgnoreAsync(fresh, freshPlan, cancellationToken).ConfigureAwait(false);
+                freshPlan = LibraryAttachPlanner.Plan(fresh, cancellationToken);
+            }
             var permissions = plan.Permissions
                 ?? throw new InvalidOperationException("An admitted Library plan requires its permission observation.");
             if (freshPlan.State != LibraryPlanState.Complete || !Matches(plan, freshPlan)
@@ -325,6 +375,7 @@ internal sealed class LibraryAttachOperation
                     Permissions = plan.Permissions,
                     Links = plan.Links,
                     GeneratedRegions = plan.GeneratedRegions,
+                    GitIgnore = plan.GitIgnore,
                     Ownership = fresh.Ownership,
                     OwnershipChange = plan.OwnershipChange,
                     Mappings = fresh.Mappings,
@@ -373,6 +424,22 @@ internal sealed class LibraryAttachOperation
             ConsumerRoot = null,
             Ancestors = [],
             IsComplete = false,
+        };
+
+    private static async ValueTask<LibraryAttachPlanningInput> ObserveIgnoreAsync(
+        LibraryAttachPlanningInput input,
+        LibraryAttachPlan plan,
+        CancellationToken cancellationToken)
+        => input.Request.GitIgnore != true ? input : input with
+        {
+            GitIgnore = await LibraryGitIgnorePlanner.PlanAsync(new LibraryGitIgnoreRequest
+            {
+                Workspace = input.Request.Workspace,
+                Current = input.Record.Record,
+                Intended = plan.IntendedRecord,
+                IsExcluded = WorkspaceRemovals.IsPathRemoved(LibraryGitIgnoreSection.Path, input.Settings.Document),
+                IsRemoval = false,
+            }, cancellationToken).ConfigureAwait(false),
         };
 
     private static bool Matches(LibraryAttachPlan expected, LibraryAttachPlan actual)

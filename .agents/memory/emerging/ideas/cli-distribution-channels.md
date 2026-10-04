@@ -8,10 +8,15 @@ open-forge:
 
 ## Current Boundary
 
-.NET Native AOT is the direction for the canonical executable. The first thin
-wrapper will use npm. The root `package.json` remains an ecosystem-neutral
-orchestration layer rather than the long-term distributable package. Exact
-native artifacts, wrapper placement, and later channels remain unsettled.
+The canonical executable uses .NET Native AOT. The accepted
+[distribution graph](../../crystallized/documents/cli/distribution.md#accepted-package-graph)
+contains one thin npm wrapper and six native platform packages. The root
+`package.json` remains an ecosystem-neutral orchestration layer rather than the
+distributable package. Native artifact and wrapper placement are settled in
+that graph. Additional channels and distro-specific variants remain candidates.
+
+Release receipts and the current release hold are separate from this packaging
+baseline. This Idea does not authorize publication.
 
 ## Candidates
 

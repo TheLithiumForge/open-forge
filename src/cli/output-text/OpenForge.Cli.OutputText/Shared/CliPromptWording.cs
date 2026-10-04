@@ -30,4 +30,33 @@ internal static class CliPromptWording
 
     // @OpenForgeText shared.wording.directory-everything-under-it
     internal static string Directory(string path) => $"{path}   (directory: everything under it)";
+
+    // @OpenForgeText shared.wording.selection-position
+    internal static string Position(int focus, int count) => string.Create(CultureInfo.InvariantCulture, $"Choice {focus + 1}/{count}");
+
+    // @OpenForgeText shared.wording.multi-selection-position
+    internal static string MultiPosition(int focus, int count, int chosen, int required)
+        => string.Create(CultureInfo.InvariantCulture, $"Choice {focus + 1}/{count}  Chosen {chosen}  Required {required}");
+
+    // @OpenForgeText shared.wording.selection-move-controls
+    internal static string MoveControls() => "up/down move  1-9 choose";
+
+    // @OpenForgeText shared.wording.selection-accept-controls
+    internal static string AcceptControls() => "enter choose  esc cancel";
+
+    // @OpenForgeText shared.wording.multi-selection-legend
+    internal static string CompactLegend() => "[x] chosen [+] required [ ] empty";
+
+    // @OpenForgeText shared.wording.multi-selection-toggle-controls
+    internal static string ToggleControls() => "space toggle  a all  n none";
+
+    // @OpenForgeText shared.wording.multi-selection-move-controls
+    internal static string MultiMoveControls() => "up/down move  enter next  esc cancel";
+
+    // @OpenForgeText shared.wording.permission-path-page
+    internal static string PathPage(int page, int count)
+        => string.Create(CultureInfo.InvariantCulture, $"Paths {page + 1}/{count}  pgup/pgdn review");
+
+    // @OpenForgeText shared.wording.permission-heading
+    internal static string PermissionHeading() => "Writes outside .agents:";
 }

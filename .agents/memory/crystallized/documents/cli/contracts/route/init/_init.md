@@ -30,7 +30,11 @@ command meaning. This entrypoint does not duplicate their detail.
 - Root Install owns the closed base Framework installation. The accepted
   `--framework` mode follows that operation and reuses its embedded payload,
   canonical topology, and trusted lifecycle provenance for one sparse scoped
-  route. Generic mode remains available independently.
+  route or explicit restoration of one canonical base route. The restoration
+  amendment is selected under [Task 73](../../../../../../archived/cli-development/tasks/task73-layered-adoption-and-installation-choices.md);
+  its local six-mode executable qualification is complete and integration is
+  authorized. Exact-version hosted release qualification remains separate.
+  Generic mode remains available independently.
 
 This set contains no command-local Technical Design file. The two sibling
 contracts define the accepted current command contract without selecting

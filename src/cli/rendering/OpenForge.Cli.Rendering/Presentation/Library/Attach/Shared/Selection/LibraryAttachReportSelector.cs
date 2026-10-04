@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Commands.Library.Models.Result.Effects;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Observation;
 using OpenForge.Cli.Core.Presentation.Library.Attach.Models;
 using OpenForge.Cli.Core.Presentation.Library.Attach.Shared.Wording;
+using OpenForge.Cli.Core.Presentation.Library.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
@@ -42,7 +43,7 @@ internal static class LibraryAttachReportSelector
                 : null,
             Findings = payload.Findings.Select(finding => Finding(result, finding, progress)).ToArray(),
             Effects = Effects(result, selection.Detail),
-            Counts = Counts(payload, progress),
+            Counts = Counts(result, progress),
             Limitations = [],
             Data = data,
             Recovery = Recovery(payload.Application.Recovery),
@@ -96,6 +97,7 @@ internal static class LibraryAttachReportSelector
             Id = identity.LibraryId ?? payload.Findings.FirstOrDefault()?.LibraryId,
             SourceFolder = identity.SourceRoot,
             DestinationFolder = identity.DestinationRoot,
+            GitIgnore = payload.Plan.GitIgnore is { } ignore ? new LibraryAttachDataGitIgnore(ignore.Path, ignore.Action, ignore.Paths) : null,
             Recorded = payload.Application.RecordPublication.State == LibraryRecordPublicationState.Verified,
             Permissions = new LibraryAttachDataPermissions
             {
@@ -177,6 +179,11 @@ internal static class LibraryAttachReportSelector
         var lines = new List<string>();
         if (partial)
         {
+            if (IgnoreStarted(payload))
+            {
+                var effect = Effects(result, detail).Single(value => value.Kind == CliEffectKind.File);
+                lines.Add(LibraryGitIgnoreWording.Effect(effect.Outcome));
+            }
             if (payload.Application.RecordPublication.State != LibraryRecordPublicationState.Verified
                 && payload.Application.Recovery.Path is { } recoveryPath)
             {
@@ -214,6 +221,11 @@ internal static class LibraryAttachReportSelector
                 : LibraryAttachWording.UpdatedEntries(region.Path));
         }
 
+        if (payload.Plan.GitIgnore is { } ignore)
+        {
+            var effect = Effects(result, detail).Single(value => value.Path == ignore.Path && value.Kind == CliEffectKind.File);
+            lines.Add(LibraryGitIgnoreWording.Effect(effect.Outcome));
+        }
         foreach (var folder in grantFolders)
         {
             lines.Add(preview
@@ -274,6 +286,7 @@ internal static class LibraryAttachReportSelector
         states.AddRange(payload.Plan.Directories.Select(directory => Expected(directory.Path, directory.Expected)));
         states.AddRange(payload.Plan.Links.Select(link => Expected(link.Path, link.Expected)));
         states.AddRange(payload.Plan.GeneratedRegions.Select(region => Expected(region.Path, region.Expected)));
+        if (payload.Plan.GitIgnore is { } ignore) states.Add(Expected(ignore.Path, ignore.Expected));
         if (payload.Plan.RecordExpected is { } record)
         {
             states.Add(Expected(payload.Record.Path, record));
@@ -319,8 +332,12 @@ internal static class LibraryAttachReportSelector
                 => new(LibraryAttachWording.CannotAttach(id, FindingMessage(result, first, progress)), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Blocked
                 => new(LibraryAttachWording.CannotAttach(id, FindingMessage(result, first, progress)), CliHeadlineKind.Blocked),
+            CliSemanticStatus.Failed when IgnoreStarted(payload)
+                => new(LibraryGitIgnoreWording.Partial("attach", Effects(result, CliDetail.Minimal), cancelled: false), CliHeadlineKind.Failed),
             CliSemanticStatus.Failed
                 => new(LibraryAttachWording.Failed(progress.Created, progress.Total), CliHeadlineKind.Failed),
+            CliSemanticStatus.Interrupted when IgnoreStarted(payload)
+                => new(LibraryGitIgnoreWording.Partial("attach", Effects(result, CliDetail.Minimal), cancelled: true), CliHeadlineKind.Cancelled),
             CliSemanticStatus.Interrupted when progress.Started == 0
                 => new(LibraryAttachWording.Cancelled(), CliHeadlineKind.Cancelled),
             CliSemanticStatus.Interrupted
@@ -346,11 +363,16 @@ internal static class LibraryAttachReportSelector
         LinkProgress progress)
     {
         var action = Action(result, finding, progress);
+        var ignoreFailure = finding.Code == LibraryAttachFindingCode.ApplicationFailed
+            && result.Result.Plan.GitIgnore is { } ignore
+            && (string.Equals(finding.Path, ignore.Path, StringComparison.Ordinal) || IgnoreStarted(result.Result));
         return new CliFinding
         {
             Severity = Severity(result, finding),
             Code = LibraryAttachWording.MachineCode(finding.Code),
-            Title = LibraryAttachWording.FindingTitle(finding.Code),
+            Title = ignoreFailure
+                ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWritingFailed()
+                : LibraryAttachWording.FindingTitle(finding.Code),
             Message = FindingMessage(result, finding, progress),
             Subject = Subject(result, finding),
             Resolution = action is null
@@ -436,6 +458,8 @@ internal static class LibraryAttachReportSelector
         var source = payload.Identity.SourceRoot ?? finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheSourceFolder();
         return finding.Code switch
         {
+            LibraryAttachFindingCode.GitIgnoreBlocked or LibraryAttachFindingCode.GitIgnoreUnavailable
+                => TrimSentence(finding.Cause),
             LibraryAttachFindingCode.InvalidInput
                 => TrimSentence(finding.Cause),
             LibraryAttachFindingCode.InvalidId
@@ -499,6 +523,11 @@ internal static class LibraryAttachReportSelector
                 => CliFindingWording.RecoveryUnavailable(finding.Path ?? payload.Application.Recovery.Path ?? global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.LabelTheRecoveryStore()),
             LibraryAttachFindingCode.RecoveryRetained
                 => CliFindingWording.RecoveryRetained(finding.Path ?? payload.Application.Recovery.Path ?? global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.LabelTheRecoveryBundle()),
+            LibraryAttachFindingCode.ApplicationFailed when payload.Plan.GitIgnore is { } ignore
+                && string.Equals(finding.Path, ignore.Path, StringComparison.Ordinal)
+                => global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.Failed(),
+            LibraryAttachFindingCode.ApplicationFailed when IgnoreStarted(payload)
+                => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.TitleLibraryAttach(), TrimSentence(finding.Cause)),
             LibraryAttachFindingCode.ApplicationFailed
                 => LibraryAttachWording.ApplicationFailed(finding.Path ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheDestinationPath(), progress.Created, progress.Total),
             LibraryAttachFindingCode.VerificationFailed
@@ -506,6 +535,8 @@ internal static class LibraryAttachReportSelector
                     payload.Application.Recovery.Path ?? global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.LabelTheRecoveryStore()),
             LibraryAttachFindingCode.OperationFailed
                 => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.TitleLibraryAttach(), TrimSentence(finding.Cause)),
+            LibraryAttachFindingCode.Interrupted when IgnoreStarted(payload)
+                => LibraryGitIgnoreWording.Partial("attach", Effects(result, CliDetail.Minimal), cancelled: true),
             LibraryAttachFindingCode.Interrupted
                 => progress.Started == 0
                     ? LibraryAttachWording.Cancelled()
@@ -541,7 +572,7 @@ internal static class LibraryAttachReportSelector
                 },
             LibraryAttachFindingCode.RecoveryRetained
                 => new CliNextAction("open-forge cleanup", LibraryAttachWording.CleanupNextReason()),
-            LibraryAttachFindingCode.Interrupted when progress.Started > 0
+            LibraryAttachFindingCode.Interrupted when progress.Started > 0 || IgnoreStarted(payload)
                 => new CliNextAction("open-forge doctor", LibraryAttachWording.DoctorNextReason()),
             _ => null,
         };
@@ -593,6 +624,11 @@ internal static class LibraryAttachReportSelector
             CliEffectAction.Rewritten,
             region.Expected,
             detail)));
+        if (payload.Plan.GitIgnore is { } ignore)
+        {
+            effects.Add(Effect(result, ignore.Path, CliEffectKind.File,
+                ignore.Action == "create" ? CliEffectAction.Created : CliEffectAction.Rewritten, ignore.Expected, detail));
+        }
         if (payload.Plan.RecordEffect != LibraryRecordEffect.None && payload.Plan.RecordExpected is { } record)
         {
             effects.Add(Effect(
@@ -672,15 +708,25 @@ internal static class LibraryAttachReportSelector
                 : CliEffectOutcome.NotStarted;
 
     private static IReadOnlyList<CliCount> Counts(
-        LibraryAttachPayload payload,
+        LibraryAttachResult result,
         LinkProgress progress)
-        =>
-        [
+    {
+        var payload = result.Result;
+        var counts = new List<CliCount>
+        {
             new CliCount("linksCreated", global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.LabelLinksCreated(), progress.Created),
             new CliCount("sectionsUpdated", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelSectionsUpdated(), CountSections(payload)),
             new CliCount("grantsSaved", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelGrantsSaved(), PermissionSaved(payload.Permissions) ? GrantFolders(payload, includePlanned: false).Count : 0),
             new CliCount("sourceFiles", global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelSourceFiles(), payload.Source.EligiblePaths.Length),
-        ];
+        };
+        if (payload.Plan.GitIgnore is { } ignore)
+        {
+            var effect = Effect(result, ignore.Path, CliEffectKind.File, CliEffectAction.Rewritten, ignore.Expected, CliDetail.Minimal);
+            counts.Add(new CliCount("gitIgnoreFilesUpdated", global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.FilesUpdated(),
+                effect.Outcome is CliEffectOutcome.Planned or CliEffectOutcome.Done ? 1 : 0));
+        }
+        return counts;
+    }
 
     private static int CountSections(LibraryAttachPayload payload)
         => payload.Identity.Mode == LibraryMode.DryRun
@@ -722,6 +768,12 @@ internal static class LibraryAttachReportSelector
             $"verification={HumanState(result.Result.Application.Verification)}",
             $"findings={result.Result.Findings.Length.ToString(CultureInfo.InvariantCulture)}",
         }.Concat(result.Result.Findings.Select(finding => finding.Cause)).ToArray();
+
+    private static bool IgnoreStarted(LibraryAttachPayload payload)
+        => payload.Plan.GitIgnore is { } ignore
+            && payload.Application.Residuals.Any(residual => residual.Kind == LibraryResidualKind.GitIgnore
+                && string.Equals(residual.Path, ignore.Path, StringComparison.Ordinal)
+                && residual.State is LibraryResidualState.Retained or LibraryResidualState.Unknown);
 
     private static LinkProgress Progress(LibraryAttachPayload payload)
     {
@@ -832,6 +884,7 @@ internal static class LibraryAttachReportSelector
         CliEffectKind.Link => LibraryResidualKind.Link,
         CliEffectKind.Section => LibraryResidualKind.GeneratedRegion,
         CliEffectKind.Record => LibraryResidualKind.Record,
+        CliEffectKind.File => LibraryResidualKind.GitIgnore,
         _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The Library effect kind is not a mutation receipt kind."),
     };
 

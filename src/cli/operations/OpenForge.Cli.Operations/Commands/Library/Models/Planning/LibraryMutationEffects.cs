@@ -11,4 +11,5 @@ internal sealed record LibraryMutationEffects
     public required ImmutableArray<RelativeFileLinkEffect> Links { get; init; }
     public required ImmutableArray<PlannedFileChange> GeneratedRegions { get; init; }
     public required PlannedFileChange? OwnershipChange { get; init; }
+    public OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnorePlan? GitIgnore { get; init; }
 }

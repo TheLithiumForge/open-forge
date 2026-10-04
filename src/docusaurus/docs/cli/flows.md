@@ -7,27 +7,61 @@ description: Common situations where the CLI helps, from setting up a workspace 
 
 Each flow starts from a common situation, then gives the commands in order and what to look for. The [command reference](/guides/cli) has every option, and the [glossary](../glossary.md) defines the terms.
 
-Some flows use files that come from Extensions, not from the base install: Documents from the Project Documents Extension, and Decisions and their Template from the Planning Extension. The first flow installs both through `development-toolkit`.
+Start with the base Framework. Later flows use Documents from the Project Documents Extension, and Decisions and their Template from Planning. The optional `development-toolkit` package installs both when you need them.
 
 ## Set up a workspace
 
 **When:** you're adding Open Forge to a project, new or existing.
 
 ```sh
-open-forge install --dry-run
-open-forge install
-open-forge extension install development-toolkit --dry-run
-open-forge extension install development-toolkit
+open-forge install --preset essentials --dry-run
+open-forge install --preset essentials
 open-forge status
 ```
 
-`development-toolkit` is an optional Extension. It installs Project Documents, Planning, Flows and Scenarios, and Development, plus Workflow Support, which they depend on. Skip the two `extension install` commands if you want only the base.
+You can now give your agent a normal task. No Extension or selected workflow is required.
 
-**Look for:** what each dry run will change. The install preview gives a count, and `--detail standard` lists every file. If you already have an `AGENTS.md` or `CLAUDE.md`, the install adds an Open Forge section and keeps your content. `status` shows how much context loads at startup, which Extensions are installed, and whether anything needs attention. Review everything with `git status` and `git diff`, then commit.
+**Look for:** what the selected plan will change. Naming Essentials makes the preview and apply use the same selection. It includes Git-ignored Working Memory, which remains readable but keeps new local records out of ordinary Git commits. Plain interactive `install` offers Essentials, Full Core, or Custom instead. The preview gives a count, and `--detail standard` lists every file. If you already have an `AGENTS.md` or `CLAUDE.md`, the install adds an Open Forge section and keeps your content. `status` shows startup context, installed Extensions, and anything needing attention. Review everything with `git status` and `git diff`, then commit.
 
 For an existing `.agents/` tree, also review any planned Skill migrations. The [installation guidance](../getting-started/installation.md#with-the-cli) explains compatible metadata and navigation adoption.
 
 **Why it helps:** you see what will be installed before any agent reads it. The CLI also records what it installed, so later updates can tell its files apart from yours.
+
+## Change the installed routes
+
+**When:** you want to add an omitted category, keep a route's new files out of Git, or restore missing packaged scaffolding.
+
+Run `open-forge install --configure` to use the wizard. For a repeatable change to the current selection:
+
+```sh
+open-forge install --configure --preset custom \
+  --route guidance=add --route memory/working=git-ignore --dry-run
+open-forge install --configure --preset custom \
+  --route guidance=add --route memory/working=git-ignore --automatic
+```
+
+**Look for:** Guidance being added and Working's whole directory entering the Install-owned `.gitignore` section. Custom starts from the current choices, so other rows keep their selection. Ignored content still appears in navigation and loads normally. Files already tracked by Git stay tracked.
+
+Custom's Remove choice omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions remain routable. Explicit configuration can restore eligible missing defaults after a checkout, with or without a lock file, while preserving authored files and narrower omissions. Missing private notes need your own copy or backup.
+
+**Why it helps:** your setup can grow with the project. [Installation](../getting-started/installation.md#configure-an-existing-workspace) explains the choices, and the [reference](/guides/cli#setup-choices) lists all row IDs and flags. To restore just one omitted canonical Core category, you can also use [`route init --framework`](/guides/cli#initialize-a-route-chain).
+
+## Choose an Extension when you need one
+
+**When:** you want extra content, such as Decisions, project documents, or development workflows.
+
+```sh
+open-forge extension list --available
+open-forge extension inspect development-toolkit
+open-forge extension install development-toolkit --dry-run
+open-forge extension install development-toolkit
+```
+
+`development-toolkit` installs Project Documents, Planning, Flows and Scenarios, and Development, plus Workflow Support, which they depend on. You can choose a smaller package instead, such as `planning`. The [catalogue](../extensions/index.md) explains each one.
+
+**Look for:** the selected packages, dependencies, and planned files before confirming. To pick packages interactively, run `open-forge extension install` without IDs. For a noninteractive run, supply the IDs and `--automatic` after reviewing the preview. Use `--source <path>` for a local package or catalogue.
+
+**Why it helps:** you add the files useful to your work without making the rest part of your setup.
 
 ## Find out why an agent ignored a rule
 
@@ -167,6 +201,27 @@ open-forge library attach team-rules vendor/team-rules
 ```
 
 **Look for:** the list of links the attach creates. Each one is a relative file link, so the files themselves stay in the shared folder. When the shared source changes, `library sync team-rules` brings the links up to date. `library detach` removes the links and leaves the source alone.
+
+Attach also asks whether to Git-ignore those links. Choose Yes when the source
+folder is the versioned copy and each checkout should recreate its links. The
+default is No. The rules cover each projected file, so unrelated files in the
+same folder stay visible to Git. Already committed links stay tracked.
+
+For a script, make the choice explicit and preview the same request:
+
+```sh
+open-forge library attach team-rules vendor/team-rules \
+  --git-ignore true --allow-path .gitignore --dry-run
+open-forge library attach team-rules vendor/team-rules \
+  --git-ignore true --allow-path .gitignore --automatic
+```
+
+These examples assume the projections land under an existing `.agents` scope.
+Add destination grants too if files land elsewhere. Sync remembers the choice
+and updates the owned rules as files come and go; Detach or removal cleans them
+up. Those Library commands need the ignore-file grant when they change it.
+Authored rules and entries for other Libraries survive. See the
+[Library reference](/guides/cli#keep-projected-links-out-of-git) for the full scope.
 
 **Why it helps:** each repository links to the shared folder instead of keeping its own edited copy. When the shared source changes, `library sync` brings the links back in step.
 

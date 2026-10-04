@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Commands.Library.Models.Result.Observation;
 using OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 using OpenForge.Cli.Core.Presentation.Library.Sync.Models;
 using OpenForge.Cli.Core.Presentation.Library.Sync.Shared.Wording;
+using OpenForge.Cli.Core.Presentation.Library.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
@@ -131,6 +132,16 @@ internal static class LibrarySyncReportSelector
             });
         }
 
+        if (payload.Plan.GitIgnore is { } ignore)
+        {
+            effects.Add(new LibrarySyncDataEffect
+            {
+                Path = ignore.Path,
+                Action = ignore.Action,
+                Outcome = Outcome(result, ignore.Path),
+                IsFile = true,
+            });
+        }
         if (payload.Plan.RecordEffect != LibraryRecordEffect.None)
         {
             effects.Add(new LibrarySyncDataEffect
@@ -150,15 +161,7 @@ internal static class LibrarySyncReportSelector
             .Select(effect => new CliEffect
             {
                 Path = effect.Path,
-                Kind = effect.IsRecord
-                    ? CliEffectKind.Record
-                    : effect.IsSection
-                        ? CliEffectKind.Section
-                        : effect.IsLink
-                            ? CliEffectKind.Link
-                            : effect.IsSettings
-                                ? CliEffectKind.Setting
-                                : CliEffectKind.Directory,
+                Kind = EffectKind(effect),
                 Action = effect.Action switch
                 {
                     "add" => CliEffectAction.Created,
@@ -169,18 +172,30 @@ internal static class LibrarySyncReportSelector
                     "update" => CliEffectAction.Rewritten,
                     _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Action, "The Library Sync effect action is not defined."),
                 },
-                Outcome = effect.Outcome switch
-                {
-                    "planned" => CliEffectOutcome.Planned,
-                    "done" => CliEffectOutcome.Done,
-                    "not-started" => CliEffectOutcome.NotStarted,
-                    "unknown" => CliEffectOutcome.Unknown,
-                    "failed" => CliEffectOutcome.Failed,
-                    _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Outcome, "The Library Sync effect outcome is not defined."),
-                },
+                Outcome = EffectOutcome(effect.Outcome),
                 Reason = effect.Suffix,
             })
             .ToArray();
+
+    private static CliEffectKind EffectKind(LibrarySyncDataEffect effect)
+    {
+        if (effect.IsFile) return CliEffectKind.File;
+        if (effect.IsRecord) return CliEffectKind.Record;
+        if (effect.IsSection) return CliEffectKind.Section;
+        if (effect.IsLink) return CliEffectKind.Link;
+        if (effect.IsSettings) return CliEffectKind.Setting;
+        return CliEffectKind.Directory;
+    }
+
+    private static CliEffectOutcome EffectOutcome(string outcome) => outcome switch
+    {
+        "planned" => CliEffectOutcome.Planned,
+        "done" => CliEffectOutcome.Done,
+        "not-started" => CliEffectOutcome.NotStarted,
+        "unknown" => CliEffectOutcome.Unknown,
+        "failed" => CliEffectOutcome.Failed,
+        _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The Library Sync effect outcome is not defined."),
+    };
 
     private static CliEffectAction RecordAction(LibraryRecordEffect effect)
         => effect switch
@@ -290,6 +305,7 @@ internal static class LibrarySyncReportSelector
         states.AddRange(plan.Directories.Select(directory => Expected(directory.Path, directory.Expected)));
         states.AddRange(plan.Links.Select(link => Expected(link.Path, link.Expected)));
         states.AddRange(plan.GeneratedRegions.Select(region => Expected(region.Path, region.Expected)));
+        if (plan.GitIgnore is { } ignore) states.Add(Expected(ignore.Path, ignore.Expected));
         if (plan.SettingsChange is { } settingsChange)
         {
             states.Add(Expected(settingsChange.Path, settingsChange.Expected));
@@ -335,16 +351,24 @@ internal static class LibrarySyncReportSelector
                 }).ToArray(),
         };
 
-    private static CliCount[] Counts(
+    private static IReadOnlyList<CliCount> Counts(
         IReadOnlyList<LibrarySyncDataEffect> effects,
         int unchanged)
-        =>
-        [
+    {
+        var counts = new List<CliCount>
+        {
             new CliCount("linksAdded", global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.LabelLinksAdded(), effects.Count(effect => effect.IsLink && effect.Action == "add" && IsCounted(effect.Outcome))),
             new CliCount("linksRemoved", global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelLinksRemoved(), effects.Count(effect => effect.IsLink && effect.Action == "remove" && IsCounted(effect.Outcome))),
             new CliCount("linksUnchanged", global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.LabelLinksUnchanged(), unchanged),
             new CliCount("sectionsUpdated", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelSectionsUpdated(), effects.Count(effect => effect.IsSection && IsCounted(effect.Outcome))),
-        ];
+        };
+        if (effects.Any(effect => effect.IsFile))
+        {
+            counts.Add(new("gitIgnoreFilesUpdated", global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.FilesUpdated(),
+                effects.Count(effect => effect.IsFile && IsCounted(effect.Outcome))));
+        }
+        return counts;
+    }
 
     private static bool IsCounted(string outcome)
         => outcome is "planned" or "done";
@@ -364,21 +388,23 @@ internal static class LibrarySyncReportSelector
 
         var preview = result.Result.Identity.Mode == LibraryMode.DryRun;
         return effects
-            .Where(effect => effect.IsLink || effect.IsSection)
+            .Where(effect => effect.IsLink || effect.IsSection || effect.IsFile)
             .Where(effect => detail >= CliDetail.Standard || !effect.IsRecord)
             .Select(effect => new LibrarySyncDataTextRow
             {
                 Path = effect.Path,
-                Label = effect.IsSection
-                    ? LibrarySyncWording.SectionLabel(effect.Outcome, preview)
-                    : LibrarySyncWording.EffectLabel(
-                        effect.Action == "add" ? LibraryLinkEffectKind.Create : LibraryLinkEffectKind.Delete,
-                        effect.Outcome,
-                        preview),
+                Label = EffectLabel(effect, preview),
                 Suffix = effect.Suffix,
                 Target = detail >= CliDetail.Standard && effect.IsLink ? effect.Target : null,
                 IsSection = effect.IsSection,
             }).ToArray();
+    }
+
+    private static string EffectLabel(LibrarySyncDataEffect effect, bool preview)
+    {
+        if (effect.IsFile) return LibraryGitIgnoreWording.Effect(EffectOutcome(effect.Outcome));
+        if (effect.IsSection) return LibrarySyncWording.SectionLabel(effect.Outcome, preview);
+        return LibrarySyncWording.EffectLabel(effect.Action == "add" ? LibraryLinkEffectKind.Create : LibraryLinkEffectKind.Delete, effect.Outcome, preview);
     }
 
     private static bool HasSafeEffects(IReadOnlyList<LibrarySyncDataEffect> effects)
@@ -501,7 +527,7 @@ internal static class LibrarySyncReportSelector
         var added = Count(counts, "linksAdded");
         var removed = Count(counts, "linksRemoved");
         var unchanged = Count(counts, "linksUnchanged");
-        var hasChanges = data.Effects.Any(effect => effect.IsLink || effect.IsSection || effect.IsRecord || effect.IsSettings);
+        var hasChanges = data.Effects.Any(effect => effect.IsLink || effect.IsSection || effect.IsFile || effect.IsRecord || effect.IsSettings);
         return result.Status switch
         {
             CliSemanticStatus.Complete when !hasChanges
@@ -529,6 +555,8 @@ internal static class LibrarySyncReportSelector
                 => new(LibrarySyncWording.Failed(0, data.Effects.Count), CliHeadlineKind.Failed),
             CliSemanticStatus.Failed
                 => new(LibrarySyncWording.Failed(CountCompleted(data.Effects), data.Effects.Count), CliHeadlineKind.Failed),
+            CliSemanticStatus.Interrupted when CountCompleted(data.Effects) == 0 && IgnoreUnknown(result.Result)
+                => new(LibraryGitIgnoreWording.Partial("sync", ReportEffects(result), cancelled: true), CliHeadlineKind.Cancelled),
             CliSemanticStatus.Interrupted when CountCompleted(data.Effects) == 0
                 => new(LibrarySyncWording.Cancelled(), CliHeadlineKind.Cancelled),
             CliSemanticStatus.Interrupted
@@ -610,6 +638,8 @@ internal static class LibrarySyncReportSelector
             LibrarySyncFindingCode.LinkCapabilityUnavailable => LibrarySyncWording.LinkCapabilityUnavailable(),
             LibrarySyncFindingCode.ConsumerBlocked => LibrarySyncWording.ConsumerBlocked(path),
             LibrarySyncFindingCode.LockUnavailable => LibrarySyncWording.LockUnavailable(),
+            LibrarySyncFindingCode.Interrupted when IgnoreUnknown(result.Result)
+                => LibraryGitIgnoreWording.Partial("sync", ReportEffects(result), cancelled: true),
             LibrarySyncFindingCode.Interrupted when finding.Cause.Contains("Nothing was changed", StringComparison.Ordinal)
                 => LibrarySyncWording.Cancelled(),
             LibrarySyncFindingCode.RecoveryRetained when finding.Path is { } recovery
@@ -617,6 +647,12 @@ internal static class LibrarySyncReportSelector
             _ => TrimSentence(finding.Cause),
         };
     }
+
+    private static bool IgnoreUnknown(LibrarySyncPayload payload)
+        => payload.Plan.GitIgnore is { } ignore
+            && payload.Application.Residuals.Any(residual => residual.Kind == LibraryResidualKind.GitIgnore
+                && string.Equals(residual.Path, ignore.Path, StringComparison.Ordinal)
+                && residual.State == LibraryResidualState.Unknown);
 
     private static string DestinationMessage(LibrarySyncResult result, string path, string cause)
     {

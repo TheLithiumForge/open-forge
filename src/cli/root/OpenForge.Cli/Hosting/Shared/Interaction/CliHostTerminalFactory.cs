@@ -23,13 +23,18 @@ internal static class CliHostTerminalFactory
             promptOutputRedirected,
             terminalName,
             isWindows,
-            supportsKeyReads);
+            supportsKeyReads,
+            supportsViewClearing: ReadViewport() is { SupportsSelection: true });
         var adapter = new CliHostTerminalAdapter(
             standardInput,
             promptOutput,
             () => Console.KeyAvailable,
-            () => Console.ReadKey(intercept: true));
-        return new CliTerminal(capabilities, adapter.WriteAsync, adapter.ReadLineAsync, adapter.ReadKeyAsync);
+            () => Console.ReadKey(intercept: true),
+            capabilities.CanRedraw ? ReadViewport : null);
+        var selectionView = capabilities.CanRedraw
+            ? new CliTerminalSelectionView(adapter.ReadViewport, ClearView)
+            : null;
+        return new CliTerminal(capabilities, adapter.WriteAsync, adapter.ReadLineAsync, adapter.ReadKeyAsync, selectionView);
     }
 
     internal static CliTerminalCapabilities ResolveCapabilities(
@@ -37,12 +42,13 @@ internal static class CliHostTerminalFactory
         bool promptOutputRedirected,
         string? terminalName,
         bool isWindows,
-        bool supportsKeyReads)
+        bool supportsKeyReads,
+        bool supportsViewClearing = false)
     {
         var canPrompt = !standardInputRedirected && !promptOutputRedirected;
         var canReadKeys = canPrompt && !string.Equals(terminalName, "dumb", StringComparison.OrdinalIgnoreCase)
             && supportsKeyReads;
-        var canRedraw = canReadKeys && SupportsAnsiRedraw(terminalName, isWindows);
+        var canRedraw = canReadKeys && supportsViewClearing && SupportsConsoleView(terminalName, isWindows);
         return new CliTerminalCapabilities(canPrompt, canReadKeys, canRedraw);
     }
 
@@ -67,9 +73,36 @@ internal static class CliHostTerminalFactory
         }
     }
 
-    private static bool SupportsAnsiRedraw(string? terminalName, bool isWindows)
+    private static CliTerminalViewport? ReadViewport()
     {
-        if (isWindows || string.IsNullOrWhiteSpace(terminalName))
+        if (Console.IsOutputRedirected) return null;
+        try
+        {
+            return new CliTerminalViewport(Console.WindowWidth, Console.WindowHeight);
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or IOException or NotSupportedException)
+        {
+            return null;
+        }
+    }
+
+    private static bool ClearView()
+    {
+        try
+        {
+            Console.Clear();
+            return true;
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or IOException or NotSupportedException)
+        {
+            return false;
+        }
+    }
+
+    private static bool SupportsConsoleView(string? terminalName, bool isWindows)
+    {
+        if (isWindows) return true;
+        if (string.IsNullOrWhiteSpace(terminalName))
             return false;
 
         return terminalName.ToLowerInvariant() switch

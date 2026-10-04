@@ -87,17 +87,16 @@ public sealed class CliPromptsTests
 
         Assert.Equal(CliPromptState.Answered, reply.State);
         Assert.Equal("second", reply.Value);
-        Assert.Contains("\u001b[", scripted.Output.ToString(), StringComparison.Ordinal);
+        Assert.Equal(2, scripted.ClearCalls);
+        Assert.Equal(2, scripted.Frames.Count);
+        Assert.DoesNotContain("\u001b[", scripted.Output.ToString(), StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Select keeps key semantics when redraw is unavailable"), Trait("Feature", "cli-interaction"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Select uses numbered lines when redraw is unavailable"), Trait("Feature", "cli-interaction"), Trait("Evidence", "Unit")]
     public async Task SelectKeyModeFallsBackWithoutRedraw()
     {
-        var scripted = ScriptedCliTerminal.Keys([
-            new CliKeyStroke(CliKey.Down),
-            new CliKeyStroke(CliKey.Enter),
-        ]);
+        var scripted = new ScriptedCliTerminal(new CliTerminalCapabilities(true, true, false), lines: ["2"]);
         var prompts = new CliPrompts(scripted.Terminal);
         var question = new CliSelectQuestion<string>("Which one?", [
             new CliChoice<string>("first", "first"),
@@ -349,10 +348,10 @@ public sealed class CliPromptsTests
 
         Assert.Equal(CliPromptState.Answered, reply.State);
         Assert.Equal(CliPermissionChoice.Always, reply.Value);
-        var output = scripted.Output.ToString();
-        var newLine = Environment.NewLine;
-        Assert.Contains($"templates/memory   (directory: everything under it){newLine}{newLine}  > Allow always", output, StringComparison.Ordinal);
-        Assert.DoesNotContain($"everything under it){newLine}{newLine}{newLine}", output, StringComparison.Ordinal);
+        var frame = Assert.Single(scripted.Frames);
+        Assert.Contains("memory-starters writes outside .agents:", frame, StringComparison.Ordinal);
+        Assert.Contains("templates/memory   (directory: everything under it)", frame, StringComparison.Ordinal);
+        Assert.Contains(">  1. Allow always", frame, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Input")]

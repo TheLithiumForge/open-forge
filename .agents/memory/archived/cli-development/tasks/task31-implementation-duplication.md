@@ -7,7 +7,7 @@ open-forge:
 # Task 31 — Implementation Duplication Removal
 
 **Closed on 2026-09-28** by the maintainer, following the
-[review](../../../emerging/analysis/open-task-review/task31-implementation-duplication.md). M1 to M5 are complete:
+[review](../analysis/open-task-review/task31-implementation-duplication.md). M1 to M5 are complete:
 M5 was applied on 2026-09-21 in `dac3bb53`. An optional split of
 `CleanupResultFacts.cs`, about 1,000 lines, was never ruled on. Raise it as its
 own change if it's wanted. The Route Move and Route Remove selector boundary
@@ -22,7 +22,7 @@ The sections below are the record as it stood before closing.
   is met: Task 30 G4 is complete and its presentation structure is stable, and
   M5's inventory is recorded.
 - Owner: Root, direct sequential implementation.
-- Evidence source: the Emerging [Implementation Duplication analysis](../../../emerging/analysis/cli-experience-audit/implementation-duplication.md).
+- Evidence source: the Emerging [Implementation Duplication analysis](../analysis/cli-experience-audit/implementation-duplication.md).
 - Current next step: rule on M5's two recorded `Needs a decision` folders, then
   apply the inventory's single proposed collapse as its own verified batch. The
   [inventory](task31/phase-structure-inventory.md) dispositions all 294 current
@@ -47,7 +47,7 @@ constants sit with the scope that owns them.
 | ------------------------- | --------------------------------------------------------------------- | ---------------------------------------------- |
 | M1 — family-level methods | Complete for accepted enumeration; excluded contracts remain separate | [Phase 3.5](task31/phase-3-5.md)               |
 | M2 — cross-family methods | Complete; behavior-preserving                                         | [Phase 3.5](task31/phase-3-5.md)               |
-| M3 — one text escaper     | Complete in Task 30 G4's rendering-system work; behavior-changing       | [Escaper boundary](task31/phase-escaper.md)    |
+| M3 — one text escaper     | Complete in Task 30 G4's rendering-system work; behavior-changing     | [Escaper boundary](task31/phase-escaper.md)    |
 | M4 — constant placement   | Complete; behavior-preserving                                         | [Constant rule](task31/phase-constants.md)     |
 | M5 — structure cleanup    | Inventory recorded; application not started                           | [Structure cleanup](task31/phase-structure.md) |
 

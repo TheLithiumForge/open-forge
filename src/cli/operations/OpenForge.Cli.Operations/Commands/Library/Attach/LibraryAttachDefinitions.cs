@@ -8,6 +8,12 @@ internal static class LibraryAttachDefinitions
 {
     internal const string CommandIdentity = "library attach";
     internal static readonly CliSyntaxDefinition Command = new("attach", "Register one Library source and create relative file links.");
+    internal static readonly CliOptionDefinition<bool> GitIgnore = new(
+        "--git-ignore",
+        "Add exact projected Library links to the workspace Git-ignore file.",
+        CliOptionArity.ExactlyOne,
+        false,
+        "true|false");
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
         "Disable prompts; does not select or alter Library targets.",
@@ -23,6 +29,8 @@ internal static class LibraryAttachDefinitions
             LibraryAttachFindingCode.PermissionUnavailable => "library-attach.permission-unavailable",
             LibraryAttachFindingCode.PermissionChanged => "library-attach.permission-changed",
             LibraryAttachFindingCode.PermissionWriteFailed => "library-attach.permission-write-failed",
+            LibraryAttachFindingCode.GitIgnoreBlocked => "library-attach.git-ignore-blocked",
+            LibraryAttachFindingCode.GitIgnoreUnavailable => "library-attach.git-ignore-unavailable",
             LibraryAttachFindingCode.InvalidInput => "library-attach.invalid-input",
             LibraryAttachFindingCode.InvalidId => "library-attach.invalid-id",
             LibraryAttachFindingCode.RecordInvalid => "library-attach.record-invalid",

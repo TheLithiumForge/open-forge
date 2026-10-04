@@ -199,13 +199,35 @@ prefix and suffix preservation, and under-lease revalidation remain required.
 This boundary applies equally to `library attach`, `library sync`, and
 `library detach`; sibling contracts use it without duplicating the rule.
 
+## Ignore Choice And Ordinary File Planning
+
+The [Interface](interface.md#library-git-ignore-choice) defines exact choice,
+omission and permission semantics. Complete structural admission before asking
+the optional interactive question. A projected root `.gitignore` with explicit
+true, or prompt-capable interactive omission, is blocked before prompts; explicit
+false and unattended omission remain eligible. Include selected ignore intent
+in every fresh request-derived plan so approval cannot transfer to another choice.
+
+For opted-in attachment, derive literal anchored rules from the intended mapped
+leaves and preserve the intent on all surviving claims. Observe the consumer
+ignore file without following its final component; keep its exact ordinary
+snapshot or prior absence. Validate the separate owned section and all effect
+overlaps before permission or confirmation. A required write joins the complete
+permission targets and plan as an ordinary file effect, never as a generated
+Markdown region or an unreported follow-up.
+
+The effect participates in plan comparison, no-follow revalidation, recovery,
+source protection, receipts and partial reporting. Verify it after link and
+navigation effects and before final ownership publication. Dry-run reports its
+actual paths and bytes without probing effectful capabilities or writing anything.
+
 ## Intended Record And Plan
 
 Attach forms the intended versioned record by inserting the new sorted library
 record and its complete sorted path list. For a valid readable ownership record,
 other claims are preserved. An absent lock starts with no claims; an invalid or
 unavailable required lock prevents planning a publication. The intended record contains no
-expected-link property, source bytes, absolute path, Git fact, collection,
+expected-link property, source bytes, absolute path, Git index or status fact, collection,
 per-file remapping, glob, dependency, or exclusion metadata. The resulting record is
 the final consumer publication and is not an early ownership marker.
 
@@ -214,7 +236,8 @@ The ordered plan contains only declared effects:
 - the approved consumer permission create/replace, verified before all other effects;
 - real ordinary parent-directory creation required by declared mappings;
 - relative-file-link creation at each missing destination;
-- bounded replacement of each permitted pre-existing generated region; and
+- bounded replacement of each permitted pre-existing generated region;
+- an ordinary ignore-file Create or Replace when the selected intent requires it; and
 - ordinary consumer-record creation or replacement as the last publication
   effect.
 
@@ -297,10 +320,13 @@ verified before the first effect under the shared mutation boundary; an
 effect-free plan has no recovery bundle. Library recovery distinguishes:
 
 - a prior-missing ordinary consumer-record `Create`;
+- an ordinary ignore-file `Create` or `Replace` with prior bytes or absence;
 - a relative-file-link `Create` at a previously missing destination; and
 - a relative-file-link `Delete` with its exact raw relative target.
 
-It stores consumer-side record bytes and link identity, never source bytes. A
+It stores prior consumer-side record and permission bytes or absence, prior
+ignore-file bytes or absence for required changes, and link identity, never
+source bytes. A
 strong no-follow recovery operation can remove a link created by this attach
 only when the destination is still the exact created link. It can recreate an
 exact deleted relative link only when the destination is safely missing and the

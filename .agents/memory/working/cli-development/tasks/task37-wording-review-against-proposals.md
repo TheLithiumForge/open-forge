@@ -6,7 +6,7 @@ open-forge:
 
 # Task 37 — Wording Review Against The Output Proposals
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task37-wording-review-against-proposals.md). Recommendation:
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task37-wording-review-against-proposals.md). Recommendation:
 Needs the maintainer's decision first. The review names any details in this record that are out of date.
 
 ## Task state
@@ -30,12 +30,12 @@ shipped text and the proposed text have never been placed side by side.
 
 ## The inputs
 
-| Proposal | Size | What it is |
-| --- | --- | --- |
-| [Fable](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-fable.md) | 1,859 lines | Shared presentation rules plus per-command transcripts for all 28 commands |
-| [Astra](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-astra.md) | 1,884 lines | A review of the others that also proposes its own wording |
-| [Opus](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-opus.md) | — | The third proposal |
-| [Consolidated](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-consolidated.md) | — | What the maintainer reviewed to produce C1–C18 |
+| Proposal                                                                                                   | Size        | What it is                                                                 |
+| ---------------------------------------------------------------------------------------------------------- | ----------- | -------------------------------------------------------------------------- |
+| [Fable](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-fable.md)               | 1,859 lines | Shared presentation rules plus per-command transcripts for all 28 commands |
+| [Astra](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-astra.md)               | 1,884 lines | A review of the others that also proposes its own wording                  |
+| [Opus](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-opus.md)                 | —           | The third proposal                                                         |
+| [Consolidated](../../../archived/cli-development/tasks/task30/phase-4b-g4-output-proposal-consolidated.md) | —           | What the maintainer reviewed to produce C1–C18                             |
 
 **The maintainer intends to add a further proposal.** Check for it before
 starting; if a fourth document is present, it is an input like the rest.
@@ -74,7 +74,7 @@ stuck — not that it is newer, longer, or more precise about internals.
   that is a finding-code split to propose, not a sentence to adopt.
 - The rules that already exist win over a proposal that predates them: the
   accepted C1–C18 decisions, the shared presentation rules, and the
-  [minimal-output sweep](task32-minimal-output-sweep.md) if it has ruled by
+  [minimal-output sweep](../../../archived/cli-development/tasks/task32-minimal-output-sweep.md) if it has ruled by
   then.
 - Interpolated command names and arguments are getting code markers in
   [Task 34](task34-interpolated-value-markup.md). Sequence against it — doing

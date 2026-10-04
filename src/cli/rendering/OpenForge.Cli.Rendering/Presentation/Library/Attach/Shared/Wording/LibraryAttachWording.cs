@@ -205,6 +205,8 @@ internal static class LibraryAttachWording
 
     internal static string FindingTitle(LibraryAttachFindingCode code) => code switch
     {
+        LibraryAttachFindingCode.GitIgnoreBlocked => global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.Blocked(),
+        LibraryAttachFindingCode.GitIgnoreUnavailable => global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.Unavailable(),
         LibraryAttachFindingCode.InvalidInput => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleInvalidInput(),
         LibraryAttachFindingCode.InvalidId => global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.TitleInvalidLibraryId(),
         LibraryAttachFindingCode.DuplicateId => global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.TitleLibraryIdIsAlreadyRegistered(),
@@ -253,6 +255,8 @@ internal static class LibraryAttachWording
         LibraryAttachFindingCode.PermissionUnavailable => "library-attach.permission-unavailable",
         LibraryAttachFindingCode.PermissionChanged => "library-attach.permission-changed",
         LibraryAttachFindingCode.PermissionWriteFailed => "library-attach.permission-write-failed",
+        LibraryAttachFindingCode.GitIgnoreBlocked => "library-attach.git-ignore-blocked",
+        LibraryAttachFindingCode.GitIgnoreUnavailable => "library-attach.git-ignore-unavailable",
         LibraryAttachFindingCode.InvalidInput => "library-attach.invalid-input",
         LibraryAttachFindingCode.InvalidId => "library-attach.invalid-id",
         LibraryAttachFindingCode.RecordInvalid => "library-attach.record-invalid",

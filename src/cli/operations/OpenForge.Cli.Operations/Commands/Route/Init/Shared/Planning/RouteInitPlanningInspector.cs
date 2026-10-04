@@ -150,8 +150,15 @@ internal sealed class RouteInitPlanningInspector
             }
         }
 
-        var current = await _currentStateReader.ReadChainAsync(catalogue, target, cancellationToken)
+        var restorationDirectory = alignment is { IsCanonicalRestoration: true, Target.CanonicalPath: { } restorationPath }
+            ? SourceLogicalPath.ReadParent(restorationPath) : null;
+        var current = await _currentStateReader.ReadChainAsync(catalogue, target, cancellationToken, restorationDirectory)
             .ConfigureAwait(false);
+        if (alignment?.IsCanonicalRestoration == true && catalogue.Formation?.Loader is null)
+        {
+            return Stopped(RouteInitFindingCode.FrameworkInstallRequired,
+                "Canonical restoration requires an installed, safe Loader.", incomplete: false, target);
+        }
         if (ReadCurrentBoundary(current) is { } currentBoundary)
         {
             return new RouteInitInspectionStopped(currentBoundary with
@@ -198,7 +205,9 @@ internal sealed class RouteInitPlanningInspector
             request.Scaffold == RouteInitScaffold.Framework);
         return new RouteInitPlanningBoundary(
             code,
-            $"The source catalogue boundary '{issue.AttemptedCanonicalPath}' is not safe and complete.",
+            issue.Code == SourceCatalogueIssueCode.OrphanOverwrite
+                ? $"The overwrite companion '{issue.AttemptedCanonicalPath}' has no base source. Restore or move its base before retrying Route Init."
+                : $"The source catalogue boundary '{issue.AttemptedCanonicalPath}' is not safe and complete.",
             incomplete,
             target);
     }

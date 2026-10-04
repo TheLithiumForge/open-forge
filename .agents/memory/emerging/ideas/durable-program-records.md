@@ -9,8 +9,8 @@ open-forge:
 ## Opportunity
 
 Consequential release, migration, redesign, and cleanup efforts may need more
-durable structure than one plan or Checkpoint can responsibly own. The new CLI
-release program currently separates:
+durable structure than one plan or Checkpoint can responsibly own. The retired
+CLI release program tried the following separation:
 
 - A small routed program entrypoint.
 - One live gate and task plan.
@@ -20,8 +20,10 @@ release program currently separates:
 - An unaccepted decision agenda.
 - A concise active Checkpoint.
 
-That separation makes exhaustive work resumable without turning a Checkpoint
-into a large specification or treating candidate findings as accepted truth.
+That historical trial motivates this candidate. It does not establish that
+every record was useful or that the complete shape should ship. A new trial
+should test whether the separation improves resumption without duplicating
+accepted sources or treating candidate findings as accepted truth.
 
 ## Candidate Reusable Shape
 
@@ -49,8 +51,9 @@ decision depth, or gate duration gives each file an independent responsibility.
   artifact-register, decision-agenda, and Checkpoint skeletons.
 - An optional **Workflow** could explain initialization, maintenance, decision
   integration, independent review, and closeout.
-- The development-toolkit Extension is a better initial package candidate than
-  the shared Framework.
+- A focused optional package or an existing method package could carry the
+  proven shape. Development Toolkit is currently a dependency bundle, so
+  adding runtime content there would require a separate package decision.
 
 A dedicated Skill or agent does not currently appear justified. Existing
 Planner, Analyst, Explorer, Architect, Implementation, and Acceptance Reviewer
@@ -67,8 +70,8 @@ ceremony.
 
 ## Evidence Before Promotion
 
-1. Complete the CLI release program using this structure.
-2. Trial the shape in at least one other consequential release, migration, or
+1. Review the retired trial and identify which records had lasting value.
+2. Trial the smallest useful shape in another consequential release, migration, or
    redesign.
 3. Identify which records materially improved resumption, decision quality,
    artifact coverage, or review.

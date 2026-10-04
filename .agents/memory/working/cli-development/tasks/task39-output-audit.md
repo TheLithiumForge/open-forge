@@ -6,13 +6,16 @@ open-forge:
 
 # Task 39 — Output Audit
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task39-output-audit.md). Recommendation:
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task39-output-audit.md). Recommendation:
 Do before 1.0. The review names any details in this record that are out of date.
 
 ## Task state
 
-- State: **Open; representative correction passed focused and complete managed/native gates.** Raised by the
-  maintainer on 2026-09-16.
+- State: **Paused by the maintainer on 2026-10-01.** The wider audit reached
+  phase 2/3, milestone 1/3, with its final checkpoint and worktree preserved.
+  The earlier representative correction passed its managed/native gates.
+  Resuming the wider audit requires maintainer direction. See the
+  [current ledger](../project-control.md#active-task-ledger).
 - Owner: Root.
 
 The 2026-09-21 [error packet](beta-follow-ups/task39-errors.md) records the current caller inventory, reproduced manifest-subject loss and proposed worker boundaries. Historical counts below are dated evidence, not a current defect count. E1 and E2 passed focused and complete managed/native gates under the [execution record](../../../archived/cli-development/tasks/beta-follow-ups/execution.md). The wider command-family audit remains open.
@@ -198,10 +201,10 @@ question: the naming convention, and whether anything unowned survives.
   checks become this Task's per-command checklist, with Run 1's rule to check
   claims against the workspace. Defect B-5, the doubled "Fix it by hand." line
   in the Doctor captures, moves here too. See the
-  [Task 41 review](../../../emerging/analysis/open-task-review/task41-beta-journey-scenarios.md).
+  [Task 41 review](../../../archived/cli-development/analysis/open-task-review/task41-beta-journey-scenarios.md).
 - **From [Task 30](../../../archived/cli-development/tasks/task30-cli-experience-remediation.md):** the one-code
   questions for `context.closure-unavailable` and `references.invalid-encoding`.
-  See the [Task 30 review](../../../emerging/analysis/open-task-review/task30-cli-experience-remediation.md).
+  See the [Task 30 review](../../../archived/cli-development/analysis/open-task-review/task30-cli-experience-remediation.md).
 
 ## Axioms
 

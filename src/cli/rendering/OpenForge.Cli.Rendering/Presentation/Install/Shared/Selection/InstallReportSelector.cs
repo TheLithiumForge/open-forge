@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Presentation.Install.Models;
 using OpenForge.Cli.Core.Presentation.Install.Shared.Wording;
@@ -60,6 +61,10 @@ internal static class InstallReportSelector
             : null;
         var data = new InstallData
         {
+            Configuration = result.Input.Configuration is { } configuration
+                ? new InstallDataConfiguration(configuration.Configure, PresetName(configuration.Preset),
+                    configuration.Routes.Select(row => new InstallDataRoute(row.Id, ActionName(row.Action))).ToArray())
+                : null,
             Mode = InstallWireVocabulary.Name(result.Mode),
             Force = result.Force,
             Automatic = result.Automatic,
@@ -164,6 +169,22 @@ internal static class InstallReportSelector
                 : [],
         };
     }
+
+    private static string PresetName(InstallPreset preset) => preset switch
+    {
+        InstallPreset.Essentials => "essentials",
+        InstallPreset.FullCore => "full-core",
+        InstallPreset.Custom => "custom",
+        _ => throw new ArgumentOutOfRangeException(nameof(preset)),
+    };
+
+    private static string ActionName(InstallRouteAction action) => action switch
+    {
+        InstallRouteAction.Add => "add",
+        InstallRouteAction.Remove => "remove",
+        InstallRouteAction.GitIgnore => "git-ignore",
+        _ => throw new ArgumentOutOfRangeException(nameof(action)),
+    };
 
     private static CliHeadline Headline(InstallResult result, InstallData data)
     {
@@ -372,13 +393,7 @@ internal static class InstallReportSelector
         => new()
         {
             Path = effect.Path,
-            Kind = effect.Path == InstallWireVocabulary.OwnershipRecordPath
-                ? CliEffectKind.Record
-                : effect.ResultKind == InstallEffectKind.Directory
-                    ? CliEffectKind.Directory
-                    : effect.ResultKind is InstallEffectKind.ManagedRegion or InstallEffectKind.GeneratedRegion
-                        ? CliEffectKind.Section
-                        : CliEffectKind.File,
+            Kind = EffectKind(effect),
             Action = effect.ResultAction switch
             {
                 InstallEffectAction.Create => CliEffectAction.Created,
@@ -396,6 +411,16 @@ internal static class InstallReportSelector
                 _ => throw new ArgumentOutOfRangeException(nameof(effect)),
             },
         };
+
+    private static CliEffectKind EffectKind(InstallDataEffect effect)
+    {
+        if (effect.Path == InstallWireVocabulary.OwnershipRecordPath) return CliEffectKind.Record;
+        if (effect.Path == ".agents/open-forge.json") return CliEffectKind.Setting;
+        if (effect.Path == ".gitignore") return CliEffectKind.Section;
+        if (effect.ResultKind == InstallEffectKind.Directory) return CliEffectKind.Directory;
+        if (effect.ResultKind is InstallEffectKind.ManagedRegion or InstallEffectKind.GeneratedRegion) return CliEffectKind.Section;
+        return CliEffectKind.File;
+    }
 
     private static IReadOnlyList<InstallDataTextRow> SelectTextRows(
         IReadOnlyList<InstallDataEffect> effects,
@@ -661,6 +686,7 @@ internal static class InstallReportSelector
             && effect.ResultKind != InstallEffectKind.Directory
             && !IsOwnershipRecord(effect)
             && IsAgentsDescendant(effect.Path)
+            && effect.Path != ".agents/open-forge.json"
             && IsProgressed(effect, preview));
 
     private static int CountCreatedPhysicalFiles(IReadOnlyList<InstallDataEffect> effects, bool preview)
@@ -672,6 +698,7 @@ internal static class InstallReportSelector
     private static int CountCreatedDirectories(IReadOnlyList<InstallDataEffect> effects, bool preview)
         => effects.Count(effect => effect.ResultKind == InstallEffectKind.Directory
             && IsAgentsDescendant(effect.Path)
+            && effect.Path != ".agents/open-forge.json"
             && IsProgressed(effect, preview));
 
     private static int CountSections(IReadOnlyList<InstallDataEffect> effects, bool preview)

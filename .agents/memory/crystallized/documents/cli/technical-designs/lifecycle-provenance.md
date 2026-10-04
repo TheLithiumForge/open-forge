@@ -26,6 +26,12 @@ is omitted from comparison and write planning, leaving both its bytes and its
 ownership facts unchanged. Missing excluded destinations remain missing until a
 person removes the entry; absence alone never changes settings.
 
+Explicit Install configuration can change those exclusions and restore missing
+selected defaults under the [Install Behavior](../contracts/install/behavior.md#configuration-planning).
+Omitting supplied defaults releases only their selected Framework receipts,
+preserving existing content and other managers' claims. Configuration creates
+no receipt merely because an existing file matches the current payload.
+
 ## Stored Ownership
 
 Framework ownership stores source ID and optional descriptive version, whole

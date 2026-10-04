@@ -30,3 +30,4 @@ Archived Memory keeps useful history without making it current authority.
 - [Historical frozen MVP Extension package, ownership, lifecycle, safety, recorded verification, and limitations](extensions-mvp-architecture.md) - #Memory #Archived #Contextual #Historical #Extension #MVP #Architecture #Lifecycle
 - [Historical Task 28 Framework review, proposals, evidence, and discussion retained outside Working Memory](framework-review/_framework-review.md) - #Memory #Archived #Contextual #Historical #Framework #Review
 - [Historical Open Forge ideas and snapshots kept after application, supersession, or pruning](ideas/_ideas.md) - #Memory #Archived #Idea #Contextual #Historical
+- [Historical record: Currency audit of Working and Emerging Memory, with confirmed corrections and stale-record candidates](memory-currency-audit.md) - #Memory #Contextual #Audit #Maintenance #Archived #Historical

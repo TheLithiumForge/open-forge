@@ -6,7 +6,7 @@ open-forge:
 
 # Task 40 — Capture coverage
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task40-capture-coverage.md). Recommendation:
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task40-capture-coverage.md). Recommendation:
 Do after 1.0. The review names any details in this record that are out of date.
 
 ## Task state
@@ -23,18 +23,18 @@ Do after 1.0. The review names any details in this record that are out of date.
 **604 of the 813 finding codes in the accepted contracts never appear in any
 capture. The corpus exercises 25% of what the CLI can print.**
 
-| command | uncaptured | of |
-| --- | --- | --- |
-| doctor | 90 | 101 |
-| status | 34 | 50 |
-| extension install | 27 | 36 |
-| extension update | 27 | 35 |
-| route init | 27 | 34 |
-| library attach | 26 | 34 |
-| library sync | 26 | 34 |
-| route move | 26 | 36 |
-| extension remove | 25 | 32 |
-| update | 24 | 29 |
+| command           | uncaptured | of  |
+| ----------------- | ---------- | --- |
+| doctor            | 90         | 101 |
+| status            | 34         | 50  |
+| extension install | 27         | 36  |
+| extension update  | 27         | 35  |
+| route init        | 27         | 34  |
+| library attach    | 26         | 34  |
+| library sync      | 26         | 34  |
+| route move        | 26         | 36  |
+| extension remove  | 25         | 32  |
+| update            | 24         | 29  |
 
 The full list is reproducible by matching contract findings rows against the
 code-shaped tokens in `src/cli/tests/**/__snapshots__/**`.
@@ -83,7 +83,7 @@ that happening.
 [51](../../../archived/cli-development/tasks/task30/51-truthful-findings.md) set the bar this task makes checkable.
 [73](../../../archived/cli-development/tasks/task30/73-consequence-clauses.md) and the Extension Install recorded-package
 split both ended with uncaptured situations. [Task 39](task39-output-audit.md)
-owns whether an output is *good*; this task owns whether it is *watched*.
+owns whether an output is _good_; this task owns whether it is _watched_.
 
 ## Folded in on 2026-09-28
 

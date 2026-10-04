@@ -6,7 +6,7 @@ open-forge:
 
 # Task 58 — Demo-based evaluations
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task58-demo-evals.md). Recommendation:
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task58-demo-evals.md). Recommendation:
 Do after 1.0. The review names any details in this record that are out of date.
 
 ## Outcome

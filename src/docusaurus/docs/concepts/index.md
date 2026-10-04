@@ -38,7 +38,7 @@ The Framework has two parts:
 - **Core** defines routing, loading, and six reusable content roles.
 - **Memory** keeps useful context as the work evolves, in four states.
 
-A fresh install contains 15 files: `AGENTS.md`, `CLAUDE.md`, the loader, the six Core category entrypoints, the Memory entrypoint with its four state entrypoints, and one Skill, `open-forge-cli`. Everything else comes from an Extension or from you. That includes Decisions, Documents, Checkpoints, workflow recipes, and starter Templates.
+Full Core supplies 15 files: `AGENTS.md`, `CLAUDE.md`, the loader, the six Core category entrypoints, the Memory entrypoint with its four state entrypoints, and one Skill, `open-forge-cli`. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). Records such as Decisions, Documents, and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
 
 Methods for planning, development, project documents, or coordinating several agents are optional [Extensions](../extensions/index.md). You install the ones that fit your work and skip the rest.
 

@@ -12,9 +12,10 @@ Replace the ceremonial vocabulary throughout Open Forge with words that carry
 the same meaning and can be read without decoding. A pass has been made at this
 before; the audit shows how much remains.
 
-## What it looks like now
+## Historical audit examples
 
-Real strings, all reproduced during the audit:
+These strings were reproduced during the original audit. They are dated
+evidence, not a claim that each still appears in the current CLI.
 
 | Currently                                                                                                              | Means                                           |
 | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
@@ -27,8 +28,9 @@ Real strings, all reproduced during the audit:
 | _"Current authored source catalogue facts are unsafe or ambiguous for intended navigation projection."_                | A file below here could not be read.            |
 | _"Repair requires an exact `--relink`, or an interactive wizard."_                                                     | Repair needs to know what to fix.               |
 
-The last one is worth noting separately: the word _wizard_ promises something the
-code does not do, so the vocabulary problem is not only about density.
+The original Repair example raised an interaction question as well as a wording
+question. Current command contracts and observed behavior must be checked before
+reusing it as a defect.
 
 ## Why it matters more than it looks
 
@@ -47,27 +49,29 @@ code does not do, so the vocabulary problem is not only about density.
 1. **Findings and error messages.** Highest value: these are read at the worst
    moment. Every one should name the file, the cause, and the next step.
 2. **Command output labels.** `Selected by`, `Coverage`, `Observed`, `Read from`,
-   `not-established`. Many disappear entirely under the View-selection work; the
-   survivors need renaming.
+   `not-established`. Check which still appear under the accepted detail selection before
+   proposing replacements.
 3. **Help text.** _"Establishment"_, _"Write policy"_, _"Results and streams"_.
-4. **Type and member names.** `*HumanRenderer*` is already scheduled; the same
-   register appears in `ExtensionInstallFoundationReader`,
+4. **Type and member names.** The historical naming proposal included `*HumanRenderer*` and `ExtensionInstallFoundationReader`,
    `LifecycleWorkspaceBinding`, `RouteInspectAxiomsProfileBuilder`.
-5. **Contracts and framework prose.** Largest by volume, lowest urgency, and
-   partly settled by the contracts work in the retrospective.
+5. **Contracts and framework prose.** Review current wording under the
+   accepted source boundaries and Writing Standard.
 
-## Sequencing
+## Current follow-up
 
-**Fold items 1–3 into G4.** The View-selection work already rewrites every
-message; rewriting the words at the same time costs almost nothing extra and
-avoids touching the same lines twice.
+Task 30 G4 and Task 31's selected naming and structure work are closed. They
+cannot take new wording changes. Shared reporting now selects four `--detail`
+levels and `--format` before rendering. This Idea does not reopen those Tasks
+or approve mechanical renaming of code.
 
-**Fold item 4 into the Phase 3 naming pass**, for the same reason — one sweep,
-one review.
-
-**Item 5 is separate** and should wait until the contracts decision in
-[contract-versus-code.md](../../emerging/analysis/cli-design-retrospective/contract-versus-code.md)
-is made, since much of that prose may be deleted rather than rewritten.
+Reproduce each remaining wording problem against the current result and
+contract. The [current ledger](../../working/cli-development/project-control.md#active-task-ledger)
+routes unfinished work: Task 34 and the wider Task 39 audit are paused, while
+Tasks 37, 44, 61, 66, and 67 retain their own wording or documentation scopes.
+Use the [Writing Standard](../../crystallized/documents/maintenance/writing.md)
+for prose and retain the narrowest existing Task for any selected correction.
+The historical retrospective remains provenance rather than a gate for every
+future sentence edit.
 
 ## One rule worth adopting
 

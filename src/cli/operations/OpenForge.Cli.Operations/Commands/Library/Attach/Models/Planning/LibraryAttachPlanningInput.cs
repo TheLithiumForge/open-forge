@@ -32,4 +32,6 @@ internal sealed record LibraryAttachPlanningInput : ILibraryMutationObservation
     public required ImmutableArray<PlannedFileChange> GeneratedRegionChanges { get; init; }
 
     public LibraryGeneratedNavigationIssue? GeneratedNavigationIssue { get; init; }
+
+    public OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreRead? GitIgnore { get; init; }
 }

@@ -1,11 +1,5 @@
 # Local Analysis Scope Notes
 
-The CLI retrospective and experience-audit scopes remain in this Emerging
-route while their related Tasks are active and their conclusions still need
-validation or acceptance. Their actionable slices are routed to the active
-Tasks and candidate queue; the analysis scopes remain contextual provenance
-until their unresolved questions have a current owner and lifecycle decision.
+The CLI experience audit, original retrospective baselines, September open-task review, initial glob proposal and stable-release readiness snapshot moved to [Archived CLI Analysis](../../archived/cli-development/analysis/_analysis.md) on 2026-10-04 after the maintainer selected cleanup.
 
-An Analysis scope may later be sealed when its actionable conclusion has moved
-into an active Task. Sealing preserves provenance without leaving the reasoning
-as a second executable plan; the active Task owns implementation reality.
+The [Memory authority proposal](cli-design-retrospective/memory-authority-boundary.md) remains Emerging because its reinterpretation has not been accepted. Other unfinished questions are retained in the current [candidate queue](../../working/cli-development/tasks/potential/_potential.md), Tasks and Local Planning review. Historical analyses do not define current implementation or supersede accepted contracts.

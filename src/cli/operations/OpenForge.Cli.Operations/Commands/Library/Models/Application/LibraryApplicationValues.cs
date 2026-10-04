@@ -31,6 +31,7 @@ internal enum LibraryResidualKind
     Directory,
     Link,
     GeneratedRegion,
+    GitIgnore,
     Record,
     Recovery,
 }

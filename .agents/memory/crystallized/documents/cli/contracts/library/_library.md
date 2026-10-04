@@ -19,7 +19,7 @@ The exact command and help order is:
 
 1. `open-forge library list [global flags]`
 2. `open-forge library inspect <library-id> [global flags]`
-3. `open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--dry-run] [--automatic] [global flags]`
+3. `open-forge library attach <library-id> <source-root> [--to <workspace-relative-directory>] [--git-ignore <true|false>] [--allow-path <path>...] [--dry-run] [--automatic] [global flags]`
 4. `open-forge library sync <library-id> [--dry-run] [--automatic] [global flags]`
 5. `open-forge library detach <library-id> [--dry-run] [--automatic] [global flags]`
 
@@ -36,8 +36,8 @@ through individual relative file links. No specially named source child is
 required. Optional Attach `--to` defaults to the workspace root (`.`). The source root and the consumer workspace retain separate identities.
 Library registrations come from the `libraries` claims in
 `.agents/open-forge.lock.json`, alongside separate Framework and Extension claims.
-Each Library records its ID, source root, destination root, and source-relative
-paths. The lock is an ownership receipt and never gates a command. Unavailable
+Each Library records its ID, source root, destination root, source-relative
+paths and optional ignore intent. The lock is an ownership receipt and never gates a command. Unavailable
 claims are reported without adopting matching links. Library IDs remain separate
 from automatic source IDs and are not source-reference operands.
 

@@ -43,7 +43,7 @@ Workspace: <workspace>
          Inspect the reported operational facts before rerunning Status.
          cause: The current startup context measurement is unavailable.
 Startup context
-  Shipped by this CLI:   11 files, about 6.0k tokens
+  Shipped by this CLI:   11 files, about 6.1k tokens
   This workspace:        unavailable files, unavailable tokens
   May load again later:  unavailable files, unavailable tokens
 All routed files: unavailable files, unavailable tokens (startup is unavailable)

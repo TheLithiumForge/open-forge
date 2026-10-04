@@ -20,6 +20,8 @@ Memory asks one question: **what is worth remembering for current or future work
 
 The states describe how to treat material. They're not quality scores or required stages, and a record doesn't have to pass through every state.
 
+The table describes each state when present. [Installation](../getting-started/installation.md#choose-the-installed-routes) lets you select them. Essentials omits Archived and Git-ignores the whole Working directory. Working stays fully available for local continuity and loads normally. Keep your own copy of private notes you need on another machine, since Git won't share new ignored records.
+
 ### Working
 
 Temporary state for work in progress: where a task stands, what's next, and what must not be lost. Examples include a Checkpoint from the [Planning](../extensions/planning.md) Extension or a Handoff from the [Observations and Handoffs](../extensions/observations-and-handoffs.md) Extension. It's expected to expire. When the need ends, keep the useful results, then move, archive, consolidate, or prune the record.
@@ -58,7 +60,7 @@ When something is accepted, update the source that defines it and keep the usefu
 
 ## Categories inside the states
 
-The base Framework ships only the four state entrypoints. Extensions add named categories inside them:
+Full Core supplies all four state entrypoints. Essentials and Custom follow your selection. Extensions add named categories inside the states:
 
 | Category     | Path                             | Supplied by                                                             |
 | ------------ | -------------------------------- | ----------------------------------------------------------------------- |

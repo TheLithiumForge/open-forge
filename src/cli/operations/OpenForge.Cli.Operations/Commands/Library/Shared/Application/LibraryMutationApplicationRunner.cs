@@ -46,6 +46,7 @@ internal static class LibraryMutationApplicationRunner
 
         var reversibleEffects = input.Links.Length
             + input.GeneratedRegions.Length
+            + (input.GitIgnore is null ? 0 : 1)
             + (input.OwnershipChange is null ? 0 : 1)
             + (input.Permissions?.Change is null ? 0 : 1);
         if (reversibleEffects > 0 && !MatchesRecovery(input))
@@ -77,6 +78,7 @@ internal static class LibraryMutationApplicationRunner
         var validator = new FileExpectationValidator(resolver);
         var revalidator = new MutationRevalidator(validator);
         var fileChanges = input.GeneratedRegions
+            .Concat(input.GitIgnore is null ? [] : [input.GitIgnore.Change])
             .Concat(input.OwnershipChange is null ? [] : [input.OwnershipChange])
             .ToImmutableArray();
         var plannedDirectories = input.SettingsParentDirectories.Concat(input.Directories).ToImmutableArray();
@@ -126,6 +128,7 @@ internal static class LibraryMutationApplicationRunner
         var linkReceipts = ImmutableArray.CreateBuilder<RelativeFileLinkReceipt>();
         var generatedReceipts = ImmutableArray.CreateBuilder<FileChangeReceipt>();
         FileChangeReceipt? recordReceipt = null;
+        FileChangeReceipt? ignoreReceipt = null;
         var attempted = ImmutableArray.CreateBuilder<CanonicalRelativePath>();
         LibraryCancellationFact? cancellation = null;
         LibraryUnexpectedFailureFact? unexpected = null;
@@ -235,6 +238,17 @@ internal static class LibraryMutationApplicationRunner
             }
         }
 
+        if (cancellation is null && unexpected is null && input.GitIgnore is { } ignore)
+        {
+            attempted.Add(Relative(input.Lease, ignore.Change.LogicalPath));
+            ignoreReceipt = await fileApplier.ApplyAsync(input.Lease, ignore.Change,
+                fileValidation.Checks[checkIndex++], input.RecoveryPreparation, cancellationToken).ConfigureAwait(false);
+            if (!Verified(ignoreReceipt.EffectState, ignoreReceipt.VerificationState))
+            {
+                ReadStop(ignoreReceipt.NotStartedReason, ignoreReceipt.Cause, out cancellation, out unexpected);
+            }
+        }
+
         var publicationOrder = LibraryRecordPublicationOrder.NotObserved;
         if (cancellation is null && unexpected is null && input.OwnershipChange is { } recordChange)
         {
@@ -262,6 +276,7 @@ internal static class LibraryMutationApplicationRunner
             Links = linkReceipts.ToImmutable(),
             GeneratedRegions = generatedReceipts.ToImmutable(),
             Record = recordReceipt,
+            GitIgnore = ignoreReceipt,
             RecoveryPreparation = input.RecoveryPreparation,
             RecoveryCleanup = null,
             Cancellation = cancellation,
@@ -287,6 +302,7 @@ internal static class LibraryMutationApplicationRunner
         return (input.Permissions?.Change is not { } permission || preparation.MatchesChange(input.Lease.Request, permission))
             && input.Links.All(effect => preparation.MatchesRelativeFileLink(input.Lease.Request, effect))
             && input.GeneratedRegions.All(change => preparation.MatchesChange(input.Lease.Request, change))
+            && (input.GitIgnore is null || preparation.MatchesChange(input.Lease.Request, input.GitIgnore.Change))
             && (input.OwnershipChange is null
                 || preparation.MatchesChange(input.Lease.Request, input.OwnershipChange));
     }
@@ -324,6 +340,7 @@ internal static class LibraryMutationApplicationRunner
             .Concat(input.SettingsParentDirectories.Select(value => Relative(input.Lease, value.LogicalPath).Value))
             .Concat(input.Links.Select(value => value.DestinationPath.Value))
             .Concat(input.GeneratedRegions.Select(value => Relative(input.Lease, value.LogicalPath).Value))
+            .Concat(input.GitIgnore is { } ignore ? [Relative(input.Lease, ignore.Change.LogicalPath).Value] : [])
             .Concat(input.OwnershipChange is { } ownership ? [Relative(input.Lease, ownership.LogicalPath).Value] : [])
             .Concat(input.Permissions?.Change is { } permission ? [Relative(input.Lease, permission.LogicalPath).Value] : []);
         var sources = input.ProtectedSourceRoots.Select(source => PortableWorkspacePath.CreatePortableKey(source.Value)).ToArray();

@@ -39,6 +39,7 @@ internal static class RouteInitReportSelector
                 new CliCount("entrypointsCreated", global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.LabelEntrypointsCreated(), CountProgressedEntrypoints(result)),
                 new CliCount("entrypointsPresent", global::OpenForge.Cli.OutputText.Route.Init.RouteInitText.LabelEntrypointsPresent(), CountPresentEntrypoints(result)),
                 new CliCount("sectionsUpdated", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelSectionsUpdated(), CountProgressedSections(result)),
+                .. RestorationCounts(result),
             ],
             Data = Data(result, selection.Detail),
             Recovery = Recovery(result),
@@ -118,6 +119,13 @@ internal static class RouteInitReportSelector
             Verification = includeFull
                 ? RouteInitWireVocabulary.Name(result.Verification)
                 : null,
+            Payload = includeFull && result.Framework?.IsCanonicalRestoration == true
+                ? result.Effects.Where(effect => effect.Kind == RouteInitEffectKind.Payload).Select(effect => new RouteInitDataPayload
+                {
+                    Path = effect.Path,
+                    SourceAssetPath = effect.SourceAssetPath ?? throw new InvalidOperationException("A payload effect requires source provenance."),
+                    Outcome = RouteInitWireVocabulary.Name(effect.Outcome),
+                }).ToArray() : null,
             TextMetadata = TextMetadata(result, includeStandard, metadata),
             TextRows = TextRows(result, detail),
             TextEntrypoints = includeFull
@@ -210,7 +218,7 @@ internal static class RouteInitReportSelector
         }
 
         foreach (var effect in result.Effects.Where(effect =>
-            effect.Kind == RouteInitEffectKind.GeneratedRegion))
+            effect.Kind is RouteInitEffectKind.GeneratedRegion or RouteInitEffectKind.Payload or RouteInitEffectKind.Settings))
         {
             rows.Add(EffectRow(effect));
         }
@@ -225,6 +233,10 @@ internal static class RouteInitReportSelector
                 => RouteInitWording.WouldList(effect.Path),
             RouteInitEffectOutcome.Verified when effect.Kind == RouteInitEffectKind.GeneratedRegion
                 => RouteInitWording.Listed(effect.Path),
+            RouteInitEffectOutcome.Planned when effect.Action == RouteInitEffectAction.Replace
+                => global::OpenForge.Cli.OutputText.Route.Init.RouteInitWording.Updated(effect.Path, preview: true),
+            RouteInitEffectOutcome.Verified when effect.Action == RouteInitEffectAction.Replace
+                => global::OpenForge.Cli.OutputText.Route.Init.RouteInitWording.Updated(effect.Path, preview: false),
             RouteInitEffectOutcome.Planned
                 => global::OpenForge.Cli.OutputText.Route.Init.RouteInitPhrases.FormatWouldCreate($"{effect.Path}"),
             RouteInitEffectOutcome.Verified
@@ -263,6 +275,10 @@ internal static class RouteInitReportSelector
             ?? result.Findings.FirstOrDefault();
         return result.Status switch
         {
+            CliSemanticStatus.Complete or CliSemanticStatus.Attention
+                when result.Framework?.IsCanonicalRestoration == true && result.Effects.Length > 0
+                => new(global::OpenForge.Cli.OutputText.Route.Init.RouteInitWording.Restored(id, result.Mode == RouteInitMode.DryRun),
+                    RestorationHeadlineKind(result)),
             CliSemanticStatus.Complete when missingEntrypoints.Length == 0
                 => new(RouteInitWording.AlreadyInitialized(id), CliHeadlineKind.NothingToDo),
             CliSemanticStatus.Complete when missingEntrypoints.Length == 1
@@ -296,6 +312,16 @@ internal static class RouteInitReportSelector
             _ => throw new ArgumentOutOfRangeException(nameof(result), result.Status,
                 "The Route Init status is not defined."),
         };
+    }
+
+    private static CliHeadlineKind RestorationHeadlineKind(RouteInitResult result)
+    {
+        if (result.Status == CliSemanticStatus.Attention)
+        {
+            return CliHeadlineKind.Warnings;
+        }
+
+        return result.Mode == RouteInitMode.DryRun ? CliHeadlineKind.Preview : CliHeadlineKind.Done;
     }
 
     private static string InvalidHeadline(
@@ -509,6 +535,8 @@ internal static class RouteInitReportSelector
                 RouteInitEffectKind.Directory => CliEffectKind.Directory,
                 RouteInitEffectKind.Entrypoint => CliEffectKind.File,
                 RouteInitEffectKind.GeneratedRegion => CliEffectKind.Section,
+                RouteInitEffectKind.Payload => CliEffectKind.File,
+                RouteInitEffectKind.Settings => CliEffectKind.Setting,
                 _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Kind,
                     "The Route Init effect kind is not defined."),
             },
@@ -528,6 +556,24 @@ internal static class RouteInitReportSelector
             Before = detail >= CliDetail.Full ? effect.Change?.Before : null,
             After = detail >= CliDetail.Full ? effect.Change?.Expected : null,
         };
+
+    private static IReadOnlyList<CliCount> RestorationCounts(RouteInitResult result)
+    {
+        if (result.Framework?.IsCanonicalRestoration != true)
+        {
+            return [];
+        }
+
+        return
+        [
+            new CliCount("payloadFilesCreated", global::OpenForge.Cli.OutputText.Route.Init.RouteInitWording.PayloadFilesCreated(),
+                result.Effects.Count(effect => effect.Kind == RouteInitEffectKind.Payload
+                    && effect.Outcome is RouteInitEffectOutcome.Planned or RouteInitEffectOutcome.Verified)),
+            new CliCount("settingsUpdated", global::OpenForge.Cli.OutputText.Route.Init.RouteInitWording.SettingsUpdated(),
+                result.Effects.Count(effect => effect.Kind == RouteInitEffectKind.Settings
+                    && effect.Outcome is RouteInitEffectOutcome.Planned or RouteInitEffectOutcome.Verified)),
+        ];
+    }
 
     private static CliRecovery Recovery(RouteInitResult result)
         => new(

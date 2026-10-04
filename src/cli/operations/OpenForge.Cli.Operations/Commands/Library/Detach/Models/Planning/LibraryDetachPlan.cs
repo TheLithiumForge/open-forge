@@ -20,6 +20,7 @@ internal sealed record LibraryDetachPlan
         Directories = Directories,
         Links = Links,
         GeneratedRegions = GeneratedRegions,
+        GitIgnore = GitIgnore,
         OwnershipChange = OwnershipChange,
     };
 
@@ -36,6 +37,8 @@ internal sealed record LibraryDetachPlan
     internal int LinkCount => Links.Length;
 
     public required ImmutableArray<PlannedFileChange> GeneratedRegions { get; init; }
+
+    internal OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnorePlan? GitIgnore { get; init; }
 
     internal PlannedFileChange? OwnershipChange { get; init; }
 

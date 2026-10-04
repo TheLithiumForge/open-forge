@@ -201,7 +201,7 @@ CLI sequence.
   `retained`, and `unknown`.
 - Responsible role: Overseer.
 - Task source: This file.
-- Analysis: [CLI Experience Audit](../../../emerging/analysis/cli-experience-audit/_cli-experience-audit.md)
+- Analysis: [CLI Experience Audit](../analysis/cli-experience-audit/_cli-experience-audit.md)
   holds what is broken; [CLI Design Retrospective](../../../emerging/analysis/cli-design-retrospective/_cli-design-retrospective.md) holds how we got here.
 - Last updated: 2026-09-07.
 

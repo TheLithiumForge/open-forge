@@ -34,6 +34,13 @@ internal static class LibraryAttachBinding
             Arity = ArgumentArity.ExactlyOne,
         };
         command.Options.Add(destinationRoot);
+        var gitIgnore = new Option<bool>(LibraryAttachDefinitions.GitIgnore.Name)
+        {
+            Description = LibraryAttachDefinitions.GitIgnore.Description,
+            HelpName = LibraryAttachDefinitions.GitIgnore.ValueName,
+            Arity = ArgumentArity.ExactlyOne,
+        };
+        command.Options.Add(gitIgnore);
         var dryRun = new Option<bool>(LibraryDefinitions.DryRun.Name)
         {
             Description = LibraryDefinitions.DryRun.Description,
@@ -61,6 +68,7 @@ internal static class LibraryAttachBinding
             LibraryId = libraryId,
             SourceRoot = sourceRoot,
             DestinationRoot = destinationRoot,
+            GitIgnore = gitIgnore,
             DryRun = dryRun,
             Automatic = automatic,
             Allow = allow,

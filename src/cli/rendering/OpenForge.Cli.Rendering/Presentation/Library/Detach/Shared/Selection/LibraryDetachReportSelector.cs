@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Effects;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Effects;
 using OpenForge.Cli.Core.Presentation.Library.Detach.Models;
 using OpenForge.Cli.Core.Presentation.Library.Detach.Shared.Wording;
+using OpenForge.Cli.Core.Presentation.Library.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
@@ -64,11 +65,7 @@ internal static class LibraryDetachReportSelector
                 : null,
             Findings = result.Result.Findings.Select(finding => Finding(result, finding, id)).ToArray(),
             Effects = effects.Select(effect => effect.Effect).ToArray(),
-            Counts =
-            [
-                new CliCount("linksRemoved", global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelLinksRemoved(), effects.Count(effect => effect.Data.Kind == "link" && effect.Outcome is EffectOutcome.Done or EffectOutcome.Planned)),
-                new CliCount("sectionsUpdated", global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionsUpdated(), effects.Count(effect => effect.Data.Kind == "section" && effect.Outcome is EffectOutcome.Done or EffectOutcome.Planned)),
-            ],
+            Counts = Counts(effects),
             Data = data,
             Recovery = Recovery(result.Result.Application),
             Next = Next(result, id),
@@ -76,6 +73,21 @@ internal static class LibraryDetachReportSelector
                 ? Diagnostics(result, data, effects)
                 : [],
         };
+    }
+
+    private static IReadOnlyList<CliCount> Counts(IReadOnlyList<ProjectedEffect> effects)
+    {
+        var counts = new List<CliCount>
+        {
+            new("linksRemoved", global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelLinksRemoved(), effects.Count(effect => effect.Data.Kind == "link" && effect.Outcome is EffectOutcome.Done or EffectOutcome.Planned)),
+            new("sectionsUpdated", global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionsUpdated(), effects.Count(effect => effect.Data.Kind == "section" && effect.Outcome is EffectOutcome.Done or EffectOutcome.Planned)),
+        };
+        if (effects.Any(effect => effect.Data.Kind == "file"))
+        {
+            counts.Add(new("gitIgnoreFilesUpdated", global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.FilesUpdated(),
+                effects.Count(effect => effect.Data.Kind == "file" && effect.Outcome is EffectOutcome.Done or EffectOutcome.Planned)));
+        }
+        return counts;
     }
 
     private static CliHeadline Headline(
@@ -132,9 +144,14 @@ internal static class LibraryDetachReportSelector
             CliSemanticStatus.Blocked => new(
                 LibraryDetachWording.Blocked(id, BlockedReason(result, finding)),
                 CliHeadlineKind.Blocked),
+            CliSemanticStatus.Failed when IgnoreStarted(result) => new(
+                LibraryGitIgnoreWording.Partial("detach", effects.Select(effect => effect.Effect).ToArray(), cancelled: false),
+                CliHeadlineKind.Failed),
             CliSemanticStatus.Failed => new(
                 LibraryDetachWording.Failed(CompletedLinks(effects), linkCount),
                 CliHeadlineKind.Failed),
+            CliSemanticStatus.Interrupted when IgnoreStarted(result) => new(
+                LibraryGitIgnoreWording.Partial("detach", effects.Select(effect => effect.Effect).ToArray(), cancelled: true), CliHeadlineKind.Cancelled),
             CliSemanticStatus.Interrupted => new(LibraryDetachWording.Cancelled(), CliHeadlineKind.Cancelled),
             _ => throw new ArgumentOutOfRangeException(nameof(result), result.Status, "The Library Detach status is not defined."),
         };
@@ -197,6 +214,7 @@ internal static class LibraryDetachReportSelector
             ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheSuppliedId();
         return finding.Code switch
         {
+            LibraryDetachFindingCode.GitIgnoreBlocked or LibraryDetachFindingCode.GitIgnoreUnavailable => Sentence(finding.Cause),
             LibraryDetachFindingCode.InvalidInput => LibraryDetachWording.InvalidInput(id, finding.Cause),
             LibraryDetachFindingCode.InvalidId => LibraryDetachWording.InvalidId(id),
             LibraryDetachFindingCode.UnknownId => LibraryDetachWording.UnknownId(id),
@@ -225,6 +243,8 @@ internal static class LibraryDetachReportSelector
             LibraryDetachFindingCode.ApplicationFailed => LibraryDetachWording.ApplicationFailed(finding.Cause),
             LibraryDetachFindingCode.VerificationFailed => LibraryDetachWording.VerificationFailed(path, result.Result.Application.Recovery.Path, finding.Cause),
             LibraryDetachFindingCode.OperationFailed => LibraryDetachWording.OperationFailed(finding.Cause),
+            LibraryDetachFindingCode.Interrupted when IgnoreStarted(result)
+                => LibraryGitIgnoreWording.Partial("detach", ProjectEffects(result, CliDetail.Minimal).Select(effect => effect.Effect).ToArray(), cancelled: true),
             LibraryDetachFindingCode.Interrupted => LibraryDetachWording.Interrupted(),
             LibraryDetachFindingCode.ConfirmationRequired => LibraryDetachWording.ConfirmationRequired(),
             _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The Library Detach finding code is not defined."),
@@ -383,6 +403,10 @@ internal static class LibraryDetachReportSelector
             "rewrite",
             null,
             region.Expected)));
+        if (plan.GitIgnore is { } ignore)
+        {
+            planned.Add(new PlannedEffect(ignore.Path, "file", ignore.Action, null, ignore.Expected));
+        }
         if (plan.RecordEffect != LibraryRecordEffect.None && plan.RecordExpected is { } recordExpected)
         {
             planned.Add(new PlannedEffect(
@@ -399,6 +423,7 @@ internal static class LibraryDetachReportSelector
         {
             var effect = planned[index];
             var outcome = Outcome(result, effect.Path, index, lastObserved);
+            var sharedEffect = SharedEffect(effect, outcome);
             var dryRun = result.Result.Identity.Mode == LibraryMode.DryRun;
             var text = effect.Kind switch
             {
@@ -406,6 +431,7 @@ internal static class LibraryDetachReportSelector
                 "section" => SectionText(effect.Path, outcome, dryRun),
                 "record" => RecordText(outcome, dryRun),
                 "setting" => SettingsText(outcome, dryRun),
+                "file" => LibraryGitIgnoreWording.Effect(sharedEffect.Outcome),
                 _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Kind, "The Library detach effect kind is not defined."),
             };
             projected.Add(new ProjectedEffect
@@ -419,7 +445,7 @@ internal static class LibraryDetachReportSelector
                     Target = detail >= CliDetail.Standard ? effect.Target : null,
                     Text = text,
                 },
-                Effect = SharedEffect(effect, outcome),
+                Effect = sharedEffect,
                 Expected = effect.Expected,
                 Outcome = outcome,
             });
@@ -476,6 +502,7 @@ internal static class LibraryDetachReportSelector
             Kind = effect.Kind switch
             {
                 "link" => CliEffectKind.Link,
+                "file" => CliEffectKind.File,
                 "section" => CliEffectKind.Section,
                 "record" => CliEffectKind.Record,
                 "setting" => CliEffectKind.Setting,
@@ -485,6 +512,7 @@ internal static class LibraryDetachReportSelector
             {
                 "link" => CliEffectAction.Deleted,
                 "section" => CliEffectAction.Rewritten,
+                "file" => effect.Action == "create" ? CliEffectAction.Created : CliEffectAction.Rewritten,
                 "record" => CliEffectAction.Detached,
                 "setting" => effect.Action == "create" ? CliEffectAction.Created : CliEffectAction.Rewritten,
                 _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Kind, "The Library detach effect kind is not defined."),
@@ -603,6 +631,10 @@ internal static class LibraryDetachReportSelector
         var sections = effects.Where(effect => effect.Data.Kind == "section").ToArray();
         var records = effects.Where(effect => effect.Data.Kind == "record").ToArray();
         var settings = effects.Where(effect => effect.Data.Kind == "setting").ToArray();
+        var files = effects.Where(effect => effect.Data.Kind == "file").ToArray();
+        lines.AddRange(files
+            .Where(effect => detail >= CliDetail.Standard || effect.Outcome is EffectOutcome.Planned or EffectOutcome.Done or EffectOutcome.Unknown)
+            .Select(effect => effect.Data.Text));
         if (detail == CliDetail.Minimal)
         {
             lines.AddRange(sections
@@ -647,6 +679,7 @@ internal static class LibraryDetachReportSelector
         var values = new List<LibraryDetachDataExpectedState>();
         values.AddRange(plan.Links.Select(link => Expected(link.Path, link.Expected)));
         values.AddRange(plan.GeneratedRegions.Select(region => Expected(region.Path, region.Expected)));
+        if (plan.GitIgnore is { } ignore) values.Add(Expected(ignore.Path, ignore.Expected));
         if (plan.RecordExpected is { } record)
         {
             values.Add(Expected(".agents/open-forge.lock.json", record));
@@ -698,6 +731,12 @@ internal static class LibraryDetachReportSelector
         => result.Result.Identity.Mode != LibraryMode.DryRun
             && result.Result.Plan.RecordEffect != LibraryRecordEffect.None
             && result.Result.Application.RecordPublication.State == LibraryRecordPublicationState.Verified;
+
+    private static bool IgnoreStarted(LibraryDetachResult result)
+        => result.Result.Plan.GitIgnore is { } ignore
+            && result.Result.Application.Residuals.Any(residual => residual.Kind == LibraryResidualKind.GitIgnore
+                && string.Equals(residual.Path, ignore.Path, StringComparison.Ordinal)
+                && residual.State is LibraryResidualState.Retained or LibraryResidualState.Unknown);
 
     private static int CompletedLinks(IReadOnlyList<ProjectedEffect> effects)
         => effects.Count(effect => effect.Data.Kind == "link" && effect.Outcome == EffectOutcome.Done);

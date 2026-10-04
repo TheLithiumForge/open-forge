@@ -13,38 +13,50 @@ settles the source-of-truth and archival questions.
 
 ## Why this exists
 
-The retrospective found that the Framework's routing and memory model is a
-source of recurring CLI and agent-workflow friction: entrypoints and leaf
-documents carry overlapping loading signals, Memory contains prescriptive
-language, Maps/Skills/Workflows lack a consistent placement aid, and task or
-handoff records are not always self-sufficient. The experience audit also found
-that the shipped loader still over-tags `#LoadNow` and has no visible context
-budget or attribution discipline.
+The historical retrospective and experience audit raised questions about
+loading cost, category placement, Memory authority, and resumable work records.
+Several original premises have changed. The Directives entrypoint defines the
+scope gate, Workflow recipes live under Skills, and the CLI usage Skill loads
+when present. Current rules distinguish required agent behavior from accepted
+requirements of a product subject. Prescriptive wording alone does not prove
+that a Memory record is misplaced.
+
+Tasks 30 and 31 are closed. [Task 53](../task53-loading-and-scoping-audit.md)
+retains the broader loading audit. This candidate preserves additional
+unaccepted questions and historical rationale. It does not revive the old
+implementation sequence.
 
 ## Candidate decision bundle
 
-- Clarify the entrypoint-versus-leaf loading axiom. Decide whether only
-  actionable leaf Directives carry `#LoadNow`, where the scope gate lives, how
-  context deltas are shown at route/task creation, and what startup budget and
-  attribution are required.
-- Apply the Memory authority boundary without contradicting the current
+- Assess remaining loading cost and attribution against the existing scope
+  gate. Decide whether context deltas at route/task creation or a measured
+  startup budget would solve an observed problem.
+- Investigate the proposed Memory authority boundary without contradicting the current
   canonical decision that `responsibility` is optional. Decide whether a
   redirect clause, mandatory responsibility on selected entrypoints, or a
   different mechanism is the narrowest source-owned fix.
-- Give Maps, Skills, Workflows, Patterns, Templates, Tasks, and Handoffs a
-  short placement aid. Decide whether Maps remains a coarse orientation route,
-  and keep Skills as a runtime-discovered format family rather than adding a
-  registry merely to make it look like a Framework category.
+- Assess whether a placement aid adds value beyond the current category
+  definitions. Preserve the historical foreign-primitive recognition and
+  reconciliation proposal, and the Maps-template and loading questions, as
+  unaccepted possibilities. Maps remains a coarse orientation route and
+  recipes remain resources of native Skills until direction changes.
 - Decide whether workstreams are first-class memory, which checkpoint and
   handoff shapes should become templates, and what context every Task/plan/
   handoff must carry so it can be resumed without reconstructing hidden scope.
-- Define the minimum shipped authoring bundle and extension boundary. Include
-  the maintenance CLI guidance in its accepted home rather than the loader,
-  and align root entrypoints, templates, descriptions, and generated index
-  behavior.
+- Evaluate needs beyond the accepted Essentials, Full Core, and Custom setup
+  choices. The complete CLI usage Skill is already required when present.
+  Any further bundle or loading change needs a new accepted boundary.
 - Revisit `rules`, `thresholds`, and any authored-vs-generated state only in
-  coordination with Task 30 G1; do not reopen the accepted two-file ownership
+  against the completed Task 30 G1 and current contracts. Do not reopen the accepted two-file ownership
   model from this candidate.
+
+## Retained provenance
+
+The [category retrospective](../../../../archived/cli-development/analysis/cli-design-retrospective/category-boundaries-and-wording.md)
+contains the foreign-primitive and Maps questions. The
+[loading audit](../../../../archived/cli-development/analysis/cli-experience-audit/loading-and-scope-discipline.md)
+contains the original loading-cost proposals. Their historical recommendations
+do not override current source rules or approve a Framework change.
 
 ## Promotion and acceptance
 

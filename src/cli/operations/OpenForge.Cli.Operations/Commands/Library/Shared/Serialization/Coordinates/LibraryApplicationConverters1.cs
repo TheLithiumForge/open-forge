@@ -80,6 +80,7 @@ internal sealed class LibraryResidualKindConverter : JsonConverter<LibraryResidu
             LibraryResidualKind.Directory => "directory",
             LibraryResidualKind.Link => "link",
             LibraryResidualKind.GeneratedRegion => "generated-region",
+            LibraryResidualKind.GitIgnore => "git-ignore",
             LibraryResidualKind.Record => "record",
             LibraryResidualKind.Recovery => "recovery",
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The Library value is not defined."),

@@ -29,7 +29,7 @@ code. Every later G4 diff is reviewed against these files.
 
 - [Phase 7 scenarios](../task30/phase-7-scenarios.md) for the AOT-safe snapshot
   boundary and its normalization rules.
-- [Model-level snapshot testing](../../../../emerging/analysis/cli-experience-audit/model-level-snapshot-testing.md)
+- [Model-level snapshot testing](../../analysis/cli-experience-audit/model-level-snapshot-testing.md)
   for the tool shape: a string comparison anchored at `[CallerFilePath]`, an
   environment-variable update switch, no reflection.
 - Existing tool: the Imprint package wired in `911470d2` and the
@@ -110,37 +110,37 @@ Coverage acceptance applies to the 340 currently reachable situations, including
 
 The new command captures contain 340 named situations and 1,360 snapshot files. Each situation has compact and expanded Human output and both requested JSON views. Names map directly to the `Situations` lists in tasks 10–37 and to the new caller-adjacent snapshot filenames. Current parser-level JSON requests that still produce shell text are explicitly identified below. Existing snapshots and helper-test expected files are excluded from these counts.
 
-| Command task | Captured situations | New snapshot files |
-| --- | ---: | ---: |
-| 10 Status | 12 | 48 |
-| 11 Doctor | 11 | 44 |
-| 12 Install | 12 | 48 |
-| 13 Update | 11 | 44 |
-| 14 Index | 11 | 44 |
-| 15 Repair | 13 | 52 |
-| 16 Cleanup | 9 | 36 |
-| 17 Context | 14 | 56 |
-| 18 Find | 12 | 48 |
-| 19 References | 11 | 44 |
-| 20 Route List | 11 | 44 |
-| 21 Route Inspect | 13 | 52 |
-| 22 Route Init | 11 | 44 |
-| 23 Route Create | 14 | 56 |
-| 24 Route Update | 13 | 52 |
-| 25 Route Move | 14 | 56 |
-| 26 Route Remove | 12 | 48 |
-| 27 Extension List | 11 | 44 |
-| 28 Extension Inspect | 10 | 40 |
-| 29 Extension Create | 11 | 44 |
-| 30 Extension Install | 18 | 72 |
-| 31 Extension Update | 15 | 60 |
-| 32 Extension Remove | 13 | 52 |
-| 33 Library List | 10 | 40 |
-| 34 Library Inspect | 11 | 44 |
-| 35 Library Attach | 12 | 48 |
-| 36 Library Sync | 14 | 56 |
-| 37 Library Detach | 11 | 44 |
-| **Total** | **340** | **1,360** |
+| Command task         | Captured situations | New snapshot files |
+| -------------------- | ------------------: | -----------------: |
+| 10 Status            |                  12 |                 48 |
+| 11 Doctor            |                  11 |                 44 |
+| 12 Install           |                  12 |                 48 |
+| 13 Update            |                  11 |                 44 |
+| 14 Index             |                  11 |                 44 |
+| 15 Repair            |                  13 |                 52 |
+| 16 Cleanup           |                   9 |                 36 |
+| 17 Context           |                  14 |                 56 |
+| 18 Find              |                  12 |                 48 |
+| 19 References        |                  11 |                 44 |
+| 20 Route List        |                  11 |                 44 |
+| 21 Route Inspect     |                  13 |                 52 |
+| 22 Route Init        |                  11 |                 44 |
+| 23 Route Create      |                  14 |                 56 |
+| 24 Route Update      |                  13 |                 52 |
+| 25 Route Move        |                  14 |                 56 |
+| 26 Route Remove      |                  12 |                 48 |
+| 27 Extension List    |                  11 |                 44 |
+| 28 Extension Inspect |                  10 |                 40 |
+| 29 Extension Create  |                  11 |                 44 |
+| 30 Extension Install |                  18 |                 72 |
+| 31 Extension Update  |                  15 |                 60 |
+| 32 Extension Remove  |                  13 |                 52 |
+| 33 Library List      |                  10 |                 40 |
+| 34 Library Inspect   |                  11 |                 44 |
+| 35 Library Attach    |                  12 |                 48 |
+| 36 Library Sync      |                  14 |                 56 |
+| 37 Library Detach    |                  11 |                 44 |
+| **Total**            |             **340** |          **1,360** |
 
 The only uncaptured authored situation is Library Attach `links-unsupported`, whose current absence of an emitting production path is documented below. All other named situations have four files, including the explicitly disclosed current-refusal prompt cases and the two deterministic staged-cancellation boundaries. The final inventory compares only staged new snapshot filenames with the authored situation names; Status's prose references to future view names are not situations.
 

@@ -61,7 +61,8 @@ naming the retained destination. If no independent safe effect exists, the
 changed mapping remains the prior `blocked` refusal. Other unsafe or unavailable
 mapping facts do not acquire a continuation bypass.
 
-Sync changes projection links and the consumer record only. It never copies,
+Sync changes projection links, permitted navigation, selected ignore rules and
+the consumer record. It never copies,
 moves, deletes, or writes through source bytes. Changes to the bytes of an
 ordinary source file are visible through its existing link and do not create a
 copy or a source mutation.
@@ -89,12 +90,12 @@ requested library.
 
 ## Operand And Repetition
 
-| Operand or flag     | Role                                      | Accepted value                                  | Omission and repetition                                                                                         |
-| ------------------- | ----------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID in readable ownership is invalid; unavailable required ownership blocks effects. |
-| `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.                                    |
-| `--automatic`      | Confirmation policy                       | Boolean flag with no value                      | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
-| Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                                                     |
+| Operand or flag     | Role                                      | Accepted value                                  | Omission and repetition                                                                                                        |
+| ------------------- | ----------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `<library-id>`      | Select one registered management identity | One value matching the library-ID grammar below | Required and singleton. An unknown ID in readable ownership is invalid; unavailable required ownership blocks effects.         |
+| `--dry-run`         | Write policy                              | Boolean flag with no value                      | Application is selected when omitted. Repetition is accepted and idempotent.                                                   |
+| `--automatic`       | Confirmation policy                       | Boolean flag with no value                      | Final confirmation is required when omitted; this flag bypasses that confirmation only. Repetition is accepted and idempotent. |
+| Shared global flags | Workspace and presentation                | Defined by the shared global contract           | Shared defaults and repetition rules apply.                                                                                    |
 
 No flag adds retirement authority, bypasses expected-link proof, chooses a
 source root, or changes record ownership. Sync never treats a recommendation
@@ -167,8 +168,7 @@ Existing source classification and protected-control rules remain applicable.
 An inaccessible directory, enumeration failure, unavailable eligible ordinary
 file or unsafe required boundary prevents complete inventory. Retain known safe
 facts as partial evidence, never as permission to delete retired links. Source
-bytes are never copied, rewritten or deleted. The result is `incomplete` (exit
-3) with no effects and says the source is unavailable; it never presents the
+bytes are never copied, rewritten or deleted. The result is `incomplete` (exit 3) with no effects and says the source is unavailable; it never presents the
 incomplete observation as an empty source. Only eligible leaf membership and
 physical path facts feed projection planning.
 
@@ -178,17 +178,17 @@ Let the complete current eligible path set be `P` and the selected record's
 registered path set be `R`. Both sets use the same portable source-relative
 strings. Both sets use the recorded destination root; Sync cannot change it.
 
-| Relationship | Destination fact                                                                                                                   | Sync effect                                                                       |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `P ∩ R`      | Exact registered relative file symlink remains at the mapped destination and its raw target is the derived target                  | Preserve the link and record path.                                                |
-| `P ∩ R`      | Destination leaf is missing and its parent path is safe                                                                            | Create the exact relative file symlink and retain a `registered-link-restored` Attention finding. The warning also applies to a dry run, which writes nothing. |
-| `P ∩ R`      | Destination is an ordinary file for the current registered mapping                                                                  | Preserve the ordinary bytes and retain the mapping. Continue only independent safe mapping effects; with such effects the result is `incomplete` and names the retained destination, otherwise block the whole Sync. |
-| `P ∩ R`      | Destination is a directory, different link, special entry, unsafe path, unknown state, or separately owned path                   | Block the whole Sync.                                                             |
-| `P \ R`      | Destination leaf is exactly missing and its parent path is safe                                                                    | Create a new exact relative file symlink and add the path to the record.          |
-| `P \ R`      | Any destination occupant exists or is unsafe, including an unregistered matching link                                              | Block the whole Sync.                                                             |
-| `R \ P`      | Destination is the exact registered relative symlink with the derived raw target, whether its source target is present or dangling | Delete only that exact link and remove the path from the record.                  |
-| `R \ P`      | Destination is positively missing, even with safe no-follow parents                                                                | Block the whole Sync because the registered link cannot be proven for retirement. |
-| `R \ P`      | Destination is an ordinary file, directory, different link, special entry, unsafe path, unknown state, or separately owned path    | Block the whole Sync.                                                             |
+| Relationship | Destination fact                                                                                                                   | Sync effect                                                                                                                                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `P ∩ R`      | Exact registered relative file symlink remains at the mapped destination and its raw target is the derived target                  | Preserve the link and record path.                                                                                                                                                                                   |
+| `P ∩ R`      | Destination leaf is missing and its parent path is safe                                                                            | Create the exact relative file symlink and retain a `registered-link-restored` Attention finding. The warning also applies to a dry run, which writes nothing.                                                       |
+| `P ∩ R`      | Destination is an ordinary file for the current registered mapping                                                                 | Preserve the ordinary bytes and retain the mapping. Continue only independent safe mapping effects; with such effects the result is `incomplete` and names the retained destination, otherwise block the whole Sync. |
+| `P ∩ R`      | Destination is a directory, different link, special entry, unsafe path, unknown state, or separately owned path                    | Block the whole Sync.                                                                                                                                                                                                |
+| `P \ R`      | Destination leaf is exactly missing and its parent path is safe                                                                    | Create a new exact relative file symlink and add the path to the record.                                                                                                                                             |
+| `P \ R`      | Any destination occupant exists or is unsafe, including an unregistered matching link                                              | Block the whole Sync.                                                                                                                                                                                                |
+| `R \ P`      | Destination is the exact registered relative symlink with the derived raw target, whether its source target is present or dangling | Delete only that exact link and remove the path from the record.                                                                                                                                                     |
+| `R \ P`      | Destination is positively missing, even with safe no-follow parents                                                                | Block the whole Sync because the registered link cannot be proven for retirement.                                                                                                                                    |
+| `R \ P`      | Destination is an ordinary file, directory, different link, special entry, unsafe path, unknown state, or separately owned path    | Block the whole Sync.                                                                                                                                                                                                |
 
 The source inventory must be complete before the `R \ P` set is formed. A
 source file becoming excluded is absent from `P` and follows the same exact
@@ -220,10 +220,32 @@ complete request blocks or is incomplete according to the established fact.
 
 The intended record preserves the selected library's source root and replaces
 its `paths` with the sorted current eligible set `P`, while retaining other
-library records in sorted ID order. It has no extra field, expected target,
-source bytes, absolute path, Git fact, dependency, collection, per-file remapping, glob,
+library records in sorted ID order, preserving optional `gitIgnore` intent.
+It has no expected target,
+source bytes, absolute path, Git index or status fact, dependency, collection, per-file remapping, glob,
 or exclusion metadata. The record is published after all link and generated
 effects verify.
+
+## Owned Ignore Rules
+
+Sync preserves the optional `gitIgnore` intent established by
+[Attach](../attach/interface.md#library-git-ignore-choice), including intent on
+every surviving Library claim. Missing or false keeps the existing no-ignore
+behavior. There is no new Sync choice or flag.
+
+For an opted-in registration, reconcile the separate Library-owned section
+against the intended exact mapped paths. Source additions gain literal anchored
+rules and retirements lose them; surviving owners and authored rules remain
+intact. An ignore-only change is a real plan effect, even when links and the
+ownership receipt need no change. A required `.gitignore` write uses the existing
+shared permission stage and can be granted with `--allow-path .gitignore`.
+
+Observe, guard, recover, apply and verify the ordinary Create or Replace before
+ownership publication. Unsafe, ambiguous or changed required ignore facts block
+the complete request; unavailable facts make it incomplete with no effects.
+Respect saved ignore-file removal exclusions
+instead of silently recreating it. Dry-run reports the same proposed change
+without effects. No source bytes, Git process or index state are changed.
 
 ## Consumer Permission
 
@@ -354,7 +376,7 @@ A parser failure is text on stderr without a result envelope.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -371,7 +393,7 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly library sync; data follows the catalogue:
 
@@ -385,22 +407,40 @@ Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON
 projection.
 
+A required ordinary `.gitignore` change appears in `data.effects` and in the
+shared envelope's file effects. Full detail includes its expected state and
+verification facts. An ignore-only change remains an effect even when every
+registered link is unchanged. Planned effects do not prove application.
+
+The shared `counts` object adds `gitIgnoreFilesUpdated` only for a concrete
+ordinary ignore plan. Preview counts the planned update; application counts
+verified updates, including zero when the file update has not verified.
+
+An unknown ignore effect prevents a cancellation from claiming that nothing
+changed, even when no effect verified. Retained and unknown file outcomes remain
+explicit in the shared effects and partial-progress wording.
+
+`library-sync.git-ignore-blocked` reports unsafe, ambiguous or excluded required
+ignore state as `blocked`. `library-sync.git-ignore-unavailable` reports
+unavailable required facts as `incomplete`. Both follow the existing detail and
+filter rules.
+
 ## Semantic Results
 
-| Status                  | When                                                                      | Headline                                                                            | Exit | Stream |
-| ----------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---: | ------ |
-| completed               | nothing to change                                                         | `The <id> Library is up to date. Nothing to do.`                                    |    0 | stdout |
-| completed               | changes other than a repaired current registered link                     | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` (omit zero parts) |    0 | stdout |
-| completed (dry run)     | planned without a warning                                                 | `Would synchronize <id>: <A> links to add, <R> to remove.`                          |    0 | stdout |
-| completed               | no ownership record                                                       | `No ownership record exists, so <id> cannot be synchronized. Nothing was changed.`  |    0 | stdout |
-| completed-with-warnings | a current registered link was missing and was restored; dry run retains the same warning without writes | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` plus the retained warning row |    2 | stdout |
-| completed-with-warnings | recovery bundle retained                                                  | + family row                                                                        |    2 | stdout |
-| incomplete              | changed ordinary current registered destination retained while independent safe effects applied | `<id> could not be fully synchronized: <limitation>.` plus effect rows |    3 | stdout |
-| incomplete              | source unavailable or inventory/fact unreadable                           | `<id> could not be synchronized: <source unavailable or limitation>. Nothing was changed.` |    3 | stdout |
-| invalid-input           | bad or unknown ID, extra operand, or required final confirmation unavailable without `--automatic` | `Cannot synchronize <ref>: <problem>.`                              |    4 | stderr |
-| blocked                 | changed destination with no independent safe effect, retired link missing, collision, permission, lock, or other unsafe mapping | `Cannot synchronize <id>: <reason>. Nothing was changed.`                           |    5 | stderr |
-| failed                  | after effects                                                             | `Library sync stopped after <n> of <m> changes.`                                    |    1 | stderr |
-| cancelled               | prompt cancelled, Ctrl+C                                                  | `Library sync was cancelled. Nothing was changed.`                                  |  130 | stderr |
+| Status                  | When                                                                                                                            | Headline                                                                                                                                                                          | Exit | Stream |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | nothing to change                                                                                                               | `The <id> Library is up to date. Nothing to do.`                                                                                                                                  |    0 | stdout |
+| completed               | changes other than a repaired current registered link                                                                           | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` (omit zero parts)                                                                                               |    0 | stdout |
+| completed (dry run)     | planned without a warning                                                                                                       | `Would synchronize <id>: <A> links to add, <R> to remove.`                                                                                                                        |    0 | stdout |
+| completed               | no ownership record                                                                                                             | `No ownership record exists, so <id> cannot be synchronized. Nothing was changed.`                                                                                                |    0 | stdout |
+| completed-with-warnings | a current registered link was missing and was restored; dry run retains the same warning without writes                         | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` plus the retained warning row                                                                                   |    2 | stdout |
+| completed-with-warnings | recovery bundle retained                                                                                                        | + family row                                                                                                                                                                      |    2 | stdout |
+| incomplete              | changed ordinary current registered destination retained while independent safe effects applied                                 | `<id> could not be fully synchronized: <limitation>.` plus effect rows                                                                                                            |    3 | stdout |
+| incomplete              | source unavailable or inventory/fact unreadable                                                                                 | `<id> could not be synchronized: <source unavailable or limitation>. Nothing was changed.`                                                                                        |    3 | stdout |
+| invalid-input           | bad or unknown ID, extra operand, or required final confirmation unavailable without `--automatic`                              | `Cannot synchronize <ref>: <problem>.`                                                                                                                                            |    4 | stderr |
+| blocked                 | changed destination with no independent safe effect, retired link missing, collision, permission, lock, or other unsafe mapping | `Cannot synchronize <id>: <reason>. Nothing was changed.`                                                                                                                         |    5 | stderr |
+| failed                  | after effects                                                                                                                   | `Library sync stopped after <n> of <m> changes.`                                                                                                                                  |    1 | stderr |
+| cancelled               | prompt cancellation or Ctrl+C                                                                                                   | Before effects: `Library sync was cancelled. Nothing was changed.` With retained or unknown ignore progress: `Library sync was cancelled after <n> of <m> changes were verified.` |  130 | stderr |
 
 ### Current merged behavior and open questions
 
@@ -419,45 +459,47 @@ contract above.
 
 The finding catalogue is:
 
-| Code                                         | Severity | Family                     | Message                                                                                                             | Next                              |
-| -------------------------------------------- | -------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| library-sync.invalid-input                   | error    | invalid-input              |                                                                                                                     |                                   |
-| library-sync.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.confirmation-required`).                                                     | `open-forge library sync --automatic` |
-| library-sync.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.invalid-id`).                                                                                | `open-forge library list`         |
-| library-sync.library-removed | error | local | The selected Library ID is excluded by workspace settings. | Remove the named ID from `removedLibraries` in `.agents/open-forge.json`, then rerun the command. |
-| library-sync.path-excluded | info | local | The mapped destination is excluded and remains untouched. | none |
-| library-sync.unknown-id                      | error    | unknown-id                 |                                                                                                                     | `open-forge library list`         |
-| library-sync.ownership-observation           | info     | ownership-observation      |                                                                                                                     |                                   |
-| library-sync.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.record-invalid`).                                         | `open-forge doctor`               |
-| library-sync.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                                                     |                                   |
-| library-sync.record-blocked                  | error    | lifecycle-blocked          |                                                                                                                     |                                   |
-| library-sync.source-root-invalid             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.source-root-invalid`).                                                    | none                              |
-| library-sync.source-root-unavailable         | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.source-root-unavailable`).                                                  | none                              |
-| library-sync.source-root-blocked             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.source-root-blocked`).                                                          | none                              |
-| library-sync.inventory-incomplete            | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.inventory-incomplete`).                                            | none                              |
-| library-sync.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.mapping-unavailable`).                                                                   | `open-forge doctor`               |
-| library-sync.mapping-blocked                 | error    | local                      | `<destination path> is <an ordinary file \| a folder \| a different link> and is not the link the Library created.` | `open-forge library inspect <id>` |
-| library-sync.destination-collision           | error   | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.destination-collision`). | none                              |
-| library-sync.retired-link-missing            | error   | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.retired-link-missing`).                                                       | `open-forge library inspect <id>` |
-| library-sync.registered-link-restored       | warning | local                      |                                                                                                                     |                                   |
-| library-sync.link-capability-unavailable     | error   | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.link-capability-unavailable`).                                                                                         | none                              |
-| library-sync.consumer-blocked                | error   | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.consumer-blocked`).                                                                                | none                              |
-| library-sync.ownership-conflict              | error   | ownership-conflict         |                                                                                                                                                    |                                   |
-| library-sync.permission-required             | error   | permission-required        |                                                                                                                                                    |                                   |
-| library-sync.permission-declined             | error   | permission-declined        |                                                                                                                                                    |                                   |
-| library-sync.permission-invalid              | error   | permissions-invalid        |                                                                                                                                                    |                                   |
-| library-sync.permission-unavailable          | warning | permissions-unavailable    |                                                                                                                                                    |                                   |
-| library-sync.permission-changed              | error   | permissions-changed        |                                                                                                                                                    |                                   |
-| library-sync.permission-write-failed         | error   | permission-write-failed    |                                                                                                                                                    |                                   |
-| library-sync.generated-navigation-blocked    | error   | generated-region-unsafe    |                                                                                                                                                    |                                   |
-| library-sync.generated-navigation-incomplete | warning | projection-unavailable     |                                                                                                                                                    |                                   |
-| library-sync.lock-unavailable                | error   | workspace-lock-unavailable |                                                                                                                                                    |                                   |
-| library-sync.recovery-unavailable            | warning | recovery-unavailable       |                                                                                                                                                    |                                   |
-| library-sync.recovery-retained               | warning | recovery-artifact-retained |                                                                                                                                                    |                                   |
-| library-sync.application-failed              | error   | write-failed               |                                                                                                                                                    |                                   |
-| library-sync.verification-failed             | error   | verification-failed        |                                                                                                                                                    |                                   |
-| library-sync.operation-failed                | error   | operation-failed           |                                                                                                                                                    |                                   |
-| library-sync.interrupted                     | error   | interrupted                |                                                                                                                                                    |                                   |
+| Code                                         | Severity | Family                     | Message                                                                                                                                                                                                                                                                                                                                                           | Next                                                                                              |
+| -------------------------------------------- | -------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| library-sync.git-ignore-blocked              | error    | local                      | [Library Git-ignore wording](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Shared/LibraryGitIgnoreText.cs) (unsafe required ignore state).                                                                                                                                                                                         |                                                                                                   |
+| library-sync.git-ignore-unavailable          | warning  | local                      | [Library Git-ignore wording](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Library/Shared/LibraryGitIgnoreText.cs) (unavailable required ignore facts).                                                                                                                                                                                    |                                                                                                   |
+| library-sync.invalid-input                   | error    | invalid-input              |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.confirmation-required           | error    | confirmation-required      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.confirmation-required`).       | `open-forge library sync --automatic`                                                             |
+| library-sync.invalid-id                      | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.invalid-id`).                  | `open-forge library list`                                                                         |
+| library-sync.library-removed                 | error    | local                      | The selected Library ID is excluded by workspace settings.                                                                                                                                                                                                                                                                                                        | Remove the named ID from `removedLibraries` in `.agents/open-forge.json`, then rerun the command. |
+| library-sync.path-excluded                   | info     | local                      | The mapped destination is excluded and remains untouched.                                                                                                                                                                                                                                                                                                         | none                                                                                              |
+| library-sync.unknown-id                      | error    | unknown-id                 |                                                                                                                                                                                                                                                                                                                                                                   | `open-forge library list`                                                                         |
+| library-sync.ownership-observation           | info     | ownership-observation      |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.record-invalid                  | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.record-invalid`).              | `open-forge doctor`                                                                               |
+| library-sync.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.record-blocked                  | error    | lifecycle-blocked          |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.source-root-invalid             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.source-root-invalid`).         | none                                                                                              |
+| library-sync.source-root-unavailable         | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.source-root-unavailable`).     | none                                                                                              |
+| library-sync.source-root-blocked             | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.source-root-blocked`).         | none                                                                                              |
+| library-sync.inventory-incomplete            | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.inventory-incomplete`).        | none                                                                                              |
+| library-sync.mapping-unavailable             | warning  | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.mapping-unavailable`).         | `open-forge doctor`                                                                               |
+| library-sync.mapping-blocked                 | error    | local                      | `<destination path> is <an ordinary file \| a folder \| a different link> and is not the link the Library created.`                                                                                                                                                                                                                                               | `open-forge library inspect <id>`                                                                 |
+| library-sync.destination-collision           | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.destination-collision`).       | none                                                                                              |
+| library-sync.retired-link-missing            | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.retired-link-missing`).        | `open-forge library inspect <id>`                                                                 |
+| library-sync.registered-link-restored        | warning  | local                      |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.link-capability-unavailable     | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.link-capability-unavailable`). | none                                                                                              |
+| library-sync.consumer-blocked                | error    | local                      | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Sync/Shared/Wording/LibrarySyncWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-sync.consumer-blocked`).            | none                                                                                              |
+| library-sync.ownership-conflict              | error    | ownership-conflict         |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.permission-required             | error    | permission-required        |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.permission-declined             | error    | permission-declined        |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.permission-invalid              | error    | permissions-invalid        |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.permission-unavailable          | warning  | permissions-unavailable    |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.permission-changed              | error    | permissions-changed        |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.permission-write-failed         | error    | permission-write-failed    |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.generated-navigation-blocked    | error    | generated-region-unsafe    |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.generated-navigation-incomplete | warning  | projection-unavailable     |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.lock-unavailable                | error    | workspace-lock-unavailable |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.recovery-unavailable            | warning  | recovery-unavailable       |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.recovery-retained               | warning  | recovery-artifact-retained |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.application-failed              | error    | write-failed               |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.verification-failed             | error    | verification-failed        |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.operation-failed                | error    | operation-failed           |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
+| library-sync.interrupted                     | error    | interrupted                |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                   |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. Counts are:
@@ -482,50 +524,50 @@ changes? [y/N]` unless `--automatic` (added by 04).
 
 ### completed
 
-~~~text
+```text
 The team-knowledge Library is up to date. Nothing to do.
-~~~
+```
 
 ### completed-with-warnings
 
-~~~text
+```text
 Synchronized team-knowledge: 1 link added.
   Warning  <recovery-bundle>  Recovery artifact retained
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 team-knowledge could not be synchronized: some files under shared/team-knowledge could not be listed. Nothing was changed.
-~~~
+```
 
 ### invalid-input
 
-~~~text
+```text
 Cannot synchronize unknown: The Library ID is not registered.
 Next: open-forge library list
-~~~
+```
 
 ### blocked
 
-~~~text
+```text
 Cannot synchronize team-knowledge: .agents/directives/review.md is no longer the link the Library created. Nothing was changed.
   It is now an ordinary file. Move it away or restore the link, then rerun.
 Next: open-forge library inspect team-knowledge
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Library sync stopped after 1 of 2 changes.
   Added    .agents/directives/review.md
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Library sync was cancelled. Nothing was changed.
-~~~
+```
 
 ## Related Current Sources
 

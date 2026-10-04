@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Accepted technology-neutral install behavior for management establishment, exact no-op, initial force, and recovery
-  responsibility: Define how install resolves Framework facts, rejects managed divergence, plans one safe establishment, and forms its result
+  description: Current install rules for setup selection, additive restoration, management establishment, verification and recovery
+  responsibility: Define how install resolves selections and Framework facts, plans one safe establishment or configuration, and forms its result
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Install, Framework, Behavior, Determinism, Lifecycle, Safety, Recovery, CurrentTruth]
 ---
 
@@ -86,11 +86,13 @@ The resolver:
    aliases, `--prune`, replacement/reinstall forms, and other unaccepted flags.
 2. Resolves shared terminal `--help` and `--version` before workspace or domain
    work. Command-specific input combined with a terminal mode is invalid.
-3. Collapses repeated `--force`, `--automatic`, and `--dry-run` presence to one
+3. Collapses repeated `--configure`, `--force`, `--automatic`, and `--dry-run` presence to one
    Boolean each. No occurrence wins by order.
 4. Resolves the exact current directory or exact `--workspace` value through the
    shared contract. It does not discover another root.
-5. Preserves independent dimensions: automatic does not set force, and dry-run
+5. Resolves the preset and Custom row values under the Interface's repetition
+   and composition rules before setup selection.
+6. Preserves independent dimensions: automatic does not set force, and dry-run
    does not remove authority from the plan it previews.
 
 A human application that would write may continue without `--automatic` only
@@ -100,11 +102,68 @@ before acquiring the workspace lease or beginning an effect. Confirmation
 continues the already formed plan. Refusal, end of input, or caller cancellation
 returns `cancelled` and writes nothing.
 
-Dry-run, verified no-op, `--automatic`, JSON, and non-prompt-capable requests
+Setup selection precedes planning as defined under Configuration Planning.
+Dry-run, ordinary verified no-op, `--automatic`, JSON, and non-prompt-capable requests
 never prompt. A non-prompt-capable human application that would write is
 `invalid-input` unless `--automatic` is explicit and directs the caller to rerun that
 same command with `--automatic`. Automatic never supplies force or bypasses a
 safety boundary. Decorative prompt wording is not contract meaning.
+
+## Configuration Planning
+
+Resolve setup selection through the existing Shell prompt contracts before
+planning or exact-no-op admission. Selection observes concrete settings,
+ordinary route presence and the Install-owned Git-ignore section. It does not
+write files. Preserve one resolved immutable selection in the request and plan.
+Use the Interface's deterministic policy when interaction is unavailable.
+
+Ordinary first setup selection retains the existing safe initial-establishment
+and bounded adoption rules below, using the prospective selected settings.
+It also retains their ownership publication for safely installed replacements
+and preserved canonical bases. Settings and ignore files remain authored inputs.
+Loader absence alone does not establish initial-adoption eligibility when a
+Framework receipt already identifies an established installation. Explicit
+`--configure` uses the additive preservation boundary rather than initial
+replacement or adoption authority.
+
+Plan authored settings, selected payload, required ancestors, affected generated
+navigation and the bounded Git-ignore section together. Use the existing
+settings codec so unrelated and unknown JSON members survive. Do not persist a
+preset identifier. Keep original settings and ignore snapshots as preconditions,
+while prospective topology uses the planned settings. Add retains narrower
+omissions. A broad Memory exclusion may be replaced by the complete explicit
+state selection, preserving the states the user chose to omit.
+
+Configuration has a distinct additive admission before ordinary managed
+divergence. It creates missing eligible selected defaults and retains occupied
+authored files, overwrite companions and compatible route hosts. Existing
+unselected managed targets retain their ordinary identity checks. It never
+replaces an edited managed payload as an implicit Update or interprets matching
+bytes as proof of ownership. Selected missing scaffolding may be recreated after
+checkout with or without an ownership file when the existing loader and host
+boundaries are safely recognized. Competing manager claims, ambiguous topology,
+unsafe paths or invalid document boundaries still block the complete plan.
+
+Remove records the selected omission and releases only Framework receipts for
+the supplied defaults in that selected canonical subtree. It does not delete
+files, remove user-owned records, release Extension/Library ownership, or release
+unrelated scoped Framework claims. Publish one final Framework ownership
+projection after verification instead of combining release/publication effects.
+
+Git-ignore selection uses one marked Install-owned section containing anchored
+directory patterns. Preserve all bytes outside that section. Add and Remove
+clear only the selected route's Install-owned pattern, not unrelated user rules.
+Malformed, duplicated or ambiguous section boundaries block safely. Changes
+participate in ordinary file expectations, preflight, complete recovery,
+lease-bound revalidation and verified application. The whole ignore file never
+becomes Framework-owned. Invoke no Git subprocess and untrack no existing file.
+
+Settings and ignore changes participate in no-op detection, reported effects,
+counts, recovery and final verification. A stale settings, ignore, payload,
+projection or ownership snapshot stops the plan before any affected write.
+Confirmation continues exactly that complete plan. Repeating the same concrete
+configuration produces no effects. Ordinary repeat Install retains its prior
+exact verification and divergence behavior.
 
 ## Exact Workspace And Payload
 
@@ -143,7 +202,9 @@ It excludes arbitrary providers, package sources, Extension payloads, overwrite
 companions as Framework targets, retired-only paths, files outside the closed
 Framework footprint, and the repository `.temp/` directory.
 
-The selected fact universe is the closed base Install subset. Ownership may
+Explicit configuration also includes the authored settings exclusions and the
+bounded owned Git-ignore section as separate effects. The ordinary selected
+fact universe is the closed base Install subset. Ownership may
 also contain scoped paths and regions from Route Init. Preserve those receipts
 and current content without selecting them as root effects or checking them
 against stored integrity facts.
@@ -794,8 +855,9 @@ workspace-relative file destination; it has no glob or recursive-directory
 meaning.
 The concrete destination is
 excluded from whole-file and generated-region planning, including root managed
-hosts. Do not recreate excluded files, change settings, or infer new ownership
-for them. Existing user content and prior receipts outside actual selected effects
+hosts. Without explicit configuration, do not recreate excluded files, change
+settings, or infer new ownership for them. Existing user content and prior
+receipts outside actual selected effects
 remain preserved. If an excluded missing entrypoint makes another selected route
 unreachable, report a structural blocker instead of recreating it. Required loader
 and root host anchors are otherwise not categories.

@@ -88,7 +88,8 @@ authorize deletion.
 For unchanged workspace bytes and explicit input, resolution, inventory, set
 reconciliation, generated projection, record bytes, plan, and semantic result
 are deterministic. An unchanged complete set and exact projection is a
-verified no-op. A missing current link is safe drift that can be recreated
+verified no-op only when no ignore-file effect is required. A missing current
+link is safe drift that can be recreated
 after complete preflight with an Attention2 result. A changed ordinary
 occupant is retainable only for a current registered mapping with independent
 safe effects; otherwise it remains unsafe mutation drift and blocks.
@@ -262,9 +263,25 @@ generated region is fabricated.
 The intended versioned record replaces the selected library's `paths` with the
 sorted current eligible set `P`, keeps its recorded `sourceRoot`, and retains
 all other libraries in sorted ID order. It has exactly the accepted properties
-and no expected-link, source-byte, Git, collection, per-file remapping, glob,
+and no expected-link, source-byte, Git index/status, collection, per-file remapping, glob,
 dependency, or exclusion field. The record is not published until every link
 and generated effect verifies.
+
+## Owned Ignore Reconciliation
+
+Preserve selected and surviving registrations' optional ignore intent. When
+selected intent is true, derive the intended union of opted-in mapped leaves
+from ownership facts; other Library sources need no inventory. Validate and
+rewrite only the recognized Library-owned section, preserving authored and
+Install bytes. The [Interface](interface.md#owned-ignore-rules) defines the
+permission and exclusion boundary.
+
+Carry an ordinary ignore-file change paired with its exact prior snapshot
+through whole-plan comparison, permission, lease reobservation, recovery,
+application, verification and result formation. A prior-missing Create uses
+the existing reversible ordinary-file recovery kind. Include ignore-only
+changes in effect detection. Verify the change before publishing ownership;
+drift or failure never becomes successful no-op or early record publication.
 
 ## Complete Plan And Preflight
 
@@ -276,7 +293,8 @@ The ordered plan contains only:
 - relative-file-link Create effects for exact missing destinations;
 - relative-file-link Delete effects for retired destinations whose registered
   raw target is exact;
-- permitted bounded generated-region replacements; and
+- permitted bounded generated-region replacements;
+- a required ordinary ignore-file Create or Replace; and
 - one ordinary consumer-record Replace effect when the sorted record changes.
 
 A complete no-op has no effects and does not manufacture a record write. Every
@@ -369,11 +387,13 @@ the first effect under the shared mutation boundary; an effect-free plan has no
 recovery bundle. Library recovery distinguishes:
 
 - a prior-missing ordinary consumer-record `Create`;
+- an ordinary ignore-file `Create` or `Replace` with prior bytes or absence;
 - a relative-file-link `Create` at an exact missing destination; and
 - a relative-file-link `Delete` carrying the exact registered raw relative
   target, including a target that is dangling.
 
-It stores consumer record and permission bytes and raw link identity only. It never stores,
+It stores prior consumer record and permission bytes or absence, prior
+ignore-file bytes or absence for required changes, and raw link identity. It never stores,
 opens, follows, restores, or deletes source bytes. Strong no-follow recovery
 can remove an exact created link when the destination is still that created
 link, or recreate an exact deleted link when the destination is safely missing
@@ -401,8 +421,8 @@ current record properties, sorted IDs, sorted paths, and complete current path s
 It also verifies source paths and bytes remain unchanged.
 
 An unchanged complete no-op is `completed` only after the complete inventory,
-exact registered-link facts, record, and generated boundaries prove no effect
-is required. A missing current registered link that is recreated is
+exact registered-link facts, record, generated boundaries and any required
+ignore reconciliation prove no effect is required. A missing current registered link that is recreated is
 `completed-with-warnings` (Attention2) after verification; dry-run retains the
 same warning and writes nothing. A changed ordinary current registered mapping
 with independent safe effects is `incomplete` (Incomplete3), with its retained

@@ -17,7 +17,9 @@
   "counts": {
     "entrypointsCreated": 0,
     "entrypointsPresent": 2,
-    "sectionsUpdated": 0
+    "sectionsUpdated": 0,
+    "payloadFilesCreated": 0,
+    "settingsUpdated": 0
   },
   "limitations": [],
   "data": {

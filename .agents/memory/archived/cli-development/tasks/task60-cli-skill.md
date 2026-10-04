@@ -7,9 +7,9 @@ open-forge:
 # Task 60 — CLI Skill in Core
 
 **Closed on 2026-09-28** by the maintainer, following the
-[review](../../../emerging/analysis/open-task-review/task60-cli-skill.md). The Skill shipped. Whether the loader's
+[review](../analysis/open-task-review/task60-cli-skill.md). The Skill shipped. Whether the loader's
 CLI section shrinks moved to [Task 53](../../../working/cli-development/tasks/task53-loading-and-scoping-audit.md). The
-integration snapshot refresh moved to [Task 59](../../../working/cli-development/tasks/task59-beta-2-release.md), where
+integration snapshot refresh moved to [Task 59](task59-beta-2-release.md), where
 it blocks the release.
 
 The sections below are the record as it stood before closing.

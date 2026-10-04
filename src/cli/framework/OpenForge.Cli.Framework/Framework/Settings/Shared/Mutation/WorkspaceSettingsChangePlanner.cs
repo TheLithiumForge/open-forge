@@ -10,6 +10,42 @@ namespace OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 
 internal static class WorkspaceSettingsChangePlanner
 {
+    internal static PlannedFileChange? PlanConfiguration(
+        WorkspaceSettingsRead observation,
+        WorkspaceRemovalSelection additions,
+        WorkspaceRemovalSelection clear)
+    {
+        if (observation.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete)
+            || observation.Snapshot is not { } snapshot)
+            throw new InvalidOperationException("Configuration requires safely observed authored settings.");
+        ReadOnlyMemory<byte> bytes = snapshot.Bytes.ToArray();
+        bytes = WorkspaceSettingsCodec.ClearRemovals(bytes, clear) ?? bytes;
+        bytes = WorkspaceSettingsCodec.AddRemovals(bytes, additions) ?? bytes;
+        if (snapshot.Bytes.AsSpan().SequenceEqual(bytes.Span)) return null;
+        return snapshot.Kind == FileExpectationKind.Missing
+            ? PlannedFileChange.Create(snapshot.Expectation, bytes.ToArray())
+            : PlannedFileChange.Replace(snapshot.Expectation, bytes.ToArray());
+    }
+
+    internal static PlannedFileChange? PlanRestoration(WorkspaceSettingsRead observation, WorkspaceRemovalSelection selection)
+    {
+        if (observation.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete)
+            || observation.Snapshot is not { } snapshot)
+        {
+            throw new InvalidOperationException("Clearing removals requires safely observed authored settings.");
+        }
+
+        var expectedKind = observation.State == WorkspaceSettingsReadState.Absent
+            ? FileExpectationKind.Missing : FileExpectationKind.File;
+        if (snapshot.Kind != expectedKind)
+        {
+            throw new InvalidOperationException("The settings snapshot does not match its observation state.");
+        }
+
+        var intended = WorkspaceSettingsCodec.ClearRemovals(snapshot.Bytes.ToArray(), selection);
+        return intended is null ? null : PlannedFileChange.Replace(snapshot.Expectation, intended);
+    }
+
     internal static PlannedFileChange? PlanGrant(WorkspaceSettingsRead observation, ImmutableArray<string> paths)
     {
         if (paths.IsEmpty)

@@ -22,7 +22,7 @@ open-forge:
 
 This is a review/decision task, not an implementation task. Local planning needs one coherent answer from accepted direction through
 execution and closeout. The current optional `planning` Extension provides a
-Planning Workflow, Work Records Pattern, and four Templates, while this
+Planning Workflow, Work Records Pattern, and seven Templates, while this
 repository also has local task, phase, checkpoint, handoff, project-control,
 and Archived Memory conventions. The package intentionally avoids importing
 this repository's permanent IDs, completion-grace counters, and orchestration
@@ -44,9 +44,9 @@ extension ID remains `planning`.
 ## Current planning surfaces
 
 - Canonical Extension source: `src/extensions/planning/`, containing the
-  `planning` Workflow, Work Records Pattern, and Task, Plan, Backlog, and
-  Checkpoint Templates.
-- Repository dogfood: `.agents/workflows/planning.md`,
+  `planning` Workflow, Work Records Pattern, and Task, Plan, Backlog,
+  Checkpoint, Idea, Analysis, and Decision Templates.
+- Repository dogfood: `.agents/skills/use-workflow/references/planning/planning.md`,
   `.agents/patterns/work-records.md`, and `.agents/templates/planning/`.
 - Local execution records: Working Task routes, phase subfolders, the project
   control ledger where a project has one, and Checkpoints/Handoffs when their
@@ -133,6 +133,13 @@ numeric IDs, ledger, or two-update grace rule.
 
 ## Named Rules Under Review
 
+The quoted wording below records the original review inputs. Some sources
+have since changed. The Loader now says that detail belongs in the narrowest
+source that defines the question. The Analysis contract distinguishes open
+exploration from a version handed off for execution. Review the current linked
+sources before choosing further changes. These historical quotations do not
+replace them.
+
 ### 1. Narrowest-Source Ownership and Summary-Only Hierarchy Rule
 
 Current wording:
@@ -201,7 +208,7 @@ other review outcomes.
 ### 5. Planning Extension and Template Boundary
 
 The current [Planning Extension](../../../src/extensions/planning/README.md)
-contains the Planning Workflow, Work Records Pattern, and four planning
+contains the Planning Workflow, Work Records Pattern, and seven planning
 Templates. The repository dogfoods corresponding files under `.agents/`.
 
 Review whether the package and dogfood copies have one clear source of truth,

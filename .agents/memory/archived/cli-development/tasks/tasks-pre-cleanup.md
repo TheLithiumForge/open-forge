@@ -13,7 +13,7 @@ Read the [program Task](00-cli-development.md),
 The two analysis scopes below hold the latest measured evidence, and the Tasks in
 this group draw on them rather than restating their findings:
 
-- [CLI Experience Audit](../../../emerging/analysis/cli-experience-audit/_cli-experience-audit.md)
+- [CLI Experience Audit](../analysis/cli-experience-audit/_cli-experience-audit.md)
   — what is broken and how to fix it. The remediation backlog against current
   behaviour.
 - [CLI Design Retrospective](../../../emerging/analysis/cli-design-retrospective/_cli-design-retrospective.md)

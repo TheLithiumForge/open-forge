@@ -20,7 +20,7 @@ Ideas preserve possibilities, experiments, open questions, and options worth exp
 
 - [Explore a way to exclude files from an applyTo condition now that a leading ! is an ordinary glob character](applyto-exclusions.md) - #Memory #Idea #Contextual #Candidate #Framework #Loading #Glob #Frontmatter #CLI
 - [Explore a read-only browser WebAssembly CLI playground backed by seeded Open Forge workspaces in documentation](cli-browser-wasm-playground.md) - #Memory #Idea #Contextual #Candidate #CLI #WebAssembly #Browser #Documentation #Docusaurus #Testing
-- [Define the accepted `--verbose` diagnostic content after ordinary human-readable failures and dogfood evidence exist](cli-debug-diagnostics.md) - #Memory #Idea #Contextual #Candidate #CLI #Debug #Diagnostics #Dogfood #Brownfield
+- [Explore diagnostic refinements beyond accepted debug-detail output through observed CLI failures](cli-debug-diagnostics.md) - #Memory #Idea #Contextual #Candidate #CLI #Debug #Diagnostics #Dogfood #Brownfield
 - [Explore additional thin package-manager wrappers after canonical native artifacts and the first npm wrapper ship](cli-distribution-channels.md) - #Memory #Idea #Contextual #Candidate #CLI #Distribution #Package #Bundle #Executable #Dogfood
 - [Anchoring code comments to Open Forge sources by ID or path plus heading, so an agent reading code can reach the documentation that governs it](code-to-context-references.md) - #Idea #Memory #Emerging #Contextual #Candidate #CLI #References #Navigation
 - [Evaluate whether the locally dogfooded recipe-bearing Development subtree should become a shipped specialization example or Extension](composable-workflow-entrypoints.md) - #Memory #Idea #Contextual #Candidate #Workflow #Routing #Orchestration #Agent

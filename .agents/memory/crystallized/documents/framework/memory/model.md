@@ -61,7 +61,11 @@ The states are semantic contracts, not quality scores or required maturity stage
 
 ## Loading Strategy
 
-Memory loading follows the role each state plays:
+Memory loading follows the role each installed state plays. The canonical
+payload supplies four state entrypoints; an installation may deliberately omit
+states and later add them. An omission changes availability, not the meanings
+below. Do not substitute another state or recreate an omitted state merely to
+save a record; ask whether the missing capability should be added.
 
 - The Core Memory `root route` enters baseline context so every task can preserve durable state correctly
 - Core Working and Crystallized `entrypoints` enter baseline context so active resumability and accepted current records are discoverable

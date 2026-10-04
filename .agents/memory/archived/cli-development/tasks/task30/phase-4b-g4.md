@@ -17,11 +17,11 @@ part of the rendering-system work; no renderer work remains pending.
 
 ## Evidence source
 
-- [Command output design](../../../../emerging/analysis/cli-experience-audit/command-output-design.md)
-- [Presentation field audit](../../../../emerging/analysis/cli-experience-audit/presentation-field-audit.md)
-- [Finding model](../../../../emerging/analysis/cli-experience-audit/finding-model.md)
-- [Model-level snapshot testing](../../../../emerging/analysis/cli-experience-audit/model-level-snapshot-testing.md)
-- [View layer and test architecture](../../../../emerging/analysis/cli-experience-audit/view-layer-and-test-architecture.md)
+- [Command output design](../../analysis/cli-experience-audit/command-output-design.md)
+- [Presentation field audit](../../analysis/cli-experience-audit/presentation-field-audit.md)
+- [Finding model](../../analysis/cli-experience-audit/finding-model.md)
+- [Model-level snapshot testing](../../analysis/cli-experience-audit/model-level-snapshot-testing.md)
+- [View layer and test architecture](../../analysis/cli-experience-audit/view-layer-and-test-architecture.md)
 
 The Emerging evidence measured repeated renderers, missing detail, unclear
 severity, and the need for a selection stage. It also requires snapshots before
@@ -140,6 +140,7 @@ current source for them.
   three-layer physical-layout decisions are implemented.
 
 <!-- The following gate wording is retained as historical evidence. -->
+
 - **Accepted (C1–C11, C13–C18):** `--detail minimal|standard|full|debug`
   with `minimal` as default and `debug` as the top level; a repeatable
   `--detail-filter error|warning|info|all`; `--format text|json`; `debug` adds

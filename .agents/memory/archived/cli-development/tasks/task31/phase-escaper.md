@@ -14,9 +14,9 @@ delivered in the same output-change packet as the renderer rewrites.
 
 ## Evidence source
 
-The sealed [Implementation Duplication analysis](../../../../emerging/analysis/cli-experience-audit/implementation-duplication.md)
+The sealed [Implementation Duplication analysis](../../analysis/cli-experience-audit/implementation-duplication.md)
 found eight escapers with four incompatible answers. The [CLI output design
-analysis](../../../../emerging/analysis/cli-experience-audit/command-output-design.md)
+analysis](../../analysis/cli-experience-audit/command-output-design.md)
 provided the historical contract input for the completed rewrite.
 
 ## Actionable boundary

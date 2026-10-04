@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 
 namespace OpenForge.Cli.Core.Commands.Install.Models.Request;
 
@@ -39,6 +40,10 @@ internal sealed record InstallRequest
         Automatic = automatic;
         AllowsInteractiveConfirmation = allowsInteractiveConfirmation;
     }
+
+    internal InstallSetupInput? Setup { get; init; }
+
+    internal InstallConfiguration? Configuration { get; init; }
 
     internal CliWorkspace Workspace { get; }
 

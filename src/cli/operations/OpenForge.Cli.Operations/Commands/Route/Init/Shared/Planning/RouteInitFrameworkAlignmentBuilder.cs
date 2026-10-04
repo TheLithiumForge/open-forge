@@ -8,49 +8,9 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
+using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
+
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
-
-internal enum RouteInitFrameworkAlignmentState
-{
-    Complete,
-    Blocked,
-}
-
-internal sealed record RouteInitFrameworkAlignedSegment(
-    string ConcreteSegment,
-    RouteInitFrameworkSegmentRole Role,
-    SourceLogicalSource IntendedSource,
-    string? SourceAssetPath);
-
-internal sealed record RouteInitFrameworkAlignment
-{
-    internal RouteInitFrameworkAlignment(
-        RouteInitTargetFacts target,
-        IEnumerable<RouteInitFrameworkAlignedSegment> segments,
-        IEnumerable<SourceLogicalSource> payloadSources,
-        SourceRouteTopology payloadTopology)
-    {
-        ArgumentNullException.ThrowIfNull(target);
-        ArgumentNullException.ThrowIfNull(payloadTopology);
-        Target = target;
-        Segments = new ReadOnlyCollection<RouteInitFrameworkAlignedSegment>(segments.ToArray());
-        PayloadSources = new ReadOnlyCollection<SourceLogicalSource>(payloadSources.ToArray());
-        PayloadTopology = payloadTopology;
-    }
-
-    internal RouteInitTargetFacts Target { get; }
-
-    internal IReadOnlyList<RouteInitFrameworkAlignedSegment> Segments { get; }
-
-    internal IReadOnlyList<SourceLogicalSource> PayloadSources { get; }
-
-    internal SourceRouteTopology PayloadTopology { get; }
-}
-
-internal sealed record RouteInitFrameworkAlignmentBuild(
-    RouteInitFrameworkAlignmentState State,
-    RouteInitFrameworkAlignment? Alignment,
-    string? Cause);
 
 internal sealed class RouteInitFrameworkAlignmentBuilder
 {
@@ -65,13 +25,24 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(requested);
         ArgumentNullException.ThrowIfNull(payloadSources);
-        if (requested.RequestedSegments.Count < 2)
+        var requestedId = string.Join('/', requested.RequestedSegments);
+        var canonical = payloadSources.SingleOrDefault(source =>
+            SourceFormClassifier.IsEntrypoint(source.Base.Form)
+            && source.Identity.AutomaticId == requestedId);
+        var isRestoration = canonical is not null
+            && (requested.RequestedSegments.Count == 1
+                || requested.RequestedSegments.Count == 2 && requested.RequestedSegments[0] == "memory")
+            && (requested.Kind != RouteInitTargetKind.ExactPath
+                || requested.CanonicalPath == canonical.Identity.CanonicalBasePath);
+        if (requested.RequestedSegments.Count < 2 && !isRestoration)
         {
             return Blocked("A Framework Route Init target must end at a non-root managed route.");
         }
 
         var topology = _topologyBuilder.Build(payloadSources, loaderRootPaths: []);
-        var candidates = FrameworkSourceAlignment.ReadCandidates(requested.RequestedSegments, payloadSources);
+        IReadOnlyList<FrameworkSourceAlignment.Candidate> candidates = isRestoration
+            ? [new(requested.RequestedSegments, Enumerable.Range(0, requested.RequestedSegments.Count).ToArray())]
+            : FrameworkSourceAlignment.ReadCandidates(requested.RequestedSegments, payloadSources);
         if (candidates.Count != 1)
         {
             return Blocked(candidates.Count == 0
@@ -116,7 +87,8 @@ internal sealed class RouteInitFrameworkAlignmentBuilder
                 alignedTarget,
                 alignedSegments,
                 payloadSources,
-                topology),
+                topology)
+            { IsCanonicalRestoration = isRestoration },
             Cause: null);
     }
 

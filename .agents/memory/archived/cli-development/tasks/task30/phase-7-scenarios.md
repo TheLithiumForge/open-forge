@@ -36,11 +36,11 @@ So the work is the matrix and the two missing shapes, not building a harness.
 
 ## Execution slices
 
-| Order | Slice | Depends on | Changes output |
-| ----- | ----- | ---------- | -------------- |
-| 1 | **70 — Coverage matrix.** Map every journey and command status to its cheapest proving boundary, and name each assertion that is intentionally process-only. Build it from the tests that exist, not from the analyses. | none | no |
-| 2 | **71 — The two uncovered shapes.** Add seeded `dirty` and `relocated` workspace journeys at the in-process boundary, asserting the contracts this phase names: encoding, finding subject and `Next`, exit status, write-freedom, and recovery consequence. | 70 | no |
-| 2 | **72 — Normalization audit.** Confirm snapshots normalize only environment-dependent representation. Counts, ordering, encoding defects and promised diagnostic content must not be normalized away. The capture redaction that rewrites machine-specific roots is the thing to audit: it is necessary, and it is exactly the mechanism that could hide a real difference. | none | no |
+| Order | Slice                                                                                                                                                                                                                                                                                                                                                                      | Depends on | Changes output |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | -------------- |
+| 1     | **70 — Coverage matrix.** Map every journey and command status to its cheapest proving boundary, and name each assertion that is intentionally process-only. Build it from the tests that exist, not from the analyses.                                                                                                                                                    | none       | no             |
+| 2     | **71 — The two uncovered shapes.** Add seeded `dirty` and `relocated` workspace journeys at the in-process boundary, asserting the contracts this phase names: encoding, finding subject and `Next`, exit status, write-freedom, and recovery consequence.                                                                                                                 | 70         | no             |
+| 2     | **72 — Normalization audit.** Confirm snapshots normalize only environment-dependent representation. Counts, ordering, encoding defects and promised diagnostic content must not be normalized away. The capture redaction that rewrites machine-specific roots is the thing to audit: it is necessary, and it is exactly the mechanism that could hide a real difference. | none       | no             |
 
 70 gates 71 because the matrix decides which boundary each new journey belongs
 at. 72 is independent. None of the three changes command output; a slice that
@@ -48,11 +48,11 @@ finds itself editing a rendered string has left its scope.
 
 ## Evidence source
 
-- [Model-level snapshot testing](../../../../emerging/analysis/cli-experience-audit/model-level-snapshot-testing.md)
-- [Test layer consolidation](../../../../emerging/analysis/cli-experience-audit/test-layer-consolidation.md)
-- [Test strategy and scenarios](../../../../emerging/analysis/cli-experience-audit/test-strategy-and-scenarios.md)
-- [View layer and test architecture](../../../../emerging/analysis/cli-experience-audit/view-layer-and-test-architecture.md)
-- [Presentation field audit](../../../../emerging/analysis/cli-experience-audit/presentation-field-audit.md)
+- [Model-level snapshot testing](../../analysis/cli-experience-audit/model-level-snapshot-testing.md)
+- [Test layer consolidation](../../analysis/cli-experience-audit/test-layer-consolidation.md)
+- [Test strategy and scenarios](../../analysis/cli-experience-audit/test-strategy-and-scenarios.md)
+- [View layer and test architecture](../../analysis/cli-experience-audit/view-layer-and-test-architecture.md)
+- [Presentation field audit](../../analysis/cli-experience-audit/presentation-field-audit.md)
 
 The test-architecture subtask owns usefulness review, project boundaries, and
 per-test temp isolation. This phase owns the missing behavior/scenario packet:

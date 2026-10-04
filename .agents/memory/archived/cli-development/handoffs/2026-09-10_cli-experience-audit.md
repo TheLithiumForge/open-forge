@@ -24,7 +24,7 @@ Two commits, neither pushed:
 - [CLI Experience Remediation](../cli-development/tasks/cli-experience-remediation.md) —
   the backlog. Its **Execution order** section is the entry point; everything
   else is reference.
-- [CLI Experience Audit](../../../emerging/analysis/cli-experience-audit/_cli-experience-audit.md) —
+- [CLI Experience Audit](../analysis/cli-experience-audit/_cli-experience-audit.md) —
   what is broken, 19 documents.
 - [CLI Design Retrospective](../../../emerging/analysis/cli-design-retrospective/_cli-design-retrospective.md) —
   how it arose, separating the original design from the contracts from what

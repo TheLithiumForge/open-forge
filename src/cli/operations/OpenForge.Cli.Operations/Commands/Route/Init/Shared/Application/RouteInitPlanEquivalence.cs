@@ -18,7 +18,22 @@ internal static class RouteInitPlanEquivalence
             && SequenceMatches(expected.FileChanges, actual.FileChanges, Matches)
             && SequenceMatches(expected.RecoveryTargets, actual.RecoveryTargets, Matches)
             && expected.Ownership?.State == actual.Ownership?.State
-            && expected.Ownership?.Snapshot?.Expectation == actual.Ownership?.Snapshot?.Expectation;
+            && expected.Ownership?.Snapshot?.Expectation == actual.Ownership?.Snapshot?.Expectation
+            && MatchesRestoration(expected.Restoration, actual.Restoration)
+            && SequenceMatches(expected.SourceSnapshots, actual.SourceSnapshots, Matches);
+    }
+
+    private static bool MatchesRestoration(RouteInitRestoration? expected, RouteInitRestoration? actual)
+    {
+        if (expected is null || actual is null)
+        {
+            return expected is null && actual is null;
+        }
+
+        return expected.Settings.MatchesObservation(actual.Settings)
+            && SequenceMatches(expected.CompanionSnapshots, actual.CompanionSnapshots, Matches)
+            && SequenceMatches(expected.Files, actual.Files, (left, right) =>
+                left.Asset.Path == right.Asset.Path && Matches(left.Before, right.Before));
     }
 
     private static bool Matches(RouteInitResultFormation expected, RouteInitResultFormation actual)
@@ -43,6 +58,7 @@ internal static class RouteInitPlanEquivalence
                     expected.InventoryFingerprint,
                     actual.InventoryFingerprint,
                     StringComparison.Ordinal)
+                && expected.IsCanonicalRestoration == actual.IsCanonicalRestoration
                 && expected.Segments.SequenceEqual(actual.Segments);
 
     private static bool Matches(RouteInitEntrypoint expected, RouteInitEntrypoint actual)

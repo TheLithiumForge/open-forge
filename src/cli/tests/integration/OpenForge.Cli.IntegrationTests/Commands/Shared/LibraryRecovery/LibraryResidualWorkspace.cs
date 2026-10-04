@@ -51,7 +51,7 @@ internal sealed class LibraryResidualWorkspace : IDisposable
     internal string TargetPath => Assert.IsType<string>(_targetPath);
     internal string? PriorText { get; private set; }
 
-    internal async Task PrepareAsync(string kind, string operation = "sync", bool includeUnselectedHost = false)
+    internal async Task PrepareAsync(string kind, string operation = "sync", bool includeUnselectedHost = false, bool includeIgnore = false, bool replaceIgnore = false)
     {
         var token = TestContext.Current.CancellationToken;
         RecoveryBundleTarget target;
@@ -91,6 +91,21 @@ internal sealed class LibraryResidualWorkspace : IDisposable
             _ => throw new ArgumentOutOfRangeException(nameof(operation)),
         };
         var targets = new List<RecoveryBundleTarget> { target };
+        const string ignoreIntended = "# authored\n# BEGIN OPEN FORGE LIBRARIES\n/.agents/directives/review.md\n# END OPEN FORGE LIBRARIES\n";
+        if (includeIgnore)
+        {
+            var ignorePath = Files.Absolute(".gitignore");
+            if (replaceIgnore) Files.Write(".gitignore", "# authored\n");
+            var beforeIgnore = replaceIgnore
+                ? FileStateSnapshot.File(ignorePath, ignorePath, Encoding.UTF8.GetBytes("# authored\n"))
+                : FileStateSnapshot.Missing(ignorePath);
+            var ignoreChange = replaceIgnore
+                ? PlannedFileChange.Replace(beforeIgnore.Expectation, Encoding.UTF8.GetBytes(ignoreIntended))
+                : PlannedFileChange.Create(beforeIgnore.Expectation, Encoding.UTF8.GetBytes(ignoreIntended));
+            targets.Add(replaceIgnore
+                ? RecoveryBundleTarget.Create(ignoreChange, beforeIgnore)
+                : RecoveryBundleTarget.CreateReversible(ignoreChange, beforeIgnore));
+        }
         const string hostPath = ".agents/directives/_directives.md";
         string? hostIntended = null;
         if (includeUnselectedHost)
@@ -130,11 +145,16 @@ internal sealed class LibraryResidualWorkspace : IDisposable
         {
             Files.Replace(hostPath, hostIntended);
         }
+        if (includeIgnore)
+        {
+            if (replaceIgnore) Files.Replace(".gitignore", ignoreIntended);
+            else Files.Write(".gitignore", ignoreIntended);
+        }
 
         var read = await RecoveryBundleReader.ReadFinalAsync(Files.Workspace, Preparation.BundlePath, token);
         Assert.Equal(RecoveryBundleReadState.Valid, read.State);
         var verified = Assert.IsType<RecoveryBundleVerifiedRead>(read.Verified);
-        Assert.Equal(includeUnselectedHost ? 2 : 1, verified.Entries.Length);
+        Assert.Equal(1 + (includeUnselectedHost ? 1 : 0) + (includeIgnore ? 1 : 0), verified.Entries.Length);
         var entry = verified.Entries[0];
         var comparisons = verified.Entries.Select(CompareIntended).ToImmutableArray();
         var comparison = comparisons[0];

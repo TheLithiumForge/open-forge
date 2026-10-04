@@ -212,6 +212,8 @@ internal static class LibraryDetachWording
 
     internal static string FindingCode(LibraryDetachFindingCode code) => code switch
     {
+        LibraryDetachFindingCode.GitIgnoreBlocked => "library-detach.git-ignore-blocked",
+        LibraryDetachFindingCode.GitIgnoreUnavailable => "library-detach.git-ignore-unavailable",
         LibraryDetachFindingCode.InvalidInput => "library-detach.invalid-input",
         LibraryDetachFindingCode.PermissionRequired => "library-detach.permission-required",
         LibraryDetachFindingCode.PermissionDeclined => "library-detach.permission-declined",
@@ -247,6 +249,8 @@ internal static class LibraryDetachWording
 
     internal static string FindingTitle(LibraryDetachFindingCode code) => code switch
     {
+        LibraryDetachFindingCode.GitIgnoreBlocked => global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.Blocked(),
+        LibraryDetachFindingCode.GitIgnoreUnavailable => global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.Unavailable(),
         LibraryDetachFindingCode.InvalidInput => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleInvalidInput(),
         LibraryDetachFindingCode.PermissionRequired => global::OpenForge.Cli.OutputText.Shared.SharedText.TitlePermissionIsRequired(),
         LibraryDetachFindingCode.PermissionDeclined => global::OpenForge.Cli.OutputText.Shared.SharedText.TitlePermissionWasDeclined(),

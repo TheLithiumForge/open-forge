@@ -6,7 +6,7 @@ open-forge:
 
 # Task 44 — Template and core file content
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task44-template-content.md). Recommendation:
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task44-template-content.md). Recommendation:
 Do before 1.0. The review names any details in this record that are out of date.
 
 ## Task state

@@ -24,7 +24,7 @@ open-forge:
   captures across three seeded workspaces shows byte-identical command output
   across phase 1 and every phase-3.5 commit.
 - Findings and reasoning stay in
-  [CLI Experience Audit](../../../emerging/analysis/cli-experience-audit/_cli-experience-audit.md). This record owns the work.
+  [CLI Experience Audit](../analysis/cli-experience-audit/_cli-experience-audit.md). This record owns the work.
 - Why the defects exist, as opposed to what they are, is in
   [CLI Design Retrospective](../../../emerging/analysis/cli-design-retrospective/_cli-design-retrospective.md).
   Consult it before changing a contract rather than a behaviour.
@@ -193,7 +193,7 @@ session. **Groups are not the execution order.** The order is below.
 
 ## Execution order
 
-Reasoned in [layers-and-sequencing.md](../../../emerging/analysis/cli-experience-audit/layers-and-sequencing.md). Each phase is
+Reasoned in [layers-and-sequencing.md](../analysis/cli-experience-audit/layers-and-sequencing.md). Each phase is
 one session or a short run of them.
 
 | #       | Phase                           | Why here                                                                                                                                                        | Session       |
@@ -516,7 +516,7 @@ answers**:
 So the same string emitted by `find --json` and by `extension list --json` is
 escaped differently, and `route list --json` differs from both. The audit saw a
 symptom of this — _"never emit JSON escaping in human text"_ in
-[command-output-design.md](../../../emerging/analysis/cli-experience-audit/command-output-design.md)
+[command-output-design.md](../analysis/cli-experience-audit/command-output-design.md)
 — but not the cause. **Converging them changes output**, so this is a G4
 presentation-contract decision, not a mechanical dedup. It should be decided
 with the three detail levels, and it is a reason the permanent snapshot suite
@@ -538,7 +538,7 @@ The maintainer accepted the recommended placement on 2026-09-11 and directed
 that the work be written down. It now lives in
 [Task 31: Implementation Duplication Removal](implementation-duplication.md),
 with the measurements in
-[Implementation Duplication](../../../emerging/analysis/cli-experience-audit/implementation-duplication.md).
+[Implementation Duplication](../analysis/cli-experience-audit/implementation-duplication.md).
 
 Two decisions were taken at the same time:
 
@@ -821,7 +821,7 @@ Three things close it, in increasing cost:
   `lines(brief) <= lines(standard) <= lines(verbose)`; severity ordering; valid
   UTF-8 with no escapes; a zero-finding result never containing `findings:`.
   Several fail today, which is the point. Detail in
-  [model-level-snapshot-testing.md](../../../emerging/analysis/cli-experience-audit/model-level-snapshot-testing.md).
+  [model-level-snapshot-testing.md](../analysis/cli-experience-audit/model-level-snapshot-testing.md).
 - **A regression test per Phase 0 fix**, written with the fix.
 
 The first item is the one that answers the question: **without it, Phase 1 is
@@ -882,7 +882,7 @@ that led here stays readable.
 - **Two files, npm-shaped: `open-forge.json` and `open-forge.lock.json`, both in
   `.agents/`.** This resolves a conflict between this record, which said collapse
   to _one_ file, and
-  [repository-dogfood-and-configuration.md](../../../emerging/analysis/cli-experience-audit/repository-dogfood-and-configuration.md),
+  [repository-dogfood-and-configuration.md](../analysis/cli-experience-audit/repository-dogfood-and-configuration.md),
   which said split by nature. The split wins, in the npm spelling, because the
   convention already teaches which file a person edits. Root placement was
   considered for marker value and rejected: `.agents/` is already the marker,
@@ -923,9 +923,9 @@ risk: `extension remove` deletes by the lock's file list, so a wrong lock
 over-deletes; contained by intersecting that list against what the payload claims,
 and by the recovery bundle written before any deletion.
 
-Backing: [lifecycle-baselines-and-architecture.md](../../../emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md),
-[repository-dogfood-and-configuration.md](../../../emerging/analysis/cli-experience-audit/repository-dogfood-and-configuration.md),
-[structural-requirements-and-markers.md](../../../emerging/analysis/cli-experience-audit/structural-requirements-and-markers.md).
+Backing: [lifecycle-baselines-and-architecture.md](../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md),
+[repository-dogfood-and-configuration.md](../analysis/cli-experience-audit/repository-dogfood-and-configuration.md),
+[structural-requirements-and-markers.md](../analysis/cli-experience-audit/structural-requirements-and-markers.md).
 
 - **Collapse to one `open-forge.json`.** Holds authored config (`rules`,
   `thresholds`, `allow`) and a minimal install index (`installed`,
@@ -987,9 +987,9 @@ install`, and no command recovers it. Resolved by the deletion above. **—**
 Make a custom scope cheap to create, and make the CLI fix what it can already see.
 This group is the whole "annoying flow" complaint.
 
-Backing: [structural-requirements-and-markers.md](../../../emerging/analysis/cli-experience-audit/structural-requirements-and-markers.md),
-[interoperability-and-diagnosis.md](../../../emerging/analysis/cli-experience-audit/interoperability-and-diagnosis.md),
-[taxonomy-and-adoption.md](../../../emerging/analysis/cli-experience-audit/taxonomy-and-adoption.md).
+Backing: [structural-requirements-and-markers.md](../analysis/cli-experience-audit/structural-requirements-and-markers.md),
+[interoperability-and-diagnosis.md](../analysis/cli-experience-audit/interoperability-and-diagnosis.md),
+[taxonomy-and-adoption.md](../analysis/cli-experience-audit/taxonomy-and-adoption.md).
 
 - **Treat absent or empty `## Axioms` as inherited.**
   [`RouteSourceStructureReader.cs:111-125`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Sources/Operational/RouteSourceStructureReader.cs#L111-L125)
@@ -1056,7 +1056,7 @@ Backing: [structural-requirements-and-markers.md](../../../emerging/analysis/cli
   space on either fence, or a `...` terminator all make valid frontmatter undetectable —
   reported as _"Required source metadata is missing"_ for a file whose frontmatter is
   visibly correct. On Windows, Visual Studio, Notepad and `Set-Content` write BOMs by
-  default. Full inventory in [hand-rolled-parsing.md](../../../emerging/analysis/cli-experience-audit/hand-rolled-parsing.md). **S**
+  default. Full inventory in [hand-rolled-parsing.md](../analysis/cli-experience-audit/hand-rolled-parsing.md). **S**
 - **Delete the second `## Axioms` parser.**
   `RouteInspectAxiomsProfileBuilder.Parsing.cs` matches `lines[index] == "## Axioms"` by
   exact equality, while `RouteSourceStructureReader` uses Markdig. Measured divergence:
@@ -1086,9 +1086,9 @@ source: …` — unquoted `": "`. `open-forge index` cannot run on the Open Forg
 
 One engine, one answer, every finding actionable.
 
-Backing: [interoperability-and-diagnosis.md](../../../emerging/analysis/cli-experience-audit/interoperability-and-diagnosis.md),
-[presentation-field-audit.md](../../../emerging/analysis/cli-experience-audit/presentation-field-audit.md),
-[repository-dogfood-and-configuration.md](../../../emerging/analysis/cli-experience-audit/repository-dogfood-and-configuration.md).
+Backing: [interoperability-and-diagnosis.md](../analysis/cli-experience-audit/interoperability-and-diagnosis.md),
+[presentation-field-audit.md](../analysis/cli-experience-audit/presentation-field-audit.md),
+[repository-dogfood-and-configuration.md](../analysis/cli-experience-audit/repository-dogfood-and-configuration.md).
 
 - **One diagnosis engine.** `doctor` becomes the single source; every other command
   renders a filtered view. Invariants: if a command blocks, `doctor` has that
@@ -1138,9 +1138,9 @@ current: 105; verified: 105`. **S**
 The missing MVC selection stage, the flag model, and every output defect.
 **Write the contract before delegating the volume.**
 
-Backing: [command-output-design.md](../../../emerging/analysis/cli-experience-audit/command-output-design.md),
-[lifecycle-baselines-and-architecture.md](../../../emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md),
-[repository-dogfood-and-configuration.md](../../../emerging/analysis/cli-experience-audit/repository-dogfood-and-configuration.md).
+Backing: [command-output-design.md](../analysis/cli-experience-audit/command-output-design.md),
+[lifecycle-baselines-and-architecture.md](../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md),
+[repository-dogfood-and-configuration.md](../analysis/cli-experience-audit/repository-dogfood-and-configuration.md).
 
 - **Rename the format vocabulary with the flag.** `--projection text|json|tsv`
   makes `Human` incoherent as a type name, so `*HumanRenderer` becomes
@@ -1172,7 +1172,7 @@ Backing: [command-output-design.md](../../../emerging/analysis/cli-experience-au
   the problem it resolves; evidence nests inside the proposal at `verbose`; coverage is
   a count; a disclosure is said once. Applying just the first two rules takes 11,455 to
   **696** before any presentation decision. Full analysis in
-  [finding-model.md](../../../emerging/analysis/cli-experience-audit/finding-model.md). **M · judgment**
+  [finding-model.md](../analysis/cli-experience-audit/finding-model.md). **M · judgment**
 - **Delete `reference.target-valid`, `reference.cycle`, `reference.repeat` and
   `reference.external-unchecked` as findings.** 8,454 of 11,455. The last is a
   capability disclosure — _"Open Forge does not fetch external URLs"_ — repeated 98
@@ -1185,7 +1185,7 @@ Backing: [command-output-design.md](../../../emerging/analysis/cli-experience-au
   11,455 findings here, so do those passes first and the remaining severity calls are
   few. Mark each surviving code as correctness (fixed) or house style (configurable via
   `rules`). Procedure in
-  [severity-and-command-division.md](../../../emerging/analysis/cli-experience-audit/severity-and-command-division.md). **M · judgment**
+  [severity-and-command-division.md](../analysis/cli-experience-audit/severity-and-command-division.md). **M · judgment**
 - **Fix external Extension sources — they fail silently.** With the payload at
   `<package>/.agents/…` instead of `<package>/content/.agents/…`, install reports
   `Status: complete`, `Effects: 0` and installs nothing, with no explanation. This is
@@ -1245,7 +1245,7 @@ Backing: [command-output-design.md](../../../emerging/analysis/cli-experience-au
 - **Add a hard output ceiling**, enforced by the selection layer and configured by
   `thresholds.outputLines`. **M · judgment**
 - **Rewrite each command's renderer** to the per-command designs in
-  [command-output-design.md](../../../emerging/analysis/cli-experience-audit/command-output-design.md). ~20 renderers; mechanical
+  [command-output-design.md](../analysis/cli-experience-audit/command-output-design.md). ~20 renderers; mechanical
   once the contract exists. **L**
 - **Promote and document the `find` TSV format.** `--view compact` already emits the
   composable one-line-per-hit shape, but it is undocumented and prose findings are
@@ -1281,8 +1281,8 @@ for the generated tree`. Moved here from Phase 0; it is wording, not behaviour. 
 355 lines and 6 files against 18,309 for recovery, mutation and locking — a
 **52:1** ratio, and the direct cause of every defect in this group.
 
-Backing: [interaction-layer.md](../../../emerging/analysis/cli-experience-audit/interaction-layer.md),
-[repository-dogfood-and-configuration.md](../../../emerging/analysis/cli-experience-audit/repository-dogfood-and-configuration.md).
+Backing: [interaction-layer.md](../analysis/cli-experience-audit/interaction-layer.md),
+[repository-dogfood-and-configuration.md](../analysis/cli-experience-audit/repository-dogfood-and-configuration.md).
 
 - **Give interaction a real budget.** A keystroke reader, a redrawable selection
   list, a confirmation renderer that shows its plan, and a non-interactive
@@ -1313,9 +1313,9 @@ Backing: [interaction-layer.md](../../../emerging/analysis/cli-experience-audit/
 
 What ships, how it reads, and why implementers skip it.
 
-Backing: [taxonomy-and-adoption.md](../../../emerging/analysis/cli-experience-audit/taxonomy-and-adoption.md),
-[loading-and-scope-discipline.md](../../../emerging/analysis/cli-experience-audit/loading-and-scope-discipline.md),
-[lifecycle-baselines-and-architecture.md](../../../emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md).
+Backing: [taxonomy-and-adoption.md](../analysis/cli-experience-audit/taxonomy-and-adoption.md),
+[loading-and-scope-discipline.md](../analysis/cli-experience-audit/loading-and-scope-discipline.md),
+[lifecycle-baselines-and-architecture.md](../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md).
 
 - **Ship a good template for every root category in core.** A bare install ships
   **zero** templates; even with `development-toolkit` there is nothing for
@@ -1370,7 +1370,7 @@ Backing: [taxonomy-and-adoption.md](../../../emerging/analysis/cli-experience-au
   directions."_ Add the redirect clause naming `directives` / `guidance` / `patterns` /
   `workflows`. Better than the current text on four counts; addresses the 1,288-vs-40
   imbalance. Analysis in
-  [category-boundaries-and-wording.md](../../../emerging/analysis/cli-design-retrospective/category-boundaries-and-wording.md). **S**
+  [category-boundaries-and-wording.md](../analysis/cli-design-retrospective/category-boundaries-and-wording.md). **S**
 - **Keep Workflows. Decided.** Runtime independence is premise-level: a Workflow is
   followable by any agent or human, a Skill needs a runtime implementing `SKILL.md`.
   Deleting Workflows would make the method layer depend on a vendor format. **—**
@@ -1448,7 +1448,7 @@ Backing: [taxonomy-and-adoption.md](../../../emerging/analysis/cli-experience-au
 asserts a command's composed output.** Seven of nine audit findings survived
 because of an _absent scenario_, not an absent assertion.
 
-Backing: [test-strategy-and-scenarios.md](../../../emerging/analysis/cli-experience-audit/test-strategy-and-scenarios.md).
+Backing: [test-strategy-and-scenarios.md](../analysis/cli-experience-audit/test-strategy-and-scenarios.md).
 
 - **Write the cross-command property assertions now, before anything else.** They
   need no snapshots and no runner, they express the G4 contract rather than current
@@ -1457,7 +1457,7 @@ Backing: [test-strategy-and-scenarios.md](../../../emerging/analysis/cli-experie
   `outputLines` threshold; errors before warnings before informational; a zero-finding
   result never contains `findings:`; valid UTF-8 with no `\uXXXX`, `\\` or literal
   `\n`; rendering is idempotent. Cheapest high-value work in the plan. Full analysis in
-  [model-level-snapshot-testing.md](../../../emerging/analysis/cli-experience-audit/model-level-snapshot-testing.md). **S**
+  [model-level-snapshot-testing.md](../analysis/cli-experience-audit/model-level-snapshot-testing.md). **S**
 - **Finish the string-snapshot tool, and prove it on two or three commands now.** Full
   rendered command output belongs in the **integration** layer: real workspace → real
   operation → real renderer already runs in-process there today. The integration
@@ -1482,7 +1482,7 @@ Backing: [test-strategy-and-scenarios.md](../../../emerging/analysis/cli-experie
   in-process. The scenarios layer collapses into it — a snapshot and a journey are the
   same mechanism with a different number of `RunAsync` calls. End-to-end shrinks to a
   process smoke suite. Full analysis in
-  [test-layer-consolidation.md](../../../emerging/analysis/cli-experience-audit/test-layer-consolidation.md). **M · judgment**
+  [test-layer-consolidation.md](../analysis/cli-experience-audit/test-layer-consolidation.md). **M · judgment**
 - **Reduce end-to-end to its six real concerns**: the AOT binary runs at all, real OS
   signals, real `Console.IsInputRedirected`, the relocated executable and embedded
   payload, file-descriptor-level stream separation, and npm wrapper parity. Today it

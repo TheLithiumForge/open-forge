@@ -18,14 +18,14 @@ LIB-UNATTACHED: real contained shared-guides, an existing destination route and 
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | open-forge library attach team shared-guides --to .agents/guidance/team --automatic | [C26-01](../scenarios/commands/c26-library-attach.md#c26-01) | Relative file symlinks and a registration exist; source bytes are untouched. |
-| 2 | open-forge library inspect team | [C25-01](../scenarios/commands/c25-library-inspect.md#c25-01) | The initial complete inventory and links agree. |
-| 3 | Add one eligible file to shared-guides, then run open-forge library inspect team. | [C25-02](../scenarios/commands/c25-library-inspect.md#c25-02) | A source addition is visible without creating its link yet. |
-| 4 | open-forge library sync team --automatic | [C27-02](../scenarios/commands/c27-library-sync.md#c27-02) | The added source file now has the correct relative destination link. |
-| 5 | Add one other source member and retire a different existing one, then sync again. | [C27-04](../scenarios/commands/c27-library-sync.md#c27-04) | Membership changes are applied while unchanged links survive. |
-| 6 | open-forge library detach team --automatic | [C28-01](../scenarios/commands/c28-library-detach.md#c28-01) | Registered links and the registration are removed; the remaining source files stay. |
+| Step | Action                                                                              | Scenario                                                      | State passed forward                                                                |
+| ---: | ----------------------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+|    1 | open-forge library attach team shared-guides --to .agents/guidance/team --automatic | [C26-01](../scenarios/commands/c26-library-attach.md#c26-01)  | Relative file symlinks and a registration exist; source bytes are untouched.        |
+|    2 | open-forge library inspect team                                                     | [C25-01](../scenarios/commands/c25-library-inspect.md#c25-01) | The initial complete inventory and links agree.                                     |
+|    3 | Add one eligible file to shared-guides, then run open-forge library inspect team.   | [C25-02](../scenarios/commands/c25-library-inspect.md#c25-02) | A source addition is visible without creating its link yet.                         |
+|    4 | open-forge library sync team --automatic                                            | [C27-02](../scenarios/commands/c27-library-sync.md#c27-02)    | The added source file now has the correct relative destination link.                |
+|    5 | Add one other source member and retire a different existing one, then sync again.   | [C27-04](../scenarios/commands/c27-library-sync.md#c27-04)    | Membership changes are applied while unchanged links survive.                       |
+|    6 | open-forge library detach team --automatic                                          | [C28-01](../scenarios/commands/c28-library-detach.md#c28-01)  | Registered links and the registration are removed; the remaining source files stay. |
 
 ## Alternatives and recovery
 
@@ -40,6 +40,26 @@ Scenarios: [C26-05](../scenarios/commands/c26-library-attach.md#c26-05).
 Do not infer retirements or delete links from partial inventory.
 
 Scenarios: [C27-09](../scenarios/commands/c27-library-sync.md#c27-09).
+
+### Ignore the local projection
+
+The accepted [Attach ignore choice](../../contracts/library/attach/interface.md#library-git-ignore-choice)
+extends this flow. During interactive Attach, choose whether to Git-ignore the
+projected links; No is the default. To exercise opt-in unattended, add
+`--git-ignore true --allow-path .gitignore` to step 1 and preview first with
+`--dry-run`. Explicit false and unattended omission leave ignore rules unchanged.
+
+Observe exact destination rules in the separate Library-owned section. Steps 4
+and 5 update those rules along with source membership; step 6 releases them.
+Shared folders, authored rules, the Install section and other Library entries
+remain intact. Removing one projected link also releases its owned entry through
+the root Remove plan. Keep source bytes unchanged throughout. The ignore-file
+write uses existing Library permission on Attach, Sync and Detach.
+
+The completed [Task 74](../../../../../archived/cli-development/tasks/task74-library-attachment-git-ignore-choice.md)
+records local implementation and qualification of this alternative, including
+real-terminal choice evidence and the complete managed and supported Windows
+Native AOT gates.
 
 ## Final result
 

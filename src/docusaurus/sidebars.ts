@@ -7,8 +7,9 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Getting started",
       collapsed: false,
-      items: ["getting-started/installation", "getting-started/greenfield-and-brownfield", "getting-started/first-task", "getting-started/grow-your-framework"],
+      items: ["getting-started/installation", "getting-started/greenfield-and-brownfield"],
     },
+    "getting-started/ten-minute-guide",
     "highlights",
     {
       type: "category",

@@ -28,7 +28,7 @@ An Extension is a way to ship files. Routed files take on the meaning of the rou
 
 ## Why Extensions exist
 
-The base Framework carries only what every workspace needs. It's 15 files: `AGENTS.md`, `CLAUDE.md`, the loader, an [entrypoint](../concepts/routing.md#entrypoints) for each of the six [Core categories](../concepts/core-categories.md), the [Memory](../concepts/memory.md) entrypoint with its four state entrypoints, and the `open-forge-cli` Skill. Every install includes all of them, and most of them are read at the start of every task. Methods for planning, documenting, developing, or coordinating agents are useful, but not every workspace wants them, so they ship as packages you choose. Everything else, such as Decisions, Checkpoints, workflow recipes, and starter Templates, comes from an Extension or from you.
+Full Core supplies 15 files: `AGENTS.md`, `CLAUDE.md`, the loader, an [entrypoint](../concepts/routing.md#entrypoints) for each of the six [Core categories](../concepts/core-categories.md), the [Memory](../concepts/memory.md) entrypoint with its four state entrypoints, and the `open-forge-cli` Skill. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). Methods for planning, documenting, developing, or coordinating agents ship as optional packages you choose. Records such as Decisions and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
 
 Three rules shape the catalogue:
 

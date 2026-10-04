@@ -174,7 +174,8 @@ The ordered plan contains only:
 - an explicitly approved permission create/replace before link deletion;
 - exact relative-file-link `Delete` effects for registered links whose raw
   target matches, including dangling links;
-- permitted bounded generated-region replacements; and
+- permitted bounded generated-region replacements;
+- a required ordinary ignore-file Replace; and
 - an ordinary lock creation or replacement as the final publication
   effect.
 
@@ -201,6 +202,20 @@ effect, record effect, and other blocker, then stops before lease acquisition
 or recovery capability probing. It writes no consumer or application-data
 state. Retained destinations produce `Attention2`/`completed-with-warnings`
 output even though dry-run writes nothing.
+
+## Owned Ignore Cleanup
+
+Derive the surviving opted-in mapped-path union without source enumeration.
+For a selected opted-in Library, validate the separate owned section and form
+only its required ordinary ignore-file change with the exact prior snapshot.
+Preserve authored bytes and other owners. A safely observed absent ignore file
+needs no recreation. The [Interface](interface.md#owned-ignore-cleanup) retains
+the existing permission boundary for a required write.
+
+Include this effect in complete plan comparison, final reobservation, recovery,
+source protection, application, verification and partial reporting. Verify it
+after the selected content/navigation effects and before record publication.
+It is companion state in the same plan, not an after-hook or implicit rollback.
 
 ## Consumer Permission
 
@@ -260,11 +275,13 @@ the first effect under the shared mutation boundary; an effect-free plan has no
 recovery bundle. Library recovery distinguishes:
 
 - a prior-missing ordinary consumer-record `Create`;
+- an ordinary ignore-file `Replace` with its exact prior bytes;
 - a relative-file-link `Create` at an exact missing destination; and
 - a relative-file-link `Delete` carrying the exact registered raw relative
   target.
 
-It stores consumer-side record and permission bytes and raw link identity only. It never
+It stores prior consumer-side record and permission bytes or absence, prior
+ignore-file bytes for required changes, and raw link identity. It never
 stores, opens, follows, restores, or deletes source bytes. Strong no-follow
 recovery can remove an exact created link or recreate an exact deleted link
 only when its destination is safely missing and the recorded raw target is

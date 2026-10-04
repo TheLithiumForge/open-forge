@@ -17,7 +17,8 @@ internal sealed class ScriptedCliTerminal
         ArgumentNullException.ThrowIfNull(capabilities);
         _lines = new Queue<string?>(lines ?? []);
         _keys = new Queue<CliKeyStroke?>(keys ?? []);
-        Terminal = new CliTerminal(capabilities, WriteAsync, ReadLineAsync, ReadKeyAsync);
+        var selectionView = capabilities.CanRedraw ? new CliTerminalSelectionView(() => Viewport, Clear) : null;
+        Terminal = new CliTerminal(capabilities, WriteAsync, ReadLineAsync, ReadKeyAsync, selectionView);
     }
 
     internal CliTerminal Terminal { get; }
@@ -25,6 +26,12 @@ internal sealed class ScriptedCliTerminal
     internal int WriteCalls { get; private set; }
     internal int LineReadCalls { get; private set; }
     internal int KeyReadCalls { get; private set; }
+    internal int ClearCalls { get; private set; }
+    internal List<string> Frames { get; } = [];
+    internal CliTerminalViewport? Viewport { get; set; } = new(80, 24);
+    internal bool CanClear { get; set; } = true;
+    internal Action<int>? BeforeKeyRead { get; set; }
+    private bool _selectionWrite;
 
     internal static ScriptedCliTerminal Lines(
         IEnumerable<string?> lines,
@@ -34,7 +41,7 @@ internal sealed class ScriptedCliTerminal
     internal static ScriptedCliTerminal Keys(
         IEnumerable<CliKeyStroke?> keys,
         bool canPrompt = true,
-        bool canRedraw = false)
+        bool canRedraw = true)
     {
         var capabilities = canPrompt
             ? new CliTerminalCapabilities(true, true, canRedraw)
@@ -47,7 +54,19 @@ internal sealed class ScriptedCliTerminal
         cancellationToken.ThrowIfCancellationRequested();
         WriteCalls++;
         Output.Append(content.Span);
+        if (_selectionWrite)
+        {
+            Frames.Add(content.ToString());
+            _selectionWrite = false;
+        }
         return ValueTask.CompletedTask;
+    }
+
+    private bool Clear()
+    {
+        ClearCalls++;
+        _selectionWrite = CanClear;
+        return CanClear;
     }
 
     private ValueTask<string?> ReadLineAsync(CancellationToken cancellationToken)
@@ -61,6 +80,7 @@ internal sealed class ScriptedCliTerminal
     {
         cancellationToken.ThrowIfCancellationRequested();
         KeyReadCalls++;
+        BeforeKeyRead?.Invoke(KeyReadCalls);
         return ValueTask.FromResult<CliKeyStroke?>(_keys.Count == 0 ? null : _keys.Dequeue());
     }
 }

@@ -43,6 +43,10 @@ internal sealed record RouteInitPlan
 
     internal WorkspaceOwnershipRead? Ownership { get; }
 
+    internal RouteInitRestoration? Restoration { get; init; }
+
+    internal ImmutableArray<FileStateSnapshot> SourceSnapshots { get; init; } = [];
+
     internal bool IsNoOp => DirectoryCreations.Length == 0
         && FileChanges.Length == 0;
 

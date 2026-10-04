@@ -220,6 +220,8 @@ internal static class LibrarySyncWording
 
     internal static string FindingTitle(LibrarySyncFindingCode code) => code switch
     {
+        LibrarySyncFindingCode.GitIgnoreBlocked => global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.Blocked(),
+        LibrarySyncFindingCode.GitIgnoreUnavailable => global::OpenForge.Cli.OutputText.Library.Shared.LibraryGitIgnoreText.Unavailable(),
         LibrarySyncFindingCode.InvalidInput => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleInvalidInput(),
         LibrarySyncFindingCode.PermissionRequired => global::OpenForge.Cli.OutputText.Shared.SharedText.TitlePermissionIsRequired(),
         LibrarySyncFindingCode.PermissionDeclined => global::OpenForge.Cli.OutputText.Shared.SharedText.TitlePermissionWasDeclined(),
@@ -265,6 +267,8 @@ internal static class LibrarySyncWording
 
     internal static string Family(LibrarySyncFindingCode code) => code switch
     {
+        LibrarySyncFindingCode.GitIgnoreBlocked => "local",
+        LibrarySyncFindingCode.GitIgnoreUnavailable => "local",
         LibrarySyncFindingCode.InvalidInput => "invalid-input",
         LibrarySyncFindingCode.InvalidId or LibrarySyncFindingCode.RecordInvalid
             or LibrarySyncFindingCode.SourceRootInvalid or LibrarySyncFindingCode.SourceRootUnavailable

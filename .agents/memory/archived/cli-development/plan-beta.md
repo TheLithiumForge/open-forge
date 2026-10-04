@@ -10,7 +10,7 @@ open-forge:
 
 The maintainer requested the [lossless source wording proposal](../beta-preparation/src-wording-proposal.md)
 on 2026-09-22. The maintainer subsequently authorized all eight replacements; they are
-applied to source and matching workspace copies for review. The [default Skill indexing follow-up](../../working/cli-development/tasks/task47-default-skill-indexing.md)
+applied to source and matching workspace copies for review. The [default Skill indexing follow-up](tasks/task47-default-skill-indexing.md)
 is recorded for later specification under Task 47, with Task 46 sharing the
 native metadata and topology boundary.
 

@@ -7,11 +7,11 @@ open-forge:
 # Task 35 — Removal and Suppression Model
 
 **Closed on 2026-09-28** by the maintainer, following the
-[review](../../../emerging/analysis/open-task-review/task35-removal-and-suppression-model.md). Task 50 settled the
+[review](../analysis/open-task-review/task35-removal-and-suppression-model.md). Task 50 settled the
 model: one delegating `remove` command, exclusions stored in
 `.agents/open-forge.json`, and a defined set of commands that consult them.
 Writing the Decision that records the options not chosen moved to
-[Task 64](../../../working/cli-development/tasks/task64-cli-defects-and-contract-drift.md).
+[Task 64](task64-cli-defects-and-contract-drift.md).
 
 The sections below are the record as it stood before closing.
 
@@ -44,11 +44,11 @@ exactly why the tests come first.
 Checked against the merged tree on 2026-09-16. **Re-verify before relying on
 these**; they are a starting point, not a specification.
 
-| Command                     | Granularity                                          |
-| --------------------------- | ---------------------------------------------------- |
-| `route remove <id-or-path>` | one leaf file, **or** a whole category/route          |
-| `extension remove <id>`     | a whole Extension package                            |
-| `library detach <id>`       | a whole Library registration and all of its links    |
+| Command                     | Granularity                                       |
+| --------------------------- | ------------------------------------------------- |
+| `route remove <id-or-path>` | one leaf file, **or** a whole category/route      |
+| `extension remove <id>`     | a whole Extension package                         |
+| `library detach <id>`       | a whole Library registration and all of its links |
 
 - `route remove` is the only command that removes an individual file, and it
   **refuses on managed content** — `route-remove.ownership-claimed`, blocked at
@@ -128,8 +128,8 @@ here, and whether a unified verb can delegate rather than reimplement.
 The maintainer offered two candidate shapes and did not pick one:
 
 - **blacklist the thing entirely** — this path stays gone, whoever would add it;
-- **scope it by source** — this path stays gone *as far as this Extension or
-  Library is concerned*, leaving another owner free to provide it.
+- **scope it by source** — this path stays gone _as far as this Extension or
+  Library is concerned_, leaving another owner free to provide it.
 
 Decide, and decide what the unit is: an exact path, a path with its region
 claims, a subtree, or a pattern. Extensions claim **regions inside files**, so
@@ -159,7 +159,7 @@ Does a suppression survive `detach` then `attach`, or `extension remove` then
 
 The maintainer recalls that Library was at some point meant to have a removal of
 its own — possibly called `remove`, possibly `unlink` — distinguishing "remove
-this entirely" from "remove it from *this* source so it is not linked back".
+this entirely" from "remove it from _this_ source so it is not linked back".
 That second meaning is the suppression question above, arriving from a different
 direction.
 
@@ -188,7 +188,7 @@ single `open-forge remove` with a shared suppression record is right, the work i
 wasted and the CLI carries a verb it did not want. The suppression record is the
 part both Tasks need, and it belongs to this one.
 
-Task 33 owns the *requirement*. This Task owns the *shape*.
+Task 33 owns the _requirement_. This Task owns the _shape_.
 
 ## Acceptance
 

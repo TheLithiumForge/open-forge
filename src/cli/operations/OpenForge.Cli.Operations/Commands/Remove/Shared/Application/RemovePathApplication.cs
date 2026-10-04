@@ -121,6 +121,7 @@ internal sealed class RemovePathApplication
         var recoveryTargets = new List<RecoveryBundleTarget>();
         AddChange(plan.SettingsChange, recoveryTargets);
         AddChange(plan.OwnershipChange, recoveryTargets);
+        AddChange(plan.GitIgnore, recoveryTargets);
         foreach (var snapshot in plan.Files)
         {
             var change = PlannedFileChange.Delete(snapshot.Expectation);
@@ -162,6 +163,16 @@ internal sealed class RemovePathApplication
                 recoveryDisposition: recoveryResult.ResidualPath is null ? "not-required" : "retained");
         }
 
+        if (plan.GitIgnore is { } ignoreValidation)
+        {
+            var validation = await _validator.ValidateAsync(plan.Request.Workspace,
+                ignoreValidation.Change.Expectation, cancellationToken).ConfigureAwait(false);
+            if (validation.State != FileExpectationValidationState.Matched)
+            {
+                return PartialFailure(plan, [], recoveryResult.Preparation?.BundlePath,
+                    validation.Cause ?? "The Library Git-ignore target changed before removal began.");
+            }
+        }
         var recovery = recoveryResult.Preparation;
         var receipts = new List<RemoveEffect>();
         if (plan.AgentsCreation is { } creation)
@@ -284,6 +295,16 @@ internal sealed class RemovePathApplication
             }
         }
 
+        if (plan.GitIgnore is { } ignore)
+        {
+            var receipt = await ApplyFileChangeAsync(lease, ignore.Change, ignore.Before, recovery, cancellationToken).ConfigureAwait(false);
+            receipts.Add(Effect(plan.Request.Workspace, ignore.Change, "file", receipt));
+            if (!IsVerified(receipt))
+            {
+                return PartialFailure(plan, receipts, recovery?.BundlePath,
+                    receipt.Cause ?? "Library Git-ignore rules could not be updated and verified.");
+            }
+        }
         if (plan.OwnershipChange is { } ownershipChange)
         {
             var receipt = await ApplyFileChangeAsync(

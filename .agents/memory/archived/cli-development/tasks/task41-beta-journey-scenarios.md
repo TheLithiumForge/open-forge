@@ -7,7 +7,7 @@ open-forge:
 # Task 41 — Beta journey scenarios
 
 **Closed on 2026-09-28** by the maintainer, following the
-[review](../../../emerging/analysis/open-task-review/task41-beta-journey-scenarios.md). The experience flow
+[review](../analysis/open-task-review/task41-beta-journey-scenarios.md). The experience flow
 collection and Task 45's 82 journey cases replaced it. The H1 to H7 output
 checks and defect B-5 moved to [Task 39](../../../working/cli-development/tasks/task39-output-audit.md). Selecting
 further journeys stays in the [beta follow-ups](../../../working/cli-development/tasks/beta-follow-ups.md) backlog.
@@ -20,7 +20,7 @@ The sections below are the record as it stood before closing.
   2026-09-17 as the highest beta priority.
 - Owner: Root.
 - Trigger: the beta bar is that everything a user touches is polished and there
-  are no stupid bugs. Nothing currently describes what a user actually *does*,
+  are no stupid bugs. Nothing currently describes what a user actually _does_,
   so nothing tells us whether that bar is met.
 
 ## Why this exists
@@ -31,7 +31,7 @@ actually exercises, and **no one ever wrote down the scenarios** it was supposed
 to protect. A passing suite that nobody can read is not evidence.
 
 So the scenarios come first, as prose a person can judge. They are deliberately
-written as *things a user does*, not as commands to run, because the beta
+written as _things a user does_, not as commands to run, because the beta
 question is whether a person understands what happened — not whether a command
 exited zero.
 
@@ -80,7 +80,7 @@ Two passes, deliberately in this order.
 **Now: run them wide, by agent.** Each scenario is independent and read-only
 with respect to this repository, so many agents can run them in parallel in
 scratch workspaces. The point of using agents rather than assertions is that an
-agent can answer *"would a first-time reader understand this?"*, which an
+agent can answer _"would a first-time reader understand this?"_, which an
 assertion cannot. Their reports go through a reasoning pass to separate real
 defects from taste.
 

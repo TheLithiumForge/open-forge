@@ -234,6 +234,13 @@ internal static class LibraryMutationCompletionProjection
                 IntendedSha256 = FileExpectation.Hash(change.IntendedBytes.AsSpan()),
                 Expected = Expected(change.Expectation),
             }).ToArray() ?? [],
+            GitIgnore = input.Effects?.GitIgnore is { } ignore ? new LibraryGitIgnoreEffectView
+            {
+                Path = Relative(input.Workspace, ignore.Change.LogicalPath),
+                Action = ignore.Change.Kind == PlannedFileChangeKind.Create ? "create" : "replace",
+                Paths = [.. ignore.Paths],
+                Expected = Expected(ignore.Before.Expectation),
+            } : null,
             RecordEffect = input.Effects?.OwnershipChange?.Kind switch
             {
                 null => LibraryRecordEffect.None,
@@ -281,6 +288,9 @@ internal static class LibraryMutationCompletionProjection
             .Concat(execution.GeneratedRegions.Select(receipt => new LibraryMutationEffectReceipt(
                 Relative(workspace, receipt.Change.LogicalPath), LibraryResidualKind.GeneratedRegion,
                 receipt.EffectState, receipt.VerificationState)))
+            .Concat(execution.GitIgnore is null ? [] : [new LibraryMutationEffectReceipt(
+                Relative(workspace, execution.GitIgnore.Change.LogicalPath), LibraryResidualKind.GitIgnore,
+                execution.GitIgnore.EffectState, execution.GitIgnore.VerificationState)])
             .Concat(execution.Record is null
                 ? []
                 : [new LibraryMutationEffectReceipt(
@@ -458,6 +468,7 @@ internal static class LibraryMutationCompletionProjection
                 SourceRoot = library.SourceRoot.Value,
                 DestinationRoot = library.DestinationRoot.Value,
                 Paths = [.. library.Paths.Select(path => path.Value)],
+                GitIgnore = library.GitIgnore,
             })],
         };
 

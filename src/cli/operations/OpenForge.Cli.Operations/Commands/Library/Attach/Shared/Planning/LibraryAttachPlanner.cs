@@ -114,7 +114,7 @@ internal static class LibraryAttachPlanner
 
         var entries = ReadSource(input, findings);
         var newLibrary = LibraryRegistration.Create(input.Request.LibraryId, input.Request.SourceRoot,
-            input.Request.DestinationRoot, [.. entries.Select(entry => entry.SourcePath)]);
+            input.Request.DestinationRoot, [.. entries.Select(entry => entry.SourcePath)], input.Request.GitIgnore == true);
         var destinationPaths = LibraryPathIdentity.Mappings(newLibrary).Select(mapping => mapping.DestinationPath.Value).ToImmutableArray();
         if (LibraryDestinationPolicy.FindConflict(input.Request.Workspace, newLibrary, currentRecord, RelativePaths(input)) is { } conflict)
         {
@@ -157,6 +157,14 @@ internal static class LibraryAttachPlanner
                 "The destination is already owned by another managed domain.");
         }
 
+        if (input.GitIgnore is { State: not OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreReadState.Complete } ignore)
+        {
+            Add(findings, ignore.State == OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreReadState.Blocked
+                ? LibraryAttachFindingCode.GitIgnoreBlocked : LibraryAttachFindingCode.GitIgnoreUnavailable,
+                ignore.State == OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore.LibraryGitIgnoreReadState.Blocked
+                    ? CliSemanticStatus.Blocked : CliSemanticStatus.Incomplete,
+                input.Request.LibraryId.Value, ".gitignore", ignore.Cause ?? "The Library Git-ignore target is unavailable.");
+        }
         var state = PlanState(findings);
         if (state != LibraryPlanState.Complete)
         {
@@ -172,7 +180,7 @@ internal static class LibraryAttachPlanner
                 library.Id.Value,
                 library.SourceRoot.Value,
                 library.DestinationRoot.Value,
-                [.. library.Paths.Select(path => path.Value)]))]);
+                [.. library.Paths.Select(path => path.Value)], library.GitIgnore))]);
         return new LibraryAttachPlan
         {
             Permissions = null,
@@ -181,6 +189,7 @@ internal static class LibraryAttachPlanner
             Directories = boundary.Directories,
             Links = links,
             GeneratedRegions = OrderGenerated(input.GeneratedRegionChanges),
+            GitIgnore = input.GitIgnore?.Plan,
             OwnershipChange = ownershipChange,
             IntendedRecord = intendedRecord,
             Findings = Order(findings),

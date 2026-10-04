@@ -8,6 +8,8 @@ internal sealed class CliHostTerminalAdapter
     private readonly TextWriter _promptOutput;
     private readonly Func<bool> _keyAvailable;
     private readonly Func<ConsoleKeyInfo> _readKey;
+    private readonly Func<CliTerminalViewport?>? _readViewport;
+    private CliTerminalViewport? _lastViewport;
     private readonly object _lineReadGate = new();
     private Task<string?>? _pendingLineRead;
 
@@ -15,7 +17,8 @@ internal sealed class CliHostTerminalAdapter
         TextReader standardInput,
         TextWriter promptOutput,
         Func<bool> keyAvailable,
-        Func<ConsoleKeyInfo> readKey)
+        Func<ConsoleKeyInfo> readKey,
+        Func<CliTerminalViewport?>? readViewport = null)
     {
         ArgumentNullException.ThrowIfNull(standardInput);
         ArgumentNullException.ThrowIfNull(promptOutput);
@@ -25,6 +28,13 @@ internal sealed class CliHostTerminalAdapter
         _promptOutput = promptOutput;
         _keyAvailable = keyAvailable;
         _readKey = readKey;
+        _readViewport = readViewport;
+    }
+
+    internal CliTerminalViewport? ReadViewport()
+    {
+        _lastViewport = _readViewport?.Invoke();
+        return _lastViewport;
     }
 
     internal async ValueTask WriteAsync(ReadOnlyMemory<char> content, CancellationToken cancellationToken)
@@ -64,6 +74,15 @@ internal sealed class CliHostTerminalAdapter
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
+                if (_readViewport is not null)
+                {
+                    var viewport = _readViewport();
+                    if (viewport != _lastViewport)
+                    {
+                        _lastViewport = viewport;
+                        return new CliKeyStroke(CliKey.Resize);
+                    }
+                }
                 if (_keyAvailable())
                     return Map(_readKey());
             }
@@ -125,6 +144,8 @@ internal sealed class CliHostTerminalAdapter
             ConsoleKey.Enter => new CliKeyStroke(CliKey.Enter),
             ConsoleKey.Escape => new CliKeyStroke(CliKey.Escape),
             ConsoleKey.Spacebar => new CliKeyStroke(CliKey.Space, ' '),
+            ConsoleKey.PageUp => new CliKeyStroke(CliKey.PageUp),
+            ConsoleKey.PageDown => new CliKeyStroke(CliKey.PageDown),
             _ => new CliKeyStroke(CliKey.Character, key.KeyChar),
         };
 }

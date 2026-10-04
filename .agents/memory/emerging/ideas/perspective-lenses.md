@@ -24,10 +24,12 @@ task-master perspectives. The current implementation places those requirements i
 a Directive and their reusable question sets in Guidance. This solves the local
 need without adding a new Core primitive.
 
-Tasks and Plans are undergoing a related local trial through experimental
-Templates and the Task Work Modes Idea. They may become reusable Memory roles,
-Templates, an Extension, or remain workspace-local records. They do not require a
-backlog to be useful.
+The [Planning Extension](../../../../src/extensions/planning/README.md)
+already supplies reusable Task and Plan Templates. The Task Work Modes Idea
+and [Local Planning review](../../working/local-planning.md) retain broader
+questions about execution modes, lifecycle and organization. Perspective
+packaging remains a separate proposal. Tasks and Plans do not require a backlog
+to be useful.
 
 ## Possibilities
 
@@ -44,9 +46,10 @@ backlog to be useful.
 
 - The CLI route-list reset showed that an implementation role and a high-reasoning
   primary agent did not by themselves preserve the top-down architecture horizon.
-- Existing advisor and reviewer roles already accept a named lens, but no reusable
-  source currently defines the top-down architect and task-master question sets.
-- Experimental Task and Plan Templates now separate what must be accomplished
+- Existing advisor and reviewer roles accept a named lens. The accepted
+  [Architectural Perspectives Guidance](../../../guidance/architectural-perspectives.md)
+  defines reusable architect and task-master question sets.
+- The Planning Extension's Task and Plan Templates separate what must be accomplished
   from how coordinated execution reaches it.
 
 ## Open Questions

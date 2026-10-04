@@ -8,6 +8,9 @@ using OpenForge.Cli.Core.Commands.Library.Inspect.Shared.Serialization;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Commands.Library;
 using OpenForge.Cli.Core.Commands.Library.Attach;
+using OpenForge.Cli.Core.Commands.Library.Attach.Models.Interaction;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.Core.Presentation.Library.Attach.Shared.Prompts;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Binding;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
@@ -74,7 +77,10 @@ internal static class CliLibraryComposer
                     new LibraryPermissionOperation(interaction.Prompts.PermissionAsync),
                     interaction.Prompts.PlanConfirmation<LibraryAttachResult, LibraryAttachData, LibraryAttachPlan>(
                         LibraryAttachPresentation.Rendering,
-                        static (LibraryAttachPlan plan) => LibraryAttachInteractionPresentation.CreateConfirmationQuestion(plan))),
+                        static (LibraryAttachPlan plan) => LibraryAttachInteractionPresentation.CreateConfirmationQuestion(plan)),
+                    new LibraryAttachIgnoreChoice(
+                        interaction.Prompts.CanPrompt(new CliPromptPolicy(true)),
+                        token => interaction.Prompts.SelectAsync(LibraryAttachIgnoreQuestion.Create(), new CliPromptPolicy(true), token))),
             }), LibraryAttachPresentation.Rendering),
             SyncBinding = CliReportBinding.Close(LibrarySyncBinding.CreateRequestBinding(sync, new LibrarySyncBindingComponents
             {

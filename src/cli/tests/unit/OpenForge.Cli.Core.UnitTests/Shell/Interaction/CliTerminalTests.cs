@@ -94,6 +94,19 @@ public sealed class CliTerminalTests
             await scripted.Terminal.ReadKeyAsync(CancellationToken.None));
     }
 
+    [Fact(DisplayName = "Legacy terminal construction cannot claim redraw without a host view"), Trait("Boundary", "Input"), Trait("Feature", "cli-interaction"), Trait("Evidence", "Unit")]
+    public void RedrawRequiresHostCallbacks()
+    {
+        var terminal = new CliTerminal(new(true, true, true),
+            static (_, _) => ValueTask.CompletedTask,
+            static _ => ValueTask.FromResult<string?>(null),
+            static _ => ValueTask.FromResult<CliKeyStroke?>(null));
+
+        Assert.False(terminal.CanRedraw);
+        Assert.Null(terminal.ReadSelectionViewport());
+        Assert.False(terminal.ClearSelection(CancellationToken.None));
+    }
+
     private static async Task AssertAllUnavailableAsync(ScriptedCliTerminal scripted, CliPromptPolicy policy)
     {
         var prompts = new CliPrompts(scripted.Terminal);

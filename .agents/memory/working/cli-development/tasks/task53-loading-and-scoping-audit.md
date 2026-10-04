@@ -6,7 +6,7 @@ open-forge:
 
 # Task 53 — Loading and scoping audit for 1.0
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task53-loading-and-scoping-audit.md). Recommendation:
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task53-loading-and-scoping-audit.md). Recommendation:
 Do next. The review names any details in this record that are out of date.
 
 ## Outcome
@@ -35,7 +35,7 @@ Directive once accepted.
 
 **Preserve / out of scope:** the loader's tag semantics themselves, unless the
 audit finds a rule that cannot be applied consistently. Tag vocabulary beyond
-the two loading tags belongs to [Task 54](task54-tag-trimming.md).
+the two loading tags belongs to [Task 54](../../../archived/cli-development/tasks/task54-tag-trimming.md).
 
 **Done when:**
 
@@ -92,7 +92,7 @@ on active-context size are related evidence.
 ## Folded in on 2026-09-28
 
 - **From [Task 60](../../../archived/cli-development/tasks/task60-cli-skill.md): should the loader's CLI section shrink
-  to a pointer?** The [review](../../../emerging/analysis/open-task-review/task60-cli-skill.md) proposes one
+  to a pointer?** The [review](../../../archived/cli-development/analysis/open-task-review/task60-cli-skill.md) proposes one
   sentence saying the CLI is optional and the files stay complete without it,
   pointing to the `open-forge-cli` Skill and `open-forge --help`. The Skills
   entrypoint loads at startup, so the Skill stays reachable, and the change

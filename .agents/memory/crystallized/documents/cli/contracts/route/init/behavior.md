@@ -66,9 +66,10 @@ details and remains technology-neutral.
   `Entries` effects required by the intended topology may affect an existing
   entrypoint.
 - The generic draft scaffold is command behavior, not a Template instantiation.
-  Framework mode copies canonical embedded entrypoint assets through the neutral
+  Framework mode copies canonical embedded assets through the neutral
   distribution capability. Neither mode creates the Loader or infers route
-  meaning from folder names.
+  meaning from folder names. Exact canonical restoration may additionally
+  change only its reviewed settings exclusions and selected missing payload.
 - Request resolution remains explicit and non-wizard. The operation has no
   `--automatic` mode, alias, or inferred current-scope mode.
 
@@ -129,6 +130,17 @@ boundaries; this command does not guess another target shape from filesystem
 coincidence.
 
 ### Framework alignment and scope labels
+
+For an exact unscoped canonical Core root or Core Memory state, select the
+restoration behavior defined by the Interface's Canonical base-route restoration
+section before sparse alignment. Observe settings and selected embedded assets,
+retain explicit descendant omissions, reject broader excluded ancestors, and
+form bounded settings/payload/navigation effects together. Revalidate the exact
+settings snapshot under the held workspace lease. Verify all effects before
+publishing ownership; claim only new payload files and actual generated regions.
+Use neutral distribution/settings/mutation primitives, never sibling Install or
+Update operation policy. An installed safe Loader remains required; selected
+missing roots are allowed. Other Framework targets follow sparse alignment below.
 
 When `--framework` is selected, resolve the embedded Framework payload and
 canonical topology through the neutral distribution capability. Require the
@@ -267,7 +279,7 @@ The complete current-fact set for one plan includes:
 
 - The selected workspace and the normalized target identity and canonical path.
 - The selected generic or Framework mode and, for Framework mode, exact embedded
-  inventory, canonical topology alignment, actual installed root route, and
+  inventory, canonical topology alignment, safe Loader and applicable root state, and
   source-asset provenance.
 - Every folder in the target chain and its canonical or recognized
   compatibility entrypoint state.
@@ -375,14 +387,16 @@ validated route target, mode, and applicable metadata
 ### Complete plan
 
 Build the full ordered plan before the first persistent effect. It contains the
-new directories, new entrypoint files, and bounded replacements of existing
+new directories, new entrypoint files, applicable canonical restoration
+payload/settings effects, and bounded replacements of existing
 machine-owned generated interiors required by the intended topology. A blocked
 target or projection fact prevents all effects. Safe facts that do not provide
 the required inspection or planning coverage form `incomplete` and also prevent
 all effects. There is no partial or best-effort application.
 
 Keep directory creation separate from file Create/Replace/Delete and limit it
-to directories in the intended route chain. A generic plan that starts without
+to directories in the intended route chain or selected canonical payload
+subtree. A generic plan that starts without
 `.agents` exposes that exact path as its first ordinary directory-create effect.
 After acquiring the external workspace lease, the shared applier confirms the
 path is missing, creates and verifies it, and reports its actual residual state.
@@ -421,8 +435,9 @@ material. It reports complete effects and diffs even when the semantic status is
 ### Application
 
 Omitting `--dry-run` selects application. The explicit command and target are
-confirmation for the missing route chain and the planned generated interiors
-only. Application does not prompt and does not accept `--yes`.
+confirmation for the missing route chain, planned generated interiors and,
+for canonical restoration, its selected missing payload and exact settings
+exclusion changes. Application does not prompt and does not accept `--yes`.
 
 Before the first effect, preflight checks every planned new-path collision,
 planned existing path, route relationship, metadata fact, generated boundary,
@@ -566,6 +581,11 @@ in addition to the caller-visible [Interface Contract](interface.md):
   inferred current-scope mode.
 - Generic and Framework mode selection, invalid metadata combinations, and
   idempotent repeated `--framework`.
+- Exact canonical root/Memory-state restoration with missing roots, complete
+  native Skill payload, necessary ancestors, retained descendant omissions,
+  explicit selected exclusion clearing, broader-ancestor refusal, unknown
+  settings preservation, settings snapshot revalidation, authored occupants,
+  bounded navigation, honest payload/settings projection and repeat no-op.
 - Unique embedded canonical-topology alignment for both ID-form and exact-path
   input, with zero, one, multiple, and consecutive scopes; scopes before and
   between managed segments; reordered segment, nested-root, ambiguous-alignment,

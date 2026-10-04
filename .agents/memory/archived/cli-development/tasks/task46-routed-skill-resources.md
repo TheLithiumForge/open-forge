@@ -7,8 +7,8 @@ open-forge:
 # Task 46 — Routed Skill resources
 
 **Folded on 2026-09-28** into the
-[default Skill indexing follow-up](../../../working/cli-development/tasks/task47-default-skill-indexing.md) by the
-maintainer, following the [review](../../../emerging/analysis/open-task-review/task46-routed-skill-resources.md).
+[default Skill indexing follow-up](task47-default-skill-indexing.md) by the
+maintainer, following the [review](../analysis/open-task-review/task46-routed-skill-resources.md).
 The thirteen-warning Doctor report no longer reproduces, and Skill metadata is
 read natively. The surviving question moved there: can a native Skill host
 routed resources, and on what terms?
@@ -20,13 +20,13 @@ The sections below are the record as it stood before folding.
 - State: **Rechecked; fresh-install report superseded, broader routing choice remains open.** Raised by the maintainer on 2026-09-18.
 - Owner: Root.
 
-The 2026-09-21 [navigation recheck](../../../working/cli-development/tasks/beta-follow-ups/task46-47-navigation.md) found zero Doctor findings after installing Core and all bundled Extensions. The thirteen-warning report below is historical and no longer reproduces. The packet separates the surviving catalogue-advice defect from the broader resource-routing decision.
+The 2026-09-21 [navigation recheck](beta-follow-ups/task46-47-navigation.md) found zero Doctor findings after installing Core and all bundled Extensions. The thirteen-warning report below is historical and no longer reproduces. The packet separates the surviving catalogue-advice defect from the broader resource-routing decision.
 
 - Caused by [Task 43](task43-workflows-as-skill.md) landing: the Workflow
   Support Extension puts real routed content inside a native Skill directory,
   and the routing model has no answer for it.
 
-The maintainer requested [default Skill indexing](../../../working/cli-development/tasks/task47-default-skill-indexing.md)
+The maintainer requested [default Skill indexing](task47-default-skill-indexing.md)
 on 2026-09-22. That Task 47 follow-up must resolve shared native metadata and
 resource topology with this Task; it does not reopen the fixed Doctor advice.
 
@@ -88,7 +88,7 @@ open-forge index .agents/skills/use-workflow/references/_references.md
 ```
 
 From the loader roots, the whole subtree is invisible. Whatever this task
-decides, that asymmetry is what [Task 47](../../../working/cli-development/tasks/task47-entrypoint-reachability.md)
+decides, that asymmetry is what [Task 47](task47-entrypoint-reachability.md)
 has to resolve; the two share a root cause and should be settled together.
 
 ## Boundaries

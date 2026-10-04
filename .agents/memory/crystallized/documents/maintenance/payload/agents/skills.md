@@ -26,6 +26,7 @@ The [current Skills document](../../../framework/primitives/skills.md) defines t
 - Open Forge does not impose an internal `Entries`, `References`, scripts, or assets schema on a Skill package
 - Loose Markdown files directly under the Skills `root route` or one of its scopes do not become native Skills
 - The installable source ships one Skill package, `open-forge-cli`, and other Skills arrive through Extensions or the workspace itself
+- The baseline-loaded Skills entrypoint explicitly requires reading `open-forge-cli/SKILL.md` when present. This makes usage instructions available at startup without changing native Skill metadata, generated #Skill entries, or runtime invocation policy. Intentional omissions remain respected; the loader's CLI summary stays available. Other Skills remain selected on demand.
 - The loader keeps its short CLI command list so harnesses that never activate native Skills still see the commands, while the `open-forge-cli` Skill adds when and how to use each command safely and defers to `open-forge <command> --help` for the installed version
 
 ## Verification
@@ -33,4 +34,5 @@ The [current Skills document](../../../framework/primitives/skills.md) defines t
 - Verify native package discovery at the Skills `root route` and within routed scopes beneath it, plus package-local resource structure, generated `entries`, and cross-root rejection.
 - Verify Index selection separately: it discovers recognized entrypoints in each eligible Skill package's immediate child directories and maintains their generated `Entries`. This selection does not automatically load resources or activate the Skill.
 - Core installation tests verify that the category installs, indexes, and remains baseline-loaded
+- Inspect the installed Skills entrypoint's conditional required-read path and its target. Verify default installation loads the usage Skill and a deliberately omitted Skill leaves no dangling required-read link. Verify `context skills/open-forge-cli` batches the tag-derived startup closure and this explicitly selected Skill without duplicate sources; plain `context` reports the tag-derived closure and does not interpret prose instructions.
 - When a command's name, purpose, status meaning, or commonly used option changes, review the `open-forge-cli` Skill against the command reference and keep the Skill's examples valid

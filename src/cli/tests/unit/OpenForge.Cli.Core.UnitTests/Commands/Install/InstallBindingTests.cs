@@ -15,7 +15,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Install;
 public sealed class InstallBindingTests
 {
     [Trait("Boundary", "Input")]
-    [Fact(DisplayName = "Install exposes the exact direct zero-operand command and three boolean options"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Install exposes the exact direct zero-operand command and typed setup options"), Trait("Feature", "install-command"), Trait("Evidence", "Unit")]
     public void SymbolsExposeExactDirectGrammar()
     {
         var symbols = InstallBinding.CreateSymbols();
@@ -25,7 +25,7 @@ public sealed class InstallBindingTests
         Assert.Empty(symbols.InstallCommand.Subcommands);
         Assert.Empty(symbols.InstallCommand.Arguments);
         Assert.Equal(
-            ["--force", "--automatic", "--dry-run"],
+            ["--configure", "--preset", "--route", "--force", "--automatic", "--dry-run"],
             symbols.InstallCommand.Options.Select(option => option.Name));
         Assert.Equal(ArgumentArity.Zero, symbols.Force.Arity);
         Assert.Equal(ArgumentArity.Zero, symbols.Automatic.Arity);

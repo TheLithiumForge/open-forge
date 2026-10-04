@@ -307,12 +307,19 @@ Users receive the installable Framework from [`src/open-forge/`](../../../../../
 
 The replacement CLI embeds this complete canonical source tree through ordinary
 .NET project resources under one fixed logical-name prefix. Root `install` owns
-the closed base Framework installation. Framework-aware `route init` is a later
-scoping operation: after a trusted current root installation exists, it reuses
+the closed base Framework installation. Installation choices select a subset
+of the canonical inventory through explicit exclusions; they do not create
+another Framework model or agent runtime. Framework-aware `route init` is a later
+restoration or scoping operation: with a safe installed Loader, it can restore
+one explicitly selected canonical Core category or Memory state. For scoped
+initialization, after a trusted current root installation exists, it reuses
 the same embedded payload and canonical topology to copy selected managed
-entrypoints into one explicit concrete scoped route. There is no separate
-`install --route`, runtime source-checkout dependency, blueprint catalogue, or
-general Template renderer.
+entrypoints into one explicit concrete scoped route. Explicit `install
+--configure` changes built-in route selections and restores missing defaults
+through the [Install contracts](../cli/contracts/install/_install.md).
+Install's Custom `--route` values select built-in categories or Memory states,
+not arbitrary scoped routes. There is no runtime source-checkout dependency,
+blueprint catalogue, or general Template renderer.
 
 Inserted scope entrypoints remain user-owned. Copied canonical Framework assets
 and bounded generated regions may be lifecycle-managed only through their exact

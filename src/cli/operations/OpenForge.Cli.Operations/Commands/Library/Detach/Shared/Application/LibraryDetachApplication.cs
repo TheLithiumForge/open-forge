@@ -32,6 +32,7 @@ internal static class LibraryDetachApplication
                 Directories = directories,
                 Links = input.Plan.Links,
                 GeneratedRegions = input.Plan.GeneratedRegions,
+                GitIgnore = input.Plan.GitIgnore,
                 OwnershipChange = input.Plan.OwnershipChange,
                 RecoveryPreparation = input.RecoveryPreparation,
                 ProtectedSourceRoots = [.. (input.Plan.Input.Record.Record?.Libraries ?? []).Select(library => library.SourceRoot)],

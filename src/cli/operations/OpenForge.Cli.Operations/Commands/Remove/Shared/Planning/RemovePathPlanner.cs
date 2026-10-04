@@ -1,4 +1,7 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.GitIgnore;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Commands.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Remove.Models.Result;
@@ -278,6 +281,29 @@ internal sealed class RemovePathPlanner
                 "The exact ownership bytes required for recovery are unavailable.");
         }
 
+        RemovePathMetadataChange? gitIgnore = null;
+        var releasesIgnoredPaths = registrations.Record?.Libraries.Any(library => library.GitIgnore
+            && libraryPaths.Any(release => release.LibraryId == library.Id.Value)) == true;
+        if (normalized != LibraryGitIgnoreSection.Path && releasesIgnoredPaths && ownershipChange is not null)
+        {
+            var intended = WorkspaceOwnershipCodec.Read(ownershipChange.Change.IntendedBytes.ToArray()).Document
+                ?? throw new InvalidOperationException("The planned ownership release requires an interpretable document.");
+            var ignore = await LibraryGitIgnorePlanner.PlanAsync(new LibraryGitIgnoreRequest
+            {
+                Workspace = request.Workspace,
+                Current = registrations.Record,
+                Intended = LibraryRegistrationReader.ReadRegistrations(intended),
+                IsExcluded = WorkspaceRemovals.IsPathRemoved(LibraryGitIgnoreSection.Path, settings.Document),
+                IsRemoval = true,
+            }, cancellationToken).ConfigureAwait(false);
+            if (ignore.State != LibraryGitIgnoreReadState.Complete)
+            {
+                return Block(request, RemoveFindingCode.TargetUnsafe, CliSemanticStatus.Blocked,
+                    ignore.Cause ?? "The required Library Git-ignore reconciliation is unavailable.");
+            }
+            if (ignore.Plan is { } ignorePlan) gitIgnore = new(ignorePlan.Change, ignorePlan.Before);
+        }
+
         var agentsPath = Path.Combine(request.Workspace.LexicalRoot, ".agents");
         var agentsDirectory = NoFollowLeafObserver.Observe(_resolver, request.Workspace, agentsPath, cancellationToken);
         var agentsCreation = agentsDirectory.State == NoFollowLeafState.Missing
@@ -304,7 +330,8 @@ internal sealed class RemovePathPlanner
             Links: [.. links.OrderBy(link => link.Path, StringComparer.Ordinal)],
             Directories: [.. directories.OrderByDescending(directory => Depth(directory.LogicalPath))
                 .ThenBy(directory => directory.LogicalPath, StringComparer.Ordinal)],
-            Navigation: navigation));
+            Navigation: navigation)
+        { GitIgnore = gitIgnore });
     }
 
     internal RemoveResult Preview(RemovePathPlan plan, bool dryRun)
@@ -334,6 +361,10 @@ internal sealed class RemovePathPlanner
                 "setting",
                 RemovePathEffectActions.SettingsPersistence(plan.SettingsChange.Change),
                 dryRun ? "planned" : "done"));
+        }
+        if (plan.GitIgnore is { } ignore)
+        {
+            effects.Add(new RemoveEffect(LibraryGitIgnoreSection.Path, "file", "persist", dryRun ? "planned" : "done"));
         }
         if (plan.OwnershipChange is not null)
         {

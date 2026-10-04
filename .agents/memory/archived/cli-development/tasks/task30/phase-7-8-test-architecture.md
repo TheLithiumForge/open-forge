@@ -51,13 +51,13 @@ to make parallel execution convenient.
   review whether every test is useful.
 - [Task 30 phases 5–8](phase-5-8.md) owns the broader interaction, content,
   scenario, folder, and project sequence.
-- [View Layer And Test Architecture](../../../../emerging/analysis/cli-experience-audit/view-layer-and-test-architecture.md)
+- [View Layer And Test Architecture](../../analysis/cli-experience-audit/view-layer-and-test-architecture.md)
   supplies the concern model: pure logic, facts, in-process behavior, and
   delivered artifact.
-- [Test Layer Consolidation](../../../../emerging/analysis/cli-experience-audit/test-layer-consolidation.md)
+- [Test Layer Consolidation](../../analysis/cli-experience-audit/test-layer-consolidation.md)
   supplies the boundary between in-process behavior and the small process-smoke
   suite.
-- [Layers And Sequencing](../../../../emerging/analysis/cli-experience-audit/layers-and-sequencing.md)
+- [Layers And Sequencing](../../analysis/cli-experience-audit/layers-and-sequencing.md)
   supplies the prerequisite layer-shaped source tree and the project-split
   rationale. These analyses remain sealed provenance.
 - [Test Evidence Integrity](../../../../../directives/open-forge/testing/evidence-integrity.md),
@@ -109,13 +109,13 @@ command behind it. The gap was documentation, not capability.
 
 ### What actually costs the time
 
-| Stage | Serial | `--parallel collections` | Share of the full gate |
-| ----- | -----: | -----------------------: | ---------------------: |
-| `npm run build` | 25-90 s | n/a | 9% |
-| Unit, 3523 tests | 8.9 s | 3.8 s (`all`) | 1% |
-| Integration, 2300 tests | 4 min 04 s | **1 min 33 s** | 24% |
-| EndToEnd, 163 tests | 10 min 15 s | not measured | 59% |
-| `npm run check:dotnet` | about 1 min | n/a | 6% |
+| Stage                   |      Serial | `--parallel collections` | Share of the full gate |
+| ----------------------- | ----------: | -----------------------: | ---------------------: |
+| `npm run build`         |     25-90 s |                      n/a |                     9% |
+| Unit, 3523 tests        |       8.9 s |            3.8 s (`all`) |                     1% |
+| Integration, 2300 tests |  4 min 04 s |           **1 min 33 s** |                    24% |
+| EndToEnd, 163 tests     | 10 min 15 s |             not measured |                    59% |
+| `npm run check:dotnet`  | about 1 min |                      n/a |                     6% |
 
 The integration comparison selected, executed and reported identically: 2300
 total, 2259 passed, the same 24 snapshot failures, 17 skips. One run is a data

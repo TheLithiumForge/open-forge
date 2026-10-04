@@ -2,6 +2,6 @@ Open Forge is installed, but 1 file needs attention.
   Warning  .agents/resources/data.json  Missing Library link
          missing; it is a link of the team-knowledge Library
          open-forge library sync team-knowledge
-  Startup reads 11 of 14 routed files, about 6.0k tokens.
+  Startup reads 11 of 14 routed files, about 6.1k tokens.
   Libraries: team-knowledge
 Next: open-forge library sync team-knowledge

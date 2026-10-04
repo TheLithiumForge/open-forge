@@ -7,10 +7,10 @@ open-forge:
 # Task 33 — Managed Content Removal
 
 **Closed on 2026-09-28** by the maintainer, following the
-[review](../../../emerging/analysis/open-task-review/task33-managed-content-removal.md). Task 50's root `remove`
+[review](../analysis/open-task-review/task33-managed-content-removal.md). Task 50's root `remove`
 delivered it: one managed file can be removed and later updates respect the
 removal. The remaining contract and documentation fixes moved to
-[Task 64](../../../working/cli-development/tasks/task64-cli-defects-and-contract-drift.md).
+[Task 64](task64-cli-defects-and-contract-drift.md).
 
 The sections below are the record as it stood before closing.
 
@@ -47,11 +47,11 @@ The maintainer's framing was that Library already supports this and Extension
 does not. **That is not the case, and the gap is wider than it appeared:
 neither manager supports per-file removal.**
 
-| Command                       | Granularity                                        |
-| ----------------------------- | -------------------------------------------------- |
-| `route remove <id-or-path>`   | a single leaf file, **or** a whole category/route   |
-| `extension remove <id>`       | a whole Extension package                          |
-| `library detach <id>`         | a whole Library registration, all of its links     |
+| Command                     | Granularity                                       |
+| --------------------------- | ------------------------------------------------- |
+| `route remove <id-or-path>` | a single leaf file, **or** a whole category/route |
+| `extension remove <id>`     | a whole Extension package                         |
+| `library detach <id>`       | a whole Library registration, all of its links    |
 
 `library detach` takes a Library id, not a path — `Detached <id>: removed <N>
 links under <destination>.` — and its only option is `--automatic`. The Library
@@ -67,10 +67,10 @@ should cover both managers, not Extensions alone.**
 
 Two commands remove content, at different granularity.
 
-| Command                       | Granularity                                        |
-| ----------------------------- | -------------------------------------------------- |
-| `route remove <id-or-path>`   | a single leaf file, **or** a whole category/route   |
-| `extension remove <id>`       | a whole Extension package only                     |
+| Command                     | Granularity                                       |
+| --------------------------- | ------------------------------------------------- |
+| `route remove <id-or-path>` | a single leaf file, **or** a whole category/route |
+| `extension remove <id>`     | a whole Extension package only                    |
 
 `route remove` genuinely supports both shapes — its catalogue carries
 `Removed <path>` for a leaf and `Removed the route <id>  (<N> files)` for a
@@ -202,7 +202,7 @@ file gone". Once the capability exists, that next action should point at it.
 - Per-file removal of managed content exists for **both** Extensions and
   Libraries, in one consistent command shape.
 - A removed file stays removed across `extension update` and `open-forge
-  update`, with the chosen behaviour specified and evidenced by a test that
+update`, with the chosen behaviour specified and evidenced by a test that
   removes a file, updates, and asserts it did not return.
 - The ownership record and the filesystem agree after every path, and `doctor`
   does not report a deliberately removed file as a problem.

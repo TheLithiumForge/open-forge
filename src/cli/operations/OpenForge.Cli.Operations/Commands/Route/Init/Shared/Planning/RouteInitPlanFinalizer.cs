@@ -26,7 +26,7 @@ internal sealed class RouteInitPlanFinalizer
         ArgumentNullException.ThrowIfNull(inspection);
         ArgumentNullException.ThrowIfNull(prospective);
 
-        var effectPlan = prospective.Effects;
+        var effectPlan = RouteInitRestorationEffects.Extend(prospective.Effects, inspection.Restoration);
         OwnershipWritePlanState? ownershipState = null;
         if (inspection.Framework is { } framework)
         {
@@ -53,6 +53,7 @@ internal sealed class RouteInitPlanFinalizer
                 new RouteInitOwnershipEffectInput(writePlan, framework.Trust.Ownership.Snapshot)).Plan
                 ?? throw new InvalidOperationException(
                     "A complete scoped lifecycle plan must form complete Route Init effects.");
+            effectPlan = RouteInitRestorationEffects.Extend(effectPlan, inspection.Restoration);
         }
 
         if (effectPlan.RecoveryTargets.Count > 0)

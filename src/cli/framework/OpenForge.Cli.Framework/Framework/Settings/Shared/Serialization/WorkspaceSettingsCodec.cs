@@ -211,6 +211,54 @@ internal static class WorkspaceSettingsCodec
             settings.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
     }
 
+    internal static byte[]? ClearRemovals(ReadOnlyMemory<byte> existing, WorkspaceRemovalSelection selection)
+    {
+        ArgumentNullException.ThrowIfNull(selection);
+        ValidateSelection(selection);
+        if (existing.IsEmpty || IsEmpty(selection))
+        {
+            return null;
+        }
+
+        var decoded = Read(existing);
+        if (decoded.Document is null)
+        {
+            throw new ArgumentException(decoded.Cause, nameof(existing));
+        }
+
+        var settings = JsonNode.Parse(existing.Span, documentOptions: new JsonDocumentOptions
+        {
+            CommentHandling = JsonCommentHandling.Skip,
+            AllowTrailingCommas = true,
+        }) as JsonObject ?? throw new ArgumentException("Authored settings must contain a JSON object.", nameof(existing));
+        var changed = RemoveExact(settings, WorkspaceSettingsDefinitions.RemovedCategoriesProperty, selection.Categories);
+        changed |= RemoveExact(settings, WorkspaceSettingsDefinitions.RemovedFilesProperty, selection.Files);
+        changed |= RemoveExact(settings, WorkspaceSettingsDefinitions.RemovedDirectoriesProperty, selection.Directories);
+        changed |= RemoveExact(settings, WorkspaceSettingsDefinitions.RemovedExtensionsProperty, selection.Extensions);
+        changed |= RemoveExact(settings, WorkspaceSettingsDefinitions.RemovedLibrariesProperty, selection.Libraries);
+        return changed ? Encoding.UTF8.GetBytes(settings.ToJsonString(new JsonSerializerOptions { WriteIndented = true })) : null;
+    }
+
+    private static bool RemoveExact(JsonObject settings, string property, ImmutableArray<string> selected)
+    {
+        if (selected.IsDefaultOrEmpty || settings[property] is not JsonArray values)
+        {
+            return false;
+        }
+
+        var changed = false;
+        for (var index = values.Count - 1; index >= 0; index--)
+        {
+            if (values[index]?.GetValue<string>() is { } value && selected.Contains(value, StringComparer.Ordinal))
+            {
+                values.RemoveAt(index);
+                changed = true;
+            }
+        }
+
+        return changed;
+    }
+
     /// <summary>
     /// The declared shape, or this release's own when the file does not say. An
     /// absent version means a file written before the key existed, or by hand,

@@ -6,6 +6,14 @@ open-forge:
 
 # Task 67: Diagram labels
 
+## Current state
+
+Open, with maintainer review deferred by the later wave selection. The diagram
+changes, council reasoning, and browser evidence below remain retained review
+material. Older branch handoff steps are historical. Use the
+[current ledger](../project-control.md#active-task-ledger) before selecting
+another change or integration step. This cleanup does not close the review.
+
 ## Outcome
 
 Requested by the maintainer on 2026-09-28, after reviewing the diagram from

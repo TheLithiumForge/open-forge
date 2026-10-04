@@ -5,6 +5,8 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Shared.Terminal;
 
 namespace OpenForge.Cli.EndToEndTests.Shared.Journeys;
 
@@ -45,12 +47,23 @@ internal static class PublishedWindowsTerminal
         IReadOnlyList<string> arguments,
         IReadOnlyDictionary<string, string> environmentVariables,
         string input)
+        => await RunAsync(target, workingDirectory, arguments, environmentVariables,
+            new PublishedTerminalScenario { Steps = [new(null, input)] }).ConfigureAwait(false);
+
+    internal static async Task<PublishedTerminalResult> RunAsync(
+        PublishedExecutableTarget target,
+        string workingDirectory,
+        IReadOnlyList<string> arguments,
+        IReadOnlyDictionary<string, string> environmentVariables,
+        PublishedTerminalScenario scenario)
     {
         ArgumentNullException.ThrowIfNull(target);
         ArgumentException.ThrowIfNullOrWhiteSpace(workingDirectory);
         ArgumentNullException.ThrowIfNull(arguments);
         ArgumentNullException.ThrowIfNull(environmentVariables);
-        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(scenario);
+        if (scenario.Size.Width <= 0 || scenario.Size.Height <= 0)
+            throw new ArgumentException("Terminal dimensions must be positive.", nameof(scenario));
 
         if (!OperatingSystem.IsWindows())
         {
@@ -74,7 +87,7 @@ internal static class PublishedWindowsTerminal
             workingDirectory,
             arguments,
             environmentVariables,
-            input,
+            scenario,
             TestContext.Current.CancellationToken).ConfigureAwait(false);
     }
 
@@ -83,7 +96,7 @@ internal static class PublishedWindowsTerminal
         string workingDirectory,
         IReadOnlyList<string> arguments,
         IReadOnlyDictionary<string, string> environmentVariables,
-        string input,
+        PublishedTerminalScenario scenario,
         CancellationToken cancellationToken)
     {
         nint ptyInputRead = nint.Zero;
@@ -121,7 +134,7 @@ internal static class PublishedWindowsTerminal
             CreatePipe(ref ptyOutputRead, ref ptyOutputWrite, ref pipeAttributes);
 
             var createPseudoConsoleResult = CreatePseudoConsole(
-                new Coord(120, 30),
+                new Coord(scenario.Size.Width, scenario.Size.Height),
                 ptyInputRead,
                 ptyOutputWrite,
                 0,
@@ -180,7 +193,7 @@ internal static class PublishedWindowsTerminal
                 commandLineText,
                 appendTerminator: true);
             environmentBlock = AllocateUtf16(
-                BuildEnvironmentBlock(environmentVariables),
+                BuildEnvironmentBlock(environmentVariables, scenario.TerminalName),
                 appendTerminator: false);
             currentDirectory = AllocateUtf16(workingDirectory, appendTerminator: true);
             WriteTerminalCommand(commandLineText, workingDirectory);
@@ -220,8 +233,9 @@ internal static class PublishedWindowsTerminal
             CloseHandleOrThrow(ref ptyInputRead);
             CloseHandleOrThrow(ref ptyOutputWrite);
 
+            var liveTranscript = new PublishedTerminalTranscript();
             outputReader = Task.Run(
-                () => ReadTerminalOutput(ptyOutputRead),
+                () => ReadTerminalOutput(ptyOutputRead, liveTranscript),
                 CancellationToken.None);
             processWait = WaitForProcessAsync(processHandle);
             var waitDeadline = Stopwatch.GetTimestamp();
@@ -229,12 +243,23 @@ internal static class PublishedWindowsTerminal
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                inputWriter = TerminalInputWriter.Create(ptyInputWrite, input);
-                if (inputWriter is not null)
+                foreach (var step in scenario.Steps)
                 {
-                    inputWriter.StartAndSignalWrite(
-                        GetRemainingTime(waitDeadline),
-                        cancellationToken);
+                    if (step.WaitFor is { } marker)
+                        await liveTranscript.WaitForAsync(marker, GetRemainingTime(waitDeadline), cancellationToken).ConfigureAwait(false);
+                    if (step.Resize is { } size)
+                    {
+                        var resizeResult = ResizePseudoConsole(pseudoConsole, new Coord(size.Width, size.Height));
+                        if (resizeResult < 0) Marshal.ThrowExceptionForHR(resizeResult);
+                    }
+                    inputWriter?.Finish(cancel: false);
+                    inputWriter = TerminalInputWriter.Create(ptyInputWrite, step.Input);
+                    if (inputWriter is not null)
+                    {
+                        inputWriter.StartAndSignalWrite(GetRemainingTime(waitDeadline), cancellationToken);
+                        await inputWriter.Completion.WaitAsync(GetRemainingTime(waitDeadline), cancellationToken).ConfigureAwait(false);
+                        if (inputWriter.ObserveFailure() is { } failure) ExceptionDispatchInfo.Capture(failure).Throw();
+                    }
                 }
 
                 await WaitForProcessAndInputAsync(
@@ -456,7 +481,7 @@ internal static class PublishedWindowsTerminal
     }
 
     private static string BuildEnvironmentBlock(
-        IReadOnlyDictionary<string, string> environmentVariables)
+        IReadOnlyDictionary<string, string> environmentVariables, string terminalName)
     {
         var inherited = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (DictionaryEntry variable in Environment.GetEnvironmentVariables())
@@ -478,7 +503,7 @@ internal static class PublishedWindowsTerminal
         }
 
         inherited.Remove("TERM");
-        inherited["TERM"] = "dumb";
+        inherited["TERM"] = terminalName;
 
         var environmentBlock = new StringBuilder();
         foreach (var variable in inherited.OrderBy(variable => variable.Key, StringComparer.OrdinalIgnoreCase))
@@ -931,7 +956,7 @@ internal static class PublishedWindowsTerminal
         }
     }
 
-    private static string ReadTerminalOutput(nint outputHandle)
+    private static string ReadTerminalOutput(nint outputHandle, PublishedTerminalTranscript liveTranscript)
     {
         using var output = new MemoryStream();
         var buffer = new byte[OutputBufferSize];
@@ -959,6 +984,7 @@ internal static class PublishedWindowsTerminal
             }
 
             output.Write(buffer, 0, checked((int)bytesRead));
+            liveTranscript.Append(buffer, checked((int)bytesRead));
         }
 
         return StrictUtf8.GetString(output.ToArray());
@@ -1130,6 +1156,9 @@ internal static class PublishedWindowsTerminal
         nint outputHandle,
         uint flags,
         out nint pseudoConsole);
+
+    [DllImport("kernel32.dll", EntryPoint = "ResizePseudoConsole", ExactSpelling = true)]
+    private static extern int ResizePseudoConsole(nint pseudoConsole, Coord size);
 
     [DllImport("kernel32.dll", EntryPoint = "DeleteProcThreadAttributeList", ExactSpelling = true)]
     private static extern void DeleteProcThreadAttributeList(nint attributeList);

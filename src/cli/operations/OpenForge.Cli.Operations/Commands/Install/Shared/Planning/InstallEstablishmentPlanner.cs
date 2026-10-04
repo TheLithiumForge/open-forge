@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using System.Collections.Immutable;
 using System.Text;
+using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
@@ -13,6 +14,8 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Libraries;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
@@ -53,17 +56,28 @@ internal sealed class InstallEstablishmentPlanner
         var migrationPaths = intendedState.Migrations
             .Select(migration => migration.Path)
             .ToHashSet(StringComparer.Ordinal);
-        var extensionPaths = input.Ownership.Document.Extensions
-            .SelectMany(extension => extension.Paths.Concat(extension.Regions.Select(region => region.Path)))
-            .Select(PortableWorkspacePath.CreatePortableKey)
-            .ToHashSet(StringComparer.Ordinal);
-        var conflict = intendedState.TargetBytes.Keys.Concat(intendedState.ManagedBlockBytes.Keys)
-            .FirstOrDefault(path => extensionPaths.Contains(PortableWorkspacePath.CreatePortableKey(path)));
-        if (conflict is not null)
+        try
+        {
+            var competingPaths = input.Ownership.Document.Extensions
+                .SelectMany(extension => extension.Paths.Concat(extension.Regions.Select(region => region.Path)))
+                .Concat(LibraryRegistrationReader.ReadRegistrations(input.Ownership.Document).Libraries
+                    .SelectMany(library => LibraryPathIdentity.Mappings(library).Select(mapping => mapping.DestinationPath.Value)))
+                .Select(PortableWorkspacePath.CreatePortableKey)
+                .ToHashSet(StringComparer.Ordinal);
+            var conflict = intendedState.TargetBytes.Keys.Concat(intendedState.ManagedBlockBytes.Keys)
+                .FirstOrDefault(path => competingPaths.Contains(PortableWorkspacePath.CreatePortableKey(path)));
+            if (conflict is not null)
+            {
+                return new InstallPlanningWithFindings(context, InstallManagementState.Blocked,
+                    [new InstallFinding(InstallFindingCode.OwnershipConflict,
+                        "Another manager owns a selected Framework destination.", conflict)]);
+            }
+        }
+        catch (ArgumentException exception)
         {
             return new InstallPlanningWithFindings(context, InstallManagementState.Blocked,
-                [new InstallFinding(InstallFindingCode.OwnershipConflict,
-                    "An Extension owns a selected Framework destination.", conflict)]);
+                [new InstallFinding(InstallFindingCode.LifecycleBlocked,
+                    $"Recorded competing ownership could not be safely interpreted: {exception.Message}", WorkspaceOwnershipDefinitions.RelativePath)]);
         }
 
         var completedTargetBytes = intendedState.TargetBytes
@@ -83,7 +97,7 @@ internal sealed class InstallEstablishmentPlanner
             var isPreservedEntrypoint = intendedState.PreservedEntrypointPaths.Contains(target.Key);
             var canRebaseGeneratedRegion = isGeneratedRegion
                 && read.State == InstallTargetReadState.File
-                && !isUserOwned
+                && (!isUserOwned || request.Configuration is not null)
                 && isVerifiedManagedTarget;
             var isNewAdoptedEntrypoint = isUserOwned
                 && intendedState.Migrations.Any(migration =>
@@ -256,9 +270,13 @@ internal sealed class InstallEstablishmentPlanner
             return new InstallPlanningWithFindings(context, state, findings);
         }
 
+        AddConfigurationEffects(intendedState, effects);
+
         var ownershipPlan = _ownershipStore.PlanFrameworkOwnership(
             input.Ownership,
-            new FrameworkOwnership(
+            request.Configuration is not null
+                ? InstallConfigurationOwnership.Build(input, effects)
+                : new FrameworkOwnership(
                 new OwnedSource("embedded-framework", null),
                 effects
                     .Where(effect => effect.Identity.Kind == InstallEffectKind.File)
@@ -354,6 +372,31 @@ internal sealed class InstallEstablishmentPlanner
                 OwnershipEffect = ownershipEffect,
             });
     }
+
+    private static void AddConfigurationEffects(InstallIntendedState intended, List<InstallFileEffect> effects)
+    {
+        if (intended.Configuration is not { } configuration) return;
+        if (configuration.SettingsChange is { } settingsChange)
+            effects.Add(ConfigurationEffect(".agents/open-forge.json", settingsChange,
+                configuration.Settings.Snapshot ?? throw new InvalidOperationException("Settings require original bytes.")));
+        if (configuration.IgnoreChange is { } ignoreChange)
+            effects.Add(ConfigurationEffect(InstallIgnoreSection.Path, ignoreChange,
+                configuration.Ignore.Snapshot ?? throw new InvalidOperationException("Ignore changes require original bytes.")));
+    }
+
+    private static InstallFileEffect ConfigurationEffect(string path, PlannedFileChange change, FileStateSnapshot before)
+        => new()
+        {
+            Identity = new()
+            {
+                Path = path,
+                Kind = InstallEffectKind.File,
+                Action = change.Kind == PlannedFileChangeKind.Create ? InstallEffectAction.Create : InstallEffectAction.Replace,
+                SourceAssetPath = null
+            },
+            Change = change,
+            RecoveryTarget = RecoveryBundleTarget.Create(change, before),
+        };
 
     private IReadOnlyList<PlannedDirectoryCreation> CreateDirectoryPlan(
         Commands.Install.Models.Request.InstallRequest request,

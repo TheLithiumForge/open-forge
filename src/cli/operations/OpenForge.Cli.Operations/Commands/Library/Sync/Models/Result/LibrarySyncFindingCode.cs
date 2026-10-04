@@ -4,6 +4,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Sync.Models.Result;
 internal enum LibrarySyncFindingCode
 {
     InvalidInput,
+    GitIgnoreBlocked,
+    GitIgnoreUnavailable,
     PermissionRequired,
     PermissionDeclined,
     PermissionInvalid,

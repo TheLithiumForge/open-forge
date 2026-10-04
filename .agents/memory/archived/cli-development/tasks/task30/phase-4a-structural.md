@@ -17,10 +17,10 @@ is superseded; G4 is complete.
 
 ## Evidence source
 
-- [Structural requirements and markers](../../../../emerging/analysis/cli-experience-audit/structural-requirements-and-markers.md)
-- [Hand-rolled parsing](../../../../emerging/analysis/cli-experience-audit/hand-rolled-parsing.md)
-- [Lifecycle baselines and architecture](../../../../emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md)
-- [Repository dogfood and configuration](../../../../emerging/analysis/cli-experience-audit/repository-dogfood-and-configuration.md)
+- [Structural requirements and markers](../../analysis/cli-experience-audit/structural-requirements-and-markers.md)
+- [Hand-rolled parsing](../../analysis/cli-experience-audit/hand-rolled-parsing.md)
+- [Lifecycle baselines and architecture](../../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md)
+- [Repository dogfood and configuration](../../analysis/cli-experience-audit/repository-dogfood-and-configuration.md)
 
 The source records found that generated-region markers churn with Prettier,
 the loader still has a stale marker-based path, and several Markdown/YAML

@@ -74,12 +74,59 @@ Final detach removes the selected registration while retaining other owners.
 No old Library record is read, written, converted or deleted.
 
 Library claims contain no expected link target, source bytes, hashes, timestamps,
-Git facts, dependencies, globs, or per-file remapping. Exact link identity derives
+Git index or status facts, dependencies, globs, or per-file remapping. Exact link identity derives
 from source root, destination root, and source-relative suffix. Permission stays
 in the authored workspace settings. Detach also records the selected ID in
 `removedLibraries` before deleting links. Attach and sync honor both Library-ID
 and mapped destination-path exclusions. Clearing all covering exclusions permits
 the corresponding ordinary command to restore managed content.
+
+## Library Git-Ignore Intent And Effects
+
+Attach selects the optional ignore choice defined by its
+[Interface Contract](../contracts/library/attach/interface.md#library-git-ignore-choice).
+`LibraryOwnership` and `LibraryRegistration` preserve optional Boolean
+`gitIgnore` intent. Missing or false means no owned ignore rules; false is
+omitted on serialization so existing no-ignore claims retain their shape.
+Every reconstruction, projection and surviving path release preserves this
+intent independently of permissions.
+
+One neutral Library capability owns exact leaf-pattern derivation and the
+separate `# BEGIN OPEN FORGE LIBRARIES` / `# END OPEN FORGE LIBRARIES` section.
+It is shared by Library mutators and root path Remove because both reconcile
+the same ownership facts. It does not import Install's private route-section
+policy, execute Git or interpret general authored Git rules. Derive the ordered
+union from opted-in registrations' recorded mappings and escape pattern
+metacharacters literally. Ordinary folders and source trees are never ignored.
+Preserve surrounding authored bytes, including equivalent authored patterns,
+the Install section, UTF-8 BOM and existing line endings. Reject ambiguous or
+unsupported owned contents before planning a required rewrite.
+
+Represent a required ignore-file effect as one ordinary planned Create or
+Replace paired with its exact prior snapshot. Keep it distinct from generated
+Markdown regions, whose existing snapshot path assumes a present ordinary file.
+The complete plan includes this pair in comparison, permission evaluation,
+whole-plan revalidation, recovery preparation and matching, source protection,
+application, verification, attempted-target evidence and report formation.
+Detect overlapping link/file targets before any prompt: a Library may project
+opaque `.gitignore` content only when that does not overlap a required managed
+ignore-file write.
+
+Attach, Sync and Detach add a required `.gitignore` write to their single
+permission stage. Root individual-link Remove includes owned-rule cleanup as
+companion metadata in its existing confirmed plan, with no new permission flow.
+Sync additions and retirements, Detach, whole-Library Remove and individual or
+directory path release preserve other owners' patterns. Explicit ignore-file
+removal never also rewrites that target. Saved removal exclusions prevent
+automatic recreation; required Attach/Sync effects report the exclusion.
+Removal may release ownership while an already absent ignore file stays absent.
+
+Recovery uses existing ordinary-file prior-byte and prior-absence entries.
+Apply the ignore effect after verified links/navigation and before publishing
+ownership last. No after-hook or automatic rollback is introduced. Existing
+Library repair attribution and current grants remain required. An ignore-only
+operation with several registrations can retain valid recovery evidence without
+a unique automatic Library repair proposal; no new attribution format is added.
 
 ## Inventory And Mapping Facts
 
@@ -171,9 +218,11 @@ Every mutator follows one complete plan:
    including exact permission bytes or absence. A changed plan or permission
    observation blocks; approval cannot transfer to a wider recomputed plan.
 4. Prepare and verify one existing recovery bundle covering links, permitted
-   generated-region changes, permission create/replace and record changes.
+   generated-region changes, ordinary ignore-file changes, permission
+   create/replace and record changes.
 5. Apply and verify permission first. Then create required ordinary parents,
-   create/delete exact relative links, and update permitted generated regions.
+   create/delete exact relative links, update permitted generated regions and
+   apply the planned ordinary ignore-file change.
 6. Publish and verify the Library record last. Remove only the positively
    recognized command-owned bundle after complete operation verification.
 
@@ -224,7 +273,8 @@ Use ordinary managed BCL file-link APIs and no-follow inspection. Unsupported
 real-relative-link capability is blocked without effects; there is no P/Invoke,
 helper process, native bridge or copy fallback. The supported failure boundary
 covers ordinary defects, interruption and cooperating processes, not malicious
-same-user namespace races. No Git action or diagnostic is added.
+same-user namespace races. Ignore-file management adds no Git process, index
+action or diagnostic.
 
 Prove portable root grammar, exact schema, mapped ownership and grant scope at
 Unit tier. Real-filesystem Integration proves recursive root inventory,

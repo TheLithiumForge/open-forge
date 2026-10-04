@@ -1,4 +1,5 @@
 using OpenForge.Cli.Hosting.Shared.Interaction;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Hosting;
 
@@ -10,7 +11,7 @@ public sealed class CliHostTerminalIntegrationTests
     [InlineData(false, true, "dumb", false, true, false, false, false)]
     [InlineData(false, false, "xterm", false, true, true, true, true)]
     [InlineData(false, false, "unknown", false, true, true, true, false)]
-    [InlineData(false, false, "xterm", true, true, true, true, false)]
+    [InlineData(false, false, "xterm", true, true, true, true, true)]
     public void ResolveCapabilities(
         bool inputRedirected,
         bool outputRedirected,
@@ -26,11 +27,50 @@ public sealed class CliHostTerminalIntegrationTests
             outputRedirected,
             terminalName,
             isWindows,
-            supportsKeyReads);
+            supportsKeyReads,
+            supportsViewClearing: true);
 
         Assert.Equal(expectedCanPrompt, capabilities.CanPrompt);
         Assert.Equal(expectedCanReadKeys, capabilities.CanReadKeys);
         Assert.Equal(expectedCanRedraw, capabilities.CanRedraw);
+    }
+
+    [Fact(DisplayName = "Host cannot claim redraw when geometry and clearing support are unavailable"), Trait("Boundary", "Host"), Trait("Feature", "cli-interaction"), Trait("Evidence", "Integration")]
+    public void RedrawRequiresVerifiedViewSupport()
+    {
+        var capabilities = CliHostTerminalFactory.ResolveCapabilities(false, false, "xterm", true, true, supportsViewClearing: false);
+        Assert.True(capabilities.CanReadKeys);
+        Assert.False(capabilities.CanRedraw);
+    }
+
+    [Fact(DisplayName = "Host reports resize while waiting for input then reads the next key without consuming it"), Trait("Boundary", "Host"), Trait("Feature", "cli-interaction"), Trait("Evidence", "Integration")]
+    public async Task ResizeWhileWaitingDoesNotConsumeAKey()
+    {
+        var polled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var viewport = new CliTerminalViewport(80, 24);
+        var keyAvailable = false;
+        var keyReads = 0;
+        var adapter = new CliHostTerminalAdapter(TextReader.Null, TextWriter.Null,
+            () => { polled.TrySetResult(); return keyAvailable; },
+            () => { keyReads++; return new ConsoleKeyInfo('\0', ConsoleKey.DownArrow, false, false, false); },
+            () => viewport);
+        Assert.Equal(viewport, adapter.ReadViewport());
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+        var waiting = adapter.ReadKeyAsync(timeout.Token).AsTask();
+        await polled.Task.WaitAsync(timeout.Token);
+        viewport = new(40, 12);
+
+        var resized = await waiting;
+
+        Assert.Equal(CliKey.Resize, resized?.Key);
+        Assert.Equal(0, keyReads);
+        Assert.Equal(viewport, adapter.ReadViewport());
+        keyAvailable = true;
+        Assert.Equal(CliKey.Down, (await adapter.ReadKeyAsync(timeout.Token))?.Key);
+        Assert.Equal(1, keyReads);
+        viewport = new(80, 24);
+        Assert.Equal(CliKey.Resize, (await adapter.ReadKeyAsync(timeout.Token))?.Key);
+        Assert.Equal(1, keyReads);
     }
 
     [Trait("Boundary", "Host")]

@@ -119,6 +119,8 @@ internal static partial class RouteInitDefinitions
             RouteInitEffectKind.Directory => "directory",
             RouteInitEffectKind.Entrypoint => "entrypoint",
             RouteInitEffectKind.GeneratedRegion => "generated-region",
+            RouteInitEffectKind.Payload => "payload",
+            RouteInitEffectKind.Settings => "settings",
             _ => Undefined(nameof(value), value),
         };
 

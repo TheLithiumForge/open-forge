@@ -15,11 +15,11 @@ test was changed while writing it. `doctor` was not run.
 
 Three labels appear throughout and never mix:
 
-| Label        | Meaning                                                                                          |
-| ------------ | ------------------------------------------------------------------------------------------------ |
-| **Captured** | Verbatim bytes from a committed snapshot under `src/cli/tests/unit/.../__snapshots__/`.          |
+| Label        | Meaning                                                                                             |
+| ------------ | --------------------------------------------------------------------------------------------------- |
+| **Captured** | Verbatim bytes from a committed snapshot under `src/cli/tests/unit/.../__snapshots__/`.             |
 | **Derived**  | Constructed by reading the renderer source. Faithful to the code, but not produced by executing it. |
-| **Proposed** | New wording. Not current behavior.                                                                |
+| **Proposed** | New wording. Not current behavior.                                                                  |
 
 Freeze means the maintainer says so explicitly. A recommendation here is not
 acceptance, and silence is not acceptance.
@@ -39,12 +39,12 @@ Three Emerging records already settled the shape of the presentation surface, an
 this proposal restates rather than reinvents it. Their obsolete premises listed in
 [G4 preparation](phase-4b-g4.md#preparation-reconciliation) are not reused.
 
-| Source                                                                                                                                   | What it already established                                                                                                       |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| [lifecycle-baselines-and-architecture.md](../../../../emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md)     | `--projection` is an option, not a mode; `--view` is granularity and should be `--detail`; default to the smallest useful level; the missing view-selection layer. |
-| [structural-requirements-and-markers.md](../../../../emerging/analysis/cli-experience-audit/structural-requirements-and-markers.md)       | `--detail` absorbs `--verbose`; default `--detail brief`; two presentation flags where there are three.                            |
-| [contract-versus-code.md](../../../../emerging/analysis/cli-design-retrospective/contract-versus-code.md)                                 | Records the above as the accepted narrowing; retire the 20 interface contracts as rendering specifications and write one presentation contract. |
-| [command-output-design.md](../../../../emerging/analysis/cli-experience-audit/command-output-design.md)                                   | The per-command proposals and the six rules that generate them. Its own three-tier naming is superseded by the narrowing above.    |
+| Source                                                                                                                 | What it already established                                                                                                                                        |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [lifecycle-baselines-and-architecture.md](../../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md) | `--projection` is an option, not a mode; `--view` is granularity and should be `--detail`; default to the smallest useful level; the missing view-selection layer. |
+| [structural-requirements-and-markers.md](../../analysis/cli-experience-audit/structural-requirements-and-markers.md)   | `--detail` absorbs `--verbose`; default `--detail brief`; two presentation flags where there are three.                                                            |
+| [contract-versus-code.md](../../analysis/cli-design-retrospective/contract-versus-code.md)                             | Records the above as the accepted narrowing; retire the 20 interface contracts as rendering specifications and write one presentation contract.                    |
+| [command-output-design.md](../../analysis/cli-experience-audit/command-output-design.md)                               | The per-command proposals and the six rules that generate them. Its own three-tier naming is superseded by the narrowing above.                                    |
 
 S1, S1a, S14 and S15 are those conclusions carried into G4 as decisions. The rest
 of Part 2 and all of Part 4 are new work built on top of them.
@@ -199,13 +199,13 @@ file contains `"`.
 This is [Task 31 M3](../task31/phase-escaper.md). Eight escapers exist and give
 five different answers:
 
-| Owner                                                                      | Behavior                                                          |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `CommandTextEscaping`, `ContextTextEscaping`, `FindTextEscaping`, `RouteListTextEscaping`, `RouteInspectTextEscaping` | `\\`, `\"`, `\uXXXX` for controls and lone surrogates             |
-| `RouteTextEscaping`                                                        | `JsonEncodedText.Encode`, which also escapes `<`, `>`, `&`, `'`, `+` |
-| `ExtensionTextEscaping`                                                    | adds `\n`, `\r`, `\b`, `\f`, and spells tab `\u0009`              |
-| `ReferencesTextEscaping`                                                   | same, but spells tab `\t`                                         |
-| `CliHumanText.Text`                                                        | replaces control characters with U+FFFD and escapes nothing        |
+| Owner                                                                                                                 | Behavior                                                             |
+| --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `CommandTextEscaping`, `ContextTextEscaping`, `FindTextEscaping`, `RouteListTextEscaping`, `RouteInspectTextEscaping` | `\\`, `\"`, `\uXXXX` for controls and lone surrogates                |
+| `RouteTextEscaping`                                                                                                   | `JsonEncodedText.Encode`, which also escapes `<`, `>`, `&`, `'`, `+` |
+| `ExtensionTextEscaping`                                                                                               | adds `\n`, `\r`, `\b`, `\f`, and spells tab `\u0009`                 |
+| `ReferencesTextEscaping`                                                                                              | same, but spells tab `\t`                                            |
+| `CliHumanText.Text`                                                                                                   | replaces control characters with U+FFFD and escapes nothing          |
 
 `CliHumanText.Text` is the only one that is right for a terminal, and it is used
 only by the shared header, Doctor, and Status. Truncation disagrees as well:
@@ -248,11 +248,11 @@ Each rule has an identifier so a review can accept or reject it individually.
 Most of the argument disappears once output is split into three classes with
 three different rules. Every line a command prints belongs to exactly one.
 
-| Class       | Definition                                                                      | Rule                                                     |
-| ----------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| **Payload** | The thing the caller asked for: matches, routes, content, entries, effects.      | Never abbreviated by view. A list command prints its list. |
-| **Finding** | Something the command noticed that the caller did not ask about.                 | Filtered by severity in the default view.                  |
-| **Framing** | Everything else: workspace echo, counts, coverage, selection echo, provenance.   | Shown only when surprising, or when a larger view is asked for. |
+| Class       | Definition                                                                     | Rule                                                            |
+| ----------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| **Payload** | The thing the caller asked for: matches, routes, content, entries, effects.    | Never abbreviated by view. A list command prints its list.      |
+| **Finding** | Something the command noticed that the caller did not ask about.               | Filtered by severity in the default view.                       |
+| **Framing** | Everything else: workspace echo, counts, coverage, selection echo, provenance. | Shown only when surprising, or when a larger view is asked for. |
 
 This is why the default view is not simply "less output". `find` in the default
 view prints every match; `doctor` in the default view prints no informational
@@ -261,9 +261,9 @@ finding at all. Both follow the same rule.
 ### S1 — Retire `--view`. Two axes: detail and projection
 
 This rule restates the narrowing already recorded in
-[lifecycle-baselines-and-architecture.md](../../../../emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md)
+[lifecycle-baselines-and-architecture.md](../../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md)
 and confirmed in
-[contract-versus-code.md](../../../../emerging/analysis/cli-design-retrospective/contract-versus-code.md).
+[contract-versus-code.md](../../analysis/cli-design-retrospective/contract-versus-code.md).
 It is repeated here because G4 is where it becomes a decision rather than a
 proposal, not because it is new.
 
@@ -274,11 +274,11 @@ thing in every command.
 
 **`--detail <brief|normal|full>`, default `brief`.**
 
-| Level              | For                          | Contains                                                                                         |
-| ------------------ | ---------------------------- | -------------------------------------------------------------------------------------------------- |
-| `brief` (default)  | the answer, and nothing else | Complete payload. Findings as counts. No framing at all.                                          |
-| `normal`           | acting on what was found     | Adds each error and warning with its subject, explanation and machine code, and one `Next`.       |
-| `full`             | proving what the CLI did     | Adds informational findings, evidence, provenance, candidate basis, echoed selection, comparison detail, and today's `--verbose` diagnostics. |
+| Level             | For                          | Contains                                                                                                                                      |
+| ----------------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `brief` (default) | the answer, and nothing else | Complete payload. Findings as counts. No framing at all.                                                                                      |
+| `normal`          | acting on what was found     | Adds each error and warning with its subject, explanation and machine code, and one `Next`.                                                   |
+| `full`            | proving what the CLI did     | Adds informational findings, evidence, provenance, candidate basis, echoed selection, comparison detail, and today's `--verbose` diagnostics. |
 
 **`--detail` absorbs `--verbose`.** There is no separate verbosity flag. Verbose
 is simply `full`, and the diagnostics that go to stderr under `--verbose` today
@@ -603,11 +603,11 @@ typed result, and therefore `--json`, carries 6772 objects each with a subject,
 evidence, provenance and a resolution lane. Suppressing them in the renderer
 fixes the terminal and leaves `--json` unusable on a real workspace.
 
-| Option                                                                                                                          | `brief` | `normal` | `--projection json`         | Contract impact                                                                                  |
-| -------------------------------------------------------------------------------------------------------------------------------- | ------------- | --------------- | --------------------------- | -------------------------------------------------------------------------------------------------- |
-| **A. Presentation only.** Keep emitting per-occurrence findings; suppress them below `full`.                                     | one line      | one line        | unchanged, still 6772 items | Doctor's "No diagnostic kind or severity is filtered out" changes.                                 |
-| **B. Aggregate in the result.** Emit one `reference.target-valid` finding per domain carrying the checked and valid counts.      | one line      | one line        | one item with counts        | Same contract line changes, plus the finding's subject becomes the domain rather than an occurrence. |
-| **C. Both.** Aggregate by default; `--detail full` re-expands per occurrence.                                                      | one line      | one line        | depends on `--detail`       | As B, plus a detail level that changes which findings the result contains.                        |
+| Option                                                                                                                      | `brief`  | `normal` | `--projection json`         | Contract impact                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------------- | -------- | -------- | --------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **A. Presentation only.** Keep emitting per-occurrence findings; suppress them below `full`.                                | one line | one line | unchanged, still 6772 items | Doctor's "No diagnostic kind or severity is filtered out" changes.                                   |
+| **B. Aggregate in the result.** Emit one `reference.target-valid` finding per domain carrying the checked and valid counts. | one line | one line | one item with counts        | Same contract line changes, plus the finding's subject becomes the domain rather than an occurrence. |
+| **C. Both.** Aggregate by default; `--detail full` re-expands per occurrence.                                               | one line | one line | depends on `--detail`       | As B, plus a detail level that changes which findings the result contains.                           |
 
 **Recommendation: B.** It is the only option that makes the JSON projection
 usable, it keeps
@@ -708,6 +708,7 @@ Covered in Part 3. Remaining per-command points:
 
   stderr, exit 5, and no domain skeleton printed, because none of it was
   inspected.
+
 - `incomplete`, **proposed**:
 
   ```text
@@ -719,6 +720,7 @@ Covered in Part 3. Remaining per-command points:
   ```
 
   stdout, exit 3.
+
 - Doctor keeps no wizard and no filters. A severity filter is unnecessary once
   `brief` lists only errors and warnings.
 
@@ -1283,16 +1285,16 @@ are the conditions the implementation must meet.
 
 Ordered. Each is separately committable and green.
 
-| Slice  | Content                                                                                                            | Changes output |
-| ------ | -------------------------------------------------------------------------------------------------------------------- | -------------- |
-| **G4-0** | Capture and commit the complete before snapshot, plus the `doctor` byte measurement. No production change.        | no             |
-| **G4-1** | One text owner in `CliHumanText`: human escaping, one truncation helper, `DiagnosticValueLimit`. Delete the eight escapers. This is Task 31 M3. | **yes**        |
-| **G4-2** | Shared framing: S2, S3, S4, S10. Header, workspace echo, zero-fact suppression, the read-only `No files changed.` removal. | **yes**        |
+| Slice    | Content                                                                                                                                                                                                               | Changes output |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| **G4-0** | Capture and commit the complete before snapshot, plus the `doctor` byte measurement. No production change.                                                                                                            | no             |
+| **G4-1** | One text owner in `CliHumanText`: human escaping, one truncation helper, `DiagnosticValueLimit`. Delete the eight escapers. This is Task 31 M3.                                                                       | **yes**        |
+| **G4-2** | Shared framing: S2, S3, S4, S10. Header, workspace echo, zero-fact suppression, the read-only `No files changed.` removal.                                                                                            | **yes**        |
 | **G4-3** | S1 and S1a: `--detail` and `--projection` replace `--view`, `--json` and `--verbose`; add the selection layer; write the one presentation contract and strip rendering prescriptions from the 20 interface contracts. | **yes**        |
-| **G4-4** | Finding presentation: S5, S6, S7, S8, S9 across Doctor, Status, Index, Find, Route list, References.               | **yes**        |
-| **G4-5** | D-1, whichever option is accepted. Doctor result model and the Doctor interface contract's filtering sentence.     | **yes**        |
-| **G4-6** | S14: one schema version, `detail` as discriminator, delete the compact envelope.                                 | **yes**        |
-| **G4-7** | Help text, `Getting started`, the `attention` sentence, and the repair wizard's opening summary.                   | **yes**        |
+| **G4-4** | Finding presentation: S5, S6, S7, S8, S9 across Doctor, Status, Index, Find, Route list, References.                                                                                                                  | **yes**        |
+| **G4-5** | D-1, whichever option is accepted. Doctor result model and the Doctor interface contract's filtering sentence.                                                                                                        | **yes**        |
+| **G4-6** | S14: one schema version, `detail` as discriminator, delete the compact envelope.                                                                                                                                      | **yes**        |
+| **G4-7** | Help text, `Getting started`, the `attention` sentence, and the repair wizard's opening summary.                                                                                                                      | **yes**        |
 
 Every slice from G4-1 onward updates its contracts in the same commit as the
 behavior, per the plan's rule for output-changing slices.
@@ -1303,15 +1305,15 @@ behavior, per the plan's rule for output-changing slices.
 
 ### Decisions the maintainer owns
 
-| ID      | Decision                                                                                 | Recommendation                                |
-| ------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------- |
-| **D-1** | What happens to `reference.target-valid` and the other per-occurrence informational kinds | B — aggregate in the result                    |
-| **D-2** | Keep or drop Find's tab-separated rows                                                    | Keep                                           |
-| **D-3** | The `brief` cap per severity                                                            | 10, pending a look at real finding counts      |
-| **D-4** | Truncation marker                                                                         | `…`                                            |
+| ID      | Decision                                                                                                  | Recommendation                                  |
+| ------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| **D-1** | What happens to `reference.target-valid` and the other per-occurrence informational kinds                 | B — aggregate in the result                     |
+| **D-2** | Keep or drop Find's tab-separated rows                                                                    | Keep                                            |
+| **D-3** | The `brief` cap per severity                                                                              | 10, pending a look at real finding counts       |
+| **D-4** | Truncation marker                                                                                         | `…`                                             |
 | **D-5** | S1: retire `--view` and `--verbose` for `--detail brief\|normal\|full` and `--projection text\|json\|tsv` | As proposed; it restates the recorded narrowing |
-| **D-6** | S14, one JSON schema with `detail` as discriminator                                       | As proposed                                    |
-| **D-7** | Whether machine codes leave the default human view                                        | Yes, they move to `normal`                   |
+| **D-6** | S14, one JSON schema with `detail` as discriminator                                                       | As proposed                                     |
+| **D-7** | Whether machine codes leave the default human view                                                        | Yes, they move to `normal`                      |
 
 ### Open questions
 

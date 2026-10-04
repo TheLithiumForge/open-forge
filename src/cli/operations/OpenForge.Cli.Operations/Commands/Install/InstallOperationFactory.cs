@@ -1,4 +1,6 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
+using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
@@ -13,7 +15,8 @@ internal static class InstallOperationFactory
 {
     internal static InstallOperation Create(
         CliPlanConfirmation<InstallResult, InstallConfirmationFacts> planConfirmation,
-        WorkspaceLockStoreRoot? lockStoreRoot = null)
+        WorkspaceLockStoreRoot? lockStoreRoot = null,
+        InstallSetupInteraction? setupInteraction = null)
     {
         ArgumentNullException.ThrowIfNull(planConfirmation);
         var physicalPathResolver = new PhysicalPathResolver();
@@ -28,6 +31,7 @@ internal static class InstallOperationFactory
             planBuilder: new InstallPlanBuilder(
                 physicalPathResolver),
             preflight: preflight,
-            applicationOperation: application);
+            applicationOperation: application,
+            setupResolver: new InstallSetupResolver(physicalPathResolver, setupInteraction));
     }
 }

@@ -19,7 +19,7 @@ open-forge:
 - Task source: Task 31 "Implementation Duplication Removal", registered in
   [CLI Development Tasks](_tasks.md).
 - Evidence base:
-  [Implementation Duplication](../../../emerging/analysis/cli-experience-audit/implementation-duplication.md)
+  [Implementation Duplication](../analysis/cli-experience-audit/implementation-duplication.md)
   holds the measurements. This record owns the work.
 - Predecessor: none. Phase M1 depends on nothing.
 - Last updated: 2026-09-11.

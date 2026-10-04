@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Accepted current Interface for establishing and verifying the managed root Framework lifecycle
+  description: Accepted current Interface for installing, configuring and verifying built-in Framework routes
   responsibility: Define install's exact syntax, management-establishment boundary, initial force rule, results, and read/write surface
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Install, Framework, Interface, Lifecycle, Safety, Recovery, CurrentTruth]
 ---
@@ -65,6 +65,8 @@ bounded initial workspace adoption described below before verifying the
 resulting state. It verifies an exact trusted managed state as a no-op. It does
 not reconcile divergence in authored managed payload. Existing authored
 managed divergence directs the caller to the root `update` operation.
+Explicit configuration additionally selects built-in routes and restores
+eligible missing defaults through the additive boundary below.
 
 The command has one stable root operation. Its request, current facts, intended
 state, generated-navigation projection, complete plan, preflight, status model,
@@ -84,7 +86,8 @@ result, or cancelled result does not publish lifecycle state.
 The complete public command form is:
 
 ```text
-open-forge install [--force] [--automatic] [--dry-run] [global flags]
+open-forge install [--configure] [--preset <essentials|full-core|custom>]
+  [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global flags]
 ```
 
 `install` is a direct root command. It has no operands, child operations,
@@ -149,6 +152,10 @@ The recognized footprint is closed. It contains only:
 4. The exact supported Claude `CLAUDE.md` managed bridge block.
 5. The transparent Framework lifecycle facts needed to establish or compare
    management for those targets and regions.
+
+Explicit setup selection also plans the authored `.agents/open-forge.json`
+exclusions and the bounded Install-owned `.gitignore` section. These are
+configuration effects, not embedded installed-content ownership.
 
 Generated `Entries` are derived navigation. Their expected bodies come from the
 intended authored topology and metadata in the selected workspace, not from
@@ -252,8 +259,8 @@ projection closure.
 ## Operands
 
 No operands are accepted. A directory, source reference, provider name, glob,
-route, or path intended to narrow the Framework is invalid. There is no partial
-footprint mode.
+route, or path supplied as an operand is invalid. Setup selection uses the
+named flags below, not arbitrary destination paths.
 
 ## Flags
 
@@ -262,7 +269,61 @@ footprint mode.
 | `--force`           | Initial replacement authority | Boolean                        | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, adoption, or ownership.                       |
 | `--automatic`       | Guided-input policy           | Boolean                        | Human input may use the minimal inspection and confirmation flow | Repeats idempotently. It suppresses interaction and selects only deterministic safe defaults.        |
 | `--dry-run`         | Preview write policy          | Boolean                        | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply. |
+| `--configure`       | Explicit setup change         | Boolean                        | Ordinary Install verification                                   | Repeats idempotently. Selects additive route configuration without Update or deletion authority. |
+| `--preset`          | Built-in setup selection      | `essentials`, `full-core`, `custom` | Interactive first setup or deterministic unattended defaults | Repeated identical values are idempotent. Conflicting values are invalid. Existing setup requires `--configure`. |
+| `--route`           | Custom row override           | `<id>=<add\|remove\|git-ignore>`  | Retain the Custom base row                                       | Repeat for different rows. Requires Custom. Conflicting actions for one row are invalid. |
 | Shared global flags | Workspace and presentation    | Defined by the shared contract | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                          |
+
+### Setup Selection
+
+`--configure` explicitly changes the selected built-in routes in an existing
+workspace and restores eligible missing defaults. It does not authorize an
+Update, replacement of authored content, or route deletion. An explicit
+`--preset` on an already installed workspace requires `--configure`.
+
+The presets are Essentials, Full Core and Custom. Essentials includes
+Directives, Patterns, Skills, Emerging and Crystallized Memory. It installs
+the complete ordinary Working route and Git-ignores its directory. Guidance,
+Maps, Templates and Archived Memory are omitted. Full Core selects every
+built-in category and Memory state, with no preset Git-ignore entries. Neither
+preset installs optional Extensions.
+
+Custom exposes Directives, Guidance, Maps, Patterns, Skills, Templates, and
+the four built-in Memory states. Each offers Add, Remove, or Add + Git-ignore.
+Remove omits supplied defaults and releases only their Framework management.
+Existing files, authored notes and overwrite companions are retained and remain
+routable. The wizard states this explicitly. Add + Git-ignore installs the
+ordinary route and adds its anchored directory to the managed section of the
+workspace `.gitignore`. It does not change Context or Index selection and does
+not untrack files already in Git.
+
+`--preset` accepts `essentials`, `full-core`, or `custom`. Custom starts from
+the current concrete selections in an existing workspace and Essentials in
+a fresh workspace. Repeatable `--route` overrides those rows and requires
+`--preset custom`. Accepted IDs are `directives`, `guidance`, `maps`,
+`patterns`, `skills`, `templates`, `memory/working`, `memory/emerging`,
+`memory/crystallized`, and `memory/archived`. Accepted actions are `add`,
+`remove`, and `git-ignore`. Unknown IDs/actions and conflicting duplicate
+values are invalid input. Identical repeated values are idempotent.
+
+A first prompt-capable interactive apply offers the three presets, with
+Essentials first. Explicit `--configure` offers selection even on an installed
+workspace. Custom starts with the current choices and reviews each row, retaining
+the choices already supplied by `--route`. Selection completes before the one
+immutable plan and final application confirmation. Cancellation writes nothing.
+Ordinary repeated Install remains quiet when its exact state is already current.
+
+Dry-run, automatic, JSON and redirected requests never ask setup questions.
+Without explicit setup input, ordinary unattended first Install retains Full
+Core and existing omissions. Noninteractive `--configure` requires an explicit
+`--preset`. Noninteractive Custom applies its deterministic base plus supplied
+row overrides. These requests use the same plan as an interactive equivalent.
+
+Only exact selected root/state exclusions and required ancestor exclusions
+may change. Preserve narrower exclusions, unknown settings members, unrelated
+Git-ignore text, and unselected ownership. Do not persist a second preset
+identity. A fresh checkout may restore ignored packaged scaffolding through
+explicit configuration. It cannot recover unshared private records.
 
 ### `--force`
 
@@ -301,7 +362,7 @@ return `blocked`, make no write, and provide one useful `Next:` action for
 only the documented deterministic safe effects for the explicit `install`
 operation, including eligible bounded initial metadata and route completion. It
 never supplies initial force authority, replaces divergence, restores missing
-managed content, deletes retired content, changes adoption eligibility or
+managed content without explicit configuration, deletes retired content, changes adoption eligibility or
 widens its candidate set, takes ownership, or bypasses a safety boundary.
 
 For a safely absent workspace, automatic mode may establish the ordinary
@@ -326,8 +387,10 @@ lease or beginning any effect. Confirmation continues with the already formed
 plan. Refusal, end of input, or caller cancellation returns `cancelled` and
 writes nothing. The exact decorative prompt sentence is not contract meaning.
 
-Dry-run, verified no-op, `--automatic`, JSON, and any request without terminal-
-capable stdin and stderr never prompt. A non-prompt-capable human apply that would
+Setup selection happens before planning as defined above. Final confirmation
+still occurs exactly once for a writing plan. Dry-run, ordinary verified no-op,
+`--automatic`, JSON, and any request without terminal-capable stdin and stderr
+never prompt. A non-prompt-capable human apply that would
 write is `invalid-input` unless `--automatic` is explicit; its single next action is to
 rerun the same command with `--automatic`. Automatic adds no force or safety
 authority.
@@ -559,9 +622,12 @@ words.
 ### Prompts
 
 In a terminal without `--automatic`: plan review at `minimal` on stderr, then
-`Apply these changes? [y/N]`. When existing files would be replaced under
-`--force`, the question reads `Replace the 2 existing files listed above?
-[y/N]`. See [04](../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md).
+`Apply these changes? [y/N]`. When the plan replaces existing files, including
+bounded configuration settings or Git-ignore edits, the question reads
+`Replace the 2 existing files listed above? [y/N]` with the actual count.
+Configuration retains its bounded authority without requiring `--force`;
+initial payload replacement still requires it. See
+[04](../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md).
 
 ### Representative transcripts by status
 
@@ -610,6 +676,13 @@ JSON). Internally, the migration collection is empty on a no-op. Public
 schema-3 `data.migrations` is optional and omitted when there are no migration
 rows, preserving existing no-op JSON snapshots. When rows exist, the array is
 present at every detail level.
+
+When concrete setup selection is resolved, optional `data.configuration`
+contains `configure`, `preset`, and ordered `routes` rows with `id` and `action`.
+It is present at every detail level for those requests and omitted for ordinary
+requests with no setup selection. This is a result of the current request, not
+persisted workspace mode state. Configuration effects use the existing complete
+effect receipts, verification and recovery coordinates.
 
 Each migration row has exactly these fields: `path`, `actions`, `fields`,
 `derivation`, and `outcome`. All keys are present, and the `actions`,
@@ -721,7 +794,7 @@ Each status has one representative native text transcript above. JSON uses the s
 Install does not:
 
 - perform managed update, reinstallation, replacement of a trusted divergent
-  state, restoration of a missing managed target, or retired-content deletion;
+  state, restoration without explicit setup selection, or retired-content deletion;
 - create a Framework group, root `init`, update/reinstall/replace/restore/recover
   alias, uninstall/remove leaf, generic apply, saved plan, session, or journal;
 - discover providers, package sources, Extension paths, or arbitrary workspace

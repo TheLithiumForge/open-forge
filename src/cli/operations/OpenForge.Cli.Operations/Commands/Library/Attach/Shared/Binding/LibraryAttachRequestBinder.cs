@@ -23,6 +23,13 @@ internal static class LibraryAttachRequestBinder
         ArgumentNullException.ThrowIfNull(parse);
         ArgumentNullException.ThrowIfNull(invocation);
         ArgumentNullException.ThrowIfNull(symbols);
+        var ignoreFacts = CliOptionResultFactsReader.Read(parse.Result, symbols.GitIgnore);
+        if (ignoreFacts.IdentifierCount > 1 || ignoreFacts.IsExplicit && ignoreFacts.ValueCount != 1 || parse.Result.Errors.Count > 0)
+        {
+            return CliBindResult<LibraryAttachRequest, LibraryAttachResult>.Invalid(Create(
+                CliSemanticStatus.Invalid, invocation.Workspace, null, null, LibraryAttachFindingCode.InvalidInput, null,
+                "--git-ignore requires exactly one explicit true or false value and can be supplied once."));
+        }
         var suppliedId = parse.Result.GetValue(symbols.LibraryId);
         var suppliedRoot = parse.Result.GetValue(symbols.SourceRoot);
         if (LibraryId.TryCreate(suppliedId) is not { } libraryId)
@@ -58,6 +65,7 @@ internal static class LibraryAttachRequestBinder
         {
             AllowPrompt = invocation.Presentation.Format == CliFormat.Text && !dryRun && !automatic,
             Automatic = automatic,
+            GitIgnore = ignoreFacts.IsExplicit ? parse.Result.GetValue(symbols.GitIgnore) : null,
             DestinationRoot = destinationRoot,
             Workspace = workspace,
             LibraryId = libraryId,

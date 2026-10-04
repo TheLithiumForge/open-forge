@@ -6,6 +6,23 @@ open-forge:
 
 # Task 70 — Existing workspace adoption during installation
 
+## Current release authorization, 2026-10-04
+
+The maintainer has authorized verification of all requested changes, squash
+integration into `develop`, a push and a new beta release. This supersedes the
+publication hold below for the corrected combined candidate. The reused-worktree
+correction is committed as `de54c1d32f37e25e7b2da9f699edc22b35664549` and is the
+base of the locally accepted onboarding, configuration and Library work.
+
+Beta5 already exists in the npm registry; its GitHub release remains draft.
+The new version is `0.9.0-beta.6`. The pre-version combined candidate passed
+10,718 tests across all six execution modes on Windows x64, with 34 declared
+platform exclusions and unchanged executable closures. That local receipt does
+not qualify a new version or another platform. Exact-candidate hosted checks,
+six-platform build/test/package qualification and publication are pending.
+The original hold, cancellation race and failed candidates remain history.
+Release evidence is retained under `artifacts/beta6-release/`.
+
 ## Immediate stale-recovery reproduction
 
 The independent reproduction failed in both immediate replacement and immediate
@@ -534,10 +551,10 @@ Keep checked-in PublishedInstallAdoptionProcessTests.cs limited to hermetic mini
 
 ## Evidence
 
-- Task47 follow-up and acceptance record: [default Skill indexing](task47-default-skill-indexing.md).
+- Task47 follow-up and acceptance record: [default Skill indexing](../../../archived/cli-development/tasks/task47-default-skill-indexing.md).
 - Task47 qualification receipt: [absolute artifact](C:/Users/Tedy/.codex/worktrees/beta-stabilization/open-forge/artifacts/task47/qualification-receipt.json), SHA256 `54B7F4A42D051C0591F2FC1D3F6A341BDEDA061A50E3D6A1E2E5173E17B9F001`.
 - Task47 root physical qualification: [absolute artifact](C:/Users/Tedy/.worker-watch/worktrees/a_390948de2166/artifacts/task47-physical-qualification/run-04a606154cc641c496be26a9e750dc9c/qualification-receipt.json).
-- Public beta 4 baseline: [Task69 release receipt](task69-next-beta-stabilization-release.md) and [absolute final receipt](C:/Users/Tedy/.codex/worktrees/beta-stabilization/open-forge/artifacts/beta4-public/final-receipt.json).
+- Public beta 4 baseline: [Task69 release receipt](../../../archived/cli-development/tasks/task69-next-beta-stabilization-release.md) and [absolute final receipt](C:/Users/Tedy/.codex/worktrees/beta-stabilization/open-forge/artifacts/beta4-public/final-receipt.json).
 - Task70 historical apply evidence and text streams: [absolute artifact](C:/Users/Tedy/.worker-watch/worktrees/a_0f9f108d71df/artifacts/task70-repro/apply-evidence.json).
 
 ## Historical Review Budget Snapshot — before final v9 qualification

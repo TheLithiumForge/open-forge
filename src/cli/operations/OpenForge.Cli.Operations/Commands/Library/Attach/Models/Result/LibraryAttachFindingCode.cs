@@ -4,6 +4,8 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
 internal enum LibraryAttachFindingCode
 {
     InvalidInput,
+    GitIgnoreBlocked,
+    GitIgnoreUnavailable,
     PermissionRequired,
     PermissionDeclined,
     PermissionInvalid,

@@ -22,11 +22,11 @@ unsandboxed host.
 
 ## Evidence source
 
-- [Lifecycle baselines and architecture](../../../../emerging/analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md)
+- [Lifecycle baselines and architecture](../../analysis/cli-experience-audit/lifecycle-baselines-and-architecture.md)
   measured the per-file baseline and lifecycle-record failure modes.
-- [Repository dogfood and configuration](../../../../emerging/analysis/cli-experience-audit/repository-dogfood-and-configuration.md)
+- [Repository dogfood and configuration](../../analysis/cli-experience-audit/repository-dogfood-and-configuration.md)
   measured the configuration and permission dead ends.
-- [Structural requirements and markers](../../../../emerging/analysis/cli-experience-audit/structural-requirements-and-markers.md)
+- [Structural requirements and markers](../../analysis/cli-experience-audit/structural-requirements-and-markers.md)
   measured the authoring and generated-region friction.
 
 These sources remain in Emerging. This subtask carries their actionable conclusion;
@@ -294,6 +294,7 @@ Settled while implementing, and not yet reflected above:
   > staged in the permission plan and published only during confirmed
   > application under lease, revalidation, and recovery. Cancellation or refusal
   > before application leaves settings unchanged.
+
 - The writer round-trips through the JSON object model, so unknown keys and
   authored key order survive. **Comments do not survive a write**; keeping them
   would mean hand-rolling a second parser, which is refused.

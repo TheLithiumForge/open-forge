@@ -6,13 +6,15 @@ open-forge:
 
 # Task 34 — Interpolated Value Markup
 
-**Reviewed on 2026-09-28:** [review](../../../emerging/analysis/open-task-review/task34-interpolated-value-markup.md). Recommendation:
+**Reviewed on 2026-09-28:** [review](../../../archived/cli-development/analysis/open-task-review/task34-interpolated-value-markup.md). Recommendation:
 Do before 1.0. The review names any details in this record that are out of date.
 
 ## Task state
 
-- State: **Open, not started.** Raised and ruled by the maintainer on
-  2026-09-16.
+- State: **Paused by the maintainer on 2026-10-01.** Implementation reached
+  phase 2/3, milestone 1/3. The saved worktree and checkpoint remain available.
+  The original decision was made on 2026-09-16. Resuming requires maintainer
+  direction. See the [current ledger](../project-control.md#active-task-ledger).
 - Owner: Root.
 - Evidence: gathered below from the merged code.
 

@@ -73,7 +73,7 @@ public sealed class InstallCompositionIntegrationTests
         var applied = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"y{Environment.NewLine}remaining{Environment.NewLine}",
+            $"2{Environment.NewLine}y{Environment.NewLine}remaining{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -116,7 +116,7 @@ public sealed class InstallCompositionIntegrationTests
         var run = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"n{Environment.NewLine}remaining{Environment.NewLine}",
+            $"2{Environment.NewLine}n{Environment.NewLine}remaining{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -140,7 +140,7 @@ public sealed class InstallCompositionIntegrationTests
         var run = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            string.Empty,
+            $"2{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -277,9 +277,12 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains(
-            "open-forge install [--force] [--automatic] [--dry-run] [global options]",
+            "open-forge install [--configure] [--preset <essentials|full-core|custom>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]",
             string.Join(" ", leaf.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
+        Assert.Contains("Setup selection", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Remove keeps existing files and their routes.",
+            string.Join(" ", leaf.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)), StringComparison.Ordinal);
         Assert.Contains("Confirmation", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Results and streams", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));

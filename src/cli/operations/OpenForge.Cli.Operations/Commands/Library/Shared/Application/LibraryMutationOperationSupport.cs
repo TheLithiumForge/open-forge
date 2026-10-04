@@ -83,6 +83,12 @@ internal static class LibraryMutationOperationSupport
             targets.Add(RecoveryBundleTarget.Create(change,
                 await ReadSnapshotAsync(change, cancellationToken).ConfigureAwait(false)));
         }
+        if (request.GitIgnore is { } ignore)
+        {
+            targets.Add(ignore.Change.Kind == PlannedFileChangeKind.Create
+                ? RecoveryBundleTarget.CreateReversible(ignore.Change, ignore.Before)
+                : RecoveryBundleTarget.Create(ignore.Change, ignore.Before));
+        }
         if (request.OwnershipChange is { } ownershipChange)
         {
             var before = request.Ownership?.Snapshot
@@ -158,6 +164,8 @@ internal static class LibraryMutationOperationSupport
         => expected.Directories.Select(DirectoryKey).SequenceEqual(actual.Directories.Select(DirectoryKey))
             && expected.Links.Select(LinkKey).SequenceEqual(actual.Links.Select(LinkKey))
             && expected.GeneratedRegions.Select(ChangeKey).SequenceEqual(actual.GeneratedRegions.Select(ChangeKey))
+            && ChangeKey(expected.GitIgnore?.Change) == ChangeKey(actual.GitIgnore?.Change)
+            && expected.GitIgnore?.Before.Expectation == actual.GitIgnore?.Before.Expectation
             && ChangeKey(expected.OwnershipChange) == ChangeKey(actual.OwnershipChange);
 
     private static async ValueTask<FileStateSnapshot> ReadSnapshotAsync(

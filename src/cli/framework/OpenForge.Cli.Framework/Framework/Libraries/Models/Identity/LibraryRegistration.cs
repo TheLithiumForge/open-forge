@@ -27,11 +27,14 @@ internal sealed record LibraryRegistration
 
     internal ImmutableArray<SourceRelativeEligiblePath> Paths { get; }
 
+    internal bool GitIgnore { get; init; }
+
     internal static LibraryRegistration Create(
         LibraryId id,
         WorkspaceRelativeDirectory sourceRoot,
         LibraryDestinationRoot destinationRoot,
-        IReadOnlyList<SourceRelativeEligiblePath> paths)
+        IReadOnlyList<SourceRelativeEligiblePath> paths,
+        bool gitIgnore = false)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(sourceRoot);
@@ -54,6 +57,6 @@ internal sealed record LibraryRegistration
             previous = path.Value;
         }
 
-        return new LibraryRegistration(id, sourceRoot, destinationRoot, values.MoveToImmutable());
+        return new LibraryRegistration(id, sourceRoot, destinationRoot, values.MoveToImmutable()) { GitIgnore = gitIgnore };
     }
 }

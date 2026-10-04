@@ -7,7 +7,7 @@ open-forge:
 # Task 55 — Alternative workspace root such as `.apm`
 
 **Folded on 2026-09-28** into [Task 62](../../../working/cli-development/tasks/task62-glob-scoped-loading.md) by the
-maintainer, following the [review](../../../emerging/analysis/open-task-review/task55-alternative-root.md). The
+maintainer, following the [review](../analysis/open-task-review/task55-alternative-root.md). The
 review recommends keeping `.agents/` as the only root: APM handles only some
 primitive types, and it compiles instructions into files that always load. That
 root choice still needs a recorded Framework Decision, which Task 62 now owns
@@ -83,5 +83,5 @@ this task changes.
 **Related:** [Task 46](task46-routed-skill-resources.md) already reads route
 metadata from native `SKILL.md` frontmatter instead of requiring an Open Forge
 block. Reading APM frontmatter would extend the same idea. Tasks
-[53](../../../working/cli-development/tasks/task53-loading-and-scoping-audit.md) and [54](../../../working/cli-development/tasks/task54-tag-trimming.md) edit
+[53](../../../working/cli-development/tasks/task53-loading-and-scoping-audit.md) and [54](task54-tag-trimming.md) edit
 the same frontmatter, so agree on the order before any of them changes files.

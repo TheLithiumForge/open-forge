@@ -14,12 +14,12 @@ things it pointed at have since been done or given their own owners.
 
 ## What this packet still owns, measured 2026-09-17
 
-| Its phase | Where it went |
-| --- | --- |
-| **5** — interaction, help and error paths | Delivered by G4's [04 interaction system](../task30-g4/04-interaction-system.md) and the accepted C1–C18 decisions. Its error-path half continues in [phase 5-D](phase-5-diagnosis-and-interoperability.md). |
-| **6** — content and taxonomy ownership | **Still open. The only distinct remainder.** |
-| **7** — scenario coverage | Owned by [phase 7 scenarios](phase-7-scenarios.md), now specified. |
-| **7/8** — test project architecture and parallel execution | [Complete](phase-7-8-test-architecture.md). |
+| Its phase                                                  | Where it went                                                                                                                                                                                                |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **5** — interaction, help and error paths                  | Delivered by G4's [04 interaction system](../task30-g4/04-interaction-system.md) and the accepted C1–C18 decisions. Its error-path half continues in [phase 5-D](phase-5-diagnosis-and-interoperability.md). |
+| **6** — content and taxonomy ownership                     | **Still open. The only distinct remainder.**                                                                                                                                                                 |
+| **7** — scenario coverage                                  | Owned by [phase 7 scenarios](phase-7-scenarios.md), now specified.                                                                                                                                           |
+| **7/8** — test project architecture and parallel execution | [Complete](phase-7-8-test-architecture.md).                                                                                                                                                                  |
 
 ### Phase 6 — what is actually left
 
@@ -46,10 +46,10 @@ question of who owns what, not the wording itself.
 
 ## Evidence source
 
-- [Interaction layer](../../../../emerging/analysis/cli-experience-audit/interaction-layer.md)
-- [Taxonomy and adoption](../../../../emerging/analysis/cli-experience-audit/taxonomy-and-adoption.md)
-- [Test strategy and scenarios](../../../../emerging/analysis/cli-experience-audit/test-strategy-and-scenarios.md)
-- [Layers and sequencing](../../../../emerging/analysis/cli-experience-audit/layers-and-sequencing.md)
+- [Interaction layer](../../analysis/cli-experience-audit/interaction-layer.md)
+- [Taxonomy and adoption](../../analysis/cli-experience-audit/taxonomy-and-adoption.md)
+- [Test strategy and scenarios](../../analysis/cli-experience-audit/test-strategy-and-scenarios.md)
+- [Layers and sequencing](../../analysis/cli-experience-audit/layers-and-sequencing.md)
 
 ## Actionable packet
 

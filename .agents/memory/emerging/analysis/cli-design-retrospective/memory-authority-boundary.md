@@ -96,7 +96,7 @@ accepted behavior guiding future work, and it belongs in a `#Core` route.
 ### Why this matters beyond tidiness
 
 This is not a filing error. It has a consequence visible in
-[contract-versus-code.md](contract-versus-code.md):
+[contract-versus-code.md](../../../archived/cli-development/analysis/cli-design-retrospective/contract-versus-code.md):
 
 **Memory and Core have different review semantics.** A Directive is binding
 instruction and is read as something to argue with. A Crystallized Document is
@@ -170,7 +170,7 @@ That form is a **redirect**, not a prohibition:
 - it ages well, because it describes the map rather than an incident;
 - it is surfaceable: `route inspect` should print it, which answers the
   "what belongs here" gap identified in
-  [taxonomy-and-adoption.md](../cli-experience-audit/taxonomy-and-adoption.md).
+  [taxonomy-and-adoption.md](../../../archived/cli-development/analysis/cli-experience-audit/taxonomy-and-adoption.md).
 
 This is the negative content you actually want, in a positive shape.
 
@@ -202,7 +202,7 @@ route.prescriptive-language
 
 Tune it by density rather than count, exempt quoted material, and default it to
 `info` — with the `rules` config from
-[repository-dogfood-and-configuration.md](../cli-experience-audit/repository-dogfood-and-configuration.md)
+[repository-dogfood-and-configuration.md](../../../archived/cli-development/analysis/cli-experience-audit/repository-dogfood-and-configuration.md)
 letting a workspace turn it off. It would have caught this on the first contract
 written.
 

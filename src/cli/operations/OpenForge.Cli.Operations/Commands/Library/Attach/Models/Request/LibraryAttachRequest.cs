@@ -19,6 +19,8 @@ internal sealed record LibraryAttachRequest
 
     public bool Automatic { get; init; }
 
+    public bool? GitIgnore { get; init; }
+
     public required LibraryMode Mode { get; init; }
 
     /// <summary>Paths named by <c>--allow-path</c>, staged with the permission plan.</summary>

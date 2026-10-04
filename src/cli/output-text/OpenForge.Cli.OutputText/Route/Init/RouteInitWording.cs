@@ -4,6 +4,20 @@ namespace OpenForge.Cli.OutputText.Route.Init;
 
 internal static class RouteInitWording
 {
+    // @OpenForgeText route.init.restored
+    internal static string Restored(string id, bool preview)
+        => preview ? $"Would restore {id}." : $"Restored {id}.";
+
+    // @OpenForgeText route.init.payload-files-created
+    internal static string PayloadFilesCreated() => "payload files created";
+
+    // @OpenForgeText route.init.settings-updated
+    internal static string SettingsUpdated() => "settings updated";
+
+    // @OpenForgeText route.init.updated
+    internal static string Updated(string path, bool preview)
+        => preview ? $"Would update {path}." : $"Updated {path}.";
+
     internal static string Created(string path)
         => global::OpenForge.Cli.OutputText.Route.Shared.CanonicalPhrases.Created(path);
 

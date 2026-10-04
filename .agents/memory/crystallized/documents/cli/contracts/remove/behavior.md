@@ -53,6 +53,16 @@ planned creation, not an unreported side effect of serialization.
 
 ## Record The Selected Meaning
 
+When a path removal releases opted-in Library mappings, reconcile the exact
+owned ignore entries from the resulting registrations. Include any ordinary
+ignore-file change and exact prior snapshot in plan matching, lease revalidation,
+recovery, application and receipts. Verify it before final ownership publication.
+The confirmed root path plan authorizes this companion metadata without a new
+Library permission flow. A selected `.gitignore` target has no second rewrite,
+and removal may leave an already absent ignore file absent. Preserve authored
+rules and surviving owners; ambiguous or unsafe required ignore facts block
+before any persistent effect.
+
 - A leaf records each removed physical file, including its removed overwrite.
 - A directory records its path in `removedDirectories`; a selected root category
   also records its category name. Future files remain excluded.

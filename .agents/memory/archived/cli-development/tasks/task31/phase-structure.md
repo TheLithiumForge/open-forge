@@ -22,9 +22,9 @@ decision gates as resolved and applied.
 
 ## Evidence source
 
-- [C# directives and structure](../../../../emerging/analysis/cli-experience-audit/csharp-directives-and-structure.md)
-- [Implementation duplication](../../../../emerging/analysis/cli-experience-audit/implementation-duplication.md)
-- [Layer adherence](../../../../emerging/analysis/cli-experience-audit/layer-adherence.md)
+- [C# directives and structure](../../analysis/cli-experience-audit/csharp-directives-and-structure.md)
+- [Implementation duplication](../../analysis/cli-experience-audit/implementation-duplication.md)
+- [Layer adherence](../../analysis/cli-experience-audit/layer-adherence.md)
 
 ## Actionable boundary
 

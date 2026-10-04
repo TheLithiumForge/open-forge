@@ -77,6 +77,8 @@ internal enum RouteInitEffectKind
     Directory,
     Entrypoint,
     GeneratedRegion,
+    Payload,
+    Settings,
 }
 
 internal enum RouteInitEffectAction

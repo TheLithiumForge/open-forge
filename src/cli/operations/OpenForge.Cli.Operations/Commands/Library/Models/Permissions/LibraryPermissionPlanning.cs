@@ -17,6 +17,7 @@ internal enum LibraryPermissionTargetUse
 internal enum LibraryPermissionEffect
 {
     CreateLink,
+    WriteGitIgnore,
     RetainLink,
     RemoveLink,
 }

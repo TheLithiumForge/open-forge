@@ -43,7 +43,9 @@ internal sealed class RouteInitProspectivePlanBuilder
 
         var topology = _topologyPlanner.Build(
             inspection.Catalogue,
-            intended.Entries.Select(entry => entry.Source));
+            intended.Entries.Select(entry => entry.Source).Concat(
+                inspection.Restoration?.Files.Where(file => file.Before.Kind == FileExpectationKind.Missing && file.Source is not null)
+                    .Select(file => file.Source ?? throw new InvalidOperationException("A routed payload file requires its source.")) ?? []));
         if (!topology.IsSafeForProjection)
         {
             return Stopped(
@@ -56,7 +58,8 @@ internal sealed class RouteInitProspectivePlanBuilder
         var projectionInputs = BuildProjectionInputs(
             topology,
             intended,
-            inspection.Current);
+            inspection.Current,
+            inspection.Restoration);
         if (projectionInputs.Boundary is { } projectionInputBoundary)
         {
             return Stopped(
@@ -89,7 +92,8 @@ internal sealed class RouteInitProspectivePlanBuilder
                     topology,
                     intended,
                     inspection.Current,
-                    cancellationToken)
+                    cancellationToken,
+                    inspection.Restoration)
                 .ConfigureAwait(false);
         }
         catch (RouteInitPlanningException exception)
@@ -104,7 +108,7 @@ internal sealed class RouteInitProspectivePlanBuilder
         IReadOnlyList<FileStateSnapshot> directoryStates;
         try
         {
-            directoryStates = ReadMissingDirectories(request, intended);
+            directoryStates = ReadMissingDirectories(request, intended, inspection.Restoration);
         }
         catch (RouteInitPlanningException exception)
         {
@@ -144,11 +148,19 @@ internal sealed class RouteInitProspectivePlanBuilder
         RouteInitProspectiveTopology topology,
         RouteInitIntendedChain intended,
         RouteInitCurrentStateFacts current,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        RouteInitRestoration? restoration)
     {
         var sources = intended.Entries
             .Select(entry => entry.Content)
             .ToList();
+        if (restoration is not null)
+        {
+            sources.AddRange(restoration.Files.Where(file => file.Before.Kind == FileExpectationKind.Missing && file.Source is not null)
+                .Select(file => new RouteInitProspectiveSourceContent(
+                    file.Source ?? throw new InvalidOperationException("A routed payload file requires its source."),
+                    file.Before, file.Asset.Bytes.AsSpan(), file.Asset.Path, ownsGeneratedEntries: false)));
+        }
         if (topology.Formation.Loader is not { } loader)
         {
             return sources;
@@ -209,9 +221,17 @@ internal sealed class RouteInitProspectivePlanBuilder
     private ProjectionInputs BuildProjectionInputs(
         RouteInitProspectiveTopology topology,
         RouteInitIntendedChain intended,
-        RouteInitCurrentStateFacts current)
+        RouteInitCurrentStateFacts current,
+        RouteInitRestoration? restoration)
     {
         var documents = new Dictionary<string, string>(StringComparer.Ordinal);
+        if (restoration is not null)
+        {
+            foreach (var file in restoration.Files.Where(file => file.Before.Kind == FileExpectationKind.Missing && file.Source is not null))
+            {
+                documents.Add(file.Asset.Path, StrictUtf8.GetString(file.Asset.Bytes.AsSpan()));
+            }
+        }
         foreach (var entry in intended.Entries)
         {
             try
@@ -310,7 +330,8 @@ internal sealed class RouteInitProspectivePlanBuilder
 
     private IReadOnlyList<FileStateSnapshot> ReadMissingDirectories(
         RouteInitRequest request,
-        RouteInitIntendedChain intended)
+        RouteInitIntendedChain intended,
+        RouteInitRestoration? restoration)
     {
         var canonicalDirectories = new List<string> { SourceLogicalPath.AgentsRoot };
         foreach (var entry in intended.Entries)
@@ -318,9 +339,22 @@ internal sealed class RouteInitProspectivePlanBuilder
             canonicalDirectories.Add(
                 SourceLogicalPath.ReadParent(entry.Source.Identity.CanonicalBasePath));
         }
+        if (restoration is not null)
+        {
+            foreach (var file in restoration.Files)
+            {
+                var parent = SourceLogicalPath.ReadParent(file.Asset.Path);
+                while (parent != SourceLogicalPath.AgentsRoot)
+                {
+                    canonicalDirectories.Add(parent);
+                    parent = SourceLogicalPath.ReadParent(parent);
+                }
+            }
+        }
 
         var results = new List<FileStateSnapshot>();
-        foreach (var canonical in canonicalDirectories.Distinct(StringComparer.Ordinal))
+        foreach (var canonical in canonicalDirectories.Distinct(StringComparer.Ordinal)
+            .OrderBy(path => path.Count(character => character == '/')).ThenBy(path => path, StringComparer.Ordinal))
         {
             var logical = SourceLogicalPath.ToLexicalPath(
                 request.Workspace.LexicalRoot,

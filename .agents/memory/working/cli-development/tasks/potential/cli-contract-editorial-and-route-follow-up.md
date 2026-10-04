@@ -8,8 +8,8 @@ open-forge:
 
 ## Status
 
-Candidate; not an active Task. The existing Task 30 G4, Task 31, and G1 state
-boundaries must be checked first so this record does not duplicate execution.
+Candidate, not an active Task. Tasks 30 and 31 are closed. Recheck each proposal
+against current contracts and unfinished Tasks before selecting it.
 
 ## Why this exists
 
@@ -22,20 +22,20 @@ versus-durability imbalance outside a current acceptance boundary.
 
 ## Candidate scope
 
-- Define one presentation/data-model contract for all commands: default detail
-  tier, selection before rendering, healthy/zero/not-applicable suppression,
-  severity and subject ordering, `Next` usability, context echo rules, output
-  budget, JSON projection, and stable fields.
+- Assess remaining gaps against the existing shared reporting and presentation
+  contracts. Four detail levels, format selection, selection before rendering,
+  and the shared result envelope already exist. Output budgets and any changed
+  suppression, ordering, or next-action rule need their own accepted scope.
 - Add a pre-implementation editorial checklist that records the user question,
   expected answer, output-size budget, stream/exit meaning, and the evidence
   boundary. Keep current defaults unchanged until the checklist is accepted.
 - Decide whether the Route command family should be rebuilt behind its existing
-  public contracts after G1/G4, or whether the documented local differences
+  public contracts, or whether the documented local differences
   justify retaining separate implementations. Route Move/Remove finding codes
   and JSON must remain distinct unless a new contract explicitly changes them.
-- Resolve the wizard/confirmation/help/error journey as a product contract,
-  including showing a plan before confirmation and making identity/next-action
-  errors directly actionable.
+- Reproduce remaining help, identity, and error journey problems. Plans already
+  precede confirmation. Task 72's bounded wizard viewport is locally accepted.
+  The wider Task 39 error audit remains paused rather than complete.
 - Measure and correct the interaction-versus-durability balance without
   discarding durable recovery, ownership, or safety evidence merely to reduce
   visible output.
@@ -45,6 +45,25 @@ versus-durability imbalance outside a current acceptance boundary.
 The historical presentation decision to retain diagnostic kinds, JSON, and exit
 behavior is a current decision boundary to recheck, not an invitation to delete
 finding categories. Promotion requires maintainer acceptance of the contract,
-reviewed before/after snapshots, and an explicit dependency on Task 30 G1 and
-G4 plus the Task 31 M1/M3 stop boundaries. This candidate does not authorize
+reviewed before/after snapshots, and current scope and ownership boundaries.
+The completed G1/G4 and Task 31 packets are historical evidence. This candidate does not authorize
 implementation or public output changes.
+
+## Other questions retained from the historical analyses
+
+The [readiness analysis](../../../../archived/cli-development/analysis/one-zero-release-readiness.md)
+proposes a stable 1.0 compatibility promise for command names and flags,
+statuses and exits, schemas, frontmatter, workspace state, customization, and
+migrations. It also recommends qualification of the exact future stable
+candidate across matching hosts, packages, archives, and checksums, plus public
+stable-channel smoke checks and an upgrade from the published beta. Prior beta
+evidence does not qualify a different stable candidate. Verified release notes,
+limitations, and a fresh dependency review are further recommendations. These
+remain unaccepted future proposals, not new release gates or publication
+authorization.
+
+The [dogfood audit](../../../../archived/cli-development/analysis/cli-experience-audit/repository-dogfood-and-configuration.md)
+also records a dirty-tree Git advisory as historical direction. Its current
+implementation and acceptance disposition were not verified in the currency
+audit. Revalidate that question before treating it as implemented, rejected,
+or newly approved. No new Git behavior is selected here.

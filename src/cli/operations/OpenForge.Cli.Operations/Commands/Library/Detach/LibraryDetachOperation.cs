@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.GitIgnore;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Detach.Models.Request;
@@ -106,6 +108,12 @@ internal sealed class LibraryDetachOperation
         {
             return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
         }
+        observations = await ObserveIgnoreAsync(observations, plan, cancellationToken).ConfigureAwait(false);
+        plan = LibraryDetachPlanner.Plan(observations, cancellationToken);
+        if (plan.State != LibraryPlanState.Complete)
+        {
+            return Complete(request, plan, observations, LibraryMutationOperationSupport.Empty());
+        }
         var selected = observations.Record.Record?.Libraries.SingleOrDefault(library => library.Id == request.LibraryId);
         ImmutableArray<LibraryPermissionTarget> targets = selected is null ? [] : LibraryPathIdentity.Mappings(selected).Select(mapping =>
             new LibraryPermissionTarget(mapping.DestinationPath.Value, LibraryPermissionTargetUse.Retired) { Effect = LibraryPermissionEffect.RemoveLink }).ToImmutableArray();
@@ -114,7 +122,9 @@ internal sealed class LibraryDetachOperation
             Workspace = request.Workspace,
             LibraryId = request.LibraryId,
             SettingsObservation = observations.Settings,
-            Targets = targets,
+            Targets = plan.GitIgnore is null ? targets : targets.Add(new LibraryPermissionTarget(
+                LibraryGitIgnoreSection.Path, LibraryPermissionTargetUse.Live)
+            { Effect = LibraryPermissionEffect.WriteGitIgnore }),
             RemovalSelection = new WorkspaceRemovalSelection { Libraries = [request.LibraryId.Value] },
             ExplicitGrantPaths = request.Allow,
             AllowPrompt = request.AllowPrompt && !request.Automatic && request.Mode != LibraryMode.DryRun,
@@ -286,6 +296,11 @@ internal sealed class LibraryDetachOperation
                     cancellationToken).ConfigureAwait(false),
             };
             var freshPlan = LibraryDetachPlanner.Plan(fresh, cancellationToken);
+            if (freshPlan.State == LibraryPlanState.Complete)
+            {
+                fresh = await ObserveIgnoreAsync(fresh, freshPlan, cancellationToken).ConfigureAwait(false);
+                freshPlan = LibraryDetachPlanner.Plan(fresh, cancellationToken);
+            }
             var permissions = plan.Permissions
                 ?? throw new InvalidOperationException("An admitted Library plan requires its permission observation.");
             if (freshPlan.State != LibraryPlanState.Complete || !Matches(plan, freshPlan)
@@ -307,6 +322,7 @@ internal sealed class LibraryDetachOperation
                     Permissions = plan.Permissions,
                     Links = plan.Links,
                     GeneratedRegions = plan.GeneratedRegions,
+                    GitIgnore = plan.GitIgnore,
                     Ownership = fresh.Ownership,
                     OwnershipChange = plan.OwnershipChange,
                     Mappings = fresh.Mappings,
@@ -357,6 +373,22 @@ internal sealed class LibraryDetachOperation
             IsComplete = false,
         };
 
+    private static async ValueTask<LibraryDetachPlanningInput> ObserveIgnoreAsync(
+        LibraryDetachPlanningInput input,
+        LibraryDetachPlan plan,
+        CancellationToken cancellationToken)
+        => input.Record.Record?.Libraries.SingleOrDefault(library => library.Id == input.Request.LibraryId)?.GitIgnore != true ? input : input with
+        {
+            GitIgnore = await LibraryGitIgnorePlanner.PlanAsync(new LibraryGitIgnoreRequest
+            {
+                Workspace = input.Request.Workspace,
+                Current = input.Record.Record,
+                Intended = plan.IntendedRecord,
+                IsExcluded = WorkspaceRemovals.IsPathRemoved(LibraryGitIgnoreSection.Path, input.Settings.Document),
+                IsRemoval = true,
+            }, cancellationToken).ConfigureAwait(false),
+        };
+
     private static bool Matches(LibraryDetachPlan expected, LibraryDetachPlan actual)
         => LibraryMutationOperationSupport.PlansMatch(expected.Effects, actual.Effects);
 
@@ -364,6 +396,7 @@ internal sealed class LibraryDetachOperation
         => plan.Directories.Length > 0
             || plan.Links.Length > 0
             || plan.GeneratedRegions.Length > 0
+            || plan.GitIgnore is not null
             || plan.OwnershipChange is not null
             || plan.Permissions?.Change is not null;
 

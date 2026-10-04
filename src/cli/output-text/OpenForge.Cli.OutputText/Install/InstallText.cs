@@ -70,11 +70,11 @@ internal static class InstallText
 
     // @OpenForgeText install.help.syntax
     internal static string HelpSyntax()
-        => "open-forge install [--force] [--automatic] [--dry-run] [global options]";
+        => "open-forge install [--configure] [--preset <essentials|full-core|custom>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]";
 
     // @OpenForgeText install.help.establishment
     internal static string HelpEstablishment()
-        => "Install adds the complete bundled Framework to the selected workspace. An identical managed installation needs no changes. Existing managed changes are preserved; use open-forge update to reconcile them.";
+        => "Install adds selected bundled defaults to the workspace. Ordinary unattended first Install uses Full Core and retains existing omissions. An identical managed installation needs no changes. Explicit configuration can restore missing selected defaults and retains existing content. Use open-forge update to reconcile other managed changes.";
 
     // @OpenForgeText install.help.write-policy
     internal static string HelpWritePolicy()
@@ -82,7 +82,7 @@ internal static class InstallText
 
     // @OpenForgeText install.help.confirmation
     internal static string HelpConfirmation()
-        => "An interactive text request asks for confirmation once, after checks, if it would write files. Dry-run, unchanged installations, --automatic, JSON, and redirected requests never prompt. Redirected text requests that would write require --automatic.";
+        => "First interactive Install offers a setup preset. --configure offers the current setup choices. A writing plan asks for confirmation once after selection and checks. Dry-run, unchanged installations, --automatic, JSON, and redirected requests never prompt. Redirected text requests that would write require --automatic.";
 
     // @OpenForgeText install.help.examples
     internal static string HelpExamples()

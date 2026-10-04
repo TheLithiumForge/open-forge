@@ -13,4 +13,6 @@ internal sealed record LibraryRegistrationDocument
     public required string SourceRoot { get; init; }
     public required string DestinationRoot { get; init; }
     public required string[] Paths { get; init; }
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public bool GitIgnore { get; init; }
 }

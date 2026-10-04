@@ -36,6 +36,8 @@ internal sealed record RouteInitFramework
     internal string InventoryFingerprint { get; }
 
     internal ImmutableArray<RouteInitFrameworkSegment> Segments { get; }
+
+    internal bool IsCanonicalRestoration { get; init; }
 }
 
 internal sealed record RouteInitMetadata

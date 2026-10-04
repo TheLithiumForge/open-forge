@@ -1,11 +1,63 @@
 ---
 title: Installation
-description: Install the Open Forge CLI, then use it (or a plain copy) to add the Framework to your project.
+description: Install Open Forge, choose the routes you need, and change that selection later.
 ---
 
 # Installation
 
 Setup has three steps: install the CLI, use it to install the Framework into your project, then review and commit the result. The CLI is optional. If you'd rather not use it, skip to [installing the Framework manually](#manually-from-a-clone).
+
+## Quick start
+
+With Node.js 22.18 or later, run:
+
+```sh
+npm install -g @thelithiumforge/open-forge@beta
+cd /path/to/your-project
+open-forge install
+```
+
+The interactive install offers Essentials, Full Core, or Custom, shows the selected plan, and asks before applying it. For a smaller start, choose Essentials. Check the result with `git status` and `git diff`, including the new files, and commit it.
+
+Continue with the [ten-minute guide](ten-minute-guide.md) to try a task, add a rule, and save a useful fact. Installing is a setup step. Your agent doesn't repeat it at startup. The base works without Extensions or a chosen workflow.
+
+## Choose the installed routes
+
+The first interactive install offers three choices:
+
+| Choice     | What it supplies                                                                                                         |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Essentials | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with its whole directory Git-ignored |
+| Full Core  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                       |
+| Custom     | Choose Add, Remove, or Add + Git-ignore for each built-in category and Memory state                                      |
+
+Essentials omits Guidance, Maps, Templates, and Archived Memory. You can add them later. Full Core includes the base categories, not optional Extensions or an agent runtime.
+
+Git-ignored routes remain ordinary Open Forge content. Agents can find and read them, and `index` still lists them. Git-ignore doesn't untrack files already committed to Git. With Essentials, Working Memory stays available for resuming local work while new records stay out of ordinary Git commits.
+
+Custom starts from your current choices in an existing workspace, or Essentials in a fresh one. **Remove** omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions stay in place and remain routable. **Add + Git-ignore** installs the route and ignores its whole directory through an Install-owned section of `.gitignore`. Other Git-ignore rules stay yours.
+
+## Configure an existing workspace
+
+To revisit those choices, run:
+
+```sh
+open-forge install --configure
+```
+
+The wizard offers the presets, with Custom starting from the current choices, and shows the plan before confirmation. It preserves authored files and narrower omissions. It can also restore eligible missing packaged defaults, such as ignored Working scaffolding after a checkout, whether or not the lock file is present. Missing private notes need your own copy or backup.
+
+For a repeatable preview or unattended setup, name the preset explicitly:
+
+```sh
+open-forge install --configure --preset essentials --dry-run
+open-forge install --configure --preset essentials --automatic
+```
+
+Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive `--configure` requires `--preset`. An ordinary unattended first install keeps Full Core and existing omissions. See the [CLI reference](/guides/cli#setup-choices) for Custom row flags and exact combinations.
+
+<details>
+<summary>Other installation methods and existing-workspace details</summary>
 
 ## 1. Install the CLI
 
@@ -38,9 +90,9 @@ Clone the repository and follow the [local setup guide](/guides/development#link
 
 ## 2. Install the Framework
 
-The Framework is the base: 15 Markdown files. They are `AGENTS.md`, the `CLAUDE.md` bridge, the loader, one entrypoint for each Core category and Memory state, and the `open-forge-cli` Skill. Everything else, such as Decisions, Checkpoints, and workflow recipes, comes from optional [Extensions](#add-extensions-optional) or from you.
+Full Core supplies 15 Markdown files: `AGENTS.md`, the `CLAUDE.md` bridge, the loader, one entrypoint for each Core category and Memory state, and the `open-forge-cli` Skill. Essentials selects fewer routes, and Custom follows your selection. Records such as Decisions and Checkpoints, and workflow recipes, come from optional [Extensions](#add-extensions-optional) or from you.
 
-Both routes install the same Framework files. The CLI also records what it installed, so it can update those files later.
+The CLI records what it manages so it can update those files later. A manual copy supplies Full Core, which you can adapt by hand.
 
 New installations use visible managed boundaries in `AGENTS.md` and
 `CLAUDE.md`. Keep your own instructions before or after the managed section.
@@ -69,14 +121,14 @@ Keep additional project-specific instructions here.
 From your project:
 
 ```sh
-open-forge install --dry-run
-open-forge install
+open-forge install --preset essentials --dry-run
+open-forge install --preset essentials
 ```
 
-The dry run lists what will be written and changes nothing. The second command shows the same plan and asks before it writes.
+Naming the preset previews that exact selection without setup questions. The second command shows the plan and asks before it writes. Use `full-core` instead when you want every built-in route. An explicit preset in an already installed workspace also needs `--configure`.
 
 An existing category entrypoint does not prevent first installation. If a file
-already occupies a bundled path such as `.agents/guidance/_guidance.md`, Install
+already occupies a bundled path in a selected route, such as `.agents/guidance/_guidance.md`, Install
 preserves its authored content in `_guidance.overwrite.md` and installs the
 Framework base. Existing overwrite content is kept after it. The base gets
 rebuilt navigation, while the overwrite remains yours. An existing native
@@ -130,6 +182,8 @@ The installed files are short, and they become the instructions your agents are 
 
 :::
 
+</details>
+
 ## Add Extensions (optional)
 
 Extensions are optional packages of more files, such as Planning for Decisions and Checkpoints, or Development for review and debugging workflows. Their files carry no loading tags, so at startup an installed Extension adds only its one-line entries to the entrypoints that already load. Once the Framework is in place, preview a package before you install it:
@@ -141,4 +195,4 @@ open-forge extension install development-toolkit --dry-run
 
 The [Extensions](../extensions/index.md) section explains what each package installs and what every file is for.
 
-**Next:** [Your first task](first-task.md).
+**Next:** [Ten-minute guide](ten-minute-guide.md).

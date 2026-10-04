@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Route the accepted current root Framework management-establishment and exact-no-op contracts for `install`
+  description: Route the current install contracts for setup selection, restoration, management establishment and verification
   responsibility: Route the root install Interface and Behavior files without adding lifecycle meaning or implementation detail
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Install, Framework, Lifecycle, CurrentTruth]
 ---
@@ -21,7 +21,9 @@ This is the accepted current Crystallized contract set for the root Framework
 records qualified platforms and published versions. [CLI Development](../../../../../working/cli-development/_cli-development.md)
 records current implementation and release work. `install` may establish a safely absent or
 eligible initial state and verify an exact managed state. Managed divergence is
-not install work and directs to root `update`. Its sibling Interface and
+not ordinary install work and directs to root `update`. Explicit configuration
+selects built-in routes, restores eligible missing defaults and manages their
+Git-ignore choices without replacing authored content. Its sibling Interface and
 Behavior files are the detailed authorities for the public surface and the
 technology-neutral operation behind it.
 
@@ -52,5 +54,5 @@ journeys. This contract set does not claim that implementation or proof.
 
 ## Entries
 
-- [Accepted technology-neutral install behavior for management establishment, exact no-op, initial force, and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Behavior #Determinism #Lifecycle #Safety #Recovery #CurrentTruth
-- [Accepted current Interface for establishing and verifying the managed root Framework lifecycle](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Interface #Lifecycle #Safety #Recovery #CurrentTruth
+- [Current install rules for setup selection, additive restoration, management establishment, verification and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Behavior #Determinism #Lifecycle #Safety #Recovery #CurrentTruth
+- [Accepted current Interface for installing, configuring and verifying built-in Framework routes](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Interface #Lifecycle #Safety #Recovery #CurrentTruth
