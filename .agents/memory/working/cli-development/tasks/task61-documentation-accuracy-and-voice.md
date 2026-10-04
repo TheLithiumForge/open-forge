@@ -55,17 +55,18 @@ diagram are aligned and verified. The broader maintainer review remains
 open; this receipt does not close the entire Task or qualify a release.
 The previous completed documentation horizon below remains historical evidence.
 
-The 2026-10-03 continuation is integrated in Root's isolated
+The 2026-10-03 continuation reached local acceptance in Root's isolated
 `docs/onboarding-and-presets` worktree from local develop `de54c1d`.
-[Task 73's active capsule](../../../archived/cli-development/tasks/task73-layered-adoption-and-installation-choices.md#active-execution-capsule-2026-10-03)
-owns this newer wave, the single ten-minute guide, restoration behavior,
-accepted installer choices and final combined qualification. Tasks 72 and 73
-are locally accepted, with six managed/native modes passing. Their changes
-remain uncommitted, unmerged and unpublished. Startup reading now
-explicitly respects an intentionally omitted CLI Skill. Actual help still
-confirms all 29 command paths and six globals; the site builds and formatting
-passes. Earlier worktree and qualification statements below describe the
-previous horizon, not a release or the final combined wave.
+[Task 73's dated capsule](../../../archived/cli-development/tasks/task73-layered-adoption-and-installation-choices.md#active-execution-capsule-2026-10-03)
+records the single ten-minute guide, restoration behavior, accepted installer
+choices and combined qualification at that stage. Tasks 72 and 73 subsequently
+shipped in beta6 after squash integration into develop and all six hosted
+platforms passed. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04)
+retains the completed integration, publication and public checks. Startup reading
+respects an intentionally omitted CLI Skill. Help covers all 29 command paths
+and six globals; the site build and formatting passed. Earlier worktree and
+qualification statements below describe their dated horizons. The broader
+Task 61 maintainer review remains open.
 
 The new scope explicitly includes `src/open-forge/.agents/skills/`, its
 repository counterpart, the Skills Maintenance contract, and affected
@@ -74,9 +75,10 @@ not the CLI parser, loading-tag semantics, runtime Skill activation, or
 Extension wizard behavior. Use the existing Skills Axiom to require the
 native Skill at startup; do not introduce a second Skill metadata format.
 The exact flag guide earns its baseline cost through the maintainer's
-explicit request; report the measured increase. No release, remote action,
-or integration is selected. The primary agent retains ownership in the
-same worktree.
+explicit request; report the measured increase. No release, remote action
+or integration was selected for that earlier bounded documentation horizon.
+The later combined release is complete in Task 70; the primary agent retains
+the separate broader maintainer-review boundary here.
 
 The maintainer also requested a reminder after completion about an as-yet
 unrecalled concept to promote or showcase. Do not invent that concept.

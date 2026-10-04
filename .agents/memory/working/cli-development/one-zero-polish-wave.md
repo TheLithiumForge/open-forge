@@ -8,7 +8,7 @@ open-forge:
 
 ## Current status, 2026-10-04
 
-The [project-control ledger](project-control.md#active-task-ledger) owns current queue state. The maintainer has [renewed release authorization](tasks/task70-existing-workspace-adoption-during-installation.md#current-release-authorization-2026-10-04) for the verified combined candidate as beta6. Tasks 32, 47, 54 and 64 completed their task-local work. Tasks 72, 73 and 74 completed the locally accepted onboarding horizon and retain the integration boundary in the ledger until the release completes.
+The [project-control ledger](project-control.md#active-task-ledger) owns current queue state. The requested onboarding horizon is complete and shipped in [beta6 release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.6). Tasks 32, 47, 54, 64, 70, 72, 73 and 74 retain completed records in Archived. The [Task 70 receipt](../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) owns the final integration and publication evidence.
 
 ## Frozen decisions and coordination
 

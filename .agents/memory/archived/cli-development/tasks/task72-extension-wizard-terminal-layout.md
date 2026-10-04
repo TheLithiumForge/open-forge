@@ -12,6 +12,8 @@ Archived on 2026-10-04 from `.agents/memory/working/cli-development/tasks/task72
 
 This record preserves historical evidence. The [current CLI development route](../../../working/cli-development/_cli-development.md) and its open Tasks define current work. Local qualification in this record does not establish later integration or publication.
 
+The correction subsequently shipped in beta6 after all six hosted platforms passed. [Task 70](task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains the completed integration and public release receipt.
+
 ## Outcome
 
 The maintainer reported this issue on 2026-10-02 after demonstrating Open

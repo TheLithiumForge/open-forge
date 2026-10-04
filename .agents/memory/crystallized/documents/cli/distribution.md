@@ -48,26 +48,17 @@ channels, or support-floor claims require a new maintainer decision.
 
 ## Current Implementation And Delivery State
 
-### Beta 6 candidate
+### Beta 6
 
-The maintainer authorized the corrected combined candidate for integration into
-`develop` and a new beta release on 2026-10-04. The selected version is
-`0.9.0-beta.6`. Local acceptance covers the onboarding guide, CLI usage Skill,
-installation presets and configuration, terminal selection layout, Library
-Git-ignore lifecycle and Memory cleanup. Hosted qualification and publication
-are pending; the local six-mode receipt is not six-platform release proof.
-[Task 70](../../../working/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#current-release-authorization-2026-10-04)
-owns that boundary.
+Version `0.9.0-beta.6` is published from `d76304a1fdd59210026570bed908b4f0627ed0af`. The requested guide, complete CLI flag summaries and startup Skill, Essentials/Full Core/Custom configuration, terminal layout, Library Git-ignore lifecycle and selected Memory cleanup are integrated into develop.
 
-### Beta 5 publication hold
+[Build 37222405813](https://github.com/TheLithiumForge/open-forge/actions/runs/37222405813) passed shared checks and native build/test/package qualification on all six platforms. [Release 37225125853](https://github.com/TheLithiumForge/open-forge/actions/runs/37225125853) reused those exact-source packages for the [beta6 release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.6) and [npm package](https://www.npmjs.com/package/@thelithiumforge/open-forge/v/0.9.0-beta.6). All seven registry versions and beta/latest tags agree; the wrapper declares six exact platform dependencies and all six portable archives match SHA256SUMS. Public Windows npm and portable executable SHA-256 values match.
 
-Version `0.9.0-beta.5` was published to npm from
-`634ab07051e670e3f9bcc1b6603ac39a91f4febc`. The `beta` and `latest` npm tags
-identify that version. The GitHub release is draft following the maintainer's
-stop; the published npm version cannot be reused for corrected source.
-The reused-worktree recovery correction is committed in `de54c1d32` and
-included in the beta6 candidate. The dated cancellation race is retained in
-[Task 70's hold history](../../../working/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#current-release-hold-2026-10-02).
+Fresh public npm installation exercised Essentials, Context, configuration and canonical restoration, Doctor, and Library attach/sync/detach with source preservation and remembered ignore choice. The local beta5-to-beta6 upgrade rehearsal preserved authored content and companions. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains complete receipts and historical beta5 hold evidence. Main and its deployed site remain unchanged by this release.
+
+### Earlier releases
+
+Beta5 was published to npm from `634ab07051e670e3f9bcc1b6603ac39a91f4febc`; its GitHub release remains draft following the dated stop. Beta6 supersedes it with the safely superseded recovery correction and requested onboarding work. Older publication receipts below are historical and do not describe current npm tags or the latest GitHub prerelease.
 
 ### Beta 4
 
@@ -98,8 +89,7 @@ Final public receipts are retained under `artifacts/beta4-public/` and
 On 2026-10-01, the npm `beta` and `latest` tags identified `0.9.0-beta.3`, as
 did the [GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.3).
 Its receipt recorded no six-host or portable-archive verification. That limited
-verification fact remains historical. Beta4 is the public GitHub prerelease;
-the current npm tags and beta5 hold are recorded above.
+verification fact remains historical. The current public release and npm tags are recorded above.
 
 ### Beta 2
 

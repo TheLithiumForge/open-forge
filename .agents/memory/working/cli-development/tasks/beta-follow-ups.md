@@ -109,14 +109,9 @@ These were recorded as later work. They are not automatically beta blockers.
       cannot preserve authored meaning, then agree on the expected refusal or edit.
       Do not invent an unsafe case merely to fill coverage.
 
-## Delivery verification still open
+## Completed delivery verification
 
-The former six-host and downloadable-archive work completed in the recorded
-beta releases. [Task 69](../../../archived/cli-development/tasks/task69-next-beta-stabilization-release.md) retains the
-beta4 receipt. The subsequent beta5 candidate and cancellation race belong to
-[Task 70](task70-existing-workspace-adoption-during-installation.md#current-release-hold-2026-10-02).
-Publication remains held. Earlier qualification does not authorize another
-release or qualify a different source candidate.
+The prior six-host and downloadable-archive work completed in the recorded beta releases. [Task 69](../../../archived/cli-development/tasks/task69-next-beta-stabilization-release.md) retains the beta4 receipt. The beta5 hold and cancellation race are historical; the corrected combined beta6 release completed under renewed maintainer authorization. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains exact-source hosted qualification and public postchecks. Earlier receipts do not authorize a future release or qualify a different source candidate.
 
 ## Suggested sequence and completion
 

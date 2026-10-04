@@ -8,15 +8,11 @@ open-forge:
 
 ## Current order
 
-The [project-control ledger](../project-control.md#active-task-ledger) owns current queue state and permanent Task identities. Each Task owns its scope and remaining evidence. Read its parent before a phase packet.
-
-The [Task 70 release boundary](task70-existing-workspace-adoption-during-installation.md#current-release-authorization-2026-10-04) now has renewed maintainer authorization for verification, `develop` integration and beta6 publication. Task 71 is queued for pipeline analysis. Tasks 34 and 39 remain paused. Task 48 is frozen at A/B1, deferred beyond beta5 and required before 1.0. Task 62 retains the later maintainer review rather than the completed original implementation.
-
-The [wave capsule](../one-zero-polish-wave.md) preserves resume boundaries and deferred selection. The [candidate queue](potential/_potential.md) records unsettled follow-ups without making them active implementation.
+The requested combined onboarding changes shipped in beta6. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains the completed release receipt. Task 71 is queued for pipeline analysis. Tasks 34 and 39 remain paused. Task 48 is frozen at A/B1 and required before 1.0. Task 62 retains the later maintainer review rather than the completed original implementation.
 
 ## Completed work
 
-Completed records and superseded analyses are in [Archived CLI Development](../../../archived/cli-development/_cli-development.md). Tasks 72, 73 and 74 are locally accepted and archived. Their remaining integration boundary is recorded in the ledger. The changes remain uncommitted, unmerged and unpublished.
+Completed records and superseded analyses are in [Archived CLI Development](../../../archived/cli-development/_cli-development.md). Tasks 70, 72, 73 and 74 are accepted, released and archived. Their complete receipts are retained there.
 
 ## Axioms
 
@@ -42,5 +38,4 @@ Completed records and superseded analyses are in [Archived CLI Development](../.
 - [Open Task 63 to decide whether and how a direct edit to a managed file can survive updates, since removedFiles already keeps such a file untouched as an undocumented side effect](task63-keeping-edits-through-updates.md) - #Memory #Working #Task #CLI #Update #Removal #Customization #Investigation #Contextual #Active
 - [Task 66 council review of the published documentation for overclaims and polish, and of the shipped Framework and Extension files for consistency, redundancy, order, and readability](task66-council-polish.md) - #Memory #Working #Task #Documentation #Framework #Extensions #Council #Writing #Contextual #Active
 - [Task 67 council redesign of the framework diagram's labels, so what loads when and where content comes from reads at a glance and stays accurate](task67-diagram-labels.md) - #Memory #Working #Task #Documentation #Diagram #Loading #Council #Writing #Contextual #Active
-- [Define bounded adoption of compatible existing workspace metadata and route entrypoints during ordinary Framework installation and ordinary managed Update](task70-existing-workspace-adoption-during-installation.md) - #Memory #Working #Task #CLI #Install #Metadata #Contextual #Active
 - [Streamline hosted build and release delivery while preserving required platform coverage and making stalled suites diagnosable](task71-streamline-build-release-pipeline.md) - #Memory #Working #Task #CLI #Pipeline #Build #Release #Contextual #Active

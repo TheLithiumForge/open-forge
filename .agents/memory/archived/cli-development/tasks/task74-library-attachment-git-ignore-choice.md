@@ -8,7 +8,7 @@ open-forge:
 
 ## Archive Status
 
-Archived on 2026-10-04 after local acceptance at phase 3/3, milestone 4/4. Production, documentation, fresh review and all six managed and supported Windows Native AOT modes passed. The changes remain uncommitted, unmerged and unpublished. The [current CLI ledger](../../../working/cli-development/project-control.md#pending-integration) retains their integration boundary.
+Archived on 2026-10-04 after local acceptance at phase 3/3, milestone 4/4. Production, documentation, fresh review and all six managed and supported Windows Native AOT modes passed. The combined candidate awaited integration at that point. It subsequently shipped in beta6 after all six hosted platforms passed; [Task 70](task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains the completed integration and public release receipt. The [current CLI ledger](../../../working/cli-development/project-control.md#completed-onboarding-release) defines the remaining work.
 
 ## Outcome
 

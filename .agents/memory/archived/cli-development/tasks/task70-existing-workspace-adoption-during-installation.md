@@ -1,10 +1,22 @@
 ---
 open-forge:
-  description: Define bounded adoption of compatible existing workspace metadata and route entrypoints during ordinary Framework installation and ordinary managed Update
-  tags: [Memory, Working, Task, CLI, Install, Metadata, Contextual, Active]
+  description: Historical record of bounded adoption of compatible existing workspace metadata and route entrypoints during ordinary Framework installation and ordinary managed Update
+  tags: [Memory, Archived, Historical, Task, CLI, Install, Metadata, Contextual]
 ---
 
 # Task 70 — Existing workspace adoption during installation
+
+## Archive Status
+
+Archived on 2026-10-04 after the corrected combined release completed. The dated plans, holds, failed candidates and receipts below are history. [CLI Distribution](../../../crystallized/documents/cli/distribution.md#current-implementation-and-delivery-state) defines current delivery state; [Project Control](../../../working/cli-development/project-control.md#active-task-ledger) defines unfinished work.
+
+## Beta 6 release complete, 2026-10-04
+
+The requested onboarding, configuration, wizard, Library ignore and Memory cleanup changes were squash-merged as `882d77cca3ed7a68e8ddb35aa0b83c75cb40bc45`. Four exact Windows-only test reasons were then registered in the existing delivery policy, with all suite/OS predicates unchanged and 64 delivery tests passing. Develop was pushed at the final release source `d76304a1fdd59210026570bed908b4f0627ed0af`.
+
+[Build 37222405813](https://github.com/TheLithiumForge/open-forge/actions/runs/37222405813) passed shared checks and native build, six-mode tests, packing and installed-package checks on Linux, macOS and Windows, each on x64 and ARM64. [Release 37225125853](https://github.com/TheLithiumForge/open-forge/actions/runs/37225125853) reused those exact-source packages and published the complete [beta6 release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.6). All seven npm exact versions and beta/latest tags agree on `0.9.0-beta.6`; six portable archives match SHA256SUMS. Public npm installation exercised Essentials, startup Context, configuration restoration, canonical Route Init, Doctor, and Library attach/sync/detach with remembered Git-ignore rules and preserved source files.
+
+The local beta5-to-beta6 upgrade rehearsal preserved authored content and companions. Public Windows npm and portable executable identity is verified separately. Evidence is retained in `artifacts/beta6-release/`, `artifacts/beta6-public/` and `artifacts/beta6-upgrade/` in the onboarding worktree. Documentation is merged into develop; main and its deployed site were not advanced by this release. No original-scope implementation or publication work remains open here.
 
 ## Current release authorization, 2026-10-04
 
@@ -551,10 +563,10 @@ Keep checked-in PublishedInstallAdoptionProcessTests.cs limited to hermetic mini
 
 ## Evidence
 
-- Task47 follow-up and acceptance record: [default Skill indexing](../../../archived/cli-development/tasks/task47-default-skill-indexing.md).
+- Task47 follow-up and acceptance record: [default Skill indexing](task47-default-skill-indexing.md).
 - Task47 qualification receipt: [absolute artifact](C:/Users/Tedy/.codex/worktrees/beta-stabilization/open-forge/artifacts/task47/qualification-receipt.json), SHA256 `54B7F4A42D051C0591F2FC1D3F6A341BDEDA061A50E3D6A1E2E5173E17B9F001`.
 - Task47 root physical qualification: [absolute artifact](C:/Users/Tedy/.worker-watch/worktrees/a_390948de2166/artifacts/task47-physical-qualification/run-04a606154cc641c496be26a9e750dc9c/qualification-receipt.json).
-- Public beta 4 baseline: [Task69 release receipt](../../../archived/cli-development/tasks/task69-next-beta-stabilization-release.md) and [absolute final receipt](C:/Users/Tedy/.codex/worktrees/beta-stabilization/open-forge/artifacts/beta4-public/final-receipt.json).
+- Public beta 4 baseline: [Task69 release receipt](task69-next-beta-stabilization-release.md) and [absolute final receipt](C:/Users/Tedy/.codex/worktrees/beta-stabilization/open-forge/artifacts/beta4-public/final-receipt.json).
 - Task70 historical apply evidence and text streams: [absolute artifact](C:/Users/Tedy/.worker-watch/worktrees/a_0f9f108d71df/artifacts/task70-repro/apply-evidence.json).
 
 ## Historical Review Budget Snapshot — before final v9 qualification

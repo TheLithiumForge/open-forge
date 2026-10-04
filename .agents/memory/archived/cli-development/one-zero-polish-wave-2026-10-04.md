@@ -13,7 +13,7 @@ Archived on 2026-10-04 from `.agents/memory/working/cli-development/one-zero-pol
 ## Current status, 2026-10-04
 
 The [project-control ledger](../../working/cli-development/project-control.md#active-task-ledger) defines
-current task state and the next boundary. [Task 70](../../working/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#current-release-hold-2026-10-02)
+current task state and the next boundary. [Task 70](tasks/task70-existing-workspace-adoption-during-installation.md#current-release-hold-2026-10-02)
 records the release hold and separate local reused-worktree correction. Its
 dated hold supersedes the earlier noon window, pending hosted gates and
 pre-publication claims below. Further publication is not authorized.
@@ -38,7 +38,7 @@ using its actual HEAD, complete source-change fingerprint, and immutable built
 artifacts. Freeze its complete file tree for exact comparison with the develop
 squash. This timing instruction supersedes the earlier requirement to commit
 candidate C before local qualification; every qualification gate remains.
-The [Task 70 record](../../working/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md)
+The [Task 70 record](tasks/task70-existing-workspace-adoption-during-installation.md)
 records all final local gates passing, including the actual published-beta4
 upgrade. Root accepts the candidate for exact-tree integration at noon. Hosted
 six-host qualification and release/public postchecks remain. No individual
@@ -113,7 +113,7 @@ selected standard routes; it preserves authored bytes, native fields, and
 ownership, reports migration, and follows normal confirmation/recovery,
 dry-run, and idempotence behavior. Strict malformed-input boundaries remain.
 Task 70's canonical record is [Existing workspace adoption during
-installation](../../working/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md).
+installation](tasks/task70-existing-workspace-adoption-during-installation.md).
 
 **Task 70 Update adoption amendment:** Root accepted adding ordinary Update in
 already-managed Framework workspaces, applying the same compatible-metadata and
@@ -382,7 +382,7 @@ integration worktree.
 
 Task 70 source authorship used seven disjoint GPT-6 Luna max lanes. Its
 GPT-6.1-Sol / high mastermind completed run `r_206aa377b864`; the sealed
-handoff and canonical record are verified. See the [Task 70 record](../../working/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md).
+handoff and canonical record are verified. See the [Task 70 record](tasks/task70-existing-workspace-adoption-during-installation.md).
 Earlier independent GPT-6.1-Sol / high
 completion assignments are retained below for provenance. Root owns combined
 qualification for Tasks 32, 47, 54, 64, and 70.

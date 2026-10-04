@@ -66,9 +66,4 @@ Detailed comparison and recovery receipts are preserved in worktree
 
 ## Current state
 
-Open follow-up, queued after the beta5 release hold. No pipeline redesign has
-been implemented. The maintainer stopped release acceptance after reporting
-a separate reused-worktree issue. The publication race and mitigation are
-recorded in [Task 70](task70-existing-workspace-adoption-during-installation.md#current-release-hold-2026-10-02).
-Tasks 34 and 39 remain paused. Task 48 remains deferred beyond beta5 and
-required before 1.0.
+Open follow-up requested during the beta5 publication investigation; no pipeline redesign has been implemented. The corrected combined beta6 release subsequently passed all six platforms and published under renewed authorization. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains that receipt and the historical cancellation race. This successful release does not close Task 71's timing, diagnostics or cancellation improvements. Tasks 34 and 39 remain paused. Task 48 remains required before 1.0.
