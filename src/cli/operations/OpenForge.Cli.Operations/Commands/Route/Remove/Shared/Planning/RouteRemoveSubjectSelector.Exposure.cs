@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Navigation;
@@ -11,7 +12,8 @@ internal sealed partial class RouteRemoveSubjectSelector
     private static RouteRemoveResultFormation? ReadExposureBoundary(
         RouteRemoveSubjectDiscovery discovery,
         SourceRouteFacts routeFacts,
-        RouteNavigationExposure exposure)
+        RouteNavigationExposure exposure,
+        SourceSharing sharing)
     {
         var formation = RouteRemoveBoundary.Start(discovery.Request) with { Source = discovery.Source };
         if (exposure.IsCancelled)
@@ -24,7 +26,7 @@ internal sealed partial class RouteRemoveSubjectSelector
                 "Route Remove navigation exposure inspection was interrupted.");
         }
 
-        return IsUnsupportedLeaf(discovery, routeFacts, exposure)
+        return IsUnsupportedLeaf(discovery, routeFacts, exposure, sharing)
             ? Boundary(
                 formation,
                 RouteRemoveFindingCode.InvalidSubject,
@@ -37,9 +39,10 @@ internal sealed partial class RouteRemoveSubjectSelector
     private static bool IsUnsupportedLeaf(
         RouteRemoveSubjectDiscovery discovery,
         SourceRouteFacts routeFacts,
-        RouteNavigationExposure exposure)
+        RouteNavigationExposure exposure,
+        SourceSharing sharing)
     {
-        if (discovery.Kind != RouteRemoveSubjectKind.Leaf)
+        if (discovery.Kind != RouteRemoveSubjectKind.Leaf || !sharing.Includes(discovery.SelectedSource.Identity.CanonicalBasePath))
         {
             return false;
         }

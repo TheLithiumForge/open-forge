@@ -68,6 +68,21 @@ public sealed class InstallConfigurationTests
         Assert.Equal(before, InstallIgnoreSection.Rewrite(added, InstallConfigurationChoices.Defaults(InstallPreset.FullCore)));
     }
 
+    [Fact(DisplayName = "Legacy whole-directory ignore upgrades to private contents and a shared compatibility host")]
+    [Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
+    public void LegacyIgnoreUpgradesWithCompatibilityHost()
+    {
+        var before = Encoding.UTF8.GetBytes("# authored\r\n# BEGIN OPEN FORGE INSTALL\r\n/.agents/memory/working/\r\n# END OPEN FORGE INSTALL\r\n*.local\r\n");
+        Assert.Equal(["memory/working"], InstallIgnoreSection.Read(before));
+        var rows = InstallConfigurationChoices.Defaults(InstallPreset.Essentials);
+        var written = InstallIgnoreSection.Rewrite(before, rows,
+            [new(".agents/memory/working", ".agents/memory/working/index.md")]);
+        Assert.Equal("# authored\r\n# BEGIN OPEN FORGE INSTALL\r\n/.agents/memory/working/*\r\n!/.agents/memory/working/index.md\r\n# END OPEN FORGE INSTALL\r\n*.local\r\n", Encoding.UTF8.GetString(written));
+        Assert.Equal(["memory/working"], InstallIgnoreSection.Read(written));
+        Assert.Equal(written, InstallIgnoreSection.Rewrite(written, rows,
+            [new(".agents/memory/working", ".agents/memory/working/index.md")]));
+    }
+
     [Theory(DisplayName = "Malformed or duplicate Install ignore markers block"), InlineData("# BEGIN OPEN FORGE INSTALL\n"), InlineData("# END OPEN FORGE INSTALL\n")]
     [InlineData("# BEGIN OPEN FORGE INSTALL\n# END OPEN FORGE INSTALL\n# BEGIN OPEN FORGE INSTALL\n# END OPEN FORGE INSTALL\n")]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]

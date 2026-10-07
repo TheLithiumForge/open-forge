@@ -27,7 +27,7 @@
     "automatic": true,
     "classification": "trusted-exact",
     "footprint": {
-      "files": 13,
+      "files": 17,
       "directories": 0,
       "sections": 2
     },

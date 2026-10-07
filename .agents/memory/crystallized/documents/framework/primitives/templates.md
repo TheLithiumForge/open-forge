@@ -17,6 +17,8 @@ Templates reduce blank-page cost. They provide useful starting material without 
 
 Templates expose the need or result they address so the most specific useful starting source can be selected before its contents are copied.
 
+Focused prompts request necessary content once, in a readable order. Optional sections are clearly marked. The result keeps only useful sections and detail while preserving the destination's required structure.
+
 Selection and removal guidance remains visible in removable `{...}`
 placeholders. Templates do not hide instructions in HTML comments. Canonical
 Templates use visible Markdown and do not emit HTML guard comments. Exact legacy

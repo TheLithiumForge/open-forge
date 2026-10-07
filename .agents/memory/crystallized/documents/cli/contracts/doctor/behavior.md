@@ -362,6 +362,13 @@ generated navigation with the current bounded generated region. Authored
 filesystem and metadata facts are authoritative for the comparison. Current
 generated lines do not define topology or provide metadata fallback.
 
+Generated-navigation comparisons use the recorded route-sharing policy: private
+child rows and private region targets are excluded, while shared entrypoints
+remain checked. Full local metadata and reference diagnosis remains available.
+Absent policy retains legacy comparisons; an unreadable or invalid existing
+policy makes applicable generated comparisons unavailable, never empty or
+current. Policy acquisition preserves the fixed domain schedule.
+
 The stage validates optional `applyTo` metadata independently of required
 ordinary metadata completeness. It reads declarations at both the frontmatter
 root and scoped `open-forge` mapping when present, including a root declaration

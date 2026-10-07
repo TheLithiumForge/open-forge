@@ -44,8 +44,11 @@ state-file output. It records package IDs, descriptive versions and sources,
 dependencies, whole-file paths, and regions. Read it forgivingly: missing or
 unreadable ownership supplies no claims, without falling back to earlier files.
 Duplicate recorded IDs or uninterpretable Library mappings produce an informational
-observation and no inferred file effects. The Library boundary cannot turn a
-missing or unreadable lock into an installation gate. Leftover records are not read, migrated, rewritten or deleted.
+observation and no inferred file effects. An absent lock supplies known empty
+sharing policy. Recognized unknown-schema data retains forgiving reads. Invalid
+or unreadable existing policy blocks shared-navigation planning before effects,
+including dry-run. This read prerequisite is separate from best-effort ownership
+publication. Leftover records are not read, migrated, rewritten or deleted.
 
 Compare current selected target content with intended source content in this
 invocation. Recorded release metadata supplies no integrity baseline. A change

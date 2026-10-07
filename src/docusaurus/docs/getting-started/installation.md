@@ -25,17 +25,17 @@ Continue with the [ten-minute guide](ten-minute-guide.md) to try a task, add a r
 
 The first interactive install offers three choices:
 
-| Choice     | What it supplies                                                                                                         |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Essentials | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with its whole directory Git-ignored |
-| Full Core  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                       |
-| Custom     | Choose Add, Remove, or Add + Git-ignore for each built-in category and Memory state                                      |
+| Choice     | What it supplies                                                                                                                  |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Essentials | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with private contents and a shared entrypoint |
+| Full Core  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                |
+| Custom     | Choose Add, Remove, or Add + Git-ignore for each built-in category and Memory state                                               |
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. You can add them later. Full Core includes the base categories, not optional Extensions or an agent runtime.
 
-Git-ignored routes remain ordinary Open Forge content. Agents can find and read them, and `index` still lists them. Git-ignore doesn't untrack files already committed to Git. With Essentials, Working Memory stays available for resuming local work while new records stay out of ordinary Git commits.
+Git-ignored routes keep their entrypoint eligible for Git, so teammates receive the route and its rules. New local records stay private. Commit the entrypoint and `.agents/open-forge*.json` files. Index reads the lock's sharing policy and omits private contents from generated Entries. Agents can still find and read those contents locally. Git-ignore doesn't untrack files already committed to Git.
 
-Custom starts from your current choices in an existing workspace, or Essentials in a fresh one. **Remove** omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions stay in place and remain routable. **Add + Git-ignore** installs the route and ignores its whole directory through an Install-owned section of `.gitignore`. Other Git-ignore rules stay yours.
+Custom starts from your current choices in an existing workspace, or Essentials in a fresh one. **Remove** omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions stay in place and remain routable. **Add + Git-ignore** installs the route, records its sharing policy, then ignores its contents with an exception for its entrypoint. Other Git-ignore rules stay yours.
 
 ## Configure an existing workspace
 

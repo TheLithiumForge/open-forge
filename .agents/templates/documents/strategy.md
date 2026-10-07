@@ -7,14 +7,11 @@ open-forge:
 # {Subject} Strategy
 
 {
-Template selection:
-
-- Need: One current document for the accepted approach used to pursue a vision.
-- Primary question: How should the subject move toward its vision, where should it focus, and why is that approach expected to work?
+Use for the accepted approach toward a vision: where should the subject focus, and why is that approach expected to work?
 
 Vision is authoritative for the desired future. Strategy is authoritative for the accepted approach used to move toward it.
 Keep task execution, transient priorities, and detailed roadmaps in their own authoritative sources.
-Replace this template's frontmatter, title, and placeholders, then remove this braced source guidance.
+Keep only details that shape this view. Replace frontmatter, title, and prompts, then remove this guidance and unused optional sections.
 }
 
 ## Objective
@@ -43,8 +40,8 @@ Replace this template's frontmatter, title, and placeholders, then remove this b
 
 ## Related Current Views
 
-{Link to the vision, operating context, architecture, roadmap, status, or other authoritative sources needed to apply the strategy.}
+{OPTIONAL: Link to the current sources needed to apply the strategy.}
 
 ## Decisions And Rationale
 
-{Link to accepted decisions that explain the strategy's important choices.}
+{OPTIONAL: Link to accepted decisions that explain important choices without retelling their rationale.}

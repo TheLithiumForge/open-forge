@@ -24,6 +24,8 @@ In a fresh install, each selected category entrypoint lists no items except Skil
 
 **Required behavior.** A Directive is a rule the agent must follow within its scope.
 
+State the required action, its conditions, and meaningful exceptions in the instructions. Examples can clarify a rule, but the obligation remains understandable from the instructions themselves.
+
 - Every Directive file directly in a Directives folder must carry `#LoadNow`, because it's mandatory there. Without the tag, it stays on demand.
 - Each Directive file keeps its instructions under a non-empty `## Instructions` heading.
 - Files in the root `directives/` folder apply to the whole workspace. A scoped folder like `directives/frontend/` loads only when selected, and its Directives then add to the root ones. A narrower Directive never cancels a broader one.
@@ -38,6 +40,8 @@ Use a Directive when behavior is mandatory in a scope, such as a correction you 
 
 **Reusable shapes.** A Pattern defines a concrete, inspectable shape: how an API response looks, how a test file is organized, where a component's files live. Each Pattern covers one shape.
 
+Show the shape as the main content through a concrete example, folder tree, table, diagram, or outline. Keep prose focused on when it applies and the labels or variations needed to understand it.
+
 Shared shapes make related work consistent and easier to inspect. In review, work that departs from the local Pattern stands out.
 
 A Pattern is the default shape in its scope. A justified departure is allowed, and the agent explains material departures before other work depends on them. When a Directive makes a shape mandatory, the agent follows the Directive.
@@ -51,6 +55,8 @@ Open Forge routes to Skills so agents can find them. It doesn't replace your har
 ## Templates
 
 **Copy-ready starting files.** Copy a Template, adapt it, then maintain the result independently. Later changes to the Template never update copies made from it.
+
+Keep only useful sections and detail while preserving the destination's required structure. Optional prompts help you choose what belongs in the result. They do not require you to fill every section.
 
 The Templates entrypoint stays on demand, and a fresh install ships no Templates. [Core Templates](../extensions/core-templates.md) adds one starter per Core category, plus one for Memory. Other Extensions add Templates for their own records, and you can write your own.
 

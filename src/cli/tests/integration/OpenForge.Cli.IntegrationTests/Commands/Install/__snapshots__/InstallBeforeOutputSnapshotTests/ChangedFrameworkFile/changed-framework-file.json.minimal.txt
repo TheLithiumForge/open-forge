@@ -49,7 +49,7 @@
     "automatic": true,
     "classification": "managed-divergence",
     "footprint": {
-      "files": 13,
+      "files": 17,
       "directories": null,
       "sections": 2
     },

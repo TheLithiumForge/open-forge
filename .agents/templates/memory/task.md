@@ -7,7 +7,7 @@ open-forge:
 # {Task}
 
 {
-Use this Template only when the current request or external task source cannot preserve the task accurately. Keep one mutable task source. This record defines what and why; use a linked Plan only when sequencing, parallel lanes, or verification need more detail. Record the execution profile and explicit non-negative budgets in the Markdown Execution Capsule before invoking an external review, council, or correction owner. Remove unused sections and this guidance.
+Use only when the request or external task source cannot preserve the task accurately. Keep one mutable task source for the outcome and reasons. Link a Plan only when sequence, parallel lanes, or verification need more detail. Keep summaries here and link detailed requirements and evidence. Before invoking an external review, council, or correction owner, record the execution profile and explicit non-negative budgets in the Markdown Execution Capsule. Replace prompts and remove this guidance and unused optional sections without dropping required identity, control, authority, or evidence fields.
 }
 
 ## Task State
@@ -33,6 +33,8 @@ This Task is the mutable source for its current phase ordinal, completed milesto
 
 ## Relationships
 
+{Keep only relationships needed to understand or execute this Task. Link to the source that defines each changing fact.}
+
 | Relationship              | Link                   | Relevance                                         |
 | ------------------------- | ---------------------- | ------------------------------------------------- |
 | Parent or program         | {Link or `None`}       | {Why this task exists.}                           |
@@ -53,7 +55,7 @@ This Task is the mutable source for its current phase ordinal, completed milesto
 
 - Invariants: {Dependency, safety, compatibility, lifecycle, or behavior invariants.}
 - Placement map: {Responsibility to local, nearest-shared, or foundational owner.}
-- Accepted decisions: {Links or concise task-local decisions.}
+- Accepted decisions: {Links or necessary task-local decisions without repeating invariants or constraints.}
 - Decisions needed: {Only material choices that block or change the task, or `None`.}
 
 ## Scope And Paths
@@ -112,7 +114,7 @@ When coordinated topic review is selected, name one stable review-budget unit pe
 ## Progress And Evidence
 
 - Current result: {What changed or was learned.}
-- Evidence: {Links or concise results and canonical receipt IDs.}
+- Evidence: {Links, decisive results, and canonical receipt IDs. Keep receipt detail in the table below or its linked source, not both.}
 - Blockers: {Current blockers or `None`.}
 - Residual risk: {Known unproved boundary or `None`.}
 

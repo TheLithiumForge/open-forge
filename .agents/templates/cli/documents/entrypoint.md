@@ -7,18 +7,14 @@ open-forge:
 # `{command-path}` Command Contract Set
 
 {
-Template selection:
-
-- Need: One routed command scope must expose its local Interface, Behavior, and optional Technical Design files.
-- Primary question: Which contract files define this command, and what is their current authority state?
+Use to route one command's Interface, Behavior, and optional Technical Design: which files define it, and what is their current authority state?
 
 Copy this file to `contracts/{command-path}/_{command-name}.md`. Replace metadata,
 including removing the `Template` tag, so it describes the independent routed
 scope. This is a copy-ready starter, not a current command instance. Replace
-the title, links, link depth, and placeholders. State the destination's actual
-lifecycle and authority. Remove the Technical Design item when that file does
+the title, links, link depth, and prompts. Keep routing and authority context here, with command detail in the contracts. State the destination's actual lifecycle and authority. Remove the Technical Design item when that file does
 not exist. Run the applicable index command to regenerate `Entries`, then remove
-this braced source guidance.
+this guidance and unused optional prompts while preserving the entrypoint sections.
 }
 
 ## Routing Boundary

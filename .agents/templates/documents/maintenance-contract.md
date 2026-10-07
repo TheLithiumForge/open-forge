@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use when a source has stable maintenance obligations worth defining separately. Do not invent a governance layer for a trivial file.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep only obligations and checks that affect maintenance. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Source
@@ -17,7 +17,7 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 **Responsibility:** {The question this source answers or the behavior it defines.}
 
-**Related surfaces:** {Counterparts, generated output, installed copies, or consumers that must stay aligned. Omit when none.}
+**Related surfaces:** {OPTIONAL: Counterparts, generated output, installed copies, or consumers that must stay aligned.}
 
 ## Contract
 
@@ -29,10 +29,10 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## Verification
 
-| Requirement | Check | Evidence and limit |
-| --- | --- | --- |
+| Requirement          | Check                                                | Evidence and limit                                |
+| -------------------- | ---------------------------------------------------- | ------------------------------------------------- |
 | {Contract condition} | {Actual project command, inspection, or other check} | {What a result proves and what remains unchecked} |
 
-**Change sequence:** {Only necessary ordering across sources and generated or installed counterparts.}
+**Change sequence:** {OPTIONAL: Necessary ordering across sources and generated or installed counterparts.}
 
-**Unavailable checks:** {Name a real verification gap and the required follow-up. Do not report an intended check as passed.}
+**Unavailable checks:** {OPTIONAL: Real verification gaps and required follow-up. Do not report an intended check as passed.}

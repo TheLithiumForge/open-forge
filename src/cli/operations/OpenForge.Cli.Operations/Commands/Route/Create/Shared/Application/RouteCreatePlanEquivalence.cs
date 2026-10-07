@@ -15,6 +15,7 @@ internal static class RouteCreatePlanEquivalence
         RouteCreatePlan expected,
         RouteCreatePlan actual)
         => MatchesRequest(expected, actual)
+            && expected.SharingExpectation == actual.SharingExpectation
             && MatchesPreview(expected.Preview, actual.Preview)
             && RouteCreateFormationEquivalence.Matches(
                 expected.NavigationFormation,

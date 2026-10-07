@@ -24,6 +24,7 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 
@@ -103,6 +104,9 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                 "The workspace settings read state is not defined.");
         }
 
+        if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete))
+            return Blocked(ownership.Cause ?? "Install requires trustworthy route-sharing facts.", InstallFindingCode.LifecycleBlocked);
+
         InstallConfigurationPlan? configurationPlan = null;
         var settings = settingsRead.Document;
         if (request.Configuration is { } configuration)
@@ -121,13 +125,8 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                         ?? throw new InvalidDataException("The configured settings must decode.");
                 var ignoreRead = await _targetReader.ReadAsync(request.Workspace, InstallIgnoreSection.Path, cancellationToken).ConfigureAwait(false);
                 var before = ignoreRead.Snapshot ?? throw new InvalidDataException(ignoreRead.Cause ?? "The Git-ignore file is unsafe or unavailable.");
-                var intendedIgnore = InstallIgnoreSection.Rewrite(before.Bytes.AsSpan(), configuration.Routes);
-                PlannedFileChange? ignoreChange = null;
-                if (!before.Bytes.AsSpan().SequenceEqual(intendedIgnore))
-                    ignoreChange = ignoreRead.State == InstallTargetReadState.Missing
-                        ? PlannedFileChange.Create(before.Expectation, intendedIgnore)
-                        : PlannedFileChange.ReplaceGeneratedRegion(before.Expectation, intendedIgnore);
-                configurationPlan = new(settingsRead, ignoreRead, settingsChange, ignoreChange, UsesInitialAdoption: true);
+                _ = InstallIgnoreSection.Read(before.Bytes.AsSpan());
+                configurationPlan = new(settingsRead, ignoreRead, settingsChange, IgnoreChange: null, UsesInitialAdoption: true);
             }
             catch (Exception exception) when (exception is ArgumentException or InvalidDataException or DecoderFallbackException)
             {
@@ -345,7 +344,11 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                 documentBytes[target.Key] = target.Value;
             }
 
-            var formation = _formationBuilder.Build(catalogue, intendedSources);
+            if (configurationPlan is not null && request.Configuration is { } selectedConfiguration)
+                configurationPlan = InstallConfigurationSharing.Complete(configurationPlan, selectedConfiguration, intendedSources);
+            var sharing = new SourceSharing(configurationPlan?.GitIgnoredRoutes ?? ownership.Document.Framework?.GitIgnoredRoutes ?? []);
+            var sharedSources = intendedSources.Where(source => sharing.Includes(source.Identity.CanonicalBasePath)).ToArray();
+            var formation = _formationBuilder.Build(sharing.Project(catalogue), sharedSources);
             if (formation.Ambiguities.Count > 0
                 || formation.IntendedTargetCollisions.Count > 0)
             {
@@ -363,7 +366,7 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
 
             var parsedDocuments = new Dictionary<string, MarkdownDocumentFacts>(StringComparer.Ordinal);
             var metadata = new List<GeneratedNavigationMetadata>();
-            foreach (var source in intendedSources)
+            foreach (var source in sharedSources)
             {
                 if (source.Base.Form == SourceDocumentForm.Loader)
                 {
@@ -385,6 +388,7 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                 .Concat(intendedSources.Where(source =>
                     userRegionPaths.Contains(source.Identity.CanonicalBasePath)
                     && SourceFormClassifier.IsEntrypoint(source.Base.Form)))
+                .Where(source => sharing.Includes(source.Identity.CanonicalBasePath))
                 .DistinctBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
                 .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
                 .ToArray();

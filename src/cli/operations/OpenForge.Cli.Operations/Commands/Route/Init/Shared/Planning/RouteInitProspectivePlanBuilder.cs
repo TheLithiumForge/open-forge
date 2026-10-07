@@ -16,6 +16,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -72,7 +73,8 @@ internal sealed class RouteInitProspectivePlanBuilder
         var projectionBuild = _topologyPlanner.Project(
             topology,
             projectionInputs.Regions,
-            projectionInputs.Metadata);
+            projectionInputs.Metadata,
+            new SourceSharing(inspection.SharingOwnership?.Document.Framework?.GitIgnoredRoutes ?? []));
         if (projectionBuild.State != RouteInitProspectiveProjectionState.Complete
             || projectionBuild.Projection is not { } projection)
         {

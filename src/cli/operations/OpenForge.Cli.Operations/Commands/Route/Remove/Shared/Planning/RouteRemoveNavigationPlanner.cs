@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 
@@ -22,12 +23,13 @@ internal sealed partial class RouteRemoveNavigationPlanner(
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
 
-    internal RouteRemoveNavigationPlanningResult Build(RouteRemoveResolvedSubject subject)
+    internal RouteRemoveNavigationPlanningResult Build(RouteRemoveResolvedSubject subject, SourceSharing? sharing = null)
     {
         ArgumentNullException.ThrowIfNull(subject);
         return Build(new RouteRemoveNavigationPlanningRequest
         {
             Subject = subject,
+            Sharing = sharing ?? new SourceSharing([]),
             IntendedSources = _sourceProjector.ProjectIntended(subject),
         });
     }
@@ -75,7 +77,8 @@ internal sealed partial class RouteRemoveNavigationPlanner(
             documents.Select(document => new GeneratedNavigationRegionInput(
                 document.Region.Source,
                 _markdownParser.Parse(document.Text))),
-            metadata);
+            metadata,
+            request.Sharing);
         var projected = documents.Select((document, index) => new ProjectedRegion(
                 document,
                 _regionPlanner.Plan(

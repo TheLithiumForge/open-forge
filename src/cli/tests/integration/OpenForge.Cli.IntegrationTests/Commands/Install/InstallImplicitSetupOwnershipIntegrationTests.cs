@@ -9,33 +9,35 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
 public sealed class InstallImplicitSetupOwnershipIntegrationTests
 {
-    [Theory(DisplayName = "Implicit first setup keeps forgiving ownership for unrelated safe effects"), InlineData("invalid"), InlineData("directory"), InlineData("unavailable")]
+    [Theory(DisplayName = "Implicit first setup blocks unavailable sharing policy before application confirmation"), InlineData("invalid"), InlineData("directory"), InlineData("unavailable")]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
-    public async Task FreshImplicitSelectionIgnoresUnavailableClaims(string state)
+    public async Task FreshImplicitSelectionRequiresReadablePolicy(string state)
     {
         using var workspace = InstallOperationWorkspace.Create("install-implicit-ownership");
-        var unavailable = SeedUnknownOwnership(workspace, state);
+        var unavailable = SeedUnknownOwnership(workspace, state == "unavailable" ? "invalid" : state);
         var presets = 0;
         var confirmations = 0;
+        var before = workspace.SnapshotHashes();
+        if (state == "unavailable")
+            unavailable = new FileStream(workspace.Combine(InstallOperationWorkspace.OwnershipPath), FileMode.Open, FileAccess.Read, FileShare.None);
         try
         {
             var operation = InstallOperationFactory.Create(InstallInteractionTestSupport.Confirmation(observe: (_, _) => confirmations++),
                 workspace.LockStoreRoot, Selection(InstallPreset.Essentials, () => presets++));
             var result = await operation.ExecuteAsync(workspace.Request(automatic: false, allowsInteractiveConfirmation: true), TestContext.Current.CancellationToken);
-            Assert.True(result.Status == CliSemanticStatus.Complete, string.Join("\n", result.Findings.Select(finding => finding.Cause)));
+            Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+            Assert.Contains(result.Findings, finding => finding.Code == InstallFindingCode.LifecycleBlocked);
             Assert.Equal(1, presets);
-            Assert.Equal(1, confirmations);
+            Assert.Equal(0, confirmations);
             Assert.NotNull(result.Input.Configuration);
-            Assert.True(workspace.Exists(".agents/loader.md"));
-            Assert.True(workspace.Exists(".agents/memory/working/_working.md"));
+            Assert.False(workspace.Exists(".agents/loader.md"));
+            Assert.False(workspace.Exists(".agents/memory/working/_working.md"));
             Assert.False(workspace.Exists(".agents/guidance/_guidance.md"));
-            if (state is "directory" or "unavailable")
-            {
-                Assert.Equal(InstallLifecycleOutcome.NotRequested, result.Facts.Lifecycle.Outcome);
-                Assert.DoesNotContain(result.Facts.Effects, effect => effect.Path == InstallOperationWorkspace.OwnershipPath);
-            }
+            Assert.Equal(InstallLifecycleOutcome.NotRequested, result.Facts.Lifecycle.Outcome);
+            Assert.Empty(result.Facts.Effects);
         }
         finally { unavailable?.Dispose(); }
+        Assert.Equal(before, workspace.SnapshotHashes());
     }
 
     [Theory(DisplayName = "Ordinary installed repeat bypasses setup ownership admission and retains the ordinary planner boundary")]
@@ -56,6 +58,8 @@ public sealed class InstallImplicitSetupOwnershipIntegrationTests
             var ordinary = await initial.ExecuteAsync(workspace.Request(), TestContext.Current.CancellationToken);
             var repeat = await operation.ExecuteAsync(workspace.Request(automatic: false, allowsInteractiveConfirmation: true), TestContext.Current.CancellationToken);
             Assert.Equal(ordinary.Status, repeat.Status);
+            Assert.Equal(CliSemanticStatus.Blocked, repeat.Status);
+            Assert.Contains(repeat.Findings, finding => finding.Code == InstallFindingCode.LifecycleBlocked);
             Assert.Equal(ordinary.Findings.Select(finding => (finding.Code, finding.Cause)), repeat.Findings.Select(finding => (finding.Code, finding.Cause)));
             Assert.Empty(repeat.Facts.Effects);
             Assert.Null(repeat.Input.Configuration);
@@ -84,7 +88,7 @@ public sealed class InstallImplicitSetupOwnershipIntegrationTests
                 workspace.LockStoreRoot, Selection(InstallPreset.FullCore, () => presets++));
             var result = await operation.ExecuteAsync(workspace.Request(automatic: false, allowsInteractiveConfirmation: true), TestContext.Current.CancellationToken);
             Assert.Equal(CliSemanticStatus.Blocked, result.Status);
-            Assert.Contains(result.Findings, finding => finding.Cause.Contains("cannot safely adopt", StringComparison.Ordinal));
+            Assert.Contains(result.Findings, finding => finding.Code == InstallFindingCode.LifecycleBlocked);
             Assert.Empty(result.Facts.Effects);
             Assert.Equal(1, presets);
             Assert.Equal(0, confirmations);

@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Install.Models.Planning;
 
@@ -46,19 +47,11 @@ internal sealed record InstallPlan
     public required IReadOnlyList<InstallFinding> Findings { get; init; }
 
     public IReadOnlyList<PlannedFileChange> FileChanges =>
-        TargetEffects.Select(effect => effect.Change)
-
-            .Concat(OwnershipEffect is { } ownershipEffect
-                ? [ownershipEffect.Change]
-                : [])
+        InstallEffectOrdering.Files(TargetEffects, OwnershipEffect).Select(effect => effect.Change)
             .ToArray();
 
     public IReadOnlyList<RecoveryBundleTarget> RecoveryTargets =>
-        TargetEffects.Select(effect => effect.RecoveryTarget)
-
-            .Concat(OwnershipEffect is { } ownershipEffect
-                ? [ownershipEffect.RecoveryTarget]
-                : [])
+        InstallEffectOrdering.Files(TargetEffects, OwnershipEffect).Select(effect => effect.RecoveryTarget)
             .ToArray();
 
     public bool IsComplete => Findings.Count == 0;

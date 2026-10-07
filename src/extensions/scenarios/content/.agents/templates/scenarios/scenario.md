@@ -6,9 +6,7 @@ open-forge:
 
 # {Scenario Name}
 
-{Copy and adapt this file. Make the actor, goal, starting state, actions, and expected result clear. Adapt headings as needed.
-Remove prompts and unused optional sections. Replace this metadata with the destination's
-own description and tags.}
+{Copy and adapt. State the actor, goal, starting state, actions, and expected result once each. Adapt headings as needed. Replace metadata and prompts, rebase links, and remove this guidance and unused optional sections.}
 
 ## Who
 
@@ -34,12 +32,11 @@ and what they should understand. State the user outcome, not implementation step
 
 ### What The Person Sees
 
-{Describe what the person needs to understand. Link a supporting output rule or stable message identity when one exists. Bind variable values to this situation. Keep proposed expectations distinct from current behavior.}
+{OPTIONAL: Add communication detail beyond the Expected Result, such as a supporting output rule or stable message identity. Bind variable values to this situation. Keep proposals distinct from current behavior.}
 
 ### Other Outputs
 
-{Optional. Reference the format/detail-specific contract. State meaningful parity
-or differences. An undefined variant is deferred, not silently assumed identical.}
+{OPTIONAL: Reference the format/detail-specific contract and meaningful parity or differences. An undefined variant is deferred, not assumed identical.}
 
 ## Supporting Contract
 
@@ -52,4 +49,4 @@ records separately. No execution means not run. A matching message is not proof 
 
 ## Open Questions
 
-{Only decisions that could change this expectation. Remove the section when resolved.}
+{OPTIONAL: Unresolved decisions that could change this expectation.}

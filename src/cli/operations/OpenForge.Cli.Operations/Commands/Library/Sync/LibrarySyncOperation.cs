@@ -238,6 +238,7 @@ internal sealed class LibrarySyncOperation
             ? await LibraryGeneratedNavigationReader.ReadAsync(
                 new LibraryGeneratedNavigationRequest
                 {
+                    Ownership = ownership,
                     Workspace = request.Workspace,
                     SelectedLibrary = LibraryRegistration.Create(selected.Id, selected.SourceRoot, selected.DestinationRoot, [.. activeRegisteredPaths], selected.GitIgnore),
                     CurrentRecord = navigationRecord,

@@ -7,20 +7,12 @@ open-forge:
 # `{command-path}` Interface Contract
 
 {
-Template selection:
-
-- Need: One command-local document that completely defines a CLI command's public surface and observable results.
-- Primary question: What may a caller enter, what does each input state mean, and what may the caller observe?
+Use for one command's complete public surface: what may a caller enter, what does each input state mean, and what may the caller observe?
 
 Copy this file to `contracts/{command-path}/interface.md`. Replace metadata,
 including removing the `Template` tag, so it describes the independent file's
 scope, state, and authority. This is a copy-ready starter, not a current command
-instance. Copying it creates an independent file; later Template changes do not
-update that file. Replace the title, links, link depth, and placeholders. Remove
-sections that cannot apply, but preserve the responsibilities stated by this
-starter. Repeat rows and subsections for every applicable operand, flag, finite
-value, result, and independently testable fact. Do not add permanent requirement
-IDs or temporary-state placeholders. Remove this braced source guidance.
+instance. Later Template changes do not update it. Replace the title, links, link depth, and prompts. Define each public fact once, linking shared meaning. Remove sections that cannot apply while preserving this starter's responsibilities. Repeat rows or subsections only for applicable operands, flags, finite values, results, and independently testable facts. Do not add permanent requirement IDs or temporary-state placeholders. Remove this guidance and unused optional prompts.
 }
 
 ## Status And Authority

@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Operational;
 using OpenForge.Cli.Core.Framework.Workspace.Operational.Models;
@@ -133,6 +134,7 @@ internal sealed class StatusOperationRecordings
     {
         public ValueTask<RouteStatusView> ReadStatusAsync(
             CliWorkspace workspace,
+            SourceSharing? sharing,
             CancellationToken cancellationToken)
         {
             Record(workspace, cancellationToken);
@@ -141,6 +143,7 @@ internal sealed class StatusOperationRecordings
 
         public ValueTask<RouteDoctorView> ReadDoctorAsync(
             CliWorkspace workspace,
+            SourceSharing? sharing,
             CancellationToken cancellationToken)
             => throw DoctorViewException();
     }

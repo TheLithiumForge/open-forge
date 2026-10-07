@@ -41,5 +41,5 @@ Route map for this repository's important authoritative sources and representati
 - [current user and author contract for choosing, installing, creating, updating, and removing Extensions.](../../docs/extensions.md) - #CurrentTruth #Evergreen #Documentation #Extension
 
 The retired MVP remains available in Git history at `c4428a90`. The current
-native CLI includes all 28 commands. Distribution and release records
+native CLI includes all 29 command forms. Distribution and release records
 distinguish published versions from later candidate changes.

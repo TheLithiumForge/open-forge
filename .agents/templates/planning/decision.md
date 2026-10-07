@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use for an accepted choice worth remembering. An unaccepted proposal isn't a Decision. Keep it in a candidate route, such as Ideas or Analysis.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep the choice and decisive rationale. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Decision
@@ -25,8 +25,10 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## Alternatives And Tradeoffs
 
-| Alternative | Why it was not selected |
-| --- | --- |
+{OPTIONAL: Keep alternatives or tradeoffs that explain the choice without repeating its rationale.}
+
+| Alternative                    | Why it was not selected                             |
+| ------------------------------ | --------------------------------------------------- |
 | {Strongest viable alternative} | {Decisive tradeoff, not a caricature of the option} |
 
 ## Consequences

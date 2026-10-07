@@ -20,6 +20,7 @@ The [current Directive contract](../../../framework/primitives/directives.md) de
 - Sibling Directives under the root apply across the workspace. A selected child entrypoint sets the narrower scope before its sibling Directives load
 - Child Directives add to active parent Directives and report conflicts instead of creating hidden precedence
 - Every sibling Directive carries #LoadNow and keeps its instructions under a non-empty level-2 `## Instructions` heading
+- Instructions state obligations, conditions, and meaningful exceptions. Supporting examples or visuals are illustrative, and obligations remain understandable from the instructions themselves
 - The entrypoint defines the reusable category rules. Each sibling Directive defines its own required behavior
 - Loader rules reach Directive files through inheritance. The entrypoint does not restate them, including the `applyTo` file condition
 

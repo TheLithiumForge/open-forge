@@ -20,7 +20,7 @@
       "message": ".agents/open-forge.lock.json could not be read completely.",
       "subject": {
         "kind": "file",
-        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "path": ".agents/guidance/old guide.md",
         "id": null,
         "location": null
       },

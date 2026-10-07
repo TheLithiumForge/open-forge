@@ -118,6 +118,7 @@ internal sealed class RouteCreatePlanBuilder
             Request = request,
             Preview = preview,
             NavigationFormation = navigation.Formation,
+            SharingExpectation = navigation.SharingExpectation,
             TargetSnapshot = inspection.Snapshot,
             TargetSource = destination.TargetSource,
             ParentSource = navigation.ParentSource,

@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
@@ -30,13 +31,20 @@ internal sealed class RouteGeneratedNavigationReader
     internal IReadOnlyList<GeneratedNavigationTargetObservation> Read(
         CliWorkspace workspace,
         FrameworkPayloadReadResult payload,
-        RouteSourceInspection inspection)
+        RouteSourceInspection inspection,
+        SourceSharing? sharing)
     {
         var paths = ReadExpectedPaths(payload, inspection);
+        if (sharing is null)
+        {
+            return paths.Select(path => new GeneratedNavigationTargetObservation(path, OperationalGeneratedNavigationState.Unavailable)).ToArray();
+        }
+
+        paths = paths.Where(sharing.Includes).ToArray();
         var formation = new GeneratedNavigationFormationBuilder().Build(inspection.Catalogue);
         var observations = RouteGeneratedNavigationProjection.IndexSources(inspection.Sources);
         var sources = paths.Select(formation.FindSource).OfType<SourceLogicalSource>();
-        var projection = RouteGeneratedNavigationProjection.Project(formation, observations, sources);
+        var projection = RouteGeneratedNavigationProjection.Project(formation, observations, sources, sharing);
         var projected = projection.Regions.ToDictionary(
             region => region.CanonicalPath,
             StringComparer.Ordinal);
@@ -49,7 +57,7 @@ internal sealed class RouteGeneratedNavigationReader
 
             return new GeneratedNavigationTargetObservation(path, Project(region))
             {
-                MetadataIssues = RouteStatusMetadataIssueReader.Read(formation, observations, region),
+                MetadataIssues = RouteStatusMetadataIssueReader.Read(formation, observations, region, sharing),
             };
         })
             .ToArray();

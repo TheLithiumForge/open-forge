@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use when reasoning must remain inspectable or resumable. A conclusion is not acceptance.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep the evidence and reasoning needed to assess the conclusion. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Question
@@ -23,15 +23,17 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## Evidence And Reasoning
 
-| Evidence or source | What it establishes | Limit or counterevidence |
-| --- | --- | --- |
+{Use the table or readable prose to show what the evidence establishes and its limits. Keep both only when they add distinct information.}
+
+| Evidence or source                     | What it establishes                | Limit or counterevidence       |
+| -------------------------------------- | ---------------------------------- | ------------------------------ |
 | {Source, artifact, or measured result} | {Supported fact and its relevance} | {What this does not establish} |
 
-{Explain the reasoning connecting the evidence to the conclusion. Distinguish observations from inferences. Do not merely repeat the table.}
+{Explain only the reasoning needed to connect evidence to the conclusion. Distinguish observations from inferences without repeating evidence summaries.}
 
 ## Alternatives And Assumptions
 
-{Compare the strongest plausible alternative. State assumptions that change the result and how they could be checked. Omit rejected options that add no future value.}
+{Keep material assumptions and how to check them. Compare the strongest plausible alternative when it helps assess the conclusion. Omit rejected options without future value.}
 
 ## Next Check
 
@@ -39,7 +41,7 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 **Would change the conclusion:** {Specific contrary evidence or changed assumption.}
 
-**Acceptance needed:** {Who or what can accept a resulting direction, when relevant.}
+**Acceptance needed:** {OPTIONAL: Who or what can accept the resulting direction.}
 
 {
 If handed off for execution, retain an identifiable version used at that boundary.

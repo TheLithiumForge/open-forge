@@ -145,6 +145,16 @@
       "after": null
     },
     {
+      "path": ".agents/skills/open-forge-cli/references",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -265,6 +275,46 @@
       "after": null
     },
     {
+      "path": ".agents/skills/open-forge-cli/references/common.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/discovery.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/packages.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/routes.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/templates/_templates.md",
       "kind": "file",
       "action": "created",
@@ -306,8 +356,8 @@
     }
   ],
   "counts": {
-    "filesCreated": 13,
-    "directoriesCreated": 12,
+    "filesCreated": 17,
+    "directoriesCreated": 13,
     "sectionsAdded": 1,
     "filesReplaced": 0
   },
@@ -318,8 +368,8 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 13,
-      "directories": 12,
+      "files": 17,
+      "directories": 13,
       "sections": 2
     },
     "lockPath": ".agents/open-forge.lock.json",
@@ -362,6 +412,9 @@
       },
       {
         "path": ".agents/skills/open-forge-cli"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references"
       },
       {
         "path": ".agents/directives/_directives.md",
@@ -412,6 +465,22 @@
         "sourceAssetPath": ".agents/skills/open-forge-cli/SKILL.md"
       },
       {
+        "path": ".agents/skills/open-forge-cli/references/common.md",
+        "sourceAssetPath": ".agents/skills/open-forge-cli/references/common.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/discovery.md",
+        "sourceAssetPath": ".agents/skills/open-forge-cli/references/discovery.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/packages.md",
+        "sourceAssetPath": ".agents/skills/open-forge-cli/references/packages.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/routes.md",
+        "sourceAssetPath": ".agents/skills/open-forge-cli/references/routes.md"
+      },
+      {
         "path": ".agents/templates/_templates.md",
         "sourceAssetPath": ".agents/templates/_templates.md"
       },
@@ -429,7 +498,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 15
+      "assetCount": 19
     },
     "lifecycle": {
       "action": "publish",

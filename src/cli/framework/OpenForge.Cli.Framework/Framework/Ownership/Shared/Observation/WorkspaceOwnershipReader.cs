@@ -13,10 +13,9 @@ namespace OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 /// boundary every other workspace file read uses, so a symlinked lock cannot
 /// redirect the read outside the workspace.
 ///
-/// No failure here is fatal. Every state other than <see
+/// Every state other than <see
 /// cref="WorkspaceOwnershipReadState.Complete"/> still returns an empty document,
-/// which records nothing as owned, so a caller proceeds and reports rather than
-/// refusing.
+/// which records nothing as owned. Each caller decides which effects require trustworthy facts.
 /// </summary>
 internal static class WorkspaceOwnershipReader
 {

@@ -6,7 +6,7 @@ open-forge:
 
 # Project Control Ledger
 
-Use one active ledger only when managed execution spans multiple tasks, worktrees, sessions, integration boundaries, or resumptions. Do not create it for ordinary discussion or a small sequential change. Extend an existing ledger instead of creating another control plane.
+{Use one active ledger when execution spans multiple tasks, worktrees, sessions, integration boundaries, or resumptions. Ordinary discussion or a small sequential change needs none. Extend an existing ledger. Keep only project coordination facts here and link Task detail. Replace metadata and prompts, then remove this guidance and unused optional sections without dropping required identity, queue, budget, authority, or recovery fields.}
 
 ## Project Identity
 
@@ -31,6 +31,8 @@ Link the current sources that define accepted behavior. Do not restate their det
 | --- | ------------------------------------------------------------- | ----- | --------- | -------- | ------ |
 
 ## Active Design Discussions
+
+{OPTIONAL: Record only live choices that affect project direction or coordination. Link detailed comparisons.}
 
 | ID  | Question | Options or hypothesis | Recommendation | User position | Status | Affected work |
 | --- | -------- | --------------------- | -------------- | ------------- | ------ | ------------- |
@@ -79,6 +81,8 @@ Keep task-local phase and milestone horizons, current phase ordinal, completed m
 Never copy a Task's budget maxima or consumed IDs into this ledger. Link to the authoritative Task through its work-queue budget mapping. Record only reservations owned by the project or an integration boundary here. Each coordinated review topic consumes one stable named review unit in its owning Task or boundary. Read-only coordinator validation and synthesis consume none. Record any required holistic review as a separate unit in that same authority.
 
 ## Change Requests And Authorizations
+
+{OPTIONAL: Record material requests and exact authorization boundaries. Link supporting rationale rather than repeating it.}
 
 | ID  | Kind | Requesting owner | Requested decision or effect | Reason and affected authority | User decision and exact scope | Status |
 | --- | ---- | ---------------- | ---------------------------- | ----------------------------- | ----------------------------- | ------ |

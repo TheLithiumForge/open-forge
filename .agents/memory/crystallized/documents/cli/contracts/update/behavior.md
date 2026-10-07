@@ -20,6 +20,11 @@ lock write without blocking the operation.
 
 ## Status And Boundary
 
+Update preserves recorded route-sharing facts. Its generated navigation follows
+the [shared sharing boundary](../../shared-operation-contract.md#route-sharing),
+so updating payload content does not restore private child rows. Private managed
+files retain their ordinary Update comparison and effect rules.
+
 This is the accepted current Crystallized Behavior Contract for the current
 `open-forge update` command. It defines deterministic request resolution,
 Framework ownership receipts, current/intended comparison, semantic
@@ -75,10 +80,10 @@ The resolver:
 After a complete plan and preflight, a prompt-capable human apply with at least
 one effect and without `--automatic` asks exactly once before lease acquisition.
 Trimmed `y` and `yes` answers are accepted case-insensitively. Refusal, end of
- input, or cancellation returns `cancelled` without a lease, recovery bundle,
- or workspace write. Verified no-op, effect-free `completed-with-warnings`, dry-run, automatic,
+input, or cancellation returns `cancelled` without a lease, recovery bundle,
+or workspace write. Verified no-op, effect-free `completed-with-warnings`, dry-run, automatic,
 JSON, and redirected or otherwise non-prompt-capable execution never prompt or
- consume input. A non-prompt-capable human apply that would write is `invalid-input`
+consume input. A non-prompt-capable human apply that would write is `invalid-input`
 without explicit automatic mode. Automatic never supplies force or prune.
 
 Workspace validation establishes lexical and physical containment and exact
@@ -197,6 +202,9 @@ excludes payloads beneath each named root category from reinstatement.
 from whole-file and generated-region planning, including root managed hosts. The
 list is not glob or recursive-directory syntax. `removedDirectories` excludes
 each canonical directory and all its descendants, including future files.
+An exact native `SKILL.md` omission also suppresses that host's dependent packaged
+resources below its Skill directory. This payload selection adds no deletion
+authority and does not broaden other exact-file exclusions.
 Force, prune, and automatic mode
 do not bypass it. Existing content and receipts outside selected effects remain.
 Removing an entry explicitly allows a later Update to restore that destination.

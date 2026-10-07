@@ -18,6 +18,7 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 - Templates are copy-ready starting files. After copying and adapting one, the destination is maintained independently.
 - The entrypoint explains when to choose a Template, how the result becomes independent, how continuing requirements differ from starting content, and how customization works. Restoration follows the inherited Loader rule: removed defaults stay removed unless the user asks to restore them.
 - Every Template makes its selection information visible before use: its route description and removable `{...}` instructions state the need and primary question or result.
+- Focused prompts request necessary content once, in a readable order. Optional sections are clearly marked, and adapted results preserve the destination's required structure.
 - Template prose is never hidden in HTML comments. Canonical Templates use visible Markdown and do not emit HTML guard comments. Exact legacy Open Forge control-marker pairs remain input-only compatibility, as defined by the [Markdown compatibility contract](../../../framework/markdown/compatibility.md).
 - Templates are on-demand. The entrypoint uses #Core and #Template without a load-policy tag so its description remains visible while its Axioms load only when the route is selected.
 - A Template result receives destination-specific metadata, scope, state, authority, and relationships. The source Template does not control the result, and later Template changes do not update it.
@@ -37,16 +38,16 @@ The [current Templates contract](../../../framework/primitives/templates.md) def
 
 The optional [Core Templates package](../../../../../../../src/extensions/core-templates/README.md) owns `templates/core/` and has no extension dependencies. It supplies seven on-demand starters, not new root routes or a required authoring workflow.
 
-| Source | Maintenance boundary |
-| --- | --- |
-| [Catalogue](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/_core.md) | Explain each role, destination-specific metadata, and the native Skill exception. |
-| [Directive](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/directive.md) | Keep a substantive Instructions section and explain destination LoadNow classification. |
-| [Guidance](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/guidance.md) | Preserve the situation, recommended approach, reasons, and tradeoffs. |
-| [Pattern](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/pattern.md) | Define an inspectable shape, a valid or explicitly schematic example, and meaningful variations. |
-| [Skill](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/skill.md) | Keep a routed Template wrapper around a complete native SKILL.md starter. Only the fenced file is instantiated; native discovery remains the active runtime's responsibility. |
-| [Template](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/template.md) | Distinguish instructions for the Template author from removable prompts retained for its future reader. A result that is itself a Template keeps that classification. |
-| [Map](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/map.md) | Keep destinations, their purpose, and selection conditions explicit without copying their facts. |
-| [Memory](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/memory.md) | Select state by meaning, preserve source and uncertainty, and avoid requiring an optional record category. |
+| Source                                                                                                      | Maintenance boundary                                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Catalogue](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/_core.md)     | Explain each role, destination-specific metadata, and the native Skill exception.                                                                                             |
+| [Directive](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/directive.md) | Keep obligations, conditions, and meaningful exceptions under Instructions. Examples are optional illustrations. Explain destination LoadNow classification.                  |
+| [Guidance](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/guidance.md)   | Preserve the situation, recommended approach, reasons, and tradeoffs.                                                                                                         |
+| [Pattern](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/pattern.md)     | Lead with one concrete representation and brief necessary labels. Keep variations and related requirements optional. Examples remain valid or explicitly schematic.           |
+| [Skill](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/skill.md)         | Keep a routed Template wrapper around a complete native SKILL.md starter. Only the fenced file is instantiated; native discovery remains the active runtime's responsibility. |
+| [Template](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/template.md)   | Distinguish instructions for the Template author from removable prompts retained for its future reader. A result that is itself a Template keeps that classification.         |
+| [Map](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/map.md)             | Keep destinations, their purpose, and selection conditions explicit without copying their facts.                                                                              |
+| [Memory](../../../../../../../src/extensions/core-templates/content/.agents/templates/core/memory.md)       | Select state by meaning, preserve source and uncertainty, and avoid requiring an optional record category.                                                                    |
 
 Package source files are canonical. Their counterparts under `.agents/templates/core/` retain the same authored content. Verify ordinary body copying, destination metadata, native Skill extraction, package links, and independent copies surviving package update/removal. A structural pass does not establish improved agent behavior or native runtime activation.
 

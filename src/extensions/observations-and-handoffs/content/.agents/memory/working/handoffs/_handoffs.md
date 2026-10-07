@@ -22,7 +22,6 @@ A Handoff is a sealed snapshot for another reader. It preserves the state needed
 
 ### Content And Lifecycle
 
-- Keep Handoffs short. Link to current state, durable sources, code, or other details instead of copying them.
 - Record the boundary status, next action, blockers, and verification state in the Handoff itself. A live working record may supplement the snapshot, not replace it.
 - Keep the snapshot unchanged while it serves as a sealed Handoff. Record later state in the active working record or a new Handoff.
 - When a Handoff no longer supports an active transfer, preserve useful results and archive it.

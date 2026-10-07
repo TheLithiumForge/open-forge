@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use one live Checkpoint when durable sources alone are insufficient to resume. Keep short state inside the Task when enough.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep only the state needed to resume. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Goal And Sources

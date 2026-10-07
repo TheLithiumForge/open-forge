@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
@@ -226,7 +227,14 @@ internal sealed partial class RouteMoveSubjectSelector(
             discovery.Catalogue,
             cancellationToken)
             .ConfigureAwait(false);
-        var exposureBoundary = ReadExposureBoundary(discovery, routeFacts, exposure);
+        var sharing = await NavigationSharingReader.ReadAsync(discovery.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (!sharing.IsAvailable)
+            return new RouteMoveSubjectSelection(subject: null, Boundary(
+                RouteMoveBoundary.Start(discovery.Request) with { Source = discovery.Source },
+                RouteMoveFindingCode.OwnershipUnavailable, CliSemanticStatus.Blocked,
+                discovery.SelectedSource.Identity.CanonicalBasePath, sharing.Cause));
+        var exposureBoundary = ReadExposureBoundary(discovery, routeFacts, exposure, sharing.Sharing
+            ?? throw new InvalidOperationException("Available sharing facts require their view."));
         return exposureBoundary is not null
             ? new RouteMoveSubjectSelection(subject: null, exposureBoundary)
             : new RouteMoveSubjectSelection(
@@ -239,6 +247,7 @@ internal sealed partial class RouteMoveSubjectSelector(
                     SelectedSource = discovery.SelectedSource,
                     RouteFacts = routeFacts,
                     NavigationExposure = exposure,
+                    Sharing = sharing.Sharing ?? throw new InvalidOperationException("Available sharing facts require their view."),
                 },
                 boundary: null);
     }

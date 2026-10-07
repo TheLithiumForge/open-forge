@@ -7,14 +7,9 @@ open-forge:
 # {Subject} Roadmap
 
 {
-Template selection:
-
-- Need: One current document for an accepted outcome sequence that must coordinate work beyond immediate task state.
-- Primary question: Which outcomes come next, in what order, what constrains that order, and what should cause it to change?
-
-Use a roadmap when accepted sequence and dependencies deserve a durable current document.
+Use when an accepted sequence needs a durable explanation beyond immediate task state: which outcomes come next, what constrains their order, and what could change it?
 Keep active task state, blockers, and immediate next actions in Working memory.
-Replace this template's frontmatter, title, and placeholders, then remove this braced source guidance.
+Keep only details that shape this view. Replace frontmatter, title, and prompts, then remove this guidance and unused optional sections.
 }
 
 ## Scope And Horizon
@@ -35,7 +30,7 @@ Replace this template's frontmatter, title, and placeholders, then remove this b
 
 ## Milestones
 
-{Name observable states that show meaningful progress. Include dates only when they are accepted commitments.}
+{OPTIONAL: Name progress states that add detail beyond the outcome sequence. Include dates only for accepted commitments.}
 
 ## Change Conditions
 
@@ -43,4 +38,4 @@ Replace this template's frontmatter, title, and placeholders, then remove this b
 
 ## Related Current Views
 
-{Link to vision, strategy, architecture, project status, and external authoritative planning sources as needed.}
+{OPTIONAL: Link to the current views and planning sources needed to use this roadmap.}

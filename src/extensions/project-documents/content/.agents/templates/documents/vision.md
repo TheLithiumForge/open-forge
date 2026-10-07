@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use for a stable direction worth preserving. This is not a roadmap or feature catalogue. Keep proposed and accepted direction distinct.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep the promise and its meaningful boundaries clear. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Vision
@@ -27,7 +27,7 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 **First useful version:** {The smallest complete expression of that value, not an implementation sequence.}
 
-**Growth direction:** {What may follow without becoming an initial commitment.}
+**Growth direction:** {OPTIONAL: What may follow without becoming an initial commitment.}
 
 ## Success
 
@@ -35,8 +35,8 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## Non-Goals
 
-{Plausible adjacent promises that are deliberately excluded. Prefer meaningful boundaries over obvious negatives.}
+{OPTIONAL: Plausible adjacent promises deliberately excluded. Omit obvious negatives.}
 
 ## Principles And Related Sources
 
-{State or link only the principles needed to understand the identity. Link to current architecture, strategy, context, and accepted rationale where they add useful detail. Do not duplicate their contents.}
+{OPTIONAL: Link to principles, current views, or accepted rationale needed to understand the identity. Summarize only what this Vision needs.}

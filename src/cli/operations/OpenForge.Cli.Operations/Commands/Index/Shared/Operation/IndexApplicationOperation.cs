@@ -74,6 +74,9 @@ internal sealed class IndexApplicationOperation(
         MutationValidationResult validation;
         try
         {
+            if (!await _projectionReader.VerifyOwnershipAsync(application.Plan, cancellationToken).ConfigureAwait(false))
+                return FinishBeforePreparation(application, IndexFindingCode.TargetChanged,
+                    cause: "The route-sharing lock changed after Index planning.");
             validation = await _revalidator.ValidateAsync(
                     lease,
                     application.Plan.Updates,

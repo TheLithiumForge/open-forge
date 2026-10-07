@@ -43,28 +43,32 @@ Workspace: <workspace>
          Inspect the reported operational facts before rerunning Status.
          cause: The current startup context measurement is unavailable.
 Startup context
-  Shipped by this CLI:   11 files, about 6.1k tokens
+  Shipped by this CLI:   11 files, about 6.4k tokens
   This workspace:        unavailable files, unavailable tokens
   May load again later:  unavailable files, unavailable tokens
 All routed files: unavailable files, unavailable tokens (startup is unavailable)
 Routes: unavailable root categories, unavailable Entries sections current
-Framework files: 14 current
+Framework files: 18 current
 Framework files
-  .agents/directives/_directives.md             current
-  .agents/guidance/_guidance.md                 current
-  .agents/loader.md                             current
-  .agents/maps/_maps.md                         current
-  .agents/memory/_memory.md                     unavailable
-  .agents/memory/archived/_archived.md          current
-  .agents/memory/crystallized/_crystallized.md  current
-  .agents/memory/emerging/_emerging.md          current
-  .agents/memory/working/_working.md            current
-  .agents/patterns/_patterns.md                 current
-  .agents/skills/_skills.md                     current
-  .agents/skills/open-forge-cli/SKILL.md        current
-  .agents/templates/_templates.md               current
-  AGENTS.md                                     current
-  CLAUDE.md                                     current
+  .agents/directives/_directives.md                      current
+  .agents/guidance/_guidance.md                          current
+  .agents/loader.md                                      current
+  .agents/maps/_maps.md                                  current
+  .agents/memory/_memory.md                              unavailable
+  .agents/memory/archived/_archived.md                   current
+  .agents/memory/crystallized/_crystallized.md           current
+  .agents/memory/emerging/_emerging.md                   current
+  .agents/memory/working/_working.md                     current
+  .agents/patterns/_patterns.md                          current
+  .agents/skills/_skills.md                              current
+  .agents/skills/open-forge-cli/SKILL.md                 current
+  .agents/skills/open-forge-cli/references/common.md     current
+  .agents/skills/open-forge-cli/references/discovery.md  current
+  .agents/skills/open-forge-cli/references/packages.md   current
+  .agents/skills/open-forge-cli/references/routes.md     current
+  .agents/templates/_templates.md                        current
+  AGENTS.md                                              current
+  CLAUDE.md                                              current
 Entries sections
   .agents/directives/_directives.md             current
   .agents/guidance/_guidance.md                 current
@@ -90,6 +94,6 @@ Recovery data: none
   current Entries sections: Filesystem access was denied.
   stale Entries sections: Filesystem access was denied.
   missing Entries sections: Filesystem access was denied.
-14 current Framework files, 9 warnings.
+18 current Framework files, 9 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

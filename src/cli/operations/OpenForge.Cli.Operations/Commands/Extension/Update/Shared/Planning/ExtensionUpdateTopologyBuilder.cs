@@ -24,6 +24,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Shared.Planning;
 
@@ -52,6 +53,12 @@ internal sealed class ExtensionUpdateTopologyBuilder
         CancellationToken cancellationToken)
     {
         var request = input.Request;
+        var sharing = input.Sharing;
+        if (sharing is null)
+        {
+            var observation = await NavigationSharingReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+            sharing = observation.Sharing ?? throw new InvalidDataException(observation.Cause);
+        }
         var catalogue = await _catalogueReader.ReadAsync(
             new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
             cancellationToken).ConfigureAwait(false);
@@ -154,7 +161,8 @@ internal sealed class ExtensionUpdateTopologyBuilder
         var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
             formation,
             regionInputs,
-            metadata));
+            metadata,
+            sharing));
         var metadataByPath = metadata.ToDictionary(
             value => value.Source.Identity.CanonicalBasePath,
             value => value.Facts,

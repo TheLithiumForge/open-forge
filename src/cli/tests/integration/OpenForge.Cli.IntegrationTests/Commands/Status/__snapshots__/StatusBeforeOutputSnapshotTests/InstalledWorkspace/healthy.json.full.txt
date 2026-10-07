@@ -15,18 +15,18 @@
   "findings": [],
   "effects": [],
   "counts": {
-    "routedFiles": 14,
+    "routedFiles": 18,
     "startupFiles": 11,
-    "startupTokens": 6099,
+    "startupTokens": 6386,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 274,
-    "allTokens": 11411,
-    "startupShare": 53.444045219525019717816142319,
+    "allTokens": 18062,
+    "startupShare": 35.352822301580710350746062066,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 15,
+    "frameworkFilesCurrent": 19,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -48,15 +48,15 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 24394,
-          "bytes": 24394,
-          "tokens": 6099
+          "characters": 25541,
+          "bytes": 25541,
+          "tokens": 6386
         },
         "current": {
           "files": 11,
-          "characters": 24394,
-          "bytes": 24394,
-          "tokens": 6099
+          "characters": 25541,
+          "bytes": 25541,
+          "tokens": 6386
         },
         "difference": {
           "files": 0,
@@ -72,12 +72,12 @@
         }
       },
       "allRouted": {
-        "files": 14,
-        "characters": 45644,
-        "bytes": 45644,
-        "tokens": 11411
+        "files": 18,
+        "characters": 72246,
+        "bytes": 72246,
+        "tokens": 18062
       },
-      "startupShare": 53.444045219525019717816142319,
+      "startupShare": 35.352822301580710350746062066,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
@@ -145,6 +145,22 @@
       },
       {
         "path": ".agents/skills/open-forge-cli/SKILL.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/common.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/discovery.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/packages.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/routes.md",
         "state": "current"
       },
       {

@@ -21,7 +21,7 @@ internal static class InstallSetupText
     // @OpenForgeText install.setup.add
     internal static string Add() => "Add missing supplied defaults and keep existing content.";
     // @OpenForgeText install.setup.gitignore
-    internal static string GitIgnore() => "Add the ordinary route and Git-ignore its whole directory. Already tracked files stay tracked.";
+    internal static string GitIgnore() => "Add the route, keep its entrypoint shared, and Git-ignore its contents. Tracked files stay tracked.";
     // @OpenForgeText install.setup.help
-    internal static string Help() => "Use --configure to change an installed setup. Choose --preset essentials, full-core, or custom. With Custom, repeat --route <id>=<add|remove|git-ignore>. Remove keeps existing files and their routes. Add + Git-ignore adds an anchored directory pattern to the managed .gitignore section.";
+    internal static string Help() => "Use --configure to change an installed setup. Choose --preset essentials, full-core, or custom. With Custom, repeat --route <id>=<add|remove|git-ignore>. Remove keeps existing files and their routes. Add + Git-ignore shares the entrypoint, ignores route contents, and omits private child Entries.";
 }

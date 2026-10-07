@@ -33,12 +33,12 @@ Workspace: <workspace>
          open-forge doctor
          Inspect the reported operational facts before rerunning Status.
 Startup context
-  Shipped by this CLI:   11 files, about 6.1k tokens
+  Shipped by this CLI:   11 files, about 6.4k tokens
   This workspace:        unavailable files, unavailable tokens
   May load again later:  unavailable files, unavailable tokens
 All routed files: unavailable files, unavailable tokens (startup is unavailable)
 Routes: unavailable root categories, unavailable Entries sections current
-Framework files: 14 current
+Framework files: 18 current
   routed files: Filesystem access was denied.
   startup files: Filesystem access was denied.
   startup tokens: Filesystem access was denied.
@@ -50,6 +50,6 @@ Framework files: 14 current
   current Entries sections: Filesystem access was denied.
   stale Entries sections: Filesystem access was denied.
   missing Entries sections: Filesystem access was denied.
-14 current Framework files, 9 warnings.
+18 current Framework files, 9 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

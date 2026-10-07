@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "command": "extension update",
-  "status": "completed-with-warnings",
+  "status": "blocked",
   "detail": "minimal",
   "filter": null,
   "workspace": {
@@ -9,34 +9,28 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "The toolkit Extension was not updated because its ownership could not be established.",
-    "kind": "warnings"
+    "headline": "Cannot update the selected: The Entries section of the selected could not be identified: The route-sharing lock is invalid or unreadable. Restore it before changing shared navigation.",
+    "kind": "blocked"
   },
   "findings": [
     {
-      "severity": "warning",
-      "code": "extension-update.lifecycle-observation",
-      "title": "Extension record was not updated",
-      "message": "toolkit is not recorded as installed, so it was not updated.",
+      "severity": "error",
+      "code": "extension-update.generated-region-unsafe",
+      "title": "Entries section is unsafe",
+      "message": "The Entries section of the selected could not be identified: The route-sharing lock is invalid or unreadable. Restore it before changing shared navigation..",
       "subject": {
-        "kind": "identifier",
-        "path": null,
-        "id": "toolkit",
+        "kind": "file",
+        "path": "the selected",
+        "id": null,
         "location": null
       },
       "category": null,
-      "actions": [
-        {
-          "kind": "command",
-          "command": "open-forge extension list --installed",
-          "reason": "List the installed Extensions, then rerun the request with an explicit selection."
-        }
-      ]
+      "actions": []
     }
   ],
   "effects": [],
   "counts": {
-    "packagesUpdated": 1,
+    "packagesUpdated": 0,
     "filesReplaced": 0,
     "filesRestored": 0,
     "filesCreated": 0,
@@ -44,7 +38,7 @@
     "filesKept": 0,
     "filesUnchanged": 0,
     "sectionsUpdated": 0,
-    "warnings": 1
+    "errors": 1
   },
   "limitations": [],
   "data": {
@@ -52,10 +46,7 @@
     "force": false,
     "prune": false,
     "automatic": true,
-    "source": {
-      "kind": "catalogue",
-      "path": "<extension-source>"
-    },
+    "source": null,
     "packages": [],
     "previousContent": null,
     "permissions": {

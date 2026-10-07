@@ -79,6 +79,12 @@ The operation satisfies these invariants:
 
 ## Request Resolution
 
+A source omitted from generated Entries by a trustworthy route-sharing policy
+remains locally operable through its complete filesystem route identity. Apply
+the [shared visibility boundary](../../../shared-operation-contract.md#route-sharing)
+without relaxing other ownership, topology or safety checks. Public unexposed
+leaves remain refused.
+
 ### Command and workspace
 
 Request resolution applies the shared terminal rules before domain work. It

@@ -56,7 +56,7 @@ Use the [Memory authority boundary](model.md#authority-boundary) to choose betwe
 
 ## Integration And Closeout
 
-When material becomes accepted, identify the question each part answers, where it applies, and its expected lifetime before dependent work relies on it. Update every authoritative source that expresses distinct current meaning, rationale, mandatory behavior, or reusable shape, and link related sources instead of copying their complete contents. If no meaning should survive the task, create no durable artifact.
+When material becomes accepted, identify the question each part answers, where it applies, and its expected lifetime before dependent work relies on it. Update every authoritative source that expresses distinct current meaning, rationale, mandatory behavior, or reusable shape. If no meaning should survive the task, create no durable artifact.
 
 Acceptance, durability, and reuse remain separate judgments. A temporary choice may be accepted current state within its scope without becoming a reusable Pattern or permanent direction.
 

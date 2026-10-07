@@ -10,12 +10,16 @@ open-forge:
 Use when accepted direction must govern agent behavior. For advice, choose Guidance.
 Place the result under the relevant Directives scope. Give it its own description and tags, including #Directive and #LoadNow. Remove #Template and #Extension.
 Update the containing entrypoint's Entries. A child scope must be selected before its Directives load.
-Replace prompts and remove this source guidance. Keep the instructions under a non-empty Instructions heading.
+Replace prompts and remove this guidance and unused optional sections. Keep distinct obligations under a non-empty Instructions heading.
 }
 
 ## Instructions
 
-- {State the action required, the condition that triggers it, and the scope where it applies.}
-- {When needed, state a meaningful exception or the response to a conflict or unavailable requirement. Refer to the defining source when another instruction already supplies the detail.}
+- {State one required action with its trigger and scope. Keep any meaningful exception beside it.}
+- {Add another item only for a distinct obligation. Link to a defining source instead of repeating its instruction.}
 
-{Use additional rules only for distinct obligations. Do not copy inherited rules or add approval requirements that the accepted direction does not establish.}
+{Do not copy inherited rules or add approval requirements absent from accepted direction. State the response to a conflict or unavailable requirement when needed.}
+
+## Example
+
+{OPTIONAL: Illustrate an instruction that needs clarification. Introduce no obligation here.}

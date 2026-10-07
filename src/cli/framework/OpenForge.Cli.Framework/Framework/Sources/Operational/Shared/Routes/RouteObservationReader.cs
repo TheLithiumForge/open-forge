@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
@@ -25,13 +26,14 @@ internal sealed class RouteObservationReader
 
     internal async ValueTask<RouteStatusView> ReadStatusAsync(
         CliWorkspace workspace,
+        SourceSharing? sharing,
         CancellationToken cancellationToken)
     {
         var payload = EmbeddedFrameworkPayloadReader.Read();
         var inspection = await _sourceInspector.ReadAsync(workspace, cancellationToken)
             .ConfigureAwait(false);
         var context = new RouteContextReader().Read(payload, inspection);
-        var generated = _generatedNavigationReader.Read(workspace, payload, inspection);
+        var generated = _generatedNavigationReader.Read(workspace, payload, inspection, sharing);
         var state = ReadState(inspection.State, context.IsIncomplete);
         var contextIssue = ReadContextIssue(inspection);
         return new RouteStatusView
@@ -53,11 +55,12 @@ internal sealed class RouteObservationReader
 
     internal async ValueTask<RouteDoctorView> ReadDoctorAsync(
         CliWorkspace workspace,
+        SourceSharing? sharing,
         CancellationToken cancellationToken)
     {
         var inspection = await _sourceInspector.ReadAsync(workspace, cancellationToken)
             .ConfigureAwait(false);
-        var generated = _doctorGeneratedNavigationReader.Read(inspection);
+        var generated = _doctorGeneratedNavigationReader.Read(inspection, sharing);
         return new RouteDoctorView
         {
             State = inspection.State,

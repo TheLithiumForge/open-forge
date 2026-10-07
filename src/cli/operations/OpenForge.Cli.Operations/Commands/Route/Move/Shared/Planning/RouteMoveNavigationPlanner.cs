@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -71,12 +72,16 @@ internal sealed partial class RouteMoveNavigationPlanner(
         IReadOnlyList<RegionDocument> documents,
         IReadOnlyList<GeneratedNavigationMetadata> metadata)
     {
+        var sharing = NavigationSharingReader.FromOwnership(request.Destination.Inventory.Ownership);
+        if (!sharing.IsAvailable)
+            return Stop(request, RouteMoveFindingCode.OwnershipUnavailable, CliSemanticStatus.Blocked, target: null, sharing.Cause);
         var projectionRequest = new GeneratedNavigationProjectionRequest(
             formation,
             documents.Select(document => new GeneratedNavigationRegionInput(
                 document.Region.Source,
                 _markdownParser.Parse(document.Text))),
-            metadata);
+            metadata,
+            sharing.Sharing);
         var regions = ProjectRegions(documents, projectionRequest);
         var unavailable = regions.FirstOrDefault(region =>
             region.Projection.State != GeneratedNavigationRegionState.Available);

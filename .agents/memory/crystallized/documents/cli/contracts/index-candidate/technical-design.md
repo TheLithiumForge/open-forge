@@ -32,6 +32,12 @@ establish that this bridge is implemented or verified.
 
 ## Accepted Runtime Boundary
 
+The Framework ownership codec supplies neutral directory/entrypoint sharing
+facts. Index projects its command-local catalogue through those facts before
+formation, selection and metadata acquisition. Its projection retains the exact
+ownership-file expectation for lease-bound revalidation. Global source discovery
+and source-reference behavior remain unchanged.
+
 The implementation is C# on .NET 10 or newer in the modern `.slnx` solution
 shape. Native AOT and trimming compatibility apply to every runtime feature,
 dependency, and serialization path. The accepted candidate passes the portable
@@ -179,7 +185,7 @@ Index consumes each source's declared `applyTo` patterns from Framework
 chains. `MarkdownEntryRowParser` and `MarkdownEntryRowFormatter` provide the
 neutral Documents row grammar shared with source loading and Generated
 Navigation; Index does not maintain a second suffix parser. The grammar reads
-the optional ` - applies to ` suffix after the existing tag slot, and the
+the optional `- applies to` suffix after the existing tag slot, and the
 formatter emits the source's declared patterns as comma-separated Markdown code
 spans.
 Unconditioned entries retain the existing generated line shape.

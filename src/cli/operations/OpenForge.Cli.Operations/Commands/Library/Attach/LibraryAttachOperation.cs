@@ -265,6 +265,7 @@ internal sealed class LibraryAttachOperation
             ? await LibraryGeneratedNavigationReader.ReadAsync(
                 new LibraryGeneratedNavigationRequest
                 {
+                    Ownership = ownership,
                     Workspace = request.Workspace,
                     SelectedLibrary = LibraryRegistration.Create(request.LibraryId, request.SourceRoot, request.DestinationRoot, [.. entries.Select(entry => entry.SourcePath)]),
                     CurrentRecord = record.Record,

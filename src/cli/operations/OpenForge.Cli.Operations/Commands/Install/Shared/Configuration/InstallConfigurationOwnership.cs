@@ -41,6 +41,7 @@ internal static class InstallConfigurationOwnership
                 .Select(effect => new OwnedRegion(effect.RelativePath, WorkspaceOwnershipDefinitions.ManagedBlockRegion)));
         var regions = (input.Ownership.Document.Framework?.Regions ?? []).Concat(writtenRegions)
             .Where(region => !omitted.Contains(region.Path)).Distinct().ToImmutableArray();
-        return new(new("embedded-framework", null), paths, regions);
+        return new(new("embedded-framework", null), paths, regions)
+        { GitIgnoredRoutes = context.IntendedState.Configuration?.GitIgnoredRoutes ?? [] };
     }
 }

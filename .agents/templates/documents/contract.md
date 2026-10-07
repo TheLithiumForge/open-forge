@@ -7,14 +7,9 @@ open-forge:
 # {Boundary} Contract
 
 {
-Template selection:
-
-- Need: One current document for guarantees that a named implementation, provider, or consumer can satisfy or violate.
-- Primary question: What may a relying party expect at this boundary, and what evidence proves conformance?
-
-Use this Template only when the boundary has stable observable obligations. Keep implementation structure, mandatory work behavior, reusable shapes, and rationale in their authoritative sources.
+Use for stable observable obligations: what may a relying party expect at this boundary, and what proves conformance? Keep implementation structure, mandatory work behavior, reusable shapes, and rationale in their authoritative sources.
 Treat the sections below as a responsibility checklist rather than a mandatory schema. Rename, merge, reorder, or remove headings to fit the subject, and use descriptive domain-specific headings when they make the guarantees clearer.
-Replace this Template's frontmatter, title, and placeholders, then remove this braced source guidance.
+State each guarantee once with its necessary conditions. Replace frontmatter, title, and prompts, then remove this guidance and unused optional sections.
 }
 
 ## Scope
@@ -31,7 +26,7 @@ Replace this Template's frontmatter, title, and placeholders, then remove this b
 
 ## Compatibility And Evolution
 
-{Keep this section only when persisted data, external consumers, versioned protocols, or compatibility promises make change semantics material. Define which changes preserve the contract and which require an explicit migration or compatibility decision.}
+{OPTIONAL: When persisted data, external consumers, protocols, or compatibility promises make change semantics material, define compatible changes and those needing a migration or compatibility decision.}
 
 ## Verification
 

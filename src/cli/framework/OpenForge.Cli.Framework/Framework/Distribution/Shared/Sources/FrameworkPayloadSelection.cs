@@ -4,13 +4,30 @@ using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
 namespace OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 
 internal static class FrameworkPayloadSelection
 {
     internal static bool IncludesPath(string path, WorkspaceSettingsDocument settings)
-        => !WorkspaceRemovals.IsPathRemoved(path, settings);
+    {
+        if (WorkspaceRemovals.IsPathRemoved(path, settings))
+        {
+            return false;
+        }
+
+        foreach (var removed in settings.RemovedFiles)
+        {
+            if (SourceFormClassifier.Matches(removed, SourceDocumentForm.Skill)
+                && path.StartsWith($"{SourceLogicalPath.ReadParent(removed)}/", StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     internal static string? FindMissingRequiredAncestor(
         FrameworkPayload payload,

@@ -7,8 +7,8 @@ open-forge:
 # {Subject} Architecture
 
 {
-Describe a coherent current or explicitly proposed architecture. Use only views needed for this subject. Narrower components may have their own sources.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Describe a coherent current or explicitly proposed architecture using only the views needed to understand it. Narrower components may have their own sources.
+Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Overview And Scope
@@ -21,11 +21,11 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## System Model
 
-{Show the major parts and their relationships with a short model, diagram, or table. It should orient a new reader before component detail.}
+{Choose a diagram, outline, or the table below to show the major parts and relationships before component detail. Use more than one only when each adds distinct information.}
 
-| Part | Responsibility | Boundary or dependency |
-| --- | --- | --- |
-| {Component or external system} | {What it owns} | {What it relies on, and what belongs elsewhere} |
+| Part                           | Responsibility            | Boundary or dependency                          |
+| ------------------------------ | ------------------------- | ----------------------------------------------- |
+| {Component or external system} | {What it defines or does} | {What it relies on, and what belongs elsewhere} |
 
 ## Important Flows
 
@@ -41,4 +41,4 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## Related Views And Rationale
 
-{Link to narrower architecture views and what they define. Link to the Vision, Principles, external contracts, and Decisions that explain this structure without reproducing their history.}
+{Link to parent and narrower architecture views when they exist, with each view's defining question. Add related requirements or rationale only when useful.}

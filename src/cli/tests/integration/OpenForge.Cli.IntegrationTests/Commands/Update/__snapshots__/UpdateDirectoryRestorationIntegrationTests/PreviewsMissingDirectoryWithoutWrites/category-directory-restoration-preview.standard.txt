@@ -5,5 +5,5 @@ Workspace: <workspace>
   .agents/loader.md              replace (you have changed it; a recovery bundle is written first)
   .agents/loader.md              Entries section updated
   .agents/open-forge.lock.json   updated
-  13 files unchanged
+  17 files unchanged
 No files were changed.

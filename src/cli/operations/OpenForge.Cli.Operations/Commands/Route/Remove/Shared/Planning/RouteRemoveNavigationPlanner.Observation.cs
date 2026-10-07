@@ -53,7 +53,8 @@ internal sealed partial class RouteRemoveNavigationPlanner
         var projection = new GeneratedNavigationProjectionRequest(
             formation,
             regions,
-            metadata.Values);
+            metadata.Values,
+            request.Sharing);
         foreach (var region in regions)
         {
             if (cancellationToken.IsCancellationRequested)

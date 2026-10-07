@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -56,7 +57,8 @@ internal sealed class RouteInitProspectiveTopologyPlanner
     internal RouteInitProspectiveProjection Project(
         RouteInitProspectiveTopology topology,
         IEnumerable<GeneratedNavigationRegionInput> regions,
-        IEnumerable<GeneratedNavigationMetadata> metadata)
+        IEnumerable<GeneratedNavigationMetadata> metadata,
+        SourceSharing? sharing = null)
     {
         ArgumentNullException.ThrowIfNull(topology);
         ArgumentNullException.ThrowIfNull(regions);
@@ -72,7 +74,8 @@ internal sealed class RouteInitProspectiveTopologyPlanner
         var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
             topology.Formation,
             regions,
-            metadata));
+            metadata,
+            sharing));
         if (!projection.IsComplete)
         {
             var decisive = projection.Regions.First(region =>

@@ -294,7 +294,8 @@ internal sealed class InstallEstablishmentPlanner
                         new OwnedRegion(path, WorkspaceOwnershipDefinitions.ManagedBlockRegion)))
                     .Concat(input.Ownership.Document.Framework?.Regions ?? [])
                     .Distinct()
-                    .ToImmutableArray()));
+                    .ToImmutableArray())
+                { GitIgnoredRoutes = input.Ownership.Document.Framework?.GitIgnoredRoutes ?? [] });
         var ownershipEffect = ownershipPlan.Change is { } ownershipChange
             ? new InstallFileEffect
             {

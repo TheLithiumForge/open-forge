@@ -128,11 +128,7 @@ internal sealed class InstallPlanResultProjector
                 Action = InstallEffectAction.Create,
                 SourceAssetPath = null,
             }));
-        identities.AddRange(effects.TargetEffects.Select(effect => effect.Identity));
-        if (effects.OwnershipEffect is { } lifecycle)
-        {
-            identities.Add(lifecycle.Identity);
-        }
+        identities.AddRange(InstallEffectOrdering.Files(effects.TargetEffects, effects.OwnershipEffect).Select(effect => effect.Identity));
 
         return identities;
     }

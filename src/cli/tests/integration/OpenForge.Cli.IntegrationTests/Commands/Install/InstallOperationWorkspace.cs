@@ -33,6 +33,10 @@ internal sealed class InstallOperationWorkspace : IDisposable
         ".agents/patterns/_patterns.md",
         ".agents/skills/_skills.md",
         ".agents/skills/open-forge-cli/SKILL.md",
+        ".agents/skills/open-forge-cli/references/common.md",
+        ".agents/skills/open-forge-cli/references/discovery.md",
+        ".agents/skills/open-forge-cli/references/packages.md",
+        ".agents/skills/open-forge-cli/references/routes.md",
         ".agents/templates/_templates.md",
     ];
 

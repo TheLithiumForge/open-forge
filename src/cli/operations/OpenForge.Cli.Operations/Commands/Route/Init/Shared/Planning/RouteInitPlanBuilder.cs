@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Recovery;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -33,6 +34,13 @@ internal sealed class RouteInitPlanBuilder
         }
 
         var inspection = ((RouteInitInspectionCompleted)inspectionResult).Facts;
+        var sharing = inspection.Framework is { } framework
+            ? NavigationSharingReader.FromOwnership(framework.Trust.Ownership)
+            : await NavigationSharingReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (!sharing.IsAvailable)
+            return _resultProjector.ProjectStopped(request, new RouteInitPlanningBoundary(
+                RouteInitFindingCode.LifecycleBlocked, sharing.Cause, Incomplete: false, inspection.Target));
+        inspection = inspection with { SharingOwnership = sharing.Ownership };
         var restoration = await _restorationInspector.InspectAsync(request, inspection, cancellationToken).ConfigureAwait(false);
         if (restoration is RouteInitInspectionStopped restorationStopped)
         {

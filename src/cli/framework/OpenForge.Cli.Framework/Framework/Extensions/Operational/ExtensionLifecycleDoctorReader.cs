@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Operational;
 
@@ -33,7 +34,9 @@ internal sealed class ExtensionLifecycleDoctorReader(
             .ConfigureAwait(false);
         var targets = await targetReader.ReadDoctorAsync(workspace, ownership.Document, sources, cancellationToken)
             .ConfigureAwait(false);
-        var bridges = await bridgeReader.ReadAsync(workspace, ownership.Document, sources, cancellationToken)
+        var sharing = ownership.State is WorkspaceOwnershipReadState.Complete or WorkspaceOwnershipReadState.Absent
+            ? new SourceSharing(ownership.Document.Framework?.GitIgnoredRoutes ?? []) : null;
+        var bridges = await bridgeReader.ReadAsync(workspace, ownership.Document, sources, sharing, cancellationToken)
             .ConfigureAwait(false);
         var comparisons = packages.Select(package => Compare(package, sources)).ToArray();
         var sourceAvailability = packages.Length == 0

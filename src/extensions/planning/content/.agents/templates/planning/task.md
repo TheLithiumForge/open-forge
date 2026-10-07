@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use when the task needs a durable record and no existing task source already serves it. A plan does not grant permission.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep the outcome, sequence, and live state distinct. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Outcome

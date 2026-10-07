@@ -6,7 +6,7 @@ open-forge:
 
 # {Collection Name}
 
-{Copy and adapt. A collection groups cases. It is not automatically an ordered flow.}
+{Copy and adapt. A collection groups cases, not necessarily an ordered flow. Keep shared context here and case detail in each Scenario. Replace metadata and prompts, rebase links, and remove this guidance and unused optional sections.}
 
 ## Purpose
 
@@ -14,13 +14,13 @@ open-forge:
 
 ## Shared Context
 
-{Common role, goal, fixtures and supporting contracts. Keep scenario-specific state in the case.}
+{OPTIONAL: Common role, goal, fixtures, and supporting contracts. Keep scenario-specific state in the case.}
 
 ## Scenarios
 
-| Scenario | Situation | Why it matters |
-| --- | --- | --- |
-| {Link} | {Starting condition} | {Risk or outcome checked} |
+| Scenario | Situation            | Why it matters            |
+| -------- | -------------------- | ------------------------- |
+| {Link}   | {Starting condition} | {Risk or outcome checked} |
 
 ## Coverage Boundaries
 

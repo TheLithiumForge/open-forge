@@ -103,6 +103,8 @@ public sealed class RouteInitCanonicalRestorationIntegrationTests
         Assert.Empty(settings.RootElement.GetProperty("removedCategories").EnumerateArray());
         Assert.Equal([".agents/skills/open-forge-cli/SKILL.md"],
             settings.RootElement.GetProperty("removedFiles").EnumerateArray().Select(value => value.GetString()));
+        Assert.All(new[] { "common", "discovery", "packages", "routes" }, name =>
+            Assert.False(workspace.Exists($".agents/skills/open-forge-cli/references/{name}.md")));
 
         var skills = workspace.ReadText(".agents/skills/_skills.md");
         Assert.Contains("When `open-forge-cli/SKILL.md` is present, read it when this entrypoint loads", skills, StringComparison.Ordinal);

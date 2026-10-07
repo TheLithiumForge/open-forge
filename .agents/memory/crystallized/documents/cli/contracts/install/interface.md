@@ -15,7 +15,8 @@ receipts for their existing managed blocks; the host files are not whole-file
 ownership. Generated Entries use `entries` region receipts. Publication follows
 verified operation effects, retains unaffected verified ownership, and does not
 convert a region-only edit into ownership of its authored host. A missing or
-unwritable lock does not authorize wider ownership or block the operation.
+unwritable lock grants no wider ownership. Ordinary Install keeps best-effort
+publication. Configuration must verify registration before applying Gitignore.
 
 The named installed content files, the generated ownership control file
 `.agents/open-forge.lock.json`, and the managed host regions are separate
@@ -44,10 +45,12 @@ remain authoritative for the meaning of the files that this operation consumes.
 The generated `.agents/open-forge.lock.json` is the only state-file input and
 output. Install updates Framework ownership after verified effects, preserves
 other ownership sections, and records whole-file ownership separately from
-region ownership. It stores no fingerprint baseline, workspace binding, plan,
+region ownership. Its optional route-sharing pairs grant no deletion authority.
+It stores no fingerprint baseline, workspace binding, plan,
 history, or recovery evidence. Leftover records from earlier formats are ordinary
-workspace files and are not read, migrated, or deleted. A skipped lock write does
-not block target effects; its public publication outcome is `not-requested`.
+workspace files and are not read, migrated, or deleted. For ordinary Install, a
+skipped lock write does not block target effects and its publication outcome is
+`not-requested`. Explicit configuration verifies registration before Gitignore.
 The existing state-file outcome points at the lock, with no additional field.
 
 The [Shared Result Coordinates](../shared/result-coordinates/interface.md) define
@@ -241,10 +244,12 @@ authority, or state tags, and it does not add optional fields just because a
 candidate lacks them.
 
 Install observes Framework, Extension, and Library ownership before forming
-adoption candidates. An absent ownership file is known empty. A malformed,
-unreadable, or unsupported ownership observation does not license adoption when
-a competing claim cannot be ruled out; this does not gate unrelated safe
-effects. A known competing claim, payload collision, ambiguous entrypoint,
+adoption candidates. An absent ownership file is known empty. An invalid or
+unreadable existing lock blocks every Install effect because route-sharing policy
+is unavailable. Recognized data in an unknown schema keeps the forgiving reader
+behavior; schema version alone does not block. Ordinary best-effort ownership
+publication remains a separate write boundary. Unavailable claims cannot license
+adoption when a competing claim cannot be ruled out. A known competing claim, payload collision, ambiguous entrypoint,
 malformed metadata, conflicting input, or unsafe physical boundary blocks the
 affected plan with a precise finding before any write. Ownership never grants
 ownership or expands the candidate set.
@@ -264,15 +269,15 @@ named flags below, not arbitrary destination paths.
 
 ## Flags
 
-| Flag                | Role                          | Value                          | Omission                                                         | Repetition and composition                                                                           |
-| ------------------- | ----------------------------- | ------------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `--force`           | Initial replacement authority | Boolean                        | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, adoption, or ownership.                       |
-| `--automatic`       | Guided-input policy           | Boolean                        | Human input may use the minimal inspection and confirmation flow | Repeats idempotently. It suppresses interaction and selects only deterministic safe defaults.        |
-| `--dry-run`         | Preview write policy          | Boolean                        | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply. |
-| `--configure`       | Explicit setup change         | Boolean                        | Ordinary Install verification                                   | Repeats idempotently. Selects additive route configuration without Update or deletion authority. |
-| `--preset`          | Built-in setup selection      | `essentials`, `full-core`, `custom` | Interactive first setup or deterministic unattended defaults | Repeated identical values are idempotent. Conflicting values are invalid. Existing setup requires `--configure`. |
-| `--route`           | Custom row override           | `<id>=<add\|remove\|git-ignore>`  | Retain the Custom base row                                       | Repeat for different rows. Requires Custom. Conflicting actions for one row are invalid. |
-| Shared global flags | Workspace and presentation    | Defined by the shared contract | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                          |
+| Flag                | Role                          | Value                               | Omission                                                         | Repetition and composition                                                                                       |
+| ------------------- | ----------------------------- | ----------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `--force`           | Initial replacement authority | Boolean                             | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, adoption, or ownership.                                   |
+| `--automatic`       | Guided-input policy           | Boolean                             | Human input may use the minimal inspection and confirmation flow | Repeats idempotently. It suppresses interaction and selects only deterministic safe defaults.                    |
+| `--dry-run`         | Preview write policy          | Boolean                             | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply.             |
+| `--configure`       | Explicit setup change         | Boolean                             | Ordinary Install verification                                    | Repeats idempotently. Selects additive route configuration without Update or deletion authority.                 |
+| `--preset`          | Built-in setup selection      | `essentials`, `full-core`, `custom` | Interactive first setup or deterministic unattended defaults     | Repeated identical values are idempotent. Conflicting values are invalid. Existing setup requires `--configure`. |
+| `--route`           | Custom row override           | `<id>=<add\|remove\|git-ignore>`    | Retain the Custom base row                                       | Repeat for different rows. Requires Custom. Conflicting actions for one row are invalid.                         |
+| Shared global flags | Workspace and presentation    | Defined by the shared contract      | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                                      |
 
 ### Setup Selection
 
@@ -283,7 +288,8 @@ Update, replacement of authored content, or route deletion. An explicit
 
 The presets are Essentials, Full Core and Custom. Essentials includes
 Directives, Patterns, Skills, Emerging and Crystallized Memory. It installs
-the complete ordinary Working route and Git-ignores its directory. Guidance,
+the complete ordinary Working route and Git-ignores its contents while keeping
+its entrypoint eligible for Git. Guidance,
 Maps, Templates and Archived Memory are omitted. Full Core selects every
 built-in category and Memory state, with no preset Git-ignore entries. Neither
 preset installs optional Extensions.
@@ -293,9 +299,10 @@ the four built-in Memory states. Each offers Add, Remove, or Add + Git-ignore.
 Remove omits supplied defaults and releases only their Framework management.
 Existing files, authored notes and overwrite companions are retained and remain
 routable. The wizard states this explicitly. Add + Git-ignore installs the
-ordinary route and adds its anchored directory to the managed section of the
-workspace `.gitignore`. It does not change Context or Index selection and does
-not untrack files already in Git.
+ordinary route, records its sharing policy in the lock, then adds a contents
+pattern and entrypoint exception to its section of `.gitignore`. Index omits
+private contents from generated Entries. Context, Find and References still
+read local content. Files already tracked by Git stay tracked.
 
 `--preset` accepts `essentials`, `full-core`, or `custom`. Custom starts from
 the current concrete selections in an existing workspace and Essentials in
@@ -476,8 +483,10 @@ status condition by themselves.
 
 ## Ownership And Currentness
 
-Ownership comes only from the generated lock. A missing, malformed or unreadable
-lock supplies no ownership claims and never blocks because of its own state.
+Ownership comes only from the generated lock. A missing lock supplies empty
+legacy sharing facts and no ownership claims. An invalid or unreadable existing
+lock blocks Install before effects because route-sharing policy is unavailable;
+`--force` cannot bypass this read prerequisite.
 Existing destination occupants and actual source, marker, containment, lease,
 and recovery conflicts retain their ordinary protection. Matching bytes do not
 establish ownership or authorize force over an Extension-owned destination.

@@ -22,6 +22,19 @@ still project their own navigation from the remaining intended source topology.
 
 ## Callable Surface
 
+The projection request accepts optional neutral source-sharing facts from
+`Framework/Sources/Sharing`. Its region planner filters private direct-child
+rows before metadata projection. All navigation writers use this boundary,
+including direct region-planner callers. Explicitly supplied region targets
+remain present, so authorized private file or entrypoint creation still works.
+Index separately excludes private write targets and metadata acquisition.
+
+Commands obtain sharing facts from the ownership lock and handle invalid or
+unavailable observations before effects. Synchronous projection reads no lock or
+filesystem. Commands retain the observation through their existing replanning
+and expected-state checks. [Lifecycle provenance](lifecycle-provenance.md#stored-ownership)
+defines the persisted pairs without granting deletion authority.
+
 The intended-membership formation overload is exactly:
 
 ```csharp
@@ -84,6 +97,13 @@ at the next same-or-higher-level heading or EOF. Reads are strict UTF-8. A malfo
 typed failure facts. Change facts preserve bytes outside the generated interior
 and distinguish exact unchanged bodies from bounded updates. The capability
 does not apply those changes.
+
+Doctor and Status coordinators supply the same neutral sharing facts to route
+observation. Their expected region targets exclude private paths, and their
+projection and metadata counterfactual share the child-row policy. Global source,
+context, metadata and reference observation remains intact. An unavailable policy
+produces unavailable comparison facts; it never becomes an empty sharing view.
+Sources consumes facts without acquiring ownership or parsing its lock.
 
 ## Related Current Sources
 

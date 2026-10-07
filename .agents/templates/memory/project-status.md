@@ -7,14 +7,9 @@ open-forge:
 # {Subject} Status
 
 {
-Template selection:
-
-- Need: One expiring coordination record for the current position of active work.
-- Primary question: Where does the work stand, what matters now, what blocks it, and what is needed to resume or coordinate it?
-
-Instantiate under the appropriate Working route.
+Use an expiring Working record when coordination needs a current view: where does work stand, what matters now, and what is needed to resume?
 This record is expected to expire. Extract durable results, archive useful history, and prune obsolete operational detail when the active need ends.
-Replace this template's frontmatter, title, and placeholders, then remove this braced source guidance.
+Keep only progress and context needed now, with links to defining sources. Replace frontmatter, title, and prompts, then remove this guidance and unused optional sections. Preserve the task and ledger relationships below.
 }
 
 ## Scope And Freshness

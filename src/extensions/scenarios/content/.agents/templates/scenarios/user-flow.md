@@ -6,7 +6,7 @@ open-forge:
 
 # {User Flow Name}
 
-{Copy and adapt. Remove this prompt and irrelevant sections.}
+{Copy and adapt. Keep the goal, state transitions, and whole-flow checks clear. Replace metadata and prompts, rebase links, and remove this guidance and unused optional sections.}
 
 ## Who And Goal
 
@@ -18,14 +18,13 @@ open-forge:
 
 ## Flow
 
-| Step | Action | Scenario | Resulting state passed forward |
-| --- | --- | --- | --- |
-| {1} | {Action or choice} | {Scenario link} | {What actually exists or is known before the next step} |
+| Step | Action             | Scenario        | Resulting state passed forward                          |
+| ---- | ------------------ | --------------- | ------------------------------------------------------- |
+| {1}  | {Action or choice} | {Scenario link} | {What actually exists or is known before the next step} |
 
 ## Alternatives And Recovery
 
-{Meaningful choices, failure branches and safe continuations. Link scenarios instead
-of repeating their expected output.}
+{OPTIONAL: Meaningful choices, failure branches, and safe continuations. Link scenarios instead of repeating their expected output.}
 
 ## Final Result
 
@@ -38,4 +37,4 @@ step. Keep actual runs and their evidence separate from this specification.}
 
 ## Cost
 
-{Optional. For frequently repeated work, record the meaningful time, steps, or effort the person spends. Distinguish measured cost from a target.}
+{OPTIONAL: For frequently repeated work, record meaningful time, steps, or effort. Distinguish measured cost from a target.}

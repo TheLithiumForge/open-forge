@@ -56,6 +56,11 @@ internal sealed class ExtensionInstallFoundationReader(
                 "The .agents Framework container is not a contained ordinary directory.", ".agents");
         }
 
+        var ownership = ownershipObservation ?? await WorkspaceOwnershipReader.ReadAsync(
+            _physicalPathResolver,
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+
         ExtensionInstallTopologyBuild topologyBuild;
         try
         {
@@ -63,7 +68,7 @@ internal sealed class ExtensionInstallFoundationReader(
                     request,
                     packages,
                     settings ?? OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument.Empty,
-                    cancellationToken)
+                    cancellationToken, ownership)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -82,10 +87,6 @@ internal sealed class ExtensionInstallFoundationReader(
                 exception.Message);
         }
 
-        var ownership = ownershipObservation ?? await WorkspaceOwnershipReader.ReadAsync(
-            _physicalPathResolver,
-            request.Workspace,
-            cancellationToken).ConfigureAwait(false);
 
         if (ownership.Document.Extensions.GroupBy(extension => extension.Id, StringComparer.Ordinal)
             .Any(group => group.Count() > 1))

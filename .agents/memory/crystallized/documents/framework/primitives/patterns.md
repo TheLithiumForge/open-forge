@@ -13,6 +13,8 @@ A Pattern defines a recognizable reusable shape for an inspectable result.
 
 Patterns make related code, files, APIs, documents, naming, placement, and boundaries more consistent and easier to understand or review. They capture stable relationships while allowing the concrete contents of each result to vary.
 
+Show the shape as the main content through a concrete example, tree, table, diagram, or artifact outline. Keep prose focused on applicability, labels, and meaningful variations. Essential relationships remain understandable in raw Markdown. Example names and values are illustrative unless an applicable requirement fixes them.
+
 ## Continuing Reference
 
 An applicable Pattern remains relevant after a result is created. It is the established default shape for its selected scope, not merely an example used once.

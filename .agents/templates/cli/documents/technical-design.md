@@ -7,24 +7,14 @@ open-forge:
 # `{command-path}` Technical Design
 
 {
-Template selection:
-
-- Need: Concrete implementation choices for one command or shared command scope need a visible design source.
-- Primary question: Which technology and source structure should satisfy the accepted Interface and Behavior contracts, and which choices remain open?
+Use when concrete implementation choices need a visible source: which technology and structure satisfy the accepted contracts, and which choices remain open?
 
 Do not create this file when the contracts are complete and no concrete
 implementation choice needs a visible source. Copy it to
 `contracts/{command-path}/technical-design.md` only when technical content
 exists. Replace metadata, including removing the `Template` tag, so it describes
 the independent file's scope, state, and authority. This is a copy-ready
-starter, not a current command instance. Copying it creates an independent file;
-later Template changes do not update that file. Replace the title, links, link
-depth, and placeholders. Repeat rows and subsections for every applicable design
-choice and unresolved decision. Do not add permanent requirement IDs. Keep
-accepted Architecture and command contracts authoritative. Use the distinct
-states `accepted`, `experimental`, `recommended`, `open`, and `pending executable
-proof`; do not treat pending proof as an open choice. Remove this braced source
-guidance.
+starter, not a current command instance. Later Template changes do not update it. Replace the title, links, link depth, and prompts. Keep each design explanation in one section, with a short traceability link. Add rows or subsections only for distinct choices. Do not add permanent requirement IDs. Keep accepted Architecture and command contracts authoritative. Use the states defined below. Remove this guidance and unused optional sections while preserving applicable design responsibilities.
 }
 
 ## Status
@@ -38,8 +28,7 @@ guidance.
 - `pending executable proof` means the choice is accepted but its executable
   evidence is not yet available.
 
-Keep these states distinct. State any unresolved choice and its acceptance
-boundary.}
+Keep states in the traceability table. Add an overall lifecycle note here only when useful. Explain unresolved choices and their acceptance boundaries under Open Decisions.}
 
 ## Design Boundary
 
@@ -56,9 +45,7 @@ contracts.
 
 ## Runtime And Dependencies
 
-{Name accepted runtimes, libraries, parsers, serializers, filesystem APIs, and
-external tools. State which choices have executable proof and which proof remains
-pending, with material constraints and tradeoffs.}
+{Name accepted runtimes, libraries, parsers, serializers, filesystem APIs, and external tools with material constraints, tradeoffs, and available or pending executable proof. Link from traceability rather than repeating the explanation.}
 
 ## Source Structure
 
@@ -80,11 +67,9 @@ sections.}
 
 ## Open Decisions
 
-- {State the unresolved choice, alternatives, evidence needed, and acceptance boundary.}
+{OPTIONAL: Keep unresolved choices here, with traceability links rather than duplicate explanations. Accepted choices awaiting executable proof stay with their design response.}
 
-{Use `open` only for decisions that remain unresolved. Keep `experimental` and
-`recommended` distinct from accepted direction. Keep an accepted choice whose
-evidence is still missing in `pending executable proof`, not `open`.}
+- {Unresolved choice, alternatives, evidence needed, and acceptance boundary.}
 
 ## Related Sources
 

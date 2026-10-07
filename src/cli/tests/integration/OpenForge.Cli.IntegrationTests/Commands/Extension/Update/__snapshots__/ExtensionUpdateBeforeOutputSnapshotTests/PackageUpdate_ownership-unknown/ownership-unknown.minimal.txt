@@ -1,5 +1,2 @@
-The toolkit Extension was not updated because its ownership could not be established.
+Cannot update the selected: The Entries section of the selected could not be identified: The route-sharing lock is invalid or unreadable. Restore it before changing shared navigation.
 Workspace: <workspace>
-  Warning  toolkit  Extension record was not updated
-         toolkit is not recorded as installed, so it was not updated.
-         open-forge extension list --installed

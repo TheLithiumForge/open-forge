@@ -413,7 +413,7 @@ internal sealed class ExtensionRemovePlanner
                         or ExtensionRemovePathAction.ReleaseOwnership)
                     .Select(path => path.Path)
                     .ToHashSet(StringComparer.Ordinal),
-                cancellationToken).ConfigureAwait(false);
+                cancellationToken, workspaceOwnership).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

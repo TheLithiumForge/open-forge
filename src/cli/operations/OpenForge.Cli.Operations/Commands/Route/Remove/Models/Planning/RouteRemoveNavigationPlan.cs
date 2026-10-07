@@ -3,11 +3,14 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 
 internal sealed record RouteRemoveNavigationPlanningRequest
 {
+    internal SourceSharing Sharing { get; init; } = new([]);
+
     public required RouteRemoveResolvedSubject Subject { get; init; }
 
     public ImmutableArray<SourceLogicalSource> IntendedSources { get; init; } = [];

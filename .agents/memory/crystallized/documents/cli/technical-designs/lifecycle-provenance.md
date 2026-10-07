@@ -34,6 +34,19 @@ no receipt merely because an existing file matches the current payload.
 
 ## Stored Ownership
 
+The optional schema-1 `framework.gitIgnoredRoutes` array stores private directory
+and shared direct-entrypoint pairs. Absent records mean no sharing policy.
+These facts grant no whole-file or region ownership and no deletion authority.
+Ownership rewrites preserve them. Explicit Install configuration updates them
+before Gitignore takes effect, while Index, Install and Update generated
+navigation omit the private contents. Local Context, Find and References retain
+complete discovery.
+
+Recognized malformed sharing records make the lock invalid. Index refuses an
+invalid or unreadable existing lock to avoid publishing private filenames. This
+bounded prerequisite does not change ordinary Install's best-effort receipt
+behavior or make unknown schema versions a gate.
+
 Framework ownership stores source ID and optional descriptive version, whole
 paths and named regions. Extension receipts add package IDs, source locations
 and dependencies. Library registrations store source root, destination root and

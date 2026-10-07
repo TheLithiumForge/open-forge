@@ -29,6 +29,11 @@ public sealed class PublishedInstallConfigurationProcessTests
             applied.RootElement.GetProperty("effects").EnumerateArray().Select(effect => effect.GetProperty("path").GetString()));
         Assert.Contains(applied.RootElement.GetProperty("effects").EnumerateArray(), effect => effect.GetProperty("path").GetString() == ".agents/open-forge.json"
             && effect.GetProperty("kind").GetString() == "setting");
+        using var ownership = JsonDocument.Parse(File.ReadAllText(workspace.Combine(".agents/open-forge.lock.json")));
+        var sharing = Assert.Single(ownership.RootElement.GetProperty("framework").GetProperty("gitIgnoredRoutes").EnumerateArray());
+        Assert.Equal(".agents/memory/working", sharing.GetProperty("directory").GetString());
+        Assert.Equal(".agents/memory/working/_working.md", sharing.GetProperty("entrypoint").GetString());
+        Assert.Contains("!/.agents/memory/working/_working.md", File.ReadAllText(workspace.Combine(".gitignore")), StringComparison.Ordinal);
         var after = workspace.SnapshotState();
         var repeat = await workspace.RunAsync("install", "--configure", "--preset", "essentials", "--automatic", "--format", "json");
         Assert.Equal(0, repeat.ExitCode);

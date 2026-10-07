@@ -62,6 +62,22 @@ orchestration, status, findings, presentation, and its use of M1 mechanics. It
 does not turn Generated Navigation into an applier or universal mutation
 coordinator.
 
+## Route Sharing
+
+Read `framework.gitIgnoredRoutes` from the ownership lock before formation.
+Each record identifies a private directory and its shared direct entrypoint.
+Project only shareable source facts: retain that entrypoint and its parent link,
+omit private children, nested entrypoints and overwrite metadata, and never
+rewrite omitted files. Explicit operands do not bypass this boundary.
+
+An absent lock or absent records mean no privacy policy. An unreadable or invalid
+existing lock blocks Index without effects. Validate recognized sharing paths
+and records rather than treating malformed data as empty policy. Revalidate the
+exact lock observation under the workspace lease before writes. Index does not
+interpret general Gitignore rules. Context, Find and References retain complete
+local discovery. [Install configuration](../install/behavior.md#configuration-planning)
+establishes or restores the record.
+
 ## Input Normalization And Target Closure
 
 Request normalization accepts repeated `--dry-run` occurrences and collapses

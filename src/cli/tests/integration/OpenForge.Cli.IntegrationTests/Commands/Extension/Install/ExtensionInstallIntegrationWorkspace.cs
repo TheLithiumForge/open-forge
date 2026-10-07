@@ -214,6 +214,7 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
         DeleteRecoveryArtifacts();
         DeleteOrdinaryFile(Combine("AGENTS.md"));
         DeleteOrdinaryFile(Combine("CLAUDE.md"));
+        DeleteOrdinaryFile(Combine(".gitignore"));
         DeleteOrdinaryTree(Combine(".agents"));
         _lockStore.Dispose();
         _workspace.Dispose();

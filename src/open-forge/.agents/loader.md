@@ -19,11 +19,13 @@ Read this after `AGENTS.md`. It defines how to select context, follow applicable
 - A request to act allows the routine, reversible, in-scope choices needed to complete it. State assumptions that affect the result, and continue when accepted direction or a reversible assumption is enough.
 - Use the request and accepted context to resolve unclear choices. When an unresolved choice could significantly change the result, scope, risk, cost, external effects, or ability to undo the work, keep it #Contextual and ask before relying on it.
 - Match explanation and planning to the request. Unless deeper analysis is requested, begin with the current understanding, one recommendation, and at most one important open choice.
+- Use the fewest words that preserve meaning, readability, and logical progression in communication and authored content. Remove filler and repetition. Keep the context, conditions, and exceptions needed to understand and apply the result.
 
 #### Sources And Acceptance
 
 - Use a declared external authority for the facts assigned to it.
 - Let each source answer one clear question. Link to related sources instead of repeating their detail. A link does not change either source's authority, scope, loading rules, or lifecycle.
+- Connect related material with relative links to local sources and precise references. Reuse consistent descriptive tags for shared subjects so tag and reference searches can find those connections. Add links and tags only when they help navigation or retrieval.
 - Put detail in the narrowest source that defines the question. Higher-level entrypoints and records keep only the summary needed to select that source and link to it.
 - Axioms and Directives govern agent behavior within their scope. Accepted documents and other sources define the current requirements, design, or knowledge of their subjects.
 - Validation establishes whether evidence supports a claim. Acceptance establishes what may be treated as current within its scope. Moving or restoring a record does not establish acceptance.

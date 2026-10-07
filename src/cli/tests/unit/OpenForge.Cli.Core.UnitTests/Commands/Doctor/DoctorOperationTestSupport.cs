@@ -19,6 +19,7 @@ using OpenForge.Cli.Core.Framework.Sources.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Operational;
 using OpenForge.Cli.Core.Framework.Workspace.Operational.Models;
@@ -135,11 +136,13 @@ internal sealed class DoctorOperationTestSupport
 
         public ValueTask<RouteStatusView> ReadStatusAsync(
             CliWorkspace workspace,
+            SourceSharing? sharing,
             CancellationToken cancellationToken)
             => throw new InvalidOperationException("Doctor evidence must not invoke Status views.");
 
         public ValueTask<RouteDoctorView> ReadDoctorAsync(
             CliWorkspace workspace,
+            SourceSharing? sharing,
             CancellationToken cancellationToken)
         {
             calls.Add("routes");

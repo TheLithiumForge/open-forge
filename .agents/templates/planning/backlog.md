@@ -8,19 +8,19 @@ open-forge:
 
 {
 Use only when an existing board or task system does not already provide the needed selection view. Listed work is not automatically accepted.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep only selection context. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Scope
 
-{Which work belongs here, who selects it, and what guides priority? Link to existing commitments and constraints.}
+{Which work belongs here, and who selects it? Link to commitments and constraints that affect selection.}
 
 **Selection rule:** {The project's existing priority convention, or a simple stated ordering.}
 
 ## Items
 
-| Work or source | Priority | Why now / what is missing |
-| --- | --- | --- |
+| Work or source                          | Priority                             | Why now / what is missing                                                           |
+| --------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
 | {Candidate outcome or link to its task} | {Project priority or relative order} | {Expected value, and the evidence, dependency, or decision needed before selection} |
 
 {

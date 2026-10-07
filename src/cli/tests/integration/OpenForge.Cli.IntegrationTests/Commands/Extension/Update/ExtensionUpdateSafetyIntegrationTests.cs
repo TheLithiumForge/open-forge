@@ -8,9 +8,9 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Update;
 public sealed class ExtensionUpdateSafetyIntegrationTests
 {
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Extension Update reports no recorded installation independently of legacy lifecycle availability"), Trait("Feature", "extension-update"), Trait("Evidence", "Integration")]
-    [InlineData("malformed", 2, CliSemanticStatus.Attention, "extension-update.lifecycle-observation")]
-    [InlineData("blocked", 2, CliSemanticStatus.Attention, "extension-update.lifecycle-observation")]
+    [Theory(DisplayName = "Extension Update requires readable sharing before reporting recorded installation"), Trait("Feature", "extension-update"), Trait("Evidence", "Integration")]
+    [InlineData("malformed", 5, CliSemanticStatus.Blocked, "extension-update.generated-region-unsafe")]
+    [InlineData("blocked", 5, CliSemanticStatus.Blocked, "extension-update.generated-region-unsafe")]
     [InlineData("missing", 2, CliSemanticStatus.Attention, "extension-update.lifecycle-observation")]
     public async Task LifecycleGatePreservesTypedSafetyBoundary(
         string lifecycleState,

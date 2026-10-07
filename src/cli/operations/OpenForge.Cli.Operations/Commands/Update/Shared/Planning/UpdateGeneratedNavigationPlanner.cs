@@ -19,6 +19,7 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 
@@ -145,7 +146,9 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
             var intendedSources = sourcePlan.IntendedSources
                 .Where(source => !retiredTargetPaths.Contains(source.Identity.CanonicalBasePath))
                 .ToArray();
-            var formation = _formationBuilder.Build(catalogue, intendedSources);
+            var sharing = new SourceSharing(ownershipDocument.Framework?.GitIgnoredRoutes ?? []);
+            var sharedSources = intendedSources.Where(source => sharing.Includes(source.Identity.CanonicalBasePath)).ToArray();
+            var formation = _formationBuilder.Build(sharing.Project(catalogue), sharedSources);
             if (formation.Ambiguities.Count > 0
                 || formation.IntendedTargetCollisions.Count > 0)
             {
@@ -267,7 +270,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
 
             var parsedDocuments = new Dictionary<string, MarkdownDocumentFacts>(StringComparer.Ordinal);
             var metadata = new List<GeneratedNavigationMetadata>();
-            foreach (var source in intendedSources)
+            foreach (var source in sharedSources)
             {
                 if (source.Base.Form == SourceDocumentForm.Loader)
                 {
@@ -288,6 +291,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 .DistinctBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
                 .Where(source => source.Base.Form == SourceDocumentForm.Loader
                     || SourceFormClassifier.IsEntrypoint(source.Base.Form))
+                .Where(source => sharing.Includes(source.Identity.CanonicalBasePath))
                 .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
                 .ToArray();
             var projection = _projector.Project(new GeneratedNavigationProjectionRequest(

@@ -6,7 +6,7 @@ open-forge:
 
 # {Run Name}
 
-{Copy and adapt. Replace metadata, rebase links, and remove prompts and unused sections. Keep observed failures. Do not rewrite the expected result merely to match them.}
+{Copy and adapt. Keep observations and decisive evidence without repeating the specification or raw logs. Replace metadata and prompts, rebase links, and remove this guidance and unused optional sections. Preserve failures without rewriting expectations to match them.}
 
 ## Basis
 
@@ -26,12 +26,12 @@ open-forge:
 
 ## Verdict
 
-| Dimension | Result | Evidence |
-| --- | --- | --- |
-| Outcome | {pass/fail/blocked/not-run} | {The person's goal or justified stop} |
-| Resulting state | {pass/fail/blocked/not-run} | {Observed effects and preservation} |
-| Communication | {pass/fail/blocked/not-run} | {What the person understood and the expectation it was checked against} |
+| Dimension       | Result                      | Evidence                                                                |
+| --------------- | --------------------------- | ----------------------------------------------------------------------- |
+| Outcome         | {pass/fail/blocked/not-run} | {The person's goal or justified stop}                                   |
+| Resulting state | {pass/fail/blocked/not-run} | {Observed effects and preservation}                                     |
+| Communication   | {pass/fail/blocked/not-run} | {What the person understood and the expectation it was checked against} |
 
 ## Follow-Up
 
-{Identify the defect, missing preparation, unclear expectation, or proposed change. Keep proposals separate from accepted expectations. Preserve relevant passes, failed branches, and limits on what this run establishes.}
+{OPTIONAL: Identify defects, missing preparation, unclear expectations, or proposed changes. Keep proposals separate from accepted expectations. Preserve relevant passes, failed branches, and evidence limits in the run.}

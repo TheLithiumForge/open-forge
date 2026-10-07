@@ -16,7 +16,8 @@ creation. Generated Entries produce `entries` region receipts. Preserve existing
 verified ownership when a planned no-op leaves its bytes unchanged. Publish the
 ownership lock after the operation's target effects verify; a region-only edit
 never establishes whole-file ownership of its authored host. Skip an unavailable
-lock write without blocking the operation.
+lock write without blocking ordinary Install. Configuration verifies its
+route-sharing registration before applying Gitignore.
 
 The named installed content-file population is separate from the generated
 `.agents/open-forge.lock.json` ownership control file and from the managed
@@ -151,12 +152,29 @@ unrelated scoped Framework claims. Publish one final Framework ownership
 projection after verification instead of combining release/publication effects.
 
 Git-ignore selection uses one marked Install-owned section containing anchored
-directory patterns. Preserve all bytes outside that section. Add and Remove
+contents patterns (`/<directory>/*`) followed by an exception for the actual
+direct entrypoint (`!/<entrypoint>`). Reuse a unique compatible host. Existing
+whole-directory patterns remain recognized and upgrade during configuration.
+Preserve all bytes outside that section. Add and Remove
 clear only the selected route's Install-owned pattern, not unrelated user rules.
 Malformed, duplicated or ambiguous section boundaries block safely. Changes
 participate in ordinary file expectations, preflight, complete recovery,
 lease-bound revalidation and verified application. The whole ignore file never
 becomes Framework-owned. Invoke no Git subprocess and untrack no existing file.
+
+Create or restore selected routes and settings, then verify them. Publish and
+verify `framework.gitIgnoredRoutes` in `.agents/open-forge.lock.json` before
+applying Gitignore. Failed registration leaves Gitignore unapplied and reports
+the verified earlier effects. Configuration requires trustworthy existing lock
+facts. An absent lock can be rebuilt. Ordinary installation retains best-effort
+ownership publication after a valid or absent read; an invalid or unreadable
+existing lock blocks all Install projections before effects, including force.
+
+Install's shared generated navigation uses the recorded or prospective sharing
+policy. It retains the shared entrypoint and parent link while omitting private
+children, nested entrypoints and overwrite metadata. Local discovery remains
+complete. [Index](../index-candidate/behavior.md#route-sharing) defines the matching
+indexing boundary.
 
 Settings and ignore changes participate in no-op detection, reported effects,
 counts, recovery and final verification. A stale settings, ignore, payload,
@@ -213,9 +231,11 @@ against stored integrity facts.
 
 The generated `.agents/open-forge.lock.json` is the only state input and output.
 Read its ownership receipts with the forgiving workspace reader. An absent
-ownership file is known empty. Malformed, unreadable or unsupported ownership
-never becomes a general integrity gate; unavailable facts do not authorize
-adoption when a competing claim cannot be ruled out.
+ownership file is known empty. Invalid or unreadable existing ownership cannot
+establish the route-sharing policy and blocks Install before effects, including
+force. This read prerequisite does not require ordinary ownership publication
+to succeed. Unavailable facts also do not authorize adoption when a competing
+claim cannot be ruled out.
 Do not read, migrate, delete, or honour leftover records from earlier formats.
 A matching file does not establish an ownership receipt.
 
@@ -264,10 +284,11 @@ their existing `--force` boundary.
 
 Ownership observation precedes candidate formation. An absent ownership file is
 known empty. A known Framework, Extension, or Library claim is checked under
-its existing lifecycle rules. Malformed, unreadable, or unsupported ownership
-does not license migration when a competing claim cannot be ruled out; the
-affected candidate is blocked. This does not turn ownership-file availability
-into a general Install gate for unrelated safe effects.
+its existing lifecycle rules. An invalid or unreadable existing lock blocks all
+Install effects because its route-sharing policy is unavailable. Recognized data
+in an unknown schema retains the forgiving reader behavior; schema version alone
+does not block. Unavailable claims cannot authorize migration, and ordinary
+best-effort ownership publication remains a separate write boundary.
 
 The candidate set is limited to existing Markdown sources and missing
 entrypoints in the selected standard route subtree that are required for
@@ -588,6 +609,8 @@ When application is selected:
     unchanged receipt writes nothing. Exact prior lock bytes participate in the
     same recovery bundle when replacement is planned. Verify the state-file
     effect and report its actual outcome.
+    During configuration, verify the route-sharing registration before applying
+    the deferred Gitignore effect, then verify the whole result.
 11. After final verification, delete only the positively recognized bundle
     created for this operation. `Deleted`/`Removed` permits normal completion.
     `Failed`/positively observed `Retained` keeps target effects successful and
@@ -853,6 +876,10 @@ settings. A category such as `skills` excludes embedded targets beneath
 `.agents/skills/`. Each `removedFiles` entry is one exact canonical
 workspace-relative file destination; it has no glob or recursive-directory
 meaning.
+When that exact file is a native `SKILL.md` host, Framework payload selection also
+omits its packaged resources below the same Skill directory. Those resources
+depend on the host. This does not broaden generic file exclusions or delete
+existing user files.
 The concrete destination is
 excluded from whole-file and generated-region planning, including root managed
 hosts. Without explicit configuration, do not recreate excluded files, change

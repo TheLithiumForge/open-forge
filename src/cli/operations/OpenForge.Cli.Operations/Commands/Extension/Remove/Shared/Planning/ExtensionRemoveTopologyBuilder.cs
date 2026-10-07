@@ -15,6 +15,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Remove.Shared.Planning;
 
@@ -31,8 +33,12 @@ internal sealed class ExtensionRemoveTopologyBuilder
         CliWorkspace workspace,
         WorkspaceSettingsDocument settings,
         IReadOnlySet<string> removedPaths,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        WorkspaceOwnershipRead? ownership = null)
     {
+        var sharing = ownership is not null ? NavigationSharingReader.FromOwnership(ownership)
+            : await NavigationSharingReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        if (!sharing.IsAvailable) throw new ExtensionRemoveTopologyBlockedException(sharing.Cause);
         var catalogue = await _catalogueReader.ReadAsync(
             new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
             cancellationToken).ConfigureAwait(false);
@@ -118,7 +124,8 @@ internal sealed class ExtensionRemoveTopologyBuilder
         var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
             formation,
             regions,
-            metadata));
+            metadata,
+            sharing.Sharing));
         var unavailable = projection.Regions.FirstOrDefault(region =>
             region.State != GeneratedNavigationRegionState.Available);
         if (unavailable is not null)

@@ -29,7 +29,7 @@
     "filesCreated": 1,
     "filesDeleted": 0,
     "filesKept": 0,
-    "filesUnchanged": 14,
+    "filesUnchanged": 18,
     "sectionsUpdated": 1
   },
   "limitations": [],
@@ -73,6 +73,18 @@
       },
       {
         "path": ".agents/skills/open-forge-cli/SKILL.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/common.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/discovery.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/packages.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/routes.md"
       },
       {
         "path": ".agents/templates/_templates.md"

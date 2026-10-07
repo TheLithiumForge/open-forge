@@ -20,7 +20,8 @@ Patterns define reusable default shapes that make related work consistent, easy 
 
 ### Shape And Application
 
-- Keep each Pattern focused on one reusable shape.
+- Keep each Pattern focused on one reusable shape. Show it as the main content through a concrete example, tree, table, diagram, or artifact outline. Use brief text for applicability, labels, and meaningful variations.
+- Keep required behavior in its defining Directive, Axiom, or accepted requirement and link it when needed. Put procedures and substantial choice rationale in their matching sources. Example names and values illustrate the shape unless an applicable requirement fixes them.
 - Use examples that are valid for their APIs, formats, and tools. Label intentionally incomplete examples as schematic.
 - Treat an applicable Pattern as the default shape in its scope. A justified adaptation is allowed within the authority already granted for the work. Explain material departures before other work depends on them.
 - When a Directive, Axiom, or accepted requirement makes a shape mandatory, follow that requirement. Ask only when a departure needs authority that has not been granted.

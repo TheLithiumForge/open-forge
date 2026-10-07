@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use for a subject with a useful current answer. Put a draft in a candidate route until accepted.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Explain the answer once, in the subject's natural order. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Summary
@@ -25,11 +25,11 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## Boundaries And Limits
 
-{State relevant exceptions, constraints, known limitations, and what this explanation should not be used to infer. Keep proposed changes separate from current meaning.}
+{Keep exceptions, constraints, and limits that affect the explanation's use. Remove this section only when none apply. Keep proposals separate from current meaning.}
 
 ## Sources And Related Detail
 
-{Link to the defining sources for related detail and say what each defines. Link to Decisions for useful rationale rather than retelling their full history.}
+{Link to existing parent and narrower Documents, with each source's defining question. Add related detail or Decision rationale only when useful.}
 
 {
 Add maintenance triggers when this is an #Evergreen source. Do not add an expiry or schedule merely to fill a field.

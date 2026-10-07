@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
@@ -18,7 +19,8 @@ internal static class RouteStatusMetadataIssueReader
     internal static IReadOnlyList<GeneratedNavigationMetadataIssue> Read(
         GeneratedNavigationFormation formation,
         IReadOnlyDictionary<string, RouteSourceObservation> observations,
-        GeneratedNavigationRegion region)
+        GeneratedNavigationRegion region,
+        SourceSharing sharing)
     {
         ArgumentNullException.ThrowIfNull(formation);
         ArgumentNullException.ThrowIfNull(observations);
@@ -30,7 +32,7 @@ internal static class RouteStatusMetadataIssueReader
             return [];
         }
 
-        if (!TryReadDirectChildren(formation, region.Source, out var children))
+        if (!TryReadDirectChildren(formation, region.Source, sharing, out var children))
         {
             return [];
         }
@@ -82,7 +84,8 @@ internal static class RouteStatusMetadataIssueReader
         var reprojection = RouteGeneratedNavigationProjection.Project(
             formation,
             counterfactual,
-            [region.Source]);
+            [region.Source],
+            sharing);
         var counterfactualRegion = reprojection.Regions
             .SingleOrDefault(value => value.CanonicalPath == region.CanonicalPath);
         if (counterfactualRegion?.State != GeneratedNavigationRegionState.Available)
@@ -101,6 +104,7 @@ internal static class RouteStatusMetadataIssueReader
     private static bool TryReadDirectChildren(
         GeneratedNavigationFormation formation,
         SourceLogicalSource parent,
+        SourceSharing sharing,
         out IReadOnlyList<SourceLogicalSource> children)
     {
         IReadOnlyList<string>? childPaths = parent.Base.Form == SourceDocumentForm.Loader
@@ -116,6 +120,11 @@ internal static class RouteStatusMetadataIssueReader
         var physicalPaths = new HashSet<string>(PhysicalIdentityTracker.PathComparer);
         foreach (var childPath in childPaths)
         {
+            if (!sharing.Includes(childPath))
+            {
+                continue;
+            }
+
             var child = formation.FindSource(childPath);
             if (child is null)
             {

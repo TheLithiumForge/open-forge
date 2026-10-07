@@ -10,7 +10,7 @@ open-forge:
 Use only when the information is worth finding again and no existing source already holds it.
 Choose the destination from its current meaning: Working for active work state, Emerging for unsettled material, Crystallized for accepted knowledge, or Archived for useful history.
 Replace metadata, prompts, and links. Remove #Template and #Extension. Add accurate state and subject tags. Do not add #CurrentTruth without an identifiable source of acceptance.
-Follow the selected state's rules. Remove this source guidance and sections that add no value.
+Follow the selected state's rules. Keep only the answer, evidence, and continuation detail worth finding again. Remove this guidance and unused optional sections.
 }
 
 ## Summary And Scope
@@ -23,4 +23,4 @@ Follow the selected state's rules. Remove this source guidance and sections that
 
 ## Limits And Next Use
 
-{Keep meaningful uncertainty, unresolved questions, or conditions that could invalidate the record. For active work, state the next action and what must be preserved. Omit when the record is complete without this section.}
+{OPTIONAL: Keep uncertainty, open questions, or invalidation conditions that affect later use. For active work, state the next action and what must be preserved.}

@@ -17,6 +17,8 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
@@ -44,8 +46,12 @@ internal sealed class ExtensionInstallTopologyBuilder
         ExtensionInstallRequest request,
         IReadOnlyList<ExtensionPackageFact> packages,
         WorkspaceSettingsDocument settings,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        WorkspaceOwnershipRead? ownership = null)
     {
+        var sharing = ownership is not null ? NavigationSharingReader.FromOwnership(ownership)
+            : await NavigationSharingReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (!sharing.IsAvailable) throw new InvalidDataException(sharing.Cause);
         var catalogue = await _catalogueReader.ReadAsync(
             new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
             cancellationToken).ConfigureAwait(false);
@@ -137,7 +143,8 @@ internal sealed class ExtensionInstallTopologyBuilder
         var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
             formation,
             regionInputs,
-            metadata));
+            metadata,
+            sharing.Sharing));
         var metadataByPath = metadata.ToDictionary(
             value => value.Source.Identity.CanonicalBasePath,
             value => value.Facts,

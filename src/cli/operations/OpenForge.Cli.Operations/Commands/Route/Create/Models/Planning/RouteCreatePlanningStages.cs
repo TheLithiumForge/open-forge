@@ -72,6 +72,8 @@ internal sealed record RouteCreateDestinationPlan
 
 internal sealed record RouteCreateNavigationPlan
 {
+    internal FileExpectation? SharingExpectation { get; init; }
+
     public required GeneratedNavigationFormation Formation { get; init; }
 
     public required SourceLogicalSource ParentSource { get; init; }

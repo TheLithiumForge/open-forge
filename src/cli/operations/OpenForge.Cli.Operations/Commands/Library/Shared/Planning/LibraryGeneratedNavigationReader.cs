@@ -20,6 +20,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 
 namespace OpenForge.Cli.Core.Commands.Library.Shared.Planning;
 
@@ -42,6 +43,10 @@ internal static class LibraryGeneratedNavigationReader
         var intendedSelectedEntries = request.IntendedEntries;
         try
         {
+            var sharing = request.Ownership is { } ownership
+                ? NavigationSharingReader.FromOwnership(ownership)
+                : await NavigationSharingReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+            if (!sharing.IsAvailable) return Blocked(path: null, sharing.Cause);
             var catalogue = await new SourceCatalogueReader().ReadAsync(
                 new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
                 cancellationToken).ConfigureAwait(false);
@@ -143,7 +148,7 @@ internal static class LibraryGeneratedNavigationReader
                         source.Base.Form)))
                 .ToArray();
             var projection = new GeneratedNavigationProjector().Project(
-                new GeneratedNavigationProjectionRequest(intendedFormation, regions, metadata));
+                new GeneratedNavigationProjectionRequest(intendedFormation, regions, metadata, sharing.Sharing));
             var changes = ImmutableArray.CreateBuilder<PlannedFileChange>();
             foreach (var region in projection.Regions.OrderBy(value => value.CanonicalPath, StringComparer.Ordinal))
             {

@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Install stopped after 15 of 28 changes.",
+    "headline": "Install stopped after 16 of 33 changes.",
     "kind": "failed"
   },
   "findings": [
@@ -124,6 +124,14 @@
       "owner": null
     },
     {
+      "path": ".agents/skills/open-forge-cli/references",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -228,6 +236,38 @@
       "owner": null
     },
     {
+      "path": ".agents/skills/open-forge-cli/references/common.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/discovery.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/packages.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/routes.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/templates/_templates.md",
       "kind": "file",
       "action": "created",
@@ -262,7 +302,7 @@
   ],
   "counts": {
     "filesCreated": 4,
-    "directoriesCreated": 11,
+    "directoriesCreated": 12,
     "sectionsAdded": 0,
     "filesReplaced": 0,
     "errors": 1
@@ -274,8 +314,8 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 13,
-      "directories": 11,
+      "files": 17,
+      "directories": 12,
       "sections": 2
     },
     "lockPath": ".agents/open-forge.lock.json",

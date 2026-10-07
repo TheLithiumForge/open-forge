@@ -2,6 +2,8 @@ using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
@@ -11,10 +13,32 @@ internal sealed class InstallAppliedVerifier(
     private readonly InstallTargetReader _targetReader = new(physicalPathResolver);
     private readonly InstallContentIdentity _contentIdentity = new();
 
-    internal ValueTask<InstallVerificationResult> VerifyAsync(
+    internal async ValueTask<InstallVerificationResult> VerifyAsync(
         InstallPlan plan,
         CancellationToken cancellationToken)
-        => VerifyTargetsAsync(plan, cancellationToken);
+    {
+        var result = await VerifyTargetsAsync(plan, cancellationToken).ConfigureAwait(false);
+        if (result.State != InstallVerificationState.Verified) return result;
+        foreach (var effect in plan.TargetEffects.Where(effect => effect.RelativePath == ".gitignore"))
+        {
+            var read = await _targetReader.ReadAsync(plan.Request.Workspace, effect.RelativePath, cancellationToken).ConfigureAwait(false);
+            if (read.State != InstallTargetReadState.File || read.Snapshot is not { } snapshot
+                || !snapshot.Bytes.AsSpan().SequenceEqual(effect.Change.IntendedBytes.AsSpan()))
+                return Failed("The Git-ignore effect did not verify.");
+        }
+        return await VerifyRegistrationAsync(plan, cancellationToken).ConfigureAwait(false);
+    }
+
+    internal async ValueTask<InstallVerificationResult> VerifyRegistrationAsync(InstallPlan plan, CancellationToken cancellationToken)
+    {
+        if (plan.IntendedState.Configuration is not { } configuration)
+            return new(InstallVerificationState.Verified, Cause: null);
+        var ownership = await WorkspaceOwnershipReader.ReadAsync(physicalPathResolver, plan.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (ownership.State != WorkspaceOwnershipReadState.Complete || ownership.Document.Framework is not { } framework
+            || !framework.GitIgnoredRoutes.ToHashSet().SetEquals(configuration.GitIgnoredRoutes))
+            return Failed("The configured route-sharing registration did not verify.");
+        return new(InstallVerificationState.Verified, Cause: null);
+    }
 
     internal async ValueTask<InstallVerificationResult> VerifyTargetsAsync(
         InstallPlan plan,
@@ -27,7 +51,7 @@ internal sealed class InstallAppliedVerifier(
             return targetBoundary;
         }
 
-        foreach (var effect in plan.TargetEffects.Where(effect => effect.RelativePath is ".agents/open-forge.json" or ".gitignore"))
+        foreach (var effect in plan.TargetEffects.Where(effect => effect.RelativePath == ".agents/open-forge.json"))
         {
             var read = await _targetReader.ReadAsync(plan.Request.Workspace, effect.RelativePath, cancellationToken).ConfigureAwait(false);
             if (read.State != InstallTargetReadState.File || read.Snapshot is not { } snapshot

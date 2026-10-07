@@ -6,7 +6,7 @@ open-forge:
 
 # {Recurring Situation}
 
-{Use for adaptable advice. Copy into the relevant Guidance scope, replace metadata and prompts, rebase links, and remove this source guidance and unused sections. Required behavior belongs in a Directive.}
+{Use for adaptable advice. Copy into the relevant Guidance scope, replace metadata and prompts, rebase links, and remove this guidance and unused optional sections. Keep only the explanation needed to choose and apply the approach. Required behavior belongs in a Directive.}
 
 ## Situation
 
@@ -18,8 +18,8 @@ open-forge:
 
 ## Reasons And Tradeoffs
 
-{Explain the benefit, cost, and strongest relevant alternative. Distinguish observed results from expectations.}
+{Explain the decisive benefit, cost, and strongest relevant alternative without repeating the approach. Distinguish observations from expectations.}
 
 ## Example
 
-{Keep a short example only when it makes the advice easier to apply. Link to defining sources instead of repeating their rules.}
+{OPTIONAL: Add a short example only when it makes the advice easier to apply. Link to rules instead of repeating them.}

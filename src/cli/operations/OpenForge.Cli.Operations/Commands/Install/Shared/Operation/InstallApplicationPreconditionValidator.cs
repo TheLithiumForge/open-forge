@@ -153,7 +153,8 @@ internal sealed class InstallApplicationPreconditionValidator(
     {
         if (planned is null || current is null) return planned is null && current is null;
         return planned.Settings.MatchesObservation(current.Settings)
-            && planned.Ignore.Snapshot?.Expectation == current.Ignore.Snapshot?.Expectation;
+            && planned.Ignore.Snapshot?.Expectation == current.Ignore.Snapshot?.Expectation
+            && planned.GitIgnoredRoutes.SequenceEqual(current.GitIgnoredRoutes);
     }
 
     private static bool MigrationRowsEqual(

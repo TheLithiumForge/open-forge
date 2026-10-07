@@ -45,9 +45,10 @@ internal sealed class RouteMoveNavigationSourceProjector
         var node = subject.RouteFacts?.Topology.FindByPath(
             source.Identity.CanonicalBasePath);
         return node?.ParentState == SourceRouteParentState.Resolved
-            && subject.NavigationExposure.UnavailableParents.Contains(
+            && (!subject.Sharing.Includes(source.Identity.CanonicalBasePath)
+                || subject.NavigationExposure.UnavailableParents.Contains(
                 node.ParentPaths[0],
-                StringComparer.Ordinal);
+                StringComparer.Ordinal));
     }
 
     private static SourceLogicalSource ProjectSource(

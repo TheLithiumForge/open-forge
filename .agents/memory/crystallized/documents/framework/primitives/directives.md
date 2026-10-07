@@ -13,6 +13,8 @@ A Directive is an independently routed binding instruction. Use one when behavio
 
 Directives let a workspace grow explicit mandatory behavior without placing every rule in the loader or treating contextual advice as binding.
 
+Instructions state each obligation, its conditions, and meaningful exceptions. Supporting examples or visuals illustrate those instructions. The obligation remains understandable from the instructions themselves.
+
 ## Relationship With Framework Axioms
 
 Framework `Axioms` define the mechanics and invariants of an already loaded `route`. A Directive uses those mechanics to provide independently selectable binding behavior through `Instructions` rather than declaring a second Axioms source.

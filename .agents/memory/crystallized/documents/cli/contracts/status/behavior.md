@@ -120,6 +120,12 @@ universe cannot enter the result merely because a local link names them, and
 eligible files cannot be silently removed because they are not exposed by stale
 generated navigation.
 
+Generated-navigation comparisons use the recorded route-sharing policy and
+exclude private child rows and private region targets. Shared entrypoints remain
+checked; full local context measurement remains available. An absent policy
+retains legacy comparisons, while an unreadable or invalid existing policy makes
+applicable generated comparisons unavailable rather than empty or current.
+
 The Library portion of the ledger is bounded to the exact consumer record,
 recorded source-root checks, and registered destination entries. It does not
 enumerate a source tree for unregistered files, follow source targets, or infer

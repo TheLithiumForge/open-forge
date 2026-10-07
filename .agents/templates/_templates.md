@@ -15,7 +15,7 @@ Templates are reusable starting files. Copy and adapt a Template, then maintain 
 ### Selection And Use
 
 - Check `Entries` when copy-ready starting content would help with a new artifact.
-- Choose the most relevant Template. Copy and adapt only what the destination needs.
+- Choose the most relevant Template. Keep only the sections and detail the destination needs, while preserving its required structure.
 - Replace metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships.
 - Remove the #Template tag unless the result is another Template. Remove package tags that do not describe the destination.
 - Rebase relative links for the destination.
@@ -25,6 +25,7 @@ Templates are reusable starting files. Copy and adapt a Template, then maintain 
 ### Catalogue Maintenance
 
 - State the need and primary question each Template answers in its description and source instructions.
+- Use focused prompts that request necessary content once, in a readable order. Mark optional sections clearly.
 - Treat generic Templates as fallbacks. Add a specialized Template only when it provides meaningfully different starting content.
 - Users may edit, replace, scope, or remove Templates.
 

@@ -60,7 +60,7 @@ public sealed class ExtensionUpdateBeforeOutputSnapshotTests
     [InlineData("path-excluded", (int)CliSemanticStatus.Complete)]
     [InlineData("all-packages", (int)CliSemanticStatus.Complete)]
     [InlineData("no-selection-non-interactive", (int)CliSemanticStatus.Invalid)]
-    [InlineData("ownership-unknown", (int)CliSemanticStatus.Attention)]
+    [InlineData("ownership-unknown", (int)CliSemanticStatus.Blocked)]
     [InlineData("permission-required", (int)CliSemanticStatus.Blocked)]
     [InlineData("dry-run", (int)CliSemanticStatus.Complete)]
     [InlineData("source-unreadable", (int)CliSemanticStatus.Incomplete)]

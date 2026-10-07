@@ -3,6 +3,8 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.References;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
+using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.Planning;
 
@@ -75,7 +77,11 @@ internal sealed class RouteRemovePlanBuilder(
 
         var referencePlan = references.Plan
             ?? throw new InvalidOperationException("Successful Route Remove reference planning requires its plan.");
-        var navigation = _navigationPlanner.Build(resolved);
+        var sharing = NavigationSharingReader.FromOwnership(facts.Ownership);
+        if (!sharing.IsAvailable)
+            return new RouteRemovePlanBuild(plan: null, RouteRemoveBoundary.Stop(RouteRemoveBoundary.Start(request),
+                RouteRemoveFindingCode.OwnershipUnavailable, CliSemanticStatus.Blocked, target: null, sharing.Cause));
+        var navigation = _navigationPlanner.Build(resolved, sharing.Sharing);
         if (navigation.Boundary is { } navigationBoundary)
         {
             return new RouteRemovePlanBuild(plan: null, navigationBoundary with

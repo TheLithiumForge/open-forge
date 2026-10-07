@@ -16,8 +16,8 @@ namespace OpenForge.Cli.IntegrationTests.Serialization;
 
 public sealed class InstallGeneratedSerializationTests
 {
-    // 13 directories (including .agents), 13 payload files, 2 host regions, and the ownership record.
-    private const int FreshInstallEffectCount = 29;
+    // 14 directories (including .agents), 17 payload files, 2 host regions, and the ownership record.
+    private const int FreshInstallEffectCount = 34;
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Install JSON uses generated native data metadata with the complete envelope"), Trait("Feature", "install-presentation"), Trait("Evidence", "Integration")]
@@ -50,7 +50,7 @@ public sealed class InstallGeneratedSerializationTests
         Assert.Equal("safe-absence", data.GetProperty("classification").GetString());
         Assert.Equal(InstallDefinitions.OwnershipRecordPath, data.GetProperty("lockPath").GetString());
         Assert.Equal(InstallOperationWorkspace.EmbeddedPayloadPaths.Count, data.GetProperty("footprint").GetProperty("files").GetInt32());
-        Assert.Equal(12, data.GetProperty("footprint").GetProperty("directories").GetInt32());
+        Assert.Equal(13, data.GetProperty("footprint").GetProperty("directories").GetInt32());
         Assert.Equal(2, data.GetProperty("footprint").GetProperty("sections").GetInt32());
         Assert.Equal(FreshInstallEffectCount, data.GetProperty("effects").GetArrayLength());
         Assert.False(string.IsNullOrWhiteSpace(data.GetProperty("source").GetProperty("inventoryFingerprint").GetString()));

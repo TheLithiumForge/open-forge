@@ -11,7 +11,7 @@ Use when a bounded reusable capability needs its own instructions or supporting 
 Copy only the fenced file below to the selected Skills scope as {skill-name}/SKILL.md. Replace its native metadata and prompts, then remove source guidance from the result.
 Do not copy this wrapper or use route create --template to create SKILL.md: that command creates ordinary routed files with Open Forge metadata.
 Follow the active runtime's supported Skill format and discovery rules. Open Forge routing alone does not activate a Skill or grant tools and permissions.
-Add scripts, references, or assets only when the capability needs them. Update the containing Skills entrypoint and verify native discovery separately.
+Keep instructions focused on this capability. Add scripts, references, or assets only when needed. Update the containing Skills entrypoint and verify native discovery separately.
 }
 
 ```markdown
@@ -28,7 +28,7 @@ description: "{Describe the capability, when to use it, and the boundary that di
 
 ## Required Inputs And Resources
 
-{Identify the inputs, tools, and resources actually needed. Use package-relative resource paths and explain when each resource must be read. Remove this section if unnecessary.}
+{Name necessary inputs, tools, and resources. Use package-relative paths and state when each resource must be read. Remove this section when none are needed.}
 
 ## Instructions
 
@@ -40,5 +40,5 @@ description: "{Describe the capability, when to use it, and the boundary that di
 
 ## Result
 
-{Describe the output, evidence, and any limitations the recipient needs. Remove these prompts after writing the Skill.}
+{Describe only the output, evidence, and limitations the recipient needs. Remove prompts and unused optional sections.}
 ```

@@ -7,7 +7,7 @@ open-forge:
 # {Task} Plan
 
 {
-Use this Template when an accepted outcome needs enough sequencing, ownership, parallelism, or verification that an inline plan would be ambiguous. The linked Task remains the source for what must be accomplished. Keep one live execution-state source. Remove unused sections and this guidance.
+Use when sequence, ownership, parallelism, or verification would make an inline plan ambiguous. The linked Task defines the outcome. Keep one live execution-state source, a short Work Graph, and step detail only where execution needs it. Replace prompts and remove this guidance and unused optional sections without dropping required controls or authority relationships.
 }
 
 ## Planning Boundary
@@ -39,12 +39,12 @@ Use this Template when an accepted outcome needs enough sequencing, ownership, p
 - Expected paths: {Forecast paths.}
 - Protected paths: {Hard boundaries.}
 - Direct integration neighborhood: {Adjacent paths allowed only when directly required and reported.}
-- Dependencies: {Prerequisites and predecessor outputs.}
+- Dependencies: {Links to prerequisites and predecessor outputs defined below.}
 - Focused evidence: {Per-step checks.}
 - Integration or full gates: {Task, archetype, or batch boundaries.}
-- Review budget: {Maximum and consumed IDs from the linked Task Execution Capsule.}
-- Council budget: {Maximum and consumed rounds from the linked Task Execution Capsule.}
-- Correction budget: {Maximum and consumed cycles from the linked Task Execution Capsule.}
+- Review budget: {Link to the Task Execution Capsule's maximum and consumed IDs.}
+- Council budget: {Link to the Task Execution Capsule's maximum and consumed rounds.}
+- Correction budget: {Link to the Task Execution Capsule's maximum and consumed cycles.}
 - Stop conditions: {Evidence that requires replan or decision.}
 - Resumption path: {Minimum sources and exact next action.}
 
@@ -69,6 +69,8 @@ Use this Template when an accepted outcome needs enough sequencing, ownership, p
 | {Lane A} | {IDs} | {Prerequisite} | {Paths or responsibilities} | {Sources or contracts}  | {Gate or step}    |
 
 ## Step Details
+
+{OPTIONAL: Add only detail needed beyond the Work Graph. Link applicable Task constraints and evidence instead of copying them. Keep required execution controls in their defining sources.}
 
 ### {S1: Step Name}
 

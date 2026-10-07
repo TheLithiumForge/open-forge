@@ -153,6 +153,7 @@ internal sealed class GeneratedNavigationRegionPlanner
         var physicalPaths = new HashSet<string>(PhysicalIdentityTracker.PathComparer);
         foreach (var childPath in childPaths)
         {
+            if (!request.Sharing.Includes(childPath)) continue;
             var child = request.FindSource(childPath);
             if (child is null)
             {

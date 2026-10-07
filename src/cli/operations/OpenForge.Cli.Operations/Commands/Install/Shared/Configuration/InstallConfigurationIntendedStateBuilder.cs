@@ -21,6 +21,7 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 
@@ -32,6 +33,7 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
     private readonly MarkdownDocumentParser _markdown = new();
     private readonly SourceAuthoredMetadataParser _metadata = new();
     private readonly InstallContentIdentity _identity = new();
+    private readonly InstallWorkspaceAdoptionBuilder _adoption = new(paths);
 
     internal async ValueTask<InstallIntendedStateBuild> BuildAsync(
         InstallRequest request, FrameworkPayload payload, WorkspaceOwnershipRead ownership,
@@ -68,17 +70,16 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
             && FrameworkPayloadSelection.IncludesPath(asset.Path, intendedSettings)).ToArray();
         var ignore = await _reader.ReadAsync(request.Workspace, InstallIgnoreSection.Path, token).ConfigureAwait(false);
         var ignoreSnapshot = ignore.Snapshot ?? throw new InvalidDataException(ignore.Cause ?? "The Git-ignore file is unsafe or unavailable.");
-        var ignoreBytes = InstallIgnoreSection.Rewrite(ignoreSnapshot.Bytes.AsSpan(), configuration.Routes);
-        PlannedFileChange? ignoreChange = null;
-        if (!ignoreSnapshot.Bytes.AsSpan().SequenceEqual(ignoreBytes))
-            ignoreChange = ignore.State == InstallTargetReadState.Missing
-                ? PlannedFileChange.Create(ignoreSnapshot.Expectation, ignoreBytes)
-                : PlannedFileChange.ReplaceGeneratedRegion(ignoreSnapshot.Expectation, ignoreBytes);
+        _ = InstallIgnoreSection.Read(ignoreSnapshot.Bytes.AsSpan());
 
         var catalogue = await _catalogue.ReadAsync(new(request.Workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         if (catalogue.Issues.Any(issue => issue.Code != SourceCatalogueIssueCode.RootMissing))
             return Boundary("Current source topology is unsafe or ambiguous for configuration.", InstallFindingCode.GeneratedRegionUnsafe);
+        var topology = _adoption.PlanTopology(catalogue.Sources,
+            selected.Select(asset => FrameworkPayloadSourceProjection.Create(request.Workspace, asset)).ToArray(), intendedSettings, ownership);
+        if (topology.Cause is { } topologyCause)
+            return Boundary(topologyCause, InstallFindingCode.GeneratedRegionUnsafe);
         var sources = catalogue.Sources.ToDictionary(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal);
         var documents = new Dictionary<string, string>(StringComparer.Ordinal);
         var targetBytes = new Dictionary<string, byte[]>(StringComparer.Ordinal);
@@ -99,6 +100,11 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
         }
         foreach (var asset in selected)
         {
+            if (topology.ReusedEntrypoints.TryGetValue(asset.Path, out var actualPath) && actualPath != asset.Path)
+            {
+                targetBytes.Add(actualPath, Utf8.GetBytes(documents[actualPath]));
+                continue;
+            }
             if (sources.ContainsKey(asset.Path))
             {
                 targetBytes.Add(asset.Path, Utf8.GetBytes(documents[asset.Path]));
@@ -112,17 +118,21 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
             documents.Add(asset.Path, Utf8.GetString(asset.Bytes.AsSpan()));
             targetBytes.Add(asset.Path, asset.Bytes.ToArray());
         }
-        var formation = new GeneratedNavigationFormationBuilder().Build(catalogue, sources.Values.ToArray());
+        var configurationPlan = InstallConfigurationSharing.Complete(new(settings, ignore, settingsChange, IgnoreChange: null), configuration, sources.Values);
+        var sharing = new SourceSharing(configurationPlan.GitIgnoredRoutes);
+        var sharedCatalogue = sharing.Project(catalogue);
+        var sharedSources = sources.Values.Where(source => sharing.Includes(source.Identity.CanonicalBasePath)).ToArray();
+        var formation = new GeneratedNavigationFormationBuilder().Build(sharedCatalogue, sharedSources);
         if (formation.Ambiguities.Count > 0 || formation.IntendedTargetCollisions.Count > 0)
             throw new InvalidDataException("Configuration would form an ambiguous route or target.");
         if (FrameworkPayloadSelection.FindMissingRequiredAncestor(payload, intendedSettings, formation) is { } ancestor)
             throw new InvalidDataException($"Excluded ancestor '{ancestor}' is required by a selected route.");
-        var parsed = sources.Values.ToDictionary(source => source.Identity.CanonicalBasePath,
+        var parsed = sharedSources.ToDictionary(source => source.Identity.CanonicalBasePath,
             source => _markdown.Parse(documents[source.Identity.CanonicalBasePath]), StringComparer.Ordinal);
-        var metadata = sources.Values.Where(source => source.Base.Form != SourceDocumentForm.Loader)
+        var metadata = sharedSources.Where(source => source.Base.Form != SourceDocumentForm.Loader)
             .Select(source => new GeneratedNavigationMetadata(source, _metadata.Parse(parsed[source.Identity.CanonicalBasePath], source.Base.Form))).ToArray();
-        var payloadPaths = payload.Assets.Select(asset => asset.Path).ToHashSet(StringComparer.Ordinal);
-        var regionSources = sources.Values.Where(source => payloadPaths.Contains(source.Identity.CanonicalBasePath)
+        var payloadPaths = payload.Assets.Select(asset => asset.Path).Concat(topology.ReusedEntrypoints.Values).ToHashSet(StringComparer.Ordinal);
+        var regionSources = sharedSources.Where(source => payloadPaths.Contains(source.Identity.CanonicalBasePath)
             && (source.Base.Form == SourceDocumentForm.Loader || SourceFormClassifier.IsEntrypoint(source.Base.Form))).ToArray();
         var projection = new GeneratedNavigationProjector().Project(new(formation,
             regionSources.Select(source => new GeneratedNavigationRegionInput(source, parsed[source.Identity.CanonicalBasePath])), metadata));
@@ -166,7 +176,7 @@ internal sealed class InstallConfigurationIntendedStateBuilder(PhysicalPathResol
                 GeneratedRegionPaths = projection.Regions.Select(region => region.CanonicalPath).ToHashSet(StringComparer.Ordinal),
                 ProjectionInputs = observations.OrderBy(observation => observation.CanonicalLayerPath, StringComparer.Ordinal).ToArray(),
                 AdoptionOwnershipExpectation = ownership.Snapshot?.Expectation,
-                Configuration = new(settings, ignore, settingsChange, ignoreChange),
+                Configuration = configurationPlan,
             },
         };
     }

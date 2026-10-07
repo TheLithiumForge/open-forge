@@ -218,7 +218,7 @@ public sealed class InstallPreservationIntegrationTests
     [Trait("Boundary", "OS")]
     [Theory, InlineData("missing"), InlineData("invalid"), InlineData("directory"),
      Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
-    public async Task FreshInstallIgnoresLeftoverFilesAndUnavailableOwnership(string state)
+    public async Task FreshInstallPreservesLeftoversAndRequiresKnownSharing(string state)
     {
         using var workspace = InstallOperationWorkspace.Create("install-leftover-state");
         const string oldLifecycle = ".agents/open-forge.lifecycle.json";
@@ -237,6 +237,16 @@ public sealed class InstallPreservationIntegrationTests
         var before = workspace.SnapshotHashes();
         var result = await CreateAutomaticOperation(workspace).ExecuteAsync(
             workspace.Request(automatic: true), TestContext.Current.CancellationToken);
+
+        if (state != "missing")
+        {
+            Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+            Assert.Contains(result.Findings, finding => finding.Code == InstallFindingCode.LifecycleBlocked);
+            Assert.Empty(result.Facts.Effects);
+            Assert.Equal(before, workspace.SnapshotHashes());
+            Assert.False(workspace.Exists(".agents/loader.md"));
+            return;
+        }
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Empty(result.Findings);

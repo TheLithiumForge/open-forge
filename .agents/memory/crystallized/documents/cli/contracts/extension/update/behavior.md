@@ -40,8 +40,11 @@ observation under the workspace lease.
 `.agents/open-forge.lock.json` is the sole ownership input and publication target.
 Selection, dependencies, whole-file paths and shared owners come from receipts.
 Preserve unselected Extensions, selected region receipts, Framework and Libraries.
-Missing or unreadable ownership supplies no claims; an unrecorded selected ID
-reports `extension-update.lifecycle-observation` without inferred file effects.
+An absent lock supplies known empty sharing policy and no claims. An unrecorded
+selected ID reports `extension-update.lifecycle-observation` without inferred
+file effects. Recognized unknown-schema data retains forgiving reads. Invalid
+or unreadable existing policy blocks shared-navigation planning before effects,
+including dry-run. It never supplies deletion authority.
 Duplicated identities likewise produce information without partial inference.
 No retired state file is read, migrated, changed or deleted.
 

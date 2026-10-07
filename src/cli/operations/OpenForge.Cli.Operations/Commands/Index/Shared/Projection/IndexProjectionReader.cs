@@ -10,6 +10,13 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Selection;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Commands.Index.Models.Selection;
+using OpenForge.Cli.Core.Commands.Index.Models.Planning;
+using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Index.Shared.Projection;
 
@@ -22,9 +29,13 @@ internal sealed class IndexProjectionReader
     private readonly GeneratedNavigationFormationBuilder _formationBuilder = new();
     private readonly IndexSelectionResolver _selectionResolver;
     private readonly IndexProjectionBuilder _projectionBuilder = new();
+    private readonly PhysicalPathResolver _paths;
+    private readonly FileExpectationValidator _expectations;
 
     internal IndexProjectionReader(PhysicalPathResolver physicalPathResolver)
     {
+        _paths = physicalPathResolver;
+        _expectations = new(physicalPathResolver);
         _selectionResolver = new IndexSelectionResolver(new SourceReferenceResolver(
             (workspace, canonicalPath) => physicalPathResolver.ResolveCandidate(
                 workspace.LexicalRoot,
@@ -36,6 +47,12 @@ internal sealed class IndexProjectionReader
         IndexRequest request,
         CancellationToken cancellationToken)
     {
+        var ownership = await WorkspaceOwnershipReader.ReadAsync(_paths, request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete))
+            return IndexProjectionReadResult.SelectionIncomplete(new IndexSelectionResolution(
+                IndexSelection.NotEstablished(request.HasExplicitSources ? IndexSelectionOrigin.ExplicitSources : IndexSelectionOrigin.AutomaticLoader),
+                [], [new IndexFinding(IndexFindingCode.SourceUnsafe, sourceOccurrence: null, source: null,
+                    cause: "The route-sharing lock is unreadable or invalid. Restore it before indexing shared navigation.", candidates: [])]));
         var catalogue = await _catalogueReader.ReadAsync(
                 new SourceCatalogueRequest(
                     request.Workspace,
@@ -54,7 +71,13 @@ internal sealed class IndexProjectionReader
                     candidates: []));
         }
 
-        var formation = _formationBuilder.Build(catalogue);
+        var sharing = new SourceSharing(ownership.Document.Framework?.GitIgnoredRoutes ?? []);
+        if (sharing.FindUnavailableEntrypoint(catalogue) is { } unavailable)
+            return IndexProjectionReadResult.SelectionIncomplete(new IndexSelectionResolution(
+                IndexSelection.NotEstablished(request.HasExplicitSources ? IndexSelectionOrigin.ExplicitSources : IndexSelectionOrigin.AutomaticLoader),
+                [], [new IndexFinding(IndexFindingCode.SourceUnsafe, sourceOccurrence: null, source: null,
+                    cause: $"The recorded shared entrypoint '{unavailable}' is missing or ambiguous. Restore its route before indexing.", candidates: [])]));
+        var formation = _formationBuilder.Build(sharing.Project(catalogue));
         var selection = _selectionResolver.Resolve(request, formation);
         if (!selection.IsComplete)
         {
@@ -70,6 +93,14 @@ internal sealed class IndexProjectionReader
                 },
                 cancellationToken)
             .ConfigureAwait(false);
-        return IndexProjectionReadResult.Projected(projection);
+        return IndexProjectionReadResult.Projected(projection with { OwnershipExpectation = ownership.Snapshot?.Expectation });
+    }
+
+    internal async ValueTask<bool> VerifyOwnershipAsync(IndexPlan plan, CancellationToken token)
+    {
+        if (plan.Input.Projection.OwnershipExpectation is not { } expectation) return true;
+        var result = await _expectations.ValidateAsync(plan.Input.Request.Workspace, expectation, token).ConfigureAwait(false);
+        token.ThrowIfCancellationRequested();
+        return result.State == FileExpectationValidationState.Matched;
     }
 }

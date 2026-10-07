@@ -268,8 +268,10 @@ gate the operation.
 
 The sole state file is `.agents/open-forge.lock.json`. Read it forgivingly as
 whole-file and region ownership, preserving unselected Framework receipts and
-other sections. Missing, malformed, null, unknown, or unreadable lock data does
-not block safe creation or authorize adoption of existing files. Earlier records
+other sections. An absent lock supplies known empty sharing facts. Recognized
+null sections and unknown-schema data retain forgiving reads. An invalid or
+unreadable existing lock blocks shared-navigation planning, including dry-run.
+None of these states authorizes adoption of existing files. Earlier records
 remain untouched and are never read or migrated. Publish the lock after target
 effects verify, or skip an unavailable write without claiming publication.
 An identical receipt is preserved and a no-op invents no new ownership.

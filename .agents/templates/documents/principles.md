@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use when several decisions share stable reasoning. Principles guide judgment. They do not replace scoped rules or specifications.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep only principles and explanations that change a choice. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Scope
@@ -23,9 +23,9 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 **Why:** {The outcome or failure it protects.}
 
-**In practice:** {One concrete application and, when useful, a counterexample.}
+**In practice:** {OPTIONAL: A concrete application or counterexample that clarifies the principle.}
 
-**Tradeoff:** {What may be sacrificed or when another principle takes precedence.}
+**Tradeoff:** {OPTIONAL: A material sacrifice or condition where another principle takes precedence.}
 
 {
 Repeat the block only for principles with a distinct job. Avoid slogans that fit every possible decision.
@@ -33,7 +33,7 @@ Repeat the block only for principles with a distinct job. Avoid slogans that fit
 
 ## Tensions And Ordering
 
-{Explain how to decide when principles conflict. Use an explicit priority only when it is accepted. Otherwise, name the judgment needed.}
+{OPTIONAL: Explain how to resolve a meaningful conflict. State a priority only when accepted. Otherwise, name the judgment needed.}
 
 ## Change Boundary
 
@@ -41,4 +41,4 @@ Repeat the block only for principles with a distinct job. Avoid slogans that fit
 
 ## Related Sources
 
-{Link to sources that apply these principles and to useful rationale.}
+{OPTIONAL: Link to applications or rationale that help use these principles.}

@@ -422,7 +422,8 @@ internal sealed class UpdatePlanBuilder
         }
         return new FrameworkOwnership(existing?.Source ?? new OwnedSource("framework", null),
             [.. paths.Order(StringComparer.Ordinal)],
-            [.. regions.OrderBy(region => region.Path, StringComparer.Ordinal).ThenBy(region => region.Region, StringComparer.Ordinal)]);
+            [.. regions.OrderBy(region => region.Path, StringComparer.Ordinal).ThenBy(region => region.Region, StringComparer.Ordinal)])
+        { GitIgnoredRoutes = existing?.GitIgnoredRoutes ?? [] };
     }
 
     private static IReadOnlyList<UpdateFinding> ReadFindings(UpdatePlanningPlan plan)

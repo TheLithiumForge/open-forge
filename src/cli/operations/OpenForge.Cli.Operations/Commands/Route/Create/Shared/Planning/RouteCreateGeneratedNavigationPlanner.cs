@@ -21,6 +21,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Routing;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Shared.Planning;
 
@@ -41,6 +42,9 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         CancellationToken cancellationToken)
     {
         var inspection = destination.Inspection;
+        var sharing = await NavigationSharingReader.ReadAsync(inspection.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (!sharing.IsAvailable)
+            return Stop(destination, parent: null, RouteCreateFindingCode.TargetUnsafe, sharing.Cause, isIncomplete: false);
         var targetPath = inspection.Target.Path
             ?? throw new InvalidOperationException(
                 "A resolved Route Create target requires a canonical path.");
@@ -190,7 +194,8 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
             formation,
             regionInputs,
-            metadata.Values));
+            metadata.Values,
+            sharing.Sharing));
         var changes = ImmutableArray.CreateBuilder<RouteCreateNavigationChange>(resolvedChain.Parents.Count);
         foreach (var parent in resolvedChain.Parents)
         {
@@ -219,6 +224,7 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         return RouteCreateNavigationPlanBuild.Complete(
             new RouteCreateNavigationPlan
             {
+                SharingExpectation = sharing.Ownership.Snapshot?.Expectation,
                 Formation = formation,
                 ParentSource = parentSource,
                 NavigationChanges = changes.MoveToImmutable(),

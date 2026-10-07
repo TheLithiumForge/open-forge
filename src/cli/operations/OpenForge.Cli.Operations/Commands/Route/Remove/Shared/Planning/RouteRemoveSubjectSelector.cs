@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
@@ -228,7 +229,14 @@ internal sealed partial class RouteRemoveSubjectSelector(
             discovery.Catalogue,
             cancellationToken)
             .ConfigureAwait(false);
-        var exposureBoundary = ReadExposureBoundary(discovery, routeFacts, exposure);
+        var sharing = await NavigationSharingReader.ReadAsync(discovery.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (!sharing.IsAvailable)
+            return new RouteRemoveSubjectSelection(subject: null, Boundary(
+                RouteRemoveBoundary.Start(discovery.Request) with { Source = discovery.Source },
+                RouteRemoveFindingCode.OwnershipUnavailable, CliSemanticStatus.Blocked,
+                discovery.SelectedSource.Identity.CanonicalBasePath, sharing.Cause));
+        var exposureBoundary = ReadExposureBoundary(discovery, routeFacts, exposure, sharing.Sharing
+            ?? throw new InvalidOperationException("Available sharing facts require their view."));
         return exposureBoundary is not null
             ? new RouteRemoveSubjectSelection(subject: null, exposureBoundary)
             : new RouteRemoveSubjectSelection(

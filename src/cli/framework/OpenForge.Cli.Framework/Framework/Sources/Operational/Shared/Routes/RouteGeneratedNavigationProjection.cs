@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
@@ -18,7 +19,8 @@ internal static class RouteGeneratedNavigationProjection
     internal static GeneratedNavigationProjection Project(
         GeneratedNavigationFormation formation,
         IReadOnlyDictionary<string, RouteSourceObservation> observations,
-        IEnumerable<SourceLogicalSource> sources)
+        IEnumerable<SourceLogicalSource> sources,
+        SourceSharing sharing)
     {
         var regions = sources.Select(source =>
         {
@@ -41,7 +43,7 @@ internal static class RouteGeneratedNavigationProjection
                         "A generated-navigation formation source requires one retained observation."));
         }).ToArray();
         return new GeneratedNavigationProjector().Project(
-            new GeneratedNavigationProjectionRequest(formation, regions, metadata));
+            new GeneratedNavigationProjectionRequest(formation, regions, metadata, sharing));
     }
 
     internal static OperationalGeneratedNavigationState ReadUnavailableState(

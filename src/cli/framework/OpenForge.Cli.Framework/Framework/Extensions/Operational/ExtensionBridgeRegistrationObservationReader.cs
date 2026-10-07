@@ -20,6 +20,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Operational;
 
@@ -38,6 +39,7 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
         CliWorkspace workspace,
         WorkspaceOwnershipDocument ownership,
         IReadOnlyList<ExtensionSourceObservation> sources,
+        SourceSharing? sharing,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(workspace);
@@ -59,6 +61,12 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
         if (candidates.Count == 0)
         {
             return ExtensionBridgeRegistrationFacts.Complete([]);
+        }
+
+        if (sharing is null)
+        {
+            return ExtensionBridgeRegistrationFacts.Incomplete(
+                "Recorded route sharing is unavailable for Extension bridge-registration comparison.");
         }
 
         var catalogue = await _catalogueReader.ReadAsync(
@@ -142,14 +150,16 @@ internal sealed class ExtensionBridgeRegistrationObservationReader
                 .ToArray();
             var projectionDocument = _markdownParser.Parse(ProjectionHost);
             var regions = intendedSources
-                .Where(source => source.Base.Form == SourceDocumentForm.Loader
-                    || SourceFormClassifier.IsEntrypoint(source.Base.Form))
+                .Where(source => sharing.Includes(source.Identity.CanonicalBasePath)
+                    && (source.Base.Form == SourceDocumentForm.Loader
+                        || SourceFormClassifier.IsEntrypoint(source.Base.Form)))
                 .Select(source => new GeneratedNavigationRegionInput(source, projectionDocument))
                 .ToArray();
             projection = _projector.Project(new GeneratedNavigationProjectionRequest(
                 formation,
                 regions,
-                metadata));
+                metadata,
+                sharing));
         }
         catch (Exception exception) when (exception is ArgumentException
             or DecoderFallbackException

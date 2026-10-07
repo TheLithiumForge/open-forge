@@ -90,7 +90,8 @@ internal sealed class RouteInitFrameworkOwnershipBuilder
         }
         var intended = new FrameworkOwnership(current?.Source ?? new OwnedSource("embedded-framework", null),
             [.. paths.Order(StringComparer.Ordinal)],
-            [.. regions.OrderBy(region => region.Path, StringComparer.Ordinal).ThenBy(region => region.Region, StringComparer.Ordinal)]);
+            [.. regions.OrderBy(region => region.Path, StringComparer.Ordinal).ThenBy(region => region.Region, StringComparer.Ordinal)])
+        { GitIgnoredRoutes = current?.GitIgnoredRoutes ?? [] };
         return new(RouteInitFrameworkOwnershipPlanState.Complete,
             _ownershipStore.PlanFrameworkOwnership(trust.Ownership, intended), null);
     }

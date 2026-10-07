@@ -249,7 +249,8 @@ internal sealed class RemovePathPlanner
         var navigationOutcome = await _navigationPlanner.BuildAsync(
             request.Workspace,
             orderedSelectedPaths,
-            cancellationToken).ConfigureAwait(false);
+            cancellationToken,
+            ownership).ConfigureAwait(false);
         if (navigationOutcome is RemoveNavigationPlanningOutcome.Unavailable navigationUnavailable)
         {
             return Block(request, RemoveFindingCode.NavigationUnavailable, CliSemanticStatus.Blocked,

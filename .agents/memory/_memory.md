@@ -24,7 +24,7 @@ Its self-growing structure lets people and agents add useful records and routed 
 - Save agent communication and coordination only when they must survive the current context. Do not save every conversation.
 - Save a durable outcome when future work needs the accepted result, its reasoning, a required behavior, or a reusable shape. Otherwise, create no durable record.
 - Show the source and uncertainty when they affect trust or later acceptance. Distinguish what was stated, observed, or inferred.
-- Update affected sources before other work depends on the outcome and no later than closeout. Keep useful context and reasoning in Memory and link related sources. Accepted durable knowledge must reach the source that defines it, not remain only in chat or a #Contextual record.
+- Update affected sources before other work depends on the outcome and no later than closeout. Keep useful context and reasoning in Memory. Accepted durable knowledge must reach the source that defines it, not remain only in chat or a #Contextual record.
 - Before closeout, also preserve unsettled findings worth revisiting and temporary state needed to resume or transfer unfinished work.
 
 ### Placement And Lifecycle

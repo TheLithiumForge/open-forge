@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use only for an actual transfer or planned resumption needing a fixed snapshot. Once sealed, record later changes elsewhere.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep the snapshot facts and context needed to continue safely. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 **For:** {Recipient or named resumption.}
@@ -31,8 +31,8 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## Verification And Blockers
 
-| Claim or remaining question | Evidence or blocker | Consequence for continuation |
-| --- | --- | --- |
+| Claim or remaining question   | Evidence or blocker                                         | Consequence for continuation    |
+| ----------------------------- | ----------------------------------------------------------- | ------------------------------- |
 | {What is complete or unknown} | {Actual result and state checked, or not run / unavailable} | {What can proceed, what cannot} |
 
 ## Required Context

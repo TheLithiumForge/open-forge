@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.Planning;
 
@@ -78,7 +79,7 @@ internal sealed partial class RouteMoveNavigationPlanner
         }
 
         return PostMoveProjection.Complete(
-            new GeneratedNavigationProjectionRequest(formation, regions, metadata),
+            new GeneratedNavigationProjectionRequest(formation, regions, metadata, new SourceSharing(plan.Projection.Ownership.Document.Framework?.GitIgnoredRoutes ?? [])),
             regions);
     }
 

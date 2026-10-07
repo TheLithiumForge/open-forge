@@ -139,9 +139,9 @@ public sealed class F15IndependentWorkJourneyTests
             "extension", "update", ToolkitId,
             "--source", catalogue.Path,
             "--dry-run");
-        Assert.Equal(2, update.ExitCode);
-        Assert.Equal(string.Empty, update.StandardError);
-        Assert.Contains("ownership", update.StandardOutput, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(5, update.ExitCode);
+        Assert.Equal(string.Empty, update.StandardOutput);
+        Assert.Contains("route-sharing", update.StandardError, StringComparison.OrdinalIgnoreCase);
         Assert.Equal(targetBefore, File.ReadAllBytes(workspace.Combine(ToolkitTargetPath)));
         Assert.Equal(ownershipBefore, File.ReadAllBytes(workspace.Combine(OwnershipPath)));
         Assert.Equal(sourceSnapshot, catalogue.SnapshotTree());

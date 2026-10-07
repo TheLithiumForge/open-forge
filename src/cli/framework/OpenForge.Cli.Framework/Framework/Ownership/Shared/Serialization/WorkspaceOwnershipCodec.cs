@@ -1,7 +1,9 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Sharing;
 using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 
@@ -10,9 +12,9 @@ namespace OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 ///
 /// Reading is forgiving on purpose. A missing section, a null array, or a key
 /// this release has not heard of yields the entries the file does carry, because
-/// the lock is never allowed to stop a command. Only a file that is not a JSON
+/// each command decides which effects require trustworthy facts. A file that is not a JSON
 /// object at all, or that carries an entry with no identity to act on, is
-/// reported as unintelligible.
+/// reported as unintelligible. Recognized route-sharing records also require valid path identities.
 ///
 /// Writing is normalized so the file is reviewable in a diff: entries are sorted
 /// by identity, paths and regions by ordinal path, and duplicates collapsed. Two
@@ -81,6 +83,7 @@ internal static class WorkspaceOwnershipCodec
                     },
                     Paths = SortPaths(framework.Paths),
                     Regions = SortRegions(framework.Regions),
+                    GitIgnoredRoutes = WriteGitIgnoredRoutes(framework.GitIgnoredRoutes),
                 }
                 : null,
             Extensions =
@@ -158,7 +161,28 @@ internal static class WorkspaceOwnershipCodec
         return new FrameworkOwnership(
             new OwnedSource(id, NullIfBlank(entry.Source?.Version)),
             ReadStrings(entry.Paths, WorkspaceOwnershipDefinitions.FrameworkProperty),
-            ReadRegions(entry.Regions, WorkspaceOwnershipDefinitions.FrameworkProperty));
+            ReadRegions(entry.Regions, WorkspaceOwnershipDefinitions.FrameworkProperty))
+        { GitIgnoredRoutes = ReadGitIgnoredRoutes(entry.GitIgnoredRoutes) };
+    }
+
+    private static JsonElement WriteGitIgnoredRoutes(ImmutableArray<SourceSharingRoute> routes)
+    {
+        if (routes.IsEmpty) return default;
+        GitIgnoredRouteEntry[] entries = [.. routes.Distinct().OrderBy(route => route.Directory, StringComparer.Ordinal)
+            .Select(route => new GitIgnoredRouteEntry { Directory = route.Directory, Entrypoint = route.Entrypoint })];
+        return JsonSerializer.SerializeToElement(entries, WorkspaceOwnershipJsonContext.Default.GitIgnoredRouteEntryArray);
+    }
+
+    private static ImmutableArray<SourceSharingRoute> ReadGitIgnoredRoutes(JsonElement value)
+    {
+        if (value.ValueKind == JsonValueKind.Undefined) return [];
+        if (value.ValueKind != JsonValueKind.Array) throw new ArgumentException("Gitignored routes must be an array when present.");
+        var entries = value.Deserialize(WorkspaceOwnershipJsonContext.Default.GitIgnoredRouteEntryArray)
+            ?? throw new ArgumentException("Gitignored routes must be an array when present.");
+        var routes = entries.Select(entry => new SourceSharingRoute(
+            entry?.Directory ?? string.Empty, entry?.Entrypoint ?? string.Empty)).ToImmutableArray();
+        _ = new SourceSharing(routes);
+        return routes;
     }
 
     private static ImmutableArray<ExtensionOwnership> ReadExtensions(ExtensionOwnershipEntry[]? entries)

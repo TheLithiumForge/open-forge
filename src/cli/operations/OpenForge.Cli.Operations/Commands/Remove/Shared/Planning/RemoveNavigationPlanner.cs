@@ -15,6 +15,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Commands.Remove.Models.Planning;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Remove.Shared.Planning;
 
@@ -30,10 +32,14 @@ internal sealed class RemoveNavigationPlanner
     internal async ValueTask<RemoveNavigationPlanningOutcome> BuildAsync(
         CliWorkspace workspace,
         IReadOnlyCollection<string> selectedPaths,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        WorkspaceOwnershipRead? ownership = null)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(selectedPaths);
+        var sharing = ownership is not null ? NavigationSharingReader.FromOwnership(ownership)
+            : await NavigationSharingReader.ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        if (!sharing.IsAvailable) return new RemoveNavigationPlanningOutcome.Unavailable(sharing.Cause);
         if (selectedPaths.Count == 0 || selectedPaths.All(path => !path.StartsWith(".agents/", StringComparison.Ordinal)))
         {
             return new RemoveNavigationPlanningOutcome.Available(RemoveNavigationPlan.Empty);
@@ -96,6 +102,7 @@ internal sealed class RemoveNavigationPlanner
 
         var metadata = new List<GeneratedNavigationMetadata>(intendedSources.Length);
         var snapshots = new List<FileStateSnapshot>(intendedSources.Length);
+        if (sharing.Ownership.Snapshot is { } sharingSnapshot) snapshots.Add(sharingSnapshot);
         foreach (var source in intendedSources)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -127,7 +134,7 @@ internal sealed class RemoveNavigationPlanner
         var regions = hostDocuments.Select(document => new GeneratedNavigationRegionInput(
             document.Source,
             _markdownParser.Parse(document.Text.Text))).ToArray();
-        var projectionRequest = new GeneratedNavigationProjectionRequest(intendedFormation, regions, metadata);
+        var projectionRequest = new GeneratedNavigationProjectionRequest(intendedFormation, regions, metadata, sharing.Sharing);
         var changes = new List<RemoveNavigationChange>();
         foreach (var document in hostDocuments)
         {

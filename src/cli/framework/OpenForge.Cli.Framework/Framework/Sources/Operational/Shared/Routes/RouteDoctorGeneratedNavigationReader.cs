@@ -3,18 +3,31 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
 internal sealed class RouteDoctorGeneratedNavigationReader
 {
     internal IReadOnlyList<DoctorGeneratedNavigationTargetObservation> Read(
-        RouteSourceInspection inspection)
+        RouteSourceInspection inspection,
+        SourceSharing? sharing)
     {
         var formation = new GeneratedNavigationFormationBuilder().Build(inspection.Catalogue);
         var observations = RouteGeneratedNavigationProjection.IndexSources(inspection.Sources);
-        var regionSources = formation.Sources.Where(GeneratedNavigationRegionPlanner.IsRegionSource).ToArray();
-        var projection = RouteGeneratedNavigationProjection.Project(formation, observations, regionSources);
+        var regionSources = formation.Sources.Where(GeneratedNavigationRegionPlanner.IsRegionSource)
+            .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal).ToArray();
+        if (sharing is null)
+        {
+            return regionSources.Select(source => DoctorGeneratedNavigationTargetObservation.Unavailable(
+                source.Identity.CanonicalBasePath,
+                OperationalGeneratedNavigationState.Unavailable,
+                new DoctorGeneratedNavigationContent(observations[source.Identity.CanonicalBasePath].GeneratedEntries, [], []),
+                new DoctorGeneratedNavigationUnavailability(GeneratedNavigationRegionUnavailableReason.ProjectionUnavailable, "Recorded route sharing is unavailable."))).ToArray();
+        }
+
+        regionSources = regionSources.Where(source => sharing.Includes(source.Identity.CanonicalBasePath)).ToArray();
+        var projection = RouteGeneratedNavigationProjection.Project(formation, observations, regionSources, sharing);
         return projection.Regions
             .OrderBy(region => region.CanonicalPath, StringComparer.Ordinal)
             .Select(region => Project(region, observations[region.CanonicalPath]))

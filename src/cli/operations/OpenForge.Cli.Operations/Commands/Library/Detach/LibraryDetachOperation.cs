@@ -209,6 +209,7 @@ internal sealed class LibraryDetachOperation
             ? await LibraryGeneratedNavigationReader.ReadAsync(
                 new LibraryGeneratedNavigationRequest
                 {
+                    Ownership = ownership,
                     Workspace = request.Workspace,
                     SelectedLibrary = selected,
                     CurrentRecord = record.Record,

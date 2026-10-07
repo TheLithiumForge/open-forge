@@ -138,6 +138,9 @@ retain explicit descendant omissions, reject broader excluded ancestors, and
 form bounded settings/payload/navigation effects together. Revalidate the exact
 settings snapshot under the held workspace lease. Verify all effects before
 publishing ownership; claim only new payload files and actual generated regions.
+An exact native Skill host omission also suppresses its dependent packaged
+resources during restoration. It neither broadens generic exact-file omissions
+nor removes existing user files.
 Use neutral distribution/settings/mutation primitives, never sibling Install or
 Update operation policy. An installed safe Loader remains required; selected
 missing roots are allowed. Other Framework targets follow sparse alignment below.
@@ -152,8 +155,10 @@ and ownership availability do not establish or deny that physical boundary.
 Read `.agents/open-forge.lock.json` as forgiving ownership evidence. Existing
 whole-file claims distinguish managed entrypoints from user-authored inputs;
 current payload alignment supplies `sourceAssetPath` only for this invocation.
-No earlier record is read, converted, written, or deleted. Missing, malformed,
-or unreadable ownership supplies no claims and does not block safe scaffolding.
+No earlier record is read, converted, written, or deleted. An absent lock supplies
+known empty sharing facts and no claims. An invalid or unreadable existing lock
+blocks shared-navigation planning before effects, including dry-run. Recognized
+unknown-schema data remains readable; release metadata is not an integrity gate.
 
 One separate neutral embedded-source adapter projects only recognized
 `.agents/...` payload assets into canonical base sources for the supplied
@@ -597,9 +602,9 @@ in addition to the caller-visible [Interface Contract](interface.md):
   creation, exact managed asset bytes, draft user scope bytes,
   destination-local generated navigation, per-target `sourceAssetPath`, and no
   whole-file Framework claim for a scope entrypoint.
-- Forgiving lock reads, preserved unselected receipts, no adoption of existing
-  unowned files, skipped-write truth, and safe scoped creation with missing,
-  malformed, older, or unreadable ownership metadata.
+- Forgiving absent and recognized unknown-schema lock reads, preserved unselected
+  receipts, no adoption of existing unowned files and skipped-write truth.
+  Invalid or unreadable existing sharing policy blocks before effects.
 - Singleton rejection for repeated `--description` and `--responsibility`,
   including equal values; ordered repeated `--tag` values with exact duplicate,
   empty, and syntax validation; idempotent repeated Boolean write-policy flags;

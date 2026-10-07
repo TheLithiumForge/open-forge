@@ -140,6 +140,14 @@
       "owner": null
     },
     {
+      "path": ".agents/skills/open-forge-cli/references",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -236,6 +244,38 @@
       "owner": null
     },
     {
+      "path": ".agents/skills/open-forge-cli/references/common.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/discovery.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/packages.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/routes.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/templates/_templates.md",
       "kind": "file",
       "action": "created",
@@ -282,8 +322,8 @@
     "automatic": false,
     "classification": "safe-absence",
     "footprint": {
-      "files": 13,
-      "directories": 12,
+      "files": 17,
+      "directories": 13,
       "sections": 2
     },
     "lockPath": ".agents/open-forge.lock.json"

@@ -6,7 +6,7 @@ Workspace: <workspace>
          Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
   .agents/guidance/_guidance.md  replaced (you had changed it and this release changes it)
   .agents/loader.md              not started (you had changed it and this release changes it)
-  13 files unchanged
+  17 files unchanged
   Recovery data: <recovery-bundle>
   Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
 Next: open-forge doctor

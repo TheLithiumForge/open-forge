@@ -14,6 +14,7 @@ Directives define required agent behavior within a scope.
 
 - Each Directive file in the same folder as an `entrypoint` must carry #LoadNow. Directives are mandatory within their scope.
 - Each Directive file keeps its instructions under a non-empty `## Instructions` heading.
+- State each obligation, its conditions, and meaningful exceptions in the instructions. Supporting examples or visuals illustrate those instructions. The obligation must remain understandable from the instructions themselves.
 - Directive files in this root `entrypoint`'s folder apply throughout the workspace.
 - A child entrypoint does not need #LoadNow. It loads only when selected.
 - Select a child entrypoint before loading its Directive files. Their Instructions apply only within that narrower scope.

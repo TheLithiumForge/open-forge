@@ -49,6 +49,8 @@ internal sealed record InstallApplicationOutcome
     public required InstallResultFacts Facts { get; init; }
 }
 
+internal sealed record InstallTargetApplicationResult(InstallApplicationProgress Progress, InstallApplicationOutcome? Boundary);
+
 internal enum InstallFinalVerificationState
 {
     NotReached,

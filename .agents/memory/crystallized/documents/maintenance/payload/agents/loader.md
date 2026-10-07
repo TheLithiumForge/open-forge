@@ -18,10 +18,11 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 ### Responsibility And Shape
 
 - The loader is the first Open Forge `entrypoint` after the canonical workspace entry.
-- It contains only the terms and `Axioms` needed to enter, route, and understand an installed Framework. It also contains compact CLI help and a generated list of direct `root routes`.
+- It contains the terms and `Axioms` needed to enter, route, and use an installed Framework, including a shared concision rule. It also contains compact CLI help and a generated list of direct `root routes`.
 - Its authored sections remain, in order, the introduction, `Terms`, one grouped `Axioms` section, and `Entries`.
 - The `Axioms` groups remain, in order, `Authority And Inheritance`, `Routing`, `Tags And Loading` with `Defined Tags`, `Frontmatter`, and `CLI` with `Applicable Commands`.
 - It lets each source answer one clear question and links to related sources instead of repeating their detail. A link does not change authority, scope, loading, or lifecycle.
+- Relative local links, precise references, and consistent descriptive tags expose useful relationships for navigation and retrieval.
 - Its short grouped lists keep related operational rules adjacent.
 - Category-specific behavior stays in routed sources. Workflow execution, Memory transitions, primitive details, Extension mechanics, and complete CLI behavior do not move into the loader.
 - The installed loader remains understandable without repository governance, source history, or the CLI.
@@ -32,6 +33,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - The loader distinguishes evidence validation from acceptance and preserves scoped acceptance when classifying contextual material. The [accepted-state contract](../../../framework/truth.md#acceptance) defines the distinction.
 - Platform constraints and runtime safety bound every action. Clear user direction sets task goals, priorities, important choices, and accepted changes. A declared external source remains authoritative for the facts assigned to it.
 - Explanation and planning match the request. Unless the user asks for deeper analysis, the first response gives the current understanding, one recommendation, and no more than one unresolved important choice.
+- Communication and authored content use the fewest words that preserve meaning, readability, and logical progression, including necessary context, conditions, and exceptions.
 - The agent continues when accepted direction or a stated reversible assumption makes progress safe. It states assumptions and stops when uncertainty, conflict, or an authority boundary could significantly change the work.
 - Only the loader and recognized loaded `entrypoints` define active `Axioms`. Child routes inherit ancestor Axioms and add only rules specific to their narrower scope. Authored scopes without local rules use the inherited marker; missing or empty local sections remain valid input.
 - Clear direction is not reconfirmed. A request to act allows routine, reversible, in-scope choices needed to complete the task. The user decides unresolved choices that could significantly change the result, scope, risk, cost, external effects, or ability to undo the work.
@@ -78,7 +80,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - The heading-owned `Entries` body is derived locally and may differ when the installed `root routes` differ.
 - Generated loader `entries` expose direct active root `entrypoints` only. They never flatten nested `routes`.
 - Generated links resolve relative to `.agents/loader.md`; CLI `route` identities remain workspace-relative.
-- The authored loader, excluding generated `Entries`, has 100 non-empty lines. Its Frontmatter section holds ten of them, including the former `description` and `responsibility` terms and the Task 62 `applyTo` rules. Review future growth against that baseline and justify changes required by accepted contracts. Keep operational detail in routed sources instead of imposing a hard ceiling.
+- The authored loader, excluding generated `Entries`, has 102 non-empty lines. Shared concision and relationship rules add two lines to the prior baseline. Its Frontmatter section holds ten lines, including `description`, `responsibility`, and the `applyTo` rules. Review future growth against this baseline and justify changes required by accepted contracts. Keep operational detail in routed sources instead of imposing a hard ceiling.
 
 ## Verification
 

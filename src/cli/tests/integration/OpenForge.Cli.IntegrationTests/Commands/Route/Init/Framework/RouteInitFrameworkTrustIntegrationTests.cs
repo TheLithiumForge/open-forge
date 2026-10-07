@@ -24,11 +24,11 @@ public sealed class RouteInitFrameworkTrustIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Framework Route Init uses real route boundaries and ignores missing stale or unreadable ownership metadata")]
+    [Theory(DisplayName = "Framework Route Init requires known sharing and keeps absent or valid ownership compatible")]
     [InlineData("missing"), InlineData("malformed"), InlineData("directory")]
     [InlineData("framework-null"), InlineData("extensions-null"), InlineData("empty")]
     [InlineData("older-source"), InlineData("edited-loader")]
-    public async Task LockMetadataDoesNotGateSafeScopedCreation(string condition)
+    public async Task SharingReadTrustDefinesScopedCreationBoundary(string condition)
     {
         using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
             "route-init-framework-lock-boundary", TestContext.Current.CancellationToken);
@@ -67,8 +67,19 @@ public sealed class RouteInitFrameworkTrustIntegrationTests
             }
             workspace.WriteText(lockPath, document.ToJsonString());
         }
+        var before = workspace.SnapshotHashes();
         var result = await RouteInitOperationFactory.Create(workspace.LockStoreRoot).ExecuteAsync(
             workspace.Request("memory/release-notes/working"), TestContext.Current.CancellationToken);
+        if (condition is "malformed" or "directory")
+        {
+            Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+            Assert.Contains(result.Findings, finding => finding.Code == RouteInitFindingCode.LifecycleBlocked);
+            Assert.Empty(result.Effects);
+            Assert.Equal(before, workspace.SnapshotHashes());
+            Assert.False(workspace.Exists(".agents/memory/release-notes/working/_working.md"));
+            return;
+        }
+
         Assert.True(result.Status == CliSemanticStatus.Complete,
             string.Join("; ", result.Findings.Select(finding => $"{finding.Code}: {finding.Cause}")));
         Assert.Equal(RouteInitVerificationState.Verified, result.Verification);

@@ -20,7 +20,8 @@ The [current Patterns document](../../../framework/primitives/patterns.md) defin
 - Every routed Pattern defines one recognizable reusable shape and enough scope to judge relevance
 - A new Pattern requires an accepted shape that remains useful for future related work
 - One-off work, temporary transitions, and unsettled candidates do not become Patterns only because they have structure
-- A Pattern stays focused on one reusable shape
+- A Pattern stays focused on one reusable shape, shown as the main content through a concrete example, tree, table, diagram, or artifact outline. Brief text supplies applicability, labels, and meaningful variations
+- Required behavior, procedures, and substantial choice rationale remain in their defining sources. Example names and values are illustrative unless an applicable requirement fixes them
 - Concrete examples remain valid against their APIs, formats, and tools. Intentionally incomplete examples identify themselves as schematic
 - An applicable Pattern remains the default shape. Deliberate adaptations are allowed within granted authority; explain material departures before dependent work. A mandatory shape requires authority for its exception
 - Binding shape requirements come from a Directive, an active Axiom, or an accepted requirement rather than Pattern classification alone

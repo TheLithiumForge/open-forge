@@ -1,4 +1,4 @@
 The Framework is up to date. Nothing to do.
 Workspace: <workspace>
-  15 files unchanged
+  19 files unchanged
   All written targets were verified.

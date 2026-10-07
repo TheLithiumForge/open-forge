@@ -276,7 +276,7 @@
     "entriesSectionsCurrent": null,
     "entriesSectionsStale": null,
     "entriesSectionsMissing": null,
-    "frameworkFilesCurrent": 14,
+    "frameworkFilesCurrent": 18,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -355,9 +355,9 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 24394,
-          "bytes": 24394,
-          "tokens": 6099
+          "characters": 25541,
+          "bytes": 25541,
+          "tokens": 6386
         },
         "current": {
           "files": null,
@@ -441,6 +441,22 @@
       },
       {
         "path": ".agents/skills/open-forge-cli/SKILL.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/common.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/discovery.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/packages.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/routes.md",
         "state": "current"
       },
       {

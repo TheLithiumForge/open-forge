@@ -13,7 +13,7 @@ Start your own workspace instructions, advice, reusable shapes, capabilities, ma
 
 ## Why it exists
 
-Each Core category expects a particular shape. A Directive keeps its rules under an `Instructions` heading, Guidance explains its tradeoffs, and a Pattern shows an example. One starter per category gives you that shape up front, so you don't have to work it out from the category rules.
+Each Core category has a distinct role. A Directive states obligations under `Instructions`, Guidance explains a recommendation, and a Pattern shows a reusable shape. One starter per category makes that distinction clear before you write.
 
 It's separate from the Development Toolkit because writing your own workspace content isn't specific to software development.
 
@@ -36,15 +36,17 @@ It's separate from the Development Toolkit because writing your own workspace co
 | File           | Starts a...                                            | Sections you fill in                                                                                                                                                                      |
 | -------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `_core.md`     | (entrypoint)                                           | Explains how to pick the right role before copying: a Directive requires, Guidance recommends, a Pattern shapes, a Skill performs, a Template starts, a Map points, and Memory remembers. |
-| `directive.md` | [Directive](../concepts/core-categories.md#directives) | `Instructions`: the required behavior for one clearly selected scope.                                                                                                                     |
+| `directive.md` | [Directive](../concepts/core-categories.md#directives) | `Instructions`: required actions, conditions, and meaningful exceptions. An optional `Example` illustrates the instructions.                                                              |
 | `guidance.md`  | [Guidance](../concepts/core-categories.md#guidance)    | `Situation`, `Recommended Approach`, `Reasons And Tradeoffs`, `Example`.                                                                                                                  |
-| `pattern.md`   | [Pattern](../concepts/core-categories.md#patterns)     | `Applies To`, `Shape`, `Example`, `Variations And Tradeoffs`.                                                                                                                             |
+| `pattern.md`   | [Pattern](../concepts/core-categories.md#patterns)     | A brief `Applies To`, then the concrete `Shape`. Keep `Variations` and `Related Requirements` only when useful.                                                                           |
 | `skill.md`     | [Skill](../concepts/core-categories.md#skills)         | A fenced native `SKILL.md` with `name`, `description`, `Purpose`, `Required Inputs And Resources`, `Instructions`, and `Result`.                                                          |
 | `template.md`  | [Template](../concepts/core-categories.md#templates)   | Guidance for the future reader, then the sections you name for a recurring artifact. Add a section only when it helps create the artifact.                                                |
 | `map.md`       | [Map](../concepts/core-categories.md#maps)             | `Scope` and `Sources`: where each source is and when to read it.                                                                                                                          |
 | `memory.md`    | Memory record                                          | `Summary And Scope`, `Details And Sources`, `Limits And Next Use`. Use it when no specialized record type fits.                                                                           |
 
 ## How to use it
+
+Keep the smallest complete result. Combine overlapping answers and remove unused prompts and optional sections. Preserve required structure and enough context for a readable progression.
 
 > Use the relevant Core Template to write this workspace rule. Keep it in the narrowest useful scope and follow the destination's loading rules.
 

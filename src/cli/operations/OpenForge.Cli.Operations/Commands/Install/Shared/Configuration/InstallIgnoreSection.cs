@@ -1,6 +1,9 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Sharing;
 using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 
@@ -15,20 +18,37 @@ internal static class InstallIgnoreSection
     {
         var section = Locate(Utf8.GetString(bytes));
         if (section.Start < 0) return [];
-        return section.Body.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
-            .Select(line => InstallConfigurationChoices.RouteIds.FirstOrDefault(id => Pattern(id) == line)
-                ?? throw new InvalidDataException("The Install Git-ignore section contains an unsupported pattern."))
-            .Distinct(StringComparer.Ordinal).ToImmutableArray();
+        var lines = section.Body.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+        var routes = ImmutableArray.CreateBuilder<string>();
+        for (var index = 0; index < lines.Length; index++)
+        {
+            var line = lines[index];
+            var id = InstallConfigurationChoices.RouteIds.FirstOrDefault(id => Pattern(id) == line || ContentsPattern(id) == line)
+                ?? throw new InvalidDataException("The Install Git-ignore section contains an unsupported pattern.");
+            if (line == ContentsPattern(id))
+            {
+                if (++index >= lines.Length || !lines[index].StartsWith("!/", StringComparison.Ordinal))
+                    throw new InvalidDataException("The Install Git-ignore section requires a shared entrypoint after each contents pattern.");
+                var entrypoint = lines[index][2..];
+                if (SourceLogicalPath.ReadParent(entrypoint) != InstallConfigurationChoices.Directory(id)
+                    || !SourceFormClassifier.TryClassify(entrypoint, out var form) || !SourceFormClassifier.IsEntrypoint(form))
+                    throw new InvalidDataException("The Install Git-ignore section contains an unsupported shared entrypoint.");
+            }
+            routes.Add(id);
+        }
+        return routes.Distinct(StringComparer.Ordinal).ToImmutableArray();
     }
 
-    internal static byte[] Rewrite(ReadOnlySpan<byte> bytes, ImmutableArray<InstallRouteSelection> routes)
+    internal static byte[] Rewrite(ReadOnlySpan<byte> bytes, ImmutableArray<InstallRouteSelection> routes,
+        IReadOnlyList<SourceSharingRoute>? sharedRoutes = null)
     {
         var text = Utf8.GetString(bytes);
         _ = Read(bytes);
         var section = Locate(text);
         var lineEnding = text.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
         var patterns = routes.Where(row => row.Action == InstallRouteAction.GitIgnore)
-            .Select(row => Pattern(row.Id)).ToArray();
+            .SelectMany(row => new[] { ContentsPattern(row.Id), $"!/{sharedRoutes?.Single(route => route.Directory == InstallConfigurationChoices.Directory(row.Id)).Entrypoint
+                ?? InstallConfigurationChoices.Entrypoint(row.Id)}" }).ToArray();
         var replacement = patterns.Length == 0 ? string.Empty
             : string.Join(lineEnding, new[] { Begin }.Concat(patterns).Append(End)) + lineEnding;
         if (section.Start >= 0)
@@ -39,6 +59,7 @@ internal static class InstallIgnoreSection
     }
 
     private static string Pattern(string id) => $"/{InstallConfigurationChoices.Directory(id)}/";
+    private static string ContentsPattern(string id) => $"/{InstallConfigurationChoices.Directory(id)}/*";
 
     private static InstallIgnoreSectionSpan Locate(string text)
     {

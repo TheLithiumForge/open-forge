@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Libraries.Operational;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
@@ -22,8 +23,9 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
         var recovery = await _contributors.RecoveryResiduals
             .ReadDoctorAsync(request.Workspace, cancellationToken)
             .ConfigureAwait(false);
+        var sharing = await NavigationSharingReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
         var routes = await _contributors.Routes
-            .ReadDoctorAsync(request.Workspace, cancellationToken)
+            .ReadDoctorAsync(request.Workspace, sharing.Sharing, cancellationToken)
             .ConfigureAwait(false);
         var references = await _contributors.LocalReferences
             .ReadDoctorAsync(request.Workspace, cancellationToken)

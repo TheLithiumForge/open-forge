@@ -1,12 +1,25 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Distribution.Shared.Sources;
 
 [Trait("Feature", "framework-payload-selection"), Trait("Evidence", "Unit")]
 public sealed class FrameworkPayloadSelectionTests
 {
+    [Fact(DisplayName = "Omitting a native Skill host suppresses dependent Framework resources without broadening exact removal"), Trait("Boundary", "Selection")]
+    public void OmittedSkillSuppressesPackagedResources()
+    {
+        var settings = Settings([".agents/skills/cli/SKILL.md"]);
+        const string resource = ".agents/skills/cli/references/commands.md";
+        Assert.False(FrameworkPayloadSelection.IncludesPath(resource, settings));
+        Assert.False(FrameworkPayloadSelection.IncludesPath(".agents/skills/cli/assets/example.json", settings));
+        Assert.True(FrameworkPayloadSelection.IncludesPath(".agents/skills/cli-extra/references/commands.md", settings));
+        Assert.True(FrameworkPayloadSelection.IncludesPath(".agents/skills/CLI/references/commands.md", settings));
+        Assert.False(WorkspaceRemovals.IsPathRemoved(resource, settings));
+    }
+
     [Trait("Boundary", "Selection")]
     [Fact(DisplayName = "A removed file excludes only its exact concrete destination")]
     public void ExcludesExactDestinationOnly()

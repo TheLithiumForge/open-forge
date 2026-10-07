@@ -41,10 +41,10 @@ public sealed class ExtensionInstallOwnershipReaderIntegrationTests
         Assert.Equal(command != "remove", ownership.Document.Extensions.Any(extension => extension.Id == "alpha"));
     }
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Extension Install uses current targets and skips unavailable lock publication without reading retired records")]
+    [Theory(DisplayName = "Extension Install preserves retired records and requires known sharing before effects")]
     [Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     [InlineData("missing"), InlineData("malformed"), InlineData("directory")]
-    public async Task UnknownLockDoesNotGateSafeNewInstallation(string condition)
+    public async Task InstallationRequiresKnownSharing(string condition)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-unknown-lock");
         using var source = ExtensionInstallCatalogue.Create("extension-install-unknown-lock-source");
@@ -65,8 +65,22 @@ public sealed class ExtensionInstallOwnershipReaderIntegrationTests
             Directory.CreateDirectory(lockPath);
         }
         source.AddPackage("alpha", [], (".agents/alpha.txt", "alpha bytes\n"));
+        var before = workspace.Snapshot();
 
         var run = await workspace.RunAsync(["extension", "install", "alpha", "--source", source.Path, "--automatic", "--format", "json", "--detail", "full"]);
+
+        if (condition != "missing")
+        {
+            Assert.Equal(5, run.ExitCode);
+            Assert.Equal(OpenForge.Cli.Core.Shell.Definitions.CliSemanticStatus.Blocked, run.Status);
+            using var refusal = System.Text.Json.JsonDocument.Parse(run.StandardOutput);
+            Assert.Contains(refusal.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+                finding.GetProperty("code").GetString() == "extension-install.generated-region-unsafe");
+            Assert.Empty(refusal.RootElement.GetProperty("effects").EnumerateArray());
+            Assert.Equal(before, workspace.Snapshot());
+            Assert.False(File.Exists(workspace.Combine(".agents/alpha.txt")));
+            return;
+        }
 
         Assert.True(run.ExitCode == 0, run.StandardOutput + run.StandardError);
         Assert.Equal("alpha bytes\n", workspace.ReadText(".agents/alpha.txt"));

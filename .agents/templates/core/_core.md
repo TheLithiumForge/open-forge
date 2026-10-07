@@ -10,9 +10,9 @@ open-forge:
 
 Choose the role before copying.
 
-- A Directive requires behavior.
+- A Directive states required behavior.
 - Guidance recommends an approach.
-- A Pattern defines a reusable shape.
+- A Pattern shows a reusable shape.
 - A Skill supplies a native capability.
 - A Template starts an independent artifact.
 - A Map points to useful sources.

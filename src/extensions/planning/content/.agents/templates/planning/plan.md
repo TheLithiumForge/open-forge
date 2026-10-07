@@ -8,7 +8,7 @@ open-forge:
 
 {
 Keep a short plan in the Task. Use this only when the sequence needs independent maintenance.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Give each step only the detail needed to execute and verify it. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Outcome Source
@@ -19,19 +19,19 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## Steps And Dependencies
 
-| Step | Observable result | Depends on | Verification |
-| --- | --- | --- | --- |
+| Step            | Observable result   | Depends on                              | Verification                              |
+| --------------- | ------------------- | --------------------------------------- | ----------------------------------------- |
 | {Coherent step} | {What becomes true} | {Predecessor, input, decision, or none} | {How to distinguish success from failure} |
 
-**Parallel work:** {Only genuinely independent steps with permitted isolation and available capabilities. Omit when sequential.}
+**Parallel work:** {OPTIONAL: Independent steps with permitted isolation and available capabilities.}
 
-**Decision or stop points:** {What requires a decision, permission, or revised plan before continuing.}
+**Decision or stop points:** {OPTIONAL: Conditions that require a decision, permission, or revised plan before continuing.}
 
 ## Verification And Completion
 
 {Link to the outcome's completion criteria. State combined checks that individual steps cannot establish, using the project's actual procedures.}
 
-**Recovery or reversal:** {What protects the current system if adoption fails. Omit when immaterial.}
+**Recovery or reversal:** {OPTIONAL: Protection needed if adoption fails.}
 
 {
 Revise remaining steps when evidence changes the plan. Preserve completed evidence in its defining source.

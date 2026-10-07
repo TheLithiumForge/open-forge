@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
@@ -241,62 +242,12 @@ internal sealed class InstallApplicationOperation(
             }
         }
 
-        foreach (var effect in plan.TargetEffects)
+        foreach (var effect in plan.TargetEffects.Where(effect => effect.RelativePath != ".gitignore"))
         {
-            var identity = plan.Effects[effectIndex++];
-            FileChangeReceipt receipt;
-            try
-            {
-                receipt = await _effectApplier.ApplyFileAsync(
-                        lease,
-                        effect,
-                        validation.Checks[checkIndex++],
-                        progress.RecoveryPreparation,
-                        cancellationToken)
-                    .ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                progress = RecordUnknown(progress, identity);
-                return Failed(
-                    plan,
-                    progress,
-                    InstallFindingCode.Interrupted,
-                    "Install target application was interrupted.",
-                    subject: effect.RelativePath);
-            }
-            catch (Exception)
-            {
-                progress = RecordUnknown(progress, identity);
-                return Failed(
-                    plan,
-                    progress,
-                    InstallFindingCode.OperationFailed,
-                    "Install target application failed unexpectedly.",
-                    subject: effect.RelativePath);
-            }
-
-            if (receipt.EffectState == FilesystemEffectState.Applied)
-            {
-                progress = progress with
-                {
-                    AppliedTargetFileCount = progress.AppliedTargetFileCount + 1,
-                };
-            }
-
-            progress = Record(progress, identity, ReadOutcome(receipt));
-
-            if (receipt.EffectState != FilesystemEffectState.Applied
-                || receipt.VerificationState != FilesystemVerificationState.Verified)
-            {
-                return Failed(
-                    plan,
-                    progress,
-                    ReadTargetReceiptFinding(receipt),
-                    receipt.Cause
-                        ?? "A planned Install target could not be applied and verified.",
-                    subject: effect.RelativePath);
-            }
+            effectIndex++;
+            var applied = await ApplyTargetAsync(context, effect, validation.Checks[checkIndex++], progress, cancellationToken).ConfigureAwait(false);
+            progress = applied.Progress;
+            if (applied.Boundary is { } boundary) return boundary;
         }
 
         InstallVerificationResult targetVerification;
@@ -403,6 +354,34 @@ internal sealed class InstallApplicationOperation(
             }
         }
 
+        if (plan.IntendedState.Configuration is not null)
+        {
+            InstallVerificationResult registration;
+            try
+            {
+                registration = await _verifier.VerifyRegistrationAsync(plan, cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return Failed(plan, progress, InstallFindingCode.Interrupted, "Route-sharing registration verification was interrupted.");
+            }
+            catch (Exception)
+            {
+                return Failed(plan, progress, InstallFindingCode.VerificationFailed, "Route-sharing registration could not be verified.");
+            }
+            if (registration.State != InstallVerificationState.Verified)
+                return Failed(plan, progress, InstallFindingCode.VerificationFailed,
+                    registration.Cause ?? "Route-sharing registration could not be verified.");
+        }
+
+        foreach (var effect in plan.TargetEffects.Where(effect => effect.RelativePath == ".gitignore"))
+        {
+            effectIndex++;
+            var applied = await ApplyTargetAsync(context, effect, validation.Checks[checkIndex++], progress, cancellationToken).ConfigureAwait(false);
+            progress = applied.Progress;
+            if (applied.Boundary is { } boundary) return boundary;
+        }
+
         InstallVerificationResult verification;
         try
         {
@@ -479,6 +458,68 @@ internal sealed class InstallApplicationOperation(
                 progress,
                 cleanup.Finding,
                 cleanup.Recovery);
+    }
+
+    private async ValueTask<InstallTargetApplicationResult> ApplyTargetAsync(
+        InstallApplicationLeaseContext context, InstallFileEffect effect,
+        FileExpectationValidationResult check, InstallApplicationProgress progress, CancellationToken cancellationToken)
+    {
+        var plan = context.Plan;
+        var identity = effect.Identity;
+        FileChangeReceipt receipt;
+        try
+        {
+            receipt = await _effectApplier.ApplyFileAsync(
+                    context.Lease,
+                    effect,
+                    check,
+                    progress.RecoveryPreparation,
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            progress = RecordUnknown(progress, identity);
+            return new(progress, Failed(
+                plan,
+                progress,
+                InstallFindingCode.Interrupted,
+                "Install target application was interrupted.",
+                subject: effect.RelativePath));
+        }
+        catch (Exception)
+        {
+            progress = RecordUnknown(progress, identity);
+            return new(progress, Failed(
+                plan,
+                progress,
+                InstallFindingCode.OperationFailed,
+                "Install target application failed unexpectedly.",
+                subject: effect.RelativePath));
+        }
+
+        if (receipt.EffectState == FilesystemEffectState.Applied)
+        {
+            progress = progress with
+            {
+                AppliedTargetFileCount = progress.AppliedTargetFileCount + 1,
+            };
+        }
+
+        progress = Record(progress, identity, ReadOutcome(receipt));
+
+        if (receipt.EffectState != FilesystemEffectState.Applied
+            || receipt.VerificationState != FilesystemVerificationState.Verified)
+        {
+            return new(progress, Failed(
+                plan,
+                progress,
+                ReadTargetReceiptFinding(receipt),
+                receipt.Cause
+                    ?? "A planned Install target could not be applied and verified.",
+                subject: effect.RelativePath));
+        }
+        return new(progress, Boundary: null);
     }
 
     private static InstallApplicationOutcome? ReadPreparationBoundary(

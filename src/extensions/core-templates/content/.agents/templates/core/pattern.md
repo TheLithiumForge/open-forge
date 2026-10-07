@@ -6,20 +6,26 @@ open-forge:
 
 # {Reusable Shape}
 
-{Use when an accepted shape should guide future related work. Copy into the relevant Patterns scope, replace metadata and prompts, rebase links, and remove this source guidance and unused sections. A procedure belongs in a workflow or Skill. A one-time starting file belongs in Templates.}
+{Use for one accepted shape that guides related work. Copy into the relevant Patterns scope, replace metadata and prompts, and rebase links. Remove this guidance and unused optional sections. Keep procedures and substantial rationale in their defining sources.}
 
 ## Applies To
 
-{Name the artifacts or boundaries this Pattern shapes, when it is useful, and any important exclusions.}
+{In one sentence, name the artifacts this Pattern shapes and when it fits, including any essential exclusion.}
 
 ## Shape
 
-{Show the concrete sections, parts, names, or relationships. Explain what belongs in each part and the boundaries that must remain visible.}
+{Replace this schematic tree with one valid concrete tree, code sample, table, diagram, or artifact outline. Keep only the labels and brief notes needed to read it. Label intentionally incomplete examples as schematic.}
 
-## Example
+```text
+subject/
+|-- part-a
+`-- part-b
+```
 
-{Provide a valid example that demonstrates the shape. Label an intentionally incomplete example as schematic.}
+## Variations
 
-## Variations And Tradeoffs
+{OPTIONAL: Show only adaptations that materially change the shape or when it fits. Link to substantial choice rationale instead of adding an essay.}
 
-{Explain which adaptations preserve the shape, what it costs, and when another shape is appropriate. Link to applicable rules for exceptions instead of inventing approval authority.}
+## Related Requirements
+
+{OPTIONAL: Link to Directives, Axioms, or accepted requirements that constrain this shape. Keep obligations in those sources. Names and values in the example are illustrative unless a requirement fixes them.}

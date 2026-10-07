@@ -11,6 +11,8 @@ namespace OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
 
 internal sealed record RouteCreatePlan
 {
+    internal FileExpectation? SharingExpectation { get; init; }
+
     public required RouteCreateRequest Request { get; init; }
 
     public required RouteCreateResultFormation Preview { get; init; }

@@ -1,30 +1,34 @@
 Open Forge is installed and current.
 Workspace: <workspace>
 Startup context
-  Shipped by this CLI:   11 files, about 6.1k tokens
-  This workspace:        11 files, about 6.1k tokens
+  Shipped by this CLI:   11 files, about 6.4k tokens
+  This workspace:        11 files, about 6.4k tokens
   May load again later:  1 file, about 0.3k tokens
-All routed files: 14 files, about 11.4k tokens (startup is 53%)
+All routed files: 18 files, about 18.1k tokens (startup is 35%)
 Routes: 7 root categories, 12 Entries sections current
-Framework files: 15 current
+Framework files: 19 current
 Largest may-load-again sources
   memory/emerging  1.1 KiB
 Framework files
-  .agents/directives/_directives.md             current
-  .agents/guidance/_guidance.md                 current
-  .agents/loader.md                             current
-  .agents/maps/_maps.md                         current
-  .agents/memory/_memory.md                     current
-  .agents/memory/archived/_archived.md          current
-  .agents/memory/crystallized/_crystallized.md  current
-  .agents/memory/emerging/_emerging.md          current
-  .agents/memory/working/_working.md            current
-  .agents/patterns/_patterns.md                 current
-  .agents/skills/_skills.md                     current
-  .agents/skills/open-forge-cli/SKILL.md        current
-  .agents/templates/_templates.md               current
-  AGENTS.md                                     current
-  CLAUDE.md                                     current
+  .agents/directives/_directives.md                      current
+  .agents/guidance/_guidance.md                          current
+  .agents/loader.md                                      current
+  .agents/maps/_maps.md                                  current
+  .agents/memory/_memory.md                              current
+  .agents/memory/archived/_archived.md                   current
+  .agents/memory/crystallized/_crystallized.md           current
+  .agents/memory/emerging/_emerging.md                   current
+  .agents/memory/working/_working.md                     current
+  .agents/patterns/_patterns.md                          current
+  .agents/skills/_skills.md                              current
+  .agents/skills/open-forge-cli/SKILL.md                 current
+  .agents/skills/open-forge-cli/references/common.md     current
+  .agents/skills/open-forge-cli/references/discovery.md  current
+  .agents/skills/open-forge-cli/references/packages.md   current
+  .agents/skills/open-forge-cli/references/routes.md     current
+  .agents/templates/_templates.md                        current
+  AGENTS.md                                              current
+  CLAUDE.md                                              current
 Entries sections
   .agents/directives/_directives.md             current
   .agents/guidance/_guidance.md                 current
@@ -39,4 +43,4 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-14 routed files, 11 startup files, 6099 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 11411 all routed tokens, 53.444045219525019717816142319 startup share, 7 root categories, 12 current Entries sections, 15 current Framework files.
+18 routed files, 11 startup files, 6386 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 18062 all routed tokens, 35.352822301580710350746062066 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files.

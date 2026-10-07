@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
 
@@ -22,6 +23,9 @@ internal sealed partial class RouteUpdateNavigationPlanner
         CancellationToken cancellationToken)
     {
         var observation = destination.Body.Metadata.Observation;
+        var sharing = await NavigationSharingReader.ReadAsync(observation.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        if (!sharing.IsAvailable)
+            return Stop(destination, RouteUpdateFindingCode.GeneratedRegionUnsafe, sharing.Cause);
         var formation = new GeneratedNavigationFormationBuilder().Build(
             observation.Catalogue);
         var templateChangesEntrypoint = destination.Body.State == RouteUpdateBodyState.TemplateCopied
@@ -34,6 +38,7 @@ internal sealed partial class RouteUpdateNavigationPlanner
             return RouteUpdateNavigationBuild.Complete(
                 new RouteUpdateNavigationPlan
                 {
+                    SharingExpectation = sharing.Ownership.Snapshot?.Expectation,
                     Formation = formation,
                     Regions = [],
                 });
@@ -135,7 +140,8 @@ internal sealed partial class RouteUpdateNavigationPlanner
             new GeneratedNavigationProjectionRequest(
                 formation,
                 regionInputs,
-                metadata.Values));
+                metadata.Values,
+                sharing.Sharing));
         var plans = ImmutableArray.CreateBuilder<RouteUpdateGeneratedRegionPlan>();
         foreach (var (source, isTarget) in regionSources)
         {
@@ -170,6 +176,7 @@ internal sealed partial class RouteUpdateNavigationPlanner
         return RouteUpdateNavigationBuild.Complete(
             new RouteUpdateNavigationPlan
             {
+                SharingExpectation = sharing.Ownership.Snapshot?.Expectation,
                 Formation = formation,
                 Regions = plans.ToImmutable(),
             });

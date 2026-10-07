@@ -7,21 +7,12 @@ open-forge:
 # `{command-path}` Behavior Contract
 
 {
-Template selection:
-
-- Need: One command-local document that completely defines deterministic semantics behind an accepted CLI interface.
-- Primary question: How must every conforming implementation resolve, execute, verify, and report this operation without depending on one technology?
+Use for deterministic semantics behind an accepted CLI interface: how must a conforming implementation resolve, execute, verify, and report the operation independently of technology?
 
 Copy this file to `contracts/{command-path}/behavior.md`. Replace metadata,
 including removing the `Template` tag, so it describes the independent file's
 scope, state, and authority. This is a copy-ready starter, not a current command
-instance. Copying it creates an independent file; later Template changes do not
-update that file. Replace the title, links, link depth, and placeholders. Remove
-sections that cannot apply, but preserve the responsibilities stated by this
-starter. Repeat rows and subsections for every applicable invariant, behavior,
-effect, result condition, and independently testable fact. Do not add permanent
-requirement IDs or temporary-state placeholders. Remove this braced source
-guidance.
+instance. Later Template changes do not update it. Replace the title, links, link depth, and prompts. Define each semantic fact once, linking shared meaning. Remove sections that cannot apply while preserving this starter's responsibilities. Repeat rows or subsections only for applicable invariants, behaviors, effects, result conditions, and independently testable facts. Do not add permanent requirement IDs or temporary-state placeholders. Remove this guidance and unused optional prompts.
 }
 
 ## Status And Authority
@@ -58,7 +49,7 @@ verification, recovery, and interruption flow.}
 
 ## Safety And Recovery
 
-{Keep this section for mutation or external-effect boundaries. Define authority,
+{OPTIONAL for read operations without external effects. For mutation or external-effect boundaries, define authority,
 concurrency, no-op behavior, rollback, residual evidence, and forbidden weaker
 fallbacks.}
 

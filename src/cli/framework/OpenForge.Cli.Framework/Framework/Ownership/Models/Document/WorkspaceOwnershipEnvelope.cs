@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 
@@ -48,6 +49,16 @@ internal sealed class FrameworkOwnershipEntry
     public string[]? Paths { get; init; }
 
     public OwnedRegionEntry[]? Regions { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public JsonElement GitIgnoredRoutes { get; init; }
+}
+
+internal sealed class GitIgnoredRouteEntry
+{
+    public string? Directory { get; init; }
+
+    public string? Entrypoint { get; init; }
 }
 
 internal sealed class ExtensionOwnershipEntry

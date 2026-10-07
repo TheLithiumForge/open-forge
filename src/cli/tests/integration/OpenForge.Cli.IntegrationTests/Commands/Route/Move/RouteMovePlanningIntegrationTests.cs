@@ -227,7 +227,7 @@ public sealed class RouteMovePlanningIntegrationTests
         InlineData("ownership-claim", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
             (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipClaimed, -1),
         InlineData("ownership-malformed", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
-            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
+            (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Blocked, (int)RouteMoveFindingCode.OwnershipUnavailable, -1),
         InlineData("ownership-old-metadata", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,
             (int)RouteMoveMode.DryRun, (int)CliSemanticStatus.Complete, -1, (int)RouteMoveSubjectKind.Leaf),
         InlineData("ownership-unknown", RouteMoveIntegrationWorkspace.LeafId, RouteMoveIntegrationWorkspace.LeafDestination,

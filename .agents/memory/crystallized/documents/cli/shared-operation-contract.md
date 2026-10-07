@@ -38,6 +38,23 @@ is optional reusable shape and context. It is not authority for current Open
 Forge command semantics. This Contract and the command-local contracts control
 the accepted Open Forge behavior.
 
+## Route Sharing
+
+Every command that writes generated Entries applies the recorded route-sharing
+policy. Shared entrypoints and their parent links remain visible. Private child
+rows stay omitted. Explicitly requested region targets remain available to
+authorized file and entrypoint operations. Index separately excludes private
+write targets and metadata acquisition.
+
+A private source intentionally omitted by a trustworthy sharing policy remains
+locally operable when its complete filesystem route identity and existing
+ownership and safety checks pass. Move and Route Remove do not require that
+source's generated-row exposure. Their ordinary public unexposed-leaf refusal
+remains unchanged. Replanning retains the exact lock observation. The
+[sharing record](technical-designs/lifecycle-provenance.md#stored-ownership)
+grants no deletion authority, and [generated navigation](technical-designs/generated-navigation.md#callable-surface)
+defines the pure projection boundary.
+
 ## Command And Group Shape
 
 The current Open Forge command forms are:

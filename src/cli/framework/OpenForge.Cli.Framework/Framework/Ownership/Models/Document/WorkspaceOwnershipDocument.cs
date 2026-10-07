@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Models.Sharing;
 using System.Collections.Immutable;
 
 namespace OpenForge.Cli.Core.Framework.Ownership.Models.Document;
@@ -16,7 +17,10 @@ internal sealed record OwnedSource(string Id, string? Version);
 internal sealed record FrameworkOwnership(
     OwnedSource Source,
     ImmutableArray<string> Paths,
-    ImmutableArray<OwnedRegion> Regions);
+    ImmutableArray<OwnedRegion> Regions)
+{
+    internal ImmutableArray<SourceSharingRoute> GitIgnoredRoutes { get; init; } = [];
+}
 
 internal sealed record ExtensionOwnership(
     string Id,

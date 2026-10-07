@@ -752,11 +752,11 @@ selection.
 
 #### Setup choices
 
-| Preset       | Supplied defaults                                                                                                                       |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `essentials` | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus the complete ordinary Working route with its directory Git-ignored |
-| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                      |
-| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                      |
+| Preset       | Supplied defaults                                                                                                                 |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `essentials` | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with private contents and a shared entrypoint |
+| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                |
+| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                |
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. Full Core
 includes the base categories, not optional Extensions or an agent runtime.
@@ -773,7 +773,7 @@ Custom offers three actions for each row:
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `add`        | Select the route and restore eligible missing packaged defaults                                                                                      |
 | `remove`     | Omit supplied defaults and release only their Framework management, preserving existing files, authored notes, overwrite companions, and routability |
-| `git-ignore` | Add the ordinary route and anchor its whole directory in the Install-owned section of the workspace `.gitignore`                                     |
+| `git-ignore` | Add the route, register its sharing policy, then ignore its contents while keeping its entrypoint eligible for Git                                   |
 
 Repeat `--route <id>=<action>` to override Custom rows. It requires
 `--preset custom`. Accepted IDs are:
@@ -797,8 +797,8 @@ invalid. Interactive Custom retains supplied overrides and reviews the
 remaining rows before planning. Noninteractive Custom applies its base plus
 the supplied overrides.
 
-For example, add Guidance and keep Working's directory out of ordinary Git
-commits while retaining the other current choices:
+For example, add Guidance and keep Working's records private while sharing its
+entrypoint and retaining the other current choices:
 
 ```sh
 open-forge install --configure --preset custom \
@@ -812,11 +812,27 @@ Noninteractive `--configure` requires `--preset`. Without explicit setup input,
 ordinary unattended first Install keeps Full Core and existing omissions.
 Applying a writing plan noninteractively also needs `--automatic`.
 
-Git-ignore changes Git's treatment of the directory, not Context or Index
-selection. Ignored files remain readable and indexed, and files already tracked
-by Git stay tracked. Add and Remove clear only that row's Install-owned ignore
-pattern. User rules and text outside the owned section stay unchanged. Malformed
-or duplicated section boundaries block the change.
+Install creates or restores the route and verifies its settings and lock record
+before applying Gitignore. For Working Memory, its owned section contains:
+
+```gitignore
+/.agents/memory/working/*
+!/.agents/memory/working/_working.md
+```
+
+The actual entrypoint name is retained, including compatible names such as
+`index.md`. Commit the entrypoint, `.agents/open-forge.json`, and
+`.agents/open-forge.lock.json` so teammates receive the route and its rules.
+Index uses the lock's sharing policy to omit private children, nested entrypoints
+and overwrite metadata from shared Entries. Explicit selection does not bypass
+that policy. Context, Find and References still read local content. An absent
+lock means no privacy policy until configuration restores it. An invalid or
+unreadable existing lock blocks Index.
+
+Files already tracked by Git stay tracked. Add and Remove clear only that row's
+Install-owned patterns. User rules and text outside the owned section stay
+unchanged. Existing whole-directory patterns upgrade during configuration.
+Malformed or duplicated section boundaries block the change.
 
 Explicit configuration can restore eligible missing packaged defaults,
 including ignored scaffolding after a checkout with or without the lock file.

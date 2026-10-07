@@ -8,16 +8,14 @@ open-forge:
 
 {
 Use for evidence worth retaining. One useful occurrence is enough. Extend a matching record before creating another.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Record the occurrence once with the evidence needed to interpret it. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## What Happened
 
-{State the observable event or pattern without explaining it away.}
+**Expected:** {OPTIONAL: Relevant expectation and its source when a discrepancy matters.}
 
-**Expected:** {Relevant expectation and its source, when a discrepancy matters.}
-
-**Observed:** {What actually happened.}
+**Observed:** {The observable event or pattern, separate from its interpretation.}
 
 **Scope:** {Where and under which conditions, and the limits on generalizing it.}
 
@@ -37,10 +35,10 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 ## Later Occurrences
 
-{Keep this section only if further independent occurrences exist.}
+{OPTIONAL: Keep only further independent occurrences and what they add.}
 
-| Occurrence | Evidence | What changed in our understanding |
-| --- | --- | --- |
+| Occurrence                 | Evidence | What changed in our understanding       |
+| -------------------------- | -------- | --------------------------------------- |
 | {Date or distinct context} | {Source} | {Agreement, disagreement, or new limit} |
 
 {

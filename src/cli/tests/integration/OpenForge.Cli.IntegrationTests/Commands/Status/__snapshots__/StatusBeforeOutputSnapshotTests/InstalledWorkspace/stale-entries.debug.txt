@@ -25,31 +25,35 @@ Workspace: <workspace>
          Rebuild the Entries section.
          cause: The generated navigation target is not current.
 Startup context
-  Shipped by this CLI:   11 files, about 6.1k tokens
-  This workspace:        11 files, about 5.9k tokens
+  Shipped by this CLI:   11 files, about 6.4k tokens
+  This workspace:        11 files, about 6.2k tokens
   May load again later:  1 file, about 0.3k tokens
 Added since shipped: about -0.2k tokens
-All routed files: 14 files, about 11.2k tokens (startup is 52%)
+All routed files: 18 files, about 17.8k tokens (startup is 35%)
 Routes: 7 root categories, 10 Entries sections current
-Framework files: 14 current
+Framework files: 18 current
 Largest may-load-again sources
   memory/emerging  1.1 KiB
 Framework files
-  .agents/directives/_directives.md             current
-  .agents/guidance/_guidance.md                 current
-  .agents/loader.md                             current
-  .agents/maps/_maps.md                         changed
-  .agents/memory/_memory.md                     current
-  .agents/memory/archived/_archived.md          current
-  .agents/memory/crystallized/_crystallized.md  current
-  .agents/memory/emerging/_emerging.md          current
-  .agents/memory/working/_working.md            current
-  .agents/patterns/_patterns.md                 current
-  .agents/skills/_skills.md                     current
-  .agents/skills/open-forge-cli/SKILL.md        current
-  .agents/templates/_templates.md               current
-  AGENTS.md                                     current
-  CLAUDE.md                                     current
+  .agents/directives/_directives.md                      current
+  .agents/guidance/_guidance.md                          current
+  .agents/loader.md                                      current
+  .agents/maps/_maps.md                                  changed
+  .agents/memory/_memory.md                              current
+  .agents/memory/archived/_archived.md                   current
+  .agents/memory/crystallized/_crystallized.md           current
+  .agents/memory/emerging/_emerging.md                   current
+  .agents/memory/working/_working.md                     current
+  .agents/patterns/_patterns.md                          current
+  .agents/skills/_skills.md                              current
+  .agents/skills/open-forge-cli/SKILL.md                 current
+  .agents/skills/open-forge-cli/references/common.md     current
+  .agents/skills/open-forge-cli/references/discovery.md  current
+  .agents/skills/open-forge-cli/references/packages.md   current
+  .agents/skills/open-forge-cli/references/routes.md     current
+  .agents/templates/_templates.md                        current
+  AGENTS.md                                              current
+  CLAUDE.md                                              current
 Entries sections
   .agents/directives/_directives.md             current
   .agents/guidance/_guidance.md                 current
@@ -64,6 +68,6 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-14 routed files, 11 startup files, 5871 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 11184 all routed tokens, 52.49698216121965395448652032 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 14 current Framework files, 1 changed Framework files, 4 warnings.
+18 routed files, 11 startup files, 6158 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 17834 all routed tokens, 34.528148480430638106986654704 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 18 current Framework files, 1 changed Framework files, 4 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

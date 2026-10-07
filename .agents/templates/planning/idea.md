@@ -8,7 +8,7 @@ open-forge:
 
 {
 Use for a possibility worth revisiting, not an approved task or commitment.
-Replace {prompts}. Remove this source guidance and optional sections that add no value.
+Keep only detail needed to evaluate or revisit the possibility. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
 ## Opportunity
@@ -29,7 +29,7 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 **Assumptions:** {What is inferred or not yet checked.}
 
-**Alternatives:** {A materially different approach, including doing nothing when viable.}
+**Alternatives:** {OPTIONAL: A materially different approach that affects evaluation, including doing nothing when viable.}
 
 ## Smallest Useful Experiment
 

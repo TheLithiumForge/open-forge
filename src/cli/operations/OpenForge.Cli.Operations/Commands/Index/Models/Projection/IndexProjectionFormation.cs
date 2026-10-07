@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Index.Models.Projection;
 
@@ -182,6 +183,8 @@ internal sealed record IndexProjectionReadiness
 
 internal sealed record IndexProjectionFormation
 {
+    internal FileExpectation? OwnershipExpectation { get; init; }
+
     internal IndexProjectionFormation(
         IndexSelectionResolution selection,
         GeneratedNavigationProjection projection,

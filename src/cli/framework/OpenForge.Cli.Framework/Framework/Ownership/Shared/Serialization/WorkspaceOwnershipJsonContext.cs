@@ -9,4 +9,5 @@ namespace OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
     WriteIndented = true,
     GenerationMode = JsonSourceGenerationMode.Metadata)]
 [JsonSerializable(typeof(WorkspaceOwnershipEnvelope))]
+[JsonSerializable(typeof(GitIgnoredRouteEntry[]))]
 internal sealed partial class WorkspaceOwnershipJsonContext : JsonSerializerContext;

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.Navigation;
@@ -11,7 +12,8 @@ internal sealed partial class RouteMoveSubjectSelector
     private static RouteMoveResultFormation? ReadExposureBoundary(
         RouteMoveSubjectDiscovery discovery,
         SourceRouteFacts routeFacts,
-        RouteNavigationExposure exposure)
+        RouteNavigationExposure exposure,
+        SourceSharing sharing)
     {
         var formation = RouteMoveBoundary.Start(discovery.Request) with { Source = discovery.Source };
         if (exposure.IsCancelled)
@@ -24,7 +26,7 @@ internal sealed partial class RouteMoveSubjectSelector
                 "Route Move navigation exposure inspection was interrupted.");
         }
 
-        return IsUnsupportedLeaf(discovery, routeFacts, exposure)
+        return IsUnsupportedLeaf(discovery, routeFacts, exposure, sharing)
             ? Boundary(
                 formation,
                 RouteMoveFindingCode.InvalidSubject,
@@ -37,9 +39,10 @@ internal sealed partial class RouteMoveSubjectSelector
     private static bool IsUnsupportedLeaf(
         RouteMoveSubjectDiscovery discovery,
         SourceRouteFacts routeFacts,
-        RouteNavigationExposure exposure)
+        RouteNavigationExposure exposure,
+        SourceSharing sharing)
     {
-        if (discovery.Kind != RouteMoveSubjectKind.Leaf)
+        if (discovery.Kind != RouteMoveSubjectKind.Leaf || !sharing.Includes(discovery.SelectedSource.Identity.CanonicalBasePath))
         {
             return false;
         }

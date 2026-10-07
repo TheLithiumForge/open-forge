@@ -13,6 +13,8 @@ Use this repository-only standard when writing or reviewing Open Forge text. Thi
 
 This standard does not define Markdown syntax, component behavior, code identifiers, external formats, quotations, or archived text. [Canonical Markdown Syntax](../framework/markdown/syntax.md) defines Markdown notation. The source for each component defines what its text must mean. The root [Writing Directive](../../../../directives/public-facing-writing.md) makes this standard mandatory for repository work. Use the [Open Forge Dictionary](helpers/dictionary.md) when choosing Open Forge terms.
 
+The [Loader](../../../../loader.md#working-with-the-user) defines shared concision requirements. This standard adds writing-specific requirements.
+
 ## Choose The Voice
 
 Use this standard's direct, precise voice for Framework rules, contracts, technical reference text, and maintenance explanations. Use [Project Voice](project-voice.md) for READMEs and public introductions: the maintainer's own engineering voice, concrete and plainly excited about the ideas. Choose by the purpose of the passage, including within a single document.
@@ -27,7 +29,7 @@ Make each idea easy to understand on the first read. Use the same term for the s
 
 Prefer familiar, precise words and direct sentences. State the rule, result, or relationship first. Add conditions and exceptions only when they matter.
 
-Be concise, but do not remove context the reader needs. Explain defined Open Forge terms at first use, then use them consistently.
+Explain defined Open Forge terms at first use, then use them consistently.
 
 For rules and reference text, the desired voice is calm, direct, and conversational. It should not sound legal, academic, promotional, or written like a news headline.
 
@@ -41,9 +43,7 @@ Apply these priorities in order. Correctness is a hard boundary: clearer wording
 2. **Correct:** Meaning, scope, relationships, and whether something is required or optional remain exact.
 3. **Consistent:** The same term means the same thing in the same context.
 4. **Predictable:** Similar files and ideas use familiar structure and wording.
-5. **Concise:** Every sentence earns its place without hiding needed context.
-
-Shorter is not better when the reader must guess what was removed.
+5. **Concise.**
 
 ## Voice For Rules And Reference Text
 
@@ -67,8 +67,6 @@ Avoid:
 - Sentences that combine several separate rules
 - Compressed wording that removes grammar needed for understanding
 - Empty claims such as `flexible`, `robust`, or `scalable` when the real tradeoff can be stated
-
-Use the fewest words that make the meaning clear, not the fewest words possible.
 
 ## Structure And Clarity
 
@@ -126,11 +124,7 @@ An essence summary keeps only what a reader needs to understand the subject's id
 
 ## Sources And Links
 
-Let each source answer one clear question. Keep enough meaning there for the source to stand on its own.
-
-Link to related sources instead of copying their full detail. Repeat only the meaning needed at an independent entry boundary, such as the shared product summary in Vision and README.
-
-A link shows a relationship. It does not merge or broaden authority, scope, loading, responsibility, or lifecycle.
+Follow the [Loader's source and relationship rules](../../../../loader.md#sources-and-acceptance). Keep enough meaning for each source to stand on its own. Repeat only the meaning needed at an independent entry boundary, such as the shared product summary in Vision and README.
 
 Name or link a standard `route` only when its role or direct relationship changes how the source is selected or used. A parent may name the standard child `routes` it exposes. Another source may name a directly related `route` only when omitting it would hide real behavior or a meaningful boundary. Name an exact path only for navigation, loading, validation, management, mutation, migration, or standard topology. Physical depth alone never justifies a reference. Otherwise, name the role or authoritative source that applies.
 

@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 
@@ -15,7 +16,8 @@ internal sealed class GeneratedNavigationProjectionRequest
     internal GeneratedNavigationProjectionRequest(
         GeneratedNavigationFormation formation,
         IEnumerable<GeneratedNavigationRegionInput> regions,
-        IEnumerable<GeneratedNavigationMetadata> metadata)
+        IEnumerable<GeneratedNavigationMetadata> metadata,
+        SourceSharing? sharing = null)
     {
         ArgumentNullException.ThrowIfNull(formation);
 
@@ -58,6 +60,7 @@ internal sealed class GeneratedNavigationProjectionRequest
         }
 
         Formation = formation;
+        Sharing = sharing ?? new SourceSharing([]);
         Regions = new ReadOnlyCollection<GeneratedNavigationRegionInput>(materializedRegions);
         Metadata = new ReadOnlyCollection<GeneratedNavigationMetadata>(materializedMetadata);
         _metadataByPath = new ReadOnlyDictionary<string, SourceAuthoredMetadataFacts>(
@@ -80,6 +83,8 @@ internal sealed class GeneratedNavigationProjectionRequest
     }
 
     internal GeneratedNavigationFormation Formation { get; }
+
+    internal SourceSharing Sharing { get; }
 
     internal SourceRouteTopology Topology => Formation.Topology;
 

@@ -2,6 +2,6 @@ Updated 1 Framework file.
 Workspace: <workspace>
   .agents/guidance/retired-framework.md  deleted (no longer part of this release)
   .agents/open-forge.lock.json           updated
-  15 files unchanged
+  19 files unchanged
   Previous content remains available for review.
 Next: Review previous content in the recovery bundle at <recovery-bundle>.

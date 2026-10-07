@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Ownership.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
@@ -126,6 +128,9 @@ internal sealed class ExtensionUpdatePlanner
             _physicalPathResolver,
             request.Workspace,
             cancellationToken).ConfigureAwait(false);
+
+        var sharing = NavigationSharingReader.FromOwnership(ownership);
+        if (!sharing.IsAvailable) return Stop(request, ExtensionUpdateFindingCode.GeneratedRegionUnsafe, sharing.Cause);
 
         if (!HasInterpretableOwnership(ownership.Document.Extensions))
         {
@@ -715,7 +720,8 @@ internal sealed class ExtensionUpdatePlanner
                     input.Packages,
                     retiredPaths,
                     input.Admission,
-                    input.Settings),
+                    input.Settings)
+                { Sharing = new SourceSharing(input.Ownership.Framework?.GitIgnoredRoutes ?? []) },
                 cancellationToken)
                 .ConfigureAwait(false);
             return new TopologyBuild(topology, Boundary: null);

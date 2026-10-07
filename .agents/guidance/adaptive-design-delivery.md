@@ -55,7 +55,7 @@ For nontrivial work, preserve only the context needed to execute and resume:
 - dependencies, evidence ladder, review budget, and stop conditions;
 - current owner, completed boundary, decisive evidence, and next action.
 
-Link full sources instead of copying them. Refresh the capsule only when meaning or state changes.
+Refresh the capsule only when meaning or state changes.
 
 ## Preserve Ownership And Delegate Proportionately
 

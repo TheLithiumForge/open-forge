@@ -1,29 +1,33 @@
-Install stopped after 15 of 28 changes.
+Install stopped after 16 of 33 changes.
 Workspace: <workspace>
   Error  .agents/memory/_memory.md  Write failed
          Writing .agents/memory/_memory.md failed: filesystem access was denied.
          open-forge doctor
          Inspect the reported Install boundary before rerunning it.
-  .agents/directives/_directives.md             created
-  .agents/guidance/_guidance.md                 created
-  .agents/loader.md                             created
-  .agents/maps/_maps.md                         created
-  .agents/memory/_memory.md                     not started
-  .agents/memory/_memory.overwrite.md           not started
-  .agents/memory/archived/_archived.md          not started
-  .agents/memory/crystallized/_crystallized.md  not started
-  .agents/memory/emerging/_emerging.md          not started
-  .agents/memory/working/_working.md            not started
-  .agents/patterns/_patterns.md                 not started
-  .agents/skills/_skills.md                     not started
-  .agents/skills/open-forge-cli/SKILL.md        not started
-  .agents/templates/_templates.md               not started
-  AGENTS.md                                     not started
-  CLAUDE.md                                     not started
-  .agents/open-forge.lock.json                  not started
-  .agents/memory/_memory.overwrite.md           Planned migration: content preserved
-  15 files and directories were created.
-  Created 11 directories.
+  .agents/directives/_directives.md                      created
+  .agents/guidance/_guidance.md                          created
+  .agents/loader.md                                      created
+  .agents/maps/_maps.md                                  created
+  .agents/memory/_memory.md                              not started
+  .agents/memory/_memory.overwrite.md                    not started
+  .agents/memory/archived/_archived.md                   not started
+  .agents/memory/crystallized/_crystallized.md           not started
+  .agents/memory/emerging/_emerging.md                   not started
+  .agents/memory/working/_working.md                     not started
+  .agents/patterns/_patterns.md                          not started
+  .agents/skills/_skills.md                              not started
+  .agents/skills/open-forge-cli/SKILL.md                 not started
+  .agents/skills/open-forge-cli/references/common.md     not started
+  .agents/skills/open-forge-cli/references/discovery.md  not started
+  .agents/skills/open-forge-cli/references/packages.md   not started
+  .agents/skills/open-forge-cli/references/routes.md     not started
+  .agents/templates/_templates.md                        not started
+  AGENTS.md                                              not started
+  CLAUDE.md                                              not started
+  .agents/open-forge.lock.json                           not started
+  .agents/memory/_memory.overwrite.md                    Planned migration: content preserved
+  16 files and directories were created.
+  Created 12 directories.
   Planned migration for 1 source.
   Recovery data: <recovery-bundle>
   Inspect the reported Install boundary before rerunning it.

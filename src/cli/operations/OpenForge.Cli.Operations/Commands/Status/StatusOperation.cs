@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Status.Models.Operation;
 using OpenForge.Cli.Core.Commands.Status.Models.Request;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
 using OpenForge.Cli.Core.Commands.Status.Shared.Aggregation;
+using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
@@ -28,7 +29,7 @@ internal sealed class StatusOperation(
                 .ReadStatusAsync(request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
             var routes = await contributors.Routes
-                .ReadStatusAsync(request.Workspace, cancellationToken)
+                .ReadStatusAsync(request.Workspace, NavigationSharingReader.FromOwnership(ownership).Sharing, cancellationToken)
                 .ConfigureAwait(false);
             var frameworkLifecycle = await contributors.FrameworkLifecycle
                 .ReadStatusAsync(request.Workspace, ownership, cancellationToken)

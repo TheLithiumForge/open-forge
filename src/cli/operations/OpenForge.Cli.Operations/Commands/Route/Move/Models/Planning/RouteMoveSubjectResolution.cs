@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Route.Shared.Models.Navigation;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 
@@ -17,6 +18,8 @@ internal sealed record RouteMoveResolvedLayer
 
 internal sealed record RouteMoveResolvedSubject
 {
+    internal SourceSharing Sharing { get; init; } = new([]);
+
     public required RouteMoveRequest Request { get; init; }
 
     public required RouteMoveSource Source { get; init; }

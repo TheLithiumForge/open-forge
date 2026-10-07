@@ -1,5 +1,5 @@
-status=completed-with-warnings
+status=blocked
 packages=0
 effects=0
 findings=1
-The selected Extension has no recorded ownership.
+The route-sharing lock is invalid or unreadable. Restore it before changing shared navigation.
