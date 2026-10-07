@@ -97,6 +97,7 @@ test("Update confirmation journeys require Windows ConPTY evidence and exclude o
 });
 
 const producerTypes = {
+  installSharing: "OpenForge.Cli.IntegrationTests.Commands.Install.InstallRouteSharingIntegrationTests",
   lifecycle: "OpenForge.Cli.IntegrationTests.Commands.Library.Shared.GitIgnore.LibraryGitIgnoreLifecycleIntegrationTests",
   application: "OpenForge.Cli.IntegrationTests.Commands.Library.Shared.GitIgnore.LibraryGitIgnoreApplicationIntegrationTests",
   libraryChoice: "OpenForge.Cli.EndToEndTests.PublishedLibraryGitIgnoreProcessTests",
@@ -104,6 +105,11 @@ const producerTypes = {
 } as const;
 
 const declaredWindowsProducers = [
+  {
+    type: producerTypes.installSharing,
+    reason: "This write refusal requires Windows file sharing enforcement.",
+    wrongSuite: producerTypes.libraryChoice,
+  },
   {
     type: producerTypes.lifecycle,
     reason: "This owned-file read denial requires Windows file sharing.",

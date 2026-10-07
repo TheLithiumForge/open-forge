@@ -10,6 +10,7 @@ const windowsOnly = new Set([
   "This evidence requires Windows file sharing.",
   "This owned-file read denial requires Windows file sharing.",
   "This deterministic replacement denial requires Windows file sharing.",
+  "This write refusal requires Windows file sharing enforcement.",
 ]);
 const unixOnly = new Set([
   "This copy failure uses Unix directory permissions.",
