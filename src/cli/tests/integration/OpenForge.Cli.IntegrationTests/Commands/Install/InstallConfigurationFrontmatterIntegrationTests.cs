@@ -156,6 +156,8 @@ public sealed class InstallConfigurationFrontmatterIntegrationTests
     [Fact(DisplayName = "A denied conversion retains recovery with original settings and every replaced file"), Trait("Feature", "install-frontmatter"), Trait("Evidence", "Integration")]
     public async Task InterruptedConversionRetainsCompleteRecovery()
     {
+        if (!OperatingSystem.IsWindows()) Assert.Skip("This deterministic replacement failure requires Windows file sharing.");
+
         using var workspace = InstallOperationWorkspace.Create("install-convert-recovery");
         await InstallFrontmatterFixture.SeedScopedAsync(workspace);
         var request = await InstallFrontmatterFixture.RequestAsync(workspace, FrontmatterForm.Root, installed: true);
