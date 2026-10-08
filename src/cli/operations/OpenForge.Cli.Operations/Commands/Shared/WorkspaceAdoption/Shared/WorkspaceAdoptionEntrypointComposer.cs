@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Shared;
@@ -11,7 +13,9 @@ internal sealed class WorkspaceAdoptionEntrypointComposer
     private const string InheritedAxiomsSentinel =
         "- inherited - No local axioms; loaded ancestor axioms remain active.";
 
-    internal WorkspaceAdoptionDocumentPlan Create(string canonicalPath, string newline)
+    private readonly FrameworkDocumentMetadataEmitter _metadataEmitter = new();
+
+    internal WorkspaceAdoptionDocumentPlan Create(string canonicalPath, string newline, FrontmatterForm form)
     {
         if (newline is not ("\n" or "\r\n"))
         {
@@ -19,8 +23,8 @@ internal sealed class WorkspaceAdoptionEntrypointComposer
         }
 
         if (!SourceLogicalPath.IsCanonicalSource(canonicalPath)
-            || !SourceFormClassifier.TryClassify(canonicalPath, out var form)
-            || !SourceFormClassifier.IsEntrypoint(form))
+            || !SourceFormClassifier.TryClassify(canonicalPath, out var sourceForm)
+            || !SourceFormClassifier.IsEntrypoint(sourceForm))
         {
             return Blocked(canonicalPath, "field 'canonicalPath' must identify a recognized entrypoint source.");
         }
@@ -28,13 +32,9 @@ internal sealed class WorkspaceAdoptionEntrypointComposer
         var directoryPath = SourceLogicalPath.ReadParent(canonicalPath);
         var title = ReadDirectoryName(directoryPath);
         var description = $"Workspace entrypoint for {title} at {directoryPath}";
-        var source = $$"""
-            ---
-            open-forge:
-              description: {{WorkspaceAdoptionDocumentText.QuoteYamlScalar(description)}}
-              tags: [{{WorkspaceTag}}]
-            ---
-
+        var metadata = new FrameworkDocumentMetadata(description, [WorkspaceTag], responsibility: null);
+        var yaml = _metadataEmitter.Emit(metadata, form);
+        var body = $$"""
             # {{WorkspaceAdoptionDocumentText.EscapeMarkdownHeading(title)}}
 
             ## Axioms
@@ -44,7 +44,8 @@ internal sealed class WorkspaceAdoptionEntrypointComposer
             ## Entries
 
             {{MarkdownEntriesSectionReader.EmptyEntry}}
-            """.ReplaceLineEndings(newline);
+            """;
+        var source = $"---\n{yaml}---\n\n{body}".ReplaceLineEndings(newline);
         if (!source.EndsWith(newline, StringComparison.Ordinal))
         {
             source += newline;

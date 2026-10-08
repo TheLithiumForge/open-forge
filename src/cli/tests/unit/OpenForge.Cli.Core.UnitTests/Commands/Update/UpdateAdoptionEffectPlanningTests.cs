@@ -18,6 +18,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Ownership;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
@@ -509,6 +510,7 @@ public sealed class UpdateAdoptionEffectPlanningTests
                      .Select(asset => asset.Path)
                      .Append(WorkspaceOwnershipDefinitions.RelativePath)
                      .Append(".agents/open-forge.lifecycle.json")
+                     .Append(WorkspaceSettingsDefinitions.RelativePath)
                      .Append(skillPath)
                      .Concat(additionalPaths)
                      .Distinct(StringComparer.Ordinal))

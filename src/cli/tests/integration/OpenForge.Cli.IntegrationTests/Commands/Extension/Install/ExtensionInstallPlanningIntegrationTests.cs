@@ -1,10 +1,141 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
 public sealed class ExtensionInstallPlanningIntegrationTests
 {
+    [Fact(DisplayName = "Root Extension delivery repeats Install without divergence"), Trait("Boundary", "OS"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
+    public async Task RootDeliveryRepeatsWithoutDivergence()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-root-repeat");
+        await workspace.SeedFrameworkAsync();
+        SetFrontmatter(workspace, "root");
+        using var source = ExtensionInstallCatalogue.Create("extension-install-root-repeat-source");
+        const string target = ".agents/toolkit/_toolkit.md";
+        source.AddPackage("toolkit", [], (target, Document("Toolkit", OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.GeneratedEntries(
+            "- none - No entries - #Empty"))),
+            (".agents/toolkit/note.md", Document("Note", "# Note\n")));
+        var sourceBefore = source.Snapshot();
+        string[] arguments = ["extension", "install", "toolkit", "--source", source.Path, "--automatic", "--format", "json"];
+        var first = await workspace.RunAsync(arguments);
+        Assert.Equal(CliSemanticStatus.Complete, first.Status);
+        var facts = new FrameworkDocumentMetadataParser().Parse(
+            new MarkdownDocumentParser().Parse(workspace.ReadText(target)), FrameworkMetadataReadScope.RoutedSource);
+        Assert.Equal(FrontmatterForm.Root, facts.Syntax.AuthoredForm);
+        var before = workspace.Snapshot();
+
+        var repeated = await workspace.RunAsync(arguments);
+
+        Assert.Equal(0, repeated.ExitCode);
+        Assert.Equal(CliSemanticStatus.Complete, repeated.Status);
+        using var result = JsonDocument.Parse(repeated.StandardOutput);
+        Assert.Empty(result.RootElement.GetProperty("effects").EnumerateArray());
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(sourceBefore, source.Snapshot());
+    }
+
+    [Fact(DisplayName = "A changed form blocks managed Extension Install until ordinary Update replaces the target"), Trait("Boundary", "OS"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
+    public async Task SettingChangeUsesOrdinaryReplacement()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-form-change");
+        await workspace.SeedFrameworkAsync();
+        SetFrontmatter(workspace, "scoped");
+        using var source = ExtensionInstallCatalogue.Create("extension-install-form-change-source");
+        const string target = ".agents/guidance/form-change.md";
+        source.AddPackage("toolkit", [], (target, Document("Form change", "# Form change\n")));
+        string[] arguments = ["extension", "install", "toolkit", "--source", source.Path, "--automatic", "--format", "json"];
+        Assert.Equal(CliSemanticStatus.Complete, (await workspace.RunAsync(arguments)).Status);
+        SetFrontmatter(workspace, "root");
+        var before = workspace.Snapshot();
+        var sourceBefore = source.Snapshot();
+
+        var blocked = await workspace.RunAsync(arguments);
+
+        Assert.Equal(CliSemanticStatus.Blocked, blocked.Status);
+        using var blockedResult = JsonDocument.Parse(blocked.StandardOutput);
+        Assert.Empty(blockedResult.RootElement.GetProperty("effects").EnumerateArray());
+        Assert.Equal(before, workspace.Snapshot());
+        var updated = await workspace.RunAsync(
+            ["extension", "update", "toolkit", "--source", source.Path, "--automatic", "--format", "json"]);
+        Assert.Equal(CliSemanticStatus.Complete, updated.Status);
+        using var result = JsonDocument.Parse(updated.StandardOutput);
+        Assert.Contains(result.RootElement.GetProperty("effects").EnumerateArray(), effect =>
+            effect.GetProperty("path").GetString() == target && effect.GetProperty("action").GetString() == "replaced");
+        Assert.Equal(sourceBefore, source.Snapshot());
+        Assert.Equal(CliSemanticStatus.Complete, (await workspace.RunAsync(arguments)).Status);
+    }
+
+    [Fact(DisplayName = "Root rendering preserves conflicts between canonical shared package sources"), Trait("Boundary", "OS"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
+    public async Task SharedOwnerConflictRemainsProtected()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-root-source-conflict");
+        await workspace.SeedFrameworkAsync();
+        SetFrontmatter(workspace, "root");
+        using var source = ExtensionInstallCatalogue.Create("extension-install-root-source-conflict-source");
+        const string target = ".agents/guidance/shared.md";
+        source.AddPackage("alpha", [], (target, Document("Shared", "# Shared\n")));
+        source.AddPackage("beta", [], (target, "---\ndescription: Shared\ntags: [Extension]\n---\n# Shared\n"));
+        var before = workspace.Snapshot();
+        var sourceBefore = source.Snapshot();
+
+        var run = await workspace.RunAsync(["extension", "install", "--all", "--source", source.Path, "--automatic", "--format", "json"]);
+
+        Assert.Equal(CliSemanticStatus.Blocked, run.Status);
+        using var result = JsonDocument.Parse(run.StandardOutput);
+        Assert.Empty(result.RootElement.GetProperty("effects").EnumerateArray());
+        Assert.Contains(result.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("code").GetString() == "extension-install.ownership-conflict");
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(sourceBefore, source.Snapshot());
+    }
+
+    private static void SetFrontmatter(ExtensionInstallIntegrationWorkspace workspace, string form)
+    {
+        const string settingsPath = ".agents/open-forge.json";
+        var exists = File.Exists(workspace.Combine(settingsPath));
+        var settings = exists
+            ? JsonNode.Parse(workspace.ReadText(settingsPath))?.AsObject()
+                ?? throw new InvalidOperationException("The fixture requires valid workspace settings.")
+            : new JsonObject { ["schemaVersion"] = 1 };
+        settings["frontmatter"] = form;
+        if (exists)
+        {
+            workspace.ReplaceText(settingsPath, settings.ToJsonString());
+        }
+        else
+        {
+            workspace.CreateOccupant(settingsPath, settings.ToJsonString());
+        }
+    }
+
+    [Fact(DisplayName = "Extension Install blocks invalid root rendering without delivering canonical bytes"), Trait("Boundary", "OS"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
+    public async Task InvalidRootRenderingBlocksAllDelivery()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-root-collision");
+        await workspace.SeedFrameworkAsync();
+        SetFrontmatter(workspace, "root");
+        using var source = ExtensionInstallCatalogue.Create("extension-install-root-collision-source");
+        source.AddPackage("toolkit", [], (".agents/guidance/collision.md",
+            "---\ndescription: Foreign metadata\nopen-forge:\n  description: Toolkit\n  tags: [Extension]\n---\n# Toolkit\n"));
+        var before = workspace.Snapshot();
+        var sourceBefore = source.Snapshot();
+
+        var run = await workspace.RunAsync(["extension", "install", "toolkit", "--source", source.Path, "--automatic", "--format", "json"]);
+
+        Assert.Equal(CliSemanticStatus.Blocked, run.Status);
+        using var result = JsonDocument.Parse(run.StandardOutput);
+        Assert.Empty(result.RootElement.GetProperty("effects").EnumerateArray());
+        Assert.Contains(result.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("code").GetString() == "extension-install.generated-region-unsafe");
+        Assert.Equal(before, workspace.Snapshot());
+        Assert.Equal(sourceBefore, source.Snapshot());
+    }
+
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Install coalesces one compatible shared target and publishes every owner"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     public async Task CompatibleSharedTargetHasOneEffectAndEveryOwner()
@@ -350,7 +481,7 @@ public sealed class ExtensionInstallPlanningIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-install-unrelated-malformed-metadata");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         const string notePath = ".agents/patterns/old-note.md";
         var noteBytes = System.Text.Encoding.UTF8.GetBytes(MalformedDocument("Old note"));
         workspace.CreateOccupant(notePath, MalformedDocument("Old note"));

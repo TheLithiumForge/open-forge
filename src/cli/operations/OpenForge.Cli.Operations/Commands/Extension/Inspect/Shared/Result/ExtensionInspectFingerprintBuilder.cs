@@ -2,6 +2,8 @@ using System.Security.Cryptography;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
@@ -49,6 +51,7 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
 
     internal IReadOnlyList<ExtensionInspectFingerprintFact> ReadIntendedFingerprints(
         IReadOnlyList<ExtensionInspectDeclaredPathProjection> paths,
+        FrontmatterForm form,
         ICollection<ExtensionInspectFinding> findings,
         IDictionary<string, MarkdownFingerprintFacts> markdownFacts)
     {
@@ -69,12 +72,24 @@ internal sealed class ExtensionInspectFingerprintBuilder(MarkdownFingerprintRead
                 continue;
             }
 
+            var rendered = WorkspacePayloadRenderer.Render(path.Path, bytes, form);
+            if (rendered.Bytes is not { } intendedBytes)
+            {
+                ExtensionInspectFindingPolicy.Add(findings, new ExtensionInspectFindingInput
+                {
+                    Code = ExtensionInspectFindingCode.FingerprintUnavailable,
+                    Path = path.Path,
+                    Cause = rendered.Cause ?? "Intended package bytes were not retained for fingerprinting.",
+                });
+                continue;
+            }
+
             values.Add(new ExtensionInspectFingerprintFact
             {
                 Path = path.Path,
                 Fingerprint = ReadOperationFingerprint(
                     path.Path,
-                    bytes,
+                    intendedBytes,
                     ExtensionInspectFingerprintOrigin.OperationTimeIntended,
                     findings,
                     markdownFacts),

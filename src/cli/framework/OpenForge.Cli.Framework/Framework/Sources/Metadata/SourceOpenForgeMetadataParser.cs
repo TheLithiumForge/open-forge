@@ -9,10 +9,10 @@ internal sealed class SourceOpenForgeMetadataParser
 {
     private readonly FrameworkDocumentMetadataParser _parser = new();
 
-    internal SourceOpenForgeMetadataFacts Parse(MarkdownDocumentFacts document)
+    internal SourceOpenForgeMetadataFacts Parse(MarkdownDocumentFacts document, FrameworkMetadataReadScope scope)
     {
         ArgumentNullException.ThrowIfNull(document);
-        return Project(_parser.Parse(document));
+        return Project(_parser.Parse(document, scope));
     }
 
     internal static SourceOpenForgeMetadataFacts Project(FrameworkDocumentMetadataFacts facts)
@@ -24,11 +24,11 @@ internal sealed class SourceOpenForgeMetadataParser
                 SourceOpenForgeMetadataState.Missing,
                 facts.ObservedDescription,
                 facts.ObservedTags) with
-            { ApplyTo = facts.ApplyTo },
+            { ApplyTo = facts.ApplyTo, FrameworkMetadata = facts },
             FrameworkDocumentMetadataState.Malformed => SourceOpenForgeMetadataFacts.WithoutValues(
                 SourceOpenForgeMetadataState.Malformed,
                 facts.ObservedDescription) with
-            { ApplyTo = facts.ApplyTo },
+            { ApplyTo = facts.ApplyTo, FrameworkMetadata = facts },
             _ => throw new ArgumentOutOfRangeException(
                 nameof(facts),
                 facts.State,
@@ -48,6 +48,6 @@ internal sealed class SourceOpenForgeMetadataParser
         return SourceOpenForgeMetadataFacts.Complete(
             metadata.Description,
             metadata.Tags) with
-        { ApplyTo = facts.ApplyTo };
+        { ApplyTo = facts.ApplyTo, FrameworkMetadata = facts };
     }
 }

@@ -42,8 +42,9 @@ conformance. The shared [Global CLI Flags Interface](../shared/global-flags/inte
 defines the six global flags once. Framework routing and maintenance sources
 remain authoritative for the meaning of the files that this operation consumes.
 
-The generated `.agents/open-forge.lock.json` is the only state-file input and
-output. Install updates Framework ownership after verified effects, preserves
+The generated `.agents/open-forge.lock.json` is the only ownership state file.
+The authored `.agents/open-forge.json` supplies settings. Install updates
+Framework ownership after verified effects, preserves
 other ownership sections, and records whole-file ownership separately from
 region ownership. Its optional route-sharing pairs grant no deletion authority.
 It stores no fingerprint baseline, workspace binding, plan,
@@ -68,8 +69,8 @@ bounded initial workspace adoption described below before verifying the
 resulting state. It verifies an exact trusted managed state as a no-op. It does
 not reconcile divergence in authored managed payload. Existing authored
 managed divergence directs the caller to the root `update` operation.
-Explicit configuration additionally selects built-in routes and restores
-eligible missing defaults through the additive boundary below.
+Explicit configuration additionally selects built-in routes, restores eligible
+missing defaults, and changes the frontmatter form through the bounded rules below.
 
 The command has one stable root operation. Its request, current facts, intended
 state, generated-navigation projection, complete plan, preflight, status model,
@@ -90,6 +91,7 @@ The complete public command form is:
 
 ```text
 open-forge install [--configure] [--preset <essentials|full-core|custom>]
+  [--frontmatter <root|scoped>]
   [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global flags]
 ```
 
@@ -159,6 +161,10 @@ The recognized footprint is closed. It contains only:
 Explicit setup selection also plans the authored `.agents/open-forge.json`
 exclusions and the bounded Install-owned `.gitignore` section. These are
 configuration effects, not embedded installed-content ownership.
+
+Every fresh Install also plans the frontmatter setting. Configure's bounded
+conversion additionally selects owned eligible Framework and Extension delivered
+targets, including scoped copies, without expanding ordinary Install's footprint.
 
 Generated `Entries` are derived navigation. Their expected bodies come from the
 intended authored topology and metadata in the selected workspace, not from
@@ -274,17 +280,22 @@ named flags below, not arbitrary destination paths.
 | `--force`           | Initial replacement authority | Boolean                             | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, adoption, or ownership.                                   |
 | `--automatic`       | Guided-input policy           | Boolean                             | Human input may use the minimal inspection and confirmation flow | Repeats idempotently. It suppresses interaction and selects only deterministic safe defaults.                    |
 | `--dry-run`         | Preview write policy          | Boolean                             | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply.             |
-| `--configure`       | Explicit setup change         | Boolean                             | Ordinary Install verification                                    | Repeats idempotently. Selects additive route configuration without Update or deletion authority.                 |
+| `--configure`       | Explicit setup change         | Boolean                             | Ordinary Install verification                                    | Repeats idempotently. Selects additive route configuration and bounded frontmatter conversion without general Update or deletion authority. |
 | `--preset`          | Built-in setup selection      | `essentials`, `full-core`, `custom` | Interactive first setup or deterministic unattended defaults     | Repeated identical values are idempotent. Conflicting values are invalid. Existing setup requires `--configure`. |
+| `--frontmatter`     | Metadata output form          | `root`, `scoped`                    | Workspace preference, with root as the fresh unattended default | Repeated identical values are idempotent. Conflicting values are invalid. An installed workspace requires `--configure`. |
 | `--route`           | Custom row override           | `<id>=<add\|remove\|git-ignore>`    | Retain the Custom base row                                       | Repeat for different rows. Requires Custom. Conflicting actions for one row are invalid.                         |
 | Shared global flags | Workspace and presentation    | Defined by the shared contract      | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                                      |
 
 ### Setup Selection
 
-`--configure` explicitly changes the selected built-in routes in an existing
-workspace and restores eligible missing defaults. It does not authorize an
-Update, replacement of authored content, or route deletion. An explicit
-`--preset` on an already installed workspace requires `--configure`.
+`--configure` changes built-in route choices or the frontmatter form and restores
+eligible missing defaults. Route configuration remains additive. The narrow
+conversion rule below is its only payload-replacement exception. It grants no
+general Update or route deletion authority. An explicit `--preset` or
+`--frontmatter` on an installed workspace requires `--configure`.
+
+`install --configure --frontmatter <form>` is valid without a preset and keeps
+route choices unchanged.
 
 The presets are Essentials, Full Core and Custom. Essentials includes
 Directives, Patterns, Skills, Emerging and Crystallized Memory. It installs
@@ -320,10 +331,24 @@ the choices already supplied by `--route`. Selection completes before the one
 immutable plan and final application confirmation. Cancellation writes nothing.
 Ordinary repeated Install remains quiet when its exact state is already current.
 
+After the preset choice, first interactive Install asks
+`How should Open Forge write file metadata?` with root preselected. The choices are:
+
+| Choice | Explanation |
+| ------ | ----------- |
+| `Root keys` | `description: and tags: at the top of the frontmatter` |
+| `Scoped under open-forge:` | `open-forge: holds description: and tags:` |
+
+An explicit `--frontmatter` skips the question. Every fresh Install writes the
+resolved `frontmatter` key. A fresh unattended Install uses the flag, then an
+explicit preference already in settings, otherwise root. Ordinary repeated
+Install and Update never ask and never write the key.
+
 Dry-run, automatic, JSON and redirected requests never ask setup questions.
 Without explicit setup input, ordinary unattended first Install retains Full
 Core and existing omissions. Noninteractive `--configure` requires an explicit
-`--preset`. Noninteractive Custom applies its deterministic base plus supplied
+`--preset` or `--frontmatter`. Noninteractive Custom applies its deterministic
+base plus supplied
 row overrides. These requests use the same plan as an interactive equivalent.
 
 Only exact selected root/state exclusions and required ancestor exclusions
@@ -331,6 +356,20 @@ may change. Preserve narrower exclusions, unknown settings members, unrelated
 Git-ignore text, and unselected ownership. Do not persist a second preset
 identity. A fresh checkout may restore ignored packaged scaffolding through
 explicit configuration. It cannot recover unshared private records.
+
+### Configure Conversion
+
+As a narrow exception to Configure's additive-only rule, Configure compares
+each owned eligible delivered target with the payload rendered in the selected
+form and in the other form. A match with the selected form needs no effect. A
+match with the other form becomes one whole-file replacement in the selected
+form with projected `Entries`.
+
+Targets matching neither form, including edited files and Extension files whose
+source is unavailable, are kept unchanged and reported. Excluded, user-authored,
+Library, and overwrite files are never touched. Retention under this rule does
+not block the form change. The settings write and conversions form one reviewed
+plan with ordinary recovery and the existing safety and permission checks.
 
 ### `--force`
 
@@ -359,7 +398,8 @@ Force does not:
 - delete retired content; or
 - replace bytes outside the exact current Framework footprint.
 
-When an existing managed state diverges, both `install` and `install --force`
+Outside Configure's bounded conversion, when an existing managed state diverges,
+both `install` and `install --force`
 return `blocked`, make no write, and provide one useful `Next:` action for
 `open-forge update`. Force is not an update shortcut.
 
@@ -630,9 +670,13 @@ words.
 
 ### Prompts
 
+The plan shows `Frontmatter: root` or `Frontmatter: scoped`. When the form
+changes, it shows the transition, such as `Frontmatter: scoped -> root`.
+
 In a terminal without `--automatic`: plan review at `minimal` on stderr, then
 `Apply these changes? [y/N]`. When the plan replaces existing files, including
-bounded configuration settings or Git-ignore edits, the question reads
+bounded configuration settings, frontmatter conversions, or Git-ignore edits,
+the question reads
 `Replace the 2 existing files listed above? [y/N]` with the actual count.
 Configuration retains its bounded authority without requiring `--force`;
 initial payload replacement still requires it. See
@@ -674,9 +718,14 @@ initial payload replacement still requires it. See
 
 ### JSON data by level
 
+`data.frontmatter` contains `form` as `root` or `scoped` at every detail level
+when the form is resolved. It also contains `previousForm` when the form changed,
+and `kept` at every detail level when Configure kept files in their previous
+form. It is separate from `data.configuration`.
+
 | Level    | `data`                                                                                                                          |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| minimal  | `{ mode, force, automatic, classification, footprint { files, directories, sections }, lockPath, [migrations] }`                |
+| minimal  | `{ mode, force, automatic, classification, footprint { files, directories, sections }, lockPath, [migrations], [frontmatter { form, [previousForm], [kept] }] }` |
 | standard | same                                                                                                                            |
 | full     | + `source { inventoryFingerprint }`, per-effect `sourceAssetPath` in `effects`, `lifecycle { action, outcome }`, `verification` |
 
@@ -803,12 +852,12 @@ Each status has one representative native text transcript above. JSON uses the s
 Install does not:
 
 - perform managed update, reinstallation, replacement of a trusted divergent
-  state, restoration without explicit setup selection, or retired-content deletion;
+  state beyond Configure's bounded form conversion, restoration without explicit setup selection, or retired-content deletion.
 - create a Framework group, root `init`, update/reinstall/replace/restore/recover
   alias, uninstall/remove leaf, generic apply, saved plan, session, or journal;
-- discover providers, package sources, Extension paths, or arbitrary workspace
-  files. Route discovery is limited to the selected standard route subtree
-  needed for the bounded initial adoption above;
+- discover providers or arbitrary workspace files. Adoption route discovery is
+  limited to the selected standard route subtree. Configure source observations
+  are limited to owned eligible delivered targets under its conversion rule.
 - adopt matching bytes, repair markers, replace overwrite companions, or change
   user content outside valid managed regions;
 - execute a formatter or persist formatter state;

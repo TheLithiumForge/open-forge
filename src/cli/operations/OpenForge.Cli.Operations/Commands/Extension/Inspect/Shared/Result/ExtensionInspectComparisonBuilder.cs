@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Settings;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 
@@ -17,10 +18,24 @@ internal sealed class ExtensionInspectComparisonBuilder(MarkdownFingerprintReade
             input.PathFacts.Current,
             input.Findings,
             currentMarkdownFacts);
-        var intendedFingerprints = _fingerprintBuilder.ReadIntendedFingerprints(
-            input.SourcePathProjections,
-            input.Findings,
-            intendedMarkdownFacts);
+        IReadOnlyList<ExtensionInspectFingerprintFact> intendedFingerprints = [];
+        if (input.Frontmatter is { } form)
+        {
+            intendedFingerprints = _fingerprintBuilder.ReadIntendedFingerprints(
+                input.SourcePathProjections,
+                form,
+                input.Findings,
+                intendedMarkdownFacts);
+        }
+        else if (input.AvailablePackage is not null)
+        {
+            ExtensionInspectFindingPolicy.Add(input.Findings, new ExtensionInspectFindingInput
+            {
+                Code = ExtensionInspectFindingCode.FingerprintUnavailable,
+                Path = WorkspaceSettingsDefinitions.RelativePath,
+                Cause = "The workspace frontmatter form is unavailable.",
+            });
+        }
         var generated = ExtensionInspectGeneratedBuilder.Build(
             currentMarkdownFacts,
             intendedMarkdownFacts,
@@ -30,6 +45,7 @@ internal sealed class ExtensionInspectComparisonBuilder(MarkdownFingerprintReade
             new ExtensionInspectComparisonInput
             {
                 Ownership = input.Ownership,
+                Frontmatter = input.Frontmatter,
                 InstalledPackage = input.InstalledPackage,
                 AvailablePackage = input.AvailablePackage,
                 AvailableClosure = input.AvailableClosure,

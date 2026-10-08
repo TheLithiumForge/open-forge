@@ -23,6 +23,7 @@ internal static class PublishedRouteMoveSetup
             "definitions.md",
             ".agents/open-forge.lifecycle.json",
             ".agents/open-forge.lock.json",
+            PublishedInstallWorkspace.SettingsPath,
             "AGENTS.md",
             "CLAUDE.md",
         ];

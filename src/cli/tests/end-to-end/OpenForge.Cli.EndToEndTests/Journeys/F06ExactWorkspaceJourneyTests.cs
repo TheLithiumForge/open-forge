@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
@@ -277,7 +278,7 @@ public sealed class F06ExactWorkspaceJourneyTests
         var result = await PublishedJourneyProcess.RunAsync(
             workspace.Target,
             workspace.Path,
-            ["install", "--automatic", "--workspace", workspacePath],
+            JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic", "--workspace", workspacePath),
             workspace.ProcessEnvironment);
         AssertSuccessfulHuman(result);
         workspace.LockStore.AssertPersistentZeroByteLock(workspacePath);
@@ -318,6 +319,7 @@ public sealed class F06ExactWorkspaceJourneyTests
             .Append($"{root}/AGENTS.md")
             .Append($"{root}/CLAUDE.md")
             .Append($"{root}/.agents/open-forge.lock.json")
+            .Append($"{root}/{PublishedInstallWorkspace.SettingsPath}")
             .ToArray();
 
     private static IReadOnlyDictionary<string, string> SnapshotAllOwnedTrees(

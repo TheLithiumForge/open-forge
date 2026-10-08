@@ -31,7 +31,7 @@ internal sealed class InstallAppliedVerifier(
 
     internal async ValueTask<InstallVerificationResult> VerifyRegistrationAsync(InstallPlan plan, CancellationToken cancellationToken)
     {
-        if (plan.IntendedState.Configuration is not { } configuration)
+        if (plan.Request.Configuration is null || plan.IntendedState.Configuration is not { } configuration)
             return new(InstallVerificationState.Verified, Cause: null);
         var ownership = await WorkspaceOwnershipReader.ReadAsync(physicalPathResolver, plan.Request.Workspace, cancellationToken).ConfigureAwait(false);
         if (ownership.State != WorkspaceOwnershipReadState.Complete || ownership.Document.Framework is not { } framework
@@ -57,6 +57,14 @@ internal sealed class InstallAppliedVerifier(
             if (read.State != InstallTargetReadState.File || read.Snapshot is not { } snapshot
                 || !snapshot.Bytes.AsSpan().SequenceEqual(effect.Change.IntendedBytes.AsSpan()))
                 return Failed("A configuration settings or Git-ignore effect did not verify.");
+        }
+
+        foreach (var replacement in plan.IntendedState.Configuration?.FrontmatterPlan?.Replacements ?? [])
+        {
+            var read = await _targetReader.ReadAsync(plan.Request.Workspace, replacement.Path, cancellationToken).ConfigureAwait(false);
+            if (read.State != InstallTargetReadState.File || read.Snapshot is not { } snapshot
+                || !snapshot.Bytes.AsSpan().SequenceEqual(replacement.IntendedBytes))
+                return Failed($"Converted file '{replacement.Path}' did not verify.");
         }
 
         try

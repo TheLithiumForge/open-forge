@@ -28,7 +28,7 @@ public sealed class InstallPresentationContractTests
     public void NativeDataPreservesPropertyOrderAndNullableBoundaries()
     {
         AssertProperties<InstallData>(
-            "Mode", "Force", "Automatic", "Classification", "Footprint", "LockPath", "Effects", "Source", "Lifecycle", "Verification", "Migrations", "Configuration");
+            "Mode", "Force", "Automatic", "Classification", "Footprint", "LockPath", "Effects", "Source", "Lifecycle", "Verification", "Migrations", "Configuration", "Frontmatter");
         AssertProperties<InstallDataFootprint>("Files", "Directories", "Sections");
         AssertProperties<InstallDataSource>("InventoryFingerprint", "AssetCount");
         AssertProperties<InstallDataEffect>("Path", "Kind", "Action", "SourceAssetPath", "Outcome", "Residual");
@@ -230,7 +230,7 @@ public sealed class InstallPresentationContractTests
     {
         var help = InstallHelpSections.Create();
         var syntax = Assert.Single(help.Sections, section => section.Heading == "Syntax");
-        Assert.Contains("open-forge install [--configure] [--preset <essentials|full-core|custom>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]", syntax.Body, StringComparison.Ordinal);
+        Assert.Contains("open-forge install [--configure] [--preset <essentials|full-core|custom>] [--frontmatter <root|scoped>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]", syntax.Body, StringComparison.Ordinal);
         Assert.Contains("Redirected text requests that would write require --automatic", Assert.Single(help.Sections, section => section.Heading == "Confirmation").Body, StringComparison.Ordinal);
 
         var result = InstallResult.Invalid(

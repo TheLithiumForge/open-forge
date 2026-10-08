@@ -110,12 +110,12 @@ For example, a C# scope may contain a #LoadNow design file and an on-demand Wind
 
 ### Frontmatter
 
-Routed Markdown files start with YAML frontmatter under `open-forge:`. For routing, each line under an entrypoint's `Entries` repeats a file's description, tags, and `applyTo` patterns, so you can decide before opening it.
+Routed Markdown files start with YAML frontmatter. Open Forge fields sit at the root, or under an `open-forge:` key that then holds all of them. When you add metadata, follow `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. For routing, each line under an entrypoint's `Entries` repeats a file's description, tags, and `applyTo` patterns, so you can decide before opening it.
 
 - `description` - Required short text that helps a reader decide whether to open the file.
 - `responsibility` - Optional sentence stating what the file defines, so an editor can decide what belongs there. It creates no authority or loading behavior.
 - `tags` - Required list of tag names without `#`. Defined Tags gives the reserved meanings.
-- `applyTo` - Optional glob patterns, as a list or a comma-separated string, that filter a file by the files the task works on. It may also sit at the frontmatter root.
+- `applyTo` - Optional glob patterns, as a list or a comma-separated string, that filter a file by the files the task works on. Root and scoped declarations are both read. Equal patterns count once, and different patterns are invalid.
   - Filter: A file that would load or refresh does so, and applies, only while one working file matches its patterns and those of every ancestor with `applyTo`. `applyTo` never loads a file by itself.
   - Patterns: Globs match from the workspace root and are case-sensitive. `*.py` matches root files, `**/*.py` any depth, and `docs/**` a folder. A leading `!` is literal and does not exclude files.
   - Working files: Files the task investigates, creates, changes, deletes, renames, or reviews, including planned ones. Reading a file for context does not count. When work reaches another file, that file's own conditions apply. `applyTo` never grants or restricts edit permission.

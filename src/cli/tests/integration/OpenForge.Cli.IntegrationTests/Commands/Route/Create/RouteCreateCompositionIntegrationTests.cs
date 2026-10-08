@@ -146,7 +146,7 @@ public sealed class RouteCreateCompositionIntegrationTests
             {
                 ApplyTo = [applyToPattern],
             },
-            string.Empty);
+            string.Empty, FrontmatterForm.Scoped);
         Assert.Equal(expectedTarget.ToArray(), targetBytes);
         var parent = workspace.ReadText(RouteCreateIntegrationWorkspace.ParentPath);
         Assert.Contains(RouteCreateIntegrationWorkspace.TargetId, parent, StringComparison.Ordinal);

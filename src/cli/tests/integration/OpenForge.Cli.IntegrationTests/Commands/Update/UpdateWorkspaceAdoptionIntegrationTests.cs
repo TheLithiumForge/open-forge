@@ -575,9 +575,9 @@ public sealed class UpdateWorkspaceAdoptionBoundaryIntegrationTests
             "---\nname: excluded-skill\ndescription: Existing complete metadata\nlicense: MIT\n---\n" + body,
             body);
         var settings = exclusion == "directory"
-            ? $$"""{"removedDirectories":["{{skill.DirectoryPath}}"]}"""
-            : "{\"removedCategories\":[\"skills\"]}";
-        workspace.WriteText(".agents/open-forge.json", settings);
+            ? $$"""{"frontmatter":"scoped","removedDirectories":["{{skill.DirectoryPath}}"]}"""
+            : "{\"frontmatter\":\"scoped\",\"removedCategories\":[\"skills\"]}";
+        workspace.ReplaceText(".agents/open-forge.json", settings);
         var originalSkill = workspace.ReadBytes(skill.SkillPath);
         var originalReference = workspace.ReadBytes(skill.ReferencePath);
         var originalSkillsCatalogue = workspace.ReadBytes(".agents/skills/_skills.md");
@@ -628,8 +628,8 @@ public sealed class UpdateWorkspaceAdoptionBoundaryIntegrationTests
             _ => throw new ArgumentOutOfRangeException(nameof(metadataCase), metadataCase, "Unknown exclusion fixture case."),
         };
         var skill = UpdateWorkspaceAdoptionTestFixture.SeedSkill(workspace, slug, skillContents, body);
-        var settings = $$"""{"removedDirectories":["{{skill.DirectoryPath}}"]}""";
-        workspace.WriteText(".agents/open-forge.json", settings);
+        var settings = $$"""{"frontmatter":"scoped","removedDirectories":["{{skill.DirectoryPath}}"]}""";
+        workspace.ReplaceText(".agents/open-forge.json", settings);
         var originalSkill = workspace.ReadBytes(skill.SkillPath);
         var originalReference = workspace.ReadBytes(skill.ReferencePath);
         var originalSupport = workspace.ReadBytes(skill.SupportPath);
@@ -691,8 +691,8 @@ public sealed class UpdateWorkspaceAdoptionBoundaryIntegrationTests
         const string neighborPath = ".agents/skills/exact-neighbor.md";
         const string neighborContents = "---\nopen-forge:\n  description: Excluded neighbor\n  tags: [Workspace]\n---\n\n# Neighbor\n";
         workspace.WriteText(neighborPath, neighborContents);
-        const string settings = "{\"removedFiles\":[\".agents/skills/exact-neighbor.md\"]}";
-        workspace.WriteText(".agents/open-forge.json", settings);
+        const string settings = "{\"frontmatter\":\"scoped\",\"removedFiles\":[\".agents/skills/exact-neighbor.md\"]}";
+        workspace.ReplaceText(".agents/open-forge.json", settings);
 
         var result = await workspace.ExecuteAsync(workspace.Request(
             mode: UpdateMode.Apply,

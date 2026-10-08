@@ -14,7 +14,7 @@ cd /path/to/your-project
 open-forge install
 ```
 
-Choose Essentials for a smaller start, Full Core for every built-in route, or Custom to choose each one. The installer shows your selected plan and asks before applying it. Review the new files with `git status` and `git diff`, then commit the result.
+Choose Essentials for a smaller start, Full Core for every built-in route, or Custom to choose each one. Then choose root keys or an `open-forge:` mapping for file metadata, with root preselected. Both forms are always readable. The installer shows your selected plan and asks before applying it. Review the new files with `git status` and `git diff`, then commit the result.
 
 Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with its whole directory Git-ignored. Working still loads normally, but new local records stay out of ordinary Git commits. Use `open-forge install --configure` to revisit an existing setup. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation) explains all choices and unattended commands.
 
@@ -63,7 +63,7 @@ open-forge install --preset essentials --dry-run
 open-forge install --preset essentials
 ```
 
-The dry run previews that exact selection without asking setup questions. Use `full-core` for every built-in route. An explicit preset on an installed workspace also needs `--configure`. For Custom rows and noninteractive configuration, see the [CLI reference](docs/cli.md#setup-choices).
+The dry run previews that exact selection without asking setup questions. Use `full-core` for every built-in route, and `--frontmatter root` or `--frontmatter scoped` to choose the metadata form without its question. A fresh unattended Install uses root unless settings already declare a preference. An explicit preset or form on an installed workspace also needs `--configure`. For Custom rows and noninteractive configuration, see the [CLI reference](docs/cli.md#setup-choices).
 
 #### Manually, from a clone
 
@@ -141,11 +141,32 @@ They're also yours. Add, adapt, replace, or remove the defaults as your needs ch
 
 Use `install --configure` to change the selected defaults later. Custom's Remove choice keeps existing files and notes routable while releasing their Framework management. Explicit configuration can restore eligible missing packaged scaffolding after a checkout, but missing private records need your own copy or backup. The [growth guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/grow-your-framework) covers changing choices and adding one omitted category.
 
+To change just the metadata form, preview `open-forge install --configure --frontmatter scoped --dry-run`, then run it without `--dry-run`. Route choices stay the same. Configure converts unedited owned files, keeps and reports edited files or Extension files whose source is unavailable, and leaves user-authored files, Library files, exclusions, and overwrite companions untouched. Ordinary repeated Install and Update keep your selected form and never ask again.
+
 Edit a shipped file directly when you want a different version. Keep in mind that `open-forge update` brings changed Framework files back to the current version and reports each one it replaces. For a local change that should survive updates, put it in an adjacent `{name}.overwrite.md` instead. It loads right after its base file and shares that file's role, scope, and loading behavior. Where the two answer the same question, the overwrite wins, and updates leave it alone.
 
 ## Grow your own framework
 
 Say your agent keeps calling work done without running the tests. Create `.agents/directives/testing.md`:
+
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
+Root form:
+
+```md
+---
+description: Run the tests before calling a change done
+tags: [LoadNow, Directive, Testing]
+---
+
+# Testing
+
+## Instructions
+
+- Run the test suite before reporting a change as done, and include the result.
+```
+
+Scoped form:
 
 ```md
 ---
@@ -246,16 +267,34 @@ One rule keeps this from turning into a pile of notes: each source defines only 
 
 ## Frontmatter and tags
 
-Routed Markdown files carry a little frontmatter to help readers, human or agent, decide what to open and what belongs where. An architecture document might begin like this:
+Routed Markdown files carry a little frontmatter to help readers, human or agent, decide what to open and what belongs where.
+
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
+Root form:
+
+```yaml
+---
+description: C# rules
+tags: [Directive, LoadNow]
+applyTo: ["**/*.cs"]
+---
+```
+
+Scoped form:
 
 ```yaml
 ---
 open-forge:
-  description: Understand the service boundaries and how requests move through the system
-  responsibility: Define the current service structure and dependency boundaries
-  tags: [Memory, Document, Architecture]
+  description: C# rules
+  tags: [Directive, LoadNow]
+  applyTo: ["**/*.cs"]
 ---
 ```
+
+When an `open-forge` mapping exists, root descriptions and tags belong to another tool. Open Forge does not merge them. `applyTo` is read at both locations, with equivalent sets counting once and conflicting sets rejected.
+
+The same precedence applies to `responsibility`. Root metadata alone doesn't make a file a routed source. Native `SKILL.md` keeps its own metadata contract. `route update` edits existing metadata where it was authored, while new metadata follows the workspace setting.
 
 The **description** helps a reader decide whether to open the file. The optional **responsibility** helps an editor decide what belongs in it. Tags help with selection and search, and a few of them have defined behavior:
 

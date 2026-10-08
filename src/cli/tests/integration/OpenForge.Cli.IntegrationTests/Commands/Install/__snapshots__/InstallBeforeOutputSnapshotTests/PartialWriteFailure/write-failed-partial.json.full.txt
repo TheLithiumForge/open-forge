@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Install stopped after 16 of 33 changes.",
+    "headline": "Install stopped after 16 of 34 changes.",
     "kind": "failed"
   },
   "findings": [
@@ -365,6 +365,16 @@
       "after": null
     },
     {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/open-forge.lock.json",
       "kind": "record",
       "action": "created",
@@ -510,6 +520,9 @@
         "sourceAssetPath": "CLAUDE.md"
       },
       {
+        "path": ".agents/open-forge.json"
+      },
+      {
         "path": ".agents/open-forge.lock.json"
       }
     ],
@@ -532,7 +545,10 @@
         "derivation": [],
         "outcome": "planned"
       }
-    ]
+    ],
+    "frontmatter": {
+      "form": "root"
+    }
   },
   "recovery": {
     "path": "<recovery-bundle>",

@@ -11,7 +11,7 @@ open-forge:
 
 This file is the accepted current Crystallized authority for technology-neutral
 resolution, invariants, safety, result formation, and conformance behind the
-[Interface Contract](interface.md). The flags do not ship yet; implementation and executable evidence are tracked in
+[Interface Contract](interface.md). The flags ship with the public beta CLI. Current implementation and release work is tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md). The Interface Contract remains the
 complete public authority for spelling, value grammar, defaults, observable
 presentation, errors, examples, and non-goals. This file links to those

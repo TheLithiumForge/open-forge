@@ -1,10 +1,11 @@
-Install stopped after 16 of 33 changes.
+Install stopped after 16 of 34 changes.
 Workspace: <workspace>
   Error  .agents/memory/_memory.md  Write failed [install.write-failed]
          Writing .agents/memory/_memory.md failed: filesystem access was denied.
          open-forge doctor
          Inspect the reported Install boundary before rerunning it.
          cause: UnauthorizedAccessException (0x80070005): Filesystem access was denied.
+Frontmatter: root
   .agents/directives                                     created
   .agents/guidance                                       created
   .agents/maps                                           created
@@ -37,6 +38,7 @@ Workspace: <workspace>
   .agents/templates/_templates.md                        not started; source: .agents/templates/_templates.md
   AGENTS.md                                              not started; source: AGENTS.md
   CLAUDE.md                                              not started; source: CLAUDE.md
+  .agents/open-forge.json                                not started
   .agents/open-forge.lock.json                           not started
   .agents/memory/_memory.overwrite.md                    Planned migration: content preserved
   16 files and directories were created.

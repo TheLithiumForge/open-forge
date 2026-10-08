@@ -103,6 +103,7 @@ internal sealed class PublishedJourneyWorkspace : IDisposable
                 .Append(AgentsPath)
                 .Append(ClaudePath)
                 .Append(OwnershipPath)
+                .Append(SettingsPath)
                 .ToArray());
     }
 

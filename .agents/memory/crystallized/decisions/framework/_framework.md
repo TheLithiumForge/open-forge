@@ -14,7 +14,7 @@ open-forge:
 
 - [Open Forge turns incomplete natural intent into decision-ready context through recommendations, consequential questions, visible assumptions, and proportionate durable extraction](adaptive-decision-elicitation.md) - #Memory #Decision #CurrentTruth #Product #Framework #Conversation #Elicitation #UserExperience
 - [Open Forge states role and authority relationships directly, names semantic authority by source type, and reserves ownership for possession or managed lifecycle](authoritative-source-terminology.md) - #Memory #Decision #CurrentTruth #Terminology #Authority #Documentation
-- [Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility
+- [Why Open Forge uses preferred Markdown forms within each authoring context, including workspace-selected frontmatter](canonical-markdown.md) - #Memory #Decision #CurrentTruth #Framework #Markdown #Authoring #Syntax #Compatibility
 - [Core uses distinct reusable content roles instead of one generic knowledge bucket, and every new primitive must earn nonduplicative semantics](core-primitives.md) - #Memory #Decision #CurrentTruth #Core #Primitive
 - [Why critical context loads early within selected routes and conditional context remains easy to select or skip](loading-reliability.md) - #Memory #Decision #CurrentTruth #Loading #Routing #Reliability
 - [Map replaces Workspace as the Core primitive for locating important local and external truth](map-primitive.md) - #Memory #Decision #CurrentTruth #Framework #Core #Map #Migration
@@ -27,4 +27,5 @@ open-forge:
 - [Templates are a distinct Core primitive for copy-ready source artifacts whose ownership transfers to independently maintained results](template-primitive.md) - #Memory #Decision #CurrentTruth #Core #Template #Primitive
 - [Open Forge writing is clear on first read, technically precise, consistent, predictable, and concise](user-facing-writing.md) - #Memory #Decision #CurrentTruth #Formatting #Documentation #Routing
 - [Workflows use a minimal goal, steps, and completion recipe while relationships remain explicit in ordinary links and steps](workflow-shape.md) - #Memory #Decision #CurrentTruth #Workflow #Routing #Orchestration
+- [Why each workspace chooses root or scoped Open Forge frontmatter](workspace-frontmatter-form.md) - #Memory #Decision #CurrentTruth #Framework #Frontmatter
 - [A workspace keeps one authored settings file and one generated lock file, and the lock records ownership rather than policing integrity](workspace-state-files.md) - #Memory #Decision #CurrentTruth #CLI #Lifecycle #Configuration #Permissions #State

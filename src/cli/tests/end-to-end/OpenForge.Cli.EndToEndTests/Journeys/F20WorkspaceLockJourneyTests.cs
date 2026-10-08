@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Filesystem;
@@ -175,9 +176,9 @@ public sealed class F20WorkspaceLockJourneyTests
         workspaceB.ExpectCoreInstall();
         _ = workspaceA.LockStore.Track(workspaceB.Path);
 
-        var installA = await workspaceA.RunAsync("install", "--automatic");
+        var installA = await workspaceA.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertCompleted(installA, "A install");
-        var installB = await RunOnADataHomeAsync(workspaceA, workspaceB, "install", "--automatic");
+        var installB = await RunOnADataHomeAsync(workspaceA, workspaceB, JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertCompleted(installB, "B install using A's data home");
     }
 

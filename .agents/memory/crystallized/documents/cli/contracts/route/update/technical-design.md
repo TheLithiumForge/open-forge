@@ -79,11 +79,19 @@ planning an edit.
 
 For equivalent normalized dual declarations, a set operation patches both
 declarations in their existing locations, and a clear operation removes both.
-A new declaration is written as a quoted list under the scoped `open-forge`
-mapping. The operation replaces or inserts only the exact spans supported by the
+A new declaration uses a quoted list in the target's selected metadata location.
+Existing declarations retain their locations, including equivalent dual
+declarations.
+The operation replaces or inserts only the exact spans supported by the
 parsed mapping and preserves unrelated frontmatter, body bytes, line endings,
 and encoding. It does not serialize the whole YAML document or use whole-file
 serialization as a fallback.
+
+Existing ordinary metadata is edited where it was authored. When metadata is
+absent, creation requires complete supplied description and tags and uses the
+workspace's form. Settings are read only for that creation. The plan retains
+the settings observation and compares it during revalidation. Malformed or
+ambiguous metadata blocks before effects.
 
 Quoted-string flow and block lists are eligible. Replacing a block list retains
 its terminal line ending and a safely separable trailing comment. Interior

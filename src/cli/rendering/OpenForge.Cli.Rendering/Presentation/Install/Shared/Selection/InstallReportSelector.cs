@@ -59,8 +59,17 @@ internal static class InstallReportSelector
         var migrations = facts.Migrations.Count > 0
             ? facts.Migrations.Select(ProjectMigration).ToArray()
             : null;
+        var kept = result.Frontmatter?.Kept.Select(file => new InstallDataFrontmatterKeptFile(file.Path, KeptReason(file.Reason))).ToArray() ?? [];
         var data = new InstallData
         {
+            Frontmatter = result.Frontmatter is { } form ? new InstallDataFrontmatter
+            {
+                Form = form.Form,
+                PreviousForm = form.Changed ? form.PreviousForm : null,
+                KeptCount = form.Kept.Length,
+                Kept = kept.Length > 0 ? kept : null,
+                TextKept = selection.Detail >= CliDetail.Standard ? kept : [],
+            } : null,
             Configuration = result.Input.Configuration is { } configuration
                 ? new InstallDataConfiguration(configuration.Configure, PresetName(configuration.Preset),
                     configuration.Routes.Select(row => new InstallDataRoute(row.Id, ActionName(row.Action))).ToArray())
@@ -176,6 +185,13 @@ internal static class InstallReportSelector
         InstallPreset.FullCore => "full-core",
         InstallPreset.Custom => "custom",
         _ => throw new ArgumentOutOfRangeException(nameof(preset)),
+    };
+
+    private static string KeptReason(InstallFrontmatterKeptReason reason) => reason switch
+    {
+        InstallFrontmatterKeptReason.Edited => "edited",
+        InstallFrontmatterKeptReason.SourceUnavailable => "source-unavailable",
+        _ => throw new ArgumentOutOfRangeException(nameof(reason)),
     };
 
     private static string ActionName(InstallRouteAction action) => action switch

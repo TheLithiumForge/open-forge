@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models.Syntax;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning.Metadata;
 using System.Reflection;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
@@ -24,6 +26,12 @@ public sealed class RouteUpdatePlanningUnionContractTests
         };
         var layout = new RouteUpdateMetadataLayout
         {
+            Syntax = FrameworkDocumentMetadataSyntax.Absent,
+            DocumentOffset = 0,
+            CreationStart = 0,
+            CreationLength = 0,
+            CreateHeader = false,
+            Newline = "\n",
             Source = "open-forge:\n  description: Before\n  tags: [Memory]\n",
             Description = "Before",
             Tags = ["Memory"],

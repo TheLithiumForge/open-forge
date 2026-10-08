@@ -31,7 +31,7 @@ public sealed class ExtensionUpdatePlanOwnershipIntegrationTests
     public async Task CallerMutationDoesNotChangeAcceptedFacts(string layer)
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-update-plan-ownership");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         using var source = ExtensionInstallCatalogue.Create("extension-update-plan-ownership-source");
         source.AddPackage("base", [], (".agents/base/_base.md", Document("Base v1")));
         source.AddPackage("toolkit", ["base"], (".agents/toolkit/_toolkit.md", Document("Toolkit v1")));

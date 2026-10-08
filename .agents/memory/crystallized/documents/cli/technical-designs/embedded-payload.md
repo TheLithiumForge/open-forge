@@ -15,6 +15,13 @@ inventory. Framework-aware Route Init consumes canonical route entrypoint assets
 and topology from the same payload. Command-local selection, findings, effects,
 and results remain in their contracts.
 
+Distribution renders eligible Framework and Extension Markdown in the selected
+workspace frontmatter form before delivery and comparison, following the
+[shared contract](../shared-operation-contract.md#frontmatter-form). The
+Documents transform moves only the leading Open Forge mapping. Repository
+bytes, source inventory hashes, body examples, and raw resource parity remain
+unchanged.
+
 ## Resource Realization
 
 The Framework project embeds the complete canonical `src/open-forge/` tree through

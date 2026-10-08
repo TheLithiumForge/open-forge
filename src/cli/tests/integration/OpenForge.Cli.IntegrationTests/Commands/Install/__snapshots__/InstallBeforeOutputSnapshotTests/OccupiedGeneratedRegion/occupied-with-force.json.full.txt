@@ -335,6 +335,16 @@
       "after": null
     },
     {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/open-forge.lock.json",
       "kind": "record",
       "action": "created",
@@ -479,6 +489,9 @@
         "sourceAssetPath": "CLAUDE.md"
       },
       {
+        "path": ".agents/open-forge.json"
+      },
+      {
         "path": ".agents/open-forge.lock.json"
       }
     ],
@@ -501,7 +514,10 @@
         "derivation": [],
         "outcome": "applied"
       }
-    ]
+    ],
+    "frontmatter": {
+      "form": "scoped"
+    }
   },
   "recovery": {
     "path": null,

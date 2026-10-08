@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
@@ -14,6 +15,8 @@ internal sealed record RouteCreatePlan
     internal FileExpectation? SharingExpectation { get; init; }
 
     public required RouteCreateRequest Request { get; init; }
+
+    public required WorkspaceSettingsRead Settings { get; init; }
 
     public required RouteCreateResultFormation Preview { get; init; }
 

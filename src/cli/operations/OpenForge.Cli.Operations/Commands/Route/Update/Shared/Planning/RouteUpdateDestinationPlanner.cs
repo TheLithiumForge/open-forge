@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning.Metadata;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning.Metadata;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates.Models;
@@ -76,7 +78,7 @@ internal sealed class RouteUpdateDestinationPlanner
                 "Complete Route Update body planning requires one body plan.");
         var intendedText = StrictUtf8.GetString(body.IntendedTargetBytes.AsSpan());
         var document = new MarkdownDocumentParser().Parse(intendedText);
-        var facts = new FrameworkDocumentMetadataParser().Parse(document);
+        var facts = new FrameworkDocumentMetadataParser().Parse(document, FrameworkMetadataReadScope.RoutedSource);
         var intendedMetadata = new SourceAuthoredMetadataParser().Parse(
             document,
             observation.TargetSource.Base.Form);

@@ -369,3 +369,31 @@ Check invalid-input outcome; do not coerce it to all or any.
 **Disposition:** Deferred; not selected yet. Repeated cancellation outcome without a concrete signal boundary; retain X09 as the shared invariant until a distinct fixture earns coverage.
 
 **Required before reconsideration:** Use a real signal-capable process and deterministic observed boundary; a timeout or invalid argument is not cancellation. Use a genuine capability-appropriate terminal and preserve actual prompt/signal evidence.
+
+## C09-13
+
+**Situation:** Find by tag matches root tags and ignores another tool's root tags beside an `open-forge` block
+
+**Disposition:** Added. Find Open Forge tag matches across both authored forms.
+
+### Starting point
+
+SEARCH has an admitted root-form `guidance/review-checklist` tagged `Guidance` and `Review`. It also has an admitted shared file whose foreign root tags contain `Review`, but whose explicit `open-forge` mapping contains only `Guidance` and `Team`. Keep the remainder of the eligible inventory known and free of the queried tag.
+
+Fixture: `SEARCH`, with the two authored tag sets recorded independently.
+
+### Steps
+
+```text
+open-forge find --tag Review
+```
+
+### Expected result
+
+Find matches the root-form checklist. It does not match the shared file from the other tool's root `Review` tag, because the explicit `open-forge` mapping supplies its complete Open Forge tag list. Root metadata alone never admits an otherwise ineligible file as a source. Find performs no writes.
+
+### Verification
+
+**State:** Independently enumerate the eligible inventory and Open Forge tag sets. Compare all authored bytes and state before and after Find.
+
+**Output:** Compare distinct returned source identities with the independently expected match set. Check the shared file's absence as well as the checklist's presence.

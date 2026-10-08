@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
@@ -359,7 +360,7 @@ public sealed class F08RepairRenamedReferenceJourneyTests
             }
 
             workspace.ExpectFiles([.. reserved]);
-            var install = await workspace.RunAsync("install", "--automatic");
+            var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
             AssertSetupSuccess(install, "install");
             workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
             Assert.True(File.Exists(workspace.Combine(".agents/open-forge.lock.json")));

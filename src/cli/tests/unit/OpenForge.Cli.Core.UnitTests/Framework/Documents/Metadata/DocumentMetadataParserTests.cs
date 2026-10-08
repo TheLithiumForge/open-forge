@@ -2,6 +2,9 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models.Syntax;
+using OpenForge.Cli.Core.Framework.Documents.Yaml;
+using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Metadata;
 
@@ -327,9 +330,168 @@ public sealed class DocumentMetadataParserTests
             observedTags: new[] { "Valid", (string)null! }));
     }
 
+    [Theory(DisplayName = "Root and scoped ordinary metadata share validation and partial observations")]
+    [InlineData("description: Example\ntags: [Évidence2, 工作-2]\nresponsibility: Owns examples\n", (int)FrameworkDocumentMetadataState.Complete)]
+    [InlineData("description: >\n  An authored\n  description\ntags:\n  - Docs\n", (int)FrameworkDocumentMetadataState.Complete)]
+    [InlineData("description: Example\n", (int)FrameworkDocumentMetadataState.Missing)]
+    [InlineData("tags: [Docs]\n", (int)FrameworkDocumentMetadataState.Missing)]
+    [InlineData("description: ''\ntags: [Docs]\n", (int)FrameworkDocumentMetadataState.Missing)]
+    [InlineData("description: Example\ntags: []\n", (int)FrameworkDocumentMetadataState.Missing)]
+    [InlineData("description: Example\ntags: [Docs]\nresponsibility: ''\n", (int)FrameworkDocumentMetadataState.Missing)]
+    [InlineData("description: [Wrong]\ntags: [Docs]\n", (int)FrameworkDocumentMetadataState.Malformed)]
+    [InlineData("description: Example\ntags: [Invalid--Tag]\n", (int)FrameworkDocumentMetadataState.Malformed)]
+    [InlineData("description: Example\ntags: {wrong: Docs}\n", (int)FrameworkDocumentMetadataState.Malformed)]
+    [InlineData("description: Example\ntags: [Docs]\nresponsibility: [Wrong]\n", (int)FrameworkDocumentMetadataState.Malformed)]
+    [InlineData("description: &text Example\ntags: [Docs]\nresponsibility: *text\n", (int)FrameworkDocumentMetadataState.Malformed)]
+    [Trait("Boundary", "Input"), Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void RootAndScopedValuesUseIdenticalGrammar(string fields, int expectedState)
+    {
+        var root = Parse($"---\n{fields}---\n");
+        var scoped = Parse($"---\nopen-forge:\n  {fields.Replace("\n", "\n  ", StringComparison.Ordinal)}\n---\n");
+
+        Assert.Equal((FrameworkDocumentMetadataState)expectedState, root.State);
+        Assert.Equal(root.State, scoped.State);
+        Assert.Equal(root.FailureKind, scoped.FailureKind);
+        Assert.Equal(root.ObservedDescription, scoped.ObservedDescription);
+        Assert.Equal(root.ObservedTags, scoped.ObservedTags);
+        Assert.Equal(root.Metadata?.Description, scoped.Metadata?.Description);
+        Assert.Equal(root.Metadata?.Tags, scoped.Metadata?.Tags);
+        Assert.Equal(root.Metadata?.Responsibility, scoped.Metadata?.Responsibility);
+        Assert.Equal(FrontmatterForm.Root, root.Syntax.AuthoredForm);
+        Assert.Equal(FrontmatterForm.Scoped, scoped.Syntax.AuthoredForm);
+    }
+
+    [Theory(DisplayName = "A scoped mapping owns the complete ordinary set even when fields are missing")]
+    [InlineData("{}", null)]
+    [InlineData("\n  description: Scoped", "Scoped")]
+    [InlineData("\n  tags: [Scoped]", null)]
+    [Trait("Boundary", "Input"), Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void ScopedMappingOwnsEntireMetadataSet(string mapping, string? description)
+    {
+        var facts = Parse($"---\ndescription: Foreign\nresponsibility: [Foreign]\ntags: [Foreign]\nopen-forge: {mapping}\n---\n");
+
+        Assert.Equal(FrameworkDocumentMetadataState.Missing, facts.State);
+        Assert.Equal(description, facts.ObservedDescription);
+        Assert.DoesNotContain("Foreign", facts.ObservedTags);
+        Assert.All(facts.Syntax.Members, member => Assert.Equal(FrontmatterForm.Scoped, member.Form));
+    }
+
+    [Fact(DisplayName = "Unsupported root keys remain opaque to ordinary metadata validation")]
+    [Trait("Boundary", "Input"), Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void UnknownRootValuesRemainOpaque()
+    {
+        var facts = Parse("---\ndescription: Example\ntags: [Docs]\nforeign: &foreign {key: value, key: other}\nforeign: *foreign\n? [complex, key]\n: [value]\n---\n");
+
+        Assert.Equal(FrameworkDocumentMetadataState.Complete, facts.State);
+        Assert.Equal(2, facts.Syntax.Members.Length);
+        Assert.Equal(["Docs"], facts.Metadata?.Tags);
+    }
+
+    [Theory(DisplayName = "Selected metadata syntax retains partial fields and duplicate member coordinates")]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    [Trait("Boundary", "Input"), Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void OriginsRetainPartialAndDuplicateCoordinates(bool scoped, bool duplicate)
+    {
+        var fields = "tags: [\"Caf\\u00E9\", 工作]\nresponsibility: Owner\n";
+        if (duplicate)
+        {
+            fields += "tags: [Later]\n";
+        }
+        var yaml = scoped ? $"open-forge:\n  {fields.Replace("\n", "\n  ", StringComparison.Ordinal)}\n" : fields;
+        var syntax = new YamlDocumentParser().Parse(yaml);
+        var facts = new FrameworkDocumentMetadataParser().Read(syntax, FrameworkMetadataReadScope.RoutedSource);
+
+        Assert.Equal(duplicate ? FrameworkDocumentMetadataState.Malformed : FrameworkDocumentMetadataState.Missing, facts.State);
+        Assert.Empty(facts.TagSpans);
+        Assert.Equal(scoped ? FrontmatterForm.Scoped : FrontmatterForm.Root, facts.Syntax.AuthoredForm);
+        Assert.Equal(duplicate ? 3 : 2, facts.Syntax.Members.Length);
+        var tags = facts.Syntax.Members[0];
+        Assert.Equal(FrameworkMetadataField.Tags, tags.Field);
+        Assert.Equal("tags", yaml[tags.KeySpan.Start..tags.KeySpan.End]);
+        Assert.Equal("[\"Caf\\u00E9\", 工作]", yaml[tags.ValueSpan.Start..tags.ValueSpan.End]);
+        Assert.Equal(["\"Caf\\u00E9\"", "工作"], tags.TagItemSpans.Select(span => yaml[span.Start..span.End]));
+        var selected = Assert.IsType<YamlNode>(facts.Syntax.SelectedMapping);
+        Assert.Same(selected.Mapping?[0], tags.Entry);
+        if (scoped)
+        {
+            var entry = Assert.IsType<YamlMappingEntry>(facts.Syntax.ScopedEntry);
+            Assert.Same(entry.Value, selected);
+            Assert.Equal(entry.Key.Span, facts.Syntax.ScopedKeySpan);
+            Assert.Equal(entry.Value.Span, facts.Syntax.ScopedValueSpan);
+        }
+        if (duplicate)
+        {
+            Assert.Equal(facts.Syntax.Members[2].KeySpan, facts.FailureSpan);
+            Assert.Equal(FrameworkDocumentMetadataFailureKind.Duplicate, facts.FailureKind);
+        }
+        else
+        {
+            Assert.Equal(["Café", "工作"], facts.ObservedTags);
+        }
+    }
+
+    [Fact(DisplayName = "Duplicate scoped containers retain the original later key failure coordinate")]
+    [Trait("Boundary", "Input"), Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void DuplicateScopeRetainsItsFailureCoordinate()
+    {
+        const string yaml = "open-forge: {}\nopen-forge: {}\n";
+        var facts = new FrameworkDocumentMetadataParser().Read(new YamlDocumentParser().Parse(yaml), FrameworkMetadataReadScope.RoutedSource);
+
+        Assert.Equal(FrameworkDocumentMetadataFailureKind.Duplicate, facts.FailureKind);
+        Assert.Equal(yaml.LastIndexOf("open-forge", StringComparison.Ordinal), facts.FailureSpan?.Start);
+        Assert.Equal(FrontmatterForm.Scoped, facts.Syntax.AuthoredForm);
+        Assert.NotNull(facts.Syntax.ScopedEntry);
+    }
+
+    [Theory(DisplayName = "Scoped-only reading ignores root ordinary values while retaining applicability")]
+    [InlineData("description: Native\ntags: [Docs]\n")]
+    [InlineData("description: [Native]\ntags: [invalid tag]\n")]
+    [Trait("Boundary", "Input"), Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void ScopedOnlyReadingIgnoresRootOrdinaryFields(string fields)
+    {
+        var document = new MarkdownDocumentParser().Parse($"---\n{fields}applyTo: '**/*.cs'\n---\n");
+        var facts = new FrameworkDocumentMetadataParser().Parse(document, FrameworkMetadataReadScope.ScopedOnly);
+
+        Assert.Equal(FrameworkDocumentMetadataState.Missing, facts.State);
+        Assert.Null(facts.ObservedDescription);
+        Assert.Empty(facts.ObservedTags);
+        Assert.Empty(facts.Syntax.Members);
+        Assert.Equal(ApplyToMetadataState.Valid, facts.ApplyTo.State);
+    }
+
+    [Theory(DisplayName = "Explicit nonmapping scoped keys keep their existing state without root fallback")]
+    [InlineData("", false)]
+    [InlineData("null", false)]
+    [InlineData("[]", false)]
+    [InlineData("[Scoped]", false)]
+    [InlineData("*foreign", true)]
+    [Trait("Boundary", "Input"), Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void ExplicitNonMappingScopeKeyNeverFallsBackToRoot(string value, bool malformed)
+    {
+        var facts = Parse($"---\nforeign: &foreign {{description: Alias, tags: [Alias]}}\ndescription: Root\ntags: [Root]\nopen-forge: {value}\n---\n");
+
+        Assert.Equal(malformed ? FrameworkDocumentMetadataState.Malformed : FrameworkDocumentMetadataState.Missing, facts.State);
+        Assert.Null(facts.ObservedDescription);
+        Assert.Empty(facts.ObservedTags);
+        Assert.Equal(FrontmatterForm.Scoped, facts.Syntax.AuthoredForm);
+        Assert.NotNull(facts.Syntax.ScopedEntry);
+        Assert.Empty(facts.Syntax.Members);
+    }
+
+    [Fact(DisplayName = "Applicability alone and absent frontmatter do not establish ordinary metadata authorship")]
+    [Trait("Boundary", "Input"), Trait("Feature", "framework-document-metadata"), Trait("Evidence", "Unit")]
+    public void MissingOrdinaryMetadataHasSyntaxWithoutAnAuthoredForm()
+    {
+        Assert.Null(Parse("# Body\n").Syntax.AuthoredForm);
+        Assert.Null(Parse("---\napplyTo: '**/*.cs'\n---\n").Syntax.AuthoredForm);
+    }
+
     private static FrameworkDocumentMetadataFacts Parse(string source)
     {
         var document = new MarkdownDocumentParser().Parse(source);
-        return new FrameworkDocumentMetadataParser().Parse(document);
+        return new FrameworkDocumentMetadataParser().Parse(document, FrameworkMetadataReadScope.RoutedSource);
     }
 }

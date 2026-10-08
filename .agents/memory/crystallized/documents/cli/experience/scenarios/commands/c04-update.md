@@ -395,3 +395,31 @@ Name the target conflict and preserve the complete selected update.
 ### Verification
 
 Verify no replacement, pruning or adoption across that boundary; apply the owning command’s ownership-observation rule separately.
+
+## C04-12
+
+**Situation:** Update delivers owned files in the workspace form, including a file left in the previous form
+
+**Disposition:** Added. Reconcile owned Framework content with the selected metadata form.
+
+### Starting point
+
+W1 has trusted Framework ownership and independently available canonical sources. Its settings select root, but one eligible owned target remains scoped. Record a user-owned scoped note, overwrite bytes, Extension bytes, and settings bytes. In F28, the owned target is the edited scoped file that Configure kept.
+
+Fixture: `W1`, with the root preference already saved before Update.
+
+### Steps
+
+```text
+open-forge update --automatic
+```
+
+### Expected result
+
+Update renders intended Framework content in root form and replaces eligible owned differences, including the file left in scoped form. Unlike Configure's bounded conversion, ordinary Update reconciles an edited owned Framework target with the intended payload. It preserves user-owned notes, overwrite companions, and Extension content outside root Update's scope. It never asks for the form or writes the settings key.
+
+### Verification
+
+**State:** Compare replaced bytes with independently rendered canonical payload and projected `Entries`. Check that settings and out-of-scope content remain byte-identical. In F28, record that the previously kept owned edit is replaced by the explicit Update, while the user note survives.
+
+**Output:** Check replacement identities and counts against actual effects. Check that the selected form introduces neither a question nor a settings effect.

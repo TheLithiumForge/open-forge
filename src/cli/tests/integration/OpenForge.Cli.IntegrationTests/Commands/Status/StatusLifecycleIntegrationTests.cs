@@ -1,6 +1,11 @@
 using System.Text;
+using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.IntegrationTests.Framework.Distribution.Operational.Shared.Frontmatter;
+using OpenForge.Cli.IntegrationTests.Hosting;
 
 using OpenForge.Cli.TestSupport;
 
@@ -8,6 +13,62 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 public sealed class StatusLifecycleIntegrationTests
 {
+    [Fact(DisplayName = "Status reports matching root Framework delivery as current"), Trait("Boundary", "Host"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
+    public async Task MatchingRootDeliveryIsCurrent()
+    {
+        using var workspace = TemporaryWorkspace.Create("status-root-framework");
+        FrameworkLifecycleFrontmatterFixture.Write(workspace, FrontmatterForm.Root);
+        workspace.WriteText(WorkspaceSettingsDefinitions.RelativePath, """{"schemaVersion":1,"frontmatter":"root"}""");
+        using var result = await ReadFrontmatterStatusAsync(workspace);
+        Assert.Equal("current", Assert.Single(result.RootElement.GetProperty("data").GetProperty("frameworkFiles").EnumerateArray())
+            .GetProperty("state").GetString());
+        Assert.DoesNotContain(result.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("code").GetString() == "status.framework-target-changed");
+    }
+
+    [Theory(DisplayName = "Status reports opposite Framework frontmatter forms as managed changes"), Trait("Boundary", "Host"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
+    [InlineData("root", (int)FrontmatterForm.Scoped)]
+    [InlineData("scoped", (int)FrontmatterForm.Root)]
+    public async Task OppositeFormReportsManagedChange(string setting, int authoredForm)
+    {
+        using var workspace = TemporaryWorkspace.Create("status-opposite-framework");
+        FrameworkLifecycleFrontmatterFixture.Write(workspace, (FrontmatterForm)authoredForm);
+        workspace.WriteText(WorkspaceSettingsDefinitions.RelativePath, $$"""{"schemaVersion":1,"frontmatter":"{{setting}}"}""");
+        using var result = await ReadFrontmatterStatusAsync(workspace);
+        Assert.Equal("changed", Assert.Single(result.RootElement.GetProperty("data").GetProperty("frameworkFiles").EnumerateArray())
+            .GetProperty("state").GetString());
+        Assert.Contains(result.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("code").GetString() == "status.framework-target-changed");
+    }
+
+    [Theory(DisplayName = "Status leaves Framework comparison unavailable when settings cannot supply a form")]
+    [Trait("Boundary", "Host"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task InvalidSettingsMakesComparisonUnavailable(bool unavailable)
+    {
+        using var workspace = TemporaryWorkspace.Create("status-invalid-form");
+        FrameworkLifecycleFrontmatterFixture.Write(workspace, FrontmatterForm.Scoped);
+        if (unavailable) workspace.CreateDirectory(WorkspaceSettingsDefinitions.RelativePath);
+        else workspace.WriteText(WorkspaceSettingsDefinitions.RelativePath, """{"schemaVersion":1,"frontmatter":"unknown"}""");
+        using var result = await ReadFrontmatterStatusAsync(workspace);
+        Assert.Equal("unavailable", Assert.Single(result.RootElement.GetProperty("data").GetProperty("frameworkFiles").EnumerateArray())
+            .GetProperty("state").GetString());
+        Assert.Contains(result.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("code").GetString() == "status.framework-target-unavailable");
+        Assert.DoesNotContain(result.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("code").GetString() == "status.framework-target-changed");
+    }
+
+    private static async Task<JsonDocument> ReadFrontmatterStatusAsync(TemporaryWorkspace workspace)
+    {
+        var before = workspace.SnapshotHashes();
+        var run = await CliHostCapture.RunAsync(["status", "--workspace", workspace.Path, "--format", "json", "--detail", "full"], workspace.Path);
+        Assert.Equal(string.Empty, run.Error);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        return JsonDocument.Parse(run.Output);
+    }
+
     [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Framework ignores recorded source identity and compares the target with the running payload"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
     public async Task RecordedSourceIdentityDoesNotReplaceCurrentPayloadComparison()

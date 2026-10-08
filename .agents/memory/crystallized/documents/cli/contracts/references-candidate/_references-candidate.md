@@ -25,7 +25,7 @@ physical entrypoint is canonicalized by identity and processed once. Candidate
 staging remains until a separate accepted route migration moves the contracts;
 the proved conformance behavior does not authorize that migration.
 
-The command does not ship yet. It is stateless, read-only, and non-shipping: it
+The command ships with the public beta CLI. It is stateless and read-only: it
 reports direct reference facts without modifying the workspace, loading target
 bodies into context, fetching external URLs, or maintaining a persistent index.
 

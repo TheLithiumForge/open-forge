@@ -207,6 +207,11 @@ before plan completion.
 Metadata acquisition follows source contracts and contributes only admitted
 facts. Behavior does not define another metadata source.
 
+Ordinary routed metadata reads root and scoped forms under the [shared
+rule](../../shared-operation-contract.md#frontmatter-form). Output selection
+does not filter readable forms. Generated metadata uses the selected Open Forge
+values. Authored frontmatter projections preserve the complete original block.
+
 Read `applyTo` declarations from both the frontmatter root and scoped
 `open-forge` mapping when present, including the root declaration when the
 scoped mapping also exists. Equivalent normalized declarations form one set.

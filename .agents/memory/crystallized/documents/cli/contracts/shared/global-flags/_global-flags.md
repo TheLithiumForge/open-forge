@@ -10,8 +10,8 @@ open-forge:
 ## Status And Authority
 
 This routed set is the accepted current Crystallized authority for shared global
-flags. The flags define current behavior for the new CLI and do not ship yet.
-Implementation and executable evidence are tracked in
+flags. The flags define current behavior and ship with the public beta CLI.
+Current implementation and release work is tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md).
 This entrypoint provides navigation only. Consumers link directly to the
 Interface for public definitions and to the Behavior file for technology-neutral

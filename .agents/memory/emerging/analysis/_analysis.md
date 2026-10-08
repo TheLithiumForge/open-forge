@@ -21,3 +21,4 @@ Analysis preserves useful reasoning, investigation, or comparison that is not ac
 ## Entries
 
 - [Unaccepted Memory authority proposal with links to historical CLI retrospective evidence](cli-design-retrospective/_cli-design-retrospective.md) - #Memory #Analysis #Contextual #Candidate #CLI #Framework #Retrospective #Design
+- [Research on moving routed metadata from the open-forge scope to root frontmatter keys, whether to align with Google's Open Knowledge Format, and other improvements found before 1.0](frontmatter-root-keys-and-okf.md) - #Memory #Analysis #Contextual #Candidate #Framework #Frontmatter #Metadata #Interoperability #Release

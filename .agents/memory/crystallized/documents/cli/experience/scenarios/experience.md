@@ -1201,3 +1201,42 @@ Use current-comparison wording. A source-only change is not evidence that the us
 Record actual outcome, state, and communication separately from this specification.
 
 **Execution constraint:** Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.
+
+## X31
+
+**Situation:** Every delivered Markdown file equals the canonical payload rendered in the workspace form, checked independently
+
+**Disposition:** Added. Verify delivered file bytes against an independent expectation for the selected form.
+
+**Who:** A maintainer completing the user task, without relying on internal delivery reports.
+
+**Goal:** Verify the complete Markdown delivery in the workspace's selected form.
+
+### Starting point
+
+Use W0 for fresh Framework delivery, or W1 for Extension delivery and Configure conversion. Canonical scoped Framework and selected Extension payloads, their manifests, the effective workspace preference, and the intended route topology are independently available. Record user files and edited owned targets separately before conversion.
+
+Fixture: `W0` or `W1`, with an independently enumerated complete selected delivery inventory.
+
+### Steps
+
+1. Carry out the selected Install, Extension Install, or Configure operation on the real workspace state.
+2. Enumerate every selected delivered Markdown target from the canonical payload inventory and manifests, independently of printed effects.
+3. Construct expected bytes in the workspace form and compare every delivered target byte for byte.
+4. Check generated `Entries` against an independent projection of the resulting route topology. Compare kept edited targets and user files separately with their saved bytes.
+
+### Expected result
+
+Every newly delivered or converted Markdown target equals its canonical source rendered under the [Frontmatter Form contract](../../shared-operation-contract.md#frontmatter-form), with independently projected generated `Entries` where the operation owns navigation. Scoped rendering preserves canonical bytes. Root rendering moves only the leading `open-forge` mapping in eligible `.md` files under `.agents/`, excluding `SKILL.md`. Native Skills and ineligible Markdown retain canonical bytes. Body content outside generated navigation remains byte-identical, including fenced examples.
+
+The independent expectation does not call the production renderer or accept hashes copied from the report. Root collisions with foreign description, responsibility, or tags, or conflicting root `applyTo`, make delivery invalid under the existing command boundary. Equivalent root `applyTo` stays in place and the moved copy is dropped. Kept edited files and independently authored files are preservation checks, rather than claimed conversion effects.
+
+### What the person sees
+
+Delivery or conversion identifies the actual selected files and form. Configure reports kept owned paths and reasons. No report substitutes for the independent comparison or implies that kept user content was converted.
+
+### Verification
+
+**State:** Check the entire independently enumerated delivery set, expected form, exact bytes, and projected navigation. Check native and ineligible assets separately. Compare the edited owned file and user note with their pre-conversion byte copies, and verify that inventory hashes continue to identify canonical repository bytes.
+
+**Output:** Compare reported paths, effects, form, and kept reasons with actual delivery and preservation results. Record outcome, state, and communication separately from this specification.

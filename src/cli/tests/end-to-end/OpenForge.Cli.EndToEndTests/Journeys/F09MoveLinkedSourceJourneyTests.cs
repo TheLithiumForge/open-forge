@@ -1,5 +1,6 @@
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
@@ -267,7 +268,7 @@ public sealed class F09MoveLinkedSourceJourneyTests
                 IncomingPath,
                 UnrelatedBytesPath);
 
-            await RunSetupAsync(workspace, "install", "--automatic");
+            await RunSetupAsync(workspace, JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
             await RunSetupAsync(
                 workspace,
                 "route", "init", "guidance/team", "--description", "Team", "--tag=Team");

@@ -17,11 +17,11 @@
   "counts": {
     "routedFiles": 56,
     "startupFiles": 11,
-    "startupTokens": 6686,
+    "startupTokens": 6711,
     "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 351,
-    "allTokens": 34864,
-    "startupShare": 19.175223726480036714089031666,
+    "mayLoadAgainTokens": 347,
+    "allTokens": 35162,
+    "startupShare": 19.084219133278822567457072772,
     "rootCategories": 7,
     "entriesSectionsCurrent": 25,
     "entriesSectionsStale": 0,
@@ -48,44 +48,44 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 25541,
-          "bytes": 25541,
-          "tokens": 6386
+          "characters": 25785,
+          "bytes": 25785,
+          "tokens": 6447
         },
         "current": {
           "files": 11,
-          "characters": 26741,
-          "bytes": 26741,
-          "tokens": 6686
+          "characters": 26841,
+          "bytes": 26841,
+          "tokens": 6711
         },
         "difference": {
           "files": 0,
-          "characters": 1200,
-          "bytes": 1200,
-          "tokens": 300
+          "characters": 1056,
+          "bytes": 1056,
+          "tokens": 264
         },
         "mayLoadAgain": {
           "files": 1,
-          "characters": 1401,
-          "bytes": 1401,
-          "tokens": 351
+          "characters": 1385,
+          "bytes": 1385,
+          "tokens": 347
         }
       },
       "allRouted": {
         "files": 56,
-        "characters": 139456,
-        "bytes": 139456,
-        "tokens": 34864
+        "characters": 140645,
+        "bytes": 140645,
+        "tokens": 35162
       },
-      "startupShare": 19.175223726480036714089031666,
+      "startupShare": 19.084219133278822567457072772,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
-          "bytes": 1401,
+          "bytes": 1385,
           "layers": [
             {
               "path": ".agents/memory/emerging/_emerging.md",
-              "bytes": 1401
+              "bytes": 1385
             }
           ]
         }

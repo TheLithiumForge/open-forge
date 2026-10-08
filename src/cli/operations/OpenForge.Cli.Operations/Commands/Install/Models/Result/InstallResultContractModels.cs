@@ -352,6 +352,8 @@ internal sealed record InstallVerification
 
 internal sealed record InstallResultFacts
 {
+    internal InstallFrontmatter? Frontmatter { get; init; }
+
     internal InstallResultFacts(InstallResultFactsInput input)
     {
         if (input.Classification is { } value)

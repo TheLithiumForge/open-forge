@@ -33,7 +33,7 @@ public sealed class UpdateRemovedFilesIntegrationTests
         var expected = workspace.ReadBytes(ExcludedOwnedPath);
         var ownership = workspace.ReadBytes(UpdateIntegrationWorkspace.OwnershipPath);
         workspace.RemoveFile(ExcludedOwnedPath);
-        const string settings = """{"removedFiles":[".agents/patterns/_patterns.md"]}""";
+        const string settings = """{"frontmatter":"scoped","removedFiles":[".agents/patterns/_patterns.md"]}""";
         workspace.ReplaceText(".agents/open-forge.json", settings);
 
         var excluded = await workspace.ExecuteAsync(workspace.Request(force: true, prune: true, automatic: true));
@@ -44,7 +44,7 @@ public sealed class UpdateRemovedFilesIntegrationTests
         Assert.Equal(ownership, workspace.ReadBytes(UpdateIntegrationWorkspace.OwnershipPath));
         Assert.Equal(settings, workspace.ReadText(".agents/open-forge.json"));
 
-        workspace.ReplaceText(".agents/open-forge.json", "{}");
+        workspace.ReplaceText(".agents/open-forge.json", "{\"frontmatter\":\"scoped\"}");
         var optedIn = await workspace.ExecuteAsync(workspace.Request());
 
         Assert.Equal(CliSemanticStatus.Complete, optedIn.Status);

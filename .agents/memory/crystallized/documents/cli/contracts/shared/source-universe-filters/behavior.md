@@ -11,8 +11,8 @@ open-forge:
 
 This file is the accepted current Crystallized authority for the
 technology-neutral resolution and conformance behavior behind the [Shared
-Source-Universe Filters Interface Contract](interface.md). The commands that
-apply the contract do not ship yet; implementation and executable evidence are tracked in
+Source-Universe Filters Interface Contract](interface.md). The `find` and
+`references` commands apply the contract in the public beta CLI. Current implementation and release work is tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md). The [Shared Result
 Coordinates](../result-coordinates/interface.md) define the shared result
 boundary. The [CLI Architecture](../../../architecture.md) defines filesystem,

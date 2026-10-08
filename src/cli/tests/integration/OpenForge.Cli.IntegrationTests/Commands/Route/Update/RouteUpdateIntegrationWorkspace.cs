@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning.Metadata;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning.Metadata;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates.Models;
@@ -317,7 +319,8 @@ internal sealed partial class RouteUpdateIntegrationWorkspace : IDisposable
                 new PhysicalPathResolver()),
             new RouteUpdateLayerObserver(new SourceDocumentSnapshotReader()),
             new MarkdownDocumentParser(),
-            selectedYamlParser);
+            selectedYamlParser,
+            new PhysicalPathResolver());
     }
 
     private static RouteUpdateMetadataPatcher CreateMetadataPatcher(

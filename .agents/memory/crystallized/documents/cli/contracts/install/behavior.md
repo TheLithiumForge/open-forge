@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current install rules for setup selection, additive restoration, management establishment, verification and recovery
+  description: Current install rules for setup selection, additive restoration, bounded frontmatter conversion, management establishment and recovery
   responsibility: Define how install resolves selections and Framework facts, plans one safe establishment or configuration, and forms its result
   tags: [Memory, Crystallized, CLI, Release, Command, Contract, Install, Framework, Behavior, Determinism, Lifecycle, Safety, Recovery, CurrentTruth]
 ---
@@ -91,7 +91,8 @@ The resolver:
    Boolean each. No occurrence wins by order.
 4. Resolves the exact current directory or exact `--workspace` value through the
    shared contract. It does not discover another root.
-5. Resolves the preset and Custom row values under the Interface's repetition
+5. Resolves the preset, frontmatter, and Custom row values under the Interface's
+   repetition
    and composition rules before setup selection.
 6. Preserves independent dimensions: automatic does not set force, and dry-run
    does not remove authority from the plan it previews.
@@ -124,8 +125,19 @@ It also retains their ownership publication for safely installed replacements
 and preserved canonical bases. Settings and ignore files remain authored inputs.
 Loader absence alone does not establish initial-adoption eligibility when a
 Framework receipt already identifies an established installation. Explicit
-`--configure` uses the additive preservation boundary rather than initial
-replacement or adoption authority.
+`--configure` uses additive preservation with the narrow frontmatter conversion
+exception below, rather than initial replacement or adoption authority.
+
+After preset resolution, first interactive Install asks
+`How should Open Forge write file metadata?` with root preselected. Choices are
+`Root keys` with `description: and tags: at the top of the frontmatter`, and
+`Scoped under open-forge:` with `open-forge: holds description: and tags:`.
+An explicit `--frontmatter` skips the question. A fresh unattended Install uses
+the flag, then an explicit preference already in settings, otherwise root.
+Every fresh Install writes the resolved key. Ordinary repeated Install and
+Update never ask and never write it. On an installed workspace, explicit
+`--frontmatter` requires `--configure`. Form-only configuration is valid without
+a preset and keeps route choices unchanged.
 
 Plan authored settings, selected payload, required ancestors, affected generated
 navigation and the bounded Git-ignore section together. Use the existing
@@ -135,7 +147,7 @@ while prospective topology uses the planned settings. Add retains narrower
 omissions. A broad Memory exclusion may be replaced by the complete explicit
 state selection, preserving the states the user chose to omit.
 
-Configuration has a distinct additive admission before ordinary managed
+Route configuration has a distinct additive admission before ordinary managed
 divergence. It creates missing eligible selected defaults and retains occupied
 authored files, overwrite companions and compatible route hosts. Existing
 unselected managed targets retain their ordinary identity checks. It never
@@ -144,6 +156,18 @@ bytes as proof of ownership. Selected missing scaffolding may be recreated after
 checkout with or without an ownership file when the existing loader and host
 boundaries are safely recognized. Competing manager claims, ambiguous topology,
 unsafe paths or invalid document boundaries still block the complete plan.
+
+As a narrow exception to Configure's additive-only rule, Configure compares
+each owned eligible delivered target with the payload rendered in the selected
+form and in the other form. A match with the selected form needs no effect. A
+match with the other form becomes one whole-file replacement in the selected
+form with projected `Entries`.
+
+Targets matching neither form, including edited files and Extension files whose
+source is unavailable, are kept unchanged and reported. Excluded, user-authored,
+Library, and overwrite files are never touched. Retention under this rule does
+not block the form change. The settings write and conversions form one reviewed
+plan with ordinary recovery and the existing safety and permission checks.
 
 Remove records the selected omission and releases only Framework receipts for
 the supplied defaults in that selected canonical subtree. It does not delete
@@ -191,7 +215,8 @@ non-directory, escaping, aliased, or otherwise unsafe boundaries return
 `blocked` before lifecycle work. The resolver never substitutes a Git root,
 package root, marker location, nested `.agents`, or nearby source tree.
 
-The source resolver admits only the embedded current Framework payload. It
+For ordinary Install, the source resolver admits only the embedded current
+Framework payload. It
 validates current destination identity, supported file kinds, source identity,
 and containment. Safely unavailable payload coverage is `incomplete`; malformed,
 ambiguous, or unsafe source identity is `blocked`. Force cannot make an
@@ -216,7 +241,8 @@ The closed current-fact universe includes:
   and
 - recognized recovery-bundle provenance, kept outside the ownership lock.
 
-It excludes arbitrary providers, package sources, Extension payloads, overwrite
+Ordinary Install excludes arbitrary providers, package sources, Extension
+payloads, overwrite
 companions as Framework targets, retired-only paths, files outside the closed
 Framework footprint, and the repository `.temp/` directory.
 
@@ -225,11 +251,15 @@ bounded owned Git-ignore section as separate effects. The ordinary selected
 fact universe is the closed base Install subset. Ownership may
 also contain scoped paths and regions from Route Init. Preserve those receipts
 and current content without selecting them as root effects or checking them
-against stored integrity facts.
+against stored integrity facts. Configure's frontmatter conversion also observes
+owned eligible Framework and Extension delivered targets, including scoped
+copies, and their available source bytes. This grants only the conversion effects
+defined above, with shared rendering eligibility and existing permissions.
 
 ## Ownership Observation And Publication
 
-The generated `.agents/open-forge.lock.json` is the only state input and output.
+The generated `.agents/open-forge.lock.json` is the only ownership state file.
+The authored `.agents/open-forge.json` supplies settings.
 Read its ownership receipts with the forgiving workspace reader. An absent
 ownership file is known empty. Invalid or unreadable existing ownership cannot
 establish the route-sharing policy and blocks Install before effects, including
@@ -419,8 +449,10 @@ is `blocked` when unsafe. Neither writes.
 ### Trusted exact managed state
 
 A Framework receipt selects the base footprint, and its current source content
-matches the running payload under the operation-time comparison policy. The
-current generated navigation also matches the intended projection. Install forms
+matches the running payload rendered in the workspace's frontmatter form under
+the existing operation-time comparison policy. Source inventory hashes retain
+repository-byte identity. Current generated navigation also matches the intended
+projection. Install forms
 a verified no-op and preserves unrelated scoped ownership and content. It does not invent a write to normalize timestamps, formatting,
 provenance, or unrelated bytes. `--force` and `--automatic` do not change the
 no-op.
@@ -457,7 +489,8 @@ that differs from the intended projection is also divergent unless its authored
 host verifies and the difference is exactly the bounded navigation migration
 for the scoped adoption above. A stale source version or an unselected scoped
 claim does not establish divergence.
-Install does not reconcile any of these states. It forms no mutation plan,
+Outside Configure's bounded form conversion, Install does not reconcile these
+states. It forms no mutation plan,
 returns `blocked`, preserves current bytes, and directs the caller to
 `open-forge update`. The same result applies when `--force` is present. Initial
 force is not managed-update authority.

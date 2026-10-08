@@ -1,4 +1,7 @@
 using System.Text;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Transformation.Models;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -65,7 +68,9 @@ internal sealed class ExtensionInstallTopologyBuilder
             .Select(file => ReadPayload(file))
             .GroupBy(payload => payload.PortableKey, StringComparer.Ordinal)
             .Select(ReadSharedPayload)
-            .ToDictionary(payload => payload.Path, payload => payload.Bytes, StringComparer.Ordinal);
+            .ToArray()
+            .ToDictionary(payload => payload.Path,
+                payload => RenderPayload(payload, settings.Frontmatter), StringComparer.Ordinal);
         var packagePaths = packageBytes.Keys.ToHashSet(StringComparer.Ordinal);
         var eligibleOverlayPaths = await ReadEligibleOverlayPathsAsync(
             catalogue,
@@ -469,6 +474,18 @@ internal sealed class ExtensionInstallTopologyBuilder
         }
 
         return canonical;
+    }
+
+    private static byte[] RenderPayload(PayloadBytes payload, FrontmatterForm form)
+    {
+        var rendered = WorkspacePayloadRenderer.Render(payload.Path, payload.Bytes, form);
+        if (rendered.State == FrameworkFrontmatterTransformState.Invalid)
+        {
+            throw new InvalidDataException(rendered.Cause);
+        }
+
+        return (rendered.Bytes
+            ?? throw new InvalidOperationException("A valid Extension payload rendering requires bytes.")).ToArray();
     }
 
     private async ValueTask<HashSet<string>> ReadEligibleOverlayPathsAsync(

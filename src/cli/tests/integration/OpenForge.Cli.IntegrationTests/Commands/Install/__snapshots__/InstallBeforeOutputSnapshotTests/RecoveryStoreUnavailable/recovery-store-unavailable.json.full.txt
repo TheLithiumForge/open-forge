@@ -67,7 +67,10 @@
       "action": "none",
       "outcome": "not-requested"
     },
-    "verification": "not-requested"
+    "verification": "not-requested",
+    "frontmatter": {
+      "form": "root"
+    }
   },
   "recovery": {
     "path": null,

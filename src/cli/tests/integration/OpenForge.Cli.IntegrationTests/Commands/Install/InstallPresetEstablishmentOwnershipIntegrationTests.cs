@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
@@ -27,7 +28,7 @@ public sealed class InstallPresetEstablishmentOwnershipIntegrationTests
         var original = matchesPayload ? Encoding.UTF8.GetString(asset.Bytes.AsSpan()) : "# Local patterns\n\nKeep my pattern notes.\n";
         workspace.WriteText(path, original);
         var operation = InstallOperationFactory.Create(InstallInteractionTestSupport.Unavailable(), workspace.LockStoreRoot);
-        var request = workspace.Request() with { Setup = new(false, InstallPreset.Essentials, []) };
+        var request = workspace.Request() with { Setup = new(false, InstallPreset.Essentials, []) { Frontmatter = FrontmatterForm.Scoped } };
 
         var applied = await operation.ExecuteAsync(request, TestContext.Current.CancellationToken);
 

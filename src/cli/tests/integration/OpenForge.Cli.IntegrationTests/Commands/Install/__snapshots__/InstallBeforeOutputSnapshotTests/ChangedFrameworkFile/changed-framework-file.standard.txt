@@ -4,5 +4,6 @@ Workspace: <workspace>
          <workspace> has changed since it was installed. Install does not replace changed files.
          open-forge update
          Update the existing managed Framework state from a fresh plan.
+Frontmatter: root
   Update the existing managed Framework state from a fresh plan.
 Next: open-forge update

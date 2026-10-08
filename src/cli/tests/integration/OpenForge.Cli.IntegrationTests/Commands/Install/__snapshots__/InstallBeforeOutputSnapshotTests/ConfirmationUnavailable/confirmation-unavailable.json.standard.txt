@@ -301,6 +301,14 @@
       "owner": null
     },
     {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/open-forge.lock.json",
       "kind": "record",
       "action": "created",
@@ -327,7 +335,10 @@
       "directories": 13,
       "sections": 2
     },
-    "lockPath": ".agents/open-forge.lock.json"
+    "lockPath": ".agents/open-forge.lock.json",
+    "frontmatter": {
+      "form": "root"
+    }
   },
   "recovery": {
     "path": null,

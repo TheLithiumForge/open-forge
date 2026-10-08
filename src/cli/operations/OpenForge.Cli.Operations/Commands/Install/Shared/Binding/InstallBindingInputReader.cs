@@ -4,6 +4,9 @@ using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Shell.Parsing;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Binding;
 
@@ -37,10 +40,26 @@ internal static class InstallBindingInputReader
             overrides[parts[0]] = action;
         }
         if (overrides.Count > 0 && preset != InstallPreset.Custom) error = "Route overrides require --preset custom.";
+        var frontmatterFacts = CliOptionResultFactsReader.Read(result, symbols.Frontmatter);
+        FrontmatterForm? frontmatter = null;
+        if (frontmatterFacts.IsExplicit && frontmatterFacts.ValueCount != frontmatterFacts.IdentifierCount)
+            error = "Each --frontmatter requires root or scoped.";
+        foreach (var value in CliOptionResultFactsReader.ReadValues(result, symbols.Frontmatter))
+        {
+            if (!WorkspaceSettingsDefinitions.TryReadFrontmatter(value, out var form))
+            {
+                error = "Frontmatter must be root or scoped.";
+                continue;
+            }
+            if (frontmatter is { } previous && previous != form)
+                error = "Repeated frontmatter values must agree.";
+            frontmatter = form;
+        }
         InstallSetupInput? setup = null;
-        if (configure || presetText is not null || overrides.Count > 0)
+        if (configure || presetText is not null || overrides.Count > 0 || frontmatterFacts.IsExplicit)
             setup = new InstallSetupInput(configure, preset, InstallConfigurationChoices.RouteIds
-                .Where(overrides.ContainsKey).Select(id => new InstallRouteSelection(id, overrides[id])).ToImmutableArray());
+                .Where(overrides.ContainsKey).Select(id => new InstallRouteSelection(id, overrides[id])).ToImmutableArray())
+            { Frontmatter = frontmatter };
         return new InstallBindingInput(
             Force: result.GetValue(symbols.Force),
             Automatic: result.GetValue(symbols.Automatic),

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
@@ -134,6 +135,7 @@ public sealed class ExtensionRemovePlanningIntegrationTests
         await InstallAllAsync(workspace, source);
         var beforeWorkspace = workspace.Snapshot();
         var beforeSource = source.Snapshot();
+        var settingsBefore = workspace.ReadText(WorkspaceSettingsDefinitions.RelativePath);
 
         var run = await workspace.RunAsync(
         [
@@ -149,7 +151,7 @@ public sealed class ExtensionRemovePlanningIntegrationTests
             document.RootElement.GetProperty("findings").EnumerateArray(),
             finding => finding.GetProperty("code").GetString()
                 == "extension-remove.dependency-blocked");
-        Assert.False(File.Exists(workspace.Combine(".agents/open-forge.json")));
+        Assert.Equal(settingsBefore, workspace.ReadText(WorkspaceSettingsDefinitions.RelativePath));
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
     }

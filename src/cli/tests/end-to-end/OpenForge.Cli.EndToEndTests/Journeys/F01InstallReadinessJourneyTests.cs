@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Security.Cryptography;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
@@ -11,13 +12,13 @@ public sealed class F01InstallReadinessJourneyTests
     private const string AgentsPath = "AGENTS.md";
     private const string ClaudePath = "CLAUDE.md";
     private const string OwnershipPath = ".agents/open-forge.lock.json";
+    private const string SettingsPath = PublishedInstallWorkspace.SettingsPath;
     private const string ReadmePath = "README.md";
     private const string LegacyManagedStart = "<!-- open-forge:start -->";
     private const string LegacyManagedEnd = "<!-- open-forge:end -->";
     private const string ManagedStart = "# Open Forge";
     private const string ManagedEnd = "**End of Open Forge managed section.**";
     private const string OccupiedPath = ".agents/guidance/_guidance.md";
-    private const string ExpectedGuidancePayloadSha256 = "47f5fe9f6b5d4bd59c7818664181bac5e912f5ed0eb85ae8c34cbf6b5297b664";
     private const string ExpectedManagedRegion =
         ManagedStart + "\n\n"
         + "Open Forge provides the working rules and context for this workspace.\n\n"
@@ -47,9 +48,11 @@ public sealed class F01InstallReadinessJourneyTests
         ".agents/skills/_skills.md",
     ];
 
-    [Fact(DisplayName = "F01 carries a fresh install through readiness, context, diagnosis, and a no-op repeat"),
+    [Theory(DisplayName = "F01 carries a fresh install through readiness, context, diagnosis, and a no-op repeat"),
      Trait("Feature", "install-readiness"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F01")]
-    public async Task FreshInstallCarriesStateThroughReadinessAndRepeat()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task FreshInstallCarriesStateThroughReadinessAndRepeat(JourneyFrontmatterForm form)
     {
         using var workspace = PublishedJourneyWorkspace.Create("f01-main");
         const string readme = "# F01 workspace\n\nKeep this authored file byte-for-byte.\n";
@@ -68,7 +71,7 @@ public sealed class F01InstallReadinessJourneyTests
 
         var dryRunBefore = workspace.SnapshotState();
         var dryRunExternalBefore = SnapshotExternalStore(workspace);
-        var dryRun = await workspace.RunAsync("install", "--dry-run");
+        var dryRun = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--dry-run"));
         AssertCompleted(dryRun);
         Assert.Contains("Would install the Open Forge Framework into", dryRun.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
@@ -82,7 +85,7 @@ public sealed class F01InstallReadinessJourneyTests
         workspace.LockStore.AssertNoInfrastructure();
 
         var beforeInstall = CaptureEntryKinds(workspace.Path);
-        var installed = await workspace.RunAsync("install", "--automatic");
+        var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertCompleted(installed);
         Assert.Contains("Installed the Open Forge Framework into", installed.StandardOutput, StringComparison.Ordinal);
 
@@ -99,7 +102,7 @@ public sealed class F01InstallReadinessJourneyTests
             .ToArray();
         var installedPayload = createdFiles
             .Where(path => path.StartsWith(".agents/", StringComparison.Ordinal)
-                && !string.Equals(path, OwnershipPath, StringComparison.Ordinal))
+                && path is not OwnershipPath and not SettingsPath)
             .ToArray();
         var createdDirectoriesBelowAgents = createdDirectories
             .Where(path => path.StartsWith(".agents/", StringComparison.Ordinal))
@@ -113,12 +116,13 @@ public sealed class F01InstallReadinessJourneyTests
 
         Assert.Equal(ExpectedPayloadPaths(), installedPayload);
         Assert.Equal([OwnershipPath], createdControlFiles);
+        Assert.Contains(SettingsPath, createdFiles);
         Assert.Contains(".agents", createdDirectories, StringComparer.Ordinal);
         Assert.Equal(ExpectedPayloadDirectories(), createdDirectoriesBelowAgents);
         Assert.Equal([AgentsPath, ClaudePath], createdHosts);
         Assert.Empty(
             createdFiles
-                .Except(ExpectedPayloadPaths().Append(OwnershipPath).Append(AgentsPath).Append(ClaudePath),
+                .Except(ExpectedPayloadPaths().Append(OwnershipPath).Append(SettingsPath).Append(AgentsPath).Append(ClaudePath),
                     StringComparer.Ordinal));
         Assert.Contains(
             $"Created {installedPayload.Length} files and {createdDirectoriesBelowAgents.Length} directories under .agents",
@@ -209,9 +213,11 @@ public sealed class F01InstallReadinessJourneyTests
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
     }
 
-    [Fact(DisplayName = "F01 preserves authored AGENTS content while adding only the bounded managed section"),
+    [Theory(DisplayName = "F01 preserves authored AGENTS content while adding only the bounded managed section"),
      Trait("Feature", "install-readiness"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F01")]
-    public async Task ExistingAgentsContentIsPreserved()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task ExistingAgentsContentIsPreserved(JourneyFrontmatterForm form)
     {
         using var workspace = PublishedJourneyWorkspace.Create("f01-existing-agents");
         const string readme = "# Existing host workspace\n";
@@ -222,7 +228,7 @@ public sealed class F01InstallReadinessJourneyTests
         var before = CaptureEntryKinds(workspace.Path);
         var authoredBytes = File.ReadAllBytes(workspace.Combine(AgentsPath));
 
-        var result = await workspace.RunAsync("install", "--automatic");
+        var result = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertCompleted(result);
         Assert.Contains("AGENTS.md", result.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Open Forge section added; your content was kept", result.StandardOutput, StringComparison.Ordinal);
@@ -258,14 +264,16 @@ public sealed class F01InstallReadinessJourneyTests
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
     }
 
-    [Fact(DisplayName = "F01 updates legacy root hosts to canonical boundaries while preserving authored bytes"),
+    [Theory(DisplayName = "F01 updates legacy root hosts to canonical boundaries while preserving authored bytes"),
      Trait("Feature", "install-readiness"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F01")]
-    public async Task UpdateMigratesLegacyRootHostsToCanonicalBoundaries()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task UpdateMigratesLegacyRootHostsToCanonicalBoundaries(JourneyFrontmatterForm form)
     {
         using var workspace = PublishedJourneyWorkspace.Create("f01-update-managed-host-migration");
         workspace.ExpectCoreInstall();
 
-        var install = await workspace.RunAsync("install", "--automatic");
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertCompleted(install);
 
         var canonicalAgents = Encoding.UTF8.GetBytes(ExpectedManagedRegion);
@@ -327,9 +335,11 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Equal(expectedClaude, File.ReadAllBytes(workspace.Combine(ClaudePath)));
     }
 
-    [Fact(DisplayName = "F01 previews and preserves an existing category entrypoint without force"),
+    [Theory(DisplayName = "F01 previews and preserves an existing category entrypoint without force"),
      Trait("Feature", "install-readiness"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F01")]
-    public async Task ExistingCategoryEntrypointIsPreservedWithoutForce()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task ExistingCategoryEntrypointIsPreservedWithoutForce(JourneyFrontmatterForm form)
     {
         using var workspace = PublishedJourneyWorkspace.Create("f01-occupied");
         workspace.ExpectFiles(".agents/guidance/_guidance.overwrite.md");
@@ -355,7 +365,7 @@ public sealed class F01InstallReadinessJourneyTests
         var unrelatedBytes = File.ReadAllBytes(workspace.Combine("notes/unrelated.txt"));
         var beforePreview = workspace.SnapshotState();
         var externalBeforePreview = SnapshotExternalStore(workspace);
-        var preview = await workspace.RunAsync("install", "--dry-run");
+        var preview = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--dry-run"));
         AssertCompleted(preview);
         Assert.Contains("Would install the Open Forge Framework into", preview.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("replacing 1 existing file", preview.StandardOutput, StringComparison.Ordinal);
@@ -365,7 +375,7 @@ public sealed class F01InstallReadinessJourneyTests
         workspace.LockStore.AssertNoInfrastructure();
 
         var beforeForce = CaptureEntryKinds(workspace.Path);
-        var forced = await workspace.RunAsync("install", "--automatic");
+        var forced = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertCompleted(forced);
         Assert.Contains("replacing 1 existing file", forced.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(OccupiedPath, forced.StandardOutput, StringComparison.Ordinal);
@@ -379,7 +389,7 @@ public sealed class F01InstallReadinessJourneyTests
             .ToArray();
         var createdPayload = createdFiles
             .Where(path => path.StartsWith(".agents/", StringComparison.Ordinal)
-                && !string.Equals(path, OwnershipPath, StringComparison.Ordinal))
+                && path is not OwnershipPath and not SettingsPath)
             .ToArray();
         var createdDirectories = afterForce.Keys
             .Except(beforeForce.Keys, StringComparer.Ordinal)
@@ -393,6 +403,7 @@ public sealed class F01InstallReadinessJourneyTests
                 .Append(".agents/guidance/_guidance.overwrite.md")
                 .Order(StringComparer.Ordinal),
             createdPayload);
+        Assert.Contains(SettingsPath, createdFiles);
         Assert.Equal(
             ExpectedPayloadDirectories().Where(path => !beforeForce.ContainsKey(path)),
             createdDirectories);
@@ -403,8 +414,11 @@ public sealed class F01InstallReadinessJourneyTests
         var occupiedPath = workspace.Combine(OccupiedPath);
         var occupiedAttributes = File.GetAttributes(occupiedPath);
         Assert.Equal((FileAttributes)0, occupiedAttributes & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device));
+        var canonicalGuidance = File.ReadAllText(Path.Combine(
+            PublishedExecutableTarget.FindRepositoryRoot(), "src", "open-forge", ".agents", "guidance", "_guidance.md"));
+        var expectedGuidanceBytes = Encoding.UTF8.GetBytes(JourneyFrontmatter.RenderCanonical(canonicalGuidance, form));
         Assert.Equal(
-            ExpectedGuidancePayloadSha256,
+            Convert.ToHexStringLower(SHA256.HashData(expectedGuidanceBytes)),
             Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(occupiedPath))).ToLowerInvariant());
         Assert.NotEqual(occupant, File.ReadAllText(occupiedPath));
         var preserved = File.ReadAllText(workspace.Combine(".agents/guidance/_guidance.overwrite.md"));
@@ -416,9 +430,11 @@ public sealed class F01InstallReadinessJourneyTests
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
     }
 
-    [Fact(DisplayName = "F01 reports unavailable confirmation without prompting, then accepts explicit automatic mode"),
+    [Theory(DisplayName = "F01 reports unavailable confirmation without prompting, then accepts explicit automatic mode"),
      Trait("Feature", "install-readiness"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F01")]
-    public async Task RedirectedInstallRequiresExplicitAutomaticMode()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task RedirectedInstallRequiresExplicitAutomaticMode(JourneyFrontmatterForm form)
     {
         using var workspace = PublishedJourneyWorkspace.Create("f01-confirmation");
         const string readme = "# Confirmation workspace\n";
@@ -427,7 +443,7 @@ public sealed class F01InstallReadinessJourneyTests
         var before = workspace.SnapshotState();
         var externalBefore = SnapshotExternalStore(workspace);
 
-        var unavailable = await workspace.RunAsync("install");
+        var unavailable = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form));
         Assert.Equal(4, unavailable.ExitCode);
         Assert.Equal(string.Empty, unavailable.StandardOutput);
         Assert.Contains("Install needs confirmation, and this session cannot ask.", unavailable.StandardError, StringComparison.Ordinal);
@@ -436,7 +452,7 @@ public sealed class F01InstallReadinessJourneyTests
         Assert.Equal(externalBefore, SnapshotExternalStore(workspace));
         workspace.LockStore.AssertNoInfrastructure();
 
-        var applied = await workspace.RunAsync("install", "--automatic");
+        var applied = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertCompleted(applied);
         Assert.Contains("Installed the Open Forge Framework into", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(readme, File.ReadAllText(workspace.Combine(ReadmePath)));

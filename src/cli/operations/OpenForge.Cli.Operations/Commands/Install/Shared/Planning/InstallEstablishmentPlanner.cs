@@ -49,6 +49,8 @@ internal sealed class InstallEstablishmentPlanner
         var intendedState = context.IntendedState;
         var findings = new List<InstallFinding>();
         var effects = new List<InstallFileEffect>();
+        var conversions = intendedState.Configuration?.FrontmatterPlan?.Replacements ?? [];
+        var conversionPaths = conversions.Select(replacement => replacement.Path).ToHashSet(StringComparer.Ordinal);
         var hasEligibleOccupant = false;
         var userOwnedPaths = intendedState.UserOwnedPaths
             .Select(PortableWorkspacePath.CreatePortableKey)
@@ -89,6 +91,7 @@ internal sealed class InstallEstablishmentPlanner
                      value => value.Key,
                      StringComparer.Ordinal))
         {
+            if (conversionPaths.Contains(target.Key)) continue;
             var read = input.CurrentTargets[target.Key];
             var isGeneratedRegion = intendedState.GeneratedRegionPaths.Contains(target.Key);
             var isUserOwned = userOwnedPaths.Contains(
@@ -271,8 +274,24 @@ internal sealed class InstallEstablishmentPlanner
         }
 
         AddConfigurationEffects(intendedState, effects);
+        foreach (var replacement in conversions)
+        {
+            var effect = CreateEffect(new InstallFileEffectInput
+            {
+                Read = replacement.Before,
+                IntendedBytes = replacement.IntendedBytes,
+                Kind = InstallEffectKind.File,
+                Action = InstallEffectAction.Replace,
+                SourceAssetPath = replacement.SourceAssetPath,
+            });
+            if (effect is not null) effects.Add(effect);
+        }
 
-        var ownershipPlan = _ownershipStore.PlanFrameworkOwnership(
+        OwnershipWritePlanResult ownershipPlan;
+        if (request.Configuration is null && request.Frontmatter?.ConvertOwnedFiles == true)
+            ownershipPlan = OwnershipWritePlanResult.Unchanged();
+        else
+            ownershipPlan = _ownershipStore.PlanFrameworkOwnership(
             input.Ownership,
             request.Configuration is not null
                 ? InstallConfigurationOwnership.Build(input, effects)
@@ -280,6 +299,7 @@ internal sealed class InstallEstablishmentPlanner
                 new OwnedSource("embedded-framework", null),
                 effects
                     .Where(effect => effect.Identity.Kind == InstallEffectKind.File)
+                    .Where(effect => intendedState.TargetBytes.ContainsKey(effect.RelativePath))
                     .Select(effect => effect.RelativePath)
                     .Concat(intendedState.PreservedEntrypointPaths)
                     .Concat(input.Ownership.Document.Framework?.Paths ?? [])
@@ -289,6 +309,7 @@ internal sealed class InstallEstablishmentPlanner
                     .Distinct(StringComparer.Ordinal)
                     .ToImmutableArray(),
                 intendedState.GeneratedRegionPaths
+                    .Where(intendedState.TargetBytes.ContainsKey)
                     .Select(path => new OwnedRegion(path, "entries"))
                     .Concat(intendedState.ManagedBlockBytes.Keys.Select(path =>
                         new OwnedRegion(path, WorkspaceOwnershipDefinitions.ManagedBlockRegion)))
@@ -374,18 +395,19 @@ internal sealed class InstallEstablishmentPlanner
             });
     }
 
-    private static void AddConfigurationEffects(InstallIntendedState intended, List<InstallFileEffect> effects)
+    internal static void AddConfigurationEffects(InstallIntendedState intended, List<InstallFileEffect> effects)
     {
         if (intended.Configuration is not { } configuration) return;
         if (configuration.SettingsChange is { } settingsChange)
             effects.Add(ConfigurationEffect(".agents/open-forge.json", settingsChange,
-                configuration.Settings.Snapshot ?? throw new InvalidOperationException("Settings require original bytes.")));
+                configuration.Settings.Snapshot ?? throw new InvalidOperationException("Settings require original bytes."),
+                captureMissing: configuration.FrontmatterPlan?.Replacements.Length > 0));
         if (configuration.IgnoreChange is { } ignoreChange)
             effects.Add(ConfigurationEffect(InstallIgnoreSection.Path, ignoreChange,
-                configuration.Ignore.Snapshot ?? throw new InvalidOperationException("Ignore changes require original bytes.")));
+                configuration.Ignore?.Snapshot ?? throw new InvalidOperationException("Ignore changes require original bytes.")));
     }
 
-    private static InstallFileEffect ConfigurationEffect(string path, PlannedFileChange change, FileStateSnapshot before)
+    private static InstallFileEffect ConfigurationEffect(string path, PlannedFileChange change, FileStateSnapshot before, bool captureMissing = false)
         => new()
         {
             Identity = new()
@@ -396,7 +418,8 @@ internal sealed class InstallEstablishmentPlanner
                 SourceAssetPath = null
             },
             Change = change,
-            RecoveryTarget = RecoveryBundleTarget.Create(change, before),
+            RecoveryTarget = captureMissing && change.Kind == PlannedFileChangeKind.Create
+                ? RecoveryBundleTarget.CreateReversible(change, before) : RecoveryBundleTarget.Create(change, before),
         };
 
     private IReadOnlyList<PlannedDirectoryCreation> CreateDirectoryPlan(

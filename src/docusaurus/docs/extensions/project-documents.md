@@ -69,7 +69,7 @@ Documents are kept top-down. Top-level Documents give an overview of the whole a
 
 > Use the architecture workflow to review this design. Keep proposed changes distinct from the current architecture and update the existing source when accepted.
 
-> Draft a vision for the reporting feature. Keep it proposed until I accept it.
+> Draft a vision for the reporting feature. Keep the draft in Emerging Memory until I accept it.
 
 ## Good to know
 

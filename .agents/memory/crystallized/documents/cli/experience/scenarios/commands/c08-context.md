@@ -427,3 +427,31 @@ Check argument classification and no mutation; keep parser failures distinct fro
 **Disposition:** Deferred; not selected yet. Repeated cancellation outcome without a concrete signal boundary; retain X09 as the shared invariant until a distinct fixture earns coverage.
 
 **Required before reconsideration:** Use a real signal-capable process and deterministic observed boundary; a timeout or invalid argument is not cancellation. Use a genuine capability-appropriate terminal and preserve actual prompt/signal evidence.
+
+## C08-15
+
+**Situation:** Context reads a root-form source
+
+**Disposition:** Added. Read an admitted root-form source with its required route context.
+
+### Starting point
+
+ROUTES exposes `guidance/review-checklist` as an ordinary source with valid root description and tags, a distinctive authored body, and `sidebar_position: 3`. Record the ancestor chain and required startup sources. The root keys do not establish routing by themselves.
+
+Fixture: `ROUTES`, with the source and its required context independently known.
+
+### Steps
+
+```text
+open-forge context guidance/review-checklist
+```
+
+### Expected result
+
+Context reads the admitted source using root Open Forge metadata and the ordinary loading rules. It emits the required startup and route context in contract order, including the selected source's authored frontmatter and body unchanged. The foreign key adds no Open Forge loading meaning. Context creates no state and converts no file.
+
+### Verification
+
+**State:** Compare all source, settings, ownership, and recovery bytes before and after the request. Independently determine the required selected source set and its ordering.
+
+**Output:** Compare the selected content blocks with original source bytes, excluding generated framing. Check actual source identities and order, rather than accepting only a text match for the checklist.

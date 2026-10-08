@@ -370,6 +370,16 @@
       "after": null
     },
     {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/open-forge.lock.json",
       "kind": "record",
       "action": "created",
@@ -519,6 +529,9 @@
         "sourceAssetPath": "CLAUDE.md"
       },
       {
+        "path": ".agents/open-forge.json"
+      },
+      {
         "path": ".agents/open-forge.lock.json"
       }
     ],
@@ -530,7 +543,10 @@
       "action": "publish",
       "outcome": "not-started"
     },
-    "verification": "not-requested"
+    "verification": "not-requested",
+    "frontmatter": {
+      "form": "root"
+    }
   },
   "recovery": {
     "path": null,

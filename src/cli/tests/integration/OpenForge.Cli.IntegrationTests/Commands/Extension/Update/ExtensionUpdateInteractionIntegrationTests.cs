@@ -21,7 +21,7 @@ public sealed class ExtensionUpdateInteractionIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-update-interactive-selection");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         using var source = ExtensionInstallCatalogue.Create(
             "extension-update-interactive-selection-source");
         source.AddPackage(

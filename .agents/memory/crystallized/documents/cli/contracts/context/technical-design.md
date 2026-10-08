@@ -57,6 +57,11 @@ Authored frontmatter uses YamlDotNet source-generated semantics. The semantic
 model preserves the distinction between authored values and CLI-generated
 metadata; it does not replace authored bytes with a private normalized document.
 
+Ordinary routed metadata reads root and scoped forms under the [shared
+rule](../../shared-operation-contract.md#frontmatter-form). Output selection
+does not filter readable forms. Generated metadata uses the selected Open Forge
+values. Authored frontmatter projections preserve the complete original block.
+
 Input decoding is strict UTF-8. Source ranges remain exact and stable for the
 current decoded source, and range-bearing facts are retained through projection
 and diagnostics. Invalid encoding or an unusable range remains the contract's

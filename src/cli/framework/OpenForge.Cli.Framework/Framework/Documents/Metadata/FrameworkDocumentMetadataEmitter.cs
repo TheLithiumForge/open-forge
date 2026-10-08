@@ -9,43 +9,43 @@ namespace OpenForge.Cli.Core.Framework.Documents.Metadata;
 
 internal sealed class FrameworkDocumentMetadataEmitter
 {
-    internal string Emit(FrameworkDocumentMetadata metadata)
+    internal string Emit(FrameworkDocumentMetadata metadata, FrontmatterForm form)
     {
         ArgumentNullException.ThrowIfNull(metadata);
         var applyTo = metadata.ApplyTo.IsEmpty ? null : metadata.ApplyTo.Select(pattern => pattern.Text).ToArray();
-        return Serialize(new FrameworkAuthoredMetadataYamlDocument
+        return Serialize(new FrameworkOpenForgeMetadataYamlModel
         {
-            OpenForge = new FrameworkOpenForgeMetadataYamlModel
-            {
-                Description = metadata.Description,
-                Tags = metadata.Tags.ToArray(),
-                Responsibility = metadata.Responsibility,
-                ApplyTo = applyTo,
-            },
-        }, applyTo);
+            Description = metadata.Description,
+            Tags = metadata.Tags.ToArray(),
+            Responsibility = metadata.Responsibility,
+            ApplyTo = applyTo,
+        }, form);
     }
 
-    internal string EmitOptional(FrameworkDocumentMetadataEmission metadata)
+    internal string EmitOptional(FrameworkDocumentMetadataEmission metadata, FrontmatterForm form)
     {
         ArgumentNullException.ThrowIfNull(metadata);
         var applyTo = metadata.ApplyTo.IsEmpty ? null : metadata.ApplyTo.Select(pattern => pattern.Text).ToArray();
-        return Serialize(new FrameworkAuthoredMetadataYamlDocument
+        return Serialize(new FrameworkOpenForgeMetadataYamlModel
         {
-            OpenForge = new FrameworkOpenForgeMetadataYamlModel
-            {
-                Description = metadata.Description,
-                Tags = metadata.Tags.IsEmpty ? null : metadata.Tags.ToArray(),
-                Responsibility = metadata.Responsibility,
-                ApplyTo = applyTo,
-            },
-        }, applyTo);
+            Description = metadata.Description,
+            Tags = metadata.Tags.IsEmpty ? null : metadata.Tags.ToArray(),
+            Responsibility = metadata.Responsibility,
+            ApplyTo = applyTo,
+        }, form);
     }
 
-    private static string Serialize(FrameworkAuthoredMetadataYamlDocument document, string[]? applyTo)
+    private static string Serialize(FrameworkOpenForgeMetadataYamlModel metadata, FrontmatterForm form)
     {
+        var (document, type) = form switch
+        {
+            FrontmatterForm.Scoped => ((object)new FrameworkAuthoredMetadataYamlDocument { OpenForge = metadata }, typeof(FrameworkAuthoredMetadataYamlDocument)),
+            FrontmatterForm.Root => ((object)metadata, typeof(FrameworkOpenForgeMetadataYamlModel)),
+            _ => throw new ArgumentOutOfRangeException(nameof(form), form, "The frontmatter form is not defined."),
+        };
         var serializer = new StaticSerializerBuilder(new FrameworkMetadataYamlContext())
             .WithQuotingNecessaryStrings()
-            .WithEventEmitter(next => new FrameworkMetadataTagsFlowStyleEmitter(next, applyTo))
+            .WithEventEmitter(next => new FrameworkMetadataTagsFlowStyleEmitter(next, metadata.ApplyTo))
             .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
             .WithNewLine("\n")
             .Build();
@@ -53,7 +53,7 @@ internal sealed class FrameworkDocumentMetadataEmitter
         serializer.Serialize(
             writer,
             document,
-            typeof(FrameworkAuthoredMetadataYamlDocument));
+            type);
         return writer.ToString();
     }
 

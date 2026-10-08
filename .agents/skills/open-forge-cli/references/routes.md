@@ -24,7 +24,7 @@ Supply description, responsibility, and Template values at most once.
 
 `applyTo` globs match from the workspace root and are case-sensitive. `*.py` matches root files, `**/*.py` any depth, and `docs/**` a folder. A leading `!` is literal, not an exclusion. These conditions affect loading, not edit permission. [Discovery](discovery.md#context-source-reference) explains how `--for` evaluates them.
 
-Canonical declarations use a quoted-string list under `open-forge:`. Existing declarations may sit there or at the frontmatter root, as a string or list. Both locations must declare equivalent pattern sets when present. List entries are atomic patterns. String expressions split at top-level commas, with `[,]` for a literal comma. Update preserves the authored location.
+New metadata and quoted-string condition lists use the workspace's frontmatter form. Existing declarations may sit under `open-forge:` or at the frontmatter root, as a string or list. Both locations must declare equivalent pattern sets when present. List entries are atomic patterns. String expressions split at top-level commas, with `[,]` for a literal comma. Update preserves existing metadata locations. A source without Open Forge metadata receives the workspace's form.
 
 ## `route init <route-target>`
 

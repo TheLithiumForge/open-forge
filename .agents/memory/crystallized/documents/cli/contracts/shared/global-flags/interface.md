@@ -10,7 +10,7 @@ open-forge:
 ## Status And Authority
 
 This file is the accepted current Crystallized authority for the caller-visible
-shared global-flag contract. These flags do not ship yet; implementation and executable evidence are tracked in
+shared global-flag contract. These flags ship with the public beta CLI. Current implementation and release work is tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md). Command contracts link here for public
 spelling, values, composition, presentation, errors, and examples instead of
 redefining them.

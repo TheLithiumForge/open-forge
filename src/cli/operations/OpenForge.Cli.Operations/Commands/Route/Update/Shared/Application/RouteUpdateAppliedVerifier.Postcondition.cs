@@ -2,9 +2,7 @@ using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates.Models;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
-using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
-using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 
 namespace OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
@@ -28,7 +26,7 @@ internal sealed partial class RouteUpdateAppliedVerifier
                 actual.Preview.Patch.Tags.Expected)
             && MatchesApplyTo(
                 expected.Preview.Patch.ApplyTo,
-                actual.Observation.Frontmatter)
+                actual.Observation.Metadata.ApplyTo)
             && MatchesBodyTransition(
                 expected.Preview.Plan.Body,
                 actual.Preview.Plan.Body);
@@ -85,14 +83,13 @@ internal sealed partial class RouteUpdateAppliedVerifier
 
     private static bool MatchesApplyTo(
         RouteUpdateApplyToPatch expected,
-        YamlDocumentFacts actualFrontmatter)
+        ApplyToMetadataFacts actual)
     {
         if (!expected.Requested)
         {
             return true;
         }
 
-        var actual = ApplyToMetadataReader.Read(actualFrontmatter);
         if (actual.State == ApplyToMetadataState.Invalid)
         {
             return false;

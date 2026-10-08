@@ -1,5 +1,6 @@
 Installed the Open Forge Framework into <workspace>.
 Workspace: <workspace>
+Frontmatter: root
   .agents/directives/_directives.md                      created
   .agents/guidance/_guidance.md                          created
   .agents/loader.md                                      created
@@ -19,6 +20,7 @@ Workspace: <workspace>
   .agents/templates/_templates.md                        created
   AGENTS.md                                              Open Forge section added; your content was kept
   CLAUDE.md                                              created with an Open Forge section
+  .agents/open-forge.json                                created
   .agents/open-forge.lock.json                           created; records the files above
   Created 17 files and 13 directories under .agents (listed in .agents/open-forge.lock.json).
   Created 13 directories.

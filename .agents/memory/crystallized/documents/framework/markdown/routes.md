@@ -25,7 +25,7 @@ For example, `.agents/patterns/` uses `_patterns.md`.
 
 An Open Forge-authored category entrypoint is represented by:
 
-1. Scoped frontmatter
+1. Leading frontmatter in the workspace's chosen form
 2. One level-1 title
 3. A primary question and compact definition of the category
 4. Any category-level `Axioms` or boundaries

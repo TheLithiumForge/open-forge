@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Reading;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -23,14 +25,16 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
         CliWorkspace workspace,
         FrameworkOwnership ownership,
         FrameworkPayload payload,
+        FrontmatterForm? form,
         CancellationToken cancellationToken)
-        => (await ReadDoctorAsync(workspace, ownership, payload, cancellationToken).ConfigureAwait(false))
+        => (await ReadDoctorAsync(workspace, ownership, payload, form, cancellationToken).ConfigureAwait(false))
             .Select(observation => observation.Target).ToArray();
 
     internal async ValueTask<IReadOnlyList<FrameworkManagedTargetDoctorObservation>> ReadDoctorAsync(
         CliWorkspace workspace,
         FrameworkOwnership ownership,
         FrameworkPayload payload,
+        FrontmatterForm? form,
         CancellationToken cancellationToken)
     {
         var observations = new List<FrameworkManagedTargetDoctorObservation>();
@@ -43,7 +47,7 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
         foreach (var (path, region) in identities)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var intent = ReadIntent(workspace, path, region, payload);
+            var intent = ReadIntent(workspace, path, region, payload, form);
             var read = await _targetStateReader.ReadAsync(workspace, intent, cancellationToken).ConfigureAwait(false);
             var target = new FrameworkManagedTargetObservation
             {
@@ -71,7 +75,7 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
         return observations.ToArray();
     }
 
-    private FrameworkManagedTargetIntent ReadIntent(CliWorkspace workspace, string path, string? region, FrameworkPayload payload)
+    private FrameworkManagedTargetIntent ReadIntent(CliWorkspace workspace, string path, string? region, FrameworkPayload payload, FrontmatterForm? form)
     {
         var kind = FrameworkManagedTargetKind.File;
         if (region == WorkspaceOwnershipDefinitions.EntriesRegion)
@@ -92,7 +96,11 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
         }
         else if (kind != FrameworkManagedTargetKind.GeneratedRegion)
         {
-            if (asset is null)
+            if (form is null)
+            {
+                cause = "The intended Framework target is unavailable.";
+            }
+            else if (asset is null)
             {
                 cause = "The running Framework payload does not identify this owned target.";
             }
@@ -100,7 +108,15 @@ internal sealed class FrameworkLifecycleTargetReader(PhysicalPathResolver physic
             {
                 try
                 {
-                    fingerprint = _targetStateReader.ReadFingerprint(kind, asset.Bytes.AsSpan());
+                    var rendered = WorkspacePayloadRenderer.Render(path, asset.Bytes.AsMemory(), form.Value);
+                    if (rendered.Bytes is { } bytes)
+                    {
+                        fingerprint = _targetStateReader.ReadFingerprint(kind, bytes.Span);
+                    }
+                    else
+                    {
+                        cause = rendered.Cause;
+                    }
                 }
                 catch (Exception exception) when (exception is ArgumentException or InvalidDataException or InvalidOperationException)
                 {

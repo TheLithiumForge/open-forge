@@ -14,14 +14,19 @@ Establish or configure the Framework bundled in the running CLI. Install does no
 
 | Flag                                       | Meaning                                                                                                                         |
 | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| `--configure`                              | Revisit an installed setup or restore eligible missing selected defaults while retaining existing content                       |
+| `--configure`                              | Revisit an installed setup, restore eligible missing selected defaults, or convert unedited owned files to the selected frontmatter form |
 | `--preset <essentials\|full-core\|custom>` | Select built-in routes. On an installed workspace, an explicit preset also requires `--configure`                               |
+| `--frontmatter <root\|scoped>`              | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
 | `--route <id>=<add\|remove\|git-ignore>`   | Override a Custom row. Requires `--preset custom`. Repeat for more rows                                                         |
 | `--force`                                  | Permit eligible existing content to be replaced during initial management establishment. Does not update or adopt managed state |
 | `--automatic`                              | Suppress confirmation without adding force or choosing missing setup inputs                                                     |
 | `--dry-run`                                | Preview selection, adoption, files, settings, and ignore changes                                                                |
 
 First interactive Install offers Essentials, Full Core, or Custom. Configure offers the current choices. Ordinary repeated Install retains its quiet no-op or divergence behavior.
+
+After the preset choice, first interactive Install asks `How should Open Forge write file metadata?` with root preselected. An explicit `--frontmatter` skips the question. A fresh Install keeps an explicit preference already in settings unless the flag overrides it. Without either, fresh unattended Install uses root. Interactive Configure offers the current form first. Ordinary repeated Install and Update retain the form and never ask.
+
+Install, Update, and Extension delivery use `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. Both root and scoped frontmatter are read in every workspace. The plan shows the selected form, such as `Frontmatter: root`, or a change such as `Frontmatter: scoped -> root`.
 
 | Preset       | Selected content                                                                                                              |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -39,14 +44,16 @@ Git-ignore first adds or restores the ordinary route and records its policy in `
 
 Index uses the lock's recorded route policy to omit private child files and nested private entrypoints from shareable `Entries`. It still maintains the whitelisted entrypoint and its parent route link. Context, Find, and References can read local private files when selected. Git-ignore does not define loading authority. The CLI neither stages files nor untracks files already committed to Git.
 
-Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive Configure requires an explicit preset. Ordinary unattended first Install uses Full Core and retains existing omissions. Preview a narrow change, then apply the reviewed request:
+Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive Configure requires an explicit `--preset` or `--frontmatter`. On an installed workspace, `--frontmatter` requires `--configure`. Form-only `install --configure --frontmatter <form>` keeps route choices unchanged. Ordinary unattended first Install uses Full Core and retains existing omissions. Preview a narrow change, then apply the reviewed request:
 
 ```sh
 open-forge install --configure --preset custom --route guidance=add --dry-run
 open-forge install --configure --preset custom --route guidance=add --automatic
 ```
 
-Explicit configuration restores eligible missing packaged defaults, including scaffolding after a checkout with or without a lock file. It preserves authored files, overwrite companions, narrower omissions, and unrelated selections. Private notes need a separate copy or backup. Configuration grants no authored replacement or deletion authority.
+Explicit configuration restores eligible missing packaged defaults, including scaffolding after a checkout with or without a lock file. It preserves authored files, overwrite companions, narrower omissions, and unrelated selections. Private notes need a separate copy or backup.
+
+Configure converts unedited owned delivered files to the selected form in the same reviewed plan as the settings change. Edited files and Extension files whose source is unavailable are kept and reported, while excluded, user-authored, Library, and overwrite files stay unchanged.
 
 ## `update`
 

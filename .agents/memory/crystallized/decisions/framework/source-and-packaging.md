@@ -14,6 +14,8 @@ Open Forge needs rich repository-only design and Maintenance material while prom
 
 `src/open-forge/` is the installable Framework payload. Its `AGENTS.md` is the canonical root instruction contract. Minimal harness bridges may import it and preload another canonical Framework entry such as the loader without duplicating policy.
 
+The CLI renders leading Open Forge metadata in eligible Framework and Extension Markdown in the workspace's chosen form. This projection changes neither repository payload sources nor fenced examples.
+
 Every runtime contract required to understand or use an installed workspace is expressed in the payload itself. Repository-only current documents and Maintenance contracts explain design, govern reviewed sources, and define verification, but they are not required runtime context.
 
 The root `.agents/` tree dogfoods the payload and may add visibly repository-specific routes. Shared semantics stay aligned unless an intentional local difference is documented.

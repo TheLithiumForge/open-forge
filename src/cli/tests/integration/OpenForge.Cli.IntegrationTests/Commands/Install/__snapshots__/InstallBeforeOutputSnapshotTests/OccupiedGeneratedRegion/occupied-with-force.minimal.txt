@@ -1,5 +1,6 @@
 Installed the Open Forge Framework into <workspace>, replacing 1 existing file.
 Workspace: <workspace>
+Frontmatter: scoped
   .agents/memory/_memory.md            replaced
   .agents/memory/_memory.overwrite.md  Migrated: content preserved
   Created 17 files and 12 directories under .agents.

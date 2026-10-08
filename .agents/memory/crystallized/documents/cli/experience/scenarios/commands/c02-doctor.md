@@ -342,3 +342,31 @@ Confirm the item persists byte-for-byte and the diagnostic names the real recove
 **Disposition:** Deferred; not selected yet. Repeated cancellation outcome without a concrete signal boundary; retain X09 as the shared invariant until a distinct fixture earns coverage.
 
 **Required before reconsideration:** Use a real signal-capable process and deterministic observed boundary; a timeout or invalid argument is not cancellation. Use a genuine capability-appropriate terminal and preserve actual prompt/signal evidence.
+
+## C02-12
+
+**Situation:** Doctor on a root workspace finds no managed changes
+
+**Disposition:** Added. Confirm that root delivery is healthy under the workspace's selected form.
+
+### Starting point
+
+W1 explicitly selects root and has independently verified Framework and installed Extension bytes. All applicable route, metadata, reference, ownership, and recovery inputs are readable and valid. User-owned root files may carry another tool's harmless root keys.
+
+Fixture: `W1`, with current root-form content and no unrelated warning fixture.
+
+### Steps
+
+```text
+open-forge doctor
+```
+
+### Expected result
+
+Doctor compares the intended payload rendered to root and finds no managed-content changes. Root metadata uses the same validation as scoped metadata, and unrelated root keys are ignored. Applicable checks complete without a form warning, and Doctor performs no writes.
+
+### Verification
+
+**State:** Compare owned files with independently rendered canonical sources and retain the full pre-request tree. Verify that Doctor preserves content, settings, ownership, and recovery state.
+
+**Output:** Check that applicable checks completed and no changed-target finding arose solely from root form. Keep informational reference observations separate from managed changes.

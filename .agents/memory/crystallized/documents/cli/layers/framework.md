@@ -113,6 +113,12 @@ node shape, scalar spans, aliases, and unsupported-mapping facts. Semantic
 metadata uses one CLI-root generated YAML context and small models. Command
 interpretation, findings, and status remain local.
 
+Ordinary routed metadata reads root and scoped forms through one grammar and
+precedence rule. Native Skills keep their own parser. Documents owns form-aware
+emission and the leading scoped-to-root transform. The [shared operation
+contract](../shared-operation-contract.md#frontmatter-form) defines selection
+and delivery eligibility.
+
 Documents depend on nothing else in Framework. Every other capability that needs
 the content of a file reaches it through this one, and **no command parses a
 document format itself**. A command that needs a structure the parser does not
@@ -192,6 +198,10 @@ Requirements are ordinary destination strings; there is no per-owner grant
 record or compatibility reader. Commands retain their lease, recovery and
 content application responsibilities.
 
+Settings also owns the workspace frontmatter preference. A missing key means
+scoped, while unsupported values are invalid. Writers and delivery consume the
+resolved form without restricting readable metadata.
+
 The [Workspace Permissions contracts](../contracts/shared/workspace-permissions/_workspace-permissions.md)
 and [Technical Design](../technical-designs/workspace-permissions.md) define the
 settings, always/once/cancel, explicit flag, result and recovery behavior.
@@ -212,6 +222,11 @@ consumes route entrypoint assets and topology from the same canonical payload.
 files embedded by the Framework project. Package manifests define IDs and dependencies;
 the reader validates dependency closure and hashes embedded payload bytes.
 No separately maintained compressed source snapshot or hash inventory is used.
+
+Distribution renders eligible Framework and Extension payload for the selected
+workspace form before delivery and comparison. Inventory hashes retain their
+repository-byte identity. Rendering preserves body bytes and native Skill
+metadata, following the [shared contract](../shared-operation-contract.md#frontmatter-form).
 
 Exact resource, hashing, parity, and isolated-binary mechanics live in the
 [Embedded Payload Technical Design](../technical-designs/embedded-payload.md).

@@ -22,11 +22,12 @@ internal static class InstallConfigurationSharing
                     && SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath) == directory);
                 return new SourceSharingRoute(directory, entrypoint.Identity.CanonicalBasePath);
             }).ToImmutableArray();
-        var snapshot = plan.Ignore.Snapshot ?? throw new InvalidDataException("The Git-ignore file is unavailable.");
+        var ignore = plan.Ignore ?? throw new InvalidDataException("Route configuration requires its Git-ignore observation.");
+        var snapshot = ignore.Snapshot ?? throw new InvalidDataException("The Git-ignore file is unavailable.");
         var bytes = InstallIgnoreSection.Rewrite(snapshot.Bytes.AsSpan(), configuration.Routes, routes);
         PlannedFileChange? change = null;
         if (!snapshot.Bytes.AsSpan().SequenceEqual(bytes))
-            change = plan.Ignore.State == InstallTargetReadState.Missing
+            change = ignore.State == InstallTargetReadState.Missing
                 ? PlannedFileChange.Create(snapshot.Expectation, bytes)
                 : PlannedFileChange.ReplaceGeneratedRegion(snapshot.Expectation, bytes);
         return plan with { IgnoreChange = change, GitIgnoredRoutes = routes };

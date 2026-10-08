@@ -12,7 +12,9 @@ Source digest (ordered relative filenames and normalized source text): `527fc3e8
 
 ## Flow Selection
 
-All 24 supplied flows were retained. Eleven were improved: F03, F05, F09, F10, F14, F15, F17, F18, F21, F22, and F23. F25 (overwrite customization) and F26 (optional package selection) are recommended additions. See the [flow list](flows/_flows.md) for the complete short definitions.
+All 24 supplied flows were retained. Eleven were improved: F03, F05, F09, F10, F14, F15, F17, F18, F21, F22, and F23. F25 (overwrite customization) and F26 (optional package selection) are recommended additions. F27 (start in root form) and F28 (switch metadata forms while preserving edits during Configure) are additions requested by the maintainer on 2026-10-08 for the per-workspace frontmatter form. The collection now has 28 flows. See the [flow list](flows/_flows.md) for generated navigation and the [flow review](flow-review.md) for all 28 selection rows.
+
+The frontmatter follow-up adds 19 command scenarios and X31 independently of the 438 supplied cases counted above. It preserves the earlier supplied-case dispositions.
 
 ## Improved And Added
 

@@ -237,7 +237,8 @@ retain the sparse-chain behavior below and do not clear persistent exclusions.
 
 For other aligned targets, `--framework` initializes one sparse scoped chain from the same canonical
 Framework payload embedded for root Install. Root Install remains the producer
-of the base Framework files and route structure; there is no `install --route` spelling.
+of the base Framework files and route structure. Its `--route <id>=<action>` option
+selects built-in routes and does not initialize a scoped chain.
 
 For either operand form, the first concrete route segment must be an exact
 installed root route. Exact case-sensitive non-root Framework segments align
@@ -293,8 +294,9 @@ caller metadata override.
 
 ## Generic Fixed Entrypoint Scaffold
 
-Every missing folder receives the same canonical structure. The following is the
-exact scaffold example for the final target from the route-target mapping above:
+Every missing folder receives the same canonical structure in the workspace's
+frontmatter form. This scoped-form example shows the final target from the
+route-target mapping above:
 
 ```md
 ---
@@ -319,9 +321,8 @@ Draft route for memory/project-alpha/documents; replace this description before 
 The example route ID and literal final slug vary by target. The scaffold always
 contains:
 
-1. Canonical scoped frontmatter with exactly one Open Forge metadata root key,
-   `open-forge`, containing `description`, `tags`, and optional
-   `responsibility` only.
+1. Leading frontmatter in the workspace's form, containing `description`,
+   `tags`, and optional `responsibility` only.
 2. A non-empty route description and at least one tag.
 3. One level-1 title whose visible text is the literal folder slug.
 4. The same honest route description appears in the body.
@@ -336,12 +337,10 @@ The fixed scaffold is command behavior, not a Template instance. Later changes
 to a Template never affect it, and `route init` does not search the Templates
 route for a default.
 
-Open Forge metadata recognizes only the `open-forge` root. A `rune` root or any
-other YAML is unrelated opaque content: it supplies no Open Forge description,
-tags, or responsibility and is preserved by bounded source edits. When both
-`open-forge` and `rune` occur, Route Init reads exactly `open-forge`, ignores the
-meaning of `rune`, and preserves the unrelated YAML bytes. Route Init never
-authors `rune` or another metadata root.
+Ordinary routed metadata reads both forms under the [shared precedence
+rule](../../../shared-operation-contract.md#frontmatter-form). Unknown root
+fields, including `rune`, supply no Open Forge metadata and are preserved by
+bounded source edits. New metadata uses the workspace's form.
 
 ## Draft Metadata
 
@@ -378,8 +377,9 @@ The command validates syntax and presence. It does not judge or rewrite the
 semantic accuracy of supplied prose and tags. A later `doctor` operation may
 report meaning-quality diagnostics separately.
 
-`applyTo` is written only in the missing final target's scoped `open-forge`
-mapping as a quoted string list. Each `--apply-to` value is an expression under
+New metadata uses the workspace's chosen form. Supplied fields and their value
+grammar remain unchanged. `applyTo` is written only in the missing final target's
+metadata as a quoted-string list. Each `--apply-to` value is an expression under
 the [File Conditions syntax](../../../../framework/markdown/syntax.md#file-conditions),
 and the resulting patterns are sorted and deduplicated by ordinal comparison.
 The field is optional and does not change the existing `NeedsAuthoring` rules

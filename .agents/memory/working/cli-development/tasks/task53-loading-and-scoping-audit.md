@@ -29,9 +29,11 @@ Directive once accepted.
   entry lines (six root entrypoints, Memory, Working, Crystallized, and Emerging).
 - First-party Extensions in `src/extensions/`: none carry a loading tag today.
   Confirm that on-demand is still right for each Memory category they add.
-- This repository's workspace `.agents/`: 58 `#LoadNow` and 15 `#KeepInMind`
-  entry lines. The nine root Directive files total about 44 KB, and
-  `hierarchical-orchestration.md` alone is about 13 KB.
+- This repository's workspace `.agents/`: 27 `#LoadNow` and 4 `#KeepInMind`
+  entry lines, counted on 2026-10-08 after the loading contract stopped using
+  both tags as topics. The task opened with 58 and 15. The eight root Directive
+  files total about 37 KB, and `hierarchical-orchestration.md` alone is about
+  13 KB.
 
 **Preserve / out of scope:** the loader's tag semantics themselves, unless the
 audit finds a rule that cannot be applied consistently. Tag vocabulary beyond

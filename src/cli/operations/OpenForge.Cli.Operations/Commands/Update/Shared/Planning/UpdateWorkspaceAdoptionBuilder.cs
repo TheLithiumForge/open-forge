@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
@@ -17,7 +18,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 
-internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physicalPathResolver)
+internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physicalPathResolver, FrontmatterForm frontmatter)
 {
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
@@ -192,7 +193,7 @@ internal sealed class UpdateWorkspaceAdoptionBuilder(PhysicalPathResolver physic
                         path,
                         sourcePlan.IntendedSources,
                         sourcePlan.PayloadSourcePaths,
-                        observedDocuments));
+                        observedDocuments), frontmatter);
                 if (create.Cause is { } createCause)
                 {
                     return Failed(documents, createCause);

@@ -495,7 +495,7 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
                 entrypointPath,
                 _documentWriter.WriteOptional(
                     new FrameworkDocumentMetadataEmission(null, [], null),
-                    IntermediateBody(id)));
+                    IntermediateBody(id), inspection.Settings.Document.Frontmatter));
         }
 
         return NavigationChainBuild.Complete(

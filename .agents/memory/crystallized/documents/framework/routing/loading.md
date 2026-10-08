@@ -2,7 +2,7 @@
 open-forge:
   description: "When selected routes load, when #KeepInMind files are read again, and how tools assist without choosing relevance"
   responsibility: Define when routed Open Forge context is read, retained, and refreshed without confusing visibility with authority
-  tags: [Memory, Document, CurrentTruth, Evergreen, Framework, Routing, Loading, LoadNow, KeepInMind, Continuity]
+  tags: [Memory, Document, CurrentTruth, Evergreen, Framework, Routing, Loading, Continuity]
 ---
 
 # Loading And Refreshing Context

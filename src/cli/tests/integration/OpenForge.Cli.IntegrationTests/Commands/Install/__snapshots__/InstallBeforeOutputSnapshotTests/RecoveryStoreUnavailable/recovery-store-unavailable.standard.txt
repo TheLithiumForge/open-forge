@@ -4,5 +4,6 @@ Workspace: <workspace>
          Recovery data could not be prepared at <workspace>. Nothing was changed.
          open-forge doctor
          Inspect the reported Install boundary before rerunning it.
+Frontmatter: root
   Inspect the reported Install boundary before rerunning it.
 Next: open-forge doctor

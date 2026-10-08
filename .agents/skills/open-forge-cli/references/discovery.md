@@ -26,6 +26,8 @@ open-forge context directives/order-rules --for src/Order.cs --follow-links 1
 
 Load startup context or selected sources with their required route context. No operands returns the loading-tag closure. The default content is `frontmatter,body`, which includes instructions. Explicit prose instructions still require their named reads.
 
+Both root and scoped frontmatter are read. An `open-forge` mapping supplies ordinary Open Forge metadata without merging root fields.
+
 | Flag                                   | Meaning                                                                                                                                                     |
 | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--for <path>`                         | Evaluate `applyTo` against a workspace-relative working file. Repeat for the complete set, including planned files                                          |

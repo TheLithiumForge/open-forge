@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -65,7 +66,7 @@ internal sealed class WorkspaceAdoptionSkillMetadataPlanner
             return Blocked(canonicalPath, "field 'frontmatter' contains invalid YAML.");
         }
 
-        var openForge = _openForgeMetadataParser.Parse(markdown);
+        var openForge = _openForgeMetadataParser.Parse(markdown, FrameworkMetadataReadScope.ScopedOnly);
         if (openForge.State == SourceOpenForgeMetadataState.Malformed)
         {
             var containsOpenForge = syntax.Root?.Mapping?.Any(entry => string.Equals(

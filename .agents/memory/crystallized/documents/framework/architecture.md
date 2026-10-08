@@ -306,7 +306,9 @@ The [CLI MVP Architecture](../cli/mvp-architecture.md) records the frozen implem
 Users receive the installable Framework from [`src/open-forge/`](../../../../../src/open-forge/). The installed Framework is its complete operational contract. Every definition, authority boundary, loading rule, and routing instruction required to navigate or use it must appear in an installed file. When required meaning is intentionally separated, the installed file that depends on it directs the reader to the installed route containing that meaning.
 
 The replacement CLI embeds this complete canonical source tree through ordinary
-.NET project resources under one fixed logical-name prefix. Root `install` owns
+.NET project resources under one fixed logical-name prefix. Delivery renders
+leading Open Forge metadata in the workspace's form. Repository source bytes
+and body examples remain unchanged. Root `install` owns
 the closed base Framework installation. Installation choices select a subset
 of the canonical inventory through explicit exclusions; they do not create
 another Framework model or agent runtime. Framework-aware `route init` is a later
@@ -315,7 +317,8 @@ one explicitly selected canonical Core category or Memory state. For scoped
 initialization, after a trusted current root installation exists, it reuses
 the same embedded payload and canonical topology to copy selected managed
 entrypoints into one explicit concrete scoped route. Explicit `install
---configure` changes built-in route selections and restores missing defaults
+--configure` changes built-in route selections and the frontmatter form, and
+restores missing defaults
 through the [Install contracts](../cli/contracts/install/_install.md).
 Install's Custom `--route` values select built-in categories or Memory states,
 not arbitrary scoped routes. There is no runtime source-checkout dependency,

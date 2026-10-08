@@ -41,7 +41,10 @@
       "action": "preserve",
       "outcome": "already-current"
     },
-    "verification": "verified"
+    "verification": "verified",
+    "frontmatter": {
+      "form": "root"
+    }
   },
   "recovery": {
     "path": null,

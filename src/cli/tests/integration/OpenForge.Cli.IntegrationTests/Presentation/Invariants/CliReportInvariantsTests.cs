@@ -679,8 +679,11 @@ public sealed class CliReportInvariantsTests
             "RouteRemoveBeforeOutputSnapshotTests",
             StringComparison.Ordinal);
         var routeUpdateCatalogueProjection = path.Contains(
-            "RouteUpdateBeforeOutputSnapshotTests",
-            StringComparison.Ordinal);
+                "RouteUpdateBeforeOutputSnapshotTests",
+                StringComparison.Ordinal)
+            || path.Contains(
+                "RouteUpdateFrontmatterOutputSnapshotTests",
+                StringComparison.Ordinal);
         foreach (var effect in Required(root, "effects").EnumerateArray())
         {
             var effectPath = TextIdentity(RequiredString(effect, "path"));

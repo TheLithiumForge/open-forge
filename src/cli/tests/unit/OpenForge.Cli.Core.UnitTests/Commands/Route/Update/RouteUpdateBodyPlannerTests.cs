@@ -8,6 +8,19 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdateBodyPlannerTests
 {
+    [Fact(DisplayName = "Route Update copies a Template body into a BOM-only source after metadata creation"),
+     Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior"), Trait("Boundary", "Processing")]
+    public void BomOnlySourceReceivesTemplateBody()
+    {
+        var observation = RouteUpdateTestData.Observation(text: "\uFEFF", templateReference: RouteUpdateTestData.TemplateId);
+        const string prefix = "\uFEFF---\ndescription: After\ntags: [Memory]\n---\n";
+        var metadata = RouteUpdateTestData.MetadataPlan(observation, prefix);
+        var build = Build(metadata, RouteUpdateTestData.ResolvedTemplate(observation.Request.Workspace));
+        var body = Assert.IsType<RouteUpdateBodyPlan>(build.Body);
+        Assert.Equal(RouteUpdateBodyState.TemplateCopied, body.State);
+        Assert.Equal($"{prefix}# Template body\n", Encoding.UTF8.GetString(body.IntendedTargetBytes.AsSpan()));
+    }
+
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Route Update body planner copies exact Template bytes into Unicode-whitespace body"), Trait("Feature", "route-update"), Trait("Evidence", "UnitBehavior")]
     public void CopiesExactTemplateBytesIntoUnicodeWhitespaceBody()

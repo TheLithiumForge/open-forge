@@ -461,3 +461,32 @@ Report cancellation without replacing, adding or pruning anything.
 Verify exact preservation and record that cancellation preceded effects.
 
 **Execution constraint:** Use a genuine capability-appropriate terminal and preserve actual prompt/signal evidence. Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.
+
+## C22-16
+
+**Situation:** Extension Update in a root workspace compares rendered identity and repeats as a no-op
+
+**Disposition:** Added. Keep current root-form Extension files unchanged under repeated Update.
+
+### Starting point
+
+W1 explicitly selects root and has the bundled Planning Extension and its declared dependencies installed. Their current bytes independently match available source payload rendered to root, with projected navigation. Ownership is trusted, and no membership or source-version change is present.
+
+Fixture: `W1`, with current root-form Planning content and independently available canonical sources.
+
+### Steps
+
+```text
+open-forge extension update planning --automatic
+open-forge extension update planning --automatic
+```
+
+### Expected result
+
+Extension Update compares intended content rendered in the workspace form before applying the existing comparison policy. Root delivery is current even though repository sources remain scoped. Both requests are no-ops with no replacements, additions, pruning, or ownership rewrite. The saved root preference is unchanged.
+
+### Verification
+
+**State:** Compare the selected closure and every target with independently rendered source bytes. Compare the complete content, settings, ownership, and recovery inventory before and after each request, carrying real state forward.
+
+**Output:** Check current identities and zero actual effects against independent state. Do not accept canonical scoped source bytes or a printed no-op as proof of root identity.

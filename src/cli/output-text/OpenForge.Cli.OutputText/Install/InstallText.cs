@@ -70,7 +70,14 @@ internal static class InstallText
 
     // @OpenForgeText install.help.syntax
     internal static string HelpSyntax()
-        => "open-forge install [--configure] [--preset <essentials|full-core|custom>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]";
+        => "open-forge install [--configure] [--preset <essentials|full-core|custom>] [--frontmatter <root|scoped>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]";
+
+    // @OpenForgeText install.help.frontmatter
+    internal static string HelpFrontmatter()
+        => "Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure.";
+
+    // @OpenForgeText install.help.heading.frontmatter
+    internal static string HelpHeadingFrontmatter() => "Frontmatter";
 
     // @OpenForgeText install.help.establishment
     internal static string HelpEstablishment()
@@ -86,11 +93,11 @@ internal static class InstallText
 
     // @OpenForgeText install.help.examples
     internal static string HelpExamples()
-        => "open-forge install\n  open-forge install --automatic --dry-run --format json\n  open-forge install --force\n  open-forge install --force --automatic --dry-run";
+        => "open-forge install\n  open-forge install --automatic --dry-run --format json\n  open-forge install --force\n  open-forge install --force --automatic --dry-run\n  open-forge install --frontmatter scoped --automatic\n  open-forge install --configure --frontmatter root --dry-run";
 
     // @OpenForgeText install.help.notes
     internal static string HelpNotes()
-        => "Install uses only the Framework payload embedded in the running CLI. It does not discover another workspace, fetch content, manipulate Git, repair markers, reconcile managed divergence, or roll back target effects.";
+        => "Ordinary Install delivers only the Framework payload embedded in the running CLI. With a form change, --configure also converts eligible owned Extension files from their recorded sources. Install does not discover another workspace, fetch content, manipulate Git, repair markers, reconcile managed divergence, or roll back target effects.";
 
     // @OpenForgeText install.label.sections-added
     internal static string LabelSectionsAdded()

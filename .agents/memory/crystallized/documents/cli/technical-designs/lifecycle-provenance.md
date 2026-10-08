@@ -113,10 +113,17 @@ diagnostics and never become guessed ownership or effects.
 Distribution aligns owned Framework destinations with the running payload,
 including scoped entrypoint mappings. Alignment is computed for the operation
 and is never a stored cross-release integrity claim. A retired destination may
-have no current payload asset. Current bytes and intended payload bytes are
+have no current payload asset. Intended payload bytes are rendered in the
+workspace's frontmatter form before comparison. Source inventory hashes still
+identify repository bytes. Current bytes and rendered intended bytes are
 compared within the same invocation using Markdown semantic identity where
 applicable; opaque files and generated navigation use their local exact-byte
 rules. Root managed blocks preserve surrounding authored host content.
+
+An unedited owned target in the other form reports the existing changed-target
+findings with Update advice. Invalid settings retain the existing invalid or
+unavailable boundary. Rendering does not normalize frontmatter within the
+fingerprint policy.
 
 The mutation plan retains exact expected current bytes, intended changes and
 recovery targets. Those operation-time facts support revalidation, application

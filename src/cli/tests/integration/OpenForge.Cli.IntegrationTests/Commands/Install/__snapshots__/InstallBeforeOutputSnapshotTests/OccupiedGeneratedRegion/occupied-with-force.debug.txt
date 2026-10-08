@@ -1,5 +1,6 @@
 Installed the Open Forge Framework into <workspace>, replacing 1 existing file.
 Workspace: <workspace>
+Frontmatter: scoped
   .agents/directives                                     created
   .agents/guidance                                       created
   .agents/maps                                           created
@@ -32,6 +33,7 @@ Workspace: <workspace>
   .agents/templates/_templates.md                        created; source: .agents/templates/_templates.md
   AGENTS.md                                              created with an Open Forge section; source: AGENTS.md
   CLAUDE.md                                              created with an Open Forge section; source: CLAUDE.md
+  .agents/open-forge.json                                created
   .agents/open-forge.lock.json                           created as the ownership receipt
   .agents/memory/_memory.overwrite.md                    Migrated: content preserved
   Created 17 files and 12 directories under .agents.

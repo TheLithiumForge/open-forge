@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
+using OpenForge.Cli.Core.Framework.Settings;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Result;
 
@@ -239,7 +241,19 @@ internal static class InstallResultFactsFactory
             Lifecycle = completion.Lifecycle,
             Recovery = completion.Recovery,
             Verification = new InstallVerification(completion.Verification),
-        });
+        })
+        {
+            Frontmatter = Frontmatter(evidence.IntendedState?.Frontmatter,
+                evidence.IntendedState?.Configuration?.FrontmatterPlan?.Kept ?? []),
+        };
+
+    internal static InstallFrontmatter? Frontmatter(InstallFrontmatterSelection? selection, IEnumerable<InstallFrontmatterKeptFile> kept)
+    {
+        if (selection is null) return null;
+        var previous = selection.PreviousForm is { } previousForm && previousForm != selection.Form
+            ? WorkspaceSettingsDefinitions.ReadFrontmatterName(previousForm) : null;
+        return new(WorkspaceSettingsDefinitions.ReadFrontmatterName(selection.Form), previous, kept);
+    }
 
     internal static int PayloadFileCount(InstallIntendedState intended)
     {

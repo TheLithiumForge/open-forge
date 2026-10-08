@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Open Forge uses one canonical authoring form wherever Markdown carries Framework meaning while treating compatibility syntax as input-only
+  description: Why Open Forge uses preferred Markdown forms within each authoring context, including workspace-selected frontmatter
   tags: [Memory, Decision, CurrentTruth, Framework, Markdown, Authoring, Syntax, Compatibility]
 ---
 
@@ -14,15 +14,15 @@ Open Forge also needed a stable way to state what an opened file defines without
 
 ## Decision
 
-Open Forge uses one canonical authoring form whenever Markdown structure carries Framework meaning. Ordinary prose remains ordinary Markdown until a Framework contract assigns semantic meaning to a structure.
+Open Forge uses one preferred form for each machine-meaningful construct within its applicable authoring context. Ordinary prose remains ordinary Markdown until a Framework contract assigns semantic meaning to a structure.
 
-Generated output, examples, Templates, scaffolding, validation help, and public authoring guidance use the canonical form. Tools may accept selected legacy or interoperability forms as input without presenting them as equivalent authoring choices.
+Frontmatter is the explicit workspace-level choice defined by the [Per-Workspace Frontmatter Form Decision](workspace-frontmatter-form.md). Generated output, examples, Templates, scaffolding, validation help, and authoring guidance follow that choice. Repository payload sources use scoped form. Other selected legacy or interoperability forms remain input-only.
 
 Frontmatter uses `description` as the natural-language pre-load selection surface. An optional `responsibility` field states the stable boundary of what the opened file defines. Responsibility guides edits but creates no authority, scope, or loading behavior.
 
 ## Rationale
 
-One authored form reduces agent decision cost, parser surface, inconsistent examples, and maintenance ambiguity while leaving ordinary Markdown expressive.
+One preferred form within each authoring context reduces agent decision cost, inconsistent examples, and maintenance ambiguity while leaving ordinary Markdown expressive.
 
 Separating canonical output from compatible input allows migration and interoperability without teaching several competing contracts. Keeping the semantic contract in readable files also prevents CLI behavior from privately defining the Framework.
 

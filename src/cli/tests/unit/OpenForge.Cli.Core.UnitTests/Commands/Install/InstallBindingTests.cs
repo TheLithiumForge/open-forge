@@ -25,7 +25,7 @@ public sealed class InstallBindingTests
         Assert.Empty(symbols.InstallCommand.Subcommands);
         Assert.Empty(symbols.InstallCommand.Arguments);
         Assert.Equal(
-            ["--configure", "--preset", "--route", "--force", "--automatic", "--dry-run"],
+            ["--configure", "--preset", "--frontmatter", "--route", "--force", "--automatic", "--dry-run"],
             symbols.InstallCommand.Options.Select(option => option.Name));
         Assert.Equal(ArgumentArity.Zero, symbols.Force.Arity);
         Assert.Equal(ArgumentArity.Zero, symbols.Automatic.Arity);

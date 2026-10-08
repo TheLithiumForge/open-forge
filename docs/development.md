@@ -473,11 +473,11 @@ git diff
 
 ## Measure context size
 
-Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. The current base has 15 Markdown files, with 12 read at startup through `AGENTS.md`.
+Context measurements count the Markdown in `src/open-forge/`, including hidden files, frontmatter, and generated `Entries`. The current base has 19 Markdown files, with 12 read at startup through `AGENTS.md`.
 
-The README uses the CLI's estimate method: divide each file's character count by four, round up, and sum. The current base gives about 9.6k estimated tokens for the 12 startup files and about 10.3k for all 15. The `open-forge-cli` Skill accounts for about 3.5k and is explicitly required by the Skills entrypoint at startup.
+The README uses the CLI's estimate method: divide each file's character count by four, round up, and sum. The current base gives about 7.4k estimated tokens for the 12 startup files and about 18.6k for all 19. The `open-forge-cli` Skill entry file accounts for about 0.9k and is explicitly required by the Skills entrypoint at startup. Its reference files load only when the Skill points to them.
 
-`open-forge status` reports the loading-tag closure: 11 files, about 6.1k tokens. It does not interpret required-read instructions in prose. `open-forge context skills/open-forge-cli` includes that closure and the required Skill in one batch, providing the 12-file source set used for the startup estimate. Account for any further reads required by your workspace's loaded rules. Installed Extensions and your own content can change these numbers.
+`open-forge status` reports the loading-tag closure: 11 files, about 6.4k tokens. It does not interpret required-read instructions in prose. `open-forge context skills/open-forge-cli` includes that closure and the required Skill in one batch, providing the 12-file source set used for the startup estimate. Account for any further reads required by your workspace's loaded rules. Installed Extensions and your own content can change these numbers.
 
 Reference tokenizer counts use [tiktoken](https://github.com/openai/tiktoken) with two named encodings, `o200k_base` and `cl100k_base`. The counts below predate the optional-content extraction and are historical, not counts for the current payload. Fresh tiktoken totals have not been measured.
 

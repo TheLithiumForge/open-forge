@@ -83,7 +83,7 @@ public sealed class PublishedInstallConfigurationProcessTests
             {
                 Size = new(width, height),
                 TerminalName = "xterm",
-                Steps = [new("Choose your Open Forge setup", "\r"), new("Apply these changes? [y/N]", apply ? "y" : "n")],
+                Steps = [new("Choose your Open Forge setup", "\r"), new("How should Open Forge write", "\r"), new("Apply these changes? [y/N]", apply ? "y" : "n")],
             });
         Capture($"essentials-{width}x{height}-{apply}", terminal.Transcript);
         Assert.Equal(apply ? 0 : 130, terminal.ExitCode);
@@ -114,7 +114,7 @@ public sealed class PublishedInstallConfigurationProcessTests
                 Size = new(80, 24),
                 Steps = [new("Choose your Open Forge setup", "\r"), new("Choose a route to change", "3"),
                     new("Choose how to configure guidance", "2"), new("Choose a route to change", "\r"),
-                    new("[y/N]", "y")],
+                    new("How should Open Forge write file metadata?", "\r"), new("[y/N]", "y")],
             });
         Capture("custom-guidance-80x24", terminal.Transcript);
         Assert.Equal(0, terminal.ExitCode);

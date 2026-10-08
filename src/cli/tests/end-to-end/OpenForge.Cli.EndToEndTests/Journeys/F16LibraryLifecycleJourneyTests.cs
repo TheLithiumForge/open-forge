@@ -1,5 +1,6 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
@@ -189,7 +190,7 @@ public sealed class F16LibraryLifecycleJourneyTests
     private static async Task InstallFrameworkAsync(PublishedJourneyWorkspace workspace)
     {
         workspace.ExpectCoreInstall();
-        var install = await workspace.RunAsync("install", "--automatic");
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         Assert.Equal(0, install.ExitCode);
         Assert.Equal(string.Empty, install.StandardError);
     }

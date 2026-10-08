@@ -1,6 +1,7 @@
 using System.IO.Compression;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -17,7 +18,7 @@ public sealed class RootRemoveRecoveryConsumerJourneyTests
         workspace.ExpectFiles(".agents/open-forge.json", targetPath);
         workspace.WriteText(targetPath, "This file is captured before removal.\n");
 
-        var install = await workspace.RunAsync("install", "--automatic");
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         Assert.Equal(0, install.ExitCode);
         Assert.Empty(install.StandardError);
 

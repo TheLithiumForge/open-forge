@@ -274,9 +274,9 @@
       "startup": {
         "shipped": {
           "files": 11,
-          "characters": 25541,
-          "bytes": 25541,
-          "tokens": 6386
+          "characters": 25785,
+          "bytes": 25785,
+          "tokens": 6447
         },
         "current": {
           "files": null,

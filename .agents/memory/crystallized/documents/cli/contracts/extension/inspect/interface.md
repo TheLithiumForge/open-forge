@@ -128,6 +128,11 @@ defined in the propagated output contract below.
 
 ## Fingerprint Policy: `open-forge-markdown-v1`
 
+Intended content is the selected payload rendered in the workspace's frontmatter
+form before the existing comparison policy is applied. Rendering prepares
+intended input. It is not frontmatter normalization within the fingerprint
+policy. Invalid settings retain the existing invalid or unavailable boundary.
+
 `open-forge-markdown-v1` is one immutable fingerprint policy. The policy string
 is its version. Any change to byte admission, UTF-8 handling, BOM or NUL
 handling, line-ending rules, CommonMark parser validation, generated-region

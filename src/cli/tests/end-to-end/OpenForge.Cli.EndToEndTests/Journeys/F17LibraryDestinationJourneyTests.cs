@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
@@ -205,7 +206,7 @@ public sealed class F17LibraryDestinationJourneyTests
             workspace.WriteText($"{SourceRoot}/{OnePath}", OneSourceBody);
             workspace.WriteText($"{SourceRoot}/{TwoPath}", TwoSourceBody);
 
-            var installed = await workspace.RunAsync("install", "--automatic");
+            var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
             AssertSetupSuccess(installed, "install");
             workspace.ExpectFiles(TeamEntrypointPath);
             workspace.WriteText(TeamEntrypointPath, TeamEntrypointBody);

@@ -134,6 +134,10 @@ unregistered Framework state cannot be established through adoption.
 ## Semantic Comparison
 
 Compare fresh current content with intended embedded or generated content.
+Intended payload is rendered in the workspace's frontmatter form before the
+existing comparison policy is applied. Update never asks for the form or writes
+the settings key. Invalid settings retain the existing invalid or unavailable
+boundary.
 No stored baseline participates. `same` means semantic agreement, `changed`
 means disagreement, `missing` means actual absence, and `format-only` means
 semantic agreement with different exact bytes. Source alignment is nullable

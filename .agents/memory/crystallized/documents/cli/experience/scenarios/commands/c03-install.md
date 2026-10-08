@@ -399,3 +399,207 @@ Explain the exact unsafe boundary and stop before all target effects.
 ### Verification
 
 Verify no traversal or modification beyond the safe workspace; force and automatic must not bypass it.
+
+## C03-13
+
+**Situation:** Fresh unattended Install defaults to root and records `"frontmatter": "root"`
+
+**Disposition:** Added. Start an unattended workspace with root metadata and a saved choice.
+
+### Starting point
+
+W0 contains a hand-authored README, no installation, and no declared frontmatter preference. The canonical bundled payload is independently available.
+
+Fixture: `W0`. Use the same workspace for preview and application.
+
+### Steps
+
+```text
+open-forge install --dry-run
+open-forge install --automatic
+```
+
+### Expected result
+
+The preview selects root without asking and changes no files. Application delivers eligible Framework Markdown in root form and writes `"frontmatter": "root"` in `.agents/open-forge.json`, with `schemaVersion` still 1. Native `SKILL.md` files and other ineligible assets retain their canonical bytes. Both reports show `Frontmatter: root`. JSON exposes `data.frontmatter.form` as `root` and omits `previousForm` for this fresh installation.
+
+### Verification
+
+**State:** Compare the entire tree before and after preview. After application, read the settings independently and compare every delivered Markdown file with the canonical payload rendered to root, following [X31](../experience.md#x31). Preserve the README bytes.
+
+**Output:** Record stdout, stderr, exit, effects, and the resolved form. Check that neither request asks a setup question and that preview describes planned effects rather than applied writes. Check the JSON form on an equivalent fresh fixture without accepting the report as proof of delivery.
+
+## C03-14
+
+**Situation:** Fresh Install with `--frontmatter scoped` delivers canonical scoped bytes and records the choice
+
+**Disposition:** Added. Choose scoped metadata explicitly on first installation.
+
+### Starting point
+
+W0 has no installation or declared preference. The canonical scoped payload is independently available.
+
+Fixture: `W0`.
+
+### Steps
+
+```text
+open-forge install --frontmatter scoped --automatic
+```
+
+### Expected result
+
+Install delivers eligible Markdown in canonical scoped form and writes `"frontmatter": "scoped"`, with `schemaVersion` still 1. The explicit option skips the form question. The report shows `Frontmatter: scoped`, and JSON resolves `data.frontmatter.form` to `scoped` without `previousForm`.
+
+### Verification
+
+**State:** Inspect the settings file and compare delivered bytes with the canonical scoped payload, following [X31](../experience.md#x31). Check the actual file inventory and preserved README independently.
+
+**Output:** Record the resolved form, actual effect identities, stdout, stderr, and exit. Check the absence of a form question and the fresh-install JSON shape on an equivalent fixture.
+
+## C03-15
+
+**Situation:** First interactive Install asks for the form after the preset, with root first
+
+**Disposition:** Added. Choose the metadata form while reviewing first-time setup.
+
+### Starting point
+
+W0 has no installation or declared preference. Use a real prompt-capable terminal without `--automatic`, `--frontmatter`, or JSON output.
+
+Fixture: `W0`, with terminal input and prompt evidence captured.
+
+### Steps
+
+```text
+open-forge install
+```
+
+Select a preset, retain the preselected root choice, review the complete plan, and confirm application.
+
+### Expected result
+
+After the preset choice, Install asks `How should Open Forge write file metadata?` with `Root keys` preselected. Its explanation is `description: and tags: at the top of the frontmatter`. The other choice is `Scoped under open-forge:` with `open-forge: holds description: and tags:`. Selection finishes before plan review and final confirmation. The applied files and saved preference use the selected form.
+
+### Verification
+
+**State:** Before final confirmation, verify that setup selection has written nothing. After confirmation, independently inspect settings and delivered bytes for the selected preset and form.
+
+**Output:** Capture the preset question, form question, preselected choice, explanations, plan, and confirmation in their actual order. A redirected run without prompts does not prove this scenario.
+
+## C03-16
+
+**Situation:** `--frontmatter` on an installed workspace without `--configure` is invalid input with no writes
+
+**Disposition:** Added. Explain how to change an installed workspace's form before making any change.
+
+### Starting point
+
+W1 is installed in scoped form. Its settings may omit `frontmatter`, as an earlier release did. Record content, settings, ownership, and recovery state before the request.
+
+Fixture: `W1`, with the effective form independently verified as scoped.
+
+### Steps
+
+```text
+open-forge install --frontmatter root --automatic
+```
+
+### Expected result
+
+Install returns `invalid-input` at exit 4 and explains that an explicit form on an installed workspace requires `--configure`. It performs no settings, payload, ownership, or recovery writes.
+
+### Verification
+
+**State:** Compare the complete pre-request and post-request tree, settings bytes, ownership bytes, and recovery inventory. The effective form remains scoped.
+
+**Output:** Check the invalid-input classification and the correction involving `--configure`. Do not infer no writes solely from the diagnostic.
+
+## C03-17
+
+**Situation:** Configure preview shows the form change, the replacements, and kept edited files, with no writes
+
+**Disposition:** Added. Review a form conversion and its retained edits before applying it.
+
+### Starting point
+
+W1 is installed in scoped form with the Collaboration Extension and available canonical sources. Remove only the `frontmatter` property to represent an earlier release. Create a user-owned scoped note with Route Create and append a distinctive paragraph to owned `.agents/patterns/_patterns.md`. Record all fixture bytes.
+
+Fixture: `W1`, with current unedited owned files, one edited owned file, and one user-owned note.
+
+### Steps
+
+```text
+open-forge install --configure --frontmatter root --dry-run
+```
+
+### Expected result
+
+The plan shows `Frontmatter: scoped -> root`, the settings write, and whole-file replacements for eligible owned targets that match the scoped payload. Replacement bytes include projected `Entries`. The edited owned file is kept unchanged and reported with reason `edited`. The user note is outside conversion. Form-only configuration leaves route choices unchanged and requires no preset or force. Preview writes nothing.
+
+JSON exposes `data.frontmatter.form` as `root`, `previousForm` as `scoped`, and `kept` with the edited path and reason at every detail level. Text reports the kept count, with paths and reasons at `standard` detail and above. Kept files add no finding code.
+
+### Verification
+
+**State:** Compare content, settings, ownership, and recovery state before and after preview. Independently identify which owned targets match each rendered form and which edited bytes match neither. The settings still omit the key.
+
+**Output:** Check the form transition, replacement set, and kept count independently of state. Check per-path reasons at standard detail and the JSON members on repeated read-only previews of the same fixture.
+
+## C03-18
+
+**Situation:** Configure converts unedited owned files, keeps edited and user files, writes the key, and repeats as a no-op
+
+**Disposition:** Added. Switch forms while preserving edited owned files and independently authored content.
+
+### Starting point
+
+Use the scoped fixture from C03-17, with available Framework and Collaboration sources, an edited owned `.agents/patterns/_patterns.md`, and a user-owned scoped note. Save independent byte copies of the edited file and note before conversion. The settings omit `frontmatter`.
+
+Fixture: `W1`. Carry the real converted state into the repeat.
+
+### Steps
+
+```text
+open-forge install --configure --frontmatter root --automatic
+open-forge install --configure --frontmatter root --automatic
+```
+
+### Expected result
+
+The first request writes `"frontmatter": "root"` and converts eligible owned Framework and Extension files that match the other form. Files already matching the selected form need no replacement. The edited owned file and user note remain byte-identical. Excluded, Library, and overwrite files remain outside conversion. An Extension target whose source is unavailable is kept with reason `source-unavailable` when present in the selected workspace.
+
+The result reports the form transition and kept owned paths without adding a finding code for retention. Settings and replacements share one reviewed plan with ordinary recovery. The identical second request changes no files and omits `previousForm` because the effective form did not change. A corresponding switch back to scoped uses the same bounded rule and restores canonical scoped bytes for eligible unedited targets, with projected `Entries`.
+
+### Verification
+
+**State:** Read settings independently, compare converted targets with [X31](../experience.md#x31), and compare the edited file, note, and other excluded content with saved bytes. Check route choices and unselected ownership remain intact. Compare all bytes and recovery state before and after the repeat. For the scoped return in F28, compare eligible converted bytes with canonical scoped sources and independently projected navigation.
+
+**Output:** Check reported settings and replacement effects against the actual changes. Check kept paths and reasons separately. The repeat must describe a no-op rather than another conversion, even when it still reports a kept file.
+
+## C03-19
+
+**Situation:** A preference already declared in the settings file is honored by the first Install
+
+**Disposition:** Added. Keep the metadata preference authored before installation.
+
+### Starting point
+
+W0 has no installation, but a valid `.agents/open-forge.json` declares `"frontmatter": "scoped"` with `schemaVersion` 1. Include an unrelated settings member and record it before installation.
+
+Fixture: `W0`, with an explicit pre-install preference and no `--frontmatter` option.
+
+### Steps
+
+```text
+open-forge install --automatic
+```
+
+### Expected result
+
+First Install honors scoped instead of choosing the fresh unattended root default. It records the resolved choice, preserves unrelated settings members, and delivers eligible Markdown in scoped form. The report identifies scoped without a form question or a fresh-install `previousForm`.
+
+### Verification
+
+**State:** Read the saved settings and compare delivered bytes with the canonical scoped payload. Check that unrelated settings and the README remain intact.
+
+**Output:** Check the resolved form and fresh-install JSON shape separately from delivery. Neither a printed scoped line nor an unchanged setting proves the file form by itself.

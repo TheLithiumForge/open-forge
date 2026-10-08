@@ -5,6 +5,7 @@ Workspace: <workspace>
          use open-forge install --automatic
          open-forge install --automatic
          Rerun the same Install request with explicit automatic mode.
+Frontmatter: root
   Bundled Framework fingerprint: <sha256> (19 assets).
   Ownership record publication did not start.
   No recovery bundle was required.

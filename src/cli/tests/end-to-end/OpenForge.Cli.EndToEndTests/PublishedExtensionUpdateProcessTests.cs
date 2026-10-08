@@ -139,7 +139,7 @@ public sealed class PublishedExtensionUpdateProcessTests
         var frameworkSeeded = await PublishedProcessTestSupport.RunAsync(
             target,
             working.WorkspacePath,
-            ["install", "--automatic", "--workspace", working.WorkspacePath],
+            ["install", "--automatic", "--frontmatter", "scoped", "--workspace", working.WorkspacePath],
             working.EnvironmentVariables);
         Assert.Equal(0, frameworkSeeded.ExitCode);
         Assert.Equal(string.Empty, frameworkSeeded.StandardError);

@@ -744,6 +744,14 @@ internal sealed class ExtensionUpdatePlanner
                 input.Selection,
                 SourceFact(input.Source)));
         }
+        catch (ExtensionUpdatePayloadRenderingException exception)
+        {
+            return new TopologyBuild(null, Stop(
+                request,
+                new ExtensionUpdateFinding(ExtensionUpdateFindingCode.TargetUnsafe, exception.Message, exception.Path),
+                input.Selection,
+                SourceFact(input.Source)));
+        }
         catch (Exception exception) when (exception is ArgumentException
             or DecoderFallbackException
             or InvalidDataException

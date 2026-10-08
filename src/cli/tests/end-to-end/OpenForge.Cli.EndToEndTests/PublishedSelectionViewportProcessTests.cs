@@ -60,7 +60,9 @@ public sealed class PublishedSelectionViewportProcessTests
             Assert.True(File.Exists(consumer.Combine(".agents/guidance/runtime.md")));
             using var ownership = JsonDocument.Parse(File.ReadAllText(consumer.Combine(".agents/open-forge.lock.json")));
             Assert.Equal(2, ownership.RootElement.GetProperty("extensions").GetArrayLength());
-            Assert.False(File.Exists(consumer.Combine(".agents/open-forge.json")));
+            Assert.Equal(
+                before[PublishedInstallWorkspace.SettingsPath],
+                consumer.SnapshotState()[PublishedInstallWorkspace.SettingsPath]);
         }
         else
         {

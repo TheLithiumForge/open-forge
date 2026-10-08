@@ -18,14 +18,14 @@ public sealed class ExtensionUpdateRemovalSettingsIntegrationTests
     public async Task ExcludedIdentityBlocksExplicitUpdateAndSkipsBulkUpdate()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-update-excluded-identity");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         using var source = ExtensionInstallCatalogue.Create("extension-update-excluded-identity-source");
         source.AddPackage("alpha", [], (".agents/alpha.md", Document("Alpha v1")));
         source.AddPackage("beta", [], (".agents/beta.md", Document("Beta v1")));
         await InstallAllAsync(workspace, source);
         await File.WriteAllTextAsync(
             workspace.Combine(".agents/open-forge.json"),
-            "{\"schemaVersion\":1,\"removedExtensions\":[\"alpha\"]}",
+            "{\"schemaVersion\":1,\"frontmatter\":\"scoped\",\"removedExtensions\":[\"alpha\"]}",
             TestContext.Current.CancellationToken);
         source.ReplacePayload("alpha", ".agents/alpha.md", Document("Alpha v2"));
         source.ReplacePayload("beta", ".agents/beta.md", Document("Beta v2"));

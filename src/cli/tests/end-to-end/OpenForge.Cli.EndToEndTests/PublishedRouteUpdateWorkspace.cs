@@ -88,6 +88,20 @@ internal sealed class PublishedRouteUpdateWorkspace : IDisposable
             cancellationToken);
 
 
+    internal void SeedTargetText(string text) => _temporary.ReplaceText(TargetPath, text);
+
+    internal void SeedSettingsText(string text)
+    {
+        const string path = ".agents/open-forge.json";
+        if (File.Exists(_temporary.Combine(path)))
+        {
+            _temporary.ReplaceText(path, text);
+            return;
+        }
+
+        _temporary.WriteText(path, text);
+    }
+
     internal void RemoveTemplate() => File.Delete(_temporary.Combine(TemplatePath));
 
     internal void RemoveAgentsRoot()

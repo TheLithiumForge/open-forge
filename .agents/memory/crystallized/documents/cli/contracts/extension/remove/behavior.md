@@ -98,6 +98,9 @@ or publication. Never fall back to legacy claims or treat unknown as empty.
 Current payload and matching bytes never establish ownership. Package source may
 be gone.
 
+Any intended-content observation uses the selected payload rendered in the
+workspace's frontmatter form before applying the existing comparison policy.
+
 Derive shared owners from the per-extension path lists. If differently spelled
 receipts alias the same portable path, report the uninterpretable ownership and
 perform no effects; exact string lookup must not turn another owner's file into

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
@@ -257,7 +258,7 @@ public sealed class F03PlainNoteJourneyTests
 
     private static async Task InstallW1Async(PublishedJourneyWorkspace workspace)
     {
-        var install = await workspace.RunAsync("install", "--automatic");
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
 
         Assert.Equal(0, install.ExitCode);
         Assert.Equal(string.Empty, install.StandardError);

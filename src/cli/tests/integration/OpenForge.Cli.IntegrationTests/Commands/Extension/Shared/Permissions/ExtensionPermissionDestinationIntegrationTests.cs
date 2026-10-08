@@ -7,6 +7,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Permissions;
 [Trait("Feature", "workspace-permissions"), Trait("Evidence", "Integration")]
 public sealed class ExtensionPermissionDestinationIntegrationTests
 {
+    private static readonly string GrantedSettings = $$"""{"frontmatter":"root","allowInstallPaths":["{{PermissionFixture.ExternalPath}}"]}""";
+
     [Trait("Boundary", "OS")]
     [Theory]
     [InlineData("remove", false)]
@@ -18,7 +20,7 @@ public sealed class ExtensionPermissionDestinationIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-parent-link");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+        workspace.ReplaceText(PermissionFixture.PermissionPath, GrantedSettings);
         try
         {
             Assert.Equal(0, (await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic"])).ExitCode);
@@ -27,7 +29,7 @@ public sealed class ExtensionPermissionDestinationIntegrationTests
                 source.MoveFile($"content/{PermissionFixture.ExternalPath}", "retired.md");
             }
             var lifecycle = workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath);
-            const string revoked = """{"allowInstallPaths":[]}""";
+            const string revoked = """{"frontmatter":"root","allowInstallPaths":[]}""";
             workspace.ReplaceText(PermissionFixture.PermissionPath, revoked);
             void RedirectParent()
             {
@@ -99,7 +101,7 @@ public sealed class ExtensionPermissionDestinationIntegrationTests
             ? "# External\r\n\r\n## Entries\r\n\r\n## Entries\r\n"
             : "# External\r\nPlain Markdown.\r\n";
         source.ReplaceText($"content/{PermissionFixture.ExternalPath}", bytes);
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+        workspace.ReplaceText(PermissionFixture.PermissionPath, GrantedSettings);
         try
         {
             Assert.Equal(0, (await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic"])).ExitCode);

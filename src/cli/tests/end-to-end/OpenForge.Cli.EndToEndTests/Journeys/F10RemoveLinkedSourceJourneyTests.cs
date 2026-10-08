@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
@@ -61,7 +62,7 @@ public sealed class F10RemoveLinkedSourceJourneyTests
         var expectedAfterApply = new HashSet<string>(beforePreview.Keys, StringComparer.Ordinal);
         Assert.True(expectedAfterApply.Remove(SourcePath));
         Assert.True(expectedAfterApply.Remove(SourceOverwritePath));
-        Assert.True(expectedAfterApply.Add(".agents/open-forge.json"));
+        Assert.Contains(PublishedInstallWorkspace.SettingsPath, expectedAfterApply);
         Assert.Equal(
             expectedAfterApply.Order(StringComparer.Ordinal),
             workspace.SnapshotState().Keys.Order(StringComparer.Ordinal));
@@ -163,7 +164,7 @@ public sealed class F10RemoveLinkedSourceJourneyTests
                 IncomingPath,
                 UnrelatedBytesPath);
 
-            await RunSetupAsync(workspace, "install", "--automatic");
+            await RunSetupAsync(workspace, JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
             await RunSetupAsync(
                 workspace,
                 "route", "create", SourceId, "--description", "Team notes", "--tag=Guidance");
@@ -201,7 +202,7 @@ public sealed class F10RemoveLinkedSourceJourneyTests
         try
         {
             workspace.ExpectCoreInstall();
-            await RunSetupAsync(workspace, "install", "--automatic");
+            await RunSetupAsync(workspace, JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
             return workspace;
         }
         catch

@@ -5,11 +5,14 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 
 internal sealed record RouteInitPlan
 {
+    public required WorkspaceSettingsRead Settings { get; init; }
+
     internal RouteInitPlan(
         RouteInitRequest request,
         RouteInitResultFormation preview,

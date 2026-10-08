@@ -662,9 +662,10 @@ interface. Detailed technology-neutral semantic evidence is mapped in the
 - The command does not create a global tag registry or choose
   one workspace-wide canonical spelling. `doctor` may report noncanonical or
   confusing authored variants under its own validation contract.
-- In `frontmatter`, `--tag` tests complete values in the authored
-  `open-forge.tags` list. It does not search serialized YAML text,
-  descriptions, responsibilities, unknown fields, or generated `Entries` copies.
+- In `frontmatter`, `--tag` tests complete values in the selected Open Forge tag
+  list under the [shared metadata precedence rule](../../shared-operation-contract.md#frontmatter-form).
+  It does not search serialized YAML text, descriptions, responsibilities,
+  unknown fields, or generated `Entries` copies.
 - In `body` or a selected section, `--tag` tests complete visible
   bare-tag tokens in parsed Markdown text.
 - Visible body-tag matching includes parsed text in paragraphs.

@@ -1,0 +1,5 @@
+Would update memory/project-alpha/overview
+Workspace: <workspace>
+  description: "Before overview" -> "After overview"
+  Entry updated in .agents/memory/project-alpha/_project-alpha.md
+No files were changed.

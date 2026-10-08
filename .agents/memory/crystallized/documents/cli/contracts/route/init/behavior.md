@@ -253,20 +253,17 @@ meaning-quality diagnostics separately.
 `applyTo` expressions use the workspace-relative syntax defined in the [route
 create Interface Contract](../create/interface.md#destination-metadata). The
 resolver emits their normalized atomic patterns as a quoted string list in the
-final target's scoped `open-forge` mapping.
+final target's metadata in the workspace's form.
 
 The resolver records draft versus explicit metadata provenance for each created
 entrypoint. It does not obtain metadata from a Template, filename meaning, or
 folder semantics, and it does not invent a fallback.
 
-Canonical emission and reading recognize exactly one Open Forge metadata root,
-`open-forge`, with supported children `description`, `tags`, optional
-`responsibility`, and optional scoped `applyTo`. A root-level `applyTo` declaration
-has the same applicability meaning and remains an authored top-level property.
-A `rune` root and every other unrelated YAML root are opaque:
-they supply no Open Forge metadata and bounded generated-region editing preserves
-their bytes. When `open-forge` and `rune` coexist, the reader uses exactly
-`open-forge` and ignores the meaning of `rune` without deleting or rewriting it.
+New metadata uses the workspace's chosen form. Supplied fields and their value
+grammar remain unchanged. Reading follows the [shared root and scoped
+rule](../../../shared-operation-contract.md#frontmatter-form). `applyTo` retains
+its dual-location rule. Unknown root fields, including `rune`, supply no Open
+Forge metadata and bounded generated-region editing preserves their bytes.
 
 The resolver records the intended tag list for every new entrypoint. After a safe
 complete plan and preflight, any new entrypoint whose intended tags contain the
@@ -624,12 +621,12 @@ in addition to the caller-visible [Interface Contract](interface.md):
   output from expressions, partial metadata, duplicate and invalid field
   values, and metadata
   provenance for every created entrypoint.
-- Canonical `open-forge` authoring and reading only, opaque `rune` preservation,
-  and `open-forge` selection when unrelated sibling YAML is present.
+- Workspace-form authoring, dual-form reading, opaque `rune` preservation,
+  and scoped precedence when an explicit `open-forge` key is present.
 - Existing direct children in a newly routable folder and blocking when child
   metadata needed by the intended generated region is missing.
-- Optional `applyTo` field absence from ancestor scaffolds, scoped quoted-list
-  output on the final target, and the existing mode and target restrictions.
+- Optional `applyTo` field absence from ancestor scaffolds, quoted-list output
+  in the workspace's form on the final target, and existing mode and target restrictions.
 - Automatic generated effects formed against the complete intended topology and
   the complete [Index Behavior Contract](../../index-candidate/behavior.md) projection.
 - Dry-run and application parity for request, current facts, intended state,

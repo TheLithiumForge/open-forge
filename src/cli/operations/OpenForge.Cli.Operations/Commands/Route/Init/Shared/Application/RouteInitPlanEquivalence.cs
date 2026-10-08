@@ -13,6 +13,7 @@ internal static class RouteInitPlanEquivalence
         ArgumentNullException.ThrowIfNull(expected);
         ArgumentNullException.ThrowIfNull(actual);
         return ReferenceEquals(expected.Request, actual.Request)
+            && expected.Settings.MatchesObservation(actual.Settings)
             && Matches(expected.Preview, actual.Preview)
             && SequenceMatches(expected.DirectoryCreations, actual.DirectoryCreations, Matches)
             && SequenceMatches(expected.FileChanges, actual.FileChanges, Matches)

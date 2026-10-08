@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
@@ -193,7 +194,7 @@ public sealed class F21PresentationViewsJourneyTests
         {
             workspace.ExpectCoreInstall();
             workspace.WriteText("README.md", "# F21 W1 fixture\n\nPreserve this authored file.\n");
-            var installed = await workspace.RunAsync("install", "--automatic");
+            var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
             Assert.Equal(0, installed.ExitCode);
             Assert.Equal(string.Empty, installed.StandardError);
             Assert.True(File.Exists(workspace.Combine("AGENTS.md")));

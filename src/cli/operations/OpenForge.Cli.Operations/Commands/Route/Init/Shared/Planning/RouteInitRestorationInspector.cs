@@ -10,7 +10,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
-using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -53,12 +52,7 @@ internal sealed class RouteInitRestorationInspector
         var framework = inspection.Framework ?? throw new InvalidOperationException("Restoration requires Framework facts.");
         var targetPath = inspection.Target.CanonicalPath ?? throw new InvalidOperationException("Restoration requires a canonical target.");
         var directory = SourceLogicalPath.ReadParent(targetPath);
-        var settings = await WorkspaceSettingsReader.ReadAsync(_resolver, request.Workspace, cancellationToken).ConfigureAwait(false);
-        if (settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete))
-        {
-            throw new RouteInitPlanningException(RouteInitFindingCode.MetadataUnsafe,
-                settings.Cause ?? "Authored settings cannot be safely read for restoration.", incomplete: false);
-        }
+        var settings = inspection.Settings;
 
         var ancestor = FindExcludedAncestor(directory, inspection, settings);
         if (ancestor is not null)
@@ -120,7 +114,10 @@ internal sealed class RouteInitRestorationInspector
                 throw new RouteInitPlanningException(RouteInitFindingCode.TargetUnsafe,
                     observed.Cause ?? $"The restoration payload target '{asset.Path}' is unsafe.", incomplete: false);
             }
-            files.Add(new RouteInitRestorationFile(asset, snapshot, source));
+            var intendedBytes = snapshot.Kind == FileExpectationKind.Missing
+                ? RouteInitRestorationEffects.Render(asset, settings.Document.Frontmatter)
+                : asset.Bytes.AsMemory();
+            files.Add(new RouteInitRestorationFile(asset, snapshot, source, intendedBytes));
         }
 
         var alignment = new RouteInitFrameworkAlignment(framework.Alignment.Target, aligned,

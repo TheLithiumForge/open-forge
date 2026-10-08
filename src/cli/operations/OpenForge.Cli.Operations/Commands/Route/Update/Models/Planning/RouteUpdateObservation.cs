@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
@@ -25,7 +27,11 @@ internal sealed record RouteUpdateObservation
 
     public required MarkdownDocumentFacts Markdown { get; init; }
 
-    public required YamlDocumentFacts Frontmatter { get; init; }
+    public required FrameworkDocumentMetadataFacts Metadata { get; init; }
+
+    public WorkspaceSettingsRead? MetadataSettings { get; init; }
+
+    public required YamlDocumentFacts? Frontmatter { get; init; }
 }
 
 internal sealed record RouteUpdatePlanningBoundary

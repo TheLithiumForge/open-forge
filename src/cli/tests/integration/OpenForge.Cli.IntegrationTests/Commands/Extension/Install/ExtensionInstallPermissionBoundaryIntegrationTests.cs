@@ -7,6 +7,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 [Trait("Feature", "workspace-permissions"), Trait("Evidence", "Integration")]
 public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
 {
+    private static readonly string GrantedSettings = $$"""{"frontmatter":"root","allowInstallPaths":["{{PermissionFixture.ExternalPath}}"]}""";
+
     [Trait("Boundary", "OS")]
     [Theory]
     [InlineData(".git/config")]
@@ -17,8 +19,8 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-protected");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage(target);
-        workspace.CreateOccupant(PermissionFixture.PermissionPath,
-            """{"allowInstallPaths":[".git/config"]}""");
+        workspace.ReplaceText(PermissionFixture.PermissionPath,
+            """{"frontmatter":"root","allowInstallPaths":[".git/config"]}""");
         var before = workspace.Snapshot();
 
         var run = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--force", "--automatic", "--format", "json"]);
@@ -37,7 +39,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-invalid-consumer");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, "{ malformed consumer permission\n");
+        workspace.ReplaceText(PermissionFixture.PermissionPath, "{ malformed consumer permission\n");
         var before = workspace.Snapshot();
         try
         {
@@ -97,6 +99,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
         var lifecycleBefore = workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath);
+        var settingsBefore = workspace.ReadText(PermissionFixture.PermissionPath);
         var answered = false;
         using var input = new ChangingInput(() =>
         {
@@ -111,7 +114,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
             }
             else
             {
-                workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+                workspace.ReplaceText(PermissionFixture.PermissionPath, GrantedSettings);
             }
         });
         try
@@ -125,11 +128,11 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
             Assert.Equal(lifecycleBefore, workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath));
             if (changeSource)
             {
-                Assert.False(File.Exists(workspace.Combine(PermissionFixture.PermissionPath)));
+                Assert.Equal(settingsBefore, workspace.ReadText(PermissionFixture.PermissionPath));
             }
             else
             {
-                Assert.Equal(PermissionFixture.Grants, workspace.ReadText(PermissionFixture.PermissionPath));
+                Assert.Equal(GrantedSettings, workspace.ReadText(PermissionFixture.PermissionPath));
             }
         }
         finally
@@ -151,10 +154,14 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-partial-effect");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        const string original = "{\"schemaVersion\":1,\"extensions\":[{\"id\":\"keep\",\"paths\":[\"keep.txt\"]}],\"libraries\":[]}\r\n";
+        const string original = "{\"schemaVersion\":1,\"frontmatter\":\"root\",\"extensions\":[{\"id\":\"keep\",\"paths\":[\"keep.txt\"]}],\"libraries\":[]}\r\n";
         if (existingPermission)
         {
-            workspace.CreateOccupant(PermissionFixture.PermissionPath, original);
+            workspace.ReplaceText(PermissionFixture.PermissionPath, original);
+        }
+        else
+        {
+            File.Delete(workspace.Combine(PermissionFixture.PermissionPath));
         }
         var parent = Directory.CreateDirectory(workspace.Combine(".apm/agents")).FullName;
         var originalMode = File.GetUnixFileMode(parent);

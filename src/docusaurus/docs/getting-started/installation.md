@@ -1,7 +1,10 @@
 ---
 title: Installation
-description: Install Open Forge, choose the routes you need, and change that selection later.
+description: Install Open Forge, choose routes and a frontmatter form, and change those choices later.
 ---
+
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
 
 # Installation
 
@@ -17,7 +20,7 @@ cd /path/to/your-project
 open-forge install
 ```
 
-The interactive install offers Essentials, Full Core, or Custom, shows the selected plan, and asks before applying it. For a smaller start, choose Essentials. Check the result with `git status` and `git diff`, including the new files, and commit it.
+The interactive install offers Essentials, Full Core, or Custom, then asks how to write file metadata, with root keys preselected. It shows the selected plan and asks before applying it. For a smaller start, choose Essentials. Check the result with `git status` and `git diff`, including the new files, and commit it.
 
 Continue with the [ten-minute guide](ten-minute-guide.md) to try a task, add a rule, and save a useful fact. Installing is a setup step. Your agent doesn't repeat it at startup. The base works without Extensions or a chosen workflow.
 
@@ -37,6 +40,44 @@ Git-ignored routes keep their entrypoint eligible for Git, so teammates receive 
 
 Custom starts from your current choices in an existing workspace, or Essentials in a fresh one. **Remove** omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions stay in place and remain routable. **Add + Git-ignore** installs the route, records its sharing policy, then ignores its contents with an exception for its entrypoint. Other Git-ignore rules stay yours.
 
+## Choose the frontmatter form
+
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
+<Tabs groupId="frontmatter-form">
+<TabItem value="root" label="Root" default>
+
+```yaml
+---
+description: C# rules
+tags: [Directive, LoadNow]
+applyTo: ["**/*.cs"]
+---
+```
+
+</TabItem>
+<TabItem value="scoped" label="Scoped">
+
+```yaml
+---
+open-forge:
+  description: C# rules
+  tags: [Directive, LoadNow]
+  applyTo: ["**/*.cs"]
+---
+```
+
+</TabItem>
+</Tabs>
+
+After resolving the preset, first interactive Install asks `How should Open Forge write file metadata?` and shows a short example of each form. The choices are `Root keys` (`description: and tags: at the top of the frontmatter`) and `Scoped under open-forge:` (`open-forge: holds description: and tags:`). Root is preselected when no preference is already declared in settings. `--frontmatter root` or `--frontmatter scoped` skips the question.
+
+A fresh Install uses the explicit flag, then a preference already declared in settings. With neither, unattended Install chooses root. Every fresh Install writes the resolved `frontmatter` key. Ordinary repeated Install and Update retain the effective form and never ask.
+
+When an `open-forge` mapping exists, root descriptions and tags belong to another tool. Open Forge does not merge them. `applyTo` is read at both locations, with equivalent sets counting once and conflicting sets rejected.
+
+The same precedence applies to `responsibility`. Root metadata alone does not make a file a routed source. Native `SKILL.md` metadata keeps its own contract.
+
 ## Configure an existing workspace
 
 To revisit those choices, run:
@@ -45,7 +86,16 @@ To revisit those choices, run:
 open-forge install --configure
 ```
 
-The wizard offers the presets, with Custom starting from the current choices, and shows the plan before confirmation. It preserves authored files and narrower omissions. It can also restore eligible missing packaged defaults, such as ignored Working scaffolding after a checkout, whether or not the lock file is present. Missing private notes need your own copy or backup.
+The wizard offers the presets, with Custom starting from the current choices, and asks about the frontmatter form with the current form preselected. It shows the plan before confirmation. It preserves authored files and narrower omissions. It can also restore eligible missing packaged defaults, such as ignored Working scaffolding after a checkout, whether or not the lock file is present. Missing private notes need your own copy or backup.
+
+To change only the form while keeping route choices, run:
+
+```sh
+open-forge install --configure --frontmatter scoped --dry-run
+open-forge install --configure --frontmatter scoped --automatic
+```
+
+Configure converts unedited owned Framework and Extension files to the selected form in the same operation as the settings change. Files already in that form need no change. Edited owned files and Extension files whose source is unavailable stay unchanged and are reported. Kept files do not block the form change. Excluded files, user-authored files, Library files, and overwrite companions are never converted. Native Skills and body content, including fenced examples, stay unchanged.
 
 For a repeatable preview or unattended setup, name the preset explicitly:
 
@@ -54,7 +104,7 @@ open-forge install --configure --preset essentials --dry-run
 open-forge install --configure --preset essentials --automatic
 ```
 
-Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive `--configure` requires `--preset`. An ordinary unattended first install keeps Full Core and existing omissions. See the [CLI reference](/guides/cli#setup-choices) for Custom row flags and exact combinations.
+Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive `--configure` requires `--preset` or `--frontmatter`. With a preset alone it retains the effective form and checks eligible owned files for conversion. An ordinary unattended first install keeps Full Core and existing omissions, with root frontmatter unless settings already declare a preference. See the [CLI reference](/guides/cli#setup-choices) for Custom row flags and exact combinations.
 
 <details>
 <summary>Other installation methods and existing-workspace details</summary>
@@ -125,7 +175,7 @@ open-forge install --preset essentials --dry-run
 open-forge install --preset essentials
 ```
 
-Naming the preset previews that exact selection without setup questions. The second command shows the plan and asks before it writes. Use `full-core` instead when you want every built-in route. An explicit preset in an already installed workspace also needs `--configure`.
+Naming the preset previews that exact selection without setup questions. The second command asks about frontmatter unless a flag or declared preference supplies it, then shows the plan and asks before it writes. Use `full-core` instead when you want every built-in route. Add `--frontmatter root` or `--frontmatter scoped` to select the form explicitly. An explicit preset or form in an already installed workspace also needs `--configure`.
 
 An existing category entrypoint does not prevent first installation. If a file
 already occupies a bundled path in a selected route, such as `.agents/guidance/_guidance.md`, Install

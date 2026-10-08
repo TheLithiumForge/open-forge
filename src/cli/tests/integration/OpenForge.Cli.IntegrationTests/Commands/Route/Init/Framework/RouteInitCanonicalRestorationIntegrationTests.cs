@@ -1,5 +1,6 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Install;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
@@ -7,6 +8,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -231,6 +233,8 @@ public sealed class RouteInitCanonicalRestorationIntegrationTests
         var before = workspace.SnapshotHashes();
         var result = await ExecuteAsync(workspace, "patterns");
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+        Assert.Contains(result.Findings, finding => finding.Code == RouteInitFindingCode.MetadataUnsafe);
+        Assert.Empty(result.Effects);
         Assert.Equal(before, workspace.SnapshotHashes());
         workspace.Delete(".agents/open-forge.json");
         workspace.Delete(".agents/loader.md");
@@ -238,6 +242,25 @@ public sealed class RouteInitCanonicalRestorationIntegrationTests
         result = await ExecuteAsync(workspace, "patterns");
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Canonical restoration blocks unavailable settings without writing effects")]
+    public async Task UnavailableSettingsBlock()
+    {
+        using var workspace = await TrustedAsync();
+        workspace.Delete(".agents/patterns");
+        workspace.Delete(".agents/open-forge.json");
+        Directory.CreateDirectory(workspace.Combine(".agents/open-forge.json"));
+        var before = workspace.SnapshotHashes();
+
+        var result = await ExecuteAsync(workspace, "patterns");
+
+        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+        Assert.Equal(RouteInitFindingCode.MetadataUnsafe, Assert.Single(result.Findings).Code);
+        Assert.Empty(result.Effects);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.True(Directory.Exists(workspace.Combine(".agents/open-forge.json")));
+        Assert.False(workspace.Exists(".agents/patterns"));
     }
 
     [Fact(DisplayName = "Restoration revalidation rejects changed settings and preserved payload snapshots")]
@@ -273,8 +296,32 @@ public sealed class RouteInitCanonicalRestorationIntegrationTests
         Assert.False(workspace.Exists(".agents/patterns"));
     }
 
-    private static Task<RouteInitFrameworkIntegrationWorkspace> TrustedAsync()
-        => RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync("canonical-restoration", TestContext.Current.CancellationToken);
+    private static async Task<RouteInitFrameworkIntegrationWorkspace> TrustedAsync()
+    {
+        var workspace = RouteInitFrameworkIntegrationWorkspace.CreateEmpty("canonical-restoration");
+        try
+        {
+            var result = await InstallOperationFactory.Create(
+                    InstallInteractionTestSupport.Unavailable(), workspace.LockStoreRoot)
+                .ExecuteAsync(
+                    workspace.InstallRequest() with
+                    {
+                        Setup = new InstallSetupInput(Configure: false, Preset: null, Overrides: [])
+                        {
+                            Frontmatter = FrontmatterForm.Scoped,
+                        },
+                    },
+                    TestContext.Current.CancellationToken);
+            Assert.Equal(CliSemanticStatus.Complete, result.Status);
+            Assert.Empty(result.Findings);
+            return workspace;
+        }
+        catch
+        {
+            workspace.Dispose();
+            throw;
+        }
+    }
 
     private static ValueTask<RouteInitResult> ExecuteAsync(RouteInitFrameworkIntegrationWorkspace workspace, string target, RouteInitMode mode = RouteInitMode.Apply)
         => RouteInitOperationFactory.Create(workspace.LockStoreRoot).ExecuteAsync(workspace.Request(target, mode), TestContext.Current.CancellationToken);

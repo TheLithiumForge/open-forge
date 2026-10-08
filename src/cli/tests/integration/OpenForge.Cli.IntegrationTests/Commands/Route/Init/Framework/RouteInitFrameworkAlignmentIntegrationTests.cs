@@ -1,10 +1,14 @@
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Install;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Route.Init;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Framework;
 
@@ -240,9 +244,20 @@ public sealed class RouteInitFrameworkAlignmentIntegrationTests
      Trait("Feature", "route-init-framework"), Trait("Evidence", "Integration")]
     public async Task ManagedAndScopeProvenanceRemainDistinct()
     {
-        using var workspace = await RouteInitFrameworkIntegrationWorkspace.CreateTrustedAsync(
-            "route-init-framework-provenance",
-            TestContext.Current.CancellationToken);
+        using var workspace = RouteInitFrameworkIntegrationWorkspace.CreateEmpty("route-init-framework-provenance");
+        var installed = await InstallOperationFactory.Create(
+                InstallInteractionTestSupport.Unavailable(), workspace.LockStoreRoot)
+            .ExecuteAsync(
+                workspace.InstallRequest() with
+                {
+                    Setup = new InstallSetupInput(Configure: false, Preset: null, Overrides: [])
+                    {
+                        Frontmatter = FrontmatterForm.Scoped,
+                    },
+                },
+                TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, installed.Status);
+        Assert.Empty(installed.Findings);
         var result = await ExecuteAsync(
             workspace,
             "memory/release-notes/working");

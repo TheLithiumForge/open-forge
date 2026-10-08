@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 
 namespace OpenForge.Cli.Core.Framework.Settings.Models.Document;
 
@@ -12,6 +13,10 @@ internal sealed record WorkspaceSettingsDocument(
     ImmutableArray<string> RemovedCategories,
     ImmutableArray<string> RemovedFiles)
 {
+    internal FrontmatterForm? DeclaredFrontmatter { get; init; }
+
+    internal FrontmatterForm Frontmatter => DeclaredFrontmatter ?? FrontmatterForm.Scoped;
+
     internal ImmutableArray<string> RemovedDirectories { get; init; } = [];
 
     internal ImmutableArray<string> RemovedExtensions { get; init; } = [];

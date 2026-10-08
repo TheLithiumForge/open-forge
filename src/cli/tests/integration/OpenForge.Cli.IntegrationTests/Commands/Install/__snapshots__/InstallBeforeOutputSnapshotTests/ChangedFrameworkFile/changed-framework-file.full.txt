@@ -5,6 +5,7 @@ Workspace: <workspace>
          use open-forge update
          open-forge update
          Update the existing managed Framework state from a fresh plan.
+Frontmatter: root
   Bundled Framework fingerprint: <sha256> (19 assets).
   The existing ownership record was preserved.
   No recovery bundle was required.

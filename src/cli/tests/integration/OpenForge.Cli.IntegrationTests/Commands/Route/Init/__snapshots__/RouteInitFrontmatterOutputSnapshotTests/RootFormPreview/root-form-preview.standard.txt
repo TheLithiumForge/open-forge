@@ -1,0 +1,9 @@
+Would create 2 entrypoints for documents/design.
+Workspace: <workspace>
+  Scaffold: generic
+  description: Draft route for documents/design; replace this description before relying on it for selection
+  tags: NeedsAuthoring
+  .agents/documents/_documents.md  would create
+  .agents/documents/design/_design.md  would create
+  Its description and tags are placeholders. Edit them before relying on this route.
+No files were changed.

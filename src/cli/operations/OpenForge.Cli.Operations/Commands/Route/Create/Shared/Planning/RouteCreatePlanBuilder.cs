@@ -66,7 +66,7 @@ internal sealed class RouteCreatePlanBuilder
                 {
                     ApplyTo = request.Metadata.ApplyTo,
                 },
-                body)
+                body, inspection.Settings.Document.Frontmatter)
             : _documentWriter.WriteOptional(
                 new FrameworkDocumentMetadataEmission(
                     request.Metadata.Description,
@@ -75,7 +75,7 @@ internal sealed class RouteCreatePlanBuilder
                 {
                     ApplyTo = request.Metadata.ApplyTo,
                 },
-                body);
+                body, inspection.Settings.Document.Frontmatter);
         if (inspection.Snapshot.Kind == FileExpectationKind.File
             && !inspection.Snapshot.Bytes.AsSpan().SequenceEqual(intendedBytes.AsSpan()))
         {
@@ -116,6 +116,7 @@ internal sealed class RouteCreatePlanBuilder
         var plan = new RouteCreatePlan
         {
             Request = request,
+            Settings = inspection.Settings,
             Preview = preview,
             NavigationFormation = navigation.Formation,
             SharingExpectation = navigation.SharingExpectation,

@@ -8,6 +8,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 [Trait("Feature", "workspace-permissions"), Trait("Evidence", "Integration")]
 public sealed class ExtensionInstallPermissionIntegrationTests
 {
+    private static readonly string GrantedSettings = $$"""{"frontmatter":"root","allowInstallPaths":["{{PermissionFixture.ExternalPath}}"]}""";
 
     [Trait("Boundary", "OS")]
     [Fact]
@@ -55,6 +56,7 @@ public sealed class ExtensionInstallPermissionIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-once");
         await workspace.SeedFrameworkAsync();
+        File.Delete(workspace.Combine(PermissionFixture.PermissionPath));
         using var source = PermissionFixture.CreatePackage();
         workspace.CreateOccupant(".agents/open-forge.permissions.json", "malformed retired file");
         try
@@ -83,7 +85,7 @@ public sealed class ExtensionInstallPermissionIntegrationTests
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
         const string invalid = "{ malformed authored settings";
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, invalid);
+        workspace.ReplaceText(PermissionFixture.PermissionPath, invalid);
         var before = workspace.Snapshot();
         var sourceBefore = source.SnapshotHashes();
         try
@@ -188,14 +190,14 @@ public sealed class ExtensionInstallPermissionIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-flag");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+        workspace.ReplaceText(PermissionFixture.PermissionPath, GrantedSettings);
         try
         {
             if (command != "install")
             {
                 Assert.Equal(0, (await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic"])).ExitCode);
             }
-            const string original = "{\"keep\":true,\"allowInstallPaths\":[]}";
+            const string original = "{\"frontmatter\":\"root\",\"keep\":true,\"allowInstallPaths\":[]}";
             workspace.ReplaceText(PermissionFixture.PermissionPath, original);
             string[] selection = command == "remove" ? ["extension", command, "team"] : ["extension", command, "team", "--source", source.Path];
             string[] arguments = [.. selection, "--allow-path", ".apm", "--allow-path", "tools", "--automatic", "--format", "json", .. dryRun ? new[] { "--dry-run" } : Array.Empty<string>()];
@@ -225,7 +227,7 @@ public sealed class ExtensionInstallPermissionIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-existing");
         await workspace.SeedFrameworkAsync();
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+        workspace.ReplaceText(PermissionFixture.PermissionPath, GrantedSettings);
         using var source = PermissionFixture.CreatePackage();
         try
         {
@@ -236,7 +238,7 @@ public sealed class ExtensionInstallPermissionIntegrationTests
                 workspace.ReadText(".agents/open-forge.lock.json").Replace(".agents/team.txt", PermissionFixture.ExternalPath, StringComparison.Ordinal));
             Assert.True(File.Exists(workspace.Combine(PermissionFixture.ExternalPath)), "The approved external file is missing.");
             Assert.Equal("content bytes\n", File.ReadAllText(workspace.Combine(PermissionFixture.ExternalPath)));
-            Assert.Equal(PermissionFixture.Grants, workspace.ReadText(PermissionFixture.PermissionPath));
+            Assert.Equal(GrantedSettings, workspace.ReadText(PermissionFixture.PermissionPath));
             using var json = JsonDocument.Parse(run.StandardOutput);
             Assert.Equal("granted", json.RootElement.GetProperty("data").GetProperty("permissions").GetProperty("decision").GetString());
         }
@@ -257,8 +259,8 @@ public sealed class ExtensionInstallPermissionIntegrationTests
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
         const string originalSettings =
-            "{\"schemaVersion\":1,\"keep\":{\"nested\":true},\"allowInstallPaths\":[]}";
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, originalSettings);
+            "{\"schemaVersion\":1,\"frontmatter\":\"root\",\"keep\":{\"nested\":true},\"allowInstallPaths\":[]}";
+        workspace.ReplaceText(PermissionFixture.PermissionPath, originalSettings);
         var before = workspace.Snapshot();
         var settingsBefore = File.ReadAllBytes(workspace.Combine(PermissionFixture.PermissionPath));
         try
@@ -313,7 +315,7 @@ public sealed class ExtensionInstallPermissionIntegrationTests
                 workspace.ReadText(".agents/open-forge.lock.json").Replace(".agents/team.txt", PermissionFixture.ExternalPath, StringComparison.Ordinal));
             Assert.True(File.Exists(workspace.Combine(PermissionFixture.ExternalPath)), "The approved external file is missing.");
             Assert.Equal("content bytes\n", File.ReadAllText(workspace.Combine(PermissionFixture.ExternalPath)));
-            workspace.CreateOccupant(PermissionFixture.PermissionPath, """{"allowInstallPaths":[]}""");
+            workspace.ReplaceText(PermissionFixture.PermissionPath, """{"frontmatter":"root","allowInstallPaths":[]}""");
             var before = workspace.Snapshot();
             string[] arguments = command == "update"
                 ? ["extension", "update", "team", "--source", source.Path, "--automatic", "--format", "json"]

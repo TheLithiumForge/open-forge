@@ -70,9 +70,22 @@ Use `open-forge remove <path> --dry-run`, then apply the reviewed removal so lat
 | File                           | Purpose                                                                                                | Agent context? |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------ | -------------- |
 | `.agents/open-forge.lock.json` | Records files and generated navigation regions managed by the Framework and each Extension. | No             |
-| `.agents/open-forge.json`      | Your settings, including removal exclusions and path grants for files outside `.agents/`.              | No             |
+| `.agents/open-forge.json`      | Your settings, including the frontmatter form, removal exclusions, and path grants for files outside `.agents/`. | No             |
 
 Neither file gives content any authority. They exist for file maintenance only.
+
+The `frontmatter` setting accepts `root` or `scoped`. A missing key means scoped, and both forms remain readable in every workspace. Fresh unattended Install chooses root unless settings already declare a preference. Interactive Install asks after the preset, with root preselected, and `--frontmatter` supplies the choice without asking. Ordinary repeated Install and Update retain the effective form.
+
+Change just the form without changing route choices:
+
+```sh
+open-forge install --configure --frontmatter root --dry-run
+open-forge install --configure --frontmatter root --automatic
+```
+
+Configure converts unedited owned Framework and Extension Markdown to the selected form in the same operation as the settings change. Edited owned files and Extension files whose source is unavailable are kept unchanged and reported. Keeping them does not block the form change. Excluded files, user-authored files, Library files, and overwrite companions are never converted. Native `SKILL.md` metadata and body content, including fenced examples, stay unchanged. This conversion differs from ordinary Update, which can replace edited managed files.
+
+New route metadata and installed Templates follow the workspace setting. `route update` edits existing metadata where it was authored. [Installation](../getting-started/installation.md#choose-the-frontmatter-form) shows both forms and the setup choices.
 
 Compatible Skill adoption can add missing metadata and navigation to user-owned content without claiming whole-file management. See the [installation guidance](../getting-started/installation.md#with-the-cli).
 

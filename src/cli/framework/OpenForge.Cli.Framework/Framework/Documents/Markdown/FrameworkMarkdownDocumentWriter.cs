@@ -15,16 +15,18 @@ internal sealed class FrameworkMarkdownDocumentWriter
 
     internal ImmutableArray<byte> Write(
         FrameworkDocumentMetadata metadata,
-        string body)
+        string body,
+        FrontmatterForm form)
     {
-        return WriteDocument(_metadataEmitter.Emit(metadata), body);
+        return WriteDocument(_metadataEmitter.Emit(metadata, form), body);
     }
 
     internal ImmutableArray<byte> WriteOptional(
         FrameworkDocumentMetadataEmission metadata,
-        string body)
+        string body,
+        FrontmatterForm form)
     {
-        return WriteDocument(_metadataEmitter.EmitOptional(metadata), body);
+        return WriteDocument(_metadataEmitter.EmitOptional(metadata, form), body);
     }
 
     private static ImmutableArray<byte> WriteDocument(string yaml, string body)

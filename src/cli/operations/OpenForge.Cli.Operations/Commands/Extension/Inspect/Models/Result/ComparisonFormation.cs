@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 
@@ -6,6 +7,8 @@ namespace OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 
 internal sealed record ExtensionInspectComparisonBuildInput
 {
+    public required FrontmatterForm? Frontmatter { get; init; }
+
     public required WorkspaceOwnershipRead Ownership { get; init; }
 
     public required ExtensionOwnership? InstalledPackage { get; init; }
@@ -32,6 +35,8 @@ internal sealed record ExtensionInspectComparisonFacts
 
 internal sealed record ExtensionInspectComparisonInput
 {
+    public required FrontmatterForm? Frontmatter { get; init; }
+
     public required IReadOnlyList<ExtensionInspectCurrentPath> CurrentPaths { get; init; }
 
     public required WorkspaceOwnershipRead Ownership { get; init; }

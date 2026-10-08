@@ -40,6 +40,9 @@ internal sealed record InstallData
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public InstallDataConfiguration? Configuration { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public InstallDataFrontmatter? Frontmatter { get; init; }
+
     [JsonIgnore]
     internal IReadOnlyList<InstallDataTextRow> TextRows { get; init; } = [];
 
@@ -178,3 +181,22 @@ internal sealed record InstallDataMigrationDerivation
 
 internal sealed record InstallDataConfiguration(bool Configure, string Preset, IReadOnlyList<InstallDataRoute> Routes);
 internal sealed record InstallDataRoute(string Id, string Action);
+
+internal sealed record InstallDataFrontmatter
+{
+    public required string Form { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? PreviousForm { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<InstallDataFrontmatterKeptFile>? Kept { get; init; }
+
+    [JsonIgnore]
+    internal IReadOnlyList<InstallDataFrontmatterKeptFile> TextKept { get; init; } = [];
+
+    [JsonIgnore]
+    internal int KeptCount { get; init; }
+}
+
+internal sealed record InstallDataFrontmatterKeptFile(string Path, string Reason);

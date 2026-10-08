@@ -171,7 +171,7 @@ public sealed class ExtensionInstallMutationIntegrationTests
     public async Task ApplyVerifiesCompleteStateAndNoOp()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-apply");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         using var source = ExtensionInstallCatalogue.Create("extension-install-apply-source");
         source.AddPackage(
             "base",

@@ -3,6 +3,9 @@ title: Reading installed files
 description: The conventions inside Extension files, so you can tell a Template from a Memory category from a workflow recipe at a glance.
 ---
 
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+
 # Reading installed files
 
 Extension files follow a few conventions. Once you know them, you can open any installed file and tell what it's for, even if the CLI output didn't make it obvious.
@@ -25,9 +28,35 @@ The folder a file lands in tells you its role:
 
 Every Extension file except a native `SKILL.md` carries the `Extension` tag in its frontmatter, plus tags for its role:
 
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
+<Tabs groupId="frontmatter-form">
+<TabItem value="root" label="Root" default>
+
 ```yaml
+---
+description: Start a task record
 tags: [Extension, Template, Planning, Task, Memory]
+---
 ```
+
+</TabItem>
+<TabItem value="scoped" label="Scoped">
+
+```yaml
+---
+open-forge:
+  description: Start a task record
+  tags: [Extension, Template, Planning, Task, Memory]
+---
+```
+
+</TabItem>
+</Tabs>
+
+Framework and Extension delivery uses the workspace's form for leading Open Forge metadata. Repository sources and fenced body examples stay unchanged. Native `SKILL.md` keeps its own metadata contract. [Installation](../getting-started/installation.md#configure-an-existing-workspace) explains how Configure converts unedited owned files while keeping and reporting edited files.
+
+When an `open-forge` mapping exists, root descriptions and tags belong to another tool. Open Forge does not merge them. `applyTo` is read at both locations, with equivalent sets counting once and conflicting sets rejected.
 
 Look for the role tag: `Template`, `Guidance`, `Pattern`, `Workflow`, `Memory`, `Decision`, and so on. A `SKILL.md` keeps its harness's own frontmatter instead, with no Open Forge tags.
 
@@ -52,7 +81,7 @@ Replace {prompts}. Remove this source guidance and optional sections that add no
 
 - **`{Something}`** is a prompt. Replace it with your content.
 - **A `{ ... }` block right after the title** is source guidance: when to use the Template and how to adapt it. Delete it from your copy.
-- **The frontmatter describes the Template**, not your record. Give the copy its own description and tags. Drop `Extension`, and drop `Template` unless the copy is itself a new Template.
+- **The frontmatter describes the Template**, not your record. Give the copy its own description and tags in the workspace's chosen form. Drop `Extension`, and drop `Template` unless the copy is itself a new Template.
 - **Relative links** point from the Template's location. Fix them for the copy's location.
 
 Your copy is yours. Updating the Template never updates copies made from it, and removing a Template never removes them.

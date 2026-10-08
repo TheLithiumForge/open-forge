@@ -152,7 +152,8 @@ internal static class RouteCreateReportSelector
             effect.Kind == RouteCreateEffectKind.GeneratedRegion);
         var targetIsHeadline = targetEffect is not null
             && result.Status is (CliSemanticStatus.Complete or CliSemanticStatus.Attention)
-            && IsProgressed(targetEffect, result.Mode);
+            && IsProgressed(targetEffect, result.Mode)
+            && !result.Effects.Any(effect => effect.Kind == RouteCreateEffectKind.Entrypoint);
 
         if (targetEffect is not null && !targetIsHeadline)
         {

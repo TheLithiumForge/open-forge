@@ -341,3 +341,31 @@ Verify actual signal delivery and unchanged bytes; a process timeout without the
 **Disposition:** Deferred; not selected yet. Retained recovery matters, but this generic permutation has no demonstrated recovery-requiring plan or reliable post-success cleanup fault.
 
 **Required before reconsideration:** Prove this exact plan requires recovery and synchronize successful effects with denied cleanup of its positively identified bundle.
+
+## C05-12
+
+**Situation:** Index projects Entries from root metadata, and from an `open-forge` block beside another tool's root keys
+
+**Disposition:** Added. Build navigation from the correct metadata in a workspace that reads both forms.
+
+### Starting point
+
+ROUTES has a valid guidance entrypoint and two admitted user-owned sibling files. `review-checklist.md` has root `description: Review checklist for pull requests` and `tags: [Guidance, Review]`. `shared-note.md` has foreign root `description: Sidebar note` and `tags: [Review]`, plus an `open-forge` mapping with `description: Shared team guidance` and `tags: [Guidance, Team]`. Both have distinctive bodies and no conflicting `applyTo` declarations. Their parent list is stale.
+
+Fixture: `ROUTES`, with both files independently admitted through the existing route topology.
+
+### Steps
+
+```text
+open-forge index
+```
+
+### Expected result
+
+Index projects the checklist's root Open Forge description and tags. For the shared file, the explicit `open-forge` mapping supplies all Open Forge description, responsibility, and tags, while the other tool's root keys are ignored. Only affected generated `Entries` bodies change. Both sibling files retain their original bytes. If the lists are already current, Index is a no-op.
+
+### Verification
+
+**State:** Compute the expected descriptions, tag sets, relative links, and ordering from the authored fixture independently. Compare the parent list with that projection and compare both sibling files and parent text outside `Entries` with saved bytes.
+
+**Output:** Check listed generated effects and counts against the actual changed lists. A printed success or root setting does not prove which metadata was projected.

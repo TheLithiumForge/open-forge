@@ -6,6 +6,9 @@ using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Distribution.Operational;
@@ -81,9 +84,12 @@ internal sealed class FrameworkLifecycleOperationalContributor(
         CancellationToken cancellationToken)
     {
         var payload = EmbeddedFrameworkPayloadReader.Read();
+        var settings = await WorkspaceSettingsReader.ReadAsync(physicalPathResolver, workspace, cancellationToken).ConfigureAwait(false);
+        FrontmatterForm? form = settings.State is WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete
+            ? settings.Document.Frontmatter : null;
         IReadOnlyList<FrameworkManagedTargetDoctorObservation> targets =
             ownership.Document.Framework is { } framework && payload.Payload is { } value
-                ? await targetReader.ReadDoctorAsync(workspace, framework, value, cancellationToken).ConfigureAwait(false)
+                ? await targetReader.ReadDoctorAsync(workspace, framework, value, form, cancellationToken).ConfigureAwait(false)
                 : [];
         var sourceAvailability = ownership.Document.Framework is null
             ? OperationalSourceAvailability.NotApplicable

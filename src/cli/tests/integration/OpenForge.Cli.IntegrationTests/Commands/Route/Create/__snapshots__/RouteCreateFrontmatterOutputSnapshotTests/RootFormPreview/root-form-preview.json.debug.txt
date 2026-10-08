@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 3,
+  "command": "route create",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would create .agents/memory/project-alpha/team/overview.md  (memory/project-alpha/team/overview)",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/memory/project-alpha/team",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/project-alpha/team/_team.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/memory/project-alpha/team/overview.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/memory/project-alpha/_project-alpha.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "filesCreated": 2,
+    "sectionsUpdated": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "target": {
+      "id": "memory/project-alpha/team/overview",
+      "path": ".agents/memory/project-alpha/team/overview.md"
+    },
+    "listedIn": ".agents/memory/project-alpha/team/_team.md",
+    "template": null,
+    "metadata": {
+      "description": "Project overview",
+      "responsibility": "Explains the project",
+      "tags": [
+        "Docs",
+        "Overview"
+      ]
+    },
+    "content": "---\ndescription: Project overview\ntags: [Docs, Overview]\nresponsibility: Explains the project\n---\n",
+    "sections": [
+      {
+        "path": ".agents/memory/project-alpha/_project-alpha.md",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "verification": "planned"
+      }
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

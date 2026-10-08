@@ -315,6 +315,11 @@ Ordinary indexed Markdown and entrypoints contribute their authored
 source such as `SKILL.md` contributes the metadata and classification defined by
 its source contract.
 
+Ordinary routed metadata reads root and scoped forms under the [shared
+rule](../../shared-operation-contract.md#frontmatter-form). Output selection
+does not filter readable forms. Generated metadata uses the selected Open Forge
+values. Authored frontmatter projections preserve the complete original block.
+
 Read `applyTo` at the frontmatter root and under `open-forge` whenever either
 declaration is present. Equivalent normalized declarations represent one set.
 Declarations whose normalized sets differ are invalid metadata under the

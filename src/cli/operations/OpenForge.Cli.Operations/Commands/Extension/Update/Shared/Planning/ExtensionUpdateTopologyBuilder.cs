@@ -1,4 +1,7 @@
 using System.Text;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Transformation.Models;
 using OpenForge.Cli.Core.Commands.Extension.Shared.Permissions;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Planning.Topology;
@@ -73,7 +76,9 @@ internal sealed class ExtensionUpdateTopologyBuilder
             .Select(ReadPayload)
             .GroupBy(payload => payload.PortableKey, StringComparer.Ordinal)
             .Select(ReadSharedPayload)
-            .ToDictionary(payload => payload.Path, payload => payload.Bytes, StringComparer.Ordinal);
+            .ToArray()
+            .ToDictionary(payload => payload.Path,
+                payload => RenderPayload(payload, input.Settings.Frontmatter), StringComparer.Ordinal);
         var packagePaths = packageBytes.Keys.ToHashSet(StringComparer.Ordinal);
         foreach (var excluded in input.Admission.Exclusions)
         {
@@ -358,6 +363,19 @@ internal sealed class ExtensionUpdateTopologyBuilder
         }
 
         return canonical;
+    }
+
+    private static byte[] RenderPayload(PayloadBytes payload, FrontmatterForm form)
+    {
+        var rendered = WorkspacePayloadRenderer.Render(payload.Path, payload.Bytes, form);
+        if (rendered.State == FrameworkFrontmatterTransformState.Invalid)
+        {
+            throw new ExtensionUpdatePayloadRenderingException(payload.Path,
+                rendered.Cause ?? "The Extension payload cannot be rendered in the workspace's frontmatter form.");
+        }
+
+        return (rendered.Bytes
+            ?? throw new InvalidOperationException("A valid Extension payload rendering requires bytes.")).ToArray();
     }
 
     internal static SourceLogicalSource CreatePackageSource(

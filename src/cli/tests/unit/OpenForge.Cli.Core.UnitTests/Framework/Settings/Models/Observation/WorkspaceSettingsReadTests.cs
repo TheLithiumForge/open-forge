@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
@@ -7,6 +8,20 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Settings.Models.Observation;
 [Trait("Feature", "workspace-settings"), Trait("Evidence", "Unit")]
 public sealed class WorkspaceSettingsReadTests
 {
+    [Fact(DisplayName = "Settings observations compare declared and effective frontmatter forms"), Trait("Boundary", "Processing")]
+    public void ObservationComparesDeclaredForm()
+    {
+        var before = WorkspaceSettingsRead.Absent(Path.GetFullPath("settings-unit/open-forge.json"));
+        var declaredScoped = before with { Document = before.Document with { DeclaredFrontmatter = FrontmatterForm.Scoped } };
+        var declaredRoot = before with { Document = before.Document with { DeclaredFrontmatter = FrontmatterForm.Root } };
+
+        Assert.Equal(before.Document.Frontmatter, declaredScoped.Document.Frontmatter);
+        Assert.False(before.MatchesObservation(declaredScoped));
+        Assert.False(before.MatchesObservation(declaredRoot));
+        Assert.False(declaredScoped.MatchesObservation(declaredRoot));
+        Assert.True(declaredRoot.MatchesObservation(declaredRoot with { Document = declaredRoot.Document with { } }));
+    }
+
     [Trait("Boundary", "Processing")]
     [Theory]
     [InlineData(false), InlineData(true)]

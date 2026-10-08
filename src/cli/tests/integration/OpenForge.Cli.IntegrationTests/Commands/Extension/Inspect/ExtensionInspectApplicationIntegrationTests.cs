@@ -1,4 +1,6 @@
 using System.Text.Json;
+using System.Security.Cryptography;
+using System.Text;
 using OpenForge.Cli.Core.Commands.Extension.Inspect;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
@@ -9,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Extensions;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
@@ -20,6 +23,100 @@ public sealed class ExtensionInspectApplicationIntegrationTests
     private const string ToolkitOwnership = """
         {"schemaVersion":1,"extensions":[{"id":"toolkit","version":"1.0.0","source":"embedded catalogue","dependencies":[],"paths":[".agents/toolkit.md"],"regions":[]}]}
         """;
+
+    [Fact(DisplayName = "Root workspace Extension Inspect compares rendered targets and retains canonical package hashes")]
+    [Trait("Boundary", "OS"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Integration")]
+    public async Task RootWorkspaceInspectReportsCurrentTargets()
+    {
+        const string scoped = """
+            ---
+            open-forge:
+              description: Toolkit guidance
+              tags: [Guidance]
+            ---
+
+            # Toolkit
+            """;
+        const string root = """
+            ---
+            description: Toolkit guidance
+            tags: [Guidance]
+            ---
+
+            # Toolkit
+            """;
+        using var fixture = InspectScenario.Create("root-frontmatter");
+        fixture.WriteInstalledToolkit(Encoding.UTF8.GetBytes(root));
+        fixture.WritePackage(string.Empty, "toolkit", [], (".agents/toolkit.md", scoped));
+        fixture.Workspace.WriteText(WorkspaceSettingsDefinitions.RelativePath, """{"schemaVersion":1,"frontmatter":"root"}""");
+        var before = fixture.Workspace.SnapshotHashes();
+        var sourceBefore = fixture.Source.SnapshotHashes();
+        var result = await fixture.InspectAsync();
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(ExtensionInspectComparisonState.Complete, result.Comparison.State);
+        var target = Assert.Single(result.Comparison.Paths);
+        Assert.Equal(ExtensionInspectPathRelation.Unchanged, target.Relation);
+        Assert.Equal(target.Current?.Sha256, target.Intended?.Sha256);
+        var package = Assert.IsType<ExtensionInspectAvailablePackage>(result.Available.Package);
+        var payload = Assert.Single(package.Payload);
+        Assert.Equal(Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(scoped))), payload.Sha256);
+        Assert.NotEqual(payload.Sha256, Assert.Single(result.PathFacts.Current).ExactSha256);
+        Assert.Empty(result.Findings);
+        Assert.Equal(before, fixture.Workspace.SnapshotHashes());
+        Assert.Equal(sourceBefore, fixture.Source.SnapshotHashes());
+    }
+
+    [Theory(DisplayName = "Extension Inspect leaves intended comparison unavailable for unusable settings even with empty payload")]
+    [Trait("Boundary", "OS"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Integration")]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task InvalidSettingsMakesComparisonUnavailable(bool unavailable, bool emptyPayload)
+    {
+        using var fixture = InspectScenario.Create("invalid-frontmatter");
+        fixture.WriteInstalledToolkit();
+        if (emptyPayload) fixture.WritePackage(string.Empty, "toolkit", []);
+        else fixture.WritePackage(string.Empty, "toolkit", [], (".agents/toolkit.md", "alpha\n"));
+        if (unavailable) fixture.Workspace.CreateDirectory(WorkspaceSettingsDefinitions.RelativePath);
+        else fixture.Workspace.WriteText(WorkspaceSettingsDefinitions.RelativePath, """{"schemaVersion":1,"frontmatter":"unknown"}""");
+        var before = fixture.Workspace.SnapshotHashes();
+        var result = await fixture.InspectAsync();
+        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
+        Assert.Equal(ExtensionInspectComparisonSideState.Unavailable, result.Comparison.Intended.State);
+        Assert.Empty(result.Comparison.Intended.Fingerprints);
+        Assert.Contains(result.Findings, finding => finding.Code == ExtensionInspectFindingCode.FingerprintUnavailable);
+        Assert.DoesNotContain(result.Findings, finding => finding.Code == ExtensionInspectFindingCode.PathChanged);
+        Assert.Equal("open-forge doctor", result.Next?.Command);
+        Assert.Equal(before, fixture.Workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Extension Inspect never falls back to canonical bytes when root rendering collides with foreign metadata")]
+    [Trait("Boundary", "OS"), Trait("Feature", "extension-inspect"), Trait("Evidence", "Integration")]
+    public async Task InvalidRenderingMakesComparisonUnavailable()
+    {
+        const string collision = """
+            ---
+            description: Foreign metadata
+            open-forge:
+              description: Toolkit guidance
+              tags: [Guidance]
+            ---
+
+            # Toolkit
+            """;
+        using var fixture = InspectScenario.Create("colliding-frontmatter");
+        fixture.WriteInstalledToolkit(Encoding.UTF8.GetBytes(collision));
+        fixture.WritePackage(string.Empty, "toolkit", [], (".agents/toolkit.md", collision));
+        fixture.Workspace.WriteText(WorkspaceSettingsDefinitions.RelativePath, """{"schemaVersion":1,"frontmatter":"root"}""");
+        var before = fixture.Workspace.SnapshotHashes();
+        var result = await fixture.InspectAsync();
+        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
+        Assert.Equal(ExtensionInspectComparisonSideState.Unavailable, result.Comparison.Intended.State);
+        Assert.Empty(result.Comparison.Intended.Fingerprints);
+        Assert.Equal(ExtensionInspectPathRelation.Unknown, Assert.Single(result.Comparison.Paths).Relation);
+        Assert.Contains(result.Findings, finding => finding.Code == ExtensionInspectFindingCode.FingerprintUnavailable);
+        Assert.Equal(before, fixture.Workspace.SnapshotHashes());
+    }
 
     [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Extension Inspect retains relations, paths and fingerprints across detail levels")]

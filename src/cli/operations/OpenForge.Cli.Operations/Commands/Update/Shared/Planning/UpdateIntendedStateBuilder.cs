@@ -221,7 +221,8 @@ internal sealed class UpdateIntendedStateBuilder(
                     var identity = asset.Path is FrameworkPayloadAsset.RootAgentPath or FrameworkPayloadAsset.RootClaudePath
                         ? ReadManagedFingerprint(snapshot.Bytes.AsSpan())
                         : _contentIdentity.ReadSourceFingerprint(snapshot.Bytes.AsSpan()).Sha256;
-                    if (identity != _contentIdentity.ReadSourceFingerprint(asset.Bytes.AsSpan()).Sha256)
+                    var intendedBytes = navigation.TargetBytes[asset.Path];
+                    if (identity != _contentIdentity.ReadSourceFingerprint(intendedBytes).Sha256)
                         return Blocked(UpdateFindingCode.OwnershipConflict, asset.Path,
                             "An unowned current Framework target differs from intended content; no ownership was inferred.");
                 }
@@ -234,9 +235,7 @@ internal sealed class UpdateIntendedStateBuilder(
 
             observations.Add(CreateNewObservation(
                 asset,
-                navigation.TargetBytes.TryGetValue(asset.Path, out var projected)
-                    ? projected
-                    : asset.Bytes.ToArray(),
+                navigation.TargetBytes[asset.Path],
                 snapshot));
         }
 
@@ -328,7 +327,8 @@ internal sealed class UpdateIntendedStateBuilder(
         }
         else if (asset is not null)
         {
-            intendedTargetBytes = projectedTargetBytes.GetValueOrDefault(target.Path) ?? asset.Bytes.ToArray();
+            intendedTargetBytes = projectedTargetBytes.GetValueOrDefault(target.Path)
+                ?? throw new InvalidDataException("An intended Framework payload has no rendered target bytes.");
         }
         if (generated && intendedTargetBytes is null)
             throw new InvalidDataException("A recorded generated region has no complete current host projection.");

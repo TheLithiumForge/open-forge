@@ -415,7 +415,7 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
                 description: "Project overview",
                 tags: ["Docs", "Overview"],
                 responsibility: "Explains the project"),
-            body: string.Empty);
+            body: string.Empty, form: FrontmatterForm.Scoped);
 
     private static ImmutableArray<byte> ParentIntendedBytes()
         => [.. Encoding.UTF8.GetBytes(ParentDocument(
@@ -427,7 +427,7 @@ internal sealed class RouteCreateIntegrationWorkspace : IDisposable
             tags: ["Project"],
             body: $"\n{OpenForgeDocumentSeed.GeneratedEntries(entries)}");
 
-    private void WriteText(string relativePath, string contents)
+    internal void WriteText(string relativePath, string contents)
         => _temporary.WriteText(relativePath, contents);
 
     private void WriteBytes(string relativePath, byte[] contents)

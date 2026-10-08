@@ -1,9 +1,11 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Install;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Presentation.Install;
 using OpenForge.Cli.Core.Framework.Distribution;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
@@ -34,7 +36,10 @@ public sealed class InstallBeforeOutputSnapshotTests
         {
             using var workspace = InstallOperationWorkspace.Create("install-output-occupied");
             var intended = SeedOccupiedGeneratedRegion(workspace);
-            var result = await Execute(workspace, workspace.Request(force: force));
+            var result = await Execute(workspace, workspace.Request(force: force) with
+            {
+                Setup = new InstallSetupInput(false, null, []) { Frontmatter = FrontmatterForm.Scoped },
+            });
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Equal(intended, File.ReadAllText(workspace.Combine(OccupiedPath)));
             var preserved = File.ReadAllText(workspace.Combine(".agents/memory/_memory.overwrite.md"));

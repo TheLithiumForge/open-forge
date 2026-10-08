@@ -1,8 +1,10 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Shared;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -362,7 +364,7 @@ public sealed class WorkspaceAdoptionDocumentPlannerTests
     public void CreatesParseableEntrypointAndPlanningItAgainIsUnchanged()
     {
         var planner = new WorkspaceAdoptionDocumentPlanner();
-        var created = planner.CreateEntrypoint(EntrypointPath, "\r\n");
+        var created = planner.CreateEntrypoint(EntrypointPath, "\r\n", FrontmatterForm.Scoped);
 
         Assert.NotNull(created.IntendedBytes);
         Assert.Equal([WorkspaceAdoptionAction.EntrypointCreated], created.Actions);
@@ -392,6 +394,69 @@ public sealed class WorkspaceAdoptionDocumentPlannerTests
         Assert.Empty(second.Actions);
     }
 
+    [Theory(DisplayName = "Adoption emits canonical metadata bytes in both forms while preserving the body and requested newline")]
+    [InlineData(false, "\n")]
+    [InlineData(false, "\r\n")]
+    [InlineData(true, "\n")]
+    [InlineData(true, "\r\n")]
+    [Trait("Boundary", "Input"), Trait("Feature", "workspace-adoption"), Trait("Evidence", "Unit")]
+    public void CreatesCanonicalEntrypointBytes(bool root, string newline)
+    {
+        var form = root ? FrontmatterForm.Root : FrontmatterForm.Scoped;
+        var yaml = form switch
+        {
+            FrontmatterForm.Scoped => """
+                open-forge:
+                  description: Workspace entrypoint for workspace at .agents/workspace
+                  tags: [Workspace]
+                """,
+            FrontmatterForm.Root => """
+                description: Workspace entrypoint for workspace at .agents/workspace
+                tags: [Workspace]
+                """,
+            _ => throw new ArgumentOutOfRangeException(nameof(form), form, "The frontmatter form is not defined."),
+        };
+        var expected = $$"""
+            ---
+            {{yaml}}
+            ---
+
+            # workspace
+
+            ## Axioms
+
+            - inherited - No local axioms; loaded ancestor axioms remain active.
+
+            ## Entries
+
+            - none - No entries - #Empty
+            """.ReplaceLineEndings(newline) + newline;
+
+        var created = new WorkspaceAdoptionDocumentPlanner().CreateEntrypoint(EntrypointPath, newline, form);
+
+        Assert.Equal(Encode(expected), created.IntendedBytes);
+        Assert.Null(created.Cause);
+    }
+
+    [Fact(DisplayName = "Entrypoint composition accepts an explicit root form without changing its body")]
+    [Trait("Boundary", "Input"), Trait("Feature", "workspace-adoption"), Trait("Evidence", "Unit")]
+    public void CreatesRequestedRootFormWithTheSameBody()
+    {
+        var planner = new WorkspaceAdoptionDocumentPlanner();
+        var scoped = planner.CreateEntrypoint(EntrypointPath, "\r\n", FrontmatterForm.Scoped);
+        var root = planner.CreateEntrypoint(EntrypointPath, "\r\n", FrontmatterForm.Root);
+        var parser = new MarkdownDocumentParser();
+        var scopedDocument = parser.Parse(Decode(Assert.IsType<byte[]>(scoped.IntendedBytes)));
+        var rootDocument = parser.Parse(Decode(Assert.IsType<byte[]>(root.IntendedBytes)));
+        var metadata = new SourceAuthoredMetadataParser().Parse(rootDocument, SourceDocumentForm.CanonicalEntrypoint);
+
+        Assert.Equal(SourceAuthoredMetadataState.Complete, metadata.State);
+        Assert.Equal(FrontmatterForm.Root, metadata.FrameworkMetadata?.Syntax.AuthoredForm);
+        var scopedBody = Assert.IsType<MarkdownTextSpan>(scopedDocument.BodySpan);
+        var rootBody = Assert.IsType<MarkdownTextSpan>(rootDocument.BodySpan);
+        Assert.Equal(scopedDocument.Source[scopedBody.Start..], rootDocument.Source[rootBody.Start..]);
+    }
+
     [Trait("Boundary", "Input")]
     [Theory(DisplayName = "Entrypoint scaffolding accepts only recognized entrypoint paths")]
     [InlineData(".agents/notes/local.md")]
@@ -399,7 +464,7 @@ public sealed class WorkspaceAdoptionDocumentPlannerTests
     [Trait("Feature", "workspace-adoption"), Trait("Evidence", "Unit")]
     public void RejectsUnrecognizedEntrypointPaths(string path)
     {
-        var plan = new WorkspaceAdoptionDocumentPlanner().CreateEntrypoint(path, "\n");
+        var plan = new WorkspaceAdoptionDocumentPlanner().CreateEntrypoint(path, "\n", FrontmatterForm.Scoped);
 
         Assert.Null(plan.IntendedBytes);
         Assert.Contains(path, plan.Cause, StringComparison.Ordinal);

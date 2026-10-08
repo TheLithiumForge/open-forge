@@ -1,4 +1,6 @@
 using OpenForge.Cli.Core.Commands.Install;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -75,7 +77,13 @@ internal sealed partial class StatusIntegrationWorkspace : IDisposable
                         OpenForge.Cli.Core.Commands.Install.Models.Request.InstallMode.Apply,
                         force: false,
                         automatic: true,
-                        allowsInteractiveConfirmation: false),
+                        allowsInteractiveConfirmation: false)
+                    {
+                        Setup = new InstallSetupInput(Configure: false, Preset: null, Overrides: [])
+                        {
+                            Frontmatter = FrontmatterForm.Scoped,
+                        },
+                    },
                     TestContext.Current.CancellationToken);
             if (result.Status != CliSemanticStatus.Complete)
             {

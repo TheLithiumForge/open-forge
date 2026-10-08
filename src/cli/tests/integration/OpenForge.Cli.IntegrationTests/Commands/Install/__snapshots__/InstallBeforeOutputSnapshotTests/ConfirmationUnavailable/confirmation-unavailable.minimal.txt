@@ -1,3 +1,4 @@
 Install needs confirmation, and this session cannot ask.
 Workspace: <workspace>
+Frontmatter: root
 Next: open-forge install --automatic

@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
+using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.OutputText.Install;
 
@@ -6,6 +7,18 @@ namespace OpenForge.Cli.Core.Presentation.Install.Shared.Prompts;
 
 internal static class InstallSetupQuestions
 {
+    internal static CliSelectQuestion<string> Frontmatter(InstallFrontmatterQuestion question)
+    {
+        CliChoice<string>[] choices =
+        [
+            new(InstallFrontmatter.Root, InstallSetupText.RootLabel(), InstallSetupText.RootExample()),
+            new(InstallFrontmatter.Scoped, InstallSetupText.ScopedLabel(), InstallSetupText.ScopedExample()),
+        ];
+        if (question.InitialForm == InstallFrontmatter.Scoped) choices = [choices[1], choices[0]];
+        else if (question.InitialForm != InstallFrontmatter.Root) throw new ArgumentOutOfRangeException(nameof(question));
+        return new(InstallSetupText.FrontmatterQuestion(), choices);
+    }
+
     internal static CliSelectQuestion<InstallPreset> Preset(InstallPreset initial)
     {
         CliChoice<InstallPreset>[] choices =

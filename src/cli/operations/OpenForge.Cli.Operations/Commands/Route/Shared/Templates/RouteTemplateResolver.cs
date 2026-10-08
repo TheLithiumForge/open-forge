@@ -78,7 +78,7 @@ internal sealed class RouteTemplateResolver
         }
 
         var document = new MarkdownDocumentParser().Parse(text);
-        var metadata = new FrameworkDocumentMetadataParser().Parse(document);
+        var metadata = new FrameworkDocumentMetadataParser().Parse(document, FrameworkMetadataReadScope.RoutedSource);
         if (metadata.State == FrameworkDocumentMetadataState.Malformed)
         {
             return Stop(

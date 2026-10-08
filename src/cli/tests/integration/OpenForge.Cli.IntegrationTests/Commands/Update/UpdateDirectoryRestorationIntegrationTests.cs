@@ -379,7 +379,7 @@ public sealed class UpdateDirectoryRestorationIntegrationTests
             var remove = await workspace.RunRootAsync(["remove", target, "--automatic", "--format", "json"]);
             Assert.Equal(0, remove.ExitCode);
             Assert.False(Directory.Exists(Path.Combine(workspace.Workspace.LexicalRoot, target.Replace('/', Path.DirectorySeparatorChar))));
-            workspace.ReplaceText(".agents/open-forge.json", "{}\n");
+            workspace.ReplaceText(".agents/open-forge.json", "{\"frontmatter\":\"scoped\"}\n");
             return workspace;
         }
         catch

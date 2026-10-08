@@ -25,7 +25,7 @@ Open Forge Markdown is designed to be:
 - Connected through normal relative links
 - Canonical where syntax carries Framework meaning
 
-Open Forge chooses one preferred authoring form for every machine-meaningful construct. [Compatibility input](compatibility.md) may remain readable during migration or interoperability, but it does not become another recommended authoring form.
+Open Forge uses a preferred authoring form for each machine-meaningful construct. Frontmatter has two supported forms, and each workspace chooses which one writers use. Other [compatibility input](compatibility.md) does not become preferred output.
 
 ## Canonical Forms
 
@@ -79,7 +79,9 @@ or renderer-specific concealment mechanism.
 
 ## Frontmatter
 
-Open Forge-authored entrypoints and indexed Markdown files use scoped metadata:
+Routed Markdown uses leading YAML frontmatter in root or scoped form. Root form places Open Forge fields at the YAML root. Scoped form places them under an `open-forge:` mapping. New metadata follows the [workspace setting](../../cli/shared-operation-contract.md#frontmatter-form).
+
+Scoped form:
 
 ```yaml
 ---
@@ -90,17 +92,28 @@ open-forge:
 ---
 ```
 
-The canonical block:
+Root form:
+
+```yaml
+---
+description: Current architecture of an example system
+responsibility: Define the accepted structure, relationships, and boundaries of the example system
+tags: [Memory, Document, CurrentTruth, Architecture]
+---
+```
+
+Each block:
 
 - Appears at the start of the file
-- Uses the `open-forge:` scope
 - Provides one natural-language `description`
 - May provide one natural-language `responsibility`
 - Provides a YAML list of tags without `#` prefixes
 
-Deterministic tools interpret this exact Open Forge metadata shape rather than
-promising arbitrary YAML support. Canonical output uses the `open-forge:`
-scope, single-line or indented multiline text values, and an inline tag list.
+Every workspace reads both forms. Any explicit `open-forge` key reserves the scoped location, whatever its value, and never falls back to root fields. A mapping supplies the complete Open Forge `description`, `responsibility`, and `tags`. Root fields beside it belong to another tool and are not merged. A null, sequence, or alias value retains its existing Missing or Malformed result. Without that key, root fields supply Open Forge metadata for an admitted routed source. Root fields alone do not make a file a source.
+
+Both forms use the same field-value grammar and diagnostics. Unknown root keys are ignored and preserved. Canonical emission uses single-line or indented multiline text values and an inline tag list. Repository payload sources stay authored in scoped form. Delivery renders them in the workspace's form.
+
+Deterministic tools interpret this metadata shape without promising arbitrary YAML support.
 The [compatibility boundary](compatibility.md) separates current canonical
 syntax, frozen-MVP compatibility, and historical CLI-v2 proposals.
 
@@ -119,10 +132,11 @@ the shared parser, Index selector, or projector, and it does not change how
 other operations handle incomplete metadata. The [Install Interface](../../cli/contracts/install/interface.md#initial-workspace-adoption)
 defines the candidate boundary, preservation rules, and permitted derivations.
 
-The released beta 4 baseline predates this enforcement. Task70 remains in
-authoring and qualification; no shipping claim is implied here. The [MVP
+Beta 6 shipped this adoption boundary, and [Task 70](../../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md)
+retains its release evidence. Releases before beta 6, including beta 4, predate
+this enforcement. The [MVP
 Architecture](../../cli/mvp-architecture.md#metadata-and-overwrite-integrity)
-records the temporary baseline liability without changing the canonical
+records the frozen MVP's temporary liability without changing the canonical
 contract.
 
 The `description` helps a reader decide whether to open the file. It provides enough purpose, trigger, or outcome to select or skip the route before loading its body. It is natural and suggestive rather than a repeated formula.
@@ -150,10 +164,11 @@ contract](../routing/loading.md#file-conditions) defines its effect.
 `open-forge:`. Readers inspect both locations, including a root declaration
 beside an existing `open-forge:` block. A declaration is one quoted string or
 a list of quoted strings. A string is an expression that produces one or more
-atomic patterns. A list entry is one atomic pattern. Canonical authoring uses
-a list of atomic patterns under `open-forge:`.
+atomic patterns. A list entry is one atomic pattern. New declarations use a
+quoted-string list in the workspace's form. Updates preserve authored
+locations and update or clear both equivalent declarations.
 
-For example, canonical authoring places the field in the scoped block:
+Scoped form:
 
 ```yaml
 ---
@@ -161,6 +176,16 @@ open-forge:
   description: C# design rules
   tags: [Directive, CSharp]
   applyTo: ["**/*.cs", "**/*.csproj"]
+---
+```
+
+Root form:
+
+```yaml
+---
+description: C# design rules
+tags: [Directive, CSharp]
+applyTo: ["**/*.cs", "**/*.csproj"]
 ---
 ```
 

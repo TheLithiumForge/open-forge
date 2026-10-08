@@ -237,6 +237,52 @@ public sealed class PublishedRouteUpdateProcessTests
         workspace.AssertNoLockInfrastructure();
     }
 
+    [Theory(DisplayName = "Published Route Update creates the workspace form edits authored metadata and converges"),
+     Trait("Feature", "route-update"), Trait("Evidence", "EndToEnd")]
+    [InlineData("root", true)]
+    [InlineData("scoped", false)]
+    [InlineData(null, false)]
+    public async Task WorkspaceFormCreationAndAuthoredLocationConverge(string? form, bool root)
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedRouteUpdateWorkspace.Create();
+        const string body = "# Exact body 🙂\n";
+        workspace.SeedTargetText(body);
+        if (form is not null)
+        {
+            workspace.SeedSettingsText($"{{\"schemaVersion\":1,\"frontmatter\":\"{form}\"}}");
+        }
+        string[] arguments = ["route", "update", PublishedRouteUpdateWorkspace.TargetId,
+            "--description", "After overview", "--tag", "Memory", "--format", "json"];
+        var preview = await RunWithoutWritesAsync(target, workspace, [.. arguments, "--dry-run"]);
+        Assert.Equal(0, preview.ExitCode);
+        Assert.Equal(string.Empty, preview.StandardError);
+        using (var document = JsonDocument.Parse(preview.StandardOutput))
+        {
+            Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+            Assert.NotEmpty(document.RootElement.GetProperty("effects").EnumerateArray());
+        }
+        var applied = await PublishedProcessTestSupport.RunAsync(target, workspace.Path, arguments, workspace.ProcessEnvironment);
+        Assert.Equal(0, applied.ExitCode);
+        Assert.Equal(string.Empty, applied.StandardError);
+        var members = root ? "description: After overview\ntags: [Memory]\n"
+            : "open-forge:\n  description: After overview\n  tags: [Memory]\n";
+        Assert.Equal($"---\n{members}---\n{body}", await workspace.ReadTargetAsync(TestContext.Current.CancellationToken));
+        workspace.SeedSettingsText($"{{\"schemaVersion\":1,\"frontmatter\":\"{(root ? "scoped" : "root")}\"}}");
+        var edited = await PublishedProcessTestSupport.RunAsync(target, workspace.Path,
+            ["route", "update", PublishedRouteUpdateWorkspace.TargetId, "--description", "Final overview", "--format", "json"], workspace.ProcessEnvironment);
+        Assert.Equal(0, edited.ExitCode);
+        Assert.Equal(string.Empty, edited.StandardError);
+        Assert.Equal($"---\n{members.Replace("After overview", "Final overview", StringComparison.Ordinal)}---\n{body}",
+            await workspace.ReadTargetAsync(TestContext.Current.CancellationToken));
+        var noOp = await RunWithoutWritesAsync(target, workspace,
+            ["route", "update", PublishedRouteUpdateWorkspace.TargetId, "--description", "Final overview", "--format", "json"]);
+        Assert.Equal(0, noOp.ExitCode);
+        Assert.Equal(string.Empty, noOp.StandardError);
+        using var repeated = JsonDocument.Parse(noOp.StandardOutput);
+        Assert.Empty(repeated.RootElement.GetProperty("effects").EnumerateArray());
+    }
+
     private static Task<ProcessRunResult> RunWithoutWritesAsync(
         PublishedExecutableTarget target,
         PublishedRouteUpdateWorkspace workspace,

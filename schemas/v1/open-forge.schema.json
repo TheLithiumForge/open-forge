@@ -16,6 +16,12 @@
       "description": "The shape this file was written for. A version the CLI does not recognise is read for the keys it understands and reported, never refused.",
       "minimum": 1
     },
+    "frontmatter": {
+      "type": "string",
+      "enum": ["root", "scoped"],
+      "default": "scoped",
+      "description": "Selects where Open Forge writes metadata: at the frontmatter root or under open-forge. Both forms are always read. A missing value means scoped."
+    },
     "allowInstallPaths": {
       "type": "array",
       "description": "Destinations outside .agents that the six permission-gated commands may write to: extension install, remove, and update, and library attach, detach, and sync. Entries are paths, not patterns. An entry naming a file admits that file; an entry naming a directory admits everything beneath it. There is no glob language, so what an entry admits is visible by reading it.",

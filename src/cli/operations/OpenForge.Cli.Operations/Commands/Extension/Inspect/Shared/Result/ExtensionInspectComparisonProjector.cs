@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 
@@ -26,7 +27,7 @@ internal static class ExtensionInspectComparisonProjector
             .Distinct(StringComparer.Ordinal)
             .Count();
         var currentState = ReadCurrentState(installedPackage, current, installedPathCount);
-        var intendedState = ReadIntendedState(availablePackage, intended, input.AvailableClosure);
+        var intendedState = ReadIntendedState(availablePackage, intended, input.AvailableClosure, input.Frontmatter);
         var paths = ExtensionInspectPathComparisonBuilder.Build(
             new ExtensionInspectPathComparisonInput
             {
@@ -121,11 +122,17 @@ internal static class ExtensionInspectComparisonProjector
     private static ExtensionInspectComparisonSideState ReadIntendedState(
         ExtensionPackageFact? availablePackage,
         IReadOnlyList<ExtensionInspectFingerprintFact> intended,
-        IReadOnlyList<ExtensionPackageFact> availableClosure)
+        IReadOnlyList<ExtensionPackageFact> availableClosure,
+        FrontmatterForm? form)
     {
         if (availablePackage is null)
         {
             return ExtensionInspectComparisonSideState.NotApplicable;
+        }
+
+        if (form is null)
+        {
+            return ExtensionInspectComparisonSideState.Unavailable;
         }
 
         var availableFileCount = availableClosure

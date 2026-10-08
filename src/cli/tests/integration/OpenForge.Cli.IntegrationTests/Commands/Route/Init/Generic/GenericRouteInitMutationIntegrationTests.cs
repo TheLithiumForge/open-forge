@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.TestSupport;
 
@@ -203,7 +204,10 @@ public sealed class GenericRouteInitMutationIntegrationTests
             directoryCreations: [],
             fileChanges: [change],
             recoveryTargets: [],
-            ownership: null);
+            ownership: null)
+        {
+            Settings = WorkspaceSettingsRead.Absent(workspace.Absolute(".agents/open-forge.json")),
+        };
         var lockManager = new WorkspaceLockManager(workspace.LockStoreRoot);
         var lockResult = await lockManager.AcquireAsync(
             new WorkspaceLockRequest(

@@ -35,6 +35,8 @@ internal sealed record WorkspaceSettingsRead(
 
     internal bool MatchesObservation(WorkspaceSettingsRead current)
         => State == current.State
+            && Document.DeclaredFrontmatter == current.Document.DeclaredFrontmatter
+            && Document.Frontmatter == current.Document.Frontmatter
             && Document.AllowInstallPaths.SequenceEqual(current.Document.AllowInstallPaths, StringComparer.Ordinal)
             && Document.RemovedCategories.SequenceEqual(current.Document.RemovedCategories, StringComparer.Ordinal)
             && Document.RemovedFiles.SequenceEqual(current.Document.RemovedFiles, StringComparer.Ordinal)

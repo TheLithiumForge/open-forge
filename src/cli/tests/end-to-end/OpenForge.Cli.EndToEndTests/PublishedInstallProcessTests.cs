@@ -56,7 +56,11 @@ public sealed class PublishedInstallProcessTests
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(string.Empty, applied.StandardError);
         Assert.Contains("All written targets were verified.", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.Equal(PublishedInstallWorkspace.EmbeddedPayloadPaths, workspace.InstalledPayloadPaths());
+        Assert.Equal(
+            PublishedInstallWorkspace.EmbeddedPayloadPaths
+                .Append(PublishedInstallWorkspace.SettingsPath)
+                .Order(StringComparer.Ordinal),
+            workspace.InstalledPayloadPaths());
         workspace.AssertPersistentExternalLock();
         var before = workspace.SnapshotState();
 

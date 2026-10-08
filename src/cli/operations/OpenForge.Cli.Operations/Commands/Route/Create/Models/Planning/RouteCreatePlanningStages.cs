@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Directories;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 namespace OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
@@ -34,6 +35,8 @@ internal sealed record RouteCreateTargetInspection
     public required SourceCatalogue Catalogue { get; init; }
 
     public required FileStateSnapshot Snapshot { get; init; }
+
+    public required WorkspaceSettingsRead Settings { get; init; }
 }
 
 internal sealed class RouteCreateTargetInspectionBuild

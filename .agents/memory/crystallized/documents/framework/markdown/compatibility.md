@@ -129,12 +129,10 @@ destination; it does not make that filename a canonical authoring form.
 
 The new CLI accepts `applyTo` at either the root of YAML frontmatter or under
 `open-forge:`. Both locations have identical meaning, and a root declaration
-is read even when the scoped metadata block is present. These locations are
-input-compatible. Canonical authoring uses a list of quoted patterns under
-`open-forge:`.
-
-This root-level exception applies only to `applyTo`. It does not make root
-`description`, `tags`, or `responsibility` accepted metadata.
+is read even when the scoped metadata block is present. Root and scoped metadata
+are supported authoring forms. The [syntax contract](syntax.md#frontmatter)
+defines workspace selection and metadata precedence. New `applyTo` declarations
+use quoted-string lists in the workspace's form.
 
 A quoted scalar is a comma-separated expression. Top-level commas separate
 patterns, while commas inside `{...}` or `[...]` remain part of the expression.

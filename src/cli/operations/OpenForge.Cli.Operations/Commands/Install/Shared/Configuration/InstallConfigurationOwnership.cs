@@ -35,7 +35,8 @@ internal static class InstallConfigurationOwnership
             ? context.IntendedState.GeneratedRegionPaths.Select(path => new OwnedRegion(path, "entries"))
                 .Concat(context.IntendedState.ManagedBlockBytes.Keys.Select(path =>
                     new OwnedRegion(path, WorkspaceOwnershipDefinitions.ManagedBlockRegion)))
-            : effects.Where(effect => context.IntendedState.GeneratedRegionPaths.Contains(effect.RelativePath))
+            : effects.Where(effect => context.IntendedState.GeneratedRegionPaths.Contains(effect.RelativePath)
+                && context.IntendedState.TargetBytes.ContainsKey(effect.RelativePath))
             .Select(effect => new OwnedRegion(effect.RelativePath, "entries"))
             .Concat(effects.Where(effect => context.IntendedState.ManagedBlockBytes.ContainsKey(effect.RelativePath))
                 .Select(effect => new OwnedRegion(effect.RelativePath, WorkspaceOwnershipDefinitions.ManagedBlockRegion)));

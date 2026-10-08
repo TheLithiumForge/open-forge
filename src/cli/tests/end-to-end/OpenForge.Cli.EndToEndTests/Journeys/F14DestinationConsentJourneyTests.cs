@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
@@ -13,7 +14,7 @@ public sealed class F14DestinationConsentJourneyTests
     private const string SettingsPath = ".agents/open-forge.json";
     private const string OwnershipPath = ".agents/open-forge.lock.json";
     private const string MalformedSettings = "{ this is not valid JSON\n";
-    private const string EmptyGrant = "{\"allowInstallPaths\":[]}\n";
+    private const string EmptyGrant = "{\"frontmatter\":\"scoped\",\"allowInstallPaths\":[]}\n";
 
     private const string ToolkitV1 = """
         ---
@@ -68,7 +69,7 @@ public sealed class F14DestinationConsentJourneyTests
         AssertBlocked(blocked, ExternalTarget);
         Assert.Equal(before, consumer.SnapshotState());
         AssertMissingFile(consumer, ExternalTarget);
-        AssertMissingFile(consumer, SettingsPath);
+        AssertGrant(consumer);
         AssertNoExtensionRecord(consumer, "toolkit");
         AssertSourceUnchanged(catalogue, sourceBefore);
         consumer.LockStore.AssertPersistentZeroByteLock(consumer.Path);
@@ -104,7 +105,7 @@ public sealed class F14DestinationConsentJourneyTests
         Assert.Contains("apply", terminal.Transcript, StringComparison.OrdinalIgnoreCase);
         Assert.Contains(ExternalTarget, terminal.Transcript, StringComparison.Ordinal);
         AssertFileBytes(consumer, ExternalTarget, File.ReadAllBytes(catalogue.Combine($"toolkit/content/{ExternalTarget}")));
-        AssertMissingFile(consumer, SettingsPath);
+        AssertGrant(consumer);
         AssertExtensionRecord(consumer, "toolkit", "1.0.0", ExternalTarget);
         Assert.False(File.Exists(consumer.Combine("docs/team")));
         AssertSourceUnchanged(catalogue, sourceBefore);
@@ -178,7 +179,7 @@ public sealed class F14DestinationConsentJourneyTests
         Assert.Contains(ExternalTarget, preview.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(before, consumer.SnapshotState());
         AssertMissingFile(consumer, ExternalTarget);
-        AssertMissingFile(consumer, SettingsPath);
+        AssertGrant(consumer);
         AssertNoExtensionRecord(consumer, "toolkit");
         AssertSourceUnchanged(catalogue, sourceBefore);
         consumer.LockStore.AssertPersistentZeroByteLock(consumer.Path);
@@ -316,7 +317,7 @@ public sealed class F14DestinationConsentJourneyTests
 
     private static async Task InstallFrameworkAsync(PublishedJourneyWorkspace workspace)
     {
-        var result = await workspace.RunAsync("install", "--automatic");
+        var result = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertCompleted(result);
         AssertFileExists(workspace, OwnershipPath);
     }
@@ -448,7 +449,13 @@ public sealed class F14DestinationConsentJourneyTests
         params string[] expectedPaths)
     {
         using var document = JsonDocument.Parse(File.ReadAllText(workspace.Combine(SettingsPath)));
-        var actualPaths = document.RootElement.GetProperty("allowInstallPaths")
+        if (!document.RootElement.TryGetProperty("allowInstallPaths", out var grants))
+        {
+            Assert.Empty(expectedPaths);
+            return;
+        }
+
+        var actualPaths = grants
             .EnumerateArray()
             .Select(path => path.GetString() ?? throw new InvalidOperationException("A grant path was null."))
             .ToArray();

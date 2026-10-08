@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
@@ -17,9 +18,11 @@ public sealed class F11PackageLifecycleJourneyTests
     private const string SharedTarget = ".agents/guidance/shared.md";
     private const string OwnershipTarget = ".agents/open-forge.lock.json";
 
-    [Fact(DisplayName = "F11 installs, updates, and removes a dependent package while preserving source and ownership"),
+    [Theory(DisplayName = "F11 installs, updates, and removes a dependent package while preserving source and ownership"),
      Trait("Feature", "package lifecycle with dependencies"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F11")]
-    public async Task MainPackageLifecycleCarriesDependencyOwnershipAndRecovery()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task MainPackageLifecycleCarriesDependencyOwnershipAndRecovery(JourneyFrontmatterForm form)
     {
         using var consumer = PublishedJourneyWorkspace.Create("journey-f11-main-consumer");
         using var catalogue = PublishedJourneyWorkspace.Create("journey-f11-main-catalogue");
@@ -27,7 +30,7 @@ public sealed class F11PackageLifecycleJourneyTests
 
         consumer.ExpectCoreInstall();
         ReserveLifecycleTargets(consumer);
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
         consumer.WriteText("unrelated-user.md", "owned by the consumer, not by either package\n");
         var unrelatedBytes = File.ReadAllBytes(consumer.Combine("unrelated-user.md"));
         var sourceOne = catalogue.SnapshotState();
@@ -49,7 +52,7 @@ public sealed class F11PackageLifecycleJourneyTests
         AssertSuccessful(install);
         Assert.Contains("toolkit", install.StandardOutput, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("base", install.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        AssertInstalledLifecycleConsumer(consumer, catalogue, includeRetired: true, version: "1.0.0");
+        AssertInstalledLifecycleConsumer(consumer, catalogue, includeRetired: true, version: "1.0.0", form: form);
         var priorToolkitBytes = File.ReadAllBytes(consumer.Combine(ToolkitTarget));
         AssertSourceUnchanged(catalogue, sourceOne);
 
@@ -61,7 +64,7 @@ public sealed class F11PackageLifecycleJourneyTests
         Assert.Equal(beforeBlockedRemoval, consumer.SnapshotState());
         AssertSourceUnchanged(catalogue, sourceOne);
 
-        var retiredBytes = File.ReadAllBytes(catalogue.Combine($"toolkit/content/{RetiredTarget}"));
+        var retiredBytes = RenderCanonicalBytes(catalogue, $"toolkit/content/{RetiredTarget}", form);
         WriteLifecycleCatalogue(catalogue, versionTwo: true);
         File.Delete(catalogue.Combine($"toolkit/content/{RetiredTarget}"));
         var sourceTwo = catalogue.SnapshotState();
@@ -83,11 +86,12 @@ public sealed class F11PackageLifecycleJourneyTests
         AssertCompletedWithWarnings(update);
         Assert.Contains("toolkit", update.StandardOutput, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("2.0.0", update.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        AssertUpdatedLifecycleConsumer(consumer, retiredBytes, catalogue, keepRetired: true);
+        AssertUpdatedLifecycleConsumer(consumer, retiredBytes, catalogue, keepRetired: true, form: form);
         AssertRetainedRecoveryEvidence(consumer, priorToolkitBytes);
         Assert.Equal(unrelatedBytes, File.ReadAllBytes(consumer.Combine("unrelated-user.md")));
         AssertSourceUnchanged(catalogue, sourceTwo);
 
+        var priorSettingsBytes = File.ReadAllBytes(consumer.Combine(PublishedInstallWorkspace.SettingsPath));
         var removeToolkit = await RunAsync(consumer, "extension", "remove", "toolkit", "--automatic");
         AssertCompletedWithWarnings(removeToolkit);
         Assert.Contains("toolkit", removeToolkit.StandardOutput, StringComparison.OrdinalIgnoreCase);
@@ -95,7 +99,7 @@ public sealed class F11PackageLifecycleJourneyTests
         AssertMissingFile(consumer, RetiredTarget);
         AssertMissingFile(consumer, AddedTarget);
         AssertMissingFile(consumer, SupportTarget);
-        AssertFileBytes(consumer, BaseTarget, File.ReadAllBytes(catalogue.Combine($"base/content/{BaseTarget}")));
+        AssertFileBytes(consumer, BaseTarget, RenderCanonicalBytes(catalogue, $"base/content/{BaseTarget}", form));
         AssertExtensionRecord(consumer, "base", "1.0.0", catalogue.Path, [], BaseTarget);
         AssertNoExtensionRecord(consumer, "toolkit");
         AssertSourceUnchanged(catalogue, sourceTwo);
@@ -106,20 +110,22 @@ public sealed class F11PackageLifecycleJourneyTests
         AssertMissingFile(consumer, BaseTarget);
         AssertNoExtensionRecord(consumer, "base");
         Assert.Equal(unrelatedBytes, File.ReadAllBytes(consumer.Combine("unrelated-user.md")));
-        AssertRetainedRecoveryEvidence(consumer, priorToolkitBytes, expectSettingsCreation: true);
+        AssertRetainedRecoveryEvidence(consumer, priorToolkitBytes, priorSettingsBytes: priorSettingsBytes);
         AssertSourceUnchanged(catalogue, sourceTwo);
     }
 
-    [Fact(DisplayName = "F11 ordinary update keeps retired bytes and ownership"),
+    [Theory(DisplayName = "F11 ordinary update keeps retired bytes and ownership"),
      Trait("Feature", "package lifecycle with dependencies"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F11")]
-    public async Task OrdinaryUpdateKeepsRetiredContent()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task OrdinaryUpdateKeepsRetiredContent(JourneyFrontmatterForm form)
     {
         using var consumer = PublishedJourneyWorkspace.Create("journey-f11-retirement-keep-consumer");
         using var versionOne = PublishedJourneyWorkspace.Create("journey-f11-retirement-keep-v1");
         using var versionTwo = PublishedJourneyWorkspace.Create("journey-f11-retirement-keep-v2");
-        await SeedLifecycleConsumerAsync(consumer, versionOne, versionTwo);
+        await SeedLifecycleConsumerAsync(consumer, versionOne, versionTwo, form);
         var priorToolkitBytes = File.ReadAllBytes(consumer.Combine(ToolkitTarget));
-        var retiredBytes = File.ReadAllBytes(versionOne.Combine($"toolkit/content/{RetiredTarget}"));
+        var retiredBytes = RenderCanonicalBytes(versionOne, $"toolkit/content/{RetiredTarget}", form);
         var sourceBefore = versionTwo.SnapshotState();
 
         var update = await RunAsync(
@@ -128,7 +134,7 @@ public sealed class F11PackageLifecycleJourneyTests
 
         AssertCompletedWithWarnings(update);
         AssertFileBytes(consumer, RetiredTarget, retiredBytes);
-        AssertFileBytes(consumer, AddedTarget, File.ReadAllBytes(versionTwo.Combine($"toolkit/content/{AddedTarget}")));
+        AssertFileBytes(consumer, AddedTarget, RenderCanonicalBytes(versionTwo, $"toolkit/content/{AddedTarget}", form));
         AssertExtensionRecord(
             consumer,
             "toolkit",
@@ -144,16 +150,18 @@ public sealed class F11PackageLifecycleJourneyTests
         AssertRetainedRecoveryEvidence(consumer, priorToolkitBytes);
     }
 
-    [Fact(DisplayName = "F11 prune update removes retired content and ownership"),
+    [Theory(DisplayName = "F11 prune update removes retired content and ownership"),
      Trait("Feature", "package lifecycle with dependencies"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F11")]
-    public async Task PruneUpdateRemovesRetiredContent()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task PruneUpdateRemovesRetiredContent(JourneyFrontmatterForm form)
     {
         using var consumer = PublishedJourneyWorkspace.Create("journey-f11-retirement-prune-consumer");
         using var versionOne = PublishedJourneyWorkspace.Create("journey-f11-retirement-prune-v1");
         using var versionTwo = PublishedJourneyWorkspace.Create("journey-f11-retirement-prune-v2");
-        await SeedLifecycleConsumerAsync(consumer, versionOne, versionTwo);
+        await SeedLifecycleConsumerAsync(consumer, versionOne, versionTwo, form);
         var priorToolkitBytes = File.ReadAllBytes(consumer.Combine(ToolkitTarget));
-        var priorRetiredBytes = File.ReadAllBytes(versionOne.Combine($"toolkit/content/{RetiredTarget}"));
+        var priorRetiredBytes = RenderCanonicalBytes(versionOne, $"toolkit/content/{RetiredTarget}", form);
         var sourceBefore = versionTwo.SnapshotState();
 
         var update = await RunAsync(
@@ -162,7 +170,7 @@ public sealed class F11PackageLifecycleJourneyTests
 
         AssertSuccessful(update);
         AssertMissingFile(consumer, RetiredTarget);
-        AssertFileBytes(consumer, AddedTarget, File.ReadAllBytes(versionTwo.Combine($"toolkit/content/{AddedTarget}")));
+        AssertFileBytes(consumer, AddedTarget, RenderCanonicalBytes(versionTwo, $"toolkit/content/{AddedTarget}", form));
         AssertExtensionRecord(
             consumer,
             "toolkit",
@@ -177,9 +185,11 @@ public sealed class F11PackageLifecycleJourneyTests
         AssertRetainedRecoveryEvidence(consumer, priorToolkitBytes, priorRetiredBytes);
     }
 
-    [Fact(DisplayName = "F11 shared ownership preserves a file after removing one owner"),
+    [Theory(DisplayName = "F11 shared ownership preserves a file after removing one owner"),
      Trait("Feature", "package lifecycle with dependencies"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F11")]
-    public async Task SharedOwnerRemovalPreservesOtherOwner()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task SharedOwnerRemovalPreservesOtherOwner(JourneyFrontmatterForm form)
     {
         using var consumer = PublishedJourneyWorkspace.Create("journey-f11-shared-owner-consumer");
         using var catalogue = PublishedJourneyWorkspace.Create("journey-f11-shared-owner-catalogue");
@@ -189,12 +199,12 @@ public sealed class F11PackageLifecycleJourneyTests
         consumer.WriteText("neighbor.md", "unrelated neighbor\n");
         var sourceBefore = catalogue.SnapshotState();
 
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
         AssertSuccessful(await RunAsync(
             consumer, "extension", "install", "first", "--source", catalogue.Path, "--automatic"));
         AssertSuccessful(await RunAsync(
             consumer, "extension", "install", "second", "--source", catalogue.Path, "--automatic"));
-        var sharedBytes = File.ReadAllBytes(catalogue.Combine($"first/content/{SharedTarget}"));
+        var sharedBytes = RenderCanonicalBytes(catalogue, $"first/content/{SharedTarget}", form);
         AssertFileBytes(consumer, SharedTarget, sharedBytes);
         AssertExtensionRecord(consumer, "first", "1.0.0", catalogue.Path, [], SharedTarget);
         AssertExtensionRecord(consumer, "second", "1.0.0", catalogue.Path, [], SharedTarget);
@@ -209,16 +219,18 @@ public sealed class F11PackageLifecycleJourneyTests
         AssertPersistentLifecycleEvidence(consumer);
     }
 
-    [Fact(DisplayName = "F11 source, version, and target comparisons use independent real package copies"),
+    [Theory(DisplayName = "F11 source, version, and target comparisons use independent real package copies"),
      Trait("Feature", "package lifecycle with dependencies"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F11")]
-    public async Task X30ComparisonsUseIndependentPackageCopies()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task X30ComparisonsUseIndependentPackageCopies(JourneyFrontmatterForm form)
     {
-        await RunComparisonCaseAsync("source-only", ComparisonMutation.SourceOnly);
-        await RunComparisonCaseAsync("version-only", ComparisonMutation.VersionOnly);
-        await RunComparisonCaseAsync("target-only", ComparisonMutation.TargetOnly);
+        await RunComparisonCaseAsync("source-only", ComparisonMutation.SourceOnly, form);
+        await RunComparisonCaseAsync("version-only", ComparisonMutation.VersionOnly, form);
+        await RunComparisonCaseAsync("target-only", ComparisonMutation.TargetOnly, form);
     }
 
-    private static async Task RunComparisonCaseAsync(string label, ComparisonMutation mutation)
+    private static async Task RunComparisonCaseAsync(string label, ComparisonMutation mutation, JourneyFrontmatterForm form)
     {
         using var consumer = PublishedJourneyWorkspace.Create($"journey-f11-x30-{label}-consumer");
         using var source = PublishedJourneyWorkspace.Create($"journey-f11-x30-{label}-source");
@@ -226,7 +238,7 @@ public sealed class F11PackageLifecycleJourneyTests
         consumer.ExpectCoreInstall();
         ReserveLifecycleTargets(consumer);
         consumer.WriteText("neighbor.md", "unrelated comparison neighbor\n");
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
         AssertSuccessful(await RunAsync(
             consumer, "extension", "install", "toolkit", "--source", source.Path, "--automatic"));
         switch (mutation)
@@ -293,23 +305,24 @@ public sealed class F11PackageLifecycleJourneyTests
     private static async Task SeedLifecycleConsumerAsync(
         PublishedJourneyWorkspace consumer,
         PublishedJourneyWorkspace versionOne,
-        PublishedJourneyWorkspace versionTwo)
+        PublishedJourneyWorkspace versionTwo,
+        JourneyFrontmatterForm form)
     {
         WriteLifecycleCatalogue(versionOne, versionTwo: false);
         WriteLifecycleCatalogue(versionTwo, versionTwo: true);
         consumer.ExpectCoreInstall();
         ReserveLifecycleTargets(consumer);
         consumer.WriteText("unrelated-user.md", "unrelated user content\n");
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
         var install = await RunAsync(
             consumer, "extension", "install", "toolkit", "--source", versionOne.Path, "--automatic");
         AssertSuccessful(install);
-        AssertInstalledLifecycleConsumer(consumer, versionOne, includeRetired: true, version: "1.0.0");
+        AssertInstalledLifecycleConsumer(consumer, versionOne, includeRetired: true, version: "1.0.0", form: form);
     }
 
-    private static async Task<ProcessRunResult> InstallFrameworkAsync(PublishedJourneyWorkspace consumer)
+    private static async Task<ProcessRunResult> InstallFrameworkAsync(PublishedJourneyWorkspace consumer, JourneyFrontmatterForm form)
     {
-        var result = await RunAsync(consumer, "install", "--automatic");
+        var result = await RunAsync(consumer, JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertSuccessful(result);
         AssertFileExists(consumer, OwnershipTarget);
         return result;
@@ -393,14 +406,15 @@ public sealed class F11PackageLifecycleJourneyTests
         PublishedJourneyWorkspace consumer,
         PublishedJourneyWorkspace source,
         bool includeRetired,
-        string version)
+        string version,
+        JourneyFrontmatterForm form)
     {
-        AssertFileBytes(consumer, BaseTarget, File.ReadAllBytes(source.Combine($"base/content/{BaseTarget}")));
-        AssertFileBytes(consumer, ToolkitTarget, File.ReadAllBytes(source.Combine($"toolkit/content/{ToolkitTarget}")));
+        AssertFileBytes(consumer, BaseTarget, RenderCanonicalBytes(source, $"base/content/{BaseTarget}", form));
+        AssertFileBytes(consumer, ToolkitTarget, RenderCanonicalBytes(source, $"toolkit/content/{ToolkitTarget}", form));
         AssertFileBytes(consumer, SupportTarget, File.ReadAllBytes(source.Combine($"toolkit/content/{SupportTarget}")));
         if (includeRetired)
         {
-            AssertFileBytes(consumer, RetiredTarget, File.ReadAllBytes(source.Combine($"toolkit/content/{RetiredTarget}")));
+            AssertFileBytes(consumer, RetiredTarget, RenderCanonicalBytes(source, $"toolkit/content/{RetiredTarget}", form));
         }
         AssertExtensionRecord(consumer, "base", "1.0.0", source.Path, [], BaseTarget);
         AssertExtensionRecord(
@@ -419,11 +433,12 @@ public sealed class F11PackageLifecycleJourneyTests
         PublishedJourneyWorkspace consumer,
         byte[] retiredBytes,
         PublishedJourneyWorkspace versionTwo,
-        bool keepRetired)
+        bool keepRetired,
+        JourneyFrontmatterForm form)
     {
-        AssertFileBytes(consumer, BaseTarget, File.ReadAllBytes(versionTwo.Combine($"base/content/{BaseTarget}")));
-        AssertFileBytes(consumer, ToolkitTarget, File.ReadAllBytes(versionTwo.Combine($"toolkit/content/{ToolkitTarget}")));
-        AssertFileBytes(consumer, AddedTarget, File.ReadAllBytes(versionTwo.Combine($"toolkit/content/{AddedTarget}")));
+        AssertFileBytes(consumer, BaseTarget, RenderCanonicalBytes(versionTwo, $"base/content/{BaseTarget}", form));
+        AssertFileBytes(consumer, ToolkitTarget, RenderCanonicalBytes(versionTwo, $"toolkit/content/{ToolkitTarget}", form));
+        AssertFileBytes(consumer, AddedTarget, RenderCanonicalBytes(versionTwo, $"toolkit/content/{AddedTarget}", form));
         AssertFileBytes(consumer, SupportTarget, File.ReadAllBytes(versionTwo.Combine($"toolkit/content/{SupportTarget}")));
         if (keepRetired)
         {
@@ -511,7 +526,7 @@ public sealed class F11PackageLifecycleJourneyTests
         PublishedJourneyWorkspace workspace,
         byte[] priorToolkitBytes,
         byte[]? priorRetiredBytes = null,
-        bool expectSettingsCreation = false)
+        byte[]? priorSettingsBytes = null)
     {
         AssertPersistentLifecycleEvidence(workspace);
 
@@ -534,8 +549,12 @@ public sealed class F11PackageLifecycleJourneyTests
             expectedPreimages[RetiredTarget] = priorRetiredBytes;
         }
 
+        if (priorSettingsBytes is not null)
+        {
+            expectedPreimages[PublishedInstallWorkspace.SettingsPath] = priorSettingsBytes;
+        }
+
         var matchedPreimages = new HashSet<string>(StringComparer.Ordinal);
-        var foundSettingsCreation = false;
         var workspaceKey = PublishedWorkspaceLockStore.RecoveryWorkspaceKey(workspace.Path);
         foreach (var artifact in artifacts)
         {
@@ -565,16 +584,7 @@ public sealed class F11PackageLifecycleJourneyTests
                 var logicalPath = entry.GetProperty("logicalPath").GetString();
                 Assert.False(string.IsNullOrWhiteSpace(logicalPath));
                 var priorPayload = entry.GetProperty("priorPayload").GetString();
-                if (entry.GetProperty("prior").GetProperty("kind").GetString() == "missing")
-                {
-                    Assert.Equal(".agents/open-forge.json", logicalPath);
-                    Assert.Equal("ordinary-create", entry.GetProperty("kind").GetString());
-                    Assert.Equal("ordinary-file", entry.GetProperty("intended").GetProperty("kind").GetString());
-                    Assert.Null(priorPayload);
-                    foundSettingsCreation = true;
-                    continue;
-                }
-
+                Assert.Equal("ordinary-file", entry.GetProperty("prior").GetProperty("kind").GetString());
                 Assert.False(string.IsNullOrWhiteSpace(priorPayload));
                 var payloadEntry = archive.GetEntry(priorPayload!);
                 Assert.NotNull(payloadEntry);
@@ -594,11 +604,15 @@ public sealed class F11PackageLifecycleJourneyTests
             }
         }
 
-        Assert.Equal(expectSettingsCreation, foundSettingsCreation);
         Assert.Contains(ToolkitTarget, matchedPreimages);
         if (priorRetiredBytes is not null)
         {
             Assert.Contains(RetiredTarget, matchedPreimages);
+        }
+
+        if (priorSettingsBytes is not null)
+        {
+            Assert.Contains(PublishedInstallWorkspace.SettingsPath, matchedPreimages);
         }
     }
 
@@ -630,6 +644,12 @@ public sealed class F11PackageLifecycleJourneyTests
 
     private static void AssertMissingFile(PublishedJourneyWorkspace workspace, string relativePath)
         => Assert.False(File.Exists(workspace.Combine(relativePath)), $"Did not expect file '{relativePath}'.");
+
+    private static byte[] RenderCanonicalBytes(
+        PublishedJourneyWorkspace source,
+        string relativePath,
+        JourneyFrontmatterForm form)
+        => Encoding.UTF8.GetBytes(JourneyFrontmatter.RenderCanonical(File.ReadAllText(source.Combine(relativePath)), form));
 
     private static void AssertFileBytes(
         PublishedJourneyWorkspace workspace,

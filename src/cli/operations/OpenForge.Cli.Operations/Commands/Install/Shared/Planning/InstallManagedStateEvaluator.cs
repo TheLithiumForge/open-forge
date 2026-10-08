@@ -14,7 +14,8 @@ internal sealed class InstallManagedStateEvaluator
         cancellationToken.ThrowIfCancellationRequested();
 
         var intended = basis.Context.IntendedState;
-        if (basis.Context.Request.Configuration is not null && intended.Configuration?.UsesInitialAdoption != true)
+        if ((basis.Context.Request.Configuration is not null || basis.Context.Request.Frontmatter?.ConvertOwnedFiles == true)
+            && intended.Configuration?.UsesInitialAdoption != true)
         {
             return new InstallManagedStateEstablishment(new InstallEstablishmentPlanInput
             {
@@ -87,6 +88,14 @@ internal sealed class InstallManagedStateEvaluator
 
         if (exact)
         {
+            if (intended.Configuration?.SettingsChange is not null)
+                return new InstallManagedStateEstablishment(new InstallEstablishmentPlanInput
+                {
+                    Context = basis.Context,
+                    Ownership = basis.Ownership,
+                    CurrentTargets = basis.CurrentTargets,
+                    VerifiedManagedTargetPaths = basis.CurrentTargets.Keys.ToHashSet(StringComparer.Ordinal),
+                });
             return new InstallManagedStateTrustedExact(basis.Context);
         }
 

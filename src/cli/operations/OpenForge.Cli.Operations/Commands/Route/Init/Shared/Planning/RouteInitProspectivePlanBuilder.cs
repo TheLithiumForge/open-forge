@@ -161,7 +161,7 @@ internal sealed class RouteInitProspectivePlanBuilder
             sources.AddRange(restoration.Files.Where(file => file.Before.Kind == FileExpectationKind.Missing && file.Source is not null)
                 .Select(file => new RouteInitProspectiveSourceContent(
                     file.Source ?? throw new InvalidOperationException("A routed payload file requires its source."),
-                    file.Before, file.Asset.Bytes.AsSpan(), file.Asset.Path, ownsGeneratedEntries: false)));
+                    file.Before, file.IntendedBytes.Span, file.Asset.Path, ownsGeneratedEntries: false)));
         }
         if (topology.Formation.Loader is not { } loader)
         {
@@ -231,7 +231,7 @@ internal sealed class RouteInitProspectivePlanBuilder
         {
             foreach (var file in restoration.Files.Where(file => file.Before.Kind == FileExpectationKind.Missing && file.Source is not null))
             {
-                documents.Add(file.Asset.Path, StrictUtf8.GetString(file.Asset.Bytes.AsSpan()));
+                documents.Add(file.Asset.Path, StrictUtf8.GetString(file.IntendedBytes.Span));
             }
         }
         foreach (var entry in intended.Entries)

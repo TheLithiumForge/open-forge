@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
@@ -420,6 +421,72 @@ public sealed class SourceAuthoredMetadataParserTests
     public void TagGrammarRemainsAuthoritative(string tag, bool expected)
     {
         Assert.Equal(expected, SourceOpenForgeMetadataParser.IsValidTag(tag));
+    }
+
+    [Theory(DisplayName = "All ordinary source forms retain complete Framework metadata syntax and coordinates")]
+    [InlineData((int)SourceDocumentForm.Markdown, false)]
+    [InlineData((int)SourceDocumentForm.Markdown, true)]
+    [InlineData((int)SourceDocumentForm.CanonicalEntrypoint, false)]
+    [InlineData((int)SourceDocumentForm.CanonicalEntrypoint, true)]
+    [InlineData((int)SourceDocumentForm.IndexEntrypoint, false)]
+    [InlineData((int)SourceDocumentForm.IndexEntrypoint, true)]
+    [InlineData((int)SourceDocumentForm.UnderscoreIndexEntrypoint, false)]
+    [InlineData((int)SourceDocumentForm.UnderscoreIndexEntrypoint, true)]
+    [InlineData((int)SourceDocumentForm.ReferencesEntrypoint, false)]
+    [InlineData((int)SourceDocumentForm.ReferencesEntrypoint, true)]
+    [InlineData((int)SourceDocumentForm.UnderscoreReferencesEntrypoint, false)]
+    [InlineData((int)SourceDocumentForm.UnderscoreReferencesEntrypoint, true)]
+    [Trait("Boundary", "Input"), Trait("Feature", "source-metadata"), Trait("Evidence", "Unit")]
+    public void OrdinaryFormsRetainFrameworkOrigins(int sourceForm, bool root)
+    {
+        var yaml = root
+            ? "description: Example\ntags: [Docs]\nresponsibility: Owner\n"
+            : "open-forge:\n  description: Example\n  tags: [Docs]\n  responsibility: Owner\n";
+        var facts = Parse($"---\n{yaml}---\n", (SourceDocumentForm)sourceForm);
+        var framework = Assert.IsType<FrameworkDocumentMetadataFacts>(facts.FrameworkMetadata);
+        var openForge = SourceOpenForgeMetadataParser.Project(framework);
+
+        Assert.Equal(SourceAuthoredMetadataState.Complete, facts.State);
+        Assert.Same(framework, openForge.FrameworkMetadata);
+        Assert.Same(framework, SourceAuthoredMetadataParser.ProjectOpenForge(openForge).FrameworkMetadata);
+        Assert.Equal(root ? FrontmatterForm.Root : FrontmatterForm.Scoped, framework.Syntax.AuthoredForm);
+        Assert.Equal("Owner", framework.Metadata?.Responsibility);
+        Assert.Equal(3, framework.Syntax.Members.Length);
+        var tagSpan = Assert.Single(framework.TagSpans);
+        Assert.Equal("Docs", yaml[tagSpan.Start..tagSpan.End]);
+        Assert.Equal(framework.ObservedDescription, facts.ObservedDescription);
+        Assert.Equal(framework.ObservedTags, facts.ObservedTags);
+    }
+
+    [Theory(DisplayName = "Source projections preserve partial and malformed Framework origins")]
+    [InlineData("description: Example\n", false)]
+    [InlineData("description: Example\ntags: [Docs]\ntags: [Later]\n", true)]
+    [Trait("Boundary", "Input"), Trait("Feature", "source-metadata"), Trait("Evidence", "Unit")]
+    public void IncompleteFormsRetainFrameworkOrigins(string yaml, bool malformed)
+    {
+        var facts = Parse($"---\n{yaml}---\n", SourceDocumentForm.Markdown);
+        var framework = Assert.IsType<FrameworkDocumentMetadataFacts>(facts.FrameworkMetadata);
+
+        Assert.Equal(malformed ? SourceAuthoredMetadataState.Malformed : SourceAuthoredMetadataState.Missing, facts.State);
+        Assert.Equal(FrontmatterForm.Root, framework.Syntax.AuthoredForm);
+        Assert.NotEmpty(framework.Syntax.Members);
+        Assert.Equal(malformed, framework.FailureSpan is not null);
+    }
+
+    [Fact(DisplayName = "Native Skill and Loader projections keep independent metadata contracts")]
+    [Trait("Boundary", "Input"), Trait("Feature", "source-metadata"), Trait("Evidence", "Unit")]
+    public void NativeSkillContractRemainsIndependent()
+    {
+        const string source = "---\nname: native-skill\ndescription: Native description\ntags: [invalid tag]\nresponsibility: [Foreign]\n---\n";
+        var skill = Parse(source, SourceDocumentForm.Skill);
+        var loader = Parse(source, SourceDocumentForm.Loader);
+
+        Assert.Equal(SourceAuthoredMetadataState.Complete, skill.State);
+        Assert.Equal("Native description", skill.Description);
+        Assert.Empty(skill.Tags);
+        Assert.Null(skill.FrameworkMetadata);
+        Assert.Equal(SourceAuthoredMetadataState.NotApplicable, loader.State);
+        Assert.Null(loader.FrameworkMetadata);
     }
 
     private static SourceAuthoredMetadataFacts Parse(string source, SourceDocumentForm form)

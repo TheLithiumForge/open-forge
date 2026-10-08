@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Reading;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Extensions.Operational.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
@@ -22,12 +23,14 @@ internal sealed class ExtensionLifecycleTargetReader(
         CliWorkspace workspace,
         WorkspaceOwnershipDocument ownership,
         IReadOnlyList<ExtensionSourceObservation> sources,
+        FrontmatterForm? form,
         CancellationToken cancellationToken)
     {
         var detailed = await ReadDoctorAsync(
             workspace,
             ownership,
             sources,
+            form,
             cancellationToken).ConfigureAwait(false);
         return detailed.Select(observation => observation.Target).ToArray();
     }
@@ -36,13 +39,14 @@ internal sealed class ExtensionLifecycleTargetReader(
         CliWorkspace workspace,
         WorkspaceOwnershipDocument ownership,
         IReadOnlyList<ExtensionSourceObservation> sources,
+        FrontmatterForm? form,
         CancellationToken cancellationToken)
     {
         var observations = new List<ExtensionManagedTargetDoctorObservation>();
         foreach (var path in ownership.Extensions.SelectMany(package => package.Paths).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var intended = ReadIntendedFingerprint(path, ownership, sources);
+            var intended = ReadIntendedFingerprint(path, ownership, sources, form);
             var read = await ReadStateAsync(
                 workspace,
                 path,
@@ -112,8 +116,13 @@ internal sealed class ExtensionLifecycleTargetReader(
     }
 
     private string? ReadIntendedFingerprint(
-        string path, WorkspaceOwnershipDocument ownership, IReadOnlyList<ExtensionSourceObservation> sources)
+        string path, WorkspaceOwnershipDocument ownership, IReadOnlyList<ExtensionSourceObservation> sources, FrontmatterForm? form)
     {
+        if (form is null)
+        {
+            return null;
+        }
+
         string? intended = null;
         foreach (var owner in ownership.Extensions.Where(package => package.Paths.Contains(path, StringComparer.Ordinal)))
         {
@@ -137,7 +146,12 @@ internal sealed class ExtensionLifecycleTargetReader(
             string fingerprint;
             try
             {
-                fingerprint = ReadFingerprint(bytes.Span, path);
+                var rendered = WorkspacePayloadRenderer.Render(path, bytes, form.Value);
+                if (rendered.Bytes is not { } intendedBytes)
+                {
+                    return null;
+                }
+                fingerprint = ReadFingerprint(intendedBytes.Span, path);
             }
             catch (Exception exception) when (exception is ArgumentException or InvalidDataException or InvalidOperationException)
             {

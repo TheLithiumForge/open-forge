@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Commands.Install;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Update;
 using OpenForge.Cli.Core.Commands.Update.Models.Planning;
@@ -12,6 +13,7 @@ using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -84,7 +86,13 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
                     InstallMode.Apply,
                     force: false,
                     automatic: true,
-                    allowsInteractiveConfirmation: false),
+                    allowsInteractiveConfirmation: false)
+                {
+                    Setup = new InstallSetupInput(Configure: false, Preset: null, Overrides: [])
+                    {
+                        Frontmatter = FrontmatterForm.Scoped,
+                    },
+                },
                 cancellationToken);
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);

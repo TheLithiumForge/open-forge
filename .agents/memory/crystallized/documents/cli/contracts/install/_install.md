@@ -22,15 +22,17 @@ records qualified platforms and published versions. [CLI Development](../../../.
 records current implementation and release work. `install` may establish a safely absent or
 eligible initial state and verify an exact managed state. Managed divergence is
 not ordinary install work and directs to root `update`. Explicit configuration
-selects built-in routes, restores eligible missing defaults and manages their
-Git-ignore choices without replacing authored content. Its sibling Interface and
+selects built-in routes, restores eligible missing defaults, manages their
+Git-ignore choices, and changes the frontmatter form through the [bounded
+conversion rule](interface.md#configure-conversion). Its sibling Interface and
 Behavior files are the detailed authorities for the public surface and the
 technology-neutral operation behind it.
 
 Install owns the closed base Framework subset and consumes the neutral embedded
 Framework distribution. It preserves trusted scoped Framework targets created by
-later Route Init operations; it neither treats them as base divergence nor
-reconciles them.
+later Route Init operations. Ordinary Install neither treats them as base
+divergence nor reconciles them. Configure's bounded form conversion also
+includes eligible owned delivered scoped copies.
 
 The accepted CLI Architecture defines the shared implementation boundary. Gate 5
 must prove source-generated YamlDotNet and STJ serialization, fixed Markdig where
@@ -54,5 +56,5 @@ journeys. This contract set does not claim that implementation or proof.
 
 ## Entries
 
-- [Current install rules for setup selection, additive restoration, management establishment, verification and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Behavior #Determinism #Lifecycle #Safety #Recovery #CurrentTruth
+- [Current install rules for setup selection, additive restoration, bounded frontmatter conversion, management establishment and recovery](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Behavior #Determinism #Lifecycle #Safety #Recovery #CurrentTruth
 - [Accepted current Interface for installing, configuring and verifying built-in Framework routes](interface.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Install #Framework #Interface #Lifecycle #Safety #Recovery #CurrentTruth

@@ -4,6 +4,9 @@ using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -67,6 +70,24 @@ internal sealed class RouteCreateTargetInspector
                 isIncomplete: code == RouteCreateFindingCode.WorkspaceUnavailable);
         }
 
+        var settings = await WorkspaceSettingsReader.ReadAsync(
+                _physicalPathResolver, request.Workspace, cancellationToken)
+            .ConfigureAwait(false);
+        if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
+        {
+            return RouteCreateTargetInspectionBuild.Stop(new RouteCreatePlanningBoundary
+            {
+                Target = resolution.Target,
+                Finding = new RouteCreateFinding(
+                    settings.State == WorkspaceSettingsReadState.Invalid
+                        ? RouteCreateFindingCode.InvalidInput
+                        : RouteCreateFindingCode.InspectionIncomplete,
+                    settings.Cause ?? "Workspace settings are unavailable.",
+                    WorkspaceSettingsDefinitions.RelativePath),
+                IsIncomplete = settings.State == WorkspaceSettingsReadState.Unavailable,
+            });
+        }
+
         if (HasPhysicalAlias(catalogue, targetPath))
         {
             return Stop(
@@ -95,6 +116,7 @@ internal sealed class RouteCreateTargetInspector
                 Target = resolution.Target,
                 Identity = identity,
                 Catalogue = catalogue,
+                Settings = settings,
                 Snapshot = snapshot.Snapshot
                     ?? throw new InvalidOperationException(
                         "Successful Route Create target inspection requires a snapshot."),

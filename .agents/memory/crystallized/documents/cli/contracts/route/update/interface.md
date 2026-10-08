@@ -185,16 +185,18 @@ folder ID, its actual filename is preserved, and generated navigation uses its
 actual relative path. More than one recognized entrypoint makes the route
 structurally ambiguous for this mutation.
 
-The target must have one safely parseable scoped Open Forge frontmatter block.
-One narrow enrichment exception applies when that block contains an existing,
-safely parsed canonical `open-forge: {}` mapping: a request that supplies a complete
-non-empty description and at least one valid tag may add those fields, with a
-responsibility following the existing set and exact-empty removal rules. A description-only
-or tags-only request against the empty mapping is not accepted. Outside that
-exception, the existing full intended-metadata validation remains in force.
-The command does not invent a missing frontmatter ownership boundary or guess
-through malformed or duplicate metadata. A malformed boundary blocks before
-writes.
+The target must have safely parseable document boundaries. Existing Open Forge
+metadata is edited where it was authored. Any explicit `open-forge` key reserves
+scoped inspection and never falls back to root. Otherwise existing root Open
+Forge fields select root metadata. Malformed or ambiguous metadata blocks writes.
+
+When no Open Forge metadata exists, a request supplying a complete non-empty
+description and at least one valid tag may create it in the workspace's form.
+Route Update reads settings only for that creation, and plan revalidation
+compares the settings observation. The existing canonical empty-map enrichment
+also requires the complete description and tags. Responsibility follows the
+existing set and exact-empty removal rules. Partial creation or enrichment is
+invalid. Full intended-metadata validation remains in force.
 
 The complete intended source must remain valid under the contract for its source
 type. Updating an entrypoint therefore preserves or establishes the required
@@ -222,8 +224,8 @@ directory-ancestry rules remain defined by the filesystem contract.
 
 ## Metadata Patch
 
-Each supplied field replaces only that field in the destination's `open-forge`
-metadata:
+Each supplied field replaces only that field in the destination's selected
+metadata location:
 
 - `--description <text>` replaces `description`.
 - Repeated `--tag=<tag>` values replace the complete tag list in argument order.
@@ -260,7 +262,9 @@ one local set. A set operation
 updates each existing declaration in place and preserves its location. A clear
 removes every local declaration. Conflicting declarations are invalid and block
 mutation. When no declaration exists and a set is requested, the command adds a
-quoted list in the scoped mapping. Empty strings, empty lists, nulls, and
+quoted list in the target's selected metadata location. Existing declarations
+retain their locations, including equivalent dual declarations. Empty strings,
+empty lists, nulls, and
 non-string values are invalid. The existing complete-metadata prerequisite
 remains in force.
 
@@ -268,9 +272,9 @@ An actual applicability change appears in the existing `changes` array as field
 `applyTo`, with normalized local patterns before and after the operation. A
 clear has no after declaration. No standalone result field is added.
 
-For the empty-mapping enrichment exception only, the accepted patch is a
-bounded exact-span insertion of the complete supplied description and tag list,
-plus responsibility when supplied. It preserves unrelated YAML, scoped fields,
+For metadata creation and empty-map enrichment, the accepted patch is a bounded
+exact-span insertion of the complete supplied description and tag list, plus
+responsibility when supplied. It preserves unrelated YAML, unsupported fields,
 the Markdown body, line endings, and encoding. It does not reserialize the
 whole document or permit arbitrary non-empty flow mappings, aliases, duplicate
 ownership maps, or other ambiguous layouts. Partial enrichment is not a new
@@ -280,9 +284,9 @@ tag set is rejected, and all existing required-metadata validation remains.
 The command preserves unrelated top-level frontmatter and unsupported scoped
 metadata when it can do so safely. It never deletes or reinterprets an unknown
 field merely because the current canonical writer would not create it. If safe
-preservation cannot be established, the update blocks. Both block-mapping
-updates and canonical empty-map enrichment use the accepted parser and canonical
-field emitter with bounded exact-span patches. Neither rewrites the whole
+preservation cannot be established, the update blocks. Block-mapping updates,
+metadata creation, and canonical empty-map enrichment use the accepted parser
+and canonical field emitter with bounded exact-span patches. None rewrites the whole
 document. All command-local mechanics
 must be proven at Gate 5.
 

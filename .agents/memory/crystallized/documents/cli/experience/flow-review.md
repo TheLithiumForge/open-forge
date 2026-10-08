@@ -6,7 +6,7 @@ open-forge:
 
 # Flow Validation
 
-Validate these user outcomes before new end-to-end tests are implemented. F01–F24 adapt the supplied collection; F25–F26 are recommended additions. Full [scenario dispositions](assessment.md) distinguish retained, improved, deferred and omitted cases. Execution observations are recorded separately and do not redefine the targets.
+Validate these user outcomes before new end-to-end tests are implemented. F01 to F24 adapt the supplied collection. F25 and F26 are recommended additions. F27 and F28 are additions requested by the maintainer on 2026-10-08 for the per-workspace frontmatter form. Full [scenario dispositions](assessment.md) distinguish retained, improved, deferred and omitted cases. Execution observations are recorded separately and do not redefine the targets.
 
 | Flow | User outcome | Selection |
 | --- | --- | --- |
@@ -36,5 +36,7 @@ Validate these user outcomes before new end-to-end tests are implemented. F01–
 | [F24](flows/f24-keep-authored-content-intact-across-reading-and-maintenance.md) | Preserve authored bytes across reading and maintenance. | Retained |
 | [F25](flows/f25-customize-through-an-overwrite.md) | Load an overwrite after its base without indexing it separately. | Recommended addition |
 | [F26](flows/f26-select-only-needed-extensions.md) | Install only selected optional extensions and their declared dependencies. | Recommended addition |
+| [F27](flows/f27-start-a-workspace-in-root-form-and-keep-working-in-it.md) | Start in root form and keep creating, finding, reading, editing, and installing content. | Addition requested by the maintainer on 2026-10-08 for the per-workspace frontmatter form |
+| [F28](flows/f28-switch-an-existing-workspace-metadata-form-without-losing-edits.md) | Switch forms through Configure while retaining edits, reconcile owned content through explicit Update, and switch back safely. | Addition requested by the maintainer on 2026-10-08 for the per-workspace frontmatter form |
 
 The main proposed changes are optional metadata, unambiguous nested creation, harmless repeated removal/detach, useful partial results, and actionable warnings without extra verbosity flags. Preserve user changes and stop only the effects that lack a trustworthy target or necessary input.

@@ -1,6 +1,7 @@
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using TheLithium.Imprint;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
@@ -13,7 +14,7 @@ public sealed class RouteInitScaffoldSnapshotTests
     public void Scaffold()
     {
         var metadata = new RouteInitMetadata("Review rules", default, null, default, ["Contextual"], default);
-        var scaffold = new RouteInitScaffoldComposer().Compose("rules", "Rules", metadata);
+        var scaffold = new RouteInitScaffoldComposer().Compose("rules", "Rules", metadata, FrontmatterForm.Scoped);
         Encoding.UTF8.GetString(scaffold.Bytes.AsSpan()).AssertSnapshot();
     }
 }

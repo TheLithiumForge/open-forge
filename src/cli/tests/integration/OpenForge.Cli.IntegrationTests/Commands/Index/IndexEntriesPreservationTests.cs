@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Index.Models.Request;
 using OpenForge.Cli.Core.Commands.Update;
 using OpenForge.Cli.Core.Commands.Update.Models.Comparison;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Status;
 using OpenForge.Cli.IntegrationTests.Commands.Update.Shared.Interaction;
@@ -164,29 +165,36 @@ public sealed class IndexEntriesPreservationTests
     public async Task InstalledMapsKeepAuthoredDifferences(string lineEnding, bool proseBefore)
     {
         using var workspace = await StatusIntegrationWorkspace.CreateInstalledAsync("index-maps-authored-note");
-        var original = File.ReadAllText(workspace.Combine(MapsPath)).Replace("\r\n", "\n", StringComparison.Ordinal);
-        Assert.Contains("- none - No entries - #Empty", original, StringComparison.Ordinal);
-        var expected = proseBefore
-            ? original.Replace("## Entries\n\n", "## Entries\n\nA note before.\n\n", StringComparison.Ordinal)
-            : original + "\nA note.\n";
-        var stale = expected.Replace("- none - No entries - #Empty", "- [Stale](stale.md) - #Map", StringComparison.Ordinal);
-        expected = expected.Replace("\n", lineEnding, StringComparison.Ordinal);
-        workspace.OverwriteInstalledText(MapsPath, stale.Replace("\n", lineEnding, StringComparison.Ordinal));
+        try
+        {
+            var original = File.ReadAllText(workspace.Combine(MapsPath)).Replace("\r\n", "\n", StringComparison.Ordinal);
+            Assert.Contains("- none - No entries - #Empty", original, StringComparison.Ordinal);
+            var expected = proseBefore
+                ? original.Replace("## Entries\n\n", "## Entries\n\nA note before.\n\n", StringComparison.Ordinal)
+                : original + "\nA note.\n";
+            var stale = expected.Replace("- none - No entries - #Empty", "- [Stale](stale.md) - #Map", StringComparison.Ordinal);
+            expected = expected.Replace("\n", lineEnding, StringComparison.Ordinal);
+            workspace.OverwriteInstalledText(MapsPath, stale.Replace("\n", lineEnding, StringComparison.Ordinal));
 
-        await AssertAuthoredDifferenceAsync(workspace);
-        var operation = IndexOperationFactory.Create(workspace.LockStoreRoot);
-        var request = new IndexRequest(workspace.Workspace, [MapsPath], IndexMode.Apply);
-        var first = await operation.ExecuteAsync(request, TestContext.Current.CancellationToken);
+            await AssertAuthoredDifferenceAsync(workspace);
+            var operation = IndexOperationFactory.Create(workspace.LockStoreRoot);
+            var request = new IndexRequest(workspace.Workspace, [MapsPath], IndexMode.Apply);
+            var first = await operation.ExecuteAsync(request, TestContext.Current.CancellationToken);
 
-        Assert.Equal(CliSemanticStatus.Complete, first.Status);
-        Assert.Equal(expected, File.ReadAllText(workspace.Combine(MapsPath)));
-        await AssertAuthoredDifferenceAsync(workspace);
-        var hashes = workspace.SnapshotHashes();
+            Assert.Equal(CliSemanticStatus.Complete, first.Status);
+            Assert.Equal(expected, File.ReadAllText(workspace.Combine(MapsPath)));
+            await AssertAuthoredDifferenceAsync(workspace);
+            var hashes = workspace.SnapshotHashes();
 
-        var second = await operation.ExecuteAsync(request, TestContext.Current.CancellationToken);
+            var second = await operation.ExecuteAsync(request, TestContext.Current.CancellationToken);
 
-        Assert.Equal(CliSemanticStatus.Complete, second.Status);
-        Assert.Equal(hashes, workspace.SnapshotHashes());
+            Assert.Equal(CliSemanticStatus.Complete, second.Status);
+            Assert.Equal(hashes, workspace.SnapshotHashes());
+        }
+        finally
+        {
+            workspace.DeleteTarget(WorkspaceSettingsDefinitions.RelativePath);
+        }
     }
 
     private static async Task AssertAuthoredDifferenceAsync(StatusIntegrationWorkspace workspace)

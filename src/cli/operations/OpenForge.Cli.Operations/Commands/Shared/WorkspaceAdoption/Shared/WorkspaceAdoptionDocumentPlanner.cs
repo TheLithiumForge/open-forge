@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -72,7 +73,10 @@ internal sealed class WorkspaceAdoptionDocumentPlanner
         }
 
         var authored = _authoredMetadataParser.Parse(markdown, form);
-        var openForge = _openForgeMetadataParser.Parse(markdown);
+        var scope = form == SourceDocumentForm.Loader
+            ? FrameworkMetadataReadScope.ScopedOnly
+            : FrameworkMetadataReadScope.RoutedSource;
+        var openForge = _openForgeMetadataParser.Parse(markdown, scope);
         var applyTo = form == SourceDocumentForm.Loader ? openForge.ApplyTo : authored.ApplyTo;
         if (applyTo.State == ApplyToMetadataState.Invalid)
         {
@@ -119,8 +123,8 @@ internal sealed class WorkspaceAdoptionDocumentPlanner
             cause: null);
     }
 
-    internal WorkspaceAdoptionDocumentPlan CreateEntrypoint(string canonicalPath, string newline)
-        => _entrypointComposer.Create(canonicalPath, newline);
+    internal WorkspaceAdoptionDocumentPlan CreateEntrypoint(string canonicalPath, string newline, FrontmatterForm form)
+        => _entrypointComposer.Create(canonicalPath, newline, form);
 
     private static bool IsEntrypoint(SourceDocumentForm form)
         => form is SourceDocumentForm.CanonicalEntrypoint

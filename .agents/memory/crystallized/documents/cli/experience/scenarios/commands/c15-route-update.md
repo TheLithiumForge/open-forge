@@ -431,3 +431,59 @@ Name the unavailable required fact and its consequence. Do not infer a complete 
 Prove the read failure and why this input is required. Verify known safe facts remain distinct from unknown values and that no target effect started.
 
 **Execution constraint:** Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
+
+## C15-14
+
+**Situation:** Route Update edits root metadata in place and preserves another tool's root keys
+
+**Disposition:** Added. Refine root Open Forge metadata while retaining another tool's fields and authored content.
+
+### Starting point
+
+ROUTES exposes a user-owned `guidance/review-checklist` with root description and `tags: [Guidance, Review]`, a distinctive body, and the foreign root key `sidebar_position: 3`. There is no explicit `open-forge` key. Record target bytes and parent navigation. The workspace preference does not relocate existing metadata.
+
+Fixture: `ROUTES`, with root metadata already authored before the patch.
+
+### Steps
+
+```text
+open-forge route update guidance/review-checklist --responsibility "Define the pull request review checklist" --tag Checklist
+```
+
+### Expected result
+
+Route Update sets responsibility at the authored root location and replaces the complete tag list with `[Checklist]`. The omitted description stays unchanged. The foreign root key and authored body retain their exact bytes, and affected generated navigation reflects the intended result. This field patch does not convert the file to the workspace's preferred form or create a scoped block.
+
+### Verification
+
+**State:** Compare the patched fields with the request, verify the single replacement tag, and compare the foreign key, description, body, and other untouched spans with saved bytes. Independently check the bounded parent projection.
+
+**Output:** Check reported field changes and effect identities against actual changes. Do not mistake `--tag Checklist` for an appended tag.
+
+## C15-15
+
+**Situation:** Route Update creates metadata in the workspace form for a routed file without metadata
+
+**Disposition:** Added. Enrich an admitted plain file with complete metadata in the selected form.
+
+### Starting point
+
+ROUTES explicitly selects root and admits `.agents/guidance/plain-note.md` through the existing topology. The file has no Open Forge metadata and contains a distinctive authored title and body. Record its bytes, settings observation, and parent list.
+
+Fixture: `ROUTES`, with an existing ordinary routed file rather than an absent target.
+
+### Steps
+
+```text
+open-forge route update guidance/plain-note --description "Team operating notes" --tag Guidance --tag Team
+```
+
+### Expected result
+
+The complete supplied description and valid tags allow Route Update to create root Open Forge metadata. It preserves the authored body and projects affected navigation. Settings are read for this creation and revalidated before effects. Partial metadata creation is invalid, and root metadata never establishes source admission by itself.
+
+### Verification
+
+**State:** Inspect the created root fields and ordered tags, compare the original title and body bytes, and check the parent entry independently. Verify that settings bytes and unrelated files remain unchanged.
+
+**Output:** Check reported field changes and actual generated effects separately from preservation. The new metadata must come from the explicit values, without inferred descriptions or tags.

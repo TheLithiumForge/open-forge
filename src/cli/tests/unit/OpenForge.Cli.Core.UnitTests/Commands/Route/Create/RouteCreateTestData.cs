@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Commands.Route.Create.Shared.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -173,6 +174,7 @@ internal static class RouteCreateTestData
         return new RouteCreatePlan
         {
             Request = Request(workspace),
+            Settings = WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, ".agents", "open-forge.json")),
             Preview = PreviewFormation(workspace),
             NavigationFormation = new GeneratedNavigationFormationBuilder().Build(
                 catalogue,

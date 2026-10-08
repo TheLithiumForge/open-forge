@@ -36,3 +36,5 @@ These flows define useful user outcomes selected under the maintainer's request.
 - [Keep authored content intact across reading and maintenance](f24-keep-authored-content-intact-across-reading-and-maintenance.md) - #Memory #Document #CLI #UserFlow #Evergreen
 - [Customize selected guidance through its adjacent overwrite without editing the base](f25-customize-through-an-overwrite.md) - #Memory #Document #CLI #UserFlow #Evergreen
 - [Install optional collaboration and planning content without unrelated packages](f26-select-only-needed-extensions.md) - #Memory #Document #CLI #UserFlow #Evergreen
+- [Start a workspace in root form and keep working in it](f27-start-a-workspace-in-root-form-and-keep-working-in-it.md) - #Memory #Document #CLI #UserFlow #Evergreen
+- [Switch an existing workspace's metadata form without losing edits during conversion](f28-switch-an-existing-workspace-metadata-form-without-losing-edits.md) - #Memory #Document #CLI #UserFlow #Evergreen

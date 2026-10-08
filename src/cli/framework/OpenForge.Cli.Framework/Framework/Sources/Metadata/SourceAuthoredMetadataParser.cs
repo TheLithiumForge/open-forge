@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 
@@ -32,7 +33,7 @@ internal sealed class SourceAuthoredMetadataParser
                 or SourceDocumentForm.IndexEntrypoint
                 or SourceDocumentForm.UnderscoreIndexEntrypoint
                 or SourceDocumentForm.ReferencesEntrypoint
-                or SourceDocumentForm.UnderscoreReferencesEntrypoint => ProjectOpenForge(_openForgeParser.Parse(document)),
+                or SourceDocumentForm.UnderscoreReferencesEntrypoint => ProjectOpenForge(_openForgeParser.Parse(document, FrameworkMetadataReadScope.RoutedSource)),
             SourceDocumentForm.OverwriteCompanion => throw new ArgumentOutOfRangeException(
                 nameof(form),
                 form,
@@ -49,16 +50,16 @@ internal sealed class SourceAuthoredMetadataParser
                 facts.Description
                     ?? throw new InvalidOperationException("Complete Open Forge metadata requires a description."),
                 facts.Tags) with
-            { ApplyTo = facts.ApplyTo },
+            { ApplyTo = facts.ApplyTo, FrameworkMetadata = facts.FrameworkMetadata },
             SourceOpenForgeMetadataState.Missing => SourceAuthoredMetadataFacts.WithoutValues(
                 SourceAuthoredMetadataState.Missing,
                 facts.ObservedDescription,
                 facts.ObservedTags) with
-            { ApplyTo = facts.ApplyTo },
+            { ApplyTo = facts.ApplyTo, FrameworkMetadata = facts.FrameworkMetadata },
             SourceOpenForgeMetadataState.Malformed => SourceAuthoredMetadataFacts.WithoutValues(
                 SourceAuthoredMetadataState.Malformed,
                 facts.ObservedDescription) with
-            { ApplyTo = facts.ApplyTo },
+            { ApplyTo = facts.ApplyTo, FrameworkMetadata = facts.FrameworkMetadata },
             _ => throw new ArgumentOutOfRangeException(nameof(facts), facts.State, "The Open Forge metadata state is not defined."),
         };
     }

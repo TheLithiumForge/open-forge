@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates.Models;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
@@ -17,9 +18,20 @@ internal sealed class RouteUpdatePlanEquivalence
             && MatchesOptionalExpectation(
                 expected.Observation.OverwriteSnapshot,
                 actual.Observation.OverwriteSnapshot)
+            && MatchesSettings(expected.Observation.MetadataSettings, actual.Observation.MetadataSettings)
             && MatchesTemplate(expected.Template, actual.Template)
             && MatchesChanges(expected.FileChanges, actual.FileChanges)
             && MatchesNavigation(expected, actual);
+
+    private static bool MatchesSettings(WorkspaceSettingsRead? expected, WorkspaceSettingsRead? actual)
+    {
+        if (expected is null || actual is null)
+        {
+            return expected is null && actual is null;
+        }
+
+        return expected.MatchesObservation(actual);
+    }
 
     private static bool MatchesTarget(RouteUpdateTarget expected, RouteUpdateTarget actual)
         => string.Equals(expected.Requested, actual.Requested, StringComparison.Ordinal)

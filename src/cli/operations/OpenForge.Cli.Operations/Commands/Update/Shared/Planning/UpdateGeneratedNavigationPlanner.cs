@@ -3,6 +3,8 @@ using OpenForge.Cli.Core.Commands.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Transformation.Models;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
@@ -34,7 +36,6 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
     private readonly GeneratedNavigationProjector _projector = new();
-    private readonly UpdateWorkspaceAdoptionBuilder _adoptionBuilder = new(physicalPathResolver);
     private readonly UpdateComparisonReader _targetReader = new(physicalPathResolver);
 
     internal ValueTask<UpdateGeneratedNavigationBuild> BuildAsync(
@@ -123,7 +124,22 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
 
         try
         {
-            var sourcePlan = _adoptionBuilder.PlanSources(
+            var renderedAssets = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+            foreach (var asset in selectedAssets)
+            {
+                var rendered = WorkspacePayloadRenderer.Render(asset.Path, asset.Bytes.AsMemory(), settings.Frontmatter);
+                if (rendered.State == FrameworkFrontmatterTransformState.Invalid)
+                {
+                    return Blocked(UpdateFindingCode.SourceProvenanceInvalid, asset.Path,
+                        rendered.Cause ?? "The Framework payload cannot be rendered in the workspace's frontmatter form.");
+                }
+
+                renderedAssets.Add(asset.Path, (rendered.Bytes
+                    ?? throw new InvalidOperationException("A valid Framework payload rendering requires bytes.")).ToArray());
+            }
+
+            var adoptionBuilder = new UpdateWorkspaceAdoptionBuilder(physicalPathResolver, settings.Frontmatter);
+            var sourcePlan = adoptionBuilder.PlanSources(
                 request.Workspace,
                 catalogue,
                 selectedAssets,
@@ -167,7 +183,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
 
             var documents = payloadAssets.Values.ToDictionary(
                 asset => asset.Path,
-                asset => StrictUtf8.GetString(asset.Bytes.AsSpan()),
+                asset => StrictUtf8.GetString(renderedAssets[asset.Path]),
                 StringComparer.Ordinal);
             var projectionInputReader = new UpdateProjectionInputReader(
                 physicalPathResolver,
@@ -252,7 +268,7 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
                 createdSnapshots.Add(path, missing);
             }
 
-            var adoptionDocuments = _adoptionBuilder.PlanDocuments(
+            var adoptionDocuments = adoptionBuilder.PlanDocuments(
                 sourcePlan,
                 documents,
                 observedBytes,
@@ -312,8 +328,12 @@ internal sealed class UpdateGeneratedNavigationPlanner(PhysicalPathResolver phys
 
             var targetBytes = payloadAssets.Values.ToDictionary(
                 asset => asset.Path,
-                asset => asset.Bytes.ToArray(),
+                asset => renderedAssets[asset.Path],
                 StringComparer.Ordinal);
+            foreach (var asset in selectedAssets.Where(asset => !asset.Path.StartsWith(".agents/", StringComparison.Ordinal)))
+            {
+                targetBytes.Add(asset.Path, renderedAssets[asset.Path]);
+            }
             foreach (var target in adoptionDocuments.TargetBytes)
             {
                 targetBytes[target.Key] = target.Value.ToArray();

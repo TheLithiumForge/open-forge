@@ -3,4 +3,5 @@ Workspace: <workspace>
   Warning  <workspace>  Recovery data is unavailable
          Recovery data could not be prepared at <workspace>. Nothing was changed.
          open-forge doctor
+Frontmatter: root
 Next: open-forge doctor

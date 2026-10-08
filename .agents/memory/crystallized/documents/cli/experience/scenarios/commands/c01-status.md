@@ -420,3 +420,31 @@ Compare unique affected paths and per-measurement availability, not finding-row 
 **Disposition:** Deferred; not selected yet. Repeated cancellation outcome without a concrete signal boundary; retain X09 as the shared invariant until a distinct fixture earns coverage.
 
 **Required before reconsideration:** Use a real signal-capable process and deterministic observed boundary; a timeout or invalid argument is not cancellation. Use a genuine capability-appropriate terminal and preserve actual prompt/signal evidence.
+
+## C01-13
+
+**Situation:** Status reports an owned file left in the previous form as changed, with Update advice
+
+**Disposition:** Added. Identify managed content that differs from the workspace's selected form.
+
+### Starting point
+
+W1 has trusted Framework ownership and available canonical sources. Install scoped, then edit only the settings preference to root by hand, leaving owned Markdown in scoped form. Record one known unedited owned target and its canonical bytes. In F28, apply this check after Configure has kept the edited scoped target. Before that conversion, the missing setting still means scoped and the form itself is current.
+
+Fixture: `W1`, with the effective setting and target form independently established.
+
+### Steps
+
+```text
+open-forge status
+```
+
+### Expected result
+
+Status compares intended payload rendered in the effective workspace form. An owned target left in the other form produces the existing changed-target finding and Update advice. A missing preference means scoped, so a matching scoped target is not changed merely because it lacks the setting. Status performs no writes and does not claim that a form difference proves a historical user edit.
+
+### Verification
+
+**State:** Independently read settings, ownership, current target bytes, and rendered intended bytes. Compare the entire tree and recovery state before and after Status.
+
+**Output:** Check the changed target path and Update advice against that comparison. On F28's initial state, distinguish the independently appended paragraph from the still-current scoped form.

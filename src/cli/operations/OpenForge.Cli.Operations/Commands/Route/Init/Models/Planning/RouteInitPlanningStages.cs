@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 
@@ -21,6 +22,8 @@ internal sealed record RouteInitInspectionFacts(
     RouteInitCurrentStateFacts Current,
     RouteInitFrameworkPlanningBasis? Framework)
 {
+    public required WorkspaceSettingsRead Settings { get; init; }
+
     internal RouteInitRestoration? Restoration { get; init; }
 
     internal WorkspaceOwnershipRead? SharingOwnership { get; init; }

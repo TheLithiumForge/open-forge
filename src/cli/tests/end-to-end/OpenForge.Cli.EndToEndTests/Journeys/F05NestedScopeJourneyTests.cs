@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
@@ -46,7 +47,7 @@ public sealed class F05NestedScopeJourneyTests
         workspace.ExpectCoreInstall();
         workspace.ExpectFiles([ReadmePath, .. CreatedRouteFiles]);
 
-        var installed = await workspace.RunAsync("install", "--automatic");
+        var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertSuccessfulHuman(installed);
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
 
@@ -167,7 +168,7 @@ public sealed class F05NestedScopeJourneyTests
         workspace.ExpectCoreInstall();
         workspace.ExpectFiles(CreatedRouteFiles);
 
-        var installed = await workspace.RunAsync("install", "--automatic");
+        var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertSuccessfulHuman(installed);
 
         var init = await workspace.RunAsync(
@@ -238,7 +239,7 @@ public sealed class F05NestedScopeJourneyTests
         workspace.ExpectCoreInstall();
         workspace.ExpectFiles(ReadmePath);
 
-        var installed = await workspace.RunAsync("install", "--automatic");
+        var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertSuccessfulHuman(installed);
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);

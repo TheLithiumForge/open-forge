@@ -140,7 +140,7 @@ YAML, unknown fields, descriptions, responsibilities, or generated `Entries`
 into tag matches.
 
 The Find-local frontmatter reader pairs source-generated semantic values with
-shared neutral scalar facts for `open-forge.tags`, then maps their spans through
+shared neutral scalar facts for the selected Open Forge tag list, then maps their spans through
 the strict UTF-8 origin map. A mismatch or unavailable span remains a typed
 frontmatter finding rather than a guessed location. Find owns no YAML event
 reader or handwritten YAML grammar; the shared parser remains subject to

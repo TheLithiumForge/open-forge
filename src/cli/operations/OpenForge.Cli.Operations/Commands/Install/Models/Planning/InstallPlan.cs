@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 
 namespace OpenForge.Cli.Core.Commands.Install.Models.Planning;
 
@@ -146,6 +147,8 @@ internal sealed record InstallTargetRead
 
 internal sealed record InstallIntendedState
 {
+    public InstallFrontmatterSelection? Frontmatter { get; init; }
+
     public InstallConfigurationPlan? Configuration { get; init; }
 
     public required IReadOnlyDictionary<string, byte[]> TargetBytes { get; init; }

@@ -50,8 +50,10 @@ or unreadable existing policy blocks shared-navigation planning before effects,
 including dry-run. This read prerequisite is separate from best-effort ownership
 publication. Leftover records are not read, migrated, rewritten or deleted.
 
-Compare current selected target content with intended source content in this
-invocation. Recorded release metadata supplies no integrity baseline. A change
+Compare current selected target content with intended source content rendered
+in the workspace's frontmatter form before the existing comparison policy is
+applied. Invalid settings retain the existing invalid or unavailable boundary.
+Recorded release metadata supplies no integrity baseline. A change
 to selected dependency or path membership still requires Extension Update.
 Preserve unselected receipts, existing regions and other ownership sections.
 Revalidate the observed lock even when publication is unchanged.

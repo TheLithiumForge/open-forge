@@ -1,3 +1,8 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
@@ -12,12 +17,16 @@ internal sealed class RouteUpdateTargetObserver(
     RouteUpdateSourceSelector sourceSelector,
     RouteUpdateLayerObserver layerObserver,
     MarkdownDocumentParser markdownParser,
-    YamlDocumentParser yamlParser)
+    YamlDocumentParser yamlParser,
+    PhysicalPathResolver physicalPathResolver)
 {
     private readonly RouteUpdateSourceSelector _sourceSelector = sourceSelector;
     private readonly RouteUpdateLayerObserver _layerObserver = layerObserver;
     private readonly MarkdownDocumentParser _markdownParser = markdownParser;
     private readonly YamlDocumentParser _yamlParser = yamlParser;
+
+    private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
+    private readonly FrameworkDocumentMetadataParser _metadataParser = new();
 
     internal async ValueTask<RouteUpdateObservationBuild> ObserveAsync(
         RouteUpdateRequest request,
@@ -51,18 +60,44 @@ internal sealed class RouteUpdateTargetObserver(
 
         var text = targetLayer.Text;
         var markdown = _markdownParser.Parse(text);
-        if (markdown.Frontmatter.State != MarkdownFrontmatterState.Complete
-            || markdown.Frontmatter.YamlSpan is not { } yamlSpan)
+        if (markdown.Frontmatter.State == MarkdownFrontmatterState.Unavailable)
         {
             return Stop(selection, RouteUpdateFindingCode.FrontmatterUnsafe,
                 "The selected source does not expose one complete leading frontmatter block.");
         }
 
-        var yaml = _yamlParser.Parse(text[yamlSpan.Start..yamlSpan.End]);
-        if (yaml.State != YamlDocumentState.Complete)
+        YamlDocumentFacts? yaml = null;
+        if (markdown.Frontmatter.YamlSpan is { } yamlSpan)
         {
-            return Stop(selection, RouteUpdateFindingCode.FrontmatterUnsafe,
-                "The selected source frontmatter is not complete parsed YAML.");
+            yaml = _yamlParser.Parse(text[yamlSpan.Start..yamlSpan.End]);
+            if (yaml.State != YamlDocumentState.Complete)
+            {
+                return Stop(selection, RouteUpdateFindingCode.FrontmatterUnsafe,
+                    "The selected source frontmatter is not complete parsed YAML.");
+            }
+        }
+
+        var metadata = yaml is null
+            ? _metadataParser.Parse(markdown, FrameworkMetadataReadScope.RoutedSource)
+            : _metadataParser.Read(yaml, FrameworkMetadataReadScope.RoutedSource);
+        WorkspaceSettingsRead? settings = null;
+        if (metadata.Syntax.AuthoredForm is null)
+        {
+            if (!operation.Patch.Description.Requested || !operation.Patch.Tags.Requested
+                || string.IsNullOrWhiteSpace(operation.Patch.Description.Value)
+                || operation.Patch.Tags.Values.IsEmpty)
+            {
+                return Stop(selection, RouteUpdateFindingCode.InvalidPatch,
+                    "The intended document requires complete description and tag metadata.");
+            }
+
+            settings = await WorkspaceSettingsReader.ReadAsync(
+                _physicalPathResolver, operation.Workspace, cancellationToken).ConfigureAwait(false);
+            if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
+            {
+                return Stop(selection, RouteUpdateFindingCode.FrontmatterUnsafe,
+                    settings.Cause ?? "Workspace settings are unavailable for metadata creation.");
+            }
         }
 
         RouteUpdateObservedLayer? overwriteLayer = null;
@@ -96,6 +131,8 @@ internal sealed class RouteUpdateTargetObserver(
                 TargetText = text,
                 Markdown = markdown,
                 Frontmatter = yaml,
+                Metadata = metadata,
+                MetadataSettings = settings,
             });
     }
 

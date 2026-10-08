@@ -583,3 +583,32 @@ Install both selected packages once and report each selected identity and actual
 Compare selected IDs, dependency closure and distinct paths; do not double-count a package also reached as a dependency.
 
 **Execution constraint:** Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.
+
+## C21-19
+
+**Situation:** Extension Install in a root workspace delivers root-form files and repeats as a no-op
+
+**Disposition:** Added. Install an Extension and its declared dependencies in root form, then repeat safely.
+
+### Starting point
+
+W1 explicitly selects root and has no installed Planning Extension. Independently read the bundled Planning manifest, dependency closure, source bytes, and target inventory. Selected destinations are safe and unoccupied.
+
+Fixture: `W1`, with the real bundled Planning catalogue available.
+
+### Steps
+
+```text
+open-forge extension install planning --automatic
+open-forge extension install planning --automatic
+```
+
+### Expected result
+
+Extension Install renders eligible selected Markdown to root, delivers the declared closure, projects required navigation, and records verified ownership. Native Skills and ineligible assets keep their canonical bytes. Comparison against the rendered intended content makes the identical repeat a no-op. The operation does not change the workspace form or rewrite user-owned files.
+
+### Verification
+
+**State:** Independently enumerate selected packages and distinct target paths from the manifests. Compare newly delivered bytes with [X31](../experience.md#x31), verify ownership, and compare settings and unrelated content. Carry the installed state into the repeat and verify byte-identical content and ownership with no new recovery artifacts.
+
+**Output:** Compare package identities, dependency closure, and actual effects with the independent inventory. Check that the second result describes the already-current installation without reporting new delivery effects.

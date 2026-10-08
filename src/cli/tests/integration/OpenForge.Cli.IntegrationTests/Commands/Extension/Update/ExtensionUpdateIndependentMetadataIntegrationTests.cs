@@ -54,7 +54,7 @@ public sealed class ExtensionUpdateIndependentMetadataIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-update-independent-metadata-version");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         using var source = ExtensionInstallCatalogue.Create(
             "extension-update-independent-metadata-version-source");
         source.AddPackage(
@@ -124,7 +124,7 @@ public sealed class ExtensionUpdateIndependentMetadataIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             $"extension-update-independent-metadata-{kind}");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         using var source = ExtensionInstallCatalogue.Create(
             $"extension-update-independent-metadata-{kind}-source");
         source.AddPackage(

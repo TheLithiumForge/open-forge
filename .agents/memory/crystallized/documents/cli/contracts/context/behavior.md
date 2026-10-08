@@ -316,6 +316,11 @@ reconstruction. `body` is every Markdown byte after the frontmatter boundary,
 including generated regions. `paths` is one operation-level ordered physical-
 layer projection; it does not replace or simplify the resolved selection.
 
+Ordinary routed metadata reads root and scoped forms under the [shared
+rule](../../shared-operation-contract.md#frontmatter-form). Output selection
+does not filter readable forms. Generated metadata uses the selected Open Forge
+values. Authored frontmatter projections preserve the complete original block.
+
 The projection stage emits `paths` first when selected, then walks logical
 sources and physical layers in the already resolved order. Within each physical
 layer, selected parts are emitted in this fixed order: generated `metadata`,

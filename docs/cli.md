@@ -126,7 +126,8 @@ files. Extension Create asks `Create these files? [y/N]`.
 
 Install can ask setup questions before building the plan on a first interactive
 apply or with `--configure`. Dry-run, automatic, JSON, and redirected requests
-skip those questions. Noninteractive Configure requires an explicit preset.
+skip those questions. Noninteractive Configure requires an explicit preset or
+`--frontmatter`.
 
 These commands confirm this way and accept `--automatic`, which skips
 interaction and adds no force, prune, or other authority:
@@ -426,20 +427,36 @@ operation whose target or metadata needs review.
 
 ### Frontmatter and metadata
 
-An indexed Open Forge Markdown source uses this canonical frontmatter shape:
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
 
-```md
+Root form:
+
+```yaml
+---
+description: C# rules
+tags: [Directive, LoadNow]
+applyTo: ["**/*.cs"]
+---
+```
+
+Scoped form:
+
+```yaml
 ---
 open-forge:
-  description: Advice for choosing a stable route boundary
-  responsibility: Define the boundary and tradeoffs for this advice
-  tags: [Guidance, Routing]
+  description: C# rules
+  tags: [Directive, LoadNow]
+  applyTo: ["**/*.cs"]
 ---
-
-# Route boundaries
-
-The body contains the source's authored explanation.
 ```
+
+When an `open-forge` mapping exists, root descriptions and tags belong to another tool. Open Forge does not merge them. `applyTo` is read at both locations, with equivalent sets counting once and conflicting sets rejected.
+
+The same precedence applies to `responsibility`. An explicit `open-forge` key
+with an invalid value never falls back to root fields. Unknown root keys are
+ignored and preserved. Metadata alone does not make a file a routed source.
+Native `SKILL.md` metadata keeps its own contract and parser.
+Both forms use the same value grammar and diagnostics.
 
 `description` helps a reader decide whether to open a source. An optional
 `responsibility` helps an editor decide what belongs in it by stating what the
@@ -466,9 +483,9 @@ member of a character class, such as `[!abc]`.
 
 Within a string expression, `\,` is a literal comma. A list entry is not split or decoded, so its comma remains part of
 that one atomic pattern. Empty expressions or entries, and non-string values,
-are invalid. New CLI-authored conditions use a quoted-string list under
-`open-forge:`. If both locations declare the field, equivalence compares their
-sets of atomic pattern texts, and conflicting sets are invalid. A brace
+are invalid. New CLI-authored conditions use a quoted-string list in the
+workspace's chosen form. If both locations declare the field, equivalence
+compares their sets of atomic pattern texts, and conflicting sets are invalid. A brace
 shorthand is not equivalent to its expanded list. `route update` keeps an
 existing declaration at its authored location and updates equivalent root and
 scoped declarations together. For example, `applyTo: "**/*.cs"` and
@@ -508,6 +525,11 @@ After authoring a condition, [inspect its matches](#current-matching-files) with
 
 The CLI does not infer these values from a filename, parent, Template, body, or
 generated entry.
+
+Route creation, route initialization, and adoption write new metadata in the
+workspace's chosen form. `route update` edits existing metadata where it was
+authored. When a routed file has no Open Forge metadata, it creates metadata
+in the workspace's form and requires a complete description and tags.
 
 ### Initialize a route chain
 
@@ -728,27 +750,47 @@ replacement and deletion.
 ### Install
 
 `install` establishes Framework management in the selected workspace. Explicit
-configuration selects built-in routes and restores eligible missing defaults.
+configuration selects built-in routes, restores eligible missing defaults,
+and converts eligible owned files to the chosen frontmatter form.
 
 ```text
 open-forge install [--configure] [--preset <essentials|full-core|custom>]
-  [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run]
+  [--frontmatter <root|scoped>] [--route <id>=<add|remove|git-ignore>...]
+  [--force] [--automatic] [--dry-run]
 ```
 
 The global options also apply. Install has no operands.
+
+| Option | What it does |
+| ------ | ------------ |
+| `--configure` | Revisit route choices or the frontmatter form in an installed workspace |
+| `--preset <essentials\|full-core\|custom>` | Select built-in routes without the preset question |
+| `--frontmatter <root\|scoped>` | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
+| `--route <id>=<add\|remove\|git-ignore>` | Override a Custom row. Repeat for different rows |
+| `--force` | Allow eligible initial replacements |
+| `--automatic` | Skip interaction and use supported automatic choices |
+| `--dry-run` | Preview the complete plan without writing files |
 
 ```sh
 open-forge install
 open-forge install --preset essentials --dry-run
 open-forge install --preset essentials
 open-forge install --configure
+open-forge install --configure --frontmatter root --dry-run
 ```
 
 First interactive Install offers Essentials, Full Core, or Custom before
 showing the selected plan and asking for confirmation. An explicit preset
-selects it without that first choice. `--dry-run` changes nothing and never
+skips the preset question. `--dry-run` changes nothing and never
 asks setup questions. Naming the preset makes a preview use the intended
 selection.
+
+After resolving the preset, first interactive Install asks `How should Open Forge write file metadata?` and shows a short example of each form when settings do not already declare a preference. Root is preselected. An explicit `--frontmatter` skips that question.
+
+| Choice | Explanation |
+| ------ | ----------- |
+| `Root keys` | `description: and tags: at the top of the frontmatter` |
+| `Scoped under open-forge:` | `open-forge: holds description: and tags:` |
 
 #### Setup choices
 
@@ -764,8 +806,31 @@ Presets select supplied defaults. Existing content in an omitted route remains
 in place and routable.
 
 `--configure` revisits the setup choices in an installed workspace. An explicit
-`--preset` on an already installed workspace requires `--configure`. Ordinary
-repeated Install keeps its quiet no-op or divergence behavior.
+`--preset` or `--frontmatter` on an already installed workspace requires
+`--configure`. Ordinary repeated Install and Update retain the effective form
+and never ask about it. Repeated identical `--frontmatter` values are
+idempotent. Conflicting values or values other than `root` and `scoped` are
+invalid input.
+
+A fresh Install uses an explicit flag first, then a preference already declared
+in settings. Without either, interactive Install asks and unattended Install
+uses root. Every fresh Install writes the resolved `frontmatter` key.
+
+Form-only configuration leaves route choices unchanged:
+
+```sh
+open-forge install --configure --frontmatter root --dry-run
+open-forge install --configure --frontmatter root --automatic
+```
+
+Interactive `--configure` asks with the current form preselected unless the
+flag supplies it. Noninteractive `--configure --preset` without the flag
+retains the effective form. Every Configure checks eligible owned files for
+conversion, even when the selected form is unchanged. An explicit
+`--frontmatter` or an answered question writes the setting when its declared
+value differs, including when the key was missing. Noninteractive
+`--configure --preset` without the flag leaves the declaration as it is,
+including an absent key.
 
 Custom offers three actions for each row:
 
@@ -808,8 +873,9 @@ open-forge install --configure --preset custom \
 ```
 
 Dry-run, automatic, JSON, and redirected requests never ask setup questions.
-Noninteractive `--configure` requires `--preset`. Without explicit setup input,
-ordinary unattended first Install keeps Full Core and existing omissions.
+Noninteractive `--configure` requires `--preset` or `--frontmatter`. Without
+explicit setup input, ordinary unattended first Install keeps Full Core and
+existing omissions.
 Applying a writing plan noninteractively also needs `--automatic`.
 
 Install creates or restores the route and verifies its settings and lock record
@@ -838,9 +904,47 @@ Explicit configuration can restore eligible missing packaged defaults,
 including ignored scaffolding after a checkout with or without the lock file.
 It preserves existing authored files, compatible route hosts, overwrite
 companions, and narrower omissions. Missing private notes need your own copy or
-backup. Configuration adds no Update, authored replacement, or deletion
-authority. Edited managed content outside that additive boundary still directs
-you to `update`.
+backup. Route configuration grants no general Update or deletion authority.
+
+Frontmatter conversion is a narrow exception: Configure converts unedited
+owned Framework and Extension Markdown under `.agents/` whose leading
+frontmatter has Open Forge metadata, except native `SKILL.md` files. It
+compares each file's authored content with the delivered content in both forms. A file already
+matching the selected form needs no change. A file matching the other form is
+replaced in the selected form with rebuilt `Entries`.
+
+Edited owned files and Extension files whose source is unavailable stay
+unchanged and are reported. Keeping these files does not block the form change.
+Excluded files, user-authored files, Library files, and overwrite companions
+are never converted. The settings write and conversions share one reviewed
+plan, with the existing safety checks and recovery. Body content, including
+fenced examples, stays unchanged. Native Skills keep their own metadata.
+
+The text plan shows `Frontmatter: root` or, for a change,
+`Frontmatter: scoped -> root`. When files are kept, it adds
+`Kept <n> files in their previous form.` Paths and reasons appear at
+`standard` detail and above. Kept files add no finding code.
+
+Install JSON exposes `data.frontmatter` separately from `data.configuration`.
+It always contains `form` when the form is resolved, includes `previousForm`
+only when the form changed, and includes `kept` at every detail level when
+files were kept.
+Each kept item has a `path` and a `reason` of `edited` or `source-unavailable`.
+For example, this is the `data.frontmatter` object for a scoped-to-root change
+that kept an edited file:
+
+```json
+{
+  "form": "root",
+  "previousForm": "scoped",
+  "kept": [
+    {
+      "path": ".agents/directives/_directives.md",
+      "reason": "edited"
+    }
+  ]
+}
+```
 
 Only the selected root or Memory state's exact exclusions and necessary
 ancestor exclusions may change. Unselected ownership, unrelated omissions, and
@@ -943,6 +1047,23 @@ Explicit Cleanup removes retained recovery data.
 Ownership state is recorded in `.agents/open-forge.lock.json`. Authored settings
 are in `.agents/open-forge.json`. Framework and Extension records share the lock
 but remain independent command domains.
+
+The settings key `frontmatter` accepts `root` or `scoped`. A missing key means
+scoped, and unsupported values are invalid settings. `schemaVersion` stays 1:
+
+```json
+{
+  "schemaVersion": 1,
+  "frontmatter": "root"
+}
+```
+
+The setting controls output, not reading. Install, Update, and Extension
+delivery use it for leading Open Forge metadata. Their managed-file comparisons
+use the same form. Repository sources and body examples stay unchanged.
+To change an installed workspace, use `install --configure --frontmatter root`
+or `install --configure --frontmatter scoped` so the setting and eligible file
+conversions happen together.
 
 ### Remove and keep removed
 

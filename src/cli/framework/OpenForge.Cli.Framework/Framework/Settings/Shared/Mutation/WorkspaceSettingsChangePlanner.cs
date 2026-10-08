@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
@@ -13,7 +14,8 @@ internal static class WorkspaceSettingsChangePlanner
     internal static PlannedFileChange? PlanConfiguration(
         WorkspaceSettingsRead observation,
         WorkspaceRemovalSelection additions,
-        WorkspaceRemovalSelection clear)
+        WorkspaceRemovalSelection clear,
+        FrontmatterForm? frontmatter)
     {
         if (observation.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete)
             || observation.Snapshot is not { } snapshot)
@@ -21,6 +23,10 @@ internal static class WorkspaceSettingsChangePlanner
         ReadOnlyMemory<byte> bytes = snapshot.Bytes.ToArray();
         bytes = WorkspaceSettingsCodec.ClearRemovals(bytes, clear) ?? bytes;
         bytes = WorkspaceSettingsCodec.AddRemovals(bytes, additions) ?? bytes;
+        if (frontmatter is { } form)
+        {
+            bytes = WorkspaceSettingsCodec.SetFrontmatter(bytes, form) ?? bytes;
+        }
         if (snapshot.Bytes.AsSpan().SequenceEqual(bytes.Span)) return null;
         return snapshot.Kind == FileExpectationKind.Missing
             ? PlannedFileChange.Create(snapshot.Expectation, bytes.ToArray())

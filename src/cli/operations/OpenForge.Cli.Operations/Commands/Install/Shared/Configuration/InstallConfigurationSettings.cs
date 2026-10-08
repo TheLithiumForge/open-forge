@@ -9,8 +9,10 @@ namespace OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 
 internal static class InstallConfigurationSettings
 {
-    internal static PlannedFileChange? Plan(WorkspaceSettingsRead settings, InstallConfiguration configuration)
+    internal static PlannedFileChange? Plan(WorkspaceSettingsRead settings, InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
     {
+        if (configuration is null)
+            return WorkspaceSettingsChangePlanner.PlanConfiguration(settings, new(), new(), frontmatter?.Persist == true ? frontmatter.Form : null);
         var included = configuration.Routes.Where(row => row.Action != InstallRouteAction.Remove).ToArray();
         var removed = configuration.Routes.Where(row => row.Action == InstallRouteAction.Remove).ToArray();
         var includesMemory = included.Any(row => row.Id.StartsWith("memory/", StringComparison.Ordinal));
@@ -37,6 +39,6 @@ internal static class InstallConfigurationSettings
             Directories = directories.ToImmutableArray(),
             Files = files.ToImmutableArray(),
         };
-        return WorkspaceSettingsChangePlanner.PlanConfiguration(settings, additions, clear);
+        return WorkspaceSettingsChangePlanner.PlanConfiguration(settings, additions, clear, frontmatter?.Persist == true ? frontmatter.Form : null);
     }
 }

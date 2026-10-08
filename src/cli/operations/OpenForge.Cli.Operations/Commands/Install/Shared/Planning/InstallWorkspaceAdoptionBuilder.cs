@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Shared;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
@@ -274,7 +275,7 @@ internal sealed class InstallWorkspaceAdoptionBuilder(
         foreach (var path in createdEntrypointPaths.Order(StringComparer.Ordinal))
         {
             var newline = ReadNewline(path, intendedSources, documents);
-            var plan = _documentPlanner.CreateEntrypoint(path, newline);
+            var plan = _documentPlanner.CreateEntrypoint(path, newline, input.Frontmatter);
             if (plan.Cause is { } cause)
             {
                 return Failed(documents, userOwnedPaths, cause);

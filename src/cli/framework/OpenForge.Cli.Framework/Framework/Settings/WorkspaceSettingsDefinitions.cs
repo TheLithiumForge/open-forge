@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+
 namespace OpenForge.Cli.Core.Framework.Settings;
 
 /// <summary>
@@ -31,6 +33,9 @@ internal static class WorkspaceSettingsDefinitions
 
     internal const string SchemaProperty = "$schema";
     internal const string SchemaVersionProperty = "schemaVersion";
+    internal const string FrontmatterProperty = "frontmatter";
+    internal const string FrontmatterRootName = "root";
+    internal const string FrontmatterScopedName = "scoped";
     internal const string AllowInstallPathsProperty = "allowInstallPaths";
     internal const string RemovedCategoriesProperty = "removedCategories";
     internal const string RemovedFilesProperty = "removedFiles";
@@ -38,4 +43,28 @@ internal static class WorkspaceSettingsDefinitions
     internal const string RemovedExtensionsProperty = "removedExtensions";
     internal const string RemovedLibrariesProperty = "removedLibraries";
     internal const string GitMetadataDirectoryName = ".git";
+
+    internal static string ReadFrontmatterName(FrontmatterForm form)
+        => form switch
+        {
+            FrontmatterForm.Root => FrontmatterRootName,
+            FrontmatterForm.Scoped => FrontmatterScopedName,
+            _ => throw new ArgumentOutOfRangeException(nameof(form), form, "The frontmatter form is not defined."),
+        };
+
+    internal static bool TryReadFrontmatter(string? name, out FrontmatterForm form)
+    {
+        switch (name)
+        {
+            case FrontmatterRootName:
+                form = FrontmatterForm.Root;
+                return true;
+            case FrontmatterScopedName:
+                form = FrontmatterForm.Scoped;
+                return true;
+            default:
+                form = default;
+                return false;
+        }
+    }
 }

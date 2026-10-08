@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Filesystem;
@@ -38,7 +39,7 @@ public sealed class F19PartialOperationJourneyTests
         workspace.ExpectCoreInstall();
         workspace.WriteText(SettingsPath, "{\"allowInstallPaths\":[]}\n");
 
-        var install = await workspace.RunAsync("install", "--automatic");
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertCompleted(install, "install");
 
         SeedCategory(workspace, "alpha", "Alpha", "Alpha Seed", "Alpha", AlphaChildPath);

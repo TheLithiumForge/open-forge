@@ -1,5 +1,6 @@
 Open Forge is already installed and current. Nothing to do.
 Workspace: <workspace>
+Frontmatter: root
   Bundled Framework fingerprint: <sha256> (19 assets).
   The existing ownership record was preserved because the installation is current.
   No recovery bundle was required.

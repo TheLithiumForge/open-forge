@@ -1,0 +1,10 @@
+status=completed
+mode=dry-run
+target=memory/project-alpha/overview
+completeness=complete
+safety=safe
+body=preserved
+effects=2
+recovery=not created
+verification=not run
+findings=0

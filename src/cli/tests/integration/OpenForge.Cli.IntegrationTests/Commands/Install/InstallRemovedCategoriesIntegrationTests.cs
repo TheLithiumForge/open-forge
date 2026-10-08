@@ -12,7 +12,7 @@ public sealed class InstallRemovedCategoriesIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("install-removed-categories");
         workspace.CreateDirectory(".agents");
-        const string settings = """{ "removedCategories": ["skills"], "foreign": true }""";
+        const string settings = """{ "removedCategories": ["skills"], "foreign": true, "frontmatter": "scoped" }""";
         workspace.CreateOccupant(".agents/open-forge.json", settings);
         var run = await workspace.RunAsync(["install", "--automatic", "--format", "json"]);
         Assert.Equal(0, run.ExitCode);
@@ -31,7 +31,7 @@ public sealed class InstallRemovedCategoriesIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("install-removed-files");
         workspace.CreateDirectory(".agents");
-        const string settings = """{"removedCategories":["skills"],"removedFiles":[".agents/patterns/_patterns.md","AGENTS.md","CLAUDE.md"],"future":true}""";
+        const string settings = """{"removedCategories":["skills"],"removedFiles":[".agents/patterns/_patterns.md","AGENTS.md","CLAUDE.md"],"future":true,"frontmatter":"scoped"}""";
         const string agentHost = "User-owned AGENTS bytes remain untouched.\r\n";
         workspace.CreateOccupant(".agents/open-forge.json", settings);
         workspace.CreateOccupant("AGENTS.md", agentHost);

@@ -20,7 +20,7 @@ public sealed class ExtensionInstallRecoveryHistoryIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-install-verified-recovery-history");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         using var source = ExtensionInstallCatalogue.Create(
             "extension-install-verified-recovery-history-source");
         const string payload = ".agents/toolkit.md";

@@ -7,6 +7,8 @@ description: Use the open-forge CLI to load workspace context, find sources, mai
 
 Use the optional CLI to read and maintain Open Forge's Markdown, rules, and links. The Skills entrypoint requires this guide at startup. Loading it grants no installation or package-change authority.
 
+When authoring metadata, follow the workspace's frontmatter form described in the loader.
+
 ## Most Important Commands
 
 | Need                                              | Start here                             |

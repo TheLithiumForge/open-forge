@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -17,7 +18,8 @@ internal sealed class ExtensionInspectResultBuilder(ExtensionInspectComparisonBu
         ExtensionInspectRequest request,
         ExtensionSourceReadResult source,
         WorkspaceOwnershipRead lifecycle,
-        IReadOnlyList<ExtensionInspectCurrentPath> currentSnapshot)
+        IReadOnlyList<ExtensionInspectCurrentPath> currentSnapshot,
+        FrontmatterForm? form)
     {
         lifecycle = ExtensionInspectInstalledClosureReader.ReadOwnership(lifecycle);
         var subjectId = request.StableId;
@@ -53,6 +55,7 @@ internal sealed class ExtensionInspectResultBuilder(ExtensionInspectComparisonBu
             new ExtensionInspectComparisonBuildInput
             {
                 Ownership = lifecycle,
+                Frontmatter = form,
                 InstalledPackage = lifecyclePackage,
                 AvailablePackage = availablePackage,
                 AvailableClosure = availableClosure,

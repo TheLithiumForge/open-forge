@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning.Metadata;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning.Metadata;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;

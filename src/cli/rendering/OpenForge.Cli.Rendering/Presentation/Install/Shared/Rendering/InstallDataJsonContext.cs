@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.Presentation.Install.Shared.Rendering;
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     GenerationMode = JsonSourceGenerationMode.Default)]
 [JsonSerializable(typeof(OpenForge.Cli.Core.Presentation.Install.Models.InstallData))]
+[JsonSerializable(typeof(OpenForge.Cli.Core.Presentation.Install.Models.InstallDataFrontmatter))]
 internal sealed partial class InstallDataJsonContext : JsonSerializerContext
 {
 }

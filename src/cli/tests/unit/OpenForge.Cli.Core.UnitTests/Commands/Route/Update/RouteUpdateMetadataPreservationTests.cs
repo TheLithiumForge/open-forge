@@ -198,7 +198,7 @@ public sealed class RouteUpdateMetadataPreservationTests
                 var observation = RouteUpdateTestData.Observation(request, source);
                 Assert.Equal(
                     OpenForge.Cli.Core.Framework.Documents.Yaml.Models.YamlDocumentState.Complete,
-                    observation.Frontmatter.State);
+                    observation.Frontmatter?.State);
                 var build = RouteUpdateTestData.MetadataPatcher().Build(
                     observation);
 

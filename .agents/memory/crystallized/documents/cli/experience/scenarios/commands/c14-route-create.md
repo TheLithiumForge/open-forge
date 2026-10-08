@@ -447,3 +447,31 @@ Name the unavailable required fact and its consequence. Do not infer a complete 
 Prove the read failure and why this input is required. Verify known safe facts remain distinct from unknown values and that no target effect started.
 
 **Execution constraint:** Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
+
+## C14-15
+
+**Situation:** Route Create in a root workspace writes root metadata
+
+**Disposition:** Added. Create an independent routed file using the workspace's root preference.
+
+### Starting point
+
+ROUTES explicitly selects root and exposes guidance through one valid entrypoint. `.agents/guidance/review-checklist.md` is absent. Record the parent, settings, and ownership bytes.
+
+Fixture: `ROUTES`, with an unoccupied ordinary destination.
+
+### Steps
+
+```text
+open-forge route create .agents/guidance/review-checklist.md --description "Review checklist for pull requests" --tag Guidance --tag Review
+```
+
+### Expected result
+
+Route Create writes description and tags at the frontmatter root and projects the affected parent `Entries` from the new source. The created file is independently user-owned, without whole-file Framework or Template ownership. Existing files keep their authored form, and settings remain unchanged.
+
+### Verification
+
+**State:** Read the destination bytes and verify the exact description and ordered tags at the root. Independently verify the new parent entry, preserve text outside the generated region, and check settings and unrelated ownership.
+
+**Output:** Check the destination and generated effect identities against the actual changes. A root setting alone does not prove where creation wrote metadata.

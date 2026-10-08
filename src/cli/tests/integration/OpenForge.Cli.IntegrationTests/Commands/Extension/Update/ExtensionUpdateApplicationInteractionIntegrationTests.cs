@@ -20,7 +20,7 @@ public sealed class ExtensionUpdateApplicationInteractionIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-update-composed-selection");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         using var source = ExtensionInstallCatalogue.Create(
             "extension-update-composed-selection-source");
         await SeedChangedSelectionAsync(workspace, source);

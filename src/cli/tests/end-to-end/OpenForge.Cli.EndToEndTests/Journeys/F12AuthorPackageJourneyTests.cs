@@ -1,5 +1,7 @@
+using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Filesystem;
@@ -14,9 +16,11 @@ public sealed class F12AuthorPackageJourneyTests
     private const string LifecycleTarget = ".agents/open-forge.lifecycle.json";
     private const string DistinctiveBody = "# Authored Toolkit\nF12 distinctive authored bytes.\n";
 
-    [Fact(DisplayName = "F12 creates, authors, lists, inspects, and installs a custom package from its source"),
+    [Theory(DisplayName = "F12 creates, authors, lists, inspects, and installs a custom package from its source"),
      Trait("Feature", "author and install custom package"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F12")]
-    public async Task MainCreatesAuthorsAndInstallsFromExactSource()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task MainCreatesAuthorsAndInstallsFromExactSource(JourneyFrontmatterForm form)
     {
         using var catalogue = PublishedJourneyWorkspace.Create("journey-f12-main-catalogue");
         using var consumer = PublishedJourneyWorkspace.Create("journey-f12-main-consumer");
@@ -51,14 +55,15 @@ public sealed class F12AuthorPackageJourneyTests
         catalogue.WriteText(
             "toolkit/content/.agents/guidance/toolkit.md",
             OpenForgeDocumentSeed.Metadata("F12 authored toolkit", ["Extension"], DistinctiveBody));
-        var authoredBytes = File.ReadAllBytes(catalogue.Combine("toolkit/content/.agents/guidance/toolkit.md"));
+        var authoredBytes = Encoding.UTF8.GetBytes(JourneyFrontmatter.RenderCanonical(
+            File.ReadAllText(catalogue.Combine("toolkit/content/.agents/guidance/toolkit.md")), form));
         var sourceBeforeConsumerCommands = catalogue.SnapshotState();
 
         consumer.ExpectCoreInstall();
         consumer.ExpectFiles(ToolkitTarget);
         consumer.WriteText("unrelated-user.md", "consumer content remains independent\n");
         var consumerNote = File.ReadAllBytes(consumer.Combine("unrelated-user.md"));
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
 
         var list = await consumer.RunAsync("extension", "list", "--source", catalogue.Path);
         AssertSuccessful(list);
@@ -83,9 +88,11 @@ public sealed class F12AuthorPackageJourneyTests
         AssertPersistentRecoveryEvidence(consumer);
     }
 
-    [Fact(DisplayName = "F12 empty scaffold reports no installable files without inventing targets"),
+    [Theory(DisplayName = "F12 empty scaffold reports no installable files without inventing targets"),
      Trait("Feature", "author and install custom package"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F12")]
-    public async Task EmptyScaffoldReportsNoInstallableFiles()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task EmptyScaffoldReportsNoInstallableFiles(JourneyFrontmatterForm form)
     {
         using var catalogue = PublishedJourneyWorkspace.Create("journey-f12-empty-catalogue");
         using var consumer = PublishedJourneyWorkspace.Create("journey-f12-empty-consumer");
@@ -114,7 +121,7 @@ public sealed class F12AuthorPackageJourneyTests
 
         consumer.ExpectCoreInstall();
         consumer.WriteText("neighbor.md", "empty scaffold neighbor\n");
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
 
         var list = await consumer.RunAsync("extension", "list", "--source", catalogue.Path);
         AssertSuccessful(list);
@@ -263,9 +270,9 @@ public sealed class F12AuthorPackageJourneyTests
         IReadOnlyDictionary<string, string>? LocalApplicationData,
         IReadOnlyDictionary<string, string>? RecoveryStore);
 
-    private static async Task<ProcessRunResult> InstallFrameworkAsync(PublishedJourneyWorkspace consumer)
+    private static async Task<ProcessRunResult> InstallFrameworkAsync(PublishedJourneyWorkspace consumer, JourneyFrontmatterForm form)
     {
-        var result = await consumer.RunAsync("install", "--automatic");
+        var result = await consumer.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertSuccessful(result);
         Assert.True(File.Exists(consumer.Combine(OwnershipTarget)));
         return result;

@@ -195,6 +195,10 @@ For each selected package path and owner set, collect current exact bytes and
 semantic facts and compare current state with intended source. Distinguish unchanged, new, changed, missing, retired, shared, unknown,
 and source-unavailable paths.
 
+Intended content is the selected payload rendered in the workspace's frontmatter
+form before the existing comparison policy is applied. Invalid settings retain
+the existing invalid or unavailable boundary.
+
 Supported parseable kinds use the `open-forge-markdown-v1` conservative
 parser/AST-derived syntax-aware fingerprints that
 preserve Unicode, headings, tags, links and destinations, marker meaning, inline

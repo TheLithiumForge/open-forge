@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
@@ -66,10 +67,12 @@ public sealed class F13DeliberateReplacementJourneyTests
         External package source bytes.
         """;
 
-    [Fact(DisplayName = "F13 blocks, previews, deliberately replaces, and preserves an occupied target"),
+    [Theory(DisplayName = "F13 blocks, previews, deliberately replaces, and preserves an occupied target"),
      Trait("Feature", Feature), Trait("Evidence", "EndToEnd"), Trait("Journey", "F13"),
      Trait("Scenarios", "C21-09,C21-14,C21-10,C21-11,C21-12")]
-    public async Task MainReplacementJourneyCarriesStateThroughNoOpAndUserEdit()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task MainReplacementJourneyCarriesStateThroughNoOpAndUserEdit(JourneyFrontmatterForm form)
     {
         using var consumer = PublishedJourneyWorkspace.Create("e2e-f13-replacement-main-consumer");
         using var catalogue = PublishedJourneyWorkspace.Create("e2e-f13-replacement-main-catalogue");
@@ -77,7 +80,7 @@ public sealed class F13DeliberateReplacementJourneyTests
 
         consumer.ExpectCoreInstall();
         consumer.ExpectFiles(ToolkitTarget, BackupPath, UnrelatedPath);
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
 
         consumer.WriteText(BackupPath, BackupBytes);
         consumer.WriteText(UnrelatedPath, UnrelatedBytes);
@@ -105,7 +108,8 @@ public sealed class F13DeliberateReplacementJourneyTests
         AssertCompleted(applied);
         Assert.Contains("toolkit", applied.StandardOutput, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("replac", applied.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        AssertFileBytes(consumer, ToolkitTarget, File.ReadAllBytes(catalogue.Combine($"toolkit/content/{ToolkitTarget}")));
+        AssertFileBytes(consumer, ToolkitTarget, Encoding.UTF8.GetBytes(JourneyFrontmatter.RenderCanonical(
+            File.ReadAllText(catalogue.Combine($"toolkit/content/{ToolkitTarget}")), form)));
         AssertFileBytes(consumer, BackupPath, Encoding.UTF8.GetBytes(BackupBytes));
         AssertFileBytes(consumer, UnrelatedPath, Encoding.UTF8.GetBytes(UnrelatedBytes));
         AssertExtensionRecord(consumer, "toolkit", "1.0.0", ToolkitTarget);
@@ -134,10 +138,12 @@ public sealed class F13DeliberateReplacementJourneyTests
         AssertSourceUnchanged(catalogue, sourceBefore);
     }
 
-    [Fact(DisplayName = "F13 force preserves a different extension owner's claim"),
+    [Theory(DisplayName = "F13 force preserves a different extension owner's claim"),
      Trait("Feature", Feature), Trait("Evidence", "EndToEnd"), Trait("Journey", "F13"),
      Trait("Scenarios", "X27")]
-    public async Task ForceDoesNotReplaceAnotherOwnersDistinctContent()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task ForceDoesNotReplaceAnotherOwnersDistinctContent(JourneyFrontmatterForm form)
     {
         using var consumer = PublishedJourneyWorkspace.Create("e2e-f13-replacement-other-owner-consumer");
         using var catalogue = PublishedJourneyWorkspace.Create("e2e-f13-replacement-other-owner-catalogue");
@@ -146,13 +152,13 @@ public sealed class F13DeliberateReplacementJourneyTests
 
         consumer.ExpectCoreInstall();
         consumer.ExpectFiles(ToolkitTarget);
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
         var sourceBefore = catalogue.SnapshotState();
 
         var otherInstall = await consumer.RunAsync(
             "extension", "install", "other", "--source", catalogue.Path, "--automatic");
         AssertCompleted(otherInstall);
-        AssertFileBytes(consumer, ToolkitTarget, Encoding.UTF8.GetBytes(OtherOwnerBytes));
+        AssertFileBytes(consumer, ToolkitTarget, Encoding.UTF8.GetBytes(JourneyFrontmatter.RenderCanonical(OtherOwnerBytes, form)));
         AssertExtensionRecord(consumer, "other", "1.0.0", ToolkitTarget);
 
         var before = consumer.SnapshotState();
@@ -160,7 +166,7 @@ public sealed class F13DeliberateReplacementJourneyTests
             "extension", "install", "toolkit", "--source", catalogue.Path, "--force", "--automatic");
         AssertOwnerConflictBlocked(blocked);
         Assert.Equal(before, consumer.SnapshotState());
-        AssertFileBytes(consumer, ToolkitTarget, Encoding.UTF8.GetBytes(OtherOwnerBytes));
+        AssertFileBytes(consumer, ToolkitTarget, Encoding.UTF8.GetBytes(JourneyFrontmatter.RenderCanonical(OtherOwnerBytes, form)));
         AssertExtensionRecord(consumer, "other", "1.0.0", ToolkitTarget);
         AssertNoExtensionRecord(consumer, "toolkit");
         AssertSourceUnchanged(catalogue, sourceBefore);
@@ -168,10 +174,12 @@ public sealed class F13DeliberateReplacementJourneyTests
         consumer.LockStore.AssertNoRecoveryArtifacts(consumer.Path);
     }
 
-    [Fact(DisplayName = "F13 force preserves a Library source tree and its links"),
+    [Theory(DisplayName = "F13 force preserves a Library source tree and its links"),
      Trait("Feature", Feature), Trait("Evidence", "EndToEnd"), Trait("Journey", "F13"),
      Trait("Scenarios", "X27")]
-    public async Task ForceDoesNotReplaceARegisteredLibrarySource()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task ForceDoesNotReplaceARegisteredLibrarySource(JourneyFrontmatterForm form)
     {
         using var consumer = PublishedJourneyWorkspace.Create("e2e-f13-replacement-library-consumer");
         using var catalogue = PublishedJourneyWorkspace.Create("e2e-f13-replacement-library-catalogue");
@@ -185,7 +193,7 @@ public sealed class F13DeliberateReplacementJourneyTests
         consumer.ExpectCoreInstall();
         consumer.ExpectFiles(LibrarySourcePath, LibraryDestinationPath, SettingsPath);
         consumer.WriteText(LibrarySourcePath, ProtectedLibraryBytes);
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
 
         var attached = await consumer.RunAsync(
             "library", "attach", LibraryId, LibrarySourceRoot,
@@ -214,10 +222,12 @@ public sealed class F13DeliberateReplacementJourneyTests
         consumer.LockStore.AssertNoRecoveryArtifacts(consumer.Path);
     }
 
-    [Fact(DisplayName = "F13 terminal cancellation leaves an eligible occupied target unchanged"),
+    [Theory(DisplayName = "F13 terminal cancellation leaves an eligible occupied target unchanged"),
      Trait("Feature", Feature), Trait("Evidence", "EndToEnd"), Trait("Journey", "F13"),
      Trait("Scenarios", "C21-18")]
-    public async Task HumanDeclineCancelsForceWithoutEffects()
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task HumanDeclineCancelsForceWithoutEffects(JourneyFrontmatterForm form)
     {
         SkipUnlessWindows();
         using var consumer = PublishedJourneyWorkspace.Create("e2e-f13-replacement-terminal-consumer");
@@ -226,7 +236,7 @@ public sealed class F13DeliberateReplacementJourneyTests
 
         consumer.ExpectCoreInstall();
         consumer.ExpectFiles(ToolkitTarget);
-        await InstallFrameworkAsync(consumer);
+        await InstallFrameworkAsync(consumer, form);
         consumer.WriteText(ToolkitTarget, UserBytes);
         var before = consumer.SnapshotState();
         var sourceBefore = catalogue.SnapshotState();
@@ -249,9 +259,9 @@ public sealed class F13DeliberateReplacementJourneyTests
         consumer.LockStore.AssertNoRecoveryArtifacts(consumer.Path);
     }
 
-    private static async Task InstallFrameworkAsync(PublishedJourneyWorkspace workspace)
+    private static async Task InstallFrameworkAsync(PublishedJourneyWorkspace workspace, JourneyFrontmatterForm form)
     {
-        var result = await workspace.RunAsync("install", "--automatic");
+        var result = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertCompleted(result);
         AssertFileExists(workspace, OwnershipPath);
     }

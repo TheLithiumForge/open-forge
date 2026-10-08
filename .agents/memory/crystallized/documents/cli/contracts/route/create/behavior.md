@@ -42,8 +42,8 @@ Design](../../../technical-designs/mutation-and-recovery.md).
   Loader-recognized route root. It may create a missing intermediate directory
   chain and canonical entrypoints below that root, but it never creates the
   Loader root itself. See [File Target](interface.md#file-target).
-- The destination has its own explicitly supplied metadata, possibly an empty
-  scoped mapping, and independently maintained content. Template frontmatter,
+- The destination has its own explicitly supplied metadata in the workspace's
+  form, possibly empty, and independently maintained content. Template frontmatter,
   route identity, ownership, future changes,
   receipts, origin fields, update relationships, and hidden ownership markers
   do not transfer. See [Destination Metadata](interface.md#destination-metadata)
@@ -158,8 +158,9 @@ body, or another routed source. See [Destination Metadata](interface.md#destinat
 and [Errors](interface.md#errors-and-boundaries).
 
 `--apply-to` supplies the expressions described in Request Resolution. The
-resolver writes the resulting atomic patterns as a quoted scoped list in
-`applyTo` in the new scoped `open-forge` mapping. Omission leaves the field
+resolver writes the resulting atomic patterns as a quoted-string `applyTo` list
+in the workspace's form. Supplied fields and their value grammar remain
+unchanged. Omission leaves the field
 absent and does not add an `optional-metadata` warning.
 
 ### Template resolution
@@ -252,7 +253,8 @@ Selection forms one complete intended destination before it forms generated
 effects:
 
 - The destination frontmatter contains only the explicitly supplied destination
-  metadata. Omitted fields are absent; an empty scoped mapping is valid.
+  metadata in the workspace's form. Omitted fields are absent. Empty metadata
+  is valid, including an empty mapping in scoped form.
 - Without a Template, the destination contains only that canonical frontmatter
   and the canonical trailing line ending, unless the selected route or
   component contract requires more content.
@@ -528,7 +530,7 @@ obligations:
 - Existing generated effects are planned against intended post-create bytes and
   use the complete Index projection.
 - `--apply-to` expression parsing into atomic patterns during binding, sorting
-  and deduplication for Create output, scoped quoted-list metadata, and an
+  and deduplication for Create output, quoted-list metadata in the workspace's form, and an
   absent field and warning-free result when omitted.
 - Singleton repetition of `--description`, `--responsibility`, and
   `--template` is rejected even for equal values; optional repeated tags retain

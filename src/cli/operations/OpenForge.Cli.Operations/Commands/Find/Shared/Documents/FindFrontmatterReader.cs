@@ -48,7 +48,10 @@ internal sealed class FindFrontmatterReader
                 return ReadSkill(input, yaml);
             }
 
-            var metadataFacts = _metadataParser.Parse(input.Document);
+            var scope = input.Layer.Form == SourceDocumentForm.Loader
+                ? FrameworkMetadataReadScope.ScopedOnly
+                : FrameworkMetadataReadScope.RoutedSource;
+            var metadataFacts = _metadataParser.Parse(input.Document, scope);
             if (metadataFacts.State == FrameworkDocumentMetadataState.Malformed)
             {
                 var applyTo = metadataFacts.ApplyTo.State != ApplyToMetadataState.Absent
@@ -105,7 +108,7 @@ internal sealed class FindFrontmatterReader
         }
 
         var skill = _skillDeserializer.Deserialize<FrameworkSkillMetadataYamlDocument>(yaml);
-        var applyTo = _metadataParser.Parse(input.Document).ApplyTo;
+        var applyTo = _metadataParser.Parse(input.Document, FrameworkMetadataReadScope.ScopedOnly).ApplyTo;
         return Complete(skill?.Description, [], applyTo);
     }
 

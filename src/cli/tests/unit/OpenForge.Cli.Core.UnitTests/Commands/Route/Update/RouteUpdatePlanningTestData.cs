@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates.Models;
@@ -26,11 +28,13 @@ internal static partial class RouteUpdateTestData
         var workspace = Workspace();
         var source = Source(workspace, TargetId, TargetPath);
         var markdown = new MarkdownDocumentParser().Parse(text);
-        var yamlSpan = markdown.Frontmatter.YamlSpan
-            ?? throw new InvalidOperationException(
-                "A Route Update Unit observation requires frontmatter YAML.");
-        var frontmatter = new YamlDocumentParser().Parse(
-            text[yamlSpan.Start..yamlSpan.End]);
+        var frontmatter = markdown.Frontmatter.YamlSpan is { } yamlSpan
+            ? new YamlDocumentParser().Parse(text[yamlSpan.Start..yamlSpan.End])
+            : null;
+        var metadataParser = new FrameworkDocumentMetadataParser();
+        var metadata = frontmatter is null
+            ? metadataParser.Parse(markdown, FrameworkMetadataReadScope.RoutedSource)
+            : metadataParser.Read(frontmatter, FrameworkMetadataReadScope.RoutedSource);
         return new RouteUpdateObservation
         {
             Request = Request(
@@ -48,6 +52,7 @@ internal static partial class RouteUpdateTestData
             TargetText = text,
             Markdown = markdown,
             Frontmatter = frontmatter,
+            Metadata = metadata,
         };
     }
 

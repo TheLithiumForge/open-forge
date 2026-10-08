@@ -202,7 +202,10 @@ does not adopt, delete, or reinterpret it.
 
 ## Destination Metadata
 
-The destination starts with canonical scoped frontmatter:
+New metadata uses the workspace's chosen form. Supplied fields and their value
+grammar remain unchanged. New `applyTo` values use quoted-string lists.
+
+Scoped-form example:
 
 ```yaml
 ---
@@ -215,10 +218,10 @@ open-forge:
 ```
 
 Only explicitly supplied destination fields are written. An omitted description
-or tag list is absent; the command never fabricates description, tags, or
+or tag list is absent. The command never fabricates description, tags, or
 responsibility or `applyTo` from a filename, parent, Template, Template body, or
-another routed source. An empty mapping is valid when no destination field is
-supplied.
+another routed source. Metadata may be empty when no destination field is
+supplied, including an empty mapping in scoped form.
 
 When supplied, `--description` must be non-empty and contain more than
 whitespace. Supplied tags retain argument order. Each tag follows canonical tag
@@ -228,8 +231,8 @@ syntax and omits the `#` prefix. Empty or duplicate exact tags are invalid.
 value, `--responsibility ""`, omits it. A whitespace-only value is invalid.
 There is no separate removal flag because the destination does not exist yet.
 
-`applyTo` is written only in the scoped `open-forge` mapping, as a quoted string
-list with one atomic pattern per entry. The [File Conditions
+`applyTo` is written in the workspace's form as a quoted-string list with one
+atomic pattern per entry. The [File Conditions
 syntax](../../../../framework/markdown/syntax.md#file-conditions) defines
 expressions, atomic patterns, and their validation. Duplicate normalized
 patterns appear once in the authored list.

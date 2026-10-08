@@ -3,6 +3,9 @@ title: Ten-minute guide
 description: Add one rule, keep a useful fact, and use the CLI to see what your agent can find and load.
 ---
 
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+
 # Ten-minute guide
 
 Open Forge is Markdown, rules, and links. This guide takes you from installation to one project rule, a reusable shape, and a useful fact that survives the next conversation.
@@ -19,7 +22,7 @@ cd /path/to/your-project
 open-forge install
 ```
 
-Choose Essentials for a smaller start, or Full Core for all built-in routes. Custom lets you choose each route. Review the selected plan before confirming, then inspect the new files with `git status` and `git diff`. [Installation](installation.md) explains the choices, other setup methods, and `install --configure` for an existing workspace. If you've already installed Open Forge, start with the task:
+Choose Essentials for a smaller start, or Full Core for all built-in routes. Custom lets you choose each route. Then choose root keys or scoped metadata, with root preselected. `--frontmatter root` or `--frontmatter scoped` supplies that choice without its question. Review the selected plan before confirming, then inspect the new files with `git status` and `git diff`. [Installation](installation.md) explains the choices, other setup methods, and `install --configure` for an existing workspace. If you've already installed Open Forge, start with the task:
 
 > Explain how this project runs its tests. Follow `AGENTS.md`, and name the Open Forge files you read.
 
@@ -28,6 +31,27 @@ The agent starts with the loader and required context, then selects the branches
 ## 2. Add a rule and a reusable shape
 
 A **Directive** says what the agent must do. Suppose it keeps reporting a code change as done without checking the tests. Create this file:
+
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
+<Tabs groupId="frontmatter-form">
+<TabItem value="root" label="Root" default>
+
+```md title=".agents/directives/testing.md"
+---
+description: Check code changes before calling them done
+tags: [LoadNow, Directive, Testing]
+---
+
+# Testing
+
+## Instructions
+
+- Run the relevant tests before reporting a code change as done. Include the command and result. If you cannot run them, explain why.
+```
+
+</TabItem>
+<TabItem value="scoped" label="Scoped">
 
 ```md title=".agents/directives/testing.md"
 ---
@@ -42,6 +66,9 @@ open-forge:
 
 - Run the relevant tests before reporting a code change as done. Include the command and result. If you cannot run them, explain why.
 ```
+
+</TabItem>
+</Tabs>
 
 Make the new file discoverable:
 
@@ -71,6 +98,29 @@ The [CLI reference](/guides/cli#initialize-a-route-chain) defines restoration be
 
 Create this reusable shape:
 
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
+<Tabs groupId="frontmatter-form">
+<TabItem value="root" label="Root" default>
+
+```md title=".agents/patterns/test-report.md"
+---
+description: Give test results a consistent shape
+tags: [Pattern, Testing]
+---
+
+# Test report
+
+## Shape
+
+- Command: the command that was run
+- Result: passed or failed, with useful details
+- Not run: any remaining checks and why
+```
+
+</TabItem>
+<TabItem value="scoped" label="Scoped">
+
 ```md title=".agents/patterns/test-report.md"
 ---
 open-forge:
@@ -86,6 +136,9 @@ open-forge:
 - Result: passed or failed, with useful details
 - Not run: any remaining checks and why
 ```
+
+</TabItem>
+</Tabs>
 
 Run `index` after adding it too. A Pattern is the default shape when selected. A Directive can make a shape required. A justified adaptation of a Pattern is allowed.
 

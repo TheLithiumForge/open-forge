@@ -1,5 +1,6 @@
 Would install the Open Forge Framework into <workspace>.
 Workspace: <workspace>
+Frontmatter: root
   .agents/directives/_directives.md                      would be created
   .agents/guidance/_guidance.md                          would be created
   .agents/loader.md                                      would be created
@@ -19,6 +20,7 @@ Workspace: <workspace>
   .agents/templates/_templates.md                        would be created
   AGENTS.md                                              would be created with an Open Forge section
   CLAUDE.md                                              would be created with an Open Forge section
+  .agents/open-forge.json                                would be created
   .agents/open-forge.lock.json                           would be created
   Would create 17 files and 13 directories under .agents, plus AGENTS.md and CLAUDE.md.
   Would create 13 directories.

@@ -32,7 +32,13 @@ internal sealed class RouteUpdateBodyPlanner
         var bodySpan = metadata.Observation.Markdown.BodySpan
             ?? throw new InvalidOperationException(
                 "Complete Route Update frontmatter requires one body span.");
-        var body = metadata.Observation.TargetText[bodySpan.Start..bodySpan.End];
+        var bodyStart = bodySpan.Start;
+        if (bodyStart == 0 && metadata.Observation.TargetText.StartsWith("\uFEFF", StringComparison.Ordinal))
+        {
+            bodyStart = 1;
+        }
+
+        var body = metadata.Observation.TargetText[bodyStart..bodySpan.End];
         var bodyIsWhitespace = body.All(char.IsWhiteSpace);
         var template = new RouteUpdateTemplate
         {

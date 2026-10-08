@@ -94,6 +94,7 @@ internal sealed class RouteInitPlanResultProjector
             effects.RecoveryTargets,
             inspection.SharingOwnership ?? inspection.Framework?.Trust.Ownership)
         {
+            Settings = inspection.Settings,
             Restoration = inspection.Restoration,
             SourceSnapshots = [.. prospective.EffectSources.Select(content => content.Before)],
         };

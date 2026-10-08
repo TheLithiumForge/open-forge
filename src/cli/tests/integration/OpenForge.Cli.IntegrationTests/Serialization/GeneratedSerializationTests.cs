@@ -1,6 +1,7 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Serialization;
@@ -11,6 +12,33 @@ namespace OpenForge.Cli.IntegrationTests.Serialization;
 
 public sealed class GeneratedSerializationTests
 {
+    [Theory(DisplayName = "The static YAML context serializes and deserializes both canonical metadata forms")]
+    [InlineData(false)]
+    [InlineData(true)]
+    [Trait("Boundary", "Output"), Trait("Feature", "cli-serialization"), Trait("Evidence", "Integration")]
+    public void StaticYamlContextSerializesBothForms(bool root)
+    {
+        var form = root ? FrontmatterForm.Root : FrontmatterForm.Scoped;
+        var metadata = new FrameworkDocumentMetadata(
+            "true: # 路由",
+            ["Évidence2", "工作-2"],
+            "Owns metadata",
+            [new ApplyToPattern("**/*.cs", ["**", "*.cs"])]);
+        var yaml = new FrameworkDocumentMetadataEmitter().Emit(metadata, form);
+        var deserializer = new StaticDeserializerBuilder(new FrameworkMetadataYamlContext()).Build();
+        var actual = root
+            ? deserializer.Deserialize<FrameworkOpenForgeMetadataYamlModel>(yaml)
+            : deserializer.Deserialize<FrameworkAuthoredMetadataYamlDocument>(yaml).OpenForge;
+
+        Assert.NotNull(actual);
+        Assert.Equal(metadata.Description, actual.Description);
+        Assert.Equal(metadata.Tags.ToArray(), actual.Tags);
+        Assert.Equal(metadata.Responsibility, actual.Responsibility);
+        Assert.Equal(["**/*.cs"], Assert.IsType<string[]>(actual.ApplyTo));
+        Assert.DoesNotContain("\r", yaml, StringComparison.Ordinal);
+        Assert.Contains("applyTo: [\"**/*.cs\"]", yaml, StringComparison.Ordinal);
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Source-generated JSON serializes registered concrete shape")]
     [Trait("Feature", "cli-serialization"), Trait("Evidence", "Integration")]
@@ -72,7 +100,7 @@ public sealed class GeneratedSerializationTests
             new FrameworkDocumentMetadata(
                 "AOT-safe route metadata",
                 ["CurrentTruth"],
-                "Owns static serialization."));
+                "Owns static serialization."), FrontmatterForm.Scoped);
 
         Assert.Equal(
             "open-forge:\n"

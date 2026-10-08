@@ -12,6 +12,7 @@ internal static class InstallHelpSections
             new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSyntax(), InstallWording.HelpSyntax()),
             new CliHelpSection(global::OpenForge.Cli.OutputText.Install.InstallText.HelpHeadingEstablishment(), InstallWording.HelpEstablishment()),
             new CliHelpSection("Setup selection", global::OpenForge.Cli.OutputText.Install.InstallSetupText.Help()),
+            new CliHelpSection(global::OpenForge.Cli.OutputText.Install.InstallText.HelpHeadingFrontmatter(), global::OpenForge.Cli.OutputText.Install.InstallText.HelpFrontmatter()),
             new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingWritePolicy(), InstallWording.HelpWritePolicy()),
             new CliHelpSection(global::OpenForge.Cli.OutputText.Install.InstallText.HelpHeadingConfirmation(), InstallWording.HelpConfirmation()),
             new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingGlobalOptions(), InstallWording.HelpGlobalOptions()),

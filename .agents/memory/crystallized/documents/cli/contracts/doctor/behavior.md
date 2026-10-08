@@ -369,6 +369,11 @@ Absent policy retains legacy comparisons; an unreadable or invalid existing
 policy makes applicable generated comparisons unavailable, never empty or
 current. Policy acquisition preserves the fixed domain schedule.
 
+Ordinary routed metadata reads root and scoped forms under the [shared
+rule](../../shared-operation-contract.md#frontmatter-form). Output selection
+does not filter readable forms. Generated metadata uses the selected Open Forge
+values. Authored frontmatter projections preserve the complete original block.
+
 The stage validates optional `applyTo` metadata independently of required
 ordinary metadata completeness. It reads declarations at both the frontmatter
 root and scoped `open-forge` mapping when present, including a root declaration
@@ -510,6 +515,11 @@ The existing immutable `open-forge-markdown-v1` policy normalizes line endings
 and eligible generated content only; authored whitespace and final-newline
 choices remain significant. Non-Markdown Extension payloads use exact bytes.
 Comparison evidence is computed during the invocation and stores no baseline.
+
+Intended content is the selected payload rendered in the workspace's frontmatter
+form before the existing comparison policy is applied. An unedited owned target
+in the other form reports the existing changed-target findings with Update
+advice. Invalid settings retain the existing invalid or unavailable boundary.
 
 Root managed hosts compare only their `open-forge` region. Scoped Framework
 entrypoints use the existing canonical payload alignment; ambiguous or missing

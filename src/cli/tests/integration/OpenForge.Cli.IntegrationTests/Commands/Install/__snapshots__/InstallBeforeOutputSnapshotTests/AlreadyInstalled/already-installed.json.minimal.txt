@@ -31,7 +31,10 @@
       "directories": 0,
       "sections": 2
     },
-    "lockPath": ".agents/open-forge.lock.json"
+    "lockPath": ".agents/open-forge.lock.json",
+    "frontmatter": {
+      "form": "root"
+    }
   },
   "recovery": {
     "path": null,

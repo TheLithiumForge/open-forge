@@ -9,7 +9,8 @@ namespace OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 internal sealed record RouteInitRestorationFile(
     FrameworkPayloadAsset Asset,
     FileStateSnapshot Before,
-    SourceLogicalSource? Source);
+    SourceLogicalSource? Source,
+    ReadOnlyMemory<byte> IntendedBytes);
 
 internal sealed record RouteInitRestoration
 {

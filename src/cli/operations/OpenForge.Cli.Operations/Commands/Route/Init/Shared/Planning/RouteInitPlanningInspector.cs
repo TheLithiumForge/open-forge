@@ -10,6 +10,10 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
@@ -19,6 +23,7 @@ internal sealed class RouteInitPlanningInspector
     private readonly RouteInitCurrentStateReader _currentStateReader = new();
     private readonly RouteInitFrameworkAlignmentBuilder _alignmentBuilder = new();
     private readonly RouteInitFrameworkOwnershipBuilder _lifecycleBuilder = new();
+    private readonly PhysicalPathResolver _physicalPathResolver = new();
 
     internal async ValueTask<RouteInitInspectionResult> InspectAsync(
         RouteInitRequest request,
@@ -105,6 +110,33 @@ internal sealed class RouteInitPlanningInspector
             target = alignment.Target;
         }
 
+        var settings = await WorkspaceSettingsReader.ReadAsync(
+                _physicalPathResolver, request.Workspace, cancellationToken)
+            .ConfigureAwait(false);
+        if (settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable)
+        {
+            var code = settings.State == WorkspaceSettingsReadState.Invalid
+                ? RouteInitFindingCode.InvalidInput
+                : RouteInitFindingCode.InspectionIncomplete;
+            var incomplete = settings.State == WorkspaceSettingsReadState.Unavailable;
+            if (alignment?.IsCanonicalRestoration == true)
+            {
+                code = RouteInitFindingCode.MetadataUnsafe;
+                incomplete = false;
+            }
+
+            return new RouteInitInspectionStopped(new RouteInitPlanningBoundary(
+                code,
+                settings.Cause ?? "Workspace settings are unavailable.",
+                incomplete,
+                target,
+                Alignment: alignment,
+                Payload: payload)
+            {
+                FindingTarget = WorkspaceSettingsDefinitions.RelativePath,
+            });
+        }
+
         var catalogue = await _currentStateReader.ReadCatalogueAsync(
                 request.Workspace,
                 cancellationToken)
@@ -184,7 +216,10 @@ internal sealed class RouteInitPlanningInspector
         }
 
         return new RouteInitInspectionCompleted(
-            new RouteInitInspectionFacts(target, catalogue, current, framework));
+            new RouteInitInspectionFacts(target, catalogue, current, framework)
+            {
+                Settings = settings,
+            });
     }
 
     private static RouteInitPlanningBoundary? ReadCatalogueBoundary(

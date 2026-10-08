@@ -22,7 +22,7 @@ namespace OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 /// shape is reported rather than skipped, because that is a mistake a person
 /// wants told.
 /// </summary>
-internal static class WorkspaceSettingsCodec
+internal static partial class WorkspaceSettingsCodec
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
@@ -52,6 +52,7 @@ internal static class WorkspaceSettingsCodec
                     ReadRemovedCategories(root),
                     ReadRemovedFiles(root))
                 {
+                    DeclaredFrontmatter = ReadDeclaredFrontmatter(root),
                     RemovedDirectories = ReadRemovedDirectories(root),
                     RemovedExtensions = ReadRemovedExtensions(root),
                     RemovedLibraries = ReadRemovedLibraries(root),

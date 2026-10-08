@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Catalogue;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Operation;
 
@@ -153,8 +154,23 @@ internal sealed class InstallApplicationPreconditionValidator(
     {
         if (planned is null || current is null) return planned is null && current is null;
         return planned.Settings.MatchesObservation(current.Settings)
-            && planned.Ignore.Snapshot?.Expectation == current.Ignore.Snapshot?.Expectation
-            && planned.GitIgnoredRoutes.SequenceEqual(current.GitIgnoredRoutes);
+            && planned.Ignore?.Snapshot?.Expectation == current.Ignore?.Snapshot?.Expectation
+            && planned.GitIgnoredRoutes.SequenceEqual(current.GitIgnoredRoutes)
+            && FrontmatterPlansEqual(planned.FrontmatterPlan, current.FrontmatterPlan);
+    }
+
+    private static bool FrontmatterPlansEqual(
+        InstallConfigurationFrontmatterPlan? planned,
+        InstallConfigurationFrontmatterPlan? current)
+    {
+        if (planned is null || current is null) return planned is null && current is null;
+        return planned.Observations.SequenceEqual(current.Observations)
+            && planned.Kept.SequenceEqual(current.Kept)
+            && planned.Replacements.Length == current.Replacements.Length
+            && planned.Replacements.Zip(current.Replacements).All(pair => pair.First.Path == pair.Second.Path
+                && pair.First.SourceAssetPath == pair.Second.SourceAssetPath
+                && pair.First.Before.Snapshot?.Expectation == pair.Second.Before.Snapshot?.Expectation
+                && pair.First.IntendedBytes.AsSpan().SequenceEqual(pair.Second.IntendedBytes));
     }
 
     private static bool MigrationRowsEqual(

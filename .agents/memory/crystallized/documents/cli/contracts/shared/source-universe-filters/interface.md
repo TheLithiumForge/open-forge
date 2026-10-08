@@ -11,8 +11,8 @@ open-forge:
 
 This file is the accepted current Crystallized authority for the caller-visible
 meaning of the shared source-universe filters. Their final route is under
-`cli/contracts/shared/`. The commands that apply the contract do not ship yet;
-implementation and executable evidence are tracked in
+`cli/contracts/shared/`. The `find` and `references` commands apply the contract
+in the public beta CLI. Current implementation and release work is tracked in
 [CLI Development](../../../../../../working/cli-development/_cli-development.md). The [Shared Result
 Coordinates](../result-coordinates/interface.md) define the shared result
 boundary. The [CLI Architecture](../../../architecture.md) defines filesystem,

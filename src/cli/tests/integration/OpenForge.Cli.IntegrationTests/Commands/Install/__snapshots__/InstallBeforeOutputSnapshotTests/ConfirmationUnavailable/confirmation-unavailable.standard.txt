@@ -4,5 +4,6 @@ Workspace: <workspace>
          Install needs confirmation, and this session cannot ask.
          open-forge install --automatic
          Rerun the same Install request with explicit automatic mode.
+Frontmatter: root
   Rerun the same Install request with explicit automatic mode.
 Next: open-forge install --automatic

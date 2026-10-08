@@ -5,6 +5,7 @@ Workspace: <workspace>
          cannot be fixed automatically
          open-forge doctor
          Inspect the reported Install boundary before rerunning it.
+Frontmatter: root
   Bundled Framework fingerprint: <sha256> (19 assets).
   No ownership record change was requested.
   No recovery bundle was required.

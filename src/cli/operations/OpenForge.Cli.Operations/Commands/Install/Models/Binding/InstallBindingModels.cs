@@ -11,7 +11,8 @@ internal sealed record InstallSymbols(
     Option<bool> DryRun,
     Option<bool> Configure,
     Option<string?> Preset,
-    Option<string[]> Route)
+    Option<string[]> Route,
+    Option<string[]> Frontmatter)
 {
     internal static InstallSymbols Create()
     {
@@ -36,8 +37,15 @@ internal sealed record InstallSymbols(
         var configure = new Option<bool>("--configure") { Description = "Configure built-in routes while retaining existing files.", Arity = ArgumentArity.Zero };
         var preset = new Option<string?>("--preset") { Description = "Select essentials, full-core, or custom.", Arity = ArgumentArity.ExactlyOne };
         var route = new Option<string[]>("--route") { Description = "Set a Custom route: <id>=<add|remove|git-ignore>.", Arity = ArgumentArity.OneOrMore, AllowMultipleArgumentsPerToken = false };
+        var frontmatter = new Option<string[]>(InstallDefinitions.Frontmatter.Name)
+        {
+            Description = InstallDefinitions.Frontmatter.Description,
+            Arity = ArgumentArity.OneOrMore,
+            AllowMultipleArgumentsPerToken = false,
+        };
         command.Options.Add(configure);
         command.Options.Add(preset);
+        command.Options.Add(frontmatter);
         command.Options.Add(route);
         command.Options.Add(force);
         command.Options.Add(automatic);
@@ -46,7 +54,7 @@ internal sealed record InstallSymbols(
             InstallCommand: command,
             Force: force,
             Automatic: automatic,
-            DryRun: dryRun, Configure: configure, Preset: preset, Route: route);
+            DryRun: dryRun, Configure: configure, Preset: preset, Route: route, Frontmatter: frontmatter);
     }
 }
 

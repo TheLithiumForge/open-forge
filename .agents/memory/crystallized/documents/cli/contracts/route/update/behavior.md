@@ -132,15 +132,19 @@ by the ordinary filesystem path contract.
 
 ### Frontmatter and field patch
 
-The resolver establishes exactly one safely parseable scoped `open-forge`
-frontmatter block for the base target. If its `open-forge` value is an existing
-safely parsed canonical `open-forge: {}` mapping, the narrow enrichment path admits only a request
-with a complete non-empty description and at least one valid tag, with
-responsibility following the existing set and exact-empty removal rules. A description-only or tags-only request
-against that empty mapping is invalid. The resolver does not guess a missing
-ownership boundary, choose among duplicate blocks, or continue through a
-malformed boundary. The complete intended source must remain valid for its
-ordinary-file or entrypoint representation.
+The resolver establishes safely parseable document boundaries and edits existing
+Open Forge metadata where it was authored. Any explicit `open-forge` key
+reserves scoped inspection and never falls back to root. Otherwise existing root
+Open Forge fields select root metadata. Malformed or ambiguous metadata blocks
+writes.
+
+When no Open Forge metadata exists, creation requires a complete supplied
+non-empty description and at least one valid tag, and uses the workspace's form.
+Read settings only for that creation and compare the observation during plan
+revalidation. Canonical empty-map enrichment also requires complete description
+and tags. Responsibility follows the existing set and exact-empty removal rules.
+Partial creation or enrichment is invalid. The complete intended source must
+remain valid for its ordinary-file or entrypoint representation.
 
 The field patch is resolved as a set of explicitly supplied operations. Omitted
 fields retain their current values. Supplied description, responsibility, and
@@ -150,7 +154,7 @@ The `--apply-to` operation replaces the target's complete local declaration set
 with the flattened atomic patterns. The mutually exclusive `--clear-apply-to`
 operation removes only its local declarations. Neither operation changes an
 ancestor's condition.
-For the empty-map enrichment path, the complete supplied metadata is formed by
+For metadata creation and empty-map enrichment, complete supplied metadata uses
 an exact span patch that preserves unrelated YAML, body bytes, line endings,
 and encoding. It rejects arbitrary non-empty flow mappings, aliases, duplicate
 ownership maps, whole-file rewrites, and any partial enrichment request.
@@ -164,7 +168,8 @@ locations represent one local set. Set operations update each existing
 declaration in place, and clear operations remove all local declarations.
 Conflicting normalized declarations make the target ambiguous and block
 mutation. When a set is requested and no declaration exists, the new quoted
-list is written in scoped metadata.
+list is written in the target's selected metadata location. Existing declarations
+retain their locations, including equivalent dual declarations.
 The resolver preserves unrelated top-level and unsupported scoped metadata when
 safe preservation can be established. It does not derive, summarize, correct,
 or judge field meaning from filenames, bodies, Templates, generated entries, or
@@ -211,12 +216,14 @@ safe update and its dependency-minimal generated navigation:
 
 - The exact selected workspace, source reference form, automatic ID, canonical
   base path, compatibility form, and logical overwrite layers.
-- The base target's readable bytes, source kind, route relationship, scoped
-  frontmatter boundary, supported and unrelated metadata, body bytes, and
+- The base target's readable bytes, source kind, route relationship, leading
+  frontmatter boundary, selected metadata location, supported and unrelated
+  metadata, body bytes, and
   entrypoint structure when applicable. The facts include whether the scoped
   `open-forge` value is the safely parsed canonical `open-forge: {}` mapping eligible for narrow
   enrichment, its exact metadata span, and the surrounding bytes, line-ending,
   and encoding facts needed for preservation.
+- The settings observation and selected form only when creating absent metadata.
 - The current destination metadata and the exact field operations requested by
   the invocation.
 - The selected Template's identity, route, source classification, overwrite
@@ -303,8 +310,8 @@ required title, Axioms meaning, `Entries` section, and generated region of
 an entrypoint. Its bytes are not normalized beyond the bounded representation
 needed by the requested field patch or eligible body completion.
 
-When the empty-map enrichment path is selected, the intended bytes are formed
-by replacing only the exact scoped metadata span with the complete supplied
+When metadata creation or empty-map enrichment is selected, intended bytes use
+only the exact field spans or required insertion boundary with complete supplied
 fields. Unrelated YAML and body bytes, line endings, and encoding remain
 unchanged. The operation does not serialize the whole document, accept a
 non-empty flow mapping or alias as an empty map, merge duplicate ownership
@@ -448,8 +455,9 @@ Each replacement uses the complete planned file bytes through a safe
 same-directory replacement property. The operation does not edit the target in
 place or fall back to a weaker write after an atomicity or identity check fails.
 It never replaces bytes outside the intended destination or generated interior.
-For empty-map enrichment, those planned file bytes differ only at the exact
-scoped metadata span; the operation never obtains them by whole-document
+For metadata creation and empty-map enrichment, planned file bytes differ only
+at the exact field spans or required insertion boundary. The operation never
+obtains them by whole-document
 reserialization.
 
 After each replacement, the effect target bytes are verified. After all effects,
@@ -564,7 +572,7 @@ boundary:
   mutation, canonical and compatibility entrypoint preservation, unsupported
   target rejection, detached-file rejection, orphan handling, collisions, and
   ambiguous route blocking.
-- Exact scoped-frontmatter boundary detection, supported-field addition,
+- Exact selected metadata location and field spans, supported-field addition,
   unrelated-metadata preservation, malformed and duplicate boundary blocking,
   field omission, replacement, exact-empty responsibility removal, required
   metadata protection, tag ordering, duplicate rejection, and invalid values.

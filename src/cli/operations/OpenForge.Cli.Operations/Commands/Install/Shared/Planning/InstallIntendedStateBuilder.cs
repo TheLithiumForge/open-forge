@@ -104,11 +104,18 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                 "The workspace settings read state is not defined.");
         }
 
+        if (request.Frontmatter is { } selection && !selection.Settings.MatchesObservation(settingsRead))
+            return Blocked("Workspace settings changed after frontmatter selection.", InstallFindingCode.TargetUnsafe);
+
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete))
             return Blocked(ownership.Cause ?? "Install requires trustworthy route-sharing facts.", InstallFindingCode.LifecycleBlocked);
 
         InstallConfigurationPlan? configurationPlan = null;
         var settings = settingsRead.Document;
+        var form = request.Frontmatter?.Form ?? settings.Frontmatter;
+        if (request.Configuration is null && request.Frontmatter?.ConvertOwnedFiles == true)
+            return await new InstallConfigurationIntendedStateBuilder(physicalPathResolver)
+                .BuildAsync(request, payload, ownership, settingsRead, cancellationToken).ConfigureAwait(false);
         if (request.Configuration is { } configuration)
         {
             var loaderRead = await _targetReader.ReadAsync(request.Workspace, FrameworkPayloadAsset.LoaderPath, cancellationToken).ConfigureAwait(false);
@@ -119,19 +126,26 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                     .BuildAsync(request, payload, ownership, settingsRead, cancellationToken).ConfigureAwait(false);
             try
             {
-                var settingsChange = InstallConfigurationSettings.Plan(settingsRead, configuration);
+                var settingsChange = InstallConfigurationSettings.Plan(settingsRead, configuration, request.Frontmatter);
                 if (settingsChange is { } change)
                     settings = WorkspaceSettingsCodec.Read(change.IntendedBytes.ToArray()).Document
                         ?? throw new InvalidDataException("The configured settings must decode.");
                 var ignoreRead = await _targetReader.ReadAsync(request.Workspace, InstallIgnoreSection.Path, cancellationToken).ConfigureAwait(false);
                 var before = ignoreRead.Snapshot ?? throw new InvalidDataException(ignoreRead.Cause ?? "The Git-ignore file is unsafe or unavailable.");
                 _ = InstallIgnoreSection.Read(before.Bytes.AsSpan());
-                configurationPlan = new(settingsRead, ignoreRead, settingsChange, IgnoreChange: null, UsesInitialAdoption: true);
+                configurationPlan = new(settingsRead, ignoreRead, settingsChange, IgnoreChange: null, UsesInitialAdoption: true)
+                { Frontmatter = request.Frontmatter };
             }
             catch (Exception exception) when (exception is ArgumentException or InvalidDataException or DecoderFallbackException)
             {
                 return Blocked(exception.Message, InstallFindingCode.TargetUnsafe);
             }
+        }
+        else if (request.Frontmatter is { } frontmatter)
+        {
+            var change = InstallConfigurationSettings.Plan(settingsRead, configuration: null, frontmatter);
+            configurationPlan = new(settingsRead, Ignore: null, change, IgnoreChange: null)
+            { Frontmatter = frontmatter, GitIgnoredRoutes = ownership.Document.Framework?.GitIgnoredRoutes ?? [] };
         }
         var selectedPayloadAssets = payload.Assets
             .Where(asset => asset.Path.StartsWith(".agents/", StringComparison.Ordinal)
@@ -176,6 +190,7 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
 
         try
         {
+            var renderedPayload = InstallPayloadRendering.Render(payload, form);
             var originalPayloadSources = selectedPayloadAssets
                 .Select(asset => FrameworkPayloadSourceProjection.Create(request.Workspace, asset))
                 .ToArray();
@@ -215,8 +230,9 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
             var documentBytes = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             foreach (var asset in payloadAssets)
             {
-                documentBytes.Add(asset.Path, asset.Bytes.ToArray());
-                documents.Add(asset.Path, StrictUtf8.GetString(asset.Bytes.AsSpan()));
+                var bytes = renderedPayload[asset.Path];
+                documentBytes.Add(asset.Path, bytes);
+                documents.Add(asset.Path, StrictUtf8.GetString(bytes));
             }
 
             var projectionInputs = new List<InstallProjectionInputObservation>();
@@ -319,6 +335,7 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
             var adoption = _adoptionBuilder.ApplyDocuments(
                 new InstallWorkspaceAdoptionDocumentInput
                 {
+                    Frontmatter = form,
                     Workspace = request.Workspace,
                     Catalogue = catalogue,
                     Topology = topology,
@@ -408,7 +425,7 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
 
             var targetBytes = payloadAssets.ToDictionary(
                 asset => asset.Path,
-                asset => asset.Bytes.ToArray(),
+                asset => renderedPayload[asset.Path],
                 StringComparer.Ordinal);
             foreach (var userTarget in adoption.UserTargetBytes)
             {
@@ -452,12 +469,12 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
             var managedBlockBytes = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             if (FrameworkPayloadSelection.IncludesPath(FrameworkPayloadAsset.RootAgentPath, settings))
             {
-                managedBlockBytes.Add(FrameworkPayloadAsset.RootAgentPath, rootAgent.Bytes.ToArray());
+                managedBlockBytes.Add(FrameworkPayloadAsset.RootAgentPath, renderedPayload[rootAgent.Path]);
             }
 
             if (FrameworkPayloadSelection.IncludesPath(FrameworkPayloadAsset.RootClaudePath, settings))
             {
-                managedBlockBytes.Add(FrameworkPayloadAsset.RootClaudePath, rootClaude.Bytes.ToArray());
+                managedBlockBytes.Add(FrameworkPayloadAsset.RootClaudePath, renderedPayload[rootClaude.Path]);
             }
 
             FileExpectation? adoptionOwnershipExpectation = null;
@@ -475,6 +492,7 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
 
             var intendedState = new InstallIntendedState
             {
+                Frontmatter = request.Frontmatter,
                 Configuration = configurationPlan,
                 TargetBytes = targetBytes,
                 UserOwnedPaths = adoption.UserOwnedPaths,

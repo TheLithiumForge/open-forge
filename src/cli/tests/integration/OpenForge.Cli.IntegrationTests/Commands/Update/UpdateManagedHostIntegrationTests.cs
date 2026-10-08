@@ -239,7 +239,7 @@ public sealed class UpdateManagedHostIntegrationTests
             StringComparison.Ordinal);
         Assert.NotEqual(canonicalPayload, changed);
         workspace.ReplaceText(path, changed);
-        workspace.ReplaceText(".agents/open-forge.json", $"{{\"removedFiles\":[\"{path}\"]}}");
+        workspace.ReplaceText(".agents/open-forge.json", $"{{\"frontmatter\":\"scoped\",\"removedFiles\":[\"{path}\"]}}");
         var before = workspace.SnapshotHashes();
         var expected = Encoding.UTF8.GetBytes(changed);
 

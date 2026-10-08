@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Commands.Shared;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -36,6 +37,13 @@ internal static class InstallDefinitions
         "Preview the complete installation without writing files.",
         CliOptionArity.None,
         false);
+
+    internal static readonly CliOptionDefinition<string[]> Frontmatter = new(
+        "--frontmatter",
+        "Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure.",
+        CliOptionArity.ExactlyOne,
+        [],
+        "root|scoped");
 
     internal static readonly IReadOnlyList<InstallFindingCode> FindingCodes =
         Array.AsReadOnly(Enum.GetValues<InstallFindingCode>());
@@ -217,6 +225,7 @@ internal static class InstallDefinitions
         if (input.Setup is not { } setup) return command;
         if (setup.Configure) command += " --configure";
         if (setup.Preset is { } preset) command += " --preset " + InstallConfigurationChoices.Name(preset);
+        if (setup.Frontmatter is { } form) command += $" --frontmatter {WorkspaceSettingsDefinitions.ReadFrontmatterName(form)}";
         foreach (var row in setup.Overrides) command += " --route " + row.Id + "=" + InstallConfigurationChoices.Name(row.Action);
         return command;
     }

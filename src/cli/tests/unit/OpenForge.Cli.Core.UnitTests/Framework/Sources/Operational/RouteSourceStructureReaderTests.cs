@@ -50,7 +50,7 @@ public sealed class RouteSourceStructureReaderTests
             # Native tool
             """;
         var document = new MarkdownDocumentParser().Parse(source);
-        var parsedMetadata = new FrameworkDocumentMetadataParser().Parse(document);
+        var parsedMetadata = new FrameworkDocumentMetadataParser().Parse(document, FrameworkMetadataReadScope.RoutedSource);
         Assert.Equal(ApplyToMetadataState.Invalid, parsedMetadata.ApplyTo.State);
 
         var metadataWithoutOrdinaryValues = FrameworkDocumentMetadataFacts.WithoutValues(
@@ -85,7 +85,7 @@ public sealed class RouteSourceStructureReaderTests
             # Future guidance
             """;
         var document = new MarkdownDocumentParser().Parse(source);
-        var metadata = new FrameworkDocumentMetadataParser().Parse(document);
+        var metadata = new FrameworkDocumentMetadataParser().Parse(document, FrameworkMetadataReadScope.RoutedSource);
 
         Assert.Equal(ApplyToMetadataState.Valid, metadata.ApplyTo.State);
         Assert.Empty(RouteSourceStructureReader.ReadWorkspaceIssues(

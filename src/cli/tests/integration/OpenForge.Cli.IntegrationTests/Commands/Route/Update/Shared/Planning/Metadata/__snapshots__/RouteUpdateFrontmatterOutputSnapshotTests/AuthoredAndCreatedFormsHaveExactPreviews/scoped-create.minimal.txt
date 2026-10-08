@@ -1,0 +1,6 @@
+Would update memory/project-alpha/overview
+Workspace: <workspace>
+  description: (none) -> "After overview"
+  tags: (none) -> #Memory
+  Entry updated in .agents/memory/project-alpha/_project-alpha.md
+No files were changed.

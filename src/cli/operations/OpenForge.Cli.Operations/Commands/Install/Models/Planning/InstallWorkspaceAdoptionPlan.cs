@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 
 namespace OpenForge.Cli.Core.Commands.Install.Models.Planning;
 
@@ -40,6 +41,8 @@ internal sealed record InstallWorkspaceAdoptionSourcePlan
 
 internal sealed record InstallWorkspaceAdoptionDocumentInput
 {
+    public required FrontmatterForm Frontmatter { get; init; }
+
     public required CliWorkspace Workspace { get; init; }
 
     public required SourceCatalogue Catalogue { get; init; }

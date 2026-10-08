@@ -187,6 +187,45 @@ public sealed class FindFrontmatterReaderTests
                 + "Body\n");
     }
 
+    [Fact(DisplayName = "Root Find tags retain escaped Unicode scalar locations in UTF8 bytes")]
+    [Trait("Boundary", "Processing"), Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
+    public void RootTagsRetainUnicodeByteLocations()
+    {
+        const string source = "---\r\ndescription: 路由\r\ntags: [\"Caf\\u00E9\", \"工作\"]\r\n---\r\n";
+        var facts = Read(source);
+        string[] tokens = ["\"Caf\\u00E9\"", "\"工作\""];
+
+        Assert.Equal(FindFrontmatterAvailability.Complete, facts.Availability);
+        Assert.Equal("路由", facts.Description);
+        Assert.Equal(["Café", "工作"], facts.Tags.Select(tag => tag.Authored));
+        for (var index = 0; index < tokens.Length; index++)
+        {
+            var start = source.IndexOf(tokens[index], StringComparison.Ordinal);
+            Assert.Equal(ExpectedLocation(source, start, tokens[index].Length, 3, index == 0 ? 8 : 21), facts.Tags[index].Location);
+        }
+    }
+
+    [Fact(DisplayName = "Scoped Find values suppress foreign root values and their invalid shapes")]
+    [Trait("Boundary", "Processing"), Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
+    public void ScopedValuesSuppressForeignRootValues()
+    {
+        const string source = "---\ndescription: [Foreign]\ntags: [invalid tag]\ntags: [Foreign]\nopen-forge:\n  description: Example\n  tags: [Scoped]\n---\n";
+        var facts = Read(source);
+
+        Assert.Equal(FindFrontmatterAvailability.Complete, facts.Availability);
+        Assert.Equal("Example", facts.Description);
+        Assert.Equal("Scoped", Assert.Single(facts.Tags).Authored);
+        var start = source.IndexOf("Scoped", StringComparison.Ordinal);
+        Assert.Equal(ExpectedLocation(source, start, "Scoped".Length, 7, 10), facts.Tags[0].Location);
+    }
+
+    [Fact(DisplayName = "Loader Find inspection ignores root ordinary metadata diagnostics")]
+    [Trait("Boundary", "Processing"), Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
+    public void LoaderRootFieldsRemainOpaque()
+    {
+        AssertCompleteWithoutTags("---\ndescription: [Foreign]\ntags: [invalid tag]\n---\n", null, SourceDocumentForm.Loader, ".agents/loader.md");
+    }
+
     private static void AssertTagSequence(
         string source,
         IReadOnlyList<(string Value, int Line, int Column)> expected)

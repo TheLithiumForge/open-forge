@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Presentation.Install;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -115,7 +116,9 @@ public sealed class InstallOperationIntegrationTests
             });
         Assert.True(workspace.AgentsDirectoryExists());
         Assert.Equal(
-            InstallOperationWorkspace.EmbeddedPayloadPaths,
+            InstallOperationWorkspace.EmbeddedPayloadPaths
+                .Append(WorkspaceSettingsDefinitions.RelativePath)
+                .Order(StringComparer.Ordinal),
             InstalledPayloadPaths(workspace));
 
         var agents = await workspace.ReadTextAsync(
@@ -223,6 +226,7 @@ public sealed class InstallOperationIntegrationTests
             .Where(effect => effect.Kind == InstallEffectKind.File)
             .Where(effect => effect.Outcome == InstallEffectOutcome.Verified)
             .Where(effect => effect.Path != OwnershipPath)
+            .Where(effect => effect.Path != WorkspaceSettingsDefinitions.RelativePath)
             .Where(effect => effect.Path is not ("AGENTS.md" or "CLAUDE.md"))
             .Select(effect => effect.Path)
             .Order(StringComparer.Ordinal)
@@ -241,6 +245,7 @@ public sealed class InstallOperationIntegrationTests
             .ToArray();
 
         Assert.Equal(verifiedFileReceipts, ownedPaths);
+        Assert.DoesNotContain(WorkspaceSettingsDefinitions.RelativePath, ownedPaths);
     }
 
     [Trait("Boundary", "OS")]
@@ -544,11 +549,16 @@ public sealed class InstallOperationIntegrationTests
                 effect => Assert.Null(effect.SourceAssetPath));
             Assert.All(
                 facts.Effects.Where(effect => effect.Kind == InstallEffectKind.File
-                    && effect.Path != OwnershipPath),
+                    && effect.Path != OwnershipPath
+                    && effect.Path != WorkspaceSettingsDefinitions.RelativePath),
                 effect => Assert.False(string.IsNullOrWhiteSpace(effect.SourceAssetPath)));
             Assert.All(
-                facts.Effects.Where(effect => effect.Path == OwnershipPath),
+                facts.Effects.Where(effect => effect.Path == OwnershipPath
+                    || effect.Path == WorkspaceSettingsDefinitions.RelativePath),
                 effect => Assert.Null(effect.SourceAssetPath));
+            Assert.Single(facts.Effects, effect => effect.Path == WorkspaceSettingsDefinitions.RelativePath
+                && effect.Kind == InstallEffectKind.File
+                && effect.Action == InstallEffectAction.Create);
         }
 
         Assert.Equal(expectation.LifecycleAction, facts.Lifecycle.Action);

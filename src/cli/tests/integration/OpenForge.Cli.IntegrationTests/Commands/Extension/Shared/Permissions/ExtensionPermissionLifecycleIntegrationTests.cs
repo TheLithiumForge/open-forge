@@ -7,6 +7,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Permissions;
 [Trait("Feature", "workspace-permissions"), Trait("Evidence", "Integration")]
 public sealed class ExtensionPermissionLifecycleIntegrationTests
 {
+    private static readonly string GrantedSettings = $$"""{"frontmatter":"root","allowInstallPaths":["{{PermissionFixture.ExternalPath}}"]}""";
+
     [Trait("Boundary", "OS")]
     [Theory]
     [InlineData("install", "preserve content")]
@@ -18,12 +20,12 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-lifecycle-approval");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+        workspace.ReplaceText(PermissionFixture.PermissionPath, GrantedSettings);
         try
         {
             var installed = await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic"]);
             Assert.Equal(0, installed.ExitCode);
-            workspace.ReplaceText(PermissionFixture.PermissionPath, """{"allowInstallPaths":[]}""");
+            workspace.ReplaceText(PermissionFixture.PermissionPath, """{"frontmatter":"root","allowInstallPaths":[]}""");
             if (effect == "copy")
             {
                 source.ReplaceText($"content/{PermissionFixture.ExternalPath}", "updated exact content\n");
@@ -89,11 +91,11 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-lifecycle-decline");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+        workspace.ReplaceText(PermissionFixture.PermissionPath, GrantedSettings);
         try
         {
             Assert.Equal(0, (await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic"])).ExitCode);
-            workspace.ReplaceText(PermissionFixture.PermissionPath, """{"allowInstallPaths":[]}""");
+            workspace.ReplaceText(PermissionFixture.PermissionPath, """{"frontmatter":"root","allowInstallPaths":[]}""");
             var before = workspace.Snapshot();
             var externalBefore = File.ReadAllBytes(workspace.Combine(PermissionFixture.ExternalPath));
             string[] arguments = command == "remove"
@@ -122,11 +124,11 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-no-op-changed");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+        workspace.ReplaceText(PermissionFixture.PermissionPath, GrantedSettings);
         try
         {
             Assert.Equal(0, (await workspace.RunAsync(["extension", "install", "team", "--source", source.Path, "--automatic"])).ExitCode);
-            const string revoked = """{"allowInstallPaths":[]}""";
+            const string revoked = """{"frontmatter":"root","allowInstallPaths":[]}""";
             workspace.ReplaceText(PermissionFixture.PermissionPath, revoked);
             var lifecycle = workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath);
             using var input = new ChangingInput(() => File.WriteAllText(workspace.Combine(PermissionFixture.ExternalPath), "changed during approval\n"));
@@ -152,7 +154,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("permission-external-force");
         await workspace.SeedFrameworkAsync();
         using var source = PermissionFixture.CreatePackage();
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+        workspace.ReplaceText(PermissionFixture.PermissionPath, GrantedSettings);
         Directory.CreateDirectory(workspace.Combine(".apm/agents"));
         workspace.CreateOccupant(PermissionFixture.ExternalPath, "unmanaged content\n");
         try
@@ -165,7 +167,7 @@ public sealed class ExtensionPermissionLifecycleIntegrationTests
 
             Assert.Equal(0, applied.ExitCode);
             Assert.Equal("content bytes\n", File.ReadAllText(workspace.Combine(PermissionFixture.ExternalPath)));
-            Assert.Equal(PermissionFixture.Grants, workspace.ReadText(PermissionFixture.PermissionPath));
+            Assert.Equal(GrantedSettings, workspace.ReadText(PermissionFixture.PermissionPath));
         }
         finally
         {

@@ -367,3 +367,31 @@ Name the unavailable required fact and its consequence. Do not infer a complete 
 Prove the read failure and why this input is required. Verify known safe facts remain distinct from unknown values and that no target effect started.
 
 **Execution constraint:** Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
+
+## C13-12
+
+**Situation:** Route Init in a root workspace scaffolds root metadata
+
+**Disposition:** Added. Initialize a missing route chain in the workspace's selected form.
+
+### Starting point
+
+ROUTES explicitly selects root. Guidance is exposed, but `guidance/team/new-topic` and its intermediate scope do not exist. Record existing parent bytes and settings.
+
+Fixture: `ROUTES`, with a valid existing root and no target collision.
+
+### Steps
+
+```text
+open-forge route init guidance/team/new-topic --description "Team topic guidance" --tag Guidance --tag Team
+```
+
+### Expected result
+
+Route Init creates the missing entrypoints with root Open Forge metadata and projects bounded navigation for the resulting chain. Supplied description and tags apply only to the final target. Intermediate draft scaffolds retain their ordinary `NeedsAuthoring` meaning and informational result. Existing entrypoints keep their metadata form and authored content outside generated changes. The saved root preference is unchanged.
+
+### Verification
+
+**State:** Inspect each created entrypoint's root fields, required headings, and generated region. Compare final metadata with the explicit values and intermediate metadata with the ordinary draft scaffold. Check settings and all preserved parent bytes outside `Entries`.
+
+**Output:** Check created paths, generated effects, and any authoring information against the actual chain. Do not treat supplied final metadata as completing the intermediate drafts.

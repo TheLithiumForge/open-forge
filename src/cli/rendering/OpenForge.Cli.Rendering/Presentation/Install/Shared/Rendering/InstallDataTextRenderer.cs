@@ -1,6 +1,6 @@
 using System.Text;
 using OpenForge.Cli.Core.Presentation.Install.Models;
-using OpenForge.Cli.Core.Presentation.Install.Shared.Wording;
+using OpenForge.Cli.OutputText.Install;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Presentation.Shared.Text.Models;
@@ -15,6 +15,18 @@ internal static class InstallDataTextRenderer
         ArgumentNullException.ThrowIfNull(style);
 
         var spans = new List<CliTextSpan>();
+        if (data.Frontmatter is { } form)
+        {
+            var line = form.PreviousForm is { } previous
+                ? InstallSetupText.FrontmatterChange(previous, form.Form)
+                : InstallSetupText.Frontmatter(form.Form);
+            spans.Add(new CliTextSpan($"{CliText.Escape(line)}\n"));
+            if (form.KeptCount > 0)
+                spans.Add(new CliTextSpan($"{InstallSetupText.FrontmatterKept(form.KeptCount)}\n"));
+            if (form.TextKept.Count > 0)
+                spans.Add(new CliTextSpan(CliTable.Render(form.TextKept.Select(file => (IReadOnlyList<string>)[file.Path, file.Reason]).ToArray(),
+                    (column, cell) => column == 0 ? style.Subject(cell) : cell)));
+        }
         var pathOnlyRows = data.TextRows.Where(row => row.Wording.Length == 0).ToArray();
         if (pathOnlyRows.Length > 0)
         {
@@ -40,7 +52,7 @@ internal static class InstallDataTextRenderer
         foreach (var line in data.TextDetailLines)
             builder.Append("  ").Append(CliText.Escape(line)).Append('\n');
         if (data.ShowNoChanges)
-            builder.Append(InstallWording.NoChanges()).Append('\n');
+            builder.Append(OpenForge.Cli.Core.Presentation.Install.Shared.Wording.InstallWording.NoChanges()).Append('\n');
         if (builder.Length > 0)
             spans.Add(new CliTextSpan(builder.ToString()));
 

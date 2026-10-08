@@ -83,6 +83,11 @@ and eligible generated content only; authored whitespace and final-newline
 choices remain significant. Non-Markdown Extension payloads use exact bytes.
 Comparison evidence is computed during the invocation and stores no baseline.
 
+Intended content is the selected payload rendered in the workspace's frontmatter
+form before the existing comparison policy is applied. An unedited owned target
+in the other form reports the existing changed-target findings with Update
+advice. Invalid settings retain the existing invalid or unavailable boundary.
+
 Root managed hosts compare only their `open-forge` region. Scoped Framework
 entrypoints use the existing canonical payload alignment; ambiguous or missing
 alignment makes intended comparison unavailable. Generated Entries compare with

@@ -103,14 +103,14 @@ internal sealed class RouteSourceInspector
             or SourceDocumentForm.ReferencesEntrypoint
             or SourceDocumentForm.UnderscoreReferencesEntrypoint)
         {
-            frameworkMetadata = _frameworkMetadataParser.Parse(document);
+            frameworkMetadata = _frameworkMetadataParser.Parse(document, FrameworkMetadataReadScope.RoutedSource);
             authoredMetadata = SourceAuthoredMetadataParser.ProjectOpenForge(
                 SourceOpenForgeMetadataParser.Project(frameworkMetadata));
         }
         else
         {
             authoredMetadata = _sourceMetadataParser.Parse(document, source.Base.Form);
-            frameworkMetadata = _frameworkMetadataParser.Parse(document);
+            frameworkMetadata = _frameworkMetadataParser.Parse(document, FrameworkMetadataReadScope.ScopedOnly);
         }
 
         return new RouteSourceObservation

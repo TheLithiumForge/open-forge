@@ -18,6 +18,7 @@ internal static class ExtensionListOperationFactory
             new ExtensionLifecycleDoctorReader(
                 new ExtensionSourceObservationReader(sourceReader),
                 new ExtensionLifecycleTargetReader(physicalPathResolver),
-                new ExtensionBridgeRegistrationObservationReader()));
+                new ExtensionBridgeRegistrationObservationReader(),
+                physicalPathResolver));
     }
 }

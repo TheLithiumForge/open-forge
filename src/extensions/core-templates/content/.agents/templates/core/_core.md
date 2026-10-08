@@ -18,6 +18,8 @@ Choose the role before copying.
 - A Map points to useful sources.
 - Memory preserves useful knowledge or work state.
 
+Give copied content its own metadata in the workspace's chosen form. Native `SKILL.md` keeps its native metadata.
+
 ## Axioms
 
 - inherited - No local axioms; loaded ancestor axioms remain active.

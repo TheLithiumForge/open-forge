@@ -126,7 +126,7 @@ The [Memory model](../../framework/memory/model.md) and [transition rules](../..
 | `description`    | Short text that helps a reader decide whether to open a file.                                    | State the purpose, trigger, or useful result.                                    |
 | `responsibility` | Optional sentence that helps an editor decide what belongs in a file by stating what it defines. | It does not create authority or loading behavior.                                |
 | `standard`       | Default route or configuration provided by Open Forge.                                           | Use ordinary lowercase language when no defined Open Forge concept is meant.     |
-| `canonical form` | Preferred authoring syntax when structure carries machine meaning.                               | Compatibility input does not become preferred output.                            |
+| `canonical form` | Preferred authoring syntax within its applicable context. Frontmatter follows the workspace's selected form. | Other compatibility input does not become preferred output.                      |
 | `contract`       | Stable behavior, promise, or boundary that can be satisfied or violated.                         | Do not use as a formal-sounding synonym for any rule or document.                |
 | `defined term`   | Term with a specific Open Forge meaning.                                                         | Explain or link it at first use, then use it consistently.                       |
 | `essence`        | Short statement of identity, mechanism, important distinctions, and boundary.                    | Keep only what changes the reader's understanding of the subject.                |

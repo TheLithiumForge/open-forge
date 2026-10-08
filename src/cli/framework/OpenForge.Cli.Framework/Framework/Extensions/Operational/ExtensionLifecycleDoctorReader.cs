@@ -6,13 +6,18 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 
 namespace OpenForge.Cli.Core.Framework.Extensions.Operational;
 
 internal sealed class ExtensionLifecycleDoctorReader(
     ExtensionSourceObservationReader sourceReader,
     ExtensionLifecycleTargetReader targetReader,
-    ExtensionBridgeRegistrationObservationReader bridgeReader)
+    ExtensionBridgeRegistrationObservationReader bridgeReader,
+    PhysicalPathResolver physicalPathResolver)
 {
     internal async ValueTask<ExtensionLifecycleDoctorView> ReadAsync(
         CliWorkspace workspace,
@@ -32,7 +37,10 @@ internal sealed class ExtensionLifecycleDoctorReader(
         var packages = ownership.Document.Extensions;
         var sources = await sourceReader.ReadAsync(workspace, packages, includeEmbedded, cancellationToken)
             .ConfigureAwait(false);
-        var targets = await targetReader.ReadDoctorAsync(workspace, ownership.Document, sources, cancellationToken)
+        var settings = await WorkspaceSettingsReader.ReadAsync(physicalPathResolver, workspace, cancellationToken).ConfigureAwait(false);
+        FrontmatterForm? form = settings.State is WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete
+            ? settings.Document.Frontmatter : null;
+        var targets = await targetReader.ReadDoctorAsync(workspace, ownership.Document, sources, form, cancellationToken)
             .ConfigureAwait(false);
         var sharing = ownership.State is WorkspaceOwnershipReadState.Complete or WorkspaceOwnershipReadState.Absent
             ? new SourceSharing(ownership.Document.Framework?.GitIgnoredRoutes ?? []) : null;

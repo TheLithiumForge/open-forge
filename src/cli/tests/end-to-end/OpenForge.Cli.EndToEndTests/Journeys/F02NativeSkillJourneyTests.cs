@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
@@ -302,7 +303,7 @@ public sealed class F02NativeSkillJourneyTests
     {
         workspace.WriteText(ReadmePath, "# F02 workspace\n\nKeep this authored file unchanged.\n");
         workspace.ExpectCoreInstall();
-        var install = await workspace.RunAsync("install", "--automatic");
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertSuccessful(install);
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);

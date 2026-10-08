@@ -17,6 +17,7 @@ Templates are reusable starting files. Copy and adapt a Template, then maintain 
 - Check `Entries` when copy-ready starting content would help with a new artifact.
 - Choose the most relevant Template. Keep only the sections and detail the destination needs, while preserving its required structure.
 - Replace metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships.
+- Give copied content its own metadata in the workspace's chosen form. Native `SKILL.md` keeps its native metadata.
 - Remove the #Template tag unless the result is another Template. Remove package tags that do not describe the destination.
 - Rebase relative links for the destination.
 - Later Template changes do not update existing copies.

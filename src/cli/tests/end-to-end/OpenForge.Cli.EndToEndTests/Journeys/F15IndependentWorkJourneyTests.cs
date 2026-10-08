@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
@@ -25,17 +26,20 @@ public sealed class F15IndependentWorkJourneyTests
 
     private const string TeamRoute = "---\nopen-forge:\n  description: Team\n  tags: [Guidance]\n---\n# Team\n\n## Entries\n";
 
-    [Fact(DisplayName = "F15 continues the selected install beside unrelated routed corruption"), Trait("Feature", "independent-work-safety"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
-    public async Task ContinuesSelectedInstallAndCarriesKnownFactsThroughReadOnlyCommands()
+    [Theory(DisplayName = "F15 continues the selected install beside unrelated routed corruption"), Trait("Feature", "independent-work-safety"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task ContinuesSelectedInstallAndCarriesKnownFactsThroughReadOnlyCommands(JourneyFrontmatterForm form)
     {
         using var workspace = PublishedJourneyWorkspace.Create("f15-independent-install");
-        await InstallFrameworkAsync(workspace);
+        await InstallFrameworkAsync(workspace, form);
 
         using var catalogue = ToolkitCatalogue.Create("f15-independent-catalogue");
         workspace.ExpectFiles(OldNotePath, ToolkitTargetPath);
         workspace.WriteBytes(OldNotePath, MalformedRoutedNote);
 
-        var sourceBytes = File.ReadAllBytes(catalogue.Combine(ToolkitSourcePath));
+        var sourceBytes = Encoding.UTF8.GetBytes(JourneyFrontmatter.RenderCanonical(
+            File.ReadAllText(catalogue.Combine(ToolkitSourcePath)), form));
         var sourceSnapshot = catalogue.SnapshotTree();
         var install = await workspace.RunAsync(
             "extension", "install", ToolkitId,
@@ -78,8 +82,10 @@ public sealed class F15IndependentWorkJourneyTests
         Assert.Equal(MalformedRoutedNote, File.ReadAllBytes(workspace.Combine(OldNotePath)));
     }
 
-    [Fact(DisplayName = "F15 stops only the install that needs an unreadable source"), Trait("Feature", "independent-work-safety"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
-    public async Task UnreadableRequiredSourceDoesNotCreateTargetOrClaim()
+    [Theory(DisplayName = "F15 stops only the install that needs an unreadable source"), Trait("Feature", "independent-work-safety"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task UnreadableRequiredSourceDoesNotCreateTargetOrClaim(JourneyFrontmatterForm form)
     {
         if (!OperatingSystem.IsWindows())
         {
@@ -88,7 +94,7 @@ public sealed class F15IndependentWorkJourneyTests
         }
 
         using var workspace = PublishedJourneyWorkspace.Create("f15-source-unreadable");
-        await InstallFrameworkAsync(workspace);
+        await InstallFrameworkAsync(workspace, form);
 
         using var catalogue = ToolkitCatalogue.Create("f15-source-unreadable-catalogue");
         workspace.ExpectFiles(OldNotePath, ToolkitTargetPath);
@@ -119,11 +125,13 @@ public sealed class F15IndependentWorkJourneyTests
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
     }
 
-    [Fact(DisplayName = "F15 does not use malformed ownership to update or remove an alleged package"), Trait("Feature", "ownership-authority"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
-    public async Task MalformedOwnershipDoesNotAuthorizeUpdateOrRemove()
+    [Theory(DisplayName = "F15 does not use malformed ownership to update or remove an alleged package"), Trait("Feature", "ownership-authority"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task MalformedOwnershipDoesNotAuthorizeUpdateOrRemove(JourneyFrontmatterForm form)
     {
         using var workspace = PublishedJourneyWorkspace.Create("f15-malformed-ownership");
-        await InstallFrameworkAsync(workspace);
+        await InstallFrameworkAsync(workspace, form);
 
         using var catalogue = ToolkitCatalogue.Create("f15-malformed-ownership-catalogue");
         workspace.ExpectFiles(ToolkitTargetPath);
@@ -156,16 +164,19 @@ public sealed class F15IndependentWorkJourneyTests
         Assert.Equal(ownershipBefore, File.ReadAllBytes(workspace.Combine(OwnershipPath)));
     }
 
-    [Fact(DisplayName = "F15 permits a fresh install from a known empty ownership section"), Trait("Feature", "ownership-authority"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
-    public async Task KnownEmptyOwnershipPermitsFreshInstall()
+    [Theory(DisplayName = "F15 permits a fresh install from a known empty ownership section"), Trait("Feature", "ownership-authority"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task KnownEmptyOwnershipPermitsFreshInstall(JourneyFrontmatterForm form)
     {
         using var workspace = PublishedJourneyWorkspace.Create("f15-known-empty-ownership");
-        await InstallFrameworkAsync(workspace);
+        await InstallFrameworkAsync(workspace, form);
 
         using var catalogue = ToolkitCatalogue.Create("f15-known-empty-ownership-catalogue");
         workspace.ExpectFiles(ToolkitTargetPath);
         WriteKnownEmptyOwnership(workspace);
-        var sourceBytes = File.ReadAllBytes(catalogue.Combine(ToolkitSourcePath));
+        var sourceBytes = Encoding.UTF8.GetBytes(JourneyFrontmatter.RenderCanonical(
+            File.ReadAllText(catalogue.Combine(ToolkitSourcePath)), form));
         var sourceSnapshot = catalogue.SnapshotTree();
 
         var install = await workspace.RunAsync(
@@ -181,11 +192,13 @@ public sealed class F15IndependentWorkJourneyTests
         AssertExtensionRegistration(workspace, ToolkitId, ToolkitTargetPath, catalogue.Path);
     }
 
-    [Fact(DisplayName = "F15 blocks attach without effects when ownership is malformed"), Trait("Feature", "ownership-authority"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
-    public async Task MalformedOwnershipBlocksAttachWithoutEffects()
+    [Theory(DisplayName = "F15 blocks attach without effects when ownership is malformed"), Trait("Feature", "ownership-authority"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F15")]
+    [InlineData(JourneyFrontmatterForm.Root)]
+    [InlineData(JourneyFrontmatterForm.Scoped)]
+    public async Task MalformedOwnershipBlocksAttachWithoutEffects(JourneyFrontmatterForm form)
     {
         using var workspace = PublishedJourneyWorkspace.Create("f15-malformed-attach");
-        await InstallFrameworkAsync(workspace);
+        await InstallFrameworkAsync(workspace, form);
 
         workspace.ExpectFiles(
             TeamRoutePath,
@@ -222,10 +235,10 @@ public sealed class F15IndependentWorkJourneyTests
         Assert.Equal(workspaceBefore, workspace.SnapshotState());
     }
 
-    private static async Task InstallFrameworkAsync(PublishedJourneyWorkspace workspace)
+    private static async Task InstallFrameworkAsync(PublishedJourneyWorkspace workspace, JourneyFrontmatterForm form)
     {
         workspace.ExpectCoreInstall();
-        var install = await workspace.RunAsync("install", "--automatic");
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         Assert.Equal(0, install.ExitCode);
         Assert.Equal(string.Empty, install.StandardError);
     }

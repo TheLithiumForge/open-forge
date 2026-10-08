@@ -10,6 +10,7 @@ internal sealed class PublishedInstallWorkspace : IDisposable
     private const string ClaudePath = "CLAUDE.md";
     private const string LifecyclePath = ".agents/open-forge.lifecycle.json";
     private const string OwnershipPath = ".agents/open-forge.lock.json";
+    internal const string SettingsPath = ".agents/open-forge.json";
     private static readonly UTF8Encoding StrictUtf8NoBom = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
@@ -130,6 +131,7 @@ internal sealed class PublishedInstallWorkspace : IDisposable
     {
         foreach (var path in EmbeddedPayloadPaths
                      .Append(OwnershipPath)
+                     .Append(SettingsPath)
                      .Append(AgentsPath)
                      .Append(ClaudePath))
         {

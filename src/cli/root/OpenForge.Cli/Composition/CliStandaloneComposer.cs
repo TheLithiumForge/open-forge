@@ -195,7 +195,8 @@ internal static class CliStandaloneComposer
                 new InstallSetupInteraction(
                     (initial, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Preset(initial), policy, token),
                     (question, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Route(question), policy, token),
-                    (row, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Action(row), policy, token))).ExecuteAsync), InstallPresentation.Rendering);
+                    (row, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Action(row), policy, token),
+                    (question, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Frontmatter(question), policy, token))).ExecuteAsync), InstallPresentation.Rendering);
 
     private static ICliCommandBinding BuildUpdate(
         UpdateSymbols symbols,

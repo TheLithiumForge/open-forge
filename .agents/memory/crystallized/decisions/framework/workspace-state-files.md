@@ -97,6 +97,10 @@ terminal the CLI asks — allow always, allow once, cancel. Outside a terminal
 `--allow-path` grants the same thing and the block message names it, so the
 absence of a TTY is never the reason a workflow is impossible.
 
+Authored settings also accept `frontmatter` as `root` or `scoped`. A missing key
+means scoped. It selects output without restricting readable forms, as defined
+by the [shared operation contract](../../documents/cli/shared-operation-contract.md#frontmatter-form).
+
 Authored settings contain `allowInstallPaths` and the optional removal lists
 `removedCategories`, `removedFiles`, `removedDirectories`, `removedExtensions`
 and `removedLibraries`. CLI commands may update the settings for explicit grants

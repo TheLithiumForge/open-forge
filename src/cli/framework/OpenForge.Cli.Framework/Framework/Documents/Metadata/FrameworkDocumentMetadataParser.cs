@@ -1,7 +1,10 @@
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models.Syntax;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Reading;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
@@ -12,9 +15,10 @@ internal sealed class FrameworkDocumentMetadataParser
     private const string OpenForgeRoot = "open-forge";
     private readonly YamlDocumentParser _yamlParser = new();
 
-    internal FrameworkDocumentMetadataFacts Parse(MarkdownDocumentFacts document)
+    internal FrameworkDocumentMetadataFacts Parse(MarkdownDocumentFacts document, FrameworkMetadataReadScope scope)
     {
         ArgumentNullException.ThrowIfNull(document);
+        ValidateScope(scope);
         if (document.Frontmatter.State == MarkdownFrontmatterState.Missing)
         {
             return Missing();
@@ -27,7 +31,13 @@ internal sealed class FrameworkDocumentMetadataParser
         }
 
         var yaml = document.Source[yamlSpan.Start..yamlSpan.End];
-        var facts = _yamlParser.Parse(yaml);
+        return Read(_yamlParser.Parse(yaml), scope);
+    }
+
+    internal FrameworkDocumentMetadataFacts Read(YamlDocumentFacts facts, FrameworkMetadataReadScope scope)
+    {
+        ArgumentNullException.ThrowIfNull(facts);
+        ValidateScope(scope);
         if (facts.State != YamlDocumentState.Complete)
         {
             return Malformed();
@@ -41,36 +51,37 @@ internal sealed class FrameworkDocumentMetadataParser
             return Missing() with { ApplyTo = applyTo };
         }
 
-        var selected = entries
+        var scopedEntries = entries
             .Where(entry => string.Equals(
                 entry.Key.Scalar?.Value,
                 OpenForgeRoot,
                 StringComparison.Ordinal))
-            .Select(entry => entry.Value)
             .ToArray();
-        if (selected.Length == 0)
+        var scopedEntry = scopedEntries.FirstOrDefault();
+        var selected = scopedEntry?.Value;
+        if (scopedEntry is null && scope == FrameworkMetadataReadScope.RoutedSource)
         {
-            return Missing() with { ApplyTo = applyTo };
+            selected = root;
         }
 
-        if (selected.Length != 1)
+        var syntax = ReadSyntax(root, selected, scopedEntry);
+        if (scopedEntries.Length > 1)
         {
-            var duplicate = entries
-                .Where(entry => string.Equals(entry.Key.Scalar?.Value, OpenForgeRoot, StringComparison.Ordinal))
-                .Skip(1)
-                .Select(entry => entry.Key.Scalar?.Span)
-                .OfType<YamlTextSpan>()
-                .First();
-            return Duplicate(duplicate) with { ApplyTo = applyTo };
+            return Duplicate(scopedEntries[1].Key.Span) with { ApplyTo = applyTo, Syntax = syntax };
         }
 
-        if (FrameworkDocumentMetadataValueReader.ReadDuplicateKey(selected[0]) is { } duplicateKey)
+        if (selected is null)
         {
-            return Duplicate(duplicateKey) with { ApplyTo = applyTo };
+            return Missing() with { ApplyTo = applyTo, Syntax = syntax };
+        }
+
+        if (FrameworkDocumentMetadataValueReader.ReadDuplicateKey(selected) is { } duplicateKey)
+        {
+            return Duplicate(duplicateKey) with { ApplyTo = applyTo, Syntax = syntax };
         }
 
         if (!FrameworkDocumentMetadataValueReader.TryRead(
-                selected[0],
+                selected,
                 out var metadata,
                 out var tagSpans,
                 out var observedDescription,
@@ -78,8 +89,8 @@ internal sealed class FrameworkDocumentMetadataParser
                 out var malformed))
         {
             return malformed
-                ? Malformed(observedDescription) with { ApplyTo = applyTo }
-                : Missing(observedDescription, observedTags) with { ApplyTo = applyTo };
+                ? Malformed(observedDescription) with { ApplyTo = applyTo, Syntax = syntax }
+                : Missing(observedDescription, observedTags) with { ApplyTo = applyTo, Syntax = syntax };
         }
 
         var authoredMetadata = metadata
@@ -90,7 +101,51 @@ internal sealed class FrameworkDocumentMetadataParser
             authoredMetadata.Tags,
             authoredMetadata.Responsibility,
             applyTo.Patterns);
-        return FrameworkDocumentMetadataFacts.Complete(completeMetadata, tagSpans) with { ApplyTo = applyTo };
+        return FrameworkDocumentMetadataFacts.Complete(completeMetadata, tagSpans) with { ApplyTo = applyTo, Syntax = syntax };
+    }
+
+    private static FrameworkDocumentMetadataSyntax ReadSyntax(
+        YamlNode root,
+        YamlNode? selected,
+        YamlMappingEntry? scopedEntry)
+    {
+        var form = scopedEntry is null ? FrontmatterForm.Root : FrontmatterForm.Scoped;
+        var members = ImmutableArray.CreateBuilder<FrameworkMetadataMemberSyntax>();
+        foreach (var entry in selected?.Mapping ?? [])
+        {
+            if (FrameworkMetadataFieldReader.Read(entry.Key.Scalar?.Value) is not { } field)
+            {
+                continue;
+            }
+
+            members.Add(new FrameworkMetadataMemberSyntax
+            {
+                Field = field,
+                Form = form,
+                Entry = entry,
+                TagItemSpans = field == FrameworkMetadataField.Tags
+                    ? [.. (entry.Value.Sequence ?? []).Select(item => item.Span)]
+                    : [],
+            });
+        }
+
+        return new FrameworkDocumentMetadataSyntax
+        {
+            AuthoredForm = scopedEntry is not null || root.Mapping?.Any(entry => FrameworkMetadataFieldReader.Read(entry.Key.Scalar?.Value) is not null) == true
+                ? form
+                : null,
+            ScopedEntry = scopedEntry,
+            SelectedMapping = selected?.Kind == YamlNodeKind.Mapping ? selected : null,
+            Members = members.ToImmutable(),
+        };
+    }
+
+    private static void ValidateScope(FrameworkMetadataReadScope scope)
+    {
+        if (!Enum.IsDefined(scope))
+        {
+            throw new ArgumentOutOfRangeException(nameof(scope), scope, "The Framework metadata read scope is not defined.");
+        }
     }
 
     private static FrameworkDocumentMetadataFacts Missing(

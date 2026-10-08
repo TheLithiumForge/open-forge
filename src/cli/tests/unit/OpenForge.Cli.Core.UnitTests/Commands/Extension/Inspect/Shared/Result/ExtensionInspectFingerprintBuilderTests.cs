@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Shared.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
@@ -43,6 +44,7 @@ public sealed class ExtensionInspectFingerprintBuilderTests
             markdownFacts);
         var intended = builder.ReadIntendedFingerprints(
             [IntendedPath(OpaquePath, "toolkit-support.bin", bytes, OpaqueSha256)],
+            FrontmatterForm.Scoped,
             findings,
             markdownFacts);
 
@@ -82,6 +84,7 @@ public sealed class ExtensionInspectFingerprintBuilderTests
             {
                 ComparisonFacts = new ExtensionInspectComparisonInput
                 {
+                    Frontmatter = FrontmatterForm.Scoped,
                     CurrentPaths = [CurrentPath(OpaquePath, bytes, OpaqueSha256)],
                     Ownership = WorkspaceOwnershipRead.Absent(Path.GetFullPath(".agents/open-forge.lock.json")),
                     InstalledPackage = null,
@@ -145,6 +148,7 @@ public sealed class ExtensionInspectFingerprintBuilderTests
             markdownFacts);
         builder.ReadIntendedFingerprints(
             [IntendedPath(UnsupportedMarkdownPath, "toolkit.md", bytes, UnsupportedMarkdownSha256)],
+            FrontmatterForm.Scoped,
             findings,
             markdownFacts);
 

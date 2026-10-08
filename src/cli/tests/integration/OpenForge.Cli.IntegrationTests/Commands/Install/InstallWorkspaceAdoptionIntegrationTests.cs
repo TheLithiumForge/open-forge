@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Operation;
+using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Planning;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
@@ -10,6 +11,7 @@ using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models;
 using OpenForge.Cli.Core.Framework.Distribution;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -40,7 +42,9 @@ public sealed class InstallWorkspaceAdoptionIntegrationTests
         var original = File.ReadAllBytes(workspace.Combine(path));
         var operation = CreateOperation(workspace);
 
-        var applied = await operation.ExecuteAsync(workspace.Request(automatic: true), TestContext.Current.CancellationToken);
+        var applied = await operation.ExecuteAsync(
+            workspace.Request(automatic: true) with { Setup = new InstallSetupInput(false, null, []) { Frontmatter = FrontmatterForm.Scoped } },
+            TestContext.Current.CancellationToken);
 
         Assert.True(applied.Status == CliSemanticStatus.Complete, DescribeResult(applied));
         Assert.Equal(original, File.ReadAllBytes(workspace.Combine(path)));
@@ -646,6 +650,10 @@ public sealed class InstallWorkspaceAdoptionIntegrationTests
         Assert.Contains(dryRun.Facts.Migrations, migration =>
             migration.Path == hostPath
             && migration.Actions.Contains(WorkspaceAdoptionAction.NavigationUpdated));
+        Assert.Contains(dryRun.Facts.Effects, effect =>
+            effect.Path == InstallOperationWorkspace.OwnershipPath
+            && effect.Action == InstallEffectAction.Replace
+            && effect.Outcome == InstallEffectOutcome.Planned);
         Assert.Equal(beforeDryRun, workspace.SnapshotHashes());
         Assert.Equal(originalHostBytes, File.ReadAllBytes(workspace.Combine(hostPath)));
 

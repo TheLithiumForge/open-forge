@@ -271,6 +271,14 @@
       "owner": null
     },
     {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/open-forge.lock.json",
       "kind": "record",
       "action": "created",
@@ -307,7 +315,10 @@
         "derivation": [],
         "outcome": "applied"
       }
-    ]
+    ],
+    "frontmatter": {
+      "form": "scoped"
+    }
   },
   "recovery": {
     "path": null,

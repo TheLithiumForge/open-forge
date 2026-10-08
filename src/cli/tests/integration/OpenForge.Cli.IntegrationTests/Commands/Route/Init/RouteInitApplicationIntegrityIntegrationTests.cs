@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.TestSupport;
 
@@ -115,7 +116,10 @@ public sealed class RouteInitApplicationIntegrityIntegrationTests
             directoryCreations: [],
             fileChanges: [change],
             recoveryTargets: [RecoveryBundleTarget.Create(change, before)],
-            ownership: null);
+            ownership: null)
+        {
+            Settings = WorkspaceSettingsRead.Absent(Path.Combine(workspace.LexicalRoot, ".agents", "open-forge.json")),
+        };
 
         var outcome = RouteInitApplicationResultFactory.Build(
             plan,

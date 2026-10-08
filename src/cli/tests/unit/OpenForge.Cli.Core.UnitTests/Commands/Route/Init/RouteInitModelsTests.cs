@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Init.Shared.Result;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Init;
@@ -157,7 +158,10 @@ public sealed class RouteInitModelsTests
             directories,
             changes,
             recovery,
-            ownership: null);
+            ownership: null)
+        {
+            Settings = WorkspaceSettingsRead.Absent(Path.Combine(request.Workspace.LexicalRoot, ".agents", "open-forge.json")),
+        };
         directories.Clear();
         changes.Clear();
 
@@ -174,7 +178,10 @@ public sealed class RouteInitModelsTests
             [],
             [],
             [],
-            ownership: null);
+            ownership: null)
+        {
+            Settings = plan.Settings,
+        };
         Assert.True(noOp.IsNoOp);
     }
 

@@ -4,6 +4,8 @@ description: What the defined tags mean, which ones control loading, how applyTo
 ---
 
 import LoadingDiagram from "@site/src/components/loading-diagram/LoadingDiagram";
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
 
 # Loading and tags
 
@@ -13,16 +15,37 @@ Tags help readers, human or agent, decide what to open and find related files. T
 
 ## Frontmatter
 
-Routed Markdown files carry a small frontmatter block:
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
+<Tabs groupId="frontmatter-form">
+<TabItem value="root" label="Root" default>
+
+```yaml
+---
+description: C# rules
+tags: [Directive, LoadNow]
+applyTo: ["**/*.cs"]
+---
+```
+
+</TabItem>
+<TabItem value="scoped" label="Scoped">
 
 ```yaml
 ---
 open-forge:
-  description: Understand the service boundaries and how requests move through the system
-  responsibility: Define the current service structure and dependency boundaries
-  tags: [Memory, Document, Architecture]
+  description: C# rules
+  tags: [Directive, LoadNow]
+  applyTo: ["**/*.cs"]
 ---
 ```
+
+</TabItem>
+</Tabs>
+
+When an `open-forge` mapping exists, root descriptions and tags belong to another tool. Open Forge does not merge them. `applyTo` is read at both locations, with equivalent sets counting once and conflicting sets rejected.
+
+The same precedence applies to `responsibility`. An explicit `open-forge` key with an invalid value never falls back to root fields. Unknown root keys are ignored and preserved. Root metadata alone does not make a file a routed source. Native `SKILL.md` keeps its own metadata contract. To change the output form and convert eligible owned files, use [`install --configure`](../getting-started/installation.md#configure-an-existing-workspace).
 
 - **description** helps a reader decide whether to open the file. It becomes the text of the file's entry.
 - **responsibility** (optional) helps an editor decide what belongs in the file. It creates no authority or loading behavior.
@@ -50,12 +73,33 @@ Loading tags act only through a parent that's already loaded. They can't pull in
 
 A routed file can list `applyTo` patterns to narrow it to the files a task works on. For example, this Directive applies only to C# files:
 
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
+<Tabs groupId="frontmatter-form">
+<TabItem value="root" label="Root" default>
+
 ```yaml
+---
+description: C# rules
+tags: [Directive, LoadNow]
+applyTo: ["**/*.cs"]
+---
+```
+
+</TabItem>
+<TabItem value="scoped" label="Scoped">
+
+```yaml
+---
 open-forge:
   description: C# rules
   tags: [Directive, LoadNow]
   applyTo: ["**/*.cs"]
+---
 ```
+
+</TabItem>
+</Tabs>
 
 `applyTo` only filters what a loading tag or relevance would load. It never selects or loads a file by itself. When the task works on a matching file, the source behaves as it would without a condition. A C# rule that should load automatically therefore uses `#LoadNow` with `applyTo`. The entry shows the patterns after its tags, so the agent can check them without opening the file. An overwrite companion follows its base.
 
@@ -66,7 +110,7 @@ open-forge:
 - **Unknown paths are pending.** Until the task's files are known, only conditioned entries that a loading tag would otherwise load are reported as pending, not as matches or mismatches. Untagged conditioned entries remain on demand. Planning and research can still select files by relevance.
 - **Inspection isn't application.** Asking to read a nonmatching file, or following a link to it, shows its content without making it apply.
 
-Patterns use workspace-relative paths with `/` separators. A quoted string can contain comma-separated patterns, while each list entry is one pattern. Braces expand alternatives, as in `**/*.{ts,tsx}`, and character classes such as `[ab]` match one character from a set. A leading `!` is an ordinary character and does not exclude files. `[!...]` negates a character class. `*` and `?` match within one path segment, and a whole `**` segment matches zero or more segments. Matching is case-sensitive on every platform. `*.py` matches only files at the workspace root, `**/*.py` matches at any depth, and `docs/**` matches everything under `docs`. A trailing `/`, as in `docs/`, is rejected. `applyTo` can sit at the frontmatter root or under `open-forge:`, and both mean the same thing.
+Patterns use workspace-relative paths with `/` separators. A quoted string can contain comma-separated patterns, while each list entry is one pattern. Braces expand alternatives, as in `**/*.{ts,tsx}`, and character classes such as `[ab]` match one character from a set. A leading `!` is an ordinary character and does not exclude files. `[!...]` negates a character class. `*` and `?` match within one path segment, and a whole `**` segment matches zero or more segments. Matching is case-sensitive on every platform. `*.py` matches only files at the workspace root, `**/*.py` matches at any depth, and `docs/**` matches everything under `docs`. A trailing `/`, as in `docs/`, is rejected. `applyTo` can sit at the frontmatter root or under `open-forge:`, and both mean the same thing. Equivalent sets count once, and conflicting sets are invalid. New declarations use a quoted-string list in the workspace's chosen form. `route update` preserves existing declaration locations and updates or clears both equivalent declarations together.
 
 Check a pattern against specific paths with `route inspect <source> --for <path>`, or preview the files that match right now with `route inspect <source> --matching-files`. When the chain has no conditions, or only match-all conditions, the preview answers `all files` without scanning. Otherwise it uses Git's file inventory, and falls back to a `.gitignore`-aware walk of the workspace when Git can't provide one. The [CLI reference](/guides/cli#current-matching-files) has the details.
 

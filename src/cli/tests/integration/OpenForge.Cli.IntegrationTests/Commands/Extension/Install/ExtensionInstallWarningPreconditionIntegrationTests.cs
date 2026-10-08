@@ -23,7 +23,7 @@ public sealed class ExtensionInstallWarningPreconditionIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-install-warning-precondition-positive");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         const string notePath = ".agents/patterns/old-note.md";
         const string healthyPath = ".agents/patterns/healthy.md";
         workspace.CreateOccupant(notePath, MalformedDocument("Old note"));
@@ -116,7 +116,7 @@ public sealed class ExtensionInstallWarningPreconditionIntegrationTests
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create(
             "extension-install-warning-precondition-negative");
-        await workspace.SeedFrameworkAsync();
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--automatic", "--frontmatter", "scoped"])).ExitCode);
         const string notePath = ".agents/patterns/old-note.md";
         const string healthyPath = ".agents/patterns/healthy.md";
         workspace.CreateOccupant(notePath, MalformedDocument("Old note"));

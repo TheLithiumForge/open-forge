@@ -1,5 +1,6 @@
 Would install the Open Forge Framework into <workspace>.
 Workspace: <workspace>
+Frontmatter: root
   .agents/open-forge.lock.json  would be created
   Would create 17 files and 13 directories under .agents, plus AGENTS.md and CLAUDE.md.
   Nothing that already exists would be changed.

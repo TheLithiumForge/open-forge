@@ -199,6 +199,11 @@ an implementation choice. The policy string is the version. Any change to
 admission, UTF-8/BOM/NUL handling, parser validation, line endings, generated
 regions, omitted bytes, hash, encoding, or fallback requires a new policy value.
 
+Intended content is the selected payload rendered in the workspace's frontmatter
+form before the existing comparison policy is applied. Rendering prepares
+intended input. It is not frontmatter normalization within the fingerprint
+policy. Invalid settings retain the existing invalid or unavailable boundary.
+
 Apply the policy in this order:
 
 1. Start with the exact original bytes and do not pre-normalize them. Only a

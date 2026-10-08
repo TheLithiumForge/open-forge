@@ -3,6 +3,9 @@ title: Routing
 description: The loader, entrypoints, and Entries, and how an agent uses them to find context without reading everything.
 ---
 
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+
 # Routing
 
 Routing is how an agent finds the right context. Instead of reading every file, it starts at the loader and follows short links whose descriptions tell it whether a branch is worth opening.
@@ -24,6 +27,36 @@ A root route exists only because the loader lists it. A folder called `patterns/
 Every routed folder has exactly one **entrypoint**, named after the folder with a leading underscore: `directives/_directives.md`, `memory/working/_working.md`, `directives/frontend/_frontend.md`.
 
 An entrypoint has a predictable shape:
+
+Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
+<Tabs groupId="frontmatter-form">
+<TabItem value="root" label="Root" default>
+
+```md title=".agents/patterns/_patterns.md (shortened, with an example entry)"
+---
+description: Reusable default shapes for code, files, APIs, documents, and other work
+tags: [LoadNow, Core, Pattern]
+---
+
+# Patterns
+
+## What reusable shape makes related work easy to create and inspect?
+
+Patterns define reusable default shapes that make related work consistent...
+
+## Axioms
+
+- Check `Entries` when the work creates, changes, or reviews something with a visible structure.
+- ...
+
+## Entries
+
+- [Keep API responses in one envelope shape](api-envelope.md) - #Pattern #API
+```
+
+</TabItem>
+<TabItem value="scoped" label="Scoped">
 
 ```md title=".agents/patterns/_patterns.md (shortened, with an example entry)"
 ---
@@ -47,6 +80,13 @@ Patterns define reusable default shapes that make related work consistent...
 
 - [Keep API responses in one envelope shape](api-envelope.md) - #Pattern #API
 ```
+
+</TabItem>
+</Tabs>
+
+When an `open-forge` mapping exists, root descriptions and tags belong to another tool. Open Forge does not merge them. `applyTo` is read at both locations, with equivalent sets counting once and conflicting sets rejected.
+
+The same precedence applies to `responsibility`. Frontmatter alone does not create a route. Native `SKILL.md` files keep their own metadata contract. [Loading and tags](loading-and-tags.md#frontmatter) explains the fields and how the workspace chooses its output form.
 
 | Part                      | What it does                                                    |
 | ------------------------- | --------------------------------------------------------------- |

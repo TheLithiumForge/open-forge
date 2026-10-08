@@ -1,6 +1,7 @@
 using System.IO.Compression;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 
@@ -82,7 +83,7 @@ public sealed class F26BundledExtensionsJourneyTests
                 .Concat(WorkflowsPayloadPaths)
                 .ToArray());
 
-        var install = await workspace.RunAsync("install", "--automatic");
+        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
         AssertSuccessfulHumanResult(install);
         var baselineLockProperties = CaptureNonExtensionRootProperties(workspace);
 
@@ -183,7 +184,7 @@ public sealed class F26BundledExtensionsJourneyTests
             .GetProperty("removedExtensions").EnumerateArray()).GetString());
         AssertRuntimeFiles(
             workspace,
-            new[] { UserNotePath, ".agents/open-forge.json" }
+            new[] { UserNotePath }
                 .Concat(PlanningPayloadPaths)
                 .Concat(WorkflowsPayloadPaths));
         AssertExtensionClaims(
@@ -286,6 +287,7 @@ public sealed class F26BundledExtensionsJourneyTests
         IEnumerable<string> additionalPaths)
     {
         var expected = PublishedInstallWorkspace.EmbeddedPayloadPaths
+            .Append(PublishedInstallWorkspace.SettingsPath)
             .Concat(additionalPaths)
             .Where(path => path is not OwnershipPath and not LifecyclePath)
             .Order(StringComparer.Ordinal)

@@ -13,7 +13,7 @@ internal sealed class RouteInitScaffoldComposer
 {
     private readonly FrameworkMarkdownDocumentWriter _documentWriter = new();
 
-    internal RouteInitComposedScaffold Compose(string id, string title, RouteInitMetadata metadata)
+    internal RouteInitComposedScaffold Compose(string id, string title, RouteInitMetadata metadata, FrontmatterForm form)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(title);
@@ -40,7 +40,7 @@ internal sealed class RouteInitScaffoldComposer
             {
                 ApplyTo = metadata.ApplyTo,
             },
-            body);
+            body, form);
         return new RouteInitComposedScaffold(
             metadata,
             bytes);

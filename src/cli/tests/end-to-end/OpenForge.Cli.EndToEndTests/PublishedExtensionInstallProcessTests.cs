@@ -51,7 +51,7 @@ public sealed class PublishedExtensionInstallProcessTests
         var seeded = await PublishedProcessTestSupport.RunAsync(
             target,
             working.WorkspacePath,
-            ["install", "--automatic", "--workspace", working.WorkspacePath],
+            ["install", "--automatic", "--frontmatter", "scoped", "--workspace", working.WorkspacePath],
             working.EnvironmentVariables);
         Assert.Equal(0, seeded.ExitCode);
         Assert.Equal(string.Empty, seeded.StandardError);

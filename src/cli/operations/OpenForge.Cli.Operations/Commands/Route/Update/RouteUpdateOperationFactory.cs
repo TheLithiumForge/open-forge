@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning.Metadata;
+using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning.Metadata;
 using OpenForge.Cli.Core.Commands.Route.Shared.Templates;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Application;
 using OpenForge.Cli.Core.Commands.Route.Update.Shared.Planning;
@@ -43,7 +45,8 @@ internal static class RouteUpdateOperationFactory
                 sourceSelectionPrompt),
             new RouteUpdateLayerObserver(new SourceDocumentSnapshotReader()),
             new MarkdownDocumentParser(),
-            yamlParser);
+            yamlParser,
+            physicalPathResolver);
         var planBuilder = new RouteUpdatePlanBuilder(
             targetObserver,
             destinationPlanner,

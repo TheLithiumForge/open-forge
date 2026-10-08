@@ -205,6 +205,15 @@ internal sealed partial class RouteUpdateIntegrationWorkspace
             ["Project"],
             body: "\n" + OpenForgeDocumentSeed.GeneratedEntries(entry));
 
+    internal void SeedSettingsText(string text)
+        => _temporary.WriteText(".agents/open-forge.json", text);
+
+    internal void SeedSettingsDirectory()
+        => _temporary.CreateDirectory(".agents/open-forge.json");
+
+    internal void SeedEntrypointOverwrite(string path, string text)
+        => _temporary.WriteText(path, text);
+
     private void WriteText(string path, string contents)
         => _temporary.WriteText(path, contents);
 }

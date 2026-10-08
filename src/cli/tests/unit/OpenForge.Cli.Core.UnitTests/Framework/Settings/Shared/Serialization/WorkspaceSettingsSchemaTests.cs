@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
@@ -13,6 +14,58 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Settings.Shared.Serialization;
 [Trait("Feature", "workspace-settings"), Trait("Evidence", "Unit")]
 public sealed class WorkspaceSettingsSchemaTests
 {
+    [Fact(DisplayName = "The published frontmatter schema agrees with codec forms and the missing-key default"), Trait("Boundary", "Input")]
+    public void FrontmatterSchemaAgreesWithCodec()
+    {
+        using var schema = ReadPublishedSchema();
+        var frontmatter = schema.RootElement.GetProperty("properties").GetProperty(WorkspaceSettingsDefinitions.FrontmatterProperty);
+
+        Assert.Equal("string", frontmatter.GetProperty("type").GetString());
+        Assert.Equal(["root", "scoped"], frontmatter.GetProperty("enum").EnumerateArray().Select(value => value.GetString()));
+        foreach (var value in frontmatter.GetProperty("enum").EnumerateArray())
+        {
+            var decoded = WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$"""{"frontmatter":{{value.GetRawText()}}}"""));
+            var document = Assert.IsType<WorkspaceSettingsDocument>(decoded.Document);
+            Assert.Equal(value.GetString(), WorkspaceSettingsDefinitions.ReadFrontmatterName(document.Frontmatter));
+        }
+
+        var defaultDocument = Assert.IsType<WorkspaceSettingsDocument>(WorkspaceSettingsCodec.Read("{}"u8.ToArray()).Document);
+        Assert.Equal("scoped", frontmatter.GetProperty("default").GetString());
+        Assert.Equal(frontmatter.GetProperty("default").GetString(), WorkspaceSettingsDefinitions.ReadFrontmatterName(defaultDocument.Frontmatter));
+        Assert.False(schema.RootElement.TryGetProperty("required", out var required)
+            && required.EnumerateArray().Any(value => value.GetString() == WorkspaceSettingsDefinitions.FrontmatterProperty));
+        Assert.Equal(1, defaultDocument.SchemaVersion);
+    }
+
+    [Theory(DisplayName = "The frontmatter schema excludes the malformed forms rejected by the codec"), Trait("Boundary", "Input")]
+    [InlineData("null"), InlineData("1"), InlineData("\"Root\""), InlineData("\"flat\"")]
+    public void FrontmatterSchemaExcludesInvalidForms(string value)
+    {
+        using var schema = ReadPublishedSchema();
+        using var candidate = JsonDocument.Parse(value);
+        var frontmatter = schema.RootElement.GetProperty("properties").GetProperty(WorkspaceSettingsDefinitions.FrontmatterProperty);
+
+        Assert.Equal("string", frontmatter.GetProperty("type").GetString());
+        Assert.DoesNotContain(frontmatter.GetProperty("enum").EnumerateArray(), allowed => JsonElement.DeepEquals(allowed, candidate.RootElement));
+        Assert.Null(WorkspaceSettingsCodec.Read(Encoding.UTF8.GetBytes($$"""{"frontmatter":{{value}}}""")).Document);
+    }
+
+    private static JsonDocument ReadPublishedSchema()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null)
+        {
+            var path = Path.Combine(directory.FullName, "schemas", "v1", "open-forge.schema.json");
+            if (File.Exists(path))
+            {
+                return JsonDocument.Parse(File.ReadAllBytes(path));
+            }
+            directory = directory.Parent;
+        }
+
+        throw new InvalidOperationException("The published workspace settings schema was not found above the test artifact.");
+    }
+
     [Trait("Boundary", "Input")]
     [Fact(DisplayName = "A declared schema version is read back")]
     public void ReadsDeclaredVersion()

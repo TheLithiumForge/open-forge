@@ -1,0 +1,20 @@
+Would create .agents/memory/project-alpha/team/overview.md  (memory/project-alpha/team/overview)
+Workspace: <workspace>
+  description: Project overview
+  tags: Docs, Overview
+  responsibility: Explains the project
+  Would create .agents/memory/project-alpha/team
+  Would create .agents/memory/project-alpha/team/_team.md
+  Would create .agents/memory/project-alpha/team/overview.md
+  Would list it in .agents/memory/project-alpha/_project-alpha.md
+--- .agents/memory/project-alpha/team/overview.md (new file) ---
+---
+description: Project overview
+tags: [Docs, Overview]
+responsibility: Explains the project
+---
+  Entries section: .agents/memory/project-alpha/_project-alpha.md
+    Before: <sha256>
+    After: <sha256>
+    Verification: planned
+No files were changed.

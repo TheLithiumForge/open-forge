@@ -38,8 +38,9 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
         var facts = root.GetProperty("data");
         Assert.Equal(
-            ["mode", "force", "automatic", "classification", "footprint", "lockPath"],
+            ["mode", "force", "automatic", "classification", "footprint", "lockPath", "frontmatter"],
             facts.EnumerateObject().Select(property => property.Name));
+        Assert.Equal("root", facts.GetProperty("frontmatter").GetProperty("form").GetString());
         Assert.Equal("dry-run", facts.GetProperty("mode").GetString());
         Assert.False(facts.GetProperty("force").GetBoolean());
         Assert.True(facts.GetProperty("automatic").GetBoolean());
@@ -73,7 +74,7 @@ public sealed class InstallCompositionIntegrationTests
         var applied = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"2{Environment.NewLine}y{Environment.NewLine}remaining{Environment.NewLine}",
+            $"2{Environment.NewLine}2{Environment.NewLine}y{Environment.NewLine}remaining{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -116,7 +117,7 @@ public sealed class InstallCompositionIntegrationTests
         var run = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"2{Environment.NewLine}n{Environment.NewLine}remaining{Environment.NewLine}",
+            $"2{Environment.NewLine}2{Environment.NewLine}n{Environment.NewLine}remaining{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -140,7 +141,7 @@ public sealed class InstallCompositionIntegrationTests
         var run = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"2{Environment.NewLine}",
+            $"2{Environment.NewLine}2{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -277,7 +278,7 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains(
-            "open-forge install [--configure] [--preset <essentials|full-core|custom>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]",
+            "open-forge install [--configure] [--preset <essentials|full-core|custom>] [--frontmatter <root|scoped>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]",
             string.Join(" ", leaf.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
         Assert.Contains("Setup selection", leaf.StandardOutput, StringComparison.Ordinal);

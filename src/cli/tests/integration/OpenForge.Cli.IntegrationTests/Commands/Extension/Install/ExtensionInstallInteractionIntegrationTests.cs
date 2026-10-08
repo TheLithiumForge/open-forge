@@ -293,7 +293,8 @@ public sealed class ExtensionInstallInteractionIntegrationTests
         using var source = PermissionFixture.CreatePackage();
         workspace.CreateDirectory(".apm/agents");
         workspace.CreateOccupant(PermissionFixture.ExternalPath, "existing occupant\n");
-        workspace.CreateOccupant(PermissionFixture.PermissionPath, PermissionFixture.Grants);
+        workspace.ReplaceText(PermissionFixture.PermissionPath,
+            $$"""{"frontmatter":"root","allowInstallPaths":["{{PermissionFixture.ExternalPath}}"]}""");
         var before = workspace.Snapshot();
         try
         {

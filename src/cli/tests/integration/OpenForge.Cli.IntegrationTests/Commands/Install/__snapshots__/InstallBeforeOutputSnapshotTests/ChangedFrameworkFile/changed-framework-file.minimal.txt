@@ -3,4 +3,5 @@ Workspace: <workspace>
   Error  <workspace>  Framework files have changed
          <workspace> has changed since it was installed. Install does not replace changed files.
          open-forge update
+Frontmatter: root
 Next: open-forge update

@@ -11,24 +11,24 @@ using OpenForge.Cli.IntegrationTests.Commands.Install;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Serialization.Shared.Assertions;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Configuration;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 
 namespace OpenForge.Cli.IntegrationTests.Serialization;
 
 public sealed class InstallGeneratedSerializationTests
 {
-    // 14 directories (including .agents), 17 payload files, 2 host regions, and the ownership record.
-    private const int FreshInstallEffectCount = 34;
+    // 14 directories (including .agents), 17 payload files, 2 host regions, settings, and the ownership record.
+    private const int FreshInstallEffectCount = 35;
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Install JSON uses generated native data metadata with the complete envelope"), Trait("Feature", "install-presentation"), Trait("Evidence", "Integration")]
     public async Task NativeDataUsesGeneratedMetadataWithCompleteEnvelope()
     {
         using var workspace = InstallOperationWorkspace.Create("install-generated-serialization");
-        var result = await InstallOperationFactory.Create(
-                InstallInteractionTestSupport.Confirmation(),
-                workspace.LockStoreRoot)
+        var result = await InstallFrontmatterFixture.Operation(workspace)
             .ExecuteAsync(
-                workspace.Request(automatic: true),
+                await InstallFrontmatterFixture.RequestAsync(workspace, FrontmatterForm.Root),
                 TestContext.Current.CancellationToken);
 
         var rendered = Render(result, CliDetail.Full);
@@ -42,8 +42,9 @@ public sealed class InstallGeneratedSerializationTests
 
         var data = root.GetProperty("data");
         Assert.Equal(
-            ["mode", "force", "automatic", "classification", "footprint", "lockPath", "effects", "source", "lifecycle", "verification"],
+            ["mode", "force", "automatic", "classification", "footprint", "lockPath", "effects", "source", "lifecycle", "verification", "frontmatter"],
             data.EnumerateObject().Select(property => property.Name));
+        Assert.Equal("root", data.GetProperty("frontmatter").GetProperty("form").GetString());
         Assert.Equal("apply", data.GetProperty("mode").GetString());
         Assert.False(data.GetProperty("force").GetBoolean());
         Assert.True(data.GetProperty("automatic").GetBoolean());
@@ -64,13 +65,9 @@ public sealed class InstallGeneratedSerializationTests
     public async Task NativeDataPreservesDryRunProjectionAndCompleteEffects()
     {
         using var workspace = InstallOperationWorkspace.Create("install-generated-dry-run");
-        var result = await InstallOperationFactory.Create(
-                InstallInteractionTestSupport.Unavailable(),
-                workspace.LockStoreRoot)
+        var result = await InstallFrontmatterFixture.Operation(workspace)
             .ExecuteAsync(
-                workspace.Request(
-                    mode: InstallMode.DryRun,
-                    automatic: true),
+                await InstallFrontmatterFixture.RequestAsync(workspace, FrontmatterForm.Root, dryRun: true),
                 TestContext.Current.CancellationToken);
 
         var rendered = Render(result, CliDetail.Standard);

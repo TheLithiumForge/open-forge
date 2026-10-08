@@ -128,7 +128,8 @@ public sealed class InstallImplicitSetupOwnershipIntegrationTests
             observe();
             return ValueTask.FromResult(CliPromptReply<InstallPreset>.Answered(preset));
         }, (_, _, _) => throw new InvalidOperationException("No Custom route prompt is expected."),
-            (_, _, _) => throw new InvalidOperationException("No Custom action prompt is expected."));
+            (_, _, _) => throw new InvalidOperationException("No Custom action prompt is expected."),
+            (question, _, _) => ValueTask.FromResult(CliPromptReply<string>.Answered(question.InitialForm)));
 
     private static FileStream? SeedUnknownOwnership(InstallOperationWorkspace workspace, string state, bool installed = false)
     {

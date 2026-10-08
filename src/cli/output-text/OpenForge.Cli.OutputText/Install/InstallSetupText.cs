@@ -2,6 +2,25 @@ namespace OpenForge.Cli.OutputText.Install;
 
 internal static class InstallSetupText
 {
+    // @OpenForgeText install.setup.frontmatterquestion
+    internal static string FrontmatterQuestion() => "How should Open Forge write file metadata?";
+    // @OpenForgeText install.setup.rootlabel
+    internal static string RootLabel() => "Root keys";
+    // @OpenForgeText install.setup.rootexample
+    internal static string RootExample() => "description: and tags: at the top of the frontmatter";
+    // @OpenForgeText install.setup.scopedlabel
+    internal static string ScopedLabel() => "Scoped under open-forge:";
+    // @OpenForgeText install.setup.scopedexample
+    internal static string ScopedExample() => "open-forge: holds description: and tags:";
+    // @OpenForgeText install.setup.frontmatter
+    internal static string Frontmatter(string form) => $"Frontmatter: {form}";
+    // @OpenForgeText install.setup.frontmatterchange
+    internal static string FrontmatterChange(string before, string after) => $"Frontmatter: {before} -> {after}";
+    // @OpenForgeText install.setup.frontmatterkept
+    internal static string FrontmatterKept(int count)
+        => count == 1
+            ? "Kept 1 file in its previous form."
+            : string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Kept {count} files in their previous form.");
     // @OpenForgeText install.setup.presetquestion
     internal static string PresetQuestion() => "Choose your Open Forge setup";
     // @OpenForgeText install.setup.essentials

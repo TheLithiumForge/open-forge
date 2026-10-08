@@ -2,6 +2,7 @@ using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
@@ -100,8 +101,16 @@ internal sealed class RouteInitIntendedChainBuilder
                         RouteInitFindingCode.FrameworkPayloadInvalid,
                         "A managed Framework segment has no embedded asset.",
                         incomplete: false);
-                var document = _markdownParser.Parse(StrictUtf8.GetString(asset.Bytes.AsSpan()));
-                var facts = _frameworkMetadataParser.Parse(document);
+                var rendered = WorkspacePayloadRenderer.Render(
+                    aligned.IntendedSource.Identity.CanonicalBasePath,
+                    asset.Bytes.AsMemory(),
+                    inspection.Settings.Document.Frontmatter);
+                var renderedBytes = rendered.Bytes ?? throw new RouteInitPlanningException(
+                    RouteInitFindingCode.FrameworkPayloadInvalid,
+                    rendered.Cause ?? "A Framework entrypoint cannot be delivered in the workspace frontmatter form.",
+                    incomplete: false);
+                var document = _markdownParser.Parse(StrictUtf8.GetString(renderedBytes.Span));
+                var facts = _frameworkMetadataParser.Parse(document, FrameworkMetadataReadScope.RoutedSource);
                 if (facts.State != FrameworkDocumentMetadataState.Complete
                     || facts.Metadata is not { } authored)
                 {
@@ -122,7 +131,7 @@ internal sealed class RouteInitIntendedChainBuilder
                 var content = new RouteInitProspectiveSourceContent(
                     aligned.IntendedSource,
                     MissingSnapshot(request, aligned.IntendedSource.Identity.CanonicalBasePath),
-                    asset.Bytes.AsSpan(),
+                    renderedBytes.Span,
                     sourceAssetPath,
                     ownsGeneratedEntries: true);
                 entries.Add(new RouteInitIntendedEntrypoint(
@@ -138,7 +147,7 @@ internal sealed class RouteInitIntendedChainBuilder
                 index == current.Chain.Count - 1,
                 request.Metadata);
             var title = chain.Id.Split('/')[^1];
-            var scaffold = _scaffoldComposer.Compose(chain.Id, title, metadata);
+            var scaffold = _scaffoldComposer.Compose(chain.Id, title, metadata, inspection.Settings.Document.Frontmatter);
             var source = aligned?.IntendedSource
                 ?? CreateSource(request, chain.Id, chain.CanonicalMissingPath);
             var userContent = new RouteInitProspectiveSourceContent(

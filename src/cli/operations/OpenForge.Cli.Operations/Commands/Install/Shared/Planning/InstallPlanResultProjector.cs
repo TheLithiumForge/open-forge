@@ -26,13 +26,16 @@ internal sealed class InstallPlanResultProjector
     {
         ArgumentNullException.ThrowIfNull(context);
 
+        var settingsEffects = new List<InstallFileEffect>();
+        InstallEstablishmentPlanner.AddConfigurationEffects(context.IntendedState, settingsEffects);
+
         return ProjectCompleted(
             context,
             InstallManagementState.TrustedExact,
             new InstallPlanEffects
             {
                 DirectoryCreations = [],
-                TargetEffects = [],
+                TargetEffects = settingsEffects,
                 OwnershipEffect = null,
             });
     }

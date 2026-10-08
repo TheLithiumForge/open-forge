@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.IntegrationTests.Commands.Install;
 using OpenForge.Cli.TestSupport;
 
@@ -11,6 +12,7 @@ internal static class StatusInstalledWorkspaceArtifacts
                 StringComparer.Ordinal)
             || relativePath is StatusIntegrationWorkspace.LifecyclePath
                 or StatusIntegrationWorkspace.OwnershipPath
+                or WorkspaceSettingsDefinitions.RelativePath
                 or "AGENTS.md"
                 or "CLAUDE.md";
 
@@ -19,6 +21,7 @@ internal static class StatusInstalledWorkspaceArtifacts
         foreach (var path in InstallOperationWorkspace.EmbeddedPayloadPaths
                      .Append(StatusIntegrationWorkspace.LifecyclePath)
                      .Append(StatusIntegrationWorkspace.OwnershipPath)
+                     .Append(WorkspaceSettingsDefinitions.RelativePath)
                      .Append("AGENTS.md")
                      .Append("CLAUDE.md"))
         {

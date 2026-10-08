@@ -38,6 +38,29 @@ is optional reusable shape and context. It is not authority for current Open
 Forge command semantics. This Contract and the command-local contracts control
 the accepted Open Forge behavior.
 
+## Frontmatter Form
+
+The authored settings file `.agents/open-forge.json` accepts `frontmatter` with
+the string value `root` or `scoped`. An absent key means scoped. Unsupported
+values are invalid settings. `schemaVersion` stays 1. This setting controls
+output, not reading. Every workspace reads both forms under the [Markdown
+Syntax contract](../framework/markdown/syntax.md#frontmatter).
+
+New route metadata and Install adoption use the selected form. Framework and
+Extension delivery renders `.md` files under `.agents/`, except `SKILL.md`,
+whose leading frontmatter has an `open-forge` mapping. Only that mapping moves.
+Scoped rendering preserves canonical bytes. Root rendering rejects collisions
+with foreign root `description`, `responsibility`, or `tags`, and conflicting
+root `applyTo`. An equivalent root `applyTo` is kept and the moved copy is
+dropped. Body bytes, including fenced examples, are preserved. Native Skills
+and other assets retain their existing contracts.
+
+Managed-content comparisons use intended payload bytes rendered in the
+workspace's form before applying the existing comparison policy. Source
+inventory hashes continue to identify repository bytes. Rendering neither
+establishes ownership nor changes the fingerprint policy. Invalid settings
+retain each command's existing invalid or unavailable boundary.
+
 ## Route Sharing
 
 Every command that writes generated Entries applies the recorded route-sharing

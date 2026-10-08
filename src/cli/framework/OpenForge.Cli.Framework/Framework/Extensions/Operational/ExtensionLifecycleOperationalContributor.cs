@@ -23,7 +23,7 @@ internal sealed class ExtensionLifecycleOperationalContributor(
 {
     private readonly ExtensionLifecycleDoctorReader _reader = new(
         new ExtensionSourceObservationReader(sourceReader), targetReader,
-        new ExtensionBridgeRegistrationObservationReader());
+        new ExtensionBridgeRegistrationObservationReader(), physicalPathResolver);
 
     public async ValueTask<ExtensionLifecycleStatusView> ReadStatusAsync(
         CliWorkspace workspace, WorkspaceOwnershipRead ownership, CancellationToken cancellationToken)

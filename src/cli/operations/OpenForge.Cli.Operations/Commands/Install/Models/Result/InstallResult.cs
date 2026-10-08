@@ -64,6 +64,8 @@ internal sealed record InstallResult : ICliCommandResult
 
     internal InstallResultFacts Facts { get; }
 
+    internal InstallFrontmatter? Frontmatter { get; init; }
+
     internal static InstallResult Invalid(
         InstallBindingInput input,
         CliWorkspace? workspace,
@@ -87,7 +89,8 @@ internal sealed record InstallResult : ICliCommandResult
                 Automatic: request.Automatic,
                 Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration),
             findings: findings,
-            summary: summary);
+            summary: summary)
+        { Frontmatter = InstallResultFactsFactory.Frontmatter(request.Frontmatter, []) };
     }
 
     internal static InstallResult Create(
@@ -104,7 +107,8 @@ internal sealed record InstallResult : ICliCommandResult
                 Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration),
             findings: findings,
             summary: summary,
-            facts: facts);
+            facts: facts)
+        { Frontmatter = facts.Frontmatter ?? InstallResultFactsFactory.Frontmatter(request.Frontmatter, []) };
     }
 
     private static CliSemanticStatus ReadStatus(

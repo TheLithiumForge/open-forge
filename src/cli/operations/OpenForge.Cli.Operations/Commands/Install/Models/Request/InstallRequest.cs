@@ -45,6 +45,8 @@ internal sealed record InstallRequest
 
     internal InstallConfiguration? Configuration { get; init; }
 
+    internal InstallFrontmatterSelection? Frontmatter { get; init; }
+
     internal CliWorkspace Workspace { get; }
 
     internal InstallMode Mode { get; }
