@@ -102,6 +102,7 @@ const producerTypes = {
   application: "OpenForge.Cli.IntegrationTests.Commands.Library.Shared.GitIgnore.LibraryGitIgnoreApplicationIntegrationTests",
   libraryChoice: "OpenForge.Cli.EndToEndTests.PublishedLibraryGitIgnoreProcessTests",
   selectionViewport: "OpenForge.Cli.EndToEndTests.PublishedSelectionViewportProcessTests",
+  installFrontmatterQuestion: "OpenForge.Cli.EndToEndTests.Commands.Install.PublishedInstallFrontmatterProcessTests",
 } as const;
 
 const declaredWindowsProducers = [
@@ -128,6 +129,11 @@ const declaredWindowsProducers = [
   {
     type: producerTypes.selectionViewport,
     reason: "Selection viewport terminal evidence requires Windows ConPTY.",
+    wrongSuite: producerTypes.lifecycle,
+  },
+  {
+    type: producerTypes.installFrontmatterQuestion,
+    reason: "This selection journey requires the repository's Windows ConPTY harness.",
     wrongSuite: producerTypes.lifecycle,
   },
 ] as const;

@@ -40,6 +40,7 @@ const publicWindowsOnly = new Set([
   "F15 source read denial requires the Windows share boundary.",
   "Library terminal choice evidence requires Windows ConPTY.",
   "Selection viewport terminal evidence requires Windows ConPTY.",
+  "This selection journey requires the repository's Windows ConPTY harness.",
 ]);
 
 // Only explicit OS exclusions in the integration and public suites qualify. Capability failures,
