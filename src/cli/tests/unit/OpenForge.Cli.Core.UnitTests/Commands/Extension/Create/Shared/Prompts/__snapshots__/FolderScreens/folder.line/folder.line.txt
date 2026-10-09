@@ -1,0 +1,5 @@
+Parent folder for the new Extension:
+Enter an existing folder. Open Forge creates a folder named after the Extension ID inside it.
+Parent folder for the new Extension:
+That folder does not exist. Enter an existing folder.
+Parent folder for the new Extension:

@@ -19,8 +19,6 @@ internal sealed record RemoveData
 
     public required string RecoveryDisposition { get; init; }
 
-    [JsonIgnore]
-    internal bool ShowEffects { get; init; }
 }
 
 internal sealed record RemoveDataEffect

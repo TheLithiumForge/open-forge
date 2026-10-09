@@ -27,7 +27,7 @@ public sealed class LibrarySyncMappedDestinationIntegrationTests
         var result = await new LibrarySyncOperation(permissions).ExecuteAsync(workspace.Sync(LibraryMode.Apply) with { AllowPrompt = true, Automatic = false },
             TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
-        Assert.Contains("docs   (directory: everything under it)", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("docs (folder and everything below it)", output.ToString(), StringComparison.Ordinal);
         Assert.Equal("Library sync was cancelled. Nothing was changed.", Assert.Single(result.Result.Findings).Cause);
         Assert.Equal(before, workspace.Snapshot());
     }

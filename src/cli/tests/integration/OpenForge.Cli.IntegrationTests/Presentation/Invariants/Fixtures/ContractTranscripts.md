@@ -856,6 +856,23 @@ Workspace: <workspace>
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
 ```
 
+## install-configure-preview
+
+Original contract: `.agents/memory/crystallized/documents/cli/contracts/install/interface.md`.
+
+```text
+Would change the Open Forge setup in <workspace>.
+Workspace: <workspace>
+Frontmatter: root
+  .agents/loader.md             Entries would be updated
+  .agents/memory/_memory.md     Entries would be updated
+  .agents/open-forge.json       settings would be updated
+  .agents/open-forge.lock.json  ownership record would be updated
+  .gitignore                    Open Forge Git-ignore rules would be updated
+  Would create 2 files and 2 directories under .agents, and update 5 existing files.
+No files were changed.
+```
+
 ## install-completed-with-warnings
 
 Original contract: `.agents/memory/crystallized/documents/cli/contracts/install/interface.md`.

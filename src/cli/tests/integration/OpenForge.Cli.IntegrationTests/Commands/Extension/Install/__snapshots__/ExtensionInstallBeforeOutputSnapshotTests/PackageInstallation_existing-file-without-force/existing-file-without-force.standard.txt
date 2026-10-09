@@ -6,5 +6,5 @@ Workspace: <workspace>
          Preview replacing the existing file before rerunning the installation.
   .agents/toolkit.md  not started
   Source: <extension-source> (catalogue)
-  .agents/open-forge.lock.json  updated
+  .agents/open-forge.lock.json  ownership record not updated
 Next: open-forge extension install toolkit --force --dry-run  (preview replacing it)

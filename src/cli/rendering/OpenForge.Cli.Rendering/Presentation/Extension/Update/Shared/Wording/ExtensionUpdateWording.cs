@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Update.Models.Interaction;
 using System.Globalization;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
@@ -9,10 +10,11 @@ internal static class ExtensionUpdateWording
 {
     internal static string Selection() => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.PromptWhichExtensionsDoYouWantToUpdate();
 
-    internal static string Apply() => CliPromptWording.Confirm();
-
-    internal static string Prune(int count)
-        => global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedPhrases.FormatDeleteTheFileListedAboveYN(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{(count == 1 ? string.Empty : "s")}"));
+    internal static string Apply(ExtensionUpdateConfirmationFacts facts)
+    {
+        ArgumentNullException.ThrowIfNull(facts);
+        return CliPromptWording.ConfirmChanges(facts.ReplacementCount, facts.DeletionCount);
+    }
 
     internal static string UpToDate(string id)
         => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateWording.UpToDate(id);
@@ -78,8 +80,8 @@ internal static class ExtensionUpdateWording
     internal static string Unchanged(int count)
         => global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatUnchanged($"{count}", $"{Plural(count, "file")}");
 
-    internal static string Sections(int count)
-        => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdatePhrases.FormatUpdated($"{count}", $"{Plural(count, "Entries section")}");
+    internal static string Sections(int count, bool preview)
+        => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdatePhrases.EntriesSummary(count, Plural(count, "Entries section"), preview);
 
     internal static string Source(string path) => global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateWording.Source(path);
 

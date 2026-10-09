@@ -249,8 +249,8 @@ public sealed class LibraryAttachOperationIntegrationTests
             && finding.Cause == "Library attach was cancelled. Nothing was changed.");
         Assert.True(promptRead);
         Assert.True(cancellation.IsCancellationRequested);
-        Assert.Contains("docs   (directory: everything under it)", output.ToString(), StringComparison.Ordinal);
-        Assert.Contains("always, once, cancel:", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("docs (folder and everything below it)", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Type always, once or cancel:", output.ToString(), StringComparison.Ordinal);
         Assert.Equal(before, workspace.Snapshot());
         Assert.Equal(sourceBefore, File.ReadAllBytes(workspace.Absolute("shared/team-knowledge/README.md")));
         Assert.Equal(settingsBefore, File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json")));

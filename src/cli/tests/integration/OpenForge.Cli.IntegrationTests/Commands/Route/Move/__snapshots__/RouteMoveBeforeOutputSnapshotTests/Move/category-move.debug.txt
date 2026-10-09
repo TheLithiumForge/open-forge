@@ -7,10 +7,10 @@ Workspace: <workspace>
   .agents/guidance/topics/image.bin -> .agents/archive/topics/image.bin
   .agents/guidance/topics/native/SKILL.md -> .agents/archive/topics/native/SKILL.md
   .agents/guidance/topics/notes.md -> .agents/archive/topics/notes.md
-  Entry added to .agents/archive/_archive.md
-  Entry updated in .agents/archive/topics/_topics.md
-  Entry removed from .agents/guidance/_guidance.md
-  Rewrote 2 links that pointed at the old paths:
+  .agents/archive/_archive.md  Entries updated
+  .agents/archive/topics/_topics.md  Entries updated
+  .agents/guidance/_guidance.md  Entries updated
+  Updated 2 links that pointed to the old paths:
   .agents/archive/topics/child.md:8:13  .agents/guidance/old guide.md -> .agents/guidance/old guide.md
   .agents/archive/topics/child.overwrite.md:1:35  .agents/guidance/old guide.md -> .agents/guidance/old guide.md
   Effects:

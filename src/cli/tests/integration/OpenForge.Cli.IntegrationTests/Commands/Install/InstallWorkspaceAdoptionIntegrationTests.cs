@@ -20,6 +20,9 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Presentation.Install;
+using OpenForge.Cli.Core.Presentation.Install.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Install.Shared.Wording;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
@@ -140,7 +143,8 @@ public sealed class InstallWorkspaceAdoptionIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Theory, InlineData("missing"), InlineData("partial"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
+    [Theory(DisplayName = "Install completes native Skill metadata while preserving content and confirming only updates")]
+    [InlineData("missing"), InlineData("partial"), Trait("Feature", "install-command"), Trait("Evidence", "Integration")]
     public async Task PlainInstallCompletesNativeSkillAndCreatesOnlyItsReferenceCatalogue(string fixture)
     {
         using var workspace = InstallOperationWorkspace.Create("install-native-skill-adoption");
@@ -174,11 +178,28 @@ public sealed class InstallWorkspaceAdoptionIntegrationTests
             migration.Path == ".agents/skills/local-skill/references/_references.md"
             && migration.Actions.Contains(WorkspaceAdoptionAction.EntrypointCreated));
 
-        var applied = await operation.ExecuteAsync(
-            workspace.Request(automatic: true),
+        InstallConfirmationFacts? confirmation = null;
+        var interactive = InstallOperationFactory.Create(
+            InstallInteractionTestSupport.Confirmation(observe: (preview, facts) =>
+            {
+                confirmation = facts;
+                var data = InstallReportSelector.Select(preview, new(CliDetail.Minimal, null)).Data;
+                Assert.Contains(data.TextRows, row => row.Path == skillPath
+                    && row.Wording == "metadata would be completed, your content would be kept");
+                Assert.Equal(0, data.ReplacedFiles);
+                Assert.Equal("Apply these changes? [y/N]", InstallWording.Confirmation(facts));
+            }), workspace.LockStoreRoot);
+        var applied = await interactive.ExecuteAsync(
+            workspace.Request(automatic: false, allowsInteractiveConfirmation: true),
             TestContext.Current.CancellationToken);
 
         Assert.Equal(CliSemanticStatus.Complete, applied.Status);
+        Assert.Equal(0, Assert.IsType<InstallConfirmationFacts>(confirmation).ReplacementCount);
+        var appliedReport = InstallReportSelector.Select(applied, new(CliDetail.Minimal, null));
+        Assert.Contains(appliedReport.Data.TextRows, row => row.Path == skillPath
+            && row.Wording == "metadata completed, your content was kept");
+        Assert.Equal(0, appliedReport.Data.ReplacedFiles);
+        Assert.Equal(0, Assert.Single(appliedReport.Counts, count => count.Name == "filesReplaced").Value);
         Assert.Empty(applied.Findings);
         Assert.Contains(applied.Facts.Effects, effect => effect.Path == skillPath);
         Assert.True(workspace.Exists(".agents/skills/local-skill/references/_references.md"));

@@ -252,7 +252,8 @@ internal static class InstallResultFactsFactory
         if (selection is null) return null;
         var previous = selection.PreviousForm is { } previousForm && previousForm != selection.Form
             ? WorkspaceSettingsDefinitions.ReadFrontmatterName(previousForm) : null;
-        return new(WorkspaceSettingsDefinitions.ReadFrontmatterName(selection.Form), previous, kept);
+        return new(WorkspaceSettingsDefinitions.ReadFrontmatterName(selection.Form), previous, kept)
+        { WasInstalled = selection.PreviousForm is not null };
     }
 
     internal static int PayloadFileCount(InstallIntendedState intended)
@@ -364,6 +365,7 @@ internal static class InstallResultFactsFactory
             SourceAssetPath = SourceAssetPathFor(identity, userOwnedPaths),
             Outcome = outcome,
             Residual = residual,
+            ContentChange = identity.ContentChange,
         });
 
     private static InstallLifecycle Lifecycle(

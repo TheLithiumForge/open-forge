@@ -1,0 +1,8 @@
+Choose Extensions to install
++ install   * also installed
+
+  1. [ ] planning   Plans, tasks and decisions   needs: workflows
+  2. [ ] workflows  Reusable workflows
+
+Choose numbers separated by spaces, "all", or press Enter to cancel:
+Also included: workflows, required by planning.

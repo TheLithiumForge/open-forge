@@ -335,7 +335,7 @@ same existing `blocked` target-safety result and produce no effect.
 
 Omitting `--dry-run` selects application. The command path and the exact source
 subject select the operation, but a prompt-capable terminal receives a plan
-review followed by `Delete the <N> files listed above? [y/N]` unless
+review followed by `Apply these changes, including deleting <N> files? [y/N]` unless
 `--automatic` is supplied. JSON, redirected, and other non-interactive requests
 without `--automatic` form the command-specific confirmation-required
 invalid-input result before effects. The command does not accept `--yes`.
@@ -394,7 +394,7 @@ bounded facts, and debug adds bounded diagnostics on stderr. Detail does not
 change semantics, effects, counts, or status. Filters select finding severities;
 all is the default filter.
 
-Route remove shows a plan review before final confirmation. --automatic bypasses the final confirmation only; without it the exact prompt is Delete the <N> files listed above? [y/N].
+Route remove shows a plan review before final confirmation. --automatic bypasses the final confirmation only; without it the exact prompt is `Apply these changes, including deleting <N> files? [y/N]`.
 
 The catalogue text by detail level is:
 
@@ -557,7 +557,7 @@ action when available. Counts are:
 Prompt rules from the catalogue:
 
 Select when the source ID matches several files; plan review listing every
-deletion, then `Delete the <N> files listed above? [y/N]` in a terminal
+deletion, then `Apply these changes, including deleting <N> files? [y/N]` in a terminal
 without `--automatic` (04 adds `--automatic` to this command).
 
 ## Representative Transcripts

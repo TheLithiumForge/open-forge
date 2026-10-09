@@ -1,0 +1,6 @@
+Would update 3 Framework files.
+  .agents/loader.md             would be restored
+  .agents/memory/_memory.md     would be created
+  AGENTS.md                     would be created with an Open Forge section
+  .agents/open-forge.lock.json  ownership record would be updated
+No files were changed.

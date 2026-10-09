@@ -23,7 +23,7 @@ internal sealed partial class CliPrompts
         {
             new CliChoice<CliPermissionChoice>(CliPermissionChoice.Always, CliPromptWording.Always(), CliPromptWording.AlwaysReason()),
             new CliChoice<CliPermissionChoice>(CliPermissionChoice.Once, CliPromptWording.Once(), CliPromptWording.OnceReason()),
-            new CliChoice<CliPermissionChoice>(CliPermissionChoice.Cancel, CliPromptWording.Cancel()),
+            new CliChoice<CliPermissionChoice>(CliPermissionChoice.Cancel, CliPromptWording.Cancel(), CliPromptWording.CancelReason()),
         };
         var cursor = 0;
         var pathOffset = 0;
@@ -33,7 +33,8 @@ internal sealed partial class CliPrompts
             var ownerHeading = CliPromptWording.Permission(question.Owner);
             var compactOwner = CliSelectionText.Wrap(ownerHeading, width).Count > 1;
             var frameHeading = compactOwner ? CliPromptWording.PermissionHeading() : ownerHeading;
-            var controls = new[] { CliPromptWording.MoveControls(), CliPromptWording.AcceptControls() };
+            var controls = new[] { CliPromptWording.SelectControls(choices.Length) };
+            var controlRows = controls.SelectMany(text => CliSelectionText.WrapItems(text, width)).Count();
             var stickyContext = new List<string>();
             if (compactOwner)
             {
@@ -43,7 +44,7 @@ internal sealed partial class CliPrompts
             var reviewText = question.Paths.Select(PermissionPath);
             if (compactOwner) reviewText = reviewText.Prepend(question.Owner);
             var pathRows = reviewText.SelectMany(text => CliSelectionText.Wrap(text, width)).ToArray();
-            var pageSize = Math.Max(MinimumPathRows, CliSelectionFrameRenderer.ContextCapacity(viewport, frameHeading, controls.Length)
+            var pageSize = Math.Max(MinimumPathRows, CliSelectionFrameRenderer.ContextCapacity(viewport, frameHeading, controlRows)
                 - PathPageControlRows - stickyContext.Count);
             var pageCount = Math.Max(1, (pathRows.Length + pageSize - 1) / pageSize);
             var page = Math.Min(pathOffset / pageSize, pageCount - 1);
@@ -72,6 +73,9 @@ internal sealed partial class CliPrompts
         }
         var heading = new StringBuilder().Append(CliText.Escape(CliPromptWording.Permission(question.Owner))).Append("\n\n");
         foreach (var path in question.Paths) heading.Append("  ").Append(CliText.Escape(PermissionPath(path))).Append('\n');
+        heading.Append('\n');
+        foreach (var choice in choices)
+            heading.AppendLine($"  {CliText.Escape(choice.Label)}  {CliText.Escape(choice.Description ?? string.Empty)}");
         await WriteFrameAsync(heading.ToString(), cancellationToken).ConfigureAwait(false);
         while (true)
         {
@@ -80,6 +84,7 @@ internal sealed partial class CliPrompts
             if (answer is null or "" or "cancel") return CliPromptReply<CliPermissionChoice>.Cancelled();
             if (answer == "always") return PermissionReply(CliPermissionChoice.Always);
             if (answer == "once") return PermissionReply(CliPermissionChoice.Once);
+            await WriteFrameAsync(CliPromptWording.PermissionLineRule() + "\n", cancellationToken).ConfigureAwait(false);
         }
     }
 

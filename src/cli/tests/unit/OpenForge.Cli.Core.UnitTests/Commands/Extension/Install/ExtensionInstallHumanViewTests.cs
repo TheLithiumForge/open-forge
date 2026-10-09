@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Presentation.Extension.Install;
+using OpenForge.Cli.Core.Presentation.Extension.Install.Shared.Wording;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -10,6 +11,18 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Install;
 
 public sealed class ExtensionInstallHumanViewTests
 {
+    [Theory(DisplayName = "Extension Install ownership wording reports the recorded lifecycle outcome")]
+    [InlineData((int)ExtensionInstallLifecycleOutcome.Planned, "ownership record would be updated")]
+    [InlineData((int)ExtensionInstallLifecycleOutcome.Verified, "ownership record updated")]
+    [InlineData((int)ExtensionInstallLifecycleOutcome.AlreadyCurrent, "ownership record unchanged")]
+    [InlineData((int)ExtensionInstallLifecycleOutcome.NotRequested, "ownership record not updated")]
+    [InlineData((int)ExtensionInstallLifecycleOutcome.NotStarted, "ownership record not updated")]
+    [InlineData((int)ExtensionInstallLifecycleOutcome.VerificationFailed, "ownership record not updated")]
+    [InlineData((int)ExtensionInstallLifecycleOutcome.CompletionUnknown, "ownership record final state could not be confirmed")]
+    [Trait("Feature", "extension-install"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void OwnershipLifecycleWording(int outcome, string expected)
+        => Assert.Equal(expected, ExtensionInstallWording.Lock((ExtensionInstallLifecycleOutcome)outcome));
+
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Extension Install views retain interrupted effects, unmatched planned paths and recovery without claiming completion"), Trait("Feature", "extension-install"), Trait("Evidence", "Unit")]
     [InlineData((int)CliDetail.Minimal)]

@@ -109,8 +109,8 @@ internal static class SharedPhrases
         => $"{commandText} needs to know which packages. Pass their IDs or --all.";
 
     // @OpenForgeText shared.phrase.is-needed-by-remove-both
-    internal static string FormatIsNeededByRemoveBoth(string labelText, string dependentsText)
-        => $"{labelText} is needed by {dependentsText}. Remove both?";
+    internal static string FormatRemovingAlsoRemoves(string dependencyText, string dependentsText)
+        => $"Removing {dependencyText} also removes {dependentsText}.";
 
     // @OpenForgeText shared.phrase.exit-and-text
     internal static string FormatExitAndText(string machineNameText, string exitCodeText, string streamText)

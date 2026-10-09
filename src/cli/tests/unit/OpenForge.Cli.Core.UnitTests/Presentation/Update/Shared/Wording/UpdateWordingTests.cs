@@ -10,19 +10,19 @@ public sealed class UpdateWordingTests
     public void ConfirmationUsesApplySentenceWhenNoFilesAreDeleted()
         => Assert.Equal(
             "Apply these changes? [y/N]",
-            UpdateWording.Confirmation(new UpdateConfirmationFacts(0)));
+            UpdateWording.Confirmation(new UpdateConfirmationFacts(ReplacementCount: 0, DeletionCount: 0)));
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Update wording names planned deleted files"), Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
     public void ConfirmationNamesPlannedDeletedFiles()
         => Assert.Equal(
-            "Delete the 3 files listed above? [y/N]",
-            UpdateWording.Confirmation(new UpdateConfirmationFacts(3)));
+            "Apply these changes, including deleting 3 files? [y/N]",
+            UpdateWording.Confirmation(new UpdateConfirmationFacts(ReplacementCount: 0, DeletionCount: 3)));
 
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Update wording uses singular deletion grammar"), Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
     public void ConfirmationUsesSingularDeletedFile()
         => Assert.Equal(
-            "Delete the 1 file listed above? [y/N]",
-            UpdateWording.Confirmation(new UpdateConfirmationFacts(1)));
+            "Apply these changes, including deleting 1 file? [y/N]",
+            UpdateWording.Confirmation(new UpdateConfirmationFacts(ReplacementCount: 0, DeletionCount: 1)));
 }

@@ -118,11 +118,23 @@ diffs stay plain. There is no colour option to configure.
 ### Prompts and noninteractive runs
 
 Commands that write files after confirmation show their already-built minimal
-plan on standard error and ask one command-specific question. Most ask
-`Apply these changes? [y/N]`. Install asks `Replace the <N> existing files
-listed above? [y/N]` when `--force` would replace files. Update asks
-`Delete the <K> files listed above? [y/N]` when `--prune` would delete retired
-files. Extension Create asks `Create these files? [y/N]`.
+plan on standard error and ask `Apply these changes? [y/N]`. When the plan
+deletes, replaces or removes something, the question names that part, such as
+`Apply these changes, including deleting 3 files? [y/N]`. The answer still
+approves the whole plan shown above it. Extension Create asks
+`Create these files? [y/N]`.
+
+The plan says what happens to each existing file. `replaced` means the whole
+file is swapped. The row adds `(your previous file is in the recovery bundle)`
+when that copy is kept after the command finishes. Smaller
+edits say what changes, such as `Entries updated`, `Open Forge section added,
+your content was kept`, `settings updated` or `ownership record updated`.
+
+Selection lists mark each row. `[+]` installs or updates a package, `[-]`
+removes it, `[*]` marks a package included because another choice needs it,
+and `[ ]` is not chosen. Move with the arrow keys, press space to choose, and
+press Enter to continue. A terminal that cannot read keys shows a numbered list
+and asks for numbers instead.
 
 Install can ask setup questions before building the plan on a first interactive
 apply or with `--configure`. Dry-run, automatic, JSON, and redirected requests
@@ -789,7 +801,7 @@ After resolving the preset, first interactive Install asks `How should Open Forg
 
 | Choice | Explanation |
 | ------ | ----------- |
-| `Root keys` | `description: and tags: at the top of the frontmatter` |
+| `Root keys` | `description: and tags: at the top level` |
 | `Scoped under open-forge:` | `open-forge: holds description: and tags:` |
 
 #### Setup choices
@@ -832,13 +844,13 @@ value differs, including when the key was missing. Noninteractive
 `--configure --preset` without the flag leaves the declaration as it is,
 including an absent key.
 
-Custom offers three actions for each row:
+Custom offers three actions for each row. The wizard shows each as a mark:
 
-| Action       | Effect                                                                                                                                               |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `add`        | Select the route and restore eligible missing packaged defaults                                                                                      |
-| `remove`     | Omit supplied defaults and release only their Framework management, preserving existing files, authored notes, overwrite companions, and routability |
-| `git-ignore` | Add the route, register its sharing policy, then ignore its contents while keeping its entrypoint eligible for Git                                   |
+| Mark  | Action       | Effect                                                                                                                                               |
+| ----- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[+]` | `add`        | Select the route and restore eligible missing packaged defaults                                                                                      |
+| `[~]` | `git-ignore` | Add the route, register its sharing policy, then ignore its contents while keeping its entrypoint eligible for Git                                   |
+| `[-]` | `remove`     | Omit supplied defaults and release only their Framework management, preserving existing files, authored notes, overwrite companions, and routability |
 
 Repeat `--route <id>=<action>` to override Custom rows. It requires
 `--preset custom`. Accepted IDs are:
@@ -858,9 +870,31 @@ memory/archived
 
 Unknown presets, row IDs, or actions are invalid input. Repeated identical
 presets or actions for one row are idempotent. Conflicting repeated values are
-invalid. Interactive Custom retains supplied overrides and reviews the
-remaining rows before planning. Noninteractive Custom applies its base plus
-the supplied overrides.
+invalid. Interactive Custom shows one list of all ten rows with their current marks:
+`[+]` for `add`, `[~]` for `git-ignore` and `[-]` for `remove`. Press `+`,
+`~` or `-` to set the focused row, or space to move it to the next mark, then
+press Enter to accept the list. Rows supplied by `--route` are locked. A
+terminal that cannot read keys shows a numbered list and accepts edits such as
+`2+ 9~`. Press Enter on an empty line to continue. Noninteractive Custom
+applies its base plus the supplied overrides.
+
+```text
+Choose what Open Forge sets up
++ add   ~ add, keep contents out of Git   - leave out
+
+> [+] directives           Rules agents must follow
+  [-] guidance             Advice for recurring choices
+  [-] maps                 Pointers to important sources
+  [+] patterns             Reusable shapes for code and documents
+  [+] skills               Packaged agent capabilities
+  [-] templates            Copy-ready starter files
+  [~] memory/working       Notes for active work
+  [+] memory/emerging      Findings not accepted yet
+  [+] memory/crystallized  Accepted knowledge
+  [-] memory/archived      Completed and historical records
+
+up/down move   + ~ - set   space next   enter done   esc cancel
+```
 
 For example, add Guidance and keep Working's records private while sharing its
 entrypoint and retaining the other current choices:

@@ -174,8 +174,8 @@ public sealed class InstallPresentationContractTests
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Install native confirmation boundary does not render the checked plan"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
     [InlineData(0, "Apply these changes? [y/N]")]
-    [InlineData(1, "Replace the 1 existing file listed above? [y/N]")]
-    [InlineData(2, "Replace the 2 existing files listed above? [y/N]")]
+    [InlineData(1, "Apply these changes, including replacing 1 existing file? [y/N]")]
+    [InlineData(2, "Apply these changes, including replacing 2 existing files? [y/N]")]
     public void ConfirmationWordingPreservesExactCountGrammar(int replacements, string expected)
         => Assert.Equal(expected, InstallWordingForTest(replacements));
 

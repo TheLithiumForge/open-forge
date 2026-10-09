@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would change the Open Forge setup in <workspace>.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/directives/_directives.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/maps/_maps.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/archived/_archived.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/crystallized/_crystallized.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/emerging/_emerging.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/working/_working.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/_skills.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/common.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/discovery.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/packages.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/routes.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/templates/_templates.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "sectionsAdded": 0,
+    "filesReplaced": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "force": false,
+    "automatic": true,
+    "classification": "safe-absence",
+    "footprint": {
+      "files": 15,
+      "directories": 0,
+      "sections": 2
+    },
+    "lockPath": ".agents/open-forge.lock.json",
+    "frontmatter": {
+      "form": "scoped",
+      "previousForm": "root"
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

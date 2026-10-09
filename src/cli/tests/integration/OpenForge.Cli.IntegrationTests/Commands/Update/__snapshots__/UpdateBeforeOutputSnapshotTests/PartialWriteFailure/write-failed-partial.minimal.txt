@@ -3,7 +3,7 @@ Workspace: <workspace>
   Error  .agents/open-forge.lock.json  Write failed
          .agents/open-forge.lock.json could not be written: filesystem access was denied.
          open-forge doctor
-  .agents/guidance/_guidance.md  replaced (you had changed it and this release changes it)
-  .agents/loader.md              not started (you had changed it and this release changes it)
+  .agents/guidance/_guidance.md  replaced (your previous file is in the recovery bundle)
+  .agents/loader.md              not started
   Recovery data: <recovery-bundle>
 Next: open-forge doctor

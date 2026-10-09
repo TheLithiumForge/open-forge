@@ -1,6 +1,6 @@
 namespace OpenForge.Cli.Core.Presentation.Shared.Prompts.Models;
 
-internal sealed record CliSelectionRow(string Label, string Mark = "", bool Disabled = false);
+internal sealed record CliSelectionRow(string Label, string Mark = "", bool Disabled = false, string? Summary = null);
 
 internal sealed record CliSelectionFrame
 {
@@ -9,6 +9,8 @@ internal sealed record CliSelectionFrame
     public required int Focus { get; init; }
     public required string Position { get; init; }
     public required IReadOnlyList<string> Controls { get; init; }
+    public string? Legend { get; init; }
+    public bool NumberRows { get; init; } = true;
     public IReadOnlyList<string> Context { get; init; } = [];
     public IReadOnlyList<string> Details { get; init; } = [];
     public string? Notice { get; init; }

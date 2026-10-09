@@ -48,7 +48,7 @@ public sealed class ExtensionInstallPermissionBoundaryIntegrationTests
 
             Assert.Equal(5, run.ExitCode);
             Assert.Equal("always", run.RemainingInput);
-            Assert.DoesNotContain("always, once, cancel:", run.StandardError, StringComparison.Ordinal);
+            Assert.DoesNotContain("Type always, once or cancel:", run.StandardError, StringComparison.Ordinal);
             Assert.DoesNotContain("[a] Allow always", run.StandardError, StringComparison.Ordinal);
             using var document = JsonDocument.Parse(run.StandardOutput);
             Assert.Contains(document.RootElement.GetProperty("findings").EnumerateArray(), finding =>

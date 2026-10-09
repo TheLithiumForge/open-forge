@@ -45,7 +45,7 @@
     }
   ],
   "counts": {
-    "filesReplaced": 1,
+    "filesReplaced": 0,
     "filesRestored": 0,
     "filesCreated": 0,
     "filesDeleted": 0,

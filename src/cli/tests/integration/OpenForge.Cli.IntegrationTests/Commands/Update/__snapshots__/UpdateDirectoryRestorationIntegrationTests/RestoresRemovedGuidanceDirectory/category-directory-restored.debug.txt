@@ -1,10 +1,9 @@
 Updated 2 Framework files.
 Workspace: <workspace>
-  .agents/guidance               created directory
-  .agents/guidance/_guidance.md  created (it was missing)
-  .agents/loader.md              replaced (you had changed it and this release changes it)
-  .agents/loader.md              Entries section updated
-  .agents/open-forge.lock.json   updated
+  .agents/guidance               created
+  .agents/guidance/_guidance.md  created
+  .agents/loader.md              Entries updated
+  .agents/open-forge.lock.json   ownership record updated
   .agents/loader.md              unchanged (line endings differ)
   17 files unchanged
   .agents/guidance bundled Framework: id=framework; version=unavailable; fingerprint=<sha256>

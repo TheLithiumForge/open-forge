@@ -130,7 +130,7 @@ exception below, rather than initial replacement or adoption authority.
 
 After preset resolution, first interactive Install asks
 `How should Open Forge write file metadata?` with root preselected. Choices are
-`Root keys` with `description: and tags: at the top of the frontmatter`, and
+`Root keys` with `description: and tags: at the top level`, and
 `Scoped under open-forge:` with `open-forge: holds description: and tags:`.
 An explicit `--frontmatter` skips the question. A fresh unattended Install uses
 the flag, then an explicit preference already in settings, otherwise root.

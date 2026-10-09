@@ -16,13 +16,7 @@ internal static class UpdateWording
     internal static string Confirmation(UpdateConfirmationFacts facts)
     {
         ArgumentNullException.ThrowIfNull(facts);
-        if (facts.DeletionCount > 0)
-        {
-            var noun = facts.DeletionCount == 1 ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFile() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFiles();
-            return global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatDeleteTheListedAboveYN(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{facts.DeletionCount}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{noun}"));
-        }
-
-        return CliPromptWording.Confirm();
+        return CliPromptWording.ConfirmChanges(facts.ReplacementCount, facts.DeletionCount);
     }
 
     internal static string MachineCode<T>(T value) where T : struct, Enum

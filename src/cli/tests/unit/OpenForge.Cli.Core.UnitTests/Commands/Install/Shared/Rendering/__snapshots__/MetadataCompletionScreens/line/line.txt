@@ -1,0 +1,17 @@
+Would install the Open Forge Framework into the workspace.
+Frontmatter: scoped -> root
+  .agents/loader.md             Entries would be updated
+  AGENTS.md                     Open Forge section would be updated
+  CLAUDE.md                     Open Forge section would be added, your content would be kept
+  .agents/open-forge.json       settings would be updated
+  .agents/open-forge.lock.json  ownership record would be updated
+  .agents/metadata.md           metadata would move to root keys
+  .gitignore                    Open Forge Git-ignore rules would be updated
+  .agents/occupant.md           metadata would be completed, your content would be kept
+  .agents/memory/_memory.md     Entries would be updated
+  .agents/occupant.md           Planned migration: metadata updated
+  Would update 9 existing files.
+  Planned migration for 1 source.
+No files were changed.
+
+Apply these changes? [y/N]

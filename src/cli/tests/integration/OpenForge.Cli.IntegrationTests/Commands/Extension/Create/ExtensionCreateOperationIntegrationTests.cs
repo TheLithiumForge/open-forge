@@ -184,7 +184,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
                 cataloguePath: null,
                 mode: ExtensionCreateMode.DryRun,
                 allowInteraction: true),
-            "\nBAD ID\ndevelopment-toolkit\n\n{catalogue}\n".Replace("{catalogue}", catalogue.Path, StringComparison.Ordinal),
+            $"\nBAD ID\ndevelopment-toolkit\n\n{catalogue.Combine("missing")}\n{catalogue.Path}\n",
             prompts,
             canPrompt: true,
             cancellationToken: TestContext.Current.CancellationToken);
@@ -192,8 +192,9 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal("development-toolkit", result.Manifest!.Id);
         Assert.True(CountPromptLines(prompts.ToString()) >= 4);
-        Assert.Contains("'BAD ID' is not a valid ID. Use lowercase letters, digits and hyphens.", prompts.ToString(), StringComparison.Ordinal);
-        Assert.Contains("ordinary directory", prompts.ToString(), StringComparison.Ordinal);
+        Assert.Contains("'BAD ID' is not a valid Extension ID. Use lowercase letters and digits, with single hyphens between them, up to 128 characters.", prompts.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Enter an existing folder. Open Forge creates a folder named after the Extension ID inside it.", prompts.ToString(), StringComparison.Ordinal);
+        Assert.Contains("That folder does not exist. Enter an existing folder.", prompts.ToString(), StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "OS")]

@@ -13,7 +13,7 @@ internal static class RouteMoveSourceSelectionPrompt
         ArgumentNullException.ThrowIfNull(prompts);
         return (question, policy, cancellationToken) => prompts.SelectAsync(
             new CliSelectQuestion<string>(
-                RouteSourceSelectionWording.SourceSelection(
+                RouteSourceSelectionWording.Move(
                     question.RequestedId,
                     question.CandidatePaths.Count),
                 question.CandidatePaths

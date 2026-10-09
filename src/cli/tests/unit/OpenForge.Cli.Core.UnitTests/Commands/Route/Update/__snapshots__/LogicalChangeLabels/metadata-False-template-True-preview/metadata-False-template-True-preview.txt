@@ -1,0 +1,6 @@
+Would update memory/topic
+Workspace: <workspace>
+  Path: .agents/memory/topic.md
+  Template: .agents/templates/topic.md
+  .agents/memory/topic.md  Template body would be added
+No files were changed.

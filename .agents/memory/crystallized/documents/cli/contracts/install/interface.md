@@ -306,10 +306,12 @@ built-in category and Memory state, with no preset Git-ignore entries. Neither
 preset installs optional Extensions.
 
 Custom exposes Directives, Guidance, Maps, Patterns, Skills, Templates, and
-the four built-in Memory states. Each offers Add, Remove, or Add + Git-ignore.
+the four built-in Memory states. Each row is Add (`+`), Add + Git-ignore (`~`),
+or Remove (`-`).
 Remove omits supplied defaults and releases only their Framework management.
 Existing files, authored notes and overwrite companions are retained and remain
-routable. The wizard states this explicitly. Add + Git-ignore installs the
+routable. The wizard states this for a focused Remove row in an installed
+workspace. Add + Git-ignore installs the
 ordinary route, records its sharing policy in the lock, then adds a contents
 pattern and entrypoint exception to its section of `.gitignore`. Index omits
 private contents from generated Entries. Context, Find and References still
@@ -326,9 +328,31 @@ values are invalid input. Identical repeated values are idempotent.
 
 A first prompt-capable interactive apply offers the three presets, with
 Essentials first. Explicit `--configure` offers selection even on an installed
-workspace. Custom starts with the current choices and reviews each row, retaining
-the choices already supplied by `--route`. Selection completes before the one
-immutable plan and final application confirmation. Cancellation writes nothing.
+workspace. Custom then shows one marked list of the ten rows with their current
+marks, under the question `Choose what Open Forge sets up` and the legend
+`+ add   ~ add, keep contents out of Git   - leave out`. Each row shows its ID
+and a short summary. Rows supplied by `--route` are locked. The shared marked
+list primitive defines the keys and line mode. Selection completes before the
+one immutable plan and final application confirmation. Cancellation writes
+nothing.
+
+```text
+Choose what Open Forge sets up
++ add   ~ add, keep contents out of Git   - leave out
+
+> [+] directives           Rules agents must follow
+  [-] guidance             Advice for recurring choices
+  [-] maps                 Pointers to important sources
+  [+] patterns             Reusable shapes for code and documents
+  [+] skills               Packaged agent capabilities
+  [-] templates            Copy-ready starter files
+  [~] memory/working       Notes for active work
+  [+] memory/emerging      Findings not accepted yet
+  [+] memory/crystallized  Accepted knowledge
+  [-] memory/archived      Completed and historical records
+
+up/down move   + ~ - set   space next   enter done   esc cancel
+```
 Ordinary repeated Install remains quiet when its exact state is already current.
 
 After the preset choice, first interactive Install asks
@@ -336,7 +360,7 @@ After the preset choice, first interactive Install asks
 
 | Choice | Explanation |
 | ------ | ----------- |
-| `Root keys` | `description: and tags: at the top of the frontmatter` |
+| `Root keys` | `description: and tags: at the top level` |
 | `Scoped under open-forge:` | `open-forge: holds description: and tags:` |
 
 An explicit `--frontmatter` skips the question. Every fresh Install writes the
@@ -584,8 +608,10 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 | ----------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---: | ------ |
 | completed               | fresh install                                        | `Installed the Open Forge Framework into <workspace>.`                                          |    0 | stdout |
 | completed               | force replaced existing files                        | `Installed the Open Forge Framework into <workspace>, replacing <N> existing files.`            |    0 | stdout |
+| completed               | `--configure` on an installed workspace              | `Changed the Open Forge setup in <workspace>.`                                                  |    0 | stdout |
 | completed               | already installed and current                        | `Open Forge is already installed and current. Nothing to do.`                                   |    0 | stdout |
-| completed (dry run)     | any plan                                             | `Would install the Open Forge Framework into <workspace>.` (+ `, replacing <N> existing files`) |    0 | stdout |
+| completed (dry run)     | install plan                                         | `Would install the Open Forge Framework into <workspace>.` (+ `, replacing <N> existing files`) |    0 | stdout |
+| completed (dry run)     | `--configure` plan on an installed workspace         | `Would change the Open Forge setup in <workspace>.`                                             |    0 | stdout |
 | completed-with-warnings | recovery bundle retained after success               | headline as completed + family `recovery-artifact-retained` row                                 |    2 | stdout |
 | incomplete              | bundled Framework, lock or recovery store unreadable | `Install could not start: <limitation>. Nothing was changed.`                                   |    3 | stdout |
 | invalid-input           | bad input; confirmation unavailable                  | family `invalid-input` / `confirmation-required`                                                |    4 | stderr |
@@ -611,7 +637,7 @@ Workspace: D:/work/myrepo
 ```text
 Installed the Open Forge Framework into D:/work/myrepo.
 Workspace: D:/work/myrepo
-  AGENTS.md  Open Forge section added; your content was kept
+  AGENTS.md  Open Forge section added, your content was kept
   CLAUDE.md  created with an Open Forge section
   Created <N> files and <N> directories under .agents (listed in .agents/open-forge.lock.json).
 ```
@@ -627,13 +653,28 @@ Workspace: D:/work/myrepo
 No files were changed.
 ```
 
+`minimal`, Configure dry run that adds Guidance and Git-ignores Archived Memory:
+
+```text
+Would change the Open Forge setup in D:/work/myrepo.
+Workspace: D:/work/myrepo
+Frontmatter: root
+  .agents/loader.md             Entries would be updated
+  .agents/memory/_memory.md     Entries would be updated
+  .agents/open-forge.json       settings would be updated
+  .agents/open-forge.lock.json  ownership record would be updated
+  .gitignore                    Open Forge Git-ignore rules would be updated
+  Would create 2 files and 2 directories under .agents, and update 5 existing files.
+No files were changed.
+```
+
 `minimal`, occupied, `--force`:
 
 ```text
 Installed the Open Forge Framework into D:/work/myrepo, replacing 2 existing files.
 Workspace: D:/work/myrepo
-  .agents/loader.md      replaced (your previous file is in the recovery bundle)
-  .agents/maps/_maps.md  replaced (your previous file is in the recovery bundle)
+  .agents/loader.md      replaced
+  .agents/maps/_maps.md  replaced
   Created <N> files and <N> directories under .agents (listed in .agents/open-forge.lock.json).
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
 ```
@@ -653,6 +694,27 @@ Next: open-forge install --force --dry-run  (preview replacing them)
 Install needs confirmation, and this session cannot ask.
 Next: open-forge install --automatic  (or --dry-run to see the plan first)
 ```
+
+Each row names the actual change. The preview form uses `would be` or `would`.
+
+| Change | Row label |
+| ------ | --------- |
+| New file or directory | `created` |
+| New `AGENTS.md` or `CLAUDE.md` | `created with an Open Forge section` |
+| Section added to an existing host file | `Open Forge section added, your content was kept` |
+| Open Forge section in a host file refreshed | `Open Forge section updated` |
+| Generated `Entries` in an existing entrypoint or the loader | `Entries updated` |
+| Install-owned Git-ignore section added or changed | `Open Forge Git-ignore rules added` or `Open Forge Git-ignore rules updated` |
+| Existing `.agents/open-forge.json` | `settings updated` |
+| Existing ownership record | `ownership record updated` |
+| Configure frontmatter conversion | `metadata moved to root keys` or `metadata moved under open-forge:` |
+| Missing metadata completed in an existing file | `metadata completed, your content was kept` |
+| Whole-file replacement | `replaced`, plus `(your previous file is in the recovery bundle)` only when the bundle was retained |
+
+`replacing <N> existing files` in a headline counts only whole-file
+replacements. One summary line counts created files and directories under
+`.agents` and updated existing files. `Nothing that already exists would be
+changed.` appears only when no existing file would change.
 
 For partial application, the headline is `Install stopped after <n> of <m> changes.`.
 The report identifies failed or unstarted effects, actual creations, and retained
@@ -674,10 +736,10 @@ The plan shows `Frontmatter: root` or `Frontmatter: scoped`. When the form
 changes, it shows the transition, such as `Frontmatter: scoped -> root`.
 
 In a terminal without `--automatic`: plan review at `minimal` on stderr, then
-`Apply these changes? [y/N]`. When the plan replaces existing files, including
-bounded configuration settings, frontmatter conversions, or Git-ignore edits,
-the question reads
-`Replace the 2 existing files listed above? [y/N]` with the actual count.
+`Apply these changes? [y/N]`. When the plan replaces whole existing files, the
+question reads `Apply these changes, including replacing 2 existing files? [y/N]`
+with the actual count. Entries, section, settings, ownership record, Git-ignore
+and frontmatter conversion changes do not change the question.
 Configuration retains its bounded authority without requiring `--force`;
 initial payload replacement still requires it. See
 [04](../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md).

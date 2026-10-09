@@ -13,12 +13,26 @@ internal static class InstallWording
         ArgumentNullException.ThrowIfNull(facts);
         if (facts.ReplacementCount > 0)
         {
-            var noun = facts.ReplacementCount == 1 ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFile() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFiles();
-            return global::OpenForge.Cli.OutputText.Install.InstallPhrases.FormatReplaceTheExistingListedAboveYN(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{facts.ReplacementCount}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{noun}"));
+            return CliPromptWording.ConfirmReplacing(facts.ReplacementCount);
         }
 
         return CliPromptWording.Confirm();
     }
+
+    internal static string Configured(string workspace, bool preview)
+        => global::OpenForge.Cli.OutputText.Install.InstallWording.Configured(workspace, preview);
+
+    internal static string WithHostFiles(string summary)
+        => global::OpenForge.Cli.OutputText.Install.InstallWording.WithHostFiles(summary);
+
+    internal static string ChangeSummary(string? creationSummary, int updatedFiles, int replacedFiles, bool preview)
+        => global::OpenForge.Cli.OutputText.Install.InstallWording.ChangeSummary(creationSummary, updatedFiles, replacedFiles, preview);
+
+    internal static string FrontmatterConversion(string form, bool preview)
+        => global::OpenForge.Cli.OutputText.Install.InstallWording.FrontmatterConversion(form, preview);
+
+    internal static string GitIgnoreRules(bool added, bool preview)
+        => global::OpenForge.Cli.OutputText.Install.InstallWording.GitIgnoreRules(added, preview);
 
     internal static string Installed(string workspace, int replacements)
         => replacements > 0
@@ -79,9 +93,7 @@ internal static class InstallWording
     internal static string WouldCreateHostFile() => global::OpenForge.Cli.OutputText.Install.InstallText.LabelWouldBeCreatedWithAnOpenForgeSection();
 
     internal static string AppendedHostFile(bool preview)
-        => preview
-            ? global::OpenForge.Cli.OutputText.Install.InstallText.LabelWouldAddAnOpenForgeSectionYourContentWouldBeKept()
-            : global::OpenForge.Cli.OutputText.Install.InstallText.TitleOpenForgeSectionAddedYourContentWasKept();
+        => CliChangeWording.AddedOpenForgeSection(preview);
 
     internal static string CreatedFile(bool preview)
         => preview ? global::OpenForge.Cli.OutputText.Install.InstallText.LabelWouldBeCreated() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelCreated();
@@ -92,8 +104,11 @@ internal static class InstallWording
     internal static string AppendedSection(bool preview)
         => preview ? global::OpenForge.Cli.OutputText.Install.InstallText.LabelWouldAppendTheOpenForgeSection() : global::OpenForge.Cli.OutputText.Install.InstallText.TitleOpenForgeSectionAdded();
 
-    internal static string ReplacedFile(bool preview)
-        => preview ? global::OpenForge.Cli.OutputText.Install.InstallText.LabelWouldBeReplaced() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelReplaced();
+    internal static string ReplacedFile(bool preview, bool recoveryKept)
+        => CliChangeWording.Replaced(preview, recoveryKept);
+
+    internal static string MetadataCompleted(bool preview)
+        => global::OpenForge.Cli.OutputText.Install.InstallWording.MetadataCompleted(preview);
 
     internal static string NotStartedFile() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted();
 
@@ -127,14 +142,6 @@ internal static class InstallWording
 
         var total = files + directories;
         return global::OpenForge.Cli.OutputText.Install.InstallPhrases.FormatFilesAndDirectoriesWereCreated(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{total}"));
-    }
-
-    internal static string DirectorySummary(int count, bool preview)
-    {
-        var noun = CliTextPlural(count, global::OpenForge.Cli.OutputText.Shared.SharedText.LabelDirectory());
-        return preview
-            ? global::OpenForge.Cli.OutputText.Install.InstallPhrases.FormatWouldCreate(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{noun}"))
-            : global::OpenForge.Cli.OutputText.Install.InstallPhrases.FormatCreated(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{noun}"));
     }
 
     internal static string SectionsSummary(int count, bool preview)

@@ -33,7 +33,7 @@ internal static class ExtensionInstallPhrases
 
     // @OpenForgeText extension.install.phrase.replace-the-existing-file-listed-above-y-n
     internal static string FormatReplaceTheExistingFileListedAboveYN(string countText, string valueText)
-        => $"Replace the {countText} existing file{valueText} listed above? [y/N]";
+        => $"Allow replacing the {countText} existing file{valueText} listed above? [y/N]";
 
     // @OpenForgeText extension.install.phrase.extensions
     internal static string FormatExtensions(string verbText, string countText, string joinText)

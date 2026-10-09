@@ -2,4 +2,4 @@ Would install the toolkit Extension.
 Workspace: <workspace>
   .agents/toolkit.md  Would create (toolkit)
   Source: <extension-source> (catalogue)
-  .agents/open-forge.lock.json  Would update
+  .agents/open-forge.lock.json  ownership record would be updated

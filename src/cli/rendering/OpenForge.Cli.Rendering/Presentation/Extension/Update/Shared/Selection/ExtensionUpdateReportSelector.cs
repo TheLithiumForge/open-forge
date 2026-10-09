@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Presentation.Extension.Update.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
@@ -154,10 +155,10 @@ internal static class ExtensionUpdateReportSelector
                     && (candidate.PackageId == effect.PackageId || effect.PackageId is null));
                 var planned = effect.Outcome == ExtensionUpdateEffectOutcome.Planned
                     || result.Mode == ExtensionUpdateMode.DryRun && effect.Outcome != ExtensionUpdateEffectOutcome.Verified;
-                var text = effect.Outcome == ExtensionUpdateEffectOutcome.NotStarted
-                    ? ExtensionUpdateWording.NotStarted()
-                    : change.Kind == ExtensionUpdateComparisonTargetKind.GeneratedRegion
-                        ? ExtensionUpdateWording.EntriesUpdated()
+                var text = change.Kind == ExtensionUpdateComparisonTargetKind.GeneratedRegion
+                    ? EntriesWording(effect.Outcome)
+                    : effect.Outcome == ExtensionUpdateEffectOutcome.NotStarted
+                        ? ExtensionUpdateWording.NotStarted()
                         : Row(change.Action, comparison, planned);
                 effects.Add(new ExtensionUpdateProjectedEffect
                 {
@@ -193,6 +194,17 @@ internal static class ExtensionUpdateReportSelector
 
         return effects;
     }
+
+    private static string EntriesWording(ExtensionUpdateEffectOutcome outcome)
+        => outcome switch
+        {
+            ExtensionUpdateEffectOutcome.Planned => CliChangeWording.Entries(preview: true),
+            ExtensionUpdateEffectOutcome.Verified => CliChangeWording.Entries(preview: false),
+            ExtensionUpdateEffectOutcome.NotStarted => ExtensionUpdateWording.NotStarted(),
+            ExtensionUpdateEffectOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFailed(),
+            ExtensionUpdateEffectOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
+        };
 
     private static ExtensionUpdateProjectedEffect ProjectKept(
         ExtensionUpdateComparison comparison,
@@ -430,7 +442,7 @@ internal static class ExtensionUpdateReportSelector
             details.Add(ExtensionUpdateWording.Unchanged(unchanged));
             if (sections > 0)
             {
-                details.Add(ExtensionUpdateWording.Sections(sections));
+                details.Add(ExtensionUpdateWording.Sections(sections, result.Mode == ExtensionUpdateMode.DryRun));
             }
 
             details.Add(ExtensionUpdateWording.Grant(

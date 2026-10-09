@@ -1,0 +1,5 @@
+Updated memory/topic
+Workspace: <workspace>
+  Path: .agents/memory/topic.md
+  Template: .agents/templates/topic.md
+  .agents/memory/topic.md  Template body added

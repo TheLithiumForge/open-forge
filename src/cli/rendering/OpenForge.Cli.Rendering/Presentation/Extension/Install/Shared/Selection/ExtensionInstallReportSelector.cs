@@ -33,7 +33,7 @@ internal static class ExtensionInstallReportSelector
             .Select(region => region.Path)
             .Order(StringComparer.Ordinal)
             .ToArray() ?? [];
-        var projectedEffects = result.Effects.Select(ProjectEffect).ToArray();
+        var projectedEffects = result.Effects.Select(effect => ProjectEffect(effect, result.Recovery.State)).ToArray();
         var counts = Counts(result, preview, projectedEffects);
         var noOp = result.Status == CliSemanticStatus.Complete
             && result.Lifecycle.Outcome == ExtensionInstallLifecycleOutcome.AlreadyCurrent;
@@ -555,7 +555,7 @@ internal static class ExtensionInstallReportSelector
         => result.Status == CliSemanticStatus.Complete
             && result.Lifecycle.Outcome == ExtensionInstallLifecycleOutcome.AlreadyCurrent;
 
-    private static CliEffect ProjectEffect(ExtensionInstallEffect effect)
+    private static CliEffect ProjectEffect(ExtensionInstallEffect effect, ExtensionInstallRecoveryState recoveryState)
         => new()
         {
             Path = effect.Path,
@@ -595,6 +595,7 @@ internal static class ExtensionInstallReportSelector
                 ExtensionInstallEffectResidual.None => null,
                 ExtensionInstallEffectResidual.Retained when effect.Kind == ExtensionInstallEffectKind.PackageFile
                     && effect.Action == ExtensionInstallEffectAction.Replace
+                    && recoveryState == ExtensionInstallRecoveryState.Retained
                     => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.LabelYourPreviousFileIsInTheRecoveryBundle(),
                 ExtensionInstallEffectResidual.Retained => null,
                 ExtensionInstallEffectResidual.Unknown => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.LabelTheFinalStateIsUnknown(),
@@ -627,7 +628,7 @@ internal static class ExtensionInstallReportSelector
                 {
                     rows.Add(new ExtensionInstallDataTextRow(
                         effect.Path,
-                        EffectText(effect, preview)));
+                        EffectText(effect, preview, result.Recovery.State)));
                 }
 
                 continue;
@@ -645,7 +646,7 @@ internal static class ExtensionInstallReportSelector
                 effect.Path,
                 detail == CliDetail.Minimal && forceBoundary
                     ? string.Empty
-                    : EffectText(effect, preview)));
+                    : EffectText(effect, preview, result.Recovery.State)));
         }
 
         if (result.Status == CliSemanticStatus.Blocked
@@ -658,7 +659,7 @@ internal static class ExtensionInstallReportSelector
         return rows;
     }
 
-    private static string EffectText(ExtensionInstallEffect effect, bool preview)
+    private static string EffectText(ExtensionInstallEffect effect, bool preview, ExtensionInstallRecoveryState recoveryState)
     {
         return effect.Outcome switch
         {
@@ -671,7 +672,8 @@ internal static class ExtensionInstallReportSelector
                     ExtensionInstallEffectKind.PackageFile when effect.Action == ExtensionInstallEffectAction.Create
                         => ExtensionInstallWording.CreatedFile(effect.PackageId ?? global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.LabelPackage(), preview),
                     ExtensionInstallEffectKind.PackageFile when effect.Action == ExtensionInstallEffectAction.Replace
-                        => ExtensionInstallWording.ReplacedFile(preview),
+                        => ExtensionInstallWording.ReplacedFile(preview,
+                            recoveryKept: !preview && recoveryState == ExtensionInstallRecoveryState.Retained),
                     ExtensionInstallEffectKind.GeneratedRegion => ExtensionInstallWording.UpdatedSection(preview),
                     _ => throw new ArgumentOutOfRangeException(nameof(effect), effect.Kind,
                         "The Extension Install text effect kind is not defined."),
@@ -748,7 +750,7 @@ internal static class ExtensionInstallReportSelector
 
             if (result.Lifecycle.Action != ExtensionInstallLifecycleAction.None)
             {
-                details.Add($".agents/open-forge.lock.json  {ExtensionInstallWording.Lock(preview)}");
+                details.Add($".agents/open-forge.lock.json  {ExtensionInstallWording.Lock(result.Lifecycle.Outcome)}");
             }
         }
 

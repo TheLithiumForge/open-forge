@@ -1,0 +1,49 @@
+Choose what Open Forge sets up
++ add   ~ add, keep contents out of Git   - leave out
+
+   1. [+] directives           Rules agents must follow
+directives is set by --route directives=add. Change that option to change this row.
+   2. [-] guidance             Advice for recurring choices
+   3. [-] maps                 Pointers to important sources
+   4. [+] patterns             Reusable shapes for code and documents
+   5. [+] skills               Packaged agent capabilities
+   6. [-] templates            Copy-ready starter files
+   7. [~] memory/working       Notes for active work
+   8. [+] memory/emerging      Findings not accepted yet
+   9. [+] memory/crystallized  Accepted knowledge
+  10. [-] memory/archived      Completed and historical records
+Type a row number and a mark, such as 2+ or 7~. Press Enter on an empty line to continue.
+>
+Choose what Open Forge sets up
++ add   ~ add, keep contents out of Git   - leave out
+
+   1. [+] directives           Rules agents must follow
+directives is set by --route directives=add. Change that option to change this row.
+   2. [+] guidance             Advice for recurring choices
+   3. [-] maps                 Pointers to important sources
+   4. [+] patterns             Reusable shapes for code and documents
+   5. [+] skills               Packaged agent capabilities
+   6. [-] templates            Copy-ready starter files
+   7. [~] memory/working       Notes for active work
+   8. [+] memory/emerging      Findings not accepted yet
+   9. [~] memory/crystallized  Accepted knowledge
+  10. [-] memory/archived      Completed and historical records
+Type a row number and a mark, such as 2+ or 7~. Press Enter on an empty line to continue.
+>
+directives is set by --route directives=add. Change that option to change this row.
+Choose what Open Forge sets up
++ add   ~ add, keep contents out of Git   - leave out
+
+   1. [+] directives           Rules agents must follow
+directives is set by --route directives=add. Change that option to change this row.
+   2. [+] guidance             Advice for recurring choices
+   3. [-] maps                 Pointers to important sources
+   4. [+] patterns             Reusable shapes for code and documents
+   5. [+] skills               Packaged agent capabilities
+   6. [-] templates            Copy-ready starter files
+   7. [~] memory/working       Notes for active work
+   8. [+] memory/emerging      Findings not accepted yet
+   9. [~] memory/crystallized  Accepted knowledge
+  10. [-] memory/archived      Completed and historical records
+Type a row number and a mark, such as 2+ or 7~. Press Enter on an empty line to continue.
+>

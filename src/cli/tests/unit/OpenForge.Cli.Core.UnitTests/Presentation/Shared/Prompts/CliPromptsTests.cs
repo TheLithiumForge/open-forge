@@ -186,14 +186,14 @@ public sealed class CliPromptsTests
             "Which packages?",
             [new CliChoice<string>("app", "app"), new CliChoice<string>("runtime", "runtime")],
             [new CliDependency<string>("app", "runtime")],
-            new HashSet<string>());
+            new HashSet<string>(), CliSelectionAction.Install);
 
         var reply = await prompts.MultiSelectAsync(question, new CliPromptPolicy(Allowed: true), CancellationToken.None);
 
         Assert.Equal(CliPromptState.Answered, reply.State);
         Assert.Equal(["app"], reply.Value.Chosen);
         Assert.Equal(["runtime"], reply.Value.Required);
-        var notice = "runtime is required by app. Unchoose that first.";
+        var notice = "To leave runtime out, unchoose app first.";
         Assert.Equal(1, CountOccurrences(scripted.Output.ToString(), notice));
         Assert.DoesNotContain(notice + Environment.NewLine + notice, scripted.Output.ToString(), StringComparison.Ordinal);
     }
@@ -230,14 +230,14 @@ public sealed class CliPromptsTests
             "Which packages?",
             [new CliChoice<string>("app", "app"), new CliChoice<string>("runtime", "runtime")],
             [new CliDependency<string>("app", "runtime")],
-            new HashSet<string>(["runtime"]));
+            new HashSet<string>(["runtime"]), CliSelectionAction.Install);
 
         var reply = await prompts.MultiSelectAsync(question, new CliPromptPolicy(Allowed: true), CancellationToken.None);
 
         Assert.Equal(CliPromptState.Answered, reply.State);
         Assert.Equal(["app"], reply.Value.Chosen);
         Assert.Empty(reply.Value.Required);
-        Assert.Contains("installed", scripted.Output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Installed", scripted.Output.ToString(), StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Input")]
@@ -255,6 +255,7 @@ public sealed class CliPromptsTests
             [new CliChoice<string>("app", "app"), new CliChoice<string>("runtime", "runtime")],
             [new CliDependency<string>("app", "runtime")],
             new HashSet<string>(),
+            CliSelectionAction.Remove,
             CliDependencyDirection.Dependents);
 
         var reply = await prompts.MultiSelectAsync(question, new CliPromptPolicy(Allowed: true), CancellationToken.None);
@@ -288,18 +289,18 @@ public sealed class CliPromptsTests
         var scripted = ScriptedCliTerminal.Lines(["My Tools", "my-tools"]);
         var prompts = new CliPrompts(scripted.Terminal);
         var question = new CliTextQuestion<string>(
-            "Extension ID (lowercase, digits and hyphens):",
-            "Use lowercase letters, digits and hyphens.",
+            "Extension ID (for example my-tools):",
+            "Use lowercase letters and digits, with single hyphens between them, up to 128 characters.",
             Required: true,
             value => value is "my-tools"
                 ? new CliTextValidation<string>(true, value, null)
-                : new CliTextValidation<string>(false, null, "'My Tools' is not a valid ID. Use lowercase letters, digits and hyphens."));
+                : new CliTextValidation<string>(false, null, "'My Tools' is not a valid Extension ID. Use lowercase letters and digits, with single hyphens between them, up to 128 characters."));
 
         var reply = await prompts.TextAsync(question, new CliPromptPolicy(Allowed: true), CancellationToken.None);
 
         Assert.Equal(CliPromptState.Answered, reply.State);
         Assert.Equal("my-tools", reply.Value);
-        Assert.Contains("'My Tools' is not a valid ID.", scripted.Output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("'My Tools' is not a valid Extension ID.", scripted.Output.ToString(), StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Input")]
@@ -349,9 +350,9 @@ public sealed class CliPromptsTests
         Assert.Equal(CliPromptState.Answered, reply.State);
         Assert.Equal(CliPermissionChoice.Always, reply.Value);
         var frame = Assert.Single(scripted.Frames);
-        Assert.Contains("memory-starters writes outside .agents:", frame, StringComparison.Ordinal);
-        Assert.Contains("templates/memory   (directory: everything under it)", frame, StringComparison.Ordinal);
-        Assert.Contains(">  1. Allow always", frame, StringComparison.Ordinal);
+        Assert.Contains("Allow memory-starters to change these paths outside .agents?", frame, StringComparison.Ordinal);
+        Assert.Contains("templates/memory (folder and everything below it)", frame, StringComparison.Ordinal);
+        Assert.Contains("> 1. Allow always", frame, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Input")]
@@ -362,7 +363,7 @@ public sealed class CliPromptsTests
         var alwaysReply = await new CliPrompts(always.Terminal).PermissionAsync(
             PermissionQuestion(), new CliPromptPolicy(Allowed: true), CancellationToken.None);
         Assert.Equal(CliPermissionChoice.Always, alwaysReply.Value);
-        Assert.Contains("always, once, cancel:", always.Output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Type always, once or cancel:", always.Output.ToString(), StringComparison.Ordinal);
 
         var once = ScriptedCliTerminal.Lines(["once"]);
         var onceReply = await new CliPrompts(once.Terminal).PermissionAsync(
@@ -405,7 +406,7 @@ public sealed class CliPromptsTests
             "Which packages?",
             [new CliChoice<string>("a", "a"), new CliChoice<string>("b", "b"), new CliChoice<string>("c", "c")],
             dependencies,
-            new HashSet<string>());
+            new HashSet<string>(), CliSelectionAction.Install);
 
     private static CliPermissionQuestion PermissionQuestion()
         => new("memory-starters", [new CliPermissionPath("templates/memory", true)]);

@@ -36,7 +36,7 @@ Install, Update, and Extension delivery use `frontmatter` in `.agents/open-forge
 
 Neither built-in preset installs optional Extensions. Essentials omits Guidance, Maps, Templates, and Archived Memory.
 
-Custom row IDs are `directives`, `guidance`, `maps`, `patterns`, `skills`, `templates`, `memory/working`, `memory/emerging`, `memory/crystallized`, and `memory/archived`. Identical repeated presets or row actions are idempotent. Conflicting repeats, unknown IDs, presets, or actions are invalid. Interactive Custom retains supplied overrides and reviews the other rows.
+Custom row IDs are `directives`, `guidance`, `maps`, `patterns`, `skills`, `templates`, `memory/working`, `memory/emerging`, `memory/crystallized`, and `memory/archived`. Identical repeated presets or row actions are idempotent. Conflicting repeats, unknown IDs, presets, or actions are invalid. Interactive Custom shows one list with a mark per row: `+` add, `~` git-ignore and `-` remove. Rows supplied by `--route` are locked.
 
 Custom Remove omits supplied defaults and releases only their Framework management. Existing files, authored notes, and overwrite companions stay routable. Add and Remove clear only that row's owned ignore rules, preserving user rules. Malformed owned sections block changes rather than being replaced.
 

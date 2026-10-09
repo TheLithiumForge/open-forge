@@ -1,0 +1,3 @@
+Updated 1 Framework file.
+  .agents/loader.md             replaced
+  .agents/open-forge.lock.json  ownership record updated

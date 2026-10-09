@@ -133,24 +133,29 @@ internal static class RouteMoveReportSelector
             }
         }
 
-        rows.AddRange(NavigationRows(result, category));
+        rows.AddRange(NavigationRows(result));
 
-        if (result.References.Rewrites.Length > 0)
+        var rewrites = ProgressedRewrites(result);
+        if (rewrites.Count > 0)
         {
-            rows.Add(RouteMoveWording.RewriteHeading(result.References.Rewrites.Length, category));
-            foreach (var rewrite in result.References.Rewrites)
-            {
-                var location = RouteMoveWording.RewriteLocation(
-                    rewrite.DestinationSourcePath,
-                    rewrite.LocationView.Line,
-                    rewrite.LocationView.Column);
-                if (standard)
-                {
-                    location += $"  {RouteMoveWording.RewriteDestination(rewrite.OldTarget.Path, rewrite.ExpectedTarget.Path)}";
-                }
+            rows.Add(RouteMoveWording.RewriteHeading(rewrites.Count, category, dryRun));
+            rows.AddRange(rewrites.Select(rewrite => RewriteRow(rewrite, standard)));
+        }
 
-                rows.Add(location);
-            }
+        var remaining = result.References.Rewrites.Except(rewrites).ToArray();
+        var unconfirmed = remaining.Where(rewrite => RewriteOutcome(result, rewrite)
+            is RouteMoveEffectOutcome.VerificationFailed or RouteMoveEffectOutcome.CompletionUnknown).ToArray();
+        var notStarted = remaining.Except(unconfirmed).ToArray();
+        if (unconfirmed.Length > 0)
+        {
+            rows.Add(RouteMoveWording.RewriteUnconfirmedHeading(unconfirmed.Length));
+            rows.AddRange(unconfirmed.Select(rewrite => RewriteRow(rewrite, standard)));
+        }
+
+        if (notStarted.Length > 0)
+        {
+            rows.Add(RouteMoveWording.RewriteNotStartedHeading(notStarted.Length, category));
+            rows.AddRange(notStarted.Select(rewrite => RewriteRow(rewrite, standard)));
         }
 
         if (full)
@@ -165,36 +170,46 @@ internal static class RouteMoveReportSelector
         return rows;
     }
 
-    private static IReadOnlyList<string> NavigationRows(RouteMoveResult result, bool category)
+    private static string RewriteRow(RouteMoveReferenceRewrite rewrite, bool standard)
+    {
+        var location = RouteMoveWording.RewriteLocation(
+            rewrite.DestinationSourcePath,
+            rewrite.LocationView.Line,
+            rewrite.LocationView.Column);
+        return standard
+            ? $"{location}  {RouteMoveWording.RewriteDestination(rewrite.OldTarget.Path, rewrite.ExpectedTarget.Path)}"
+            : location;
+    }
+
+    private static RouteMoveEffectOutcome? RewriteOutcome(RouteMoveResult result, RouteMoveReferenceRewrite rewrite)
+        => result.Effects.FirstOrDefault(effect => effect.Path == rewrite.DestinationSourcePath
+            && effect.Action != RouteMoveEffectAction.Delete)?.Outcome;
+
+    private static IReadOnlyList<RouteMoveReferenceRewrite> ProgressedRewrites(RouteMoveResult result)
+        => result.References.Rewrites.Where(rewrite => result.Effects.Any(effect =>
+                effect.Path == rewrite.DestinationSourcePath
+                && effect.Action != RouteMoveEffectAction.Delete
+                && IsProgressed(effect, result.Mode)))
+            .ToArray();
+
+    private static IReadOnlyList<string> NavigationRows(RouteMoveResult result)
     {
         var rows = new List<string>();
         foreach (var region in result.GeneratedNavigation.Regions
                      .Where(region => region.State == RouteMoveGeneratedState.Changed))
         {
-            if (!category)
+            var effect = result.Effects.FirstOrDefault(effect => effect.Path == region.Path
+                && effect.Action != RouteMoveEffectAction.Delete);
+            var label = effect?.Outcome switch
             {
-                rows.Add(RouteMoveWording.EntryUpdated(region.Path));
-                continue;
-            }
-
-            foreach (var reason in region.Reasons)
-            {
-                var row = reason switch
-                {
-                    RouteMoveGeneratedReason.OldParent => RouteMoveWording.EntryRemoved(region.Path),
-                    RouteMoveGeneratedReason.NewParent => RouteMoveWording.EntryAdded(region.Path),
-                    RouteMoveGeneratedReason.Loader
-                        or RouteMoveGeneratedReason.MovedEntrypoint => RouteMoveWording.EntryUpdated(region.Path),
-                    _ => throw new ArgumentOutOfRangeException(
-                        nameof(region),
-                        reason,
-                        "The Route Move generated-navigation reason is not defined."),
-                };
-                if (!rows.Contains(row, StringComparer.Ordinal))
-                {
-                    rows.Add(row);
-                }
-            }
+                RouteMoveEffectOutcome.Planned => CliChangeWording.Entries(preview: true),
+                RouteMoveEffectOutcome.Verified => CliChangeWording.Entries(preview: false),
+                RouteMoveEffectOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFailed(),
+                RouteMoveEffectOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
+                null or RouteMoveEffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
+                _ => throw new ArgumentOutOfRangeException(nameof(result), effect.Outcome, "The Route Move effect outcome is not defined."),
+            };
+            rows.Add($"{region.Path}  {label}");
         }
 
         return rows;
@@ -634,7 +649,7 @@ internal static class RouteMoveReportSelector
         [
             new CliCount("filesMoved", global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.LabelFilesMoved(), MovedFileCount(result)),
             new CliCount("sectionsUpdated", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelSectionsUpdated(), SectionsUpdated(result)),
-            new CliCount("linksRewritten", global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.LabelLinksRewritten(), result.References.Rewrites.Length),
+            new CliCount("linksRewritten", global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.LabelLinksRewritten(), ProgressedRewrites(result).Count),
             new CliCount(
                 "filesScanned",
                 global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.LabelFilesScanned(),

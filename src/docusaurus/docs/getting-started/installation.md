@@ -32,13 +32,38 @@ The first interactive install offers three choices:
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Essentials | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with private contents and a shared entrypoint |
 | Full Core  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                |
-| Custom     | Choose Add, Remove, or Add + Git-ignore for each built-in category and Memory state                                               |
+| Custom     | One list of every built-in category and Memory state, where you mark each one to add, add and Git-ignore, or leave out             |
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. You can add them later. Full Core includes the base categories, not optional Extensions or an agent runtime.
 
 Git-ignored routes keep their entrypoint eligible for Git, so teammates receive the route and its rules. New local records stay private. Commit the entrypoint and `.agents/open-forge*.json` files. Index reads the lock's sharing policy and omits private contents from generated Entries. Agents can still find and read those contents locally. Git-ignore doesn't untrack files already committed to Git.
 
-Custom starts from your current choices in an existing workspace, or Essentials in a fresh one. **Remove** omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions stay in place and remain routable. **Add + Git-ignore** installs the route, records its sharing policy, then ignores its contents with an exception for its entrypoint. Other Git-ignore rules stay yours.
+Custom shows one list, starting from your current choices in an existing workspace, or Essentials in a fresh one:
+
+```text
+Choose what Open Forge sets up
++ add   ~ add, keep contents out of Git   - leave out
+
+> [+] directives           Rules agents must follow
+  [-] guidance             Advice for recurring choices
+  [-] maps                 Pointers to important sources
+  [+] patterns             Reusable shapes for code and documents
+  [+] skills               Packaged agent capabilities
+  [-] templates            Copy-ready starter files
+  [~] memory/working       Notes for active work
+  [+] memory/emerging      Findings not accepted yet
+  [+] memory/crystallized  Accepted knowledge
+  [-] memory/archived      Completed and historical records
+
+up/down move   + ~ - set   space next   enter done   esc cancel
+```
+
+Press `+`, `~` or `-` to set the focused row, or space to move it to the next mark, then press Enter. Without key input, type edits such as `2+ 9~` and press Enter on an empty line to continue.
+
+- **`-` leave out** omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions stay in place and remain routable.
+- **`~` add, keep contents out of Git** installs the route, records its sharing policy, then ignores its contents with an exception for its entrypoint. Other Git-ignore rules stay yours.
+
+The plan that follows says what happens to each existing file, such as `Entries would be updated` or `settings would be updated`. Only a whole-file swap says `replaced`.
 
 ## Choose the frontmatter form
 
@@ -70,7 +95,7 @@ open-forge:
 </TabItem>
 </Tabs>
 
-After resolving the preset, first interactive Install asks `How should Open Forge write file metadata?` and shows a short example of each form. The choices are `Root keys` (`description: and tags: at the top of the frontmatter`) and `Scoped under open-forge:` (`open-forge: holds description: and tags:`). Root is preselected when no preference is already declared in settings. `--frontmatter root` or `--frontmatter scoped` skips the question.
+After resolving the preset, first interactive Install asks `How should Open Forge write file metadata?` and shows a short example of each form. The choices are `Root keys` (`description: and tags: at the top level`) and `Scoped under open-forge:` (`open-forge: holds description: and tags:`). Root is preselected when no preference is already declared in settings. `--frontmatter root` or `--frontmatter scoped` skips the question.
 
 A fresh Install uses the explicit flag, then a preference already declared in settings. With neither, unattended Install chooses root. Every fresh Install writes the resolved `frontmatter` key. Ordinary repeated Install and Update retain the effective form and never ask.
 

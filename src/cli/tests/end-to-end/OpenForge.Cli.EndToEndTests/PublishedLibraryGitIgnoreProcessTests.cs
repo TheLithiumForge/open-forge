@@ -113,24 +113,24 @@ public sealed class PublishedLibraryGitIgnoreProcessTests
         };
         if (answer != "cancel")
         {
-            steps.Add(new("team writes outside .agents:", "2"));
+            steps.Add(new("Allow team to change these paths outside .agents?", "2"));
             steps.Add(new("Apply these changes? [y/N]", "y"));
         }
         var terminal = await PublishedWindowsTerminal.RunAsync(workspace.Target, workspace.Path,
             ["library", "attach", "team", "source", "--to", "docs"], workspace.ProcessEnvironment,
             new PublishedTerminalScenario { TerminalName = "xterm", Steps = steps });
         Assert.Equal(answer == "cancel" ? 130 : 0, terminal.ExitCode);
-        Assert.Contains("Add this Library's projected links to .gitignore?", terminal.Transcript, StringComparison.Ordinal);
-        Assert.Contains("Choice 1/2", terminal.Transcript, StringComparison.Ordinal);
-        var choice = terminal.Transcript.IndexOf("Add this Library's projected links to .gitignore?", StringComparison.Ordinal);
+        Assert.Contains("Add Git-ignore rules for this Library's links?", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("> 1. No", terminal.Transcript, StringComparison.Ordinal);
+        var choice = terminal.Transcript.IndexOf("Add Git-ignore rules for this Library's links?", StringComparison.Ordinal);
         if (answer == "cancel")
         {
             Assert.Equal(before, workspace.SnapshotState());
-            Assert.DoesNotContain("team writes outside .agents:", terminal.Transcript, StringComparison.Ordinal);
+            Assert.DoesNotContain("Allow team to change these paths outside .agents?", terminal.Transcript, StringComparison.Ordinal);
         }
         else
         {
-            var permission = terminal.Transcript.IndexOf("team writes outside .agents:", StringComparison.Ordinal);
+            var permission = terminal.Transcript.IndexOf("Allow team to change these paths outside .agents?", StringComparison.Ordinal);
             var preview = terminal.Transcript.IndexOf("Would register the team Library from source.", StringComparison.Ordinal);
             var confirmation = terminal.Transcript.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal);
             Assert.True(choice >= 0 && permission > choice && preview > permission && confirmation > preview, terminal.Transcript);

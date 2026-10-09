@@ -178,8 +178,8 @@ internal static class RepairWording
     internal static string CandidateDescription(RepairCandidate candidate)
     {
         var evidence = string.Join(
-            "; ",
-            candidate.Evidence.Select(value => $"{EvidenceKind(value.Kind)}: {value.Value}"));
+            ", ",
+            candidate.Evidence.Select(value => $"{PromptEvidenceKind(value.Kind)}: {value.Value}"));
         return candidate.RecommendedForReview
             ? global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatRecommendedForReview($"{evidence}")
             : evidence;
@@ -188,18 +188,39 @@ internal static class RepairWording
     internal static string LibraryQuestion(RepairLibraryPromptQuestion question)
     {
         ArgumentNullException.ThrowIfNull(question);
-        var proposal = question.Proposal;
-        return global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatLibraryRecoverAt(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{proposal.LibraryIdValue}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{EntryKind(question.EntryKind)}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{proposal.TargetPath}"));
+        return global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatLibraryRecoveryQuestion(question.Proposal.LibraryIdValue);
     }
 
-    internal static string Skip() => global::OpenForge.Cli.OutputText.Repair.RepairText.LabelSkip();
+    internal static string LeaveLinkUnchanged() => global::OpenForge.Cli.OutputText.Repair.RepairText.LeaveLinkUnchanged();
 
-    internal static string Select() => global::OpenForge.Cli.OutputText.Repair.RepairText.TitleSelect();
+    internal static string IncludeRecovery() => global::OpenForge.Cli.OutputText.Repair.RepairText.IncludeRecovery();
+
+    internal static string LeaveRecoveryOut() => global::OpenForge.Cli.OutputText.Repair.RepairText.LeaveRecoveryOut();
+
+    internal static string LeaveRecoveryOutDescription() => global::OpenForge.Cli.OutputText.Repair.RepairText.LeaveRecoveryOutDescription();
+
+    internal static string LibraryRecoveryDescription(RepairLibraryPromptQuestion question)
+    {
+        ArgumentNullException.ThrowIfNull(question);
+        var path = question.Proposal.TargetPath;
+        if (question.AlreadyMatchesPriorState)
+            return global::OpenForge.Cli.OutputText.Repair.RepairPhrases.RecoveryCheckPreviousState(path);
+        return question.EntryKind switch
+        {
+            RepairLibraryPromptEntryKind.OrdinaryCreate => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.RecoveryRemoveCreatedFile(path),
+            RepairLibraryPromptEntryKind.OrdinaryReplace => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.RecoveryRestorePreviousFile(path),
+            RepairLibraryPromptEntryKind.OrdinaryReplaceGeneratedRegion => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.RecoveryRestorePreviousEntries(path),
+            RepairLibraryPromptEntryKind.OrdinaryDelete => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.RecoveryRestoreDeletedFile(path),
+            RepairLibraryPromptEntryKind.RelativeFileLinkCreate => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.RecoveryRemoveCreatedLink(path),
+            RepairLibraryPromptEntryKind.RelativeFileLinkDelete => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.RecoveryRestoreDeletedLink(path),
+            _ => throw new ArgumentOutOfRangeException(nameof(question), question.EntryKind, "The recovery entry kind is not defined."),
+        };
+    }
 
     internal static string Confirmation(RepairConfirmationQuestion question)
         => question.Kind switch
         {
-            RepairConfirmationKind.Safe => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatApplyTheThatSafeYN(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{question.Count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(question.Count, "repair")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(question.Count, "is", "are")}")),
+            RepairConfirmationKind.Safe => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatIncludeLinkRepairsYN(question.Count),
             RepairConfirmationKind.Final => CliPromptWording.Confirm(),
             _ => throw new ArgumentOutOfRangeException(nameof(question), question.Kind, "The Repair confirmation kind is not defined."),
         };
@@ -214,17 +235,10 @@ internal static class RepairWording
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The Repair evidence kind is not defined."),
         };
 
-    private static string EntryKind(RepairLibraryPromptEntryKind kind)
-        => kind switch
-        {
-            RepairLibraryPromptEntryKind.OrdinaryCreate => global::OpenForge.Cli.OutputText.Repair.RepairText.LabelOrdinaryCreate(),
-            RepairLibraryPromptEntryKind.OrdinaryReplace => global::OpenForge.Cli.OutputText.Repair.RepairText.LabelOrdinaryReplace(),
-            RepairLibraryPromptEntryKind.OrdinaryReplaceGeneratedRegion => global::OpenForge.Cli.OutputText.Repair.RepairText.LabelGeneratedRegionReplace(),
-            RepairLibraryPromptEntryKind.OrdinaryDelete => global::OpenForge.Cli.OutputText.Repair.RepairText.LabelOrdinaryDelete(),
-            RepairLibraryPromptEntryKind.RelativeFileLinkCreate => global::OpenForge.Cli.OutputText.Repair.RepairText.LabelRelativeLinkCreate(),
-            RepairLibraryPromptEntryKind.RelativeFileLinkDelete => global::OpenForge.Cli.OutputText.Repair.RepairText.LabelRelativeLinkDelete(),
-            _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The recovery entry kind is not defined."),
-        };
+    private static string PromptEvidenceKind(RepairCandidateEvidenceKind kind)
+        => kind == RepairCandidateEvidenceKind.RouteNeighborhood
+            ? global::OpenForge.Cli.OutputText.Repair.RepairText.InNearbyFolder()
+            : EvidenceKind(kind);
 
     private static string CoverageClause(
         string subject,

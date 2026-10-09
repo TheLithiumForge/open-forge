@@ -164,7 +164,7 @@ internal sealed class ExtensionCreateRequestResolver
                     return outcome?.Path is { } path
                         ? new CliTextValidation<string>(true, path, null)
                         : new CliTextValidation<string>(false, null,
-                            outcome?.Finding?.Cause ?? "That path is not an existing ordinary directory.");
+                            outcome?.Finding?.Cause ?? _interaction.InvalidPackageFolder);
                 }),
             new CliPromptPolicy(Allowed: true),
             cancellationToken).ConfigureAwait(false);

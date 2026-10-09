@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would change the Open Forge setup in <workspace>.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/directives/_directives.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/maps/_maps.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/archived/_archived.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/crystallized/_crystallized.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/emerging/_emerging.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/working/_working.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/_skills.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/common.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/discovery.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/packages.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/open-forge-cli/references/routes.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/_templates.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "sectionsAdded": 0,
+    "filesReplaced": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "force": false,
+    "automatic": true,
+    "classification": "safe-absence",
+    "footprint": {
+      "files": 15,
+      "directories": 0,
+      "sections": 2
+    },
+    "lockPath": ".agents/open-forge.lock.json",
+    "effects": [
+      {
+        "path": ".agents/open-forge.json"
+      },
+      {
+        "path": ".agents/directives/_directives.md",
+        "sourceAssetPath": ".agents/directives/_directives.md"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "sourceAssetPath": ".agents/guidance/_guidance.md"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "sourceAssetPath": ".agents/maps/_maps.md"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "sourceAssetPath": ".agents/memory/_memory.md"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "sourceAssetPath": ".agents/memory/archived/_archived.md"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "sourceAssetPath": ".agents/memory/crystallized/_crystallized.md"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "sourceAssetPath": ".agents/memory/emerging/_emerging.md"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "sourceAssetPath": ".agents/memory/working/_working.md"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "sourceAssetPath": ".agents/patterns/_patterns.md"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "sourceAssetPath": ".agents/skills/_skills.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/common.md",
+        "sourceAssetPath": ".agents/skills/open-forge-cli/references/common.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/discovery.md",
+        "sourceAssetPath": ".agents/skills/open-forge-cli/references/discovery.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/packages.md",
+        "sourceAssetPath": ".agents/skills/open-forge-cli/references/packages.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/routes.md",
+        "sourceAssetPath": ".agents/skills/open-forge-cli/references/routes.md"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "sourceAssetPath": ".agents/templates/_templates.md"
+      }
+    ],
+    "source": {
+      "inventoryFingerprint": "<sha256>",
+      "assetCount": 19
+    },
+    "lifecycle": {
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "verification": "not-requested",
+    "frontmatter": {
+      "form": "scoped",
+      "previousForm": "root"
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

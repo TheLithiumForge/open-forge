@@ -125,6 +125,12 @@ internal sealed record InstallDataSource
 
 internal sealed record InstallDataEffect
 {
+    [JsonIgnore]
+    internal InstallEffectContentChange ContentChange { get; init; }
+
+    [JsonIgnore]
+    internal string? FrontmatterForm { get; init; }
+
     public required string Path { get; init; }
 
     [JsonIgnore]

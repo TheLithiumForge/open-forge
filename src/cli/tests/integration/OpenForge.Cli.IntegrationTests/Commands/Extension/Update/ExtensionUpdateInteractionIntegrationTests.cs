@@ -69,14 +69,14 @@ public sealed class ExtensionUpdateInteractionIntegrationTests
         Assert.Equal(Document("Toolkit v2"), workspace.ReadText(".agents/toolkit.md"));
         Assert.Equal(Document("Base v1"), workspace.ReadText(".agents/base.md"));
         var output = scripted.Output.ToString();
-        Assert.Contains("Which Extensions do you want to update?", output, StringComparison.Ordinal);
-        Assert.Contains("Apply these changes? [y/N]", output, StringComparison.Ordinal);
+        Assert.Contains("Choose Extensions to update", output, StringComparison.Ordinal);
+        Assert.Contains("Apply these changes, including replacing 1 existing file? [y/N]", output, StringComparison.Ordinal);
         var preview = output.IndexOf("Would update the toolkit Extension to 1.0.0.", StringComparison.Ordinal);
         var previewPath = output.IndexOf(".agents/toolkit.md", StringComparison.Ordinal);
-        var apply = output.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal);
+        var apply = output.IndexOf("Apply these changes, including replacing 1 existing file? [y/N]", StringComparison.Ordinal);
         Assert.True(preview >= 0 && preview < apply, "The complete preview must precede confirmation.");
         Assert.True(previewPath >= 0 && previewPath < apply, "The planned path must precede confirmation.");
-        Assert.Equal(1, Count(output, "Apply these changes? [y/N]"));
+        Assert.Equal(1, Count(output, "Apply these changes, including replacing 1 existing file? [y/N]"));
     }
 
     [Trait("Boundary", "OS")]
@@ -122,7 +122,7 @@ public sealed class ExtensionUpdateInteractionIntegrationTests
             finding => finding.Code == ExtensionUpdateFindingCode.Interrupted
                 && finding.Cause == "Extension update was cancelled. Nothing was changed.");
         Assert.Equal(before, workspace.Snapshot());
-        Assert.DoesNotContain("Apply these changes? [y/N]", scripted.Output.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply these changes, including replacing 1 existing file? [y/N]", scripted.Output.ToString(), StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "OS")]
@@ -165,9 +165,9 @@ public sealed class ExtensionUpdateInteractionIntegrationTests
         Assert.Empty(result.Findings);
         Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
         var output = scripted.Output.ToString();
-        Assert.Contains("Delete the 1 file listed above? [y/N]", output, StringComparison.Ordinal);
-        Assert.Equal(1, Count(output, "Delete the 1 file listed above? [y/N]"));
-        Assert.DoesNotContain("Apply these changes? [y/N]", output, StringComparison.Ordinal);
+        Assert.Contains("Apply these changes, including deleting 1 file? [y/N]", output, StringComparison.Ordinal);
+        Assert.Equal(1, Count(output, "Apply these changes, including deleting 1 file? [y/N]"));
+        Assert.DoesNotContain("Apply these changes, including replacing 1 existing file? [y/N]", output, StringComparison.Ordinal);
     }
 
     private static async Task InstallAllAsync(

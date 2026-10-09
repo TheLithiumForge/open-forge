@@ -24,7 +24,6 @@ Frontmatter: scoped
   .agents/open-forge.json                                created
   .agents/open-forge.lock.json                           created as the ownership receipt
   .agents/memory/_memory.overwrite.md                    Migrated: content preserved
-  Created 17 files and 12 directories under .agents.
+  Created 17 files and 12 directories under .agents, and replaced 1 existing file.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
-  Created 12 directories.
   Migrated 1 source.

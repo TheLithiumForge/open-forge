@@ -44,7 +44,7 @@ internal static class RepairPromptAdapters
                 RepairWording.CandidateDescription(candidate)))
             .Append(new CliChoice<RepairTargetChoice>(
                 RepairTargetChoice.Skip,
-                RepairWording.Skip()))
+                RepairWording.LeaveLinkUnchanged()))
             .ToArray();
         var response = await prompts.SelectAsync(
             new CliSelectQuestion<RepairTargetChoice>(
@@ -83,8 +83,8 @@ internal static class RepairPromptAdapters
     {
         var choices = new[]
         {
-            new CliChoice<RepairLibraryChoice>(RepairLibraryChoice.Select, RepairWording.Select()),
-            new CliChoice<RepairLibraryChoice>(RepairLibraryChoice.Skip, RepairWording.Skip()),
+            new CliChoice<RepairLibraryChoice>(RepairLibraryChoice.Select, RepairWording.IncludeRecovery(), RepairWording.LibraryRecoveryDescription(question)),
+            new CliChoice<RepairLibraryChoice>(RepairLibraryChoice.Skip, RepairWording.LeaveRecoveryOut(), RepairWording.LeaveRecoveryOutDescription()),
         };
         var response = await prompts.SelectAsync(
             new CliSelectQuestion<RepairLibraryChoice>(

@@ -150,6 +150,15 @@ internal sealed record UpdateDataEffect
     internal bool IsSection { get; init; }
 
     [JsonIgnore]
+    internal bool IsWholeFileReplacement { get; init; }
+
+    [JsonIgnore]
+    internal bool HasManagedSection { get; init; }
+
+    [JsonIgnore]
+    internal bool AddsManagedSection { get; init; }
+
+    [JsonIgnore]
     internal bool IsDirectory { get; init; }
 
     [JsonIgnore]

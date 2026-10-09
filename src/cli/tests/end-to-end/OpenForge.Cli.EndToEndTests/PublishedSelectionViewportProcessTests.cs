@@ -6,7 +6,7 @@ namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedSelectionViewportProcessTests
 {
-    private const string Controls = "up/down move  enter next  esc cancel";
+    private const string Controls = "enter next   esc cancel";
 
     [Theory(DisplayName = "Published Extension wizard replaces bounded views and retains the plan before authority"), Trait("Feature", "cli-interaction"), Trait("Evidence", "EndToEnd")]
     [InlineData(80, 24, false, true)]
@@ -46,7 +46,9 @@ public sealed class PublishedSelectionViewportProcessTests
         Assert.Equal(apply ? 0 : 130, terminal.ExitCode);
         Assert.Contains("Choice 25/25", terminal.Transcript, StringComparison.Ordinal);
         Assert.Contains("[+]", terminal.Transcript, StringComparison.Ordinal);
-        Assert.Contains("Writes outside .agents:", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("[*]", terminal.Transcript, StringComparison.Ordinal);
+        Assert.DoesNotContain("[x]", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Allow changes outside .agents?", terminal.Transcript, StringComparison.Ordinal);
         Assert.Contains("docs/selected.md", terminal.Transcript, StringComparison.Ordinal);
         var plan = terminal.Transcript.IndexOf("Would install", StringComparison.Ordinal);
         var confirmation = terminal.Transcript.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal);

@@ -18,7 +18,7 @@ internal sealed record ExtensionInstallInteraction
 
     internal required Func<IReadOnlyList<string>, CliConfirmQuestion> ForceQuestion { get; init; }
 
-    internal required CliConfirmQuestion ApplyQuestion { get; init; }
+    internal required Func<ExtensionInstallConfirmationFacts, CliConfirmQuestion> ApplyQuestion { get; init; }
 
     internal required CliPlanConfirmation<ExtensionInstallResult, CliConfirmQuestion> Apply { get; init; }
 }

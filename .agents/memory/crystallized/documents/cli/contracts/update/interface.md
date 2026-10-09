@@ -307,9 +307,9 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 
 ```text
 Updated 3 Framework files.
-  .agents/guidance/_guidance.md     replaced (you had changed it)
-  .agents/patterns/_patterns.md     restored (it was missing)
-  .agents/workflows/_workflows.md   replaced (new content in this release)
+  .agents/guidance/_guidance.md     replaced
+  .agents/patterns/_patterns.md     restored
+  .agents/workflows/_workflows.md   replaced
   Previous content: git diff
 ```
 
@@ -317,7 +317,7 @@ Updated 3 Framework files.
 
 ```text
 Updated 1 Framework file. 1 file from an earlier version was kept.
-  .agents/guidance/_guidance.md     replaced (new content in this release)
+  .agents/guidance/_guidance.md     replaced
   .agents/guidance/old-advice.md    kept; no longer part of this release
 Next: open-forge update --prune --dry-run  (preview deleting it)
 ```
@@ -326,9 +326,9 @@ Next: open-forge update --prune --dry-run  (preview deleting it)
 
 ```text
 Would update 3 Framework files.
-  .agents/guidance/_guidance.md     replace (you have changed it; a recovery bundle is written first)
-  .agents/patterns/_patterns.md     restore
-  .agents/workflows/_workflows.md   replace
+  .agents/guidance/_guidance.md     would be replaced
+  .agents/patterns/_patterns.md     would be restored
+  .agents/workflows/_workflows.md   would be replaced
 No files were changed.
 ```
 
@@ -349,9 +349,12 @@ and verification facts in words.
 
 ### Prompts
 
-Plan review at `minimal` then `Apply these changes? [y/N]`. When retired
-files would be deleted under `--prune`, the question reads `Delete the <K>
-files listed above? [y/N]`.
+Plan review at `minimal` then `Apply these changes? [y/N]`. The question
+names the destructive part when there is one:
+`Apply these changes, including deleting <K> files? [y/N]` under `--prune`,
+`Apply these changes, including replacing <N> existing files? [y/N]` for
+whole-file replacements, or both, such as
+`Apply these changes, including replacing 2 existing files and deleting 3 files? [y/N]`.
 
 ### Representative transcripts by status
 
@@ -412,20 +415,27 @@ The status and exit mapping above are unchanged by detail or format. Root effect
 
 ### Effects wording
 
+Each row names the actual change. A whole-file replacement reads `replaced`,
+with `(your previous file is in the recovery bundle)` only while that bundle is
+retained. A refreshed section in an existing file says what changed instead.
+
 | Relation (current, shipped)   | Action    | Row                                                                 |
 | ----------------------------- | --------- | ------------------------------------------------------------------- |
-| changed, same shipped content | replaced  | `<path>  replaced (you had changed it)`                             |
-| same current, changed shipped | replaced  | `<path>  replaced (new content in this release)`                    |
-| changed both                  | replaced  | `<path>  replaced (you had changed it and this release changes it)` |
+| changed whole file            | replaced  | `<path>  replaced`                                                  |
+| Open Forge section added      | section   | `<path>  Open Forge section added, your content was kept`           |
+| Open Forge section refreshed  | section   | `<path>  Open Forge section updated`                                |
 | missing                       | restored  | `<path>  restored (it was missing)`                                 |
 | new in this release           | created   | `<path>  created (new in this release)`                             |
 | retired, `--prune`            | deleted   | `<path>  deleted (no longer part of this release)`                  |
 | retired, no `--prune`         | kept      | `<path>  kept; no longer part of this release`                      |
 | format-only difference        | unchanged | counted; at `full`: `<path>  unchanged (line endings differ)`       |
-| Entries section rewritten     | section   | `<path>  Entries section updated`                                   |
-| lock                          | record    | `.agents/open-forge.lock.json  updated`                             |
+| Entries section rewritten     | section   | `<path>  Entries updated`                                           |
+| lock                          | record    | `.agents/open-forge.lock.json  ownership record updated`            |
 
-Dry-run rows use the bare verb (`replace`, `restore`, `delete`, `keep`).
+Dry-run rows use the preview form, such as `would be replaced`,
+`Entries would be updated` and `ownership record would be updated`. Each
+section edit appears once. Replacement counts include only planned
+replacements in a preview and verified replacements after application.
 The previous-content line is `Previous content: git diff` when `.git` exists
 and is omitted otherwise.
 

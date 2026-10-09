@@ -3,6 +3,11 @@ using OpenForge.Cli.Core.Commands.Update;
 using OpenForge.Cli.Core.Commands.Update.Models.Operation;
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
+using OpenForge.Cli.Core.Presentation.Update;
+using OpenForge.Cli.Core.Presentation.Update.Shared.Prompts;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.TestSupport.Interaction;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
@@ -12,6 +17,35 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Update;
 
 public sealed class UpdateOperationIntegrationTests
 {
+    [Theory(DisplayName = "Update confirms real whole-file replacements and optional deletions in both input modes")]
+    [InlineData(true, false), InlineData(false, false), InlineData(true, true), InlineData(false, true)]
+    [Trait("Feature", "update"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
+    public async Task ConfirmationNamesReplacementAndDeletionPlans(bool keys, bool mixed)
+    {
+        using var workspace = UpdateIntegrationWorkspace.Create("update-destructive-confirmation");
+        await workspace.EstablishTrustedFrameworkAsync(TestContext.Current.CancellationToken);
+        workspace.MutateManagedContent();
+        if (mixed) workspace.SeedHistoricalRetiredTarget();
+        var before = workspace.SnapshotHashes();
+        var terminal = keys
+            ? ScriptedCliTerminal.Keys([new(CliKey.Character, 'n')])
+            : ScriptedCliTerminal.Lines(["no"]);
+        var prompts = new CliPrompts(terminal.Terminal);
+        var confirmation = prompts.PlanConfirmation(UpdatePresentation.Rendering,
+            static (UpdateConfirmationFacts facts) => UpdatePlanConfirmationQuestion.Create(facts));
+        var result = await UpdateOperationFactory.Create(confirmation, workspace.LockStoreRoot).ExecuteAsync(
+            workspace.Request(force: true, prune: mixed, automatic: false, allowsInteractiveConfirmation: true),
+            TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        var expected = mixed
+            ? "Apply these changes, including replacing 1 existing file and deleting 1 file? [y/N]"
+            : "Apply these changes, including replacing 1 existing file? [y/N]";
+        Assert.EndsWith(expected + Environment.NewLine, terminal.Output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("would be replaced (your previous file would be kept in a recovery bundle)", terminal.Output.ToString(), StringComparison.Ordinal);
+        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.False(workspace.RecoveryDirectoryExists());
+    }
+
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Update creates a genuinely new source target while protecting existing lifecycle bytes"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     public async Task CreatesNewSourceTargetAlongsideProtectedLifecyclePublication()
@@ -161,6 +195,7 @@ public sealed class UpdateOperationIntegrationTests
         Assert.False(previewResult.Automatic);
         var confirmationFacts = Assert.IsType<UpdateConfirmationFacts>(facts);
         Assert.Equal(1, confirmationFacts.DeletionCount);
+        Assert.Equal(0, confirmationFacts.ReplacementCount);
         Assert.Equal(before, workspace.SnapshotHashes());
         Assert.True(workspace.Exists(UpdateIntegrationWorkspace.HistoricalTargetPath));
         Assert.False(workspace.RecoveryDirectoryExists());

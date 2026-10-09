@@ -4,6 +4,21 @@ namespace OpenForge.Cli.OutputText.Route.Move;
 
 internal static class RouteMovePhrases
 {
+    // @OpenForgeText route.move.phrase.reference-changes
+    internal static string RewriteHeading(int count, string noun, string oldPath, bool preview)
+        => string.Create(global::System.Globalization.CultureInfo.InvariantCulture,
+            $"{(preview ? "Would update" : "Updated")} {count} {noun} that {(preview ? "point" : "pointed")} to the {oldPath}:");
+
+    // @OpenForgeText route.move.phrase.reference-changes-not-started
+    internal static string RewriteNotStartedHeading(int count, string noun, string oldPath)
+        => string.Create(global::System.Globalization.CultureInfo.InvariantCulture,
+            $"Did not update {count} {noun} that still {(count == 1 ? "points" : "point")} to the {oldPath}:");
+
+    // @OpenForgeText route.move.phrase.reference-changes-unconfirmed
+    internal static string RewriteUnconfirmedHeading(int count, string noun)
+        => string.Create(global::System.Globalization.CultureInfo.InvariantCulture,
+            $"Could not confirm the update of {count} {noun}:");
+
     // @OpenForgeText route.move.phrase.moved-the-route-to
     internal static string FormatMovedTheRouteTo(string idText, string folderText, string countText, string pluralText)
         => $"Moved the route {idText} to {folderText}  ({countText} {pluralText})";

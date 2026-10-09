@@ -1,6 +1,7 @@
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
@@ -12,6 +13,34 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Update;
 
 public sealed class ExtensionUpdateApplicationInteractionIntegrationTests
 {
+    [Theory(DisplayName = "Extension Update confirms actual replacement-only and mixed deletion plans in both input modes")]
+    [InlineData(true, false), InlineData(false, false), InlineData(true, true), InlineData(false, true)]
+    [Trait("Feature", "extension-update"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
+    public async Task FinalApprovalNamesReplacementsAndDeletions(bool keys, bool mixed)
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-update-destructive-confirmation");
+        await workspace.SeedFrameworkAsync();
+        using var source = ExtensionInstallCatalogue.Create("extension-update-destructive-confirmation-source");
+        source.AddPackage("toolkit", [], (".agents/one.md", Document("One v1")), (".agents/two.md", Document("Two v1")));
+        await InstallAllAsync(workspace, source);
+        source.ReplacePayload("toolkit", ".agents/one.md", Document("One v2"));
+        if (mixed) source.RemovePayload("toolkit", ".agents/two.md");
+        var before = workspace.Snapshot();
+        var scripted = keys
+            ? ScriptedCliTerminal.Keys([new(CliKey.Character, 'n')])
+            : ScriptedCliTerminal.Lines(["no"]);
+        string[] arguments = mixed
+            ? ["extension", "update", "toolkit", "--source", source.Path, "--prune"]
+            : ["extension", "update", "toolkit", "--source", source.Path];
+        var run = await RunAsync(workspace, arguments, scripted);
+        Assert.Equal(CliSemanticStatus.Interrupted, run.Status);
+        var expected = mixed
+            ? "Apply these changes, including replacing 1 existing file and deleting 1 file? [y/N]"
+            : "Apply these changes, including replacing 1 existing file? [y/N]";
+        Assert.EndsWith(expected + Environment.NewLine, run.TerminalOutput, StringComparison.Ordinal);
+        Assert.Equal(before, workspace.Snapshot());
+    }
+
     [Trait("Boundary", "Host")]
     [Fact(
         DisplayName = "Composed Extension Update freezes the chosen package and confirms after the retained preview"),
@@ -41,15 +70,15 @@ public sealed class ExtensionUpdateApplicationInteractionIntegrationTests
 
         var prompts = run.TerminalOutput;
         Assert.Equal(2, scripted.LineReadCalls);
-        Assert.Equal(1, Count(prompts, "Which Extensions do you want to update?"));
-        Assert.Equal(1, Count(prompts, "Apply these changes? [y/N]"));
+        Assert.Equal(1, Count(prompts, "Choose Extensions to update"));
+        Assert.Equal(1, Count(prompts, "Apply these changes, including replacing 1 existing file? [y/N]"));
         Assert.Contains("Would update the toolkit Extension to 1.0.0.", prompts, StringComparison.Ordinal);
         Assert.Contains("Updated the toolkit Extension to 1.0.0.", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Status:", run.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("Apply these changes? [y/N]", run.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply these changes, including replacing 1 existing file? [y/N]", run.StandardOutput, StringComparison.Ordinal);
         Assert.True(
             prompts.IndexOf("Would update the toolkit Extension to 1.0.0.", StringComparison.Ordinal)
-                < prompts.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal),
+                < prompts.IndexOf("Apply these changes, including replacing 1 existing file? [y/N]", StringComparison.Ordinal),
             "The retained preview must precede the final confirmation.");
     }
 
@@ -90,7 +119,7 @@ public sealed class ExtensionUpdateApplicationInteractionIntegrationTests
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(1, scripted.LineReadCalls);
-        Assert.DoesNotContain("Apply these changes? [y/N]", run.TerminalOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply these changes, including replacing 1 existing file? [y/N]", run.TerminalOutput, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Host")]
@@ -130,10 +159,10 @@ public sealed class ExtensionUpdateApplicationInteractionIntegrationTests
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(2, scripted.LineReadCalls);
         Assert.Contains("Would update the toolkit Extension to 1.0.0.", run.TerminalOutput, StringComparison.Ordinal);
-        Assert.Equal(1, Count(run.TerminalOutput, "Apply these changes? [y/N]"));
+        Assert.Equal(1, Count(run.TerminalOutput, "Apply these changes, including replacing 1 existing file? [y/N]"));
         Assert.True(
             run.TerminalOutput.IndexOf("Would update the toolkit Extension to 1.0.0.", StringComparison.Ordinal)
-                < run.TerminalOutput.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal),
+                < run.TerminalOutput.IndexOf("Apply these changes, including replacing 1 existing file? [y/N]", StringComparison.Ordinal),
             "The retained preview must precede the cancellation question.");
     }
 
@@ -165,15 +194,15 @@ public sealed class ExtensionUpdateApplicationInteractionIntegrationTests
         Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
         Assert.Equal(sourceBefore, source.Snapshot());
         Assert.Equal(1, scripted.LineReadCalls);
-        Assert.Equal(1, Count(run.TerminalOutput, "Delete the 1 file listed above? [y/N]"));
-        Assert.DoesNotContain("Apply these changes? [y/N]", run.TerminalOutput, StringComparison.Ordinal);
+        Assert.Equal(1, Count(run.TerminalOutput, "Apply these changes, including deleting 1 file? [y/N]"));
+        Assert.DoesNotContain("Apply these changes, including replacing 1 existing file? [y/N]", run.TerminalOutput, StringComparison.Ordinal);
         Assert.Contains("Would update the toolkit Extension to 1.0.0.", run.TerminalOutput, StringComparison.Ordinal);
         Assert.Contains("Updated the toolkit Extension to 1.0.0.", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Status:", run.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("Delete the 1 file listed above? [y/N]", run.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply these changes, including deleting 1 file? [y/N]", run.StandardOutput, StringComparison.Ordinal);
         Assert.True(
             run.TerminalOutput.IndexOf("Would update the toolkit Extension to 1.0.0.", StringComparison.Ordinal)
-                < run.TerminalOutput.IndexOf("Delete the 1 file listed above? [y/N]", StringComparison.Ordinal),
+                < run.TerminalOutput.IndexOf("Apply these changes, including deleting 1 file? [y/N]", StringComparison.Ordinal),
             "The retained prune preview must precede the final confirmation.");
     }
 

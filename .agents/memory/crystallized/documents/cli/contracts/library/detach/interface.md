@@ -314,8 +314,8 @@ change semantics, effects, counts, or status. Filters select finding severities;
 all is the default filter.
 
 Library detach shows a plan review before final confirmation. `--automatic`
-bypasses the final confirmation only; without it the prompt is `Remove the <N>
-links listed above? [y/N]`. Permission prompts for links outside `.agents`
+bypasses the final confirmation only; without it the prompt is
+`Apply these changes, including removing <N> links? [y/N]`. Permission prompts for links outside `.agents`
 remain separate. In a noninteractive invocation, when final confirmation is
 required and `--automatic` is absent, the result is `Invalid4` with
 `library-detach.confirmation-required`; no link or record effect is applied.
@@ -494,7 +494,7 @@ or alternate occupant: blocked),
 Prompt rules from the catalogue:
 
 Permission when links outside `.agents` are removed; plan review listing
-every link; `Remove the <N> links listed above? [y/N]` unless `--automatic`
+every link; `Apply these changes, including removing <N> links? [y/N]` unless `--automatic`
 (added by 04).
 
 ## Representative Transcripts

@@ -47,16 +47,16 @@ public sealed class ExtensionRemoveApplicationInteractionIntegrationTests
 
         var prompts = run.TerminalOutput;
         Assert.Equal(2, scripted.LineReadCalls);
-        Assert.Equal(1, Count(prompts, "Which Extensions do you want to remove?"));
+        Assert.Equal(1, Count(prompts, "Choose Extensions to remove"));
         Assert.Contains("needed by", prompts, StringComparison.Ordinal);
-        Assert.Equal(1, Count(prompts, "Delete the 2 files listed above? [y/N]"));
+        Assert.Equal(1, Count(prompts, "Apply these changes, including deleting 2 files? [y/N]"));
         Assert.Contains("Would remove the base Extension.", prompts, StringComparison.Ordinal);
         Assert.Contains("Removed 2 Extensions: base, toolkit.", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Would remove", run.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("Delete the 2 files listed above? [y/N]", run.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply these changes, including deleting 2 files? [y/N]", run.StandardOutput, StringComparison.Ordinal);
         Assert.True(
             prompts.IndexOf("Would remove the base Extension.", StringComparison.Ordinal)
-                < prompts.IndexOf("Delete the 2 files listed above? [y/N]", StringComparison.Ordinal),
+                < prompts.IndexOf("Apply these changes, including deleting 2 files? [y/N]", StringComparison.Ordinal),
             "The retained dependent-closure preview must precede confirmation.");
     }
 
@@ -97,7 +97,7 @@ public sealed class ExtensionRemoveApplicationInteractionIntegrationTests
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(1, scripted.LineReadCalls);
-        Assert.DoesNotContain("Delete the ", run.TerminalOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply these changes, including deleting ", run.TerminalOutput, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Host")]
@@ -142,10 +142,10 @@ public sealed class ExtensionRemoveApplicationInteractionIntegrationTests
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(2, scripted.LineReadCalls);
         Assert.Contains("Would remove the base Extension.", run.TerminalOutput, StringComparison.Ordinal);
-        Assert.Equal(1, Count(run.TerminalOutput, "Delete the 2 files listed above? [y/N]"));
+        Assert.Equal(1, Count(run.TerminalOutput, "Apply these changes, including deleting 2 files? [y/N]"));
         Assert.True(
             run.TerminalOutput.IndexOf("Would remove the base Extension.", StringComparison.Ordinal)
-                < run.TerminalOutput.IndexOf("Delete the 2 files listed above? [y/N]", StringComparison.Ordinal),
+                < run.TerminalOutput.IndexOf("Apply these changes, including deleting 2 files? [y/N]", StringComparison.Ordinal),
             "The retained dependent-closure preview must precede cancellation.");
     }
 

@@ -1,0 +1,9 @@
+.agents/loader.md  Entries would be updated
+AGENTS.md  Open Forge section would be updated
+CLAUDE.md  Open Forge section would be added, your content would be kept
+.agents/open-forge.json  settings would be updated
+.agents/open-forge.lock.json  ownership record would be updated
+.agents/metadata.md  metadata would move to root keys
+.gitignore  Open Forge Git-ignore rules would be updated
+.agents/occupant.md  would be replaced
+.agents/memory/_memory.md  Entries would be updated

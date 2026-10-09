@@ -106,7 +106,7 @@
   "counts": {
     "filesMoved": 2,
     "sectionsUpdated": 1,
-    "linksRewritten": 5,
+    "linksRewritten": 2,
     "filesScanned": 12,
     "errors": 1
   },

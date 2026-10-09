@@ -79,7 +79,8 @@ public sealed class F28SwitchFrontmatterFormJourneyTests
         Assert.Contains("Kept 1 file", preview.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(EditedPath, preview.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("edited", preview.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("replace", preview.StandardOutput, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("metadata would move to root keys", preview.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("would be replaced", preview.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("No files were changed.", preview.StandardOutput, StringComparison.Ordinal);
 
         var configured = await workspace.RunAsync(

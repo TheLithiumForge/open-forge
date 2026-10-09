@@ -26,7 +26,7 @@ public sealed class ExtensionInstallPermissionIntegrationTests
             Assert.Equal(0, first.ExitCode);
             Assert.Equal("sentinel", first.RemainingInput);
             Assert.Contains(PermissionFixture.ExternalPath, first.StandardError, StringComparison.Ordinal);
-            Assert.Contains("always, once, cancel:", first.StandardError, StringComparison.Ordinal);
+            Assert.Contains("Type always, once or cancel:", first.StandardError, StringComparison.Ordinal);
             workspace.ReplaceText(".agents/open-forge.lock.json",
                 workspace.ReadText(".agents/open-forge.lock.json").Replace(".agents/team.txt", PermissionFixture.ExternalPath, StringComparison.Ordinal));
             Assert.True(File.Exists(workspace.Combine(PermissionFixture.ExternalPath)), "The approved external file is missing.");
@@ -99,7 +99,7 @@ public sealed class ExtensionInstallPermissionIntegrationTests
             Assert.Equal(5, run.ExitCode);
             Assert.Equal(CliSemanticStatus.Blocked, run.Status);
             Assert.Equal("once", run.RemainingInput);
-            Assert.DoesNotContain("always, once, cancel:", run.StandardError, StringComparison.Ordinal);
+            Assert.DoesNotContain("Type always, once or cancel:", run.StandardError, StringComparison.Ordinal);
             using var document = JsonDocument.Parse(run.StandardOutput);
             var finding = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray());
             Assert.Equal("extension-install.settings-invalid", finding.GetProperty("code").GetString());

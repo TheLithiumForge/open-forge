@@ -1,0 +1,21 @@
+Would change the Open Forge setup in <workspace>.
+Workspace: <workspace>
+Frontmatter: root -> scoped
+  .agents/open-forge.json                                settings would be updated
+  .agents/directives/_directives.md                      metadata would move under open-forge:
+  .agents/guidance/_guidance.md                          metadata would move under open-forge:
+  .agents/maps/_maps.md                                  metadata would move under open-forge:
+  .agents/memory/_memory.md                              metadata would move under open-forge:
+  .agents/memory/archived/_archived.md                   metadata would move under open-forge:
+  .agents/memory/crystallized/_crystallized.md           metadata would move under open-forge:
+  .agents/memory/emerging/_emerging.md                   metadata would move under open-forge:
+  .agents/memory/working/_working.md                     metadata would move under open-forge:
+  .agents/patterns/_patterns.md                          metadata would move under open-forge:
+  .agents/skills/_skills.md                              metadata would move under open-forge:
+  .agents/skills/open-forge-cli/references/common.md     metadata would move under open-forge:
+  .agents/skills/open-forge-cli/references/discovery.md  metadata would move under open-forge:
+  .agents/skills/open-forge-cli/references/packages.md   metadata would move under open-forge:
+  .agents/skills/open-forge-cli/references/routes.md     metadata would move under open-forge:
+  .agents/templates/_templates.md                        metadata would move under open-forge:
+  Would update 16 existing files.
+No files were changed.

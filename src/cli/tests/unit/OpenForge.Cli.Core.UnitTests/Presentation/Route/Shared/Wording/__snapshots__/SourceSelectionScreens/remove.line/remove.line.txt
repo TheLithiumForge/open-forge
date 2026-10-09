@@ -1,0 +1,6 @@
+"docs/guide" matches 2 paths. Choose the one to remove.
+
+  1. .agents/docs/guide.md
+  2. .agents/docs/guide.overwrite.md
+
+Choose a number (1-2), or press Enter to cancel:

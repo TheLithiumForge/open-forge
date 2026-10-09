@@ -90,19 +90,11 @@ internal static class ExtensionInstallText
 
     // @OpenForgeText extension.install.prompt.which-extensions-do-you-want-to-install
     internal static string PromptWhichExtensionsDoYouWantToInstall()
-        => "Which Extensions do you want to install?";
+        => "Choose Extensions to install";
 
     // @OpenForgeText extension.install.title.would-install
     internal static string TitleWouldInstall()
         => "Would install";
-
-    // @OpenForgeText extension.install.title.would-replace-your-previous-file-is-in-the-recovery-bundle
-    internal static string TitleWouldReplaceYourPreviousFileIsInTheRecoveryBundle()
-        => "Would replace (your previous file is in the recovery bundle)";
-
-    // @OpenForgeText extension.install.label.replaced-your-previous-file-is-in-the-recovery-bundle
-    internal static string LabelReplacedYourPreviousFileIsInTheRecoveryBundle()
-        => "replaced (your previous file is in the recovery bundle)";
 
     // @OpenForgeText extension.install.title.extension-record-is-invalid
     internal static string TitleExtensionRecordIsInvalid()

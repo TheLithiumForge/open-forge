@@ -33,32 +33,28 @@ internal static class RouteUpdateDataTextRenderer
             builder.Append("  ").Append(CliText.Escape(line)).Append('\n');
         }
 
-        if (selection.Detail >= CliDetail.Standard)
+        foreach (var effect in data.TextEffects)
         {
-            foreach (var effect in data.TextEffects)
+            builder.Append("  ")
+                .Append(CliText.Escape(effect.Action))
+                .Append('\n');
+            if (selection.Detail >= CliDetail.Full)
             {
-                builder.Append("  ")
-                    .Append(CliText.Escape(effect.Action))
-                    .Append('\n');
-                if (selection.Detail >= CliDetail.Full)
+                if (effect.Before is { } before)
                 {
-                    if (effect.Before is { } before)
-                    {
-                        builder.Append("    ")
-                            .Append(CliText.Escape(global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedPhrases.FormatBefore($"{before}")))
-                            .Append('\n');
-                    }
+                    builder.Append("    ")
+                        .Append(CliText.Escape(global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedPhrases.FormatBefore($"{before}")))
+                        .Append('\n');
+                }
 
-                    if (effect.After is { } after)
-                    {
-                        builder.Append("    ")
-                            .Append(CliText.Escape(global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedPhrases.FormatAfter($"{after}")))
-                            .Append('\n');
-                    }
+                if (effect.After is { } after)
+                {
+                    builder.Append("    ")
+                        .Append(CliText.Escape(global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedPhrases.FormatAfter($"{after}")))
+                        .Append('\n');
                 }
             }
         }
-
         if (selection.Detail >= CliDetail.Full)
         {
             if (data.FrontmatterBefore is { } before)

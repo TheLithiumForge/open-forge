@@ -468,8 +468,8 @@ The catalogue text by detail level is:
 
 ```text
 Moved memory/emerging/ideas/pricing/tiers to .agents/memory/emerging/ideas/pricing/tier-options.md
-  Entry updated in .agents/memory/emerging/ideas/pricing/_pricing.md
-  Rewrote 2 links that pointed at the old path:
+  .agents/memory/emerging/ideas/pricing/_pricing.md  Entries updated
+  Updated 2 links that pointed to the old path:
     .agents/maps/_maps.md:12:3
     .agents/guidance/team.md:40:5
 ```
@@ -481,13 +481,18 @@ Moved the route memory/projects/alpha to .agents/memory/archived/alpha  (6 files
   .agents/memory/projects/alpha/_alpha.md        -> .agents/memory/archived/alpha/_alpha.md
   .agents/memory/projects/alpha/plan.md          -> .agents/memory/archived/alpha/plan.md
   ...
-  Entry removed from .agents/memory/projects/_projects.md
-  Entry added to .agents/memory/archived/_archived.md
-  Rewrote 1 link that pointed at the old paths: .agents/maps/_maps.md:20:3
+  .agents/memory/archived/_archived.md  Entries updated
+  .agents/memory/projects/_projects.md  Entries updated
+  Updated 1 link that pointed to the old paths:
+    .agents/maps/_maps.md:20:3
 ```
 
 `standard` adds `Workspace:` and per rewritten link `<old destination> ->
-<new destination>`, plus the overwrite file rows when a pair moved.
+<new destination>`, plus the overwrite file rows when a pair moved. A dry run
+uses `Entries would be updated` and `Would update <N> links that point to the
+old path:`. A failed or blocked move lists only completed rewrites under
+`Updated`, then `Could not confirm the update of <N> links:` and
+`Did not update <N> links that still point to the old path:` for the rest.
 
 `full` adds hashes per effect and the reference scan summary (`28 files
 scanned`).
@@ -647,9 +652,9 @@ Select when the source ID matches several files.
 ~~~text
 Moved guidance/old guide to .agents/archive/new guide.md
 Workspace: <workspace>
-  Entry updated in .agents/archive/_archive.md
-  Entry updated in .agents/guidance/_guidance.md
-  Rewrote 5 links that pointed at the old path:
+  .agents/archive/_archive.md  Entries updated
+  .agents/guidance/_guidance.md  Entries updated
+  Updated 5 links that pointed to the old path:
   .agents/guidance/topics/child.md:8:13
   .agents/guidance/topics/child.overwrite.md:1:35
   README.md:3:13

@@ -411,8 +411,10 @@ recovery facts in words.
 ### Prompts
 
 Multi-select of installed packages when no ID and no `--all`; Permission;
-plan review; Confirm; `Delete the <K> files listed above? [y/N]` under
-`--prune`.
+plan review; `Apply these changes? [y/N]`, naming the destructive part when
+there is one: `Apply these changes, including deleting <K> files? [y/N]` under
+`--prune`, `including replacing <N> existing files` for whole-file
+replacements, or both.
 
 ### Representative transcripts by status
 

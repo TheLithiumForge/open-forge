@@ -31,7 +31,7 @@ public sealed class RouteMoveInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, run.Completion.Status);
         Assert.Equal(1, run.Terminal.LineReadCalls);
         Assert.Contains(
-            "guidance/old guide matches 2 sources. Which one?",
+            "\"guidance/old guide\" matches 2 paths. Choose the one to move.",
             run.TerminalOutput,
             StringComparison.Ordinal);
         Assert.Contains(
@@ -69,7 +69,7 @@ public sealed class RouteMoveInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, run.Completion.Status);
         Assert.Equal(1, run.Terminal.LineReadCalls);
         Assert.Contains(
-            "guidance/old guide matches 2 sources. Which one?",
+            "\"guidance/old guide\" matches 2 paths. Choose the one to move.",
             run.TerminalOutput,
             StringComparison.Ordinal);
         Assert.Contains(
@@ -146,7 +146,7 @@ public sealed class RouteMoveInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Blocked, run.Completion.Status);
         Assert.Equal(1, run.Terminal.LineReadCalls);
         Assert.Contains(
-            "guidance/old guide matches 2 sources. Which one?",
+            "\"guidance/old guide\" matches 2 paths. Choose the one to move.",
             run.TerminalOutput,
             StringComparison.Ordinal);
         Assert.Contains("cannot be rewritten safely", run.StandardError, StringComparison.Ordinal);

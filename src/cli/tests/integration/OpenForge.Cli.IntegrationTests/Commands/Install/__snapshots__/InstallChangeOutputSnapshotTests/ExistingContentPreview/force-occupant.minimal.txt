@@ -1,0 +1,9 @@
+Would install the Open Forge Framework into <workspace>, replacing 1 existing file.
+Workspace: <workspace>
+Frontmatter: root
+  .agents/memory/_memory.md            would be replaced
+  .agents/open-forge.lock.json         would be created
+  .agents/memory/_memory.overwrite.md  Planned migration: content preserved
+  Would create 17 files and 12 directories under .agents, and replace 1 existing file, plus AGENTS.md and CLAUDE.md.
+  Planned migration for 1 source.
+No files were changed.

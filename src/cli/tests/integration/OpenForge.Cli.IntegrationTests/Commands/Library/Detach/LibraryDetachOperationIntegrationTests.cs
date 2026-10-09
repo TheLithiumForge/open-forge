@@ -376,7 +376,7 @@ public sealed class LibraryDetachOperationIntegrationTests
         var reviewPosition = review.IndexOf(
             "Would detach team-knowledge: remove 1 link under docs.",
             StringComparison.Ordinal);
-        var confirmationPosition = review.IndexOf("Remove the 1 links listed above? [y/N]", StringComparison.Ordinal);
+        var confirmationPosition = review.IndexOf("Apply these changes, including removing 1 link? [y/N]", StringComparison.Ordinal);
         Assert.True(reviewPosition >= 0 && reviewPosition < confirmationPosition);
         Assert.Equal(before, workspace.Snapshot());
     }
@@ -410,7 +410,7 @@ public sealed class LibraryDetachOperationIntegrationTests
         Assert.True(promptRead);
         Assert.True(cancellation.IsCancellationRequested);
         Assert.Contains("docs/review.md", output.ToString(), StringComparison.Ordinal);
-        Assert.Contains("always, once, cancel:", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Type always, once or cancel:", output.ToString(), StringComparison.Ordinal);
         Assert.Equal(before, workspace.Snapshot());
         Assert.Equal(sourceBefore, File.ReadAllBytes(workspace.Absolute("shared/team-knowledge/review.md")));
         Assert.Equal(settingsBefore, File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json")));

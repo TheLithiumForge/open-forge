@@ -1,0 +1,9 @@
+Extension update stopped after 0 of 1 changes.
+Workspace: <workspace>
+  Error  .agents/aaa.md  Update verification failed
+         The generated Entries were not verified.
+  .agents/aaa.md  failed
+  Source: /source
+  Dependency closure: toolkit
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded

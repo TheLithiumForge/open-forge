@@ -82,7 +82,7 @@ internal static class ExtensionUpdateText
 
     // @OpenForgeText extension.update.prompt.which-extensions-do-you-want-to-update
     internal static string PromptWhichExtensionsDoYouWantToUpdate()
-        => "Which Extensions do you want to update?";
+        => "Choose Extensions to update";
 
     // @OpenForgeText extension.update.label.restore-it-was-missing
     internal static string LabelRestoreItWasMissing()

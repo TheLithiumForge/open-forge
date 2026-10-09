@@ -467,9 +467,11 @@ unsafe boundary as skippable.
 Per [04](../../../../../../archived/cli-development/tasks/task30-g4/04-interaction-system.md), when applicable the prompt order is:
 multi-select when the source has several packages and no ID was given; Permission
 for paths outside `.agents`; initial-force consent for eligible existing files
-(`Replace the 1 existing file listed above? [y/N]`); plan review; and final apply
-confirmation (`Apply these changes? [y/N]`). Initial-force consent and final apply
-confirmation are distinct; `--force` skips only the former.
+(`Allow replacing the 1 existing file listed above? [y/N]`). Plan review and
+final apply confirmation follow. The final question is `Apply these changes? [y/N]`,
+or `Apply these changes, including replacing <N> existing files? [y/N]` when the
+plan replaces whole files. Initial-force consent and final apply confirmation are
+distinct, and `--force` skips only the former.
 
 ### Representative transcripts by status
 
@@ -524,7 +526,10 @@ Created files: at `minimal` counted by directory (`Created 3 files under
 replaced existing files always rows `<path>  replaced (your previous file is
 in the recovery bundle)`; `Updated the Entries section of <path>` (`minimal`
 counts them when more than three); `Saved a grant for <path> to
-.agents/open-forge.json`; lock `updated` at `standard`. Dry run: `Would
+.agents/open-forge.json`; at `standard`, the lock row follows its lifecycle:
+`ownership record would be updated` in a preview, `ownership record updated`
+after verified publication, and no success claim on a blocked, no-op or
+unverified result. Dry run: `Would
 create`, `Would update`, `Would save`. Partial: `created`, `not started`,
 `final state unknown`.
 

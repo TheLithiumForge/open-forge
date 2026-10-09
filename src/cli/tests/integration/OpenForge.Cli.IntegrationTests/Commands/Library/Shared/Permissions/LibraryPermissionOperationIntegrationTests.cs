@@ -56,8 +56,8 @@ public sealed class LibraryPermissionOperationIntegrationTests
         Assert.All(approval.ApprovedScopes.Where(scope => scope.Path != "README.md"),
             scope => Assert.Equal(LibraryPermissionScopeKind.Directory, scope.Kind));
         Assert.DoesNotContain(approval.ProposedScopes, scope => scope.Path is "." or ".apm" or ".apm/agents");
-        Assert.Contains("everything under it", output.ToString(), StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("always, once, cancel:", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("folder and everything below it", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Type always, once or cancel:", output.ToString(), StringComparison.Ordinal);
         Assert.Contains(".apm/agents/team", output.ToString(), StringComparison.Ordinal);
         Assert.DoesNotContain(".apm/agents/team/nested/c.md", output.ToString(), StringComparison.Ordinal);
         Assert.Equal("sentinel", input.ReadLine());

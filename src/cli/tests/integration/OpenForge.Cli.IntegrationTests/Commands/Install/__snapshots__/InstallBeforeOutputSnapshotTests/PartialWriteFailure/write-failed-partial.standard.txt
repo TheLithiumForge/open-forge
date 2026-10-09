@@ -29,7 +29,6 @@ Frontmatter: root
   .agents/open-forge.lock.json                           not started
   .agents/memory/_memory.overwrite.md                    Planned migration: content preserved
   16 files and directories were created.
-  Created 12 directories.
   Planned migration for 1 source.
   Recovery data: <recovery-bundle>
   Inspect the reported Install boundary before rerunning it.

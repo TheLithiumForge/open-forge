@@ -1,0 +1,8 @@
+Updated the toolkit Extension to 2.0.0.
+Workspace: <workspace>
+  .agents/aaa.md  Entries updated
+  Source: /source
+  Dependency closure: toolkit
+  0 files unchanged
+  Updated 1 Entries section.
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded

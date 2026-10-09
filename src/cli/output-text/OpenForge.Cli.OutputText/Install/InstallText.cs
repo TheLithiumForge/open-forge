@@ -111,14 +111,6 @@ internal static class InstallText
     internal static string MessagePlusAgentsMdAndClaudeMd()
         => ", plus AGENTS.md and CLAUDE.md.";
 
-    // @OpenForgeText install.label.would-add-an-open-forge-section-your-content-would-be-kept
-    internal static string LabelWouldAddAnOpenForgeSectionYourContentWouldBeKept()
-        => "would add an Open Forge section; your content would be kept";
-
-    // @OpenForgeText install.title.open-forge-section-added-your-content-was-kept
-    internal static string TitleOpenForgeSectionAddedYourContentWasKept()
-        => "Open Forge section added; your content was kept";
-
     // @OpenForgeText install.label.would-be-created
     internal static string LabelWouldBeCreated()
         => "would be created";
@@ -130,10 +122,6 @@ internal static class InstallText
     // @OpenForgeText install.title.open-forge-section-added
     internal static string TitleOpenForgeSectionAdded()
         => "Open Forge section added";
-
-    // @OpenForgeText install.label.would-be-replaced
-    internal static string LabelWouldBeReplaced()
-        => "would be replaced";
 
     // @OpenForgeText install.label.created-records-the-files-above
     internal static string LabelCreatedRecordsTheFilesAbove()

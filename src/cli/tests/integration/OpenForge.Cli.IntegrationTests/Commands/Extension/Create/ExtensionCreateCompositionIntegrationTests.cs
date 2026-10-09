@@ -25,8 +25,8 @@ public sealed class ExtensionCreateCompositionIntegrationTests
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Equal(
-            $"Extension ID (lowercase, digits and hyphens):{Environment.NewLine}"
-            + $"Package folder:{Environment.NewLine}",
+            $"Extension ID (for example my-tools):{Environment.NewLine}"
+            + $"Parent folder for the new Extension:{Environment.NewLine}",
             run.StandardError);
         Assert.Contains("Would create the development-toolkit Extension scaffold at", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Would create ", run.StandardOutput, StringComparison.Ordinal);

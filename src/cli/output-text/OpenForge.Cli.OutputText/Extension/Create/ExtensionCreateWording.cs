@@ -8,7 +8,7 @@ internal static class ExtensionCreateWording
     internal static string InvalidExtensionId(string value)
         => string.Create(
             CultureInfo.InvariantCulture,
-            $"'{value}' is not a valid ID. Use lowercase letters, digits and hyphens.");
+            $"'{value}' is not a valid Extension ID. {ExtensionCreateText.MessageUseLowercaseLettersDigitsAndHyphens()}");
 
     // @OpenForgeText extension.create.wording.created-the-extension-scaffold-at
     internal static string Created(string id, string folder)

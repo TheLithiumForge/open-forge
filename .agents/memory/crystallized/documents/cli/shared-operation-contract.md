@@ -190,11 +190,13 @@ The host derives those capabilities as follows:
 
 ### Selection viewport
 
-Key-based single, multi, and permission selection use one bounded current view.
-Keep the question, focused choice, selected/dependency markers, visible position
-and controls together. The full finite inventory remains navigable; it need not
-fit on screen simultaneously. Show details for the focused choice rather than
-every description. Clip or wrap through the actual viewport width and reserve
+Key-based single, multi, marked-list, and permission selection use one bounded
+current view. Keep the question, legend, focused choice, marks and controls
+together. The full finite inventory remains navigable, and it need not fit on
+screen at once. Show a position line only when some rows are out of view. A row
+shows its mark, its label and an optional one-line summary clipped to the view
+width. Longer details appear only for the focused choice. Rows carry numbers
+only where digit keys choose a row: single selection and every line-mode list. Clip or wrap through the actual viewport width and reserve
 enough rows for controls and a useful current choice, without terminal wrapping
 or scrolling stale rows into the current view. At small sizes, prioritize the
 question, focus, position and next action over secondary detail.
@@ -214,31 +216,51 @@ capability is unavailable, preserve the existing numbered line-input semantics.
 
 All prompt primitives have key and line modes with identical semantics:
 
-- Confirmation asks `Apply these changes? [y/N]`. The key answers are `y`,
+- Confirmation asks `Apply these changes? [y/N]`. When the plan deletes,
+  replaces or removes something, the question names that part, such as
+  `Apply these changes, including deleting 3 files? [y/N]`,
+  `Apply these changes, including replacing 2 existing files? [y/N]` or
+  `Apply these changes, including removing 4 links? [y/N]`. The question
+  still approves the whole plan shown above it. The key answers are `y`,
   `n`, Enter, and Escape. Line mode accepts `y`, `yes`, `n`, `no`, or empty.
   The flag equivalent is `--automatic`.
 - Single selection shows the possible paths or IDs, supports up/down, Enter,
   digits, and Escape, and has the line-mode question `Choose a number (1-2), or
 press Enter to cancel:`. An exact path or ID is its flag equivalent.
-- Multi-selection shows `[x]` chosen, `[+]` required by a chosen package, and
-  `[ ]` not chosen, with a legend. Space toggles, `a` chooses all, `n` clears
-  all, up/down moves, Enter continues, and Escape cancels. Direct dependencies
-  appear in `needs:`; reverse dependencies appear in `required by` or
+- Multi-selection marks a chosen row with its action: `[+]` to install or
+  update, and `[-]` to remove. `[*]` marks a row included because another
+  choice needs it, and `[ ]` marks a row that is not chosen. A legend names
+  the marks the list uses. Space toggles, `a` chooses all, `n` clears all,
+  up/down moves, Enter continues, and Escape cancels. Direct dependencies
+  appear in `needs:`. Reverse dependencies appear in `required by` or
   `needed by`. Its flag equivalents are package IDs or `--all`.
+- A marked list gives every row one of a fixed set of marks and starts with a
+  complete answer. Up/down moves, a mark key sets the focused row, space moves
+  it to the next mark, Enter accepts the whole list, and Escape cancels. A
+  locked row shows why it cannot change. Line mode prints the numbered list and
+  accepts edits such as `3-` or `2+ 9~`, separated by spaces or commas, then
+  reprints the list. An empty line accepts the list, and `cancel` or end of
+  input cancels. An invalid edit repeats the rule and changes nothing. Install
+  Custom is the only marked list, and its flag equivalent is `--route`.
 - Text input is line mode only. A rejected value repeats the rule, such as
   `'My Tools' is not a valid ID. Use lowercase letters, digits, and hyphens.`
   The operand or option is its flag equivalent.
-- Permission selection shows `Allow always`, `Allow once`, and `Cancel`.
-  Line mode accepts `always`, `once`, or `cancel`. The flag equivalent is
+- Permission selection asks `Allow <owner> to change these paths outside .agents?`,
+  lists each path, and shows `Allow always`, `Allow once`, and `Cancel` with a
+  one-line description each, in key and line mode. Line mode asks
+  `Type always, once or cancel:` and accepts `always`, `once`, or `cancel`. The flag equivalent is
   `--allow-path <path>` and means allow always.
 
-Choosing a required dependency marks it `[+]` and a required row cannot be
+Choosing a required dependency marks it `[*]`, and a required row cannot be
 toggled off while a chosen package needs it. Trying prints
-`<dependency> is required by <package>. Unchoose that first.`. Enter with no
+`To leave <dependency> out, unchoose <package> first.`. Enter with no
 package chosen prints `Choose at least one package, or press esc to cancel.`.
-Line mode reports added dependencies with `Also installing <dependency>,
-required by <package>.`, for example `Also installing memory-starters, required
-by development-toolkit.`.
+Line mode reports added dependencies with `Also included: <dependency>,
+required by <package>.`, for example `Also included: memory-starters, required
+by development-toolkit.`. In a removal list, choosing a package that others
+need includes them too and prints `Removing <package> also removes <dependents>.`.
+An invalid line-mode answer to a confirmation prints `Type y or n.`, and to a
+permission question `Type always, once or cancel.`, before asking again.
 
 ### Plan review
 

@@ -42,9 +42,9 @@ The six Core categories and Memory are built-in routes that you can select durin
 
 ## Change your setup choices
 
-Run `open-forge install --configure` to revisit Essentials, Full Core, or Custom. Custom starts with the current concrete selection. Add an omitted category when it becomes useful, or choose Add + Git-ignore to keep new files throughout its directory out of ordinary Git commits. Already tracked files stay tracked. Ignored content is still indexed and read.
+Run `open-forge install --configure` to revisit Essentials, Full Core, or Custom. Custom shows one list that starts with the current concrete selection. Mark an omitted category `+` when it becomes useful, or `~` to keep new files throughout its directory out of ordinary Git commits. Already tracked files stay tracked. Ignored content is still indexed and read.
 
-Custom's Remove omits supplied defaults and releases their Framework management. It keeps existing files, notes, and overwrite companions in place and routable. For actual deletion, review the separate [`remove` command](/guides/cli#remove-and-keep-removed).
+Marking a category `-` omits supplied defaults and releases their Framework management. It keeps existing files, notes, and overwrite companions in place and routable. For actual deletion, review the separate [`remove` command](/guides/cli#remove-and-keep-removed).
 
 Explicit configuration can restore eligible missing packaged defaults while preserving authored files and narrower omissions. After a checkout, it can restore an ignored route's scaffolding with or without the lock file. It cannot recover private notes that weren't shared. [Installation](installation.md#configure-an-existing-workspace) covers the wizard and unattended setup, and the [CLI reference](/guides/cli#setup-choices) lists Custom row flags.
 

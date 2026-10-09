@@ -42,8 +42,16 @@ internal static class RouteMoveWording
     internal static string EntryAdded(string path)
         => global::OpenForge.Cli.OutputText.Route.Move.RouteMoveWording.EntryAdded(path);
 
-    internal static string RewriteHeading(int count, bool category)
-        => global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.FormatRewroteThatPointedAtThe(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{Plural(count, "link")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{(category ? "old paths" : "old path")}"));
+    internal static string RewriteHeading(int count, bool category, bool preview)
+        => global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.RewriteHeading(
+            count, Plural(count, "link"), category ? "old paths" : "old path", preview);
+
+    internal static string RewriteNotStartedHeading(int count, bool category)
+        => global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.RewriteNotStartedHeading(
+            count, Plural(count, "link"), category ? "old paths" : "old path");
+
+    internal static string RewriteUnconfirmedHeading(int count)
+        => global::OpenForge.Cli.OutputText.Route.Move.RouteMovePhrases.RewriteUnconfirmedHeading(count, Plural(count, "link"));
 
     internal static string RewriteLocation(string path, int line, int column)
         => string.Create(CultureInfo.InvariantCulture, $"{path}:{line}:{column}");

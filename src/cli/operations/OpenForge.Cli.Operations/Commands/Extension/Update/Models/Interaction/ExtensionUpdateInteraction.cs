@@ -14,9 +14,7 @@ internal sealed record ExtensionUpdateInteraction
 
     internal required CliPrompt<CliPermissionQuestion, CliPermissionChoice> Permission { get; init; }
 
-    internal required CliConfirmQuestion ApplyQuestion { get; init; }
-
-    internal required Func<int, CliConfirmQuestion> PruneQuestion { get; init; }
+    internal required Func<ExtensionUpdateConfirmationFacts, CliConfirmQuestion> ApplyQuestion { get; init; }
 
     internal required CliPlanConfirmation<ExtensionUpdateResult, CliConfirmQuestion> Apply { get; init; }
 }

@@ -282,6 +282,7 @@ internal sealed class ExtensionUpdatePlanner
                     .Where(displayedIds.Contains)
                     .Select(dependency => new CliDependency<string>(package.Id, dependency)))],
                 new HashSet<string>(StringComparer.Ordinal),
+                CliSelectionAction.Update,
                 CliDependencyDirection.Requires);
             var reply = await _selectionPrompt(
                 question,

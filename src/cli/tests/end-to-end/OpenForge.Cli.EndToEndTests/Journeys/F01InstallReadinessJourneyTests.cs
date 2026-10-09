@@ -231,7 +231,7 @@ public sealed class F01InstallReadinessJourneyTests
         var result = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertCompleted(result);
         Assert.Contains("AGENTS.md", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Open Forge section added; your content was kept", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Open Forge section added, your content was kept", result.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Created AGENTS.md", result.StandardOutput, StringComparison.Ordinal);
 
         var after = CaptureEntryKinds(workspace.Path);

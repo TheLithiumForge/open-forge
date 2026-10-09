@@ -16,6 +16,8 @@ internal static class ExtensionCreateWording
 
     internal static string PackageFolderRule() => global::OpenForge.Cli.OutputText.Extension.Create.ExtensionCreateText.MessageEnterAnExistingOrdinaryDirectory();
 
+    internal static string InvalidPackageFolder() => global::OpenForge.Cli.OutputText.Extension.Create.ExtensionCreateText.InvalidParentFolder();
+
     internal static string ConfirmCreate() => global::OpenForge.Cli.OutputText.Extension.Create.ExtensionCreateText.TitleCreateTheseFilesYN();
 
     internal static string Created(string id, string folder)

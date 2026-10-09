@@ -24,8 +24,8 @@ public sealed class InstallFrontmatterPresentationTests
         var question = InstallSetupQuestions.Frontmatter(new("root"));
         Assert.Equal("How should Open Forge write file metadata?", question.Question);
         Assert.Collection(question.Choices,
-            root => { Assert.Equal("root", root.Value); Assert.Equal("Root keys", root.Label); Assert.Equal("description: and tags: at the top of the frontmatter", root.Description); },
-            scoped => { Assert.Equal("scoped", scoped.Value); Assert.Equal("Scoped under open-forge:", scoped.Label); Assert.Equal("open-forge: holds description: and tags:", scoped.Description); });
+            root => { Assert.Equal("root", root.Value); Assert.Equal("Root keys", root.Label); Assert.Equal("description: and tags: at the top level", root.Summary); },
+            scoped => { Assert.Equal("scoped", scoped.Value); Assert.Equal("Scoped under open-forge:", scoped.Label); Assert.Equal("open-forge: holds description: and tags:", scoped.Summary); });
     }
 
     [Fact(DisplayName = "Fresh setup lists root first")]

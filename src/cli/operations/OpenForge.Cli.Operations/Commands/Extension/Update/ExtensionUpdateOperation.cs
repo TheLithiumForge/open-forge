@@ -177,11 +177,7 @@ internal sealed class ExtensionUpdateOperation(
                     plan.Result.Verification,
                     permission.Result),
                 plan.Result.Findings);
-            var deletionCount = plan.Effects.Count(effect =>
-                effect.FileChange?.Kind == PlannedFileChangeKind.Delete);
-            var question = request.Prune
-                ? _interaction.PruneQuestion(deletionCount)
-                : _interaction.ApplyQuestion;
+            var question = _interaction.ApplyQuestion(ExtensionUpdateConfirmationFacts.From(plan));
             CliPromptReply<bool> approval;
             try
             {

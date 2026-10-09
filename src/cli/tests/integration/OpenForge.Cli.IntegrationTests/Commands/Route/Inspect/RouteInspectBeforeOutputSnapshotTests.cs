@@ -44,7 +44,7 @@ public sealed class RouteInspectBeforeOutputSnapshotTests
             new CliWorkspace(workspace.Path, workspace.Path, CliWorkspaceSelectionMethod.CurrentDirectory),
             "docs/guide", allowInteractiveSourceSelection: true), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Attention, result.Status);
-        Assert.Contains("docs/guide matches 2 sources. Which one?", prompts.ToString(), StringComparison.Ordinal);
+        Assert.Contains("\"docs/guide\" matches 2 paths. Choose the one to inspect.", prompts.ToString(), StringComparison.Ordinal);
         Assert.Equal(before, workspace.Snapshot());
         CommandOutputRenderers<RouteInspectResult>.From(RouteInspectPresentation.Rendering)
             .MatchDetails(result, "ambiguous-id-prompt");

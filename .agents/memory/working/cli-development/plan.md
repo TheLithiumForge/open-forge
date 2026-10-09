@@ -10,9 +10,10 @@ open-forge:
 
 The [project-control ledger](project-control.md#active-task-ledger) owns the queue and permanent Task identities. Each Task defines its remaining outcome and evidence.
 
-1. Keep [Task 71](tasks/task71-streamline-build-release-pipeline.md) queued for pipeline analysis.
-2. Keep Tasks 34 and 39 paused, and Task 48 frozen at A/B1. Its Extension scoping work remains required before 1.0. The [wave capsule](one-zero-polish-wave.md) retains resume boundaries.
-3. Retain Task 62's pending maintainer review, deferred documentation reviews and the broader [Local Planning review](../local-planning.md). Other unfinished work stays in the [Task index](tasks/_tasks.md) and [candidate queue](tasks/potential/_potential.md).
+1. Deliver [Task 76](tasks/task76-simple-wizards-and-honest-change-wording.md), the simpler wizards and honest change wording the maintainer selected on 2026-10-09.
+2. Keep [Task 71](tasks/task71-streamline-build-release-pipeline.md) queued for pipeline analysis.
+3. Keep Tasks 34 and 39 paused, and Task 48 frozen at A/B1. Its Extension scoping work remains required before 1.0. The [wave capsule](one-zero-polish-wave.md) retains resume boundaries.
+4. Retain Task 62's pending maintainer review, deferred documentation reviews and the broader [Local Planning review](../local-planning.md). Other unfinished work stays in the [Task index](tasks/_tasks.md) and [candidate queue](tasks/potential/_potential.md).
 
 ## Completed work and history
 

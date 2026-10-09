@@ -360,7 +360,7 @@ public sealed class UpdateMigrationPresentationTests
 
         Assert.Equal(CliEffectKind.Section, Assert.Single(selected.Report.Effects).Kind);
         Assert.Equal(1, selected.Report.Data.ChangedFiles);
-        Assert.Equal(1, selected.Report.Counts.Single(count => count.Name == "filesReplaced").Value);
+        Assert.Equal(0, selected.Report.Counts.Single(count => count.Name == "filesReplaced").Value);
         Assert.Equal(1, selected.Report.Counts.Single(count => count.Name == "sectionsUpdated").Value);
         Assert.Equal("framework", dataEffect.Source?.Id);
         Assert.Null(dataEffect.SourceAssetPath);

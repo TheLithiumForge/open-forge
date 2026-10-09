@@ -29,8 +29,16 @@ internal static class RouteUpdateWording
 
     internal static string TemplatePath(string path) => global::OpenForge.Cli.OutputText.Route.Shared.CanonicalPhrases.TemplatePath(path);
 
-    // @OpenForgeText route.update.wording.frontmatter-rewritten
-    internal static string FrontmatterRewritten(string path) => $"{path}  frontmatter rewritten";
+    // @OpenForgeText route.update.wording.metadata-change
+    internal static string MetadataChange(bool preview)
+        => preview ? "metadata would be updated" : "metadata updated";
+
+    // @OpenForgeText route.update.wording.template-body-change
+    internal static string TemplateBodyChange(bool preview)
+        => preview ? "Template body would be added" : "Template body added";
+
+    // @OpenForgeText route.update.wording.combined-change
+    internal static string CombinedChange(string metadata, string body) => $"{metadata} and {body}";
 
     internal static string EntryUpdated(string path) => global::OpenForge.Cli.OutputText.Route.Shared.CanonicalPhrases.EntryUpdated(path);
 

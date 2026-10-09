@@ -1,0 +1,5 @@
+Updated 3 Framework files.
+  .agents/loader.md             Entries updated
+  AGENTS.md                     Open Forge section updated
+  CLAUDE.md                     Open Forge section added, your content was kept
+  .agents/open-forge.lock.json  ownership record updated

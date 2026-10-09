@@ -1,0 +1,10 @@
+Route move stopped after 0 of 4 changes.
+Workspace: <workspace>
+  Error  .agents/memory/guides/old guide.md  Verification failed
+         .agents/memory/guides/old guide.md did not verify after it was written. Recovery data: /recovery/route-move-final.zip.
+  .agents/memory/guides/old guide.md -> .agents/memory/archive/new guide.md
+  .agents/guidance/_guidance.md  failed
+  Could not confirm the update of 1 link:
+  README.md:3:2  .agents/memory/guides/old guide.md -> .agents/memory/archive/new guide.md
+  Report the failure and retry the same Route Move request with bounded diagnostics.
+Next: open-forge route move --detail debug

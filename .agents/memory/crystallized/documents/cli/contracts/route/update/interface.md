@@ -519,7 +519,8 @@ The catalogue text by detail level is:
 Updated memory/emerging/ideas/pricing/tiers
   description: "Pricing tier options" -> "Pricing tiers and their tradeoffs"
   tags: #Idea -> #Idea #Pricing
-  Entry updated in .agents/memory/emerging/ideas/pricing/_pricing.md
+  .agents/memory/emerging/ideas/pricing/tiers.md  metadata updated
+  .agents/memory/emerging/ideas/pricing/_pricing.md  Entries updated
 ```
 
 `minimal`, responsibility removed: `  responsibility: "Define the tiers" -> (removed)`.
@@ -532,8 +533,11 @@ Updated memory/emerging/ideas/pricing/tiers, but the Template body was not copie
   The file already has content, which was kept. The Template templates/memory/idea was not copied.
 ```
 
-`standard` adds `Workspace:`, the path, the Template path when used, and
-`<path>  frontmatter rewritten` as the effect row.
+Each routed file row names its change: `metadata updated`, `Template body
+added`, or `metadata updated and Template body added`, with preview forms such
+as `metadata would be updated` in a dry run. Failure and not-started outcomes
+keep their failure wording. `standard` adds `Workspace:`, the path and the
+Template path when used.
 
 `full` adds the before and after hashes and the full frontmatter before and
 after.

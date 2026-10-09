@@ -1,6 +1,6 @@
 Would update 1 Framework file.
 Workspace: <workspace>
-  .agents/loader.md  replace (you have changed it; a recovery bundle is written first)
+  .agents/loader.md  would be replaced (your previous file would be kept in a recovery bundle)
   .agents/loader.md  unchanged (line endings differ)
   18 files unchanged
   .agents/loader.md current SHA-256: <sha256>

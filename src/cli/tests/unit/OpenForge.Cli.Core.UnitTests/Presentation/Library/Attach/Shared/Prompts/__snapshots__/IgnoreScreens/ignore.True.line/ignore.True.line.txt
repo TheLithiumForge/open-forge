@@ -1,0 +1,6 @@
+Add Git-ignore rules for this Library's links?
+
+  1. No   Attach the links without changing .gitignore.
+  2. Yes  Add ignore rules for the Library's individual links. These rules do not cover source files or shared folders. Already tracked files stay tracked.
+
+Choose a number (1-2), or press Enter to cancel:

@@ -172,10 +172,6 @@ internal static class SharedText
     internal static string HeadingChooseNumbersSeparatedBySpacesAllOrPressEnterToCancel()
         => "Choose numbers separated by spaces, \"all\", or press Enter to cancel:";
 
-    // @OpenForgeText shared.label.x-chosen-required-by-a-chosen-package-not-chosen
-    internal static string LabelXChosenRequiredByAChosenPackageNotChosen()
-        => "[x] chosen   [+] required by a chosen package   [ ] not chosen";
-
     // @OpenForgeText shared.message.choose-at-least-one-package-or-press-esc-to-cancel
     internal static string MessageChooseAtLeastOnePackageOrPressEscToCancel()
         => "Choose at least one package, or press esc to cancel.";
@@ -186,7 +182,7 @@ internal static class SharedText
 
     // @OpenForgeText shared.label.save-these-paths-to-agents-open-forge-json
     internal static string LabelSaveThesePathsToAgentsOpenForgeJson()
-        => "save these paths to .agents/open-forge.json";
+        => "Save these paths in .agents/open-forge.json so later runs do not ask again. All Extensions and Libraries can use them.";
 
     // @OpenForgeText shared.title.allow-once
     internal static string TitleAllowOnce()
@@ -194,15 +190,19 @@ internal static class SharedText
 
     // @OpenForgeText shared.label.this-run-only
     internal static string LabelThisRunOnly()
-        => "this run only";
+        => "Allow for this run only.";
 
     // @OpenForgeText shared.title.cancel
     internal static string TitleCancel()
         => "Cancel";
 
+    // @OpenForgeText shared.message.permission-cancel-description
+    internal static string PermissionCancelDescription()
+        => "Stop without changing anything.";
+
     // @OpenForgeText shared.heading.always-once-cancel
     internal static string HeadingAlwaysOnceCancel()
-        => "always, once, cancel:";
+        => "Type always, once or cancel:";
 
     // @OpenForgeText shared.title.framework-files
     internal static string TitleFrameworkFiles()
@@ -803,6 +803,28 @@ internal static class SharedText
     // @OpenForgeText shared.title.apply-these-changes-y-n
     internal static string TitleApplyTheseChangesYN()
         => "Apply these changes? [y/N]";
+
+    // The shared operation contract defines one confirmation family for the
+    // complete plan, naming only its destructive part when one exists.
+    // @OpenForgeText shared.title.apply-these-changes-including-deleting-y-n
+    internal static string TitleApplyTheseChangesIncludingDeletingYN(int count)
+        => string.Create(CultureInfo.InvariantCulture,
+            $"Apply these changes, including deleting {count} {(count == 1 ? "file" : "files")}? [y/N]");
+
+    // @OpenForgeText shared.title.apply-these-changes-including-replacing-y-n
+    internal static string TitleApplyTheseChangesIncludingReplacingYN(int count)
+        => string.Create(CultureInfo.InvariantCulture,
+            $"Apply these changes, including replacing {count} existing {(count == 1 ? "file" : "files")}? [y/N]");
+
+    // @OpenForgeText shared.title.apply-these-changes-including-replacing-and-deleting-y-n
+    internal static string TitleApplyTheseChangesIncludingReplacingAndDeletingYN(int replacementCount, int deletionCount)
+        => string.Create(CultureInfo.InvariantCulture,
+            $"Apply these changes, including replacing {replacementCount} existing {(replacementCount == 1 ? "file" : "files")} and deleting {deletionCount} {(deletionCount == 1 ? "file" : "files")}? [y/N]");
+
+    // @OpenForgeText shared.title.apply-these-changes-including-removing-y-n
+    internal static string TitleApplyTheseChangesIncludingRemovingYN(int count)
+        => string.Create(CultureInfo.InvariantCulture,
+            $"Apply these changes, including removing {count} {(count == 1 ? "link" : "links")}? [y/N]");
 
     // @OpenForgeText shared.message.text-completed-completed-with-warnings-and-incomplete-results-use-stdout-invalid-input-blocked-failed-and-cancelled-results-use-stderr
     internal static string MessageTextCompletedCompletedWithWarningsAndIncompleteResultsUseStdoutInvalidInputBlockedFailedAndCancelledResultsUseStderr()

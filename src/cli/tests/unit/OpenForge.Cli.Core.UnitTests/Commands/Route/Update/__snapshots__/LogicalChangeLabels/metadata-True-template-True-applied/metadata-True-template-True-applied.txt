@@ -1,0 +1,8 @@
+Updated memory/topic
+Workspace: <workspace>
+  Path: .agents/memory/topic.md
+  Template: .agents/templates/topic.md
+  description: "Before" -> "After"
+  responsibility: "Before responsibility" -> "After responsibility"
+  tags: #Before -> #After
+  .agents/memory/topic.md  metadata updated and Template body added

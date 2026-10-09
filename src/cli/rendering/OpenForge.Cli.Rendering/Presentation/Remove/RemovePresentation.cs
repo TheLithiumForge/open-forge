@@ -25,6 +25,7 @@ internal static class RemovePresentation
         DataTextRenderer = RemoveDataTextRenderer.Render,
         DataJsonTypeInfo = JsonContext.RemoveData,
         Shape = CliCommandShape.ChangeReport,
+        SelectText = static selected => selected with { TextEffects = [] },
     };
 
     internal static CliHelpContent CreateHelp()

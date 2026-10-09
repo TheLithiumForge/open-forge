@@ -11,7 +11,7 @@ internal static class ExtensionRemoveWording
     internal static string Selection() => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.PromptWhichExtensionsDoYouWantToRemove();
 
     internal static string Delete(int count)
-        => global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedPhrases.FormatDeleteTheFileListedAboveYN(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{(count == 1 ? string.Empty : "s")}"));
+        => count > 0 ? CliPromptWording.ConfirmDeleting(count) : CliPromptWording.Confirm();
 
     internal static string Removed(IReadOnlyList<string> ids)
         => ids.Count == 1

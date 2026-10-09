@@ -786,6 +786,7 @@ public sealed class CliReportInvariantsTests
                 && ((detail == "minimal"
                         && (path.Contains("ExtensionInstallBeforeOutputSnapshotTests", StringComparison.Ordinal)
                             || path.Contains("InstallBeforeOutputSnapshotTests", StringComparison.Ordinal)
+                            || path.Contains("InstallChangeOutputSnapshotTests", StringComparison.Ordinal)
                             || path.Contains("LibraryAttachBeforeOutputSnapshotTests", StringComparison.Ordinal)))
                     || path.Contains("InstallBeforeOutputSnapshotTests", StringComparison.Ordinal)
                         && RequiredString(effect, "outcome") == "not-started"

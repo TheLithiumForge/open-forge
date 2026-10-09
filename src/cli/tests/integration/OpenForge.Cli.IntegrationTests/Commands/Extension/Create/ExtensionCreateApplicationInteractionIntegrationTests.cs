@@ -35,8 +35,8 @@ public sealed class ExtensionCreateApplicationInteractionIntegrationTests
         Assert.True(Directory.Exists(catalogue.Combine("toolkit", "content")));
 
         var prompts = scripted.Output.ToString();
-        Assert.Contains("Extension ID (lowercase, digits and hyphens):", prompts, StringComparison.Ordinal);
-        Assert.Contains("Package folder:", prompts, StringComparison.Ordinal);
+        Assert.Contains("Extension ID (for example my-tools):", prompts, StringComparison.Ordinal);
+        Assert.Contains("Parent folder for the new Extension:", prompts, StringComparison.Ordinal);
         Assert.Contains("Would create the toolkit Extension scaffold at", prompts, StringComparison.Ordinal);
         Assert.Contains("Create these files? [y/N]", prompts, StringComparison.Ordinal);
         Assert.True(

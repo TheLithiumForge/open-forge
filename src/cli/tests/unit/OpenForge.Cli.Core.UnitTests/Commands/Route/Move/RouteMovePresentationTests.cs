@@ -9,11 +9,26 @@ using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Move;
 
 public sealed class RouteMovePresentationTests
 {
+    [Fact(DisplayName = "Route Move failed reference receipts contribute no completed rewrites")]
+    [Trait("Feature", "route-move"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void FailedReferencesAreNotCompleted()
+    {
+        var result = Result(CliSemanticStatus.Failed);
+        var json = Render(result, CliFormat.Json, CliDetail.Standard).PrimaryContent;
+        using var report = JsonDocument.Parse(json);
+        Assert.Equal(0, report.RootElement.GetProperty("counts").GetProperty("linksRewritten").GetInt32());
+        Assert.Single(report.RootElement.GetProperty("data").GetProperty("rewrittenLinks").EnumerateArray());
+        CommandOutputSnapshot.MatchSnapshot(CommandOutputNormalization.ReplaceDelimitedPath(
+            Render(result, CliFormat.Text, CliDetail.Standard).PrimaryContent,
+            result.WorkspacePath!, "<workspace>"), "failed-rewrites");
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Move native JSON exposes the accepted ordered change data"),
      Trait("Feature", "route-move"), Trait("Evidence", "UnitContract")]
@@ -68,8 +83,8 @@ public sealed class RouteMovePresentationTests
 
         Assert.StartsWith("Moved ", minimal, StringComparison.Ordinal);
         Assert.Contains(RouteMoveTestData.DestinationPath, minimal, StringComparison.Ordinal);
-        Assert.Contains("Entry updated in .agents/guidance/_guidance.md", minimal, StringComparison.Ordinal);
-        Assert.Contains("Rewrote 1 link that pointed at the old path:", minimal, StringComparison.Ordinal);
+        Assert.Contains(".agents/guidance/_guidance.md  Entries updated", minimal, StringComparison.Ordinal);
+        Assert.Contains("Updated 1 link that pointed to the old path:", minimal, StringComparison.Ordinal);
         Assert.Contains("README.md:3:2", minimal, StringComparison.Ordinal);
         Assert.DoesNotContain("old%20guide.md", minimal, StringComparison.Ordinal);
         Assert.Contains("Workspace:", standard, StringComparison.Ordinal);
@@ -149,7 +164,7 @@ public sealed class RouteMovePresentationTests
 
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Route Move native output preserves failed and cancelled status actions")]
-    [InlineData((int)CliSemanticStatus.Failed, "Route move stopped after 0 of 3 changes.", "open-forge route move --detail debug")]
+    [InlineData((int)CliSemanticStatus.Failed, "Route move stopped after 0 of 4 changes.", "open-forge route move --detail debug")]
     [InlineData((int)CliSemanticStatus.Interrupted, "Route move was cancelled. Nothing was changed.", "open-forge route move")]
     [Trait("Feature", "route-move")]
     [Trait("Evidence", "UnitBehavior")]
@@ -273,6 +288,12 @@ public sealed class RouteMovePresentationTests
         RouteMoveEffectResidual residual)
         =>
         [
+            Effect(
+                ".agents/guidance/_guidance.md",
+                RouteMoveEffectKind.GeneratedRegion,
+                RouteMoveEffectAction.Replace,
+                outcome,
+                residual),
             Effect(
                 RouteMoveTestData.DestinationPath,
                 RouteMoveEffectKind.MovedFile,

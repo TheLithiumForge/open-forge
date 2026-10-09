@@ -25,7 +25,7 @@ public sealed class CliSelectionViewportTests
         Assert.Equal(20, script.ClearCalls);
         Assert.All(script.Frames, frame => AssertBounded(frame, width, height));
         Assert.Contains("Choice 20/20", script.Frames[^1], StringComparison.Ordinal);
-        Assert.Contains(">  20. package-20", script.Frames[^1], StringComparison.Ordinal);
+        Assert.Contains("> 20. package-20", script.Frames[^1], StringComparison.Ordinal);
         Assert.DoesNotContain("Details for package-01", script.Frames[^1], StringComparison.Ordinal);
         Assert.All(choices, choice => Assert.Contains(script.Frames, frame => frame.Contains(choice.Label, StringComparison.Ordinal)));
     }
@@ -38,17 +38,18 @@ public sealed class CliSelectionViewportTests
         var script = ScriptedCliTerminal.Keys([new(CliKey.Space), new(CliKey.Down), new(CliKey.Space), new(CliKey.Enter)]);
         script.Viewport = new(width, height);
         var question = new CliMultiSelectQuestion<string>("Which packages?", Choices(25),
-            [new("package-01", "package-02"), new("package-02", "package-25")], new HashSet<string>());
+            [new("package-01", "package-02"), new("package-02", "package-25")], new HashSet<string>(), CliSelectionAction.Install);
 
         var reply = await new CliPrompts(script.Terminal).MultiSelectAsync(question, new(true), CancellationToken.None);
 
         Assert.Equal(["package-01"], reply.Value.Chosen);
         Assert.Equal(["package-02", "package-25"], reply.Value.Required);
         Assert.All(script.Frames, frame => AssertBounded(frame, width, height));
-        Assert.Contains("> [+] 2. package-02", script.Frames[^1], StringComparison.Ordinal);
+        Assert.Contains("> [*] package-02", script.Frames[^1], StringComparison.Ordinal);
         Assert.Contains("required by package-01", script.Frames[2], StringComparison.Ordinal);
-        Assert.Contains("Unchoose that first.", script.Frames[^1].Replace(Environment.NewLine, string.Empty, StringComparison.Ordinal), StringComparison.Ordinal);
-        Assert.Contains("space toggle  a all  n none", script.Frames[^1], StringComparison.Ordinal);
+        Assert.Contains("unchoose package-01 first.", script.Frames[^1].Replace(Environment.NewLine, " ", StringComparison.Ordinal), StringComparison.Ordinal);
+        Assert.Contains("up/down move   space toggle   a all", script.Frames[^1], StringComparison.Ordinal);
+        Assert.Contains("n none   enter next   esc cancel", script.Frames[^1], StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Resize refreshes the frame while preserving choice dependency and notice state"), Trait("Boundary", "Output"), Trait("Feature", "cli-interaction"), Trait("Evidence", "Unit")]
@@ -62,7 +63,7 @@ public sealed class CliSelectionViewportTests
             if (call == 4) script.Viewport = new(40, 12);
             if (call == 5) script.Viewport = new(80, 24);
         };
-        var question = new CliMultiSelectQuestion<string>("Which packages?", Choices(25), [new("package-01", "package-02")], new HashSet<string>());
+        var question = new CliMultiSelectQuestion<string>("Which packages?", Choices(25), [new("package-01", "package-02")], new HashSet<string>(), CliSelectionAction.Install);
 
         var reply = await new CliPrompts(script.Terminal).MultiSelectAsync(question, new(true), CancellationToken.None);
 
@@ -71,9 +72,9 @@ public sealed class CliSelectionViewportTests
         AssertBounded(script.Frames[4], 40, 12);
         AssertBounded(script.Frames[5], 80, 24);
         Assert.True(script.Frames[5].Split('\n').Length > script.Frames[4].Split('\n').Length);
-        Assert.Contains("> [+] 2. package-02", script.Frames[4], StringComparison.Ordinal);
-        Assert.Contains("Unchoose that first.", script.Frames[4].Replace(Environment.NewLine, string.Empty, StringComparison.Ordinal), StringComparison.Ordinal);
-        Assert.Contains("Unchoose that first.", script.Frames[5].Replace(Environment.NewLine, string.Empty, StringComparison.Ordinal), StringComparison.Ordinal);
+        Assert.Contains("> [*] package-02", script.Frames[4], StringComparison.Ordinal);
+        Assert.Contains("unchoose package-01 first.", script.Frames[4].Replace(Environment.NewLine, " ", StringComparison.Ordinal), StringComparison.Ordinal);
+        Assert.Contains("unchoose package-01 first.", script.Frames[5].Replace(Environment.NewLine, " ", StringComparison.Ordinal), StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Permission pages retain owner choices and every complete path including long suffixes"), Trait("Boundary", "Output"), Trait("Feature", "cli-interaction"), Trait("Evidence", "Unit")]
@@ -82,7 +83,7 @@ public sealed class CliSelectionViewportTests
         var longPath = "docs/" + new string('p', 75) + "/distinct-file.md";
         var paths = new[] { new CliPermissionPath(longPath, false) }
             .Concat(Enumerable.Range(1, 10).Select(index => new CliPermissionPath($"docs/file-{index:00}.md", false))).ToArray();
-        var keys = Enumerable.Repeat(new CliKeyStroke(CliKey.PageDown), 6)
+        var keys = Enumerable.Repeat(new CliKeyStroke(CliKey.PageDown), 20)
             .Concat([new(CliKey.PageUp), new(CliKey.PageDown), new(CliKey.Down), new(CliKey.Enter)]);
         var script = ScriptedCliTerminal.Keys(keys.Select(key => (CliKeyStroke?)key));
         script.Viewport = new(40, 12);
@@ -93,15 +94,13 @@ public sealed class CliSelectionViewportTests
         Assert.All(script.Frames, frame =>
         {
             AssertBounded(frame, 40, 12);
-            Assert.Contains("toolkit writes outside .agents:", frame, StringComparison.Ordinal);
+            Assert.Contains("Allow changes outside .agents?", frame, StringComparison.Ordinal);
             Assert.Contains("pgup/pgdn review", frame, StringComparison.Ordinal);
             Assert.Contains("Allow", frame, StringComparison.Ordinal);
         });
-        var reviewed = string.Concat(script.Frames.Take(7).SelectMany(frame => frame.Split(Environment.NewLine)
-            .Skip(1).TakeWhile(line => !line.StartsWith("Paths ", StringComparison.Ordinal))));
-        Assert.Equal(string.Concat(paths.Select(path => path.Path)), reviewed);
-        Assert.Contains("Paths 7/7", script.Frames[6], StringComparison.Ordinal);
-        Assert.Contains("Paths 6/7", script.Frames[7], StringComparison.Ordinal);
+        var reviewed = string.Concat(script.Frames.SelectMany(frame => frame.Split(Environment.NewLine)
+            .Skip(3).TakeWhile(line => !line.StartsWith("Paths ", StringComparison.Ordinal))));
+        Assert.Contains(string.Concat(paths.Select(path => path.Path)), reviewed, StringComparison.Ordinal);
     }
 
     [Theory(DisplayName = "Long permission owners remain identifiable and fully reviewable at the smallest supported views"), Trait("Boundary", "Output"), Trait("Feature", "cli-interaction"), Trait("Evidence", "Unit")]
@@ -123,7 +122,7 @@ public sealed class CliSelectionViewportTests
             AssertBounded(frame, width, height);
             Assert.Contains("/distinct-owner", frame, StringComparison.Ordinal);
             Assert.Contains("docs/first.md", frame, StringComparison.Ordinal);
-            Assert.Contains("enter choose  esc cancel", frame, StringComparison.Ordinal);
+            Assert.Contains("enter choose   esc cancel", frame, StringComparison.Ordinal);
         });
         var reviewed = string.Concat(script.Frames.SelectMany(frame => frame.Split(Environment.NewLine)
             .Skip(3).TakeWhile(line => !line.StartsWith("Paths ", StringComparison.Ordinal))));

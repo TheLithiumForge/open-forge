@@ -1,0 +1,5 @@
+Updated 3 Framework files.
+  .agents/loader.md             restored
+  .agents/memory/_memory.md     created
+  AGENTS.md                     created with an Open Forge section
+  .agents/open-forge.lock.json  ownership record updated

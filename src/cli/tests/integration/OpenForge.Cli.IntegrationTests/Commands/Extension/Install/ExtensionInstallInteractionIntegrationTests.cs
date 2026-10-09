@@ -1,11 +1,49 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Commands.Extension.Install;
+using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
+using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
+using OpenForge.Cli.TestSupport.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install.Shared.Permissions;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 
 public sealed class ExtensionInstallInteractionIntegrationTests
 {
+    [Theory(DisplayName = "Extension Install keeps separate replacement authority and names replacements in final approval")]
+    [InlineData(true, false, 1), InlineData(false, false, 1), InlineData(true, true, 2), InlineData(false, true, 2)]
+    [Trait("Feature", "extension-install"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
+    public async Task FinalApprovalNamesRealReplacements(bool keys, bool force, int replacements)
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-replacement-confirmation");
+        await workspace.SeedFrameworkAsync();
+        using var source = ExtensionInstallCatalogue.Create("extension-install-replacement-confirmation-source");
+        source.AddPackage("toolkit", [], (".agents/one.md", Document("One")), (".agents/two.md", Document("Two")));
+        workspace.CreateOccupant(".agents/one.md", "Your first file.\n");
+        if (replacements == 2) workspace.CreateOccupant(".agents/two.md", "Your second file.\n");
+        var before = workspace.Snapshot();
+        CliKeyStroke?[] strokes = force ? [new(CliKey.Character, 'n')] : [new(CliKey.Character, 'y'), new(CliKey.Character, 'n')];
+        string?[] lines = force ? ["no"] : ["yes", "no"];
+        var terminal = keys ? ScriptedCliTerminal.Keys(strokes) : ScriptedCliTerminal.Lines(lines);
+        var operation = ExtensionInstallOperationFactory.Create(
+            ExtensionInteractionTestFactory.ForInstall(new CliPrompts(terminal.Terminal)), workspace.LockStoreRoot);
+        var result = await operation.ExecuteAsync(new(workspace.Workspace, ExtensionInstallMode.Apply,
+            ["toolkit"], all: false, sourcePath: source.Path, force: force, automatic: false, allowInteraction: true),
+            TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        var expected = replacements == 1
+            ? "Apply these changes, including replacing 1 existing file? [y/N]"
+            : "Apply these changes, including replacing 2 existing files? [y/N]";
+        var output = terminal.Output.ToString();
+        Assert.EndsWith(expected + Environment.NewLine, output, StringComparison.Ordinal);
+        Assert.Equal(force ? 0 : 1, Count(output, "Allow replacing the"));
+        Assert.Contains("would be replaced", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("your previous file", output, StringComparison.Ordinal);
+        Assert.Equal(before, workspace.Snapshot());
+    }
+
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Extension Install selection prompt retries exact IDs and then applies after final confirmation"), Trait("Feature", "extension-install"), Trait("Evidence", "Integration")]
     public async Task SelectionPromptRetriesLocallyAndConsumesNoConfirmation()
@@ -36,6 +74,8 @@ public sealed class ExtensionInstallInteractionIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Contains("base", run.StandardError, StringComparison.Ordinal);
         Assert.Contains("toolkit", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("+ install   * also installed", run.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("[x]", run.StandardError, StringComparison.Ordinal);
         Assert.True(Count(run.StandardError, "base") >= 2, "The complete finite inventory must be shown again after an invalid answer.");
         Assert.True(Count(run.StandardError, "toolkit") >= 2, "The complete finite inventory must be shown again after an invalid answer.");
         Assert.Contains("Dependency order: base, toolkit", run.StandardOutput, StringComparison.Ordinal);
@@ -179,12 +219,13 @@ public sealed class ExtensionInstallInteractionIntegrationTests
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, applied.Status);
-        Assert.DoesNotContain("Replace the", applied.StandardError, StringComparison.Ordinal);
-        Assert.Contains("Apply these changes? [y/N]", applied.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("Allow replacing the", applied.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Apply these changes, including replacing 1 existing file? [y/N]", applied.StandardError, StringComparison.Ordinal);
         Assert.Equal("remaining", applied.RemainingInput);
         Assert.Contains("# Toolkit", workspace.ReadText(".agents/toolkit.md"), StringComparison.Ordinal);
         Assert.Contains("Recovery:", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("removed", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("your previous file is in the recovery bundle", applied.StandardOutput, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "OS")]
@@ -218,17 +259,17 @@ public sealed class ExtensionInstallInteractionIntegrationTests
                 path => path.GetString() == PermissionFixture.ExternalPath);
 
             var output = run.StandardError;
-            var permission = output.IndexOf("always, once, cancel:", StringComparison.Ordinal);
+            var permission = output.IndexOf("Type always, once or cancel:", StringComparison.Ordinal);
             var replacement = output.IndexOf(
-                "Replace the 1 existing file listed above? [y/N]",
+                "Allow replacing the 1 existing file listed above? [y/N]",
                 StringComparison.Ordinal);
-            var apply = output.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal);
+            var apply = output.IndexOf("Apply these changes, including replacing 1 existing file? [y/N]", StringComparison.Ordinal);
             Assert.True(permission >= 0, "The permission prompt was not rendered.");
             Assert.True(replacement > permission, "Replacement approval must follow permission approval.");
             Assert.True(apply > replacement, "Final plan approval must follow replacement approval.");
-            Assert.Equal(1, Count(output, "always, once, cancel:"));
-            Assert.Equal(1, Count(output, "Replace the 1 existing file listed above? [y/N]"));
-            Assert.Equal(1, Count(output, "Apply these changes? [y/N]"));
+            Assert.Equal(1, Count(output, "Type always, once or cancel:"));
+            Assert.Equal(1, Count(output, "Allow replacing the 1 existing file listed above? [y/N]"));
+            Assert.Equal(1, Count(output, "Apply these changes, including replacing 1 existing file? [y/N]"));
         }
         finally
         {
@@ -311,7 +352,7 @@ public sealed class ExtensionInstallInteractionIntegrationTests
             Assert.Equal(5, run.ExitCode);
             Assert.Equal(CliSemanticStatus.Blocked, run.Status);
             Assert.Equal("remaining", run.RemainingInput);
-            Assert.DoesNotContain("Replace the", run.StandardError, StringComparison.Ordinal);
+            Assert.DoesNotContain("Allow replacing the", run.StandardError, StringComparison.Ordinal);
             Assert.Equal(before, workspace.Snapshot());
         }
         finally

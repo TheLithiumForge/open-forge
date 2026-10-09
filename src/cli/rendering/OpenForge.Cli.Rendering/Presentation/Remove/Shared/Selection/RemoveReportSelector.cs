@@ -43,7 +43,6 @@ internal static class RemoveReportSelector
                 }).ToArray(),
                 RecoveryPath = result.RecoveryPath,
                 RecoveryDisposition = result.RecoveryDisposition,
-                ShowEffects = selection.Detail >= CliDetail.Standard,
             },
             Recovery = new CliRecovery(result.RecoveryPath, ReadRecoveryDisposition(result.RecoveryDisposition)),
             Next = result.Next,

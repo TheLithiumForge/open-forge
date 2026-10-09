@@ -3,6 +3,5 @@ Workspace: <workspace>
   Path: .agents/memory/project-alpha/overview.md
   Template: .agents/templates/route.md
   description: "Before overview" -> "After overview"
-  Body copied from the Template templates/route
-  Entry updated in .agents/memory/project-alpha/_project-alpha.md
-  .agents/memory/project-alpha/overview.md  frontmatter rewritten
+  .agents/memory/project-alpha/_project-alpha.md  Entries updated
+  .agents/memory/project-alpha/overview.md  metadata updated and Template body added

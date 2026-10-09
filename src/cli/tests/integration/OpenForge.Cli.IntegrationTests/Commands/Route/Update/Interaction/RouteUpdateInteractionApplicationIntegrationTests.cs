@@ -32,7 +32,7 @@ public sealed class RouteUpdateInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, run.Completion.Status);
         Assert.Equal(1, run.Terminal.LineReadCalls);
         Assert.Contains(
-            "memory/project-alpha/overview matches 2 sources. Which one?",
+            "\"memory/project-alpha/overview\" matches 2 paths. Choose the one to update.",
             run.TerminalOutput,
             StringComparison.Ordinal);
         Assert.Contains(

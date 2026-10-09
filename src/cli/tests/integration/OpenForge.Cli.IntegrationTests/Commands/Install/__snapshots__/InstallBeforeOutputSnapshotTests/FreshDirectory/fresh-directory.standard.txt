@@ -24,4 +24,3 @@ Frontmatter: root
   .agents/open-forge.lock.json                           created; records the files above
   Created 17 files and 13 directories under .agents (listed in .agents/open-forge.lock.json).
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
-  Created 13 directories.

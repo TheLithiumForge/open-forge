@@ -1,9 +1,16 @@
-using System.Globalization;
-
 namespace OpenForge.Cli.Core.Presentation.Route.Shared.Wording;
 
 internal static class RouteSourceSelectionWording
 {
-    internal static string SourceSelection(string requestedReference, int candidateCount)
-        => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedPhrases.FormatMatchesSourcesWhichOne(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{requestedReference}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{candidateCount}"));
+    internal static string Inspect(string reference, int count)
+        => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedPhrases.InspectSelection(reference, count);
+
+    internal static string Move(string reference, int count)
+        => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedPhrases.MoveSelection(reference, count);
+
+    internal static string Remove(string reference, int count)
+        => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedPhrases.RemoveSelection(reference, count);
+
+    internal static string Update(string reference, int count)
+        => global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedPhrases.UpdateSelection(reference, count);
 }

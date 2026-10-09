@@ -13,7 +13,7 @@ internal static class RouteInspectSourceSelectionPrompt
         ArgumentNullException.ThrowIfNull(prompts);
         return (question, policy, cancellationToken) => prompts.SelectAsync(
             new CliSelectQuestion<string>(
-                RouteSourceSelectionWording.SourceSelection(
+                RouteSourceSelectionWording.Inspect(
                     question.RequestedId,
                     question.CandidatePaths.Count),
                 question.CandidatePaths

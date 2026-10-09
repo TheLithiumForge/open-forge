@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Entries;
+using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Models.Interaction;
 
@@ -55,11 +56,14 @@ internal sealed record RepairLibraryPromptQuestion
         ArgumentNullException.ThrowIfNull(proposal);
         Proposal = proposal;
         EntryKind = ReadEntryKind(proposal.Evidence.Entry.Input.Context.Entry.Kind);
+        AlreadyMatchesPriorState = proposal.Evidence.Entry.State == RecoveryBundleTargetComparisonState.Prior;
     }
 
     internal RepairLibraryRecoveryProposal Proposal { get; }
 
     internal RepairLibraryPromptEntryKind EntryKind { get; }
+
+    internal bool AlreadyMatchesPriorState { get; }
 
     private static RepairLibraryPromptEntryKind ReadEntryKind(RecoveryEntryKind kind)
         => kind switch

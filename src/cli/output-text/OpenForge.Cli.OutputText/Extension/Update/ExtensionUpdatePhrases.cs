@@ -4,6 +4,11 @@ namespace OpenForge.Cli.OutputText.Extension.Update;
 
 internal static class ExtensionUpdatePhrases
 {
+    // @OpenForgeText extension.update.phrase.entries-summary
+    internal static string EntriesSummary(int count, string noun, bool preview)
+        => string.Create(global::System.Globalization.CultureInfo.InvariantCulture,
+            $"{(preview ? "Would update" : "Updated")} {count} {noun}.");
+
     // @OpenForgeText extension.update.phrase.status
     internal static string FormatStatus(string readText)
         => $"status={readText}";

@@ -3,6 +3,7 @@ using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.IntegrationTests.TestSupport;
@@ -31,6 +32,7 @@ internal sealed class RemoveRootIntegrationWorkspace : IDisposable
     internal IReadOnlyDictionary<string, string> SnapshotHashes() => _temporary.SnapshotHashes();
     internal void WriteText(string path, string value) => _temporary.CreateFile(path, value);
     internal void WriteBytes(string path, byte[] value) => _temporary.CreateFile(path, value);
+    internal void CreateDirectory(string path) => _temporary.CreateDirectory(path);
     internal bool TryCreateDirectoryLink(string path, string target) => _temporary.TryCreateDirectorySymbolicLink(path, target, out _);
     internal bool TryCreateFileLink(string path, string target) => _temporary.TryCreateFileSymbolicLink(path, target, out _);
 
@@ -55,7 +57,8 @@ internal sealed class RemoveRootIntegrationWorkspace : IDisposable
         StringWriter output,
         StringWriter error,
         TextReader? standardInput = null,
-        TextWriter? promptOutput = null)
+        TextWriter? promptOutput = null,
+        CliTerminal? terminal = null)
     {
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", "test"),
@@ -66,6 +69,7 @@ internal sealed class RemoveRootIntegrationWorkspace : IDisposable
                 StandardInputRedirected = true,
                 PromptOutputRedirected = true,
                 LockStoreRoot = LockStoreRoot,
+                Terminal = terminal,
             });
         return await application.RunAsync(
             arguments.ToArray(),

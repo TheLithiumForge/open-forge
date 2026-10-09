@@ -61,7 +61,7 @@ internal static class RouteUpdateReportSelector
             : new RouteUpdateDataEffect
             {
                 Path = targetEffect.Path,
-                Action = RouteUpdateWording.FrontmatterRewritten(targetEffect.Path),
+                Action = $"{targetEffect.Path}  {EffectWording(targetEffect, changes.Count > 0, result.Template?.Decision == RouteUpdateTemplateDecision.Copied)}",
                 Outcome = RouteUpdateWireVocabulary.Name(targetEffect.Outcome),
                 Before = full ? targetEffect.Change.Before : null,
                 After = full ? targetEffect.Change.Expected : null,
@@ -90,7 +90,7 @@ internal static class RouteUpdateReportSelector
             FrontmatterAfter = full ? Frontmatter(targetEffect, before: false) : null,
             TextMetadata = TextMetadata(result, standard, template),
             TextRows = textRows,
-            TextEffects = standard && targetDataEffect is not null
+            TextEffects = targetDataEffect is not null
                 ? [targetDataEffect]
                 : [],
             ShowNoChanges = result.Mode == RouteUpdateMode.DryRun
@@ -182,23 +182,32 @@ internal static class RouteUpdateReportSelector
         RouteUpdateEffect? parentEffect)
     {
         var rows = changes.Select(ChangeRow).ToList();
-        if (result.Template is { Decision: RouteUpdateTemplateDecision.Copied } template)
-        {
-            rows.Add(RouteUpdateWording.BodyCopied(template.Id ?? template.Requested));
-        }
-
         if (result.Template is { Decision: RouteUpdateTemplateDecision.AuthoredBodyProtected } protectedTemplate)
         {
             rows.Add(RouteUpdateWording.ProtectedBody(protectedTemplate.Id ?? protectedTemplate.Requested));
         }
 
-        if (parentEffect is not null && IsProgressed(parentEffect, result.Mode))
+        if (parentEffect is not null)
         {
-            rows.Add(RouteUpdateWording.EntryUpdated(parentEffect.Path));
+            rows.Add($"{parentEffect.Path}  {EffectWording(parentEffect, metadata: false, template: false)}");
         }
 
         return rows;
     }
+
+    private static string EffectWording(RouteUpdateEffect effect, bool metadata, bool template)
+        => effect.Outcome switch
+        {
+            RouteUpdateEffectOutcome.Planned or RouteUpdateEffectOutcome.Verified
+                when effect.Kind == RouteUpdateEffectKind.GeneratedRegion
+                => CliChangeWording.Entries(effect.Outcome == RouteUpdateEffectOutcome.Planned),
+            RouteUpdateEffectOutcome.Planned or RouteUpdateEffectOutcome.Verified
+                => RouteUpdateWording.TargetChange(metadata, template, effect.Outcome == RouteUpdateEffectOutcome.Planned),
+            RouteUpdateEffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
+            RouteUpdateEffectOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
+            RouteUpdateEffectOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFailed(),
+            _ => throw new ArgumentOutOfRangeException(nameof(effect)),
+        };
 
     private static string ChangeRow(RouteUpdateDataChange change)
     {

@@ -4,7 +4,8 @@ Workspace: <workspace>
          Writing .agents/memory/project-alpha/overview.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.
   Path: .agents/memory/project-alpha/overview.md
   description: "Before overview" -> "After overview"
-  .agents/memory/project-alpha/overview.md  frontmatter rewritten
+  .agents/memory/project-alpha/_project-alpha.md  not started
+  .agents/memory/project-alpha/overview.md  metadata updated
     Before: <sha256>
     After: <sha256>
   Frontmatter before:

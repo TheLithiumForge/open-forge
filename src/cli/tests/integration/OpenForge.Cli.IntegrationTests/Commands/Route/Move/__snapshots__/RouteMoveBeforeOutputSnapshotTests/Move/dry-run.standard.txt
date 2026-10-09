@@ -1,9 +1,9 @@
 Would move guidance/old guide to .agents/archive/new guide.md
 Workspace: <workspace>
   Would move .agents/guidance/old guide.overwrite.md -> .agents/archive/new guide.overwrite.md
-  Entry updated in .agents/archive/_archive.md
-  Entry updated in .agents/guidance/_guidance.md
-  Rewrote 5 links that pointed at the old path:
+  .agents/archive/_archive.md  Entries would be updated
+  .agents/guidance/_guidance.md  Entries would be updated
+  Would update 5 links that point to the old path:
   .agents/guidance/topics/child.md:8:13  .agents/guidance/old guide.md -> .agents/archive/new guide.md
   .agents/guidance/topics/child.overwrite.md:1:35  .agents/guidance/old guide.md -> .agents/archive/new guide.md
   README.md:3:13  .agents/guidance/old guide.md -> .agents/archive/new guide.md

@@ -205,6 +205,7 @@ internal sealed class ExtensionInstallSelectionResolver
                 .Where(displayedIds.Contains)
                 .Select(dependency => new CliDependency<string>(package.Id, dependency)))],
             disabled,
+            CliSelectionAction.Install,
             CliDependencyDirection.Requires);
         var reply = await _selectionPrompt(
             question,

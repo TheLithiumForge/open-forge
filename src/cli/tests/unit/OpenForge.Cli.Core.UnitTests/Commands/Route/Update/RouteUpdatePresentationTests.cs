@@ -6,11 +6,47 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Update;
 
 public sealed class RouteUpdatePresentationTests
 {
+    [Theory(DisplayName = "Route Update labels metadata and Template body changes independently in previews and applied reports")]
+    [InlineData(true, false, true), InlineData(false, true, true), InlineData(true, true, true)]
+    [InlineData(true, false, false), InlineData(false, true, false), InlineData(true, true, false)]
+    [Trait("Feature", "route-update"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void LogicalChangeLabels(bool metadata, bool template, bool preview)
+    {
+        var formation = RouteUpdateTestData.VerifiedNoOpFormation() with
+        {
+            Mode = preview ? RouteUpdateMode.DryRun : RouteUpdateMode.Apply,
+            Patch = metadata ? ChangedPatch() : RouteUpdateTestData.PatchFacts(),
+            Template = template
+                ? RouteUpdateTestData.ProtectedTemplate() with { Decision = RouteUpdateTemplateDecision.Copied }
+                : null,
+            Plan = new RouteUpdatePlanFacts
+            {
+                Completeness = RouteUpdatePlanCompleteness.Complete,
+                Safety = RouteUpdatePlanSafety.Safe,
+                Body = template ? RouteUpdateBodyState.TemplateCopied : RouteUpdateBodyState.Preserved,
+            },
+            Effects = [RouteUpdateTestData.Effect() with
+            {
+                Outcome = preview ? RouteUpdateEffectOutcome.Planned : RouteUpdateEffectOutcome.Verified,
+            }],
+            UnchangedPaths = [RouteUpdateTestData.ParentPath],
+            Verification = preview ? RouteUpdateVerificationState.NotRequested : RouteUpdateVerificationState.Verified,
+        };
+        var text = Render(RouteUpdateTestData.Result(formation), CliFormat.Text, CliDetail.Standard);
+        Assert.Equal(metadata, text.Contains("metadata " + (preview ? "would be updated" : "updated"), StringComparison.Ordinal));
+        Assert.Equal(template, text.Contains("Template body " + (preview ? "would be added" : "added"), StringComparison.Ordinal));
+        Assert.DoesNotContain("frontmatter rewritten", text, StringComparison.Ordinal);
+        CommandOutputSnapshot.MatchSnapshot(
+            CommandOutputNormalization.ReplaceDelimitedPath(text, formation.Workspace!.LexicalRoot, "<workspace>"),
+            $"metadata-{metadata}-template-{template}-{(preview ? "preview" : "applied")}");
+    }
+
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Route Update native reports retain status disposition"),
      InlineData((int)RouteUpdateFindingCode.InvalidPatch, "Cannot update memory/topic", 4, (int)CliOutputTarget.StandardError),
@@ -59,8 +95,8 @@ public sealed class RouteUpdatePresentationTests
             "description: \"Before\" -> \"After\"",
             "responsibility: \"Before responsibility\" -> \"After responsibility\"",
             "tags: #Before -> #After",
-            $"Entry updated in {RouteUpdateTestData.ParentPath}");
-        Assert.DoesNotContain(RouteUpdateTestData.TargetPath + "  frontmatter rewritten", text, StringComparison.Ordinal);
+            $"{RouteUpdateTestData.ParentPath}  Entries updated");
+        Assert.Contains(RouteUpdateTestData.TargetPath + "  metadata updated", text, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Output")]
@@ -92,7 +128,7 @@ public sealed class RouteUpdatePresentationTests
 
         var standard = Render(result, CliFormat.Text, CliDetail.Standard);
         Assert.Contains($"Path: {RouteUpdateTestData.TargetPath}", standard, StringComparison.Ordinal);
-        Assert.Contains($"{RouteUpdateTestData.TargetPath}  frontmatter rewritten", standard, StringComparison.Ordinal);
+        Assert.Contains($"{RouteUpdateTestData.TargetPath}  metadata updated", standard, StringComparison.Ordinal);
 
         var full = Render(result, CliFormat.Text, CliDetail.Full);
         Assert.Contains("Before: before-hash", full, StringComparison.Ordinal);

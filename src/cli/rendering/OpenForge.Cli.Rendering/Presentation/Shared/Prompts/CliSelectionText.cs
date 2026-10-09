@@ -8,35 +8,78 @@ internal static class CliSelectionText
 {
     private const string Ellipsis = "...";
     private const int NonAsciiColumns = 2;
+    private const string ItemSeparator = "   ";
+
+    internal static int Width(string text) => Columns(CliText.Escape(text));
 
     internal static IReadOnlyList<string> Wrap(string text, int width)
     {
         var lines = new List<string>();
         var line = new StringBuilder();
         var columns = 0;
-        var elements = StringInfo.GetTextElementEnumerator(CliText.Escape(text));
-        while (elements.MoveNext())
+        var escaped = CliText.Escape(text);
+        var position = 0;
+        while (position < escaped.Length)
         {
-            var element = elements.GetTextElement();
-            var size = Columns(element);
-            if (columns + size > width)
+            var spaces = 0;
+            while (position < escaped.Length && escaped[position] == ' ')
+            {
+                spaces++;
+                position++;
+            }
+            var start = position;
+            while (position < escaped.Length && escaped[position] != ' ') position++;
+            if (start == position) break;
+            var word = escaped[start..position];
+            var wordColumns = Columns(word);
+            if (line.Length > 0 && columns + spaces + wordColumns > width)
             {
                 lines.Add(line.ToString());
                 line.Clear();
                 columns = 0;
             }
-            if (size > width)
+            if (line.Length > 0)
             {
-                line.Append('?');
-                columns++;
+                line.Append(' ', spaces);
+                columns += spaces;
             }
-            else
+            var elements = StringInfo.GetTextElementEnumerator(word);
+            while (elements.MoveNext())
             {
-                line.Append(element);
-                columns += size;
+                var element = elements.GetTextElement();
+                var size = Columns(element);
+                if (columns + size > width && line.Length > 0)
+                {
+                    lines.Add(line.ToString());
+                    line.Clear();
+                    columns = 0;
+                }
+                line.Append(size > width ? "?" : element);
+                columns += size > width ? 1 : size;
             }
         }
         if (line.Length > 0 || lines.Count == 0) lines.Add(line.ToString());
+        return lines;
+    }
+
+    internal static IReadOnlyList<string> WrapItems(string text, int width)
+    {
+        var lines = new List<string>();
+        var line = string.Empty;
+        foreach (var item in CliText.Escape(text).Split(ItemSeparator, StringSplitOptions.RemoveEmptyEntries).Select(item => item.Trim()))
+        {
+            var candidate = line.Length == 0 ? item : $"{line}{ItemSeparator}{item}";
+            if (Columns(candidate) <= width)
+            {
+                line = candidate;
+                continue;
+            }
+            if (line.Length > 0) lines.Add(line);
+            line = string.Empty;
+            if (Columns(item) > width) lines.AddRange(Wrap(item, width));
+            else line = item;
+        }
+        if (line.Length > 0 || lines.Count == 0) lines.Add(line);
         return lines;
     }
 

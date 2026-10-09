@@ -1,0 +1,6 @@
+Library team-knowledge: include this recovery step?
+
+  1. Include    Restore the deleted Library link at .agents/directives/review.md.
+  2. Leave out  Leave this recovery step out of the plan.
+
+Choose a number (1-2), or press Enter to cancel:

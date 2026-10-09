@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Extension.Install.Models.Interaction;
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
@@ -12,7 +13,11 @@ internal static class ExtensionInstallWording
     internal static string ReplaceExisting(IReadOnlyList<string> paths)
         => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatReplaceTheExistingFileListedAboveYN(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{paths.Count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{(paths.Count == 1 ? string.Empty : "s")}"));
 
-    internal static string Apply() => CliPromptWording.Confirm();
+    internal static string Apply(ExtensionInstallConfirmationFacts facts)
+    {
+        ArgumentNullException.ThrowIfNull(facts);
+        return CliPromptWording.ConfirmChanges(facts.ReplacementCount, deletionCount: 0);
+    }
 
     internal static string Installed(
         IReadOnlyList<string> rootIds,
@@ -81,10 +86,8 @@ internal static class ExtensionInstallWording
     internal static string CreatedFile(string package, bool preview)
         => preview ? global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatWouldCreate($"{package}") : global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatCreated($"{package}");
 
-    internal static string ReplacedFile(bool preview)
-        => preview
-            ? global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.TitleWouldReplaceYourPreviousFileIsInTheRecoveryBundle()
-            : global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.LabelReplacedYourPreviousFileIsInTheRecoveryBundle();
+    internal static string ReplacedFile(bool preview, bool recoveryKept)
+        => CliChangeWording.Replaced(preview, recoveryKept);
 
     internal static string UpdatedSection(bool preview)
         => preview ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWouldUpdate() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdated();
@@ -100,8 +103,17 @@ internal static class ExtensionInstallWording
             ? global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatWouldSaveAGrantForToAgentsOpenForgeJson($"{path}")
             : global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatSavedAGrantForToAgentsOpenForgeJson($"{path}");
 
-    internal static string Lock(bool preview)
-        => preview ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWouldUpdate() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdated();
+    internal static string Lock(ExtensionInstallLifecycleOutcome outcome)
+        => outcome switch
+        {
+            ExtensionInstallLifecycleOutcome.Planned => CliChangeWording.OwnershipRecord(preview: true),
+            ExtensionInstallLifecycleOutcome.Verified => CliChangeWording.OwnershipRecord(preview: false),
+            ExtensionInstallLifecycleOutcome.AlreadyCurrent => CliChangeWording.OwnershipRecordUnchanged(),
+            ExtensionInstallLifecycleOutcome.NotRequested or ExtensionInstallLifecycleOutcome.NotStarted
+                or ExtensionInstallLifecycleOutcome.VerificationFailed => CliChangeWording.OwnershipRecordNotUpdated(),
+            ExtensionInstallLifecycleOutcome.CompletionUnknown => CliChangeWording.OwnershipRecordUnconfirmed(),
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
+        };
 
     internal static string EntriesUnchanged(IReadOnlyList<string> paths)
         => paths.Count == 0

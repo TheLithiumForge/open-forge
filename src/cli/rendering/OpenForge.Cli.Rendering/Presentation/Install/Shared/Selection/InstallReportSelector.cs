@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Shared.WorkspaceAdoption.Models.Result;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Result;
@@ -24,9 +25,10 @@ internal static class InstallReportSelector
         var facts = result.Facts;
         var preview = result.Mode == InstallMode.DryRun;
         var includeSource = selection.Detail >= CliDetail.Full;
-        var effects = facts.Effects.Select(effect => Project(effect, includeSource)).ToArray();
+        var effects = facts.Effects.Select(effect => Project(effect, includeSource, result.Frontmatter?.Form)).ToArray();
         var directoryCount = DirectoryCount(facts);
         var replacementCount = ReplacementCount(effects, preview);
+        var updatedFiles = UpdatedFileCount(effects, preview);
         var createdFiles = CountCreatedFiles(effects, preview);
         var createdPhysicalFiles = CountCreatedPhysicalFiles(effects, preview);
         var createdDirectories = CountCreatedDirectories(effects, preview);
@@ -53,7 +55,8 @@ internal static class InstallReportSelector
             preview,
             suppressInterruptedFinding,
             blockedPaths,
-            facts.Migrations.Count > 0)
+            facts.Migrations,
+            facts.Recovery.State)
             .Concat(facts.Migrations.Select(MigrationTextRow))
             .ToArray();
         var migrations = facts.Migrations.Count > 0
@@ -120,6 +123,7 @@ internal static class InstallReportSelector
                 createdPhysicalFiles,
                 createdDirectories,
                 addedSections,
+                updatedFiles,
                 replacementCount,
                 facts.Recovery.State,
                 facts.Recovery.ResidualPath),
@@ -205,17 +209,23 @@ internal static class InstallReportSelector
     private static CliHeadline Headline(InstallResult result, InstallData data)
     {
         var workspace = result.WorkspacePath ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheWorkspace();
+        var configure = (result.Input.Setup?.Configure == true || result.Input.Configuration?.Configure == true)
+            && result.Frontmatter?.WasInstalled == true;
         var first = result.Findings.FirstOrDefault(finding => finding.Status == result.Status);
         return result.Status switch
         {
             CliSemanticStatus.Complete when data.IsNoOp =>
                 new(InstallWording.AlreadyCurrent(), CliHeadlineKind.NothingToDo),
+            CliSemanticStatus.Complete when configure =>
+                new(InstallWording.Configured(workspace, data.IsPreview), data.IsPreview ? CliHeadlineKind.Preview : CliHeadlineKind.Done),
             CliSemanticStatus.Complete when result.Mode == InstallMode.DryRun =>
                 new(InstallWording.Preview(workspace, data.ReplacedFiles), CliHeadlineKind.Preview),
             CliSemanticStatus.Complete =>
                 new(InstallWording.Installed(workspace, data.ReplacedFiles), CliHeadlineKind.Done),
             CliSemanticStatus.Attention when data.IsNoOp =>
                 new(InstallWording.AlreadyCurrent(), CliHeadlineKind.Warnings),
+            CliSemanticStatus.Attention when configure =>
+                new(InstallWording.Configured(workspace, data.IsPreview), CliHeadlineKind.Warnings),
             CliSemanticStatus.Attention =>
                 new(InstallWording.Installed(workspace, data.ReplacedFiles), CliHeadlineKind.Warnings),
             CliSemanticStatus.Incomplete =>
@@ -391,7 +401,7 @@ internal static class InstallReportSelector
             $"next={(Next(result) is null ? "none" : "present")}",
         ];
 
-    private static InstallDataEffect Project(InstallEffect effect, bool includeSource)
+    private static InstallDataEffect Project(InstallEffect effect, bool includeSource, string? frontmatterForm)
         => new()
         {
             Path = effect.Path,
@@ -403,6 +413,8 @@ internal static class InstallReportSelector
             ResultKind = effect.Kind,
             ResultAction = effect.Action,
             ResultOutcome = effect.Outcome,
+            ContentChange = effect.ContentChange,
+            FrontmatterForm = frontmatterForm,
         };
 
     private static CliEffect Effect(InstallDataEffect effect)
@@ -445,7 +457,8 @@ internal static class InstallReportSelector
         bool preview,
         bool suppressInterruptedRows,
         IReadOnlyList<string> blockedPaths,
-        bool hasMigrations)
+        IReadOnlyList<InstallMigration> migrations,
+        InstallResultRecoveryState recoveryState)
     {
         if (suppressInterruptedRows)
             return [];
@@ -471,7 +484,7 @@ internal static class InstallReportSelector
             if (minimal)
             {
                 var progressed = IsProgressed(effect, preview);
-                if (isLock && progressed && !preview)
+                if (isLock && effect.ResultAction == InstallEffectAction.Create && progressed && !preview)
                     continue;
                 if (effect.ResultAction == InstallEffectAction.Create && progressed && !isLock)
                 {
@@ -480,7 +493,7 @@ internal static class InstallReportSelector
                 }
             }
 
-            var wording = RowWording(effect, preview, isLock, hasMigrations);
+            var wording = RowWording(effect, preview, isLock, migrations, recoveryState);
             if (full && effect.SourceAssetPath is { } source)
                 wording += $"; {InstallWording.SourceAsset(source)}";
             rows.Add(new InstallDataTextRow(effect.Path, wording));
@@ -499,7 +512,8 @@ internal static class InstallReportSelector
         int createdPhysicalFiles,
         int createdDirectories,
         int addedSections,
-        int replacementCount,
+        int updatedFiles,
+        int replacedFiles,
         InstallResultRecoveryState recoveryState,
         string? recoveryPath)
     {
@@ -513,6 +527,23 @@ internal static class InstallReportSelector
         {
             if (createdPhysicalFiles > 0 || createdDirectories > 0)
                 lines.Add(InstallWording.PartialSummary(createdPhysicalFiles, createdDirectories));
+        }
+        else if (updatedFiles > 0 || replacedFiles > 0)
+        {
+            string? creationSummary = null;
+            if (createdFiles > 0 || createdDirectories > 0)
+            {
+                creationSummary = preview
+                    ? InstallWording.WouldCreateSummary(files: createdFiles, directories: createdDirectories, bothHostFiles: false)
+                    : InstallWording.CreatedSummary(files: createdFiles, directories: createdDirectories,
+                        lockVerified: migrations.Count == 0 && effects.Any(effect => IsVerifiedOwnershipRecord(effect)
+                            && effect.ResultAction == InstallEffectAction.Create));
+            }
+            var summary = InstallWording.ChangeSummary(creationSummary: creationSummary,
+                updatedFiles: updatedFiles, replacedFiles: replacedFiles, preview: preview);
+            if (preview && hostCreateCount == 2)
+                summary = InstallWording.WithHostFiles(summary);
+            lines.Add(summary);
         }
         else if (createdFiles > 0 || createdDirectories > 0 || hostCreateCount == 2)
         {
@@ -529,15 +560,12 @@ internal static class InstallReportSelector
                 : InstallWording.CreatedHostFiles());
         }
 
-        if (detail >= CliDetail.Standard && detail < CliDetail.Full && createdDirectories > 0)
-            lines.Add(InstallWording.DirectorySummary(createdDirectories, preview));
-
         if (detail >= CliDetail.Standard && addedSections > 0)
             lines.Add(InstallWording.SectionsSummary(addedSections, preview));
 
         lines.AddRange(MigrationSummaryLines(migrations));
 
-        if (preview && replacementCount == 0 && effects.Count > 0)
+        if (preview && updatedFiles == 0 && replacedFiles == 0 && effects.Count > 0)
             lines.Add(InstallWording.NoExistingChanges());
 
         if (!preview
@@ -571,7 +599,8 @@ internal static class InstallReportSelector
         InstallDataEffect effect,
         bool preview,
         bool isLock,
-        bool hasMigrations)
+        IReadOnlyList<InstallMigration> migrations,
+        InstallResultRecoveryState recoveryState)
     {
         if (effect.ResultOutcome is InstallEffectOutcome.NotStarted)
             return InstallWording.NotStartedFile();
@@ -584,7 +613,7 @@ internal static class InstallReportSelector
 
         if (isLock
             && effect.ResultAction == InstallEffectAction.Create
-            && hasMigrations
+            && migrations.Count > 0
             && effect.ResultOutcome == InstallEffectOutcome.Verified)
         {
             return global::OpenForge.Cli.OutputText.Install.InstallText.LabelOwnershipReceiptCreated();
@@ -602,11 +631,36 @@ internal static class InstallReportSelector
         if (IsHost(effect) && effect.ResultAction == InstallEffectAction.Create)
             return preview ? InstallWording.WouldCreateHostFile() : InstallWording.CreatedHostFile();
 
+        if (effect.Path == ".gitignore")
+            return InstallWording.GitIgnoreRules(effect.ContentChange == InstallEffectContentChange.GitIgnoreRulesAdded
+                || effect.ResultAction == InstallEffectAction.Create, preview);
+
+        if (effect.ResultAction == InstallEffectAction.Replace)
+        {
+            if (isLock)
+                return CliChangeWording.OwnershipRecord(preview);
+            if (effect.Path == ".agents/open-forge.json")
+                return CliChangeWording.Settings(preview);
+            if (effect.ContentChange == InstallEffectContentChange.FrontmatterConversion)
+                return InstallWording.FrontmatterConversion(effect.FrontmatterForm
+                    ?? throw new InvalidOperationException("A frontmatter conversion requires its selected form."), preview);
+            if (effect.ResultKind == InstallEffectKind.GeneratedRegion)
+                return CliChangeWording.Entries(preview);
+            if (effect.ResultKind == InstallEffectKind.ManagedRegion)
+                return CliChangeWording.OpenForgeSection(preview);
+            if (effect.ContentChange == InstallEffectContentChange.PreservedContent)
+                return migrations.Any(migration => migration.Path == effect.Path
+                    && migration.Actions.Contains(WorkspaceAdoptionAction.MetadataCompleted))
+                    ? InstallWording.MetadataCompleted(preview)
+                    : CliChangeWording.Updated(preview);
+        }
+
         return effect.ResultAction switch
         {
             InstallEffectAction.Create => InstallWording.CreatedFile(preview),
             InstallEffectAction.Append => InstallWording.AppendedSection(preview),
-            InstallEffectAction.Replace => InstallWording.ReplacedFile(preview),
+            InstallEffectAction.Replace => InstallWording.ReplacedFile(preview,
+                recoveryKept: !preview && recoveryState == InstallResultRecoveryState.Retained),
             _ => throw new ArgumentOutOfRangeException(nameof(effect)),
         };
     }
@@ -690,12 +744,26 @@ internal static class InstallReportSelector
             && IsProgressed(effect, preview));
 
     private static int ReplacementCount(IReadOnlyList<InstallDataEffect> effects, bool preview)
-        => effects.Where(effect => effect.ResultAction == InstallEffectAction.Replace
-                && IsProgressed(effect, preview)
-                && !IsOwnershipRecord(effect))
+        => effects.Where(effect => IsWholeFileReplacement(effect) && IsProgressed(effect, preview))
             .Select(effect => effect.Path)
             .Distinct(StringComparer.Ordinal)
             .Count();
+
+    private static int UpdatedFileCount(IReadOnlyList<InstallDataEffect> effects, bool preview)
+        => effects.Where(effect => effect.ResultKind != InstallEffectKind.Directory
+                && effect.ResultAction is InstallEffectAction.Replace or InstallEffectAction.Append
+                && !IsWholeFileReplacement(effect)
+                && IsProgressed(effect, preview))
+            .Select(effect => effect.Path)
+            .Distinct(StringComparer.Ordinal)
+            .Count();
+
+    private static bool IsWholeFileReplacement(InstallDataEffect effect)
+        => effect.ResultKind == InstallEffectKind.File
+            && effect.ResultAction == InstallEffectAction.Replace
+            && effect.ContentChange == InstallEffectContentChange.WholeFile
+            && !IsOwnershipRecord(effect)
+            && effect.Path is not (".agents/open-forge.json" or ".gitignore");
 
     private static int CountCreatedFiles(IReadOnlyList<InstallDataEffect> effects, bool preview)
         => effects.Count(effect => effect.ResultAction == InstallEffectAction.Create

@@ -1,4 +1,5 @@
 Updated memory/project-alpha/overview
 Workspace: <workspace>
   description: "Before overview" -> "After overview"
-  Entry updated in .agents/memory/project-alpha/_project-alpha.md
+  .agents/memory/project-alpha/_project-alpha.md  Entries updated
+  .agents/memory/project-alpha/overview.md  metadata updated

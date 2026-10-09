@@ -6,19 +6,22 @@ internal static class ExtensionCreateText
 {
     // @OpenForgeText extension.create.heading.extension-id-lowercase-digits-and-hyphens
     internal static string HeadingExtensionIdLowercaseDigitsAndHyphens()
-        => "Extension ID (lowercase, digits and hyphens):";
+        => "Extension ID (for example my-tools):";
 
     // @OpenForgeText extension.create.message.use-lowercase-letters-digits-and-hyphens
     internal static string MessageUseLowercaseLettersDigitsAndHyphens()
-        => "Use lowercase letters, digits and hyphens.";
+        => "Use lowercase letters and digits, with single hyphens between them, up to 128 characters.";
 
     // @OpenForgeText extension.create.heading.package-folder
     internal static string HeadingPackageFolder()
-        => "Package folder:";
+        => "Parent folder for the new Extension:";
 
     // @OpenForgeText extension.create.message.enter-an-existing-ordinary-directory
     internal static string MessageEnterAnExistingOrdinaryDirectory()
-        => "Enter an existing ordinary directory.";
+        => "Enter an existing folder. Open Forge creates a folder named after the Extension ID inside it.";
+
+    // @OpenForgeText extension.create.message.invalid-parent-folder
+    internal static string InvalidParentFolder() => "That folder does not exist. Enter an existing folder.";
 
     // @OpenForgeText extension.create.message.extension-create-was-cancelled-nothing-was-changed
     internal static string MessageExtensionCreateWasCancelledNothingWasChanged()

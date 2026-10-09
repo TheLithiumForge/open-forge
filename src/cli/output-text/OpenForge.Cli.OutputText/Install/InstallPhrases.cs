@@ -4,10 +4,6 @@ namespace OpenForge.Cli.OutputText.Install;
 
 internal static class InstallPhrases
 {
-    // @OpenForgeText install.phrase.replace-the-existing-listed-above-y-n
-    internal static string FormatReplaceTheExistingListedAboveYN(string replacementCountText, string nounText)
-        => $"Replace the {replacementCountText} existing {nounText} listed above? [y/N]";
-
     // @OpenForgeText install.phrase.installed-the-open-forge-framework-into-replacing-existing
     internal static string FormatInstalledTheOpenForgeFrameworkIntoReplacingExisting(string workspaceText, string replacementsText, string cliTextPluralText)
         => $"Installed the Open Forge Framework into {workspaceText}, replacing {replacementsText} existing {cliTextPluralText}.";

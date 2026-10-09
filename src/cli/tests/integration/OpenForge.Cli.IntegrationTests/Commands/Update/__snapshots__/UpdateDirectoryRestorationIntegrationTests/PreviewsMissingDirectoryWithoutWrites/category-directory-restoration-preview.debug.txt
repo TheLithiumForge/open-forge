@@ -1,10 +1,9 @@
 Would update 2 Framework files.
 Workspace: <workspace>
-  .agents/guidance               create directory
-  .agents/guidance/_guidance.md  create
-  .agents/loader.md              replace (you have changed it; a recovery bundle is written first)
-  .agents/loader.md              Entries section updated
-  .agents/open-forge.lock.json   updated
+  .agents/guidance               would be created
+  .agents/guidance/_guidance.md  would be created
+  .agents/loader.md              Entries would be updated
+  .agents/open-forge.lock.json   ownership record would be updated
   .agents/loader.md              unchanged (line endings differ)
   17 files unchanged
   .agents/guidance bundled Framework: id=framework; version=unavailable; fingerprint=<sha256>

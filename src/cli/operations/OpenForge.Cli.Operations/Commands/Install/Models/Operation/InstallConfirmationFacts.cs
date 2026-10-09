@@ -9,7 +9,9 @@ internal sealed record InstallConfirmationFacts(int ReplacementCount)
     {
         ArgumentNullException.ThrowIfNull(plan);
         var replacementPaths = plan.TargetEffects
-            .Where(effect => effect.Identity.Action == InstallEffectAction.Replace)
+            .Where(effect => effect.Identity.Kind == InstallEffectKind.File
+                && effect.Identity.Action == InstallEffectAction.Replace
+                && effect.Identity.ContentChange == InstallEffectContentChange.WholeFile)
             .Select(effect => effect.Identity.Path)
             .Distinct(StringComparer.Ordinal);
         return new(replacementPaths.Count());

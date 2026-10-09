@@ -1,0 +1,6 @@
+Library team-knowledge: include this recovery step?
+
+  1. Include    Check that .agents/open-forge.libraries.json already matches its previous state.
+  2. Leave out  Leave this recovery step out of the plan.
+
+Choose a number (1-2), or press Enter to cancel:

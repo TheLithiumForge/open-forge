@@ -67,5 +67,7 @@ internal sealed record InstallFrontmatter
 
     internal bool Changed => PreviousForm is not null && !string.Equals(PreviousForm, Form, StringComparison.Ordinal);
 
+    internal bool WasInstalled { get; init; }
+
     private static bool IsForm(string value) => value is Root or Scoped;
 }

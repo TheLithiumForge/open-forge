@@ -1,0 +1,9 @@
+.agents/loader.md  Entries updated
+AGENTS.md  Open Forge section updated
+CLAUDE.md  Open Forge section added, your content was kept
+.agents/open-forge.json  settings updated
+.agents/open-forge.lock.json  ownership record updated
+.agents/metadata.md  metadata moved to root keys
+.gitignore  Open Forge Git-ignore rules updated
+.agents/occupant.md  replaced
+.agents/memory/_memory.md  Entries updated

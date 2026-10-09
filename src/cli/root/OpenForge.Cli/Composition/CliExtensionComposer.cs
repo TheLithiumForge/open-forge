@@ -124,6 +124,7 @@ internal static class CliExtensionComposer
                         InvalidExtensionId = ExtensionCreateWording.InvalidExtensionId,
                         PackageFolderLabel = ExtensionCreateWording.PackageFolder(),
                         PackageFolderRule = ExtensionCreateWording.PackageFolderRule(),
+                        InvalidPackageFolder = ExtensionCreateWording.InvalidPackageFolder(),
                         ConfirmationQuestion = new CliConfirmQuestion(
                             ExtensionCreateWording.ConfirmCreate()),
                         Confirm = confirmation,
@@ -154,7 +155,7 @@ internal static class CliExtensionComposer
                     Force = confirmation,
                     ForceQuestion = static paths => new CliConfirmQuestion(
                         ExtensionInstallWording.ReplaceExisting(paths)),
-                    ApplyQuestion = new CliConfirmQuestion(ExtensionInstallWording.Apply()),
+                    ApplyQuestion = static facts => new CliConfirmQuestion(ExtensionInstallWording.Apply(facts)),
                     Apply = confirmation,
                 },
                 lockStoreRoot)), ExtensionInstallPresentation.Rendering);
@@ -180,9 +181,7 @@ internal static class CliExtensionComposer
                     SelectPackages = interaction.Prompts.MultiSelectAsync<string>,
                     SelectionQuestion = ExtensionUpdateWording.Selection(),
                     Permission = interaction.Prompts.PermissionAsync,
-                    ApplyQuestion = new CliConfirmQuestion(ExtensionUpdateWording.Apply()),
-                    PruneQuestion = static count => new CliConfirmQuestion(
-                        ExtensionUpdateWording.Prune(count)),
+                    ApplyQuestion = static facts => new CliConfirmQuestion(ExtensionUpdateWording.Apply(facts)),
                     Apply = confirmation,
                 },
                 lockStoreRoot)), ExtensionUpdatePresentation.Rendering);

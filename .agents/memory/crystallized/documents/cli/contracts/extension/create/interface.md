@@ -199,9 +199,9 @@ Next: open-forge extension create <id> --path <folder>
 
 ### Prompts
 
-Text input for the ID (`Extension ID (lowercase, digits and hyphens):`) and
-the folder (`Package folder:`) when missing, then plan review and
-`Create these files? [y/N]` unless `--automatic`.
+Text input for the ID (`Extension ID (for example my-tools):`) and the
+parent folder (`Parent folder for the new Extension:`) when missing, then plan
+review and `Create these files? [y/N]` unless `--automatic`.
 
 ### Representative transcripts by status
 

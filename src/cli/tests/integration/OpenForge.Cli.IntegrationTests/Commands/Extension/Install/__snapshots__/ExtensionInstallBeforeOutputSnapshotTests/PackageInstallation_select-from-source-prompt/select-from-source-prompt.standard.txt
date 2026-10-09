@@ -2,4 +2,4 @@ Installed the toolkit Extension.
 Workspace: <workspace>
   .agents/toolkit.md  created (toolkit)
   Source: <extension-source> (catalogue)
-  .agents/open-forge.lock.json  updated
+  .agents/open-forge.lock.json  ownership record updated

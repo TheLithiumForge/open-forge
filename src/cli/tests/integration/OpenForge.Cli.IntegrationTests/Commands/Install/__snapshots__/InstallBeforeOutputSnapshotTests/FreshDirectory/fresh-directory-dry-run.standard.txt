@@ -23,6 +23,5 @@ Frontmatter: root
   .agents/open-forge.json                                would be created
   .agents/open-forge.lock.json                           would be created
   Would create 17 files and 13 directories under .agents, plus AGENTS.md and CLAUDE.md.
-  Would create 13 directories.
   Nothing that already exists would be changed.
 No files were changed.

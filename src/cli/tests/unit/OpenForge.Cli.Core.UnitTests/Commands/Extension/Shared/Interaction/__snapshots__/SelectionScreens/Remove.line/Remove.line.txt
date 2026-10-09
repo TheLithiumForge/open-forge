@@ -1,0 +1,8 @@
+Choose Extensions to remove
+- remove   * also removed
+
+  1. [ ] planning   Plans, tasks and decisions
+  2. [ ] workflows  Reusable workflows   needed by: planning
+
+Choose numbers separated by spaces, "all", or press Enter to cancel:
+Removing workflows also removes planning.

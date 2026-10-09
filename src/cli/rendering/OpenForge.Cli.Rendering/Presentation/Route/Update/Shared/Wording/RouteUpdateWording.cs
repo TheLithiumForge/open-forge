@@ -34,7 +34,18 @@ internal static class RouteUpdateWording
 
     internal static string TemplatePath(string path) => global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateWording.TemplatePath(path);
 
-    internal static string FrontmatterRewritten(string path) => global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateWording.FrontmatterRewritten(path);
+    internal static string TargetChange(bool metadata, bool template, bool preview)
+    {
+        if (!template)
+        {
+            return global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateWording.MetadataChange(preview);
+        }
+        var body = global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateWording.TemplateBodyChange(preview);
+        return metadata
+            ? global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateWording.CombinedChange(
+                global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateWording.MetadataChange(preview), body)
+            : body;
+    }
 
     internal static string EntryUpdated(string path) => global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateWording.EntryUpdated(path);
 

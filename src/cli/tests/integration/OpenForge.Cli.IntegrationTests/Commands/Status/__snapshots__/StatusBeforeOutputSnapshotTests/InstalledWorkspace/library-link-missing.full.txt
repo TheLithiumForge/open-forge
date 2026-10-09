@@ -53,6 +53,6 @@ Entries sections
 Library team-knowledge links
   .agents/resources/data.json  missing (expected ../../shared/team-knowledge/.agents/resources/data.json)
 Recovery data: none
-18 routed files, 11 startup files, 6447 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 18567 all routed tokens, 34.719323521887244671253719687 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files, 1 registered Libraries, 1 missing Library links, 1 warnings.
+18 routed files, 11 startup files, 6447 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 18582 all routed tokens, 34.691296567869011261049147685 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files, 1 registered Libraries, 1 missing Library links, 1 warnings.
   Synchronize the missing Library link.
 Next: open-forge library sync team-knowledge

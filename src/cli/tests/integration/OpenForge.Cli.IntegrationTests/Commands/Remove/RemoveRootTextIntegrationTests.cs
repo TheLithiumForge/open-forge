@@ -31,19 +31,9 @@ public sealed class RemoveRootTextIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, textCompletion.Status);
         Assert.Equal(string.Empty, textError.ToString());
         Assert.Contains("Would remove old.txt", textOutput.ToString(), StringComparison.Ordinal);
-        if (detail == "minimal")
-        {
-            Assert.DoesNotContain("Workspace: ", textOutput.ToString(), StringComparison.Ordinal);
-            Assert.DoesNotContain("Would create", textOutput.ToString(), StringComparison.Ordinal);
-            Assert.DoesNotContain("Would remove file old.txt", textOutput.ToString(), StringComparison.Ordinal);
-        }
-        else
-        {
-            Assert.Contains($"Workspace: {workspace.Path}", textOutput.ToString(), StringComparison.Ordinal);
-            Assert.Contains("Would create directory .agents", textOutput.ToString(), StringComparison.Ordinal);
-            Assert.Contains("Would create setting .agents/open-forge.json", textOutput.ToString(), StringComparison.Ordinal);
-            Assert.Contains("Would remove file old.txt", textOutput.ToString(), StringComparison.Ordinal);
-        }
+        Assert.Contains(".agents  would be created", textOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains(".agents/open-forge.json  would be created", textOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Would remove file old.txt", textOutput.ToString(), StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
 
         var jsonOutput = new StringWriter();
@@ -141,8 +131,8 @@ public sealed class RemoveRootTextIntegrationTests
 
         Assert.Equal(CliSemanticStatus.Incomplete, textCompletion.Status);
         Assert.Equal(string.Empty, textError.ToString());
-        Assert.Contains("Created directory .agents", textOutput.ToString(), StringComparison.Ordinal);
-        Assert.Contains("Created setting .agents/open-forge.json", textOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains(".agents  created", textOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains(".agents/open-forge.json  created", textOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("Removed file batch/a-first.bin", textOutput.ToString(), StringComparison.Ordinal);
 
         using var jsonWorkspace = PartialWorkspace($"remove-root-partial-json-{detail}");

@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Presentation.Shared.Prompts.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
+using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
@@ -48,6 +49,7 @@ internal sealed partial class CliPrompts(CliTerminal terminal, bool standardErro
                 var answer = (await _terminal.ReadLineAsync(cancellationToken).ConfigureAwait(false))?.Trim().ToLowerInvariant();
                 if (answer is null or "" or "n" or "no") return CliPromptReply<bool>.Cancelled();
                 if (answer is "y" or "yes") return CliPromptReply<bool>.Answered(true);
+                await WriteFrameAsync(CliPromptWording.ConfirmationLineRule() + "\n", cancellationToken).ConfigureAwait(false);
             }
         }
     }

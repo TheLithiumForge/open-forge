@@ -244,7 +244,7 @@ internal sealed class ExtensionInstallOperation(
             {
                 approval = await _interaction.Apply(
                     forcePreview,
-                    _interaction.ApplyQuestion,
+                    _interaction.ApplyQuestion(ExtensionInstallConfirmationFacts.From(plan)),
                     new CliPromptPolicy(!request.Automatic && request.AllowInteraction),
                     cancellationToken).ConfigureAwait(false);
             }

@@ -30,7 +30,7 @@ public sealed class RouteRemoveInteractionApplicationIntegrationTests
         AssertPreviewPrecedesConfirmation(
             run.TerminalOutput,
             $"Would remove {RouteRemoveIntegrationWorkspace.LeafPath}",
-            "Delete the 2 files listed above? [y/N]");
+            "Apply these changes, including deleting 2 files? [y/N]");
         Assert.Contains(RouteRemoveIntegrationWorkspace.LeafPath, run.TerminalOutput, StringComparison.Ordinal);
         Assert.Contains(RouteRemoveIntegrationWorkspace.LeafOverwritePath, run.TerminalOutput, StringComparison.Ordinal);
         Assert.Contains($"Removed {RouteRemoveIntegrationWorkspace.LeafPath}", run.StandardOutput, StringComparison.Ordinal);
@@ -91,7 +91,7 @@ public sealed class RouteRemoveInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, run.Completion.Status);
         Assert.Equal(1, run.Terminal.LineReadCalls);
         Assert.Contains(
-            "guidance/old guide matches 2 sources. Which one?",
+            "\"guidance/old guide\" matches 2 paths. Choose the one to remove.",
             run.TerminalOutput,
             StringComparison.Ordinal);
         Assert.Contains($"Would remove {RouteRemoveIntegrationWorkspace.LeafPath}", run.StandardOutput, StringComparison.Ordinal);
@@ -123,14 +123,14 @@ public sealed class RouteRemoveInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, run.Completion.Status);
         Assert.Equal(2, run.Terminal.LineReadCalls);
         Assert.Contains(
-            "guidance/old guide matches 2 sources. Which one?",
+            "\"guidance/old guide\" matches 2 paths. Choose the one to remove.",
             run.TerminalOutput,
             StringComparison.Ordinal);
         AssertPreviewPrecedesConfirmation(
             run.TerminalOutput,
             $"Would remove {RouteRemoveIntegrationWorkspace.LeafPath}",
-            "Delete the 2 files listed above? [y/N]");
-        Assert.Contains("Delete the 2 files listed above? [y/N]", run.TerminalOutput, StringComparison.Ordinal);
+            "Apply these changes, including deleting 2 files? [y/N]");
+        Assert.Contains("Apply these changes, including deleting 2 files? [y/N]", run.TerminalOutput, StringComparison.Ordinal);
         Assert.Contains($"Removed {RouteRemoveIntegrationWorkspace.LeafPath}", run.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(string.Empty, run.StandardError);
         Assert.False(File.Exists(selectedPath));
@@ -161,13 +161,13 @@ public sealed class RouteRemoveInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, run.Completion.Status);
         Assert.Equal(2, run.Terminal.LineReadCalls);
         Assert.Contains(
-            "guidance/topics matches 2 sources. Which one?",
+            "\"guidance/topics\" matches 2 paths. Choose the one to remove.",
             run.TerminalOutput,
             StringComparison.Ordinal);
         AssertPreviewPrecedesConfirmation(
             run.TerminalOutput,
             "Would remove the route guidance/topics",
-            "Delete the");
+            "Apply these changes, including deleting");
         Assert.Contains("Removed the route guidance/topics", run.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(string.Empty, run.StandardError);
         Assert.False(File.Exists(workspace.Combine(RouteRemoveIntegrationWorkspace.CategoryPath)));
@@ -199,10 +199,10 @@ public sealed class RouteRemoveInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Blocked, run.Completion.Status);
         Assert.Equal(1, run.Terminal.LineReadCalls);
         Assert.Contains(
-            "guidance/old guide matches 2 sources. Which one?",
+            "\"guidance/old guide\" matches 2 paths. Choose the one to remove.",
             run.TerminalOutput,
             StringComparison.Ordinal);
-        Assert.DoesNotContain("Delete the", run.TerminalOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply these changes, including deleting", run.TerminalOutput, StringComparison.Ordinal);
         Assert.Contains("Cannot remove", run.StandardError, StringComparison.Ordinal);
         Assert.Equal(string.Empty, run.StandardOutput);
         Assert.Equal(before, workspace.SnapshotHashes());
@@ -315,7 +315,7 @@ public sealed class RouteRemoveInteractionApplicationIntegrationTests
         AssertPreviewPrecedesConfirmation(
             run.TerminalOutput,
             $"Would remove {RouteRemoveIntegrationWorkspace.LeafPath}",
-            "Delete the 2 files listed above? [y/N]");
+            "Apply these changes, including deleting 2 files? [y/N]");
         Assert.Contains("Route remove was cancelled. Nothing was changed.", run.StandardError, StringComparison.Ordinal);
         Assert.Equal(string.Empty, run.StandardOutput);
         Assert.Equal(before, workspace.SnapshotHashes());
@@ -337,10 +337,10 @@ public sealed class RouteRemoveInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Interrupted, run.Completion.Status);
         Assert.Equal(1, run.Terminal.LineReadCalls);
         Assert.Contains(
-            "guidance/old guide matches 2 sources. Which one?",
+            "\"guidance/old guide\" matches 2 paths. Choose the one to remove.",
             run.TerminalOutput,
             StringComparison.Ordinal);
-        Assert.DoesNotContain("Delete the", run.TerminalOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply these changes, including deleting", run.TerminalOutput, StringComparison.Ordinal);
         Assert.Contains("Route remove was cancelled. Nothing was changed.", run.StandardError, StringComparison.Ordinal);
         Assert.Equal(string.Empty, run.StandardOutput);
         Assert.Equal(before, workspace.SnapshotHashes());

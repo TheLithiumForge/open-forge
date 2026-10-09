@@ -319,7 +319,7 @@ verification facts in words.
 ### Prompts
 
 Multi-select of installed packages with `needed by` marks; plan review
-listing every deletion; `Delete the <N> files listed above? [y/N]`.
+listing every deletion; `Apply these changes, including deleting <N> files? [y/N]`.
 
 ### Representative transcripts by status
 

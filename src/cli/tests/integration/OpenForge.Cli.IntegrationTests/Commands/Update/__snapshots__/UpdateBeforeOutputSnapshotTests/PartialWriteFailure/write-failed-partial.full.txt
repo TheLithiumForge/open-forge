@@ -5,8 +5,8 @@ Workspace: <workspace>
          open-forge doctor
          Inspect the blocked, unavailable, or incomplete Update facts before rerunning.
          cause: UnauthorizedAccessException (0x80070005): Filesystem access was denied.
-  .agents/guidance/_guidance.md  replaced (you had changed it and this release changes it)
-  .agents/loader.md              not started (you had changed it and this release changes it)
+  .agents/guidance/_guidance.md  replaced (your previous file is in the recovery bundle)
+  .agents/loader.md              not started
   .agents/guidance/_guidance.md  unchanged (line endings differ)
   .agents/loader.md              unchanged (line endings differ)
   17 files unchanged

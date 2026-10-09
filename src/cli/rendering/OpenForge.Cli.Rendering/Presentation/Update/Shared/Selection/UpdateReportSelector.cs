@@ -37,12 +37,13 @@ internal static class UpdateReportSelector
         var fileEffects = effects
             .Where(effect => !effect.IsDirectory && !userOwnedSourcePaths.Contains(effect.Path))
             .ToArray();
-        var changedFiles = fileEffects.Length;
-        var replacedFiles = fileEffects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Replace && !effect.IsRestore);
-        var restoredFiles = fileEffects.Count(effect => effect.IsRestore);
-        var createdFiles = fileEffects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Create);
-        var deletedFiles = fileEffects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Delete);
-        var updatedSections = entries.Length;
+        var countedFileEffects = fileEffects.Where(effect => IsCounted(effect, preview)).ToArray();
+        var changedFiles = countedFileEffects.Length;
+        var replacedFiles = countedFileEffects.Count(effect => effect.IsWholeFileReplacement);
+        var restoredFiles = countedFileEffects.Count(effect => effect.IsRestore);
+        var createdFiles = countedFileEffects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Create);
+        var deletedFiles = countedFileEffects.Count(effect => effect.ResultAction == UpdatePhysicalEffectAction.Delete);
+        var updatedSections = entries.Count(entry => effects.Any(effect => effect.Path == entry.Path && IsCounted(effect, preview)));
         var completedChanges = effects.Count(effect => effect.ResultOutcome == UpdatePhysicalEffectOutcome.Verified);
         var suppressInterruptedFinding = result.Status == CliSemanticStatus.Interrupted && completedChanges == 0;
         var previousContent = result.PreviousContentAvailable ? "git-diff" : null;
@@ -159,6 +160,12 @@ internal static class UpdateReportSelector
             ResultResidual = effect.Residual,
             IsRestore = isRestore,
             IsSection = isSection,
+            IsWholeFileReplacement = effect.Action == UpdatePhysicalEffectAction.Replace
+                && effect.Changes.Any(change => change.Kind == UpdateComparisonTargetKind.File
+                    && change.Action == UpdateLogicalChangeAction.Replace),
+            HasManagedSection = effect.Changes.Any(change => change.Kind == UpdateComparisonTargetKind.ManagedRegion),
+            AddsManagedSection = effect.Changes.Any(change => change.Kind == UpdateComparisonTargetKind.ManagedRegion
+                && change.Action is UpdateLogicalChangeAction.Create or UpdateLogicalChangeAction.Restore),
             IsDirectory = effect.Kind == UpdatePhysicalEffectKind.Directory,
             Reason = isUserOwnedMigration ? null : Reason(effect, comparison),
         };
@@ -361,7 +368,7 @@ internal static class UpdateReportSelector
                     continue;
                 }
 
-                rows.Add(new UpdateDataTextRow(effect.Path, RowWording(effect, preview)));
+                rows.Add(new UpdateDataTextRow(effect.Path, RowWording(effect, preview, result.Recovery.State)));
             }
 
             var effectPaths = effects.Select(effect => effect.Path).ToHashSet(StringComparer.Ordinal);
@@ -378,14 +385,14 @@ internal static class UpdateReportSelector
             if (detail >= CliDetail.Standard)
             {
                 rows.AddRange(entries
-                    .Where(entry => !migrationsByPath.ContainsKey(entry.Path))
+                    .Where(entry => !migrationsByPath.ContainsKey(entry.Path) && !effectPaths.Contains(entry.Path))
                     .Select(entry => new UpdateDataTextRow(
                         entry.Path,
-                        UpdateWording.EntriesSectionUpdated())));
+                        global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted())));
 
                 if (result.Lifecycle.Action == UpdateLifecycleAction.Publish && effects.Count > 0)
                 {
-                    rows.Add(new UpdateDataTextRow(UpdateWording.OwnershipRecordPath, UpdateWording.LockUpdated()));
+                    rows.Add(new UpdateDataTextRow(UpdateWording.OwnershipRecordPath, OwnershipWording(result.Lifecycle.Outcome)));
                 }
 
                 if (detail == CliDetail.Standard && unchanged.Count > 0)
@@ -408,56 +415,75 @@ internal static class UpdateReportSelector
         return rows;
     }
 
-    private static string RowWording(UpdateDataEffect effect, bool preview)
-    {
-        if (effect.IsDirectory)
-        {
-            var directoryAction = preview
-                ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelCreate()
-                : effect.ResultOutcome switch
-                {
-                    UpdatePhysicalEffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
-                    UpdatePhysicalEffectOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
-                    UpdatePhysicalEffectOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFailed(),
-                    UpdatePhysicalEffectOutcome.Planned => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelCreate(),
-                    UpdatePhysicalEffectOutcome.Verified => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelCreated(),
-                    _ => throw new ArgumentOutOfRangeException(nameof(effect)),
-                };
-            var directoryLabel = global::OpenForge.Cli.OutputText.Shared.SharedText.LabelDirectory();
-            return $"{directoryAction} {directoryLabel}";
-        }
+    private static bool IsCounted(UpdateDataEffect effect, bool preview)
+        => preview
+            ? effect.ResultOutcome == UpdatePhysicalEffectOutcome.Planned
+            : effect.ResultOutcome == UpdatePhysicalEffectOutcome.Verified;
 
-        var action = preview
-            ? effect.ResultAction switch
+    private static string RowWording(UpdateDataEffect effect, bool preview, UpdateRecoveryState recoveryState)
+    {
+        if (effect.ResultOutcome == UpdatePhysicalEffectOutcome.NotStarted)
+        {
+            return global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted();
+        }
+        if (effect.ResultOutcome == UpdatePhysicalEffectOutcome.CompletionUnknown)
+        {
+            return global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown();
+        }
+        if (effect.ResultOutcome == UpdatePhysicalEffectOutcome.VerificationFailed)
+        {
+            return global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFailed();
+        }
+        preview = preview || effect.ResultOutcome == UpdatePhysicalEffectOutcome.Planned;
+        if (effect.IsWholeFileReplacement)
+        {
+            return CliChangeWording.Replaced(preview, recoveryKept: preview || recoveryState == UpdateRecoveryState.Retained);
+        }
+        if (effect.HasManagedSection)
+        {
+            if (effect.ResultAction == UpdatePhysicalEffectAction.Create)
             {
-                UpdatePhysicalEffectAction.Create => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelCreate(),
-                UpdatePhysicalEffectAction.Replace => global::OpenForge.Cli.OutputText.Update.UpdateText.LabelReplace(),
-                UpdatePhysicalEffectAction.Delete => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelDelete(),
-                _ => throw new ArgumentOutOfRangeException(nameof(effect)),
+                return global::OpenForge.Cli.OutputText.Update.UpdateText.CreatedWithSection(preview);
             }
-            : effect.ResultOutcome switch
-            {
-                UpdatePhysicalEffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
-                UpdatePhysicalEffectOutcome.CompletionUnknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
-                UpdatePhysicalEffectOutcome.VerificationFailed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFailed(),
-                UpdatePhysicalEffectOutcome.Planned or UpdatePhysicalEffectOutcome.Verified => effect.IsRestore
-                    ? global::OpenForge.Cli.OutputText.Update.UpdateText.LabelRestored()
-                    : effect.ResultAction switch
-                    {
-                        UpdatePhysicalEffectAction.Create => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelCreated(),
-                        UpdatePhysicalEffectAction.Replace => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelReplaced(),
-                        UpdatePhysicalEffectAction.Delete => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelDeleted(),
-                        _ => throw new ArgumentOutOfRangeException(nameof(effect)),
-                    },
-                _ => throw new ArgumentOutOfRangeException(nameof(effect)),
-            };
-        var reason = preview
-            ? effect.Relation.Current == "changed"
-                ? UpdateWording.DryChangedReason()
-                : null
-            : effect.Reason;
-        return reason is null ? action : $"{action} ({reason})";
+            return effect.AddsManagedSection
+                ? CliChangeWording.AddedOpenForgeSection(preview)
+                : CliChangeWording.OpenForgeSection(preview);
+        }
+        if (effect.ResultAction == UpdatePhysicalEffectAction.Create)
+        {
+            return effect.IsRestore
+                ? global::OpenForge.Cli.OutputText.Update.UpdateText.Restored(preview)
+                : CliChangeWording.Created(preview);
+        }
+        if (effect.IsSection)
+        {
+            return CliChangeWording.Entries(preview);
+        }
+        if (effect.IsRestore)
+        {
+            return global::OpenForge.Cli.OutputText.Update.UpdateText.Restored(preview);
+        }
+        var action = effect.ResultAction switch
+        {
+            UpdatePhysicalEffectAction.Delete => global::OpenForge.Cli.OutputText.Update.UpdateText.Deleted(preview),
+            UpdatePhysicalEffectAction.Replace => CliChangeWording.Replaced(preview,
+                recoveryKept: preview || recoveryState == UpdateRecoveryState.Retained),
+            _ => throw new ArgumentOutOfRangeException(nameof(effect)),
+        };
+        return effect.Reason is null ? action : $"{action} ({effect.Reason})";
     }
+
+    private static string OwnershipWording(UpdateLifecycleOutcome outcome)
+        => outcome switch
+        {
+            UpdateLifecycleOutcome.Planned => CliChangeWording.OwnershipRecord(preview: true),
+            UpdateLifecycleOutcome.Verified => CliChangeWording.OwnershipRecord(preview: false),
+            UpdateLifecycleOutcome.AlreadyCurrent => CliChangeWording.OwnershipRecordUnchanged(),
+            UpdateLifecycleOutcome.NotRequested or UpdateLifecycleOutcome.NotStarted
+                or UpdateLifecycleOutcome.VerificationFailed => CliChangeWording.OwnershipRecordNotUpdated(),
+            UpdateLifecycleOutcome.CompletionUnknown => CliChangeWording.OwnershipRecordUnconfirmed(),
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
+        };
 
     private static IReadOnlyList<string> TextSummaryLines(
         UpdateResult result,

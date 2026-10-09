@@ -1,0 +1,18 @@
+Would change the Open Forge setup in <workspace>.
+Workspace: <workspace>
+Frontmatter: root
+  .agents/guidance                      would be created
+  .agents/memory/archived               would be created
+  .agents/guidance/_guidance.md         would be created; source: .agents/guidance/_guidance.md
+  .agents/loader.md                     Entries would be updated
+  .agents/memory/_memory.md             Entries would be updated
+  .agents/memory/archived/_archived.md  would be created; source: .agents/memory/archived/_archived.md
+  .agents/open-forge.json               settings would be updated
+  .agents/open-forge.lock.json          ownership record would be updated
+  .gitignore                            Open Forge Git-ignore rules would be updated
+  Would create 2 files and 2 directories under .agents, and update 5 existing files.
+  Bundled Framework fingerprint: <sha256> (19 assets).
+  The ownership record is planned for publication.
+  No recovery bundle was created.
+  Verification was not requested.
+No files were changed.

@@ -199,7 +199,7 @@ internal static class RouteRemoveWording
     };
 
     internal static string Confirmation(int fileCount)
-        => global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatDeleteTheListedAboveYN(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{fileCount}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(fileCount, "file")}"));
+        => fileCount > 0 ? CliPromptWording.ConfirmDeleting(fileCount) : CliPromptWording.Confirm();
 
     private static string Sentence(string value) => CliFindingWording.PlainCause(value);
 

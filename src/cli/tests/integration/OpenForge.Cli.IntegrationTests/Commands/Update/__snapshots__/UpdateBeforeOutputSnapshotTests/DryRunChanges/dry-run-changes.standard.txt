@@ -1,5 +1,5 @@
 Would update 1 Framework file.
 Workspace: <workspace>
-  .agents/loader.md  replace (you have changed it; a recovery bundle is written first)
+  .agents/loader.md  would be replaced (your previous file would be kept in a recovery bundle)
   18 files unchanged
 No files were changed.

@@ -41,14 +41,14 @@ public sealed class RepairCompositionInteractionIntegrationTests
         // grammar defect. Each repaired link is now a row under the headline.
         Assert.Contains(".agents/docs/source.md:9:8", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Preview of selected repairs", run.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("Apply the 1 repair that is safe? [y/N]", run.StandardOutput, StringComparison.Ordinal);
+        Assert.DoesNotContain("Include this 1 link repair in the plan? [y/N]", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Apply these changes? [y/N]", run.StandardOutput, StringComparison.Ordinal);
 
         // The plan review renders the preview report itself at minimal detail rather than a
         // `Preview of selected repairs` header, so each preview opens with the dry-run headline.
         var firstPreview = run.StandardError.IndexOf("Would repair ", StringComparison.Ordinal);
-        var safeQuestion = run.StandardError.IndexOf("Apply the 1 repair that is safe? [y/N]", StringComparison.Ordinal);
-        var guidedQuestion = run.StandardError.IndexOf("choose a target for \"missing.md\".", StringComparison.Ordinal);
+        var safeQuestion = run.StandardError.IndexOf("Include this 1 link repair in the plan? [y/N]", StringComparison.Ordinal);
+        var guidedQuestion = run.StandardError.IndexOf("Choose a new destination for the broken link \"missing.md\"", StringComparison.Ordinal);
         var finalPreview = run.StandardError.LastIndexOf("Would repair ", StringComparison.Ordinal);
         var finalQuestion = run.StandardError.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal);
         Assert.True(firstPreview >= 0, run.StandardError);
@@ -58,7 +58,7 @@ public sealed class RepairCompositionInteractionIntegrationTests
         Assert.True(finalPreview < finalQuestion, run.StandardError);
         Assert.Contains("1. .agents/docs/guide.md", run.StandardError, StringComparison.Ordinal);
 
-        Assert.Contains("skip", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Leave this link unchanged", run.StandardError, StringComparison.Ordinal);
         var after = workspace.SnapshotState();
         Assert.Equal(before["workspace/.agents/docs/unrelated.bin"], after["workspace/.agents/docs/unrelated.bin"]);
         Assert.Contains("[Safe](guide.md)", workspace.ReadText(RepairIntegrationWorkspace.SourcePath), StringComparison.Ordinal);
@@ -94,7 +94,7 @@ public sealed class RepairCompositionInteractionIntegrationTests
         Assert.Contains(ExpectedPrompt(stage), run.StandardError, StringComparison.Ordinal);
         if (stage == "safe")
         {
-            Assert.DoesNotContain("choose a target for", run.StandardError, StringComparison.Ordinal);
+            Assert.DoesNotContain("Choose a new destination for the broken link", run.StandardError, StringComparison.Ordinal);
             Assert.DoesNotContain("Apply these changes? [y/N]", run.StandardError, StringComparison.Ordinal);
         }
         else if (stage == "guided")
@@ -132,11 +132,11 @@ public sealed class RepairCompositionInteractionIntegrationTests
         Assert.StartsWith("Repaired ", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Status:", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
-            "Library team-knowledge: recover ordinary replace at .agents/open-forge.lock.json?",
+            "Library team-knowledge: include this recovery step?",
             run.StandardError,
             StringComparison.Ordinal);
-        Assert.Contains("1. Select", run.StandardError, StringComparison.Ordinal);
-        Assert.Contains("2. skip", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("1. Include", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("2. Leave out", run.StandardError, StringComparison.Ordinal);
         // The plan review renders the preview report itself at minimal detail rather than
         // printing a `Preview of selected repairs` header. This flow previews a result whose
         // Library recovery step has already run, so the preview opens with `Repaired ...`; the
@@ -168,10 +168,10 @@ public sealed class RepairCompositionInteractionIntegrationTests
             promptOutputRedirected: false);
 
         Assert.Contains(
-            "Library team-knowledge: recover ordinary replace at .agents/open-forge.lock.json?",
+            "Library team-knowledge: include this recovery step?",
             run.StandardError,
             StringComparison.Ordinal);
-        Assert.Contains("2. skip", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("2. Leave out", run.StandardError, StringComparison.Ordinal);
         Assert.Null(run.RemainingInput);
         Assert.Equal(before, workspace.Files.Snapshot());
         Assert.Equal(workspace.PriorText, File.ReadAllText(workspace.TargetPath).TrimEnd('\n'));
@@ -195,8 +195,8 @@ public sealed class RepairCompositionInteractionIntegrationTests
     private static string ExpectedPrompt(string stage)
         => stage switch
         {
-            "safe" => "Apply the 1 repair that is safe? [y/N]",
-            "guided" => "choose a target for \"missing.md\".",
+            "safe" => "Include this 1 link repair in the plan? [y/N]",
+            "guided" => "Choose a new destination for the broken link \"missing.md\"",
             "final" => "Apply these changes? [y/N]",
             _ => throw new ArgumentOutOfRangeException(nameof(stage), stage, "The Repair prompt stage is not defined."),
         };

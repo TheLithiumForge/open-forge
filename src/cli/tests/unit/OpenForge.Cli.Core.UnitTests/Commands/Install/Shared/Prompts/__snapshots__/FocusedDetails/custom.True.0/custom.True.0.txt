@@ -1,0 +1,16 @@
+Choose what Open Forge sets up
++ add   ~ add, keep contents out of Git   - leave out
+
+> [+] directives           Rules agents must follow
+  [-] guidance             Advice for recurring choices
+  [-] maps                 Pointers to important sources
+  [+] patterns             Reusable shapes for code and documents
+  [+] skills               Packaged agent capabilities
+  [-] templates            Copy-ready starter files
+  [~] memory/working       Notes for active work
+  [+] memory/emerging      Findings not accepted yet
+  [+] memory/crystallized  Accepted knowledge
+  [-] memory/archived      Completed and historical records
+Adds missing defaults. Your existing files stay.
+
+up/down move   + ~ - set   space next   enter done   esc cancel

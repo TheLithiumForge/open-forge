@@ -14,7 +14,6 @@ internal static class RemoveDataTextRenderer
         ArgumentNullException.ThrowIfNull(selection);
         ArgumentNullException.ThrowIfNull(style);
         var lines = data.Effects
-            .Where(effect => data.ShowEffects || effect.Outcome != "planned")
             .Select(effect => RemoveText.Effect(
                 effect.Kind,
                 effect.Action,

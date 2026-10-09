@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would change the Open Forge setup in <workspace>.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/guidance",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/archived",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/guidance/_guidance.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/archived/_archived.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".gitignore",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 2,
+    "directoriesCreated": 2,
+    "sectionsAdded": 0,
+    "filesReplaced": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "force": false,
+    "automatic": true,
+    "classification": "safe-absence",
+    "footprint": {
+      "files": 2,
+      "directories": 2,
+      "sections": 2
+    },
+    "lockPath": ".agents/open-forge.lock.json",
+    "effects": [
+      {
+        "path": ".agents/guidance"
+      },
+      {
+        "path": ".agents/memory/archived"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "sourceAssetPath": ".agents/guidance/_guidance.md"
+      },
+      {
+        "path": ".agents/loader.md"
+      },
+      {
+        "path": ".agents/memory/_memory.md"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "sourceAssetPath": ".agents/memory/archived/_archived.md"
+      },
+      {
+        "path": ".agents/open-forge.json"
+      },
+      {
+        "path": ".agents/open-forge.lock.json"
+      },
+      {
+        "path": ".gitignore"
+      }
+    ],
+    "source": {
+      "inventoryFingerprint": "<sha256>",
+      "assetCount": 19
+    },
+    "lifecycle": {
+      "action": "publish",
+      "outcome": "planned"
+    },
+    "verification": "not-requested",
+    "configuration": {
+      "configure": true,
+      "preset": "custom",
+      "routes": [
+        {
+          "id": "directives",
+          "action": "add"
+        },
+        {
+          "id": "guidance",
+          "action": "add"
+        },
+        {
+          "id": "maps",
+          "action": "remove"
+        },
+        {
+          "id": "patterns",
+          "action": "add"
+        },
+        {
+          "id": "skills",
+          "action": "add"
+        },
+        {
+          "id": "templates",
+          "action": "remove"
+        },
+        {
+          "id": "memory/working",
+          "action": "git-ignore"
+        },
+        {
+          "id": "memory/emerging",
+          "action": "add"
+        },
+        {
+          "id": "memory/crystallized",
+          "action": "add"
+        },
+        {
+          "id": "memory/archived",
+          "action": "git-ignore"
+        }
+      ]
+    },
+    "frontmatter": {
+      "form": "root"
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

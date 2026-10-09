@@ -1,3 +1,4 @@
 Updated memory/project-alpha/overview
 Workspace: <workspace>
   responsibility: "Owns the overview" -> (removed)
+  .agents/memory/project-alpha/overview.md  metadata updated

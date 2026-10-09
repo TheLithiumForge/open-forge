@@ -136,6 +136,8 @@ internal sealed record InstallFootprint
 
 internal sealed record InstallEffectInput
 {
+    public InstallEffectContentChange ContentChange { get; init; }
+
     public required string Path { get; init; }
 
     public required InstallEffectKind Kind { get; init; }
@@ -153,6 +155,8 @@ internal sealed record InstallEffect
 {
     internal InstallEffect(InstallEffectInput input)
     {
+        if (!Enum.IsDefined(input.ContentChange))
+            throw new ArgumentOutOfRangeException(nameof(input), input.ContentChange, "The Install content change is not defined.");
         ValidateCanonicalPath(input.Path, nameof(input.Path));
         ValidateKindAction(input.Kind, input.Action);
         ValidateSourceAssetPath(input.SourceAssetPath);
@@ -185,6 +189,7 @@ internal sealed record InstallEffect
         SourceAssetPath = input.SourceAssetPath;
         Outcome = input.Outcome;
         Residual = input.Residual;
+        ContentChange = input.ContentChange;
     }
 
     internal string Path { get; }
@@ -198,6 +203,8 @@ internal sealed record InstallEffect
     internal InstallEffectOutcome Outcome { get; }
 
     internal InstallEffectResidual Residual { get; }
+
+    internal InstallEffectContentChange ContentChange { get; }
 
     private static void ValidateKindAction(
         InstallEffectKind kind,

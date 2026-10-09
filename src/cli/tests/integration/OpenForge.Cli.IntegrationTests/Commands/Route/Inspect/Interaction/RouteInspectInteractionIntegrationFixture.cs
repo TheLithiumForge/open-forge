@@ -104,7 +104,7 @@ internal static class RouteInspectInteractionIntegrationFixture
         return string.Join(
             Environment.NewLine,
             [
-                $"{CollisionId} matches 2 sources. Which one?",
+                $"\"{CollisionId}\" matches 2 paths. Choose the one to inspect.",
                 string.Empty,
                 $"  1. {FirstCandidate}",
                 $"  2. {SecondCandidate}",

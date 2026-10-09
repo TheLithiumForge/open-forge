@@ -1,5 +1,5 @@
 Installed the toolkit Extension.
 Workspace: <workspace>
-  .agents/toolkit.md  replaced (your previous file is in the recovery bundle)
+  .agents/toolkit.md  replaced
   Source: <extension-source> (catalogue)
-  .agents/open-forge.lock.json  updated
+  .agents/open-forge.lock.json  ownership record updated

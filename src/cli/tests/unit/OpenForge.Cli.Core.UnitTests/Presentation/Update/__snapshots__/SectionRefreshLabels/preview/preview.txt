@@ -1,0 +1,6 @@
+Would update 3 Framework files.
+  .agents/loader.md             Entries would be updated
+  AGENTS.md                     Open Forge section would be updated
+  CLAUDE.md                     Open Forge section would be added, your content would be kept
+  .agents/open-forge.lock.json  ownership record would be updated
+No files were changed.

@@ -1,4 +1,6 @@
 Cannot update memory/project-alpha/overview: Another Open Forge command holds the workspace lock. Nothing was changed.
 Workspace: <workspace>
   description: "Before overview" -> "After overview"
+  .agents/memory/project-alpha/_project-alpha.md  not started
+  .agents/memory/project-alpha/overview.md  not started
 Next: open-forge route update

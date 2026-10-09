@@ -4,8 +4,8 @@ Workspace: <workspace>
          Another Open Forge command holds the workspace lock. Nothing was changed.
   .agents/guidance/old guide.md -> .agents/guidance/new guide.md
   .agents/guidance/old guide.overwrite.md -> .agents/guidance/new guide.overwrite.md
-  Entry updated in .agents/guidance/_guidance.md
-  Rewrote 5 links that pointed at the old path:
+  .agents/guidance/_guidance.md  not started
+  Did not update 5 links that still point to the old path:
   .agents/guidance/topics/child.md:8:13  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
   .agents/guidance/topics/child.overwrite.md:1:35  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
   README.md:3:13  .agents/guidance/old guide.md -> .agents/guidance/new guide.md

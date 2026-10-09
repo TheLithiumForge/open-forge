@@ -65,15 +65,15 @@ public sealed class ExtensionRemoveInteractionIntegrationTests
         Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
         Assert.Empty(workspace.ReadExtensionOwnership().EnumerateArray());
         var output = scripted.Output.ToString();
-        Assert.Contains("Which Extensions do you want to remove?", output, StringComparison.Ordinal);
+        Assert.Contains("Choose Extensions to remove", output, StringComparison.Ordinal);
         Assert.Contains("needed by", output, StringComparison.Ordinal);
-        Assert.Contains("Delete the 2 files listed above? [y/N]", output, StringComparison.Ordinal);
+        Assert.Contains("Apply these changes, including deleting 2 files? [y/N]", output, StringComparison.Ordinal);
         var preview = output.IndexOf("Would remove the", StringComparison.Ordinal);
         var previewPath = output.IndexOf(".agents/base.md", StringComparison.Ordinal);
-        var delete = output.IndexOf("Delete the 2 files listed above? [y/N]", StringComparison.Ordinal);
+        var delete = output.IndexOf("Apply these changes, including deleting 2 files? [y/N]", StringComparison.Ordinal);
         Assert.True(preview >= 0 && preview < delete, "The complete preview must precede confirmation.");
         Assert.True(previewPath >= 0 && previewPath < delete, "The planned path must precede confirmation.");
-        Assert.Equal(1, Count(output, "Delete the 2 files listed above? [y/N]"));
+        Assert.Equal(1, Count(output, "Apply these changes, including deleting 2 files? [y/N]"));
     }
 
     [Trait("Boundary", "OS")]
@@ -115,7 +115,7 @@ public sealed class ExtensionRemoveInteractionIntegrationTests
             finding => finding.Code == ExtensionRemoveFindingCode.Interrupted
                 && finding.Cause == "Extension remove was cancelled. Nothing was changed.");
         Assert.Equal(before, workspace.Snapshot());
-        Assert.DoesNotContain("Delete the ", scripted.Output.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain("Apply these changes, including deleting ", scripted.Output.ToString(), StringComparison.Ordinal);
     }
 
     private static async Task InstallAllAsync(

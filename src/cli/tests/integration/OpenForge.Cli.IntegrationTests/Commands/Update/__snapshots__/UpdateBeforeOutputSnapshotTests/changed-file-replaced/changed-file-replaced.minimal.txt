@@ -1,4 +1,4 @@
 Updated 1 Framework file.
 Workspace: <workspace>
-  .agents/loader.md  replaced (you had changed it and this release changes it)
+  .agents/loader.md  replaced (your previous file is in the recovery bundle)
 Next: Review previous content in the recovery bundle at <recovery-bundle>.

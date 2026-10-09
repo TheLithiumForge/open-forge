@@ -49,12 +49,21 @@ internal static class RepairText
         => "Review remaining broken links in Repair, then select a possible target in the interactive prompt or provide an explicit --relink target.";
 
     // @OpenForgeText repair.label.skip
-    internal static string LabelSkip()
-        => "skip";
+    internal static string LeaveLinkUnchanged()
+        => "Leave this link unchanged";
 
     // @OpenForgeText repair.title.select
-    internal static string TitleSelect()
-        => "Select";
+    internal static string IncludeRecovery()
+        => "Include";
+
+    // @OpenForgeText repair.label.leave-recovery-out
+    internal static string LeaveRecoveryOut() => "Leave out";
+
+    // @OpenForgeText repair.message.leave-recovery-out-description
+    internal static string LeaveRecoveryOutDescription() => "Leave this recovery step out of the plan.";
+
+    // @OpenForgeText repair.label.in-nearby-folder
+    internal static string InNearbyFolder() => "in a nearby folder";
 
     // @OpenForgeText repair.label.the-repair-request-is-blocked
     internal static string LabelTheRepairRequestIsBlocked()

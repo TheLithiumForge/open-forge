@@ -1,0 +1,25 @@
+Would change the Open Forge setup in <workspace>.
+Workspace: <workspace>
+Frontmatter: root -> scoped
+  .agents/open-forge.json                                settings would be updated
+  .agents/directives/_directives.md                      metadata would move under open-forge:; source: .agents/directives/_directives.md
+  .agents/guidance/_guidance.md                          metadata would move under open-forge:; source: .agents/guidance/_guidance.md
+  .agents/maps/_maps.md                                  metadata would move under open-forge:; source: .agents/maps/_maps.md
+  .agents/memory/_memory.md                              metadata would move under open-forge:; source: .agents/memory/_memory.md
+  .agents/memory/archived/_archived.md                   metadata would move under open-forge:; source: .agents/memory/archived/_archived.md
+  .agents/memory/crystallized/_crystallized.md           metadata would move under open-forge:; source: .agents/memory/crystallized/_crystallized.md
+  .agents/memory/emerging/_emerging.md                   metadata would move under open-forge:; source: .agents/memory/emerging/_emerging.md
+  .agents/memory/working/_working.md                     metadata would move under open-forge:; source: .agents/memory/working/_working.md
+  .agents/patterns/_patterns.md                          metadata would move under open-forge:; source: .agents/patterns/_patterns.md
+  .agents/skills/_skills.md                              metadata would move under open-forge:; source: .agents/skills/_skills.md
+  .agents/skills/open-forge-cli/references/common.md     metadata would move under open-forge:; source: .agents/skills/open-forge-cli/references/common.md
+  .agents/skills/open-forge-cli/references/discovery.md  metadata would move under open-forge:; source: .agents/skills/open-forge-cli/references/discovery.md
+  .agents/skills/open-forge-cli/references/packages.md   metadata would move under open-forge:; source: .agents/skills/open-forge-cli/references/packages.md
+  .agents/skills/open-forge-cli/references/routes.md     metadata would move under open-forge:; source: .agents/skills/open-forge-cli/references/routes.md
+  .agents/templates/_templates.md                        metadata would move under open-forge:; source: .agents/templates/_templates.md
+  Would update 16 existing files.
+  Bundled Framework fingerprint: <sha256> (19 assets).
+  No ownership record change was requested.
+  No recovery bundle was created.
+  Verification was not requested.
+No files were changed.

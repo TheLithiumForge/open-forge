@@ -21,6 +21,8 @@ internal sealed record ExtensionCreateInteraction
 
     internal required string PackageFolderRule { get; init; }
 
+    internal required string InvalidPackageFolder { get; init; }
+
     internal required CliConfirmQuestion ConfirmationQuestion { get; init; }
 
     internal required CliPlanConfirmation<ExtensionCreateResult, CliConfirmQuestion> Confirm { get; init; }

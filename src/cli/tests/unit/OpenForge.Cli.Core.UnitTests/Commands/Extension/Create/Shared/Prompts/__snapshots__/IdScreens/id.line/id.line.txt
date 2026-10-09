@@ -1,0 +1,5 @@
+Extension ID (for example my-tools):
+Use lowercase letters and digits, with single hyphens between them, up to 128 characters.
+Extension ID (for example my-tools):
+'BAD ID' is not a valid Extension ID. Use lowercase letters and digits, with single hyphens between them, up to 128 characters.
+Extension ID (for example my-tools):

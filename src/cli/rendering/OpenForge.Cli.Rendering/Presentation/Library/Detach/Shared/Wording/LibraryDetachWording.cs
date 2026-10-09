@@ -201,7 +201,7 @@ internal static class LibraryDetachWording
     };
 
     internal static string Confirm(int links)
-        => global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachPhrases.FormatRemoveTheLinksListedAboveYN(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{links}"));
+        => links > 0 ? CliPromptWording.ConfirmRemoving(links) : CliPromptWording.Confirm();
 
     internal static string Mode(LibraryMode mode) => mode switch
     {

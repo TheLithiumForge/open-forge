@@ -49,6 +49,7 @@ internal static class ExtensionInteractionTestFactory
             InvalidExtensionId = ExtensionCreateWording.InvalidExtensionId,
             PackageFolderLabel = ExtensionCreateWording.PackageFolder(),
             PackageFolderRule = ExtensionCreateWording.PackageFolderRule(),
+            InvalidPackageFolder = ExtensionCreateWording.InvalidPackageFolder(),
             ConfirmationQuestion = new CliConfirmQuestion(ExtensionCreateWording.ConfirmCreate()),
             Confirm = prompts.PlanConfirmation<ExtensionCreateResult, ExtensionCreateData, CliConfirmQuestion>(
                 ExtensionCreatePresentation.Rendering,
@@ -69,7 +70,7 @@ internal static class ExtensionInteractionTestFactory
             Permission = prompts.PermissionAsync,
             Force = confirmation,
             ForceQuestion = static paths => new CliConfirmQuestion(ExtensionInstallWording.ReplaceExisting(paths)),
-            ApplyQuestion = new CliConfirmQuestion(ExtensionInstallWording.Apply()),
+            ApplyQuestion = static facts => new CliConfirmQuestion(ExtensionInstallWording.Apply(facts)),
             Apply = confirmation,
         };
     }
@@ -82,8 +83,7 @@ internal static class ExtensionInteractionTestFactory
             SelectPackages = prompts.MultiSelectAsync<string>,
             SelectionQuestion = ExtensionUpdateWording.Selection(),
             Permission = prompts.PermissionAsync,
-            ApplyQuestion = new CliConfirmQuestion(ExtensionUpdateWording.Apply()),
-            PruneQuestion = static count => new CliConfirmQuestion(ExtensionUpdateWording.Prune(count)),
+            ApplyQuestion = static facts => new CliConfirmQuestion(ExtensionUpdateWording.Apply(facts)),
             Apply = prompts.PlanConfirmation<ExtensionUpdateResult, ExtensionUpdateData, CliConfirmQuestion>(
                 ExtensionUpdatePresentation.Rendering,
                 static question => question),

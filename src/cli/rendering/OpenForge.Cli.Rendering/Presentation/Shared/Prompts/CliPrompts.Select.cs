@@ -25,11 +25,11 @@ internal sealed partial class CliPrompts
             var frame = new CliSelectionFrame
             {
                 Question = question.Question,
-                Rows = question.Choices.Select(row => new CliSelectionRow(row.Label)).ToArray(),
+                Rows = question.Choices.Select(row => new CliSelectionRow(row.Label, Summary: row.Summary)).ToArray(),
                 Focus = cursor,
                 Position = CliPromptWording.Position(cursor, question.Choices.Count),
-                Details = focused.Description is { } description ? [description] : [],
-                Controls = [CliPromptWording.MoveControls(), CliPromptWording.AcceptControls()],
+                Details = focused.Description is { } description && description != focused.Summary ? [description] : [],
+                Controls = [CliPromptWording.SelectControls(question.Choices.Count)],
             };
             if (!await DrawSelectionAsync(frame, viewport, cancellationToken).ConfigureAwait(false)) break;
             var key = await _terminal.ReadKeyAsync(cancellationToken).ConfigureAwait(false);
@@ -50,11 +50,14 @@ internal sealed partial class CliPrompts
         while (true)
         {
             var frame = new StringBuilder().Append(CliText.Escape(question.Question)).Append("\n\n");
+            var labelWidth = question.Choices.Max(row => CliSelectionText.Width(row.Label));
+            var numberWidth = question.Choices.Count.ToString(CultureInfo.InvariantCulture).Length;
             for (var index = 0; index < question.Choices.Count; index++)
             {
                 var row = question.Choices[index];
-                frame.Append(CultureInfo.InvariantCulture, $"  {index + 1}. {CliText.Escape(row.Label)}");
-                if (row.Description is { } description) frame.Append("   ").Append(CliText.Escape(description));
+                frame.Append($"  {(index + 1).ToString(CultureInfo.InvariantCulture).PadLeft(numberWidth)}. {CliText.Escape(row.Label)}");
+                if ((row.Summary ?? row.Description) is { } summary)
+                    frame.Append(' ', labelWidth - CliSelectionText.Width(row.Label) + 2).Append(CliText.Escape(summary));
                 frame.Append('\n');
             }
             frame.Append('\n').Append(CliPromptWording.SelectLine(question.Choices.Count)).Append('\n');

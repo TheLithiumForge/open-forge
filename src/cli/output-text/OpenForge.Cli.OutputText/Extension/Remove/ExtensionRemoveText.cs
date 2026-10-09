@@ -62,7 +62,7 @@ internal static class ExtensionRemoveText
 
     // @OpenForgeText extension.remove.prompt.which-extensions-do-you-want-to-remove
     internal static string PromptWhichExtensionsDoYouWantToRemove()
-        => "Which Extensions do you want to remove?";
+        => "Choose Extensions to remove";
 
     // @OpenForgeText extension.remove.label.would-delete
     internal static string LabelWouldDelete()

@@ -3,14 +3,16 @@ namespace OpenForge.Cli.OutputText.Remove;
 internal static class RemoveText
 {
     // @OpenForgeText remove.confirm.missing
-    internal static string ConfirmMissing(string target) => $"Record and reconcile the missing target \"{target}\"?";
+    internal static string ConfirmMissing(string target) => Shared.SharedText.TitleApplyTheseChangesYN();
 
     // @OpenForgeText remove.confirm.file
-    internal static string ConfirmFile() => "Remove this file and record its workspace exclusion?";
+    internal static string ConfirmFile() => Shared.SharedText.TitleApplyTheseChangesIncludingDeletingYN(1);
 
     // @OpenForgeText remove.confirm.tree
     internal static string ConfirmTree(int files, int directories)
-        => $"Remove {files} files and {directories} directories and record the workspace exclusion?";
+        => files > 0
+            ? Shared.SharedText.TitleApplyTheseChangesIncludingDeletingYN(files)
+            : Shared.SharedText.TitleApplyTheseChangesYN();
 
     // @OpenForgeText remove.headline.preview
     internal static string Preview(string target) => $"Would remove {target}";
@@ -27,6 +29,25 @@ internal static class RemoveText
     // @OpenForgeText remove.effect
     internal static string Effect(string kind, string action, string outcome, string path)
     {
+        if (outcome is "planned" or "done")
+        {
+            var preview = outcome == "planned";
+            if (action == "create")
+            {
+                return $"{path}  {Shared.ChangeLabels.Created(preview)}";
+            }
+            var label = kind switch
+            {
+                "setting" => Shared.ChangeLabels.Settings(preview),
+                "navigation" => Shared.ChangeLabels.Entries(preview),
+                "record" => Shared.ChangeLabels.OwnershipRecord(preview),
+                _ => null,
+            };
+            if (label is not null)
+            {
+                return $"{path}  {label}";
+            }
+        }
         var subject = kind switch
         {
             "directory" => "directory",

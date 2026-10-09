@@ -92,6 +92,8 @@ internal sealed record InstallPlanningEvidence
 
 internal sealed record InstallEffectIdentity
 {
+    public InstallEffectContentChange ContentChange { get; init; }
+
     public required string Path { get; init; }
 
     public required InstallEffectKind Kind { get; init; }
@@ -114,6 +116,8 @@ internal sealed record InstallFileEffect
 
 internal sealed record InstallFileEffectInput
 {
+    public InstallEffectContentChange ContentChange { get; init; }
+
     public required InstallTargetRead Read { get; init; }
 
     public required byte[] IntendedBytes { get; init; }

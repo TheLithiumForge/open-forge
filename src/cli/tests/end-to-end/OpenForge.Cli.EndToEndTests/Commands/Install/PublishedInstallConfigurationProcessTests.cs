@@ -88,7 +88,7 @@ public sealed class PublishedInstallConfigurationProcessTests
         Capture($"essentials-{width}x{height}-{apply}", terminal.Transcript);
         Assert.Equal(apply ? 0 : 130, terminal.ExitCode);
         Assert.Contains("Essentials", terminal.Transcript, StringComparison.Ordinal);
-        var plan = terminal.Transcript.IndexOf("Would install", StringComparison.Ordinal);
+        var plan = terminal.Transcript.IndexOf("Would ", StringComparison.Ordinal);
         var confirmation = terminal.Transcript.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal);
         Assert.True(plan >= 0 && confirmation > plan, terminal.Transcript);
         Assert.DoesNotContain("\u001b[2J", terminal.Transcript[plan..], StringComparison.Ordinal);
@@ -101,8 +101,9 @@ public sealed class PublishedInstallConfigurationProcessTests
         else Assert.Equal(before, workspace.SnapshotState());
     }
 
-    [Fact(DisplayName = "Real TTY configure changes one Custom row and finishes without ten sequential questions"), Trait("Feature", "install-configuration"), Trait("Evidence", "EndToEnd")]
-    public async Task CustomTerminalEditsOneRoute()
+    [Theory(DisplayName = "Real TTY configure changes one Custom row in the marked list before reviewed application")]
+    [InlineData("xterm"), InlineData("dumb"), Trait("Feature", "install-configuration"), Trait("Evidence", "EndToEnd")]
+    public async Task CustomTerminalEditsOneRoute(string terminalName)
     {
         if (!OperatingSystem.IsWindows()) Assert.Skip("This confirmation journey requires the repository's Windows ConPTY harness.");
         using var workspace = Create("e2e-install-custom-terminal");
@@ -110,16 +111,28 @@ public sealed class PublishedInstallConfigurationProcessTests
         var terminal = await PublishedWindowsTerminal.RunAsync(workspace.Target, workspace.Path, ["install", "--configure"], workspace.ProcessEnvironment,
             new PublishedTerminalScenario
             {
-                TerminalName = "xterm",
+                TerminalName = terminalName,
                 Size = new(80, 24),
-                Steps = [new("Choose your Open Forge setup", "\r"), new("Choose a route to change", "3"),
-                    new("Choose how to configure guidance", "2"), new("Choose a route to change", "\r"),
-                    new("How should Open Forge write file metadata?", "\r"), new("[y/N]", "y")],
+                Steps = terminalName == "xterm"
+                    ? [new("Choose your Open Forge setup", "\r"), new("esc cancel", "\u001b[B+"), new("esc cancel", "\r"),
+                        new("How should Open Forge write file metadata?", "\r"), new("[y/N]", "y")]
+                    : [new("Choose a number", "1\r"), new("Press Enter on an empty line to continue.", "2+\r"),
+                        new("Press Enter on an empty line to continue.", "\r"), new("Choose a number", "1\r"), new("[y/N]", "yes\r")],
             });
-        Capture("custom-guidance-80x24", terminal.Transcript);
+        Capture($"custom-guidance-80x24-{terminalName}", terminal.Transcript);
         Assert.Equal(0, terminal.ExitCode);
-        Assert.Contains("Finish selection", terminal.Transcript, StringComparison.Ordinal);
-        Assert.Contains("Existing files, notes and companions", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Choose what Open Forge sets up", terminal.Transcript, StringComparison.Ordinal);
+        Assert.DoesNotContain("Choose how to configure", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Would change the Open Forge setup in", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Changed the Open Forge setup in", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Entries would be updated", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("ownership record would be updated", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Apply these changes? [y/N]", terminal.Transcript, StringComparison.Ordinal);
+        Assert.DoesNotContain("replacing", terminal.Transcript, StringComparison.Ordinal);
+        var plan = terminal.Transcript.IndexOf("Would ", StringComparison.Ordinal);
+        var confirmation = terminal.Transcript.IndexOf("[y/N]", StringComparison.Ordinal);
+        Assert.True(plan >= 0 && confirmation > plan, terminal.Transcript);
+        Assert.DoesNotContain("\u001b[2J", terminal.Transcript[plan..], StringComparison.Ordinal);
         Assert.True(File.Exists(workspace.Combine(".agents/guidance/_guidance.md")));
         Assert.False(File.Exists(workspace.Combine(".agents/templates/_templates.md")));
     }

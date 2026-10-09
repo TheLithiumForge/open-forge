@@ -6,6 +6,7 @@ Workspace: <workspace>
          Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan.
   Path: .agents/memory/project-alpha/overview.md
   description: "Before overview" -> "After overview"
-  .agents/memory/project-alpha/overview.md  frontmatter rewritten
+  .agents/memory/project-alpha/_project-alpha.md  not started
+  .agents/memory/project-alpha/overview.md  not started
   Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan.
 Next: open-forge route update

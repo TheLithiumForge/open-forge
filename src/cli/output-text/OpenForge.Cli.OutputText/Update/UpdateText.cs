@@ -184,6 +184,18 @@ internal static class UpdateText
     internal static string LabelRestored()
         => "restored";
 
+    // @OpenForgeText update.label.deletion
+    internal static string Deleted(bool preview)
+        => preview ? "would be deleted" : Shared.SharedText.LabelDeleted();
+
+    // @OpenForgeText update.label.restoration
+    internal static string Restored(bool preview)
+        => preview ? "would be restored" : LabelRestored();
+
+    // @OpenForgeText update.label.created-with-section
+    internal static string CreatedWithSection(bool preview)
+        => preview ? "would be created with an Open Forge section" : "created with an Open Forge section";
+
     // @OpenForgeText update.label.migration-metadata-completed
     internal static string LabelMigrationMetadataCompleted()
         => "metadata updated";

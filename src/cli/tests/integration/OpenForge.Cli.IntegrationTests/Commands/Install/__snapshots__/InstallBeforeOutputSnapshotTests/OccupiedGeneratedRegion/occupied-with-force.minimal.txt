@@ -3,6 +3,6 @@ Workspace: <workspace>
 Frontmatter: scoped
   .agents/memory/_memory.md            replaced
   .agents/memory/_memory.overwrite.md  Migrated: content preserved
-  Created 17 files and 12 directories under .agents.
+  Created 17 files and 12 directories under .agents, and replaced 1 existing file.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Migrated 1 source.

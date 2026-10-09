@@ -1,0 +1,13 @@
+Allow toolkit to change these paths outside .agents?
+
+  docs (folder and everything below it)
+  .gitignore
+
+  Allow always  Save these paths in .agents/open-forge.json so later runs do not ask again. All Extensions and Libraries can use them.
+  Allow once  Allow for this run only.
+  Cancel  Stop without changing anything.
+
+Type always, once or cancel:
+Type always, once or cancel.
+
+Type always, once or cancel:

@@ -1,7 +1,7 @@
 Moved guidance/old guide to .agents/guidance/new guide.md
 Workspace: <workspace>
-  Entry updated in .agents/guidance/_guidance.md
-  Rewrote 5 links that pointed at the old path:
+  .agents/guidance/_guidance.md  Entries updated
+  Updated 5 links that pointed to the old path:
   .agents/guidance/topics/child.md:8:13
   .agents/guidance/topics/child.overwrite.md:1:35
   README.md:3:13

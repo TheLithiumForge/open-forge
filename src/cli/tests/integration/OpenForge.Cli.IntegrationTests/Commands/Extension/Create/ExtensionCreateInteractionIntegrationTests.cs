@@ -184,7 +184,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(3, CountPromptLines(prompts.ToString()));
-        Assert.Contains("ordinary directory", prompts.ToString(), StringComparison.Ordinal);
+        Assert.Contains("That folder does not exist. Enter an existing folder.", prompts.ToString(), StringComparison.Ordinal);
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 

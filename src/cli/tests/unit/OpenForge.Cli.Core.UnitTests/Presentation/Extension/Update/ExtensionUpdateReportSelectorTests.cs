@@ -13,11 +13,40 @@ using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.Core.UnitTests.Presentation.Extension.Update;
 
 public sealed class ExtensionUpdateReportSelectorTests
 {
+    [Theory(DisplayName = "Extension Update Entries rows and summaries follow planned verified and unfinished receipts")]
+    [InlineData((int)ExtensionUpdateEffectOutcome.Planned)]
+    [InlineData((int)ExtensionUpdateEffectOutcome.Verified)]
+    [InlineData((int)ExtensionUpdateEffectOutcome.NotStarted)]
+    [InlineData((int)ExtensionUpdateEffectOutcome.VerificationFailed)]
+    [InlineData((int)ExtensionUpdateEffectOutcome.CompletionUnknown)]
+    [Trait("Feature", "extension-update"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void EntriesReceiptWording(int value)
+    {
+        var outcome = (ExtensionUpdateEffectOutcome)value;
+        var result = Result(
+            outcome == ExtensionUpdateEffectOutcome.Planned ? ExtensionUpdateMode.DryRun : ExtensionUpdateMode.Apply,
+            WorkspacePermissionResult.NotEvaluated, [outcome],
+            findings: outcome is ExtensionUpdateEffectOutcome.Planned or ExtensionUpdateEffectOutcome.Verified
+                ? []
+                : [new(ExtensionUpdateFindingCode.VerificationFailed, "The generated Entries were not verified.", ".agents/aaa.md")],
+            generatedRegions: [new(".agents/aaa.md", ExtensionUpdateGeneratedRegionState.Changed)],
+            generatedEffect: true);
+        var selected = Select(result, CliDetail.Standard);
+        Assert.Equal(CliEffectKind.Section, Assert.Single(selected.Report.Effects).Kind);
+        Assert.Equal(outcome is ExtensionUpdateEffectOutcome.Planned or ExtensionUpdateEffectOutcome.Verified ? 1 : 0,
+            selected.Report.Counts.Single(count => count.Name == "sectionsUpdated").Value);
+        var text = CliTextRenderer.Render(selected, CliTextStyle.Plain,
+            ExtensionUpdatePresentation.Rendering.DataTextRenderer).Content;
+        CommandOutputSnapshot.MatchSnapshot(CommandOutputNormalization.ReplaceDelimitedPath(
+            text, result.WorkspacePath!, "<workspace>"), outcome.ToString());
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Extension Update failed mixed effects keep not-started text and count only verified files"), Trait("Feature", "extension-update"), Trait("Evidence", "Unit")]
     public void FailedMixedEffectsKeepNotStartedTextAndCountOnlyVerifiedFiles()
@@ -252,7 +281,8 @@ public sealed class ExtensionUpdateReportSelectorTests
         IReadOnlyList<ExtensionUpdateEffectOutcome> outcomes,
         IReadOnlyList<ExtensionUpdateFinding>? findings = null,
         bool includeRetainedFile = false,
-        IReadOnlyList<ExtensionUpdateGeneratedRegion>? generatedRegions = null)
+        IReadOnlyList<ExtensionUpdateGeneratedRegion>? generatedRegions = null,
+        bool generatedEffect = false)
     {
         var paths = outcomes
             .Select((_, index) => index == 0 ? ".agents/aaa.md" : ".agents/toolkit.md")
@@ -288,13 +318,13 @@ public sealed class ExtensionUpdateReportSelectorTests
             .Select((path, index) => new ExtensionUpdateEffect(
                 path,
                 package.Id,
-                ExtensionUpdateEffectKind.PackageFile,
+                generatedEffect ? ExtensionUpdateEffectKind.GeneratedRegion : ExtensionUpdateEffectKind.PackageFile,
                 ExtensionUpdateEffectAction.Replace,
                 [new ExtensionUpdateLogicalChange(
-                    ExtensionUpdateComparisonTargetKind.PackageFile,
+                    generatedEffect ? ExtensionUpdateComparisonTargetKind.GeneratedRegion : ExtensionUpdateComparisonTargetKind.PackageFile,
                     ExtensionUpdateChangeAction.Replace,
-                    region: null,
-                    sourceAssetPath: $"content/{path}")],
+                    region: generatedEffect ? "entries" : null,
+                    sourceAssetPath: generatedEffect ? null : $"content/{path}")],
                 outcomes[index],
                 ExtensionUpdateEffectResidual.None))
             .ToArray();

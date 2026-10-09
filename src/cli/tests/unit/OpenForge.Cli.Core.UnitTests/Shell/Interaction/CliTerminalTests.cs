@@ -116,7 +116,7 @@ public sealed class CliTerminalTests
             new CliSelectQuestion<string>("Select?", [new CliChoice<string>("one", "one")]),
             policy, CancellationToken.None)).State);
         Assert.Equal(CliPromptState.Unavailable, (await prompts.MultiSelectAsync(
-            new CliMultiSelectQuestion<string>("Select?", [new CliChoice<string>("one", "one")], [], new HashSet<string>()),
+            new CliMultiSelectQuestion<string>("Select?", [new CliChoice<string>("one", "one")], [], new HashSet<string>(), CliSelectionAction.Install),
             policy, CancellationToken.None)).State);
         Assert.Equal(CliPromptState.Unavailable, (await prompts.TextAsync(
             new CliTextQuestion<string>("Text?", "rule", false,

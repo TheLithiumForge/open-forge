@@ -182,6 +182,9 @@ internal sealed class InstallEstablishmentPlanner
                         || (isGeneratedRegion && read.State == InstallTargetReadState.File)
                             ? null
                             : target.Key,
+                ContentChange = isUserOwned
+                    ? InstallEffectContentChange.PreservedContent
+                    : InstallEffectContentChange.WholeFile,
             }) is { } effect)
             {
                 effects.Add(effect);
@@ -283,6 +286,7 @@ internal sealed class InstallEstablishmentPlanner
                 Kind = InstallEffectKind.File,
                 Action = InstallEffectAction.Replace,
                 SourceAssetPath = replacement.SourceAssetPath,
+                ContentChange = InstallEffectContentChange.FrontmatterConversion,
             });
             if (effect is not null) effects.Add(effect);
         }
@@ -328,6 +332,7 @@ internal sealed class InstallEstablishmentPlanner
                         ? InstallEffectAction.Create
                         : InstallEffectAction.Replace,
                     SourceAssetPath = null,
+                    ContentChange = InstallEffectContentChange.PreservedContent,
                 },
                 Change = ownershipChange,
                 RecoveryTarget = RecoveryBundleTarget.Create(
@@ -403,11 +408,18 @@ internal sealed class InstallEstablishmentPlanner
                 configuration.Settings.Snapshot ?? throw new InvalidOperationException("Settings require original bytes."),
                 captureMissing: configuration.FrontmatterPlan?.Replacements.Length > 0));
         if (configuration.IgnoreChange is { } ignoreChange)
+        {
+            var snapshot = configuration.Ignore?.Snapshot ?? throw new InvalidOperationException("Ignore changes require original bytes.");
             effects.Add(ConfigurationEffect(InstallIgnoreSection.Path, ignoreChange,
-                configuration.Ignore?.Snapshot ?? throw new InvalidOperationException("Ignore changes require original bytes.")));
+                snapshot,
+                contentChange: InstallIgnoreSection.Read(snapshot.Bytes.AsSpan()).IsEmpty
+                    ? InstallEffectContentChange.GitIgnoreRulesAdded
+                    : InstallEffectContentChange.PreservedContent));
+        }
     }
 
-    private static InstallFileEffect ConfigurationEffect(string path, PlannedFileChange change, FileStateSnapshot before, bool captureMissing = false)
+    private static InstallFileEffect ConfigurationEffect(string path, PlannedFileChange change, FileStateSnapshot before,
+        bool captureMissing = false, InstallEffectContentChange contentChange = InstallEffectContentChange.PreservedContent)
         => new()
         {
             Identity = new()
@@ -415,7 +427,8 @@ internal sealed class InstallEstablishmentPlanner
                 Path = path,
                 Kind = InstallEffectKind.File,
                 Action = change.Kind == PlannedFileChangeKind.Create ? InstallEffectAction.Create : InstallEffectAction.Replace,
-                SourceAssetPath = null
+                SourceAssetPath = null,
+                ContentChange = contentChange,
             },
             Change = change,
             RecoveryTarget = captureMissing && change.Kind == PlannedFileChangeKind.Create
@@ -522,6 +535,7 @@ internal sealed class InstallEstablishmentPlanner
                     Kind = input.Kind,
                     Action = input.Action,
                     SourceAssetPath = input.SourceAssetPath,
+                    ContentChange = input.ContentChange,
                 },
                 Change = change,
                 RecoveryTarget = RecoveryBundleTarget.Create(change, before),

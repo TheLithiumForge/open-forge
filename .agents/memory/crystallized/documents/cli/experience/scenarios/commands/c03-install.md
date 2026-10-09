@@ -479,7 +479,7 @@ Select a preset, retain the preselected root choice, review the complete plan, a
 
 ### Expected result
 
-After the preset choice, Install asks `How should Open Forge write file metadata?` with `Root keys` preselected. Its explanation is `description: and tags: at the top of the frontmatter`. The other choice is `Scoped under open-forge:` with `open-forge: holds description: and tags:`. Selection finishes before plan review and final confirmation. The applied files and saved preference use the selected form.
+After the preset choice, Install asks `How should Open Forge write file metadata?` with `Root keys` preselected. Its explanation is `description: and tags: at the top level`. The other choice is `Scoped under open-forge:` with `open-forge: holds description: and tags:`. Selection finishes before plan review and final confirmation. The applied files and saved preference use the selected form.
 
 ### Verification
 
@@ -535,7 +535,7 @@ open-forge install --configure --frontmatter root --dry-run
 
 ### Expected result
 
-The plan shows `Frontmatter: scoped -> root`, the settings write, and whole-file replacements for eligible owned targets that match the scoped payload. Replacement bytes include projected `Entries`. The edited owned file is kept unchanged and reported with reason `edited`. The user note is outside conversion. Form-only configuration leaves route choices unchanged and requires no preset or force. Preview writes nothing.
+The plan shows `Frontmatter: scoped -> root`, `settings would be updated`, and `metadata would move to root keys` for eligible owned targets that match the scoped payload. Replacement bytes include projected `Entries`. The edited owned file is kept unchanged and reported with reason `edited`. The user note is outside conversion. Form-only configuration leaves route choices unchanged and requires no preset or force. Preview writes nothing.
 
 JSON exposes `data.frontmatter.form` as `root`, `previousForm` as `scoped`, and `kept` with the edited path and reason at every detail level. Text reports the kept count, with paths and reasons at `standard` detail and above. Kept files add no finding code.
 
@@ -603,3 +603,64 @@ First Install honors scoped instead of choosing the fresh unattended root defaul
 **State:** Read the saved settings and compare delivered bytes with the canonical scoped payload. Check that unrelated settings and the README remain intact.
 
 **Output:** Check the resolved form and fresh-install JSON shape separately from delivery. Neither a printed scoped line nor an unchanged setting proves the file form by itself.
+
+## C03-20
+
+**Situation:** Interactive Custom shows one marked list, keeps `--route` rows locked, and finishes with one plan
+
+**Disposition:** Added. Change several setup rows on one screen instead of answering two questions per row.
+
+### Starting point
+
+W1 is installed with Essentials. Use a real prompt-capable terminal without `--automatic` or JSON output. Record the settings, lock and `.gitignore` bytes before the run.
+
+Fixture: `W1`, with terminal input and prompt evidence captured.
+
+### Steps
+
+```text
+open-forge install --configure --preset custom --route templates=add
+```
+
+In the list, press `+` on `guidance`, press space on `memory/archived` until it shows `[~]`, try to change `templates`, then press Enter. Review the plan and confirm. Repeat on a fresh copy of the fixture in line mode by typing `2+ 10~`, an edit to the `templates` row, and an empty line.
+
+### Expected result
+
+Custom shows `Choose what Open Forge sets up`, the legend `+ add   ~ add, keep contents out of Git   - leave out`, and all ten rows with their current marks and summaries. The `templates` row is locked and explains that `--route templates=add` set it. Its mark does not change. Enter accepts the whole list. One plan follows, then one confirmation. The applied workspace adds Guidance, Templates and Git-ignored Archived Memory and keeps every other choice.
+
+### Verification
+
+**State:** Before confirmation, verify that nothing was written. After confirmation, inspect settings, the sharing policy in the lock, `.gitignore` and the delivered routes independently.
+
+**Output:** Capture the list before and after each key, the locked-row explanation, the plan and the confirmation in their actual order. Check the line-mode rule after the invalid edit. A redirected run without prompts does not prove this scenario.
+
+## C03-21
+
+**Situation:** A Configure plan describes each change to an existing file instead of calling it a replacement
+
+**Disposition:** Added. A user who only adds a route must not be told that their files will be replaced.
+
+### Starting point
+
+W1 is installed with Essentials, with user-authored content in `AGENTS.md` outside the Open Forge section and one user rule in `.gitignore`. Record the bytes of every existing file the plan lists.
+
+Fixture: `W1`, with the user content above.
+
+### Steps
+
+```text
+open-forge install --configure --preset custom --route guidance=add --route memory/archived=git-ignore --dry-run --detail standard
+open-forge install --configure --preset custom --route guidance=add --route memory/archived=git-ignore
+```
+
+Confirm the second command in a prompt-capable terminal.
+
+### Expected result
+
+The preview headline is `Would change the Open Forge setup in <workspace>.` The loader and Memory entrypoint rows say `Entries would be updated`, `.agents/open-forge.json` says `settings would be updated`, the lock says `ownership record would be updated`, and `.gitignore` says `Open Forge Git-ignore rules would be updated`. No row says `replaced`. One summary line counts created files and directories and updated existing files. The confirmation asks `Apply these changes? [y/N]`. The applied result uses the done forms of the same labels.
+
+### Verification
+
+**State:** After application, compare each listed existing file with its recorded bytes. Only the Entries, settings, ownership record and Open Forge Git-ignore section changed. The user rule in `.gitignore` and the user content in `AGENTS.md` are unchanged.
+
+**Output:** Capture the preview, the confirmation question and the applied result. Check that the headline has no replacement count and that the directory count appears once.

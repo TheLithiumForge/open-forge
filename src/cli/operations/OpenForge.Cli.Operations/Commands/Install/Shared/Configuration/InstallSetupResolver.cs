@@ -83,19 +83,19 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
         if (preset == InstallPreset.Custom && canPrompt && interaction is { } prompts)
         {
             var fixedIds = overrides.Select(row => row.Id).ToImmutableArray();
-            while (true)
+            var locks = overrides.Select(row => new InstallRouteLock(Id: row.Id, Action: InstallConfigurationChoices.Name(row.Action))).ToImmutableArray();
+            var question = new InstallRouteQuestion(Materialize(rows), locks, installed);
+            var reply = await prompts.Routes(question, new(true), token).ConfigureAwait(false);
+            if (reply.State != CliPromptState.Answered) return new(null, Cancelled: true);
+            var selected = reply.Value;
+            if (selected.IsDefault || selected.Length != rows.Count
+                || selected.Select(row => row.Id).Distinct(StringComparer.Ordinal).Count() != rows.Count
+                || selected.Any(row => !rows.ContainsKey(row.Id)
+                    || !Enum.IsDefined(row.Action) || fixedIds.Contains(row.Id, StringComparer.Ordinal) && rows[row.Id] != row.Action))
+                throw new InvalidOperationException("Setup must return every Custom row once and preserve explicit route choices.");
+            foreach (var row in selected)
             {
-                var question = new InstallRouteQuestion(Materialize(rows), fixedIds);
-                var picked = await prompts.Route(question, new(true), token).ConfigureAwait(false);
-                if (picked.State != CliPromptState.Answered) return new(null, Cancelled: true);
-                if (picked.Value.Length == 0) break;
-                if (fixedIds.Contains(picked.Value, StringComparer.Ordinal)) continue;
-                if (!rows.TryGetValue(picked.Value, out var current))
-                    throw new InvalidOperationException("Setup selected an unavailable Custom row.");
-                var answer = await prompts.Action(new(picked.Value, current), new(true), token).ConfigureAwait(false);
-                if (answer.State != CliPromptState.Answered) return new(null, Cancelled: true);
-                _ = InstallConfigurationChoices.Name(answer.Value);
-                rows[picked.Value] = answer.Value;
+                rows[row.Id] = row.Action;
             }
         }
         return await ResolveFrontmatterAsync(new(request.Setup?.Configure == true, preset.Value, Materialize(rows))).ConfigureAwait(false);

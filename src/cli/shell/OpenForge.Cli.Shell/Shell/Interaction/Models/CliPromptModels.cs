@@ -29,13 +29,14 @@ internal delegate ValueTask<CliPromptReply<bool>> CliPlanConfirmation<TResult, T
     where TResult : ICliCommandResult where TQuestion : notnull;
 
 internal sealed record CliConfirmQuestion(string Sentence);
-internal sealed record CliChoice<T>(T Value, string Label, string? Description = null) where T : notnull;
+internal sealed record CliChoice<T>(T Value, string Label, string? Description = null, string? Summary = null) where T : notnull;
 internal sealed record CliSelectQuestion<T>(string Question, IReadOnlyList<CliChoice<T>> Choices) where T : notnull;
 internal enum CliDependencyDirection { Requires, Dependents }
+internal enum CliSelectionAction { Install, Update, Remove }
 internal sealed record CliDependency<T>(T Value, T Dependency) where T : notnull;
 internal sealed record CliMultiSelectQuestion<T>(
     string Question, IReadOnlyList<CliChoice<T>> Choices, IReadOnlyList<CliDependency<T>> Dependencies,
-    IReadOnlySet<T> Disabled, CliDependencyDirection Direction = CliDependencyDirection.Requires) where T : notnull;
+    IReadOnlySet<T> Disabled, CliSelectionAction Action, CliDependencyDirection Direction = CliDependencyDirection.Requires) where T : notnull;
 internal sealed record CliMultiSelection<T>(IReadOnlyList<T> Chosen, IReadOnlyList<T> Required) where T : notnull;
 internal sealed record CliTextValidation<T>(bool IsValid, T? Value, string? Error) where T : notnull;
 internal sealed record CliTextQuestion<T>(string Label, string Rule, bool Required, Func<string, CliTextValidation<T>> Validate)

@@ -93,19 +93,42 @@ internal static class RepairPhrases
 
     // @OpenForgeText repair.phrase.choose-a-target-for
     internal static string FormatChooseATargetFor(string sourceCanonicalPathText, string lineText, string columnText, string expectedDestinationText)
-        => $"{sourceCanonicalPathText}:{lineText}:{columnText}: choose a target for \"{expectedDestinationText}\".";
+        => $"Choose a new destination for the broken link \"{expectedDestinationText}\" at {sourceCanonicalPathText}:{lineText}:{columnText}.";
 
     // @OpenForgeText repair.phrase.recommended-for-review
     internal static string FormatRecommendedForReview(string evidenceText)
-        => $"{evidenceText}; recommended for review";
+        => $"{evidenceText}, suggested";
 
     // @OpenForgeText repair.phrase.library-recover-at
-    internal static string FormatLibraryRecoverAt(string libraryIdValueText, string entryKindText, string targetPathText)
-        => $"Library {libraryIdValueText}: recover {entryKindText} at {targetPathText}?";
+    internal static string FormatLibraryRecoveryQuestion(string libraryId)
+        => $"Library {libraryId}: include this recovery step?";
 
     // @OpenForgeText repair.phrase.apply-the-that-safe-y-n
-    internal static string FormatApplyTheThatSafeYN(string countText, string pluralText, string pluralText2)
-        => $"Apply the {countText} {pluralText} that {pluralText2} safe? [y/N]";
+    internal static string FormatIncludeLinkRepairsYN(int count)
+        => count == 1
+            ? "Include this 1 link repair in the plan? [y/N]"
+            : string.Create(CultureInfo.InvariantCulture, $"Include these {count} link repairs in the plan? [y/N]");
+
+    // @OpenForgeText repair.phrase.recovery-remove-created-file
+    internal static string RecoveryRemoveCreatedFile(string path) => $"Remove the file this Library created at {path}.";
+
+    // @OpenForgeText repair.phrase.recovery-restore-previous-file
+    internal static string RecoveryRestorePreviousFile(string path) => $"Restore the previous file at {path} from the recovery bundle.";
+
+    // @OpenForgeText repair.phrase.recovery-restore-previous-entries
+    internal static string RecoveryRestorePreviousEntries(string path) => $"Restore the previous Entries section in {path} from the recovery bundle.";
+
+    // @OpenForgeText repair.phrase.recovery-restore-deleted-file
+    internal static string RecoveryRestoreDeletedFile(string path) => $"Restore the deleted file at {path} from the recovery bundle.";
+
+    // @OpenForgeText repair.phrase.recovery-remove-created-link
+    internal static string RecoveryRemoveCreatedLink(string path) => $"Remove the Library link created at {path}.";
+
+    // @OpenForgeText repair.phrase.recovery-restore-deleted-link
+    internal static string RecoveryRestoreDeletedLink(string path) => $"Restore the deleted Library link at {path}.";
+
+    // @OpenForgeText repair.phrase.recovery-check-previous-state
+    internal static string RecoveryCheckPreviousState(string path) => $"Check that {path} already matches its previous state.";
 
     // @OpenForgeText repair.phrase.could-not-be-checked
     internal static string FormatCouldNotBeChecked(string subjectText)

@@ -1,0 +1,6 @@
+Choose a new destination for the broken link "old" at .agents/docs/missing.md:1:1.
+
+  1. .agents/docs/new.md        title match: New, in a nearby folder: .agents/docs, suggested
+  2. Leave this link unchanged
+
+Choose a number (1-2), or press Enter to cancel:

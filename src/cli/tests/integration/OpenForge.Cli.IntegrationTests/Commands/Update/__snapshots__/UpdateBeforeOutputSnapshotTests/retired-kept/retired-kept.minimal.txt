@@ -3,6 +3,6 @@ Workspace: <workspace>
   Warning  .agents/guidance/retired-framework.md  Retired content kept
          .agents/guidance/retired-framework.md is no longer part of this release, so it was kept.
          open-forge update --prune --dry-run
-  .agents/guidance/_guidance.md          replaced (you had changed it and this release changes it)
+  .agents/guidance/_guidance.md          Entries updated
   .agents/guidance/retired-framework.md  kept; no longer part of this release
 Next: open-forge update --prune --dry-run

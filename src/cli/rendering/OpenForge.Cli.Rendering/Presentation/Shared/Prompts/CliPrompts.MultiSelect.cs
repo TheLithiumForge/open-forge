@@ -20,6 +20,7 @@ internal sealed partial class CliPrompts
     {
         ValidateChoices(question.Choices);
         var byId = question.Choices.ToDictionary(choice => choice.Value);
+        if (!Enum.IsDefined(question.Action)) throw new ArgumentOutOfRangeException(nameof(question));
         if (!Enum.IsDefined(question.Direction) || question.Disabled.Any(value => !byId.ContainsKey(value))
             || question.Dependencies.Any(edge => !byId.ContainsKey(edge.Value) || !byId.ContainsKey(edge.Dependency)))
             throw new ArgumentException("Dependency rows must reference displayed choices.", nameof(question));
@@ -58,8 +59,8 @@ internal sealed partial class CliPrompts
                 var closure = RequiredBy(question, values);
                 foreach (var row in question.Choices.Where(choice => closure.ContainsKey(choice.Value) && !values.Contains(choice.Value)))
                     await WriteFrameAsync(CliText.Escape(question.Direction == CliDependencyDirection.Requires
-                        ? CliPromptWording.AlsoInstalling(row.Label, Labels(question, closure[row.Value]))
-                        : CliPromptWording.AlsoRemoving(row.Label, Labels(question, closure[row.Value]))) + "\n", cancellationToken).ConfigureAwait(false);
+                        ? CliPromptWording.AlsoIncluded(row.Label, Labels(question, closure[row.Value]))
+                        : CliPromptWording.Removing(Labels(question, closure[row.Value]), row.Label)) + "\n", cancellationToken).ConfigureAwait(false);
                 return Reply(question, values, closure);
             }
 
@@ -86,7 +87,7 @@ internal sealed partial class CliPrompts
                 {
                     notice = question.Direction == CliDependencyDirection.Requires
                         ? CliPromptWording.Required(row.Label, Labels(question, owners))
-                        : CliPromptWording.RemoveBoth(row.Label, Labels(question, owners));
+                        : CliPromptWording.Removing(Labels(question, owners), row.Label);
                 }
                 else
                 {
@@ -94,7 +95,7 @@ internal sealed partial class CliPrompts
                     if (question.Direction == CliDependencyDirection.Dependents)
                     {
                         var added = RequiredBy(question, chosen).Keys.Where(value => !chosen.Contains(value)).ToHashSet();
-                        if (added.Count > 0) notice = CliPromptWording.RemoveBoth(row.Label, Labels(question, added));
+                        if (added.Count > 0) notice = CliPromptWording.Removing(row.Label, Labels(question, added));
                     }
                 }
             }

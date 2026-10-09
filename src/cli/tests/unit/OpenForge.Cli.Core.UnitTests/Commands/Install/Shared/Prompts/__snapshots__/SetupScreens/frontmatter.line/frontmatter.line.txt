@@ -1,0 +1,6 @@
+How should Open Forge write file metadata?
+
+  1. Root keys                 description: and tags: at the top level
+  2. Scoped under open-forge:  open-forge: holds description: and tags:
+
+Choose a number (1-2), or press Enter to cancel:

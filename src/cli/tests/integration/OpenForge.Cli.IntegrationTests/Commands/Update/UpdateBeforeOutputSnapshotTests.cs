@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Update.Models.Result;
+using OpenForge.Cli.Core.Presentation.Update.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Update;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
@@ -140,6 +141,12 @@ public sealed class UpdateBeforeOutputSnapshotTests
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal(before, workspace.SnapshotHashes());
         Renderers.MatchDetails(result, "cancelled");
+        var cancelledReport = UpdateReportSelector.Select(result, new(CliDetail.Full));
+        Assert.Equal(0, cancelledReport.Data.ReplacedFiles);
+        Assert.Equal(0, cancelledReport.Data.CreatedFiles);
+        Assert.Equal(0, cancelledReport.Data.DeletedFiles);
+        Assert.Equal(0, cancelledReport.Data.RestoredFiles);
+        Assert.Equal(0, cancelledReport.Data.UpdatedSections);
     }
 
     private static void AssertRecovery(UpdateResult result)
@@ -175,6 +182,12 @@ public sealed class UpdateBeforeOutputSnapshotTests
         Assert.Equal(blockedBefore, workspace.ReadBytes(UpdateIntegrationWorkspace.ManagedPath));
         Assert.Contains(result.Effects, effect => effect.Path == firstPath && effect.Outcome == Core.Commands.Update.Models.Effects.UpdatePhysicalEffectOutcome.Verified);
         Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
+        var partialReport = UpdateReportSelector.Select(result, new(CliDetail.Full));
+        Assert.Equal(1, partialReport.Data.ReplacedFiles);
+        Assert.Equal(0, partialReport.Data.CreatedFiles);
+        Assert.Equal(0, partialReport.Data.DeletedFiles);
+        Assert.Equal(0, partialReport.Data.RestoredFiles);
+        Assert.Equal(0, partialReport.Data.UpdatedSections);
         AssertRecovery(result);
         Renderers.MatchDetails(result, "write-failed-partial", result.Recovery.ResidualPath);
     }

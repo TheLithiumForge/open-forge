@@ -17,7 +17,7 @@ internal static class RouteRemoveSourceSelectionPrompt
         ArgumentNullException.ThrowIfNull(prompts);
         return (question, policy, cancellationToken) => prompts.SelectAsync(
             new CliSelectQuestion<string>(
-                RouteSourceSelectionWording.SourceSelection(
+                RouteSourceSelectionWording.Remove(
                     question.RequestedId,
                     question.CandidatePaths.Count),
                 question.CandidatePaths

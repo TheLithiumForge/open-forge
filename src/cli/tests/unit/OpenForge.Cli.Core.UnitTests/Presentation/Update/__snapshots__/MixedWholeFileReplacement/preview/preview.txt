@@ -1,0 +1,4 @@
+Would update 1 Framework file.
+  .agents/loader.md             would be replaced (your previous file would be kept in a recovery bundle)
+  .agents/open-forge.lock.json  ownership record would be updated
+No files were changed.
