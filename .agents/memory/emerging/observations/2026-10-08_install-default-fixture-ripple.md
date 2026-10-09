@@ -27,6 +27,10 @@ Fixtures install the Framework through many local helpers, about 21 in the Integ
 
 Five fixture slices updated the tests without changing product code. Tests whose subject is not the delivered form now install explicitly scoped. Cleanup lists and effect expectations include the settings file. Settings writes after Install replace or merge the file. The work also exposed two real product defects that the cleanup errors had hidden: a missing ownership receipt and a presentation gap. The managed Integration tier went from 115 failures to green, and the EndToEnd tier from 93 failures to 306 passing.
 
+## Platform Gap
+
+The local gates ran on Windows only. The first hosted Build then failed on all four Unix runners: one new test forced a failure through Windows file sharing without a platform guard, and one new test used a Windows-only skip reason that the delivery gate did not declare. A Linux run from a local clone reproduced both before the next push.
+
 ## Promotion Signal
 
-Consider one shared test capability that knows every file a fresh Install writes, used by every fixture that cleans up or enumerates an installed workspace. Promote it when another Task changes the fresh-install file set. Until then, plan a fixture wave whenever a Task changes what a fresh Install writes or delivers by default, and run the EndToEnd tier before calling a consumer wave green.
+Consider one shared test capability that knows every file a fresh Install writes, used by every fixture that cleans up or enumerates an installed workspace. Promote it when another Task changes the fresh-install file set. Until then, plan a fixture wave whenever a Task changes what a fresh Install writes or delivers by default, run the EndToEnd tier before calling a consumer wave green, and run the managed tiers on Linux before a release push when tests that force platform failures change.

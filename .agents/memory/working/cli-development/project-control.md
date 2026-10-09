@@ -6,9 +6,9 @@ open-forge:
 
 # CLI Project Control
 
-## Current release, 2026-10-04
+## Current release, 2026-10-09
 
-The corrected combined [beta6 release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.6) is published from `d76304a1fdd59210026570bed908b4f0627ed0af` after squash integration into develop and the bounded delivery-policy correction. [Build 37222405813](https://github.com/TheLithiumForge/open-forge/actions/runs/37222405813) qualified all six native platforms; [Release 37225125853](https://github.com/TheLithiumForge/open-forge/actions/runs/37225125853) published all seven npm packages and six portable archives. Exact-version public installation, checksums and Library lifecycle smoke passed. [Task 70](../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains the completed receipt and dated beta5 history. Main and its deployed documentation site remain unchanged.
+[beta9 release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.9) is published from `34c818fa5` after the Task 75 squash into develop. [Build 37859981299](https://github.com/TheLithiumForge/open-forge/actions/runs/37859981299) qualified all six native platforms, and [Release 37864096247](https://github.com/TheLithiumForge/open-forge/actions/runs/37864096247) published all seven npm packages and six portable archives. An exact-version public install smoke passed. [Task 75](../../archived/cli-development/tasks/task75-workspace-frontmatter-form.md#beta-9-release-2026-10-09) retains the receipt, including the two Unix test-portability fixes found by the first Build. Main is fast-forwarded to develop, which publishes the documentation site.
 
 ## Active task ledger
 
@@ -16,7 +16,6 @@ This ledger owns permanent identity, queue state and ownership. The Task owns it
 
 | ID  | Task                                                                                       | State                                                      | Current boundary                                                                                                                                                            | Owner              |
 | --- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| 75  | [Per-workspace frontmatter form](tasks/task75-workspace-frontmatter-form.md) | Complete on its feature branch, 2026-10-08 | Follow-up phase 2/2, milestone 4/4: user flows F27 and F28, scenarios, and root-form journey coverage green in all six local modes. Squash integration into develop awaits maintainer authorization | Root |
 | 71  | [Streamline build and release delivery](tasks/task71-streamline-build-release-pipeline.md) | Open follow-up requested during beta5 publication          | Compare platform steps and timings, diagnose stalls, reduce repeated builds, and make publication cancellation effective. No redesign started                               | Root               |
 | 39  | [Output Audit](tasks/task39-output-audit.md)                                               | Paused by user, 2026-10-01                                 | Wave phase 2/3, milestone 1/3; final checkpoint `r_f4bdc49aa2c4` saved; all workers stopped; no beta5 integration or captures                                               | Root; Worker Watch |
 | 34  | [Interpolated Value Markup](tasks/task34-interpolated-value-markup.md)                     | Paused by user, 2026-10-01                                 | Wave phase 2/3, milestone 1/3; final literal-correction checkpoint `r_b68ae7955e36` saved; all workers stopped; no beta5 integration or captures                            | Root; Worker Watch |
@@ -35,7 +34,7 @@ This ledger owns permanent identity, queue state and ownership. The Task owns it
 
 ## Completed onboarding release
 
-Tasks [72](../../archived/cli-development/tasks/task72-extension-wizard-terminal-layout.md), [73](../../archived/cli-development/tasks/task73-layered-adoption-and-installation-choices.md) and [74](../../archived/cli-development/tasks/task74-library-attachment-git-ignore-choice.md) are accepted, integrated and released in beta6. The final local Windows six-mode gate passed 10,718 tests with 34 declared platform exclusions and verified executable closures. Matching hosted gates then passed on all six platforms. Their implementation records and the completed Task 70 release record are Archived.
+Tasks [72](../../archived/cli-development/tasks/task72-extension-wizard-terminal-layout.md), [73](../../archived/cli-development/tasks/task73-layered-adoption-and-installation-choices.md) and [74](../../archived/cli-development/tasks/task74-library-attachment-git-ignore-choice.md) are accepted, integrated and released in beta6. The final local Windows six-mode gate passed 10,718 tests with 34 declared platform exclusions and verified executable closures. Matching hosted gates then passed on all six platforms. Their implementation records and the completed Task 70 release record are Archived. [Task 75](../../archived/cli-development/tasks/task75-workspace-frontmatter-form.md), the per-workspace frontmatter form, shipped in beta9 and is Archived.
 
 ## Retired identities and receipts
 

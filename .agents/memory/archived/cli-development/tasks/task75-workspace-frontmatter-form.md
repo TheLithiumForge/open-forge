@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 75 to let each workspace choose root or scoped Open Forge frontmatter, read both forms everywhere, and deliver, write, edit, and compare metadata in the chosen form
-  tags: [Memory, Working, Task, CLI, Framework, Frontmatter, Metadata, Install, Contextual, Active]
+  description: "Historical record: Let each workspace choose root or scoped Open Forge frontmatter, released in beta9"
+  tags: [Memory, Task, CLI, Framework, Frontmatter, Metadata, Install, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 75: Per-workspace frontmatter form
@@ -12,7 +12,7 @@ Every workspace reads Open Forge metadata at the YAML frontmatter root and under
 
 The maintainer selected this direction on 2026-10-08 after the [frontmatter research](../../../emerging/analysis/frontmatter-root-keys-and-okf.md#choose-the-form-per-workspace) and asked the root Overseer to plan and orchestrate the implementation.
 
-Status: Task 75 “Per-workspace frontmatter form” (phase 2/2): milestone 4/4 — follow-up horizon complete: user flows F27 and F28, twenty scenarios, and root-form journey coverage, green in all six local modes. The first horizon finished at phase 4/4, milestone 13/13. Squash integration into `develop` awaits maintainer authorization.
+Status: Task 75 “Per-workspace frontmatter form” (phase 2/2): milestone 4/4 — complete and released in beta9 on 2026-10-09.
 
 ## Accepted decisions
 
@@ -212,12 +212,18 @@ Alternative: the setting is edited by hand, and `update` converts the owned file
 - **Existing journeys.** F01, F11, F12, F13, and F15 now run every installing test in both forms, with root expectations from the oracle. Every other journey installs with an explicit `--frontmatter root`. Journey cases grew from 84 to 105. No journey needed a changed expectation in root form, so no product difference between the forms was found.
 - **Gate.** `npm run build:native -- --offline` then `npm run test:built`, Windows x64: Unit 4,375 passed. Integration 2,946 passed on each target with 17 declared platform exclusions. EndToEnd 329 passed in each of its three modes. `npm run check:docs` passed 13 of 13, and generated `Entries` are current. One unchanged terminal viewport test timed out once during a worker's first full run and passed on rerun and in every later run.
 
+
+## Beta 9 release, 2026-10-09
+
+The maintainer authorized the squash merge, a beta release, and a documentation release on 2026-10-09.
+
+- The feature branch was squashed into `develop` as `dffa067d0`, followed by the version change to `0.9.0-beta.9` in `a541a0cc8`.
+- The first hosted [Build 37853783984](https://github.com/TheLithiumForge/open-forge/actions/runs/37853783984) passed both Windows targets and failed the test step on all four Unix runners. A local Linux reproduction from a clone of the commit found two test-portability defects and no product defect. `InterruptedConversionRetainsCompleteRecovery` forced a replacement failure with Windows file sharing and now skips elsewhere with the declared reason (`248f4a067`). `PublishedInstallFrontmatterProcessTests` used an undeclared Windows-only skip reason, now declared with delivery tests (`34c818fa5`). After the fixes, the Linux Integration tier passed 2,933 with 30 declared skips.
+- [Build 37859981299](https://github.com/TheLithiumForge/open-forge/actions/runs/37859981299) qualified `34c818fa5` on all six platforms.
+- Tag `v0.9.0-beta.9` at `34c818fa5` started [Release 37864096247](https://github.com/TheLithiumForge/open-forge/actions/runs/37864096247), which published all seven npm packages, with `latest` and `beta` pointing at `0.9.0-beta.9`, and the GitHub prerelease with six portable archives and `SHA256SUMS`.
+- A public smoke test installed the exact npm version in a fresh directory: `--version` reported `0.9.0-beta.9`, an unattended install delivered root form and recorded it, `install --configure --frontmatter scoped --automatic` reported `previousForm` root and converted the files, Status was current, and Install help listed `--frontmatter`.
+- The documentation site deploys from `main`, which is fast-forwarded to `develop` after this record.
+
 ## Current state
 
-Wave 0 is complete: five read-only architecture packets were merged into the decisions above, and the shared form type is frozen.
-
-Wave 1 is integrated (M2 to M5). F1 delivered dual reading, `FrameworkDocumentMetadataSyntax` location facts, and required form arguments on the emitter, writer, and adoption seam. F2 delivered `FrameworkFrontmatterDocumentTransformer` and `WorkspacePayloadRenderer`, and proved that every shipped Markdown asset renders in both forms. F3 delivered the `frontmatter` setting, schema, and settings edits. P1 amended 39 contract, Decision, and dictionary files and added the [Per-Workspace Frontmatter Form Decision](../../../crystallized/decisions/framework/workspace-frontmatter-form.md). The Overseer replaced two code comments that cited this Task with the shared operation contract, and froze the Wave 2 Install contract models (`InstallFrontmatterSelection`, `InstallFrontmatter`, `InstallRequest.Frontmatter`, `InstallResult.Frontmatter`).
-
-Wave 1 receipt, managed target, Windows x64, `npm test -- --offline` on the integrated tree: build passed with 0 warnings and 0 errors. Unit 4,301 passed. Integration 2,866 passed with 17 declared platform exclusions. EndToEnd 300 passed. No failures or skips. The Native AOT gate runs at the Wave 2 integration, where composition and serialization change.
-
-Wave 2 runs eight parallel slices: IA Install option, question, and presentation. IB Install planning, delivery, and Configure conversion. U Update and Extension delivery. H Status, Doctor, and Extension Inspect identity. R Route Create and Route Init. RU Route Update. P2 payload prose. D public documentation. Existing Install output snapshots are regenerated and reviewed by the Overseer after integration.
+Complete. Released in beta9. Follow-up candidates: a shared test capability for the fresh-install file set, and the RA-1 navigation edge where a multiline description cannot be projected into `Entries`.

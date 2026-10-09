@@ -32,5 +32,5 @@ Writers and managed-content comparisons share the selected rendering. Repository
 
 ## Provenance
 
-- [Accepted Task 75 decisions](../../../working/cli-development/tasks/task75-workspace-frontmatter-form.md#accepted-decisions)
+- [Accepted Task 75 decisions](../../../archived/cli-development/tasks/task75-workspace-frontmatter-form.md#accepted-decisions)
 - [Frontmatter research Analysis](../../../emerging/analysis/frontmatter-root-keys-and-okf.md#choose-the-form-per-workspace)
