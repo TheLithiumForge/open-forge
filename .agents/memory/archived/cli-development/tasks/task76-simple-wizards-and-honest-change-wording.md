@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 76 to replace the Install Custom loop with one marked list, give every wizard one clear visual language, and make plans say how existing files change instead of calling every edit a replacement
-  tags: [Memory, Working, Task, CLI, Install, Prompts, Wizard, Wording, Contextual, Active]
+  description: "Historical record: One marked list for Install Custom, one visual language for every wizard, and plans that say how existing files change, released in beta10"
+  tags: [Memory, Task, CLI, Install, Prompts, Wizard, Wording, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 76: Simple wizards and honest change wording
@@ -12,7 +12,7 @@ Every interactive wizard is quick to read and easy to answer. Install's Custom s
 
 The maintainer reported both problems on 2026-10-09 after trying the beta9 Install flow. On Custom, they said: "the easiest and best way to do it would have been to put a list like `[ ] - {entryname} - {add, remove, add+remove}` And in the square brackets you just put + / - / ~ or * and that would be it". On the plan, they said: "it said it will replace some of my files, that is absolutely incorrect, it just modified/appended to some of my files. Which should be the message."
 
-Status: Task 76 “Simple wizards and honest change wording” (phase 2/2): milestone 8/8 — complete, release authorized by the maintainer for after 19:30 on 2026-10-09.
+Status: Task 76 “Simple wizards and honest change wording” (phase 2/2): milestone 8/8 — complete and released in beta10 on 2026-10-09.
 
 ## Reproduced problems
 
@@ -165,17 +165,26 @@ One independent review of `b406db059..077ec7308` returned four major findings an
 - **B-1** The replaced label promised a recovery bundle that a successful Install removes. The clause now appears only when the bundle is retained.
 - **B-2** Live command contracts still described the old wording. They now match the code.
 
-Integration found further defects that focused slice evidence missed: a dropped effect row for migrated paths, unfinished Route Move link rewrites removed from the text, misplaced Remove text captures, a reversed remove-direction dependency detail, and stale journey assertions. The [focused evidence observation](../../../../emerging/observations/2026-10-09_focused-worker-evidence-misses-shared-output-guards.md) records the pattern.
+Integration found further defects that focused slice evidence missed: a dropped effect row for migrated paths, unfinished Route Move link rewrites removed from the text, misplaced Remove text captures, a reversed remove-direction dependency detail, and stale journey assertions. The [focused evidence observation](../../../emerging/observations/2026-10-09_focused-worker-evidence-misses-shared-output-guards.md) records the pattern.
 
 ## Closeout
 
 - Final feature tip `fd8f7bc97`. Managed Windows: Unit 4,539 passed, Integration 2,977 passed with 17 declared platform skips, EndToEnd 330 passed.
 - Linux, from a WSL clone of `fd8f7bc97`: Unit 4,539 passed, Integration 2,967 passed with 30 skips, EndToEnd 297 passed with 33 skips. Every skip reason is declared in `scripts/delivery/platform-skips.ts`.
-- Native AOT: recorded with the release receipt.
+- Native AOT on Windows x64 at `fd8f7bc97`: all six `test:built` modes passed (unit 4,539, integration and native-integration 2,980 each with 17 platform exclusions, public, native-public and public-native 330 each).
 - Manual check with the built CLI: the reproduced Configure request, a fresh Install onto an existing `AGENTS.md` and `.gitignore`, and a real `route move` that rewrote both README links and moved the Entries line.
 - Docs: CLI reference, installation and growing pages, CLI Skill, scenarios C03-20 and C03-21, refreshed Entries, and a passing docs link check.
 - Deferred to the maintainer: focusing `Allow once` instead of `Allow always` in the permission prompt.
 
+## Beta 10 release, 2026-10-09
+
+The maintainer authorized the squash into `develop` and a beta release after 19:30 on 2026-10-09.
+
+- The feature branch was squashed into `develop` as `bc8d47211`, followed by the version change to `0.9.0-beta.10` in `4364a5c4c`.
+- [Build 37983060029](https://github.com/TheLithiumForge/open-forge/actions/runs/37983060029) passed five platforms and failed the Windows ARM64 test step. Its logs and diagnostics need a signed-in GitHub session, so the cause was not read. The same commit passed every managed and Native AOT mode on Windows x64 and every managed tier on Linux.
+- Tag `v0.9.0-beta.10` at `4364a5c4c` started [Release 37990754560](https://github.com/TheLithiumForge/open-forge/actions/runs/37990754560), which rebuilt and retested all six platforms before publishing.
+- Release 37990754560 published all seven npm packages, with `latest` and `beta` pointing at `0.9.0-beta.10`, and the GitHub prerelease with six portable archives and `SHA256SUMS`. A public smoke test installed the exact npm version in a fresh directory: `--version` reported `0.9.0-beta.10`, an Essentials install onto an existing `AGENTS.md` and `.gitignore` reported `Open Forge section added, your content was kept` and `Open Forge Git-ignore rules added`, and the Configure preview for the maintainer's reproduced request listed Entries, settings, ownership record and Git-ignore updates with no replacement. The same smoke found a Status defect present since beta9: a fresh Essentials workspace warns that the omitted routes' entrypoints have no Entries section.
+
 ## Current state
 
-Complete. Squash integration into `develop` and the beta10 release follow the authorization the maintainer gave on 2026-10-09.
+Complete. Released in beta10. Follow-up candidates: focusing `Allow once` in the permission prompt, and adding the report invariants and the complete EndToEnd project to the standard evidence of output-changing slices.
