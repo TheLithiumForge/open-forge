@@ -63,6 +63,17 @@ Detailed comparison and recovery receipts are preserved in worktree
    and a documented way to restore public channels after partial publication.
 7. Agree the bounded design, implement it, and validate the changed delivery
    behavior proportionately. Do not reduce required coverage by assumption.
+8. Replace every inline shell `run:` block in the workflows with a
+   `scripts/delivery` TypeScript command, written as readable pure functions
+   and small utilities. The maintainer asked for this on 2026-10-10 ("the
+   pipelines should too be run on ts scripts, since I can't stand bash"). Keep
+   the PowerShell-only Windows test boundary above unless the TypeScript runner
+   proves it preserves the ACL evidence.
+
+Beta10 adds one data point for steps 2 and 5. [Build 37983060029](https://github.com/TheLithiumForge/open-forge/actions/runs/37983060029)
+failed only the Windows ARM64 test step, and its logs and diagnostics needed a
+signed-in session. The tag-triggered [Release 37990754560](https://github.com/TheLithiumForge/open-forge/actions/runs/37990754560)
+rebuilt and retested the same commit and passed on all six platforms.
 
 ## Current state
 

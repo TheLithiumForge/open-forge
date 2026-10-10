@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 77 to stop Status warning about the routes Essentials leaves out, and to keep its standard text free of raw counts and negative additions
-  tags: [Memory, Working, Task, CLI, Status, Install, Contextual, Active]
+  description: "Historical record: Status stopped warning about the routes Essentials leaves out, released in beta11"
+  tags: [Memory, Task, CLI, Status, Install, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 77: Status on Essentials workspaces
@@ -12,7 +12,7 @@ open-forge:
 
 The beta10 public smoke test found the defect, which beta9 already had. The maintainer asked for the fix and the next beta release on 2026-10-10.
 
-Status: Task 77 “Status on Essentials workspaces” (phase 1/1): milestone 3/3 — complete, releasing in beta11.
+Status: Task 77 “Status on Essentials workspaces” (phase 1/1): milestone 3/3 — complete and released in beta11 on 2026-10-10.
 
 ## Findings
 
@@ -33,6 +33,13 @@ Status: Task 77 “Status on Essentials workspaces” (phase 1/1): milestone 3/3
 - Manual check: a fresh Essentials workspace reports current, and deleting a selected entrypoint still reports findings.
 - Gates at `badbaf461`. Managed Windows: Unit 4,539, Integration 2,980 with 17 declared platform skips, EndToEnd 330. Native AOT on Windows x64: all six `test:built` modes passed. Linux from a WSL clone: Unit 4,539, Integration 2,967 with 30 skips, EndToEnd 297 with 33 skips, every skip reason declared.
 
+## Beta 11 release, 2026-10-10
+
+- The fix branch was squashed into `develop` as `0ed21575d`, followed by the version change to `0.9.0-beta.11` in `1b7cd09ff`.
+- [Build 38043268695](https://github.com/TheLithiumForge/open-forge/actions/runs/38043268695) qualified `1b7cd09ff` on all six platforms in parallel with the Release.
+- Tag `v0.9.0-beta.11` at `1b7cd09ff` started [Release 38043270935](https://github.com/TheLithiumForge/open-forge/actions/runs/38043270935), which rebuilt and retested all six platforms and published all seven npm packages, with `latest` and `beta` pointing at `0.9.0-beta.11`, and the GitHub prerelease with six portable archives and `SHA256SUMS`.
+- A public smoke test installed the exact npm version in a fresh directory: `--version` reported `0.9.0-beta.11`, and `status` on a fresh Essentials workspace reported `Open Forge is installed and current.` with `Compared with shipped: 2 fewer files, about 0.6k fewer tokens` at standard detail.
+
 ## Current state
 
-Complete. The squash into `develop` and the beta11 release follow the maintainer request of 2026-10-10.
+Complete. Released in beta11.
