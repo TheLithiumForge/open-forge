@@ -33,7 +33,8 @@ internal sealed class RouteObservationReader
         var inspection = await _sourceInspector.ReadAsync(workspace, cancellationToken)
             .ConfigureAwait(false);
         var context = new RouteContextReader().Read(payload, inspection);
-        var generated = _generatedNavigationReader.Read(workspace, payload, inspection, sharing);
+        var generated = await _generatedNavigationReader.ReadAsync(workspace, payload, inspection, sharing, cancellationToken)
+            .ConfigureAwait(false);
         var state = ReadState(inspection.State, context.IsIncomplete);
         var contextIssue = ReadContextIssue(inspection);
         return new RouteStatusView

@@ -87,9 +87,10 @@ internal static class StatusDataTextRenderer
         }
 
         AppendTable(builder, measurementRows, style);
-        if (data.TextFacts.ShowDifference)
+        if (data.TextFacts.ShowDifference
+            && StatusWording.ComparedWithShipped(data.Context.Startup.Difference) is { } difference)
         {
-            AppendLine(builder, StatusWording.AddedSinceShipped(data.Context.Startup.Difference));
+            AppendLine(builder, difference);
         }
 
         AppendLine(builder, StatusWording.AllRouted(data.Context.AllRouted, new StatusDecimalValue(

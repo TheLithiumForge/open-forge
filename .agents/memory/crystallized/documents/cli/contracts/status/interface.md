@@ -572,12 +572,16 @@ Recovery data: none
 ```
 
 Lines whose count is zero are omitted (`Recovery data: none` is shown only at
-`full`). `Difference` appears only when non-zero: `Added since shipped: 2
-files, about 400 tokens`. Root categories added or removed appear as
-`added: custom` and `removed: patterns` on the Routes line.
+`full`). The difference from the shipped startup context appears only when it
+is visible: `Compared with shipped: 2 more files, about 0.4k more tokens`, or
+`fewer` when the workspace loads less, such as after Essentials. A token
+difference below 50 tokens is omitted. Root categories added or removed appear
+as `added: custom` and `removed: patterns` on the Routes line. A route the
+workspace settings remove is not expected to have an Entries section, so its
+missing entrypoint is not a finding.
 
-`full` adds every Framework file with its state, every Entries section with
-its state, every Extension file, every Library link with expected and
+`full` adds the numeric counts line, every Framework file with its state,
+every Entries section with its state, every Extension file, every Library link with expected and
 observed targets, the three largest may-load-again sources, and the recovery
 bundle paths with their integrity.
 

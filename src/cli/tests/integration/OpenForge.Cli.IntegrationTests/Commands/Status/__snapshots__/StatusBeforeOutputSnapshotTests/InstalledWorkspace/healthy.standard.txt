@@ -7,4 +7,3 @@ Startup context
 All routed files: 18 files, about 18.6k tokens (startup is 35%)
 Routes: 7 root categories, 12 Entries sections current
 Framework files: 19 current
-18 routed files, 11 startup files, 6447 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 18582 all routed tokens, 34.691296567869011261049147685 startup share, 7 root categories, 12 current Entries sections, 19 current Framework files.

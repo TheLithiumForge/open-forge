@@ -1,0 +1,38 @@
+---
+open-forge:
+  description: Open Task 77 to stop Status warning about the routes Essentials leaves out, and to keep its standard text free of raw counts and negative additions
+  tags: [Memory, Working, Task, CLI, Status, Install, Contextual, Active]
+---
+
+# Task 77: Status on Essentials workspaces
+
+## Outcome
+
+`status` on a freshly installed Essentials workspace reports `Open Forge is installed and current.` instead of four warnings.
+
+The beta10 public smoke test found the defect, which beta9 already had. The maintainer asked for the fix and the next beta release on 2026-10-10.
+
+Status: Task 77 “Status on Essentials workspaces” (phase 1/1): milestone 3/3 — complete, releasing in beta11.
+
+## Findings
+
+- **Removed routes.** Status listed every payload entrypoint with an Entries region as an expected Entries target, including the Guidance, Maps, Templates and Archived Memory entrypoints that Essentials records as removed in `.agents/open-forge.json`. Each missing file became `Entries section is missing`.
+- **Counts line.** At `standard`, Status printed the JSON counts as a raw line, such as `... 33.962701262597011467624232596 startup share ...`, repeating the lines above it. The contract's `standard` example has no counts line.
+- **Negative additions.** A workspace that loads less than shipped printed `Added since shipped: -2 files, about -0.6k tokens`.
+
+## Decisions
+
+- The generated-navigation reader reads workspace settings and skips payload entrypoints that `FrameworkPayloadSelection.IncludesPath` excludes, the same selection Install and Update use. Unreadable settings keep the previous behavior. Doctor's reader uses only workspace sources and needs no change.
+- Status shows the counts line at `full` only, like Find. The shared renderer keeps exact numeric counts, as its existing contract tests require.
+- The difference line reads `Compared with shipped: 2 fewer files, about 0.6k fewer tokens`, uses `more` or `fewer` per part, drops a token part below 50 tokens, and is omitted when nothing visible differs.
+
+## Evidence
+
+- The Essentials and copied-Working health Integration tests now also require a completed Status with no warnings or errors.
+- Status output snapshots are refreshed for the counts and difference changes.
+- Manual check: a fresh Essentials workspace reports current, and deleting a selected entrypoint still reports findings.
+- Gates at `badbaf461`. Managed Windows: Unit 4,539, Integration 2,980 with 17 declared platform skips, EndToEnd 330. Native AOT on Windows x64: all six `test:built` modes passed. Linux from a WSL clone: Unit 4,539, Integration 2,967 with 30 skips, EndToEnd 297 with 33 skips, every skip reason declared.
+
+## Current state
+
+Complete. The squash into `develop` and the beta11 release follow the maintainer request of 2026-10-10.

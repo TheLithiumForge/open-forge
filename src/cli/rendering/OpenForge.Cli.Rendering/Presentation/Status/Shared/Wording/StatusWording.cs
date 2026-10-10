@@ -76,26 +76,29 @@ internal static class StatusWording
     internal static string AllRouted(StatusDataMeasurement measurement, StatusDecimalValue startupShare)
         => global::OpenForge.Cli.OutputText.Status.StatusPhrases.FormatStartupIs($"{AllRoutedFilesLabel()}", $"{MeasurementSummary(measurement)}", $"{Percentage(startupShare)}");
 
-    internal static string AddedSinceShipped(StatusDataMeasurement measurement)
+    // Token counts render in tenths of a thousand, so a difference below 50 tokens would read as 0.0k.
+    private const long VisibleTokenDifference = 50;
+
+    internal static string? ComparedWithShipped(StatusDataMeasurement measurement)
     {
         var parts = new List<string>();
         if (measurement.FilesState == StatusValueState.Available
             && measurement.Files is { } files
             && files != 0)
         {
-            parts.Add(string.Create(
-                CultureInfo.InvariantCulture,
-                $"{files} {CliText.Plural(files, "file")}"));
+            parts.Add(global::OpenForge.Cli.OutputText.Status.StatusPhrases.ShippedFileDifference(Math.Abs(files), files > 0));
         }
 
         if (measurement.TokensState == StatusValueState.Available
             && measurement.Tokens is { } tokens
-            && tokens != 0)
+            && Math.Abs(tokens) >= VisibleTokenDifference)
         {
-            parts.Add(CliText.Tokens(tokens));
+            parts.Add(global::OpenForge.Cli.OutputText.Status.StatusPhrases.ShippedTokenDifference(Math.Abs(tokens), tokens > 0));
         }
 
-        return global::OpenForge.Cli.OutputText.Status.StatusPhrases.FormatAddedSinceShipped($"{string.Join(", ", parts)}");
+        return parts.Count == 0
+            ? null
+            : global::OpenForge.Cli.OutputText.Status.StatusPhrases.FormatComparedWithShipped($"{string.Join(", ", parts)}");
     }
 
     internal static string RoutesSummary(

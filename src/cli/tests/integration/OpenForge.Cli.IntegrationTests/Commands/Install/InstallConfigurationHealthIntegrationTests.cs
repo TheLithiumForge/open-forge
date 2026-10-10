@@ -35,7 +35,7 @@ public sealed class InstallConfigurationHealthIntegrationTests
         Assert.All(SkillResources, path => Assert.False(workspace.Exists(path), path));
     }
 
-    [Theory(DisplayName = "Essentials setup keeps full Doctor and Context healthy with a supplied or intentionally omitted CLI Skill"), InlineData(false), InlineData(true)]
+    [Theory(DisplayName = "Essentials setup keeps full Doctor, Status and Context healthy with a supplied or intentionally omitted CLI Skill"), InlineData(false), InlineData(true)]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
     public async Task EssentialsHealth(bool omitSkill)
     {
@@ -50,7 +50,7 @@ public sealed class InstallConfigurationHealthIntegrationTests
         await AssertHealthyAsync(workspace, omitSkill);
     }
 
-    [Theory(DisplayName = "Configured copied Working scaffolding composes clean Doctor and Context and repeats without writes")]
+    [Theory(DisplayName = "Configured copied Working scaffolding composes clean Doctor, Status and Context and repeats without writes")]
     [InlineData(true, false), InlineData(false, false), InlineData(true, true), InlineData(false, true)]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
     public async Task CopiedWorkingHealth(bool retainLock, bool omitSkill)
@@ -86,6 +86,12 @@ public sealed class InstallConfigurationHealthIntegrationTests
         Assert.All(diagnosis.RootElement.GetProperty("data").GetProperty("categories").EnumerateArray(), category =>
             Assert.Equal("complete", category.GetProperty("coverage").GetString()));
         Assert.DoesNotContain(diagnosis.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("severity").GetString() is "warning" or "error");
+        var status = await CliHostCapture.RunAsync(["status", "--format", "json", "--detail", "full"], workspace.PhysicalPath);
+        Assert.True(status.ExitCode == 0, status.Output + status.Error);
+        using var observed = JsonDocument.Parse(status.Output);
+        Assert.Equal("completed", observed.RootElement.GetProperty("status").GetString());
+        Assert.DoesNotContain(observed.RootElement.GetProperty("findings").EnumerateArray(), finding =>
             finding.GetProperty("severity").GetString() is "warning" or "error");
         var context = await CliHostCapture.RunAsync(["context", "skills", "memory/working", "--follow-links=all", "--format", "json", "--detail", "full"], workspace.PhysicalPath);
         Assert.True(context.ExitCode == 0, context.Output + context.Error);

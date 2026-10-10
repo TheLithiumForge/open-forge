@@ -32,9 +32,19 @@ internal static class StatusPhrases
     internal static string FormatStartupIs(string allRoutedFilesLabelText, string measurementSummaryText, string percentageText)
         => $"{allRoutedFilesLabelText}: {measurementSummaryText} (startup is {percentageText})";
 
-    // @OpenForgeText status.phrase.added-since-shipped
-    internal static string FormatAddedSinceShipped(string joinText)
-        => $"Added since shipped: {joinText}";
+    // @OpenForgeText status.phrase.compared-with-shipped
+    internal static string FormatComparedWithShipped(string joinText)
+        => $"Compared with shipped: {joinText}";
+
+    // @OpenForgeText status.phrase.shipped-file-difference
+    internal static string ShippedFileDifference(long count, bool more)
+        => string.Create(System.Globalization.CultureInfo.InvariantCulture,
+            $"{count} {(more ? "more" : "fewer")} {(count == 1 ? "file" : "files")}");
+
+    // @OpenForgeText status.phrase.shipped-token-difference
+    internal static string ShippedTokenDifference(long count, bool more)
+        => string.Create(System.Globalization.CultureInfo.InvariantCulture,
+            $"about {count / 1000.0:0.0}k {(more ? "more" : "fewer")} tokens");
 
     // @OpenForgeText status.counts.current
     internal static string CountsCurrent(string countText)

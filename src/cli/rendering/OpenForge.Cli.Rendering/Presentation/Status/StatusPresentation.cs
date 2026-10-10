@@ -21,7 +21,7 @@ internal static class StatusPresentation
         Shape = CliCommandShape.Summary,
         SelectText = static selected => selected with
         {
-            TextCounts = selected.Selection.Detail >= CliDetail.Standard ? selected.Report.Counts : [],
+            TextCounts = selected.Selection.Detail >= CliDetail.Full ? selected.Report.Counts : [],
         },
     };
 

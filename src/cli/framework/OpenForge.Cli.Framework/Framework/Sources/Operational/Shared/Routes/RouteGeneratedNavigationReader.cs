@@ -1,5 +1,6 @@
 using System.Text;
 using OpenForge.Cli.Core.Framework.Distribution.Models;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -7,6 +8,9 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
@@ -28,13 +32,29 @@ internal sealed class RouteGeneratedNavigationReader
         _physicalPathResolver = physicalPathResolver;
     }
 
+    internal async ValueTask<IReadOnlyList<GeneratedNavigationTargetObservation>> ReadAsync(
+        CliWorkspace workspace,
+        FrameworkPayloadReadResult payload,
+        RouteSourceInspection inspection,
+        SourceSharing? sharing,
+        CancellationToken cancellationToken)
+    {
+        // Routes a workspace removed, such as the categories Essentials omits, are not
+        // delivered, so their payload entrypoints are not expected Entries targets.
+        var settings = await WorkspaceSettingsReader.ReadAsync(_physicalPathResolver, workspace, cancellationToken)
+            .ConfigureAwait(false);
+        return Read(workspace, payload, inspection, sharing,
+            settings.State == WorkspaceSettingsReadState.Complete ? settings.Document : null);
+    }
+
     internal IReadOnlyList<GeneratedNavigationTargetObservation> Read(
         CliWorkspace workspace,
         FrameworkPayloadReadResult payload,
         RouteSourceInspection inspection,
-        SourceSharing? sharing)
+        SourceSharing? sharing,
+        WorkspaceSettingsDocument? settings)
     {
-        var paths = ReadExpectedPaths(payload, inspection);
+        var paths = ReadExpectedPaths(payload, inspection, settings);
         if (sharing is null)
         {
             return paths.Select(path => new GeneratedNavigationTargetObservation(path, OperationalGeneratedNavigationState.Unavailable)).ToArray();
@@ -65,7 +85,8 @@ internal sealed class RouteGeneratedNavigationReader
 
     private IReadOnlyList<string> ReadExpectedPaths(
         FrameworkPayloadReadResult payload,
-        RouteSourceInspection inspection)
+        RouteSourceInspection inspection,
+        WorkspaceSettingsDocument? settings)
     {
         var paths = new HashSet<string>(StringComparer.Ordinal);
         if (payload.State == FrameworkPayloadReadState.Available
@@ -75,7 +96,8 @@ internal sealed class RouteGeneratedNavigationReader
             {
                 foreach (var asset in value.Assets.Where(asset =>
                              SourceFormClassifier.TryClassify(asset.Path, out var form)
-                             && form != SourceDocumentForm.OverwriteCompanion))
+                             && form != SourceDocumentForm.OverwriteCompanion
+                             && (settings is null || FrameworkPayloadSelection.IncludesPath(asset.Path, settings))))
                 {
                     var document = _markdownParser.Parse(
                         StrictUtf8.GetString(asset.Bytes.AsSpan()));

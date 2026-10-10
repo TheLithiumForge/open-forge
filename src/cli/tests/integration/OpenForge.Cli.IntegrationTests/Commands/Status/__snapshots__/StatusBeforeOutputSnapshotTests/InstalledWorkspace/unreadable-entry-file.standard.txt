@@ -50,6 +50,5 @@ Framework files: 18 current
   current Entries sections: Filesystem access was denied.
   stale Entries sections: Filesystem access was denied.
   missing Entries sections: Filesystem access was denied.
-18 current Framework files, 9 warnings.
   Update the Framework files that need attention.
 Next: open-forge update
