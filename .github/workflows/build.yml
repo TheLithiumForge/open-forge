@@ -53,9 +53,6 @@ jobs:
           - { rid: osx-arm64, runner: macos-15, architecture: arm64 }
           - { rid: win-x64, runner: windows-2025, architecture: x64 }
           - { rid: win-arm64, runner: windows-11-vs2026-arm, architecture: arm64 }
-    defaults:
-      run:
-        shell: bash
     steps:
       - name: Enable Windows long paths before checkout
         if: runner.os == 'Windows'
@@ -69,38 +66,22 @@ jobs:
           node-version: "24.19.0"
           architecture: ${{ matrix.architecture }}
           package-manager-cache: false
-      - name: Isolate SDK selection
-        run: printf 'DOTNET_INSTALL_DIR=%s/dotnet\nDOTNET_ROOT=%s/dotnet\n' "$RUNNER_TEMP" "$RUNNER_TEMP" >> "$GITHUB_ENV"
-      - name: Use a physical short temporary root on macOS
-        if: runner.os == 'macOS'
-        run: |
-          temporary_root="$(cd "$RUNNER_TEMP" && pwd -P)"
-          printf 'TMPDIR=%s/\n' "$temporary_root" >> "$GITHUB_ENV"
+      - name: Prepare runner environment
+        run: npm run ci:prepare
       - uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: "10.0.111"
           architecture: ${{ matrix.architecture }}
       - run: npm run setup
       - name: Show delivery plan
-        run: npm run dist -- --rid "$RID" --no-restore --plan
+        run: npm run dist -- --rid ${{ matrix.rid }} --no-restore --plan
       - name: Build native artifacts
         id: native-build
-        run: |
-          mkdir -p "artifacts/delivery/logs/$RID"
-          npm run build:native -- --rid "$RID" --no-restore 2>&1 | tee "artifacts/delivery/logs/$RID/build.log"
+        run: npm run build:native -- --rid ${{ matrix.rid }} --no-restore --log artifacts/delivery/logs/${{ matrix.rid }}/build.log
       - name: Bundle downloadable CLI binary
         id: binary-bundle
         if: ${{ !cancelled() && steps.native-build.outcome == 'success' }}
-        run: |
-          suffix=""
-          if [[ "$RID" == win-* ]]; then suffix=".exe"; fi
-          mkdir -p "artifacts/downloads/$RID/content"
-          cp "artifacts/publish/$RID/open-forge/OpenForge.Cli$suffix" "artifacts/downloads/$RID/content/open-forge$suffix"
-          chmod +x "artifacts/downloads/$RID/content/open-forge$suffix"
-          cp LICENSE "artifacts/downloads/$RID/content/LICENSE"
-          printf 'Development build for %s. Check this workflow run for test results before use.\n' "$RID" > "artifacts/downloads/$RID/content/README.txt"
-          tar -czf "artifacts/downloads/$RID/open-forge-$RID.tar.gz" -C "artifacts/downloads/$RID/content" .
-          (cd "artifacts/downloads/$RID" && sha256sum "open-forge-$RID.tar.gz" > SHA256SUMS)
+        run: npm run ci:bundle -- --rid ${{ matrix.rid }} --log artifacts/delivery/logs/${{ matrix.rid }}/bundle.log
       - name: Upload downloadable CLI binary
         if: ${{ !cancelled() && steps.binary-bundle.outcome == 'success' }}
         uses: actions/upload-artifact@v7.0.1
@@ -111,26 +92,11 @@ jobs:
             artifacts/downloads/${{ matrix.rid }}/SHA256SUMS
           if-no-files-found: error
           retention-days: 14
+      # Runner-default PowerShell preserves Windows ACL denial evidence.
       - name: Test managed and native suites
-        if: runner.os != 'Windows'
-        run: npm run test:built -- --rid "$RID" 2>&1 | tee "artifacts/delivery/logs/$RID/test.log"
-      # Git Bash enables backup/restore privileges for elevated Windows users,
-      # which bypasses the ACL denials exercised by the filesystem tests.
-      - name: Test managed and native suites on Windows
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          npm run test:built -- --rid $env:RID 2>&1 | Tee-Object -FilePath "artifacts/delivery/logs/$env:RID/test.log"
-          exit $LASTEXITCODE
+        run: npm run test:built -- --rid ${{ matrix.rid }} --log artifacts/delivery/logs/${{ matrix.rid }}/test.log
       - name: Pack and test npm installation
-        if: runner.os != 'Windows'
-        run: npm run pack -- --rid "$RID" 2>&1 | tee "artifacts/delivery/logs/$RID/pack.log"
-      - name: Pack and test npm installation on Windows
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          npm run pack -- --rid $env:RID 2>&1 | Tee-Object -FilePath "artifacts/delivery/logs/$env:RID/pack.log"
-          exit $LASTEXITCODE
+        run: npm run pack -- --rid ${{ matrix.rid }} --log artifacts/delivery/logs/${{ matrix.rid }}/pack.log
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: package-${{ matrix.rid }}

@@ -75,6 +75,32 @@ failed only the Windows ARM64 test step, and its logs and diagnostics needed a
 signed-in session. The tag-triggered [Release 37990754560](https://github.com/TheLithiumForge/open-forge/actions/runs/37990754560)
 rebuilt and retested the same commit and passed on all six platforms.
 
+## Horizon: TypeScript pipeline steps and local parity
+
+The maintainer selected step 8 on 2026-10-10 and stated the goal: "we should do everything a pipeline does locally as well", with "all the scripts in the repo such that we can easily check them out and run them when needed". This horizon covers step 8 and that parity. Steps 1 to 7 stay open.
+
+Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 2/3 — commands and workflow changes verified locally, hosted verification next.
+
+Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 hosted verification.
+
+### Decisions
+
+- **P1 No shell in workflows.** Every `run:` step is one `npm run <command>` with arguments. Values that differ by matrix row use `${{ matrix.rid }}`, which reads the same in bash and PowerShell. The Build job drops its bash default and its paired bash and PowerShell steps. Windows then runs every step under the runner default PowerShell, which keeps the ACL evidence the Git Bash note above protects. The only exception is `git config --global core.longpaths true` before checkout, which runs before the repository exists.
+- **P2 Commands, not inline logic.** Runner preparation (`ci:prepare`: .NET SDK isolation and the macOS physical temporary root, written to `GITHUB_ENV`) and the downloadable binary bundle (`ci:bundle`: archive plus `SHA256SUMS`) become `forge` commands. `ci:prepare` imports only Node built-ins, because it runs before `npm ci`.
+- **P3 Logging.** A shared `--log <file>` option on `forge` commands writes the command output to the file while still printing it, replacing `tee` and `Tee-Object`.
+- **P4 Composite checks.** `verify`, `check`, `check:fast` and `check:delivery` become `forge` commands that run their steps in order from data, instead of `&&` chains in `package.json`.
+- **P5 Local parity.** `ci:checks` runs the Build `checks` job and `ci:job --rid <rid>` runs one Build matrix job in the same order with the same logs. `docs:build` runs the documentation build job. Release publication stays in the workflow, because it needs repository secrets. Its selection and collection commands already run locally.
+- **P6 Operator tools.** The ad hoc helpers used for beta9 to beta11 become repository commands: `gate:wsl` runs the managed tiers for one commit in a WSL clone, `ci:watch` follows hosted runs for a commit through the public GitHub API, and `smoke:public` installs an exact published version in a temporary directory and checks it.
+
+### Local evidence
+
+- `npm run check:delivery` and `npm run test:delivery` passed: 96 tests, no failures or skips.
+- `npx forge ci:job --rid win-x64` ran every stage on Windows: delivery plan, `build:native`, `ci:bundle`, `test:built` (unit 4,539, integration and native-integration 2,980 each with 17 platform exclusions, public, native-public and public-native 330 each) and `pack`, writing `build.log`, `bundle.log`, `test.log` and `pack.log` under `artifacts/delivery/logs/win-x64/`. The bundle holds `open-forge.exe`, `LICENSE` and `README.txt`, and its `SHA256SUMS` line matches `sha256sum`. A source edit during the first run made `test:built` refuse the stale build, and `ci:job` stopped and named that stage. `test:built` and `pack` then passed on the unchanged tree.
+- `npx forge gate:wsl --commit 54aeb780b` cloned the commit into WSL and passed Unit, Integration (2,967 passed, 30 skipped) and EndToEnd (297 passed, 33 skipped) with no undeclared skip reason. Two fixes came from this run: it now resolves short commit names on the host, and it starts Node through the WSL login shell, because `wsl.exe --exec` does not load per-user Node managers.
+- `npx forge smoke:public --version 0.9.0-beta.11` passed its four checks against the published package.
+- `npx forge ci:watch --run 38043270935` reported every job of the beta11 runs as successful and exited 0.
+- Commands that call `npm run` must be started through `npx forge` or `npm run`, which supply npm's environment. Direct `node scripts/delivery/cli.ts` reports that requirement.
+
 ## Current state
 
-Open follow-up requested during the beta5 publication investigation; no pipeline redesign has been implemented. The corrected combined beta6 release subsequently passed all six platforms and published under renewed authorization. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains that receipt and the historical cancellation race. This successful release does not close Task 71's timing, diagnostics or cancellation improvements. Tasks 34 and 39 remain paused. Task 48 remains required before 1.0.
+The TypeScript pipeline horizon above is active. The earlier steps remain open: no other pipeline redesign has been implemented. The corrected combined beta6 release subsequently passed all six platforms and published under renewed authorization. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains that receipt and the historical cancellation race. This successful release does not close Task 71's timing, diagnostics or cancellation improvements. Tasks 34 and 39 remain paused. Task 48 remains required before 1.0.

@@ -10,6 +10,21 @@ export const Projects = {
 export const TestAssemblies = { unit: "OpenForge.Cli.Core.UnitTests", integration: "OpenForge.Cli.IntegrationTests", public: "OpenForge.Cli.EndToEndTests" } as const;
 export const DevelopmentPublish = "artifacts/publish/open-forge-dev/Release";
 export const WrapperOutput = "artifacts/delivery/wrapper";
+export const DownloadsRoot = "artifacts/downloads";
+export const DeliveryLogs = "artifacts/delivery/logs";
+export const DocumentationRoot = "src/docusaurus";
+export const DownloadContent = "content";
+export const CliAssembly = "OpenForge.Cli";
+export const CliExecutable = "open-forge";
+export const WindowsExecutableSuffix = ".exe";
+export const ArchiveSuffix = ".tar.gz";
+
+export function downloadDirectory(rid: string): string {
+  return `${DownloadsRoot}/${rid}`;
+}
+export function deliveryLog(rid: string, stage: string): string {
+  return `${DeliveryLogs}/${rid}/${stage}.log`;
+}
 
 export function hostRuntime(requested?: string): SupportedRuntime {
   const platform = Object.values(PlatformPackages).find((entry) => entry.nodePlatform === process.platform && entry.nodeArchitecture === process.arch);

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { AllTargets } from "./targets.ts";
 import { deliveryCommands, type DeliveryCommand } from "./commands.ts";
 import { parseArgs } from "node:util";
+import { CiCommand } from "./ci/command-names.ts";
 
 const flags = {
   rid: { type: "string", description: "Native RID; defaults to this host and must match it." },
@@ -15,12 +16,17 @@ const flags = {
   "dry-run": { type: "boolean", description: "Validate and print an offline publication plan; no registry contact." },
   from: { type: "string", description: "Collected release directory; defaults to artifacts/release." },
   preid: { type: "string", description: "Prerelease identifier passed to npm version, such as beta." },
+  log: { type: "string", description: "Write complete stdout and stderr to this file while printing them." },
+  run: { type: "string", description: "GitHub workflow run ID to watch." },
+  commit: { type: "string", description: "Full Git commit SHA to qualify inside WSL." },
+  version: { type: "string", description: "Exact published version to check." },
   help: { type: "boolean", short: "h", description: "Show this command's options." },
 } as const;
 
 export function readOptions(command: DeliveryCommand, args = process.argv.slice(2)) {
   const allowed: readonly (keyof typeof flags)[] = [...deliveryCommands[command].options, "help"];
-  const { values } = parseArgs({ args, options: flags });
+  const commandFlags = command === CiCommand.watch ? { ...flags, sha: { type: "string" as const, description: "Commit SHA to watch." } } : flags;
+  const { values } = parseArgs({ args, options: commandFlags });
   for (const name of Object.keys(values))
     assert.ok(
       allowed.some((key) => key === name),
@@ -31,14 +37,16 @@ export function readOptions(command: DeliveryCommand, args = process.argv.slice(
     printCommandHelp(command, deliveryCommands[command]);
     return undefined;
   }
-  return values;
+  // The watch command owns a string --sha. Build commands retain the existing boolean --sha.
+  const { sha, ...other } = values;
+  return { ...other, ...(typeof sha === "boolean" ? { sha } : {}), ...(typeof sha === "string" ? { commitSha: sha } : {}) };
 }
 
 export function printCommandHelp(
   name: string,
   command: { description: string; options: readonly (keyof typeof flags)[]; usage?: string; details: readonly string[]; examples: readonly string[] },
 ): void {
-  const names: readonly (keyof typeof flags)[] = [...command.options, "help"];
+  const names: readonly (keyof typeof flags)[] = [...command.options, "log", "help"];
   process.stdout.write(`Usage: npx forge ${command.usage ?? `${name} [options]`}
 ${command.description}
 
@@ -47,7 +55,7 @@ ${command.details.join("\n")}
 Options:
 ${names
   .map((name) => {
-    const flag = flags[name];
+    const flag = name === "sha" && command.options.includes("run") ? { type: "string", description: "Commit SHA to watch." } : flags[name];
     return `  ${name === "help" ? "-h, " : ""}--${name}${flag.type === "string" ? " <value>" : ""}  ${flag.description}`;
   })
   .join("\n")}

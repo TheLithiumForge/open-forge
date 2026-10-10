@@ -12,9 +12,10 @@ of the replacement CLI command-contract set. It defines the contract roles,
 topology, and authority boundaries, and links to the detailed command-local
 contracts. It is a Document, not a Pattern, and it does not replace the detailed
 contracts it links. The command set includes the root `remove` command alongside
-the retained commands. The CLI is available as a public beta. [CLI Distribution](distribution.md#beta-2)
-records version `0.9.0-beta.2` and its qualified platforms. [Task 59](../../../archived/cli-development/tasks/task59-beta-2-release.md)
-records the release and package/site verification. The active [CLI Development](../../../working/cli-development/_cli-development.md)
+the retained commands. The CLI is available as a public beta. The
+[CLI project control](../../../working/cli-development/project-control.md) records
+the current release, and [CLI Distribution](distribution.md) defines what a
+release contains. The active [CLI Development](../../../working/cli-development/_cli-development.md)
 route records current implementation and release work.
 
 ## Interface Contract

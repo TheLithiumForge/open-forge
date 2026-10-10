@@ -43,6 +43,12 @@ const publicWindowsOnly = new Set([
   "This selection journey requires the repository's Windows ConPTY harness.",
 ]);
 
+export const PlatformSkipReasons = {
+  windows: [...windowsOnly],
+  unix: [...unixOnly],
+  publicWindows: [...publicWindowsOnly],
+} as const;
+
 // Only explicit OS exclusions in the integration and public suites qualify. Capability failures,
 // unknown reasons and skips on the platform that owns the evidence still fail.
 export function isPlatformExclusion(test: Record<string, unknown>, platform: NodeJS.Platform): boolean {

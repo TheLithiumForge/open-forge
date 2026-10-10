@@ -13,6 +13,10 @@ Arguments go directly after the command. Both `--help` and `-h` work. Root npm
 aliases remain available, such as `npm run build`; aliases need the usual
 separator for flags: `npm run pack -- --skip-tests`.
 
+Every command accepts `--log <file>`. It creates the parent directory, prints
+stdout and stderr as usual, and records both streams in that file. A failed
+command keeps its exit code.
+
 ## Start from a fresh checkout
 
 Install Node/npm as specified in [package.json](../../package.json), the SDK in
@@ -34,19 +38,31 @@ and fails if required packages are unavailable. Builds restore by default;
 
 ## Choose a stage
 
-| Command        | What it does                                                               |
-| -------------- | -------------------------------------------------------------------------- |
-| `setup`        | Install npm dependencies and restore .NET.                                 |
-| `restore`      | Restore .NET only.                                                         |
-| `build`        | Build the managed solution and development CLI in Release mode.            |
-| `test`         | Build and run managed unit, integration and public-command tests.          |
-| `build:native` | Build the current host's native CLI and test executables.                  |
-| `test:built`   | Test existing native-build artifacts in six execution modes.               |
-| `pack`         | Package existing artifacts and test their npm installation.                |
-| `dist`         | Run `build:native`, `test:built`, then `pack`.                             |
-| `dist:wrapper` | Build and pack only the npm wrapper, without .NET or native files.         |
-| `version`      | Bump the root version and synchronize .NET, without committing or tagging. |
-| `clean`        | Remove owned .NET and delivery outputs.                                    |
+| Command          | What it does                                                               |
+| ---------------- | -------------------------------------------------------------------------- |
+| `setup`          | Install npm dependencies and restore .NET.                                 |
+| `restore`        | Restore .NET only.                                                         |
+| `build`          | Build the managed solution and development CLI in Release mode.            |
+| `test`           | Build and run managed unit, integration and public-command tests.          |
+| `build:native`   | Build the current host's native CLI and test executables.                  |
+| `test:built`     | Test existing native-build artifacts in six execution modes.               |
+| `pack`           | Package existing artifacts and test their npm installation.                |
+| `dist`           | Run `build:native`, `test:built`, then `pack`.                             |
+| `dist:wrapper`   | Build and pack only the npm wrapper, without .NET or native files.         |
+| `version`        | Bump the root version and synchronize .NET, without committing or tagging. |
+| `clean`          | Remove owned .NET and delivery outputs.                                    |
+| `verify`         | Run delivery, package, .NET and documentation checks in order.             |
+| `check`          | Check formatting, TypeScript and lint.                                     |
+| `check:fast`     | Check TypeScript and lint.                                                 |
+| `check:delivery` | Check delivery TypeScript, lint and formatting.                            |
+| `ci:prepare`     | Write runner SDK paths and macOS temporary paths to `GITHUB_ENV`.          |
+| `ci:bundle`      | Archive the published CLI for `--rid` with its license and checksum.       |
+| `ci:checks`      | Run the Build workflow's shared setup and verification.                    |
+| `ci:job`         | Run one Build matrix job for `--rid` with the workflow's logs.             |
+| `docs:build`     | Install, type-check and build the documentation site.                      |
+| `ci:watch`       | Watch all GitHub workflow runs for `--sha`, or the commit of `--run`.      |
+| `smoke:public`   | Install and check an exact published `--version` in a fresh workspace.     |
+| `gate:wsl`       | Run the three managed test tiers for `--commit` in a WSL clone.            |
 
 `dist --plan` shows stage names and effective arguments without executing them.
 Each stage reports start, success or failure. Execution stops at the failed
@@ -198,11 +214,87 @@ Restoration verifies ordered access-rule bytes and inheritance protection; an
 OS-added auto-inheritance bookkeeping flag is not treated as a permission change.
 The real access-denial probes and required Windows scenarios remain mandatory.
 
+## Run workflow steps locally
+
+The workflow commands are ordinary repository commands. Preview a job's stages,
+then run the same job on a matching host:
+
+```sh
+npx forge ci:checks --plan
+npx forge ci:job --rid win-x64 --plan
+npx forge ci:job --rid win-x64
+npx forge docs:build --plan
+```
+
+| Workflow step                                | Local command                                                                                   |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Build: prepare runner environment            | `npx forge ci:prepare`                                                                          |
+| Build: install dependencies                  | `npx forge setup`                                                                               |
+| Build: shared verification                   | `npx forge verify`                                                                              |
+| Build: show delivery plan                    | `npx forge dist --rid <RID> --no-restore --plan`                                                |
+| Build: native artifacts                      | `npx forge build:native --rid <RID> --no-restore --log artifacts/delivery/logs/<RID>/build.log` |
+| Build: downloadable binary                   | `npx forge ci:bundle --rid <RID> --log artifacts/delivery/logs/<RID>/bundle.log`                |
+| Build: managed and native tests              | `npx forge test:built --rid <RID> --log artifacts/delivery/logs/<RID>/test.log`                 |
+| Build: package and installation check        | `npx forge pack --rid <RID> --log artifacts/delivery/logs/<RID>/pack.log`                       |
+| Documentation: install, type-check and build | `npx forge docs:build`                                                                          |
+| Release: select workflow source              | `npx forge release:select` with the workflow environment                                        |
+| Release: collect packages                    | `npx forge release:collect artifacts/release-input artifacts/release`                           |
+| Release: npm publication                     | `npx forge publish:release --tag <channel> --dry-run` for a local preview                       |
+
+`ci:checks` runs `setup` and `verify`. `ci:job` runs `setup`, the delivery plan,
+native build, binary bundle, tests and pack. `--no-restore` reuses an earlier
+setup. `--offline` uses cached dependencies for setup and build. These two
+options cannot be combined. Each composite command accepts `--plan` and stops
+at the first failed stage, naming it.
+
+`ci:prepare` runs before npm dependencies exist. It writes `DOTNET_INSTALL_DIR`
+and `DOTNET_ROOT` below `RUNNER_TEMP/dotnet`, plus the physical `RUNNER_TEMP`
+path as macOS `TMPDIR`. Without `GITHUB_ENV`, it prints the assignments and
+changes nothing. `ci:bundle --rid <RID>` uses existing publish output and
+`tar` from PATH. It writes the same development notice and `SHA256SUMS` as
+the hosted bundle.
+
+`docs:build` runs `npm ci`, `npm run typecheck` and `npm run build` in
+`src/docusaurus`. Hosted checkout, tool installation, artifact upload and
+Pages deployment stay in GitHub Actions. Release publication keeps its workflow
+secrets and existing order. Windows workflow commands use runner-default
+PowerShell so filesystem tests retain their ACL denial evidence.
+
+## Follow and qualify a delivery
+
+```sh
+npx forge ci:watch --sha <commit>
+npx forge ci:watch --run 38043270935
+npx forge smoke:public --version 0.9.0-beta.11
+npx forge gate:wsl --commit <sha>
+```
+
+`ci:watch` prints job states when they change. It uses the public GitHub API,
+adding `GITHUB_TOKEN` only when set, and succeeds only when every run for the
+commit completes successfully.
+
+`smoke:public` contacts npm and installs the exact version in a new temporary
+directory. It checks the version, unattended Essentials installation, current
+Status, and a guidance configuration preview. Each check reports its name.
+The temporary workspace and data home remain available for inspection.
+
+`gate:wsl` requires Windows and WSL with Node >=22.18, Git and .NET. It
+starts Node through the WSL login shell, so a per-user install such as nvm or
+Volta is found. `--commit` accepts any name Git resolves on the host, such as a
+short SHA. The gate reuses a clone in the WSL home, fetches the current branch
+from the host repository, and checks out that commit. Restore
+uses an empty local source with `NuGetAudit=false`. It builds Release and runs
+the managed unit, integration and public-command tiers. Summaries, execution
+logs and distinct skip reasons go to `artifacts/delivery/logs/wsl/<commit>/`.
+Unexpected skips fail the gate using [platform-skips.ts](platform-skips.ts).
+
 ## Maintain the scripts
 
 [commands.ts](commands.ts) defines commands, options, usage, guidance and examples.
 [cli.ts](cli.ts) dispatches them; [options.ts](options.ts) parses shared options
 and renders help. [dist-plan.ts](dist-plan.ts) declares the pipeline.
+The [ci](ci/) modules declare workflow plans and implement runner and operator
+commands. [process-log.ts](process-log.ts) records command output at dispatch.
 Focused modules implement each stage. [npm](npm/) contains package preparation
 and the launcher; [release](release/) contains collection and release helpers.
 

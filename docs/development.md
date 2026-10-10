@@ -353,12 +353,24 @@ the version afterward requires a new build and test run.
 
 ### CI and releases
 
+Every workflow command has a local path through `forge`. `ci:checks` runs the
+Build workflow's shared `setup` and `verify` steps. `ci:job --rid <RID>` runs
+one matrix job with the same stage order and logs. `docs:build` installs,
+type-checks and builds the documentation site. Add `--plan` to preview any of
+these jobs. The [delivery guide](../scripts/delivery/README.md#run-workflow-steps-locally)
+maps individual workflow steps to their local commands.
+
 `build.yml` runs `setup` and `verify` once for shared checks. Its single native
 matrix covers Linux, macOS and Windows on x64 and ARM64. Each runner uses
-`setup` followed by explicit `build:native -- --no-restore`, `test:built` and
-`pack` steps on the same machine. These are the stages shown by `dist --plan`.
+`ci:prepare` before SDK installation, then `setup` followed by explicit
+`build:native -- --no-restore`, `ci:bundle`, `test:built` and `pack` steps on
+the same machine. These are the stages shown by `ci:job --rid <RID> --plan`.
 CI passes one shared RID and never supplies `--skip-tests`. GitHub shows the
 failed stage directly and retains separate build/test/pack logs.
+The shared `--log <file>` option prints and records stdout and stderr while
+preserving failures. Windows uses runner-default PowerShell to preserve the
+filesystem tests' ACL denial evidence. Hosted tool setup, artifact transfer,
+secret-backed publication and Pages deployment remain in the workflows.
 The explicit matrix RID is an assertion that the host matches the target.
 The build uploads finished packages and diagnostics from stable output paths.
 There are no intermediate build/test transfers or platform packaging workflows.

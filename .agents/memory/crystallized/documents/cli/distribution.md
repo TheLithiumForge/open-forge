@@ -11,8 +11,9 @@ open-forge:
 
 This document defines the accepted public package graph, platform horizon,
 package identities, staging and packing boundary, checksum ownership, proof
-boundary, and complete-publication rule for the CLI. Release qualification and
-publication are recorded separately from package-graph design below.
+boundary, and complete-publication rule for the CLI. The [Delivery System](delivery-system.md)
+defines how the workflows and `forge` commands carry out these stages. Release
+qualification and publication are recorded in release Tasks, not here.
 
 [Task 7](../../../archived/cli-development/tasks/delivery/01-npm-packages.md)
 defines package-graph realization, npm release, and explicit local-linking work.
@@ -46,105 +47,13 @@ The maintainer accepted ARM64 alongside x64 on Linux, macOS, and Windows on
 systems, architectures, RIDs, libc variants,
 channels, or support-floor claims require a new maintainer decision.
 
-## Current Implementation And Delivery State
+## Release State
 
-### Beta 6
-
-Version `0.9.0-beta.6` is published from `d76304a1fdd59210026570bed908b4f0627ed0af`. The requested guide, complete CLI flag summaries and startup Skill, Essentials/Full Core/Custom configuration, terminal layout, Library Git-ignore lifecycle and selected Memory cleanup are integrated into develop.
-
-[Build 37222405813](https://github.com/TheLithiumForge/open-forge/actions/runs/37222405813) passed shared checks and native build/test/package qualification on all six platforms. [Release 37225125853](https://github.com/TheLithiumForge/open-forge/actions/runs/37225125853) reused those exact-source packages for the [beta6 release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.6) and [npm package](https://www.npmjs.com/package/@thelithiumforge/open-forge/v/0.9.0-beta.6). All seven registry versions and beta/latest tags agree; the wrapper declares six exact platform dependencies and all six portable archives match SHA256SUMS. Public Windows npm and portable executable SHA-256 values match.
-
-Fresh public npm installation exercised Essentials, Context, configuration and canonical restoration, Doctor, and Library attach/sync/detach with source preservation and remembered ignore choice. The local beta5-to-beta6 upgrade rehearsal preserved authored content and companions. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains complete receipts and historical beta5 hold evidence. Main and its deployed site remain unchanged by this release.
-
-### Earlier releases
-
-Beta5 was published to npm from `634ab07051e670e3f9bcc1b6603ac39a91f4febc`; its GitHub release remains draft following the dated stop. Beta6 supersedes it with the safely superseded recovery correction and requested onboarding work. Older publication receipts below are historical and do not describe current npm tags or the latest GitHub prerelease.
-
-### Beta 4
-
-Version `0.9.0-beta.4` uses source
-`80f0b46dd71837fc65593e9bcd1656ef5a6314a6`, matching the clean second squash
-and the deployed `main` fast-forward. [Build 36809625271](https://github.com/TheLithiumForge/open-forge/actions/runs/36809625271),
-[Release 36813167101](https://github.com/TheLithiumForge/open-forge/actions/runs/36813167101),
-and [Documentation 36813142627](https://github.com/TheLithiumForge/open-forge/actions/runs/36813142627)
-passed. The [GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.4)
-and the [npm package](https://www.npmjs.com/package/@thelithiumforge/open-forge/v/0.9.0-beta.4)
-identify that exact release.
-
-All seven exact-version npm records and the `beta` and `latest` tags agree. The
-wrapper declares six exact platform dependencies; each native package has the
-matching platform metadata. All six portable archives match `SHA256SUMS`, and
-the public Windows x64 portable and
-npm executables have identical SHA-256
-`73F3AC762C0F42F0CBE287F2D0D16442E88A09D3508BB67FC592DC6B0DF4B3FC` values.
-Fresh exact-version and `@beta` installs ran the actual `0.9.0-beta.4` npm
-shim; Framework, Core Templates, Context, Status, and Doctor passed. The
-published beta3-to-beta4 upgrade and the deployed Loading, Frontmatter,
-diagram, and Customizing guidance are recorded in [Task 69](../../../archived/cli-development/tasks/task69-next-beta-stabilization-release.md#verified-candidate-and-merge-receipt).
-Final public receipts are retained under `artifacts/beta4-public/` and
-`artifacts/beta4-published-upgrade/receipt.json`.
-
-### Beta 3 (historical)
-
-On 2026-10-01, the npm `beta` and `latest` tags identified `0.9.0-beta.3`, as
-did the [GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.3).
-Its receipt recorded no six-host or portable-archive verification. That limited
-verification fact remains historical. The current public release and npm tags are recorded above.
-
-### Beta 2
-
-Version `0.9.0-beta.2` uses source
-`00e3ba0294679163d95b42a81295091254debfb7`, pushed to `develop` and `main`.
-[Build 36511732462](https://github.com/TheLithiumForge/open-forge/actions/runs/36511732462)
-and [Release 36515807876](https://github.com/TheLithiumForge/open-forge/actions/runs/36515807876)
-passed shared checks and all six matching-host build, test and package jobs.
-The Release workflow published all seven npm packages and the
-[GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.2).
-
-The beta 2 release receipt verified that all seven exact-version registry records
-and the `beta` and `latest` tags published at that release agreed on beta 2. The
-wrapper names all six native packages at that exact version.
-The six downloaded portable archives match `SHA256SUMS`, and the Windows x64
-archive executable matches the public npm executable byte for byte.
-
-Fresh exact-version and `@beta` npm installs passed on Windows x64. The exact
-install passed Framework and Core Templates installation, `status`, and
-`doctor`. An isolated global `@beta` install also ran the command successfully.
-Updating a public beta 1 workspace with beta 2 preserved an overwrite companion
-and a custom file. Recovery preserved the previous Loader bytes, and Doctor
-verified the retained bundle with no errors or warnings.
-
-The published wrapper includes the verified README and package links. The
-versioned npm page renders its README and diagram. The updated documentation
-site is deployed. [Task 59](../../../archived/cli-development/tasks/task59-beta-2-release.md)
-retains the publication checks and the default npm page's cache limitation.
-
-### Earlier beta qualification
-
-The maintainer authorized hosted pipeline fixes and public beta publication on
-2026-09-24. Version `0.9.0-beta.1` uses source
-`89438d39015aee71f21e6d2d5a67427f7ab7e520`.
-[Build 35942428820](https://github.com/TheLithiumForge/open-forge/actions/runs/35942428820)
-passed shared checks, managed and Native AOT suites, and installed npm package
-journeys on Linux, macOS and Windows, each on x64 and ARM64. The earlier
-Linux-only qualification boundary is superseded by these matching-host results.
-
-The [GitHub prerelease](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.1)
-contains all six portable archives and `SHA256SUMS`. Published archive digests
-match the checksum manifest. Task 7 and Task 13 retain the earlier implementation
-history and its more limited local evidence.
-
-[npm publication](https://github.com/TheLithiumForge/open-forge/actions/runs/35945963855)
-published all seven packages at `0.9.0-beta.1`. Their public exact-version records
-and `beta` tags agree, and the main package lists all six native packages at that
-exact version. Use `npm install -g @thelithiumforge/open-forge@beta` to select
-the beta channel.
-
-Fresh public npm installs by exact version and by `@beta` passed Framework and
-Core Templates installation, `status`, and `doctor` on Windows x64. The native
-executable matches the qualified build and GitHub download byte for byte.
-The [beta release record](../../../archived/cli-development/tasks/task51-beta-release.md)
-retains the fixes, publication runs and verification details.
+This document defines what a release must contain, not which releases exist.
+The [CLI project control](../../../working/cli-development/project-control.md)
+records the current published release. Each release Task in
+[Archived CLI Tasks](../../../archived/cli-development/tasks/_tasks.md) keeps
+its build, publication and smoke-test receipt.
 
 ## Main Launcher Boundary
 
@@ -283,6 +192,7 @@ maintainer accepts the release as complete.
 ## Related Current Sources
 
 - [CLI Architecture](architecture.md)
+- [Delivery System](delivery-system.md)
 - [Task 7: npm Package Manager Release and Local Linking](../../../archived/cli-development/tasks/delivery/01-npm-packages.md)
 - [Task 13: Native CI and Reproducible Artifacts](../../../archived/cli-development/tasks/delivery/02-native-ci.md)
 - [CLI Delivery](../../../archived/cli-development/tasks/delivery/_delivery.md)

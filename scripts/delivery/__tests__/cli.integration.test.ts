@@ -17,8 +17,29 @@ test("delivery help and setup help bootstrap without node_modules", (context) =>
   mkdirSync(scripts, { recursive: true });
   const manifest = readPackage(fileURLToPath(new URL("../../../package.json", import.meta.url)));
   writeFileSync(join(root, "package.json"), JSON.stringify({ name: "forge-bootstrap-fixture", version: "0.0.0", type: "module", private: true, bin: manifest["bin"] }));
-  for (const file of ["cli.ts", "commands.ts", "options.ts", "process.ts", "repository.ts", "targets.ts", "package-model.ts"])
+  for (const file of [
+    "cli.ts",
+    "commands.ts",
+    "build-commands.ts",
+    "publication-commands.ts",
+    "version-commands.ts",
+    "release/commands.ts",
+    "ci/commands.ts",
+    "ci/pipeline-commands.ts",
+    "ci/command-names.ts",
+    "options.ts",
+    "log-option.ts",
+    "process-log.ts",
+    "process.ts",
+    "repository.ts",
+    "targets.ts",
+    "package-model.ts",
+    "ci/prepare.ts",
+    "ci/environment.ts",
+  ]) {
+    mkdirSync(dirname(join(scripts, file)), { recursive: true });
     copyFileSync(fileURLToPath(new URL(`../${file}`, import.meta.url)), join(scripts, file));
+  }
   for (const args of [["--help"], ["-h"], ["pack", "-h"], ...Object.keys(deliveryCommands).map((command) => [command, "--help"])]) {
     const result = spawnSync(process.execPath, [join(scripts, "cli.ts"), ...args], { cwd: root, encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
@@ -37,6 +58,9 @@ test("delivery help and setup help bootstrap without node_modules", (context) =>
   assert.equal(installed.status, 0, installed.stderr);
   assert.match(installed.stdout, /Usage: npx forge pack/);
   assert.match(installed.stdout, /--skip-tests/);
+  const prepare = spawnSync(process.execPath, [join(scripts, "cli.ts"), "ci:prepare"], { cwd: root, encoding: "utf8", env: { ...process.env, GITHUB_ENV: "" } });
+  assert.equal(prepare.status, 0, prepare.stderr);
+  assert.match(prepare.stdout, /DOTNET_INSTALL_DIR=/);
 });
 
 test("delivery version forwards to standard npm with Git commit/tag disabled", (context) => {
