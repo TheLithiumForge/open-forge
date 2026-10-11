@@ -4,8 +4,9 @@ import { readOptions } from "../options.ts";
 import { reportFailure, ProcessExit } from "../process.ts";
 import { FullGitShaPattern } from "../source-identity.ts";
 import { CiCommand } from "./command-names.ts";
-import { commitRuns, runJobs, readGithub, GithubApi } from "./github-api.ts";
-import { jobState, readRun, runDecision, runSummary, WatchDecision } from "./github-summary.ts";
+import { commitRuns, githubToken, runJobs, readGithub, GithubApi } from "./github-api.ts";
+import { pollDelay } from "./github-rate-limit.ts";
+import { GithubState, jobState, readRun, runDecision, runSummary, WatchDecision } from "./github-summary.ts";
 
 try {
   const options = readOptions(CiCommand.watch);
@@ -23,20 +24,24 @@ try {
         observed.set(key, line);
       }
     };
+    // A finished run's jobs no longer change, so each one is read once after it completes.
+    const finished = new Set<number>();
+    const poll = pollDelay(Boolean(githubToken()), GithubApi.pollMilliseconds, GithubApi.anonymousPollMilliseconds);
     for (;;) {
       const runs = await commitRuns(sha);
       // Include the selected run even while the commit listing is catching up.
       if (selected && !runs.some((run) => run.id === selected.id)) runs.push(readRun(await readGithub(`actions/runs/${selected.id}`)));
-      for (const run of runs) {
+      for (const run of runs.filter((current) => !finished.has(current.id))) {
         changed(`run/${run.id}`, runSummary([run]));
         for (const job of await runJobs(run.id)) changed(`${run.id}/${job.id}`, `${run.id} ${job.name}: ${jobState(job)}`);
+        if (run.status === GithubState.completed) finished.add(run.id);
       }
       const decision = runDecision(runs);
       if (decision !== WatchDecision.pending) {
         process.exitCode = decision === WatchDecision.success ? ProcessExit.success : ProcessExit.failure;
         break;
       }
-      await setTimeout(GithubApi.pollMilliseconds);
+      await setTimeout(poll);
     }
   }
 } catch (error) {

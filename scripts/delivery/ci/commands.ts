@@ -1,6 +1,16 @@
 import { CiCommand } from "./command-names.ts";
 
 export const ciCommands = {
+  [CiCommand.reuse]: {
+    script: "ci/reuse.ts",
+    options: [],
+    description: "CI only: reuse another branch's Build for a direct push.",
+    details: [
+      "Reads the GitHub workflow environment and BUILD_REF (the workflow ref input). Writes run to GITHUB_OUTPUT.",
+      "Requires GITHUB_TOKEN with actions: read. Pull requests, manual runs and calls from Release always build.",
+    ],
+    examples: ["ci:reuse --help"],
+  },
   [CiCommand.prepare]: {
     script: "ci/prepare.ts",
     options: [],

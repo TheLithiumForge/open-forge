@@ -378,12 +378,33 @@ There are no intermediate build/test transfers or platform packaging workflows.
 The `release.yml` workflow coordinates complete public releases. It can run manually with a
 source ref or commit, a destination (`github`, `npm`, or `all`), and optionally
 an existing successful build run for that exact commit. Without a supplied
-build run, it runs the reusable build workflow once. The release job downloads
+run, it reuses the most recent successful `build.yml` run for the exact commit
+with all six package artifacts present and unexpired. A supplied run passes
+the same checks. If none qualifies, it runs the reusable build workflow once.
+Direct pushes also skip duplicate Builds when another branch's run for the same
+commit has passed, or started earlier and is still queued or running. Pull requests, manual runs and
+Release calls always build. Retry a failed host with GitHub's **Re-run failed jobs**,
+then let Release reuse the completed run. The release job downloads
 the finished `package-<RID>` artifacts from the selected run and calls
 `npm run release:collect -- artifacts/release-input artifacts/release`.
 The default collection checks all six targets and replaces its generated release output.
 Older build runs containing only intermediate test artifacts cannot be reused.
 Release does not compile, repack or change the product version.
+
+After collection, `release:checkpoint` prints the complete publication plan
+and waits 60 seconds before either destination. Cancelling during this wait
+uploads nothing. During npm publication, `publish:release` handles SIGINT and
+SIGTERM, starts no further upload or tag change, and lets the current effect
+settle. It reports published, interrupted and unstarted packages and exits
+non-zero. Earlier uploads remain published.
+
+To restore public npm channels, preview
+`npx forge release:restore-channels --version <bad> --to <previous>`.
+It defaults to `latest` plus the bad version's prerelease channel. Use
+`--channels <tags>` to choose tags and `--apply` to apply the plan after checking
+that the previous version exists for all seven packages. It never unpublishes
+or deprecates versions. GitHub release changes are manual. The [delivery guide](../scripts/delivery/README.md#reuse-builds-and-cancel-publication)
+describes cancellation and recovery at both destinations.
 
 Pushing a version tag such as `v0.1.0-beta.1` selects automatic release. The tag
 must match the source version. Automatic runs use the `RELEASE_TARGET`

@@ -20,7 +20,30 @@ env:
   DOTNET_NOLOGO: "1"
 
 jobs:
+  reuse:
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+    outputs:
+      run: ${{ steps.reuse.outputs.run }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "24.19.0"
+          package-manager-cache: false
+      - id: reuse
+        run: npm run ci:reuse
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUILD_REF: ${{ inputs.ref }}
+
   checks:
+    needs: reuse
+    if: needs.reuse.outputs.run == ''
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7.0.1
@@ -38,7 +61,8 @@ jobs:
       - run: npm run verify
 
   build:
-    needs: checks
+    needs: [reuse, checks]
+    if: needs.reuse.outputs.run == ''
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     env:

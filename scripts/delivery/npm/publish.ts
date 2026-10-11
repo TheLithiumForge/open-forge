@@ -11,7 +11,7 @@ try {
   assert.ok(positionals.length === 1 && (kind === "native" || kind === "wrapper"), "Select native or wrapper.");
   assert.ok(values.tag, "Publication requires an explicit --tag.");
   const publication = readPublication(repositoryRoot, kind);
-  publishPackages(repositoryRoot, [publication], values.tag, values["dry-run"] === true);
+  await publishPackages(repositoryRoot, [publication], values.tag, values["dry-run"] === true);
 } catch (error) {
   reportFailure(error);
 }

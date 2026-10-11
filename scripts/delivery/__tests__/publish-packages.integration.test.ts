@@ -55,7 +55,7 @@ for (const scenario of ["fresh", "partial", "all-existing", "lookup-failure", "g
         "--eval",
         `
       import { publishPackages } from ${JSON.stringify(publisher)};
-      publishPackages(${JSON.stringify(root)}, ${JSON.stringify(publications)}, "latest", ${scenario === "dry-run"});
+      await publishPackages(${JSON.stringify(root)}, ${JSON.stringify(publications)}, "latest", ${scenario === "dry-run"});
     `,
       ],
       { cwd: root, encoding: "utf8", env: { ...process.env, npm_execpath: fakeNpm } },

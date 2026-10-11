@@ -10,6 +10,7 @@ export const PipelineCommand = {
 export type PipelineCommand = (typeof PipelineCommand)[keyof typeof PipelineCommand];
 
 export const CiCommand = {
+  reuse: "ci:reuse",
   prepare: "ci:prepare",
   bundle: "ci:bundle",
   watch: "ci:watch",

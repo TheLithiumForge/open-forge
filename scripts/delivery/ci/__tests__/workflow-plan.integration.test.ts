@@ -11,14 +11,16 @@ const MatrixRid = "${{ matrix.rid }}";
 const Rid = "win-x64";
 
 function runLines(text: string): string[] {
-  return [...text.matchAll(/^\s+(?:- )?run: (.+)$/gmu)].map((match) => match[1] ?? assert.fail());
+  return [...text.matchAll(/^(?: {6}- | {8})run: (.+)$/gmu)].map((match) => match[1] ?? assert.fail());
 }
 
 test("Build run steps match shared and matrix plans using single npm commands", () => {
   const text = readFileSync(BuildWorkflow, "utf8");
   const buildStart = text.indexOf("\n  build:");
+  const checksStart = text.indexOf("\n  checks:");
   assert.ok(buildStart > 0);
-  const shared = runLines(text.slice(0, buildStart));
+  assert.deepEqual(runLines(text.slice(0, checksStart)), [`npm ${NpmCommand.run} ${CiCommand.reuse}`]);
+  const shared = runLines(text.slice(checksStart, buildStart));
   const matrix = runLines(text.slice(buildStart)).map((line) => line.replaceAll(MatrixRid, Rid));
   assert.deepEqual(
     shared,

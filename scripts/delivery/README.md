@@ -38,31 +38,34 @@ and fails if required packages are unavailable. Builds restore by default;
 
 ## Choose a stage
 
-| Command          | What it does                                                               |
-| ---------------- | -------------------------------------------------------------------------- |
-| `setup`          | Install npm dependencies and restore .NET.                                 |
-| `restore`        | Restore .NET only.                                                         |
-| `build`          | Build the managed solution and development CLI in Release mode.            |
-| `test`           | Build and run managed unit, integration and public-command tests.          |
-| `build:native`   | Build the current host's native CLI and test executables.                  |
-| `test:built`     | Test existing native-build artifacts in six execution modes.               |
-| `pack`           | Package existing artifacts and test their npm installation.                |
-| `dist`           | Run `build:native`, `test:built`, then `pack`.                             |
-| `dist:wrapper`   | Build and pack only the npm wrapper, without .NET or native files.         |
-| `version`        | Bump the root version and synchronize .NET, without committing or tagging. |
-| `clean`          | Remove owned .NET and delivery outputs.                                    |
-| `verify`         | Run delivery, package, .NET and documentation checks in order.             |
-| `check`          | Check formatting, TypeScript and lint.                                     |
-| `check:fast`     | Check TypeScript and lint.                                                 |
-| `check:delivery` | Check delivery TypeScript, lint and formatting.                            |
-| `ci:prepare`     | Write runner SDK paths and macOS temporary paths to `GITHUB_ENV`.          |
-| `ci:bundle`      | Archive the published CLI for `--rid` with its license and checksum.       |
-| `ci:checks`      | Run the Build workflow's shared setup and verification.                    |
-| `ci:job`         | Run one Build matrix job for `--rid` with the workflow's logs.             |
-| `docs:build`     | Install, type-check and build the documentation site.                      |
-| `ci:watch`       | Watch all GitHub workflow runs for `--sha`, or the commit of `--run`.      |
-| `smoke:public`   | Install and check an exact published `--version` in a fresh workspace.     |
-| `gate:wsl`       | Run the three managed test tiers for `--commit` in a WSL clone.            |
+| Command                    | What it does                                                               |
+| -------------------------- | -------------------------------------------------------------------------- |
+| `setup`                    | Install npm dependencies and restore .NET.                                 |
+| `restore`                  | Restore .NET only.                                                         |
+| `build`                    | Build the managed solution and development CLI in Release mode.            |
+| `test`                     | Build and run managed unit, integration and public-command tests.          |
+| `build:native`             | Build the current host's native CLI and test executables.                  |
+| `test:built`               | Test existing native-build artifacts in six execution modes.               |
+| `pack`                     | Package existing artifacts and test their npm installation.                |
+| `dist`                     | Run `build:native`, `test:built`, then `pack`.                             |
+| `dist:wrapper`             | Build and pack only the npm wrapper, without .NET or native files.         |
+| `version`                  | Bump the root version and synchronize .NET, without committing or tagging. |
+| `clean`                    | Remove owned .NET and delivery outputs.                                    |
+| `verify`                   | Run delivery, package, .NET and documentation checks in order.             |
+| `check`                    | Check formatting, TypeScript and lint.                                     |
+| `check:fast`               | Check TypeScript and lint.                                                 |
+| `check:delivery`           | Check delivery TypeScript, lint and formatting.                            |
+| `ci:prepare`               | Write runner SDK paths and macOS temporary paths to `GITHUB_ENV`.          |
+| `ci:reuse`                 | On a direct push, reuse another branch's Build for the same commit.        |
+| `release:checkpoint`       | Print the publication plan and wait 60 seconds before uploads.             |
+| `release:restore-channels` | Preview or apply npm channel recovery for all seven packages.              |
+| `ci:bundle`                | Archive the published CLI for `--rid` with its license and checksum.       |
+| `ci:checks`                | Run the Build workflow's shared setup and verification.                    |
+| `ci:job`                   | Run one Build matrix job for `--rid` with the workflow's logs.             |
+| `docs:build`               | Install, type-check and build the documentation site.                      |
+| `ci:watch`                 | Watch all GitHub workflow runs for `--sha`, or the commit of `--run`.      |
+| `smoke:public`             | Install and check an exact published `--version` in a fresh workspace.     |
+| `gate:wsl`                 | Run the three managed test tiers for `--commit` in a WSL clone.            |
 
 `dist --plan` shows stage names and effective arguments without executing them.
 Each stage reports start, success or failure. Execution stops at the failed
@@ -148,6 +151,55 @@ The default Actions workflows still build and release all six targets.
 `release:select` is a GitHub Actions helper, not a local release command.
 Its help describes the workflow environment it reads.
 
+## Reuse Builds and cancel publication
+
+Release reuses the most recent successful `build.yml` run for the exact source
+commit with all six `package-<RID>` artifacts present and unexpired. A supplied
+`BUILD_RUN_ID` must pass the same checks. If no run qualifies, Release builds
+once. On direct branch pushes, `ci:reuse` skips duplicate checks and builds
+when another branch's Build for that commit has passed, or started earlier and
+is still queued or running.
+Pull requests, manual runs and calls from Release always build.
+
+If only one host fails, open the Build run in GitHub Actions and choose
+**Re-run failed jobs**. Successful hosts keep their artifacts. After the retry
+passes, Release can reuse that run without rebuilding those hosts.
+
+```sh
+npx forge ci:reuse --help
+npx forge release:checkpoint --wait 60
+npx forge release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10
+```
+
+`release:checkpoint` prints the target, channel, version, source commit, every
+npm package and every GitHub release file from the collected release. It waits
+60 seconds by default. `--from <directory>`, `--target <github|npm|all>` and
+`--tag <channel>` select its inputs. `--wait <seconds>` changes the wait.
+The publish job runs it after collection and before either destination.
+Cancel during this wait to publish nothing.
+
+During npm publication, `publish:release` handles SIGINT and SIGTERM, starts no
+further upload or tag change, and lets the current effect finish or fail. It
+reports published packages, an interrupted upload whose final state is unknown,
+and packages not started, then exits non-zero. A completed upload remains
+published. Force cancellation can prevent this report. Inspect npm and GitHub
+before recovery because publication across packages and destinations is not a
+transaction.
+
+`release:restore-channels` prints `npm dist-tag add` commands for all seven
+packages without registry contact. Its default tags are `latest` and the bad
+version's prerelease channel, or just `latest` for a stable version. Use
+`--channels latest,beta` to choose tags explicitly. Add `--apply` only after
+reviewing the plan. It checks that `--to` exists for every package before
+changing any tag. It never unpublishes or deprecates a version.
+
+For GitHub recovery, open the affected release under the repository's
+**Releases** page. Use **Edit** to mark it as a prerelease, remove its latest
+designation or explain the withdrawal in its notes. If it should be removed,
+use **Delete** on that release. Edit the previous release's latest designation
+as needed and inspect the source tag separately. These manual actions do not
+restore npm channels or undo downloaded files.
+
 ## Version and clean up
 
 ```sh
@@ -229,6 +281,7 @@ npx forge docs:build --plan
 | Workflow step                                | Local command                                                                                   |
 | -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | Build: prepare runner environment            | `npx forge ci:prepare`                                                                          |
+| Build: select another branch's run           | `npx forge ci:reuse` with the workflow environment                                              |
 | Build: install dependencies                  | `npx forge setup`                                                                               |
 | Build: shared verification                   | `npx forge verify`                                                                              |
 | Build: show delivery plan                    | `npx forge dist --rid <RID> --no-restore --plan`                                                |
@@ -239,6 +292,7 @@ npx forge docs:build --plan
 | Documentation: install, type-check and build | `npx forge docs:build`                                                                          |
 | Release: select workflow source              | `npx forge release:select` with the workflow environment                                        |
 | Release: collect packages                    | `npx forge release:collect artifacts/release-input artifacts/release`                           |
+| Release: publication checkpoint              | `npx forge release:checkpoint --wait 60`                                                        |
 | Release: npm publication                     | `npx forge publish:release --tag <channel> --dry-run` for a local preview                       |
 
 `ci:checks` runs `setup` and `verify`. `ci:job` runs `setup`, the delivery plan,
@@ -271,7 +325,10 @@ npx forge gate:wsl --commit <sha>
 
 `ci:watch` prints job states when they change. It uses the public GitHub API,
 adding `GITHUB_TOKEN` only when set, and succeeds only when every run for the
-commit completes successfully.
+commit completes successfully. Without a token, GitHub allows 60 requests an
+hour, so it polls every three minutes. With `GITHUB_TOKEN` it polls every 15
+seconds. When GitHub reports a rate limit, it waits until the reset time GitHub
+gives and continues.
 
 `smoke:public` contacts npm and installs the exact version in a new temporary
 directory. It checks the version, unattended Essentials installation, current

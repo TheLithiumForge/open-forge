@@ -75,7 +75,7 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
       [
         "--input-type=module",
         "-e",
-        `import { publishPackages } from ${JSON.stringify(publisher)}; delete process.env.npm_execpath; publishPackages(process.cwd(), JSON.parse(process.argv[1]), "beta", true);`,
+        `import { publishPackages } from ${JSON.stringify(publisher)}; delete process.env.npm_execpath; await publishPackages(process.cwd(), JSON.parse(process.argv[1]), "beta", true);`,
         JSON.stringify(publications),
       ],
       { cwd: root, encoding: "utf8" },

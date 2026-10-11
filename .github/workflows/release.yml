@@ -88,6 +88,8 @@ jobs:
           path: artifacts/release-input
           digest-mismatch: error
       - run: npm run release:collect -- artifacts/release-input artifacts/release
+      - name: Review publication plan and wait before uploads
+        run: npm run release:checkpoint -- --target ${{ needs.select.outputs.target }} --tag ${{ needs.select.outputs.channel }}
       - name: Publish six platform packages before the main package
         if: needs.select.outputs.target == 'npm' || needs.select.outputs.target == 'all'
         env:

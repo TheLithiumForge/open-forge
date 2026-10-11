@@ -31,11 +31,26 @@ The delivery system builds, tests, packages and releases the Open Forge CLI. Eve
 
 | Workflow | Trigger | Jobs | Local command |
 | -------- | ------- | ---- | ------------- |
-| `build.yml` | Push to `main` or `develop`, pull requests, manual, or called by Release | `checks` runs `setup` and `verify` once. One matrix job per RID runs `ci:prepare`, `setup`, the delivery plan, `build:native`, `ci:bundle`, `test:built` and `pack` | `npx forge ci:checks`, `npx forge ci:job --rid <rid>` |
-| `release.yml` | Version tag `v*`, or manual with a source ref, destination and optional Build run | `select` checks the tag and source. `build` calls `build.yml` unless a successful Build run for the exact commit is supplied. `publish` collects the packages, publishes the six platform packages before the main package, and creates the GitHub release | `release:select`, `release:collect`, `publish:release --dry-run` |
+| `build.yml` | Push to `main` or `develop`, pull requests, manual, or called by Release | `reuse` checks direct pushes for another branch's Build of the same commit. Otherwise `checks` runs `setup` and `verify` once. One matrix job per RID runs `ci:prepare`, `setup`, the delivery plan, `build:native`, `ci:bundle`, `test:built` and `pack` | `ci:reuse`, `npx forge ci:checks`, `npx forge ci:job --rid <rid>` |
+| `release.yml` | Version tag `v*`, or manual with a source ref, destination and optional Build run | `select` checks the tag and source and reuses the newest qualified exact-commit Build. Without one, `build` calls `build.yml`. `publish` collects packages, prints the plan and waits 60 seconds, publishes the six platform packages before the main package, and creates the GitHub release | `release:select`, `release:collect`, `release:checkpoint`, `publish:release --dry-run` |
 | `docs.yml` | Documentation changes on pull requests and `main` | Builds the site, and deploys it to Pages from `main` | `npx forge docs:build` |
 
 Each Build job writes `build.log`, `bundle.log`, `test.log` and `pack.log` to `artifacts/delivery/logs/<rid>/`, and uploads packages, the downloadable binary and diagnostics. The [CLI Distribution](distribution.md#publication-boundary) document defines the package graph and the complete-release rules that `publish` enforces.
+
+Release reuse requires a successful `build.yml` run for the exact source commit
+and all six unexpired package artifacts, including when a run ID is supplied.
+A direct push reuses another branch's passed Build of the same commit, or an
+earlier one that is still queued or running, so two branches pushed together
+never wait for each other.
+Pull requests, manual runs and Release calls always build. Retry failed hosts
+with GitHub's **Re-run failed jobs**, then reuse the completed run.
+
+Cancelling during the publication checkpoint uploads nothing. During npm
+publication, SIGINT or SIGTERM stops further uploads after the current effect
+settles and reports partial results with a non-zero exit. Published uploads
+remain present. `release:restore-channels` previews npm channel recovery for all
+seven packages and applies it only with `--apply`. The [delivery guide](../../../../../scripts/delivery/README.md#reuse-builds-and-cancel-publication)
+explains recovery, including manual GitHub release changes.
 
 ## Qualifying a release
 

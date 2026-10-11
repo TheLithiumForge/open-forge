@@ -150,9 +150,11 @@ complete-release rules apply to the release coordinator.
 The release coordinator supports manual source-ref/commit selection and
 automatic version-tag invocation. Its destination selects GitHub, npm or all
 implemented destinations. The default Actions release prepares and tests all six targets before any
-publication begins. A supplied build run must be successful, from the expected
-repository/workflow, and match the selected source commit and version; otherwise
-the reusable build workflow produces the candidate once.
+publication begins. Release reuses the most recent successful build run from
+the expected repository/workflow for the exact source commit with all six
+package artifacts present and unexpired. A supplied run passes the same checks.
+Without a qualified run, the reusable build workflow produces the candidate
+once. Collection still checks the selected source commit and version.
 
 The Actions release uses only build.yml and release.yml. Build's one
 six-host matrix calls setup and the explicit build:native, test:built and pack
@@ -170,7 +172,13 @@ npm publishes every platform package at the synchronized version before the
 main package. No command subset, platform subset presented as complete,
 partial graph presented as a successful release, or warning-bearing artifact is
 accepted. Publication across packages and services is not a transaction: a
-failure can leave earlier uploads present. Before any npm upload, the shared
+failure or cancellation can leave earlier uploads present. A publication
+checkpoint prints the complete plan and waits 60 seconds before either
+destination. Cancelling during that wait uploads nothing. During npm
+publication, SIGINT or SIGTERM stops further uploads and tag changes after the
+current effect settles and reports partial results with a non-zero exit.
+Channel restoration previews commands for all seven packages and applies them
+only with `--apply`, after checking every previous version. Before any npm upload, the shared
 publisher queries every selected exact version. An existing version emits a
 warning and is skipped without retagging when its identity matches. Existing
 wrappers must have exactly the selected dependencies; a mismatch rejects before

@@ -79,7 +79,7 @@ rebuilt and retested the same commit and passed on all six platforms.
 
 The maintainer selected step 8 on 2026-10-10 and stated the goal: "we should do everything a pipeline does locally as well", with "all the scripts in the repo such that we can easily check them out and run them when needed". This horizon covers step 8 and that parity. Steps 1 to 7 stay open.
 
-Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 2/3 — commands and workflow changes verified locally, hosted verification next.
+Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 3/3 — TypeScript pipeline horizon complete.
 
 Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 hosted verification.
 
@@ -101,6 +101,34 @@ Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 
 - `npx forge ci:watch --run 38043270935` reported every job of the beta11 runs as successful and exited 0.
 - Commands that call `npm run` must be started through `npx forge` or `npm run`, which supply npm's environment. Direct `node scripts/delivery/cli.ts` reports that requirement.
 
+### Hosted evidence
+
+[Build 38080012366](https://github.com/TheLithiumForge/open-forge/actions/runs/38080012366) ran the new `build.yml` for `6a9107d75` and passed on all six platforms, with the new `Prepare runner environment`, bundle, test and pack steps. Following it exposed one defect: `ci:watch` polled every 15 seconds and exhausted GitHub's 60 anonymous requests an hour. It now polls every three minutes without a token, reads a finished run's jobs once, and waits out a reported rate limit. This horizon is complete.
+
+## Horizon: release reuse and cancellation boundaries
+
+The maintainer selected steps 5 and 6 on 2026-10-10.
+
+Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 2/3 — commands and workflow changes verified locally, hosted verification next.
+
+Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 hosted verification.
+
+### Decisions
+
+- **R1 Release reuse.** When no Build run is supplied, `release:select` finds a successful `build.yml` run for the exact commit whose six `package-<rid>` artifacts are present and not expired, validates it with the existing rules, and passes its ID on, so the Release skips its own build. Without such a run, the Release builds as before.
+- **R2 No duplicate branch builds.** A first `reuse` job in `build.yml` skips the remaining jobs on a push when a `build.yml` run for the same commit from another branch has passed or is still running, and names that run. Pull requests, manual runs and calls from Release always build.
+- **R3 Retry only failed hosts.** A failed platform is retried with GitHub's "Re-run failed jobs" on the Build run. A later Release reuses the completed run under R1, so green hosts are not rebuilt. This is documented, not automated.
+- **C1 Last moment to cancel.** The publish job prints the complete publication plan, then waits 60 seconds before the first upload. Cancelling during that wait publishes nothing.
+- **C2 Cancellation between uploads.** `publish:release` handles SIGINT and SIGTERM. It does not start another upload after a signal, lets the current upload finish or fail, and reports which packages were published and which were not.
+- **C3 Restoring channels.** `release:restore-channels --version <bad> --to <previous>` points the npm `latest` and channel tags of all seven packages back at the previous version. It prints the commands by default and runs them only with `--apply`. The guide covers deleting or editing the GitHub release by hand.
+
+### Release horizon local evidence
+
+- `npm run check:delivery` and `npm run test:delivery` passed: 141 tests, covering reusable-run choice, the reuse decision, the checkpoint plan, stop requests before the first, middle and last upload, and restore command lists.
+- Integration review found one defect: two branches pushed together would each defer to the other's unfinished run, so neither would build. A push now defers only to an earlier unfinished run, with a test for both orders.
+- `npx forge release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10` printed the 14 dist-tag commands and changed nothing.
+- The worker sandbox could not write `.agents`, so the two document changes arrived as a reviewed patch and were applied during integration.
+
 ## Current state
 
-The TypeScript pipeline horizon above is active. The earlier steps remain open: no other pipeline redesign has been implemented. The corrected combined beta6 release subsequently passed all six platforms and published under renewed authorization. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains that receipt and the historical cancellation race. This successful release does not close Task 71's timing, diagnostics or cancellation improvements. Tasks 34 and 39 remain paused. Task 48 remains required before 1.0.
+The TypeScript pipeline horizon is complete. The release reuse and cancellation horizon is active. Steps 1 to 4 and 7 remain open.
