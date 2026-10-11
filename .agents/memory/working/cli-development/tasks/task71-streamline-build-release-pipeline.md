@@ -109,7 +109,7 @@ Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 
 
 The maintainer selected steps 5 and 6 on 2026-10-10.
 
-Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 2/3 — commands and workflow changes verified locally, hosted verification next.
+Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 2/3 — Build reuse verified on GitHub, release-side checks wait for the next tagged release.
 
 Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 hosted verification.
 
@@ -137,6 +137,13 @@ A background review of `454bbfc47` found three issues in the first reuse version
 - **Untrusted run trust.** A push could skip its Build by deferring to a pull request or fork run. Branch reuse now applies the same trust rule.
 - **Fail-open gate.** A push skipped at once when another branch's Build was still running, so it showed green before anything passed. [Build 38161933644](https://github.com/TheLithiumForge/open-forge/actions/runs/38161933644) on `main` did exactly that while `develop`'s Build ran. The `reuse` job now waits for the earlier run and reuses it only if it passes.
 
+### Release horizon hosted evidence
+
+- [Build 38161906826](https://github.com/TheLithiumForge/open-forge/actions/runs/38161906826) on `develop` built `454bbfc47` and passed on all six platforms. [Build 38161933644](https://github.com/TheLithiumForge/open-forge/actions/runs/38161933644) on `main` skipped at once while it ran, which is the fail-open defect the security review then named.
+- After the fix, [Build 38162623919](https://github.com/TheLithiumForge/open-forge/actions/runs/38162623919) on `develop` built `a2d0cee37` and passed on all six platforms. On `main`, [Build 38162644655](https://github.com/TheLithiumForge/open-forge/actions/runs/38162644655) ran its `reuse` job for 52 minutes, from 18:09:42 to 19:02:11 UTC, finished 31 seconds after the `develop` Build passed, and only then skipped checks and builds. R2 now fails closed.
+- `ci:watch` followed both commits. Two watches shared GitHub's anonymous limit, reached it, waited out the reported reset of about 34 minutes, and finished with exit 0.
+- R1, C1 and C2 run only in `release.yml`. The next tagged release exercises them: `release:select` should report the reused Build, the publish job should show the plan and wait 60 seconds, and publication should report each upload. C3 is verified by its dry run.
+
 ## Current state
 
-The TypeScript pipeline horizon is complete. The release reuse and cancellation horizon is active. Steps 1 to 4 and 7 remain open.
+The TypeScript pipeline horizon is complete. The release reuse and cancellation horizon is implemented and its Build reuse is verified on GitHub. Its milestone 3 closes when the next tagged release shows release reuse, the checkpoint and the publication report working. Steps 1 to 4 and 7 remain open.
