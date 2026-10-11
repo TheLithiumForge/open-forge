@@ -154,12 +154,19 @@ Its help describes the workflow environment it reads.
 ## Reuse Builds and cancel publication
 
 Release reuses the most recent successful `build.yml` run for the exact source
-commit with all six `package-<RID>` artifacts present and unexpired. A supplied
-`BUILD_RUN_ID` must pass the same checks. If no run qualifies, Release builds
-once. On direct branch pushes, `ci:reuse` skips duplicate checks and builds
-when another branch's Build for that commit has passed, or started earlier and
-is still queued or running.
-Pull requests, manual runs and calls from Release always build.
+commit with all six `package-<RID>` artifacts present and unexpired. Only runs
+started by a push or by hand in this repository count. A pull request run
+builds a merge commit and a fork can change the workflow, so neither can stand
+in for a commit's own Build. A supplied `BUILD_RUN_ID` must pass the same
+checks. If no run qualifies, Release builds once.
+
+On direct branch pushes, `ci:reuse` skips duplicate checks and builds when
+another branch's trusted Build of that commit has passed. When that Build
+started earlier and is still running, `ci:reuse` waits for it, for up to 90
+minutes. It skips only if that Build passes. If it fails, is cancelled or runs
+too long, this push builds the commit itself, so a branch never shows green
+without a passing Build. Pull requests, manual runs and calls from Release
+always build.
 
 If only one host fails, open the Build run in GitHub Actions and choose
 **Re-run failed jobs**. Successful hosts keep their artifacts. After the retry

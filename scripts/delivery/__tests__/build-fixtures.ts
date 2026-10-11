@@ -12,12 +12,16 @@ export const FailedBuild = "failure";
 export const OtherRepository = "another/repo";
 export const OtherWorkflow = ".github/workflows/release.yml";
 
+export const BuildEvent = { push: "push", manual: "workflow_dispatch", pullRequest: "pull_request" } as const;
+
 export function recordedBuild(overrides: Partial<BuildRun> = {}): BuildRun {
   return {
     id: BuildId.older,
     repository: { full_name: BuildRepository },
+    head_repository: { full_name: BuildRepository },
     head_sha: BuildSha,
     head_branch: BuildBranch.other,
+    event: BuildEvent.push,
     path: BuildWorkflow.path,
     status: GithubState.completed,
     conclusion: GithubState.success,

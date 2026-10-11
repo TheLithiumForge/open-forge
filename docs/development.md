@@ -379,11 +379,13 @@ The `release.yml` workflow coordinates complete public releases. It can run manu
 source ref or commit, a destination (`github`, `npm`, or `all`), and optionally
 an existing successful build run for that exact commit. Without a supplied
 run, it reuses the most recent successful `build.yml` run for the exact commit
-with all six package artifacts present and unexpired. A supplied run passes
+with all six package artifacts present and unexpired. Only push and manual runs
+in this repository count, never pull request or fork runs. A supplied run passes
 the same checks. If none qualifies, it runs the reusable build workflow once.
 Direct pushes also skip duplicate Builds when another branch's run for the same
-commit has passed, or started earlier and is still queued or running. Pull requests, manual runs and
-Release calls always build. Retry a failed host with GitHub's **Re-run failed jobs**,
+commit has passed. When that run is still in progress, the push waits for it
+and builds itself if it fails. Pull requests, manual runs and Release calls
+always build. Retry a failed host with GitHub's **Re-run failed jobs**,
 then let Release reuse the completed run. The release job downloads
 the finished `package-<RID>` artifacts from the selected run and calls
 `npm run release:collect -- artifacts/release-input artifacts/release`.

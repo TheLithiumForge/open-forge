@@ -39,9 +39,14 @@ Each Build job writes `build.log`, `bundle.log`, `test.log` and `pack.log` to `a
 
 Release reuse requires a successful `build.yml` run for the exact source commit
 and all six unexpired package artifacts, including when a run ID is supplied.
-A direct push reuses another branch's passed Build of the same commit, or an
-earlier one that is still queued or running, so two branches pushed together
-never wait for each other.
+Only push and manual runs in this repository qualify. A pull request run builds
+a merge commit and a fork can change the workflow, so neither stands in for a
+commit's own Build.
+
+A direct push reuses another branch's passed Build of the same commit. It waits
+for an earlier one that is still running and reuses it only if it passes, so a
+branch never shows green without a passing Build. A Build that fails, is
+cancelled or runs past 90 minutes makes the push build the commit itself.
 Pull requests, manual runs and Release calls always build. Retry failed hosts
 with GitHub's **Re-run failed jobs**, then reuse the completed run.
 

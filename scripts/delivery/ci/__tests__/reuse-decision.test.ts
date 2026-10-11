@@ -1,11 +1,23 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { chooseBranchBuild, isDirectPush, PushEvent, type ReuseRequest } from "../reuse-decision.ts";
+import { chooseBranchBuild, isDirectPush, PushEvent, ReuseOutcome, ReuseWait, settleReuse, type ReuseRequest } from "../reuse-decision.ts";
 import { GithubState } from "../github-summary.ts";
-import { BuildBranch, BuildId, BuildRepository, BuildSha, FailedBuild, OtherBuildSha, OtherRepository, OtherWorkflow, recordedBuild } from "../../__tests__/build-fixtures.ts";
+import {
+  BuildBranch,
+  BuildEvent,
+  BuildId,
+  BuildRepository,
+  BuildSha,
+  FailedBuild,
+  OtherBuildSha,
+  OtherRepository,
+  OtherWorkflow,
+  recordedBuild,
+} from "../../__tests__/build-fixtures.ts";
 
 const Request: ReuseRequest = { event: PushEvent, ref: "", repository: BuildRepository, sha: BuildSha, branch: BuildBranch.source, currentRun: BuildId.current };
 const NonPushEvent = { pullRequest: "pull_request", manual: "workflow_dispatch", call: "workflow_call" } as const;
+const CancelledBuild = "cancelled";
 
 test("a direct push reuses a passed, queued or running Build from another branch", () => {
   assert.equal(isDirectPush(Request), true);
@@ -22,9 +34,15 @@ for (const [scenario, run] of [
   ["another commit", recordedBuild({ head_sha: OtherBuildSha })],
   ["another repository", recordedBuild({ repository: { full_name: OtherRepository } })],
   ["another workflow", recordedBuild({ path: OtherWorkflow })],
+  ["a pull request", recordedBuild({ event: BuildEvent.pullRequest })],
+  ["a fork", recordedBuild({ head_repository: { full_name: OtherRepository } })],
 ] as const) {
   test(`branch reuse excludes ${scenario}`, () => assert.equal(chooseBranchBuild(Request, [run]), undefined));
 }
+
+test("a manual Build of the same commit can stand in for a push", () => {
+  assert.equal(chooseBranchBuild(Request, [recordedBuild({ event: BuildEvent.manual })])?.id, BuildId.older);
+});
 
 test("branches pushed together defer only to the earlier unfinished run", () => {
   for (const status of [GithubState.queued, GithubState.running]) {
@@ -33,6 +51,14 @@ test("branches pushed together defer only to the earlier unfinished run", () => 
   }
   const passedLater = recordedBuild({ id: BuildId.newer });
   assert.equal(chooseBranchBuild(Request, [passedLater])?.id, BuildId.newer);
+});
+
+test("a deferred Build is reused only once it passes", () => {
+  const running = recordedBuild({ status: GithubState.running, conclusion: null });
+  assert.equal(settleReuse(running, 0), ReuseOutcome.wait);
+  assert.equal(settleReuse(running, ReuseWait.limitMilliseconds), ReuseOutcome.build);
+  assert.equal(settleReuse(recordedBuild(), 0), ReuseOutcome.reuse);
+  for (const conclusion of [FailedBuild, CancelledBuild]) assert.equal(settleReuse(recordedBuild({ conclusion }), 0), ReuseOutcome.build);
 });
 
 test("pull requests, manual runs and Release calls always build", () => {

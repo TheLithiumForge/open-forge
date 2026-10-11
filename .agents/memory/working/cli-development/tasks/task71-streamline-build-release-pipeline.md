@@ -115,8 +115,8 @@ Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 
 
 ### Decisions
 
-- **R1 Release reuse.** When no Build run is supplied, `release:select` finds a successful `build.yml` run for the exact commit whose six `package-<rid>` artifacts are present and not expired, validates it with the existing rules, and passes its ID on, so the Release skips its own build. Without such a run, the Release builds as before.
-- **R2 No duplicate branch builds.** A first `reuse` job in `build.yml` skips the remaining jobs on a push when a `build.yml` run for the same commit from another branch has passed or is still running, and names that run. Pull requests, manual runs and calls from Release always build.
+- **R1 Release reuse.** When no Build run is supplied, `release:select` finds a successful `build.yml` run for the exact commit whose six `package-<rid>` artifacts are present and not expired, validates it, and passes its ID on, so the Release skips its own build. Only runs started by a push or by hand in this repository qualify, for supplied runs too. Without such a run, the Release builds as before.
+- **R2 No duplicate branch builds.** A first `reuse` job in `build.yml` skips the remaining jobs on a push when a trusted `build.yml` run for the same commit from another branch has passed. When that run started earlier and is still running, the job waits up to 90 minutes and skips only if it passes. Otherwise this push builds. Pull requests, manual runs and calls from Release always build.
 - **R3 Retry only failed hosts.** A failed platform is retried with GitHub's "Re-run failed jobs" on the Build run. A later Release reuses the completed run under R1, so green hosts are not rebuilt. This is documented, not automated.
 - **C1 Last moment to cancel.** The publish job prints the complete publication plan, then waits 60 seconds before the first upload. Cancelling during that wait publishes nothing.
 - **C2 Cancellation between uploads.** `publish:release` handles SIGINT and SIGTERM. It does not start another upload after a signal, lets the current upload finish or fail, and reports which packages were published and which were not.
@@ -128,6 +128,14 @@ Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 
 - Integration review found one defect: two branches pushed together would each defer to the other's unfinished run, so neither would build. A push now defers only to an earlier unfinished run, with a test for both orders.
 - `npx forge release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10` printed the 14 dist-tag commands and changed nothing.
 - The worker sandbox could not write `.agents`, so the two document changes arrived as a reviewed patch and were applied during integration.
+
+### Security review
+
+A background review of `454bbfc47` found three issues in the first reuse version. All were accepted and fixed in the next commit.
+
+- **Artifact provenance.** Release could reuse a `pull_request` run of the same commit. GitHub builds a pull request from a merge commit, so those artifacts are not the tagged commit's own Build. Release now accepts only `push` and `workflow_dispatch` runs whose head repository is this repository.
+- **Untrusted run trust.** A push could skip its Build by deferring to a pull request or fork run. Branch reuse now applies the same trust rule.
+- **Fail-open gate.** A push skipped at once when another branch's Build was still running, so it showed green before anything passed. [Build 38161933644](https://github.com/TheLithiumForge/open-forge/actions/runs/38161933644) on `main` did exactly that while `develop`'s Build ran. The `reuse` job now waits for the earlier run and reuses it only if it passes.
 
 ## Current state
 
