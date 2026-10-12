@@ -49,7 +49,7 @@ test("annotations escape workflow command text and link repository files", () =>
   assert.equal(repositoryPath(Root, undefined), undefined);
   assert.equal(repositoryPath(Root, "/_/src/Test.cs"), "src/Test.cs");
   const failed: ReportedTest = { name: "Install keeps content", status: "failed", message: "Expected 1\nActual 2", file: join(Root, "src", "Test.cs"), line: 12, milliseconds: 5 };
-  assert.equal(failureAnnotation(Root, "integration", failed), "::error file=src/Test.cs,line=12,title=Test integration failed::Install keeps content: Expected 1");
+  assert.equal(failureAnnotation(Root, "integration", failed), "::error file=src/Test.cs,line=12,title=Test integration failed::Install keeps content: Expected 1%0AActual 2");
   assert.equal(failureAnnotation(Root, "unit", { ...failed, file: undefined, message: "" }), "::error title=Test unit failed::Install keeps content");
   assert.equal(longRunningAnnotation("public", Report), `::warning title=Test public long-running test::${Report}`);
 });

@@ -192,6 +192,10 @@ Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 
 - `npx forge ci:watch --run 38166548020` printed the failed win-x64 job's annotation.
 - `npm run test:agent-tooling` went from 3 of 8 to 7 of 9 passing. The patch output now uses `/` on every platform, and the Git object inspector uses `/dev/null` for its empty global config, because Git for Windows cannot open the Win32 null device name that Node gives. The two remaining failures check `.opencode/tools/inspect-git-objects.ts`, which commit `28c7aa2af` removed on 2026-09-12. Whether to restore the adapter or retire those tests is the maintainer's choice.
 
+### Diagnostics hosted evidence
+
+- [Build 38200391504](https://github.com/TheLithiumForge/open-forge/actions/runs/38200391504) for the beta.12 preparation commit `63abd6fe1` failed its `checks` job after 15 seconds of `verify`, so no platform job ran. The only annotation was "Process completed with exit code 1". The same commit passed the whole `verify` in the WSL clone, with and without GitHub's `CI` and `GITHUB_ACTIONS` variables, so the failing check could not be named. `test:delivery` and `test:package-layout` now annotate failed `node:test` tests too, and the runner tests wait for an orphaned child to be reaped before checking it.
+
 ### Diagnostics review
 
 An Astra high review of `8498d1af5` found six issues. All were accepted and fixed: Unix cancellation left the detached suite running, a failing or stalled stall report could block the stop, CI's mapped `/_/` paths lost annotation locations, a normally quick step that suddenly took minutes was not an outlier, and three documentation claims overstated timeout headroom, output latency and the request count, and attributed matching hosts to AOT alone.

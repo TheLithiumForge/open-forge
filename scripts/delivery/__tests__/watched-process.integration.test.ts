@@ -55,7 +55,10 @@ test("a stalled process tree is stopped at its deadline after reporting progress
   assert.ok(watched.heartbeats.length > 0);
   assert.match(watched.output.join(""), /\[Long Running Test\] 'Stalled test'/u);
   assert.ok(existsSync(pidFile));
-  assert.equal(alive(Number(readFileSync(pidFile, "utf8"))), false);
+  const idle = Number(readFileSync(pidFile, "utf8"));
+  // An orphan stays visible until init reaps it, so allow a moment.
+  for (let waited = 0; alive(idle) && waited < 5_000; waited += 100) await setTimeout(100);
+  assert.equal(alive(idle), false);
 });
 
 test("a finished process reports its exit status and complete output", async (context) => {

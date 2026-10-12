@@ -11,6 +11,8 @@ export const SuiteLimits = {
   slowestTests: 3,
   // GitHub shows at most ten error annotations per step.
   annotations: 10,
+  // Assertion messages put expected and actual values on the lines after the first.
+  messageLines: 4,
 } as const;
 export const LongRunningMarker = "[Long Running Test]";
 const MillisecondsPerSecond = 1_000;
@@ -75,7 +77,11 @@ export function repositoryPath(root: string, file: string | undefined): string |
 export function failureAnnotation(root: string, suite: string, test: ReportedTest): string {
   const path = repositoryPath(root, test.file);
   const location = path ? `file=${commandProperty(path)}${test.line === undefined ? "" : `,line=${test.line}`},` : "";
-  const message = test.message.split(/\r?\n/u)[0] ?? "";
+  const message = test.message
+    .split(/\r?\n/u)
+    .filter((line) => line.trim())
+    .slice(0, SuiteLimits.messageLines)
+    .join("\n");
   return `::error ${location}title=${commandProperty(`Test ${suite} failed`)}::${commandData(message ? `${test.name}: ${message}` : test.name)}`;
 }
 
