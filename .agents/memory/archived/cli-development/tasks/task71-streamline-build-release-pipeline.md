@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Streamline hosted build and release delivery while preserving required platform coverage and making stalled suites diagnosable
-  tags: [Memory, Working, Task, CLI, Pipeline, Build, Release, Contextual, Active]
+  description: "Historical record: streamlined build and release delivery with TypeScript pipeline steps, Build reuse, bounded publication and diagnosable suites, released in beta12"
+  tags: [Memory, Task, CLI, Pipeline, Build, Release, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 71: Streamline build and release delivery
@@ -109,7 +109,7 @@ Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 
 
 The maintainer selected steps 5 and 6 on 2026-10-10.
 
-Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 2/3 — Build reuse verified on GitHub, release-side checks wait for the next tagged release.
+Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 3/3 — release reuse and the checkpoint verified in the beta12 Release.
 
 Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 hosted verification.
 
@@ -148,7 +148,7 @@ A background review of `454bbfc47` found three issues in the first reuse version
 
 The maintainer asked on 2026-10-12 to finish the task completely. This horizon covers steps 1 to 4 and 7.
 
-Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 2/3 — implemented with local evidence, hosted verification with the next push.
+Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 3/3 — verified on all six hosted platforms and released in beta12.
 
 Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 hosted verification.
 
@@ -185,7 +185,7 @@ Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 
 
 - `npm run check:delivery` and `npm run test:delivery` passed on Windows: 159 tests and one Unix-only skip, including a stalled fixture whose child process is stopped with it at the deadline, an exit-status case, annotation escaping, CTRF failure and slowest-test reading, and timing medians and outliers.
 - In the WSL clone at `58da9d59c`, the runner, diagnostics and timing tests passed on Linux, 12 of 12, including the process-group stop at the deadline and on SIGTERM.
-- `build:native` and `test:built` at `8498d1af5` first failed six native-integration Install tests together on Windows. The new runner named all six. Two direct re-runs and a second `test:built` passed all six modes: 4,539 unit, 2,980 integration twice and 330 public three times, with 34 declared platform exclusions. The [Windows Install fixture race](potential/windows-install-fixture-race.md) candidate records the failure.
+- `build:native` and `test:built` at `8498d1af5` first failed six native-integration Install tests together on Windows. The new runner named all six. Two direct re-runs and a second `test:built` passed all six modes: 4,539 unit, 2,980 integration twice and 330 public three times, with 34 declared platform exclusions. The [Windows Install fixture race](../../../working/cli-development/tasks/potential/windows-install-fixture-race.md) candidate records the failure.
 - `npx forge gate:wsl --commit 58da9d59c` passed on Linux: 4,539 unit, 2,967 integration with 30 skips and 297 public with 33 skips, with no undeclared skip reason.
 - `npx forge test --no-restore` ran the managed unit, integration and public suites through the new runner on Windows: 4,539, 2,980 and 330 tests passed. `public` printed a heartbeat at two minutes, and each suite printed its three slowest tests.
 - `--long-running 2` against the integration suite named tests running longer than two seconds and repeated them every interval. The native test executables accept both runner options.
@@ -200,6 +200,14 @@ Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 
 
 An Astra high review of `8498d1af5` found six issues. All were accepted and fixed: Unix cancellation left the detached suite running, a failing or stalled stall report could block the stop, CI's mapped `/_/` paths lost annotation locations, a normally quick step that suddenly took minutes was not an outlier, and three documentation claims overstated timeout headroom, output latency and the request count, and attributed matching hosts to AOT alone.
 
+## Beta 12 release, 2026-10-12
+
+- [Build 38202226428](https://github.com/TheLithiumForge/open-forge/actions/runs/38202226428) for `54fe5ddb1` passed `checks` and all six platforms with the new suite runner. Its suites ran under the deadline and heartbeat, and no annotation was needed.
+- Tag `v0.9.0-beta.12` started [Release 38205530268](https://github.com/TheLithiumForge/open-forge/actions/runs/38205530268). `release:select` reused Build 38202226428, so the `build` job was skipped and `publish` downloaded the six package artifacts within seconds (R1).
+- The checkpoint step printed the publication plan and waited 66 seconds, from 04:52:50 to 04:53:56 UTC, before any upload (C1).
+- The six platform packages and the main package were published in 41 seconds, then the [GitHub release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.12) with six archives and `SHA256SUMS`. The whole Release took about 2.5 minutes instead of a full rebuild. Publication ran without a signal, so the interrupted path of C2 stays proved by its tests, as C3 is by its dry run.
+- npm returned `notarget` for the new version for about a minute. Then `beta` and `latest` pointed at `0.9.0-beta.12`, and `npx forge smoke:public --version 0.9.0-beta.12` passed its four checks.
+
 ## Current state
 
-The TypeScript pipeline horizon is complete. The release reuse and cancellation horizon is implemented and its Build reuse is verified on GitHub. Its milestone 3 closes when the next tagged release shows release reuse, the checkpoint and the publication report working. The timing, stall diagnostics and check map horizon is implemented with local evidence and verifies on GitHub with the next push.
+Complete and Archived. All three horizons shipped in beta12. Steps 1 to 8 of the plan are done. The [Windows Install fixture race](../../../working/cli-development/tasks/potential/windows-install-fixture-race.md) remains a candidate for the intermittent Windows test failures.

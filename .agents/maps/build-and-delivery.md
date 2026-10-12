@@ -15,4 +15,4 @@ Route map for changing or running the delivery pipeline. Each destination keeps 
 - [contributor workflow for building, testing, packaging and releasing, including release triggers and npm credentials.](../../docs/development.md#build-and-test) - #Evergreen #Documentation #Development
 - [declared platform skip reasons. Add a reason here before a test skips on a platform.](../../scripts/delivery/platform-skips.ts) - #Build #Testing #Platform
 - [the Build, Release and Documentation workflows.](../../.github/workflows/) - #Build #Release #Pipeline
-- [open pipeline work and its evidence.](../memory/working/cli-development/tasks/task71-streamline-build-release-pipeline.md) - #Contextual #Task #Pipeline
+- [pipeline decisions, timing analysis and release evidence from Task 71.](../memory/archived/cli-development/tasks/task71-streamline-build-release-pipeline.md) - #Contextual #Task #Pipeline

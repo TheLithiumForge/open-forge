@@ -95,10 +95,10 @@ Run these around a release, in order:
 
 ## How long does a Build take?
 
-`npx forge ci:timings` compares step times across recent Build runs. Native compilation and the six test suites take most of each job. osx-x64 is the slowest host and sets the Build's length: in the ten runs to 2026-10-11 its job took a median of 48 minutes and at most 59. The shared `checks` job adds about five minutes before the matrix starts. [Task 71](../../../working/cli-development/tasks/task71-streamline-build-release-pipeline.md#timing-analysis) records the full analysis.
+`npx forge ci:timings` compares step times across recent Build runs. Native compilation and the six test suites take most of each job. osx-x64 is the slowest host and sets the Build's length: in the ten runs to 2026-10-11 its job took a median of 48 minutes and at most 59. The shared `checks` job adds about five minutes before the matrix starts. [Task 71](../../../archived/cli-development/tasks/task71-streamline-build-release-pipeline.md#timing-analysis) records the full analysis.
 
 ## Guides and open work
 
 - The [`forge` guide](../../../../../scripts/delivery/README.md) lists every command, its options, and the workflow-step-to-command table.
 - The [development guide](../../../../../docs/development.md#ci-and-releases) explains the contributor workflow, release triggers and npm credentials.
-- [Task 71](../../../working/cli-development/tasks/task71-streamline-build-release-pipeline.md) records the pipeline decisions and their evidence.
+- [Task 71](../../../archived/cli-development/tasks/task71-streamline-build-release-pipeline.md) records the pipeline decisions and their evidence.

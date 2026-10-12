@@ -8,7 +8,7 @@ open-forge:
 
 ## Current order
 
-The requested combined onboarding changes shipped in beta6. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains the completed release receipt. Task 71 is queued for pipeline analysis. Tasks 34 and 39 remain paused. Task 48 is frozen at A/B1 and required before 1.0. Task 62 retains the later maintainer review rather than the completed original implementation.
+The requested combined onboarding changes shipped in beta6. [Task 70](../../../archived/cli-development/tasks/task70-existing-workspace-adoption-during-installation.md#beta-6-release-complete-2026-10-04) retains the completed release receipt. Task 71 shipped in beta12 and is Archived. Tasks 34 and 39 remain paused. Task 48 is frozen at A/B1 and required before 1.0. Task 62 retains the later maintainer review rather than the completed original implementation.
 
 ## Completed work
 
@@ -38,4 +38,3 @@ Completed records and superseded analyses are in [Archived CLI Development](../.
 - [Open Task 63 to decide whether and how a direct edit to a managed file can survive updates, since removedFiles already keeps such a file untouched as an undocumented side effect](task63-keeping-edits-through-updates.md) - #Memory #Working #Task #CLI #Update #Removal #Customization #Investigation #Contextual #Active
 - [Task 66 council review of the published documentation for overclaims and polish, and of the shipped Framework and Extension files for consistency, redundancy, order, and readability](task66-council-polish.md) - #Memory #Working #Task #Documentation #Framework #Extensions #Council #Writing #Contextual #Active
 - [Task 67 council redesign of the framework diagram's labels, so what loads when and where content comes from reads at a glance and stays accurate](task67-diagram-labels.md) - #Memory #Working #Task #Documentation #Diagram #Loading #Council #Writing #Contextual #Active
-- [Streamline hosted build and release delivery while preserving required platform coverage and making stalled suites diagnosable](task71-streamline-build-release-pipeline.md) - #Memory #Working #Task #CLI #Pipeline #Build #Release #Contextual #Active
