@@ -14,7 +14,7 @@ const Failure = 1;
 /** Installs the locked APM packages, then applies Open Forge model policy to the generated Codex agents. */
 export function installSteps(node: string = process.execPath): Step[] {
   return [
-    { name: "Install locked APM packages", executable: "apm", args: ["install", "--frozen", "--target", "opencode,codex"] },
+    { name: "Install locked APM packages", executable: "apm", args: ["install", "--frozen", "--target", "codex"] },
     { name: "Apply Codex agent model policy", executable: node, args: [fileURLToPath(new URL("patch-codex-agent-models.ts", import.meta.url))] },
   ];
 }

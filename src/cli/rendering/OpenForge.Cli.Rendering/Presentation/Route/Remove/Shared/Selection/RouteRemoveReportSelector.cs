@@ -539,7 +539,9 @@ internal static class RouteRemoveReportSelector
             $"removed={result.Effects.Count(effect => effect.Kind == RouteRemoveEffectKind.RemovedFile).ToString(CultureInfo.InvariantCulture)}",
             $"detached={result.References.Detachments.Length.ToString(CultureInfo.InvariantCulture)}",
             $"findings={result.Findings.Length.ToString(CultureInfo.InvariantCulture)}",
-        }.Concat(result.Findings.Select(finding => finding.Cause)).ToArray();
+        }.Concat(result.References.IgnoredPathCount > 0
+            ? [$"gitIgnoredPaths={result.References.IgnoredPathCount.ToString(CultureInfo.InvariantCulture)}"]
+            : Array.Empty<string>()).Concat(result.Findings.Select(finding => finding.Cause)).ToArray();
 
     private static string FileRow(RouteRemoveEffect effect)
         => effect.Outcome switch

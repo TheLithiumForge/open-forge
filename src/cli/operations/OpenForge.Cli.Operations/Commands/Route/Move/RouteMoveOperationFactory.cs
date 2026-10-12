@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Route.Move.Shared.Result;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Shared.Navigation;
 using OpenForge.Cli.Core.Commands.Route.Shared.References;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
@@ -27,29 +28,32 @@ internal static class RouteMoveOperationFactory
 {
     internal static RouteMoveOperation Create(
         WorkspaceLockStoreRoot? lockStoreRoot = null,
-        CliPrompt<RouteMoveSourceSelectionQuestion, string>? sourceSelectionPrompt = null)
+        CliPrompt<RouteMoveSourceSelectionQuestion, string>? sourceSelectionPrompt = null,
+        RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator = null)
     {
         var physicalPathResolver = new PhysicalPathResolver();
         var expectationValidator = new FileExpectationValidator(physicalPathResolver);
-        var planBuilder = CreatePlanBuilder(physicalPathResolver, expectationValidator, sourceSelectionPrompt);
+        var planBuilder = CreatePlanBuilder(physicalPathResolver, expectationValidator, sourceSelectionPrompt, ignoredPathEnumerator);
         var resultBuilder = new RouteMoveResultBuilder();
         var applicationOperation = CreateApplicationOperation(
             planBuilder,
             physicalPathResolver,
             expectationValidator,
-            lockStoreRoot);
+            lockStoreRoot,
+            ignoredPathEnumerator);
         return new RouteMoveOperation(planBuilder, applicationOperation, resultBuilder);
     }
 
     private static RouteMovePlanBuilder CreatePlanBuilder(
         PhysicalPathResolver physicalPathResolver,
         FileExpectationValidator expectationValidator,
-        CliPrompt<RouteMoveSourceSelectionQuestion, string>? sourceSelectionPrompt = null)
+        CliPrompt<RouteMoveSourceSelectionQuestion, string>? sourceSelectionPrompt = null,
+        RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator = null)
         => new(
             CreateSubjectResolver(physicalPathResolver, expectationValidator, sourceSelectionPrompt),
             CreateInventoryReader(physicalPathResolver, expectationValidator),
             new RouteMoveDestinationResolver(expectationValidator),
-            CreateReferencePlanner(physicalPathResolver, expectationValidator),
+            CreateReferencePlanner(physicalPathResolver, expectationValidator, ignoredPathEnumerator),
             CreateNavigationPlanner());
 
     private static RouteMoveSubjectResolver CreateSubjectResolver(
@@ -80,7 +84,8 @@ internal static class RouteMoveOperationFactory
 
     private static RouteMoveReferencePlanner CreateReferencePlanner(
         PhysicalPathResolver physicalPathResolver,
-        FileExpectationValidator expectationValidator)
+        FileExpectationValidator expectationValidator,
+        RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator)
     {
         var markdownParser = new MarkdownDocumentParser();
         var destinationResolver = new SourceLinkDestinationResolver(
@@ -91,7 +96,7 @@ internal static class RouteMoveOperationFactory
             StrictUtf8FileReader.ReadAsync,
             markdownParser.Parse);
         return new RouteMoveReferencePlanner(
-            new RouteMarkdownCatalogueReader(physicalPathResolver),
+            new RouteMarkdownCatalogueReader(physicalPathResolver, ignoredPathEnumerator),
             markdownParser,
             destinationResolver,
             expectationValidator);
@@ -107,10 +112,11 @@ internal static class RouteMoveOperationFactory
         RouteMovePlanBuilder planBuilder,
         PhysicalPathResolver physicalPathResolver,
         FileExpectationValidator expectationValidator,
-        WorkspaceLockStoreRoot? lockStoreRoot)
+        WorkspaceLockStoreRoot? lockStoreRoot,
+        RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator)
     {
         var appliedVerifier = new RouteMoveAppliedVerifier(
-            CreatePostMoveObserver(physicalPathResolver, expectationValidator),
+            CreatePostMoveObserver(physicalPathResolver, expectationValidator, ignoredPathEnumerator),
             expectationValidator);
         return new RouteMoveApplicationOperation(
             CreateLockManager(lockStoreRoot),
@@ -121,11 +127,12 @@ internal static class RouteMoveOperationFactory
 
     private static RouteMovePostMoveObserver CreatePostMoveObserver(
         PhysicalPathResolver physicalPathResolver,
-        FileExpectationValidator expectationValidator)
+        FileExpectationValidator expectationValidator,
+        RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator)
         => new(
             CreateSubjectResolver(physicalPathResolver, expectationValidator),
             CreateInventoryReader(physicalPathResolver, expectationValidator),
-            CreateReferencePlanner(physicalPathResolver, expectationValidator),
+            CreateReferencePlanner(physicalPathResolver, expectationValidator, ignoredPathEnumerator),
             CreateNavigationPlanner(),
             expectationValidator);
 

@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
@@ -87,7 +88,7 @@ internal sealed partial class StatusIntegrationWorkspace : IDisposable
                     TestContext.Current.CancellationToken);
             if (result.Status != CliSemanticStatus.Complete)
             {
-                throw new InvalidOperationException($"The installed Status fixture did not complete: {result.Status}.");
+                throw new InvalidOperationException(InstallFixtureDiagnostics.Failure(result));
             }
 
             Assert.True(File.Exists(workspace.Combine(OwnershipPath)));

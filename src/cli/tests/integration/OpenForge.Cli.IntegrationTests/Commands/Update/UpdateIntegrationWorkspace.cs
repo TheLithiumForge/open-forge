@@ -22,6 +22,7 @@ using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.IntegrationTests.Commands.Install;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
 
 using OpenForge.Cli.IntegrationTests.Commands.Update.Shared.Interaction;
 
@@ -95,7 +96,7 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
                 },
                 cancellationToken);
 
-        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.True(result.Status == CliSemanticStatus.Complete, InstallFixtureDiagnostics.Failure(result));
         Assert.Empty(result.Findings);
     }
 

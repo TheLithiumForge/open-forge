@@ -32,7 +32,10 @@ internal static class PublishedWindowsTerminal
     private const int ErrorNotFound = 1168;
     private const long ProcThreadAttributePseudoConsole = 0x00020016;
     private const int OutputBufferSize = 8 * 1024;
-    private static readonly TimeSpan ProcessTimeout = TimeSpan.FromSeconds(30);
+    // Each observable prompt or exit gets its own hang guard. CPU contention
+    // measured a healthy conversation near 30 seconds, with individual events
+    // around 10 seconds. Do not charge all its redraws to one process deadline.
+    private static readonly TimeSpan EventTimeout = TimeSpan.FromSeconds(60);
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
@@ -238,15 +241,22 @@ internal static class PublishedWindowsTerminal
                 () => ReadTerminalOutput(ptyOutputRead, liveTranscript),
                 CancellationToken.None);
             processWait = WaitForProcessAsync(processHandle);
-            var waitDeadline = Stopwatch.GetTimestamp();
+            var conversationStarted = Stopwatch.GetTimestamp();
+            var pendingEvent = "initial input";
 
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 foreach (var step in scenario.Steps)
                 {
+                    var stepStarted = Stopwatch.GetTimestamp();
+                    pendingEvent = step.WaitFor ?? "initial input";
                     if (step.WaitFor is { } marker)
-                        await liveTranscript.WaitForAsync(marker, GetRemainingTime(waitDeadline), cancellationToken).ConfigureAwait(false);
+                        await liveTranscript.WaitForAsync(marker, EventTimeout, cancellationToken).ConfigureAwait(false);
+                    TestContext.Current.TestOutputHelper?.WriteLine(
+                        $"Terminal event '{pendingEvent}': {Stopwatch.GetElapsedTime(stepStarted).TotalMilliseconds:F1} ms, elapsed {Stopwatch.GetElapsedTime(conversationStarted).TotalMilliseconds:F1} ms");
+                    var inputStarted = Stopwatch.GetTimestamp();
+                    pendingEvent = $"input after '{pendingEvent}'";
                     if (step.Resize is { } size)
                     {
                         var resizeResult = ResizePseudoConsole(pseudoConsole, new Coord(size.Width, size.Height));
@@ -256,22 +266,28 @@ internal static class PublishedWindowsTerminal
                     inputWriter = TerminalInputWriter.Create(ptyInputWrite, step.Input);
                     if (inputWriter is not null)
                     {
-                        inputWriter.StartAndSignalWrite(GetRemainingTime(waitDeadline), cancellationToken);
-                        await inputWriter.Completion.WaitAsync(GetRemainingTime(waitDeadline), cancellationToken).ConfigureAwait(false);
+                        inputWriter.StartAndSignalWrite(GetRemainingTime(inputStarted), cancellationToken);
+                        await inputWriter.Completion.WaitAsync(GetRemainingTime(inputStarted), cancellationToken).ConfigureAwait(false);
                         if (inputWriter.ObserveFailure() is { } failure) ExceptionDispatchInfo.Capture(failure).Throw();
                     }
                 }
 
+                pendingEvent = "process exit after the final input";
                 await WaitForProcessAndInputAsync(
                     processWait,
                     inputWriter,
-                    waitDeadline,
+                    Stopwatch.GetTimestamp(),
                     cancellationToken).ConfigureAwait(false);
+                TestContext.Current.TestOutputHelper?.WriteLine(
+                    $"Terminal conversation: {scenario.Size.Width}x{scenario.Size.Height}, {Stopwatch.GetElapsedTime(conversationStarted).TotalMilliseconds:F1} ms");
             }
-            catch (TimeoutException)
+            catch (TimeoutException exception)
             {
                 primaryFailure = new TimeoutException(
-                    $"Executable '{target.ExecutablePath}' did not exit within {ProcessTimeout}.");
+                    $"""
+                    Executable '{target.ExecutablePath}' stalled waiting for {pendingEvent} within {EventTimeout}.
+                    Terminal: {scenario.Size.Width}x{scenario.Size.Height}. Elapsed: {Stopwatch.GetElapsedTime(conversationStarted)}.
+                    """, exception);
             }
             catch (OperationCanceledException exception) when (cancellationToken.IsCancellationRequested)
             {
@@ -563,7 +579,7 @@ internal static class PublishedWindowsTerminal
 
     private static TimeSpan GetRemainingTime(long deadlineTimestamp)
     {
-        var remaining = ProcessTimeout - Stopwatch.GetElapsedTime(deadlineTimestamp);
+        var remaining = EventTimeout - Stopwatch.GetElapsedTime(deadlineTimestamp);
         if (remaining <= TimeSpan.Zero)
         {
             throw new TimeoutException();

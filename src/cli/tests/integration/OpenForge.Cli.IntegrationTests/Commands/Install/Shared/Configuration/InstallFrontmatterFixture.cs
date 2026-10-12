@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Configuration;
 
@@ -39,6 +40,6 @@ internal static class InstallFrontmatterFixture
     internal static async Task SeedScopedAsync(InstallOperationWorkspace workspace)
     {
         var result = await Operation(workspace).ExecuteAsync(await RequestAsync(workspace, FrontmatterForm.Scoped), TestContext.Current.CancellationToken);
-        Assert.Equal(Core.Shell.Definitions.CliSemanticStatus.Complete, result.Status);
+        Assert.True(result.Status == Core.Shell.Definitions.CliSemanticStatus.Complete, InstallFixtureDiagnostics.Failure(result));
     }
 }

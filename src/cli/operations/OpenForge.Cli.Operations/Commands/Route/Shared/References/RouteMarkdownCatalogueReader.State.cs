@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.References;
 
@@ -14,9 +15,13 @@ internal sealed partial class RouteMarkdownCatalogueReader
             PhysicalIdentityTracker.PathComparer);
         private readonly HashSet<string> _selectedPaths = new(StringComparer.Ordinal);
         private readonly List<RouteMarkdownCatalogueFinding> _findings = [];
+        private readonly HashSet<string> _ignoredPaths = new(PhysicalIdentityTracker.PathComparer);
+        private readonly HashSet<string> _gitIgnoredPaths = new(PhysicalIdentityTracker.PathComparer);
         private bool _interrupted;
 
         internal RouteMarkdownCatalogueRequest Request { get; } = request;
+
+        internal void SetGitIgnoredPaths(IEnumerable<string> paths) => _gitIgnoredPaths.UnionWith(paths);
 
         internal bool HasBlockedFinding => _findings.Any(finding => finding.Code is
             RouteMarkdownCatalogueFindingCode.IncludedRootUnsafe
@@ -37,6 +42,32 @@ internal sealed partial class RouteMarkdownCatalogueReader
 
         internal void AddSelected(string path) => _selectedPaths.Add(path);
 
+        internal static bool IsAgentsPath(string path)
+        {
+            var separator = path.IndexOf('/');
+            var root = separator < 0 ? path : path[..separator];
+            return PhysicalIdentityTracker.PathComparer.Equals(root, SourceLogicalPath.AgentsRoot);
+        }
+
+        internal bool IsGitIgnored(string path)
+        {
+            if (IsAgentsPath(path))
+            {
+                return false;
+            }
+
+            var candidate = path;
+            while (!_gitIgnoredPaths.Contains(candidate))
+            {
+                var separator = candidate.LastIndexOf('/');
+                if (separator < 0) return false;
+                candidate = candidate[..separator];
+            }
+
+            _ignoredPaths.Add(path);
+            return true;
+        }
+
         internal void MarkInterrupted() => _interrupted = true;
 
         internal void AddFinding(
@@ -56,7 +87,8 @@ internal sealed partial class RouteMarkdownCatalogueReader
                 return new RouteMarkdownCatalogue(
                     RouteMarkdownCatalogueCoverage.Interrupted,
                     _selectedPaths,
-                    _findings);
+                    _findings,
+                    _ignoredPaths.Count);
             }
 
             var coverage = HasBlockedFinding
@@ -64,7 +96,7 @@ internal sealed partial class RouteMarkdownCatalogueReader
                 : _findings.Count > 0
                     ? RouteMarkdownCatalogueCoverage.Incomplete
                     : RouteMarkdownCatalogueCoverage.Complete;
-            return new RouteMarkdownCatalogue(coverage, _selectedPaths, _findings);
+            return new RouteMarkdownCatalogue(coverage, _selectedPaths, _findings, _ignoredPaths.Count);
         }
     }
 }

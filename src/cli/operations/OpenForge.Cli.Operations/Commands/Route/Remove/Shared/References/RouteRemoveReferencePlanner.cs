@@ -56,6 +56,10 @@ internal sealed class RouteRemoveReferencePlanner
                     {
                         Source = request.Subject.Source,
                         Subject = new RouteRemoveSubject { Kind = request.Subject.Kind },
+                        References = RouteRemoveBoundary.Start(request.Subject.Request).References with
+                        {
+                            IgnoredPathCount = catalogue.IgnoredPathCount,
+                        },
                     },
                     code,
                     status,
@@ -81,6 +85,7 @@ internal sealed class RouteRemoveReferencePlanner
                 {
                     Coverage = RouteRemoveCoverage.Complete,
                     ScannedSourceCount = catalogue.SelectedPaths.Length,
+                    IgnoredPathCount = catalogue.IgnoredPathCount,
                     InspectedSourceCount = catalogue.SelectedPaths.Length,
                     OccurrenceCount = scan.OccurrenceCount,
                     Detachments = scan.Detachments,
@@ -142,6 +147,7 @@ internal sealed class RouteRemoveReferencePlanner
                         "The Route Remove absence-reference status is not defined."),
                 },
                 ScannedSourceCount = 0,
+                IgnoredPathCount = catalogue.IgnoredPathCount,
                 InspectedSourceCount = 0,
                 OccurrenceCount = 0,
             },

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Composition.Shared.RouteReferences;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Composition.Shared.RouteInspectMatchingFiles;
 using OpenForge.Cli.Core.Commands.Route;
@@ -155,7 +156,8 @@ internal static class CliRouteComposer
                 Help = RouteMoveHelpSections.Create(),
                 Operation = RouteMoveOperationFactory.Create(
                     lockStoreRoot,
-                    RouteMoveSourceSelectionPrompt.Create(prompts)),
+                    RouteMoveSourceSelectionPrompt.Create(prompts),
+                    new RouteGitIgnoredPathEnumerator().EnumerateAsync),
             }), RouteMovePresentation.Rendering);
 
     private static ICliCommandBinding BuildRemove(
@@ -171,6 +173,7 @@ internal static class CliRouteComposer
                 Operation = RouteRemoveOperationFactory.Create(
                     lockStoreRoot,
                     RouteRemoveSourceSelectionPrompt.Create(prompts),
-                    RouteRemoveConfirmationPrompt.Create(prompts)),
+                    RouteRemoveConfirmationPrompt.Create(prompts),
+                    new RouteGitIgnoredPathEnumerator().EnumerateAsync),
             }), RouteRemovePresentation.Rendering);
 }

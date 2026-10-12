@@ -229,6 +229,16 @@ No legacy record is read, migrated or deleted.
 
 ### Reference coverage
 
+In a Git work tree, reference coverage excludes paths Git ignores through its
+standard exclude rules. Ignored files are left unchanged, and ignored directory
+trees are pruned before link checks or content reads. Tracked files remain
+covered even when an ignore pattern matches them. The complete `.agents` tree
+stays covered, including Git-ignored private routes recorded by the workspace.
+Outside a Git work tree, or when Git is missing, refuses the workspace, fails,
+times out or supplies an unusable inventory, discard its exclusions and keep
+the complete filesystem scan. Cancellation still cancels the operation.
+This rule applies to reference coverage, not the selected category inventory.
+
 The reference resolver enumerates every supported Markdown source physically
 contained by the selected workspace, including sources outside `.agents`, and
 reads every applicable base and overwrite layer. It records complete coverage
@@ -409,7 +419,8 @@ The command path and exact source subject provide application consent.
 Application is otherwise gated by the complete plan and preflight. It does not
 prompt and does not accept a confirmation flag.
 
-The command does not inspect or report repository state. Before the
+The command uses Git only to select reference coverage. It does not inspect or
+report repository changes. Before the
 first target effect, orchestration uses only
 `Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData,
 Environment.SpecialFolderOption.Create)` and its application-owned
@@ -521,6 +532,11 @@ inventory or the safe facts and explicit incomplete/blocked boundary; it does
 not report a successful partial category removal.
 
 ## Behavioral Conformance
+
+Evidence must prove that ignored dependency or build trees containing links do
+not block the operation, ignored Markdown stays unchanged, private references
+inside `.agents` remain covered, and Git failures and non-Git workspaces retain
+the complete scan.
 
 The mandatory public evidence boundary is [Interface Verification](interface.md).
 A conforming implementation must additionally prove:

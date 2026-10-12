@@ -3,7 +3,6 @@ node_modules/
 dist/
 .temp/
 .codex
-.opencode
 .omo
 
 
@@ -11,11 +10,7 @@ dist/
 # APM dependencies
 apm_modules/
 **/.codex
-**/.opencode
 **/.claude
-
-# Expose only the repository-owned OpenCode Git-object inspection adapter.
-**/.opencode
 
 # .NET build output
 **/bin/

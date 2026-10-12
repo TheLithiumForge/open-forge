@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
 
@@ -302,9 +303,13 @@ public sealed class InstallRouteSharingIntegrationTests
     }
 
     private static async Task<OpenForge.Cli.Core.Commands.Install.Models.Result.InstallResult> Install(InstallOperationWorkspace workspace, bool configure)
-        => await InstallOperationFactory.Create(InstallInteractionTestSupport.Unavailable(), workspace.LockStoreRoot)
+    {
+        var result = await InstallOperationFactory.Create(InstallInteractionTestSupport.Unavailable(), workspace.LockStoreRoot)
             .ExecuteAsync(new(workspace.Workspace, InstallMode.Apply, false, true, false)
             { Setup = new(configure, InstallPreset.Essentials, []) }, TestContext.Current.CancellationToken);
+        Assert.True(result.Status == CliSemanticStatus.Complete, InstallFixtureDiagnostics.Failure(result));
+        return result;
+    }
 
     private static async Task<IReadOnlyList<SourceSharingRoute>> Policy(InstallOperationWorkspace workspace)
     {

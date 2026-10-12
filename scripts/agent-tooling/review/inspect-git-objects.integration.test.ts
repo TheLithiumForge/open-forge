@@ -12,17 +12,9 @@ import { GitObjectInspectionError, inspectGitObjects } from "./inspect-git-objec
 const ScriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const RepositoryRoot = path.resolve(ScriptDirectory, "../../..");
 const GatewayScript = path.join(ScriptDirectory, "inspect-git-objects.ts");
-const AdapterSource = ".opencode/tools/inspect-git-objects.ts";
 const RejectedExit = 2;
 const OversizedBlobBytes = 8 * 1024 * 1024 + 1;
 const OfflineGitEnvironment: NodeJS.ProcessEnv = { ...process.env, GIT_NO_LAZY_FETCH: "1", GIT_TERMINAL_PROMPT: "0" };
-const AgentSources = [
-  ".apm/agents/review-mastermind.agent.md",
-  ".apm/agents/topics/csharp-conformance.agent.md",
-  ".apm/agents/topics/architecture-ownership-refactoring.agent.md",
-  ".apm/agents/topics/behavior-contracts.agent.md",
-  ".apm/agents/topics/test-evidence.agent.md",
-];
 type CommandResult = { status: number; stdout: string; stderr: string };
 type RepositoryState = { status: string; head: string; refs: string; objects: string; index: string; config: string };
 function command(executable: string, arguments_: readonly string[], cwd: string, environment: NodeJS.ProcessEnv = process.env): CommandResult {
@@ -106,7 +98,7 @@ after(async () => {
   assert.deepEqual(await repositoryState(fixtureRoot), initialState);
   await rm(fixtureRoot, { force: true, recursive: true });
 });
-describe("Git object inspection engine and OpenCode adapter", () => {
+describe("Git object inspection engine", () => {
   test("reads every fixed operation through exact immutable objects", async () => {
     assert.equal(success(gateway(fixtureRoot, "object-type", candidateCommit)), "commit\n");
     assert.equal(success(gateway(fixtureRoot, "object-type", candidateCommit.toUpperCase())), "commit\n");
@@ -169,32 +161,5 @@ describe("Git object inspection engine and OpenCode adapter", () => {
     } finally {
       await rm(partialRoot, { force: true, recursive: true });
     }
-  });
-});
-
-describe("review-role capability boundary", () => {
-  test("defines one structured shell-free OpenCode adapter", async () => {
-    const source = await readFile(path.join(RepositoryRoot, AdapterSource), "utf8");
-    assert.ok(source.includes('import { tool } from "@opencode-ai/plugin";'));
-    assert.ok(source.includes("operation: tool.schema.enum(GitObjectOperations)"));
-    for (const field of ["object", "otherObject", "path"]) assert.ok(source.includes(`${field}: tool.schema.string()`));
-    assert.ok(source.includes("return executeInspectionRequest(args, context.worktree);"));
-    assert.doesNotMatch(source, /(?:spawnSync|execFile|execSync|child_process|Bun\.\$|writeFile|createWriteStream|\bshell\s*:)/u);
-  });
-  test("denies Bash and allows only the named custom inspection tool", async () => {
-    for (const relativePath of AgentSources) {
-      const source = await readFile(path.join(RepositoryRoot, relativePath), "utf8");
-      assert.ok(source.includes('\npermission:\n  "*": deny\n'), relativePath);
-      assert.ok(source.includes("\n  bash: deny\n  inspect-git-objects: allow\n"), relativePath);
-      assert.deepEqual(source.match(/^  [^ \n][^:]*: allow$/gmu), ["  inspect-git-objects: allow"], relativePath);
-      assert.doesNotMatch(source, /"(?:node|git) [^"]+": allow/u, relativePath);
-    }
-  });
-  test("exposes only the root canonical OpenCode adapter", () => {
-    assert.equal(git(["check-ignore", "--quiet", "--no-index", ".opencode/tools/inspect-git-objects.ts"]).status, 1);
-    for (const relativePath of [".opencode/tools/other.ts", ".opencode/agents/review-mastermind.md", ".opencode/other.txt", "nested/.opencode/tools/inspect-git-objects.ts"]) {
-      assert.equal(git(["check-ignore", "--quiet", "--no-index", relativePath]).status, 0, relativePath);
-    }
-    assert.equal(success(git(["ls-files", "--cached", "--others", "--exclude-standard", ".opencode"])).trim(), ".opencode/tools/inspect-git-objects.ts");
   });
 });

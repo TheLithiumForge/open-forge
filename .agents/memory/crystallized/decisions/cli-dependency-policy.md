@@ -113,6 +113,19 @@ matching. The maintainer accepted the bounded translation, link and submodule
 exclusions, single deadline, and display cap, replacing the proposed
 unavailable-only fallback.
 
+### Optional Git reference exclusions
+
+On 2026-10-12 the maintainer extended the optional read-only Git process to the
+shared Route Move and Route Remove reference catalogue, also used by root
+`remove` for routed subjects. The host probes the selected workspace and asks
+Git for ignored paths with `ls-files --others --ignored --exclude-standard
+--directory -z -- .`. Collapsed directory roots avoid traversing ignored
+dependency and build trees. Operations preserves complete `.agents` coverage.
+A five-second deadline bounds the Git probe and inventory. Any unusable result
+selects the existing complete filesystem scan, with no ignore translation.
+The Route Move and Route Remove contracts define coverage and diagnostics.
+No package, Git configuration mutation or trust override is added.
+
 ## Rationale
 
 Central package management makes the executable configuration the one exact

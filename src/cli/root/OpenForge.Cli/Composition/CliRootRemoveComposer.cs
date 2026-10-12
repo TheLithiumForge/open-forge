@@ -1,3 +1,4 @@
+using OpenForge.Cli.Composition.Shared.RouteReferences;
 using OpenForge.Cli.Core.Commands.Extension.Remove;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Extension.Remove.Models.Result;
@@ -48,7 +49,8 @@ internal static class CliRootRemoveComposer
         var routeOperation = RouteRemoveOperationFactory.Create(
             lockStoreRoot,
             RouteRemoveSourceSelectionPrompt.Create(interaction.Prompts),
-            RouteRemoveConfirmationPrompt.Create(interaction.Prompts));
+            RouteRemoveConfirmationPrompt.Create(interaction.Prompts),
+            new RouteGitIgnoredPathEnumerator().EnumerateAsync);
         var extensionConfirmation = interaction.Prompts.PlanConfirmation<
             ExtensionRemoveResult,
             ExtensionRemoveData,

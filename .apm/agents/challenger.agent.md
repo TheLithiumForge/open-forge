@@ -4,44 +4,6 @@ description: Adversarially tests one consequential decision, architecture, plan,
   weaknesses.
 model: openai/gpt-5.6-sol
 reasoningEffort: xhigh
-mode: subagent
-color: error
-permission:
-  read:
-    "*": allow
-    "*.env": deny
-    "*.env.*": deny
-    "*.pem": deny
-    "*.key": deny
-    "*id_rsa*": deny
-    "*id_ed25519*": deny
-    "*.p12": deny
-    "*.pfx": deny
-    "*.kdbx": deny
-    "*.netrc": deny
-    "*.git-credentials": deny
-    "*.env.example": allow
-  glob: allow
-  grep: allow
-  list: allow
-  edit: deny
-  bash:
-    "*": deny
-    git status*: allow
-    git diff*: allow
-    git log*: allow
-    git show*: allow
-    git blame*: allow
-    git ls-files*: allow
-    git rev-parse*: allow
-    git merge-base*: allow
-  lsp: allow
-  task: deny
-  question: deny
-  websearch: allow
-  webfetch: allow
-  external_directory: deny
-  doom_loop: deny
 ---
 
 # Challenger

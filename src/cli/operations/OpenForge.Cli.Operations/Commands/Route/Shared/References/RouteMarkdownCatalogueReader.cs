@@ -5,7 +5,9 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Shared.References;
 
-internal sealed partial class RouteMarkdownCatalogueReader(PhysicalPathResolver physicalPathResolver)
+internal sealed partial class RouteMarkdownCatalogueReader(
+    PhysicalPathResolver physicalPathResolver,
+    RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator = null)
 {
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
@@ -28,6 +30,19 @@ internal sealed partial class RouteMarkdownCatalogueReader(PhysicalPathResolver 
             return state.Form(interrupted: false);
         }
 
+        if (ignoredPathEnumerator is not null)
+        {
+            try
+            {
+                state.SetGitIgnoredPaths(await ignoredPathEnumerator(
+                    request.Workspace.LexicalRoot, cancellationToken).ConfigureAwait(false) ?? []);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return state.Form(interrupted: true);
+            }
+        }
+
         foreach (var includedRoot in request.IncludedRoots)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -35,7 +50,7 @@ internal sealed partial class RouteMarkdownCatalogueReader(PhysicalPathResolver 
                 return state.Form(interrupted: true);
             }
 
-            if (state.IsExcluded(includedRoot))
+            if (state.IsExcluded(includedRoot) || state.IsGitIgnored(includedRoot))
             {
                 continue;
             }

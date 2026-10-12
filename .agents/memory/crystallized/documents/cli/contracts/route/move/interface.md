@@ -301,6 +301,16 @@ ordinary directory-ancestry rules remain defined by the filesystem contract.
 
 ## Complete Reference Pass
 
+In a Git work tree, reference coverage excludes paths Git ignores through its
+standard exclude rules. Ignored files are left unchanged, and ignored directory
+trees are pruned before link checks or content reads. Tracked files remain
+covered even when an ignore pattern matches them. The complete `.agents` tree
+stays covered, including Git-ignored private routes recorded by the workspace.
+Outside a Git work tree, or when Git is missing, refuses the workspace, fails,
+times out or supplies an unusable inventory, discard its exclusions and keep
+the complete filesystem scan. Cancellation still cancels the operation.
+This rule applies to reference coverage, not the selected category inventory.
+
 Move performs one complete physically contained pass over the supported Markdown
 catalogue in the selected workspace, both inside and outside `.agents`. The
 catalogue includes every supported Markdown source and physical layer that can
@@ -411,8 +421,8 @@ the complete plan. It does not grant ownership, lifecycle, collision,
 containment, heading-repair, or recovery bypass authority.
 
 For an actual application, the complete plan checks every existing path it may
-change or remove through ordinary workspace facts. It does not inspect or report
-repository state.
+change or remove through ordinary workspace facts. Git selects reference coverage
+only. The command does not inspect or report repository changes.
 
 When the operation has one or more existing-target effects (`Replace`,
 `ReplaceGeneratedRegion`, or `Delete`),
@@ -493,6 +503,12 @@ uses `Entries would be updated` and `Would update <N> links that point to the
 old path:`. A failed or blocked move lists only completed rewrites under
 `Updated`, then `Could not confirm the update of <N> links:` and
 `Did not update <N> links that still point to the old path:` for the rest.
+
+When paths are excluded, `--detail debug` adds `gitIgnoredPaths=<count>`
+to bounded stderr diagnostics in both text and JSON modes. The count records
+skipped files and pruned directory roots, each once. Descendants of a pruned
+directory are not enumerated or counted. Full and debug primary output retain
+the existing scan schema.
 
 `full` adds hashes per effect and the reference scan summary (`28 files
 scanned`).

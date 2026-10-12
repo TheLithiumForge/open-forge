@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Shared.References;
 using OpenForge.Cli.Core.Commands.Route.Remove.Shared.Result;
 using OpenForge.Cli.Core.Commands.Route.Shared.Navigation;
 using OpenForge.Cli.Core.Commands.Route.Shared.References;
+using OpenForge.Cli.Core.Commands.Route.Shared.Models.References;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
@@ -29,11 +30,12 @@ internal static class RouteRemoveOperationFactory
     internal static RouteRemoveOperation Create(
         WorkspaceLockStoreRoot? lockStoreRoot = null,
         CliPrompt<RouteRemoveSourceSelectionQuestion, string>? sourceSelectionPrompt = null,
-        CliPlanConfirmation<RouteRemoveResult, RouteRemoveConfirmationQuestion>? confirmation = null)
+        CliPlanConfirmation<RouteRemoveResult, RouteRemoveConfirmationQuestion>? confirmation = null,
+        RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator = null)
     {
         var physicalPathResolver = new PhysicalPathResolver();
         var expectationValidator = new FileExpectationValidator(physicalPathResolver);
-        var planBuilder = CreatePlanBuilder(physicalPathResolver, expectationValidator, sourceSelectionPrompt);
+        var planBuilder = CreatePlanBuilder(physicalPathResolver, expectationValidator, sourceSelectionPrompt, ignoredPathEnumerator);
         var resultBuilder = new RouteRemoveResultBuilder();
         var applicationOperation = CreateApplicationOperation(
             planBuilder,
@@ -43,7 +45,8 @@ internal static class RouteRemoveOperationFactory
     }
 
     internal static RouteRemovePlanBuilder CreatePlanBuilder(
-        CliPrompt<RouteRemoveSourceSelectionQuestion, string>? sourceSelectionPrompt = null)
+        CliPrompt<RouteRemoveSourceSelectionQuestion, string>? sourceSelectionPrompt = null,
+        RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator = null)
     {
         var physical = new PhysicalPathResolver();
         var expectation = new FileExpectationValidator(physical);
@@ -73,7 +76,7 @@ internal static class RouteRemoveOperationFactory
             StrictUtf8FileReader.ReadAsync,
             markdown.Parse);
         var references = new RouteRemoveReferencePlanner(
-            new RouteMarkdownCatalogueReader(physical),
+            new RouteMarkdownCatalogueReader(physical, ignoredPathEnumerator),
             markdown,
             destinationResolver,
             expectation);
@@ -135,11 +138,13 @@ internal static class RouteRemoveOperationFactory
     private static RouteRemovePlanBuilder CreatePlanBuilder(
         PhysicalPathResolver physicalPathResolver,
         FileExpectationValidator expectationValidator,
-        CliPrompt<RouteRemoveSourceSelectionQuestion, string>? sourceSelectionPrompt = null)
+        CliPrompt<RouteRemoveSourceSelectionQuestion, string>? sourceSelectionPrompt = null,
+        RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator = null)
     {
         var referencePlanner = CreateReferencePlanner(
             physicalPathResolver,
-            expectationValidator);
+            expectationValidator,
+            ignoredPathEnumerator);
         var navigationPlanner = CreateNavigationPlanner();
         return new RouteRemovePlanBuilder(
             CreateSubjectResolver(physicalPathResolver, expectationValidator, sourceSelectionPrompt),
@@ -182,7 +187,8 @@ internal static class RouteRemoveOperationFactory
 
     private static RouteRemoveReferencePlanner CreateReferencePlanner(
         PhysicalPathResolver physicalPathResolver,
-        FileExpectationValidator expectationValidator)
+        FileExpectationValidator expectationValidator,
+        RouteMarkdownIgnoredPathEnumerator? ignoredPathEnumerator)
     {
         var markdownParser = new MarkdownDocumentParser();
         var destinationResolver = new SourceLinkDestinationResolver(
@@ -193,7 +199,7 @@ internal static class RouteRemoveOperationFactory
             StrictUtf8FileReader.ReadAsync,
             markdownParser.Parse);
         return new RouteRemoveReferencePlanner(
-            new RouteMarkdownCatalogueReader(physicalPathResolver),
+            new RouteMarkdownCatalogueReader(physicalPathResolver, ignoredPathEnumerator),
             markdownParser,
             destinationResolver,
             expectationValidator);

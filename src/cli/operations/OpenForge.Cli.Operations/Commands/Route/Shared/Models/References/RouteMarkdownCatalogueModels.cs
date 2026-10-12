@@ -140,7 +140,8 @@ internal sealed record RouteMarkdownCatalogue
     internal RouteMarkdownCatalogue(
         RouteMarkdownCatalogueCoverage coverage,
         IEnumerable<string> selectedPaths,
-        IEnumerable<RouteMarkdownCatalogueFinding> findings)
+        IEnumerable<RouteMarkdownCatalogueFinding> findings,
+        int ignoredPathCount = 0)
     {
         if (!Enum.IsDefined(coverage))
         {
@@ -152,6 +153,8 @@ internal sealed record RouteMarkdownCatalogue
 
         ArgumentNullException.ThrowIfNull(selectedPaths);
         ArgumentNullException.ThrowIfNull(findings);
+        ArgumentOutOfRangeException.ThrowIfNegative(ignoredPathCount);
+        IgnoredPathCount = ignoredPathCount;
         Coverage = coverage;
         SelectedPaths = selectedPaths
             .Select(path => SourceWorkspaceRelativePath.ValidateMarkdown(
@@ -173,6 +176,8 @@ internal sealed record RouteMarkdownCatalogue
     }
 
     internal RouteMarkdownCatalogueCoverage Coverage { get; }
+
+    internal int IgnoredPathCount { get; }
 
     internal ImmutableArray<string> SelectedPaths { get; }
 

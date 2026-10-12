@@ -57,14 +57,14 @@ public sealed class InstallIgnoreGitIntegrationTests
         foreach (var name in new[] { "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_CONFIG_PARAMETERS" }) start.Environment.Remove(name);
         foreach (var argument in arguments) start.ArgumentList.Add(argument);
         using var process = Process.Start(start) ?? throw new InvalidOperationException("Git did not start.");
-        var output = process.StandardOutput.ReadToEndAsync();
-        var error = process.StandardError.ReadToEndAsync();
-        if (input is not null) await process.StandardInput.WriteAsync(input);
-        process.StandardInput.Close();
+        var output = process.StandardOutput.ReadToEndAsync(CancellationToken.None);
+        var error = process.StandardError.ReadToEndAsync(CancellationToken.None);
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         deadline.CancelAfter(TimeSpan.FromSeconds(30));
         try
         {
+            if (input is not null) await process.StandardInput.WriteAsync(input);
+            process.StandardInput.Close();
             await process.WaitForExitAsync(deadline.Token);
             Assert.True(process.ExitCode is 0 or 1, await error);
             return (process.ExitCode, await output);
@@ -73,9 +73,18 @@ public sealed class InstallIgnoreGitIntegrationTests
         {
             if (!process.HasExited)
             {
-                process.Kill(entireProcessTree: true);
-                await process.WaitForExitAsync(CancellationToken.None);
+                try
+                {
+                    process.Kill(entireProcessTree: true);
+                }
+                catch (InvalidOperationException) when (process.HasExited)
+                {
+                    // Git exited between observation and cancellation cleanup.
+                }
             }
+
+            await process.WaitForExitAsync(CancellationToken.None);
+            await Task.WhenAll(output, error);
         }
     }
 }

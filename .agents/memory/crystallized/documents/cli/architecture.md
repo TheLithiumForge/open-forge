@@ -416,6 +416,12 @@ command or process dependency. The [CLI Dependency Policy](../../decisions/cli-d
 records the optional executable and its boundaries. The
 [Route Inspect contracts](contracts/route/inspect/_inspect.md) define the scan.
 
+The host also supplies optional Git ignored-path inventories to the shared Route
+Move and Route Remove reference catalogue. The shared host Git process runner
+owns launch, cancellation and cleanup. Operations owns exclusions, the complete
+`.agents` exception, fallback coverage and counts. Framework gains no process
+dependency. The local Move and Remove contracts define this scan.
+
 Presentation has its own checked direction. No `Presentation/**` file may import
 any `Framework.*` namespace. A command presentation under
 `Presentation/<Owner>/` may import `Commands.<Owner>.Models.*` only for its own

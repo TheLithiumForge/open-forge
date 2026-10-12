@@ -27,11 +27,13 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
     private const string UnrelatedLine = "Unrelated bytes stay exactly.\n";
     private static readonly byte[] UnrelatedBytes = [0, 255, 1, 128, 13, 10, 0];
     private readonly TemporaryWorkspace _temporary;
+    private readonly WorkspaceLockStoreRoot? _lockStoreRoot;
     private bool _disposed;
 
-    private RepairIntegrationWorkspace(TemporaryWorkspace temporary)
+    private RepairIntegrationWorkspace(TemporaryWorkspace temporary, WorkspaceLockStoreRoot? lockStoreRoot)
     {
         _temporary = temporary;
+        _lockStoreRoot = lockStoreRoot;
         Workspace = new CliWorkspace(
             lexicalRoot: temporary.Path,
             physicalRoot: temporary.Path,
@@ -74,7 +76,7 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
     {
         get
         {
-            var storeRoot = WorkspaceLockStoreRoot.ResolveForCurrentUser(
+            var storeRoot = _lockStoreRoot ?? WorkspaceLockStoreRoot.ResolveForCurrentUser(
                 Environment.SpecialFolderOption.None);
             return storeRoot is null
                 ? null
@@ -85,7 +87,8 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
     internal static RepairIntegrationWorkspace Create(
         string purpose,
         bool includeSafeExact = true,
-        bool includeGuided = true)
+        bool includeGuided = true,
+        WorkspaceLockStoreRoot? lockStoreRoot = null)
     {
         var temporary = TemporaryWorkspace.Create(purpose);
         try
@@ -124,7 +127,7 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
                     tags: ["Docs"],
                     body: "\n# Guided\n\nGuided target.\n"));
             temporary.WriteBytes(UnrelatedPath, UnrelatedBytes);
-            return new RepairIntegrationWorkspace(temporary);
+            return new RepairIntegrationWorkspace(temporary, lockStoreRoot);
         }
         catch
         {
@@ -219,7 +222,7 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
 
         try
         {
-            DeleteExactIfPresent(LockPath);
+            DeleteLockFileIfPresent(LockPath);
             DeleteRecoveryArtifacts();
         }
         finally
@@ -319,7 +322,7 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
         Directory.Delete(directory);
     }
 
-    private static void DeleteExactIfPresent(string? path)
+    private static void DeleteLockFileIfPresent(string? path)
     {
         if (path is null || !File.Exists(path))
         {
@@ -327,18 +330,5 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
         }
 
         File.Delete(path);
-        var parent = System.IO.Path.GetDirectoryName(path);
-        if (parent is null)
-        {
-            return;
-        }
-
-        while (Directory.Exists(parent)
-            && !Directory.EnumerateFileSystemEntries(parent).Any())
-        {
-            var next = System.IO.Path.GetDirectoryName(parent);
-            Directory.Delete(parent);
-            parent = next;
-        }
     }
 }

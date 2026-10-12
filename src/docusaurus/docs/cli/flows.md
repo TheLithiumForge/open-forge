@@ -141,6 +141,16 @@ Here `billing` is a Document you wrote, inside the Documents category from the P
 
 **Look for:** everything that links to the file before you move it. `route init` creates the new scope, which must exist before the move can be planned. The move plan shows which links and `Entries` it updates. Run the move again without `--dry-run` to apply it, then run `doctor` to confirm nothing still points at the old place. `route move` moves only files you created, not files installed by the Framework or an Extension. To delete a file instead, use `route remove`. It records the removal and turns links to the file into plain text.
 
+Both commands scan supported Markdown across the workspace for affected
+references. In a Git work tree, they skip paths Git ignores through standard
+exclude rules, including dependency and build folders such as `node_modules`,
+`bin`, `obj` and `artifacts`. Ignored Markdown is left unchanged. Tracked files
+remain covered, and the entire `.agents` tree is scanned, including Git-ignored
+private routes. Without a usable Git inventory, they keep the complete scan.
+`--detail debug` reports `gitIgnoredPaths=<count>` on stderr when paths were
+excluded. It counts skipped files and pruned directory roots, not their
+unvisited descendants. Root `remove` uses the same scan for routed subjects.
+
 **Why it helps:** moving files by hand breaks links without any warning, and an agent that follows a dead link finds nothing.
 
 ## Keep the workspace healthy

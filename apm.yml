@@ -2,7 +2,6 @@ name: open-forge
 version: 1.0.0
 description: Open Forge agent context and installation tooling
 targets:
-  - opencode
   - codex
 includes: auto
 dependencies:

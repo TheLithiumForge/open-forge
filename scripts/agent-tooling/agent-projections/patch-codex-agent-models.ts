@@ -54,7 +54,7 @@ Behavior:
        reasoning_effort
        modelReasoningEffort
        model_reasoning_effort
-  2. Strips an OpenCode-style "openai/" prefix from model names.
+  2. Strips a provider prefix from "openai/" model names.
   3. Optionally merges Codex-only overrides from .apm/codex-agent-models.json.
      JSON overrides win over .agent.md frontmatter.
   4. Patches model/model_reasoning_effort into generated .codex/agents/**/*.toml.

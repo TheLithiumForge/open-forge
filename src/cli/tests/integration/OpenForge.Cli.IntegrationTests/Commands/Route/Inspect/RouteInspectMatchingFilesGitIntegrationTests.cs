@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Composition.Shared.RouteInspectMatchingFiles;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
@@ -317,6 +318,60 @@ public sealed class RouteInspectMatchingFilesGitIntegrationTests
         }
     }
 
+    [Theory(DisplayName = "Repeated cancellation drains Git pipes and reaps each blocked child before returning")]
+    [InlineData(false), InlineData(true)]
+    public async Task RepeatedRunnerCancellation(bool delayed)
+    {
+        using var repository = new GitWorkspace();
+        const int attempts = 100;
+        for (var attempt = 0; attempt < attempts; attempt++)
+        {
+            TestContext.Current.CancellationToken.ThrowIfCancellationRequested();
+            using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+            Process? child = null;
+            var runner = new GitProcessRunner("git", start =>
+            {
+                repository.Configure(start);
+                start.RedirectStandardInput = true;
+            }, process =>
+            {
+                child = Process.GetProcessById(process.Id);
+                Assert.False(child.HasExited);
+                if (delayed)
+                {
+                    cancellation.CancelAfter(TimeSpan.FromMilliseconds(1));
+                }
+                else
+                {
+                    cancellation.Cancel();
+                }
+            });
+
+            try
+            {
+                // Keeping stdin open leaves both output pipe reads pending until cleanup stops Git.
+                var exception = await Assert.ThrowsAnyAsync<OperationCanceledException>(
+                    () => runner.RunAsync(repository.Root, ["hash-object", "--stdin"], cancellation.Token));
+                Assert.Equal(cancellation.Token, exception.CancellationToken);
+                Assert.NotNull(child);
+                Assert.True(child.HasExited);
+            }
+            finally
+            {
+                if (child is not null)
+                {
+                    if (!child.HasExited)
+                    {
+                        child.Kill(entireProcessTree: true);
+                        await child.WaitForExitAsync(CancellationToken.None);
+                    }
+
+                    child.Dispose();
+                }
+            }
+        }
+    }
+
     [Fact(DisplayName = "Git adapter hardens read-only process launch without changing repository configuration")]
     public async Task ProcessHardening()
     {
@@ -491,8 +546,8 @@ public sealed class RouteInspectMatchingFilesGitIntegrationTests
             }
 
             using var process = Process.Start(start) ?? throw new InvalidOperationException("Git did not start.");
-            var output = process.StandardOutput.ReadToEndAsync();
-            var error = process.StandardError.ReadToEndAsync();
+            var output = process.StandardOutput.ReadToEndAsync(CancellationToken.None);
+            var error = process.StandardError.ReadToEndAsync(CancellationToken.None);
             using var deadline = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
             deadline.CancelAfter(TimeSpan.FromSeconds(30));
             try
@@ -505,9 +560,18 @@ public sealed class RouteInspectMatchingFilesGitIntegrationTests
             {
                 if (!process.HasExited)
                 {
-                    process.Kill(entireProcessTree: true);
-                    await process.WaitForExitAsync(CancellationToken.None);
+                    try
+                    {
+                        process.Kill(entireProcessTree: true);
+                    }
+                    catch (InvalidOperationException) when (process.HasExited)
+                    {
+                        // Git exited between observation and cancellation cleanup.
+                    }
                 }
+
+                await process.WaitForExitAsync(CancellationToken.None);
+                await Task.WhenAll(output, error);
             }
         }
 

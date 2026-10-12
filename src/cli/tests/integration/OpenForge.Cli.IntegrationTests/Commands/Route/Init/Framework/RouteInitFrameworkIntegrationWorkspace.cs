@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Shared.Storage;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
 
@@ -84,10 +85,7 @@ internal sealed class RouteInitFrameworkIntegrationWorkspace : IDisposable
             if (result.Status != CliSemanticStatus.Complete || result.Findings.Count != 0)
             {
                 throw new InvalidOperationException(
-                    "The Framework integration fixture could not establish a trusted Install: "
-                    + string.Join(
-                        " | ",
-                        result.Findings.Select(finding => $"{finding.Code}: {finding.Cause}")));
+                    InstallFixtureDiagnostics.Failure(result));
             }
 
             return workspace;

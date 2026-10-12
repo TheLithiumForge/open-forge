@@ -107,6 +107,7 @@ internal sealed class RouteMoveReferencePlanner
             {
                 Coverage = RouteMoveCoverage.Complete,
                 ScannedSourceCount = input.Catalogue.SelectedPaths.Length,
+                IgnoredPathCount = input.Catalogue.IgnoredPathCount,
                 InspectedSourceCount = scan.Documents.Length,
                 OccurrenceCount = scan.OccurrenceCount,
                 Rewrites = scan.Rewrites

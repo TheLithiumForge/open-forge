@@ -827,7 +827,9 @@ internal static class RouteMoveReportSelector
             $"recovery={HumanState(RouteMoveWireVocabulary.Name(result.Recovery.State))}",
             $"verification={HumanState(RouteMoveWireVocabulary.Name(result.Verification))}",
             $"findings={result.Findings.Length.ToString(CultureInfo.InvariantCulture)}",
-        }.Concat(result.Findings.Select(finding =>
+        }.Concat(result.References.IgnoredPathCount > 0
+            ? [$"gitIgnoredPaths={result.References.IgnoredPathCount.ToString(CultureInfo.InvariantCulture)}"]
+            : Array.Empty<string>()).Concat(result.Findings.Select(finding =>
             $"finding={RouteMoveWireVocabulary.Name(finding.Code)}:target={finding.Target ?? "none"}:cause={finding.Cause}"))
         .ToArray();
 

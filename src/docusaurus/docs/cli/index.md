@@ -92,6 +92,16 @@ Check specific paths with `route inspect <source> --for <path>`, or preview the 
 
 Repeat `--tag <tag>` and `--apply-to <glob>` for multiple values. `--template <source>` copies starting content from a source tagged `Template`. `--clear-apply-to` removes a file condition and cannot be combined with `--apply-to`. On `route init`, metadata applies only to a missing generic final entrypoint, and cannot be combined with `--framework`. Installed files can't be moved with `route move`.
 
+Both commands scan supported Markdown across the workspace for affected
+references. In a Git work tree, they skip paths Git ignores through standard
+exclude rules, including dependency and build folders such as `node_modules`,
+`bin`, `obj` and `artifacts`. Ignored Markdown is left unchanged. Tracked files
+remain covered, and the entire `.agents` tree is scanned, including Git-ignored
+private routes. Without a usable Git inventory, they keep the complete scan.
+`--detail debug` reports `gitIgnoredPaths=<count>` on stderr when paths were
+excluded. It counts skipped files and pruned directory roots, not their
+unvisited descendants. Root `remove` uses the same scan for routed subjects.
+
 To add an omitted canonical Core category, preview `open-forge route init patterns --framework --dry-run`, then run the same command without `--dry-run`. `--framework` restores the selected category's packaged contents. See [growing your framework](../getting-started/grow-your-framework.md#add-an-omitted-category) for scope and preservation rules, or the [full reference](/guides/cli#initialize-a-route-chain).
 
 ### Check and repair

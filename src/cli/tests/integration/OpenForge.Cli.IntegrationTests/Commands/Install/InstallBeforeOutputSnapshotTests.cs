@@ -13,6 +13,7 @@ using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.Models;
 using OpenForge.Cli.TestSupport.Snapshots;
 
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
+using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Diagnostics;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -113,6 +114,9 @@ public sealed class InstallBeforeOutputSnapshotTests
         Assert.Equal(InstallResultRecoveryState.Retained, result.Facts.Recovery.State);
         var bundle = Assert.IsType<string>(result.Facts.Recovery.ResidualPath);
         Assert.True(File.Exists(bundle));
+        var failure = Assert.IsType<string>(InstallFixtureDiagnostics.Failure(result));
+        Assert.Contains(OccupiedPath, failure, StringComparison.Ordinal);
+        Assert.Contains(bundle, failure, StringComparison.Ordinal);
         Renderers.MatchDetails(result, "write-failed-partial", recoveryBundlePath: bundle);
     }
 

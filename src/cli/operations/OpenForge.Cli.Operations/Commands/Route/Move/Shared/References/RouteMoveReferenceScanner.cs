@@ -381,6 +381,7 @@ internal sealed partial class RouteMoveReferenceScanner(
             {
                 Coverage = ReadCoverage(status),
                 ScannedSourceCount = input.Catalogue.SelectedPaths.Length,
+                IgnoredPathCount = input.Catalogue.IgnoredPathCount,
                 InspectedSourceCount = 0,
                 OccurrenceCount = 0,
             },

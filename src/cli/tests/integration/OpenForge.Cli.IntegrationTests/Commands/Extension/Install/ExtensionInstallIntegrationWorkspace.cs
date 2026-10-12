@@ -66,8 +66,8 @@ internal sealed class ExtensionInstallIntegrationWorkspace : IDisposable
 
     internal async Task SeedFrameworkAsync()
     {
-        var run = await RunAsync(["install", "--automatic"]);
-        Assert.Equal(0, run.ExitCode);
+        var run = await RunAsync(["install", "--automatic", "--format", "json", "--detail", "full"]);
+        Assert.True(run.ExitCode == 0, $"{run.StandardOutput}\n{run.StandardError}");
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Equal(string.Empty, run.StandardError);
         Assert.True(Directory.Exists(Combine(".agents")));

@@ -3,42 +3,15 @@ name: csharp-conformance
 description: Reviews C# source and tests for the current scoped C# design and style rules without assessing behavior contracts or evidence sufficiency.
 model: openai/gpt-5.6-luna
 reasoningEffort: max
-mode: subagent
-color: info
-permission:
-  "*": deny
-  read: deny
-  glob: deny
-  grep: deny
-  list: deny
-  edit: deny
-  bash: deny
-  inspect-git-objects: allow
-  lsp: deny
-  task: deny
-  question: deny
-  websearch: deny
-  webfetch: deny
-  external_directory: deny
-  doom_loop: deny
 ---
 
 # C# Conformance Topic
 
 This is an internal read-only topic reviewer. Report only to the Review Mastermind. Edit nothing, spawn nothing, and do not synthesize other topics.
 
-## Immutable Git Object Tool
+## Immutable Review Content
 
-On OpenCode, use only the named `inspect-git-objects` custom tool. Every request carries `operation` and `object`; `tree-path` also carries `path`, while two-object operations carry `otherObject`. The fixed operations are:
-
-- `object-type <object>` and `object-content <object>`;
-- `tree-list <tree>` and `tree-path <tree> <path>`;
-- `changed-paths <ancestor> <candidate>`, `diff <ancestor> <candidate>`, and `diff-check <ancestor> <candidate>`; and
-- `is-ancestor <ancestor-commit> <candidate-commit>`.
-
-Pass complete 40- or 64-character object IDs, never refs, selectors, expressions, ranges, abbreviations, options, unknown fields, or output targets. Pass tree paths as explicit nonempty repository-relative POSIX paths. The tool reads only bounded local Git objects and returns Git's exact status with its bounded output.
-
-When the host does not expose this named tool, including a non-identical Codex projection, inspect only bounded immutable content supplied in the intake packet. Return `TOPIC_GAP` when required immutable content is absent. Never fall back to Bash, native filesystem tools, language-server state, or another command surface.
+Inspect only bounded immutable content supplied in the intake packet. Return `TOPIC_GAP` when required immutable content is absent. Never fall back to Bash, native filesystem tools, language-server state, or another command surface.
 
 ## Start
 

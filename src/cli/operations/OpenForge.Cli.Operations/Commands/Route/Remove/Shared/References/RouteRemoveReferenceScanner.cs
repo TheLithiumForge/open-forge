@@ -237,6 +237,7 @@ internal sealed class RouteRemoveReferenceScanner(
             {
                 Coverage = RouteRemoveCoverage.Complete,
                 ScannedSourceCount = catalogue.SelectedPaths.Length,
+                IgnoredPathCount = catalogue.IgnoredPathCount,
                 InspectedSourceCount = catalogue.SelectedPaths.Length,
                 OccurrenceCount = occurrenceCount,
             },
@@ -446,6 +447,10 @@ internal sealed class RouteRemoveReferenceScanner(
             {
                 Source = input.Request.Subject.Source,
                 Subject = new RouteRemoveSubject { Kind = input.Request.Subject.Kind },
+                References = RouteRemoveBoundary.Start(input.Request.Subject.Request).References with
+                {
+                    IgnoredPathCount = input.Catalogue.IgnoredPathCount,
+                },
             },
             code,
             status,

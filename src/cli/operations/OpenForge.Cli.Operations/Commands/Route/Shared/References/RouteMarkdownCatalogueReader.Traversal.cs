@@ -72,7 +72,12 @@ internal sealed partial class RouteMarkdownCatalogueReader
                 var canonicalPath = directory.CanonicalPath == "."
                     ? name
                     : $"{directory.CanonicalPath}/{name}";
-                if (state.IsExcluded(canonicalPath))
+                if (directory.CanonicalPath == "." && ReadState.IsAgentsPath(canonicalPath))
+                {
+                    canonicalPath = SourceLogicalPath.AgentsRoot;
+                }
+
+                if (state.IsExcluded(canonicalPath) || state.IsGitIgnored(canonicalPath))
                 {
                     continue;
                 }

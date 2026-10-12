@@ -685,6 +685,16 @@ files, directories, packages and Libraries.
 open-forge route remove memory/crystallized/documents/project-alpha/service-architecture --dry-run
 ```
 
+Both commands scan supported Markdown across the workspace for affected
+references. In a Git work tree, they skip paths Git ignores through standard
+exclude rules, including dependency and build folders such as `node_modules`,
+`bin`, `obj` and `artifacts`. Ignored Markdown is left unchanged. Tracked files
+remain covered, and the entire `.agents` tree is scanned, including Git-ignored
+private routes. Without a usable Git inventory, they keep the complete scan.
+`--detail debug` reports `gitIgnoredPaths=<count>` on stderr when paths were
+excluded. It counts skipped files and pruned directory roots, not their
+unvisited descendants. Root `remove` uses the same scan for routed subjects.
+
 Both commands can be blocked by ambiguous routes, changed targets, unsafe
 generated regions or incomplete evidence. `route move` still refuses managed
 content. Read the plan and resolve the named boundary before applying it.

@@ -91,6 +91,8 @@ internal sealed record RouteRemoveReferences
 
     public required int ScannedSourceCount { get; init; }
 
+    public int IgnoredPathCount { get; init; }
+
     public required int InspectedSourceCount { get; init; }
 
     public required int OccurrenceCount { get; init; }

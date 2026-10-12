@@ -13,7 +13,9 @@ internal sealed class PublishedLockHolder : IDisposable
     private const string MutationPathVariable = "OPEN_FORGE_F20_MUTATION_PATH";
     private const string LockedMarker = "LOCKED";
     private const string ReleasedMarker = "RELEASED";
-    private static readonly TimeSpan HandshakeTimeout = TimeSpan.FromSeconds(10);
+    // Wait for the child's protocol markers. Saturated-CPU runs approached the
+    // former ten-second startup limit before the fixture could acquire its lock.
+    private static readonly TimeSpan HandshakeTimeout = TimeSpan.FromSeconds(60);
     private const string HolderScript = """
         $ErrorActionPreference = 'Stop'
         $lockPath = [Environment]::GetEnvironmentVariable('OPEN_FORGE_F20_LOCK_PATH')
@@ -118,9 +120,12 @@ internal sealed class PublishedLockHolder : IDisposable
         var process = Process.Start(startInfo)
             ?? throw new InvalidOperationException("Unable to start the owned Windows PowerShell lock holder.");
         var holder = new PublishedLockHolder(process);
+        var started = Stopwatch.GetTimestamp();
         try
         {
             await holder.WaitForLockedAsync().ConfigureAwait(false);
+            TestContext.Current.TestOutputHelper?.WriteLine(
+                $"Lock holder LOCKED: {Stopwatch.GetElapsedTime(started).TotalMilliseconds:F1} ms");
             return holder;
         }
         catch (Exception startFailure)
@@ -297,7 +302,7 @@ internal sealed class PublishedLockHolder : IDisposable
 
     private async Task WaitForLockedAsync()
     {
-        await _locked.Task.WaitAsync(HandshakeTimeout).ConfigureAwait(false);
+        await _locked.Task.WaitAsync(HandshakeTimeout, TestContext.Current.CancellationToken).ConfigureAwait(false);
         if (_process.HasExited)
         {
             throw new InvalidOperationException(
