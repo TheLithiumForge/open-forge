@@ -24,13 +24,13 @@ ROUTES with guidance present and guidance/team absent.
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | open-forge route create guidance/team/new-topic/notes --description "Team topic notes" --tag=Guidance | [C14-09](../scenarios/commands/c14-route-create.md#c14-09) | Target: create the missing intermediate scope entrypoints and new leaf under the recognized guidance root, then list the leaf. |
-| 2 | open-forge route update guidance/team/new-topic/notes --tag=Guidance --tag=Team | [C15-02](../scenarios/commands/c15-route-update.md#c15-02) | The supplied tag list replaces the old list in order. |
-| 3 | open-forge route inspect guidance/team/new-topic/notes | [C12-02](../scenarios/commands/c12-route-inspect.md#c12-02) | The source has the intended inherited scope and identity. |
-| 4 | open-forge context guidance/team/new-topic/notes | [C08-02](../scenarios/commands/c08-context.md#c08-02) | The selected context respects the new chain. |
-| 5 | open-forge route update guidance/team/new-topic/notes --tag=Guidance --tag=Team | [C15-06](../scenarios/commands/c15-route-update.md#c15-06) | The identical patch is a no-op. |
+| Step | Action                                                                                                | Scenario                                                    | State passed forward                                                                                                           |
+| ---: | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+|    1 | open-forge route create guidance/team/new-topic/notes --description "Team topic notes" --tag=Guidance | [C14-09](../scenarios/commands/c14-route-create.md#c14-09)  | Target: create the missing intermediate scope entrypoints and new leaf under the recognized guidance root, then list the leaf. |
+|    2 | open-forge route update guidance/team/new-topic/notes --tag=Guidance --tag=Team                       | [C15-02](../scenarios/commands/c15-route-update.md#c15-02)  | The supplied tag list replaces the old list in order.                                                                          |
+|    3 | open-forge route inspect guidance/team/new-topic/notes                                                | [C12-02](../scenarios/commands/c12-route-inspect.md#c12-02) | The source has the intended inherited scope and identity.                                                                      |
+|    4 | open-forge context guidance/team/new-topic/notes                                                      | [C08-02](../scenarios/commands/c08-context.md#c08-02)       | The selected context respects the new chain.                                                                                   |
+|    5 | open-forge route update guidance/team/new-topic/notes --tag=Guidance --tag=Team                       | [C15-06](../scenarios/commands/c15-route-update.md#c15-06)  | The identical patch is a no-op.                                                                                                |
 
 ## Alternatives and recovery
 

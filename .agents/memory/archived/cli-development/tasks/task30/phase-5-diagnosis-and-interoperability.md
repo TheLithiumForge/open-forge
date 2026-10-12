@@ -41,13 +41,13 @@ point, not a specification.
 
 ## Execution slices
 
-| Order | Slice | Depends on | Changes output |
-| ----- | ----- | ---------- | -------------- |
-| 1 | [50 — Command ownership of diagnosis](50-diagnosis-ownership.md) | none | no |
-| 2 | [51 — Truthful blocking findings](51-truthful-findings.md) | 50 | yes |
-| 2 | [52 — Interoperability inputs](52-interoperability-inputs.md) | none | yes |
-| 2 | [53 — One logical path normalizer](53-one-path-normalizer.md) | none | possibly |
-| 3 | [54 — Snapshot consolidation and pruning](54-snapshot-consolidation.md) | 51, 52, 53 | no |
+| Order | Slice                                                                   | Depends on | Changes output |
+| ----- | ----------------------------------------------------------------------- | ---------- | -------------- |
+| 1     | [50 — Command ownership of diagnosis](50-diagnosis-ownership.md)        | none       | no             |
+| 2     | [51 — Truthful blocking findings](51-truthful-findings.md)              | 50         | yes            |
+| 2     | [52 — Interoperability inputs](52-interoperability-inputs.md)           | none       | yes            |
+| 2     | [53 — One logical path normalizer](53-one-path-normalizer.md)           | none       | possibly       |
+| 3     | [54 — Snapshot consolidation and pruning](54-snapshot-consolidation.md) | 51, 52, 53 | no             |
 
 **Parallelism.** 50, 52 and 53 all start together — they share no source folder,
 and only 51 depends on the ownership table. 51 follows 50, because that table

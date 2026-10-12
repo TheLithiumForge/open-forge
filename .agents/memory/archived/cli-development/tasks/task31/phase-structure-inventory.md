@@ -46,14 +46,14 @@ Task 30 G4; Task 31 M1; Task 31 M3; Task 31 M4
 ## Preconditions
 
 - [x] Task 30 G4 is at the branch point: all 28 commands use the native
-  `Presentation/<Command>/` report shape, and `Presentation/Legacy/` contains
-  only the three composer-bound help-section files.
+      `Presentation/<Command>/` report shape, and `Presentation/Legacy/` contains
+      only the three composer-bound help-section files.
 - [x] No source files were moved, renamed, deleted, or edited for this
-  inventory.
+      inventory.
 - [x] The two behavior-fix lanes named by the task are not included in this
-  branch-point checkout. Rows that mention `Commands/Library/**` or
-  `Commands/Route/Remove/**` are explicitly marked for re-check after those
-  lanes merge.
+      branch-point checkout. Rows that mention `Commands/Library/**` or
+      `Commands/Route/Remove/**` are explicitly marked for re-check after those
+      lanes merge.
 
 ## Scan and counting rule
 
@@ -92,12 +92,12 @@ $oneFileLeafFolders.Count
 Every one of the 294 folders is listed below, either as an individual decision
 or as an explicit member of a group with one shared reason.
 
-| Disposition | Folders |
-| --- | ---: |
-| Keep (retained) | 289 |
-| Collapse into `Commands/Extension/List/Models` (applied) | 3 |
-| Decision gates (resolved and applied) | 2 |
-| Total | 294 |
+| Disposition                                              | Folders |
+| -------------------------------------------------------- | ------: |
+| Keep (retained)                                          |     289 |
+| Collapse into `Commands/Extension/List/Models` (applied) |       3 |
+| Decision gates (resolved and applied)                    |       2 |
+| Total                                                    |     294 |
 
 The map names the branch-point file in every folder and records the resulting
 disposition. `Keep` means that the current owner, layer, namespace, project
@@ -619,29 +619,29 @@ already has one coherent owner; splitting by method size, detail level, or
 serialization format would either hide invariants or create a generic utility
 bag. No source split is proposed for any of them.
 
-| File | Lines | Seam verdict and reason |
-| --- | ---: | --- |
-| `Commands/Extension/Update/Shared/Planning/ExtensionUpdatePlanner.cs` | 849 | No. One command plan owner answers what constitutes a valid extension-update plan; it already composes topology and reconciliation collaborators. |
-| `Presentation/Library/Attach/Shared/Selection/LibraryAttachReportSelector.cs` | 830 | No. One G4 selector answers which Attach facts are exposed at the selected detail/filter; helper groups are the same presentation question. Recheck after the Library behavior lane merges. |
-| `Presentation/Route/Move/Shared/Selection/RouteMoveReportSelector.cs` | 825 | No. One G4 selector owns Move report selection; splitting it risks changing destination-sensitive output. Keep local and recheck after the Route lane merges. |
-| `Presentation/Extension/Install/Shared/Selection/ExtensionInstallReportSelector.cs` | 810 | No. One command selector owns Install report selection and its accepted detail behavior. |
-| `Commands/Repair/Shared/Application/RepairLibraryRecoveryApplication.cs` | 809 | No. One application boundary owns preflight, prepare/apply, verify, and completion; splitting would hide recovery and lease invariants. |
-| `Presentation/Extension/Update/Shared/Selection/ExtensionUpdateReportSelector.cs` | 759 | No. One G4 selector answers the Extension Update presentation question; detail helpers are not new owners. |
-| `Presentation/Repair/Shared/Selection/RepairReportSelector.cs` | 724 | No. One selector owns Repair's presentation projection, including its findings and effects. |
-| `Presentation/Doctor/Shared/Wording/DoctorWording.cs` | 700 | No. One wording vocabulary owns the command's many status/finding phrases; it is large because Doctor's subject is large. |
-| `Presentation/Library/Sync/Shared/Selection/LibrarySyncReportSelector.cs` | 684 | No. One G4 selector owns Sync report selection. Recheck after the Library behavior lane merges. |
-| `Presentation/Status/Shared/Selection/StatusReportSelector.cs` | 671 | No. One selector answers which Status observations are rendered; splitting by severity would duplicate that answer. |
-| `Presentation/Update/Shared/Selection/UpdateReportSelector.cs` | 666 | No. One selector owns Update's detail/filter projection and public report shape. |
-| `Presentation/Library/Detach/Shared/Selection/LibraryDetachReportSelector.cs` | 662 | No. One G4 selector owns Detach report selection. Recheck after the Library behavior lane merges. |
-| `Framework/Sources/References/SourceLinkDestinationResolver.cs` | 636 | No. One Framework capability resolves source-link destinations, including URI, fragment, percent, path, and safety rules; parser fragments would be internal helpers, not distinct owners. |
-| `Presentation/Install/Shared/Selection/InstallReportSelector.cs` | 624 | No. One selector owns Install's report projection and accepted output choices. |
-| `Commands/Update/Shared/Planning/UpdateIntendedStateBuilder.cs` | 620 | No. One planning owner answers intended-versus-current target state, fingerprints, generated boundaries, and retirement. |
-| `Presentation/Route/Remove/Shared/Selection/RouteRemoveReportSelector.cs` | 617 | No. One G4 selector owns Remove report selection; do not lift its finding/result formation. Recheck after the Route lane merges. |
-| `Commands/Library/Shared/Completion/LibraryMutationCompletionProjection.cs` | 615 | No. One shared Library completion projection owns the accepted mutation-to-report projection; lifecycle and permission internals remain Task 30 work. Recheck after the Library behavior lane merges. |
-| `Commands/Extension/Update/Shared/Planning/ExtensionUpdateReconciler.cs` | 615 | No. One reconciliation algorithm owns package-path, retired-path, expected-state, and fingerprint invariants; its staging types are not new public seams. |
-| `Commands/Extension/Update/Shared/Application/ExtensionUpdateApplicationOperation.cs` | 610 | No. One application stage owns lock, revalidation, prepare/apply, verify, and recovery. |
-| `Presentation/Status/Shared/Wording/StatusWording.cs` | 605 | No. One Status wording vocabulary owns its command phrases and delegates typed value states to the accepted shared report vocabulary. |
-| `Commands/Install/Shared/Operation/InstallApplicationOperation.cs` | 603 | No. One Install application protocol owns preconditions, lease, effects, verification, and outcome. |
+| File                                                                                  | Lines | Seam verdict and reason                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------- | ----: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Commands/Extension/Update/Shared/Planning/ExtensionUpdatePlanner.cs`                 |   849 | No. One command plan owner answers what constitutes a valid extension-update plan; it already composes topology and reconciliation collaborators.                                                     |
+| `Presentation/Library/Attach/Shared/Selection/LibraryAttachReportSelector.cs`         |   830 | No. One G4 selector answers which Attach facts are exposed at the selected detail/filter; helper groups are the same presentation question. Recheck after the Library behavior lane merges.           |
+| `Presentation/Route/Move/Shared/Selection/RouteMoveReportSelector.cs`                 |   825 | No. One G4 selector owns Move report selection; splitting it risks changing destination-sensitive output. Keep local and recheck after the Route lane merges.                                         |
+| `Presentation/Extension/Install/Shared/Selection/ExtensionInstallReportSelector.cs`   |   810 | No. One command selector owns Install report selection and its accepted detail behavior.                                                                                                              |
+| `Commands/Repair/Shared/Application/RepairLibraryRecoveryApplication.cs`              |   809 | No. One application boundary owns preflight, prepare/apply, verify, and completion; splitting would hide recovery and lease invariants.                                                               |
+| `Presentation/Extension/Update/Shared/Selection/ExtensionUpdateReportSelector.cs`     |   759 | No. One G4 selector answers the Extension Update presentation question; detail helpers are not new owners.                                                                                            |
+| `Presentation/Repair/Shared/Selection/RepairReportSelector.cs`                        |   724 | No. One selector owns Repair's presentation projection, including its findings and effects.                                                                                                           |
+| `Presentation/Doctor/Shared/Wording/DoctorWording.cs`                                 |   700 | No. One wording vocabulary owns the command's many status/finding phrases; it is large because Doctor's subject is large.                                                                             |
+| `Presentation/Library/Sync/Shared/Selection/LibrarySyncReportSelector.cs`             |   684 | No. One G4 selector owns Sync report selection. Recheck after the Library behavior lane merges.                                                                                                       |
+| `Presentation/Status/Shared/Selection/StatusReportSelector.cs`                        |   671 | No. One selector answers which Status observations are rendered; splitting by severity would duplicate that answer.                                                                                   |
+| `Presentation/Update/Shared/Selection/UpdateReportSelector.cs`                        |   666 | No. One selector owns Update's detail/filter projection and public report shape.                                                                                                                      |
+| `Presentation/Library/Detach/Shared/Selection/LibraryDetachReportSelector.cs`         |   662 | No. One G4 selector owns Detach report selection. Recheck after the Library behavior lane merges.                                                                                                     |
+| `Framework/Sources/References/SourceLinkDestinationResolver.cs`                       |   636 | No. One Framework capability resolves source-link destinations, including URI, fragment, percent, path, and safety rules; parser fragments would be internal helpers, not distinct owners.            |
+| `Presentation/Install/Shared/Selection/InstallReportSelector.cs`                      |   624 | No. One selector owns Install's report projection and accepted output choices.                                                                                                                        |
+| `Commands/Update/Shared/Planning/UpdateIntendedStateBuilder.cs`                       |   620 | No. One planning owner answers intended-versus-current target state, fingerprints, generated boundaries, and retirement.                                                                              |
+| `Presentation/Route/Remove/Shared/Selection/RouteRemoveReportSelector.cs`             |   617 | No. One G4 selector owns Remove report selection; do not lift its finding/result formation. Recheck after the Route lane merges.                                                                      |
+| `Commands/Library/Shared/Completion/LibraryMutationCompletionProjection.cs`           |   615 | No. One shared Library completion projection owns the accepted mutation-to-report projection; lifecycle and permission internals remain Task 30 work. Recheck after the Library behavior lane merges. |
+| `Commands/Extension/Update/Shared/Planning/ExtensionUpdateReconciler.cs`              |   615 | No. One reconciliation algorithm owns package-path, retired-path, expected-state, and fingerprint invariants; its staging types are not new public seams.                                             |
+| `Commands/Extension/Update/Shared/Application/ExtensionUpdateApplicationOperation.cs` |   610 | No. One application stage owns lock, revalidation, prepare/apply, verify, and recovery.                                                                                                               |
+| `Presentation/Status/Shared/Wording/StatusWording.cs`                                 |   605 | No. One Status wording vocabulary owns its command phrases and delegates typed value states to the accepted shared report vocabulary.                                                                 |
+| `Commands/Install/Shared/Operation/InstallApplicationOperation.cs`                    |   603 | No. One Install application protocol owns preconditions, lease, effects, verification, and outcome.                                                                                                   |
 
 The other large files below 600 lines were not proposed as seams: they remain
 covered by their one-owner folders and would need the same distinct-question
@@ -721,24 +721,24 @@ reason to stay where they are.
 ## Acceptance
 
 - [x] The counting rule is stated, the branch-point number is reported, and the
-  difference from 176 is explained.
+      difference from 176 is explained.
 - [x] Every one-file leaf folder is listed exactly once in the disposition map:
-  289 Keep, 3 Collapse (applied), and 2 former decision gates (resolved and
-  applied), for 294 total.
+      289 Keep, 3 Collapse (applied), and 2 former decision gates (resolved and
+      applied), for 294 total.
 - [x] Every proposed oversized split has an explicit seam verdict; only
-  `CleanupResultFacts.cs` has a bounded semantic split proposal, and all other
-  files examined are explicitly No.
+      `CleanupResultFacts.cs` has a bounded semantic split proposal, and all other
+      files examined are explicitly No.
 - [x] Ownership, layer, namespace, project-reference, generated-code, and test
-  impact are recorded for the proposed Extension List move and each decision
-  gate.
+      impact are recorded for the proposed Extension List move and each decision
+      gate.
 - [x] Route Move/Remove formation, lifecycle/permission internals, and public
-  finding/JSON/exit/stream behavior are explicitly excluded.
+      finding/JSON/exit/stream behavior are explicitly excluded.
 - [x] Independent application batches and the layer-boundary tests guarding
-  them are specified.
+      them are specified.
 - [x] The approved M5 moves, deletions, namespace updates, consumer updates,
-  and snapshot-directory renames were applied under `src/cli/**` without
-  changing public finding codes, JSON names, exit codes, streams, or output
-  strings.
+      and snapshot-directory renames were applied under `src/cli/**` without
+      changing public finding codes, JSON names, exit codes, streams, or output
+      strings.
 
 ## Observations
 
@@ -814,7 +814,7 @@ reason to stay where they are.
 - **Build environment:** the prescribed build initially failed because NuGet
   could not read the redirected per-user config under `artifacts/`. An
   explicit `dotnet restore OpenForge.Cli.slnx --configfile NuGet.Config
-  --ignore-failed-sources -p:NuGetAudit=false`, followed by the same Release
+--ignore-failed-sources -p:NuGetAudit=false`, followed by the same Release
   build with `--no-restore -m:1 -p:UseSharedCompilation=false`, passed with 0
   warnings and 0 errors. Scratch stayed under `artifacts/`.
 - **Whitespace:** verification reports exactly the baseline five pre-existing

@@ -68,9 +68,9 @@ Each line contains:
 When the source declares `applyTo`, append its declared patterns after the tags
 on the same physical line:
 
-````md
+```md
 - [C# rules](csharp/_csharp.md) - #Directive #KeepInMind - applies to `**/*.cs`, `**/*.csproj`
-````
+```
 
 Each code span holds one atomic pattern, separated by a comma and a space.
 Braces and character classes appear unexpanded. A string expression from

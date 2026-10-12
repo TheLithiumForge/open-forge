@@ -38,8 +38,6 @@ open-forge install --automatic
 
 Install the Framework, identify created host sections and summarize the managed content with truthful counts.
 
-
-
 ### Verification
 
 Compare the full pre/post tree, including hidden files and root directories; use COUNT rules, not the historical 21/20 literals.
@@ -65,8 +63,6 @@ open-forge install --dry-run
 ### Expected result
 
 Show what would be installed and finish with No files were changed.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge install --automatic
 
 Say Open Forge is already installed and current, with nothing to do.
 
-
-
 ### Verification
 
 Hash all files and inventory external recovery; a repeated install must not churn navigation or receipts.
@@ -122,14 +116,9 @@ open-forge install --automatic
 
 Keep the authored instructions and describe the actual host-file treatment. Do not report the whole file as newly created.
 
-
-
 ### Verification
 
 Compare authored bytes and any inserted bounded region separately; count files below .agents independently of host files and the root directory.
-
-
-
 
 ## C03-05
 
@@ -155,8 +144,6 @@ open-forge install --automatic
 ### Expected result
 
 Name the exact conflict before any installation effects and explain the available deliberate choice.
-
-
 
 ### Verification
 
@@ -184,8 +171,6 @@ open-forge install --force --automatic
 
 Replace only eligible conflicts and report which existing files were replaced.
 
-
-
 ### Verification
 
 Inspect before/after bytes and recovery evidence; force must not bypass reserved paths or another owner's claims.
@@ -211,8 +196,6 @@ open-forge install --automatic
 ### Expected result
 
 Direct the user to update instead of pretending this is a fresh install conflict.
-
-
 
 ### Verification
 
@@ -240,8 +223,6 @@ open-forge install
 
 Explain that confirmation is required without waiting forever or printing an unanswered terminal prompt.
 
-
-
 ### Verification
 
 Capture stdin mode, stderr, exit and unchanged filesystem; compare against the valid --automatic counterpart.
@@ -267,8 +248,6 @@ open-forge install --automatic
 ### Expected result
 
 Explain the required recovery limitation and make no target changes. Do not substitute a corrupt unrelated old log.
-
-
 
 ### Verification
 
@@ -298,8 +277,6 @@ open-forge install --automatic
 
 State that install stopped, distinguish completed and unstarted effects, and name available recovery truthfully.
 
-
-
 ### Verification
 
 Compare receipts with actual completed effects; never use a successful-install headline or claim nothing changed.
@@ -328,8 +305,6 @@ open-forge install
 
 Say installation was cancelled and nothing was changed.
 
-
-
 ### Verification
 
 Verify no target, settings or recovery effect; mid-write cancellation is separately required by X09.
@@ -357,8 +332,6 @@ open-forge install --not-an-option
 ### Expected result
 
 Reject the argument without attempting installation.
-
-
 
 ### Verification
 
@@ -393,8 +366,6 @@ open-forge install --automatic
 ### Expected result
 
 Explain the exact unsafe boundary and stop before all target effects.
-
-
 
 ### Verification
 

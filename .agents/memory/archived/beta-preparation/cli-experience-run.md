@@ -22,25 +22,25 @@ Inventory comparisons and content inspection take precedence over provisional ha
 
 ## Confirmed Gaps
 
-| Flow / case | Observed disagreement |
-| --- | --- |
-| F03 / X02 | A plain Markdown note causes index to report incomplete work and change no navigation. The authored note survives, but enrichment is required before the journey works. |
-| F03, F08, F21 / X05, C02-03 | Doctor can describe an unfinished Framework update after ordinary note or link changes. Default output hides warning subjects behind a request for `--detail standard`. |
-| F05 / C14-09 | Create-first nested guidance stops on the absent parent entrypoint. Explicit init and retry work, but the desired direct path does not. |
-| F06 / X11 | With an empty uninstalled child recorded as cwd, default status reports installed/current. Explicit workspace and missing-path selection work. The captured inventories omit A/B, so their preservation is not proved. |
-| F09 / C16-04, C16-02 | The supplied shorthand destination is rejected: move requires a Markdown file path beneath `.agents`. This is an invocation/interface gap, not evidence of corrupted links. |
-| F10 / C17-05 | The first removal preserves surrounding authored text; repeating the already completed removal returns invalid input instead of a harmless no-op. |
-| F11 / C22-05, C23-04 | Installation and update work, but retained recovery data prevents the subsequent prune/remove sequence from completing. |
-| F11 / C19-03, C22-03 | The report counts two dependencies for a fixture declaring only `base`; update describes an untouched installed file as user-changed, and preview uses completed tense. |
-| F09 / C16-04 | The corrected physical-path preview says entries and links were updated despite no changes, and calls an outgoing-link rewrite an incoming old-path link. The actual corrected move preserves the intended links and labels. |
-| F12 / C19-03 | Inspect reports one dependency for a manifest and installed record with an empty dependency list. Installation itself succeeds. |
-| F13 / C21-09, C21-14, C21-10, X15 | Protection works, but blocked/preview output claims navigation or backup effects that the independent inventory does not show. Suggested follow-up commands omit the custom source. |
-| F15 / X12 | A malformed file in an unrelated routed branch blocks the selected valid package install; no selected effect occurs. |
-| F17 / C27-07 | A replacement user file blocks the whole sync, including an independently addable new member. Backing up the replacement lets the new member and restored link synchronize. |
-| F17, F18 / C28-05, C28-06 | Detach stops for an already absent link or an ordinary replacement file instead of removing the remaining exact link and releasing registration. The replacement and source bytes are preserved. |
-| F18 / X17 | Detachment after source disappearance succeeds, but the report says source files were kept even though the source folder was already absent. |
-| F22 / C14-07 | Creating an unambiguous destination without description/tags is rejected. The explicit-metadata recovery succeeds. |
-| F26 / native Skill diagnosis | Planning and its Workflow dependency install, but Doctor treats the native `use-workflow` Skill and its support resources as missing metadata or unreachable ordinary routes. All actual local package link targets exist. |
+| Flow / case                       | Observed disagreement                                                                                                                                                                                                        |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F03 / X02                         | A plain Markdown note causes index to report incomplete work and change no navigation. The authored note survives, but enrichment is required before the journey works.                                                      |
+| F03, F08, F21 / X05, C02-03       | Doctor can describe an unfinished Framework update after ordinary note or link changes. Default output hides warning subjects behind a request for `--detail standard`.                                                      |
+| F05 / C14-09                      | Create-first nested guidance stops on the absent parent entrypoint. Explicit init and retry work, but the desired direct path does not.                                                                                      |
+| F06 / X11                         | With an empty uninstalled child recorded as cwd, default status reports installed/current. Explicit workspace and missing-path selection work. The captured inventories omit A/B, so their preservation is not proved.       |
+| F09 / C16-04, C16-02              | The supplied shorthand destination is rejected: move requires a Markdown file path beneath `.agents`. This is an invocation/interface gap, not evidence of corrupted links.                                                  |
+| F10 / C17-05                      | The first removal preserves surrounding authored text; repeating the already completed removal returns invalid input instead of a harmless no-op.                                                                            |
+| F11 / C22-05, C23-04              | Installation and update work, but retained recovery data prevents the subsequent prune/remove sequence from completing.                                                                                                      |
+| F11 / C19-03, C22-03              | The report counts two dependencies for a fixture declaring only `base`; update describes an untouched installed file as user-changed, and preview uses completed tense.                                                      |
+| F09 / C16-04                      | The corrected physical-path preview says entries and links were updated despite no changes, and calls an outgoing-link rewrite an incoming old-path link. The actual corrected move preserves the intended links and labels. |
+| F12 / C19-03                      | Inspect reports one dependency for a manifest and installed record with an empty dependency list. Installation itself succeeds.                                                                                              |
+| F13 / C21-09, C21-14, C21-10, X15 | Protection works, but blocked/preview output claims navigation or backup effects that the independent inventory does not show. Suggested follow-up commands omit the custom source.                                          |
+| F15 / X12                         | A malformed file in an unrelated routed branch blocks the selected valid package install; no selected effect occurs.                                                                                                         |
+| F17 / C27-07                      | A replacement user file blocks the whole sync, including an independently addable new member. Backing up the replacement lets the new member and restored link synchronize.                                                  |
+| F17, F18 / C28-05, C28-06         | Detach stops for an already absent link or an ordinary replacement file instead of removing the remaining exact link and releasing registration. The replacement and source bytes are preserved.                             |
+| F18 / X17                         | Detachment after source disappearance succeeds, but the report says source files were kept even though the source folder was already absent.                                                                                 |
+| F22 / C14-07                      | Creating an unambiguous destination without description/tags is rejected. The explicit-metadata recovery succeeds.                                                                                                           |
+| F26 / native Skill diagnosis      | Planning and its Workflow dependency install, but Doctor treats the native `use-workflow` Skill and its support resources as missing metadata or unreachable ordinary routes. All actual local package link targets exist.   |
 
 These are observations against the reviewed targets. Current contracts and desired UX must be reconciled before changing implementation or approving exact output snapshots. Preserve the successful effects and file-protection evidence while fixing each failed boundary.
 
@@ -77,34 +77,34 @@ The fresh main run is .temp/astra-open-forge-2026-09-19/flow-runs/evidence-20260
 
 Raw runner verdicts are provisional and do not replace the audited observations below. In particular, its unavailable F19 is supplemented by the real controlled fault, and its partial labels do not conceal the identified failures. Routine successful state comparisons were checked independently, rather than inferred from the absence of a failure entry.
 
-| Flow | Audited observation |
-| --- | --- |
-| F01 | Fresh install, preview, readiness and repeat preserve the README and expected state. Count wording omits the generated ownership file from the reported payload count. |
-| F02 | All three native Skill files match fixture hashes; discovery/context and repeated indexing preserve them. |
-| F03 | Plain-note target fails; optional-metadata enrichment is currently required for recovery. |
-| F04 | Copy independence and body preservation pass on the executed path. |
-| F05 | Create-first target fails; explicit parent initialization recovers the journey. |
-| F06 | Default status from the empty child says installed/current, contrary to the selected target. Explicit A and invalid-path selection work. A/B preservation is not proved by the captured inventory. |
-| F07 | Executed discovery queries and read-only preservation pass; not every filtering branch is covered. |
-| F08 | Exact relink succeeds; diagnosis and the final unresolved choice remain gaps. |
-| F09 | Corrected physical-path move preserves labels and rewrites incoming/outgoing links; shorthand is rejected and preview wording/count classification misleads. |
-| F10 | First removal preserves authored meaning; repeated removal fails the no-op target. |
-| F11 | Update succeeds; retained recovery blocks subsequent lifecycle work, with additional report defects. |
-| F12 | Scaffold authoring and installation pass with exact source bytes. Inspect falsely reports one dependency for a dependency-free manifest. |
-| F13 | Protection and force effects pass; claims about navigation, recovery and next commands are misleading. |
-| F14 | Exact persistent grant branch passes; interactive once/always and revocation are not run. |
-| F15 | Unrelated malformed content blocks the useful selected install. |
-| F16 | Real link creation, membership synchronization and ordinary detach pass. |
-| F17 | Missing-link restoration passes; changed-file sync and missing/changed detach block independent work. |
-| F18 | Detaching dangling links passes; already-absent link handling and source-preservation wording have gaps. |
-| F19 | A real partial update and diagnosis are exercised; error attribution is suspect and recovery choice remains explicit. |
-| F20 | Not run: no live writer-held mutation boundary was established. |
-| F21 | Views preserve observed facts, but default warnings are not actionable and diagnosis can be misleading. |
-| F22 | Optional-metadata creation fails; explicit-metadata recovery succeeds. |
-| F23 | Real recovery cleanup and repetition pass; damaged and inaccessible candidates remain unrun. |
-| F24 | Exact authorized metadata replacement preserves remaining CRLF bytes. |
-| F25 | Base/overwrite order, one route entry and no-churn indexing pass, with a metadata warning. |
-| F26 | Optional package composition, template bytes and removal isolation pass; native Skill diagnosis has gaps. |
+| Flow | Audited observation                                                                                                                                                                                |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F01  | Fresh install, preview, readiness and repeat preserve the README and expected state. Count wording omits the generated ownership file from the reported payload count.                             |
+| F02  | All three native Skill files match fixture hashes; discovery/context and repeated indexing preserve them.                                                                                          |
+| F03  | Plain-note target fails; optional-metadata enrichment is currently required for recovery.                                                                                                          |
+| F04  | Copy independence and body preservation pass on the executed path.                                                                                                                                 |
+| F05  | Create-first target fails; explicit parent initialization recovers the journey.                                                                                                                    |
+| F06  | Default status from the empty child says installed/current, contrary to the selected target. Explicit A and invalid-path selection work. A/B preservation is not proved by the captured inventory. |
+| F07  | Executed discovery queries and read-only preservation pass; not every filtering branch is covered.                                                                                                 |
+| F08  | Exact relink succeeds; diagnosis and the final unresolved choice remain gaps.                                                                                                                      |
+| F09  | Corrected physical-path move preserves labels and rewrites incoming/outgoing links; shorthand is rejected and preview wording/count classification misleads.                                       |
+| F10  | First removal preserves authored meaning; repeated removal fails the no-op target.                                                                                                                 |
+| F11  | Update succeeds; retained recovery blocks subsequent lifecycle work, with additional report defects.                                                                                               |
+| F12  | Scaffold authoring and installation pass with exact source bytes. Inspect falsely reports one dependency for a dependency-free manifest.                                                           |
+| F13  | Protection and force effects pass; claims about navigation, recovery and next commands are misleading.                                                                                             |
+| F14  | Exact persistent grant branch passes; interactive once/always and revocation are not run.                                                                                                          |
+| F15  | Unrelated malformed content blocks the useful selected install.                                                                                                                                    |
+| F16  | Real link creation, membership synchronization and ordinary detach pass.                                                                                                                           |
+| F17  | Missing-link restoration passes; changed-file sync and missing/changed detach block independent work.                                                                                              |
+| F18  | Detaching dangling links passes; already-absent link handling and source-preservation wording have gaps.                                                                                           |
+| F19  | A real partial update and diagnosis are exercised; error attribution is suspect and recovery choice remains explicit.                                                                              |
+| F20  | Not run: no live writer-held mutation boundary was established.                                                                                                                                    |
+| F21  | Views preserve observed facts, but default warnings are not actionable and diagnosis can be misleading.                                                                                            |
+| F22  | Optional-metadata creation fails; explicit-metadata recovery succeeds.                                                                                                                             |
+| F23  | Real recovery cleanup and repetition pass; damaged and inaccessible candidates remain unrun.                                                                                                       |
+| F24  | Exact authorized metadata replacement preserves remaining CRLF bytes.                                                                                                                              |
+| F25  | Base/overwrite order, one route entry and no-churn indexing pass, with a metadata warning.                                                                                                         |
+| F26  | Optional package composition, template bytes and removal isolation pass; native Skill diagnosis has gaps.                                                                                          |
 
 ## Next Boundary
 

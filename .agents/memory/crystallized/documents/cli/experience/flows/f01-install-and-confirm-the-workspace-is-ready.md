@@ -18,16 +18,16 @@ W0, with a hand-authored README and no installed Framework.
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | open-forge status | [C01-01](../scenarios/commands/c01-status.md#c01-01) | The user knows this exact workspace is not installed; nothing has changed. |
-| 2 | open-forge install --dry-run | [C03-02](../scenarios/commands/c03-install.md#c03-02) | The intended host sections, content targets and counts are visible, but no installation exists yet. |
-| 3 | open-forge install --automatic | [C03-01](../scenarios/commands/c03-install.md#c03-01) | The reviewed installation has actually been created; record the independent inventory. |
-| 4 | Compare the full created-file and created-directory sets with the install report. | [X08](../scenarios/experience.md#x08) | A truthful baseline inventory is available; no count is accepted only because it was printed. |
-| 5 | open-forge status | [C01-02](../scenarios/commands/c01-status.md#c01-02) | Readiness and startup measures describe the resulting installed state. |
-| 6 | open-forge context | [C08-01](../scenarios/commands/c08-context.md#c08-01) | Startup instructions are readable in the declared order. |
-| 7 | open-forge doctor | [C02-01](../scenarios/commands/c02-doctor.md#c02-01) | Applicable checks finish on the same installed state. |
-| 8 | open-forge install --automatic | [C03-03](../scenarios/commands/c03-install.md#c03-03) | The identical second install is a real no-op. |
+| Step | Action                                                                            | Scenario                                              | State passed forward                                                                                |
+| ---: | --------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+|    1 | open-forge status                                                                 | [C01-01](../scenarios/commands/c01-status.md#c01-01)  | The user knows this exact workspace is not installed; nothing has changed.                          |
+|    2 | open-forge install --dry-run                                                      | [C03-02](../scenarios/commands/c03-install.md#c03-02) | The intended host sections, content targets and counts are visible, but no installation exists yet. |
+|    3 | open-forge install --automatic                                                    | [C03-01](../scenarios/commands/c03-install.md#c03-01) | The reviewed installation has actually been created; record the independent inventory.              |
+|    4 | Compare the full created-file and created-directory sets with the install report. | [X08](../scenarios/experience.md#x08)                 | A truthful baseline inventory is available; no count is accepted only because it was printed.       |
+|    5 | open-forge status                                                                 | [C01-02](../scenarios/commands/c01-status.md#c01-02)  | Readiness and startup measures describe the resulting installed state.                              |
+|    6 | open-forge context                                                                | [C08-01](../scenarios/commands/c08-context.md#c08-01) | Startup instructions are readable in the declared order.                                            |
+|    7 | open-forge doctor                                                                 | [C02-01](../scenarios/commands/c02-doctor.md#c02-01)  | Applicable checks finish on the same installed state.                                               |
+|    8 | open-forge install --automatic                                                    | [C03-03](../scenarios/commands/c03-install.md#c03-03) | The identical second install is a real no-op.                                                       |
 
 ## Alternatives and recovery
 

@@ -170,16 +170,16 @@ does not diagnose the workspace or recommend a change.
 
 | Established source state                                                                                     | Semantic result           | Route-profile treatment                                                                                                                                                     |
 | ------------------------------------------------------------------------------------------------------------ | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Routed entrypoint, routed leaf, or routed native source                                                      | `completed`                | Applicable route, reading, topology, and measurements are reported.                                                                                                         |
-| Accepted compatibility entrypoint filename                                                                   | `completed`                | The filename is reported as compatibility input; its route facts remain ordinary complete facts.                                                                            |
-| Valid base and overwrite pair                                                                                | `completed`                | The pair is one logical source with base-first physical layers. Customization is neutral.                                                                                   |
-| Detached entrypoint with safe local identity and topology                                                    | `completed`                | Local route facts are reported. Loader-root reading facts are not-applicable.                                                                                               |
-| Known supported source with no established route                                                             | `completed`                | The source identity and applicable physical measurements are reported; route-dependent facts are not-applicable.                                                            |
-| Safe source and route with a non-unique automatic ID, resolved by exact path or interactive source selection | `completed-with-warnings`               | The non-unique ID remains an observation. Interactive selection requires an exact path for later non-interactive use; exact-path selection has no invented required action. |
+| Routed entrypoint, routed leaf, or routed native source                                                      | `completed`               | Applicable route, reading, topology, and measurements are reported.                                                                                                         |
+| Accepted compatibility entrypoint filename                                                                   | `completed`               | The filename is reported as compatibility input; its route facts remain ordinary complete facts.                                                                            |
+| Valid base and overwrite pair                                                                                | `completed`               | The pair is one logical source with base-first physical layers. Customization is neutral.                                                                                   |
+| Detached entrypoint with safe local identity and topology                                                    | `completed`               | Local route facts are reported. Loader-root reading facts are not-applicable.                                                                                               |
+| Known supported source with no established route                                                             | `completed`               | The source identity and applicable physical measurements are reported; route-dependent facts are not-applicable.                                                            |
+| Safe source and route with a non-unique automatic ID, resolved by exact path or interactive source selection | `completed-with-warnings` | The non-unique ID remains an observation. Interactive selection requires an exact path for later non-interactive use; exact-path selection has no invented required action. |
 | Safe identity with an unreadable required source, incomplete route chain, or unmeasurable applicable fact    | `incomplete`              | Safe observations remain visible and the affected availability is `unavailable`.                                                                                            |
 | Orphan or ambiguous overwrite, ambiguous route, unsafe identity, or containment failure                      | `blocked`                 | The command does not choose a pair, route, alias, or out-of-bound source.                                                                                                   |
-| Zero or several operands, Loader, unknown, missing, or unsupported source                                    | `invalid-input`                 | Input is rejected before route inspection.                                                                                                                                  |
-| Unexpected failure or caller interruption before completion                                                  | `failed` or `cancelled` | The event status retains its own meaning.                                                                                                                                   |
+| Zero or several operands, Loader, unknown, missing, or unsupported source                                    | `invalid-input`           | Input is rejected before route inspection.                                                                                                                                  |
+| Unexpected failure or caller interruption before completion                                                  | `failed` or `cancelled`   | The event status retains its own meaning.                                                                                                                                   |
 
 When several ordinary conditions occur, `blocked` takes precedence over
 `incomplete`, `incomplete` over `completed-with-warnings`, and `completed-with-warnings` over `completed`.
@@ -215,14 +215,14 @@ still require explicit `--for` paths. Without this option, the command performs
 no candidate enumeration and launches no Git process. Help and version also
 perform no enumeration.
 
-| Property | `--matching-files` |
-| -------- | ------------------ |
-| Type | Boolean |
-| Default | `false` |
-| Value | No required value |
-| Repetition | Idempotent, following native Boolean option behavior |
-| Alias | None |
-| Composition | May be combined with repeated `--for` |
+| Property    | `--matching-files`                                   |
+| ----------- | ---------------------------------------------------- |
+| Type        | Boolean                                              |
+| Default     | `false`                                              |
+| Value       | No required value                                    |
+| Repetition  | Idempotent, following native Boolean option behavior |
+| Alias       | None                                                 |
+| Composition | May be combined with repeated `--for`                |
 
 The exact option help description is:
 
@@ -612,8 +612,6 @@ adds all bounded facts, and debug adds bounded diagnostics on stderr. Detail
 does not change semantics, counts, or status. Filters select finding severities;
 all is the default filter.
 
-
-
 The catalogue text by detail level is:
 
 `minimal`:
@@ -668,7 +666,7 @@ text, including the exact scope labels and zero-match sentence.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -685,7 +683,7 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly route inspect; data follows the catalogue. When
 `--for` is supplied, the result also echoes normalized `workingPaths` at every
@@ -705,12 +703,12 @@ conditions do not claim unconditional task-start reading.
 `matchingFiles.paths` independently lists current files from the requested scan.
 Neither result substitutes for the other.
 
-| Level    | `data`                                                                                                                                                                                                                                         |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Level    | `data`                                                                                                                                                                                                                                                                                                                                                        |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | minimal  | `{ id, path, kind, entrypointForm, overwritePath, belongs { routeChain, parent, directChildren { files, entrypoints }, descendants { files, entrypoints } }, read { atStart, automaticallyWhen, mayReadAgain }, size { own, adds, loadNow }, workingPaths?: [ ... ], matchingFiles?: { scope, complete, count, paths, pathLimit, truncated, reason, note } }` |
-| standard | + `axioms { inheritedFrom: [...], local }`, `tags`, and `applicability { state, conditions: [ { source, patterns } ], matchingPaths: [ ... ] }` when conditions or `--for` apply |
-| full     | + `selected { closure, startupOverlap }`, `selection { kind, method, requested }`, `layers: [ { path, kind } ]`, `statusReason`, and the same applicability facts |
-| debug    | Same primary data as full, with bounded diagnostics on stderr |
+| standard | + `axioms { inheritedFrom: [...], local }`, `tags`, and `applicability { state, conditions: [ { source, patterns } ], matchingPaths: [ ... ] }` when conditions or `--for` apply                                                                                                                                                                              |
+| full     | + `selected { closure, startupOverlap }`, `selection { kind, method, requested }`, `layers: [ { path, kind } ]`, `statusReason`, and the same applicability facts                                                                                                                                                                                             |
+| debug    | Same primary data as full, with bounded diagnostics on stderr                                                                                                                                                                                                                                                                                                 |
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON
@@ -731,10 +729,7 @@ the flag, the block remains absent. For example:
     "scope": "git-tracked-and-untracked",
     "complete": true,
     "count": 2,
-    "paths": [
-      "docs/guide.md",
-      "docs/reference.md"
-    ],
+    "paths": ["docs/guide.md", "docs/reference.md"],
     "pathLimit": 100,
     "truncated": false,
     "reason": null,
@@ -743,16 +738,16 @@ the flag, the block remains absent. For example:
 }
 ```
 
-| Field | Shape |
-| ----- | ----- |
-| `scope` | `"git-tracked-and-untracked"`, `"workspace-files"` for the ignore-aware Open Forge walk, `"all-files"`, or `null` when no scope could be established |
-| `complete` | Boolean |
-| `count` | Nonnegative integer when a scan is complete, otherwise null. The all-files answer is complete with a null count because it runs no scan. |
-| `paths` | Ordered string array with at most 100 entries |
-| `pathLimit` | Integer `100` |
-| `truncated` | `true` exactly when a complete count exceeds 100 |
-| `reason` | `null` on success, otherwise one finite reason below |
-| `note` | `No current files match this condition. Planned files may still match.` when a complete count is zero, `Skipped unsupported .gitignore lines: N.` when lines were skipped, `No effective applyTo restriction. Every file applies. No scan was run.` for `all-files`, otherwise `null` |
+| Field       | Shape                                                                                                                                                                                                                                                                                 |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scope`     | `"git-tracked-and-untracked"`, `"workspace-files"` for the ignore-aware Open Forge walk, `"all-files"`, or `null` when no scope could be established                                                                                                                                  |
+| `complete`  | Boolean                                                                                                                                                                                                                                                                               |
+| `count`     | Nonnegative integer when a scan is complete, otherwise null. The all-files answer is complete with a null count because it runs no scan.                                                                                                                                              |
+| `paths`     | Ordered string array with at most 100 entries                                                                                                                                                                                                                                         |
+| `pathLimit` | Integer `100`                                                                                                                                                                                                                                                                         |
+| `truncated` | `true` exactly when a complete count exceeds 100                                                                                                                                                                                                                                      |
+| `reason`    | `null` on success, otherwise one finite reason below                                                                                                                                                                                                                                  |
+| `note`      | `No current files match this condition. Planned files may still match.` when a complete count is zero, `Skipped unsupported .gitignore lines: N.` when lines were skipped, `No effective applyTo restriction. Every file applies. No scan was run.` for `all-files`, otherwise `null` |
 
 When unsupported lines are skipped, use `Skipped unsupported .gitignore lines: N.`
 as the note. When the complete count is zero, append that sentence to the
@@ -774,15 +769,15 @@ lower-bound counts.
 
 The finite reasons and exact limitation sentences are:
 
-| Reason | Text |
-| ------ | ---- |
-| `source-unavailable` | `The source could not be resolved for matching-file inspection.` |
-| `condition-unavailable` | `The source's effective applyTo conditions could not be established.` |
-| `scan-timeout` | `The matching-file scan did not finish within 30 seconds.` |
-| `scan-failed` | `The matching-file scan could not be completed.` |
-| `files-unavailable` | `Required file information or .gitignore content could not be read or decoded.` |
-| `unsafe-path` | `The matching-file scan encountered a path outside the workspace boundary.` |
-| `cancelled` | `The matching-file scan was cancelled.` |
+| Reason                  | Text                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| `source-unavailable`    | `The source could not be resolved for matching-file inspection.`                |
+| `condition-unavailable` | `The source's effective applyTo conditions could not be established.`           |
+| `scan-timeout`          | `The matching-file scan did not finish within 30 seconds.`                      |
+| `scan-failed`           | `The matching-file scan could not be completed.`                                |
+| `files-unavailable`     | `Required file information or .gitignore content could not be read or decoded.` |
+| `unsafe-path`           | `The matching-file scan encountered a path outside the workspace boundary.`     |
+| `cancelled`             | `The matching-file scan was cancelled.`                                         |
 
 The four ordinary Git failures select the ignore-aware walk. A timeout or
 cancellation keeps its existing result and does not start the fallback. A
@@ -816,34 +811,34 @@ does not choose which wording to retain.
 
 The finding catalogue is:
 
-| Code                                   | Severity | Family                | Message                                                                          | Next                                         |
-| -------------------------------------- | -------- | --------------------- | -------------------------------------------------------------------------------- | -------------------------------------------- |
-| route-inspect.invalid-source-reference | error    | invalid-input         | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.invalid-source-reference`).                          | `open-forge route list --depth=all`          |
-| route-inspect.unknown-source           | error    | unknown-source        |                                                                                  |                                              |
-| route-inspect.missing-source           | error    | unknown-source        |                                                                                  |                                              |
-| route-inspect.missing-source-file      | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.missing-source-file`).                                                         | `open-forge route list --depth=all`          |
-| route-inspect.multiple-sources         | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.multiple-sources`).                                                | none                                         |
-| route-inspect.loader-subject           | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.loader-subject`).                  | `open-forge route list`                      |
-| route-inspect.invalid-workspace        | error    | workspace-unavailable |                                                                                  |                                              |
-| route-inspect.workspace-unavailable    | error    | workspace-unavailable |                                                                                  |                                              |
-| route-inspect.invalid-working-path     | error    | invalid-input         | `Each --for path must resolve inside the selected workspace.` | `open-forge route inspect --help` |
-| route-inspect.unsafe-workspace         | error    | workspace-unsafe      |                                                                                  |                                              |
-| route-inspect.ambiguous-source         | error    | source-ambiguous      | (the prompt resolves it in a terminal)                                           |                                              |
-| route-inspect.ambiguous-route          | error    | route-ambiguous       |                                                                                  |                                              |
-| route-inspect.ambiguous-overwrite      | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.ambiguous-overwrite`).                   | fix by hand                                  |
-| route-inspect.unsafe-source            | error    | source-unsafe         |                                                                                  |                                              |
-| route-inspect.unsupported-source       | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.unsupported-source`).                             | none                                         |
-| route-inspect.orphan-overwrite         | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.orphan-overwrite`).                                | fix by hand                                  |
-| route-inspect.unreadable-source        | warning  | inspection-incomplete |                                                                                  |                                              |
-| route-inspect.incomplete-route         | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.incomplete-route`).    | `open-forge doctor`                          |
-| route-inspect.unavailable-fact         | warning  | local                 | `Route facts could not be measured: No working paths were supplied, so effective loading is pending.` when pending loading needs working paths, otherwise `<fact> could not be measured: <reason>.` | `open-forge route inspect "<source-path>" --for <path>` for pending working paths, `open-forge route inspect --help` for scan-only failures, otherwise `open-forge doctor` |
-| route-inspect.automatic-id-not-unique  | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.automatic-id-not-unique`).          | none                                         |
-| route-inspect.not-routed               | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.not-routed`). | `open-forge index` when its parent is routed |
-| route-inspect.detached-source          | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.detached-source`).                        | none                                         |
-| route-inspect.compatibility-entrypoint | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.compatibility-entrypoint`). | none                                         |
-| route-inspect.valid-overwrite          | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.valid-overwrite`).                                      | none                                         |
-| route-inspect.operation-failed         | error    | operation-failed      |                                                                                  |                                              |
-| route-inspect.interrupted              | error    | interrupted           |                                                                                  |                                              |
+| Code                                   | Severity | Family                | Message                                                                                                                                                                                                                                                                                                                                                           | Next                                                                                                                                                                       |
+| -------------------------------------- | -------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| route-inspect.invalid-source-reference | error    | invalid-input         | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.invalid-source-reference`). | `open-forge route list --depth=all`                                                                                                                                        |
+| route-inspect.unknown-source           | error    | unknown-source        |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
+| route-inspect.missing-source           | error    | unknown-source        |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
+| route-inspect.missing-source-file      | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.missing-source-file`).      | `open-forge route list --depth=all`                                                                                                                                        |
+| route-inspect.multiple-sources         | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.multiple-sources`).         | none                                                                                                                                                                       |
+| route-inspect.loader-subject           | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.loader-subject`).           | `open-forge route list`                                                                                                                                                    |
+| route-inspect.invalid-workspace        | error    | workspace-unavailable |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
+| route-inspect.workspace-unavailable    | error    | workspace-unavailable |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
+| route-inspect.invalid-working-path     | error    | invalid-input         | `Each --for path must resolve inside the selected workspace.`                                                                                                                                                                                                                                                                                                     | `open-forge route inspect --help`                                                                                                                                          |
+| route-inspect.unsafe-workspace         | error    | workspace-unsafe      |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
+| route-inspect.ambiguous-source         | error    | source-ambiguous      | (the prompt resolves it in a terminal)                                                                                                                                                                                                                                                                                                                            |                                                                                                                                                                            |
+| route-inspect.ambiguous-route          | error    | route-ambiguous       |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
+| route-inspect.ambiguous-overwrite      | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.ambiguous-overwrite`).      | fix by hand                                                                                                                                                                |
+| route-inspect.unsafe-source            | error    | source-unsafe         |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
+| route-inspect.unsupported-source       | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.unsupported-source`).       | none                                                                                                                                                                       |
+| route-inspect.orphan-overwrite         | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.orphan-overwrite`).         | fix by hand                                                                                                                                                                |
+| route-inspect.unreadable-source        | warning  | inspection-incomplete |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
+| route-inspect.incomplete-route         | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.incomplete-route`).         | `open-forge doctor`                                                                                                                                                        |
+| route-inspect.unavailable-fact         | warning  | local                 | `Route facts could not be measured: No working paths were supplied, so effective loading is pending.` when pending loading needs working paths, otherwise `<fact> could not be measured: <reason>.`                                                                                                                                                               | `open-forge route inspect "<source-path>" --for <path>` for pending working paths, `open-forge route inspect --help` for scan-only failures, otherwise `open-forge doctor` |
+| route-inspect.automatic-id-not-unique  | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.automatic-id-not-unique`).  | none                                                                                                                                                                       |
+| route-inspect.not-routed               | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.not-routed`).               | `open-forge index` when its parent is routed                                                                                                                               |
+| route-inspect.detached-source          | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.detached-source`).          | none                                                                                                                                                                       |
+| route-inspect.compatibility-entrypoint | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.compatibility-entrypoint`). | none                                                                                                                                                                       |
+| route-inspect.valid-overwrite          | info     | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Inspect/Shared/Wording/RouteInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-inspect.valid-overwrite`).          | none                                                                                                                                                                       |
+| route-inspect.operation-failed         | error    | operation-failed      |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
+| route-inspect.interrupted              | error    | interrupted           |                                                                                                                                                                                                                                                                                                                                                                   |                                                                                                                                                                            |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. Counts are:
@@ -853,18 +848,18 @@ action when available. Counts are:
 
 ### Matching-file failures
 
-| Situation | Result |
-| --------- | ------ |
-| Complete scan, including zero matches | Does not itself raise status |
-| Git cannot start or the workspace is not a work tree | Select the ignore-aware walk, which can complete |
-| Repository refusal | Select the ignore-aware walk, which can complete |
+| Situation                                                                                 | Result                                                                    |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Complete scan, including zero matches                                                     | Does not itself raise status                                              |
+| Git cannot start or the workspace is not a work tree                                      | Select the ignore-aware walk, which can complete                          |
+| Repository refusal                                                                        | Select the ignore-aware walk, which can complete                          |
 | Inventory fails after a confirmed work-tree probe, including warnings or malformed output | Discard Git output, then select the ignore-aware walk, which can complete |
-| Scan timeout or caller cancellation | Keep the existing unavailable or cancelled result. Do not fall back. |
-| Unexpected implementation failure | `scan-failed`, exit 1 |
-| Candidate metadata unavailable or required `.gitignore` unreadable or undecodable | `files-unavailable`, exit 3 |
-| Invalid condition chain | `incomplete`, exit 3 |
-| Containment violation | `blocked`, exit 5 |
-| Existing invalid or blocked source selection | Preserve that result and do not scan |
+| Scan timeout or caller cancellation                                                       | Keep the existing unavailable or cancelled result. Do not fall back.      |
+| Unexpected implementation failure                                                         | `scan-failed`, exit 1                                                     |
+| Candidate metadata unavailable or required `.gitignore` unreadable or undecodable         | `files-unavailable`, exit 3                                               |
+| Invalid condition chain                                                                   | `incomplete`, exit 3                                                      |
+| Containment violation                                                                     | `blocked`, exit 5                                                         |
+| Existing invalid or blocked source selection                                              | Preserve that result and do not scan                                      |
 
 Use the existing `route-inspect.unavailable-fact` condition for scan
 unavailability. Its finding wording stays intact. The matching-files block
@@ -895,7 +890,7 @@ When an ID matches several files in a terminal: Select among the paths (see
 
 ### completed
 
-~~~text
+```text
 docs  .agents/docs/_docs.md
 
 Where this source belongs
@@ -912,19 +907,19 @@ When it is read
 Context size
   This file: 156 B, about 39 tokens
   Selecting this route adds: nothing (already in startup context)
-~~~
+```
 
 ### completed-with-warnings
 
-~~~text
+```text
 docs/guide  .agents/docs/guide.md
   Warning  docs/guide  ID is not unique
          The ID docs/guide also matches .agents/docs/guide/_guide.md. Use the exact path to be sure.
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 docs/guide  .agents/docs/guide.md
   Warning  .agents/docs/guide.md  Source could not be read
          .agents/docs/guide.md could not be read completely.
@@ -942,34 +937,34 @@ Context size
   This file could not be measured: The selected source body is unavailable.
   Selecting this route adds could not be measured: The selection addition cannot be established completely.
 Next: open-forge doctor
-~~~
+```
 
 ### invalid-input
 
-~~~text
+```text
 Cannot inspect missing/source: No source has the ID missing/source.
 Next: open-forge route inspect --help
-~~~
+```
 
 ### blocked
 
-~~~text
+```text
 Cannot inspect .agents/orphan.overwrite.md: orphan.overwrite.md has no orphan.md beside it.
 Workspace: <workspace>
 Next: open-forge doctor
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Route inspect stopped because of an unexpected error: <reason>.
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Route inspect was cancelled.
-~~~
+```
 
 ### Matching-files transcripts
 

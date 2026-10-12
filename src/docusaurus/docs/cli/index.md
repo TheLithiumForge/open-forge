@@ -104,12 +104,12 @@ To add an omitted canonical Core category, preview `open-forge route init patter
 
 ### Install, update, and remove
 
-| Command and purpose                                                                 | Available flags                                                             |
-| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Command and purpose                                                                 | Available flags                                                                              |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | `install`<br />Install or configure built-in Framework routes and record management | `--configure`, `--preset`, `--frontmatter`, `--route`, `--dry-run`, `--automatic`, `--force` |
-| `update`<br />Bring managed Framework files to the version bundled with the CLI     | `--dry-run`, `--automatic`, `--prune`, `--force`                            |
-| `remove <target>`<br />Remove a file, folder, route, package, or Library            | `--kind`, `--allow-path`, `--dry-run`, `--automatic`                        |
-| `cleanup`<br />Delete recovery copies once you've checked the result                | `--dry-run`                                                                 |
+| `update`<br />Bring managed Framework files to the version bundled with the CLI     | `--dry-run`, `--automatic`, `--prune`, `--force`                                             |
+| `remove <target>`<br />Remove a file, folder, route, package, or Library            | `--kind`, `--allow-path`, `--dry-run`, `--automatic`                                         |
+| `cleanup`<br />Delete recovery copies once you've checked the result                | `--dry-run`                                                                                  |
 
 First interactive Install offers Essentials, Full Core, or Custom. Use `install --configure` to revisit an existing setup. `--preset essentials|full-core|custom` selects it explicitly. With Custom, repeat `--route <id>=<add|remove|git-ignore>` to override rows. Remove keeps existing content and releases only its Framework management. Git-ignored routes still load and don't untrack files already in Git. [Installation](../getting-started/installation.md#choose-the-installed-routes) compares the choices, and the [reference](/guides/cli#setup-choices) lists IDs and combinations.
 

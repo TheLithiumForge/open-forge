@@ -38,8 +38,6 @@ open-forge repair --automatic
 
 Say nothing needs repair; do not claim a nonzero number of verified fixes.
 
-
-
 ### Verification
 
 Verify zero effects, exact bytes and that a real diagnosis ran.
@@ -65,8 +63,6 @@ open-forge repair --automatic
 ### Expected result
 
 Apply exactly those two corrections and show source locations and old-to-new destinations.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge repair --automatic
 
 Apply nothing and explain the two choices still needed. Do not pick a likely target to make the run green.
 
-
-
 ### Verification
 
 Verify both link spans unchanged and the remaining-problem count derived from actual unresolved occurrences.
@@ -121,8 +115,6 @@ open-forge repair --automatic --dry-run
 ### Expected result
 
 Show both proposed relinks without writing them.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge repair --relink "$LOCATION" "$EXPECTED" "$TARGET"
 
 Repair that exact occurrence and no similarly spelled occurrence elsewhere.
 
-
-
 ### Verification
 
 Measure line and Unicode-scalar column independently; verify the old-destination guard and preservation of visible link text.
@@ -177,8 +167,6 @@ open-forge repair --relink "$LOCATION" "$WRONG_EXPECTED" "$TARGET"
 ### Expected result
 
 Reject the mismatch without changing the link.
-
-
 
 ### Verification
 
@@ -206,8 +194,6 @@ open-forge repair --relink "$LOCATION" "$EXPECTED" "$TARGET" --relink "$LOCATION
 
 Explain the contradictory requests before any repair effect.
 
-
-
 ### Verification
 
 Verify no first-wins or last-wins behavior and no partial application.
@@ -233,8 +219,6 @@ open-forge repair
 ### Expected result
 
 Explain the missing selection and do not start an invisible wizard.
-
-
 
 ### Verification
 
@@ -270,8 +254,6 @@ open-forge repair --automatic
 
 Explain the active operation and preserve all selected sources.
 
-
-
 ### Verification
 
 Verify lock ownership separately from lock-file presence and compare the complete no-write set.
@@ -299,8 +281,6 @@ open-forge repair --automatic
 ### Expected result
 
 Say repair stopped after the completed effects and retain precise remaining work.
-
-
 
 ### Verification
 
@@ -330,8 +310,6 @@ open-forge repair
 
 Report cancellation and preserve the source.
 
-
-
 ### Verification
 
 Record the interaction and compare exact bytes; a redirected pipe does not prove this prompt branch.
@@ -360,8 +338,6 @@ open-forge repair --relink "$LOCATION" "$EXPECTED"
 
 Explain the missing operand before diagnosis or mutation.
 
-
-
 ### Verification
 
 Check parser/semantic classification explicitly; no fabricated schema-3 domain report is required for parser rejection.
@@ -388,8 +364,6 @@ open-forge repair --automatic
 
 Distinguish the selected safe correction from the unresolved choice. Apply only the safe correction and preserve the ambiguous link.
 
-
-
 ### Verification
 
 Compare each occurrence, remaining problem count and next action. A successful selected repair does not promise all unrelated Doctor problems are gone.
@@ -415,8 +389,6 @@ open-forge repair --automatic --dry-run
 ### Expected result
 
 Distinguish the selected safe correction from the unresolved choice. Preview only; change nothing.
-
-
 
 ### Verification
 
@@ -451,8 +423,6 @@ open-forge repair --automatic
 ### Expected result
 
 Name the unavailable required fact and its consequence. Do not infer a complete empty inventory or apply a partial mutation plan.
-
-
 
 ### Verification
 

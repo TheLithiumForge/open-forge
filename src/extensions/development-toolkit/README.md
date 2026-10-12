@@ -4,12 +4,12 @@ Install Project Documents, Planning, Flows and Scenarios, and Development togeth
 
 ## Included Packages
 
-| Package | Contribution |
-| --- | --- |
-| [Project Documents](../project-documents/README.md) | Current documents, document starters, and Vision and Architecture workflows |
-| [Planning](../planning/README.md) | Ideas, Analysis, Decisions, Checkpoints, work records, starters, and a Planning workflow |
-| [Flows and Scenarios](../scenarios/README.md) | User Flow, Scenario, Scenario Collection, and Run Record starters |
-| [Development](../development/README.md) | Development, Debugging, and Review workflows |
+| Package                                             | Contribution                                                                             |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [Project Documents](../project-documents/README.md) | Current documents, document starters, and Vision and Architecture workflows              |
+| [Planning](../planning/README.md)                   | Ideas, Analysis, Decisions, Checkpoints, work records, starters, and a Planning workflow |
+| [Flows and Scenarios](../scenarios/README.md)       | User Flow, Scenario, Scenario Collection, and Run Record starters                        |
+| [Development](../development/README.md)             | Development, Debugging, and Review workflows                                             |
 
 The methods use [Workflow Support](../workflows/README.md), installed once through dependency resolution.
 

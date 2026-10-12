@@ -473,14 +473,14 @@ are green.
   suite errors. The 17 Integration skips are the same Unix/Linux-only cases
   in both runtimes. Snapshot review and focused semantic review are complete.
 
-  | Mode | Passed | Skipped | Total |
-  | --- | ---: | ---: | ---: |
-  | Managed Unit | 3459 | 0 | 3459 |
-  | Managed Integration | 2189 | 17 | 2206 |
-  | Managed EndToEnd, managed CLI | 163 | 0 | 163 |
-  | Native Integration | 2189 | 17 | 2206 |
-  | Native EndToEnd, native CLI | 163 | 0 | 163 |
-  | Managed EndToEnd, native CLI | 163 | 0 | 163 |
+  | Mode                          | Passed | Skipped | Total |
+  | ----------------------------- | -----: | ------: | ----: |
+  | Managed Unit                  |   3459 |       0 |  3459 |
+  | Managed Integration           |   2189 |      17 |  2206 |
+  | Managed EndToEnd, managed CLI |    163 |       0 |   163 |
+  | Native Integration            |   2189 |      17 |  2206 |
+  | Native EndToEnd, native CLI   |    163 |       0 |   163 |
+  | Managed EndToEnd, native CLI  |    163 |       0 |   163 |
 
   Evidence: `artifacts/g4-03-six-mode-evidence.json` and
   `artifacts/g4-03-native-remaining.log`, with per-mode CTRF reports referenced
@@ -492,8 +492,9 @@ are green.
   - CLI: `718630524833feb365bc1f505e1b926fb3c36dcdb52fbd7ac2f50cd71cc2de41`.
   - Integration: `acf53276418c3e74845235e15ff518b68515fb32303bd4016479615592d59d7a`.
   - EndToEnd: `6c121d482aaa489c3baf38bac4125f7e17884986ae582aed4270cac087fa1f8b`.
-  These are qualified local development artifacts; the delivery wrapper's
-  zero-skip packaging condition remains distinct, as explained below.
+    These are qualified local development artifacts; the delivery wrapper's
+    zero-skip packaging condition remains distinct, as explained below.
+
 - The rebuilt native artifacts passed every build stage in
   `artifacts/g4-03-native-build-2.log`. The next test run passed all 3,459 Unit
   cases and all 2,189 runnable Integration cases, with the 17 expected
@@ -609,9 +610,6 @@ are green.
   assumed help would not wrap. These were corrective runtime inventories,
   not final acceptance gates.
 
-
-
-
 ### Shared wording propagation
 
 - Added the accepted missing shared finding factories to
@@ -672,7 +670,7 @@ are green.
   belong to JSON, diagnostics and shared help. Against the 01 baseline, the
   legacy-only text mapping now retains `complete`, `invalid`, `interrupted` and
   the unchanged other tokens. Descriptive Attention text remains `requires
-  attention`; Find's compact token remains `attention`. Shared headers, uppercase
+attention`; Find's compact token remains `attention`. Shared headers, uppercase
   finding labels, Library Inspect's headline and References' inline section
   statuses use that legacy mapping. Native Index retains its final catalogue.
   No shared status definition, exit, JSON status or diagnostic token is reverted.

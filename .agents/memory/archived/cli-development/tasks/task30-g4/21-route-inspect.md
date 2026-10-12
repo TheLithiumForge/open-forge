@@ -187,7 +187,7 @@ worker's own, expanded; the fifth is the overseer's.
    this file's paths.
 3. **The worker could not write this file.** Both `apply_patch` attempts returned
    `patch rejected: writing outside of the project; rejected by user approval
-   settings`, because it addressed the main checkout by absolute path rather than
+settings`, because it addressed the main checkout by absolute path rather than
    its own worktree. The overseer wrote the ledger and committed.
 4. **The worker could not commit or stage.** `git status --short --branch` first
    failed with dubious ownership; `git add -- src/cli` then failed creating

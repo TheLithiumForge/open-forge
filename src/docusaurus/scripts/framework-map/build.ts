@@ -254,7 +254,8 @@ function caption(theme: Theme): string {
   const guide = `<a href="${escape(href)}" text-decoration="underline">${text(WIDTH / 2, CAPTION.top, [loadingGuide.label], { size: 12, fill: theme.line, anchor: "middle" })}</a>`;
   let y = CAPTION.top + GUIDE_HEIGHT;
   return (
-    guide + captionBlocks
+    guide +
+    captionBlocks
       .map((item) => {
         const style = item.first ? { size: item.size, fill: theme.text, anchor: "middle" as const } : { size: item.size, fill: theme.muted, anchor: "middle" as const };
         const markup = text(WIDTH / 2, y, item.lines, style, item.lineHeight);

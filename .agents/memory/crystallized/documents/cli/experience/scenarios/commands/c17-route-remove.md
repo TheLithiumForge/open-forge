@@ -38,8 +38,6 @@ open-forge route remove guidance/notes --automatic
 
 Remove the leaf and its navigation entry, naming the actual removed source.
 
-
-
 ### Verification
 
 Verify target absence, bounded parent edit and preservation of all neighboring files.
@@ -65,8 +63,6 @@ open-forge route remove guidance/notes --automatic
 ### Expected result
 
 Remove the source and detach safe link markup while preserving Team notes as authored text.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge route remove guidance/team --automatic
 
 Remove the selected category, list the actual effects and handle incoming references under the safe-detach rules.
 
-
-
 ### Verification
 
 Enumerate every removed path and preserved neighbor; a category summary cannot replace the effect inventory when paths are required.
@@ -121,8 +115,6 @@ open-forge route remove guidance/team --dry-run
 ### Expected result
 
 Show the removal and link changes in future tense, ending with No files were changed.
-
-
 
 ### Verification
 
@@ -154,7 +146,6 @@ open-forge route remove guidance/does-not-exist --automatic
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C17-06
 
 **Situation:** Managed source
@@ -176,8 +167,6 @@ open-forge route remove "$MANAGED_SOURCE" --automatic
 ### Expected result
 
 Remove the explicitly selected managed route, record its persistent exclusion, and release its content claims.
-
-
 
 ### Verification
 
@@ -213,8 +202,6 @@ open-forge route remove "$AMBIGUOUS_ID"
 
 Remove only the explicitly selected source after the required confirmation.
 
-
-
 ### Verification
 
 Record selection and confirmation separately; verify the other candidate survives.
@@ -242,8 +229,6 @@ open-forge route remove guidance/notes --automatic
 ### Expected result
 
 Explain why safe detachment cannot be checked and make no removal.
-
-
 
 ### Verification
 
@@ -273,8 +258,6 @@ open-forge route remove guidance/notes --automatic
 
 Explain contention and preserve every source and link.
 
-
-
 ### Verification
 
 Distinguish a held lock from a harmless persistent lock file.
@@ -303,8 +286,6 @@ open-forge route remove guidance/notes --automatic
 
 Say removal stopped after the completed effects and identify remaining work and real recovery.
 
-
-
 ### Verification
 
 Compare every removed path and rewritten span; do not claim nothing changed.
@@ -332,8 +313,6 @@ open-forge route remove guidance/notes
 ### Expected result
 
 Say removal was cancelled and preserve the source and links.
-
-
 
 ### Verification
 

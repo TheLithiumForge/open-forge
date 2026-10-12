@@ -16,14 +16,14 @@ The CLI experience target is helpful continuation whenever useful work remains p
 
 Read all six original manifests, READMEs, and all 40 runtime files. Checked Markdown destinations from installed locations against Core plus the transitive declared dependency closure, and reviewed literal paths and named capabilities in prose.
 
-| Package | Runtime files | Local links | Missing runtime targets |
-| --- | ---: | ---: | ---: |
-| Development | 4 | 4 | 0 |
-| Development Toolkit | 0 | 0 | 0 |
-| Orchestration | 7 | 9 | 0 |
-| Planning | 15 | 12 | 0 |
-| Project Documents | 10 | 9 | 0 |
-| Workflow Support | 4 | 3 | 0 |
+| Package             | Runtime files | Local links | Missing runtime targets |
+| ------------------- | ------------: | ----------: | ----------------------: |
+| Development         |             4 |           4 |                       0 |
+| Development Toolkit |             0 |           0 |                       0 |
+| Orchestration       |             7 |           9 |                       0 |
+| Planning            |            15 |          12 |                       0 |
+| Project Documents   |            10 |           9 |                       0 |
+| Workflow Support    |             4 |           3 |                       0 |
 
 Planning's references to an optional workspace transfer record do not require Orchestration. Project Documents' optional rationale does not require Planning's Decision convention. Workflow Support's empty recipe catalogue is intentional until other packages contribute recipes. Placeholder source fields in Templates are authoring prompts, not missing runtime files.
 

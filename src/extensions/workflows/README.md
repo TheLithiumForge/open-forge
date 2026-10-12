@@ -4,11 +4,11 @@ Find and follow installed workflows, or create your own using the supplied templ
 
 ## What You Get
 
-| Source | Use it to |
-| --- | --- |
-| [Use Workflow](content/.agents/skills/use-workflow/SKILL.md) | Choose a method and follow its required steps within applicable authority. |
-| [Recipe catalogue](content/.agents/skills/use-workflow/references/_references.md) | Find relevant scopes without reading every method. |
-| [Workflow Template](content/.agents/templates/workflows/workflow.md) | Write and scope your own method. |
+| Source                                                                            | Use it to                                                                  |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [Use Workflow](content/.agents/skills/use-workflow/SKILL.md)                      | Choose a method and follow its required steps within applicable authority. |
+| [Recipe catalogue](content/.agents/skills/use-workflow/references/_references.md) | Find relevant scopes without reading every method.                         |
+| [Workflow Template](content/.agents/templates/workflows/workflow.md)              | Write and scope your own method.                                           |
 
 **Direct dependencies:** None.
 
@@ -29,4 +29,3 @@ Open Forge routing and native harness discovery are distinct. Expose the canonic
 Use the complete source catalogue so dependencies resolve together. See the [installation guide](../../../docs/extensions.md) for managed and manual setup.
 
 Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent. Deleting a starter never means deleting the work created from it.
-

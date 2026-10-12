@@ -341,23 +341,23 @@ names the flag instead.
   acceptance; its delta already includes the four global Install/Update
   fixture migrations identified during integration preparation.
 - Install/Update confirmation wording: the direct prompts `Apply this Install
-  plan? [y/N] ` and `Apply this Update plan? [y/N] ` are now the shared sentence
+plan? [y/N] ` and `Apply this Update plan? [y/N] ` are now the shared sentence
   `Apply these changes? [y/N]`. Install replacement uses `Replace the <N>
-  existing file listed above? [y/N]` or its plural form, counting distinct
+existing file listed above? [y/N]` or its plural form, counting distinct
   replacement target files and excluding the ownership record. Update's prune
   deletion question uses `Delete the <N> file listed above? [y/N]` or its
   plural form, counting distinct physical delete paths and excluding lifecycle
   slots. Refusal, end of input, Escape and Ctrl+C before effects report
   `Install was cancelled. Nothing was changed.` or `Update was cancelled.
-  Nothing was changed.`, exit 130, empty stdout, and no workspace effects.
+Nothing was changed.`, exit 130, empty stdout, and no workspace effects.
 - Install/Update plan review now renders the already-built minimal result
   through the same report renderer to stderr before confirmation; after an
   accepted answer, only the apply result is rendered to stdout. Dry-run and
   verified no-op paths do not prompt, and plan review does not rerun the
   operation. Their unavailable capability path reports the exact causes
   `Install requires explicit automatic mode when interactive confirmation is
-  unavailable.` and `Update requires explicit automatic mode when interactive
-  confirmation is unavailable.` with confirmation-required / invalid input,
+unavailable.` and `Update requires explicit automatic mode when interactive
+confirmation is unavailable.` with confirmation-required / invalid input,
   exit 4, and no prompt I/O or effects. `--automatic` bypasses confirmation
   while retaining the request flags; it grants neither Install `--force` nor
   Update `--force`/`--prune` authority.
@@ -377,7 +377,7 @@ names the flag instead.
   state and revalidation boundaries retained. Against the frozen 03 baseline,
   the exact 04 snapshot delta is eight cancellation cause-string substitutions:
   `Install confirmation was refused or reached end of input.` -> `Install was
-  cancelled. Nothing was changed.` and the corresponding Update sentence,
+cancelled. Nothing was changed.` and the corresponding Update sentence,
   across the four Install and four Update cancellation snapshots. The 03
   prerequisite owns the schema/envelope and final-newline migrations; no other
   04 snapshot bytes changed.
@@ -439,7 +439,7 @@ names the flag instead.
   `--automatic`. Propagate codes, status, exit, and Next text in 41.
 - Library permission or final-confirmation no/decline/EOF/Escape/Ctrl+C ->
   `cancelled`, exit 130, and exact `<Command> was cancelled. Nothing was
-  changed.` before effects; missing permission remains blocked exit 5 and
+changed.` before effects; missing permission remains blocked exit 5 and
   post-effect interruption retains partial/recovery wording. Propagate Library
   scenarios and transcripts in 41.
 - Raw Library permission prompt with leaf rows, `future`/`descendants` prose,

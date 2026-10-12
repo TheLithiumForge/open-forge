@@ -38,8 +38,6 @@ open-forge route list
 
 Show the default depth-one tree with usable source IDs and only truthful hidden-child hints.
 
-
-
 ### Verification
 
 Compare displayed depth and IDs against authored topology; run a shown ID through route inspect on a separate identical fixture.
@@ -65,8 +63,6 @@ open-forge route list guidance
 ### Expected result
 
 List the selected subtree without blending sibling roots into it.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge route list guidance --depth=all
 
 Show the full selected tree without an arbitrary display cap.
 
-
-
 ### Verification
 
 Count all eligible descendants independently and inspect for silent ellipses.
@@ -121,8 +115,6 @@ open-forge route list guidance --depth=0
 ### Expected result
 
 Treat zero as a valid depth and show only the contract-defined subject level.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge route list guidance/empty
 
 Explain that the selected scope has no child routes, not that its reference is invalid.
 
-
-
 ### Verification
 
 Confirm the entrypoint exists and the independently inspected child set is empty.
@@ -177,8 +167,6 @@ open-forge route list guidance/does-not-exist
 ### Expected result
 
 Name the unknown reference and avoid an empty-tree success.
-
-
 
 ### Verification
 
@@ -206,8 +194,6 @@ open-forge route list guidance --depth=-1
 
 Explain the invalid depth and accepted forms.
 
-
-
 ### Verification
 
 Verify depth zero remains valid in its separate case; do not use one rule for both.
@@ -233,8 +219,6 @@ open-forge route list "$AMBIGUOUS_ID"
 ### Expected result
 
 Explain the ambiguity instead of combining or selecting trees arbitrarily.
-
-
 
 ### Verification
 
@@ -264,7 +248,6 @@ open-forge route list guidance
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C11-10
 
 **Situation:** Unreadable entrypoint
@@ -286,8 +269,6 @@ open-forge route list
 ### Expected result
 
 Show safe available routes and name the branch whose inspection could not finish.
-
-
 
 ### Verification
 
@@ -316,8 +297,6 @@ open-forge route list
 ### Expected result
 
 Explain the loader problem and avoid inventing a usable root graph.
-
-
 
 ### Verification
 
@@ -358,8 +337,6 @@ open-forge route list
 ### Expected result
 
 Report incomplete root discovery; do not invent the usual standard roots or call the workspace empty.
-
-
 
 ### Verification
 

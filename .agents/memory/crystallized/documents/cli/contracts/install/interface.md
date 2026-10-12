@@ -275,16 +275,16 @@ named flags below, not arbitrary destination paths.
 
 ## Flags
 
-| Flag                | Role                          | Value                               | Omission                                                         | Repetition and composition                                                                                       |
-| ------------------- | ----------------------------- | ----------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `--force`           | Initial replacement authority | Boolean                             | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, adoption, or ownership.                                   |
-| `--automatic`       | Guided-input policy           | Boolean                             | Human input may use the minimal inspection and confirmation flow | Repeats idempotently. It suppresses interaction and selects only deterministic safe defaults.                    |
-| `--dry-run`         | Preview write policy          | Boolean                             | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply.             |
+| Flag                | Role                          | Value                               | Omission                                                         | Repetition and composition                                                                                                                  |
+| ------------------- | ----------------------------- | ----------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--force`           | Initial replacement authority | Boolean                             | Selects ordinary management establishment or exact managed no-op | Repeats idempotently. It does not imply update, prune, adoption, or ownership.                                                              |
+| `--automatic`       | Guided-input policy           | Boolean                             | Human input may use the minimal inspection and confirmation flow | Repeats idempotently. It suppresses interaction and selects only deterministic safe defaults.                                               |
+| `--dry-run`         | Preview write policy          | Boolean                             | Permits application after the same preflight                     | Repeats idempotently. It writes nothing and uses the same request, facts, plan, and status as apply.                                        |
 | `--configure`       | Explicit setup change         | Boolean                             | Ordinary Install verification                                    | Repeats idempotently. Selects additive route configuration and bounded frontmatter conversion without general Update or deletion authority. |
-| `--preset`          | Built-in setup selection      | `essentials`, `full-core`, `custom` | Interactive first setup or deterministic unattended defaults     | Repeated identical values are idempotent. Conflicting values are invalid. Existing setup requires `--configure`. |
-| `--frontmatter`     | Metadata output form          | `root`, `scoped`                    | Workspace preference, with root as the fresh unattended default | Repeated identical values are idempotent. Conflicting values are invalid. An installed workspace requires `--configure`. |
-| `--route`           | Custom row override           | `<id>=<add\|remove\|git-ignore>`    | Retain the Custom base row                                       | Repeat for different rows. Requires Custom. Conflicting actions for one row are invalid.                         |
-| Shared global flags | Workspace and presentation    | Defined by the shared contract      | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                                      |
+| `--preset`          | Built-in setup selection      | `essentials`, `full-core`, `custom` | Interactive first setup or deterministic unattended defaults     | Repeated identical values are idempotent. Conflicting values are invalid. Existing setup requires `--configure`.                            |
+| `--frontmatter`     | Metadata output form          | `root`, `scoped`                    | Workspace preference, with root as the fresh unattended default  | Repeated identical values are idempotent. Conflicting values are invalid. An installed workspace requires `--configure`.                    |
+| `--route`           | Custom row override           | `<id>=<add\|remove\|git-ignore>`    | Retain the Custom base row                                       | Repeat for different rows. Requires Custom. Conflicting actions for one row are invalid.                                                    |
+| Shared global flags | Workspace and presentation    | Defined by the shared contract      | Shared defaults                                                  | Shared repetition and terminal rules apply.                                                                                                 |
 
 ### Setup Selection
 
@@ -353,14 +353,15 @@ Choose what Open Forge sets up
 
 up/down move   + ~ - set   space next   enter done   esc cancel
 ```
+
 Ordinary repeated Install remains quiet when its exact state is already current.
 
 After the preset choice, first interactive Install asks
 `How should Open Forge write file metadata?` with root preselected. The choices are:
 
-| Choice | Explanation |
-| ------ | ----------- |
-| `Root keys` | `description: and tags: at the top level` |
+| Choice                     | Explanation                                |
+| -------------------------- | ------------------------------------------ |
+| `Root keys`                | `description: and tags: at the top level`  |
 | `Scoped under open-forge:` | `open-forge: holds description: and tags:` |
 
 An explicit `--frontmatter` skips the question. Every fresh Install writes the
@@ -697,19 +698,19 @@ Next: open-forge install --automatic  (or --dry-run to see the plan first)
 
 Each row names the actual change. The preview form uses `would be` or `would`.
 
-| Change | Row label |
-| ------ | --------- |
-| New file or directory | `created` |
-| New `AGENTS.md` or `CLAUDE.md` | `created with an Open Forge section` |
-| Section added to an existing host file | `Open Forge section added, your content was kept` |
-| Open Forge section in a host file refreshed | `Open Forge section updated` |
-| Generated `Entries` in an existing entrypoint or the loader | `Entries updated` |
-| Install-owned Git-ignore section added or changed | `Open Forge Git-ignore rules added` or `Open Forge Git-ignore rules updated` |
-| Existing `.agents/open-forge.json` | `settings updated` |
-| Existing ownership record | `ownership record updated` |
-| Configure frontmatter conversion | `metadata moved to root keys` or `metadata moved under open-forge:` |
-| Missing metadata completed in an existing file | `metadata completed, your content was kept` |
-| Whole-file replacement | `replaced`, plus `(your previous file is in the recovery bundle)` only when the bundle was retained |
+| Change                                                      | Row label                                                                                           |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| New file or directory                                       | `created`                                                                                           |
+| New `AGENTS.md` or `CLAUDE.md`                              | `created with an Open Forge section`                                                                |
+| Section added to an existing host file                      | `Open Forge section added, your content was kept`                                                   |
+| Open Forge section in a host file refreshed                 | `Open Forge section updated`                                                                        |
+| Generated `Entries` in an existing entrypoint or the loader | `Entries updated`                                                                                   |
+| Install-owned Git-ignore section added or changed           | `Open Forge Git-ignore rules added` or `Open Forge Git-ignore rules updated`                        |
+| Existing `.agents/open-forge.json`                          | `settings updated`                                                                                  |
+| Existing ownership record                                   | `ownership record updated`                                                                          |
+| Configure frontmatter conversion                            | `metadata moved to root keys` or `metadata moved under open-forge:`                                 |
+| Missing metadata completed in an existing file              | `metadata completed, your content was kept`                                                         |
+| Whole-file replacement                                      | `replaced`, plus `(your previous file is in the recovery bundle)` only when the bundle was retained |
 
 `replacing <N> existing files` in a headline counts only whole-file
 replacements. One summary line counts created files and directories under
@@ -785,11 +786,11 @@ when the form is resolved. It also contains `previousForm` when the form changed
 and `kept` at every detail level when Configure kept files in their previous
 form. It is separate from `data.configuration`.
 
-| Level    | `data`                                                                                                                          |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Level    | `data`                                                                                                                                                           |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | minimal  | `{ mode, force, automatic, classification, footprint { files, directories, sections }, lockPath, [migrations], [frontmatter { form, [previousForm], [kept] }] }` |
-| standard | same                                                                                                                            |
-| full     | + `source { inventoryFingerprint }`, per-effect `sourceAssetPath` in `effects`, `lifecycle { action, outcome }`, `verification` |
+| standard | same                                                                                                                                                             |
+| full     | + `source { inventoryFingerprint }`, per-effect `sourceAssetPath` in `effects`, `lifecycle { action, outcome }`, `verification`                                  |
 
 `effects` lists every planned effect at every level (receipts are complete in
 JSON). Internally, the migration collection is empty on a no-op. Public

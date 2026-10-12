@@ -24,11 +24,11 @@ PACKAGES with valid explicit inputs and an unrelated malformed .agents/patterns/
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | Run the otherwise valid explicit Extension install. | [X12](../scenarios/experience.md#x12) | The unrelated corrupt file does not become a universal admission gate and remains untouched. |
-| 2 | Fork with an absent, unreadable or malformed generated ownership lock instead. | [X13](../scenarios/experience.md#x13) | No ownership is inferred; unavailable ownership facts are reported without hiding known useful facts. |
-| 3 | Fork with a genuinely unreadable required package source or required recovery boundary. | [X12](../scenarios/experience.md#x12) | This necessary missing fact still stops the unsafe operation. |
+| Step | Action                                                                                  | Scenario                              | State passed forward                                                                                  |
+| ---: | --------------------------------------------------------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+|    1 | Run the otherwise valid explicit Extension install.                                     | [X12](../scenarios/experience.md#x12) | The unrelated corrupt file does not become a universal admission gate and remains untouched.          |
+|    2 | Fork with an absent, unreadable or malformed generated ownership lock instead.          | [X13](../scenarios/experience.md#x13) | No ownership is inferred; unavailable ownership facts are reported without hiding known useful facts. |
+|    3 | Fork with a genuinely unreadable required package source or required recovery boundary. | [X12](../scenarios/experience.md#x12) | This necessary missing fact still stops the unsafe operation.                                         |
 
 ## Alternatives and recovery
 

@@ -158,7 +158,7 @@ complete managed suite and the supported Native AOT gate once.
   sandboxed worker. The final gate was assigned to the overseer on an
   unsandboxed host.
 - The merged report model uses `--format text|json`, `--detail
-  minimal|standard|full|debug`, repeatable `--detail-filter`, and one schema-3
+minimal|standard|full|debug`, repeatable `--detail-filter`, and one schema-3
   envelope. The current status names are `completed`,
   `completed-with-warnings`, `incomplete`, `invalid-input`, `blocked`, `failed`,
   and `cancelled`.

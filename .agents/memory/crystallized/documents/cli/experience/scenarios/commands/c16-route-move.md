@@ -38,8 +38,6 @@ open-forge route move guidance/notes guidance/moved-note
 
 Move the leaf and update its old/new parent navigation.
 
-
-
 ### Verification
 
 Verify old path absence, new path content and no duplicate route identity.
@@ -65,8 +63,6 @@ open-forge route move guidance/notes patterns/moved-note
 ### Expected result
 
 Move the source and rewrite exactly the affected link destinations while preserving their visible text.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge route move guidance/team patterns/team
 
 Move the complete category and adjust every affected route and authored reference.
 
-
-
 ### Verification
 
 Enumerate the full moved path mapping and outside-reference edits; do not treat only the entrypoint as the category.
@@ -121,8 +115,6 @@ open-forge route move guidance/notes patterns/moved-note --dry-run
 ### Expected result
 
 Show the move and reference/navigation changes without changing any path or byte.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge route move guidance/notes patterns/moved-note
 
 Name the occupied destination and stop without overwriting or deleting either source.
 
-
-
 ### Verification
 
 Compare both files and all references; there is no silent merge or force behavior.
@@ -177,8 +167,6 @@ open-forge route move guidance/team guidance/team/nested
 ### Expected result
 
 Explain that a category cannot be moved inside itself.
-
-
 
 ### Verification
 
@@ -210,7 +198,6 @@ open-forge route move guidance/notes guidance/notes
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C16-08
 
 **Situation:** Managed source
@@ -232,8 +219,6 @@ open-forge route move "$MANAGED_SOURCE" guidance/moved-managed
 ### Expected result
 
 Explain the ownership restriction and use the relevant management action rather than bypassing it.
-
-
 
 ### Verification
 
@@ -261,8 +246,6 @@ open-forge route move guidance/does-not-exist guidance/moved-note
 
 Name the missing source and do not create the destination.
 
-
-
 ### Verification
 
 Verify no best-match or parent fallback.
@@ -288,8 +271,6 @@ open-forge route move "$AMBIGUOUS_ID" guidance/moved-note
 ### Expected result
 
 Honor the selected physical source and leave the other candidate alone.
-
-
 
 ### Verification
 
@@ -319,8 +300,6 @@ open-forge route move guidance/notes guidance/moved-note
 
 Explain that safe reference updates cannot be established and leave the move unapplied.
 
-
-
 ### Verification
 
 Verify the complete no-write set includes source, destination and already scanned references.
@@ -348,8 +327,6 @@ open-forge route move guidance/notes guidance/moved-note
 ### Expected result
 
 Explain that another operation is using the workspace and make no move.
-
-
 
 ### Verification
 
@@ -379,8 +356,6 @@ open-forge route move guidance/notes guidance/moved-note
 
 Distinguish completed effects from unfinished work and explain actual recovery.
 
-
-
 ### Verification
 
 Compare path identity and every affected reference; do not infer atomic rollback from a failed status.
@@ -408,8 +383,6 @@ open-forge route move "$AMBIGUOUS_ID" guidance/moved-note
 ### Expected result
 
 Report cancellation with no move or link rewrites.
-
-
 
 ### Verification
 
@@ -442,8 +415,6 @@ open-forge route move guidance/notes guidance/moved-note
 ### Expected result
 
 Complete the ownership observation without planning or applying a move/removal. Explain that no route changed.
-
-
 
 ### Verification
 

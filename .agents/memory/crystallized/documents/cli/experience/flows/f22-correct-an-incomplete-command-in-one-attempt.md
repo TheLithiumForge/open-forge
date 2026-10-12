@@ -24,12 +24,12 @@ ROUTES with a valid guidance parent and absent new-note.md.
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | open-forge route create guidance/new-note | [C14-07](../scenarios/commands/c14-route-create.md#c14-07) | Target: create the unambiguous destination with a warning about optional missing metadata. |
-| 2 | Optionally choose a more useful description and tag. | [X15](../scenarios/experience.md#x15) | The note remains usable before enrichment. |
-| 3 | open-forge route update guidance/new-note --description "Team operating notes" --tag=Guidance | [C15-01](../scenarios/commands/c15-route-update.md#c15-01) | Enrichment updates the same file and navigation. |
-| 4 | open-forge route inspect guidance/new-note | [C12-02](../scenarios/commands/c12-route-inspect.md#c12-02) | The resulting source is exactly the one named in the corrected request. |
+| Step | Action                                                                                        | Scenario                                                    | State passed forward                                                                       |
+| ---: | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+|    1 | open-forge route create guidance/new-note                                                     | [C14-07](../scenarios/commands/c14-route-create.md#c14-07)  | Target: create the unambiguous destination with a warning about optional missing metadata. |
+|    2 | Optionally choose a more useful description and tag.                                          | [X15](../scenarios/experience.md#x15)                       | The note remains usable before enrichment.                                                 |
+|    3 | open-forge route update guidance/new-note --description "Team operating notes" --tag=Guidance | [C15-01](../scenarios/commands/c15-route-update.md#c15-01)  | Enrichment updates the same file and navigation.                                           |
+|    4 | open-forge route inspect guidance/new-note                                                    | [C12-02](../scenarios/commands/c12-route-inspect.md#c12-02) | The resulting source is exactly the one named in the corrected request.                    |
 
 ## Alternatives and recovery
 

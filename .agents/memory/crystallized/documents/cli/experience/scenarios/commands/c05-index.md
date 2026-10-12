@@ -38,14 +38,9 @@ open-forge index
 
 Say the checked Entries sections are current and nothing needs doing.
 
-
-
 ### Verification
 
 Verify byte-identical repetition, including line endings, comments and authored paragraphs.
-
-
-
 
 ## C05-02
 
@@ -69,14 +64,9 @@ open-forge index
 
 Update the one affected list and show the actual changed/checked counts.
 
-
-
 ### Verification
 
 Derive the changed-list set from a tree diff. The supplied capture named one-stale updates two lists and is not this fixture's oracle.
-
-
-
 
 ## C05-03
 
@@ -100,14 +90,9 @@ open-forge index --dry-run
 
 Say which Entries section would change, with the correct before/after entry counts and no writes.
 
-
-
 ### Verification
 
 Compare file bytes, directory entries and external recovery; require a later apply/repeat branch in the flow.
-
-
-
 
 ## C05-04
 
@@ -130,8 +115,6 @@ open-forge index guidance
 ### Expected result
 
 Rebuild exactly the selected source's contract-defined scope and affected direct parent, not unrelated roots.
-
-
 
 ### Verification
 
@@ -161,7 +144,6 @@ open-forge index .agents/guidance/
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C05-06
 
 **Situation:** Unknown source
@@ -183,8 +165,6 @@ open-forge index guidance/does-not-exist
 ### Expected result
 
 Name the unknown reference and do not turn it into an empty successful index.
-
-
 
 ### Verification
 
@@ -214,7 +194,6 @@ open-forge index
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C05-08
 
 **Situation:** Incomplete unreadable child
@@ -241,7 +220,6 @@ open-forge index
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 **Execution constraint:** Prove genuine access denial and include at least one independent stale branch. Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
 
 ## C05-09
@@ -265,8 +243,6 @@ open-forge index
 ### Expected result
 
 Explain that another operation is using this workspace without guessing its identity or suggesting deletion of a lock file.
-
-
 
 ### Verification
 
@@ -296,8 +272,6 @@ open-forge index
 
 Distinguish changed, unchanged, failed and unstarted work; report recovery truthfully.
 
-
-
 ### Verification
 
 Compare per-list hashes and receipts; never print the successful updated count as though the whole request completed.
@@ -325,8 +299,6 @@ open-forge index
 ### Expected result
 
 Report cancellation and no content changes for this pre-effect case.
-
-
 
 ### Verification
 

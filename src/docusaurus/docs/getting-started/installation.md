@@ -32,7 +32,7 @@ The first interactive install offers three choices:
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Essentials | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with private contents and a shared entrypoint |
 | Full Core  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                |
-| Custom     | One list of every built-in category and Memory state, where you mark each one to add, add and Git-ignore, or leave out             |
+| Custom     | One list of every built-in category and Memory state, where you mark each one to add, add and Git-ignore, or leave out            |
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. You can add them later. Full Core includes the base categories, not optional Extensions or an agent runtime.
 

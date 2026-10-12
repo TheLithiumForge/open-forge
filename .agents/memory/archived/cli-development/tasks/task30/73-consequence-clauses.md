@@ -114,7 +114,7 @@ Two rows in `contracts/extension/remove/interface.md` were also corrected
 because they no longer described the command:
 
 - `extension-remove.lifecycle-observation` was listed as `<id> is not recorded
-  as installed.` with `open-forge extension list --installed`. That text exists
+as installed.` with `open-forge extension list --installed`. That text exists
   nowhere in Remove and appears to have been copied from Update. The code emits
   `<dependency> remains installed and is no longer needed by <id>.` under the
   title `Dependency remains installed`, and offers
@@ -130,17 +130,17 @@ Four clauses were rewritten before merge because they did not read the way the
 asks. Recorded because the shape of the mistake repeats:
 
 - `library-list.record-unavailable` said `so Libraries cannot be listed from
-  it`. "From it" is clumsy; the plain result is `so no Libraries are listed.`
+it`. "From it" is clumsy; the plain result is `so no Libraries are listed.`
 - `references.candidate-unsafe` said `so its links were not included in the
-  incoming scan`, repeating both "incoming" and "links" inside one sentence.
+incoming scan`, repeating both "incoming" and "links" inside one sentence.
   Now `so none of its links were counted.`
 - `extension-inspect.dependency-incomplete` appended `, so the comparison could
-  not finish` directly after an interpolated `<reason>`, which reads as a comma
+not finish` directly after an interpolated `<reason>`, which reads as a comma
   splice. Now a second sentence, `It was not compared.`, which also mirrors
   Context's `It was not followed.`
 - `context.closure-unavailable` gained `Some context was not included.`, which
   is both vague and already carried by the headline `Context could not be read
-  completely.` Dropped.
+completely.` Dropped.
 
 `library-sync.mapping-unavailable` was dropped for the headline reason below:
 its Incomplete headline is `<id> could not be synchronized: <limitation>.

@@ -40,7 +40,6 @@ open-forge status
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 **Execution constraint:** Start from a verified uninstalled workspace.
 
 ## C01-02
@@ -65,14 +64,9 @@ open-forge status
 
 Say the Framework is installed and current; show measured startup cost, not a diagnostic dump.
 
-
-
 ### Verification
 
 Compare each stated measure with its declared source set; inspect all emitted lines for irrelevant zero counts.
-
-
-
 
 ## C01-03
 
@@ -96,14 +90,9 @@ open-forge status
 
 Report a healthy installation and the actual installed Extension context, without treating the Extension as drift.
 
-
-
 ### Verification
 
 Count distinct installed packages separately from dependency memberships and from files.
-
-
-
 
 **Execution constraint:** Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.
 
@@ -129,14 +118,9 @@ open-forge status
 
 Identify the file that differs from the current selected source. Offer the relevant update action without claiming a historical user edit unless independently established.
 
-
-
 ### Verification
 
 Compare hashes and known ownership; verify that status did not undo the edit.
-
-
-
 
 ## C01-05
 
@@ -160,14 +144,9 @@ open-forge status
 
 Name the missing file and explain the consequence. Count affected files, not repeated findings about one file.
 
-
-
 ### Verification
 
 Compare unique affected paths with headline N; verify absence remains absence after this read-only command.
-
-
-
 
 ## C01-06
 
@@ -191,14 +170,9 @@ open-forge status
 
 Identify the stale navigation and the applicable indexing action. Do not describe the new file itself as a failed Framework update.
 
-
-
 ### Verification
 
 Compare authored child inventory with the parent list; inspect any competing changed-file and stale-list diagnoses separately.
-
-
-
 
 ## C01-07
 
@@ -221,8 +195,6 @@ open-forge status
 ### Expected result
 
 Name the leftover recovery item and the applicable cleanup action. Do not call a recovery item an affected source file. The linked flow previews cleanup before applying it.
-
-
 
 ### Verification
 
@@ -250,14 +222,9 @@ open-forge status
 
 Identify the missing Library link and the specific Library sync action.
 
-
-
 ### Verification
 
 Compare the destination directory entry, registration and untouched source bytes.
-
-
-
 
 ## C01-09
 
@@ -285,7 +252,6 @@ open-forge status
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C01-10
 
 **Situation:** Unreadable entry file
@@ -308,14 +274,9 @@ open-forge status
 
 Say which checks could not finish and which source could not be read. Do not equate unknown measures with zero.
 
-
-
 ### Verification
 
 Independently confirm access denial under the running account; inspect each dependent measurement for unavailable status.
-
-
-
 
 **Execution constraint:** Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
 
@@ -340,8 +301,6 @@ open-forge status --workspace "$MISSING_WS"
 ### Expected result
 
 Name the selected missing workspace and stop. Do not search its parent or inspect a different workspace.
-
-
 
 ### Verification
 
@@ -369,8 +328,6 @@ open-forge status --detail=verbose
 
 Explain the invalid value before any workspace work. Parser-level text is not a schema-3 domain report.
 
-
-
 ### Verification
 
 Verify nonzero invalid-input exit and no writes; do not demand a domain headline from a pre-binding parser error.
@@ -396,8 +353,6 @@ open-forge status
 ### Expected result
 
 Report both the known attention item and incomplete checks. Do not let either fact erase the other.
-
-
 
 ### Verification
 

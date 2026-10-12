@@ -48,19 +48,19 @@ The maintainer accepted D1 to D3 on 2026-10-09. The Overseer resolved D4 to D9 w
 - **D6 Focused details for Custom.** A focused `-` row in an installed workspace says that leaving it out keeps existing files and notes, which stay routable, and that Open Forge stops managing its defaults. A focused `~` row says that new files stay on this machine and the entrypoint is still shared through Git. The retention sentence no longer repeats on every row.
 - **D7 Change vocabulary.** Plans and results use these labels. The preview form uses `would be` or `would`.
 
-  | Change | Done label |
-  |---|---|
-  | New file or directory | `created` |
-  | New `AGENTS.md` or `CLAUDE.md` | `created with an Open Forge section` |
-  | Section added to an existing host file | `Open Forge section added, your content was kept` |
-  | Open Forge section in a host file refreshed | `Open Forge section updated` |
-  | Generated `Entries` in an existing entrypoint or the loader | `Entries updated` |
-  | Install's Git-ignore section added or changed | `Open Forge Git-ignore rules added` or `updated` |
-  | Existing `.agents/open-forge.json` | `settings updated` |
-  | Existing ownership record | `ownership record updated` |
-  | Configure frontmatter conversion | `metadata moved to root keys` or `metadata moved under open-forge:` |
-  | Missing metadata completed in an existing file | `metadata completed, your content was kept` |
-  | Whole-file replacement | `replaced`, plus `(your previous file is in the recovery bundle)` only when the bundle was retained |
+  | Change                                                      | Done label                                                                                          |
+  | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+  | New file or directory                                       | `created`                                                                                           |
+  | New `AGENTS.md` or `CLAUDE.md`                              | `created with an Open Forge section`                                                                |
+  | Section added to an existing host file                      | `Open Forge section added, your content was kept`                                                   |
+  | Open Forge section in a host file refreshed                 | `Open Forge section updated`                                                                        |
+  | Generated `Entries` in an existing entrypoint or the loader | `Entries updated`                                                                                   |
+  | Install's Git-ignore section added or changed               | `Open Forge Git-ignore rules added` or `updated`                                                    |
+  | Existing `.agents/open-forge.json`                          | `settings updated`                                                                                  |
+  | Existing ownership record                                   | `ownership record updated`                                                                          |
+  | Configure frontmatter conversion                            | `metadata moved to root keys` or `metadata moved under open-forge:`                                 |
+  | Missing metadata completed in an existing file              | `metadata completed, your content was kept`                                                         |
+  | Whole-file replacement                                      | `replaced`, plus `(your previous file is in the recovery bundle)` only when the bundle was retained |
 
 - **D8 Install headlines.** A fresh Install keeps `Installed the Open Forge Framework into <workspace>.`, adding `, replacing <N> existing files` only for whole-file replacements. Configure on an installed workspace reads `Changed the Open Forge setup in <workspace>.` and `Would change the Open Forge setup in <workspace>.` One summary line counts created files and directories and updated existing files, for example `Would create 2 files and 2 directories under .agents, and update 5 existing files.` `Nothing that already exists would be changed.` appears only when it is true.
 - **D10 One confirmation pattern.** Every plan confirmation asks `Apply these changes? [y/N]`. When the plan deletes, replaces or removes something, the question names it: `Apply these changes, including deleting 3 files? [y/N]`, `Apply these changes, including replacing 2 existing files? [y/N]`, `Apply these changes, including replacing 2 existing files and deleting 3 files? [y/N]` or `Apply these changes, including removing 4 links? [y/N]`, with correct singular forms. The count covers only that destructive part, and the question still approves the whole plan shown above it. Extension Create keeps `Create these files? [y/N]`. Extension Install's separate authority question before its plan becomes `Allow replacing the <N> existing files listed above? [y/N]`. This supersedes the earlier `Replace the <N> existing files listed above?` and `Delete the <N> files listed above?` questions (reversible default).
@@ -144,16 +144,16 @@ R1 audited 32 prompts and 9 change-label families at `be285bcc5`. Its report is 
 
 ## Slices
 
-| Slice | Owner | Outcome | Milestone |
-|---|---|---|---|
-| P1 | Overseer | Shared prompt and Install contract amendments | M2 |
-| R1 | Read-only worker | Audit of every wizard and every plan or result that calls a partial edit a replacement, with current text and proposed wording | Input to M6 |
-| S1 | Worker | Mark list primitive, shared marks and row layout, and the Install Custom list | M3, M4 |
-| S2 | Worker | Install and Configure change wording, headline and summary, the D10 confirmation pattern for Install, and the shared change labels | M5 |
-| S3 | Worker | Accepted R1 change labels for the other commands, and the D10 confirmations | M6 |
-| S4 | Worker | Accepted R1 prompt wording for the other wizards | M6 |
-| S5 | Overseer or worker | Public docs, CLI Skill, flows and scenarios | M7 |
-| S6 | Overseer | Review, corrections, managed and Native AOT gates, manual check | M8 |
+| Slice | Owner              | Outcome                                                                                                                            | Milestone   |
+| ----- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| P1    | Overseer           | Shared prompt and Install contract amendments                                                                                      | M2          |
+| R1    | Read-only worker   | Audit of every wizard and every plan or result that calls a partial edit a replacement, with current text and proposed wording     | Input to M6 |
+| S1    | Worker             | Mark list primitive, shared marks and row layout, and the Install Custom list                                                      | M3, M4      |
+| S2    | Worker             | Install and Configure change wording, headline and summary, the D10 confirmation pattern for Install, and the shared change labels | M5          |
+| S3    | Worker             | Accepted R1 change labels for the other commands, and the D10 confirmations                                                        | M6          |
+| S4    | Worker             | Accepted R1 prompt wording for the other wizards                                                                                   | M6          |
+| S5    | Overseer or worker | Public docs, CLI Skill, flows and scenarios                                                                                        | M7          |
+| S6    | Overseer           | Review, corrections, managed and Native AOT gates, manual check                                                                    | M8          |
 
 ## Review and corrections
 

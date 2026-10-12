@@ -12,8 +12,8 @@ Return to the [review](./_cli-experience-coverage.md). **Status describes E2E ev
 
 **[None registered](../../../crystallized/documents/cli/experience/scenarios/commands/c24-library-list.md#c24-01)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | [AbsentRecordIsCompleteWithoutInventory:8](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryListProcessTests.cs) | Absent ownership gives completed/0, empty libraries and no inventory; snapshot unchanged, no infrastructure. |
 
 **Gap / qualification:** Absent ownership is not readable known-empty ownership. Install legacy-file test invokes list but asserts only exit and preservation.
@@ -22,8 +22,8 @@ Return to the [review](./_cli-experience-coverage.md). **Status describes E2E ev
 
 **[One current](../../../crystallized/documents/cli/experience/scenarios/commands/c24-library-list.md#c24-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                          | What its assertions establish                                                                                                                        |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [HealthyRecordsAreDeterministic:21](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryListProcessTests.cs) | Two seeded registrations give identical repeated JSON/streams/exit; ordered IDs and links, expected mapping and current states; unchanged workspace. |
 
 **Gap / qualification:** Two JSON registrations, not one concise human row.
@@ -32,8 +32,8 @@ Return to the [review](./_cli-experience-coverage.md). **Status describes E2E ev
 
 **[Link missing](../../../crystallized/documents/cli/experience/scenarios/commands/c24-library-list.md#c24-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                        | What its assertions establish                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | [MissingProjectionIsAttentionWithoutInventory:61](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryListProcessTests.cs) | Absent destination with present source gives warnings/2 and link-missing code, no inventory, unchanged workspace. |
 
 **Gap / qualification:** No exact finding path or useful action.
@@ -42,10 +42,10 @@ Return to the [review](./_cli-experience-coverage.md). **Status describes E2E ev
 
 **[Link changed](../../../crystallized/documents/cli/experience/scenarios/commands/c24-library-list.md#c24-04)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [ChangedOccupantBlocksWholeSync:63](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs) | Changed ordinary occupant plus independent source addition gives blocked/5, unchanged snapshot and explicitly no new link; source preserved. |
-| [ChangedOccupantPreservesEveryProjectionAndRecord:47](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryDetachProcessTests.cs) | Changed ordinary occupant plus other link gives blocked/5 and unchanged full snapshot/ownership, preserving other link/source. |
+| Existing published-process evidence                                                                                                                              | What its assertions establish                                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [ChangedOccupantBlocksWholeSync:63](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs)                     | Changed ordinary occupant plus independent source addition gives blocked/5, unchanged snapshot and explicitly no new link; source preserved. |
+| [ChangedOccupantPreservesEveryProjectionAndRecord:47](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryDetachProcessTests.cs) | Changed ordinary occupant plus other link gives blocked/5 and unchanged full snapshot/ownership, preserving other link/source.               |
 
 **Gap / qualification:** Changed occupant tested through mutations, not list.
 
@@ -53,8 +53,8 @@ Return to the [review](./_cli-experience-coverage.md). **Status describes E2E ev
 
 **[No ownership record](../../../crystallized/documents/cli/experience/scenarios/commands/c24-library-list.md#c24-05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | [AbsentRecordIsCompleteWithoutInventory:8](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryListProcessTests.cs) | Absent ownership gives completed/0, empty libraries and no inventory; snapshot unchanged, no infrastructure. |
 
 **Gap / qualification:** No unavailable-count or known-empty distinction assertion.
@@ -63,8 +63,8 @@ Return to the [review](./_cli-experience-coverage.md). **Status describes E2E ev
 
 **[Source folder missing](../../../crystallized/documents/cli/experience/scenarios/commands/c24-library-list.md#c24-06)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                               | What its assertions establish                                                                                                       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [ApplyRemovesExactAndDanglingLinksBeforeLastRecord:27](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryDetachProcessTests.cs) | Current and dangling targets become null; libraries array empty, registrationRemoved=true; remaining source preserved, no recovery. |
 
 **Gap / qualification:** Dangling member during detach, not missing-root list.
@@ -121,8 +121,8 @@ No matching published-process assertion identified.
 
 **[Current](../../../crystallized/documents/cli/experience/scenarios/commands/c25-library-inspect.md#c25-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                         | What its assertions establish                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | [HealthyProjectionHasCompleteInventoryAndDestinationIdentity:8](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryInspectProcessTests.cs) | Seeded docs mapping yields one current row, current=true, source/destination paths, equal expected/observed targets and preserved source. |
 
 **Gap / qualification:** No complete identity/count communication.
@@ -131,8 +131,8 @@ No matching published-process assertion identified.
 
 **[Added source files](../../../crystallized/documents/cli/experience/scenarios/commands/c25-library-inspect.md#c25-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                              | What its assertions establish                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | [CompleteInventoryExplainsAdditionRetirementAndMissingProjection:51](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryInspectProcessTests.cs) | Mixed seeded state yields exactly ordered added, retired, missing rows and destination paths, warnings/2 and unchanged snapshot. |
 
 **Gap / qualification:** Seeded mixed addition state, no attach then source addition.
@@ -141,8 +141,8 @@ No matching published-process assertion identified.
 
 **[Retired source files](../../../crystallized/documents/cli/experience/scenarios/commands/c25-library-inspect.md#c25-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                              | What its assertions establish                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | [CompleteInventoryExplainsAdditionRetirementAndMissingProjection:51](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryInspectProcessTests.cs) | Mixed seeded state yields exactly ordered added, retired, missing rows and destination paths, warnings/2 and unchanged snapshot. |
 
 **Gap / qualification:** Seeded retirement, no public sequence or sync advice.
@@ -151,8 +151,8 @@ No matching published-process assertion identified.
 
 **[Missing links](../../../crystallized/documents/cli/experience/scenarios/commands/c25-library-inspect.md#c25-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                              | What its assertions establish                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | [CompleteInventoryExplainsAdditionRetirementAndMissingProjection:51](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryInspectProcessTests.cs) | Mixed seeded state yields exactly ordered added, retired, missing rows and destination paths, warnings/2 and unchanged snapshot. |
 
 **Gap / qualification:** Missing row asserted, restoration explanation absent.
@@ -161,10 +161,10 @@ No matching published-process assertion identified.
 
 **[Changed links](../../../crystallized/documents/cli/experience/scenarios/commands/c25-library-inspect.md#c25-05)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [ChangedOccupantBlocksWholeSync:63](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs) | Changed ordinary occupant plus independent source addition gives blocked/5, unchanged snapshot and explicitly no new link; source preserved. |
-| [ChangedOccupantPreservesEveryProjectionAndRecord:47](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryDetachProcessTests.cs) | Changed ordinary occupant plus other link gives blocked/5 and unchanged full snapshot/ownership, preserving other link/source. |
+| Existing published-process evidence                                                                                                                              | What its assertions establish                                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [ChangedOccupantBlocksWholeSync:63](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs)                     | Changed ordinary occupant plus independent source addition gives blocked/5, unchanged snapshot and explicitly no new link; source preserved. |
+| [ChangedOccupantPreservesEveryProjectionAndRecord:47](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryDetachProcessTests.cs) | Changed ordinary occupant plus other link gives blocked/5 and unchanged full snapshot/ownership, preserving other link/source.               |
 
 **Gap / qualification:** Other mutation commands, not inspect.
 
@@ -196,8 +196,8 @@ No matching published-process assertion identified.
 
 **[Unknown id](../../../crystallized/documents/cli/experience/scenarios/commands/c25-library-inspect.md#c25-09)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                            | What its assertions establish                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | [RequiredIdOmissionIsInvalidWithoutObservation:32](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryInspectProcessTests.cs) | Omitted ID gives invalid/4, empty stdout, Cannot inspect and Library List guidance; full detail includes invalid-ID code; no changes. |
 
 **Gap / qualification:** Omitted operand differs from valid known-absent ID.
@@ -206,8 +206,8 @@ No matching published-process assertion identified.
 
 **[No ownership record](../../../crystallized/documents/cli/experience/scenarios/commands/c25-library-inspect.md#c25-10)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | [AbsentRecordIsCompleteWithoutInventory:8](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryListProcessTests.cs) | Absent ownership gives completed/0, empty libraries and no inventory; snapshot unchanged, no infrastructure. |
 
 **Gap / qualification:** Missing ownership only for list.
@@ -216,8 +216,8 @@ No matching published-process assertion identified.
 
 **[Invalid id](../../../crystallized/documents/cli/experience/scenarios/commands/c25-library-inspect.md#c25-11)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                            | What its assertions establish                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | [RequiredIdOmissionIsInvalidWithoutObservation:32](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryInspectProcessTests.cs) | Omitted ID gives invalid/4, empty stdout, Cannot inspect and Library List guidance; full detail includes invalid-ID code; no changes. |
 
 **Gap / qualification:** Omitted ID differs from supplied malformed ID.
@@ -250,9 +250,9 @@ No matching published-process assertion identified.
 
 **[Attached inside agents](../../../crystallized/documents/cli/experience/scenarios/commands/c26-library-attach.md#c26-01)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [DryRunReportsCompletePlanWithoutEffects:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryAttachProcessTests.cs) | Default-destination preview asserts source/destination, dry-run, recorded=false, permission not-required, no directory/infrastructure or snapshot changes. |
+| Existing published-process evidence                                                                                                                                    | What its assertions establish                                                                                                                                                                                           |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [DryRunReportsCompletePlanWithoutEffects:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryAttachProcessTests.cs)                 | Default-destination preview asserts source/destination, dry-run, recorded=false, permission not-required, no directory/infrastructure or snapshot changes.                                                              |
 | [ApplyCreatesExactRelativeProjectionAndOwnershipReceipt:26](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryAttachProcessTests.cs) | Public attach to pre-granted docs creates exact relative file link, ordinary parent, exact ownership member; source and authored route prefix preserved, unrelated README unlisted, persistent empty lock, no recovery. |
 
 **Gap / qualification:** Only preview implicit admission or apply pre-granted docs; no routed .agents attach and Entries verification.
@@ -261,10 +261,10 @@ No matching published-process assertion identified.
 
 **[Attached outside with flag](../../../crystallized/documents/cli/experience/scenarios/commands/c26-library-attach.md#c26-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [ExplicitRepeatableGrantPersistsAndDryRunWritesNothing:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySharedGrantProcessTests.cs) | Six rows attach/sync/detach by preview/apply. Repeated docs/tools grants persist and keep unrelated setting; preview leaves settings/workspace unchanged. Sync/detach start with public attach. |
-| [ApplyCreatesExactRelativeProjectionAndOwnershipReceipt:26](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryAttachProcessTests.cs) | Public attach to pre-granted docs creates exact relative file link, ordinary parent, exact ownership member; source and authored route prefix preserved, unrelated README unlisted, persistent empty lock, no recovery. |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [ExplicitRepeatableGrantPersistsAndDryRunWritesNothing:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySharedGrantProcessTests.cs) | Six rows attach/sync/detach by preview/apply. Repeated docs/tools grants persist and keep unrelated setting; preview leaves settings/workspace unchanged. Sync/detach start with public attach.                         |
+| [ApplyCreatesExactRelativeProjectionAndOwnershipReceipt:26](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryAttachProcessTests.cs)     | Public attach to pre-granted docs creates exact relative file link, ordinary parent, exact ownership member; source and authored route prefix preserved, unrelated README unlisted, persistent empty lock, no recovery. |
 
 **Gap / qualification:** Grant persistence and mapping tested separately; no single case plus reserved boundary.
 
@@ -280,8 +280,8 @@ No matching published-process assertion identified.
 
 **[Permission required non interactive](../../../crystallized/documents/cli/experience/scenarios/commands/c26-library-attach.md#c26-04)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ExplicitRepeatableGrantPersistsAndDryRunWritesNothing:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySharedGrantProcessTests.cs) | Six rows attach/sync/detach by preview/apply. Repeated docs/tools grants persist and keep unrelated setting; preview leaves settings/workspace unchanged. Sync/detach start with public attach. |
 
 **Gap / qualification:** Supplies replacement grants; does not assert uncovered automatic denial.
@@ -314,8 +314,8 @@ No matching published-process assertion identified.
 
 **[Destination collision](../../../crystallized/documents/cli/experience/scenarios/commands/c26-library-attach.md#c26-08)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                  | What its assertions establish                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | [OccupiedDestinationBlocksWholeAttach:67](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryAttachProcessTests.cs) | Occupied ordinary file yields blocked/5, unchanged full snapshot, no registration/infrastructure and preserved source. |
 
 **Gap / qualification:** Ordinary occupied leaf only; no unowned exact-looking link, precise finding or multi-member plan.
@@ -324,8 +324,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c26-library-attach.md#c26-09)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ExplicitRepeatableGrantPersistsAndDryRunWritesNothing:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySharedGrantProcessTests.cs) | Six rows attach/sync/detach by preview/apply. Repeated docs/tools grants persist and keep unrelated setting; preview leaves settings/workspace unchanged. Sync/detach start with public attach. |
 
 **Gap / qualification:** No proposed links/directories or scope explanation assertion.
@@ -390,8 +390,8 @@ No matching published-process assertion identified.
 
 **[Up to date](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                               | What its assertions establish                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | [UnchangedInventoryIsAnEffectFreeNoOp:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs) | Seeded current mapping gives completed/0, empty effects, unchanged workspace/source, no infrastructure. |
 
 **Gap / qualification:** No human up-to-date message or public prior-state provenance.
@@ -400,8 +400,8 @@ No matching published-process assertion identified.
 
 **[Links added](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [DryRunThenApplyReconcilesOneAdditionAndRetirement:24](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs) | Connected preview/apply preserves preview state, matches planned/applied effect shapes, removes old link target, creates exact relative new link, retains only new member, preserves source, no recovery. |
 
 **Gap / qualification:** No existing-current-link preservation.
@@ -410,8 +410,8 @@ No matching published-process assertion identified.
 
 **[Links removed](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [DryRunThenApplyReconcilesOneAdditionAndRetirement:24](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs) | Connected preview/apply preserves preview state, matches planned/applied effect shapes, removes old link target, creates exact relative new link, retains only new member, preserves source, no recovery. |
 
 **Gap / qualification:** No sibling sentinel or explicit entry absence.
@@ -420,8 +420,8 @@ No matching published-process assertion identified.
 
 **[Both](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [DryRunThenApplyReconcilesOneAdditionAndRetirement:24](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs) | Connected preview/apply preserves preview state, matches planned/applied effect shapes, removes old link target, creates exact relative new link, retains only new member, preserves source, no recovery. |
 
 **Gap / qualification:** No unchanged third member/count.
@@ -430,8 +430,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [DryRunThenApplyReconcilesOneAdditionAndRetirement:24](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs) | Connected preview/apply preserves preview state, matches planned/applied effect shapes, removes old link target, creates exact relative new link, retains only new member, preserves source, no recovery. |
 
 **Gap / qualification:** No independent exact receipt or reviewed public-created fixture.
@@ -448,8 +448,8 @@ No matching published-process assertion identified.
 
 **[Changed occupant](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-07)** — selection: improved; E2E coverage: **opposite**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                          | What its assertions establish                                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ChangedOccupantBlocksWholeSync:63](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs) | Changed ordinary occupant plus independent source addition gives blocked/5, unchanged snapshot and explicitly no new link; source preserved. |
 
 **Gap / qualification:** Explicit whole-sync block and no independent addition contradict continuation.
@@ -458,8 +458,8 @@ No matching published-process assertion identified.
 
 **[Registered link gone](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-08)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                              | What its assertions establish                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | [CompleteInventoryExplainsAdditionRetirementAndMissingProjection:51](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryInspectProcessTests.cs) | Mixed seeded state yields exactly ordered added, retired, missing rows and destination paths, warnings/2 and unchanged snapshot. |
 
 **Gap / qualification:** Inspect observes missing link; no sync restoration/warning.
@@ -476,8 +476,8 @@ No matching published-process assertion identified.
 
 **[Permission required](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-10)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ExplicitRepeatableGrantPersistsAndDryRunWritesNothing:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySharedGrantProcessTests.cs) | Six rows attach/sync/detach by preview/apply. Repeated docs/tools grants persist and keep unrelated setting; preview leaves settings/workspace unchanged. Sync/detach start with public attach. |
 
 **Gap / qualification:** Replacement grants, not denied revoked permission.
@@ -486,8 +486,8 @@ No matching published-process assertion identified.
 
 **[No ownership record](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-11)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | [AbsentRecordIsCompleteWithoutInventory:8](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryListProcessTests.cs) | Absent ownership gives completed/0, empty libraries and no inventory; snapshot unchanged, no infrastructure. |
 
 **Gap / qualification:** Missing ownership only for list.
@@ -536,8 +536,8 @@ No matching published-process assertion identified.
 
 **[A retired registration has no deletable link](../../../crystallized/documents/cli/experience/scenarios/commands/c27-library-sync.md#c27-16)** — selection: improved; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [DryRunThenApplyReconcilesOneAdditionAndRetirement:24](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySyncProcessTests.cs) | Connected preview/apply preserves preview state, matches planned/applied effect shapes, removes old link target, creates exact relative new link, retains only new member, preserves source, no recovery. |
 
 **Gap / qualification:** Retires existing dangling link, not already absent destination.
@@ -546,8 +546,8 @@ No matching published-process assertion identified.
 
 **[Detached](../../../crystallized/documents/cli/experience/scenarios/commands/c28-library-detach.md#c28-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                               | What its assertions establish                                                                                                       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [ApplyRemovesExactAndDanglingLinksBeforeLastRecord:27](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryDetachProcessTests.cs) | Current and dangling targets become null; libraries array empty, registrationRemoved=true; remaining source preserved, no recovery. |
 
 **Gap / qualification:** No sibling/navigation preservation or source-kept explanation.
@@ -564,8 +564,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c28-library-detach.md#c28-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                     | What its assertions establish                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [DryRunReportsExactDeletionWithoutEffects:8](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryDetachProcessTests.cs) | Preview asserts selected ID, registrationRemoved=false, one exact-target deletion; unchanged workspace, no infrastructure. |
 
 **Gap / qualification:** Seeded registration, not public attachment provenance.
@@ -582,8 +582,8 @@ No matching published-process assertion identified.
 
 **[Registered link gone](../../../crystallized/documents/cli/experience/scenarios/commands/c28-library-detach.md#c28-05)** — selection: improved; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                               | What its assertions establish                                                                                                       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [ApplyRemovesExactAndDanglingLinksBeforeLastRecord:27](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryDetachProcessTests.cs) | Current and dangling targets become null; libraries array empty, registrationRemoved=true; remaining source preserved, no recovery. |
 
 **Gap / qualification:** Dangling link exists; absent destination not exercised.
@@ -592,8 +592,8 @@ No matching published-process assertion identified.
 
 **[Changed occupant](../../../crystallized/documents/cli/experience/scenarios/commands/c28-library-detach.md#c28-06)** — selection: improved; E2E coverage: **opposite**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                              | What its assertions establish                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | [ChangedOccupantPreservesEveryProjectionAndRecord:47](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryDetachProcessTests.cs) | Changed ordinary occupant plus other link gives blocked/5 and unchanged full snapshot/ownership, preserving other link/source. |
 
 **Gap / qualification:** Whole registration and other links retained, contrary to independent detach.
@@ -610,8 +610,8 @@ No matching published-process assertion identified.
 
 **[Permission required](../../../crystallized/documents/cli/experience/scenarios/commands/c28-library-detach.md#c28-08)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ExplicitRepeatableGrantPersistsAndDryRunWritesNothing:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibrarySharedGrantProcessTests.cs) | Six rows attach/sync/detach by preview/apply. Repeated docs/tools grants persist and keep unrelated setting; preview leaves settings/workspace unchanged. Sync/detach start with public attach. |
 
 **Gap / qualification:** Replacement grants, not revocation denial.
@@ -620,8 +620,8 @@ No matching published-process assertion identified.
 
 **[No ownership record](../../../crystallized/documents/cli/experience/scenarios/commands/c28-library-detach.md#c28-09)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | [AbsentRecordIsCompleteWithoutInventory:8](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedLibraryListProcessTests.cs) | Absent ownership gives completed/0, empty libraries and no inventory; snapshot unchanged, no infrastructure. |
 
 **Gap / qualification:** Missing ownership only for list.
@@ -665,4 +665,3 @@ No matching published-process assertion identified.
 No matching published-process assertion identified.
 
 **Gap / qualification:** Deferred retained-recovery fault absent.
-

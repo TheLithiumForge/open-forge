@@ -773,15 +773,15 @@ open-forge install [--configure] [--preset <essentials|full-core|custom>]
 
 The global options also apply. Install has no operands.
 
-| Option | What it does |
-| ------ | ------------ |
-| `--configure` | Revisit route choices or the frontmatter form in an installed workspace |
-| `--preset <essentials\|full-core\|custom>` | Select built-in routes without the preset question |
-| `--frontmatter <root\|scoped>` | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
-| `--route <id>=<add\|remove\|git-ignore>` | Override a Custom row. Repeat for different rows |
-| `--force` | Allow eligible initial replacements |
-| `--automatic` | Skip interaction and use supported automatic choices |
-| `--dry-run` | Preview the complete plan without writing files |
+| Option                                     | What it does                                                                                                                                        |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--configure`                              | Revisit route choices or the frontmatter form in an installed workspace                                                                             |
+| `--preset <essentials\|full-core\|custom>` | Select built-in routes without the preset question                                                                                                  |
+| `--frontmatter <root\|scoped>`             | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
+| `--route <id>=<add\|remove\|git-ignore>`   | Override a Custom row. Repeat for different rows                                                                                                    |
+| `--force`                                  | Allow eligible initial replacements                                                                                                                 |
+| `--automatic`                              | Skip interaction and use supported automatic choices                                                                                                |
+| `--dry-run`                                | Preview the complete plan without writing files                                                                                                     |
 
 ```sh
 open-forge install
@@ -799,9 +799,9 @@ selection.
 
 After resolving the preset, first interactive Install asks `How should Open Forge write file metadata?` and shows a short example of each form when settings do not already declare a preference. Root is preselected. An explicit `--frontmatter` skips that question.
 
-| Choice | Explanation |
-| ------ | ----------- |
-| `Root keys` | `description: and tags: at the top level` |
+| Choice                     | Explanation                                |
+| -------------------------- | ------------------------------------------ |
+| `Root keys`                | `description: and tags: at the top level`  |
 | `Scoped under open-forge:` | `open-forge: holds description: and tags:` |
 
 #### Setup choices

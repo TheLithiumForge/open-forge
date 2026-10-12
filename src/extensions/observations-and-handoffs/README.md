@@ -4,12 +4,12 @@ Save an observation worth revisiting, or give the next person, agent, or session
 
 ## What You Get
 
-| Source | Use it to |
-| --- | --- |
-| [Observations](content/.agents/memory/emerging/observations/_observations.md) | Preserve useful occurrences and evidence without accepting an explanation prematurely. |
-| [Handoffs](content/.agents/memory/working/handoffs/_handoffs.md) | Preserve a fixed snapshot at an actual transfer or planned resumption. |
-| [Observation Template](content/.agents/templates/observations-and-handoffs/observation.md) | Record what happened, its evidence, limits, and possible follow-up. |
-| [Handoff Template](content/.agents/templates/observations-and-handoffs/handoff.md) | State the next action, work to preserve, accepted direction, and verification at transfer. |
+| Source                                                                                     | Use it to                                                                                  |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| [Observations](content/.agents/memory/emerging/observations/_observations.md)              | Preserve useful occurrences and evidence without accepting an explanation prematurely.     |
+| [Handoffs](content/.agents/memory/working/handoffs/_handoffs.md)                           | Preserve a fixed snapshot at an actual transfer or planned resumption.                     |
+| [Observation Template](content/.agents/templates/observations-and-handoffs/observation.md) | Record what happened, its evidence, limits, and possible follow-up.                        |
+| [Handoff Template](content/.agents/templates/observations-and-handoffs/handoff.md)         | State the next action, work to preserve, accepted direction, and verification at transfer. |
 
 **Direct dependencies:** None.
 

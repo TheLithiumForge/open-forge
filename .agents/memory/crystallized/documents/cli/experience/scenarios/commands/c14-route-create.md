@@ -38,8 +38,6 @@ open-forge route create guidance/new-note --description "Team operating notes" -
 
 Create the new file with supplied metadata and update only its bounded navigation.
 
-
-
 ### Verification
 
 Inspect the destination bytes, metadata and parent entry; no unrelated list churn.
@@ -65,8 +63,6 @@ open-forge route create guidance/new-note --description "Team operating notes" -
 ### Expected result
 
 Copy the Template's body as independent starting content and use the destination's supplied metadata.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge route create guidance/new-note --description "Team operating notes" -
 
 Show the proposed file and parent-list change without creating either.
 
-
-
 ### Verification
 
 Verify exact no-write evidence and preserve the Template source.
@@ -121,8 +115,6 @@ open-forge route create guidance/new-note --description "Team operating notes" -
 ### Expected result
 
 Say the file already matches and there is nothing to do.
-
-
 
 ### Verification
 
@@ -154,7 +146,6 @@ open-forge route create guidance/new-note --tag=Guidance
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C14-06
 
 **Situation:** Missing tag
@@ -180,7 +171,6 @@ open-forge route create guidance/new-note --description "Team operating notes"
 ### Verification
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
-
 
 ## C14-07
 
@@ -208,7 +198,6 @@ open-forge route create guidance/new-note
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C14-08
 
 **Situation:** Invalid target
@@ -230,8 +219,6 @@ open-forge route create guidance/../outside --description "Notes" --tag=Guidance
 ### Expected result
 
 Explain the invalid destination and do not reinterpret it as a valid source.
-
-
 
 ### Verification
 
@@ -261,7 +248,6 @@ open-forge route create guidance/no-parent/new-note --description "Notes" --tag=
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 **Execution constraint:** Distinguish the current explicit-init workaround from the proposed automatic creation target; an existing recognized root and unambiguous admitted path are required.
 
 ## C14-10
@@ -285,8 +271,6 @@ open-forge route create guidance/new-note --description "Team operating notes" -
 ### Expected result
 
 Refuse replacement and identify the existing file. There is no force option for this command.
-
-
 
 ### Verification
 
@@ -314,8 +298,6 @@ open-forge route create guidance/new-note --description "Notes" --tag=Guidance -
 
 Explain the missing Template, not a successful empty-body creation.
 
-
-
 ### Verification
 
 Verify no target or navigation change and distinguish unknown from unreadable Template.
@@ -341,8 +323,6 @@ open-forge route create guidance/new-note --description "Team operating notes" -
 ### Expected result
 
 Explain the active workspace operation and preserve every path.
-
-
 
 ### Verification
 
@@ -372,8 +352,6 @@ open-forge route create guidance/new-note --description "Team operating notes" -
 
 Say creation stopped and name the completed file and unfinished navigation.
 
-
-
 ### Verification
 
 Compare the actual target and parent list; do not claim a fully usable route merely because a leaf exists.
@@ -401,8 +379,6 @@ open-forge route create guidance/new-note --description "Team operating notes" -
 ### Expected result
 
 Report cancellation and no completed creation.
-
-
 
 ### Verification
 
@@ -439,8 +415,6 @@ open-forge route create guidance/new-note --description "Notes" --tag=Guidance -
 ### Expected result
 
 Name the unavailable required fact and its consequence. Do not infer a complete empty inventory or apply a partial mutation plan.
-
-
 
 ### Verification
 

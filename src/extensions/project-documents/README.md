@@ -4,12 +4,12 @@ Maintain understandable current project knowledge without duplicating it. Keep d
 
 ## What You Get
 
-| Source | Use it to |
-| --- | --- |
-| [Documents](content/.agents/memory/crystallized/documents/_documents.md) | Keep one coherent current explanation of a subject. |
-| [Vision method](content/.agents/skills/use-workflow/references/project-documents/vision.md) | Clarify purpose, audience, first useful value, and success. |
-| [Architecture method](content/.agents/skills/use-workflow/references/project-documents/architecture.md) | Explain responsibilities, boundaries, relationships, and adoption. |
-| [Five Templates](content/.agents/templates/documents/_documents.md) | Document, Vision, Architecture, Principles, and Maintenance Contract. |
+| Source                                                                                                  | Use it to                                                             |
+| ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [Documents](content/.agents/memory/crystallized/documents/_documents.md)                                | Keep one coherent current explanation of a subject.                   |
+| [Vision method](content/.agents/skills/use-workflow/references/project-documents/vision.md)             | Clarify purpose, audience, first useful value, and success.           |
+| [Architecture method](content/.agents/skills/use-workflow/references/project-documents/architecture.md) | Explain responsibilities, boundaries, relationships, and adoption.    |
+| [Five Templates](content/.agents/templates/documents/_documents.md)                                     | Document, Vision, Architecture, Principles, and Maintenance Contract. |
 
 **Direct dependencies:** [Workflow Support](../workflows/README.md)
 
@@ -30,4 +30,3 @@ Drafts remain candidates until accepted. Existing documentation need not move in
 Use the complete source catalogue so dependencies resolve together. See the [installation guide](../../../docs/extensions.md) for managed and manual setup.
 
 Keep or remove the methods, categories, and starter files that fit the workspace. Review dependent references and user-created descendants before removal. Template copies remain independent. Deleting a starter never means deleting the work created from it.
-

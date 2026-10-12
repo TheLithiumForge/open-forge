@@ -38,8 +38,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 
 Install the selected package and name actual effects, without an unexplained success dump.
 
-
-
 ### Verification
 
 Compare the manifest's intended paths and bytes with disk; unrelated files and source package remain unchanged.
@@ -67,8 +65,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 ### Expected result
 
 Explain the selected package and required dependency and install each once.
-
-
 
 ### Verification
 
@@ -98,8 +94,6 @@ open-forge extension install --source "$CAT"
 
 Show meaningful choices, honor the selected package and confirm the concrete plan.
 
-
-
 ### Verification
 
 Record selection and verify no unselected package was installed except explicit dependencies.
@@ -128,8 +122,6 @@ open-forge extension install --source "$CAT"
 
 Explain that a selection is required; do not interpret omission as all packages.
 
-
-
 ### Verification
 
 Verify bounded completion, no prompt hang and zero effects.
@@ -155,8 +147,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 ### Expected result
 
 Name the uncovered destination and required consent, then stop without content effects.
-
-
 
 ### Verification
 
@@ -186,8 +176,6 @@ open-forge extension install toolkit --source "$CAT"
 
 Explain that the scope includes future descendants, save only the chosen grant, and install the package.
 
-
-
 ### Verification
 
 Inspect .agents/open-forge.json and actual saved scope; re-run consent checks on a fresh later request to verify persistence.
@@ -215,8 +203,6 @@ open-forge extension install toolkit --source "$CAT"
 ### Expected result
 
 Apply this approved operation without persisting a grant.
-
-
 
 ### Verification
 
@@ -246,8 +232,6 @@ open-forge extension install toolkit --source "$CAT" --allow-path docs --automat
 
 Save the explicit permitted scope and install only eligible planned targets.
 
-
-
 ### Verification
 
 Inspect the saved grant and effects separately; a later failure must not erase a verified saved-grant receipt from the report.
@@ -275,8 +259,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 ### Expected result
 
 Name the existing file and explain why it was not replaced.
-
-
 
 ### Verification
 
@@ -306,8 +288,6 @@ open-forge extension install toolkit --source "$CAT" --force --automatic
 
 Replace only eligible conflicts and say which content was replaced.
 
-
-
 ### Verification
 
 Compare bytes and prior-content recovery; force must not bypass other owners, source trees or protected controls.
@@ -335,8 +315,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 ### Expected result
 
 Say toolkit is already installed with nothing to do.
-
-
 
 ### Verification
 
@@ -366,8 +344,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 
 Explain the changed-content boundary and the appropriate update action instead of silently reinstalling over it.
 
-
-
 ### Verification
 
 Compare current source and target, not only stored version metadata; preserve the changed file.
@@ -395,8 +371,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 ### Expected result
 
 Explain that there was no content to install, without pretending files were created.
-
-
 
 ### Verification
 
@@ -426,8 +400,6 @@ open-forge extension install toolkit --source "$CAT" --allow-path docs --dry-run
 
 Show the complete proposed package and permission effects without saving consent or creating content.
 
-
-
 ### Verification
 
 Compare workspace, settings, source catalogue and recovery inventory; dry-run never prompts.
@@ -455,8 +427,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 ### Expected result
 
 Name the unavailable source and do not install a partial dependency closure.
-
-
 
 ### Verification
 
@@ -486,8 +456,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 
 Explain the active operation and make no content changes.
 
-
-
 ### Verification
 
 Verify real contention and ensure a standing grant does not bypass the workspace lock.
@@ -515,8 +483,6 @@ open-forge extension install toolkit --source "$CAT" --automatic
 ### Expected result
 
 Report the installed portion and unfinished operation, with actual recovery and permission-save facts.
-
-
 
 ### Verification
 
@@ -546,8 +512,6 @@ open-forge extension install --source "$CAT"
 
 Report cancellation and preserve all target and settings bytes.
 
-
-
 ### Verification
 
 Record the actual cancellation stage; a denied permission choice and cancellation may have different status semantics.
@@ -575,8 +539,6 @@ open-forge extension install toolkit base --source "$CAT" --automatic
 ### Expected result
 
 Install both selected packages once and report each selected identity and actual effects.
-
-
 
 ### Verification
 

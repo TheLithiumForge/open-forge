@@ -473,7 +473,7 @@ A parser failure is text on stderr without a result envelope.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -490,15 +490,15 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly route create; data follows the catalogue:
 
-| Level    | `data`                                                                   |
-| -------- | ------------------------------------------------------------------------ |
-| minimal  | `{ mode, target { id, path }, listedIn, template { id, path } \| null }` |
+| Level    | `data`                                                                                                                                                                 |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| minimal  | `{ mode, target { id, path }, listedIn, template { id, path } \| null }`                                                                                               |
 | standard | + `metadata { description, responsibility, tags }`. Omitted description and responsibility are `null`, tags remain an array, and `applyTo` appears only when supplied. |
-| full     | + `content`, per section `before`, `after`, `verification`               |
+| full     | + `content`, per section `before`, `after`, `verification`                                                                                                             |
 
 The shared schema-3 envelope is unchanged. The command-local `metadata` object
 omits `applyTo` when the flag was not supplied.
@@ -509,56 +509,54 @@ projection.
 
 ## Semantic Results
 
-| Status                  | When                                                   | Headline                                                              | Exit | Stream |
-| ----------------------- | ------------------------------------------------------ | --------------------------------------------------------------------- | ---: | ------ |
-| completed               | created with no optional-metadata finding              | `Created <path>  (<id>)`                                              |    0 | stdout |
-| completed               | identical file already present with no finding         | `<path> already has the requested content. Nothing to do.`            |    0 | stdout |
-| completed (dry run)     | planned with no optional-metadata finding             | `Would create <path>  (<id>)`                                         |    0 | stdout |
-| completed-with-warnings | optional metadata omitted or recovery bundle retained  | + family row                                                          |    2 | stdout |
-| incomplete              | template, parent or record unreadable                  | `The file could not be created: <limitation>. Nothing was changed.`   |    3 | stdout |
+| Status                  | When                                                     | Headline                                                              | Exit | Stream |
+| ----------------------- | -------------------------------------------------------- | --------------------------------------------------------------------- | ---: | ------ |
+| completed               | created with no optional-metadata finding                | `Created <path>  (<id>)`                                              |    0 | stdout |
+| completed               | identical file already present with no finding           | `<path> already has the requested content. Nothing to do.`            |    0 | stdout |
+| completed (dry run)     | planned with no optional-metadata finding                | `Would create <path>  (<id>)`                                         |    0 | stdout |
+| completed-with-warnings | optional metadata omitted or recovery bundle retained    | + family row                                                          |    2 | stdout |
+| incomplete              | template, parent or record unreadable                    | `The file could not be created: <limitation>. Nothing was changed.`   |    3 | stdout |
 | invalid-input           | explicitly invalid supplied metadata, unknown/bad target | `Cannot create the routed file: <problem>.` (all problems in one run) |    4 | stderr |
-| blocked                 | exists with different content, unsafe, ambiguous, lock | `Cannot create <path>: <reason>.`                                     |    5 | stderr |
-| failed                  | after effects                                          | `Route create stopped after <n> of <m> changes.`                      |    1 | stderr |
-| cancelled               | Ctrl+C                                                 | `Route create was cancelled. Nothing was changed.`                    |  130 | stderr |
-
-
+| blocked                 | exists with different content, unsafe, ambiguous, lock   | `Cannot create <path>: <reason>.`                                     |    5 | stderr |
+| failed                  | after effects                                            | `Route create stopped after <n> of <m> changes.`                      |    1 | stderr |
+| cancelled               | Ctrl+C                                                   | `Route create was cancelled. Nothing was changed.`                    |  130 | stderr |
 
 ## Errors And Boundaries
 
 The finding catalogue is:
 
-| Code                                     | Severity | Family                      | Message                                                                                                                                                      | Next                                |
-| ---------------------------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |
-| route-create.invalid-input               | error    | invalid-input               |                                                                                                                                                              |                                     |
-| route-create.invalid-target              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.invalid-target`). | `open-forge route create --help`    |
-| route-create.invalid-metadata            | error    | local                       | `--description is empty.` / `--tag <value> is empty.` / `--tag <value> is repeated.` / `--tag <value> is not a valid tag.` / an `--apply-to <glob>` pattern problem, joined with `and`. An empty path segment adds `Use docs/** to match files under docs/.` once | corrected command                   |
-| route-create.optional-metadata | warning | local | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Selection/RouteCreateReportSelector.cs): distinguish preview, verified creation, and already-current optional metadata. | `open-forge route update <target id>`; add an optional description or tag when useful. |
-| route-create.invalid-template            | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.invalid-template`).                                                                                                                 | `open-forge find --tag Template`    |
-| route-create.parent-missing              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.parent-missing`); retained only for a missing Framework or other required existing boundary. | `open-forge route init <parent id>` |
-| route-create.workspace-unavailable       | error    | workspace-unavailable       |                                                                                                                                                              |                                     |
-| route-create.workspace-unsafe            | error    | workspace-unsafe            |                                                                                                                                                              |                                     |
-| route-create.target-unsafe               | error    | target-unsafe               |                                                                                                                                                              |                                     |
-| route-create.target-content-differs      | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.target-content-differs`).                                                                                                              | `open-forge route update <id>`      |
-| route-create.route-ambiguous             | error    | route-ambiguous             |                                                                                                                                                              |                                     |
-| route-create.identity-collision          | error    | identity-collision          | (blocking: the new ID would collide)                                                                                                                         | choose another name                 |
-| route-create.metadata-unsafe             | error    | metadata-unsafe             |                                                                                                                                                              |                                     |
-| route-create.template-unsafe             | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.template-unsafe`).                                                                                                           | none                                |
-| route-create.generated-region-unsafe     | error    | generated-region-unsafe     |                                                                                                                                                              |                                     |
-| route-create.workspace-lock-unavailable  | error    | workspace-lock-unavailable  |                                                                                                                                                              |                                     |
-| route-create.target-changed              | error    | target-changed              |                                                                                                                                                              |                                     |
-| route-create.recovery-conflict           | error    | recovery-conflict           |                                                                                                                                                              |                                     |
-| route-create.inspection-incomplete       | warning  | inspection-incomplete       |                                                                                                                                                              |                                     |
-| route-create.metadata-incomplete         | warning  | metadata-incomplete         |                                                                                                                                                              |                                     |
-| route-create.projection-incomplete       | warning  | projection-unavailable      |                                                                                                                                                              |                                     |
-| route-create.template-unavailable        | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.template-unavailable`).                                                                                                                      | none                                |
-| route-create.recovery-unavailable        | warning  | recovery-unavailable        |                                                                                                                                                              |                                     |
-| route-create.recovery-artifact-retained  | warning  | recovery-artifact-retained  |                                                                                                                                                              |                                     |
-| route-create.target-changed-during-apply | error    | target-changed-during-apply |                                                                                                                                                              |                                     |
-| route-create.write-failed                | error    | write-failed                |                                                                                                                                                              |                                     |
-| route-create.verification-failed         | error    | verification-failed         |                                                                                                                                                              |                                     |
-| route-create.recovery-failed             | error    | recovery-failed             |                                                                                                                                                              |                                     |
-| route-create.operation-failed            | error    | operation-failed            |                                                                                                                                                              |                                     |
-| route-create.interrupted                 | error    | interrupted                 |                                                                                                                                                              |                                     |
+| Code                                     | Severity | Family                      | Message                                                                                                                                                                                                                                                                                                                                                                                                                         | Next                                                                                   |
+| ---------------------------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| route-create.invalid-input               | error    | invalid-input               |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.invalid-target              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.invalid-target`).                                                                            | `open-forge route create --help`                                                       |
+| route-create.invalid-metadata            | error    | local                       | `--description is empty.` / `--tag <value> is empty.` / `--tag <value> is repeated.` / `--tag <value> is not a valid tag.` / an `--apply-to <glob>` pattern problem, joined with `and`. An empty path segment adds `Use docs/** to match files under docs/.` once                                                                                                                                                               | corrected command                                                                      |
+| route-create.optional-metadata           | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Selection/RouteCreateReportSelector.cs): distinguish preview, verified creation, and already-current optional metadata.                                                                                                                                                                                          | `open-forge route update <target id>`; add an optional description or tag when useful. |
+| route-create.invalid-template            | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.invalid-template`).                                                                          | `open-forge find --tag Template`                                                       |
+| route-create.parent-missing              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.parent-missing`); retained only for a missing Framework or other required existing boundary. | `open-forge route init <parent id>`                                                    |
+| route-create.workspace-unavailable       | error    | workspace-unavailable       |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.workspace-unsafe            | error    | workspace-unsafe            |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.target-unsafe               | error    | target-unsafe               |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.target-content-differs      | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.target-content-differs`).                                                                    | `open-forge route update <id>`                                                         |
+| route-create.route-ambiguous             | error    | route-ambiguous             |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.identity-collision          | error    | identity-collision          | (blocking: the new ID would collide)                                                                                                                                                                                                                                                                                                                                                                                            | choose another name                                                                    |
+| route-create.metadata-unsafe             | error    | metadata-unsafe             |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.template-unsafe             | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.template-unsafe`).                                                                           | none                                                                                   |
+| route-create.generated-region-unsafe     | error    | generated-region-unsafe     |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.workspace-lock-unavailable  | error    | workspace-lock-unavailable  |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.target-changed              | error    | target-changed              |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.recovery-conflict           | error    | recovery-conflict           |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.inspection-incomplete       | warning  | inspection-incomplete       |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.metadata-incomplete         | warning  | metadata-incomplete         |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.projection-incomplete       | warning  | projection-unavailable      |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.template-unavailable        | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Create/Shared/Wording/RouteCreateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-create.template-unavailable`).                                                                      | none                                                                                   |
+| route-create.recovery-unavailable        | warning  | recovery-unavailable        |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.recovery-artifact-retained  | warning  | recovery-artifact-retained  |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.target-changed-during-apply | error    | target-changed-during-apply |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.write-failed                | error    | write-failed                |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.verification-failed         | error    | verification-failed         |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.recovery-failed             | error    | recovery-failed             |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.operation-failed            | error    | operation-failed            |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
+| route-create.interrupted                 | error    | interrupted                 |                                                                                                                                                                                                                                                                                                                                                                                                                                 |                                                                                        |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. For `recovery-conflict`, the exact positively observed
@@ -579,41 +577,40 @@ Recovery-bundle admission is unchanged. Counts are:
 `exists-with-different-content` (blocked),
 `template-unknown`, `lock-held`, `write-failed-partial`, `cancelled`.
 
-
 ## Representative Transcripts
 
 ### completed
 
-~~~text
+```text
 Created .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
 Workspace: <workspace>
   Listed in .agents/memory/project-alpha/_project-alpha.md
-~~~
+```
 
 ### completed-with-warnings
 
-~~~text
+```text
 Created .agents/memory/project-alpha/overview.md  (memory/project-alpha/overview)
   Warning  <recovery-bundle>  Recovery artifact retained
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 The file could not be created: <limitation>. Nothing was changed.
-~~~
+```
 
 ### blocked
 
-~~~text
+```text
 Cannot create .agents/memory/project-alpha/overview.md: .agents/memory/project-alpha/overview.md already exists with different content.
 Workspace: <workspace>
 Next: open-forge route update memory/project-alpha/overview
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Route create stopped after 1 of 2 changes.
 Workspace: <workspace>
   Error  .agents/memory/project-alpha/_project-alpha.md  Write failed
@@ -621,17 +618,17 @@ Workspace: <workspace>
   Created .agents/memory/project-alpha/overview.md
   .agents/memory/project-alpha/_project-alpha.md  not started
 Next: open-forge route create --detail debug
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Route create was cancelled. Nothing was changed.
 Workspace: <workspace>
   Error  memory/project-alpha/overview  Route create was cancelled
          Route create was cancelled. Nothing was changed.
          open-forge route create
-~~~
+```
 
 ## Related Current Sources
 

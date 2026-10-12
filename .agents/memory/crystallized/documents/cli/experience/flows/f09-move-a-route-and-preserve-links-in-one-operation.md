@@ -24,12 +24,12 @@ LINKS with a relocation-sensitive outgoing link and authored incoming links from
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | open-forge route move guidance/notes guidance/team/moved-note --dry-run | [C16-04](../scenarios/commands/c16-route-move.md#c16-04) | The complete move, parent-list and reference changes are visible without writes. |
-| 2 | open-forge route move guidance/notes guidance/team/moved-note | [C16-02](../scenarios/commands/c16-route-move.md#c16-02) | The source moved and all affected authored destinations were rewritten. |
-| 3 | open-forge references guidance/team/moved-note | [C10-01](../scenarios/commands/c10-references.md#c10-01) | The resulting incoming and outgoing authored links refer to the new location. |
-| 4 | open-forge context guidance/team/moved-note | [C08-02](../scenarios/commands/c08-context.md#c08-02) | The moved source remains usable through the displayed new ID. |
+| Step | Action                                                                  | Scenario                                                 | State passed forward                                                             |
+| ---: | ----------------------------------------------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------- |
+|    1 | open-forge route move guidance/notes guidance/team/moved-note --dry-run | [C16-04](../scenarios/commands/c16-route-move.md#c16-04) | The complete move, parent-list and reference changes are visible without writes. |
+|    2 | open-forge route move guidance/notes guidance/team/moved-note           | [C16-02](../scenarios/commands/c16-route-move.md#c16-02) | The source moved and all affected authored destinations were rewritten.          |
+|    3 | open-forge references guidance/team/moved-note                          | [C10-01](../scenarios/commands/c10-references.md#c10-01) | The resulting incoming and outgoing authored links refer to the new location.    |
+|    4 | open-forge context guidance/team/moved-note                             | [C08-02](../scenarios/commands/c08-context.md#c08-02)    | The moved source remains usable through the displayed new ID.                    |
 
 ## Alternatives and recovery
 

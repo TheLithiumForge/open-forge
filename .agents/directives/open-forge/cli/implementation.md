@@ -242,7 +242,7 @@ open-forge:
   (default), `standard`, `full`, and `debug`; each level adds to the previous
   level. `--detail-filter <error|warning|info|all>` is repeatable and selects
   which finding severities are listed without changing counts. `--format
-  text|json` selects the representation and defaults to `text`.
+text|json` selects the representation and defaults to `text`.
 - `minimal` keeps the smallest useful answer, `standard` adds reasons and
   per-finding actions, `full` adds evidence, possible targets, provenance,
   hashes and finding codes, and `debug` keeps the same primary result as `full`

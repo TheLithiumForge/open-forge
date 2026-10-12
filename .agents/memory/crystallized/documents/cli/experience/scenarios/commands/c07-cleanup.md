@@ -38,8 +38,6 @@ open-forge cleanup
 
 Say there is nothing to remove.
 
-
-
 ### Verification
 
 Verify complete enumeration and no unrelated workspace's bundle was touched.
@@ -66,8 +64,6 @@ open-forge cleanup
 
 List what was removed and use correct bundle/draft counts.
 
-
-
 ### Verification
 
 Compare the external catalogue's exact entries and hashes; source files in the workspace must be untouched.
@@ -93,8 +89,6 @@ open-forge cleanup --dry-run
 ### Expected result
 
 List proposed removals in future tense and finish with No files were changed.
-
-
 
 ### Verification
 
@@ -126,7 +120,6 @@ open-forge cleanup
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C07-05
 
 **Situation:** Lock held
@@ -148,8 +141,6 @@ open-forge cleanup
 ### Expected result
 
 Explain the active workspace operation rather than instructing removal of its lock file.
-
-
 
 ### Verification
 
@@ -179,14 +170,9 @@ open-forge cleanup
 
 Say the store could not be read completely and nothing was removed, once.
 
-
-
 ### Verification
 
 Verify denied access and no deletions; distinguish unknown catalogue size from zero candidates.
-
-
-
 
 **Execution constraint:** Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
 
@@ -211,8 +197,6 @@ open-forge cleanup
 ### Expected result
 
 State how far cleanup got, what remains and what could not be removed.
-
-
 
 ### Verification
 
@@ -242,8 +226,6 @@ open-forge cleanup
 
 Report cancellation with the actual removed and remaining items, not Nothing was changed.
 
-
-
 ### Verification
 
 Require reliable synchronization and a signal trace; timing guesses are not a reproducible scenario.
@@ -271,8 +253,6 @@ open-forge cleanup extra
 ### Expected result
 
 Reject the input without enumerating or removing recovery items.
-
-
 
 ### Verification
 

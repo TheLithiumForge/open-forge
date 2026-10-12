@@ -79,25 +79,25 @@ the lock coverage sentence.
 
 ## Findings catalogue
 
-| Code                                 | Severity | Family                | Message                                                                                                                                      | Next |
-| ------------------------------------ | -------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
-| extension-list.invalid-input         | error    | invalid-input         |                                                                                                                                              |      |
-| extension-list.workspace-unavailable | error    | workspace-unavailable |                                                                                                                                              |      |
-| extension-list.source-invalid        | error    | local                 | `<path> is not an Extension package or package folder: <reason>. Expected extension.json with id, name, description, version, dependencies.` | none |
-| extension-list.source-blocked        | error    | local                 | `<path> cannot be used as a source: <it is inside the workspace \| it resolves to an unsafe location>.`                                      | none |
-| extension-list.source-unavailable    | warning  | local                 | `<path> could not be read, so available packages are not listed.`                                                                            | none |
-| extension-list.installed-source-missing     | warning  | local  | `The <id> Extension's source <path> is missing.`                                                    | `open-forge extension inspect <id>` |
-| extension-list.installed-source-unavailable | warning  | local  | `The <id> Extension's source <path> could not be read.`                                             | `open-forge extension inspect <id>` |
-| extension-list.installed-source-invalid     | warning  | local  | `<path> is not an Extension package or package folder: <reason>. Expected extension.json with id, name, description, version, dependencies.` | `open-forge extension inspect <id>` |
-| extension-list.installed-source-blocked     | error    | local  | `Cannot list Extensions: <reason>.`                                                                | `open-forge extension inspect <id>` |
-| extension-list.installed-files-changed      | warning  | local  | `<N> file installed by <id> has changed since installation.` / `<N> files installed by <id> have changed since installation.` | `open-forge extension inspect <id>` |
-| extension-list.installed-files-missing      | warning  | local  | `<N> file installed by <id> is missing.` / `<N> files installed by <id> are missing.`                                     | `open-forge extension inspect <id>` |
-| extension-list.installed-target-blocked     | error    | local  | `The installed file <path> could not be checked safely.`                                          | `open-forge extension inspect <id>` |
-| extension-list.installed-target-unavailable | warning  | local  | `<path> could not be read completely.`                                                            | `open-forge extension inspect <id>` |
-| extension-list.installed-files-unavailable  | warning  | local  | `The files installed by <id> could not be compared.`                                               | `open-forge extension inspect <id>` |
-| extension-list.ownership-observation | info     | ownership-observation |                                                                                                                                              |      |
-| extension-list.operation-failed      | error    | operation-failed      |                                                                                                                                              |      |
-| extension-list.interrupted           | error    | interrupted           |                                                                                                                                              |      |
+| Code                                        | Severity | Family                | Message                                                                                                                                      | Next                                |
+| ------------------------------------------- | -------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| extension-list.invalid-input                | error    | invalid-input         |                                                                                                                                              |                                     |
+| extension-list.workspace-unavailable        | error    | workspace-unavailable |                                                                                                                                              |                                     |
+| extension-list.source-invalid               | error    | local                 | `<path> is not an Extension package or package folder: <reason>. Expected extension.json with id, name, description, version, dependencies.` | none                                |
+| extension-list.source-blocked               | error    | local                 | `<path> cannot be used as a source: <it is inside the workspace \| it resolves to an unsafe location>.`                                      | none                                |
+| extension-list.source-unavailable           | warning  | local                 | `<path> could not be read, so available packages are not listed.`                                                                            | none                                |
+| extension-list.installed-source-missing     | warning  | local                 | `The <id> Extension's source <path> is missing.`                                                                                             | `open-forge extension inspect <id>` |
+| extension-list.installed-source-unavailable | warning  | local                 | `The <id> Extension's source <path> could not be read.`                                                                                      | `open-forge extension inspect <id>` |
+| extension-list.installed-source-invalid     | warning  | local                 | `<path> is not an Extension package or package folder: <reason>. Expected extension.json with id, name, description, version, dependencies.` | `open-forge extension inspect <id>` |
+| extension-list.installed-source-blocked     | error    | local                 | `Cannot list Extensions: <reason>.`                                                                                                          | `open-forge extension inspect <id>` |
+| extension-list.installed-files-changed      | warning  | local                 | `<N> file installed by <id> has changed since installation.` / `<N> files installed by <id> have changed since installation.`                | `open-forge extension inspect <id>` |
+| extension-list.installed-files-missing      | warning  | local                 | `<N> file installed by <id> is missing.` / `<N> files installed by <id> are missing.`                                                        | `open-forge extension inspect <id>` |
+| extension-list.installed-target-blocked     | error    | local                 | `The installed file <path> could not be checked safely.`                                                                                     | `open-forge extension inspect <id>` |
+| extension-list.installed-target-unavailable | warning  | local                 | `<path> could not be read completely.`                                                                                                       | `open-forge extension inspect <id>` |
+| extension-list.installed-files-unavailable  | warning  | local                 | `The files installed by <id> could not be compared.`                                                                                         | `open-forge extension inspect <id>` |
+| extension-list.ownership-observation        | info     | ownership-observation |                                                                                                                                              |                                     |
+| extension-list.operation-failed             | error    | operation-failed      |                                                                                                                                              |                                     |
+| extension-list.interrupted                  | error    | interrupted           |                                                                                                                                              |                                     |
 
 Row notes for installed packages come from the lock and target checks:
 `source missing` (the recorded source cannot be read), `files changed`,
@@ -153,14 +153,14 @@ installed by <id> have changed since installation.`, `<N> files installed by
   `Status: complete`, and coverage-prefixed body to the accepted Installed and
   Available blocks, with descriptions on minimal Available rows, a blank
   section separator, `Installed  (no ownership record, so installed packages
-  cannot be listed)` for unavailable ownership, `Installed  none` for a known
+cannot be listed)` for unavailable ownership, `Installed  none` for a known
   empty set, and the existing install Next command. The human source line says
   `Source: embedded catalogue` or `Source: <path>`; the machine token
   `embedded-catalogue` remains JSON-only.
 - 2026-09-14 — JSON member: native `data` now carries source, installed rows,
   available rows, and the requested detail fields directly; JSON-only complete
   results add the invariant factual summary `The result contains <N> installed
-  package(s) and <N> available package(s).` without adding a healthy text
+package(s) and <N> available package(s).` without adding a healthy text
   headline.
 - 2026-09-14 — finding: installed lifecycle observations now use typed source
   and target states, owner/package subjects for aggregate changed/missing
@@ -174,18 +174,18 @@ installed by <id> have changed since installation.`, `<N> files installed by
   now use `ExtensionInstallIntegrationWorkspace`, while informational ownership
   assertions request full detail so the shared info listing policy is explicit.
 - 2026-09-14 — verification: `dotnet build
-  src/cli/core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj -c Release
-  --no-restore` passed with 0 warnings and 0 errors; the root CLI and Unit
+src/cli/core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj -c Release
+--no-restore` passed with 0 warnings and 0 errors; the root CLI and Unit
   projects also passed with 0 warnings and 0 errors. The focused List Unit
   command (`OpenForge.Cli.Core.UnitTests.exe --filter-class
-  '*OpenForge.Cli.Core.UnitTests.Commands.Extension.List.*' --parallel none
-  --no-ansi --progress off --minimum-expected-tests 1 --fail-warns on
-  --fail-skips off --report-xunit-ctrf --report-xunit-ctrf-filename results.json
-  --results-directory artifacts/g4-27-extensions-unit-3`) passed 18/18 tests,
+'*OpenForge.Cli.Core.UnitTests.Commands.Extension.List.*' --parallel none
+--no-ansi --progress off --minimum-expected-tests 1 --fail-warns on
+--fail-skips off --report-xunit-ctrf --report-xunit-ctrf-filename results.json
+--results-directory artifacts/g4-27-extensions-unit-3`) passed 18/18 tests,
   with 0 failures and 0 skips. The final Integration project build command
   (`dotnet build
-  src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj
-  -c Release --no-restore`) passed with 0 warnings and 0 errors in
+src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj
+-c Release --no-restore`) passed with 0 warnings and 0 errors in
   `artifacts/g4-27-extensions-integration-build-6.log`.
 
 - message: source-boundary parser failures now use the shared `the content is not valid JSON` cause in headlines, finding messages and unavailable counts; the parser text remains in the existing Cause evidence and debug diagnostics.

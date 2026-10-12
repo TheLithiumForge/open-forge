@@ -38,8 +38,6 @@ open-forge extension list
 
 Distinguish Installed none from the available packages and describe available choices.
 
-
-
 ### Verification
 
 Compare installed and available sets independently; empty installed is not unknown ownership.
@@ -65,8 +63,6 @@ open-forge extension list
 ### Expected result
 
 List toolkit in installed and available contexts with the correct matching marker.
-
-
 
 ### Verification
 
@@ -96,8 +92,6 @@ open-forge extension list --installed
 
 Show only the installed selection without pretending available packages were absent.
 
-
-
 ### Verification
 
 Compare requested sections and ensure availability enumeration does not leak into a hidden second list.
@@ -123,8 +117,6 @@ open-forge extension list --available
 ### Expected result
 
 Show the available catalogue with useful descriptions.
-
-
 
 ### Verification
 
@@ -152,8 +144,6 @@ open-forge extension list --source "$CAT"
 
 Identify the selected source and list its packages, not the bundled defaults.
 
-
-
 ### Verification
 
 Verify actual source identity and displayed versions; custom-source continuation must retain the same source.
@@ -180,8 +170,6 @@ open-forge extension list
 
 Explain that installed packages cannot be established while still listing known available packages.
 
-
-
 ### Verification
 
 Verify no ownership reconstruction and no Installed none claim for unavailable ownership.
@@ -207,8 +195,6 @@ open-forge extension list --source "$CAT"
 ### Expected result
 
 Say available packages could not be listed from that source, preserving any independently known installed rows.
-
-
 
 ### Verification
 
@@ -238,8 +224,6 @@ open-forge extension list
 
 Keep the installed identity and say its recorded source is missing.
 
-
-
 ### Verification
 
 Verify installed content is not declared absent merely because its source disappeared.
@@ -265,8 +249,6 @@ open-forge extension list
 ### Expected result
 
 Distinguish an unavailable source from a missing one and retain known installed facts.
-
-
 
 ### Verification
 
@@ -296,8 +278,6 @@ open-forge extension list
 
 Name the invalid manifest cause without describing it as an unreadable file.
 
-
-
 ### Verification
 
 Verify readable malformed bytes and preserve installed claims. The output Situations annotations explicitly classify this subtype as incomplete; do not collapse it into source-missing.
@@ -324,8 +304,6 @@ open-forge extension list
 
 Explain the unsafe source boundary, without following it or presenting it as ordinary absence.
 
-
-
 ### Verification
 
 Inspect links without following them and verify no external scan.
@@ -351,8 +329,6 @@ open-forge extension list
 ### Expected result
 
 Say the installed file changed and point to inspection of toolkit.
-
-
 
 ### Verification
 
@@ -382,8 +358,6 @@ open-forge extension list
 
 Name the missing installed file without calling the whole package uninstalled.
 
-
-
 ### Verification
 
 Compare exact claimed paths to directory entries and preserve distinct changed/missing counts.
@@ -412,8 +386,6 @@ open-forge extension list
 
 Explain that the target cannot be checked safely and do not follow it.
 
-
-
 ### Verification
 
 Verify no unsafe target read and no fabricated file comparison.
@@ -439,8 +411,6 @@ open-forge extension list
 ### Expected result
 
 Say the installed target could not be read completely and preserve known package identity.
-
-
 
 ### Verification
 
@@ -476,8 +446,6 @@ open-forge extension list --source "$CAT_INVALID"
 
 Explain the exact invalid source shape and required manifest information.
 
-
-
 ### Verification
 
 Verify no fallback catalogue and no attempt to repair or invent the manifest.
@@ -504,8 +472,6 @@ open-forge extension list --source "$BLOCKED_CAT"
 
 Explain the source boundary and stop safely.
 
-
-
 ### Verification
 
 Verify no traversal into the forbidden path and no mutation.
@@ -531,8 +497,6 @@ open-forge extension list toolkit
 ### Expected result
 
 Explain the invalid command form.
-
-
 
 ### Verification
 

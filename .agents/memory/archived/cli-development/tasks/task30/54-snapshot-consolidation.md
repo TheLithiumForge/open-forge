@@ -35,16 +35,16 @@ none, so an empty corpus cannot pass silently.
 
 Measured on 2026-09-16. **3,433 snapshot files, all with the `.txt` extension.**
 
-| Root | Files |
-| --- | --- |
-| `tests/integration/snapshots/` | 3,300 |
-| `tests/unit/OpenForge.Cli.Core.UnitTests/__snapshots__/` | 23 |
-| `tests/unit/.../Commands/Doctor/Shared/Rendering/__snapshots__/` | 110 |
+| Root                                                             | Files |
+| ---------------------------------------------------------------- | ----- |
+| `tests/integration/snapshots/`                                   | 3,300 |
+| `tests/unit/OpenForge.Cli.Core.UnitTests/__snapshots__/`         | 23    |
+| `tests/unit/.../Commands/Doctor/Shared/Rendering/__snapshots__/` | 110   |
 
 Two facts worth stating plainly, because both are easy to misread:
 
 - **There is no `.json` / `.txt` format split.** Every file is `.txt`. JSON
-  *content* lives in files named `<situation>.json.<detail>.txt`, where `.json.`
+  _content_ lives in files named `<situation>.json.<detail>.txt`, where `.json.`
   is a name segment marking content type, not an extension. 1,705 files carry
   JSON content and 1,728 carry text.
 - **There is a location split.** Unit snapshots live in two different roots: a

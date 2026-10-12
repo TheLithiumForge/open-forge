@@ -38,8 +38,6 @@ open-forge library sync team --automatic
 
 Say team is up to date and nothing needs doing.
 
-
-
 ### Verification
 
 Compare links, source bytes, registration and directory inventory for zero churn.
@@ -65,8 +63,6 @@ open-forge library sync team --automatic
 ### Expected result
 
 Add its corresponding relative file link and describe the new link.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge library sync team --automatic
 
 Remove the retired destination link only and report that source-driven change.
 
-
-
 ### Verification
 
 Verify no source deletion and no removal of unregistered neighboring files.
@@ -121,8 +115,6 @@ open-forge library sync team --automatic
 ### Expected result
 
 Add and remove the respective links in one coherent sync, with accurate unchanged count.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge library sync team --dry-run
 
 Show the two proposed changes and no writes.
 
-
-
 ### Verification
 
 Compare raw link targets, directory entries, registration, settings and external recovery.
@@ -177,8 +167,6 @@ open-forge library sync team --automatic
 ### Expected result
 
 Explain that team is unknown rather than creating it from a matching folder.
-
-
 
 ### Verification
 
@@ -208,7 +196,6 @@ open-forge library sync team --automatic
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C27-08
 
 **Situation:** Registered link gone
@@ -230,8 +217,6 @@ open-forge library sync team --automatic
 ### Expected result
 
 Restore the missing link and explain that restoration, with the declared warning outcome.
-
-
 
 ### Verification
 
@@ -258,8 +243,6 @@ open-forge library sync team --automatic
 ### Expected result
 
 Say sync could not establish the complete source inventory and leave all links unchanged.
-
-
 
 ### Verification
 
@@ -289,8 +272,6 @@ open-forge library sync team --automatic
 
 Explain that destination permission is required before synchronization.
 
-
-
 ### Verification
 
 Verify ownership does not bypass revocation and no settings are saved implicitly.
@@ -317,12 +298,9 @@ open-forge library sync team --automatic
 
 Report a completed ownership observation, select no claim, and keep unavailable counts unknown. Distinguish a missing, unreadable or unusable record from a valid empty record; do not invent an unknown-ID error. Preserve every file.
 
-
-
 ### Verification
 
 Independently establish the record state and unchanged workspace. Verify no source inventory or selected Library was fabricated; a separate valid-record unknown-ID case must remain invalid-input.
-
 
 Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
 
@@ -347,8 +325,6 @@ open-forge library sync team --automatic
 ### Expected result
 
 Explain contention and make no link or registration changes.
-
-
 
 ### Verification
 
@@ -378,12 +354,9 @@ open-forge library sync team --automatic
 
 Report a completed ownership observation, select no claim, and keep unavailable counts unknown. Distinguish a missing, unreadable or unusable record from a valid empty record; do not invent an unknown-ID error. Preserve every file.
 
-
-
 ### Verification
 
 Independently establish the record state and unchanged workspace. Verify no source inventory or selected Library was fabricated; a separate valid-record unknown-ID case must remain invalid-input.
-
 
 Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
 
@@ -408,8 +381,6 @@ open-forge library sync team --automatic
 ### Expected result
 
 Describe the completed portion, unfinished changes and actual recovery/publication state.
-
-
 
 ### Verification
 
@@ -438,8 +409,6 @@ open-forge library sync team
 ### Expected result
 
 Report cancellation without changing links or source content.
-
-
 
 ### Verification
 

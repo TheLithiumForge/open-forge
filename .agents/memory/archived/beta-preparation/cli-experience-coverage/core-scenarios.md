@@ -20,10 +20,10 @@ No matching published-process assertion identified.
 
 **[Healthy](../../../crystallized/documents/cli/experience/scenarios/commands/c01-status.md#c01-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [FreshExtensionNavigationIsNotFrameworkDrift:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorGeneratedNavigationProcessTests.cs) | Four inline cases: install Framework plus development/development-toolkit, then status/Doctor JSON exits0/completed; Doctor Framework and route finding sets empty; diagnosis source hashes unchanged. |
-| [PublishedStatusHumanJourneyUsesSemanticStreamExitAndPreservesWorkspaceAndRecoveryBytes:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedStatusProcessTests.cs) | Minimal and standard status return 3 with installed text, incomplete recovery-draft path and unfinished-command finding; detail-specific cost headings; workspace and recovery bytes unchanged. |
+| Existing published-process evidence                                                                                                                                                             | What its assertions establish                                                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [FreshExtensionNavigationIsNotFrameworkDrift:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorGeneratedNavigationProcessTests.cs)                         | Four inline cases: install Framework plus development/development-toolkit, then status/Doctor JSON exits0/completed; Doctor Framework and route finding sets empty; diagnosis source hashes unchanged. |
+| [PublishedStatusHumanJourneyUsesSemanticStreamExitAndPreservesWorkspaceAndRecoveryBytes:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedStatusProcessTests.cs) | Minimal and standard status return 3 with installed text, incomplete recovery-draft path and unfinished-command finding; detail-specific cost headings; workspace and recovery bytes unchanged.        |
 
 **Gap / qualification:** Healthy extension status checks exit/completed only; cost prose tested on incomplete draft. No independent numeric startup oracle.
 
@@ -31,8 +31,8 @@ No matching published-process assertion identified.
 
 **[Healthy with extension](../../../crystallized/documents/cli/experience/scenarios/commands/c01-status.md#c01-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                     | What its assertions establish                                                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [FreshExtensionNavigationIsNotFrameworkDrift:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorGeneratedNavigationProcessTests.cs) | Four inline cases: install Framework plus development/development-toolkit, then status/Doctor JSON exits0/completed; Doctor Framework and route finding sets empty; diagnosis source hashes unchanged. |
 
 **Gap / qualification:** Healthy status after embedded dependencies is asserted; distinct installed/dependency counts and extension context are not.
@@ -41,8 +41,8 @@ No matching published-process assertion identified.
 
 **[Changed managed file](../../../crystallized/documents/cli/experience/scenarios/commands/c01-status.md#c01-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                                                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [OrdinaryUpdateAndPruneRetainReviewableRecovery:156](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | Edited loader status flags changed; Doctor six categories and update action. Normal update verified with retained existing recovery path. Synthetic retired ownership + force/prune deletes actual retired file; repeat no effects/source changes. |
 
 **Gap / qualification:** Changed finding and read-only status asserted; exact subject path, human action and no invented historical-edit attribution not asserted.
@@ -59,8 +59,8 @@ No matching published-process assertion identified.
 
 **[Stale entries](../../../crystallized/documents/cli/experience/scenarios/commands/c01-status.md#c01-06)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                         | What its assertions establish                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [NavigationAndAuthoredDriftKeepTheirOwnDiagnosis:33](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorGeneratedNavigationProcessTests.cs) | Install, add valid note, index, Doctor exits0; remove generated entry, Doctor exits2 with stale-region finding; reindex, append authored guidance edit, Doctor exits2 with managed-changed AND partial-lifecycle findings; diagnostic hashes unchanged. |
 
 **Gap / qualification:** Stale navigation diagnosed by Doctor, not status; no status action/count assertion.
@@ -69,10 +69,10 @@ No matching published-process assertion identified.
 
 **[Recovery bundle present](../../../crystallized/documents/cli/experience/scenarios/commands/c01-status.md#c01-07)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                                             | What its assertions establish                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedStatusHumanJourneyUsesSemanticStreamExitAndPreservesWorkspaceAndRecoveryBytes:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedStatusProcessTests.cs) | Minimal and standard status return 3 with installed text, incomplete recovery-draft path and unfinished-command finding; detail-specific cost headings; workspace and recovery bytes unchanged. |
-| [PublishedStatusJsonJourneyEmitsOneSchemaDocumentAndPreservesWorkspaceAndRecoveryBytes:78](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedStatusProcessTests.cs) | Schema 3 status incomplete, single draft candidate of incomplete integrity, exit3/stdout; workspace and recovery preserved. |
+| [PublishedStatusJsonJourneyEmitsOneSchemaDocumentAndPreservesWorkspaceAndRecoveryBytes:78](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedStatusProcessTests.cs)  | Schema 3 status incomplete, single draft candidate of incomplete integrity, exit3/stdout; workspace and recovery preserved.                                                                     |
 
 **Gap / qualification:** Incomplete artificial draft named/preserved, not a verified complete bundle; cleanup suggestion and distinct recovery/source counts unasserted.
 
@@ -88,10 +88,10 @@ No matching published-process assertion identified.
 
 **[No ownership record](../../../crystallized/documents/cli/experience/scenarios/commands/c01-status.md#c01-09)** — selection: improved; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                                             | What its assertions establish                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedStatusHumanJourneyUsesSemanticStreamExitAndPreservesWorkspaceAndRecoveryBytes:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedStatusProcessTests.cs) | Minimal and standard status return 3 with installed text, incomplete recovery-draft path and unfinished-command finding; detail-specific cost headings; workspace and recovery bytes unchanged. |
-| [JsonJourneyRetainsSixDomainsAndReadOnlyResult:28](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorProcessTests.cs) | Doctor JSON exit2/completed-with-warnings, six ordered categories, Workspace complete, informational extension.ownership-observation; source hashes unchanged and no infrastructure. |
+| [JsonJourneyRetainsSixDomainsAndReadOnlyResult:28](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorProcessTests.cs)                                          | Doctor JSON exit2/completed-with-warnings, six ordered categories, Workspace complete, informational extension.ownership-observation; source hashes unchanged and no infrastructure.            |
 
 **Gap / qualification:** Fixtures omit ownership, but tests do not assert unknown ownership or continuing independent status checks.
 
@@ -107,8 +107,8 @@ No matching published-process assertion identified.
 
 **[Blocked workspace](../../../crystallized/documents/cli/experience/scenarios/commands/c01-status.md#c01-11)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [EveryPublishedBindingSupportsBothFormatsAtEveryDetail:39](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedSchema3ProcessTests.cs) | 28 command variants against explicit missing workspace, four details/two formats: fixed exit/status, schema and key coordinates stable, correct streams, missing paths absent, workspace hashes preserved, no infrastructure. |
 
 **Gap / qualification:** Explicit missing status path blocked/read-only across formats; healthy parent fallback and exact selected-path diagnostic absent.
@@ -117,8 +117,8 @@ No matching published-process assertion identified.
 
 **[Invalid input](../../../crystallized/documents/cli/experience/scenarios/commands/c01-status.md#c01-12)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [PublishedParserFailureUsesFixedInvalidExitAndStandardError:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Unknown root option and help/version conflict return4 with empty stdout/relevant stderr. |
 
 **Gap / qualification:** Only generic root unknown option/conflict; status --detail=verbose and its no-effects boundary untested.
@@ -151,8 +151,8 @@ No matching published-process assertion identified.
 
 **[Healthy](../../../crystallized/documents/cli/experience/scenarios/commands/c02-doctor.md#c02-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                   | What its assertions establish                                                                                       |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | [FreshFrameworkHasCompleteCoverage:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorInstallationProcessTests.cs) | Install then Doctor JSON exit0/completed; all six categories complete with no limitations; source hashes unchanged. |
 
 **Gap / qualification:** Fresh installed Doctor checks all six domains complete; default human no-problem headline/no mutation footer unasserted.
@@ -161,8 +161,8 @@ No matching published-process assertion identified.
 
 **[Info only](../../../crystallized/documents/cli/experience/scenarios/commands/c02-doctor.md#c02-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                    | What its assertions establish                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [JsonJourneyRetainsSixDomainsAndReadOnlyResult:28](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorProcessTests.cs) | Doctor JSON exit2/completed-with-warnings, six ordered categories, Workspace complete, informational extension.ownership-observation; source hashes unchanged and no infrastructure. |
 
 **Gap / qualification:** Info ownership observation is asserted with read-only state, but fixture returns warnings; no info-only full-coverage/unknown-ownership oracle.
@@ -171,8 +171,8 @@ No matching published-process assertion identified.
 
 **[Warnings only](../../../crystallized/documents/cli/experience/scenarios/commands/c02-doctor.md#c02-03)** — selection: improved; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                    | What its assertions establish                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [JsonJourneyRetainsSixDomainsAndReadOnlyResult:28](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorProcessTests.cs) | Doctor JSON exit2/completed-with-warnings, six ordered categories, Workspace complete, informational extension.ownership-observation; source hashes unchanged and no infrastructure. |
 
 **Gap / qualification:** JSON warning categories only; broken-link fixture, actionable default affected source and next action absent.
@@ -181,8 +181,8 @@ No matching published-process assertion identified.
 
 **[Error and warnings](../../../crystallized/documents/cli/experience/scenarios/commands/c02-doctor.md#c02-04)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                   | What its assertions establish                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [DuplicateGeneratedHeadingsRemainDiagnosed:67](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorGeneratedNavigationProcessTests.cs) | Duplicate Entries headings produce nonzero Doctor with generated-region-duplicate; diagnostics preserve workspace hashes. |
 
 **Gap / qualification:** Duplicate generated heading error is diagnosed; mixed malformed YAML plus independent authored links/counts absent.
@@ -199,9 +199,9 @@ No matching published-process assertion identified.
 
 **[Blocked workspace](../../../crystallized/documents/cli/experience/scenarios/commands/c02-doctor.md#c02-06)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [InvalidGrammarAndBlockedWorkspaceUseErrorStream:46](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorProcessTests.cs) | Unexpected positional token returns4; selected regular file returns5; stdout empty and stderr nonempty; source hashes unchanged/no infrastructure. |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [InvalidGrammarAndBlockedWorkspaceUseErrorStream:46](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorProcessTests.cs)        | Unexpected positional token returns4; selected regular file returns5; stdout empty and stderr nonempty; source hashes unchanged/no infrastructure.                                                                            |
 | [EveryPublishedBindingSupportsBothFormatsAtEveryDetail:39](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedSchema3ProcessTests.cs) | 28 command variants against explicit missing workspace, four details/two formats: fixed exit/status, schema and key coordinates stable, correct streams, missing paths absent, workspace hashes preserved, no infrastructure. |
 
 **Gap / qualification:** Regular-file and missing workspace boundaries blocked with no writes; healthy-parent fallback and exact explanation not asserted.
@@ -210,8 +210,8 @@ No matching published-process assertion identified.
 
 **[Invalid input](../../../crystallized/documents/cli/experience/scenarios/commands/c02-doctor.md#c02-07)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [InvalidGrammarAndBlockedWorkspaceUseErrorStream:46](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorProcessTests.cs) | Unexpected positional token returns4; selected regular file returns5; stdout empty and stderr nonempty; source hashes unchanged/no infrastructure. |
 
 **Gap / qualification:** Unexpected positional token invalid/read-only; unsupported flag help path/parser-vs-domain output not asserted.
@@ -220,10 +220,10 @@ No matching published-process assertion identified.
 
 **[Changed extension file](../../../crystallized/documents/cli/experience/scenarios/commands/c02-doctor.md#c02-08)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [InstalledEmbeddedPackagesHaveCompleteExtensionCoverage:31](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorInstallationProcessTests.cs) | Two embedded packages installed; Doctor Extensions category complete with no limitations and diagnosis hashes unchanged. |
-| [OrdinaryUpdateAndPruneRetainReviewableRecovery:156](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | Edited loader status flags changed; Doctor six categories and update action. Normal update verified with retained existing recovery path. Synthetic retired ownership + force/prune deletes actual retired file; repeat no effects/source changes. |
+| Existing published-process evidence                                                                                                                                         | What its assertions establish                                                                                                                                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [InstalledEmbeddedPackagesHaveCompleteExtensionCoverage:31](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorInstallationProcessTests.cs) | Two embedded packages installed; Doctor Extensions category complete with no limitations and diagnosis hashes unchanged.                                                                                                                           |
+| [OrdinaryUpdateAndPruneRetainReviewableRecovery:156](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs)                    | Edited loader status flags changed; Doctor six categories and update action. Normal update verified with retained existing recovery path. Synthetic retired ownership + force/prune deletes actual retired file; repeat no effects/source changes. |
 
 **Gap / qualification:** Healthy embedded extension inspection and changed Framework diagnostics do not prove changed Extension attribution.
 
@@ -231,8 +231,8 @@ No matching published-process assertion identified.
 
 **[Stale entries](../../../crystallized/documents/cli/experience/scenarios/commands/c02-doctor.md#c02-09)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                         | What its assertions establish                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [NavigationAndAuthoredDriftKeepTheirOwnDiagnosis:33](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedDoctorGeneratedNavigationProcessTests.cs) | Install, add valid note, index, Doctor exits0; remove generated entry, Doctor exits2 with stale-region finding; reindex, append authored guidance edit, Doctor exits2 with managed-changed AND partial-lifecycle findings; diagnostic hashes unchanged. |
 
 **Gap / qualification:** Real stale entry removed and Doctor finding asserted without writes; no default wording/action or absence of spurious lifecycle finding assertion.
@@ -249,8 +249,8 @@ No matching published-process assertion identified.
 
 **[Recovery bundle](../../../crystallized/documents/cli/experience/scenarios/commands/c02-doctor.md#c02-11)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                                             | What its assertions establish                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedStatusHumanJourneyUsesSemanticStreamExitAndPreservesWorkspaceAndRecoveryBytes:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedStatusProcessTests.cs) | Minimal and standard status return 3 with installed text, incomplete recovery-draft path and unfinished-command finding; detail-specific cost headings; workspace and recovery bytes unchanged. |
 
 **Gap / qualification:** Read-only status draft evidence, not Doctor verified retained bundle with cleanup preview.
@@ -275,10 +275,10 @@ No matching published-process assertion identified.
 
 **[Fresh directory](../../../crystallized/documents/cli/experience/scenarios/commands/c03-install.md#c03-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [PublishedApplyConvergesToVerifiedNoOp:49](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedInstallProcessTests.cs) | Automatic apply exits0, reports verification, installed Framework path set matches 12 expected payload paths; repeat says already current and source hashes unchanged. |
-| [RelocatedArtifactReachesEmbeddedPayload:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedEmbeddedPayloadProcessTests.cs) | Relocated binary install preview source asset count equals 12 payload paths+2 hosts; loader effect present; hashes unchanged/no infrastructure. |
+| Existing published-process evidence                                                                                                                       | What its assertions establish                                                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [PublishedApplyConvergesToVerifiedNoOp:49](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedInstallProcessTests.cs)           | Automatic apply exits0, reports verification, installed Framework path set matches 12 expected payload paths; repeat says already current and source hashes unchanged. |
+| [RelocatedArtifactReachesEmbeddedPayload:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedEmbeddedPayloadProcessTests.cs) | Relocated binary install preview source asset count equals 12 payload paths+2 hosts; loader effect present; hashes unchanged/no infrastructure.                        |
 
 **Gap / qualification:** Payload path inventory/asserted verification exist; no full first-apply source-byte/host-section/README/count oracle, directory entries or recovery inventory.
 
@@ -286,9 +286,9 @@ No matching published-process assertion identified.
 
 **[Fresh directory dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c03-install.md#c03-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [PublishedJsonDryRunIsReadOnly:29](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedInstallProcessTests.cs) | Fresh install JSON mode dry-run/completed and nonempty effects; workspace hashes unchanged; external lock infrastructure absent. |
+| Existing published-process evidence                                                                                                                       | What its assertions establish                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| [PublishedJsonDryRunIsReadOnly:29](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedInstallProcessTests.cs)                   | Fresh install JSON mode dry-run/completed and nonempty effects; workspace hashes unchanged; external lock infrastructure absent.                |
 | [RelocatedArtifactReachesEmbeddedPayload:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedEmbeddedPayloadProcessTests.cs) | Relocated binary install preview source asset count equals 12 payload paths+2 hosts; loader effect present; hashes unchanged/no infrastructure. |
 
 **Gap / qualification:** JSON planned effects and file hashes/no lock checked; actual human proposal/footer, exact effects/counts, directory/settings/recovery inventory unasserted.
@@ -297,8 +297,8 @@ No matching published-process assertion identified.
 
 **[Already installed](../../../crystallized/documents/cli/experience/scenarios/commands/c03-install.md#c03-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                             | What its assertions establish                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedApplyConvergesToVerifiedNoOp:49](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedInstallProcessTests.cs) | Automatic apply exits0, reports verification, installed Framework path set matches 12 expected payload paths; repeat says already current and source hashes unchanged. |
 
 **Gap / qualification:** Real repeat headline and file hashes asserted; external recovery and empty directory changes excluded by SnapshotState.
@@ -339,8 +339,8 @@ No matching published-process assertion identified.
 
 **[Confirmation unavailable](../../../crystallized/documents/cli/experience/scenarios/commands/c03-install.md#c03-08)** — selection: retained; E2E coverage: **direct**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                       | What its assertions establish                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [PublishedRedirectedHumanWriteIsInvalidAndSilent:73](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedInstallProcessTests.cs) | Bare install in redirected process exits4, stdout empty, actionable automatic command, no unanswered prompt; workspace unchanged and no lock infrastructure. |
 
 **Gap / qualification:** Individual reviewed outcome and relevant ordinary-file state are asserted; broader flow is not implied.
@@ -373,8 +373,8 @@ No matching published-process assertion identified.
 
 **[Invalid input](../../../crystallized/documents/cli/experience/scenarios/commands/c03-install.md#c03-12)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [PublishedParserFailureUsesFixedInvalidExitAndStandardError:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Unknown root option and help/version conflict return4 with empty stdout/relevant stderr. |
 
 **Gap / qualification:** Generic parser root error only; install unknown-flag no-effects branch absent.
@@ -399,10 +399,10 @@ No matching published-process assertion identified.
 
 **[Up to date](../../../crystallized/documents/cli/experience/scenarios/commands/c04-update.md#c04-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [RedirectedConfirmationAutomaticDryRunApplyRepeatJourney:74](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | After one real loader edit, force without automatic exits4/no writes; force preview planned effects/no writes; force apply reports verified nonempty effects; repeat has empty effects and unchanged workspace hashes. |
-| [OrdinaryUpdateAndPruneRetainReviewableRecovery:156](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | Edited loader status flags changed; Doctor six categories and update action. Normal update verified with retained existing recovery path. Synthetic retired ownership + force/prune deletes actual retired file; repeat no effects/source changes. |
+| Existing published-process evidence                                                                                                                              | What its assertions establish                                                                                                                                                                                                                      |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [RedirectedConfirmationAutomaticDryRunApplyRepeatJourney:74](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | After one real loader edit, force without automatic exits4/no writes; force preview planned effects/no writes; force apply reports verified nonempty effects; repeat has empty effects and unchanged workspace hashes.                             |
+| [OrdinaryUpdateAndPruneRetainReviewableRecovery:156](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs)         | Edited loader status flags changed; Doctor six categories and update action. Normal update verified with retained existing recovery path. Synthetic retired ownership + force/prune deletes actual retired file; repeat no effects/source changes. |
 
 **Gap / qualification:** Real repeat reports empty effects and unchanged hashes but always with force (and prune); ordinary bare automatic no-op/human headline/external recovery unasserted.
 
@@ -410,8 +410,8 @@ No matching published-process assertion identified.
 
 **[Changed file replaced](../../../crystallized/documents/cli/experience/scenarios/commands/c04-update.md#c04-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                                                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [OrdinaryUpdateAndPruneRetainReviewableRecovery:156](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | Edited loader status flags changed; Doctor six categories and update action. Normal update verified with retained existing recovery path. Synthetic retired ownership + force/prune deletes actual retired file; repeat no effects/source changes. |
 
 **Gap / qualification:** Ordinary update reports effects/verified and actual retained file exists; replacement bytes, specific effect path/name and bundle prior payload not independently checked.
@@ -428,8 +428,8 @@ No matching published-process assertion identified.
 
 **[Retired kept](../../../crystallized/documents/cli/experience/scenarios/commands/c04-update.md#c04-04)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                                                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [OrdinaryUpdateAndPruneRetainReviewableRecovery:156](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | Edited loader status flags changed; Doctor six categories and update action. Normal update verified with retained existing recovery path. Synthetic retired ownership + force/prune deletes actual retired file; repeat no effects/source changes. |
 
 **Gap / qualification:** Synthetic retired target only exercised with force/prune; normal retention and kept counts absent.
@@ -438,8 +438,8 @@ No matching published-process assertion identified.
 
 **[Retired pruned](../../../crystallized/documents/cli/experience/scenarios/commands/c04-update.md#c04-05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                                                                                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [OrdinaryUpdateAndPruneRetainReviewableRecovery:156](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | Edited loader status flags changed; Doctor six categories and update action. Normal update verified with retained existing recovery path. Synthetic retired ownership + force/prune deletes actual retired file; repeat no effects/source changes. |
 
 **Gap / qualification:** Actual retired target removed; fixture alters lock rather than real version pair, forces prune, and does not assert unowned neighbor survival or named deletion.
@@ -448,8 +448,8 @@ No matching published-process assertion identified.
 
 **[Dry run changes](../../../crystallized/documents/cli/experience/scenarios/commands/c04-update.md#c04-06)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                              | What its assertions establish                                                                                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [RedirectedConfirmationAutomaticDryRunApplyRepeatJourney:74](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | After one real loader edit, force without automatic exits4/no writes; force preview planned effects/no writes; force apply reports verified nonempty effects; repeat has empty effects and unchanged workspace hashes. |
 
 **Gap / qualification:** Force JSON dryrun planned effects/read-only hashes; no missing+replacement mix, human future tense, external recovery or directory oracle.
@@ -466,8 +466,8 @@ No matching published-process assertion identified.
 
 **[Confirmation unavailable](../../../crystallized/documents/cli/experience/scenarios/commands/c04-update.md#c04-08)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                              | What its assertions establish                                                                                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [RedirectedConfirmationAutomaticDryRunApplyRepeatJourney:74](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | After one real loader edit, force without automatic exits4/no writes; force preview planned effects/no writes; force apply reports verified nonempty effects; repeat has empty effects and unchanged workspace hashes. |
 
 **Gap / qualification:** Redirected force command with real change blocked and actionable; ordinary no-force spelling and complete external-state snapshot absent.
@@ -492,10 +492,10 @@ No matching published-process assertion identified.
 
 **[Invalid input](../../../crystallized/documents/cli/experience/scenarios/commands/c04-update.md#c04-11)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [HelpInvalidSingletonAndBooleanRepetitionJourney:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs) | Help lists modes; repeated --workspace exits4 without writes; repeated Boolean automatic/dryrun accepted and JSON flags/mode exact with no next. |
-| [PublishedParserFailureUsesFixedInvalidExitAndStandardError:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Unknown root option and help/version conflict return4 with empty stdout/relevant stderr. |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [HelpInvalidSingletonAndBooleanRepetitionJourney:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedUpdateProcessTests.cs)  | Help lists modes; repeated --workspace exits4 without writes; repeated Boolean automatic/dryrun accepted and JSON flags/mode exact with no next. |
+| [PublishedParserFailureUsesFixedInvalidExitAndStandardError:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Unknown root option and help/version conflict return4 with empty stdout/relevant stderr.                                                         |
 
 **Gap / qualification:** Repeated singleton invalid and generic parser rejection; update unsupported flag/domain-no-work not directly exercised.
 
@@ -527,8 +527,8 @@ No matching published-process assertion identified.
 
 **[All current](../../../crystallized/documents/cli/experience/scenarios/commands/c05-index.md#c05-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                     | What its assertions establish                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedApplyPreservesOutsideBytesAndConverges:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedIndexProcessTests.cs) | One explicit entrypoint apply exactly equals expected generated document including authored prefix; repeat says current and hashes unchanged; persistent lock checked. |
 
 **Gap / qualification:** Explicit single-root repeat current and byte hashes asserted; default all-selected lists, line-ending/comment variants not exercised.
@@ -537,8 +537,8 @@ No matching published-process assertion identified.
 
 **[One stale](../../../crystallized/documents/cli/experience/scenarios/commands/c05-index.md#c05-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                     | What its assertions establish                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedApplyPreservesOutsideBytesAndConverges:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedIndexProcessTests.cs) | One explicit entrypoint apply exactly equals expected generated document including authored prefix; repeat says current and hashes unchanged; persistent lock checked. |
 
 **Gap / qualification:** Explicit single-entrypoint content equals expected list/prose; no default global changed/checked counts or initial whole-tree changed-set equality.
@@ -547,8 +547,8 @@ No matching published-process assertion identified.
 
 **[Dry run one stale](../../../crystallized/documents/cli/experience/scenarios/commands/c05-index.md#c05-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                               | What its assertions establish                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [PublishedRepeatedDryRunIsExactAndReadOnly:11](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedIndexProcessTests.cs) | One explicit stale entrypoint preview names one list and old/new line fragments; stdout no-files-changed; workspace hashes unchanged/no lock infrastructure. |
 
 **Gap / qualification:** Explicit root dryrun shows one section and diff/no writes; no default scan or before/after numeric counts and external recovery/directory check.
@@ -557,8 +557,8 @@ No matching published-process assertion identified.
 
 **[Explicit source](../../../crystallized/documents/cli/experience/scenarios/commands/c05-index.md#c05-04)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                     | What its assertions establish                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedApplyPreservesOutsideBytesAndConverges:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedIndexProcessTests.cs) | One explicit entrypoint apply exactly equals expected generated document including authored prefix; repeat says current and hashes unchanged; persistent lock checked. |
 
 **Gap / qualification:** Explicit target tested, but no independently stale unselected sibling to establish mutation boundary.
@@ -647,8 +647,8 @@ No matching published-process assertion identified.
 
 **[Nothing to repair](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                        | What its assertions establish                                                                                                                                                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ExplicitRelinkPreservesContentAndConvergesToNoOp:104](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRepairProcessTests.cs) | Measured occurrence relink changes missing.md to replacement.md; exact full source equality, visible label and unrelated binary preserved; reports done, no remaining, recovery removed and actual no recovery artifacts; automatic repeat empty/no-op with full snapshot equality. |
 
 **Gap / qualification:** Automatic repeat after explicit repair asserts no effects/findings, zero remaining and exact state/recovery; human bare invocation headline is only asserted in JSON.
@@ -657,8 +657,8 @@ No matching published-process assertion identified.
 
 **[Automatic two links](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                        | What its assertions establish                                                                                                                                                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ExplicitRelinkPreservesContentAndConvergesToNoOp:104](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRepairProcessTests.cs) | Measured occurrence relink changes missing.md to replacement.md; exact full source equality, visible label and unrelated binary preserved; reports done, no remaining, recovery removed and actual no recovery artifacts; automatic repeat empty/no-op with full snapshot equality. |
 
 **Gap / qualification:** Explicit single occurrence applied; no two independent safe-exact automatic corrections or exact full changed-span set.
@@ -667,8 +667,8 @@ No matching published-process assertion identified.
 
 **[Automatic nothing safe two guided](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                         | What its assertions establish                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [AutomaticJsonDryRunPreviewsSafeExactWithoutEffects:37](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRepairProcessTests.cs) | Safe ./guide.md rewrite plus separate ambiguous missing.md: JSON/text preview says one repair/one choice, planned effect, four candidates, exact counts, warning code; source/lock/recovery state unchanged. |
 
 **Gap / qualification:** One guided problem retained during mixed dryrun; no automatic apply with two ambiguous links and no selected work.
@@ -677,8 +677,8 @@ No matching published-process assertion identified.
 
 **[Dry run automatic](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                         | What its assertions establish                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [AutomaticJsonDryRunPreviewsSafeExactWithoutEffects:37](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRepairProcessTests.cs) | Safe ./guide.md rewrite plus separate ambiguous missing.md: JSON/text preview says one repair/one choice, planned effect, four candidates, exact counts, warning code; source/lock/recovery state unchanged. |
 
 **Gap / qualification:** One safe plus one guided dryrun proven; not two safe proposals followed by apply comparison.
@@ -687,8 +687,8 @@ No matching published-process assertion identified.
 
 **[Relink one](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                        | What its assertions establish                                                                                                                                                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ExplicitRelinkPreservesContentAndConvergesToNoOp:104](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRepairProcessTests.cs) | Measured occurrence relink changes missing.md to replacement.md; exact full source equality, visible label and unrelated binary preserved; reports done, no remaining, recovery removed and actual no recovery artifacts; automatic repeat empty/no-op with full snapshot equality. |
 
 **Gap / qualification:** Exact source/visible label/unrelated binary preservation demonstrated for one ASCII occurrence; no identical-destination decoy, wrong-value guard or Unicode column boundary.
@@ -697,8 +697,8 @@ No matching published-process assertion identified.
 
 **[Relink invalid](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-06)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                        | What its assertions establish                                                                                                                                                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ExplicitRelinkPreservesContentAndConvergesToNoOp:104](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRepairProcessTests.cs) | Measured occurrence relink changes missing.md to replacement.md; exact full source equality, visible label and unrelated binary preserved; reports done, no remaining, recovery removed and actual no recovery artifacts; automatic repeat empty/no-op with full snapshot equality. |
 
 **Gap / qualification:** Positive old-destination tuple only; wrong EXPECTED no-effect guard not exercised.
@@ -715,8 +715,8 @@ No matching published-process assertion identified.
 
 **[Non interactive no selection](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-08)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [EveryPublishedBindingSupportsBothFormatsAtEveryDetail:39](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedSchema3ProcessTests.cs) | 28 command variants against explicit missing workspace, four details/two formats: fixed exit/status, schema and key coordinates stable, correct streams, missing paths absent, workspace hashes preserved, no infrastructure. |
 
 **Gap / qualification:** Bare repair under missing workspace produces invalid input, but no valid repairable redirected fixture/no-wizard assertion.
@@ -757,8 +757,8 @@ No matching published-process assertion identified.
 
 **[Invalid input](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-13)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [PublishedParserFailureUsesFixedInvalidExitAndStandardError:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Unknown root option and help/version conflict return4 with empty stdout/relevant stderr. |
 
 **Gap / qualification:** No E2E incomplete relink tuple; generic root parsing only.
@@ -767,8 +767,8 @@ No matching published-process assertion identified.
 
 **[Outcome 04](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-s04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                         | What its assertions establish                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [AutomaticJsonDryRunPreviewsSafeExactWithoutEffects:37](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRepairProcessTests.cs) | Safe ./guide.md rewrite plus separate ambiguous missing.md: JSON/text preview says one repair/one choice, planned effect, four candidates, exact counts, warning code; source/lock/recovery state unchanged. |
 
 **Gap / qualification:** Exact same mixed safe+guided facts previewed, but real automatic apply and ambiguous-span preservation after mutation not asserted.
@@ -777,8 +777,8 @@ No matching published-process assertion identified.
 
 **[Outcome 05](../../../crystallized/documents/cli/experience/scenarios/commands/c06-repair.md#c06-s05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                         | What its assertions establish                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [AutomaticJsonDryRunPreviewsSafeExactWithoutEffects:37](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRepairProcessTests.cs) | Safe ./guide.md rewrite plus separate ambiguous missing.md: JSON/text preview says one repair/one choice, planned effect, four candidates, exact counts, warning code; source/lock/recovery state unchanged. |
 
 **Gap / qualification:** Mixed preview, source/recovery preservation and exact repair/remaining counts asserted; actionable next choice not asserted.
@@ -803,8 +803,8 @@ No matching published-process assertion identified.
 
 **[Nothing to remove](../../../crystallized/documents/cli/experience/scenarios/commands/c07-cleanup.md#c07-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                                  | What its assertions establish                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ApplicationRemovesEligibleItemsPreservesBlockedAndUnknownThenRepeatsAsNoOp:39](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedCleanupProcessTests.cs) | Deletes one verified bundle and one incomplete draft, names them; preserves unknown same-bucket file/nested sentinel and malformed FOREIGN-bucket archive hashes; repeat while lease held reports no recovery to remove and full snapshot unchanged. |
 
 **Gap / qualification:** Repeat empty eligible catalogue while lease held reports no-op and full snapshot unchanged; no independently enumerated empty complete catalogue assertion.
@@ -813,8 +813,8 @@ No matching published-process assertion identified.
 
 **[Two bundles one draft](../../../crystallized/documents/cli/experience/scenarios/commands/c07-cleanup.md#c07-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                                  | What its assertions establish                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ApplicationRemovesEligibleItemsPreservesBlockedAndUnknownThenRepeatsAsNoOp:39](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedCleanupProcessTests.cs) | Deletes one verified bundle and one incomplete draft, names them; preserves unknown same-bucket file/nested sentinel and malformed FOREIGN-bucket archive hashes; repeat while lease held reports no recovery to remove and full snapshot unchanged. |
 
 **Gap / qualification:** One bundle plus one draft deleted and named with unknown/foreign bytes preserved; needs two bundles/counts and initial workspace-source preservation assertion.
@@ -823,8 +823,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c07-cleanup.md#c07-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                            | What its assertions establish                                                                                                                                        |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [DryRunJsonIsDeterministicTypedContingentAndLeaseFree:94](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedCleanupProcessTests.cs) | Two identical dryruns same JSON, exact selected bundle+draft order and would-be-removed outcomes; full recovery/workspace snapshot equality; no lock infrastructure. |
 
 **Gap / qualification:** Exact JSON preview rows/order and full snapshot equality; no human future-tense/no-files-changed footer or two-bundle population.
@@ -833,8 +833,8 @@ No matching published-process assertion identified.
 
 **[Damaged bundle](../../../crystallized/documents/cli/experience/scenarios/commands/c07-cleanup.md#c07-04)** — selection: improved; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                                  | What its assertions establish                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ApplicationRemovesEligibleItemsPreservesBlockedAndUnknownThenRepeatsAsNoOp:39](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedCleanupProcessTests.cs) | Deletes one verified bundle and one incomplete draft, names them; preserves unknown same-bucket file/nested sentinel and malformed FOREIGN-bucket archive hashes; repeat while lease held reports no recovery to remove and full snapshot unchanged. |
 
 **Gap / qualification:** E2E preserves malformed archive only in FOREIGN bucket. Same selected bucket damaged+valid apply continuation remains uncovered; integration preserves blocked planning baseline.
@@ -848,8 +848,8 @@ No matching published-process assertion identified.
 
 **[Lock held](../../../crystallized/documents/cli/experience/scenarios/commands/c07-cleanup.md#c07-05)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                                  | What its assertions establish                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [ApplicationRemovesEligibleItemsPreservesBlockedAndUnknownThenRepeatsAsNoOp:39](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedCleanupProcessTests.cs) | Deletes one verified bundle and one incomplete draft, names them; preserves unknown same-bucket file/nested sentinel and malformed FOREIGN-bucket archive hashes; repeat while lease held reports no recovery to remove and full snapshot unchanged. |
 
 **Gap / qualification:** Held lease occurs only after eligible items removed: proves lease-free no-op, not blocking eligible cleanup.
@@ -886,8 +886,8 @@ No matching published-process assertion identified.
 
 **[Invalid input](../../../crystallized/documents/cli/experience/scenarios/commands/c07-cleanup.md#c07-09)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [PublishedParserFailureUsesFixedInvalidExitAndStandardError:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Unknown root option and help/version conflict return4 with empty stdout/relevant stderr. |
 
 **Gap / qualification:** No cleanup extra-operand fixture; root parser error only.
@@ -904,8 +904,8 @@ No matching published-process assertion identified.
 
 **[Startup](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                 | What its assertions establish                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedContextDefaultStartupClosureIsOrderedAndReadOnly:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) | Metadata projection four-source startup delimiters in order, KeepInMind tags, no projects branch, no source hash changes. |
 
 **Gap / qualification:** Startup delimiters/order/exclusion checked only with metadata projection; no default content block byte equality/banner oracle.
@@ -914,8 +914,8 @@ No matching published-process assertion identified.
 
 **[One source](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                | What its assertions establish                                                                                                                                                                       |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedContextJsonRetainsExpandedGraph:35](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) | Selected guide additions-only metadata with follow-links=all yields exact ancestor/base/overwrite/linked/README sequence; local followed/external unchecked facts; no next, no source hash changes. |
 
 **Gap / qualification:** Explicit selected guide ancestor/base/overwrite closure checked with additions-only, metadata, all links; default selected content and unrelated branch exclusion differ.
@@ -924,8 +924,8 @@ No matching published-process assertion identified.
 
 **[Additions only](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-03)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                | What its assertions establish                                                                                                                                                                       |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedContextJsonRetainsExpandedGraph:35](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) | Selected guide additions-only metadata with follow-links=all yields exact ancestor/base/overwrite/linked/README sequence; local followed/external unchecked facts; no next, no source hash changes. |
 
 **Gap / qualification:** Nonempty additions-only graph covered; startup-only selection producing empty additions absent.
@@ -934,8 +934,8 @@ No matching published-process assertion identified.
 
 **[Paths](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-04)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                | What its assertions establish                                                                                                                                                                       |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedContextJsonRetainsExpandedGraph:35](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) | Selected guide additions-only metadata with follow-links=all yields exact ancestor/base/overwrite/linked/README sequence; local followed/external unchecked facts; no next, no source hash changes. |
 
 **Gap / qualification:** Ordered source paths in JSON metadata, not --content=paths one-line framing/no authored body.
@@ -960,8 +960,8 @@ No matching published-process assertion identified.
 
 **[Frontmatter missing host](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-07)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                 | What its assertions establish                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedContextDefaultStartupClosureIsOrderedAndReadOnly:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) | Metadata projection four-source startup delimiters in order, KeepInMind tags, no projects branch, no source hash changes. |
 
 **Gap / qualification:** Plain AGENTS fixture is read in metadata mode, not requested frontmatter+body with intact body/no missing-YAML warning.
@@ -978,8 +978,8 @@ No matching published-process assertion identified.
 
 **[Follow links](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-09)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                | What its assertions establish                                                                                                                                                                       |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedContextJsonRetainsExpandedGraph:35](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) | Selected guide additions-only metadata with follow-links=all yields exact ancestor/base/overwrite/linked/README sequence; local followed/external unchecked facts; no next, no source hash changes. |
 
 **Gap / qualification:** All-links graph and cycle dedup via exact source sequence; no one-hop cutoff with second-hop decoy.
@@ -988,8 +988,8 @@ No matching published-process assertion identified.
 
 **[Broken followed link](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-10)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                              | What its assertions establish                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedContextFragmentFailureIsIncompleteAndReadOnly:85](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedContextProcessTests.cs) | Missing followed fragment produces exit3/incomplete and context.fragment-missing with exact from/destination/resolved path/unfollowed; source hashes unchanged. |
 
 **Gap / qualification:** Missing fragment diagnosed/unfollowed; actual missing/unreadable target and emitted readable content retention not asserted.
@@ -998,8 +998,8 @@ No matching published-process assertion identified.
 
 **[Unknown source](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-11)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [EveryPublishedBindingSupportsBothFormatsAtEveryDetail:39](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedSchema3ProcessTests.cs) | 28 command variants against explicit missing workspace, four details/two formats: fixed exit/status, schema and key coordinates stable, correct streams, missing paths absent, workspace hashes preserved, no infrastructure. |
 
 **Gap / qualification:** Missing workspace only, not missing source in valid workspace.
@@ -1008,8 +1008,8 @@ No matching published-process assertion identified.
 
 **[Ambiguous source](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-12)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [BlockedCollisionUsesExactNextWording:61](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Ambiguous ID in redirected session exits5, explains multiple sources and exact-path next command; source hashes unchanged. |
 
 **Gap / qualification:** Other command blocks colliding ID; Context alternatives/order/closure untested.
@@ -1026,8 +1026,8 @@ No matching published-process assertion identified.
 
 **[Invalid content](../../../crystallized/documents/cli/experience/scenarios/commands/c08-context.md#c08-14)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [PublishedParserFailureUsesFixedInvalidExitAndStandardError:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Unknown root option and help/version conflict return4 with empty stdout/relevant stderr. |
 
 **Gap / qualification:** Generic root parser error; unknown Context projection not exercised.
@@ -1052,8 +1052,8 @@ No matching published-process assertion identified.
 
 **[Bare inventory](../../../crystallized/documents/cli/experience/scenarios/commands/c09-find.md#c09-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                | What its assertions establish                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedFindBareUsesCurrentDirectoryAndDefaultMinimalDetail:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedFindProcessTests.cs) | Bare find exits0, three nonempty lines, docs/guide named and no workspace/selection decorations; filesystem tree snapshot equal. |
 
 **Gap / qualification:** Bare inventory fragments/line count and read-only tree; exact sorted eligible routed+unrouted universe absent.
@@ -1062,10 +1062,10 @@ No matching published-process assertion identified.
 
 **[One tag](../../../crystallized/documents/cli/experience/scenarios/commands/c09-find.md#c09-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                              | What its assertions establish                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedFindCompactFilteringReturnsMatch:33](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedFindProcessTests.cs) | Three delimiter variants tag Architecture+heading Architecture exit0 and contain docs row; workspace echoed, tree unchanged. |
-| [PublishedFindJsonProjectsMatchedContent:52](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedFindProcessTests.cs) | Combined tag+heading query JSON has exactly docs and exact base body part text; tree unchanged. |
+| [PublishedFindJsonProjectsMatchedContent:52](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedFindProcessTests.cs)   | Combined tag+heading query JSON has exactly docs and exact base body part text; tree unchanged.                              |
 
 **Gap / qualification:** One Architecture tag plus heading query; not tag-only two matches or ordinary-word decoy.
 
@@ -1073,8 +1073,8 @@ No matching published-process assertion identified.
 
 **[Two tags all](../../../crystallized/documents/cli/experience/scenarios/commands/c09-find.md#c09-03)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                              | What its assertions establish                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedFindCompactFilteringReturnsMatch:33](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedFindProcessTests.cs) | Three delimiter variants tag Architecture+heading Architecture exit0 and contain docs row; workspace echoed, tree unchanged. |
 
 **Gap / qualification:** Tag+heading conjunction does not establish two-tag intersection or OR alternative.
@@ -1083,8 +1083,8 @@ No matching published-process assertion identified.
 
 **[Heading](../../../crystallized/documents/cli/experience/scenarios/commands/c09-find.md#c09-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                              | What its assertions establish                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedFindCompactFilteringReturnsMatch:33](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedFindProcessTests.cs) | Three delimiter variants tag Architecture+heading Architecture exit0 and contain docs row; workspace echoed, tree unchanged. |
 
 **Gap / qualification:** Real heading query positive; no fenced identical text decoy or exact location assertion.
@@ -1101,8 +1101,8 @@ No matching published-process assertion identified.
 
 **[With content headings](../../../crystallized/documents/cli/experience/scenarios/commands/c09-find.md#c09-06)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                            | What its assertions establish                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | [PublishedFindJsonProjectsMatchedContent:52](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedFindProcessTests.cs) | Combined tag+heading query JSON has exactly docs and exact base body part text; tree unchanged. |
 
 **Gap / qualification:** Body projection preserves matched source; headings projection versus tag-only baseline untested.
@@ -1119,8 +1119,8 @@ No matching published-process assertion identified.
 
 **[Ambiguous selector](../../../crystallized/documents/cli/experience/scenarios/commands/c09-find.md#c09-08)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [BlockedCollisionUsesExactNextWording:61](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Ambiguous ID in redirected session exits5, explains multiple sources and exact-path next command; source hashes unchanged. |
 
 **Gap / qualification:** Other command's collision guard, not Find include selector.
@@ -1153,8 +1153,8 @@ No matching published-process assertion identified.
 
 **[Invalid require](../../../crystallized/documents/cli/experience/scenarios/commands/c09-find.md#c09-12)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [PublishedParserFailureUsesFixedInvalidExitAndStandardError:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Unknown root option and help/version conflict return4 with empty stdout/relevant stderr. |
 
 **Gap / qualification:** No require=some query; generic parser error only.
@@ -1179,9 +1179,9 @@ No matching published-process assertion identified.
 
 **[Links both](../../../crystallized/documents/cli/experience/scenarios/commands/c10-references.md#c10-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [PublishedReferencesDefaultIsBothExpandedAndReadOnly:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedReferencesProcessTests.cs) | Default references exits2, subject and outgoing markers/destination names shown, unwanted decorations absent, source hashes unchanged. |
+| Existing published-process evidence                                                                                                                                     | What its assertions establish                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [PublishedReferencesDefaultIsBothExpandedAndReadOnly:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedReferencesProcessTests.cs)         | Default references exits2, subject and outgoing markers/destination names shown, unwanted decorations absent, source hashes unchanged.                      |
 | [PublishedReferencesIncomingFiltersPreserveSelectorEvidence:62](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedReferencesProcessTests.cs) | In-only include alpha/exclude beta yields exactly one alpha incoming occurrence and exact scanned universe alpha; filter values retained; hashes unchanged. |
 
 **Gap / qualification:** Default asserts outgoing substrings; incoming is a separate filtered fixture. No exact both directions/location set or generated Entries noise exclusion.
@@ -1198,8 +1198,8 @@ No matching published-process assertion identified.
 
 **[Out only](../../../crystallized/documents/cli/experience/scenarios/commands/c10-references.md#c10-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                          | What its assertions establish                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [PublishedReferencesOutgoingPreservesDirectFacts:33](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedReferencesProcessTests.cs) | Out-only JSON exact eight destination occurrences and base/overwrite layers; external unchecked/no resolvedPath, missing and fragment-missing distinguished; hashes unchanged. |
 
 **Gap / qualification:** Exact outgoing destinations/layers asserted; incoming absence/not-requested coverage not asserted.
@@ -1208,8 +1208,8 @@ No matching published-process assertion identified.
 
 **[In only with include](../../../crystallized/documents/cli/experience/scenarios/commands/c10-references.md#c10-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                     | What its assertions establish                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedReferencesIncomingFiltersPreserveSelectorEvidence:62](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedReferencesProcessTests.cs) | In-only include alpha/exclude beta yields exactly one alpha incoming occurrence and exact scanned universe alpha; filter values retained; hashes unchanged. |
 
 **Gap / qualification:** Exact included alpha incoming/scanned set and beta exclusion; no subtree expansion or exact locations.
@@ -1218,8 +1218,8 @@ No matching published-process assertion identified.
 
 **[Broken outgoing](../../../crystallized/documents/cli/experience/scenarios/commands/c10-references.md#c10-05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                          | What its assertions establish                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [PublishedReferencesOutgoingPreservesDirectFacts:33](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedReferencesProcessTests.cs) | Out-only JSON exact eight destination occurrences and base/overwrite layers; external unchecked/no resolvedPath, missing and fragment-missing distinguished; hashes unchanged. |
 
 **Gap / qualification:** Missing file and fragment destinations/states exact; source line/column not asserted.
@@ -1228,8 +1228,8 @@ No matching published-process assertion identified.
 
 **[External outgoing](../../../crystallized/documents/cli/experience/scenarios/commands/c10-references.md#c10-06)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                          | What its assertions establish                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [PublishedReferencesOutgoingPreservesDirectFacts:33](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedReferencesProcessTests.cs) | Out-only JSON exact eight destination occurrences and base/overwrite layers; external unchecked/no resolvedPath, missing and fragment-missing distinguished; hashes unchanged. |
 
 **Gap / qualification:** HTTPS external-unchecked and absent resolvedPath asserted; no independent no-network check or external-only completed status.
@@ -1246,8 +1246,8 @@ No matching published-process assertion identified.
 
 **[Invalid direction](../../../crystallized/documents/cli/experience/scenarios/commands/c10-references.md#c10-08)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | [PublishedParserFailureUsesFixedInvalidExitAndStandardError:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Unknown root option and help/version conflict return4 with empty stdout/relevant stderr. |
 
 **Gap / qualification:** No invalid References direction command; generic parser only.
@@ -1268,8 +1268,8 @@ No matching published-process assertion identified.
 
 **[Ambiguous source](../../../crystallized/documents/cli/experience/scenarios/commands/c10-references.md#c10-10)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [BlockedCollisionUsesExactNextWording:61](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Ambiguous ID in redirected session exits5, explains multiple sources and exact-path next command; source hashes unchanged. |
 
 **Gap / qualification:** Collision proof is for Inspect, not References alternatives and no mixed inventory.
@@ -1302,8 +1302,8 @@ No matching published-process assertion identified.
 
 **[Roots depth 1](../../../crystallized/documents/cli/experience/scenarios/commands/c11-route-list.md#c11-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                         | What its assertions establish                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | [PublishedRouteListEmitsStructuredReadOnlyResult:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteListProcessTests.cs) | Default JSON completed/depth1, contains workspace-defined row, source hashes unchanged. |
 
 **Gap / qualification:** Default depth1 and one root present; no complete exact topology/hidden-child hints or shown-ID Inspect followup.
@@ -1312,8 +1312,8 @@ No matching published-process assertion identified.
 
 **[Subtree](../../../crystallized/documents/cli/experience/scenarios/commands/c11-route-list.md#c11-02)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | [PublishedRouteListExactPathUsesZeroDepthCompactView:35](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteListProcessTests.cs) | Exact entrypoint depth0 accepted, root shown, root/child and path/status/coverage decorations absent; hashes unchanged. |
 
 **Gap / qualification:** Selected exact root depth0 only; no subtree descendants or unrelated sibling exclusion.
@@ -1322,8 +1322,8 @@ No matching published-process assertion identified.
 
 **[Depth all](../../../crystallized/documents/cli/experience/scenarios/commands/c11-route-list.md#c11-03)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                | What its assertions establish                                                                                                       |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedProcessCancellationKillsAndDrainsOwnedChild:121](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/CliProcessTests.cs) | Runner cancellation immediately after route-list process start requests child kill, returns process ID and preserves source hashes. |
 
 **Gap / qualification:** depth=all appears only in immediately killed harness child; no completed deep-tree result assertion.
@@ -1332,10 +1332,10 @@ No matching published-process assertion identified.
 
 **[Depth 0](../../../crystallized/documents/cli/experience/scenarios/commands/c11-route-list.md#c11-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [PublishedRouteListExactPathUsesZeroDepthCompactView:35](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteListProcessTests.cs) | Exact entrypoint depth0 accepted, root shown, root/child and path/status/coverage decorations absent; hashes unchanged. |
-| [NativeGlobalScalarDelimitersReachTheCommand:329](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedShellBoundaryProcessTests.cs) | Three global scalar delimiter forms with route-list depth0 give exact single root row, schema3, minimal detail and deduplicated warning/error filters; no source changes. |
+| Existing published-process evidence                                                                                                                             | What its assertions establish                                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [PublishedRouteListExactPathUsesZeroDepthCompactView:35](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteListProcessTests.cs) | Exact entrypoint depth0 accepted, root shown, root/child and path/status/coverage decorations absent; hashes unchanged.                                                   |
+| [NativeGlobalScalarDelimitersReachTheCommand:329](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedShellBoundaryProcessTests.cs)    | Three global scalar delimiter forms with route-list depth0 give exact single root row, schema3, minimal detail and deduplicated warning/error filters; no source changes. |
 
 **Gap / qualification:** Exact path depth0 excludes child; global delimiter variants assert exact single root JSON. Human complete no-descendant set not asserted.
 
@@ -1351,8 +1351,8 @@ No matching published-process assertion identified.
 
 **[Unknown source](../../../crystallized/documents/cli/experience/scenarios/commands/c11-route-list.md#c11-06)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                      | What its assertions establish                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
 | [PublishedRouteListAcceptsOptionLikeSourceAfterTerminator:12](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedShellBoundaryProcessTests.cs) | Unknown --depth operand after terminator gets typed unknown-source with exact subject; source hashes unchanged. |
 
 **Gap / qualification:** Unknown option-like operand named/read-only; no ordinary missing reference beside healthy fallback root.
@@ -1361,8 +1361,8 @@ No matching published-process assertion identified.
 
 **[Invalid depth](../../../crystallized/documents/cli/experience/scenarios/commands/c11-route-list.md#c11-07)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                     | What its assertions establish                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | [PublishedRouteListInvalidDepthUsesTypedJson:52](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteListProcessTests.cs) | Negative depth gives exit4/invalid-input, route-list.invalid-depth and no next, source hashes unchanged. |
 
 **Gap / qualification:** Invalid negative depth typed code/exit and zero separately accepted; accepted forms explanatory wording not asserted.
@@ -1371,8 +1371,8 @@ No matching published-process assertion identified.
 
 **[Ambiguous source](../../../crystallized/documents/cli/experience/scenarios/commands/c11-route-list.md#c11-08)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [BlockedCollisionUsesExactNextWording:61](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Ambiguous ID in redirected session exits5, explains multiple sources and exact-path next command; source hashes unchanged. |
 
 **Gap / qualification:** Inspect collision only; no List ambiguous-tree behavior.
@@ -1429,8 +1429,8 @@ No matching published-process assertion identified.
 
 **[Entrypoint](../../../crystallized/documents/cli/experience/scenarios/commands/c12-route-inspect.md#c12-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                | What its assertions establish                                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | [JsonResultExposesCompleteTypedGraph:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Root selection/path exact and base+overwrite layers in order, schema3/completed/no next, source hashes unchanged. |
 
 **Gap / qualification:** Correct selection/path/layers; inherited scope, loading condition and measurements entirely unasserted.
@@ -1439,8 +1439,8 @@ No matching published-process assertion identified.
 
 **[Routed file](../../../crystallized/documents/cli/experience/scenarios/commands/c12-route-inspect.md#c12-02)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | [ExactPathAttentionStatusHasNoInventedNext:43](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Exact colliding leaf path succeeds with warning exit2 and exact ID/path text, no Next, source hashes unchanged. |
 
 **Gap / qualification:** Exact collided ordinary leaf ID/path shown; ordinary routed leaf ancestor/measurement facts unasserted.
@@ -1449,8 +1449,8 @@ No matching published-process assertion identified.
 
 **[Load now child](../../../crystallized/documents/cli/experience/scenarios/commands/c12-route-inspect.md#c12-03)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                | What its assertions establish                                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | [JsonResultExposesCompleteTypedGraph:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Root selection/path exact and base+overwrite layers in order, schema3/completed/no next, source hashes unchanged. |
 
 **Gap / qualification:** Fixture root LoadNow exists but no loading semantics assertion or child inclusion.
@@ -1467,8 +1467,8 @@ No matching published-process assertion identified.
 
 **[Overwrite pair](../../../crystallized/documents/cli/experience/scenarios/commands/c12-route-inspect.md#c12-05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                | What its assertions establish                                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | [JsonResultExposesCompleteTypedGraph:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Root selection/path exact and base+overwrite layers in order, schema3/completed/no next, source hashes unchanged. |
 
 **Gap / qualification:** One result base/overwrite paths and order asserted; contribution measures and reading/association meaning unasserted.
@@ -1493,8 +1493,8 @@ No matching published-process assertion identified.
 
 **[Id not unique exact path](../../../crystallized/documents/cli/experience/scenarios/commands/c12-route-inspect.md#c12-08)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                      | What its assertions establish                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | [ExactPathAttentionStatusHasNoInventedNext:43](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Exact colliding leaf path succeeds with warning exit2 and exact ID/path text, no Next, source hashes unchanged. |
 
 **Gap / qualification:** Exact collision file accepted at exit2 with ID/path; nonunique reason and nonmerged measurements absent.
@@ -1503,8 +1503,8 @@ No matching published-process assertion identified.
 
 **[Ambiguous id prompt](../../../crystallized/documents/cli/experience/scenarios/commands/c12-route-inspect.md#c12-09)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [BlockedCollisionUsesExactNextWording:61](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInspectProcessTests.cs) | Ambiguous ID in redirected session exits5, explains multiple sources and exact-path next command; source hashes unchanged. |
 
 **Gap / qualification:** Redirected collision blocked; no real terminal selection and chosen candidate proof.
@@ -1513,8 +1513,8 @@ No matching published-process assertion identified.
 
 **[Unknown source](../../../crystallized/documents/cli/experience/scenarios/commands/c12-route-inspect.md#c12-10)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                 | What its assertions establish                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | [OptionLikeOperandAfterTerminatorRemainsDomainInput:211](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedShellBoundaryProcessTests.cs) | Option-like --view operand after terminator gets typed route-inspect.unknown-source with exact subject and no writes. |
 
 **Gap / qualification:** Option-like unknown-source ID/status/no writes asserted; normal missing reference fallback boundary absent.
@@ -1563,10 +1563,10 @@ No matching published-process assertion identified.
 
 **[New chain](../../../crystallized/documents/cli/experience/scenarios/commands/c13-route-init.md#c13-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [GenericDryRunApplyAndRepeatNoOpFormOneRealJourney:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Single docs scope JSON preview/no writes; apply verified, final file exists with supplied description and heading; repeat empty effects/unchanged entrypoints and source hashes unchanged. |
-| [FrameworkDryRunApplyAndRepeatNoOpPreserveOwnership:43](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Installed Framework then sparse memory/mobile-app/working preview/apply; framework scaffold property, final file exists, verified; repeat empty effects/unchanged entrypoints/hashes. |
+| Existing published-process evidence                                                                                                                            | What its assertions establish                                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [GenericDryRunApplyAndRepeatNoOpFormOneRealJourney:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs)   | Single docs scope JSON preview/no writes; apply verified, final file exists with supplied description and heading; repeat empty effects/unchanged entrypoints and source hashes unchanged. |
+| [FrameworkDryRunApplyAndRepeatNoOpPreserveOwnership:43](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Installed Framework then sparse memory/mobile-app/working preview/apply; framework scaffold property, final file exists, verified; repeat empty effects/unchanged entrypoints/hashes.      |
 
 **Gap / qualification:** Single generic scope and sparse framework path creation tested; generic nested chain, parent list oracle and placeholder authoring clarity absent.
 
@@ -1574,10 +1574,10 @@ No matching published-process assertion identified.
 
 **[Already initialized](../../../crystallized/documents/cli/experience/scenarios/commands/c13-route-init.md#c13-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [GenericDryRunApplyAndRepeatNoOpFormOneRealJourney:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Single docs scope JSON preview/no writes; apply verified, final file exists with supplied description and heading; repeat empty effects/unchanged entrypoints and source hashes unchanged. |
-| [FrameworkDryRunApplyAndRepeatNoOpPreserveOwnership:43](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Installed Framework then sparse memory/mobile-app/working preview/apply; framework scaffold property, final file exists, verified; repeat empty effects/unchanged entrypoints/hashes. |
+| Existing published-process evidence                                                                                                                            | What its assertions establish                                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [GenericDryRunApplyAndRepeatNoOpFormOneRealJourney:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs)   | Single docs scope JSON preview/no writes; apply verified, final file exists with supplied description and heading; repeat empty effects/unchanged entrypoints and source hashes unchanged. |
+| [FrameworkDryRunApplyAndRepeatNoOpPreserveOwnership:43](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Installed Framework then sparse memory/mobile-app/working preview/apply; framework scaffold property, final file exists, verified; repeat empty effects/unchanged entrypoints/hashes.      |
 
 **Gap / qualification:** Repeated generic/framework init empty effects and source hashes unchanged; human no-op wording and full directories/receipts unasserted.
 
@@ -1585,10 +1585,10 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c13-route-init.md#c13-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
-| [GenericDryRunApplyAndRepeatNoOpFormOneRealJourney:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Single docs scope JSON preview/no writes; apply verified, final file exists with supplied description and heading; repeat empty effects/unchanged entrypoints and source hashes unchanged. |
-| [FrameworkDryRunApplyAndRepeatNoOpPreserveOwnership:43](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Installed Framework then sparse memory/mobile-app/working preview/apply; framework scaffold property, final file exists, verified; repeat empty effects/unchanged entrypoints/hashes. |
+| Existing published-process evidence                                                                                                                            | What its assertions establish                                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [GenericDryRunApplyAndRepeatNoOpFormOneRealJourney:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs)   | Single docs scope JSON preview/no writes; apply verified, final file exists with supplied description and heading; repeat empty effects/unchanged entrypoints and source hashes unchanged. |
+| [FrameworkDryRunApplyAndRepeatNoOpPreserveOwnership:43](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Installed Framework then sparse memory/mobile-app/working preview/apply; framework scaffold property, final file exists, verified; repeat empty effects/unchanged entrypoints/hashes.      |
 
 **Gap / qualification:** Preview mode and read-only source hashes checked; concrete created-entrypoint/parent-plan set, future tense and recovery inventory absent.
 
@@ -1596,8 +1596,8 @@ No matching published-process assertion identified.
 
 **[Framework scaffold](../../../crystallized/documents/cli/experience/scenarios/commands/c13-route-init.md#c13-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                            | What its assertions establish                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [FrameworkDryRunApplyAndRepeatNoOpPreserveOwnership:43](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Installed Framework then sparse memory/mobile-app/working preview/apply; framework scaffold property, final file exists, verified; repeat empty effects/unchanged entrypoints/hashes. |
 
 **Gap / qualification:** Scoped Framework final file exists and repeat converges; no exact scaffold bytes, ownership/parent scope oracle or unrelated-category absence.
@@ -1606,8 +1606,8 @@ No matching published-process assertion identified.
 
 **[Explicit metadata](../../../crystallized/documents/cli/experience/scenarios/commands/c13-route-init.md#c13-05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                          | What its assertions establish                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [GenericDryRunApplyAndRepeatNoOpFormOneRealJourney:9](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Single docs scope JSON preview/no writes; apply verified, final file exists with supplied description and heading; repeat empty effects/unchanged entrypoints and source hashes unchanged. |
 
 **Gap / qualification:** Description in single final file asserted; no absent intermediate scopes/final-only description and tag propagation oracle.
@@ -1632,8 +1632,8 @@ No matching published-process assertion identified.
 
 **[Framework not installed](../../../crystallized/documents/cli/experience/scenarios/commands/c13-route-init.md#c13-08)** — selection: retained; E2E coverage: **direct**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [FrameworkWithoutTrustedInstallIsBlocked:77](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteInitProcessTests.cs) | Framework init on uninstalled workspace exits5 on stderr, installation-required text and install dryrun next; source hashes unchanged and no lock infrastructure. |
 
 **Gap / qualification:** Required Framework absence, useful install next action, no created control files and no lock infrastructure asserted. Snapshot does not certify empty-directory/permission invariants beyond scenario's files.
@@ -1677,4 +1677,3 @@ No matching published-process assertion identified.
 No matching published-process assertion identified.
 
 **Gap / qualification:** No owned E2E method instantiates this case and asserts its outcome/state. Required evidence: Name the unavailable required fact and its consequence. Do not infer a complete empty inventory or apply a partial mutation plan. Prove the read failure and why this input is required. Verify known safe facts remain distinct from unknown values and that no target effect started.
-

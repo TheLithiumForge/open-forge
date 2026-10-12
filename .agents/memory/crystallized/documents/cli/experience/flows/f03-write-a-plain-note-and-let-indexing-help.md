@@ -24,14 +24,14 @@ ROUTES without my-note.md. This flow is the requested target, not existing outpu
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | Copy docs/cli-experience-fixtures/content/plain-note.md to .agents/guidance/my-note.md. | [X02](../scenarios/experience.md#x02) | The authored body exists exactly, without YAML. |
-| 2 | open-forge index | [X02](../scenarios/experience.md#x02) | The plain note is navigable, its bytes are unchanged, and one useful metadata warning is visible. |
-| 3 | open-forge doctor | [X05](../scenarios/experience.md#x05) | Any remaining authoring issue is described truthfully; no imaginary unfinished Framework update appears. |
-| 4 | Optionally add a description and tags chosen by the author. | [X02](../scenarios/experience.md#x02) | Enrichment is optional; the original body remains intact. |
-| 5 | open-forge index | [C05-02](../scenarios/commands/c05-index.md#c05-02) | If enriched, navigation uses the authored metadata and no longer warns about those missing fields; otherwise the note remains usable unchanged. |
-| 6 | open-forge context guidance/my-note | [C08-02](../scenarios/commands/c08-context.md#c08-02) | The completed note can be read through its real route. |
+| Step | Action                                                                                  | Scenario                                              | State passed forward                                                                                                                            |
+| ---: | --------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+|    1 | Copy docs/cli-experience-fixtures/content/plain-note.md to .agents/guidance/my-note.md. | [X02](../scenarios/experience.md#x02)                 | The authored body exists exactly, without YAML.                                                                                                 |
+|    2 | open-forge index                                                                        | [X02](../scenarios/experience.md#x02)                 | The plain note is navigable, its bytes are unchanged, and one useful metadata warning is visible.                                               |
+|    3 | open-forge doctor                                                                       | [X05](../scenarios/experience.md#x05)                 | Any remaining authoring issue is described truthfully; no imaginary unfinished Framework update appears.                                        |
+|    4 | Optionally add a description and tags chosen by the author.                             | [X02](../scenarios/experience.md#x02)                 | Enrichment is optional; the original body remains intact.                                                                                       |
+|    5 | open-forge index                                                                        | [C05-02](../scenarios/commands/c05-index.md#c05-02)   | If enriched, navigation uses the authored metadata and no longer warns about those missing fields; otherwise the note remains usable unchanged. |
+|    6 | open-forge context guidance/my-note                                                     | [C08-02](../scenarios/commands/c08-context.md#c08-02) | The completed note can be read through its real route.                                                                                          |
 
 ## Alternatives and recovery
 
@@ -60,4 +60,3 @@ The author achieves a routable note without losing text or learning an internal 
 ## Verification
 
 Observe the resulting files and links independently of printed output. Record actions, stdout, stderr, exit, preserved bytes, and separate outcome/state/communication verdicts in a run record. Carry real state between steps; fork only at an explicit alternative.
-

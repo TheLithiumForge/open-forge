@@ -33,19 +33,19 @@ Change report.
 
 ## Statuses and headlines
 
-| Status                  | When                                                                      | Headline                                                                            | Exit | Stream |
-| ----------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ---: | ------ |
-| completed               | nothing to change                                                         | `The <id> Library is up to date. Nothing to do.`                                    |    0 | stdout |
-| completed               | changes                                                                   | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` (omit zero parts) |    0 | stdout |
-| completed-with-warnings | a registered link was restored                                          | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` (omit zero parts) |    2 | stdout |
-| completed (dry run)     | planned                                                                   | `Would synchronize <id>: <A> links to add, <R> to remove.`                          |    0 | stdout |
-| completed               | no ownership record                                                       | `No ownership record exists, so <id> cannot be synchronized. Nothing was changed.`  |    0 | stdout |
-| completed-with-warnings | recovery bundle retained                                                  | + family row                                                                        |    2 | stdout |
-| incomplete              | source folder or a fact unreadable                                        | `<id> could not be synchronized: <limitation>. Nothing was changed.`                |    3 | stdout |
-| invalid-input           | bad or unknown ID, extra operand                                          | `Cannot synchronize <ref>: <problem>.`                                              |    4 | stderr |
-| blocked                 | changed destination, collision, permission, lock                          | `Cannot synchronize <id>: <reason>. Nothing was changed.`                           |    5 | stderr |
-| failed                  | after effects                                                             | `Library sync stopped after <n> of <m> changes.`                                    |    1 | stderr |
-| cancelled               | prompt cancelled, Ctrl+C                                                  | `Library sync was cancelled. Nothing was changed.`                                  |  130 | stderr |
+| Status                  | When                                             | Headline                                                                            | Exit | Stream |
+| ----------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | nothing to change                                | `The <id> Library is up to date. Nothing to do.`                                    |    0 | stdout |
+| completed               | changes                                          | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` (omit zero parts) |    0 | stdout |
+| completed-with-warnings | a registered link was restored                   | `Synchronized <id>: <A> links added, <R> removed, <U> unchanged.` (omit zero parts) |    2 | stdout |
+| completed (dry run)     | planned                                          | `Would synchronize <id>: <A> links to add, <R> to remove.`                          |    0 | stdout |
+| completed               | no ownership record                              | `No ownership record exists, so <id> cannot be synchronized. Nothing was changed.`  |    0 | stdout |
+| completed-with-warnings | recovery bundle retained                         | + family row                                                                        |    2 | stdout |
+| incomplete              | source folder or a fact unreadable               | `<id> could not be synchronized: <limitation>. Nothing was changed.`                |    3 | stdout |
+| invalid-input           | bad or unknown ID, extra operand                 | `Cannot synchronize <ref>: <problem>.`                                              |    4 | stderr |
+| blocked                 | changed destination, collision, permission, lock | `Cannot synchronize <id>: <reason>. Nothing was changed.`                           |    5 | stderr |
+| failed                  | after effects                                    | `Library sync stopped after <n> of <m> changes.`                                    |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                         | `Library sync was cancelled. Nothing was changed.`                                  |  130 | stderr |
 
 ## Text by level
 
@@ -97,7 +97,7 @@ changes? [y/N]` unless `--automatic` (added by 04).
 | library-sync.mapping-blocked                 | error    | local                      | `<destination path> is <an ordinary file \| a folder \| a different link> and is not the link the Library created.` | `open-forge library inspect <id>` |
 | library-sync.destination-collision           | error    | local                      | `<destination path> already exists and is not a link this Library would create.`                                    | none                              |
 | library-sync.retired-link-missing            | error    | local                      | `<destination path> is registered but no longer exists, so its removal cannot be confirmed.`                        | `open-forge library inspect <id>` |
-| library-sync.registered-link-restored        | warning  | local                      | `<destination path> was registered but missing, so it was restored.`                                                 | none                              |
+| library-sync.registered-link-restored        | warning  | local                      | `<destination path> was registered but missing, so it was restored.`                                                | none                              |
 | library-sync.link-capability-unavailable     | error    | local                      | `This system cannot create the file links Libraries need.`                                                          | none                              |
 | library-sync.consumer-blocked                | error    | local                      | `<path> is managed by Open Forge and cannot receive Library links.`                                                 | none                              |
 | library-sync.ownership-conflict              | error    | ownership-conflict         |                                                                                                                     |                                   |
@@ -235,11 +235,11 @@ Entries section of <path>`, lock `updated`. Dry run: `Add`, `Remove`. Partial:
 
 8. **The lock-held ruling makes an existing Sync wording gap reachable.** The
    old finding message was `Library sync stopped because of an unexpected
-   error: IOException (0x80070020): The filesystem operation failed.`; the new
+error: IOException (0x80070020): The filesystem operation failed.`; the new
    `library-sync.lock-unavailable` finding message is
    `IOException (0x80070020): The filesystem operation failed`, while the
    shared workspace-lock family says `Another Open Forge command holds the
-   workspace lock. Nothing was changed.`. The ruling fixes status and finding
+workspace lock. Nothing was changed.`. The ruling fixes status and finding
    identity, and the frozen-string rule does not choose between these messages.
    **Maintainer decision.**
 

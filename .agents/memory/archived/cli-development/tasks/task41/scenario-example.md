@@ -28,7 +28,7 @@ heading and a paragraph and no frontmatter at all.
 
 **Result.**
 
-*minimal*
+_minimal_
 
     Updated the Entries section in 1 of 20 files.
       .agents/guidance/_guidance.md  1 -> 2 entries
@@ -36,13 +36,13 @@ heading and a paragraph and no frontmatter at all.
              .agents/guidance/my-notes.md has no description, so its entry reads from its file name.
     Next: open-forge route inspect .agents/guidance/my-notes.md
 
-*standard* — as minimal.
+_standard_ — as minimal.
 
-*full* — adds the finding code and the resolved route for the new entry.
+_full_ — adds the finding code and the resolved route for the new entry.
 
-*debug* — adds the metadata actually read from the file.
+_debug_ — adds the metadata actually read from the file.
 
-*json* — `status` is `completed-with-warnings`; `effects` carries the rewritten
+_json_ — `status` is `completed-with-warnings`; `effects` carries the rewritten
 entrypoint; `findings` carries one warning whose `subject.path` is the authored
 file; `counts.entriesSectionsStale` reaches zero.
 

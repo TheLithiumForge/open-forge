@@ -38,8 +38,6 @@ open-forge update --automatic
 
 Say the Framework is up to date and there is nothing to do.
 
-
-
 ### Verification
 
 Compare all bytes and entries before/after; do not rewrite an unchanged lock.
@@ -65,8 +63,6 @@ open-forge update --automatic
 ### Expected result
 
 Replace the selected changed content and name the replacement. Do not promise all local edits are preserved by update.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge update --automatic
 
 Restore and identify that missing file, without calling it a replacement of existing bytes.
 
-
-
 ### Verification
 
 Compare restored bytes to the pinned intended file; ensure unrelated content is unchanged.
@@ -121,8 +115,6 @@ open-forge update --automatic
 ### Expected result
 
 Keep the retired file by default and explain that it remains from an earlier version.
-
-
 
 ### Verification
 
@@ -152,8 +144,6 @@ open-forge update --prune --automatic
 
 Remove only eligible retired owned content and name it explicitly.
 
-
-
 ### Verification
 
 Verify unowned neighbors survive and pruning does not adopt them into the removal set.
@@ -179,8 +169,6 @@ open-forge update --dry-run
 ### Expected result
 
 Show the concrete proposed effects using future tense and No files were changed.
-
-
 
 ### Verification
 
@@ -208,8 +196,6 @@ open-forge update --automatic
 
 Explain that update cannot establish its managed files and changes nothing. Do not infer claims from matching content.
 
-
-
 ### Verification
 
 Verify no files are adopted, deleted or replaced; distinguish unavailable ownership from known empty ownership.
@@ -236,8 +222,6 @@ open-forge update
 
 Explain the missing confirmation instead of starting or hanging.
 
-
-
 ### Verification
 
 Check invalid-input outcome in the output baseline and no effects; record the prompt-capability boundary.
@@ -263,8 +247,6 @@ open-forge update --automatic
 ### Expected result
 
 Report the completed portion, stopped operation and actual recovery location or failure.
-
-
 
 ### Verification
 
@@ -294,8 +276,6 @@ open-forge update
 
 Report cancellation without implying an update happened.
 
-
-
 ### Verification
 
 Verify exact pre/post equality; test post-effect cancellation separately.
@@ -323,8 +303,6 @@ open-forge update --not-an-option
 ### Expected result
 
 Reject the argument without selecting an update.
-
-
 
 ### Verification
 
@@ -360,8 +338,6 @@ open-forge update --automatic
 
 Name the unavailable required fact and its consequence. Do not infer a complete empty inventory or apply a partial mutation plan.
 
-
-
 ### Verification
 
 Prove the read failure and why this input is required. Verify known safe facts remain distinct from unknown values and that no target effect started.
@@ -389,8 +365,6 @@ open-forge update --automatic
 ### Expected result
 
 Name the target conflict and preserve the complete selected update.
-
-
 
 ### Verification
 

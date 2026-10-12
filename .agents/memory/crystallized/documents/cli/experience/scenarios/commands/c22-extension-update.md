@@ -38,8 +38,6 @@ open-forge extension update toolkit --source "$CAT" --automatic
 
 Say the package is up to date and there is nothing to do.
 
-
-
 ### Verification
 
 Verify no target or lock churn and no gratuitous recovery bundle.
@@ -67,8 +65,6 @@ open-forge extension update toolkit --source "$CAT" --automatic
 ### Expected result
 
 Name the replacement and update to the selected source, without claiming all local edits are preserved.
-
-
 
 ### Verification
 
@@ -98,8 +94,6 @@ open-forge extension update toolkit --source "$CAT" --automatic
 
 Show the version change and new file without treating the version string alone as proof of correctness.
 
-
-
 ### Verification
 
 Compare intended membership and each added/replaced file; no unrelated package should be refreshed.
@@ -127,8 +121,6 @@ open-forge extension update toolkit --source "$CAT" --automatic
 ### Expected result
 
 Keep it by default and explain that it remains from the earlier package version.
-
-
 
 ### Verification
 
@@ -158,8 +150,6 @@ open-forge extension update toolkit --source "$CAT" --prune --automatic
 
 Remove only eligible retired owned content and list the deletion.
 
-
-
 ### Verification
 
 Verify shared or unowned files survive and source content is untouched.
@@ -188,8 +178,6 @@ open-forge extension update --all --source "$CAT" --automatic
 
 Update the intended installed selection, not every available package.
 
-
-
 ### Verification
 
 Compare selected installed IDs and dependency effects; no installation of the unrelated available package.
@@ -215,8 +203,6 @@ open-forge extension update --source "$CAT"
 ### Expected result
 
 Present installed choices clearly and honor the selected package and its required dependency scope.
-
-
 
 ### Verification
 
@@ -246,8 +232,6 @@ open-forge extension update --source "$CAT"
 
 Explain the missing selection and do not default to all installed packages.
 
-
-
 ### Verification
 
 Verify no prompt hang and no effects.
@@ -273,8 +257,6 @@ open-forge extension update toolkit --source "$CAT" --automatic
 ### Expected result
 
 Explain the revoked or absent destination permission before updating content.
-
-
 
 ### Verification
 
@@ -304,8 +286,6 @@ open-forge extension update toolkit --source "$CAT" --automatic
 
 Explain that ownership cannot be established and do not infer it from matching paths.
 
-
-
 ### Verification
 
 Compare unknown versus known-not-installed behavior against the command’s specific ownership and output rules.
@@ -333,8 +313,6 @@ open-forge extension update toolkit --source "$CAT" --dry-run
 ### Expected result
 
 Show proposed effects in future tense with no writes or prompts.
-
-
 
 ### Verification
 
@@ -364,8 +342,6 @@ open-forge extension update toolkit --source "$CAT" --automatic
 
 Explain the missing comparison input and leave all selected package targets unchanged.
 
-
-
 ### Verification
 
 Confirm the failure is a required source read, not an unrelated obsolete record.
@@ -393,8 +369,6 @@ open-forge extension update toolkit --source "$CAT" --automatic
 ### Expected result
 
 Explain contention and preserve content.
-
-
 
 ### Verification
 
@@ -424,8 +398,6 @@ open-forge extension update toolkit --source "$CAT" --automatic
 
 Report the completed portion, unfinished changes and actual recovery/permission facts.
 
-
-
 ### Verification
 
 Compare receipts with disk, including kept retired files and ownership publication state.
@@ -453,8 +425,6 @@ open-forge extension update toolkit --source "$CAT"
 ### Expected result
 
 Report cancellation without replacing, adding or pruning anything.
-
-
 
 ### Verification
 

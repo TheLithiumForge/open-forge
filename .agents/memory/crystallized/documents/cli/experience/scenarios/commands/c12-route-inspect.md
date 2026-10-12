@@ -38,8 +38,6 @@ open-forge route inspect guidance
 
 Explain where the scope belongs, when it is read and the declared context measurements.
 
-
-
 ### Verification
 
 Check source-role and scope distinctions; do not count all descendants as automatically loaded.
@@ -65,8 +63,6 @@ open-forge route inspect guidance/notes
 ### Expected result
 
 Describe that file's identity and inherited context, not an imaginary child scope.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge route inspect guidance/notes
 
 Explain the parent's loading condition and the child's resulting automatic inclusion.
 
-
-
 ### Verification
 
 Verify the tag is conditional on its parent exposure, not globally loaded merely because the file exists.
@@ -121,8 +115,6 @@ open-forge route inspect guidance/notes
 ### Expected result
 
 Explain continuity and refresh behavior without turning the tag into stronger authority.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge route inspect guidance/notes
 
 Describe one logical source with both layers and their real reading behavior.
 
-
-
 ### Verification
 
 Check base/overwrite association, contribution measurements and layer order; avoid double-counting identity.
@@ -177,8 +167,6 @@ open-forge route inspect "$COMPAT_ENTRY"
 ### Expected result
 
 Resolve it once and explain the same scope without demanding a rename.
-
-
 
 ### Verification
 
@@ -206,8 +194,6 @@ open-forge route inspect .agents/guidance/unlisted.md
 
 Describe that it is not currently routed, without inventing a route or treating physical existence as exposure.
 
-
-
 ### Verification
 
 Compare parent Entries and source identity; inspect must not automatically index it.
@@ -234,8 +220,6 @@ open-forge route inspect "$EXACT_SOURCE"
 
 Inspect the exact file and explain its non-unique automatic ID without blocking a resolved request.
 
-
-
 ### Verification
 
 Verify the chosen physical identity and no merged measurements from the other candidate.
@@ -261,8 +245,6 @@ open-forge route inspect "$AMBIGUOUS_ID"
 ### Expected result
 
 Present clear alternatives, honor the choice and qualify the shared ID.
-
-
 
 ### Verification
 
@@ -292,8 +274,6 @@ open-forge route inspect guidance/does-not-exist
 
 Say the source cannot be found, not that it has zero content.
 
-
-
 ### Verification
 
 Verify no nearest-match selection or file creation.
@@ -320,8 +300,6 @@ open-forge route inspect .agents/loader.md
 
 Explain that this command does not inspect the loader as an ordinary route.
 
-
-
 ### Verification
 
 Verify the dedicated invalid-input boundary without corrupting startup context.
@@ -347,8 +325,6 @@ open-forge route inspect guidance/notes
 ### Expected result
 
 Keep known identity facts and label unavailable measurements and the unreadable layer.
-
-
 
 ### Verification
 
@@ -377,8 +353,6 @@ open-forge route inspect .agents/guidance/notes.overwrite.md
 ### Expected result
 
 Explain the missing base relationship and do not treat the overwrite as an independent source.
-
-
 
 ### Verification
 

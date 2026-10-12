@@ -69,7 +69,7 @@ every snapshot file and over synthetic reports:
        run by a sandboxed worker** and was completed by the overseer; it needs
        `vswhere` on `PATH`.
 6. [x] Grep gates. `wizard` 0; `CliView` 0. **Two corrected:** `TextEscaping`
-       returns 2 hits that are *test class names*, not a surviving type — the
+       returns 2 hits that are _test class names_, not a surviving type — the
        gate means the type. And `schemaVersion.*[12]` **can never be empty as
        written**: it matches 174 legitimate unrelated on-disk schemas (workspace
        settings, the recovery manifest, the ownership codec, the libraries
@@ -193,7 +193,6 @@ ecovery`; it now adds none (34,698 before and
 - step 6 grep gates: `wizard` 0; `CliView` 0; `TextEscaping` 2 hits, both test class names with no surviving type; broad `schemaVersion.*[12]` 174 legitimate unrelated hits, so the gate was scoped to the CLI report envelope, where 1,296 envelopes carry **0** versions below 3; human-primary forbidden vocabulary 0; `Commands/` and `Framework/` references to `Presentation/` 0.
 - acceptance: every command subtask's `Changes ledger` and `Divergences observed` are non-empty. Verified by sweep; only `00-conventions.md` (none by design) and `41-documentation-propagation.md` (not started) are unfilled.
 
-
 ## Divergences observed
 
 1. **Native AOT was reported blocked; it is not.** The worker reported `NU1101`
@@ -220,7 +219,7 @@ ecovery`; it now adds none (34,698 before and
 2. **`Next:` is not always last, and a catalogue requires it not to be.**
    Extension Install has a catalogue-required continuation after the next
    action: `Or add ".apm/agents/team.md" to allowInstallPaths in
-   .agents/open-forge.json.` This directly contradicts the "at most one `Next:`
+.agents/open-forge.json.` This directly contradicts the "at most one `Next:`
    line, and it is the last line" invariant. The invariant admits the
    continuation. **Maintainer decision:** relax the invariant, or move the
    continuation above `Next:`.
@@ -266,7 +265,7 @@ ecovery`; it now adds none (34,698 before and
 
 10. **Closeout was blocked.** The permitted task file was sandbox read-only;
     `apply_patch` reached it and returned `Failed to write file
-    ...40-verification.md`. The overseer wrote this record and committed.
+...40-verification.md`. The overseer wrote this record and committed.
 
 ## Rollback
 

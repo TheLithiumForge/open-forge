@@ -27,13 +27,13 @@ Discussion and source investigation on 2026-09-19, in `codex/extensions-experien
 
 Accepted target: **four libraries replacing Core**, plus the existing executable host. The accepted later OutputText extraction is additional and is excluded from the three-versus-four comparison. This means five production projects initially and six after OutputText. Test projects are counted separately. Exact visibility and callable seams still require the packet's bounded investigation before implementation.
 
-| Proposed library | Owns | Direct production references |
-| --- | --- | --- |
-| `OpenForge.Cli.Framework` | Workspace/document observation, routing facts, physical filesystem operations, ownership/recovery and embedded package access | No other CLI project |
-| `OpenForge.Cli.Shell` | Shared argument parsing, invocation/binding contracts, status/stream definitions, interaction contracts and process-completion policy | Framework, for the existing workspace-selection boundary |
-| `OpenForge.Cli.Operations` | Existing Commands: typed requests/results, planning/application and command-local input adapters | Framework and Shell |
-| `OpenForge.Cli.Rendering` | Report selection, detail/filter rules, text/JSON renderers, help/prompt presentation and render-ready output | Operations result models and neutral Shell contracts |
-| Existing executable `OpenForge.Cli` | Composition, concrete command registration, complete execution pipeline, stream writing and hosting | Explicit references to the four libraries it composes |
+| Proposed library                    | Owns                                                                                                                                  | Direct production references                             |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `OpenForge.Cli.Framework`           | Workspace/document observation, routing facts, physical filesystem operations, ownership/recovery and embedded package access         | No other CLI project                                     |
+| `OpenForge.Cli.Shell`               | Shared argument parsing, invocation/binding contracts, status/stream definitions, interaction contracts and process-completion policy | Framework, for the existing workspace-selection boundary |
+| `OpenForge.Cli.Operations`          | Existing Commands: typed requests/results, planning/application and command-local input adapters                                      | Framework and Shell                                      |
+| `OpenForge.Cli.Rendering`           | Report selection, detail/filter rules, text/JSON renderers, help/prompt presentation and render-ready output                          | Operations result models and neutral Shell contracts     |
+| Existing executable `OpenForge.Cli` | Composition, concrete command registration, complete execution pipeline, stream writing and hosting                                   | Explicit references to the four libraries it composes    |
 
 References point from consumer to dependency. Operations never references Rendering. Framework never references Shell or Operations. Shared Shell has no reference to concrete Operations or Rendering. Rendering must not consume Framework facts or operation behavior through an indirect reference. Preserve command-local folders; do not create one assembly per command.
 
@@ -41,12 +41,12 @@ This keeps the already-demonstrated Framework/Operations boundary and makes gene
 
 ### Alternatives
 
-| Option | Benefit | Cost / reason not preferred |
-| --- | --- | --- |
-| Keep one Core assembly | Least immediate movement; existing typed seams can already improve tests | Does not provide the requested independent project boundaries; using-based checks currently miss real dependencies |
-| Three libraries: Shell, combined Data (Framework + Operations), Rendering | Fewer projects and much of the current placement remains recognizable | Framework-to-Operations dependency prohibition stays an intra-assembly convention; combines reusable facts with command policy |
-| Three libraries: Framework, Operations, Rendering; put Shell in the executable | A legitimate smaller graph with separate domain and output assemblies | Command bindings currently consume Shell contracts. Avoiding Operations-to-executable references requires moving command input adapters and rehoming shared result/status contracts. Generic Shell and concrete composition share a compiler boundary |
-| Four libraries plus existing host | Preserves both meaningful boundaries with less semantic redistribution; Shell and Framework remain separately testable | One extra library; requires explicit cycle repair, API visibility and build configuration work |
+| Option                                                                         | Benefit                                                                                                                | Cost / reason not preferred                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Keep one Core assembly                                                         | Least immediate movement; existing typed seams can already improve tests                                               | Does not provide the requested independent project boundaries; using-based checks currently miss real dependencies                                                                                                                                    |
+| Three libraries: Shell, combined Data (Framework + Operations), Rendering      | Fewer projects and much of the current placement remains recognizable                                                  | Framework-to-Operations dependency prohibition stays an intra-assembly convention; combines reusable facts with command policy                                                                                                                        |
+| Three libraries: Framework, Operations, Rendering; put Shell in the executable | A legitimate smaller graph with separate domain and output assemblies                                                  | Command bindings currently consume Shell contracts. Avoiding Operations-to-executable references requires moving command input adapters and rehoming shared result/status contracts. Generic Shell and concrete composition share a compiler boundary |
+| Four libraries plus existing host                                              | Preserves both meaningful boundaries with less semantic redistribution; Shell and Framework remain separately testable | One extra library; requires explicit cycle repair, API visibility and build configuration work                                                                                                                                                        |
 
 The fourth library earns its cost through the current dependency and review goals, not merely the number of source files. A separate generic Contracts/Common project is not justified by the inspected dependencies. Keep genuinely neutral CLI contracts with Shell and command result contracts with their Operations owner.
 
@@ -56,13 +56,13 @@ The two bounded Luna reviews agreed on this graph and the host-owned orchestrati
 
 The current tree cannot simply become four projects unchanged. Six Shell files import Presentation, while Presentation and Commands also use Shell.
 
-| Current surface | Recommended destination / treatment |
-| --- | --- |
-| [CliReportBinding](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Composition/CliReportBinding.cs) and [CliReportCommandBinding](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Composition/CliReportCommandBinding.cs) | Host composition: these join a command binding to its concrete presentation functions. Keep `ICliCommandBinding` and neutral request-binding contracts in Shell |
-| [CliReportPipeline](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Pipeline/CliReportPipeline.cs) | Host pipeline: it invokes the supplied operation, renders its result and writes output; it is not a renderer responsibility |
-| [CliPipelineStages](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Pipeline/CliPipelineStages.cs) | Separate the existing classes by owner. Keep generic invocation/result validation and completion policy in Shell; move `CliRenderingStage` to Rendering and concrete stream writing to the host. Do not recreate the pipeline as a registry or universal engine |
-| [CliCoreApplication](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Composition/CliCoreApplication.cs) | Host application orchestration, because it combines parsing/binding with the concrete help renderer. Shared parsing and invocation services remain in Shell |
-| [CliRenderedOutput](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Pipeline/Models/Presentation/CliRenderedOutput.cs) | Rendering, alongside the text-document/span representation it exposes; the host consumes it |
+| Current surface                                                                                                                                                                                                               | Recommended destination / treatment                                                                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [CliReportBinding](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Composition/CliReportBinding.cs) and [CliReportCommandBinding](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Composition/CliReportCommandBinding.cs) | Host composition: these join a command binding to its concrete presentation functions. Keep `ICliCommandBinding` and neutral request-binding contracts in Shell                                                                                                 |
+| [CliReportPipeline](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Pipeline/CliReportPipeline.cs)                                                                                                                          | Host pipeline: it invokes the supplied operation, renders its result and writes output; it is not a renderer responsibility                                                                                                                                     |
+| [CliPipelineStages](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Pipeline/CliPipelineStages.cs)                                                                                                                          | Separate the existing classes by owner. Keep generic invocation/result validation and completion policy in Shell; move `CliRenderingStage` to Rendering and concrete stream writing to the host. Do not recreate the pipeline as a registry or universal engine |
+| [CliCoreApplication](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Composition/CliCoreApplication.cs)                                                                                                                     | Host application orchestration, because it combines parsing/binding with the concrete help renderer. Shared parsing and invocation services remain in Shell                                                                                                     |
+| [CliRenderedOutput](../../../../src/cli/core/OpenForge.Cli.Core/Shell/Pipeline/Models/Presentation/CliRenderedOutput.cs)                                                                                                      | Rendering, alongside the text-document/span representation it exposes; the host consumes it                                                                                                                                                                     |
 
 When splitting stages, remove the output writer's incidental dependency on `CliRenderingStage.MaximumDiagnosticLength`: the limit is shared output policy and should have one owner in Shell. Preserve authored versus generated spans and their different newline handling; flattening everything to an ordinary string would change behavior.
 
@@ -97,14 +97,14 @@ The existing pipeline already has typed results, reports, selectors and text/JSO
 
 Use one authority per fact and one review index:
 
-| Fact | Owner |
-| --- | --- |
-| User goal, flow sequence and desired behavior | Existing flow/scenario documents, retaining Fxx/Cxx-xx/Xxx identities |
-| Wording and typed substitution | C# factories, with the accepted later extraction into `OpenForge.Cli.OutputText` |
-| Which facts to show and how to compose lists/sections | Typed selectors and renderers |
-| Approved concrete output | Independently reviewed named snapshots, addressed by scenario, format, detail and stream |
-| Actual resulting files, links, claims and effects | Independent semantic assertions |
-| Navigation across these owners | A generated or validated review index containing references rather than copied transcripts |
+| Fact                                                  | Owner                                                                                      |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| User goal, flow sequence and desired behavior         | Existing flow/scenario documents, retaining Fxx/Cxx-xx/Xxx identities                      |
+| Wording and typed substitution                        | C# factories, with the accepted later extraction into `OpenForge.Cli.OutputText`           |
+| Which facts to show and how to compose lists/sections | Typed selectors and renderers                                                              |
+| Approved concrete output                              | Independently reviewed named snapshots, addressed by scenario, format, detail and stream   |
+| Actual resulting files, links, claims and effects     | Independent semantic assertions                                                            |
+| Navigation across these owners                        | A generated or validated review index containing references rather than copied transcripts |
 
 Message IDs such as `library.sync.partial` identify reusable wording, not entire scenarios. Keep detail/format as output-view facets rather than inventing a new semantic scenario for every view. Markdown should reference stable keys/anchors, not source line numbers. Delete duplicated manually authored transcripts only after their authoritative replacement and links exist. Do not make production factories the sole oracle for exact wording.
 

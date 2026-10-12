@@ -38,8 +38,6 @@ open-forge library list
 
 Say no Libraries are registered without confusing it with unavailable ownership.
 
-
-
 ### Verification
 
 Verify the known empty registration set; a next instruction may request missing inputs but must not pretend placeholders are runnable.
@@ -65,8 +63,6 @@ open-forge library list
 ### Expected result
 
 Show the Library identity, source and destination in a concise row.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge library list
 
 Name the missing link and specific Library action.
 
-
-
 ### Verification
 
 Compare directory entries and registration; do not call the source missing.
@@ -121,8 +115,6 @@ open-forge library list
 ### Expected result
 
 Explain the changed destination and preserve the user's file.
-
-
 
 ### Verification
 
@@ -150,12 +142,9 @@ open-forge library list
 
 Report a completed ownership observation, select no claim, and keep unavailable counts unknown. Distinguish a missing, unreadable or unusable record from a valid empty record; do not invent an unknown-ID error. Preserve every file.
 
-
-
 ### Verification
 
 Independently establish the record state and unchanged workspace. Verify no source inventory or selected Library was fabricated; a separate valid-record unknown-ID case must remain invalid-input.
-
 
 Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
 
@@ -180,8 +169,6 @@ open-forge library list
 ### Expected result
 
 Keep the registered identity and describe missing source availability.
-
-
 
 ### Verification
 
@@ -209,12 +196,9 @@ open-forge library list
 
 Report a completed ownership observation, select no claim, and keep unavailable counts unknown. Distinguish a missing, unreadable or unusable record from a valid empty record; do not invent an unknown-ID error. Preserve every file.
 
-
-
 ### Verification
 
 Independently establish the record state and unchanged workspace. Verify no source inventory or selected Library was fabricated; a separate valid-record unknown-ID case must remain invalid-input.
-
 
 Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
 
@@ -240,16 +224,11 @@ open-forge library list
 
 Report a completed ownership observation, select no claim, and keep unavailable counts unknown. Distinguish a missing, unreadable or unusable record from a valid empty record; do not invent an unknown-ID error. Preserve every file.
 
-
-
 ### Verification
 
 Independently establish the record state and unchanged workspace. Verify no source inventory or selected Library was fabricated; a separate valid-record unknown-ID case must remain invalid-input.
 
-
 Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
-
-
 
 **Execution constraint:** Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
 
@@ -274,8 +253,6 @@ open-forge library list
 ### Expected result
 
 Explain the exact unsafe link check and do not follow the boundary.
-
-
 
 ### Verification
 
@@ -302,8 +279,6 @@ open-forge library list team
 ### Expected result
 
 Explain the invalid form instead of silently switching to inspect.
-
-
 
 ### Verification
 

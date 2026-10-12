@@ -10,18 +10,18 @@ An Extension is a way to distribute files. Routed content takes the role and sco
 
 The [first-party catalogue](../src/extensions/README.md) describes every package and its dependencies.
 
-| Package ID | Name | Use it to |
-| --- | --- | --- |
-| `core-templates` | Core Templates | Create directives, guidance, patterns, skills, templates, maps, and memory records from adaptable starting files. |
-| `collaboration` | Collaboration | Explore ideas, compare alternatives, and clarify decisions through discussion and a brainstorming template. |
-| `project-documents` | Project Documents | Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements. |
-| `planning` | Planning | Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and checkpoints. |
-| `scenarios` | Flows and Scenarios | Describe user journeys and expected outcomes, organize scenarios, and record what happened when they were tried. |
-| `observations-and-handoffs` | Observations and Handoffs | Save useful observations and prepare a clear snapshot for another person, agent, or session to resume work. |
-| `development` | Development | Implement changes, investigate defects, and review results using the project's existing tools and conventions. |
-| `orchestration` | Task Coordination | Coordinate related tasks, assign responsibilities, manage dependencies, and verify combined results. |
-| `development-toolkit` | Development Toolkit | Install Project Documents, Planning, Flows and Scenarios, and Development together. |
-| `workflows` | Workflow Support | Find and follow installed workflows, or create your own using the supplied template. |
+| Package ID                  | Name                      | Use it to                                                                                                           |
+| --------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `core-templates`            | Core Templates            | Create directives, guidance, patterns, skills, templates, maps, and memory records from adaptable starting files.   |
+| `collaboration`             | Collaboration             | Explore ideas, compare alternatives, and clarify decisions through discussion and a brainstorming template.         |
+| `project-documents`         | Project Documents         | Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements. |
+| `planning`                  | Planning                  | Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and checkpoints.      |
+| `scenarios`                 | Flows and Scenarios       | Describe user journeys and expected outcomes, organize scenarios, and record what happened when they were tried.    |
+| `observations-and-handoffs` | Observations and Handoffs | Save useful observations and prepare a clear snapshot for another person, agent, or session to resume work.         |
+| `development`               | Development               | Implement changes, investigate defects, and review results using the project's existing tools and conventions.      |
+| `orchestration`             | Task Coordination         | Coordinate related tasks, assign responsibilities, manage dependencies, and verify combined results.                |
+| `development-toolkit`       | Development Toolkit       | Install Project Documents, Planning, Flows and Scenarios, and Development together.                                 |
+| `workflows`                 | Workflow Support          | Find and follow installed workflows, or create your own using the supplied template.                                |
 
 Core Templates is a good first pick when you want to write your own workspace content. It has no dependencies and isn't part of Development Toolkit. When a more specialized starter already fits the work, use that instead.
 
@@ -112,10 +112,10 @@ The [CLI guide](cli.md#extension-operations) covers the command surface. When an
 
 Revision `0.4.0` separates two sets of files from their former packages:
 
-| Former package | New package | Installed-path change |
-| --- | --- | --- |
-| Planning | Flows and Scenarios (`scenarios`) | Four starters move from `templates/planning/` to `templates/scenarios/`. |
-| Orchestration | Observations and Handoffs (`observations-and-handoffs`) | Memory category paths stay the same. Their starters move from `templates/orchestration/` to `templates/observations-and-handoffs/`. |
+| Former package | New package                                             | Installed-path change                                                                                                               |
+| -------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Planning       | Flows and Scenarios (`scenarios`)                       | Four starters move from `templates/planning/` to `templates/scenarios/`.                                                            |
+| Orchestration  | Observations and Handoffs (`observations-and-handoffs`) | Memory category paths stay the same. Their starters move from `templates/orchestration/` to `templates/observations-and-handoffs/`. |
 
 Orchestration's display name becomes Task Coordination. Its ID remains `orchestration`. Existing user records and copies made from Templates keep their own content and locations.
 

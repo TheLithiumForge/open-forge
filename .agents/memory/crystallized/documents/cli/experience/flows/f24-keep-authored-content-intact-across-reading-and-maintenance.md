@@ -18,12 +18,12 @@ LITERAL-CONTENT with a valid source, distinctive body bytes and a parent list th
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | Read the source through context with body and section projections. | [X23](../scenarios/experience.md#x23) | Authored content is available without global UI-word filtering or escape corruption. |
-| 2 | Update only that source’s description. | [C15-01](../scenarios/commands/c15-route-update.md#c15-01) | The body and unrelated metadata survive. |
-| 3 | Index its parent containing surrounding prose and a later authored list. | [X07](../scenarios/experience.md#x07) | Only the contract-defined managed list span changes. |
-| 4 | Repeat the completed maintenance operation. | [X19](../scenarios/experience.md#x19) | The repeat is genuinely byte-identical where the operation promises no changes. |
+| Step | Action                                                                   | Scenario                                                   | State passed forward                                                                 |
+| ---: | ------------------------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+|    1 | Read the source through context with body and section projections.       | [X23](../scenarios/experience.md#x23)                      | Authored content is available without global UI-word filtering or escape corruption. |
+|    2 | Update only that source’s description.                                   | [C15-01](../scenarios/commands/c15-route-update.md#c15-01) | The body and unrelated metadata survive.                                             |
+|    3 | Index its parent containing surrounding prose and a later authored list. | [X07](../scenarios/experience.md#x07)                      | Only the contract-defined managed list span changes.                                 |
+|    4 | Repeat the completed maintenance operation.                              | [X19](../scenarios/experience.md#x19)                      | The repeat is genuinely byte-identical where the operation promises no changes.      |
 
 ## Alternatives and recovery
 

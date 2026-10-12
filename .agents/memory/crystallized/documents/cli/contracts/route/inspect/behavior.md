@@ -180,13 +180,13 @@ locale. Skip every entry named `.git`.
 
 The fallback triggers are:
 
-| Situation | Result |
-| --------- | ------ |
-| Git cannot start | Ignore-aware workspace walk |
-| Workspace is not a work tree | Ignore-aware workspace walk |
-| Repository refusal | Ignore-aware workspace walk |
-| Inventory fails after a confirmed probe, including warnings or malformed output | Discard Git output, then use the ignore-aware workspace walk |
-| Timeout or caller cancellation | Keep the existing unavailable or cancelled result. Do not fall back. |
+| Situation                                                                       | Result                                                               |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Git cannot start                                                                | Ignore-aware workspace walk                                          |
+| Workspace is not a work tree                                                    | Ignore-aware workspace walk                                          |
+| Repository refusal                                                              | Ignore-aware workspace walk                                          |
+| Inventory fails after a confirmed probe, including warnings or malformed output | Discard Git output, then use the ignore-aware workspace walk         |
+| Timeout or caller cancellation                                                  | Keep the existing unavailable or cancelled result. Do not fall back. |
 
 A timeout or cancellation never restarts the deadline. Unexpected
 implementation failures remain `scan-failed`. The host preserves process

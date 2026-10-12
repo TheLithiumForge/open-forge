@@ -24,13 +24,13 @@ LIB with valid registration, current raw relative symlink targets and applicable
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | Remove or rename the source root while keeping every destination symlink entry. | [X17](../scenarios/experience.md#x17) | Links are dangling, not absent. |
-| 2 | open-forge library list | [C24-06](../scenarios/commands/c24-library-list.md#c24-06) | The registered Library is visible with its source-availability issue. |
-| 3 | open-forge library inspect team | [C25-07](../scenarios/commands/c25-library-inspect.md#c25-07) | Full source comparison is unavailable. |
-| 4 | open-forge library sync team --automatic | [C27-09](../scenarios/commands/c27-library-sync.md#c27-09) | No retirement is inferred from the unavailable source. |
-| 5 | open-forge library detach team --automatic | [X17](../scenarios/experience.md#x17) | The known links are removed using destination identity; no source read or deletion is required. |
+| Step | Action                                                                          | Scenario                                                      | State passed forward                                                                            |
+| ---: | ------------------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+|    1 | Remove or rename the source root while keeping every destination symlink entry. | [X17](../scenarios/experience.md#x17)                         | Links are dangling, not absent.                                                                 |
+|    2 | open-forge library list                                                         | [C24-06](../scenarios/commands/c24-library-list.md#c24-06)    | The registered Library is visible with its source-availability issue.                           |
+|    3 | open-forge library inspect team                                                 | [C25-07](../scenarios/commands/c25-library-inspect.md#c25-07) | Full source comparison is unavailable.                                                          |
+|    4 | open-forge library sync team --automatic                                        | [C27-09](../scenarios/commands/c27-library-sync.md#c27-09)    | No retirement is inferred from the unavailable source.                                          |
+|    5 | open-forge library detach team --automatic                                      | [X17](../scenarios/experience.md#x17)                         | The known links are removed using destination identity; no source read or deletion is required. |
 
 ## Alternatives and recovery
 

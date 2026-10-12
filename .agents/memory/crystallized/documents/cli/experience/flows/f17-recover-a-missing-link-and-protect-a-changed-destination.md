@@ -24,13 +24,13 @@ The verified attached state of F16 before detachment.
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | Unlink one registered destination without touching its source, then list Libraries. | [C24-03](../scenarios/commands/c24-library-list.md#c24-03) | The missing destination link is distinguished from missing source content. |
-| 2 | open-forge library sync team --automatic | [C27-08](../scenarios/commands/c27-library-sync.md#c27-08) | The missing registered link is restored with the declared warning. |
-| 3 | Replace that link with an ordinary user file, then sync. | [C27-07](../scenarios/commands/c27-library-sync.md#c27-07) | The changed destination is preserved and reported; independently safe sync effects continue. Add another source member before this call to make continuation observable. |
-| 4 | Deliberately move the user file to a backup outside the registered destination set, then sync again. | [X18](../scenarios/experience.md#x18) | The user’s bytes survive in the chosen backup; the registered link is restored. |
-| 5 | open-forge library inspect team | [C25-01](../scenarios/commands/c25-library-inspect.md#c25-01) | Registration and links agree again. |
+| Step | Action                                                                                               | Scenario                                                      | State passed forward                                                                                                                                                     |
+| ---: | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|    1 | Unlink one registered destination without touching its source, then list Libraries.                  | [C24-03](../scenarios/commands/c24-library-list.md#c24-03)    | The missing destination link is distinguished from missing source content.                                                                                               |
+|    2 | open-forge library sync team --automatic                                                             | [C27-08](../scenarios/commands/c27-library-sync.md#c27-08)    | The missing registered link is restored with the declared warning.                                                                                                       |
+|    3 | Replace that link with an ordinary user file, then sync.                                             | [C27-07](../scenarios/commands/c27-library-sync.md#c27-07)    | The changed destination is preserved and reported; independently safe sync effects continue. Add another source member before this call to make continuation observable. |
+|    4 | Deliberately move the user file to a backup outside the registered destination set, then sync again. | [X18](../scenarios/experience.md#x18)                         | The user’s bytes survive in the chosen backup; the registered link is restored.                                                                                          |
+|    5 | open-forge library inspect team                                                                      | [C25-01](../scenarios/commands/c25-library-inspect.md#c25-01) | Registration and links agree again.                                                                                                                                      |
 
 ## Alternatives and recovery
 

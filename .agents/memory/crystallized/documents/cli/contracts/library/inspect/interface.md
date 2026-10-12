@@ -188,8 +188,6 @@ expected and observed targets, and debug adds bounded diagnostics on stderr.
 Detail does not change semantics, counts, ordering, or status. Filters select
 finding severities; all is the default filter.
 
-
-
 The catalogue text by detail level is:
 
 `minimal`, attention:
@@ -216,7 +214,7 @@ stderr. A parser failure is text on stderr without a result envelope.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -233,7 +231,7 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly library inspect; data follows the catalogue:
 
@@ -280,25 +278,25 @@ Maintainer decision remains open.
 
 The finding catalogue is:
 
-| Code                                    | Severity | Family                | Message                                                                              | Next                                     |
-| --------------------------------------- | -------- | --------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------- |
-| library-inspect.invalid-id              | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.invalid-id`).      | `open-forge library list`                |
-| library-inspect.unknown-id              | error    | unknown-id            |                                                                                      | `open-forge library list`                |
+| Code                                    | Severity | Family                | Message                                                                                                                                                                                                                                                                                                                                                                | Next                                     |
+| --------------------------------------- | -------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| library-inspect.invalid-id              | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.invalid-id`).              | `open-forge library list`                |
+| library-inspect.unknown-id              | error    | unknown-id            |                                                                                                                                                                                                                                                                                                                                                                        | `open-forge library list`                |
 | library-inspect.record-invalid          | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.record-invalid`).          | `open-forge doctor`                      |
-| library-inspect.record-unavailable      | warning  | lifecycle-unavailable |                                                                                      |                                          |
-| library-inspect.record-blocked          | error    | lifecycle-blocked     |                                                                                      |                                          |
-| library-inspect.ownership-observation   | info     | ownership-observation |                                                                                      |                                          |
-| library-inspect.source-root-invalid     | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.source-root-invalid`).                     | none                                     |
-| library-inspect.source-root-unavailable | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.source-root-unavailable`).       | none                                     |
-| library-inspect.source-root-blocked     | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.source-root-blocked`).                           | none                                     |
-| library-inspect.inventory-incomplete    | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.inventory-incomplete`). | none                                     |
-| library-inspect.path-added              | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.path-added`).                       | `open-forge library sync <id> --dry-run` |
-| library-inspect.path-retired            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.path-retired`).                            | `open-forge library sync <id> --dry-run` |
-| library-inspect.link-missing            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.link-missing`).                                                        | `open-forge library sync <id> --dry-run` |
-| library-inspect.link-changed            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.link-changed`).                             | fix by hand                              |
-| library-inspect.link-blocked            | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.link-blocked`).                          | `open-forge doctor`                      |
-| library-inspect.operation-failed        | error    | operation-failed      |                                                                                      |                                          |
-| library-inspect.interrupted             | error    | interrupted           |                                                                                      |                                          |
+| library-inspect.record-unavailable      | warning  | lifecycle-unavailable |                                                                                                                                                                                                                                                                                                                                                                        |                                          |
+| library-inspect.record-blocked          | error    | lifecycle-blocked     |                                                                                                                                                                                                                                                                                                                                                                        |                                          |
+| library-inspect.ownership-observation   | info     | ownership-observation |                                                                                                                                                                                                                                                                                                                                                                        |                                          |
+| library-inspect.source-root-invalid     | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.source-root-invalid`).     | none                                     |
+| library-inspect.source-root-unavailable | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.source-root-unavailable`). | none                                     |
+| library-inspect.source-root-blocked     | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.source-root-blocked`).     | none                                     |
+| library-inspect.inventory-incomplete    | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.inventory-incomplete`).    | none                                     |
+| library-inspect.path-added              | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.path-added`).              | `open-forge library sync <id> --dry-run` |
+| library-inspect.path-retired            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.path-retired`).            | `open-forge library sync <id> --dry-run` |
+| library-inspect.link-missing            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.link-missing`).            | `open-forge library sync <id> --dry-run` |
+| library-inspect.link-changed            | warning  | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.link-changed`).            | fix by hand                              |
+| library-inspect.link-blocked            | error    | local                 | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Library/Inspect/Shared/Wording/LibraryInspectWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`library-inspect.link-blocked`).            | `open-forge doctor`                      |
+| library-inspect.operation-failed        | error    | operation-failed      |                                                                                                                                                                                                                                                                                                                                                                        |                                          |
+| library-inspect.interrupted             | error    | interrupted           |                                                                                                                                                                                                                                                                                                                                                                        |                                          |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. Counts are:
@@ -315,59 +313,59 @@ action when available. Counts are:
 
 ### completed
 
-~~~text
+```text
 team-knowledge is current: 1 file from shared/team is linked under ..
 Workspace: <workspace>
-~~~
+```
 
 ### completed-with-warnings
 
-~~~text
+```text
 team-knowledge needs a sync: 1 file differs between shared/team and ..
 Workspace: <workspace>
   Warning  .agents/directives/review.md  Registered link is missing
          .agents/directives/review.md  missing
 Next: open-forge library sync team-knowledge --dry-run
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 team-knowledge could not be inspected completely: Some files under shared/team could not be listed, so the comparison could not finish.
 Workspace: <workspace>
   Warning  .agents/directives/review.md  Source inventory is incomplete
          Some files under shared/team could not be listed, so the comparison could not finish.
   Warning  shared/team  Source inventory is incomplete
          Some files under shared/team could not be listed, so the comparison could not finish.
-~~~
+```
 
 ### invalid-input
 
-~~~text
+```text
 Cannot inspect unknown: No Library has the ID unknown.
 Next: open-forge library list
-~~~
+```
 
 ### blocked
 
-~~~text
+```text
 Cannot inspect team-knowledge: .agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.
 Workspace: <workspace>
   Error  .agents/linked/review.md  Registered link is blocked
          .agents/linked/review.md  could not be checked safely: The Library destination parent is not a real ordinary directory.
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Library inspect stopped because of an unexpected error: <reason>.
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Library inspect was cancelled.
-~~~
+```
 
 ## Related Current Sources
 

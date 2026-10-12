@@ -77,38 +77,38 @@ every link; `Remove the <N> links listed above? [y/N]` unless `--automatic`
 
 ## Findings catalogue
 
-| Code                                           | Severity | Family                     | Message                                                                                                 | Next                              |
-| ---------------------------------------------- | -------- | -------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| library-detach.invalid-input                   | error    | invalid-input              |                                                                                                         |                                   |
-| library-detach.confirmation-required           | error    | confirmation-required      |                                                                                                         |                                   |
-| library-detach.invalid-id                      | error    | local                      | `<value> is not a valid Library ID.`                                                                    | `open-forge library list`         |
-| library-detach.unknown-id                      | error    | unknown-id                 |                                                                                                         | `open-forge library list`         |
-| library-detach.ownership-observation           | info     | ownership-observation      |                                                                                                         |                                   |
-| library-detach.record-invalid                  | warning  | local                      | `The Library section of .agents/open-forge.lock.json is invalid: <reason>.`                             | `open-forge doctor`               |
-| library-detach.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                                         |                                   |
-| library-detach.record-blocked                  | error    | lifecycle-blocked          |                                                                                                         |                                   |
-| library-detach.registered-link-missing         | error    | local                      | `<path> is registered but no longer exists, so its removal cannot be confirmed.`                        | `open-forge library inspect <id>` |
+| Code                                           | Severity | Family                     | Message                                                                                                                                                                                                                | Next                              |
+| ---------------------------------------------- | -------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| library-detach.invalid-input                   | error    | invalid-input              |                                                                                                                                                                                                                        |                                   |
+| library-detach.confirmation-required           | error    | confirmation-required      |                                                                                                                                                                                                                        |                                   |
+| library-detach.invalid-id                      | error    | local                      | `<value> is not a valid Library ID.`                                                                                                                                                                                   | `open-forge library list`         |
+| library-detach.unknown-id                      | error    | unknown-id                 |                                                                                                                                                                                                                        | `open-forge library list`         |
+| library-detach.ownership-observation           | info     | ownership-observation      |                                                                                                                                                                                                                        |                                   |
+| library-detach.record-invalid                  | warning  | local                      | `The Library section of .agents/open-forge.lock.json is invalid: <reason>.`                                                                                                                                            | `open-forge doctor`               |
+| library-detach.record-unavailable              | warning  | lifecycle-unavailable      |                                                                                                                                                                                                                        |                                   |
+| library-detach.record-blocked                  | error    | lifecycle-blocked          |                                                                                                                                                                                                                        |                                   |
+| library-detach.registered-link-missing         | error    | local                      | `<path> is registered but no longer exists, so its removal cannot be confirmed.`                                                                                                                                       | `open-forge library inspect <id>` |
 | library-detach.mapping-blocked                 | error    | local                      | `<path> is <an ordinary file \| a folder \| a different link> and is not the link the Library created.`; when the occupant cannot be classified, `<path> could not be classified as a supported destination occupant.` | `open-forge library inspect <id>` |
-| library-detach.destination-protected           | error    | local                      | `<path> is protected, owned by the source, or registered to another Library.`                          | `open-forge library list`         |
-| library-detach.mapping-unavailable             | warning  | local                      | `<path> could not be checked, so nothing was changed.`                                                  | `open-forge doctor`               |
-| library-detach.link-capability-unavailable     | error    | local                      | `This system cannot handle the file links Libraries use.`                                               | none                              |
-| library-detach.consumer-blocked                | error    | local                      | `<path> is managed by Open Forge and cannot be changed by detach.`                                      | none                              |
-| library-detach.ownership-conflict              | error    | ownership-conflict         |                                                                                                         |                                   |
-| library-detach.permission-required             | error    | permission-required        |                                                                                                         |                                   |
-| library-detach.permission-declined             | error    | permission-declined        |                                                                                                         |                                   |
-| library-detach.permission-invalid              | error    | permissions-invalid        |                                                                                                         |                                   |
-| library-detach.permission-unavailable          | warning  | permissions-unavailable    |                                                                                                         |                                   |
-| library-detach.permission-changed              | error    | permissions-changed        |                                                                                                         |                                   |
-| library-detach.permission-write-failed         | error    | permission-write-failed    |                                                                                                         |                                   |
-| library-detach.generated-navigation-blocked    | error    | generated-region-unsafe    |                                                                                                         |                                   |
-| library-detach.generated-navigation-incomplete | warning  | projection-unavailable     |                                                                                                         |                                   |
-| library-detach.lock-unavailable                | error    | workspace-lock-unavailable |                                                                                                         |                                   |
-| library-detach.recovery-unavailable            | warning  | recovery-unavailable       |                                                                                                         |                                   |
-| library-detach.recovery-retained               | warning  | recovery-artifact-retained |                                                                                                         |                                   |
-| library-detach.application-failed              | error    | write-failed               |                                                                                                         |                                   |
-| library-detach.verification-failed             | error    | verification-failed        |                                                                                                         |                                   |
-| library-detach.operation-failed                | error    | operation-failed           |                                                                                                         |                                   |
-| library-detach.interrupted                     | error    | interrupted                |                                                                                                         |                                   |
+| library-detach.destination-protected           | error    | local                      | `<path> is protected, owned by the source, or registered to another Library.`                                                                                                                                          | `open-forge library list`         |
+| library-detach.mapping-unavailable             | warning  | local                      | `<path> could not be checked, so nothing was changed.`                                                                                                                                                                 | `open-forge doctor`               |
+| library-detach.link-capability-unavailable     | error    | local                      | `This system cannot handle the file links Libraries use.`                                                                                                                                                              | none                              |
+| library-detach.consumer-blocked                | error    | local                      | `<path> is managed by Open Forge and cannot be changed by detach.`                                                                                                                                                     | none                              |
+| library-detach.ownership-conflict              | error    | ownership-conflict         |                                                                                                                                                                                                                        |                                   |
+| library-detach.permission-required             | error    | permission-required        |                                                                                                                                                                                                                        |                                   |
+| library-detach.permission-declined             | error    | permission-declined        |                                                                                                                                                                                                                        |                                   |
+| library-detach.permission-invalid              | error    | permissions-invalid        |                                                                                                                                                                                                                        |                                   |
+| library-detach.permission-unavailable          | warning  | permissions-unavailable    |                                                                                                                                                                                                                        |                                   |
+| library-detach.permission-changed              | error    | permissions-changed        |                                                                                                                                                                                                                        |                                   |
+| library-detach.permission-write-failed         | error    | permission-write-failed    |                                                                                                                                                                                                                        |                                   |
+| library-detach.generated-navigation-blocked    | error    | generated-region-unsafe    |                                                                                                                                                                                                                        |                                   |
+| library-detach.generated-navigation-incomplete | warning  | projection-unavailable     |                                                                                                                                                                                                                        |                                   |
+| library-detach.lock-unavailable                | error    | workspace-lock-unavailable |                                                                                                                                                                                                                        |                                   |
+| library-detach.recovery-unavailable            | warning  | recovery-unavailable       |                                                                                                                                                                                                                        |                                   |
+| library-detach.recovery-retained               | warning  | recovery-artifact-retained |                                                                                                                                                                                                                        |                                   |
+| library-detach.application-failed              | error    | write-failed               |                                                                                                                                                                                                                        |                                   |
+| library-detach.verification-failed             | error    | verification-failed        |                                                                                                                                                                                                                        |                                   |
+| library-detach.operation-failed                | error    | operation-failed           |                                                                                                                                                                                                                        |                                   |
+| library-detach.interrupted                     | error    | interrupted                |                                                                                                                                                                                                                        |                                   |
 
 ## Effects wording
 
@@ -242,38 +242,38 @@ state unknown`.
    [24](24-route-update.md) divergence 3. No product divergence, and nothing
    leaked into the merge.
 
-9. **The `lock-held` divergence was resolved by maintainer ruling.** The
-   catalogue already specified blocked/exit 5; the code now raises
-   `library-detach.lock-unavailable` with blocked status, because a held
-   workspace lock is expected and retryable rather than an unexpected fault.
+10. **The `lock-held` divergence was resolved by maintainer ruling.** The
+    catalogue already specified blocked/exit 5; the code now raises
+    `library-detach.lock-unavailable` with blocked status, because a held
+    workspace lock is expected and retryable rather than an unexpected fault.
 
-10. **The lock-held ruling makes an existing Detach wording composition
+11. **The lock-held ruling makes an existing Detach wording composition
     reachable.** The old headline was `Library detach stopped after 0 of 1
-    links were removed.`; the new headline is `Cannot detach team-knowledge:
-    Another Open Forge command holds the workspace lock. Nothing was changed.
-    Nothing was changed.`, while the catalogue template has one final
+links were removed.`; the new headline is `Cannot detach team-knowledge:
+Another Open Forge command holds the workspace lock. Nothing was changed.
+Nothing was changed.`, while the catalogue template has one final
     `Nothing was changed.`. The frozen-string rule does not authorize changing
     this native composition. **Maintainer decision.**
 
-11. **The lock-held wording composition is resolved without changing the
+12. **The lock-held wording composition is resolved without changing the
     catalogue headline or the trailer-bearing shared lock sentence.** Detach
     now uses the trailer-free shared reason only for the blocked headline;
     finding details continue to use the complete shared lock message.
 
-12. **The `mapping-blocked` result was missing the destination occupant kind.**
+13. **The `mapping-blocked` result was missing the destination occupant kind.**
     The Framework no-follow observation already distinguishes ordinary files,
     directories and relative/absolute links. Detach now projects those states
     into its result finding and the selector renders the three catalogue
     alternatives without cause-text or projection inference.
 
-13. **The `confirmation-required` finding had no catalogue row.** The emitted
+14. **The `confirmation-required` finding had no catalogue row.** The emitted
     message is `Library detach needs confirmation, and this session cannot ask.`;
     the row now classifies it as `confirmation-required` / `invalid-input` and
     leaves its message and next-action cells empty because the shared family
     supplies them; the code still supplies the existing
     `open-forge library detach --automatic` action.
 
-14. **The observer also has leaf states outside the three-way catalogue.** A
+15. **The observer also has leaf states outside the three-way catalogue.** A
     `ReparsePoint` has no immediate managed link target, `Special` is a device,
     and `Unknown` may represent an unresolved parent, so those states cannot be
     rendered honestly as an ordinary file, folder or different link. Detach
@@ -284,7 +284,7 @@ state unknown`.
     are distinct and covered by this change; no such state appeared in
     regenerated captures.
 
-15. **`mapping-blocked` overloaded three situations:** a non-Library occupant, a
+16. **`mapping-blocked` overloaded three situations:** a non-Library occupant, a
     protected/source-owned/other-Library destination, and two destinations that
     resolve to the same physical path. The local catalogue message described only
     the first. The maintainer ruling is implemented for the reachable protected

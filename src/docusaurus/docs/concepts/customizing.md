@@ -67,9 +67,9 @@ Use `open-forge remove <path> --dry-run`, then apply the reviewed removal so lat
 
 ## Files the CLI keeps for itself
 
-| File                           | Purpose                                                                                                | Agent context? |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------ | -------------- |
-| `.agents/open-forge.lock.json` | Records files and generated navigation regions managed by the Framework and each Extension. | No             |
+| File                           | Purpose                                                                                                          | Agent context? |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------- | -------------- |
+| `.agents/open-forge.lock.json` | Records files and generated navigation regions managed by the Framework and each Extension.                      | No             |
 | `.agents/open-forge.json`      | Your settings, including the frontmatter form, removal exclusions, and path grants for files outside `.agents/`. | No             |
 
 Neither file gives content any authority. They exist for file maintenance only.

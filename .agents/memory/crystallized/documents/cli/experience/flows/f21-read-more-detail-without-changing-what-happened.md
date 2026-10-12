@@ -24,12 +24,12 @@ VIEW-VARIANTS, with exact identical pre-state copies for each mutating view and 
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | Capture default text and explicit minimal for one success and one incomplete result. | [X20](../scenarios/experience.md#x20) | The default is verified to be minimal without a semantic change. |
-| 2 | Capture standard, full and debug for those same cases. | [X20](../scenarios/experience.md#x20) | Added detail reveals evidence rather than repeating the same explanation. |
-| 3 | Review these fresh captures for repeated explanations and missing useful facts. | [X25](../scenarios/experience.md#x25) | Communication quality is assessed against the actual fixture, not an old capture. |
-| 4 | Capture JSON and detail-filter variants, retaining stdout, stderr and exit separately. | [X20](../scenarios/experience.md#x20) | Presentation variants describe the same selected result and preserve counts/unknowns. |
+| Step | Action                                                                                 | Scenario                              | State passed forward                                                                  |
+| ---: | -------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
+|    1 | Capture default text and explicit minimal for one success and one incomplete result.   | [X20](../scenarios/experience.md#x20) | The default is verified to be minimal without a semantic change.                      |
+|    2 | Capture standard, full and debug for those same cases.                                 | [X20](../scenarios/experience.md#x20) | Added detail reveals evidence rather than repeating the same explanation.             |
+|    3 | Review these fresh captures for repeated explanations and missing useful facts.        | [X25](../scenarios/experience.md#x25) | Communication quality is assessed against the actual fixture, not an old capture.     |
+|    4 | Capture JSON and detail-filter variants, retaining stdout, stderr and exit separately. | [X20](../scenarios/experience.md#x20) | Presentation variants describe the same selected result and preserve counts/unknowns. |
 
 ## Alternatives and recovery
 

@@ -6,15 +6,15 @@ Start your own workspace instructions, advice, reusable shapes, capabilities, ma
 
 [Core Templates](content/.agents/templates/core/_core.md) provides one starter for each Core category, plus Memory:
 
-| Starter | Use it to |
-| --- | --- |
-| [Directive](content/.agents/templates/core/directive.md) | State required behavior for a selected scope. |
-| [Guidance](content/.agents/templates/core/guidance.md) | Recommend an approach and explain when it fits. |
-| [Pattern](content/.agents/templates/core/pattern.md) | Define a reusable, inspectable shape. |
-| [Skill](content/.agents/templates/core/skill.md) | Create a native SKILL.md capability. |
-| [Template](content/.agents/templates/core/template.md) | Write another independently reusable starting file. |
-| [Map](content/.agents/templates/core/map.md) | Point to useful sources and explain when to read them. |
-| [Memory](content/.agents/templates/core/memory.md) | Preserve useful knowledge or work state without a specialized category. |
+| Starter                                                  | Use it to                                                               |
+| -------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [Directive](content/.agents/templates/core/directive.md) | State required behavior for a selected scope.                           |
+| [Guidance](content/.agents/templates/core/guidance.md)   | Recommend an approach and explain when it fits.                         |
+| [Pattern](content/.agents/templates/core/pattern.md)     | Define a reusable, inspectable shape.                                   |
+| [Skill](content/.agents/templates/core/skill.md)         | Create a native SKILL.md capability.                                    |
+| [Template](content/.agents/templates/core/template.md)   | Write another independently reusable starting file.                     |
+| [Map](content/.agents/templates/core/map.md)             | Point to useful sources and explain when to read them.                  |
+| [Memory](content/.agents/templates/core/memory.md)       | Preserve useful knowledge or work state without a specialized category. |
 
 **Direct dependencies:** None.
 

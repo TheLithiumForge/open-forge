@@ -73,13 +73,13 @@ open-forge remove guidance/old-note --kind route --automatic
 The authored `.agents/open-forge.json` remains the sole source of removal intent.
 Keep schema version 1 with optional additive lists:
 
-| Property | Meaning |
-| --- | --- |
-| `removedCategories` | Existing root-category exclusions under `.agents/` |
-| `removedFiles` | Exact canonical workspace-relative file paths |
+| Property             | Meaning                                                                                  |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| `removedCategories`  | Existing root-category exclusions under `.agents/`                                       |
+| `removedFiles`       | Exact canonical workspace-relative file paths                                            |
 | `removedDirectories` | Canonical workspace-relative directory paths and all descendants, including future files |
-| `removedExtensions` | Stable package IDs that must not be installed, including as dependencies |
-| `removedLibraries` | Stable local library IDs that must not be attached or synchronized |
+| `removedExtensions`  | Stable package IDs that must not be installed, including as dependencies                 |
+| `removedLibraries`   | Stable local library IDs that must not be attached or synchronized                       |
 
 Lists are ordinal, deterministic, duplicate-free and validated. Paths use `/`,
 have no trailing slash, and cannot denote the root, traversal or reserved control
@@ -247,14 +247,14 @@ was preserved.
 Native AOT CLI/test builds with zero warnings and errors. `npm run test:built`
 then passed all six modes on those exact artifacts:
 
-| Mode | Passed | Platform skips | Failed |
-| --- | ---: | ---: | ---: |
-| Unit | 3,424 | 0 | 0 |
-| Managed Integration | 2,479 | 17 | 0 |
-| Managed Public | 247 | 0 | 0 |
-| Native Integration | 2,479 | 17 | 0 |
-| Native Public | 247 | 0 | 0 |
-| Managed Public against native CLI | 247 | 0 | 0 |
+| Mode                              | Passed | Platform skips | Failed |
+| --------------------------------- | -----: | -------------: | -----: |
+| Unit                              |  3,424 |              0 |      0 |
+| Managed Integration               |  2,479 |             17 |      0 |
+| Managed Public                    |    247 |              0 |      0 |
+| Native Integration                |  2,479 |             17 |      0 |
+| Native Public                     |    247 |              0 |      0 |
+| Managed Public against native CLI |    247 |              0 |      0 |
 
 The 17 skips in each Integration mode are the expected Windows exclusions for
 Unix permission/socket evidence. No skipped case is counted as a pass.

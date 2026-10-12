@@ -38,8 +38,6 @@ open-forge extension remove toolkit --automatic
 
 Remove the selected package's eligible effects and explain what was removed.
 
-
-
 ### Verification
 
 Verify target absence and selected claim removal; source package and unrelated content remain.
@@ -67,8 +65,6 @@ open-forge extension remove toolkit --automatic
 ### Expected result
 
 Remove toolkit while explicitly keeping the shared file for its remaining owner.
-
-
 
 ### Verification
 
@@ -98,8 +94,6 @@ open-forge extension remove toolkit --automatic
 
 Release the claim and distinguish already missing from physically deleted.
 
-
-
 ### Verification
 
 Compare pre/post directory entries and ownership; deletion counts must exclude nonexistent files.
@@ -127,8 +121,6 @@ open-forge extension remove toolkit --automatic
 ### Expected result
 
 Remove toolkit, keep base and explain that the dependency is now unused.
-
-
 
 ### Verification
 
@@ -158,8 +150,6 @@ open-forge extension remove toolkit --automatic
 
 Name the dependent package and stop removal.
 
-
-
 ### Verification
 
 Verify all files and claims remain and the next action does not bypass dependency safety.
@@ -187,8 +177,6 @@ open-forge extension remove
 ### Expected result
 
 Show installed choices and honor the selected removal set.
-
-
 
 ### Verification
 
@@ -218,8 +206,6 @@ open-forge extension remove
 
 Explain that a package selection is needed and do not default to all.
 
-
-
 ### Verification
 
 Verify no hang or effects.
@@ -245,8 +231,6 @@ open-forge extension remove toolkit --automatic
 ### Expected result
 
 Say there is no installed toolkit content to remove, without deleting similarly named unowned files.
-
-
 
 ### Verification
 
@@ -276,8 +260,6 @@ open-forge extension remove toolkit --dry-run
 
 Show the removal and kept content in future tense with no writes.
 
-
-
 ### Verification
 
 Compare targets, claims, settings and recovery inventory.
@@ -305,8 +287,6 @@ open-forge extension remove toolkit --automatic
 ### Expected result
 
 Explain that removal still needs destination permission.
-
-
 
 ### Verification
 
@@ -336,8 +316,6 @@ open-forge extension remove toolkit --automatic
 
 Explain contention and preserve content and ownership.
 
-
-
 ### Verification
 
 Prove live lock ownership and exact no-write evidence.
@@ -366,8 +344,6 @@ open-forge extension remove toolkit --automatic
 
 Say removal stopped, identify removed and remaining items, and describe actual recovery.
 
-
-
 ### Verification
 
 Compare file kinds, remaining claims and recovery; no false total removal or no-change statement.
@@ -395,8 +371,6 @@ open-forge extension remove toolkit
 ### Expected result
 
 Report cancellation and leave every package effect unapplied.
-
-
 
 ### Verification
 
@@ -427,6 +401,5 @@ open-forge extension remove toolkit --automatic
 ### Verification
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
-
 
 **Execution constraint:** Independently prove the denied read and that it is required for the selected effect, not for package source lookup. Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure. Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.

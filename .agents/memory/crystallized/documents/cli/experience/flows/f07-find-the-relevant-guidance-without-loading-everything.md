@@ -18,13 +18,13 @@ SEARCH with independently known tag sets, headings, included scopes and decoys.
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | open-forge route list --depth=all | [C11-03](../scenarios/commands/c11-route-list.md#c11-03) | The available source IDs and scope boundaries are visible. |
-| 2 | open-forge find --tag=Decision --tag=Architecture | [C09-03](../scenarios/commands/c09-find.md#c09-03) | The intersection is returned, not the union. |
-| 3 | open-forge find --tag=Decision --content=headings | [C09-06](../scenarios/commands/c09-find.md#c09-06) | Requested headings add useful content without changing the tag match set. |
-| 4 | open-forge find --tag=Decision --include=guidance | [C09-07](../scenarios/commands/c09-find.md#c09-07) | The effective universe is explicit and bounded. |
-| 5 | Run open-forge context with one exact source returned by find. | [C08-02](../scenarios/commands/c08-context.md#c08-02) | The selected result can actually be read using the displayed identity. |
+| Step | Action                                                         | Scenario                                                 | State passed forward                                                      |
+| ---: | -------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------- |
+|    1 | open-forge route list --depth=all                              | [C11-03](../scenarios/commands/c11-route-list.md#c11-03) | The available source IDs and scope boundaries are visible.                |
+|    2 | open-forge find --tag=Decision --tag=Architecture              | [C09-03](../scenarios/commands/c09-find.md#c09-03)       | The intersection is returned, not the union.                              |
+|    3 | open-forge find --tag=Decision --content=headings              | [C09-06](../scenarios/commands/c09-find.md#c09-06)       | Requested headings add useful content without changing the tag match set. |
+|    4 | open-forge find --tag=Decision --include=guidance              | [C09-07](../scenarios/commands/c09-find.md#c09-07)       | The effective universe is explicit and bounded.                           |
+|    5 | Run open-forge context with one exact source returned by find. | [C08-02](../scenarios/commands/c08-context.md#c08-02)    | The selected result can actually be read using the displayed identity.    |
 
 ## Alternatives and recovery
 

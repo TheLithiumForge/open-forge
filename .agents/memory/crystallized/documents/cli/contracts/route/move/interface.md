@@ -105,9 +105,9 @@ therefore use the same explicit two-operand request and never prompt.
 
 ## Operands And Repetition
 
-| Operand                | Role                                                                        | Accepted value                                                                                       | Omission and repetition                   |
-| ---------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `<source-reference>`   | Select one existing eligible logical leaf or recognized category entrypoint | One shared automatic source ID or exact `.agents/...` path, narrowed by this command's subject rules | Required; exactly one source subject      |
+| Operand                | Role                                                                        | Accepted value                                                                                           | Omission and repetition                   |
+| ---------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `<source-reference>`   | Select one existing eligible logical leaf or recognized category entrypoint | One shared automatic source ID or exact `.agents/...` path, narrowed by this command's subject rules     | Required; exactly one source subject      |
 | `<destination-target>` | Select one exact new leaf target or category entrypoint target              | One exact filesystem target or accepted logical leaf ID for a leaf, or an exact category entrypoint path | Required; exactly one destination subject |
 
 The source operand follows the shared source-reference classification: `.agents/`
@@ -506,7 +506,7 @@ A parser failure is text on stderr without a result envelope.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -523,7 +523,7 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly route move; data follows the catalogue:
 
@@ -583,44 +583,44 @@ formed command data is an object. Maintainer decision remains open.
 
 The finding catalogue is:
 
-| Code                                     | Severity | Family                      | Message                                                                                                | Next                                |
-| ---------------------------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------- |
-| route-move.invalid-input                 | error    | invalid-input               |                                                                                                        |                                     |
-| route-move.invalid-source                | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.invalid-source`).                                                    | `open-forge route list --depth=all` |
-| route-move.source-not-found              | error    | unknown-source              | (also the repeated-move case)                                                                          |                                     |
-| route-move.invalid-subject               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.invalid-subject`).         | none                                |
-| route-move.invalid-destination           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.invalid-destination`). | `open-forge route move --help`      |
-| route-move.self-move                     | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.self-move`).                                                         | none                                |
-| route-move.destination-inside-source     | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.destination-inside-source`).                                                    | none                                |
-| route-move.workspace-unavailable         | error    | workspace-unavailable       |                                                                                                        |                                     |
-| route-move.workspace-unsafe              | error    | workspace-unsafe            |                                                                                                        |                                     |
-| route-move.source-unsafe                 | error    | source-unsafe               |                                                                                                        |                                     |
-| route-move.destination-unsafe            | error    | target-unsafe               |                                                                                                        |                                     |
-| route-move.destination-occupied          | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.destination-occupied`).                                                                               | choose another destination          |
-| route-move.destination-parent-missing    | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.destination-parent-missing`).                 | `open-forge route init <id>`        |
-| route-move.category-unsafe               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.category-unsafe`).                             | none                                |
-| route-move.route-ambiguous               | error    | route-ambiguous             |                                                                                                        |                                     |
-| route-move.identity-collision            | error    | identity-collision          | (blocking when the new ID would collide; the prompt resolves source ambiguity)                         |                                     |
-| route-move.overwrite-ambiguous           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.overwrite-ambiguous`).                                         | fix by hand                         |
-| route-move.ownership-claimed             | error    | ownership-claimed           |                                                                                                        | `open-forge update` / the Extension |
-| route-move.reference-unsafe              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.reference-unsafe`).                                         | fix by hand                         |
-| route-move.generated-region-unsafe       | error    | generated-region-unsafe     |                                                                                                        |                                     |
-| route-move.workspace-lock-unavailable    | error    | workspace-lock-unavailable  |                                                                                                        |                                     |
-| route-move.target-changed                | error    | target-changed              |                                                                                                        |                                     |
-| route-move.recovery-conflict             | error    | recovery-conflict           |                                                                                                        |                                     |
-| route-move.ownership-unavailable         | warning  | lifecycle-unavailable       |                                                                                                        |                                     |
-| route-move.inspection-incomplete         | warning  | inspection-incomplete       |                                                                                                        |                                     |
-| route-move.category-inventory-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.category-inventory-incomplete`).                          | `open-forge doctor`                 |
-| route-move.reference-coverage-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.reference-coverage-incomplete`).                    | `open-forge doctor`                 |
-| route-move.projection-incomplete         | warning  | projection-unavailable      |                                                                                                        |                                     |
-| route-move.recovery-unavailable          | warning  | recovery-unavailable        |                                                                                                        |                                     |
-| route-move.recovery-artifact-retained    | warning  | recovery-artifact-retained  |                                                                                                        |                                     |
-| route-move.target-changed-during-apply   | error    | target-changed-during-apply |                                                                                                        |                                     |
-| route-move.write-failed                  | error    | write-failed                |                                                                                                        |                                     |
-| route-move.verification-failed           | error    | verification-failed         |                                                                                                        |                                     |
-| route-move.recovery-failed               | error    | recovery-failed             |                                                                                                        |                                     |
-| route-move.operation-failed              | error    | operation-failed            |                                                                                                        |                                     |
-| route-move.interrupted                   | error    | interrupted                 |                                                                                                        |                                     |
+| Code                                     | Severity | Family                      | Message                                                                                                                                                                                                                                                                                                                                                       | Next                                |
+| ---------------------------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| route-move.invalid-input                 | error    | invalid-input               |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.invalid-source                | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.invalid-source`).                | `open-forge route list --depth=all` |
+| route-move.source-not-found              | error    | unknown-source              | (also the repeated-move case)                                                                                                                                                                                                                                                                                                                                 |                                     |
+| route-move.invalid-subject               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.invalid-subject`).               | none                                |
+| route-move.invalid-destination           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.invalid-destination`).           | `open-forge route move --help`      |
+| route-move.self-move                     | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.self-move`).                     | none                                |
+| route-move.destination-inside-source     | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.destination-inside-source`).     | none                                |
+| route-move.workspace-unavailable         | error    | workspace-unavailable       |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.workspace-unsafe              | error    | workspace-unsafe            |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.source-unsafe                 | error    | source-unsafe               |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.destination-unsafe            | error    | target-unsafe               |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.destination-occupied          | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.destination-occupied`).          | choose another destination          |
+| route-move.destination-parent-missing    | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.destination-parent-missing`).    | `open-forge route init <id>`        |
+| route-move.category-unsafe               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.category-unsafe`).               | none                                |
+| route-move.route-ambiguous               | error    | route-ambiguous             |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.identity-collision            | error    | identity-collision          | (blocking when the new ID would collide; the prompt resolves source ambiguity)                                                                                                                                                                                                                                                                                |                                     |
+| route-move.overwrite-ambiguous           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.overwrite-ambiguous`).           | fix by hand                         |
+| route-move.ownership-claimed             | error    | ownership-claimed           |                                                                                                                                                                                                                                                                                                                                                               | `open-forge update` / the Extension |
+| route-move.reference-unsafe              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.reference-unsafe`).              | fix by hand                         |
+| route-move.generated-region-unsafe       | error    | generated-region-unsafe     |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.workspace-lock-unavailable    | error    | workspace-lock-unavailable  |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.target-changed                | error    | target-changed              |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.recovery-conflict             | error    | recovery-conflict           |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.ownership-unavailable         | warning  | lifecycle-unavailable       |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.inspection-incomplete         | warning  | inspection-incomplete       |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.category-inventory-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.category-inventory-incomplete`). | `open-forge doctor`                 |
+| route-move.reference-coverage-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Move/Shared/Wording/RouteMoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-move.reference-coverage-incomplete`). | `open-forge doctor`                 |
+| route-move.projection-incomplete         | warning  | projection-unavailable      |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.recovery-unavailable          | warning  | recovery-unavailable        |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.recovery-artifact-retained    | warning  | recovery-artifact-retained  |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.target-changed-during-apply   | error    | target-changed-during-apply |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.write-failed                  | error    | write-failed                |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.verification-failed           | error    | verification-failed         |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.recovery-failed               | error    | recovery-failed             |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.operation-failed              | error    | operation-failed            |                                                                                                                                                                                                                                                                                                                                                               |                                     |
+| route-move.interrupted                   | error    | interrupted                 |                                                                                                                                                                                                                                                                                                                                                               |                                     |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. For `recovery-conflict`, the exact positively observed
@@ -649,7 +649,7 @@ Select when the source ID matches several files.
 
 ### completed
 
-~~~text
+```text
 Moved guidance/old guide to .agents/archive/new guide.md
 Workspace: <workspace>
   .agents/archive/_archive.md  Entries updated
@@ -660,43 +660,43 @@ Workspace: <workspace>
   README.md:3:13
   README.md:5:23
   notes.md:3:11
-~~~
+```
 
 ### completed-with-warnings
 
-~~~text
+```text
 Moved guidance/old guide to .agents/guidance/new guide.md
   Warning  <recovery-bundle>  Recovery artifact retained
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 guidance/old guide could not be moved: Some files could not be scanned for links to invalid.md, so the move was not planned. Nothing was changed.
 Workspace: <workspace>
   .agents/guidance/old guide.md -> .agents/guidance/new guide.md
 Next: open-forge doctor
-~~~
+```
 
 ### invalid-input
 
-~~~text
+```text
 Cannot move missing: No source has the ID missing.
 Workspace: <workspace>
   files scanned: the reference scan was not completed
-~~~
+```
 
 ### blocked
 
-~~~text
+```text
 Cannot move guidance/old guide: The source and the destination are the same.
 Workspace: <workspace>
   files scanned: the reference scan was not completed
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Route move stopped after 5 of 9 changes.
 Workspace: <workspace>
   Error  .agents/guidance/new guide.md  Write failed
@@ -710,18 +710,18 @@ Workspace: <workspace>
   README.md:5:23
   notes.md:3:11
 Next: open-forge route move --detail debug
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Route move was cancelled. Nothing was changed.
 Workspace: <workspace>
   Error  guidance/old guide  Route move was cancelled
          Route move was cancelled. Nothing was changed.
   files scanned: the reference scan was not completed
 Next: open-forge route move
-~~~
+```
 
 ## Related Current Sources
 

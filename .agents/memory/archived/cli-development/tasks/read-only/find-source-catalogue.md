@@ -145,7 +145,7 @@ Route behavior change.
 | Find design          | [Find Technical Design](../../../../crystallized/documents/cli/contracts/find/technical-design.md)                                                                                                        | Defines the Find source boundary and no-body-read direction.                                  |
 | Implementation rules | [CLI Implementation Directive](../../../../../directives/open-forge/cli/implementation.md) and [Source Locality](../../../../../directives/source-locality.md)                                            | Bind BCL-first safety, dependency direction, locality, and no-forwarding rules.               |
 | Evidence             | [Test Evidence Integrity](../../../../../directives/open-forge/testing/evidence-integrity.md) and [Evidence Tiers](../../../../../patterns/testing/evidence-tiers.md)                                     | Define real-OS integration, isolation, and tier placement.                                    |
-| Phase workflow       | [Task Lifecycle](../../../../../skills/use-workflow/references/open-forge/development/task-lifecycle.md)                                                                                                                                  | Defines the Preflight, Gray, Red, Green, review, and commit boundaries.                       |
+| Phase workflow       | [Task Lifecycle](../../../../../skills/use-workflow/references/open-forge/development/task-lifecycle.md)                                                                                                  | Defines the Preflight, Gray, Red, Green, review, and commit boundaries.                       |
 
 ## Allowed And Protected Surfaces
 

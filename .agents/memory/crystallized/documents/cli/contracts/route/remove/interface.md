@@ -440,7 +440,7 @@ A parser failure is text on stderr without a result envelope.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -457,7 +457,7 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly route remove; data follows the catalogue:
 
@@ -478,18 +478,18 @@ workspace write or recovery bundle.
 
 ## Semantic Results
 
-| Status                  | When                                                                     | Headline                                                           | Exit | Stream |
-| ----------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------ | ---: | ------ |
-| completed               | target known absent under complete safe coverage                         | `Nothing to do for <source>.`                                    |    0 | stdout |
-| completed               | leaf removed                                                             | `Removed <path>`                                                   |    0 | stdout |
-| completed               | category removed                                                         | `Removed the route <id>  (<N> files)`                              |    0 | stdout |
-| completed (dry run)     | planned                                                                  | `Would remove <path>` / `Would remove the route <id>  (<N> files)` |    0 | stdout |
-| completed-with-warnings | recovery bundle retained after success                                   | + family row                                                       |    2 | stdout |
-| incomplete              | catalogue, scan or record unreadable                                     | `<id> could not be removed: <limitation>. Nothing was changed.`    |    3 | stdout |
-| invalid-input           | bad source, the Loader, an overwrite file, or missing source without complete absence proof | `Cannot remove <ref>: <problem>.`                 |    4 | stderr |
-| blocked                 | unavailable required ownership, a link that cannot be detached safely, unsafe path, lock | `Cannot remove <id>: <reason>.`                                    |    5 | stderr |
-| failed                  | after effects                                                            | `Route remove stopped after <n> of <m> changes.`                   |    1 | stderr |
-| cancelled               | prompt cancelled, Ctrl+C                                                 | `Route remove was cancelled. Nothing was changed.`                 |  130 | stderr |
+| Status                  | When                                                                                        | Headline                                                           | Exit | Stream |
+| ----------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ---: | ------ |
+| completed               | target known absent under complete safe coverage                                            | `Nothing to do for <source>.`                                      |    0 | stdout |
+| completed               | leaf removed                                                                                | `Removed <path>`                                                   |    0 | stdout |
+| completed               | category removed                                                                            | `Removed the route <id>  (<N> files)`                              |    0 | stdout |
+| completed (dry run)     | planned                                                                                     | `Would remove <path>` / `Would remove the route <id>  (<N> files)` |    0 | stdout |
+| completed-with-warnings | recovery bundle retained after success                                                      | + family row                                                       |    2 | stdout |
+| incomplete              | catalogue, scan or record unreadable                                                        | `<id> could not be removed: <limitation>. Nothing was changed.`    |    3 | stdout |
+| invalid-input           | bad source, the Loader, an overwrite file, or missing source without complete absence proof | `Cannot remove <ref>: <problem>.`                                  |    4 | stderr |
+| blocked                 | unavailable required ownership, a link that cannot be detached safely, unsafe path, lock    | `Cannot remove <id>: <reason>.`                                    |    5 | stderr |
+| failed                  | after effects                                                                               | `Route remove stopped after <n> of <m> changes.`                   |    1 | stderr |
+| cancelled               | prompt cancelled, Ctrl+C                                                                    | `Route remove was cancelled. Nothing was changed.`                 |  130 | stderr |
 
 ### Known absent target
 
@@ -506,40 +506,40 @@ blocked result; it is never converted into absence or success.
 
 The finding catalogue is:
 
-| Code                                       | Severity | Family                      | Message                                                                                            | Next                                                     |
-| ------------------------------------------ | -------- | --------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| route-remove.invalid-input                 | error    | invalid-input               |                                                                                                    |                                                          |
-| route-remove.invalid-source                | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.invalid-source`).                                                | `open-forge route list --depth=all`                      |
-| route-remove.source-not-found              | error    | unknown-source              | retained for unknown or unproven absence; a proven no-op emits no finding    |                                                          |
-| route-remove.invalid-subject               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.invalid-subject`). | none                                                     |
-| route-remove.workspace-unavailable         | error    | workspace-unavailable       |                                                                                                    |                                                          |
-| route-remove.workspace-unsafe              | error    | workspace-unsafe            |                                                                                                    |                                                          |
-| route-remove.source-unsafe                 | error    | source-unsafe               |                                                                                                    |                                                          |
-| route-remove.category-unsafe               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.category-unsafe`).                       | none                                                     |
-| route-remove.route-ambiguous               | error    | route-ambiguous             |                                                                                                    |                                                          |
-| route-remove.identity-collision            | error    | identity-collision          | (the prompt resolves it in a terminal)                                                             |                                                          |
-| route-remove.overwrite-ambiguous           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.overwrite-ambiguous`).                                     | fix by hand                                              |
-| route-remove.ownership-claimed             | error    | ownership-claimed           | Ownership claims remain beyond the accepted removal plan.                                      | Inspect the reported ownership conflict and rerun the same removal after resolving it. |
-| route-remove.reference-unsafe              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.reference-unsafe`).                                      | fix by hand                                              |
-| route-remove.generated-region-unsafe       | error    | generated-region-unsafe     |                                                                                                    |                                                          |
-| route-remove.workspace-lock-unavailable    | error    | workspace-lock-unavailable  |                                                                                                    |                                                          |
-| route-remove.target-changed                | error    | target-changed              |                                                                                                    |                                                          |
-| route-remove.recovery-conflict             | error    | recovery-conflict           |                                                                                                    |                                                          |
-| route-remove.ownership-unavailable | error | lifecycle-unavailable | Required ownership could not be established; no route changed. | Repair the ownership record, then rerun. |
-| route-remove.settings-unavailable | error | local | Required workspace settings could not be established; no route changed. | Repair the settings, then rerun. |
-| route-remove.protected-target | error | local | The selected route overlaps protected control state or a registered Library source. | Select an unprotected route. |
-| route-remove.inspection-incomplete         | warning  | inspection-incomplete       |                                                                                                    |                                                          |
-| route-remove.category-inventory-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.category-inventory-incomplete`).                   | `open-forge doctor`                                      |
-| route-remove.reference-coverage-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.reference-coverage-incomplete`).             | `open-forge doctor`                                      |
-| route-remove.projection-incomplete         | warning  | projection-unavailable      |                                                                                                    |                                                          |
-| route-remove.recovery-unavailable          | warning  | recovery-unavailable        |                                                                                                    |                                                          |
-| route-remove.recovery-artifact-retained    | warning  | recovery-artifact-retained  |                                                                                                    |                                                          |
-| route-remove.target-changed-during-apply   | error    | target-changed-during-apply |                                                                                                    |                                                          |
-| route-remove.write-failed                  | error    | write-failed                |                                                                                                    |                                                          |
-| route-remove.verification-failed           | error    | verification-failed         |                                                                                                    |                                                          |
-| route-remove.recovery-failed               | error    | recovery-failed             |                                                                                                    |                                                          |
-| route-remove.operation-failed              | error    | operation-failed            |                                                                                                    |                                                          |
-| route-remove.interrupted                   | error    | interrupted                 |                                                                                                    |                                                          |
+| Code                                       | Severity | Family                      | Message                                                                                                                                                                                                                                                                                                                                                             | Next                                                                                   |
+| ------------------------------------------ | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| route-remove.invalid-input                 | error    | invalid-input               |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.invalid-source                | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.invalid-source`).                | `open-forge route list --depth=all`                                                    |
+| route-remove.source-not-found              | error    | unknown-source              | retained for unknown or unproven absence; a proven no-op emits no finding                                                                                                                                                                                                                                                                                           |                                                                                        |
+| route-remove.invalid-subject               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.invalid-subject`).               | none                                                                                   |
+| route-remove.workspace-unavailable         | error    | workspace-unavailable       |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.workspace-unsafe              | error    | workspace-unsafe            |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.source-unsafe                 | error    | source-unsafe               |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.category-unsafe               | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.category-unsafe`).               | none                                                                                   |
+| route-remove.route-ambiguous               | error    | route-ambiguous             |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.identity-collision            | error    | identity-collision          | (the prompt resolves it in a terminal)                                                                                                                                                                                                                                                                                                                              |                                                                                        |
+| route-remove.overwrite-ambiguous           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.overwrite-ambiguous`).           | fix by hand                                                                            |
+| route-remove.ownership-claimed             | error    | ownership-claimed           | Ownership claims remain beyond the accepted removal plan.                                                                                                                                                                                                                                                                                                           | Inspect the reported ownership conflict and rerun the same removal after resolving it. |
+| route-remove.reference-unsafe              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.reference-unsafe`).              | fix by hand                                                                            |
+| route-remove.generated-region-unsafe       | error    | generated-region-unsafe     |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.workspace-lock-unavailable    | error    | workspace-lock-unavailable  |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.target-changed                | error    | target-changed              |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.recovery-conflict             | error    | recovery-conflict           |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.ownership-unavailable         | error    | lifecycle-unavailable       | Required ownership could not be established; no route changed.                                                                                                                                                                                                                                                                                                      | Repair the ownership record, then rerun.                                               |
+| route-remove.settings-unavailable          | error    | local                       | Required workspace settings could not be established; no route changed.                                                                                                                                                                                                                                                                                             | Repair the settings, then rerun.                                                       |
+| route-remove.protected-target              | error    | local                       | The selected route overlaps protected control state or a registered Library source.                                                                                                                                                                                                                                                                                 | Select an unprotected route.                                                           |
+| route-remove.inspection-incomplete         | warning  | inspection-incomplete       |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.category-inventory-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.category-inventory-incomplete`). | `open-forge doctor`                                                                    |
+| route-remove.reference-coverage-incomplete | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Remove/Shared/Wording/RouteRemoveWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-remove.reference-coverage-incomplete`). | `open-forge doctor`                                                                    |
+| route-remove.projection-incomplete         | warning  | projection-unavailable      |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.recovery-unavailable          | warning  | recovery-unavailable        |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.recovery-artifact-retained    | warning  | recovery-artifact-retained  |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.target-changed-during-apply   | error    | target-changed-during-apply |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.write-failed                  | error    | write-failed                |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.verification-failed           | error    | verification-failed         |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.recovery-failed               | error    | recovery-failed             |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.operation-failed              | error    | operation-failed            |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
+| route-remove.interrupted                   | error    | interrupted                 |                                                                                                                                                                                                                                                                                                                                                                     |                                                                                        |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. Counts are:
@@ -564,49 +564,49 @@ without `--automatic` (04 adds `--automatic` to this command).
 
 ### completed
 
-~~~text
+```text
 Removed .agents/guidance/old guide.md
   Removed .agents/guidance/old guide.overwrite.md
   Entry removed from .agents/guidance/_guidance.md
   Detached 1 link that pointed at it; the link text was kept:
     README.md:1:8
-~~~
+```
 
 The proven missing-source no-op is also completed:
 `Nothing to do for guidance/old guide.`
 
 ### completed-with-warnings
 
-~~~text
+```text
 Removed .agents/guidance/old guide.md
   Warning  <recovery-bundle>  Recovery artifact retained
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 guidance/old guide could not be removed: Some files could not be scanned for links to .agents/guidance/old guide.md, so the removal was not planned. Nothing was changed.
 Next: open-forge doctor
-~~~
+```
 
 ### invalid-input
 
-~~~text
+```text
 Cannot remove guidance/old guide: The source is not a source ID or a path under .agents.
-~~~
+```
 
 ### blocked
 
-~~~text
+```text
 Cannot remove guidance/old guide: .agents/open-forge.lock.json could not be read completely.
 Workspace: <workspace>
   Error  <workspace>/.agents/open-forge.lock.json  Ownership record is unavailable
          .agents/open-forge.lock.json could not be read completely.
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Route remove stopped after 2 of 4 changes.
 Workspace: <workspace>
   .agents/guidance/old guide.md  not started
@@ -616,15 +616,15 @@ Workspace: <workspace>
     README.md:1:8
   The deleted files are kept in a recovery bundle at <recovery-bundle>.
 Next: open-forge cleanup  (after reviewing the bundle)
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Route remove was cancelled. Nothing was changed.
 Workspace: <workspace>
 Next: open-forge route remove
-~~~
+```
 
 ## Related Current Sources
 

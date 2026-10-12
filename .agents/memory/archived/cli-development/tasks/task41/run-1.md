@@ -93,7 +93,7 @@ check reads that as a half-finished update.
 ```
 
 Three defects in five lines: the message repeats the title verbatim and adds
-nothing, it never says *which* metadata is missing, and `Fix it by hand.` is
+nothing, it never says _which_ metadata is missing, and `Fix it by hand.` is
 rendered twice.
 
 ## B-6 — One file stops every route check
@@ -164,7 +164,7 @@ Two consequences:
 - **B-1 is not a miss at all; it is accepted design.** G4's index status table
   specifies: incomplete, "a routed file, its metadata, or recovery unreadable",
   headline `The Entries sections could not be rebuilt completely. Nothing was
-  changed.`, exit 3. The all-or-nothing rebuild was written down and accepted.
+changed.`, exit 3. The all-or-nothing rebuild was written down and accepted.
 
   So B-1 is a **product disagreement**, not a regression. The accepted design
   says one unreadable file stops the rebuild; the maintainer's intent is that a

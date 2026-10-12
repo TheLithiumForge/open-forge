@@ -386,13 +386,13 @@ Counts at every level: `checks`, `checksComplete`, `errors`, `warnings`,
    `standard`, `full` and `debug` the shared renderer prints both the command and
    the reason, so `Fix it by hand.` and `Fix the link by hand.` appear twice.
    Either the rule or the shared renderer has to give. **Maintainer decision**,
-   and it is a *shared* renderer question, not a Doctor-only one.
+   and it is a _shared_ renderer question, not a Doctor-only one.
 
 3. **The `error-and-warnings` situation no longer contains an error.** It is
    named and exemplified as containing one, but `workspace.frontmatter-malformed`
    is catalogued as a **warning**. The old fixture produced `1 error, 2
-   warnings`; the native fixture produces `No errors. 3 warnings and 3 info
-   findings were recorded.` So the situation's name, its example and its
+warnings`; the native fixture produces `No errors. 3 warnings and 3 info
+findings were recorded.` So the situation's name, its example and its
    catalogued severities disagree. **Clarification required**, and the fixture
    probably needs a genuine error to keep the situation meaningful.
 
@@ -406,13 +406,13 @@ Counts at every level: `checks`, `checksComplete`, `errors`, `warnings`,
    native ladder shows only at `full`; and a blocked-workspace snapshot that
    changed once the selector gained a stable subject fallback. Both were carried
    into the resume packet verbatim and fixed there. **Process note:** partial
-   work survives a capacity failure, and committing it *before* deciding
+   work survives a capacity failure, and committing it _before_ deciding
    anything else is what made the five hours recoverable.
 
 6. **The first run scattered build scratch inside the source tree.** It created
    `src/cli/.appdata/`, `src/cli/.dotnet-cli-home/`, `src/cli/NuGet.config` and
    four `src/cli/doctor-build-*` trees while working around the unreadable user
-   NuGet configuration. The overseer's junk check only excluded paths *outside*
+   NuGet configuration. The overseer's junk check only excluded paths _outside_
    `src/cli/`, so the first commit swept all of it in; it was stripped and
    recommitted. **Durable record:** the merge check must also assert that only
    `core/`, `root/` and `tests/` appear directly under `src/cli/`.

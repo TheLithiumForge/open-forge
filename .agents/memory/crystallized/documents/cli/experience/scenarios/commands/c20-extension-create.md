@@ -38,8 +38,6 @@ open-forge extension create toolkit --path "$CAT" --automatic
 
 Create the manifest and content scaffold under CAT/toolkit and explain the actual location.
 
-
-
 ### Verification
 
 Distinguish file effects from created directories; no package installation or workspace mutation.
@@ -67,8 +65,6 @@ open-forge extension create toolkit --path "$CAT" --name "Team toolkit" --descri
 ### Expected result
 
 Preserve supplied descriptive metadata and dependency identity in the manifest.
-
-
 
 ### Verification
 
@@ -98,8 +94,6 @@ open-forge extension create toolkit --path "$CAT" --dry-run
 
 Show the exact package directory and files that would be created, with no writes.
 
-
-
 ### Verification
 
 Verify CAT/toolkit remains absent and no workspace lock or installation content was created.
@@ -127,8 +121,6 @@ open-forge extension create toolkit --path "$CAT" --automatic
 ### Expected result
 
 Say the package scaffold is already present and nothing changed.
-
-
 
 ### Verification
 
@@ -158,8 +150,6 @@ open-forge extension create toolkit --path "$CAT" --automatic
 
 Name the occupied destination and preserve it.
 
-
-
 ### Verification
 
 Verify no overwrite, cleanup or implicit adoption.
@@ -188,8 +178,6 @@ open-forge extension create --path "$CAT"
 
 Explain that the package ID is required without hanging on an unavailable prompt.
 
-
-
 ### Verification
 
 Verify no guessed ID from folder names and no scaffold effects.
@@ -215,8 +203,6 @@ open-forge extension create
 ### Expected result
 
 Show prompts whose folder meaning matches the created location, then create only after confirmation.
-
-
 
 ### Verification
 
@@ -246,8 +232,6 @@ open-forge extension create Bad_ID --path "$CAT" --automatic
 
 Explain the ID grammar and preserve the destination.
 
-
-
 ### Verification
 
 Verify no automatic lowercasing or filename sanitization.
@@ -273,8 +257,6 @@ open-forge extension create toolkit --path "$CAT" --automatic
 ### Expected result
 
 Explain that the selected folder could not be read, not that it is empty.
-
-
 
 ### Verification
 
@@ -304,14 +286,9 @@ open-forge extension create toolkit --path "$CAT" --automatic
 
 Say what was created and what remains unfinished; do not call a directory a completed file.
 
-
-
 ### Verification
 
 Compare actual path kinds and manifest bytes; a retry suggestion must retain toolkit and CAT instead of dropping required inputs.
-
-
-
 
 **Execution constraint:** Establish a deterministic public process or real filesystem boundary and independently verify before/after effects; no timer-only or mocked-result proof. Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.
 
@@ -336,8 +313,6 @@ open-forge extension create
 ### Expected result
 
 Say package creation was cancelled without creating the destination.
-
-
 
 ### Verification
 
@@ -366,8 +341,6 @@ open-forge extension create
 
 Return invalid-input with the missing fact, not a cancellation claim or a partially guessed request.
 
-
-
 ### Verification
 
 Verify no package directory or manifest was created. This is not the Ctrl+C event in C20-11.
@@ -393,8 +366,6 @@ open-forge extension create toolkit --path "$CAT" --package-version=preview --de
 ### Expected result
 
 Create the scaffold with the exact descriptive version and dependency declaration. Do not require package availability or SemVer.
-
-
 
 ### Verification
 

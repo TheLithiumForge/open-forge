@@ -18,12 +18,12 @@ TWO-WORKSPACES with healthy A, malformed B, and an uninstalled subdirectory insi
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | From the uninstalled subdirectory, run open-forge status. | [X11](../scenarios/experience.md#x11) | The selected current directory is not replaced silently by A. |
-| 2 | From B, run open-forge status --workspace "$WS_A". | [X11](../scenarios/experience.md#x11) | The explicit A workspace is reported and echoed at minimal. |
-| 3 | open-forge index --workspace "$WS_A" --dry-run | [X11](../scenarios/experience.md#x11) | Only A is inspected for the preview. |
-| 4 | open-forge status --workspace "$MISSING_WS" | [C01-11](../scenarios/commands/c01-status.md#c01-11) | A nonexistent explicit path is blocked without a nearest-parent fallback. |
+| Step | Action                                                    | Scenario                                             | State passed forward                                                      |
+| ---: | --------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------- |
+|    1 | From the uninstalled subdirectory, run open-forge status. | [X11](../scenarios/experience.md#x11)                | The selected current directory is not replaced silently by A.             |
+|    2 | From B, run open-forge status --workspace "$WS_A".        | [X11](../scenarios/experience.md#x11)                | The explicit A workspace is reported and echoed at minimal.               |
+|    3 | open-forge index --workspace "$WS_A" --dry-run            | [X11](../scenarios/experience.md#x11)                | Only A is inspected for the preview.                                      |
+|    4 | open-forge status --workspace "$MISSING_WS"               | [C01-11](../scenarios/commands/c01-status.md#c01-11) | A nonexistent explicit path is blocked without a nearest-parent fallback. |
 
 ## Alternatives and recovery
 

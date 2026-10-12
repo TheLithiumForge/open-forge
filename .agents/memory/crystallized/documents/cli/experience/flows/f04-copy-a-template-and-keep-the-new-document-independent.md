@@ -18,12 +18,12 @@ TEMPLATE with a routed templates/example source and a valid memory/working paren
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | open-forge route create memory/working/new-note --description "Scenario for adding team notes" --tag=Scenario --template templates/example | [C14-02](../scenarios/commands/c14-route-create.md#c14-02) | The new source has destination metadata and copied starting body. |
-| 2 | Fill the new document placeholders and remove irrelevant sections. | [X10](../scenarios/experience.md#x10) | The copied starting file becomes a useful independently maintained document. |
-| 3 | Edit only templates/example.md. | [X10](../scenarios/experience.md#x10) | The original Template changes; the copied document does not. |
-| 4 | open-forge route update memory/working/new-note --description "Accepted review scenario" --template templates/example | [C15-05](../scenarios/commands/c15-route-update.md#c15-05) | Allowed metadata changes, but existing authored body is kept with the appropriate warning. |
+| Step | Action                                                                                                                                     | Scenario                                                   | State passed forward                                                                       |
+| ---: | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+|    1 | open-forge route create memory/working/new-note --description "Scenario for adding team notes" --tag=Scenario --template templates/example | [C14-02](../scenarios/commands/c14-route-create.md#c14-02) | The new source has destination metadata and copied starting body.                          |
+|    2 | Fill the new document placeholders and remove irrelevant sections.                                                                         | [X10](../scenarios/experience.md#x10)                      | The copied starting file becomes a useful independently maintained document.               |
+|    3 | Edit only templates/example.md.                                                                                                            | [X10](../scenarios/experience.md#x10)                      | The original Template changes; the copied document does not.                               |
+|    4 | open-forge route update memory/working/new-note --description "Accepted review scenario" --template templates/example                      | [C15-05](../scenarios/commands/c15-route-update.md#c15-05) | Allowed metadata changes, but existing authored body is kept with the appropriate warning. |
 
 ## Alternatives and recovery
 

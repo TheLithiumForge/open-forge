@@ -110,15 +110,15 @@ collision, containment, and overwrite rules remain in [CLI Source References](..
 
 ## Flags
 
-| Flag                              | Role                               | Value                                                                                          | Omission                                           | Repetition and composition                                                                                                                   |
-| --------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--description <text>`            | Selection of destination metadata  | One description value; empty or whitespace-only is invalid                                     | The destination `description` remains unchanged    | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
-| `--responsibility <text>`         | Selection of destination metadata  | One responsibility value; whitespace-only is invalid; exact `""` removes the key               | The destination `responsibility` remains unchanged | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                          |
-| `--tag=<tag>`                     | Selection of destination metadata  | One canonical tag without the `#` prefix                                                       | The destination tag list remains unchanged         | Repeatable. Supplied values replace the complete tag list in command-line order; duplicate exact tags and an empty supplied set are invalid. |
-| `--apply-to <glob>`         | Selection of destination metadata  | One workspace-relative glob expression                                                       | The destination's local declarations remain unchanged | Repeatable. Each occurrence is one expression. Atomic patterns are appended in first-seen order with duplicates removed. Conflicts with `--clear-apply-to`. |
-| `--clear-apply-to`                | Selection of destination metadata  | Boolean flag with no value                                                                    | No local declaration is removed                    | Singleton. Conflicts with `--apply-to`. Removes only the target's local declarations.                                                       |
-| `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `.agents/...` path for an existing routed Markdown Template | No Template body is selected                       | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                      |
-| `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                            | Repetition is accepted and idempotent; it does not add authority or precedence.                                                              |
+| Flag                              | Role                               | Value                                                                                          | Omission                                              | Repetition and composition                                                                                                                                  |
+| --------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--description <text>`            | Selection of destination metadata  | One description value; empty or whitespace-only is invalid                                     | The destination `description` remains unchanged       | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                                         |
+| `--responsibility <text>`         | Selection of destination metadata  | One responsibility value; whitespace-only is invalid; exact `""` removes the key               | The destination `responsibility` remains unchanged    | Singleton. Any repetition is invalid, even when the repeated value is equal. No last-wins behavior.                                                         |
+| `--tag=<tag>`                     | Selection of destination metadata  | One canonical tag without the `#` prefix                                                       | The destination tag list remains unchanged            | Repeatable. Supplied values replace the complete tag list in command-line order; duplicate exact tags and an empty supplied set are invalid.                |
+| `--apply-to <glob>`               | Selection of destination metadata  | One workspace-relative glob expression                                                         | The destination's local declarations remain unchanged | Repeatable. Each occurrence is one expression. Atomic patterns are appended in first-seen order with duplicates removed. Conflicts with `--clear-apply-to`. |
+| `--clear-apply-to`                | Selection of destination metadata  | Boolean flag with no value                                                                     | No local declaration is removed                       | Singleton. Conflicts with `--apply-to`. Removes only the target's local declarations.                                                                       |
+| `--template <template-reference>` | Selection of starting body content | One automatic Template ID or exact `.agents/...` path for an existing routed Markdown Template | No Template body is selected                          | Singleton. Any repetition is invalid, even when the repeated reference is equal. No last-wins behavior.                                                     |
+| `--dry-run`                       | Write policy                       | Boolean flag with no value                                                                     | Application is selected                               | Repetition is accepted and idempotent; it does not add authority or precedence.                                                                             |
 
 All six [Global CLI Flags](../../shared/global-flags/interface.md) apply. Their complete spelling,
 values, defaults, repetition, composition, terminal behavior, errors, and
@@ -551,7 +551,7 @@ A parser failure is text on stderr without a result envelope.
 --format json emits one schema-3 envelope on stdout for each semantic result.
 The envelope has exactly these fields:
 
-~~~text
+```text
 {
   schemaVersion: 3,
   command,
@@ -568,15 +568,15 @@ The envelope has exactly these fields:
   recovery,
   next
 }
-~~~
+```
 
 The command is exactly route update; data follows the catalogue:
 
-| Level    | `data`                                                                                                                   |
-| -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Level    | `data`                                                                                                                                                                            |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | minimal  | `{ mode, target { id, path }, changes: [ { field, before, after } ], template { id, path, applied } \| null, listedIn }`. Applicability changes use the existing `changes` array. |
-| standard | same                                                                                                                     |
-| full     | + `frontmatterBefore`, `frontmatterAfter`, per effect `before`, `after`                                                  |
+| standard | same                                                                                                                                                                              |
+| full     | + `frontmatterBefore`, `frontmatterAfter`, per effect `before`, `after`                                                                                                           |
 
 The shared schema-3 envelope and command-local `data` shape are unchanged.
 Applicability results use the existing `changes` array.
@@ -600,42 +600,40 @@ projection.
 | failed                  | after effects                                 | `Route update stopped after <n> of <m> changes.`                |    1 | stderr |
 | cancelled               | prompt cancelled, Ctrl+C                      | `Route update was cancelled. Nothing was changed.`              |  130 | stderr |
 
-
-
 ## Errors And Boundaries
 
 The finding catalogue is:
 
-| Code                                      | Severity | Family                      | Message                                                                                                                                             | Next                                |
-| ----------------------------------------- | -------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| route-update.invalid-input                | error    | invalid-input               |                                                                                                                                                     |                                     |
-| route-update.invalid-target               | error    | unknown-source              | `<ref> is not a routed source that can be updated.` when known but ineligible                                                                       | `open-forge route list --depth=all` |
-| route-update.invalid-patch                | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.invalid-patch`). | corrected command                   |
-| route-update.invalid-template             | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.invalid-template`).                                                                                                        | `open-forge find --tag Template`    |
-| route-update.workspace-unavailable        | error    | workspace-unavailable       |                                                                                                                                                     |                                     |
-| route-update.workspace-unsafe             | error    | workspace-unsafe            |                                                                                                                                                     |                                     |
-| route-update.target-unsafe                | error    | target-unsafe               |                                                                                                                                                     |                                     |
-| route-update.route-ambiguous              | error    | route-ambiguous             |                                                                                                                                                     |                                     |
-| route-update.identity-collision           | error    | identity-collision          | (the prompt resolves it in a terminal)                                                                                                              |                                     |
-| route-update.frontmatter-unsafe           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.frontmatter-unsafe`).                                                                                   | fix by hand                         |
-| route-update.metadata-preservation-unsafe | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.metadata-preservation-unsafe`).                                                                  | fix by hand                         |
-| route-update.template-unsafe              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.template-unsafe`).                                                                                                  | none                                |
-| route-update.generated-region-unsafe      | error    | generated-region-unsafe     |                                                                                                                                                     |                                     |
-| route-update.workspace-lock-unavailable   | error    | workspace-lock-unavailable  |                                                                                                                                                     |                                     |
-| route-update.target-changed               | error    | target-changed              |                                                                                                                                                     |                                     |
-| route-update.recovery-conflict            | error    | recovery-conflict           |                                                                                                                                                     |                                     |
-| route-update.template-body-protected      | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.template-body-protected`).                                                                  | none                                |
-| route-update.inspection-incomplete        | warning  | inspection-incomplete       |                                                                                                                                                     |                                     |
-| route-update.projection-incomplete        | warning  | projection-unavailable      |                                                                                                                                                     |                                     |
-| route-update.template-unavailable         | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.template-unavailable`).                                                                                                             | none                                |
-| route-update.recovery-unavailable         | warning  | recovery-unavailable        |                                                                                                                                                     |                                     |
-| route-update.recovery-artifact-retained   | warning  | recovery-artifact-retained  |                                                                                                                                                     |                                     |
-| route-update.target-changed-during-apply  | error    | target-changed-during-apply |                                                                                                                                                     |                                     |
-| route-update.write-failed                 | error    | write-failed                |                                                                                                                                                     |                                     |
-| route-update.verification-failed          | error    | verification-failed         |                                                                                                                                                     |                                     |
-| route-update.recovery-failed              | error    | recovery-failed             |                                                                                                                                                     |                                     |
-| route-update.operation-failed             | error    | operation-failed            |                                                                                                                                                     |                                     |
-| route-update.interrupted                  | error    | interrupted                 |                                                                                                                                                     |                                     |
+| Code                                      | Severity | Family                      | Message                                                                                                                                                                                                                                                                                                                                                            | Next                                |
+| ----------------------------------------- | -------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |
+| route-update.invalid-input                | error    | invalid-input               |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.invalid-target               | error    | unknown-source              | `<ref> is not a routed source that can be updated.` when known but ineligible                                                                                                                                                                                                                                                                                      | `open-forge route list --depth=all` |
+| route-update.invalid-patch                | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.invalid-patch`).                | corrected command                   |
+| route-update.invalid-template             | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.invalid-template`).             | `open-forge find --tag Template`    |
+| route-update.workspace-unavailable        | error    | workspace-unavailable       |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.workspace-unsafe             | error    | workspace-unsafe            |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.target-unsafe                | error    | target-unsafe               |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.route-ambiguous              | error    | route-ambiguous             |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.identity-collision           | error    | identity-collision          | (the prompt resolves it in a terminal)                                                                                                                                                                                                                                                                                                                             |                                     |
+| route-update.frontmatter-unsafe           | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.frontmatter-unsafe`).           | fix by hand                         |
+| route-update.metadata-preservation-unsafe | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.metadata-preservation-unsafe`). | fix by hand                         |
+| route-update.template-unsafe              | error    | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.template-unsafe`).              | none                                |
+| route-update.generated-region-unsafe      | error    | generated-region-unsafe     |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.workspace-lock-unavailable   | error    | workspace-lock-unavailable  |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.target-changed               | error    | target-changed              |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.recovery-conflict            | error    | recovery-conflict           |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.template-body-protected      | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.template-body-protected`).      | none                                |
+| route-update.inspection-incomplete        | warning  | inspection-incomplete       |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.projection-incomplete        | warning  | projection-unavailable      |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.template-unavailable         | warning  | local                       | [selection](../../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Route/Update/Shared/Wording/RouteUpdateWording.cs); [independent forms](../../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`route-update.template-unavailable`).         | none                                |
+| route-update.recovery-unavailable         | warning  | recovery-unavailable        |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.recovery-artifact-retained   | warning  | recovery-artifact-retained  |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.target-changed-during-apply  | error    | target-changed-during-apply |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.write-failed                 | error    | write-failed                |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.verification-failed          | error    | verification-failed         |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.recovery-failed              | error    | recovery-failed             |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.operation-failed             | error    | operation-failed            |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
+| route-update.interrupted                  | error    | interrupted                 |                                                                                                                                                                                                                                                                                                                                                                    |                                     |
 
 Findings retain code, severity, family, message, subject, cause, and next
 action when available. For `recovery-conflict`, the exact positively observed
@@ -663,60 +661,60 @@ Select when the ID matches several files (see 04).
 
 ### completed
 
-~~~text
+```text
 Updated memory/project-alpha/overview
 Workspace: <workspace>
   description: "Before overview" -> "After overview"
   Entry updated in .agents/memory/project-alpha/_project-alpha.md
-~~~
+```
 
 ### completed-with-warnings
 
-~~~text
+```text
 Updated memory/project-alpha/overview, but the Template body was not copied.
 Workspace: <workspace>
   description: "Before overview" -> "After overview"
   The file already has content, which was kept. The Template templates/route was not copied.
   Entry updated in .agents/memory/project-alpha/_project-alpha.md
-~~~
+```
 
 ### incomplete
 
-~~~text
+```text
 memory/project-alpha/overview could not be updated: <limitation>. Nothing was changed.
-~~~
+```
 
 ### invalid-input
 
-~~~text
+```text
 Cannot update memory/project-alpha/overview: Nothing to update: pass --description, --responsibility, --tag or --template.
 Next: open-forge route update memory/project-alpha/overview --description "<one sentence>"
-~~~
+```
 
 ### blocked
 
-~~~text
+```text
 Cannot update docs/guide: docs/guide could match more than one route.
 Workspace: <workspace>
 Next: open-forge route list --depth=all
-~~~
+```
 
 ### failed
 
-~~~text
+```text
 Route update stopped after 1 of 2 changes.
 Workspace: <workspace>
   description: "Before overview" -> "After overview"
 Next: open-forge route update --detail debug
-~~~
+```
 
 ### cancelled
 
-~~~text
+```text
 Route update was cancelled. Nothing was changed.
 Workspace: <workspace>
 Next: open-forge route update
-~~~
+```
 
 ## Related Current Sources
 

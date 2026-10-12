@@ -61,16 +61,16 @@ support nullable flow`). All five ordered mutation batches are accepted, and no
 
 ## Authority
 
-| Source                                                                                     | Relevance to this Task                                                                                                                 |
-| ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| [CLI Architecture](../../../crystallized/documents/cli/architecture.md)                    | Defines the accepted source, project, dependency, serializer, Native AOT, and integration boundaries.                                  |
-| [C# callable design Directive](../../../../directives/csharp/design.md)                    | Defines truthful nullability, callable, construction, conditional, and collection rules.                                               |
-| [CLI Implementation Directive](../../../../directives/open-forge/cli/implementation.md)    | Binds CLI source ownership, test tiers, parser, filesystem, generated, package, and AOT constraints.                                   |
-| [Test Evidence Integrity](../../../../directives/open-forge/testing/evidence-integrity.md) | Defines evidence isolation, test ownership, and acceptance integrity.                                                                  |
-| [Task Lifecycle](../../../../skills/use-workflow/references/open-forge/development/task-lifecycle.md)                      | Governs Preflight, the exact baseline/isolation exception, coherent commits, same-commit progress, review, correction, and acceptance. |
-| [CLI Development Plan](../plan.md)                                                         | Defines the maintainer-authorized Child 1 → Modern C# → Child 2 sequence and integration boundary.                                     |
-| [Complete The Replacement CLI](00-cli-development.md)                                      | Defines the parent outcome, authority, and program acceptance boundary.                                                                |
-| [Accepted Child 1 predecessor](read-only/find-source-catalogue.md)                         | Defines the accepted Green behavior, evidence, and exact predecessor for this migration.                                               |
+| Source                                                                                                | Relevance to this Task                                                                                                                 |
+| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| [CLI Architecture](../../../crystallized/documents/cli/architecture.md)                               | Defines the accepted source, project, dependency, serializer, Native AOT, and integration boundaries.                                  |
+| [C# callable design Directive](../../../../directives/csharp/design.md)                               | Defines truthful nullability, callable, construction, conditional, and collection rules.                                               |
+| [CLI Implementation Directive](../../../../directives/open-forge/cli/implementation.md)               | Binds CLI source ownership, test tiers, parser, filesystem, generated, package, and AOT constraints.                                   |
+| [Test Evidence Integrity](../../../../directives/open-forge/testing/evidence-integrity.md)            | Defines evidence isolation, test ownership, and acceptance integrity.                                                                  |
+| [Task Lifecycle](../../../../skills/use-workflow/references/open-forge/development/task-lifecycle.md) | Governs Preflight, the exact baseline/isolation exception, coherent commits, same-commit progress, review, correction, and acceptance. |
+| [CLI Development Plan](../plan.md)                                                                    | Defines the maintainer-authorized Child 1 → Modern C# → Child 2 sequence and integration boundary.                                     |
+| [Complete The Replacement CLI](00-cli-development.md)                                                 | Defines the parent outcome, authority, and program acceptance boundary.                                                                |
+| [Accepted Child 1 predecessor](read-only/find-source-catalogue.md)                                    | Defines the accepted Green behavior, evidence, and exact predecessor for this migration.                                               |
 
 ## Decisions Needed
 

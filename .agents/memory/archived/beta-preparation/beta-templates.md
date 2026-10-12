@@ -85,14 +85,14 @@ npm run test:built
 
 Managed builds and Native AOT publication completed with zero warnings and zero errors. The six final execution modes reported:
 
-| Mode | Passed | Platform exclusions |
-| --- | ---: | ---: |
-| `unit` | 3,348 | 0 |
-| `integration` | 2,354 | 17 |
-| `public` | 246 | 0 |
-| `native-integration` | 2,354 | 17 |
-| `native-public` | 246 | 0 |
-| `public-native` | 246 | 0 |
+| Mode                 | Passed | Platform exclusions |
+| -------------------- | -----: | ------------------: |
+| `unit`               |  3,348 |                   0 |
+| `integration`        |  2,354 |                  17 |
+| `public`             |    246 |                   0 |
+| `native-integration` |  2,354 |                  17 |
+| `native-public`      |    246 |                   0 |
+| `public-native`      |    246 |                   0 |
 
 The integration exclusions require operating-system behavior unavailable on Windows. The managed/native modes reuse the same test populations; their sum is not a count of distinct cases. The gate checked source and artifact identity before and after execution.
 

@@ -38,8 +38,6 @@ open-forge extension inspect toolkit --source "$CAT"
 
 Explain that the installed package matches the available content, with useful file and dependency facts.
 
-
-
 ### Verification
 
 Compare current source content and target membership independently; a matching version string alone proves nothing.
@@ -67,8 +65,6 @@ open-forge extension inspect toolkit --source "$CAT"
 ### Expected result
 
 Distinguish changed current content from retired content and preserve both during inspection.
-
-
 
 ### Verification
 
@@ -98,8 +94,6 @@ open-forge extension inspect toolkit --source "$CAT"
 
 Describe the available package and clearly say it is not installed.
 
-
-
 ### Verification
 
 Verify no install effects and no ownership inferred from coincidentally matching files.
@@ -128,8 +122,6 @@ open-forge extension inspect toolkit --source "$CAT"
 
 Preserve known installed identity and explain that full comparison could not finish.
 
-
-
 ### Verification
 
 Check missing source separately from missing installed files; do not claim the package is current.
@@ -157,8 +149,6 @@ open-forge extension inspect toolkit --source "$CAT"
 ### Expected result
 
 Show installed and available versions and the actual content differences without assuming semantic-version ordering proves compatibility.
-
-
 
 ### Verification
 
@@ -192,7 +182,6 @@ open-forge extension inspect toolkit --source "$CAT"
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 **Execution constraint:** Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.
 
 ## C19-07
@@ -216,8 +205,6 @@ open-forge extension inspect does-not-exist --source "$CAT"
 ### Expected result
 
 Explain that this ID is unknown in the selected source and installed set.
-
-
 
 ### Verification
 
@@ -249,7 +236,6 @@ open-forge extension inspect toolkit --source "$CAT"
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 **Execution constraint:** Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.
 
 ## C19-09
@@ -273,8 +259,6 @@ open-forge extension inspect toolkit --source "$CAT"
 ### Expected result
 
 Explain the ambiguous identity instead of selecting the first manifest.
-
-
 
 ### Verification
 
@@ -303,8 +287,6 @@ open-forge extension inspect Bad_ID --source "$CAT"
 ### Expected result
 
 Explain the invalid ID without silently lowercasing or renaming it.
-
-
 
 ### Verification
 

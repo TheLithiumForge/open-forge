@@ -38,8 +38,6 @@ open-forge library inspect team
 
 Say team is current and identify the source, destination and actual linked-file count.
 
-
-
 ### Verification
 
 Compare source-relative membership and exact relative link targets independently.
@@ -65,8 +63,6 @@ open-forge library inspect team
 ### Expected result
 
 Show the new source member that needs a link, without creating it.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge library inspect team
 
 Show the retired member and the corresponding sync difference.
 
-
-
 ### Verification
 
 Distinguish a dangling existing link from a missing destination; no removal during inspection.
@@ -121,8 +115,6 @@ open-forge library inspect team
 ### Expected result
 
 Explain that the registered link needs restoration.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge library inspect team
 
 Identify the changed destination without implying sync may overwrite it automatically.
 
-
-
 ### Verification
 
 Compare entry kind and user bytes; link drift and safe automatic repair are separate questions.
@@ -178,8 +168,6 @@ open-forge library inspect team
 
 Say the Library is current and has no eligible files, not that its source could not be read.
 
-
-
 ### Verification
 
 Prove complete empty enumeration rather than missing/denied source.
@@ -205,8 +193,6 @@ open-forge library inspect team
 ### Expected result
 
 Say inspection could not finish and do not infer additions or retirements from a partial inventory.
-
-
 
 ### Verification
 
@@ -236,12 +222,9 @@ open-forge library inspect team
 
 Report a completed ownership observation, select no claim, and keep unavailable counts unknown. Distinguish a missing, unreadable or unusable record from a valid empty record; do not invent an unknown-ID error. Preserve every file.
 
-
-
 ### Verification
 
 Independently establish the record state and unchanged workspace. Verify no source inventory or selected Library was fabricated; a separate valid-record unknown-ID case must remain invalid-input.
-
 
 Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
 
@@ -266,8 +249,6 @@ open-forge library inspect team
 ### Expected result
 
 Say the requested Library ID is unknown.
-
-
 
 ### Verification
 
@@ -295,12 +276,9 @@ open-forge library inspect team
 
 Report a completed ownership observation, select no claim, and keep unavailable counts unknown. Distinguish a missing, unreadable or unusable record from a valid empty record; do not invent an unknown-ID error. Preserve every file.
 
-
-
 ### Verification
 
 Independently establish the record state and unchanged workspace. Verify no source inventory or selected Library was fabricated; a separate valid-record unknown-ID case must remain invalid-input.
-
 
 Revision note: Reconciled to the explicit forgiving-ownership behavior in the supplied contract, not the obsolete capture status.
 
@@ -325,8 +303,6 @@ open-forge library inspect Bad_ID
 ### Expected result
 
 Explain the invalid ID without normalizing it into another registration.
-
-
 
 ### Verification
 
@@ -353,8 +329,6 @@ open-forge library inspect team
 ### Expected result
 
 Name the blocked mapping without following an unsafe source or destination.
-
-
 
 ### Verification
 

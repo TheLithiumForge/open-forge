@@ -38,8 +38,6 @@ open-forge route update guidance/notes --description "Current team operating not
 
 Show the old and new description and the bounded navigation update.
 
-
-
 ### Verification
 
 Compare body bytes and unrelated frontmatter; only authorized fields and generated navigation may change.
@@ -65,8 +63,6 @@ open-forge route update guidance/notes --tag=Guidance --tag=Team
 ### Expected result
 
 Replace the complete tag list in the supplied order, rather than appending silently.
-
-
 
 ### Verification
 
@@ -96,7 +92,6 @@ open-forge route update guidance/notes --responsibility ""
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C15-04
 
 **Situation:** Template applied
@@ -118,8 +113,6 @@ open-forge route update guidance/notes --template templates/example
 ### Expected result
 
 Copy the Template body while retaining destination metadata and independent ownership.
-
-
 
 ### Verification
 
@@ -147,8 +140,6 @@ open-forge route update guidance/notes --description "Current team operating not
 
 Apply the allowed metadata change but explain that existing body content was kept and the Template body was not copied.
 
-
-
 ### Verification
 
 Verify both halves: metadata changed, body byte-identical. Neither total success nor total no-op is truthful.
@@ -175,8 +166,6 @@ open-forge route update guidance/notes --description "Current team operating not
 
 Say the source already has the requested values and nothing changed.
 
-
-
 ### Verification
 
 Compare the exact file and parent entry; avoid formatting churn disguised as a no-op.
@@ -202,8 +191,6 @@ open-forge route update guidance/notes --description "Current team operating not
 ### Expected result
 
 Show old-to-new values in future tense and No files were changed.
-
-
 
 ### Verification
 
@@ -235,7 +222,6 @@ open-forge route update guidance/notes
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C15-09
 
 **Situation:** Unknown source
@@ -257,8 +243,6 @@ open-forge route update guidance/does-not-exist --description "Notes"
 ### Expected result
 
 Name the missing source without creating it.
-
-
 
 ### Verification
 
@@ -287,8 +271,6 @@ open-forge route update "$AMBIGUOUS_ID" --description "Selected source only"
 Stop without a write. Name the ambiguity and exact candidate paths so the person
 can rerun against the intended file. Do not open a chooser, choose the first
 candidate, or claim the patch was applied.
-
-
 
 ### Verification
 
@@ -320,8 +302,6 @@ open-forge route update guidance/notes --description "Current team operating not
 
 Explain the active operation without modifying metadata or navigation.
 
-
-
 ### Verification
 
 Confirm actual lock ownership and byte-identical preservation.
@@ -349,8 +329,6 @@ open-forge route update guidance/notes --description "Current team operating not
 ### Expected result
 
 State the completed portion and the real recovery status.
-
-
 
 ### Verification
 
@@ -383,8 +361,6 @@ Deliver Ctrl+C at the defined pre-effect boundary.
 Report cancellation with no changed files. Do not treat the signal as an invalid
 input or a declined nonexistent prompt. Cancellation after an effect belongs to
 the separate shared interrupted-effect checks.
-
-
 
 ### Verification
 
@@ -423,8 +399,6 @@ open-forge route update guidance/notes --template templates/example
 ### Expected result
 
 Name the unavailable required fact and its consequence. Do not infer a complete empty inventory or apply a partial mutation plan.
-
-
 
 ### Verification
 

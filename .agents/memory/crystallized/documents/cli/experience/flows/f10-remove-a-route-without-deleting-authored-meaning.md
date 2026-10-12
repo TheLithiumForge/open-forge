@@ -24,12 +24,12 @@ LINKS with an unowned obsolete source and a safe visible-text link to it; keep a
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | open-forge route remove guidance/notes --dry-run | [C17-04](../scenarios/commands/c17-route-remove.md#c17-04) | The selected source and link-markup changes are previewed. |
-| 2 | open-forge route remove guidance/notes --automatic | [C17-02](../scenarios/commands/c17-route-remove.md#c17-02) | The source is removed while link text remains in the referring sentence. |
-| 3 | open-forge doctor | [C02-01](../scenarios/commands/c02-doctor.md#c02-01) | The resulting authored references and navigation are checked on this same state. |
-| 4 | open-forge route remove guidance/notes --automatic | [C17-05](../scenarios/commands/c17-route-remove.md#c17-05) | A repeated request reports that this source no longer exists; it does not delete a different source. |
+| Step | Action                                             | Scenario                                                   | State passed forward                                                                                 |
+| ---: | -------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+|    1 | open-forge route remove guidance/notes --dry-run   | [C17-04](../scenarios/commands/c17-route-remove.md#c17-04) | The selected source and link-markup changes are previewed.                                           |
+|    2 | open-forge route remove guidance/notes --automatic | [C17-02](../scenarios/commands/c17-route-remove.md#c17-02) | The source is removed while link text remains in the referring sentence.                             |
+|    3 | open-forge doctor                                  | [C02-01](../scenarios/commands/c02-doctor.md#c02-01)       | The resulting authored references and navigation are checked on this same state.                     |
+|    4 | open-forge route remove guidance/notes --automatic | [C17-05](../scenarios/commands/c17-route-remove.md#c17-05) | A repeated request reports that this source no longer exists; it does not delete a different source. |
 
 ## Alternatives and recovery
 

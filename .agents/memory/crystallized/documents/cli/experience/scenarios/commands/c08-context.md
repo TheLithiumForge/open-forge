@@ -38,8 +38,6 @@ open-forge context
 
 Emit startup content in the specified order, with source delimiters and no redundant success banner.
 
-
-
 ### Verification
 
 Compare the selected source set and each content block against fixture bytes; exclude diagnostics from payload comparison.
@@ -65,8 +63,6 @@ open-forge context guidance/notes
 ### Expected result
 
 Include the selected source and the contract-required context around it, without pulling in unrelated branches.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge context guidance --additions-only
 
 Explain that there is no additional context instead of printing a duplicate startup dump.
 
-
-
 ### Verification
 
 Compare selected closure minus startup closure; a different fixture with new material belongs in X06.
@@ -121,8 +115,6 @@ open-forge context guidance/notes --content=paths
 ### Expected result
 
 Print the requested paths in contract order, one per line, without Markdown code fences or authored body text.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge context guidance/notes --content=headings
 
 Return parsed headings, not arbitrary lines starting with a hash inside opaque content.
 
-
-
 ### Verification
 
 Compare structural headings with the authored fixture and exclude the fenced imitation.
@@ -177,8 +167,6 @@ open-forge context guidance/notes --content=section:Details
 ### Expected result
 
 Return the requested section's defined extent without leaking the next peer section.
-
-
 
 ### Verification
 
@@ -206,8 +194,6 @@ open-forge context --content=frontmatter,body
 
 Treat the host's absent frontmatter as normal. Do not fabricate YAML or a warning that belongs to a different file role.
 
-
-
 ### Verification
 
 Compare AGENTS.md before/after and ensure its body appears intact.
@@ -233,8 +219,6 @@ open-forge context guidance/notes --content=section:Details
 ### Expected result
 
 Say the requested section is absent and retain any independently available requested content.
-
-
 
 ### Verification
 
@@ -262,8 +246,6 @@ open-forge context guidance/notes --follow-links=1
 
 Follow only the permitted depth and report source framing without unbounded recursive expansion.
 
-
-
 ### Verification
 
 Compare the expected one-hop set; verify no duplicate source and no accidental second-hop load.
@@ -289,8 +271,6 @@ open-forge context guidance/notes --follow-links=1
 ### Expected result
 
 Keep readable selected content and explain the failed followed link and that it was not followed.
-
-
 
 ### Verification
 
@@ -320,8 +300,6 @@ open-forge context guidance/does-not-exist
 
 Name the unresolved reference and reject the request without inventing a scope.
 
-
-
 ### Verification
 
 Verify no unrequested startup-only success masquerades as resolution of the requested source.
@@ -348,8 +326,6 @@ open-forge context "$AMBIGUOUS_ID"
 
 Explain the ambiguity and give exact resolvable alternatives. Do not choose by traversal order.
 
-
-
 ### Verification
 
 Repeat with reversed directory creation order and confirm the same blocked meaning and stable alternatives.
@@ -375,8 +351,6 @@ open-forge context guidance/notes patterns/example
 ### Expected result
 
 Preserve safe available content and explicitly qualify the missing part.
-
-
 
 ### Verification
 
@@ -405,8 +379,6 @@ open-forge context guidance/notes --content=not-a-part
 ### Expected result
 
 Explain the unsupported content value without reading or returning a misleading partial result.
-
-
 
 ### Verification
 

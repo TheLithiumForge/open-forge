@@ -35,14 +35,14 @@ change one command into another job and does not grant unrelated authority.
 
 ## Accepted Flags
 
-| Flag                                          | Value                         | Default           | Meaning                                                               |
-| --------------------------------------------- | ----------------------------- | ----------------- | --------------------------------------------------------------------- |
-| `--workspace <path>`                          | One exact directory path      | Current directory | Use that directory as the workspace instead of the current directory  |
-| `--format <text\|json>`                       | `text` or `json`              | `text`            | Select text or structured JSON output                                 |
-| `--detail <minimal\|standard\|full\|debug>`   | One detail level              | `minimal`         | Select how much detail the text or JSON result includes               |
-| `--detail-filter <error\|warning\|info\|all>` | One or more severity values   | Not set           | Select which finding severities are listed; repeatable                |
-| `--help`                                      | None                          | —                 | Show help for the selected command path without running the operation |
-| `--version`                                   | None                          | —                 | Show the distributed CLI version without running a domain operation   |
+| Flag                                          | Value                       | Default           | Meaning                                                               |
+| --------------------------------------------- | --------------------------- | ----------------- | --------------------------------------------------------------------- |
+| `--workspace <path>`                          | One exact directory path    | Current directory | Use that directory as the workspace instead of the current directory  |
+| `--format <text\|json>`                       | `text` or `json`            | `text`            | Select text or structured JSON output                                 |
+| `--detail <minimal\|standard\|full\|debug>`   | One detail level            | `minimal`         | Select how much detail the text or JSON result includes               |
+| `--detail-filter <error\|warning\|info\|all>` | One or more severity values | Not set           | Select which finding severities are listed; repeatable                |
+| `--help`                                      | None                        | —                 | Show help for the selected command path without running the operation |
+| `--version`                                   | None                        | —                 | Show the distributed CLI version without running a domain operation   |
 
 Short aliases are not accepted yet. Add one only when it is familiar, useful,
 globally unique, and keeps the complete meaning of the canonical flag.

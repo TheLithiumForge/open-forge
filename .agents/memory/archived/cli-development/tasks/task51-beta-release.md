@@ -139,11 +139,11 @@ passed shared checks and all six native hosts. Every host passed Unit,
 Integration, public, native Integration, native public, and public-against-native
 execution, followed by its installed npm package journey.
 
-| Host | Unit passed | Integration passed / excluded, each runtime | Public passed / excluded, each of three modes |
-| --- | --- | --- | --- |
-| Linux x64 and ARM64 | 3,424 each | 2,474 / 22 | 231 / 16 |
-| macOS x64 and ARM64 | 3,424 each | 2,468 / 28 | 231 / 16 |
-| Windows x64 and ARM64 | 3,424 each | 2,479 / 17 | 247 / 0 |
+| Host                  | Unit passed | Integration passed / excluded, each runtime | Public passed / excluded, each of three modes |
+| --------------------- | ----------- | ------------------------------------------- | --------------------------------------------- |
+| Linux x64 and ARM64   | 3,424 each  | 2,474 / 22                                  | 231 / 16                                      |
+| macOS x64 and ARM64   | 3,424 each  | 2,468 / 28                                  | 231 / 16                                      |
+| Windows x64 and ARM64 | 3,424 each  | 2,479 / 17                                  | 247 / 0                                       |
 
 The `v0.9.0-beta.1` tag points to that source. Its first push registered the
 Release workflow. A subsequent REST dispatch could reuse the successful Build

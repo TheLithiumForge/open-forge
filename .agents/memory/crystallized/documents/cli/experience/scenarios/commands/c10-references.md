@@ -38,8 +38,6 @@ open-forge references guidance/notes
 
 Separate incoming and outgoing authored links, with actionable source locations and no generated-navigation noise.
 
-
-
 ### Verification
 
 Enumerate authored link occurrences independently; exclude generated Entries while preserving authored links outside them.
@@ -65,8 +63,6 @@ open-forge references guidance/notes
 ### Expected result
 
 Say no authored incoming or outgoing links exist.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge references guidance/notes --direction=out
 
 Return only outgoing links without pretending incoming links were scanned and found absent.
 
-
-
 ### Verification
 
 Compare the outgoing occurrence set; incoming counts must follow not-requested semantics.
@@ -121,8 +115,6 @@ open-forge references guidance/notes --direction=in --include=guidance
 ### Expected result
 
 Search the explicit incoming universe and show only its matching occurrences.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge references guidance/notes --direction=out
 
 Show the exact broken destination and its location without guessing a replacement.
 
-
-
 ### Verification
 
 Check target absence or parsed-fragment absence independently; distinguish these causes.
@@ -177,8 +167,6 @@ open-forge references guidance/notes --direction=out
 ### Expected result
 
 Show the external link as not checked, not proven valid and not automatically broken.
-
-
 
 ### Verification
 
@@ -206,8 +194,6 @@ open-forge references guidance/does-not-exist
 
 Reject the unknown source, not a successful empty link inventory.
 
-
-
 ### Verification
 
 Verify no substitute source was selected.
@@ -233,8 +219,6 @@ open-forge references guidance/notes --direction=sideways
 ### Expected result
 
 Explain the invalid direction and leave source content alone.
-
-
 
 ### Verification
 
@@ -266,7 +250,6 @@ open-forge references guidance/notes --direction=out --include=guidance
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C10-10
 
 **Situation:** Ambiguous source
@@ -288,8 +271,6 @@ open-forge references "$AMBIGUOUS_ID"
 ### Expected result
 
 Show exact alternatives and stop rather than choosing one.
-
-
 
 ### Verification
 
@@ -316,8 +297,6 @@ open-forge references guidance/notes
 ### Expected result
 
 Retain the known link and explain that the unreadable candidate's links were not counted.
-
-
 
 ### Verification
 

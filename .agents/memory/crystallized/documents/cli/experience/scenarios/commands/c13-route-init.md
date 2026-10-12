@@ -38,8 +38,6 @@ open-forge route init guidance/team/new-topic
 
 Create the missing entrypoints and navigation in the requested chain, clearly marking any authoring still needed.
 
-
-
 ### Verification
 
 Inspect every new entrypoint, bounded parent-list edit and placeholder; do not claim invented descriptions are finished content.
@@ -65,8 +63,6 @@ open-forge route init guidance/team/new-topic
 ### Expected result
 
 Say the route is already initialized and nothing needs changing.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge route init guidance/team/new-topic --dry-run
 
 Show the entrypoints and parent navigation that would be created or updated, with no writes.
 
-
-
 ### Verification
 
 Compare the entire route tree and recovery inventory; future-tense scaffolding must not appear on disk.
@@ -121,8 +115,6 @@ open-forge route init guidance/team --framework
 ### Expected result
 
 Create only the requested scoped Framework scaffold and explain what still needs authoring.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge route init guidance/team/new-topic --description "Team topic guidance
 
 Apply supplied metadata to the final target, not as misleading copied descriptions of every ancestor.
 
-
-
 ### Verification
 
 Inspect intermediate and final metadata separately and verify ordered parent entries.
@@ -177,8 +167,6 @@ open-forge route init guidance/../outside
 ### Expected result
 
 Reject the target without normalizing it into a different authorized location.
-
-
 
 ### Verification
 
@@ -206,8 +194,6 @@ open-forge route init guidance/team --description ""
 
 Explain the invalid metadata without creating a partial route chain.
 
-
-
 ### Verification
 
 Verify every missing entrypoint remains absent; a supplied invalid value is not equivalent to omission.
@@ -234,8 +220,6 @@ open-forge route init guidance/team --framework
 
 Explain that Framework installation is required; do not silently install it.
 
-
-
 ### Verification
 
 Verify no .agents controls or partial scope were created and the proposed next action names installation.
@@ -261,8 +245,6 @@ open-forge route init guidance/team/new-topic
 ### Expected result
 
 Explain that the workspace is in use and preserve the chain.
-
-
 
 ### Verification
 
@@ -292,8 +274,6 @@ open-forge route init guidance/team/new-topic
 
 Report completed and unfinished parts accurately, with recovery where it exists.
 
-
-
 ### Verification
 
 Compare every entrypoint and parent list; never label the full chain initialized when it is not.
@@ -321,8 +301,6 @@ open-forge route init guidance/team/new-topic
 ### Expected result
 
 Report cancellation without claiming the chain was created.
-
-
 
 ### Verification
 
@@ -359,8 +337,6 @@ open-forge route init guidance/team/new-topic
 ### Expected result
 
 Name the unavailable required fact and its consequence. Do not infer a complete empty inventory or apply a partial mutation plan.
-
-
 
 ### Verification
 

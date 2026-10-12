@@ -12,8 +12,8 @@ Return to the [review](./_cli-experience-coverage.md). **Status describes E2E ev
 
 **[Created](../../../crystallized/documents/cli/experience/scenarios/commands/c14-route-create.md#c14-01)** — selection: retained; E2E coverage: **direct**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | [ApplyCreatesExactTargetUpdatesOnlyParentInteriorAndConverges:47](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteCreateProcessTests.cs) | Creates exact target bytes, bounded parent bytes, preserves loader, checks target kind and repeat no-op. |
 
 **Gap / qualification:** Exact destination/parent bytes, bounded navigation and repeat no-op are asserted; no independent Template or missing-metadata branch.
@@ -34,8 +34,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c14-route-create.md#c14-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                | What its assertions establish                                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | [JsonDryRunIsReadOnly:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteCreateProcessTests.cs) | JSON completed/dry-run target, parent listing and two effects; RunWithoutWrites snapshot and no-lock check. |
 
 **Gap / qualification:** Exact preview target/parent/effects and preservation are checked, but no Template source exists in this fixture, so Template preservation is not exercised.
@@ -44,8 +44,8 @@ No matching published-process assertion identified.
 
 **[Already matching](../../../crystallized/documents/cli/experience/scenarios/commands/c14-route-create.md#c14-04)** — selection: retained; E2E coverage: **direct**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | [ApplyCreatesExactTargetUpdatesOnlyParentInteriorAndConverges:47](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteCreateProcessTests.cs) | Creates exact target bytes, bounded parent bytes, preserves loader, checks target kind and repeat no-op. |
 
 **Gap / qualification:** The second invocation proves matching-content no-op and byte stability; it follows an apply in the same method.
@@ -54,8 +54,8 @@ No matching published-process assertion identified.
 
 **[Missing description](../../../crystallized/documents/cli/experience/scenarios/commands/c14-route-create.md#c14-05)** — selection: improved; E2E coverage: **opposite**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                      | What its assertions establish                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | [InvalidMetadataUsesSharedStatusStreamAndExitWithoutWrites:109](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteCreateProcessTests.cs) | Missing-description exit/stream/Next wording and write-free helper boundary. |
 
 **Gap / qualification:** The current EndToEnd test asserts missing description is invalid and required, opposite the reviewed optional-metadata target.
@@ -168,8 +168,8 @@ No matching published-process assertion identified.
 
 **[Description changed](../../../crystallized/documents/cli/experience/scenarios/commands/c15-route-update.md#c15-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                          | What its assertions establish                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | [ApplyThenNoOpIsOneExactJourney:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteUpdateProcessTests.cs) | Description/tag byte replacement, bounded parent rewrite, persistent lock and exact repeat no-op. |
 
 **Gap / qualification:** Exact description replacement and bounded parent bytes are asserted, but the report is only checked for a generic Updated headline, not explicit old/new fields.
@@ -178,8 +178,8 @@ No matching published-process assertion identified.
 
 **[Tags replaced](../../../crystallized/documents/cli/experience/scenarios/commands/c15-route-update.md#c15-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                          | What its assertions establish                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | [ApplyThenNoOpIsOneExactJourney:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteUpdateProcessTests.cs) | Description/tag byte replacement, bounded parent rewrite, persistent lock and exact repeat no-op. |
 
 **Gap / qualification:** Exact final tag bytes are asserted, but ordered replacement is coupled to description and not separately reported.
@@ -224,8 +224,8 @@ No matching published-process assertion identified.
 
 **[No change](../../../crystallized/documents/cli/experience/scenarios/commands/c15-route-update.md#c15-06)** — selection: retained; E2E coverage: **direct**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                          | What its assertions establish                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | [ApplyThenNoOpIsOneExactJourney:38](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteUpdateProcessTests.cs) | Description/tag byte replacement, bounded parent rewrite, persistent lock and exact repeat no-op. |
 
 **Gap / qualification:** Repeat invocation asserts requested values already present, no-op wording and unchanged snapshot; no standalone preseeded-only test.
@@ -234,8 +234,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c15-route-update.md#c15-07)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                | What its assertions establish                                                         |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | [JsonDryRunIsReadOnly:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteUpdateProcessTests.cs) | JSON completed/dry-run target and nonempty changes/effects through write-free helper. |
 
 **Gap / qualification:** JSON dry-run, target, change list, effects and no writes are checked; future-tense human output is not.
@@ -264,8 +264,8 @@ No matching published-process assertion identified.
 
 **[An ambiguous ID requires an exact path](../../../crystallized/documents/cli/experience/scenarios/commands/c15-route-update.md#c15-10)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                        | What its assertions establish                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
 | [AmbiguousTargetRefusesWrites:85](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteUpdateProcessTests.cs) | Ambiguous physical target yields blocked exit/error and write-free helper snapshot. |
 
 **Gap / qualification:** Ambiguous physical target is blocked and write-free, but exact candidate paths and the reviewed human ambiguity wording are not asserted.
@@ -330,8 +330,8 @@ No matching published-process assertion identified.
 
 **[Leaf move](../../../crystallized/documents/cli/experience/scenarios/commands/c16-route-move.md#c16-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                          | What its assertions establish                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
 | [LeafApplyPreservesBytesAndConsumesTheOldIdentity:34](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteMoveProcessTests.cs) | Moves leaf and overwrite bytes, rewrites README link, preserves lifecycle, and rejects old-ID repeat. |
 
 **Gap / qualification:** Leaf source/overwrite bytes and old identity are checked, but old/new parent Entries are not independently asserted.
@@ -340,8 +340,8 @@ No matching published-process assertion identified.
 
 **[Leaf move with rewritten links](../../../crystallized/documents/cli/experience/scenarios/commands/c16-route-move.md#c16-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                          | What its assertions establish                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
 | [LeafApplyPreservesBytesAndConsumesTheOldIdentity:34](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteMoveProcessTests.cs) | Moves leaf and overwrite bytes, rewrites README link, preserves lifecycle, and rejects old-ID repeat. |
 
 **Gap / qualification:** README rewrite and moved bytes are checked; complete affected-link inventory and every authored reference are not asserted by the EndToEnd method.
@@ -366,8 +366,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c16-route-move.md#c16-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                              | What its assertions establish                                                        |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | [JsonDryRunIsReadOnly:10](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteMoveProcessTests.cs) | JSON completed/dry-run source/destination/moved data and write-free helper boundary. |
 
 **Gap / qualification:** Dry-run identity and moved data are checked through the process helper, but complete reference/navigation plan contents are not.
@@ -380,8 +380,8 @@ No matching published-process assertion identified.
 
 **[Destination exists](../../../crystallized/documents/cli/experience/scenarios/commands/c16-route-move.md#c16-05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                          | What its assertions establish                                             |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | [OccupiedDestinationRefusesWrites:84](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteMoveProcessTests.cs) | Occupied destination yields blocked error and write-free helper snapshot. |
 
 **Gap / qualification:** Occupied target and write-free rejection are checked. The assertion checks already-exists prose, not that the actual destination path is named.
@@ -422,8 +422,8 @@ No matching published-process assertion identified.
 
 **[Source not found](../../../crystallized/documents/cli/experience/scenarios/commands/c16-route-move.md#c16-09)** — selection: retained; E2E coverage: **adjacent**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                          | What its assertions establish                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
 | [LeafApplyPreservesBytesAndConsumesTheOldIdentity:34](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteMoveProcessTests.cs) | Moves leaf and overwrite bytes, rewrites README link, preserves lifecycle, and rejects old-ID repeat. |
 
 **Gap / qualification:** Only the repeat after a successful move proves an old source ID is then absent; no fresh missing-source fixture is used.
@@ -508,8 +508,8 @@ No matching published-process assertion identified.
 
 **[Leaf removed](../../../crystallized/documents/cli/experience/scenarios/commands/c17-route-remove.md#c17-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                               |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | [LeafDryRunAndApplicationPreserveLifecycleAndSurroundingBytes:53](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteRemoveProcessTests.cs) | Leaf dry-run detachedLinks/no-write snapshot, apply removes source/overwrite/entry, detaches label and preserves lifecycle. |
 
 **Gap / qualification:** Target/overwrite absence and removed-source prose are checked; parent-entry removal is asserted in output, not by comparing actual bounded parent bytes or all neighbors.
@@ -522,8 +522,8 @@ No matching published-process assertion identified.
 
 **[Leaf with detached links](../../../crystallized/documents/cli/experience/scenarios/commands/c17-route-remove.md#c17-02)** — selection: retained; E2E coverage: **direct**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                               |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | [LeafDryRunAndApplicationPreserveLifecycleAndSurroundingBytes:53](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteRemoveProcessTests.cs) | Leaf dry-run detachedLinks/no-write snapshot, apply removes source/overwrite/entry, detaches label and preserves lifecycle. |
 
 **Gap / qualification:** Dry-run records detached link and apply preserves visible label while removing the route.
@@ -536,8 +536,8 @@ No matching published-process assertion identified.
 
 **[Category removed](../../../crystallized/documents/cli/experience/scenarios/commands/c17-route-remove.md#c17-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                            | What its assertions establish                                                           |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | [CategoryApplicationProjectionAndRepeatAreStable:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteRemoveProcessTests.cs) | Category tree/resources/navigation deletion and repeated missing-source invalid result. |
 
 **Gap / qualification:** Category/children/resource absence is asserted, but complete effect enumeration, preserved neighbors and incoming reference detachment are not all independently checked.
@@ -550,8 +550,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c17-route-remove.md#c17-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                               |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | [LeafDryRunAndApplicationPreserveLifecycleAndSurroundingBytes:53](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteRemoveProcessTests.cs) | Leaf dry-run detachedLinks/no-write snapshot, apply removes source/overwrite/entry, detaches label and preserves lifecycle. |
 
 **Gap / qualification:** Dry-run no-write state and detachedLinks are asserted in JSON; complete future-tense text and every planned effect are not.
@@ -564,8 +564,8 @@ No matching published-process assertion identified.
 
 **[Source not found](../../../crystallized/documents/cli/experience/scenarios/commands/c17-route-remove.md#c17-05)** — selection: improved; E2E coverage: **opposite**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                            | What its assertions establish                                                           |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | [CategoryApplicationProjectionAndRepeatAreStable:103](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedRouteRemoveProcessTests.cs) | Category tree/resources/navigation deletion and repeated missing-source invalid result. |
 
 **Gap / qualification:** EndToEnd repeat asserts exit 4/source-not-found for verified absence, opposite the revised harmless no-op target.
@@ -675,8 +675,8 @@ No matching published-process assertion identified.
 
 **[None installed](../../../crystallized/documents/cli/experience/scenarios/commands/c18-extension-list.md#c18-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                        | What its assertions establish                                                           |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | [PublishedExplicitPackageIsExactAndReadOnly:62](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionListProcessTests.cs) | Explicit local package source kind/path/ID and source-byte preservation with no writes. |
 
 **Gap / qualification:** Explicit available-only source with empty ownership is checked, but the default two-section Installed none presentation is not.
@@ -685,8 +685,8 @@ No matching published-process assertion identified.
 
 **[One installed](../../../crystallized/documents/cli/experience/scenarios/commands/c18-extension-list.md#c18-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                 | What its assertions establish                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | [PublishedDefaultReportsBothSections:37](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionListProcessTests.cs) | Trusted installed development-toolkit and embedded available IDs in JSON; write-free helper. |
 
 **Gap / qualification:** One trusted installed and available package IDs are asserted; matching marker and descriptions are not.
@@ -707,8 +707,8 @@ No matching published-process assertion identified.
 
 **[Available only](../../../crystallized/documents/cli/experience/scenarios/commands/c18-extension-list.md#c18-04)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                        | What its assertions establish                                                           |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | [PublishedExplicitPackageIsExactAndReadOnly:62](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionListProcessTests.cs) | Explicit local package source kind/path/ID and source-byte preservation with no writes. |
 
 **Gap / qualification:** Available-only package ID/source bytes are checked; useful description rendering is not.
@@ -717,8 +717,8 @@ No matching published-process assertion identified.
 
 **[Explicit source](../../../crystallized/documents/cli/experience/scenarios/commands/c18-extension-list.md#c18-05)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                        | What its assertions establish                                                           |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | [PublishedExplicitPackageIsExactAndReadOnly:62](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionListProcessTests.cs) | Explicit local package source kind/path/ID and source-byte preservation with no writes. |
 
 **Gap / qualification:** Checks package source kind, one local-toolkit ID and preserved source bytes. Does not assert selected source path or displayed versions.
@@ -871,8 +871,8 @@ No matching published-process assertion identified.
 
 **[Installed matches](../../../crystallized/documents/cli/experience/scenarios/commands/c19-extension-inspect.md#c19-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                 | What its assertions establish                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | [PublishedComparisonUsesCurrentAndIntendedContent:40](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionInspectProcessTests.cs) | Two theory rows assert changed/unchanged relation, selected package source, no writes and update next action. |
 
 **Gap / qualification:** Theory unchanged row proves current/intended equality and JSON source identity; dependency/version/file detail completeness is not.
@@ -881,8 +881,8 @@ No matching published-process assertion identified.
 
 **[Installed changed and retired](../../../crystallized/documents/cli/experience/scenarios/commands/c19-extension-inspect.md#c19-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                 | What its assertions establish                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | [PublishedComparisonUsesCurrentAndIntendedContent:40](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionInspectProcessTests.cs) | Two theory rows assert changed/unchanged relation, selected package source, no writes and update next action. |
 
 **Gap / qualification:** Changed relation is covered, but the EndToEnd fixture has no retired path/receipt membership.
@@ -1003,8 +1003,8 @@ No matching published-process assertion identified.
 
 **[Created](../../../crystallized/documents/cli/experience/scenarios/commands/c20-extension-create.md#c20-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                                          | What its assertions establish                                                                                             |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedAutomaticApplyConvergesWithoutWorkspaceLifecycleOrRecoveryEffects:25](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionCreateProcessTests.cs) | Scaffold manifest/content creation, metadata defaults, repeat no-op, catalogue/workspace/lifecycle/recovery preservation. |
 
 **Gap / qualification:** Default manifest and content directory are asserted; exact output location and distinction of file versus directory effects are not independently checked.
@@ -1013,8 +1013,8 @@ No matching published-process assertion identified.
 
 **[Created with metadata](../../../crystallized/documents/cli/experience/scenarios/commands/c20-extension-create.md#c20-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | [PublishedJsonPreservesExactResultOrderAndStdoutIsolation:87](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionCreateProcessTests.cs) | Prompt-free JSON dry-run schema/order/paths and manifest name/description/version/dependency order with no writes. |
 
 **Gap / qualification:** Only preview inspects supplied dependency order and manifest property names; it does not assert supplied descriptive values or an applied manifest preserving them.
@@ -1023,8 +1023,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c20-extension-create.md#c20-03)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | [PublishedJsonPreservesExactResultOrderAndStdoutIsolation:87](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionCreateProcessTests.cs) | Prompt-free JSON dry-run schema/order/paths and manifest name/description/version/dependency order with no writes. |
 
 **Gap / qualification:** Preview asserts exact proposed paths and unchanged file hashes; explicit absence of directories/lock infrastructure is not checked in this method.
@@ -1033,8 +1033,8 @@ No matching published-process assertion identified.
 
 **[Already present](../../../crystallized/documents/cli/experience/scenarios/commands/c20-extension-create.md#c20-04)** — selection: retained; E2E coverage: **direct**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                                          | What its assertions establish                                                                                             |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedAutomaticApplyConvergesWithoutWorkspaceLifecycleOrRecoveryEffects:25](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionCreateProcessTests.cs) | Scaffold manifest/content creation, metadata defaults, repeat no-op, catalogue/workspace/lifecycle/recovery preservation. |
 
 **Gap / qualification:** Second apply reports Nothing to do and catalogue bytes remain unchanged.
@@ -1139,8 +1139,8 @@ No matching published-process assertion identified.
 
 **[Descriptive metadata does not trigger dependency lookup](../../../crystallized/documents/cli/experience/scenarios/commands/c20-extension-create.md#c20-13)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                        | What its assertions establish                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | [PublishedJsonPreservesExactResultOrderAndStdoutIsolation:87](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionCreateProcessTests.cs) | Prompt-free JSON dry-run schema/order/paths and manifest name/description/version/dependency order with no writes. |
 
 **Gap / qualification:** E2E JSON carries arbitrary dependencies without applying them; only Integration explicitly asserts no source lookup.
@@ -1153,8 +1153,8 @@ No matching published-process assertion identified.
 
 **[Single package](../../../crystallized/documents/cli/experience/scenarios/commands/c21-extension-install.md#c21-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                 | What its assertions establish                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedApplyAndNoOpUseExactStreamsExitsAndJson:47](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionInstallProcessTests.cs) | Explicit toolkit install verifies JSON schema/selection/package/verification, exact bytes, source preservation, repeat empty effects and recovery not-required. |
 
 **Gap / qualification:** Exact installed payload and source bytes are checked. Unrelated workspace preservation and ownership are not independently enumerated; reported verification is not its own oracle.
@@ -1187,8 +1187,8 @@ No matching published-process assertion identified.
 
 **[No selection non interactive](../../../crystallized/documents/cli/experience/scenarios/commands/c21-extension-install.md#c21-04)** — selection: retained; E2E coverage: **direct**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                       | What its assertions establish                                                         |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | [PublishedUnattendedSelectionIsRequired:23](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionInstallProcessTests.cs) | Redirected/no-ID request exits invalid with selection-required finding and no stdout. |
 
 **Gap / qualification:** Unattended omitted selection exits invalid with selection-required finding and no stdout.
@@ -1269,8 +1269,8 @@ No matching published-process assertion identified.
 
 **[Already installed](../../../crystallized/documents/cli/experience/scenarios/commands/c21-extension-install.md#c21-11)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                 | What its assertions establish                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PublishedApplyAndNoOpUseExactStreamsExitsAndJson:47](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionInstallProcessTests.cs) | Explicit toolkit install verifies JSON schema/selection/package/verification, exact bytes, source preservation, repeat empty effects and recovery not-required. |
 
 **Gap / qualification:** Repeat has empty effects and identical workspace/source snapshots, but the reviewed already-installed/no-op explanation is not asserted.
@@ -1371,8 +1371,8 @@ No matching published-process assertion identified.
 
 **[Up to date](../../../crystallized/documents/cli/experience/scenarios/commands/c22-extension-update.md#c22-01)** — selection: retained; E2E coverage: **direct**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                   | What its assertions establish                                                                                     |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | [PublishedUpdateAppliesReviewedBytesAndRepeatsAsNoOp:34](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionUpdateProcessTests.cs) | Source-only edit replaces target, publishes/rechecks recovery, source stays unchanged by CLI and repeat is no-op. |
 
 **Gap / qualification:** Repeat after source update asserts up-to-date headline, empty effects and unchanged workspace/source/recovery.
@@ -1381,8 +1381,8 @@ No matching published-process assertion identified.
 
 **[Files replaced](../../../crystallized/documents/cli/experience/scenarios/commands/c22-extension-update.md#c22-02)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                   | What its assertions establish                                                                                     |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | [PublishedUpdateAppliesReviewedBytesAndRepeatsAsNoOp:34](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionUpdateProcessTests.cs) | Source-only edit replaces target, publishes/rechecks recovery, source stays unchanged by CLI and repeat is no-op. |
 
 **Gap / qualification:** Source-edited target bytes and retained recovery file are checked; exact replacement communication and recovery payload are not verified.
@@ -1547,8 +1547,8 @@ No matching published-process assertion identified.
 
 **[Single package](../../../crystallized/documents/cli/experience/scenarios/commands/c23-extension-remove.md#c23-01)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                     | What its assertions establish                                                                                  |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | [DefaultRemovalPreservesUnownedContentAndRepeatsAsNoOp:54](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionRemoveProcessTests.cs) | Toolkit target removed, unowned neighbor/source preserved, repeat reports no files and snapshots remain equal. |
 
 **Gap / qualification:** Target absence, source/unowned-note preservation and removal explanation are checked; selected ownership claim removal is not independently read.
@@ -1625,8 +1625,8 @@ No matching published-process assertion identified.
 
 **[Not installed](../../../crystallized/documents/cli/experience/scenarios/commands/c23-extension-remove.md#c23-08)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                     | What its assertions establish                                                                                  |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | [DefaultRemovalPreservesUnownedContentAndRepeatsAsNoOp:54](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionRemoveProcessTests.cs) | Toolkit target removed, unowned neighbor/source preserved, repeat reports no files and snapshots remain equal. |
 
 **Gap / qualification:** Repeat proves no-op after removal but does not place similarly named unowned content at the former managed destination or independently assert known-absent claims.
@@ -1635,8 +1635,8 @@ No matching published-process assertion identified.
 
 **[Dry run](../../../crystallized/documents/cli/experience/scenarios/commands/c23-extension-remove.md#c23-09)** — selection: retained; E2E coverage: **partial**.
 
-| Existing published-process evidence | What its assertions establish |
-| --- | --- |
+| Existing published-process evidence                                                                                                                                       | What its assertions establish                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | [JsonPreviewAndApplySharePlanAndDeleteChangedFinalOwner:102](../../../../../src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/PublishedExtensionRemoveProcessTests.cs) | Changed final-owner dry-run/apply plan parity, verified delete, retained recovery, source/unowned preservation and next cleanup. |
 
 **Gap / qualification:** JSON preview/apply parity and changed-owner deletion are checked; complete future-tense human explanation and full settings/recovery inventory preservation are not.
@@ -1696,4 +1696,3 @@ No matching published-process assertion identified.
 **Separate lower-tier evidence:**
 
 - Integration [MissingManagedTargetCanBeReleasedSourceIndependently:188](../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Extension/Remove/ExtensionRemovePlanningIntegrationTests.cs): Missing managed target can release ownership independently of source.
-

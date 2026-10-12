@@ -24,11 +24,11 @@ RECOVERY with independently identified eligible complete bundles and a draft, no
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | open-forge cleanup --dry-run | [C07-03](../scenarios/commands/c07-cleanup.md#c07-03) | The exact proposed recovery removals are visible without deleting evidence. |
-| 2 | open-forge cleanup | [C07-02](../scenarios/commands/c07-cleanup.md#c07-02) | Only eligible selected leftovers are removed; workspace source content stays intact. |
-| 3 | open-forge cleanup | [C07-01](../scenarios/commands/c07-cleanup.md#c07-01) | A complete empty catalogue produces the command’s no-op response. |
+| Step | Action                       | Scenario                                              | State passed forward                                                                 |
+| ---: | ---------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------ |
+|    1 | open-forge cleanup --dry-run | [C07-03](../scenarios/commands/c07-cleanup.md#c07-03) | The exact proposed recovery removals are visible without deleting evidence.          |
+|    2 | open-forge cleanup           | [C07-02](../scenarios/commands/c07-cleanup.md#c07-02) | Only eligible selected leftovers are removed; workspace source content stays intact. |
+|    3 | open-forge cleanup           | [C07-01](../scenarios/commands/c07-cleanup.md#c07-01) | A complete empty catalogue produces the command’s no-op response.                    |
 
 ## Alternatives and recovery
 

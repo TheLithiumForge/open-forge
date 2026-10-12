@@ -33,20 +33,20 @@ Change report.
 
 ## Statuses and headlines
 
-| Status                  | When                                                                                      | Headline                                                                                  | Exit | Stream |
-| ----------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---: | ------ |
-| completed               | nothing in scope needs repair                                                             | `Nothing to repair.`                                                                      |    0 | stdout |
-| completed               | repairs applied, nothing left in scope                                                    | `Repaired <N> links.` (`Repaired 1 link.`)                                                |    0 | stdout |
-| completed (dry run)     | repairs planned                                                                           | `Would repair <N> links.`                                                                 |    0 | stdout |
-| completed-with-warnings | repairs applied, problems remain that need a choice or hand                               | `Repaired <N> links. <K> problems still need a choice.` / `... need a choice or a hand.`  |    2 | stdout |
-| completed-with-warnings (dry run) | repairs planned, problems remain that need a choice or hand                 | `Would repair <N> links. <K> problems still need a choice.` / `... need a choice or a hand.` |    2 | stdout |
-| completed-with-warnings | nothing safe, problems remain                                                             | `Nothing could be repaired automatically. <K> problems need a choice.`                    |    2 | stdout |
-| completed-with-warnings | recovery bundle retained                                                                  | + family row                                                                              |    2 | stdout |
-| incomplete              | diagnosis or a required fact could not finish                                             | `Repair could not check the workspace completely. Nothing was changed.` + limitation rows |    3 | stdout |
-| invalid-input           | bad flags, invalid or contradictory `--relink`                                            | `Cannot repair: <problem>.`                                                               |    4 | stderr |
-| blocked                 | no selection outside a terminal, diagnosis blocked, conflicting facts, stale target, missing authority, lock | `Cannot repair: <reason>. Nothing was changed.`                                           |    5 | stderr |
-| failed                  | after effects                                                                             | `Repair stopped after <n> of <m> links were rewritten.`                                   |    1 | stderr |
-| cancelled               | prompt cancelled, Ctrl+C                                                                  | `Repair was cancelled. Nothing was changed.`                                              |  130 | stderr |
+| Status                            | When                                                                                                         | Headline                                                                                     | Exit | Stream |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed                         | nothing in scope needs repair                                                                                | `Nothing to repair.`                                                                         |    0 | stdout |
+| completed                         | repairs applied, nothing left in scope                                                                       | `Repaired <N> links.` (`Repaired 1 link.`)                                                   |    0 | stdout |
+| completed (dry run)               | repairs planned                                                                                              | `Would repair <N> links.`                                                                    |    0 | stdout |
+| completed-with-warnings           | repairs applied, problems remain that need a choice or hand                                                  | `Repaired <N> links. <K> problems still need a choice.` / `... need a choice or a hand.`     |    2 | stdout |
+| completed-with-warnings (dry run) | repairs planned, problems remain that need a choice or hand                                                  | `Would repair <N> links. <K> problems still need a choice.` / `... need a choice or a hand.` |    2 | stdout |
+| completed-with-warnings           | nothing safe, problems remain                                                                                | `Nothing could be repaired automatically. <K> problems need a choice.`                       |    2 | stdout |
+| completed-with-warnings           | recovery bundle retained                                                                                     | + family row                                                                                 |    2 | stdout |
+| incomplete                        | diagnosis or a required fact could not finish                                                                | `Repair could not check the workspace completely. Nothing was changed.` + limitation rows    |    3 | stdout |
+| invalid-input                     | bad flags, invalid or contradictory `--relink`                                                               | `Cannot repair: <problem>.`                                                                  |    4 | stderr |
+| blocked                           | no selection outside a terminal, diagnosis blocked, conflicting facts, stale target, missing authority, lock | `Cannot repair: <reason>. Nothing was changed.`                                              |    5 | stderr |
+| failed                            | after effects                                                                                                | `Repair stopped after <n> of <m> links were rewritten.`                                      |    1 | stderr |
+| cancelled                         | prompt cancelled, Ctrl+C                                                                                     | `Repair was cancelled. Nothing was changed.`                                                 |  130 | stderr |
 
 ## Text by level
 
@@ -123,7 +123,7 @@ SHA-256 confirmation text are removed.
 | repair.diagnosis-blocked          | error    | local                      | `The workspace could not be checked: <reason>.`                                                | `open-forge doctor`                                              |
 | repair.diagnosis-incomplete       | warning  | local                      | `<path> could not be checked, so its links were not repaired.`                                 | `open-forge doctor`                                              |
 | repair.proposal-unavailable       | warning  | local                      | `The link at <path>:l:c is not one doctor reports as repairable.`                              | `open-forge doctor --detail standard`                            |
-| repair.facts-conflicting          | error    | local                      | `The current Repair facts disagree about <path>:l:c.`                                         | `open-forge doctor --detail standard`                            |
+| repair.facts-conflicting          | error    | local                      | `The current Repair facts disagree about <path>:l:c.`                                          | `open-forge doctor --detail standard`                            |
 | repair.proposal-unsupported       | error    | local                      | `The repair for <path>:l:c cannot be applied: <reason>.`                                       | fix by hand                                                      |
 | repair.plan-conflict              | error    | local                      | `Two repairs change the same text at <path>:l:c.`                                              | none                                                             |
 | repair.guided-finding-remaining   | warning  | local                      | `<path>:l:c  Broken link; <N> possible targets`                                                | `open-forge repair`                                              |
@@ -238,12 +238,12 @@ cleanup`; completed -> none. Never `verified` wording anywhere.
   `RepairConflictKind.SelectionUnmatched` keeps both proposal-selection sites on
   `repair.proposal-unavailable` / warning.
 - message: the reachable facts-disagreement situation changed from `The link at
-  <path>:l:c is not one doctor reports as repairable.` to `The current Repair
-  facts disagree about <path>:l:c.`; the proposal-unavailable message stayed
+<path>:l:c is not one doctor reports as repairable.` to `The current Repair
+facts disagree about <path>:l:c.`; the proposal-unavailable message stayed
   unchanged for both selection-unmatched sites.
 - next action: facts disagreement now points to `open-forge doctor --detail
-  standard` with `Inspect the conflicting Repair facts before relying on this
-  result.`; proposal-unavailable keeps its existing command and reason.
+standard` with `Inspect the conflicting Repair facts before relying on this
+result.`; proposal-unavailable keeps its existing command and reason.
 - type name: internal `RepairConflictKind.MissingAuthority` became
   `RepairConflictKind.SelectionUnmatched`; `RepairFindingCode.MissingAuthority`
   and its permission message remain unchanged, so no user-visible wire code,
@@ -287,11 +287,11 @@ cleanup`; completed -> none. Never `verified` wording anywhere.
 2. **`repair.plan-conflict` emits a message the catalogue does not carry.** The
    catalogue gives `Two repairs change the same text at <path>:l:c.` The stale
    explicit relink above emits `The explicit relink does not match one current
-   admitted Repair proposal.` from `RepairSelectionPlanner`, which raises a
+admitted Repair proposal.` from `RepairSelectionPlanner`, which raises a
    `RepairConflict` of kind `MissingAuthority` that `RepairOperation` flattens to
    `PlanConflict`, discarding the kind. The catalogue's
    `repair.proposal-unavailable` (`The link at <path>:l:c is not one doctor
-   reports as repairable.`, next `open-forge doctor --detail standard`) is the
+reports as repairable.`, next `open-forge doctor --detail standard`) is the
    closer match. Before the ruling, output strings were frozen, so nothing was
    changed.
    **Maintainer ruling:** implemented by preserving the typed conflict through

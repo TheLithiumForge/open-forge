@@ -4,12 +4,12 @@ Describe the experience you want people to have, then keep an honest record of w
 
 ## What You Get
 
-| Starter | Use it to |
-| --- | --- |
-| [User Flow](content/.agents/templates/scenarios/user-flow.md) | Connect scenarios from a starting state to a meaningful goal. |
-| [Scenario](content/.agents/templates/scenarios/scenario.md) | Describe one situation, the actions taken, and the expected outcome. |
-| [Scenario Collection](content/.agents/templates/scenarios/scenario-collection.md) | Group related cases without duplicating their expectations. |
-| [Run Record](content/.agents/templates/scenarios/run-record.md) | Record actual actions, observations, checks, and follow-up. |
+| Starter                                                                           | Use it to                                                            |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [User Flow](content/.agents/templates/scenarios/user-flow.md)                     | Connect scenarios from a starting state to a meaningful goal.        |
+| [Scenario](content/.agents/templates/scenarios/scenario.md)                       | Describe one situation, the actions taken, and the expected outcome. |
+| [Scenario Collection](content/.agents/templates/scenarios/scenario-collection.md) | Group related cases without duplicating their expectations.          |
+| [Run Record](content/.agents/templates/scenarios/run-record.md)                   | Record actual actions, observations, checks, and follow-up.          |
 
 **Direct dependencies:** None.
 

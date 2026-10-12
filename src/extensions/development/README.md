@@ -4,11 +4,11 @@ Implement changes, investigate defects, and review results using the project's t
 
 ## What You Get
 
-| Source | Use it to |
-| --- | --- |
-| [Development](content/.agents/skills/use-workflow/references/development/development.md) | Deliver one accepted change with evidence matched to its risk. |
-| [Debugging](content/.agents/skills/use-workflow/references/development/debugging.md) | Connect a symptom to an evidenced cause and an authorized fix. |
-| [Review](content/.agents/skills/use-workflow/references/development/review.md) | Return prioritized, evidence-backed findings without unrequested edits. |
+| Source                                                                                   | Use it to                                                               |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [Development](content/.agents/skills/use-workflow/references/development/development.md) | Deliver one accepted change with evidence matched to its risk.          |
+| [Debugging](content/.agents/skills/use-workflow/references/development/debugging.md)     | Connect a symptom to an evidenced cause and an authorized fix.          |
+| [Review](content/.agents/skills/use-workflow/references/development/review.md)           | Return prioritized, evidence-backed findings without unrequested edits. |
 
 **Direct dependencies:** [Workflow Support](../workflows/README.md)
 
@@ -27,4 +27,3 @@ The three recipes remain separate methods within the shared selector Skill. They
 Use the complete source catalogue so dependencies resolve together. See the [installation guide](../../../docs/extensions.md) for managed and manual setup.
 
 Keep or remove the methods that fit the workspace. Review dependent references and user-created descendants before removal.
-

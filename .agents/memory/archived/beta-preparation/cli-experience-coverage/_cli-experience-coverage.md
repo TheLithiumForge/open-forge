@@ -14,13 +14,13 @@ The C# E2E suite has **112 methods in 35 classes: 100 Facts plus 12 Theories con
 
 Each of the 438 supplied identities appears once in the detailed matrices. Selection and evidence are independent: 399 retained/improved scenarios are under review, 38 are deferred and one is omitted. “Situation” in their body is simply the scenario title field.
 
-| E2E evidence for the complete individual scenario | Selected 399 | All 438 identities | Meaning |
-| --- | ---: | ---: | --- |
-| direct | 9 | 9 | Asserts the reviewed individual outcome and meaningful state; does not imply its containing flow. |
-| partial | 115 | 115 | Exercises that same situation but omits a material outcome, state, communication or setup check. |
-| adjacent | 60 | 60 | Tests a related incident, different setup, different command or narrower boundary. |
-| opposite | 7 | 7 | Explicitly asserts behavior incompatible with the reviewed target. |
-| none | 208 | 247 | No corresponding published-process assertion identified; lower-tier evidence may still be listed. |
+| E2E evidence for the complete individual scenario | Selected 399 | All 438 identities | Meaning                                                                                           |
+| ------------------------------------------------- | -----------: | -----------------: | ------------------------------------------------------------------------------------------------- |
+| direct                                            |            9 |                  9 | Asserts the reviewed individual outcome and meaningful state; does not imply its containing flow. |
+| partial                                           |          115 |                115 | Exercises that same situation but omits a material outcome, state, communication or setup check.  |
+| adjacent                                          |           60 |                 60 | Tests a related incident, different setup, different command or narrower boundary.                |
+| opposite                                          |            7 |                  7 | Explicitly asserts behavior incompatible with the reviewed target.                                |
+| none                                              |          208 |                247 | No corresponding published-process assertion identified; lower-tier evidence may still be listed. |
 
 These are conservative, overlapping-domain **scenario classifications**, not a product coverage percentage. A single method can inform several cases; multiple unrelated tests do not automatically combine into one fully covered case. Essential communication and fixture provenance count. Deferred/omitted rows are accounting only, not demands to implement them.
 

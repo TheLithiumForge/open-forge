@@ -4,18 +4,18 @@ Choose optional content by the work it helps you do. The base Framework supplies
 
 ## Choose By Need
 
-| Package | Description | Direct dependencies |
-| --- | --- | --- |
-| [Core Templates](core-templates/README.md) | Create directives, guidance, patterns, skills, templates, maps, and memory records from adaptable starting files | None |
-| [Collaboration](collaboration/README.md) | Explore ideas, compare alternatives, and clarify decisions through discussion and a brainstorming template | None |
-| [Project Documents](project-documents/README.md) | Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements | Workflow Support |
-| [Planning](planning/README.md) | Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and checkpoints | Workflow Support |
-| [Flows and Scenarios](scenarios/README.md) | Describe user journeys and expected outcomes, organize scenarios, and record what happened when they were tried | None |
-| [Observations and Handoffs](observations-and-handoffs/README.md) | Save useful observations and prepare a clear snapshot for another person, agent, or session to resume work | None |
-| [Development](development/README.md) | Implement changes, investigate defects, and review results using the project's existing tools and conventions | Workflow Support |
-| [Task Coordination](orchestration/README.md) | Coordinate related tasks, assign responsibilities, manage dependencies, and verify combined results | Development, Observations and Handoffs, Planning |
-| [Development Toolkit](development-toolkit/README.md) | Install Project Documents, Planning, Flows and Scenarios, and Development together | Development, Planning, Project Documents, Flows and Scenarios |
-| [Workflow Support](workflows/README.md) | Find and follow installed workflows, or create your own using the supplied template | None |
+| Package                                                          | Description                                                                                                        | Direct dependencies                                           |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| [Core Templates](core-templates/README.md)                       | Create directives, guidance, patterns, skills, templates, maps, and memory records from adaptable starting files   | None                                                          |
+| [Collaboration](collaboration/README.md)                         | Explore ideas, compare alternatives, and clarify decisions through discussion and a brainstorming template         | None                                                          |
+| [Project Documents](project-documents/README.md)                 | Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements | Workflow Support                                              |
+| [Planning](planning/README.md)                                   | Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and checkpoints      | Workflow Support                                              |
+| [Flows and Scenarios](scenarios/README.md)                       | Describe user journeys and expected outcomes, organize scenarios, and record what happened when they were tried    | None                                                          |
+| [Observations and Handoffs](observations-and-handoffs/README.md) | Save useful observations and prepare a clear snapshot for another person, agent, or session to resume work         | None                                                          |
+| [Development](development/README.md)                             | Implement changes, investigate defects, and review results using the project's existing tools and conventions      | Workflow Support                                              |
+| [Task Coordination](orchestration/README.md)                     | Coordinate related tasks, assign responsibilities, manage dependencies, and verify combined results                | Development, Observations and Handoffs, Planning              |
+| [Development Toolkit](development-toolkit/README.md)             | Install Project Documents, Planning, Flows and Scenarios, and Development together                                 | Development, Planning, Project Documents, Flows and Scenarios |
+| [Workflow Support](workflows/README.md)                          | Find and follow installed workflows, or create your own using the supplied template                                | None                                                          |
 
 Task Coordination keeps the stable ID `orchestration`. Workflow Support keeps `workflows`. All packages remain optional. Installing a package does not make its methods or record categories mandatory.
 

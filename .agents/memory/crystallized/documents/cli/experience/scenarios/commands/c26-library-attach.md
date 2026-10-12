@@ -38,8 +38,6 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 
 Register team and create relative file symlinks under the chosen destination, not copies or a directory symlink.
 
-
-
 ### Verification
 
 Compare raw link targets, source bytes, registration and bounded Entries updates; .agents destinations need no extra grant.
@@ -66,8 +64,6 @@ open-forge library attach team shared-guides --to docs/team --allow-path docs/te
 
 Save the explicit scope and create only eligible planned links outside .agents.
 
-
-
 ### Verification
 
 Inspect saved scope separately from content effects; reserved destinations remain protected despite a parent grant.
@@ -93,8 +89,6 @@ open-forge library attach team shared-guides --to docs/team
 ### Expected result
 
 Explain once versus always and the proposed descendants before obtaining approval.
-
-
 
 ### Verification
 
@@ -124,8 +118,6 @@ open-forge library attach team shared-guides --to docs/team --automatic
 
 Name the missing destination permission and stop without creating links.
 
-
-
 ### Verification
 
 Verify --automatic bypasses final confirmation only, not destination consent.
@@ -151,8 +143,6 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 ### Expected result
 
 Register the empty Library and explain that it has no eligible files yet.
-
-
 
 ### Verification
 
@@ -182,7 +172,6 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C26-07
 
 **Situation:** Source missing
@@ -204,8 +193,6 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 ### Expected result
 
 Name the missing source folder and create no registration or destination.
-
-
 
 ### Verification
 
@@ -233,8 +220,6 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 
 Explain the occupied leaf and preserve it; do not adopt an unregistered link.
 
-
-
 ### Verification
 
 Inspect entry kind, raw link target and bytes; the complete attach plan must not partly apply.
@@ -260,8 +245,6 @@ open-forge library attach team shared-guides --to docs/team --allow-path docs/te
 ### Expected result
 
 Show proposed links, directories and permission scope without creating or saving them.
-
-
 
 ### Verification
 
@@ -293,7 +276,6 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 **Execution constraint:** Use a supported host configuration that genuinely denies or cannot create file symlinks; record the actual failure stage.
 
 ## C26-11
@@ -317,8 +299,6 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 ### Expected result
 
 Explain contention and preserve source, destination and ownership.
-
-
 
 ### Verification
 
@@ -348,12 +328,9 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 
 Block Attach before any effect. Preserve the malformed lock and explain the required correction. An absent lock does not block an otherwise safe Attach.
 
-
-
 ### Verification
 
 Verify exact lock and source bytes remain unchanged, no destination links or registration are created, and no settings are changed. Independently verify that the absent-lock case creates only the requested links and new claim.
-
 
 Revision note: Task 50 distinguishes an absent lock from invalid required ownership; the Attach contract defines this boundary.
 
@@ -378,8 +355,6 @@ open-forge library attach team shared-guides --to .agents/guidance/team --automa
 ### Expected result
 
 State completed and remaining links and whether registration/permission publication actually occurred.
-
-
 
 ### Verification
 
@@ -408,8 +383,6 @@ open-forge library attach Bad_ID shared-guides --to .agents/guidance/team --auto
 ### Expected result
 
 Explain the ID problem without creating links or a registration.
-
-
 
 ### Verification
 

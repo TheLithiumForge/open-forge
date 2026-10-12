@@ -3,7 +3,5 @@
   "name": "Project Documents",
   "description": "Write and maintain project documentation, including vision, architecture, principles, and maintenance requirements",
   "version": "0.4.0",
-  "dependencies": [
-    "workflows"
-  ]
+  "dependencies": ["workflows"]
 }

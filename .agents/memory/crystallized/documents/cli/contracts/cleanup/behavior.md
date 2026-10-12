@@ -274,9 +274,9 @@ condition. Every planned effect remains contingent on application acquiring the
 same-workspace lease and passing final under-lease validation. Dry-run then stops
 before lease acquisition, deletion, or any persistent effect. It does not create
 a recovery bundle or draft, temporary file, staging copy, receipt, journal,
-   tombstone, or residual marker. A readable ordinary malformed final remains a
-   warning preservation condition in the result; planned deletions alone do not
-   form `completed-with-warnings`.
+tombstone, or residual marker. A readable ordinary malformed final remains a
+warning preservation condition in the result; planned deletions alone do not
+form `completed-with-warnings`.
 
 ## Application, Revalidation, And Verification
 

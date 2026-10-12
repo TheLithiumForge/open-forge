@@ -18,12 +18,12 @@ LOCK with a reproducible live first writer and a second independently prepared w
 
 Run the steps on the actual resulting state. A linked scenario supplies a verification boundary, not permission to reset the workspace between steps.
 
-| Step | Action | Scenario | State passed forward |
-| ---: | --- | --- | --- |
-| 1 | Start one mutation in workspace A and hold its real lock at a known boundary. | [X21](../scenarios/experience.md#x21) | A live operation, not merely a lock file, owns the workspace. |
-| 2 | Run index against A while the first operation holds the lock. | [C05-09](../scenarios/commands/c05-index.md#c05-09) | The second writer is blocked without effects. |
-| 3 | Run an otherwise valid mutation in workspace B. | [X21](../scenarios/experience.md#x21) | B is not accidentally blocked by A’s per-workspace lock. |
-| 4 | Release the first operation; retry the second while the persistent lock file remains. | [X21](../scenarios/experience.md#x21) | The retry can proceed from the actual current state after revalidation. |
+| Step | Action                                                                                | Scenario                                            | State passed forward                                                    |
+| ---: | ------------------------------------------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------- |
+|    1 | Start one mutation in workspace A and hold its real lock at a known boundary.         | [X21](../scenarios/experience.md#x21)               | A live operation, not merely a lock file, owns the workspace.           |
+|    2 | Run index against A while the first operation holds the lock.                         | [C05-09](../scenarios/commands/c05-index.md#c05-09) | The second writer is blocked without effects.                           |
+|    3 | Run an otherwise valid mutation in workspace B.                                       | [X21](../scenarios/experience.md#x21)               | B is not accidentally blocked by A’s per-workspace lock.                |
+|    4 | Release the first operation; retry the second while the persistent lock file remains. | [X21](../scenarios/experience.md#x21)               | The retry can proceed from the actual current state after revalidation. |
 
 ## Alternatives and recovery
 

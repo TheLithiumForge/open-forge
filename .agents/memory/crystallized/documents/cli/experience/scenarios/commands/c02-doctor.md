@@ -38,8 +38,6 @@ open-forge doctor
 
 Say no problems were found. Do not append a no-files-changed mutation footer.
 
-
-
 ### Verification
 
 Confirm all applicable diagnostic domains were inspected rather than skipped.
@@ -65,8 +63,6 @@ open-forge doctor
 ### Expected result
 
 Distinguish an informational observation from an error. Never reconstruct ownership or rewrite the lock.
-
-
 
 ### Verification
 
@@ -98,7 +94,6 @@ open-forge doctor
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C02-04
 
 **Situation:** Error and warnings
@@ -120,8 +115,6 @@ open-forge doctor
 ### Expected result
 
 Show the error's subject and action, with correct error and warning counts. Diagnostic errors do not themselves mean the doctor process failed.
-
-
 
 ### Verification
 
@@ -148,8 +141,6 @@ open-forge doctor
 ### Expected result
 
 Identify checks that did not finish and retain findings from checks that did. Never say no problems found without qualification.
-
-
 
 ### Verification
 
@@ -179,8 +170,6 @@ open-forge doctor --workspace "$MISSING_WS"
 
 Explain why this workspace cannot be checked, without producing findings for another one.
 
-
-
 ### Verification
 
 Verify no parent fallback, installation or repair occurred.
@@ -207,8 +196,6 @@ open-forge doctor --not-an-option
 
 Explain the flag error and the valid help path. A parser failure need not use a domain report.
 
-
-
 ### Verification
 
 Check no diagnosis or workspace effect occurred and no fake JSON envelope was printed.
@@ -234,8 +221,6 @@ open-forge doctor
 ### Expected result
 
 Attribute the difference to the correct Extension and point to its inspection or update operation.
-
-
 
 ### Verification
 
@@ -265,8 +250,6 @@ open-forge doctor
 
 Diagnose stale navigation, not a fabricated incomplete installation or update.
 
-
-
 ### Verification
 
 Inspect the actual list difference and verify doctor does not index automatically.
@@ -293,8 +276,6 @@ open-forge doctor
 
 Explain the missing Library link and its targeted action without silently recreating it.
 
-
-
 ### Verification
 
 Verify the complete source inventory prerequisite before calling drift safe; a missing inventory must become a different scenario.
@@ -320,8 +301,6 @@ open-forge doctor
 ### Expected result
 
 Describe the item and its consequence, with cleanup preview rather than automatic deletion.
-
-
 
 ### Verification
 

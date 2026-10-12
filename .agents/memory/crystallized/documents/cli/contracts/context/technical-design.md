@@ -142,7 +142,7 @@ accepted Architecture boundary.
 | Base and overwrite layering    | Represent one logical source with ordered physical layers and preserve the contract's base-first projection.                                    |
 | Heading and section projection | Use fixed Markdig structural nodes, visible text, source forms, strict UTF-8, and exact source ranges.                                          |
 | Authored frontmatter           | Use YamlDotNet source-generated semantics while preserving the authored representation required by the contracts.                               |
-| Path-scoped applicability      | Read typed declarations once, evaluate visible source chains against normalized paths, and retain pending conditions. |
+| Path-scoped applicability      | Read typed declarations once, evaluate visible source chains against normalized paths, and retain pending conditions.                           |
 | Human and structured results   | Form one typed result, render human views from it, and serialize the shared JSON shape with source-generated JSON.                              |
 | Read-only safety               | Use real BCL-first `System.IO` reads and no persistent graph, session, receipt, cache key, or mutation plan.                                    |
 

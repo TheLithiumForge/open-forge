@@ -42,10 +42,6 @@ Index the recognized native package, expose it through Skills, and allow its int
 
 Use the Index apply/current rules. A valid native header without Open Forge fields is not a metadata error. No assistance message is emitted for untouched native resources.
 
-
-
-
-
 ### Verification
 
 - Compare every copied file byte-for-byte before and after all five commands.
@@ -90,7 +86,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## X03
 
 **Situation:** Index partial metadata without changing authored values
@@ -126,7 +121,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## X04
 
 **Situation:** Preview indexing a plain note without metadata edits
@@ -160,7 +154,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 ### Verification
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
-
 
 ## X05
 
@@ -196,7 +189,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 **Execution constraint:** Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
 
 ## X06
@@ -227,10 +219,6 @@ Return selected material not already included at startup, in its defined order; 
 ### What the person sees
 
 Use Context output/content-part rules without suppressing the requested additions or adding an unrelated success wrapper.
-
-
-
-
 
 ### Verification
 
@@ -273,7 +261,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## X08
 
 **Situation:** Count actual files and directories after install
@@ -303,10 +290,6 @@ Every number refers to a named set: installed content files, generated control f
 ### What the person sees
 
 Resolve all count wording from Install output and the shared count populations. The reported file and directory sets must match an independent inventory.
-
-
-
-
 
 ### Verification
 
@@ -346,10 +329,6 @@ Cancellation and ordinary failure retain different event meanings. No-change lan
 
 Choose pre-effect or post-effect wording from verified stage and event. A saved permission grant prevents a global no-change claim.
 
-
-
-
-
 ### Verification
 
 - A timer alone does not prove the boundary; require deterministic synchronization or mark blocked by fixture.
@@ -388,10 +367,6 @@ The created file retains destination metadata and the copied starting body, then
 
 Use the applicable copy/create/index output rules; no later template change is described as updating an already independent copy.
 
-
-
-
-
 ### Verification
 
 - Compare destination bytes before and after editing only the Template.
@@ -428,10 +403,6 @@ Each operation uses exactly the selected workspace. No parent discovery, hidden 
 ### What the person sees
 
 Only the selected workspace appears in reports, findings, limits and continuations.
-
-
-
-
 
 ### Verification
 
@@ -472,7 +443,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 **Execution constraint:** Bind package IDs and bytes to a verified fixture catalogue/version pair; toolkit/base are fixture IDs, not assumed bundled packages.
 
 ## X13
@@ -509,7 +479,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 **Execution constraint:** Use current repository ownership behavior as baseline; any differing target requires user validation. A valid publication must preserve independently known unrelated claims. Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
 
 ## X14
@@ -542,10 +511,6 @@ Consent is destination-scoped and separate from selection, final confirmation, f
 ### What the person sees
 
 Use the permission decision and publication facts, not the same sentence for once, persistent and declined consent.
-
-
-
-
 
 ### Verification
 
@@ -589,7 +554,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## X16
 
 **Situation:** Judge partial repair within the actual repair scope
@@ -620,10 +584,6 @@ Unrelated problems do not automatically invalidate a completed selected repair. 
 ### What the person sees
 
 Report the selected repair effects and remaining independent findings. Do not imply that a bounded repair guarantees a globally clean workspace.
-
-
-
-
 
 ### Verification
 
@@ -663,10 +623,6 @@ List reports source availability; inspect/sync cannot establish a complete sourc
 ### What the person sees
 
 Use the source-independent detach rule for an existing registered link. Do not conflate a missing source with a missing destination entry.
-
-
-
-
 
 ### Verification
 
@@ -709,7 +665,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## X19
 
 **Situation:** Make a second identical operation genuinely a no-op
@@ -745,7 +700,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## X20
 
 **Situation:** Keep detail and JSON views about the same outcome
@@ -775,10 +729,6 @@ Detail changes explanation, never the selected operation, status, exit, actual e
 ### What the person sees
 
 Resolve all presentation expectations through the same output rule at every detail/format. Omitted filtering and explicit all have different listing selections.
-
-
-
-
 
 ### Verification
 
@@ -818,10 +768,6 @@ The second same-workspace writer is blocked while the live lock is held, then ca
 ### What the person sees
 
 Describe an observed live lock holder, not merely a lock pathname. The continuation does not tell the user to delete a possibly active lock.
-
-
-
-
 
 ### Verification
 
@@ -863,10 +809,6 @@ HTTPS is a known unchecked external occurrence without a network request. Unsupp
 
 Keep unvisited external links, unsupported schemes and checked-broken local links distinct in findings, counts and completion.
 
-
-
-
-
 ### Verification
 
 - Verify network-not-attempted behavior and local filesystem/heading facts independently.
@@ -903,10 +845,6 @@ Generated UI prose follows the writing rules; authored payload is not sanitized 
 ### What the person sees
 
 Authored content is not a generated message template. Preserve its declared exact bytes through reading and indexing.
-
-
-
-
 
 ### Verification
 
@@ -948,10 +886,6 @@ Help/version terminate before workspace validation or mutation. Available comman
 
 Use the command help/input-correction rules without invoking domain work just to display help or version.
 
-
-
-
-
 ### Verification
 
 - Verify no source reads or writes required merely to display terminal help where the contract exempts them.
@@ -991,7 +925,6 @@ Explain the independently observed result, useful warning, or genuinely necessar
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## X26
 
 **Situation:** Test grant persistence independently from later content failure
@@ -1020,10 +953,6 @@ The report distinguishes saved permission from failed content. It must not say N
 ### What the person sees
 
 A verified persistent permission write is reported even when later content work fails or is declined. Once-only consent writes no settings.
-
-
-
-
 
 ### Verification
 
@@ -1064,10 +993,6 @@ Only selected eligible ownership effects occur. Shared files stay for remaining 
 
 Use owner-specific receipts across install/update/remove and preserve every unrelated owner, resource and unclaimed file.
 
-
-
-
-
 ### Verification
 
 - Compare all three inventories across the complete lifecycle, not only command snapshots.
@@ -1104,10 +1029,6 @@ Zero is used only for a completed empty set of the stated kind. Unknown and not-
 
 Use numeric zero for known empty, null plus a limitation for unavailable required facts, and the documented applicability rule for inapplicable values.
 
-
-
-
-
 ### Verification
 
 - Define the counted set before examining the result.
@@ -1143,10 +1064,6 @@ Best-effort ownership publication must not erase verified content effects or inv
 ### What the person sees
 
 Keep verified content and failed ownership publication separate. Do not claim registration succeeded, rollback happened, or no files changed.
-
-
-
-
 
 ### Verification
 
@@ -1187,10 +1104,6 @@ A current content difference is not proof that a user changed a file since insta
 ### What the person sees
 
 Use current-comparison wording. A source-only change is not evidence that the user edited an installed file.
-
-
-
-
 
 ### Verification
 

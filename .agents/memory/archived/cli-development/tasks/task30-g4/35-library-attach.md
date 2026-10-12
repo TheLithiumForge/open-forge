@@ -40,7 +40,7 @@ Change report.
 | completed               | registered, source empty                                                      | `Registered the <id> Library from <source>. It has no eligible files yet.`                   |    0 | stdout |
 | completed (dry run)     | planned                                                                       | `Would register the <id> Library from <source>.`                                             |    0 | stdout |
 | completed-with-warnings | recovery bundle retained                                                      | + family row                                                                                 |    2 | stdout |
-| incomplete              | source, inventory, Entries, record or recovery unreadable                    | `The <id> Library could not be attached: <limitation>. Nothing was changed.`                 |    3 | stdout |
+| incomplete              | source, inventory, Entries, record or recovery unreadable                     | `The <id> Library could not be attached: <limitation>. Nothing was changed.`                 |    3 | stdout |
 | invalid-input           | bad ID, missing or non-folder source, bad `--to`                              | `Cannot attach <id>: <problem>.`                                                             |    4 | stderr |
 | blocked                 | ID already registered, collision, unsafe, links unsupported, permission, lock | `Cannot attach <id>: <reason>.`                                                              |    5 | stderr |
 | failed                  | after effects                                                                 | `Library attach stopped after <n> of <m> links were created.`                                |    1 | stderr |
@@ -170,7 +170,7 @@ records the Library` at `standard`. Dry run: `Would create`, `Would update`,
 
 ## Changes ledger
 
-- file layout/type: the legacy Library Attach renderers under `Presentation/Legacy/Library/Attach/` are deleted; native `Presentation/Library/Attach/` owns the presentation, data model, selection, rendering, help and wording. `CliLibraryComposer` closes the binding over it. **With this lane the Library family is complete**: no legacy *command* binding remains in that composer, only the shared `Legacy/Library/Shared/Rendering` helpers.
+- file layout/type: the legacy Library Attach renderers under `Presentation/Legacy/Library/Attach/` are deleted; native `Presentation/Library/Attach/` owns the presentation, data model, selection, rendering, help and wording. `CliLibraryComposer` closes the binding over it. **With this lane the Library family is complete**: no legacy _command_ binding remains in that composer, only the shared `Legacy/Library/Shared/Rendering` helpers.
 - message: `Library attach preview completed.` is replaced by the catalogue headlines for the registered, preview, empty, refusal, failure and cancellation outcomes.
 - message: the legacy plan and application status lines are replaced by the catalogue effect wording, link target rows, inventory, lock, permission, verification and recovery text.
 - JSON member: the raw result graph is replaced by a level-gated shape — `minimal` carries `mode`, `id`, `sourceFolder`, `destinationFolder`, `recorded` and `permissions`; `standard` adds `links` and `inventory`; `full` adds `expectedStates`, `verification` and `recovery`.
@@ -240,14 +240,14 @@ records the Library` at `standard`. Dry run: `Would create`, `Would update`,
    Measured after this merge, counting references outside
    `Presentation/Legacy/Library/Shared/` itself:
 
-   | Renderer | External references | Held by |
-   | --- | ---: | --- |
-   | `LibraryApplicationHumanRenderer` | 0 | nothing |
-   | `LibraryHumanText` | 0 | nothing |
-   | `LibraryObservationHumanRenderer` | 1 | `LibraryHumanRendererTests` only |
-   | `LibraryPermissionHumanRenderer` | 1 | `LibraryHumanRendererTests` only |
-   | `LibraryPlanHumanRenderer` | 1 | `LibraryHumanRendererTests` only |
-   | `LibraryHelpSections` | 1 | **`CliLibraryComposer`, production** |
+   | Renderer                          | External references | Held by                              |
+   | --------------------------------- | ------------------: | ------------------------------------ |
+   | `LibraryApplicationHumanRenderer` |                   0 | nothing                              |
+   | `LibraryHumanText`                |                   0 | nothing                              |
+   | `LibraryObservationHumanRenderer` |                   1 | `LibraryHumanRendererTests` only     |
+   | `LibraryPermissionHumanRenderer`  |                   1 | `LibraryHumanRendererTests` only     |
+   | `LibraryPlanHumanRenderer`        |                   1 | `LibraryHumanRendererTests` only     |
+   | `LibraryHelpSections`             |                   1 | **`CliLibraryComposer`, production** |
 
    So five form a self-contained dead cluster with the single legacy test
    `Commands/Library/Shared/Rendering/LibraryHumanRendererTests.cs`, which exists
@@ -256,7 +256,7 @@ records the Library` at `standard`. Dry run: `Would create`, `Would update`,
    **Belongs to [40](40-verification.md)**, which should delete the five and the
    test together, and decide separately what replaces `LibraryHelpSections`.
 
-5. **The `lock-held` divergence was resolved by maintainer ruling.** The
+7. **The `lock-held` divergence was resolved by maintainer ruling.** The
    catalogue already specified blocked/exit 5; the code now raises
    `library-attach.lock-unavailable` with blocked status, because a held
    workspace lock is expected and retryable rather than an unexpected fault.

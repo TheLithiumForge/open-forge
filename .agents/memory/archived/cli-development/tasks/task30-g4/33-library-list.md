@@ -40,7 +40,7 @@ Data. `list` checks registered links only; it never scans the source folder.
 | completed               | no ownership record                                                        | `No ownership record exists, so Libraries cannot be listed from it.` (Info; exit 0)     |    0 | stdout |
 | completed-with-warnings | a registered link is missing or changed, or a source folder cannot be read | `<N> Libraries registered. <K> links need attention.` then rows                         |    2 | stdout |
 | incomplete              | record or a link fact unreadable                                           | rows plus warning rows                                                                  |    3 | stdout |
-| invalid-input           | bad flag                                                               | `Cannot list Libraries: <problem>.`                                                     |    4 | stderr |
+| invalid-input           | bad flag                                                                   | `Cannot list Libraries: <problem>.`                                                     |    4 | stderr |
 | blocked                 | unsafe identity, containment or link                                       | `Cannot list Libraries: <reason>.`                                                      |    5 | stderr |
 | failed                  | unexpected error                                                           | `Library list stopped because of an unexpected error: <reason>.`                        |    1 | stderr |
 | cancelled               | Ctrl+C                                                                     | `Library list was cancelled.`                                                           |  130 | stderr |

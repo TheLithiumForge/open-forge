@@ -19,7 +19,7 @@ a failure.** Note token cost for anything a user runs often.
 
 - **A1. Install into an empty folder.** Run `open-forge install`. Does the output
   say what was placed, where, and what to do next? Is a first-time reader told
-  what Open Forge now *is* in this folder?
+  what Open Forge now _is_ in this folder?
 - **A2. Install where `.agents/` already exists and was authored by hand.** Must
   not clobber authored files. Is the refusal or merge understandable?
 - **A3. Install twice.** The second run should be a clean no-op, not a

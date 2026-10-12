@@ -41,14 +41,14 @@ of them; these records hold the inner workings of each.
 Four rules, all currently true, all mechanically checkable from the `using`
 graph:
 
-| Rule                                                                                               | Why it matters                                      |
-| -------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| Framework never references Commands, Shell, or Presentation                                        | Framework stays independently testable and reusable |
-| Shell never references a concrete command                                                          | The pipeline stays generic over command payloads    |
-| Presentation never imports any `Framework.*` namespace                                             | Rendering cannot reach around command-owned facts  |
-| `Presentation/<Owner>/` may import only that owner's `Commands.<Owner>.Models.*`                  | Each selector consumes its own projected data     |
-| No file under `Commands/` or `Framework/` references `Presentation/`                              | Data and behavior do not depend on rendering      |
-| Commands reference Framework and Shell, never another command's private `Shared`                  | Command meaning stays local                         |
+| Rule                                                                             | Why it matters                                      |
+| -------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Framework never references Commands, Shell, or Presentation                      | Framework stays independently testable and reusable |
+| Shell never references a concrete command                                        | The pipeline stays generic over command payloads    |
+| Presentation never imports any `Framework.*` namespace                           | Rendering cannot reach around command-owned facts   |
+| `Presentation/<Owner>/` may import only that owner's `Commands.<Owner>.Models.*` | Each selector consumes its own projected data       |
+| No file under `Commands/` or `Framework/` references `Presentation/`             | Data and behavior do not depend on rendering        |
+| Commands reference Framework and Shell, never another command's private `Shared` | Command meaning stays local                         |
 
 A shared owner extracted during deduplication goes at the narrowest scope that
 covers **every** consumer, measured against this graph rather than the folder

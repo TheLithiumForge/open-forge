@@ -38,8 +38,6 @@ open-forge find
 
 List the eligible inventory in stable order; do not silently apply a tag or route-only filter.
 
-
-
 ### Verification
 
 Compare distinct logical sources against the independently enumerated eligible universe.
@@ -65,8 +63,6 @@ open-forge find --tag=Decision
 ### Expected result
 
 Return the two genuine tag matches with useful selection information.
-
-
 
 ### Verification
 
@@ -94,8 +90,6 @@ open-forge find --tag=Decision --tag=Architecture
 
 Use the default all requirement and return only the intersection.
 
-
-
 ### Verification
 
 Calculate the intersection independently; a union would look plausible but be wrong.
@@ -121,8 +115,6 @@ open-forge find --heading=Acceptance
 ### Expected result
 
 Match the actual structural heading, not the fenced imitation.
-
-
 
 ### Verification
 
@@ -150,8 +142,6 @@ open-forge find --tag=NonexistentTag
 
 Say no sources matched this request. Do not imply the workspace was empty or search incomplete.
 
-
-
 ### Verification
 
 Verify complete eligible coverage and an empty independently computed match set.
@@ -177,8 +167,6 @@ open-forge find --tag=Decision --content=headings
 ### Expected result
 
 Preserve the matching source set and add requested headings without changing the query.
-
-
 
 ### Verification
 
@@ -206,8 +194,6 @@ open-forge find --tag=Decision --include=guidance
 
 Limit the searched universe to the declared guidance subtree, including eligible unrouted Markdown there.
 
-
-
 ### Verification
 
 Independently compute selector expansion and prove external matches were excluded intentionally, not dropped accidentally.
@@ -234,8 +220,6 @@ open-forge find --include="$AMBIGUOUS_ID"
 
 Report the selector ambiguity without searching an arbitrary candidate.
 
-
-
 ### Verification
 
 Compare the selected universe to empty/unresolved state; do not print a successful zero-match result.
@@ -261,8 +245,6 @@ open-forge find --tag=Decision
 ### Expected result
 
 Return known safe matches but clearly say search was incomplete.
-
-
 
 ### Verification
 
@@ -292,8 +274,6 @@ open-forge find --tag=Decision --within=section:Details
 
 Distinguish missing requested regions from readable non-matches and retain valid matches.
 
-
-
 ### Verification
 
 Compare per-source search regions and ensure absence is not treated as an empty complete scan without the declared warning.
@@ -320,8 +300,6 @@ open-forge find --include=guidance/does-not-exist
 
 Name the invalid selector rather than silently searching everything or nothing.
 
-
-
 ### Verification
 
 Verify no fallback universe or fabricated match result.
@@ -347,8 +325,6 @@ open-forge find --tag=Decision --require=some
 ### Expected result
 
 Explain the invalid require value and the accepted alternatives.
-
-
 
 ### Verification
 

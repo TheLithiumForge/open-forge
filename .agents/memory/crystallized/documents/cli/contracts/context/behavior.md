@@ -394,7 +394,7 @@ conditions; it does not create another status vocabulary.
   or projection cannot be established completely, including missing local
   targets, broken fragments, invalid link encodings, unreadable required layers,
   incomplete source inspection, ambiguous sections, or encountered conditioned
-entries deferred because no working paths were supplied.
+  entries deferred because no working paths were supplied.
 - Form `invalid-input` for command input or a selected route outside the accepted
   grammar, including an unknown reference, invalid `--content` grammar, invalid
   operation-flag repetition, `--additions-only` without a route, or zero link

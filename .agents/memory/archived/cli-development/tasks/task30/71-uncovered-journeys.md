@@ -20,12 +20,12 @@ each of these belongs and draws a distinction this slice must respect.
 
 Integration files mentioning each seeded shape on 2026-09-17:
 
-| Shape | Files | Disposition |
-| --- | ---: | --- |
-| `malformed` | 66 | covered |
-| `external` | 64 | covered |
-| `nested` | 20 | covered |
-| **`dirty`** | **0** | **this slice** |
+| Shape                     | Files | Disposition    |
+| ------------------------- | ----: | -------------- |
+| `malformed`               |    66 | covered        |
+| `external`                |    64 | covered        |
+| `nested`                  |    20 | covered        |
+| **`dirty`**               | **0** | **this slice** |
 | **`relocated` workspace** | **0** | **this slice** |
 
 **Read slice 70's journey matrix before starting.** It separates two things that

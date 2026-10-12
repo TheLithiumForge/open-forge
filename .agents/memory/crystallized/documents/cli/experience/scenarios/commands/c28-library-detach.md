@@ -38,8 +38,6 @@ open-forge library detach team --automatic
 
 Remove the registered links and team registration, explicitly keeping source content.
 
-
-
 ### Verification
 
 Verify raw link removal, untouched source bytes, unrelated sibling preservation and bounded navigation changes.
@@ -66,8 +64,6 @@ open-forge library detach team --automatic
 
 Remove the registration and say it had no links.
 
-
-
 ### Verification
 
 Verify zero physical link deletions and preservation of the empty or populated source tree.
@@ -93,8 +89,6 @@ open-forge library detach team --dry-run
 ### Expected result
 
 Show the proposed link removals without touching links, source or registration.
-
-
 
 ### Verification
 
@@ -126,7 +120,6 @@ open-forge library detach team --automatic
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C28-05
 
 **Situation:** Registered link gone
@@ -152,7 +145,6 @@ open-forge library detach team --automatic
 ### Verification
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
-
 
 ## C28-06
 
@@ -180,7 +172,6 @@ open-forge library detach team --automatic
 
 Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
 
-
 ## C28-07
 
 **Situation:** Destination protected
@@ -202,8 +193,6 @@ open-forge library detach team --automatic
 ### Expected result
 
 Explain the protected destination and make no removal.
-
-
 
 ### Verification
 
@@ -230,8 +219,6 @@ open-forge library detach team --automatic
 ### Expected result
 
 Explain that detaching still requires destination permission.
-
-
 
 ### Verification
 
@@ -261,14 +248,11 @@ Record `team` in `removedLibraries` and complete the settings-only removal. The
 absent lock supplies no link ownership: preserve every source and destination,
 including exact-looking links. Do not create a registration or ownership lock.
 
-
-
 ### Verification
 
 Independently establish lock absence, the new ID exclusion and unchanged source
 and link identities. Repeat and verify a no-op. A separate valid empty lock also
 permits this exclusion; neither case authorizes link deletion.
-
 
 Revision note: Updated for the accepted Task 50 persistent-removal contract.
 
@@ -293,8 +277,6 @@ open-forge library detach team --automatic
 ### Expected result
 
 Explain contention and preserve all registered links and source content.
-
-
 
 ### Verification
 
@@ -326,14 +308,11 @@ Report the unusable ownership boundary, select no claim and perform no effects.
 Preserve content, links, settings and the malformed lock. Do not treat unknown
 ownership as the known-empty state of a proven-absent lock.
 
-
-
 ### Verification
 
 Independently establish the malformed record and unchanged workspace. Verify no
 registration, link deletion or removal exclusion was fabricated. A separate
 valid-record unregistered-ID case permits only its settings exclusion.
-
 
 Revision note: Updated for the accepted Task 50 persistent-removal contract.
 
@@ -358,8 +337,6 @@ open-forge library detach team --automatic
 ### Expected result
 
 State which links were removed and which remain, and whether registration publication finished.
-
-
 
 ### Verification
 
@@ -388,8 +365,6 @@ open-forge library detach team
 ### Expected result
 
 Say detach was cancelled and keep both links and source files.
-
-
 
 ### Verification
 

@@ -115,31 +115,31 @@ The [Memory model](../../framework/memory/model.md) and [transition rules](../..
 
 ## Lifecycle And Writing
 
-| Term             | Meaning                                                                                          | Use                                                                              |
-| ---------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| `capture`        | Save useful material before it is lost.                                                          | Do not save ordinary activity without future value.                              |
-| `consolidate`    | Combine related material into one coherent source.                                               | Avoid competing copies of current meaning.                                       |
-| `promote`        | Move material into an accepted state or authoritative destination.                               | Use when the authority change matters. Otherwise state the destination directly. |
-| `archive`        | Keep useful history outside current authority.                                                   | Use when the history still has value.                                            |
-| `prune`          | Remove Working or candidate material that is no longer useful.                                   | Retain useful history according to accepted retention preferences.               |
-| `restore`        | Validate historical material and move it into an explicit current destination.                   | Restoration is a new transition, not an automatic return of old authority.       |
-| `description`    | Short text that helps a reader decide whether to open a file.                                    | State the purpose, trigger, or useful result.                                    |
-| `responsibility` | Optional sentence that helps an editor decide what belongs in a file by stating what it defines. | It does not create authority or loading behavior.                                |
-| `standard`       | Default route or configuration provided by Open Forge.                                           | Use ordinary lowercase language when no defined Open Forge concept is meant.     |
+| Term             | Meaning                                                                                                      | Use                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `capture`        | Save useful material before it is lost.                                                                      | Do not save ordinary activity without future value.                              |
+| `consolidate`    | Combine related material into one coherent source.                                                           | Avoid competing copies of current meaning.                                       |
+| `promote`        | Move material into an accepted state or authoritative destination.                                           | Use when the authority change matters. Otherwise state the destination directly. |
+| `archive`        | Keep useful history outside current authority.                                                               | Use when the history still has value.                                            |
+| `prune`          | Remove Working or candidate material that is no longer useful.                                               | Retain useful history according to accepted retention preferences.               |
+| `restore`        | Validate historical material and move it into an explicit current destination.                               | Restoration is a new transition, not an automatic return of old authority.       |
+| `description`    | Short text that helps a reader decide whether to open a file.                                                | State the purpose, trigger, or useful result.                                    |
+| `responsibility` | Optional sentence that helps an editor decide what belongs in a file by stating what it defines.             | It does not create authority or loading behavior.                                |
+| `standard`       | Default route or configuration provided by Open Forge.                                                       | Use ordinary lowercase language when no defined Open Forge concept is meant.     |
 | `canonical form` | Preferred authoring syntax within its applicable context. Frontmatter follows the workspace's selected form. | Other compatibility input does not become preferred output.                      |
-| `contract`       | Stable behavior, promise, or boundary that can be satisfied or violated.                         | Do not use as a formal-sounding synonym for any rule or document.                |
-| `defined term`   | Term with a specific Open Forge meaning.                                                         | Explain or link it at first use, then use it consistently.                       |
-| `essence`        | Short statement of identity, mechanism, important distinctions, and boundary.                    | Keep only what changes the reader's understanding of the subject.                |
-| `actor`          | Person, agent, system, or role performing an action.                                             | Name the actor only when it adds useful meaning.                                 |
-| `link`           | Navigable relationship to related detail.                                                        | A link does not merge authority, scope, loading, responsibility, or lifecycle.   |
+| `contract`       | Stable behavior, promise, or boundary that can be satisfied or violated.                                     | Do not use as a formal-sounding synonym for any rule or document.                |
+| `defined term`   | Term with a specific Open Forge meaning.                                                                     | Explain or link it at first use, then use it consistently.                       |
+| `essence`        | Short statement of identity, mechanism, important distinctions, and boundary.                                | Keep only what changes the reader's understanding of the subject.                |
+| `actor`          | Person, agent, system, or role performing an action.                                                         | Name the actor only when it adds useful meaning.                                 |
+| `link`           | Navigable relationship to related detail.                                                                    | A link does not merge authority, scope, loading, responsibility, or lifecycle.   |
 
 ## File-Scoped Loading
 
-| Term              | Meaning                                                                                         | Use                                                                                                  |
-| ----------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `working file`    | A concrete path included in the files a task works on or plans to create or change.              | Use when deciding whether a file condition matches the task's file set.                              |
-| `context source`  | A routed source read to guide, explain, or authorize work.                                       | Reading it does not by itself make its Markdown path a `working file` or widen its `applyTo` scope.  |
-| `applyTo`         | Optional condition that limits when a routed source is selected for work on matching files.     | It controls pre-load applicability, not edit permission or authority.                               |
+| Term             | Meaning                                                                                     | Use                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `working file`   | A concrete path included in the files a task works on or plans to create or change.         | Use when deciding whether a file condition matches the task's file set.                             |
+| `context source` | A routed source read to guide, explain, or authorize work.                                  | Reading it does not by itself make its Markdown path a `working file` or widen its `applyTo` scope. |
+| `applyTo`        | Optional condition that limits when a routed source is selected for work on matching files. | It controls pre-load applicability, not edit permission or authority.                               |
 
 The [routing and loading contract](../../framework/routing/loading.md) defines
 how file conditions combine and how explicit inspection relates to automatic
