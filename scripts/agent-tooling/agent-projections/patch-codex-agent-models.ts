@@ -122,7 +122,7 @@ async function main(): Promise<void> {
       if (updated !== original) {
         await writeFile(file, updated, "utf8");
         changed++;
-        console.log(`patched ${path.relative(process.cwd(), file)} (${name})`);
+        console.log(`patched ${path.relative(process.cwd(), file).replaceAll(path.sep, "/")} (${name})`);
       }
     }
   }

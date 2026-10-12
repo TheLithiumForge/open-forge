@@ -375,6 +375,15 @@ The explicit matrix RID is an assertion that the host matches the target.
 The build uploads finished packages and diagnostics from stable output paths.
 There are no intermediate build/test transfers or platform packaging workflows.
 
+Each test suite stops after 20 minutes, lists running processes and fails. With
+the slowest build and suites observed so far, a stall still leaves diagnostics
+before the 90-minute job limit. Suites print progress
+every two minutes and name tests running longer than two minutes. In GitHub
+Actions, failed and hung tests become annotations that `ci:watch` prints.
+`npx forge ci:timings` compares step times across recent Build runs and lists
+failed or unusually slow steps. The [delivery guide](../scripts/delivery/README.md#diagnose-slow-stalled-and-failed-suites)
+describes these safeguards.
+
 The `release.yml` workflow coordinates complete public releases. It can run manually with a
 source ref or commit, a destination (`github`, `npm`, or `all`), and optionally
 an existing successful build run for that exact commit. Without a supplied

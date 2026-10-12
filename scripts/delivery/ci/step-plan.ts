@@ -21,13 +21,15 @@ function scriptStep(script: string, args: readonly string[] = []): PipelineStep 
 export function checkPlan(command: PipelineCommand): PipelineStep[] {
   switch (command) {
     case PipelineCommand.verify:
-      return [PipelineCommand.delivery, LeafCommand.deliveryTests, LeafCommand.packageLayout, LeafCommand.dotnet, LeafCommand.docs].map((script) => scriptStep(script));
+      return [PipelineCommand.delivery, LeafCommand.deliveryTests, LeafCommand.packageLayout, PipelineCommand.dotnet, LeafCommand.docs].map((script) => scriptStep(script));
     case PipelineCommand.check:
       return [LeafCommand.format, LeafCommand.typecheck, LeafCommand.lint].map((script) => scriptStep(script));
     case PipelineCommand.fast:
       return [LeafCommand.typecheck, LeafCommand.lint].map((script) => scriptStep(script));
     case PipelineCommand.delivery:
       return [LeafCommand.deliveryTypes, LeafCommand.deliveryLint, LeafCommand.deliveryFormat].map((script) => scriptStep(script));
+    case PipelineCommand.dotnet:
+      return [LeafCommand.dotnetWhitespace, LeafCommand.dotnetStyle].map((script) => scriptStep(script));
     case PipelineCommand.checks:
     case PipelineCommand.job:
     case PipelineCommand.docs:

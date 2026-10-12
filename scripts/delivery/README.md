@@ -38,34 +38,36 @@ and fails if required packages are unavailable. Builds restore by default;
 
 ## Choose a stage
 
-| Command                    | What it does                                                               |
-| -------------------------- | -------------------------------------------------------------------------- |
-| `setup`                    | Install npm dependencies and restore .NET.                                 |
-| `restore`                  | Restore .NET only.                                                         |
-| `build`                    | Build the managed solution and development CLI in Release mode.            |
-| `test`                     | Build and run managed unit, integration and public-command tests.          |
-| `build:native`             | Build the current host's native CLI and test executables.                  |
-| `test:built`               | Test existing native-build artifacts in six execution modes.               |
-| `pack`                     | Package existing artifacts and test their npm installation.                |
-| `dist`                     | Run `build:native`, `test:built`, then `pack`.                             |
-| `dist:wrapper`             | Build and pack only the npm wrapper, without .NET or native files.         |
-| `version`                  | Bump the root version and synchronize .NET, without committing or tagging. |
-| `clean`                    | Remove owned .NET and delivery outputs.                                    |
-| `verify`                   | Run delivery, package, .NET and documentation checks in order.             |
-| `check`                    | Check formatting, TypeScript and lint.                                     |
-| `check:fast`               | Check TypeScript and lint.                                                 |
-| `check:delivery`           | Check delivery TypeScript, lint and formatting.                            |
-| `ci:prepare`               | Write runner SDK paths and macOS temporary paths to `GITHUB_ENV`.          |
-| `ci:reuse`                 | On a direct push, reuse another branch's Build for the same commit.        |
-| `release:checkpoint`       | Print the publication plan and wait 60 seconds before uploads.             |
-| `release:restore-channels` | Preview or apply npm channel recovery for all seven packages.              |
-| `ci:bundle`                | Archive the published CLI for `--rid` with its license and checksum.       |
-| `ci:checks`                | Run the Build workflow's shared setup and verification.                    |
-| `ci:job`                   | Run one Build matrix job for `--rid` with the workflow's logs.             |
-| `docs:build`               | Install, type-check and build the documentation site.                      |
-| `ci:watch`                 | Watch all GitHub workflow runs for `--sha`, or the commit of `--run`.      |
-| `smoke:public`             | Install and check an exact published `--version` in a fresh workspace.     |
-| `gate:wsl`                 | Run the three managed test tiers for `--commit` in a WSL clone.            |
+| Command                    | What it does                                                                 |
+| -------------------------- | ---------------------------------------------------------------------------- |
+| `setup`                    | Install npm dependencies and restore .NET.                                   |
+| `restore`                  | Restore .NET only.                                                           |
+| `build`                    | Build the managed solution and development CLI in Release mode.              |
+| `test`                     | Build and run managed unit, integration and public-command tests.            |
+| `build:native`             | Build the current host's native CLI and test executables.                    |
+| `test:built`               | Test existing native-build artifacts in six execution modes.                 |
+| `pack`                     | Package existing artifacts and test their npm installation.                  |
+| `dist`                     | Run `build:native`, `test:built`, then `pack`.                               |
+| `dist:wrapper`             | Build and pack only the npm wrapper, without .NET or native files.           |
+| `version`                  | Bump the root version and synchronize .NET, without committing or tagging.   |
+| `clean`                    | Remove owned .NET and delivery outputs.                                      |
+| `verify`                   | Run delivery, package, .NET and documentation checks in order.               |
+| `check`                    | Check formatting, TypeScript and lint.                                       |
+| `check:fast`               | Check TypeScript and lint.                                                   |
+| `check:delivery`           | Check delivery TypeScript, lint and formatting.                              |
+| `check:dotnet`             | Check .NET whitespace, then formatting and analyzer style.                   |
+| `ci:prepare`               | Write runner SDK paths and macOS temporary paths to `GITHUB_ENV`.            |
+| `ci:reuse`                 | On a direct push, reuse another branch's Build for the same commit.          |
+| `release:checkpoint`       | Print the publication plan and wait 60 seconds before uploads.               |
+| `release:restore-channels` | Preview or apply npm channel recovery for all seven packages.                |
+| `ci:bundle`                | Archive the published CLI for `--rid` with its license and checksum.         |
+| `ci:checks`                | Run the Build workflow's shared setup and verification.                      |
+| `ci:job`                   | Run one Build matrix job for `--rid` with the workflow's logs.               |
+| `docs:build`               | Install, type-check and build the documentation site.                        |
+| `ci:watch`                 | Watch all GitHub workflow runs for `--sha`, or the commit of `--run`.        |
+| `ci:timings`               | Compare step timings across recent Build runs and list slow or failed steps. |
+| `smoke:public`             | Install and check an exact published `--version` in a fresh workspace.       |
+| `gate:wsl`                 | Run the three managed test tiers for `--commit` in a WSL clone.              |
 
 `dist --plan` shows stage names and effective arguments without executing them.
 Each stage reports start, success or failure. Execution stops at the failed
@@ -321,11 +323,35 @@ Pages deployment stay in GitHub Actions. Release publication keeps its workflow
 secrets and existing order. Windows workflow commands use runner-default
 PowerShell so filesystem tests retain their ACL denial evidence.
 
+## Diagnose slow, stalled and failed suites
+
+Each `test:built` and `test` suite writes its runner output to
+`execution.log` in its report folder and runs under three safeguards:
+
+- xUnit names any test still running after two minutes, and repeats the
+  report while it runs. The suite prints new reports at each two-minute check.
+- Every two minutes the suite prints how long it has run and how much it has
+  logged.
+- A suite still running after 20 minutes is stopped with every process it
+  started. Before stopping it, the runner lists running processes in
+  `processes.txt` next to the log, then prints the log tail and fails.
+
+A failed suite names each failed test. A passing suite prints its three slowest
+tests. In GitHub Actions, failed tests and hung tests also become annotations,
+so they appear on the run page and in `ci:watch` without a signed-in log
+download. The longest suite, public, takes under half of the test step, which
+has taken up to 22 minutes on osx-x64. The 20-minute deadline is about twice
+that suite's time on the slowest host. With the slowest build and suites
+observed so far, a stall in the last suite reaches its deadline by about minute
+85, inside the Build job limit of 90 minutes, so the diagnostics artifact is
+uploaded.
+
 ## Follow and qualify a delivery
 
 ```sh
 npx forge ci:watch --sha <commit>
 npx forge ci:watch --run 38043270935
+npx forge ci:timings --limit 20
 npx forge smoke:public --version 0.9.0-beta.11
 npx forge gate:wsl --commit <sha>
 ```
@@ -335,7 +361,16 @@ adding `GITHUB_TOKEN` only when set, and succeeds only when every run for the
 commit completes successfully. Without a token, GitHub allows 60 requests an
 hour, so it polls every three minutes. With `GITHUB_TOKEN` it polls every 15
 seconds. When GitHub reports a rate limit, it waits until the reset time GitHub
-gives and continues.
+gives and continues. When a job fails, it prints that job's annotations, which
+name failed and hung tests.
+
+`ci:timings` reads the latest completed Build runs, 10 by default and at most
+50, with about one request per run plus one. Very large runs and rate-limit
+retries add requests. It prints the median and slowest
+successful time of each step that takes 30 seconds or more, grouped by job and
+RID. It then lists failed and cancelled steps, and steps that took more than
+twice their median. It keeps every attempt, so a retried host's failed attempt
+stays visible. Per-suite times are in each job's `test.log`.
 
 `smoke:public` contacts npm and installs the exact version in a new temporary
 directory. It checks the version, unattended Essentials installation, current

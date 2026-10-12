@@ -64,7 +64,8 @@ jobs:
     needs: [reuse, checks]
     if: needs.reuse.outputs.run == ''
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 60
+    # osx-x64 has taken up to 59 minutes. Test suites stop at their own 20-minute deadline first.
+    timeout-minutes: 90
     env:
       RID: ${{ matrix.rid }}
     strategy:

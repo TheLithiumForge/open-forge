@@ -1,6 +1,5 @@
 import { spawnSync } from "node:child_process";
 import { writeSync } from "node:fs";
-import { devNull } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -45,12 +44,15 @@ function secondField(operation: unknown): "path" | "otherObject" | undefined {
   return operation === "tree-path" ? "path" : typeof operation === "string" && TwoObjectOperations.has(operation) ? "otherObject" : undefined;
 }
 
+// Git reads /dev/null as empty on every platform. Git for Windows cannot open the Win32 name that os.devNull gives.
+const EmptyGlobalConfig = "/dev/null";
+
 function gitEnvironment(): NodeJS.ProcessEnv {
   const environment: NodeJS.ProcessEnv = {
     LANG: "C",
     LC_ALL: "C",
     GIT_ATTR_NOSYSTEM: "1",
-    GIT_CONFIG_GLOBAL: devNull,
+    GIT_CONFIG_GLOBAL: EmptyGlobalConfig,
     GIT_CONFIG_NOSYSTEM: "1",
     GIT_EXTERNAL_DIFF: "",
     GIT_NO_LAZY_FETCH: "1",

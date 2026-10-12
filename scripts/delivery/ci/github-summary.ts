@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 export const GithubState = { completed: "completed", success: "success", queued: "queued", running: "in_progress" } as const;
+export const GithubConclusion = { failure: "failure" } as const;
 export const WatchDecision = { pending: "pending", success: "success", failure: "failure" } as const;
 export type WatchDecision = (typeof WatchDecision)[keyof typeof WatchDecision];
 export interface GithubRun {
@@ -61,4 +62,33 @@ export function jobState(job: GithubJob): string {
 
 export function runSummary(runs: readonly GithubRun[]): string {
   return runs.map((run) => `${run.id} ${run.name}: ${jobState(run)}`).join("\n");
+}
+
+export interface GithubAnnotation {
+  level: string;
+  title: string;
+  message: string;
+  path: string;
+  line: number | null;
+}
+
+/** Reads a check run's annotations, which name failures without signing in to read logs. */
+export function readAnnotations(value: unknown): GithubAnnotation[] {
+  assert.ok(Array.isArray(value), "Missing GitHub annotations.");
+  return value.map((entry: unknown) => {
+    const item = record(entry);
+    const text = (key: string) => (typeof item[key] === "string" ? item[key] : "");
+    return {
+      level: text("annotation_level"),
+      title: text("title"),
+      message: text("message"),
+      path: text("path"),
+      line: typeof item["start_line"] === "number" ? item["start_line"] : null,
+    };
+  });
+}
+
+export function annotationLine(annotation: GithubAnnotation): string {
+  const location = annotation.path && annotation.path !== ".github" ? ` ${annotation.path}${annotation.line === null ? "" : `:${annotation.line}`}` : "";
+  return `  ${annotation.level}${location}: ${annotation.title ? `${annotation.title}: ` : ""}${annotation.message}`;
 }

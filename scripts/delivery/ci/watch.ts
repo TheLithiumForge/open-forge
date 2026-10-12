@@ -4,9 +4,9 @@ import { readOptions } from "../options.ts";
 import { reportFailure, ProcessExit } from "../process.ts";
 import { FullGitShaPattern } from "../source-identity.ts";
 import { CiCommand } from "./command-names.ts";
-import { commitRuns, githubToken, runJobs, readGithub, GithubApi } from "./github-api.ts";
+import { commitRuns, githubToken, jobAnnotations, runJobs, readGithub, GithubApi } from "./github-api.ts";
 import { pollDelay } from "./github-rate-limit.ts";
-import { GithubState, jobState, readRun, runDecision, runSummary, WatchDecision } from "./github-summary.ts";
+import { annotationLine, GithubConclusion, GithubState, jobState, readRun, runDecision, runSummary, WatchDecision } from "./github-summary.ts";
 
 try {
   const options = readOptions(CiCommand.watch);
@@ -26,6 +26,7 @@ try {
     };
     // A finished run's jobs no longer change, so each one is read once after it completes.
     const finished = new Set<number>();
+    const explained = new Set<number>();
     const poll = pollDelay(Boolean(githubToken()), GithubApi.pollMilliseconds, GithubApi.anonymousPollMilliseconds);
     for (;;) {
       const runs = await commitRuns(sha);
@@ -33,7 +34,14 @@ try {
       if (selected && !runs.some((run) => run.id === selected.id)) runs.push(readRun(await readGithub(`actions/runs/${selected.id}`)));
       for (const run of runs.filter((current) => !finished.has(current.id))) {
         changed(`run/${run.id}`, runSummary([run]));
-        for (const job of await runJobs(run.id)) changed(`${run.id}/${job.id}`, `${run.id} ${job.name}: ${jobState(job)}`);
+        for (const job of await runJobs(run.id)) {
+          changed(`${run.id}/${job.id}`, `${run.id} ${job.name}: ${jobState(job)}`);
+          // Annotations name a failure without the signed-in session that job logs need.
+          if (job.conclusion === GithubConclusion.failure && !explained.has(job.id)) {
+            explained.add(job.id);
+            for (const annotation of await jobAnnotations(job.id)) process.stdout.write(`${annotationLine(annotation)}\n`);
+          }
+        }
         if (run.status === GithubState.completed) finished.add(run.id);
       }
       const decision = runDecision(runs);

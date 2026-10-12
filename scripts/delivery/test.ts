@@ -7,16 +7,16 @@ import { repositoryRoot } from "./repository.ts";
 import { runSuites } from "./test-suites.ts";
 import { committedVersion } from "./version.ts";
 
-function testManaged(root: string): void {
+async function testManaged(root: string): Promise<void> {
   const selections = Object.entries(TestAssemblies).map(([name, assembly]) => ({ name, executable: `artifacts/bin/${assembly}/release/${assembly}.dll` }));
-  runSuites(root, selections, resetOutput(root, "artifacts/delivery/managed-reports"));
+  await runSuites(root, selections, resetOutput(root, "artifacts/delivery/managed-reports"));
 }
 
 try {
   const values = readOptions("test");
   if (values) {
     managedBuild(repositoryRoot, committedVersion(repositoryRoot), values);
-    testManaged(repositoryRoot);
+    await testManaged(repositoryRoot);
   }
 } catch (error) {
   reportFailure(error);

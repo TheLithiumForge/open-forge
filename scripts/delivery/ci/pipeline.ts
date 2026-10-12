@@ -34,6 +34,7 @@ try {
       case PipelineCommand.check:
       case PipelineCommand.fast:
       case PipelineCommand.delivery:
+      case PipelineCommand.dotnet:
         steps = checkPlan(command);
         break;
       default: {

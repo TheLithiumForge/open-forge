@@ -36,6 +36,14 @@ export const pipelineCommands = {
     details: PipelineDetails,
     examples: ["check:delivery"],
   },
+  [PipelineCommand.dotnet]: {
+    script: "ci/pipeline.ts",
+    arguments: [PipelineCommand.dotnet],
+    options: PlanOptions,
+    description: "Check .NET whitespace, then formatting and analyzer style.",
+    details: [...PipelineDetails, "Runs dotnet format without restoring and changes no files."],
+    examples: ["check:dotnet"],
+  },
   [PipelineCommand.checks]: {
     script: "ci/pipeline.ts",
     arguments: [PipelineCommand.checks],

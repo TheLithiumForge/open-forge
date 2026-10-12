@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { setTimeout } from "node:timers/promises";
-import { readJobs, readRuns, type GithubJob, type GithubRun } from "./github-summary.ts";
+import { readAnnotations, readJobs, readRuns, type GithubAnnotation, type GithubJob, type GithubRun } from "./github-summary.ts";
 import { rateLimitDelay } from "./github-rate-limit.ts";
 
 export const GithubRepository = "TheLithiumForge/open-forge";
@@ -68,4 +68,9 @@ export async function runJobs(id: number): Promise<GithubJob[]> {
     jobs.push(...current);
     if (current.length < GithubApi.pageSize) return jobs;
   }
+}
+
+/** A job's check run shares its ID, so its annotations come from the check run. */
+export async function jobAnnotations(id: number): Promise<GithubAnnotation[]> {
+  return readAnnotations(await readGithub(`check-runs/${id}/annotations?per_page=${GithubApi.pageSize}`));
 }

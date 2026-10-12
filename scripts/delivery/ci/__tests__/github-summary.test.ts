@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { GithubState, WatchDecision, readRun, readRuns, readJobs, jobState, runDecision, runSummary } from "../github-summary.ts";
+import { annotationLine, GithubState, WatchDecision, readAnnotations, readRun, readRuns, readJobs, jobState, runDecision, runSummary } from "../github-summary.ts";
 import { githubHeaders, GithubApi, GithubHeader } from "../github-api.ts";
 import { RecordedRun, RecordedRuns, RecordedJobs, RecordedSha, FailedConclusion, CancelledConclusion } from "./github-fixtures.ts";
 
@@ -29,4 +29,15 @@ test("public GitHub requests include a token only when supplied", () => {
   assert.deepEqual(githubHeaders(), { [GithubHeader.accept]: GithubApi.accept, [GithubHeader.version]: GithubApi.version });
   const FixtureToken = "fixture-token";
   assert.equal(githubHeaders(FixtureToken)[GithubHeader.authorization], `Bearer ${FixtureToken}`);
+});
+
+test("annotations print their level, source location and message", () => {
+  const [failure, generic] = readAnnotations([
+    { annotation_level: "failure", title: "Test unit failed", message: "Install keeps content: Expected 1", path: "src/Test.cs", start_line: 12 },
+    { annotation_level: "failure", title: "", message: "Process completed with exit code 1.", path: ".github", start_line: 90 },
+  ]);
+  assert.ok(failure && generic);
+  assert.equal(annotationLine(failure), "  failure src/Test.cs:12: Test unit failed: Install keeps content: Expected 1");
+  assert.equal(annotationLine(generic), "  failure: Process completed with exit code 1.");
+  assert.throws(() => readAnnotations({}));
 });

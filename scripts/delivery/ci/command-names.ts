@@ -3,6 +3,7 @@ export const PipelineCommand = {
   check: "check",
   fast: "check:fast",
   delivery: "check:delivery",
+  dotnet: "check:dotnet",
   checks: "ci:checks",
   job: "ci:job",
   docs: "docs:build",
@@ -14,6 +15,7 @@ export const CiCommand = {
   prepare: "ci:prepare",
   bundle: "ci:bundle",
   watch: "ci:watch",
+  timings: "ci:timings",
   smoke: "smoke:public",
   wsl: "gate:wsl",
 } as const;
@@ -32,7 +34,8 @@ export const LeafCommand = {
   deliveryFormat: "format:delivery:check",
   deliveryTests: "test:delivery",
   packageLayout: "test:package-layout",
-  dotnet: "check:dotnet",
+  dotnetWhitespace: "check:dotnet:whitespace",
+  dotnetStyle: "check:dotnet:style",
   docs: "check:docs",
 } as const;
 

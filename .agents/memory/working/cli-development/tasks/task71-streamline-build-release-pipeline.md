@@ -144,6 +144,58 @@ A background review of `454bbfc47` found three issues in the first reuse version
 - `ci:watch` followed both commits. Two watches shared GitHub's anonymous limit, reached it, waited out the reported reset of about 34 minutes, and finished with exit 0.
 - R1, C1 and C2 run only in `release.yml`. The next tagged release exercises them: `release:select` should report the reused Build, the publish job should show the plan and wait 60 seconds, and publication should report each upload. C3 is verified by its dry run.
 
+## Horizon: timing, stall diagnostics and the check map
+
+The maintainer asked on 2026-10-12 to finish the task completely. This horizon covers steps 1 to 4 and 7.
+
+Status: Task 71 “Streamline build and release delivery” (phase 1/1): milestone 2/3 — implemented with local evidence, hosted verification with the next push.
+
+Milestones: M1 design, M2 commands and workflow changes with local evidence, M3 hosted verification.
+
+### Timing analysis
+
+`npx forge ci:timings --limit 12` read the twelve latest completed Build runs on 2026-10-12. Two were reuse skips, so ten built. Medians and maxima of successful steps, in minutes:
+
+| Host        | Whole job      | Native build   | Test suites            |
+| ----------- | -------------- | -------------- | ---------------------- |
+| linux-arm64 | 19.7, max 21.1 | 13.1, max 14.2 | 5.7, max 6.0           |
+| linux-x64   | 18.5, max 21.7 | 10.0, max 11.7 | 7.5, max 9.1           |
+| osx-arm64   | 24.3, max 30.6 | 16.3, max 20.3 | 7.0, max 9.0           |
+| osx-x64     | 48.0, max 59.0 | 26.4, max 37.7 | 19.4, max 22.2         |
+| win-arm64   | 29.7, max 32.0 | 13.5, max 14.1 | 12.6, max 13.3         |
+| win-x64     | 24.4, max 35.3 | 9.8, max 14.5  | 10.2 to 14.8, max 17.8 |
+
+- osx-x64 sets the Build's length and came within one minute of the 60-minute job limit. Intel macOS runners are about twice as slow as the others in both build and tests.
+- The shared `checks` job takes 5.0 minutes (`verify` 4.3) before the matrix starts.
+- Tests failed on win-arm64 in Builds [37983060029](https://github.com/TheLithiumForge/open-forge/actions/runs/37983060029), [37996572273](https://github.com/TheLithiumForge/open-forge/actions/runs/37996572273) and [38047448623](https://github.com/TheLithiumForge/open-forge/actions/runs/38047448623), and on win-x64 in [38166548020](https://github.com/TheLithiumForge/open-forge/actions/runs/38166548020), a documentation-only commit whose code commit had passed. Each failure's only public annotation was "Process completed with exit code 1". The failing tests could not be named without a signed-in log download, so whether they are one flaky test is unconfirmed.
+- The Linux ARM64 stall in the evidence above did not recur. Its slowest test step in these runs was 6.0 minutes. Its cause remains unconfirmed.
+- Locally on win-x64, `public` is the longest suite, 226 to 229 seconds of about 530 for all six.
+
+### Decisions
+
+- **D1 Check map.** The [delivery system](../../../crystallized/documents/cli/delivery-system.md#what-does-each-check-prove) maps each required check to what it proves and where it runs. No check is redundant: AOT cannot build for another operating system and the tests must run on the platform they prove, so each RID uses a matching host, and the managed and native modes prove different builds.
+- **D2 Timing command.** `ci:timings` reads recent Build runs through the public API, about one request per run plus one, and prints step medians and maxima by job and RID, then failed, cancelled and over-twice-median steps. It keeps every attempt, so a retried host's failure stays visible.
+- **D3 Suite safeguards.** Each suite runs asynchronously under a 20-minute deadline with a two-minute heartbeat, and xUnit's `--long-running 120` names hung tests in the log, which the runner echoes at each heartbeat. At the deadline it writes `processes.txt` within a bounded time, stops the process tree (`taskkill /T` on Windows, the process group elsewhere, with the process itself as a fallback), prints the log tail and fails. SIGINT and SIGTERM stop the tree too, so a cancelled local run leaves no suite behind. Passing suites print their three slowest tests.
+- **D4 Readable failures.** In GitHub Actions, failed tests become error annotations with their source file and line, including CI's mapped `/_/` source paths, and hung tests become warning annotations. `ci:watch` prints a failed job's annotations. Both are readable without signing in, which the failures above lacked.
+- **D5 Job limit.** The Build matrix limit rises from 60 to 90 minutes. osx-x64 needs room beyond its 59-minute maximum. With the slowest build and suites observed, a stall in the last suite reaches its deadline by about minute 85, so the diagnostics artifact uploads. A slower build than any seen so far could still meet the job limit first.
+- **D6 Orchestration.** The TypeScript horizon already gave every host the same commands and one matrix job with no paired shell steps. Starting the matrix in parallel with `checks` would save about five minutes but spend six hosts' time on commits that fail cheap checks, so the order stays. Splitting osx-x64 across jobs would transfer artifacts between hosts and weaken provenance, so it stays one job.
+- **D7 Remaining shell chains.** `check:dotnet` becomes a `forge` composite of `check:dotnet:whitespace` and `check:dotnet:style`. `apm:install` runs `scripts/agent-tooling/agent-projections/apm-install.ts`, which accepts `--plan`. No npm script chains commands with `&&` any more.
+
+### Diagnostics local evidence
+
+- `npm run check:delivery` and `npm run test:delivery` passed on Windows: 159 tests and one Unix-only skip, including a stalled fixture whose child process is stopped with it at the deadline, an exit-status case, annotation escaping, CTRF failure and slowest-test reading, and timing medians and outliers.
+- In the WSL clone at `58da9d59c`, the runner, diagnostics and timing tests passed on Linux, 12 of 12, including the process-group stop at the deadline and on SIGTERM.
+- `build:native` and `test:built` at `8498d1af5` first failed six native-integration Install tests together on Windows. The new runner named all six. Two direct re-runs and a second `test:built` passed all six modes: 4,539 unit, 2,980 integration twice and 330 public three times, with 34 declared platform exclusions. The [Windows Install fixture race](potential/windows-install-fixture-race.md) candidate records the failure.
+- `npx forge gate:wsl --commit 58da9d59c` passed on Linux: 4,539 unit, 2,967 integration with 30 skips and 297 public with 33 skips, with no undeclared skip reason.
+- `npx forge test --no-restore` ran the managed unit, integration and public suites through the new runner on Windows: 4,539, 2,980 and 330 tests passed. `public` printed a heartbeat at two minutes, and each suite printed its three slowest tests.
+- `--long-running 2` against the integration suite named tests running longer than two seconds and repeated them every interval. The native test executables accept both runner options.
+- `npx forge ci:watch --run 38166548020` printed the failed win-x64 job's annotation.
+- `npm run test:agent-tooling` went from 3 of 8 to 7 of 9 passing. The patch output now uses `/` on every platform, and the Git object inspector uses `/dev/null` for its empty global config, because Git for Windows cannot open the Win32 null device name that Node gives. The two remaining failures check `.opencode/tools/inspect-git-objects.ts`, which commit `28c7aa2af` removed on 2026-09-12. Whether to restore the adapter or retire those tests is the maintainer's choice.
+
+### Diagnostics review
+
+An Astra high review of `8498d1af5` found six issues. All were accepted and fixed: Unix cancellation left the detached suite running, a failing or stalled stall report could block the stop, CI's mapped `/_/` paths lost annotation locations, a normally quick step that suddenly took minutes was not an outlier, and three documentation claims overstated timeout headroom, output latency and the request count, and attributed matching hosts to AOT alone.
+
 ## Current state
 
-The TypeScript pipeline horizon is complete. The release reuse and cancellation horizon is implemented and its Build reuse is verified on GitHub. Its milestone 3 closes when the next tagged release shows release reuse, the checkpoint and the publication report working. Steps 1 to 4 and 7 remain open.
+The TypeScript pipeline horizon is complete. The release reuse and cancellation horizon is implemented and its Build reuse is verified on GitHub. Its milestone 3 closes when the next tagged release shows release reuse, the checkpoint and the publication report working. The timing, stall diagnostics and check map horizon is implemented with local evidence and verifies on GitHub with the next push.

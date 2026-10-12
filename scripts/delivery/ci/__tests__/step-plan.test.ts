@@ -9,7 +9,7 @@ const Rid = "win-x64";
 test("composite checks preserve the existing leaf order", () => {
   assert.deepEqual(
     checkPlan(PipelineCommand.verify).map((step) => step.name),
-    [PipelineCommand.delivery, LeafCommand.deliveryTests, LeafCommand.packageLayout, LeafCommand.dotnet, LeafCommand.docs],
+    [PipelineCommand.delivery, LeafCommand.deliveryTests, LeafCommand.packageLayout, PipelineCommand.dotnet, LeafCommand.docs],
   );
   assert.deepEqual(
     checkPlan(PipelineCommand.check).map((step) => step.name),
@@ -22,6 +22,10 @@ test("composite checks preserve the existing leaf order", () => {
   assert.deepEqual(
     checkPlan(PipelineCommand.delivery).map((step) => step.name),
     [LeafCommand.deliveryTypes, LeafCommand.deliveryLint, LeafCommand.deliveryFormat],
+  );
+  assert.deepEqual(
+    checkPlan(PipelineCommand.dotnet).map((step) => step.name),
+    [LeafCommand.dotnetWhitespace, LeafCommand.dotnetStyle],
   );
   assert.throws(() => checkPlan(PipelineCommand.docs), /dedicated plan/u);
 });

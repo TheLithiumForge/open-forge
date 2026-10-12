@@ -12,13 +12,17 @@ export function run(executable: string, args: readonly string[], root: string, l
     const result = spawnSync(executable, args, { cwd: root, shell: false, stdio: descriptor === undefined ? "inherit" : ["ignore", descriptor, descriptor] });
     if (result.error) throw result.error;
     if (result.status !== ProcessExit.success) {
-      if (log !== undefined) process.stderr.write(`Last output from ${log}:\n${readFileSync(log, "utf8").slice(-FailureLogTailCharacters)}\n`);
+      if (log !== undefined) printLogTail(log);
       process.exitCode = result.status ?? ProcessExit.failure;
       throw new Error(`${executable} failed (${result.status ?? result.signal}); ${log ?? "see output"}`);
     }
   } finally {
     if (descriptor !== undefined) closeSync(descriptor);
   }
+}
+
+export function printLogTail(log: string): void {
+  process.stderr.write(`Last output from ${log}:\n${readFileSync(log, "utf8").slice(-FailureLogTailCharacters)}\n`);
 }
 
 export function npm(args: readonly string[], root: string): void {

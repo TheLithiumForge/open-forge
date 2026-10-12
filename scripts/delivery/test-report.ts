@@ -35,3 +35,50 @@ export function qualifyReport(value: unknown, platform?: NodeJS.Platform): { pas
   for (const suite of suites) assert.deepEqual(object(suite)["errors"], [], "Suite-level errors.");
   return { passed, skipped };
 }
+
+export const ReportedStatus = { failed: "failed", passed: "passed" } as const;
+
+/** One test case from a CTRF report, as much as diagnostics need. */
+export interface ReportedTest {
+  name: string;
+  status: string;
+  message: string;
+  file: string | undefined;
+  line: number | undefined;
+  milliseconds: number;
+}
+
+function reportedTest(value: unknown): ReportedTest {
+  const test = object(value);
+  const text = (key: string) => (typeof test[key] === "string" ? test[key] : undefined);
+  const count = (key: string) => (typeof test[key] === "number" ? test[key] : undefined);
+  return {
+    name: text("name") ?? "(unnamed test)",
+    status: text("status") ?? "",
+    message: text("message") ?? "",
+    file: text("filePath"),
+    line: count("line"),
+    milliseconds: count("duration") ?? 0,
+  };
+}
+
+/** Reads the test cases of a report for diagnostics. An unreadable report has none. */
+export function reportedTests(value: unknown): ReportedTest[] {
+  try {
+    const tests = object(object(value)["results"])["tests"];
+    return Array.isArray(tests) ? tests.map(reportedTest) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function failedTests(tests: readonly ReportedTest[]): ReportedTest[] {
+  return tests.filter((test) => test.status === ReportedStatus.failed);
+}
+
+export function slowestTests(tests: readonly ReportedTest[], count: number): ReportedTest[] {
+  return tests
+    .filter((test) => test.status === ReportedStatus.passed)
+    .toSorted((left, right) => right.milliseconds - left.milliseconds)
+    .slice(0, count);
+}

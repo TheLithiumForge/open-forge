@@ -23,6 +23,7 @@ const flags = {
   preid: { type: "string", description: "Prerelease identifier passed to npm version, such as beta." },
   log: { type: "string", description: "Write complete stdout and stderr to this file while printing them." },
   run: { type: "string", description: "GitHub workflow run ID to watch." },
+  limit: { type: "string", description: "Number of recent completed Build runs to compare, 1 to 50, default 10." },
   commit: { type: "string", description: "Full Git commit SHA to qualify inside WSL." },
   version: { type: "string", description: "Exact published version to check or recover from." },
   help: { type: "boolean", short: "h", description: "Show this command's options." },

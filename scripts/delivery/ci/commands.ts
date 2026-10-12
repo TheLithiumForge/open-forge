@@ -32,6 +32,16 @@ export const ciCommands = {
     details: ["Supply --sha <commit> or --run <id>. Uses public GitHub REST requests and GITHUB_TOKEN only when set."],
     examples: ["ci:watch --sha <commit>", "ci:watch --run 38043270935"],
   },
+  [CiCommand.timings]: {
+    script: "ci/timings.ts",
+    options: ["limit"],
+    description: "Compare step timings across recent Build runs.",
+    details: [
+      "Reads the latest completed build.yml runs through public GitHub REST requests, about one per run plus one, and GITHUB_TOKEN only when set.",
+      "Prints the median and slowest successful time of each step that takes 30 seconds or more, then failed, cancelled and unusually slow steps.",
+    ],
+    examples: ["ci:timings", "ci:timings --limit 20"],
+  },
   [CiCommand.smoke]: {
     script: "ci/smoke-public.ts",
     options: ["version"],

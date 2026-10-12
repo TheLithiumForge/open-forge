@@ -6,7 +6,7 @@ open-forge:
 
 # Potential CLI Tasks
 
-These two candidate records retain unfinished questions from earlier CLI analyses. They become executable only after their outcome, owner, acceptance boundary and dependencies are selected in a Task. The [archived disposition ledger](../../../../archived/cli-development/tasks/potential/analysis-disposition.md) preserves the September review. Its former Task 30/31 state is historical.
+These candidate records retain unfinished questions from CLI analyses and delivery evidence. They become executable only after their outcome, owner, acceptance boundary and dependencies are selected in a Task. The [archived disposition ledger](../../../../archived/cli-development/tasks/potential/analysis-disposition.md) preserves the September review. Its former Task 30/31 state is historical.
 
 ## Axioms
 
@@ -18,3 +18,4 @@ These two candidate records retain unfinished questions from earlier CLI analyse
 
 - [Candidate CLI follow-up for contract editorial gates, output budgets, Route rebuild decisions, and interaction durability](cli-contract-editorial-and-route-follow-up.md) - #Memory #Working #CLI #Task #Potential #Contextual #Contracts #Presentation
 - [Candidate Framework follow-up for memory authority, loading defaults, taxonomy, templates, and self-sufficient task context](framework-context-and-authoring.md) - #Memory #Working #Framework #CLI #Task #Potential #Contextual #Loading #Taxonomy
+- [Candidate follow-up for intermittent Windows integration failures where parallel Install fixtures fail together with DirectoryNotFoundException](windows-install-fixture-race.md) - #Memory #Working #CLI #Task #Potential #Contextual #Testing #Windows #Pipeline

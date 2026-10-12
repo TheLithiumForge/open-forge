@@ -10,7 +10,8 @@ const Fixture = fileURLToPath(new URL("../../__tests__/fixtures/pipeline-output.
 
 for (const [command, fail, next] of [
   [PipelineCommand.delivery, LeafCommand.deliveryLint, LeafCommand.deliveryFormat],
-  [PipelineCommand.verify, LeafCommand.packageLayout, LeafCommand.dotnet],
+  [PipelineCommand.verify, LeafCommand.packageLayout, PipelineCommand.dotnet],
+  [PipelineCommand.dotnet, LeafCommand.dotnetWhitespace, LeafCommand.dotnetStyle],
   [PipelineCommand.checks, LeafCommand.setup, PipelineCommand.verify],
 ] as const) {
   test(`${command} stops at the failing ordered stage and names it`, () => {
