@@ -23,6 +23,18 @@ resolution and mutation. The [Extension group entrypoint](../_extension.md),
 [Global CLI Flags](../../shared/global-flags/interface.md), and current Index
 contracts own their shared boundaries. No Technical Design exists.
 
+## Help
+
+The purpose sentence is: Remove selected Extension ownership and eligible files while keeping shared paths.
+
+The public Usage line is:
+
+```text
+open-forge extension remove [<stable-id>...] [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Consumer Destination Permissions
 
 The repeatable `--allow-path <path>` explicitly authors shared `allowInstallPaths`
@@ -287,11 +299,11 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 Removed the toolkit Extension.
   .agents/changed.md     deleted
   .agents/unchanged.md   deleted
-  .agents/shared.md      kept; still owned by survivor
+  .agents/shared.md      kept, still owned by survivor
   .agents/missing.md     was already gone; its ownership was released
   Updated the Entries section of .agents/loader.md
   The deleted files are kept in a recovery bundle at <recovery-path>.
-Next: open-forge cleanup  (after reviewing the bundle)
+Next: open-forge cleanup
 ```
 
 `minimal`, unavailable ownership record (stdout):
@@ -369,7 +381,7 @@ The status and exit mapping above are unchanged by detail or format. Root effect
 
 ### Effects wording
 
-`<path>  deleted`, `<path>  kept; still owned by <owners>`, `<path>  was
+`<path>  deleted`, `<path>  kept, still owned by <owners>`, `<path>  was
 already gone; its ownership was released`, `Updated the Entries section of
 <path>`, lock `updated`. Dry run: `would delete`, `would keep`, `would
 release`. Partial: `deleted`, `not started`, `final state unknown`.
@@ -422,10 +434,7 @@ The findings catalogue below is the command's finite error and warning vocabular
 | extension-remove.operation-failed             | error    | operation-failed             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                            |
 | extension-remove.interrupted                  | error    | cancelled                    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                                                                            |
 
-The orphaned-dependency warning is the headline clause plus a warning
-finding with the dependency as subject: `<dependency> remains installed and
-is no longer needed by <id>.` with `Next: open-forge extension remove
-<dependency>`.
+An applied removal receipt reports the dependency as subject: `<dependency> remains installed and is no longer needed by <id>.` It may offer a dependency-removal command only after verified removal. A preview says `<dependency> would remain installed after removing <id>.` Its finding action says `After applying this removal, you can preview removing <dependency> too.` Text shows this advice once at every detail level, including standard. The immediate next action applies the selected removal. Text and JSON keep the same dependency facts, counts and exits.
 
 ## Scenarios
 
@@ -456,6 +465,18 @@ Result Coordinates](../../shared/result-coordinates/interface.md) define the
 result schema and exit mapping. Verify source-generated serialization, real
 filesystem behavior, Native AOT, OS locking, isolated tests, and package journeys.
 
+## Next rules
+
+Next-action reasons remain separate from runnable command strings at every
+detail level in text and JSON. An explicit workspace stays in cleanup and
+dependency-removal actions.
+
+A preview with retained dependencies offers the complete selected-removal apply
+request. It preserves the selected IDs, workspace, grants and presentation
+options, removes the preview flag, and keeps automatic mode only when supplied.
+Text and JSON carry the same command. Dependency-removal actions require a
+verified applied receipt.
+
 ## Executable Wording References
 
 Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
@@ -473,3 +494,7 @@ remain the output evidence.
 
 - [ExtensionRemovePhrases.cs](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/Remove/ExtensionRemovePhrases.cs)
   <!-- @OpenForgeTextRef extension.remove.phrase.ownership-record-unavailable -->
+
+### Human Removal Preview
+
+The preview names every Extension in the selected removal closure. One package keeps `Would remove the planning Extension.` Multiple packages use `Would remove 2 Extensions: planning, workflows.` in the same order as the selected IDs. The result, deletion effects, dependency rules, structured output, statuses and exits remain unchanged.

@@ -39,7 +39,7 @@ public sealed class ExtensionCreateBeforeOutputSnapshotTests
         var scripted = ScriptedCliTerminal.Lines([], canPrompt: false);
         var prompts = new CliPrompts(scripted.Terminal);
         var operation = ExtensionCreateOperationFactory.Create(
-            ExtensionInteractionTestFactory.ForCreate(prompts));
+            ExtensionInteractionTestFactory.ForCreate(prompts, scripted.Terminal.WriteAsync));
         var request = new ExtensionCreateRequest
         {
             StableId = "toolkit",
@@ -93,7 +93,7 @@ public sealed class ExtensionCreateBeforeOutputSnapshotTests
         var scripted = ScriptedCliTerminal.Lines([], canPrompt: false);
         var prompts = new CliPrompts(scripted.Terminal);
         var operation = ExtensionCreateOperationFactory.Create(
-            ExtensionInteractionTestFactory.ForCreate(prompts));
+            ExtensionInteractionTestFactory.ForCreate(prompts, scripted.Terminal.WriteAsync));
         var request = new ExtensionCreateRequest
         {
             StableId = "toolkit",
@@ -153,7 +153,7 @@ public sealed class ExtensionCreateBeforeOutputSnapshotTests
             canPrompt: prompted);
         var prompts = new CliPrompts(scripted.Terminal);
         var operation = ExtensionCreateOperationFactory.Create(
-            ExtensionInteractionTestFactory.ForCreate(prompts));
+            ExtensionInteractionTestFactory.ForCreate(prompts, scripted.Terminal.WriteAsync));
         var stableId = situation switch
         {
             "missing-id-non-interactive" or "prompted-id-and-path" => null,

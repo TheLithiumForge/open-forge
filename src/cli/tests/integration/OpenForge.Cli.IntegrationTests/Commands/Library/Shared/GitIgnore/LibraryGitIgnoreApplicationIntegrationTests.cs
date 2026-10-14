@@ -104,7 +104,7 @@ public sealed class LibraryGitIgnoreApplicationIntegrationTests
         try
         {
             Assert.Equal(CliSemanticStatus.Failed, result.Status);
-            Assert.Equal("../shared/team-knowledge/a.md", new FileInfo(workspace.Absolute("docs/a.md")).LinkTarget);
+            Assert.Equal("../shared/team-knowledge/a.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Absolute("docs/a.md")).LinkTarget);
             Assert.Equal("# authored\n", File.ReadAllText(workspace.Absolute(".gitignore")));
             Assert.False(File.Exists(workspace.Absolute(LibraryMutationWorkspace.OwnershipPath)));
             Assert.Null(result.Result.Application.RecordPublication.PublishedLast);

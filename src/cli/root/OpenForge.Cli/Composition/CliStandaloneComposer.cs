@@ -64,6 +64,8 @@ using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Parsing.Models.CommandTree;
 using OpenForge.Cli.Core.Shell.Pipeline;
+using OpenForge.Cli.Composition.Shared.Git;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 
 namespace OpenForge.Cli.Composition;
 
@@ -130,13 +132,17 @@ internal static class CliStandaloneComposer
         CliInteractionComposition interaction,
         WorkspaceLockStoreRoot? lockStoreRoot,
         OperationalContributorCatalogue operationalContributors)
-        => CliReportBinding.Close(RepairBinding.CreateRequestBinding(
+    {
+        var evidence = new RoutedMaintenanceRenameEvidenceAdapter(new RenameEvidenceReader(new PhysicalPathResolver(), new GitRenameEvidenceReader().ReadAsync));
+        return CliReportBinding.Close(RepairBinding.CreateRequestBinding(
             symbols,
             RepairPresentation.CreateHelp(),
             RepairOperationFactory.Create(
                 RepairPromptAdapters.Create(interaction.Prompts, RepairPresentation.Rendering),
                 lockStoreRoot,
-                operationalContributors).ExecuteAsync), RepairPresentation.Rendering);
+                operationalContributors,
+                new OpenForge.Cli.Core.Commands.Repair.Models.Application.RepairRenameServices(evidence.ReadEvidenceAsync, evidence)).ExecuteAsync), RepairPresentation.Rendering);
+    }
 
     private static ICliCommandBinding BuildFind(FindSymbols symbols)
         => CliReportBinding.Close(FindBinding.CreateRequestBinding(
@@ -153,7 +159,8 @@ internal static class CliStandaloneComposer
         => CliReportBinding.Close(IndexBinding.CreateRequestBinding(
             symbols: symbols,
             help: IndexHelpSections.Create(),
-            operation: IndexOperationFactory.Create(lockStoreRoot).ExecuteAsync), OpenForge.Cli.Core.Presentation.Index.IndexPresentation.Rendering);
+            operation: IndexOperationFactory.Create(lockStoreRoot,
+                new RoutedMaintenanceRenameEvidenceAdapter(new RenameEvidenceReader(new PhysicalPathResolver(), new GitRenameEvidenceReader().ReadAsync))).ExecuteAsync), OpenForge.Cli.Core.Presentation.Index.IndexPresentation.Rendering);
 
     private static ICliCommandBinding BuildStatus(
         StatusSymbols symbols,
@@ -177,7 +184,8 @@ internal static class CliStandaloneComposer
             new DoctorBindingComponents
             {
                 Help = DoctorPresentation.CreateHelp(),
-                Operation = new DoctorOperation(operationalContributors),
+                Operation = new DoctorOperation(operationalContributors,
+                    new RenameEvidenceReader(new PhysicalPathResolver(), new GitRenameEvidenceReader().ReadAsync)),
             }), DoctorPresentation.Rendering);
 
     private static ICliCommandBinding BuildInstall(
@@ -189,7 +197,7 @@ internal static class CliStandaloneComposer
             help: InstallHelpSections.Create(),
             operation: InstallOperationFactory.Create(
                 interaction.Prompts.PlanConfirmation<InstallResult, InstallData, InstallConfirmationFacts>(
-                    InstallPresentation.Rendering,
+                    InstallPresentation.PlanReviewRendering,
                     static (InstallConfirmationFacts facts) => InstallPlanConfirmationQuestion.Create(facts)),
                 lockStoreRoot,
                 new InstallSetupInteraction(

@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge doctor",
+          "command": "open-forge doctor --workspace <workspace>",
           "reason": "Inspect the blocked, unavailable, or incomplete Update facts before rerunning."
         }
       ]
@@ -69,7 +69,7 @@
     "force": true,
     "prune": false,
     "automatic": true,
-    "previousContent": null,
+    "previousContent": "<recovery-bundle>",
     "lockPath": ".agents/open-forge.lock.json",
     "unchanged": [
       {
@@ -132,7 +132,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the blocked, unavailable, or incomplete Update facts before rerunning."
   }
 }

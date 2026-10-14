@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach.Models.Result;
 
 internal sealed record LibraryAttachResult : ICliCommandResult
 {
+    internal string? PermissionCommand { get; init; }
     public string Command => LibraryAttachDefinitions.CommandIdentity;
     public required CliSemanticStatus Status { get; init; }
     public required CliWorkspace? Workspace { get; init; }

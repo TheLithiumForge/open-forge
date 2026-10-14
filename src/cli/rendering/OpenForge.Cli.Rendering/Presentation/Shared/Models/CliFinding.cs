@@ -16,7 +16,10 @@ internal sealed record CliFinding
     public IReadOnlyList<CliCandidate> Candidates { get; init; } = [];
     public IReadOnlyList<CliEvidence> Evidence { get; init; } = [];
     public CliProvenance? Provenance { get; init; }
+    internal IReadOnlyList<CliFindingTextChoice> TextChoices { get; init; } = [];
 }
+
+internal sealed record CliFindingTextChoice(string Label, string Command);
 
 internal sealed record CliSubject(CliSubjectKind Kind, string? Path = null, string? Id = null, CliSourceLocation? Location = null);
 internal enum CliSubjectKind { File, Directory, Source, Workspace, Identifier }

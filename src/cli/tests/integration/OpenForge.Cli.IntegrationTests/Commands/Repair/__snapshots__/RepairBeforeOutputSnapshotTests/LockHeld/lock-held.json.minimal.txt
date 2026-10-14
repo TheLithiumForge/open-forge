@@ -29,9 +29,26 @@
     },
     {
       "severity": "warning",
+      "code": "repair.manual-finding-remaining",
+      "title": "Broken link",
+      "message": "This link still needs repair.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 9,
+          "column": 8
+        }
+      },
+      "category": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
       "code": "repair.guided-finding-remaining",
       "title": "Broken link",
-      "message": "missing.md: Broken link; 4 possible targets",
+      "message": "1 possible target.",
       "subject": {
         "kind": "file",
         "path": ".agents/docs/source.md",
@@ -42,7 +59,13 @@
         }
       },
       "category": null,
-      "actions": []
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge repair --relink '.agents/docs/source.md@10:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>",
+          "reason": "To use replacement.md (same title):"
+        }
+      ]
     }
   ],
   "effects": [
@@ -53,6 +76,22 @@
       "outcome": "planned",
       "reason": "./guide.md -> guide.md",
       "owner": null
+    },
+    {
+      "path": ".agents/docs/index.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
     }
   ],
   "counts": {
@@ -62,7 +101,11 @@
     "problemsNeedingHand": 1,
     "librarySteps": 0,
     "errors": 1,
-    "warnings": 1
+    "warnings": 2,
+    "entriesUpdated": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0
   },
   "limitations": [],
   "data": {
@@ -96,9 +139,24 @@
           "column": 10
         },
         "kind": "guided",
-        "candidates": 4
+        "candidates": 1
       }
-    ]
+    ],
+    "renames": [],
+    "navigation": [
+      {
+        "path": ".agents/docs/index.md",
+        "before": 0,
+        "after": 3
+      },
+      {
+        "path": ".agents/loader.md",
+        "before": 1,
+        "after": 1
+      }
+    ],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
@@ -106,7 +164,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the blocked diagnosis, selection, target, plan, or recovery boundary before retrying Repair."
   }
 }

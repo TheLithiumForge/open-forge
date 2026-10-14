@@ -18,7 +18,7 @@ internal static class LibraryDetachText
 
     // @OpenForgeText library.detach.help.syntax
     internal static string HelpSyntax()
-        => "open-forge library detach <library-id> [--dry-run] [--automatic] [--allow-path <path>] [global options]";
+        => "open-forge library detach <library-id> [options]";
 
     // @OpenForgeText library.detach.help.policy
     internal static string HelpPolicy()
@@ -26,7 +26,7 @@ internal static class LibraryDetachText
 
     // @OpenForgeText library.detach.help.examples
     internal static string HelpExamples()
-        => "open-forge library detach shared --dry-run\n  open-forge library detach shared --automatic";
+        => "open-forge library detach shared --dry-run\nopen-forge library detach shared\nopen-forge library detach shared --automatic";
 
     // @OpenForgeText library.detach.message.review-the-detached-library-state-if-needed
     internal static string MessageReviewTheDetachedLibraryStateIfNeeded()
@@ -147,4 +147,20 @@ internal static class LibraryDetachText
     // @OpenForgeText library.detach.label.a-folder
     internal static string LabelAFolder()
         => "a folder";
+
+    // @OpenForgeText library.detach.librarydetach.help.behavior
+    internal static string HelpBehavior()
+        => "Select one registered Library. Its source files stay.\n--dry-run shows all registration and link changes and writes nothing.\nAn interactive writing plan asks for confirmation unless --automatic is supplied.\nRedirected or JSON requests that would write need --automatic. External destinations need permission. Interrupted writes report recovery data.";
+
+    // @OpenForgeText library.detach.librarydetach.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("library list", "List registered Libraries."),
+            ("library inspect --help", "Inspect one Library and its links."),
+            ("remove --help", "Choose one exact removal target."),
+        ];
+    // @OpenForgeText library.detach.help.details-1
+    internal static string HelpPermissionDetails()
+        => "--allow-path records permission for an exact destination outside .agents. The target is verified before writing.";
 }

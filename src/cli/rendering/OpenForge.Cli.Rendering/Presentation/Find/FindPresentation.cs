@@ -35,6 +35,8 @@ internal static class FindPresentation
                     or CliSemanticStatus.Failed
                     or CliSemanticStatus.Interrupted,
             TextCounts = selected.Selection.Detail >= CliDetail.Full ? selected.Report.Counts : [],
+            TextFindings = selected.TextFindings.Select(finding => selected.Report.Data.HasInvalidRequire && finding.Code == "find.invalid-input"
+                ? finding with { Message = string.Empty } : finding).ToArray(),
         },
     };
 

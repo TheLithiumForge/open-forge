@@ -5,4 +5,4 @@ Workspace: <workspace>
   .agents/open-forge.lock.json  unchanged
   The deleted files are kept in a recovery bundle at <recovery-bundle>.
   after reviewing the bundle
-Next: open-forge cleanup
+Next: open-forge cleanup --workspace <workspace>

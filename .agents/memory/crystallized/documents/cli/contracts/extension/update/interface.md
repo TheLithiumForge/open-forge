@@ -24,6 +24,18 @@ entrypoint](../_extension.md), [Global CLI Flags](../../shared/global-flags/inte
 and current Index contracts define routing, shared presentation, and generated
 navigation boundaries. No Technical Design exists.
 
+## Help
+
+The purpose sentence is: Update selected managed Extensions from one reviewed source.
+
+The public Usage line is:
+
+```text
+open-forge extension update [<stable-id>...] [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Ownership Source
 
 `.agents/open-forge.lock.json` is the sole ownership input and publication target.
@@ -36,6 +48,12 @@ or unreadable existing lock blocks shared-navigation planning before effects,
 including dry-run. It never supplies deletion authority.
 Duplicated identities likewise produce information without partial inference.
 No retired state file is read, migrated, changed or deleted.
+
+An uninterpretable recorded identity, path or dependency also reports
+`extension-update.lifecycle-observation`. It names the affected package and
+explains that no ownership or file effects were inferred. The next action is
+`open-forge extension inspect <affected-id>`. The catalogue's independent
+message forms include this warning as well as the unrecorded-ID warning.
 
 The existing lifecycle outcome reports the lock publication. An unchanged lock
 is preserved, a planned write reports its actual verified receipt, and a skipped
@@ -193,8 +211,12 @@ target state from recovery provenance, or stores a journal, progress receipt, or
 history.
 
 After final verification, retain and verify the prepared bundle and report its
-exact path. Retention is normal completion. When `.git` is an ordinary directory,
-point at `git diff`; otherwise point at that bundle. No Git executable or clean-tree
+exact path. Retention is normal completion. Human text names that bundle as the
+source of previous content. Text and JSON Next point at the retained bundle with
+`Review previous content in the recovery bundle at <path>.` regardless of Git
+tracking. `data.previousContent` is that actual path, matching `recovery.path`,
+or null before retention and for unknown recovery. The existing nullable string
+field and schema stay unchanged. No Git executable or clean-tree
 gate is introduced. Explicit Cleanup
 may delete only the exact selected-workspace final or draft candidate while
 holding the same-workspace lease and after immediate ordinary path, kind, and
@@ -396,10 +418,10 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 Updated the development Extension to 0.2.0.
   .agents/workflows/review.md         replaced (new content in this version)
   .agents/workflows/development.md    replaced (you had changed it)
-  .agents/workflows/checklist.md      created (new in this version)
+  .agents/workflows/checklist.md      created
   .agents/workflows/old.md            kept; no longer part of the package
-  Previous content: git diff
-Next: open-forge extension update development --prune --dry-run  (preview deleting the kept file)
+  Previous content is in the recovery bundle at <recovery-bundle>.
+Next: open-forge extension update development --prune --dry-run
 ```
 
 `standard` adds `Workspace:`, the source, unchanged files as a count, the
@@ -407,6 +429,14 @@ Entries sections updated, the dependency closure, and the grant.
 
 `full` adds both SHA-256 values per changed path and the verification and
 recovery facts in words.
+
+Newly delivered package files use `would be created` in previews and `created`
+after verified application. This includes files delivered after a category
+exclusion is lifted. The operation has current source and delivered ownership
+facts, but no earlier source inventory proving that a package version added a
+particular file. Use the plain creation labels for both cases rather than
+claiming `new in this version`. JSON change actions, comparisons and all effects
+remain unchanged.
 
 ### Prompts
 
@@ -471,6 +501,14 @@ part of the package`.
 
 `packagesUpdated`, `filesReplaced`, `filesRestored`, `filesCreated`,
 `filesDeleted`, `filesKept`, `filesUnchanged`, `sectionsUpdated`.
+
+### Next rules
+
+Confirmation retries and prune previews retain the complete selected request:
+all root IDs or `--all`, the source, explicit workspace, existing permission
+paths, force and automatic flags, and presentation options. A prune preview adds
+`--prune --dry-run`. Only missing confirmation adds `--automatic`. Text and JSON
+use the same command, with paths quoted for the supported shell.
 
 ## Errors And Boundaries
 

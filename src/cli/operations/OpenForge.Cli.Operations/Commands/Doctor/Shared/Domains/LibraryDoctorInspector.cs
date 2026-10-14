@@ -54,7 +54,7 @@ internal static class LibraryDoctorInspector
 
         foreach (var mapping in libraries.Mappings)
         {
-            InspectMapping(libraries, mapping, findings);
+            InspectMapping(workspace, libraries, mapping, findings);
         }
 
         InspectOwnership(libraries, findings);
@@ -176,6 +176,7 @@ internal static class LibraryDoctorInspector
     }
 
     private static void InspectMapping(
+        CliWorkspace workspace,
         LibraryDoctorView libraries,
         LibraryMappingObservation mapping,
         ICollection<DoctorFinding> findings)
@@ -184,6 +185,22 @@ internal static class LibraryDoctorInspector
             LibraryPathIdentity.Mappings(value).Any(registered => registered == mapping.Mapping));
         if (record is null)
         {
+            return;
+        }
+
+        if (mapping.UnreadableOnWindows)
+        {
+            findings.Add(DoctorDomainSupport.Create(
+                DoctorDomainSupport.Error(DoctorFindingKind.LibraryProjectionRetargeted,
+                    "The recorded Library link is unreadable on Windows because its target uses forward slashes.", DoctorResolutionLane.BlockedRepair),
+                Subject(record, DoctorSubjectKind.LibraryProjection, mapping),
+                DoctorDomainSupport.Provenance(DoctorDomainKind.WorkspaceEntry, DoctorProvenanceSource.WorkspaceEntry, mapping.LogicalDestinationPath),
+                [new DoctorStateEvidence(DoctorObservedState.Changed),
+                    new DoctorComparisonEvidence(Expected: mapping.ExpectedLink.RawRelativeTarget,
+                        Actual: mapping.Leaf.RelativeFileLink?.RawRelativeTarget ?? "")]) with
+            {
+                LinkRecreation = Commands.Shared.LibraryLinks.LibraryLinkRecreationReader.Read(record, workspace),
+            });
             return;
         }
 

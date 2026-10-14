@@ -123,7 +123,7 @@ internal static class RouteListDefinitions
 
     internal static readonly CliSyntaxDefinition ListCommand = new(
         "list",
-        "List routed sources and descendants at a structural depth.");
+        "List navigable sources and their descendants.");
 
     internal static readonly CliSyntaxDefinition SourceReference = new(
         "source-reference",
@@ -131,7 +131,7 @@ internal static class RouteListDefinitions
 
     internal static readonly CliOptionDefinition<string> Depth = new(
         "--depth",
-        "Include routed descendants through a non-negative structural depth or all.",
+        "Include routed descendants through a non-negative descendant depth or all.",
         CliOptionArity.ExactlyOne,
         RouteListDepth.Default.MachineValue,
         "non-negative-integer|all");

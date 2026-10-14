@@ -84,27 +84,33 @@ public sealed class InstallSetupPromptsTests
         var reply = await InstallSetupQuestions.RoutesAsync(new(script.Terminal), question, new(true), CancellationToken.None);
         Assert.Equal(question.Routes, reply.Value);
         Assert.StartsWith("Choose what Open Forge sets up" + Environment.NewLine + "+ add   ~ add, keep contents out of Git   - leave out", script.Output.ToString(), StringComparison.Ordinal);
+        var outputLines = script.Output.ToString().Split(Environment.NewLine);
+        Assert.Single(outputLines, line => line == "~ keeps the entrypoint shared through Git. New contents are Git-ignored.");
+        Assert.Single(outputLines, line => line == "Files already tracked by Git stay tracked.");
+        Assert.Single(outputLines, line => line == "- leaves out supplied defaults. Existing files stay and remain routable.");
+        Assert.Single(outputLines, line => line == "Type cancel to stop without changes.");
         CommandOutputSnapshot.MatchSnapshot(script.Output.ToString(), "custom.line");
     }
 
     [Theory(DisplayName = "Preset and frontmatter lists show aligned summaries with focused details only once")]
-    [InlineData("preset"), InlineData("frontmatter")]
+    [InlineData("preset"), InlineData("full-core"), InlineData("frontmatter"), InlineData("configure-root"), InlineData("configure-scoped")]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
     public async Task SetupScreens(string screen)
     {
-        var keys = ScriptedCliTerminal.Keys([new(CliKey.Enter)]);
+        var keys = ScriptedCliTerminal.Keys(screen == "full-core" ? [new(CliKey.Down), new(CliKey.Enter)] : [new(CliKey.Enter)]);
         var lines = ScriptedCliTerminal.Lines(["1"]);
-        if (screen == "preset")
+        if (screen is "preset" or "full-core")
         {
             await new CliPrompts(keys.Terminal).SelectAsync(InstallSetupQuestions.Preset(InstallPreset.Essentials), new(true), CancellationToken.None);
             await new CliPrompts(lines.Terminal).SelectAsync(InstallSetupQuestions.Preset(InstallPreset.Essentials), new(true), CancellationToken.None);
         }
         else
         {
-            await new CliPrompts(keys.Terminal).SelectAsync(InstallSetupQuestions.Frontmatter(new("root")), new(true), CancellationToken.None);
-            await new CliPrompts(lines.Terminal).SelectAsync(InstallSetupQuestions.Frontmatter(new("root")), new(true), CancellationToken.None);
+            var question = new InstallFrontmatterQuestion(screen == "configure-scoped" ? "scoped" : "root") { Installed = screen.StartsWith("configure", StringComparison.Ordinal) };
+            await new CliPrompts(keys.Terminal).SelectAsync(InstallSetupQuestions.Frontmatter(question), new(true), CancellationToken.None);
+            await new CliPrompts(lines.Terminal).SelectAsync(InstallSetupQuestions.Frontmatter(question), new(true), CancellationToken.None);
         }
-        CommandOutputSnapshot.MatchSnapshot(Assert.Single(keys.Frames), screen + ".key.80x24");
+        CommandOutputSnapshot.MatchSnapshot(keys.Frames[^1], screen + ".key.80x24");
         CommandOutputSnapshot.MatchSnapshot(lines.Output.ToString(), screen + ".line");
     }
 

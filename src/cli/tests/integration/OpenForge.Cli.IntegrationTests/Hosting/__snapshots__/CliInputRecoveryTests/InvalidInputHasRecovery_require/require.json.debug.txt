@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 3,
+  "command": "find",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot search: Invalid --require value: other. Use all or any.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "find.invalid-input",
+      "title": "Invalid input",
+      "message": "Invalid --require value: other. Use all or any.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "find",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "matches": 0,
+    "sourcesInspected": null,
+    "sourcesCandidates": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "matches": [],
+    "query": {
+      "tags": [
+        "Core"
+      ],
+      "headings": [],
+      "require": "all",
+      "within": [
+        "frontmatter",
+        "body"
+      ]
+    },
+    "sourceSet": {
+      "mode": "default",
+      "include": [],
+      "exclude": [],
+      "inspected": null,
+      "candidates": null
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge find --help",
+    "reason": "Correct the named Find input, then rerun the request."
+  }
+}

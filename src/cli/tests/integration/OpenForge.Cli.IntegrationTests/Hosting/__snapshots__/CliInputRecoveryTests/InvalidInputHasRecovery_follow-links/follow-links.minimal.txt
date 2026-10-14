@@ -1,0 +1,4 @@
+Cannot read context: Invalid --follow-links value: -1. Use a positive number or all.
+Workspace: <workspace>
+Context counts are unavailable.
+Next: open-forge context --help

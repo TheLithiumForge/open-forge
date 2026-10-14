@@ -121,6 +121,9 @@ internal sealed record IndexProjectionReadResult
 internal sealed record IndexOperationOutcome
 {
     public required IndexRequest Request { get; init; }
+    public IReadOnlyList<IndexMetadataCompletion> Metadata { get; init; } = [];
+    public IReadOnlyList<IndexEntrypointCompletion> Entrypoints { get; init; } = [];
+    public IReadOnlyList<IndexFileDeletion> Deletions { get; init; } = [];
 
     public required IndexSelection Selection { get; init; }
 
@@ -149,6 +152,7 @@ internal sealed class IndexApplicationContext
     }
 
     internal IndexPlan Plan { get; }
+    internal Dictionary<string, IndexRegionOutcome> EffectOutcomes { get; } = new(StringComparer.Ordinal);
 
     internal Guid OperationId { get; }
 
@@ -161,14 +165,15 @@ internal sealed class IndexPreparedApplication
         IndexApplicationContext application,
         WorkspaceLockLease lease,
         MutationValidationResult validation,
-        RecoveryBundlePreparation preparation)
+        RecoveryBundlePreparation? preparation)
     {
         if (!lease.IsHeld
             || lease.Request.OperationId != application.OperationId
-            || !preparation.MatchesOperation(lease.Request)
+            || preparation is not null && !preparation.MatchesOperation(lease.Request)
             || validation.State != MutationValidationState.Valid
             || validation.Checks.Count != application.Plan.Updates.Count
-            || application.Plan.Updates.Any(change => !preparation.MatchesChange(lease.Request, change)))
+            || application.Plan.Updates.Any(change => change.Kind != OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files.PlannedFileChangeKind.Create
+                && (preparation is null || !preparation.MatchesChange(lease.Request, change))))
         {
             throw new ArgumentException(
                 "A prepared Index application requires one held matching operation, validation, and recovery authority.");
@@ -186,7 +191,7 @@ internal sealed class IndexPreparedApplication
 
     internal MutationValidationResult Validation { get; }
 
-    internal RecoveryBundlePreparation Preparation { get; }
+    internal RecoveryBundlePreparation? Preparation { get; }
 }
 
 internal sealed record IndexValidationMappingInput

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 478" width="360" height="478" role="img" aria-labelledby="title description">
+  <title id="title">After you edit files by hand</title>
+  <desc id="description">Edit, rename, or move files by hand. Run open-forge index for new notes and folders, or open-forge repair --automatic for proven renames and moves. Run open-forge doctor and follow its one next step until no warnings or errors remain.</desc>
+  <defs><marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 Z" fill="#d9480f"/></marker></defs>
+  <rect x="0.5" y="0.5" width="359" height="477" rx="16" fill="#fff6f0" stroke="#f0cdb8"/>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" text-anchor="middle" fill="#1c1e21">
+    <rect x="28" y="20" width="304" height="64" rx="10" fill="#fbe3d6" stroke="#d9480f"/>
+    <text x="180" y="46" font-size="16" font-weight="700">Edit, rename, or move</text>
+    <text x="180" y="67" font-size="15">files by hand</text>
+    <path d="M180 84 V100 H14 V250 H27" fill="none" stroke="#d9480f" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M14 148 H27" fill="none" stroke="#d9480f" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="28" y="112" width="304" height="72" rx="10" fill="#ffffff" stroke="#d9480f"/>
+    <text x="180" y="138" font-size="15">New notes and folders</text>
+    <text x="180" y="162" font-size="14" font-family="ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace" font-weight="700">open-forge index</text>
+    <text x="180" y="205" font-size="14" fill="#5b6168">or</text>
+    <rect x="28" y="216" width="304" height="72" rx="10" fill="#ffffff" stroke="#d9480f"/>
+    <text x="180" y="241" font-size="15">Proven renames and moves</text>
+    <text x="180" y="266" font-size="14" font-family="ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace" font-weight="700">open-forge repair --automatic</text>
+    <path d="M332 148 H346 V324 H180 V330" fill="none" stroke="#d9480f" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M332 252 H346" fill="none" stroke="#d9480f" stroke-width="2"/>
+    <text x="180" y="313" font-size="13" fill="#5b6168">Preview changes with --dry-run</text>
+    <rect x="28" y="334" width="304" height="90" rx="10" fill="#fbe3d6" stroke="#d9480f"/>
+    <text x="180" y="362" font-size="14" font-family="ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace" font-weight="700">open-forge doctor</text>
+    <text x="180" y="387" font-size="15">Follow its one next step</text>
+    <text x="180" y="409" font-size="15">and check again until clean</text>
+    <text x="180" y="452" font-size="14" fill="#5b6168">Clean: no warnings or errors</text>
+  </g>
+</svg>

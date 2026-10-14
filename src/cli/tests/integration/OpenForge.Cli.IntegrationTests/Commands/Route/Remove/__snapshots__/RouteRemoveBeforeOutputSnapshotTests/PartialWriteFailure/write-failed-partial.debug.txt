@@ -19,4 +19,4 @@ Workspace: <workspace>
   Scanned 11 files and found 2 links.
   The deleted files are kept in a recovery bundle at <recovery-bundle>.
   after reviewing the bundle
-Next: open-forge cleanup
+Next: open-forge cleanup --workspace <workspace>

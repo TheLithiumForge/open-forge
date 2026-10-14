@@ -65,6 +65,6 @@ public sealed class LibraryGitIgnoreRepairIntegrationTests
         }
         Assert.Equal(source, workspace.Sources());
         Assert.Equal(bundle, File.ReadAllBytes(workspace.Preparation.BundlePath));
-        Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md", new FileInfo(workspace.Files.Absolute(".agents/directives/review.md")).LinkTarget);
+        Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Files.Absolute(".agents/directives/review.md")).LinkTarget);
     }
 }

@@ -5,4 +5,4 @@ Workspace: <workspace>
   .agents/directives/added.md   new in the source folder
   .agents/directives/review.md  current
   Preview the synchronization before changing files.
-Next: open-forge library sync team-knowledge --dry-run
+Next: open-forge library sync team-knowledge --dry-run --workspace <workspace>

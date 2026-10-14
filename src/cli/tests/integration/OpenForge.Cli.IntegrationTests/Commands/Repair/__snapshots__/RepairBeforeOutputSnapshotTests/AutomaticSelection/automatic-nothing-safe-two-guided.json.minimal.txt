@@ -17,7 +17,7 @@
       "severity": "warning",
       "code": "repair.guided-finding-remaining",
       "title": "Broken link",
-      "message": "missing.md: Broken link; 4 possible targets",
+      "message": "1 possible target.",
       "subject": {
         "kind": "file",
         "path": ".agents/docs/source.md",
@@ -28,13 +28,19 @@
         }
       },
       "category": null,
-      "actions": []
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge repair --relink '.agents/docs/source.md@9:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>",
+          "reason": "To use replacement.md (same title):"
+        }
+      ]
     },
     {
       "severity": "warning",
       "code": "repair.guided-finding-remaining",
       "title": "Broken link",
-      "message": "missing.md: Broken link; 4 possible targets",
+      "message": "1 possible target.",
       "subject": {
         "kind": "file",
         "path": ".agents/docs/source.md",
@@ -45,7 +51,13 @@
         }
       },
       "category": null,
-      "actions": []
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge repair --relink '.agents/docs/source.md@10:18' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>",
+          "reason": "To use replacement.md (same title):"
+        }
+      ]
     }
   ],
   "effects": [],
@@ -55,7 +67,11 @@
     "problemsNeedingChoice": 2,
     "problemsNeedingHand": 0,
     "librarySteps": 0,
-    "warnings": 2
+    "warnings": 2,
+    "entriesUpdated": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0
   },
   "limitations": [],
   "data": {
@@ -70,7 +86,7 @@
           "column": 10
         },
         "kind": "guided",
-        "candidates": 4
+        "candidates": 1
       },
       {
         "path": ".agents/docs/source.md",
@@ -79,17 +95,21 @@
           "column": 18
         },
         "kind": "guided",
-        "candidates": 4
+        "candidates": 1
       }
-    ]
+    ],
+    "renames": [],
+    "navigation": [],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
     "disposition": "not-required"
   },
   "next": {
-    "kind": "command",
-    "command": "open-forge repair",
+    "kind": "sentence",
+    "command": "Choose a target above, then run its command.",
     "reason": "Review remaining broken links in Repair, then select a possible target in the interactive prompt or provide an explicit --relink target."
   }
 }

@@ -33,6 +33,26 @@
       "owner": null,
       "before": "<sha256>",
       "after": "<sha256>"
+    },
+    {
+      "path": ".agents/docs/index.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
     }
   ],
   "counts": {
@@ -40,7 +60,11 @@
     "problemsRemaining": 0,
     "problemsNeedingChoice": 0,
     "problemsNeedingHand": 0,
-    "librarySteps": 0
+    "librarySteps": 0,
+    "entriesUpdated": 2,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0
   },
   "limitations": [],
   "data": {
@@ -81,11 +105,30 @@
       "targets": "not-requested",
       "resultingBytes": "not-requested",
       "postConditions": "not-requested"
-    }
+    },
+    "renames": [],
+    "navigation": [
+      {
+        "path": ".agents/docs/index.md",
+        "before": 0,
+        "after": 3
+      },
+      {
+        "path": ".agents/loader.md",
+        "before": 1,
+        "after": 1
+      }
+    ],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
     "disposition": "not-required"
   },
-  "next": null
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair --automatic --workspace <workspace>",
+    "reason": "Apply the previewed repairs."
+  }
 }

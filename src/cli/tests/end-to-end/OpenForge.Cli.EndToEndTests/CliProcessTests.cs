@@ -60,8 +60,8 @@ public sealed class CliProcessTests
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(0, inspectLeaf.ExitCode);
         Assert.Equal(root.StandardOutput, help.StandardOutput);
-        Assert.Contains("Inspect and maintain an Open Forge workspace.", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Getting started:", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Open Forge installs and maintains your project's agent rules and context.", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Get started in your project folder:", root.StandardOutput, StringComparison.Ordinal);
         foreach (var output in new[] { root.StandardOutput, leaf.StandardOutput, inspectLeaf.StandardOutput })
         {
             Assert.Contains("--detail", output, StringComparison.Ordinal);
@@ -71,8 +71,8 @@ public sealed class CliProcessTests
             Assert.DoesNotContain("--json", output, StringComparison.Ordinal);
             Assert.DoesNotContain("--verbose", output, StringComparison.Ordinal);
         }
-        Assert.Contains("route list", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("open-forge route --help", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Read and discover:", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Use open-forge <command> --help", root.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Commands:", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("list <source-reference>", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("inspect <source-reference>", group.StandardOutput, StringComparison.Ordinal);
@@ -83,10 +83,10 @@ public sealed class CliProcessTests
         Assert.DoesNotContain("Operations:", group.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("available —", group.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
-            "open-forge route list [source-reference] [--depth=<non-negative-integer|all>]",
+            "open-forge route list [<source-reference>] [options]",
             string.Join(" ", leaf.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
-        Assert.Contains("open-forge route list memory --depth=all", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("open-forge route list memory --depth all", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
             "open-forge route inspect <source-reference>",
             inspectLeaf.StandardOutput,

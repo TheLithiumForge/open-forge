@@ -30,15 +30,18 @@ public sealed class IndexGeneratedSerializationTests
         var workspaceValue = root.GetProperty("workspace");
         AssertPropertyOrder(workspaceValue, "path", "selectedBy");
         var data = root.GetProperty("data");
-        AssertPropertyOrder(data, "mode", "changes", "unchanged", "selection", "regions");
+        AssertPropertyOrder(data, "mode", "changes", "unchanged", "selection", "regions", "metadata", "entrypoints");
         AssertPropertyOrder(data.GetProperty("selection"), "origin", "scope", "sources");
         AssertPropertyOrder(data.GetProperty("selection").GetProperty("sources")[0], "id", "path");
         AssertPropertyOrder(data.GetProperty("regions")[0], "path", "action", "outcome");
         AssertPropertyOrder(root.GetProperty("recovery"), "path", "disposition");
         Assert.Equal(JsonValueKind.Null, root.GetProperty("recovery").GetProperty("path").ValueKind);
         Assert.Equal(JsonValueKind.Array, root.GetProperty("findings").ValueKind);
-        AssertPropertyOrder(root.GetProperty("counts"), "filesChecked", "filesUpdated", "filesCurrent");
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
+        AssertPropertyOrder(root.GetProperty("counts"), "filesChecked", "filesUpdated", "filesCurrent", "metadataCompleted", "entrypointsCreated", "filesSkipped", "navigationFilesRenamed");
+        // A preview with planned changes points to the same request without --dry-run.
+        var next = root.GetProperty("next").GetProperty("command").GetString();
+        Assert.StartsWith("open-forge index ", next, StringComparison.Ordinal);
+        Assert.DoesNotContain("--dry-run", next, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Output")]

@@ -16,4 +16,5 @@ internal sealed record LibraryDetachResult : ICliCommandResult
 
     public required LibraryDetachPayload Result { get; init; }
     public required CliNextAction? Next { get; init; }
+    internal string? PermissionCommand { get; init; }
 }

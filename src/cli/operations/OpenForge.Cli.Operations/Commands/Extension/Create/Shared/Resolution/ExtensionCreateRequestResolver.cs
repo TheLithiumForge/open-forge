@@ -90,7 +90,7 @@ internal sealed class ExtensionCreateRequestResolver
             ExtensionCreateCataloguePromptOutcome promptedCatalogue;
             try
             {
-                promptedCatalogue = await AskCataloguePathAsync(cancellationToken).ConfigureAwait(false);
+                promptedCatalogue = await AskCataloguePathAsync(stableId, cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -151,11 +151,12 @@ internal sealed class ExtensionCreateRequestResolver
     }
 
     private async ValueTask<ExtensionCreateCataloguePromptOutcome> AskCataloguePathAsync(
+        string stableId,
         CancellationToken cancellationToken)
     {
-        var response = await _interaction.Text(
+        var response = await _interaction.PackageFolderText(
             new CliTextQuestion<string>(
-                _interaction.PackageFolderLabel,
+                _interaction.PackageFolderLabel(stableId),
                 _interaction.PackageFolderRule,
                 Required: true,
                 answer =>

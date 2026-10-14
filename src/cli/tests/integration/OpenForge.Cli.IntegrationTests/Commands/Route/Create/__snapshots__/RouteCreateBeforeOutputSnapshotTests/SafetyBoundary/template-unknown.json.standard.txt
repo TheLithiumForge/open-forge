@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge find --tag Template",
+          "command": "open-forge find --tag Template --workspace <workspace>",
           "reason": "Find a routed Template, then rerun Route Create."
         }
       ]
@@ -65,7 +65,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge find --tag Template",
+    "command": "open-forge find --tag Template --workspace <workspace>",
     "reason": "Find a routed Template, then rerun Route Create."
   }
 }

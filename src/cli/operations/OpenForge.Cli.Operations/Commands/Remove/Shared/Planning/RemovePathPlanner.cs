@@ -78,7 +78,7 @@ internal sealed class RemovePathPlanner
                 RemoveFindingCode.EntryPointRequiresRoute,
                 CliSemanticStatus.Blocked,
                 "This file is a routed category entrypoint. Select its category directory or use --kind route.",
-                $"open-forge remove \"{directory}\" --kind route",
+                RemoveRetryCommand.From(request, directory, "route"),
                 "Remove the category through its routed entrypoint so companions and navigation are handled together."));
         }
 
@@ -119,7 +119,7 @@ internal sealed class RemovePathPlanner
                 RemoveFindingCode.TargetUnsafe,
                 CliSemanticStatus.Blocked,
                 $"The target has a portable case alias. Use the exact spelling '{alias}'.",
-                $"open-forge remove \"{alias}\" --kind path",
+                RemoveRetryCommand.From(request, alias),
                 "Use the established exact spelling so the stored exclusion matches the workspace catalogue."));
         }
 

@@ -133,7 +133,7 @@ Use the relevant commands below when the Open Forge CLI is available. The plain 
 - `open-forge route inspect <source-reference>` - Inspect one source's route behavior
 - `open-forge find [options]` - Find Markdown sources by tags and headings
 - `open-forge references <source-reference>` - Inspect direct authored references
-- `open-forge index [<source-reference>...]` - Rebuild generated `Entries`
+- `open-forge index [<source-reference>...]` - Complete missing metadata and navigation, including generated `Entries`
 - `open-forge status` - Summarize workspace, context, lifecycle, generated navigation, and recovery
 - `open-forge doctor` - Diagnose workspace, routes, references, lifecycle, and recovery without changes
 

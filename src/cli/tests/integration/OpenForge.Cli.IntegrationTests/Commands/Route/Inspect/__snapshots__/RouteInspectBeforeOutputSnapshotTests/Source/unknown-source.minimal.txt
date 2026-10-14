@@ -1,2 +1,2 @@
 Cannot inspect missing/source: No source has the ID missing/source.
-Next: open-forge route inspect --help
+Next: open-forge route list --depth all

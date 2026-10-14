@@ -30,7 +30,7 @@ internal static class LibraryListDataTextRenderer
         }).ToArray();
         if (rows.Length > 0)
         {
-            builder.Append(CliTable.Render(rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
+            builder.Append(CliTable.Render(style, rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
         }
 
         if (data.ShowLinks)

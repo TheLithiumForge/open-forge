@@ -76,10 +76,11 @@ public sealed class F14DestinationConsentJourneyTests
         consumer.LockStore.AssertNoRecoveryArtifacts(consumer.Path);
     }
 
-    [Fact(DisplayName = "F14 once consent installs the exact external file without saving a grant"),
+    [Theory(DisplayName = "F14 Enter allows once and only deliberate Always selection saves a grant"),
      Trait("Feature", Feature), Trait("Evidence", "EndToEnd"), Trait("Journey", "F14"),
-     Trait("Scenarios", "C21-07")]
-    public async Task TerminalOnceConsentInstallsWithoutPersistingPermission()
+     Trait("Scenarios", "C21-07,X14")]
+    [InlineData("once"), InlineData("enter"), InlineData("always")]
+    public async Task TerminalConsentPersistsOnlyDeliberateAlwaysSelection(string answer)
     {
         SkipUnlessWindows();
         using var consumer = PublishedJourneyWorkspace.Create("e2e-f14-consent-once-consumer");
@@ -92,20 +93,38 @@ public sealed class F14DestinationConsentJourneyTests
         var failedState = await PrepareGrantFreeExternalStateAsync(consumer, catalogue);
         AssertBlocked(failedState, ExternalTarget);
         var sourceBefore = catalogue.SnapshotState();
+        var settingsBefore = File.ReadAllBytes(consumer.Combine(SettingsPath));
+        PublishedTerminalStep[] steps =
+        [
+            new("pgup/pgdn review", answer == "always" ? "1" : "\r"),
+            new("Apply these changes? [y/N]", "y"),
+        ];
+        if (answer == "once")
+            steps = [new("Type always, once or cancel:", "once\r"), new("Apply these changes? [y/N]", "yes\r")];
 
         var terminal = await PublishedWindowsTerminal.RunAsync(
             consumer.Target,
             consumer.Path,
             ["extension", "install", "toolkit", "--source", catalogue.Path],
             TerminalEnvironment(consumer),
-            "once\ryes\r");
+            new PublishedTerminalScenario
+            {
+                TerminalName = answer == "once" ? "dumb" : "xterm",
+                Steps = steps,
+            });
 
         Assert.Equal(0, terminal.ExitCode);
         Assert.Contains("once", terminal.Transcript, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("apply", terminal.Transcript, StringComparison.OrdinalIgnoreCase);
         Assert.Contains(ExternalTarget, terminal.Transcript, StringComparison.Ordinal);
         AssertFileBytes(consumer, ExternalTarget, File.ReadAllBytes(catalogue.Combine($"toolkit/content/{ExternalTarget}")));
-        AssertGrant(consumer);
+        if (answer == "always") AssertGrant(consumer, ExternalTarget);
+        else
+        {
+            AssertGrant(consumer);
+            Assert.Equal(settingsBefore, File.ReadAllBytes(consumer.Combine(SettingsPath)));
+        }
+        if (answer != "once") Assert.Contains("> 2. Allow once", terminal.Transcript, StringComparison.Ordinal);
         AssertExtensionRecord(consumer, "toolkit", "1.0.0", ExternalTarget);
         Assert.False(File.Exists(consumer.Combine("docs/team")));
         AssertSourceUnchanged(catalogue, sourceBefore);

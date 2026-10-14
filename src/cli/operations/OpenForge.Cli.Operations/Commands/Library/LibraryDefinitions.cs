@@ -6,7 +6,7 @@ namespace OpenForge.Cli.Core.Commands.Library;
 internal static class LibraryDefinitions
 {
     internal const int SchemaVersion = 1;
-    internal static readonly CliSyntaxDefinition Group = new("library", "Manage Libraries and their file links.");
+    internal static readonly CliSyntaxDefinition Group = new("library", "Manage links from local source folders into your workspace.");
     internal static readonly CliSyntaxDefinition LibraryId = new("library-id", "Select one exact Library management ID.");
     internal static readonly CliSyntaxDefinition SourceRoot = new("source-root", "Select a source directory by its workspace-relative path.");
     internal static readonly CliOptionDefinition<string> DestinationRoot = new(

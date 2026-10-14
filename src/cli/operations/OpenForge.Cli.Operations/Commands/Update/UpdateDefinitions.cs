@@ -21,11 +21,11 @@ internal static class UpdateDefinitions
 
     internal static readonly CliSyntaxDefinition UpdateCommand = new(
         UpdateCommandName,
-        "Update managed Framework files.");
+        "Update files Open Forge manages to the version bundled in this CLI.");
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         "--force",
-        "Accepted for compatibility; ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
+        "Accepted for compatibility. Ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
         CliOptionArity.None,
         false);
 
@@ -37,7 +37,7 @@ internal static class UpdateDefinitions
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
-        "Use safe defaults without prompting; does not imply --force or --prune.",
+        "Use safe defaults without prompting. Does not imply --force or --prune.",
         CliOptionArity.None,
         false);
 

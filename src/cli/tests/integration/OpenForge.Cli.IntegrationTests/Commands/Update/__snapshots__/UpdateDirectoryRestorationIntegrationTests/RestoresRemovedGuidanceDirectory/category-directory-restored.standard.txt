@@ -1,9 +1,10 @@
-Updated 2 Framework files.
+Changed 2 source files.
 Workspace: <workspace>
   .agents/guidance               created
   .agents/guidance/_guidance.md  created
   .agents/loader.md              Entries updated
   .agents/open-forge.lock.json   ownership record updated
   17 files unchanged
+  Previous content is in the recovery bundle at <recovery-bundle>.
   Previous content remains available for review.
 Next: Review previous content in the recovery bundle at <recovery-bundle>.

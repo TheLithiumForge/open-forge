@@ -41,6 +41,8 @@ internal sealed record ContextCounts
 
     internal string? UnavailableReason { get; }
 
+    internal bool NotEstablished { get; init; }
+
     internal static ContextCounts Unavailable(string reason, bool linksNotRequested = false)
         => new(
             sources: null,

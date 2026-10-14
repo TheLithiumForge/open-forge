@@ -30,15 +30,15 @@ internal static class LibrarySyncText
 
     // @OpenForgeText library.sync.help.syntax
     internal static string HelpSyntax()
-        => "open-forge library sync <library-id> [--dry-run] [--automatic] [--allow-path <path>] [global options]";
+        => "open-forge library sync <library-id> [options]";
 
     // @OpenForgeText library.sync.help.write-policy
     internal static string HelpWritePolicy()
-        => "Reconcile a registered Library with its complete source inventory. Use --dry-run to preview all changes without writing, or --automatic for a non-interactive apply.";
+        => "Bring a registered Library's links into agreement with its complete source-file inventory. Use --dry-run to preview all changes without writing, or --automatic for an unattended apply.";
 
     // @OpenForgeText library.sync.help.examples
     internal static string HelpExamples()
-        => "open-forge library sync shared --dry-run\n  open-forge library sync shared\n  open-forge library sync shared --automatic";
+        => "open-forge library sync shared --dry-run\nopen-forge library sync shared\nopen-forge library sync shared --automatic";
 
     // @OpenForgeText library.sync.message.inspect-the-destination-link-before-synchronizing-it
     internal static string MessageInspectTheDestinationLinkBeforeSynchronizingIt()
@@ -155,4 +155,20 @@ internal static class LibrarySyncText
     // @OpenForgeText library.sync.title.registered-link-was-restored
     internal static string TitleRegisteredLinkWasRestored()
         => "Registered link was restored";
+
+    // @OpenForgeText library.sync.librarysync.help.behavior
+    internal static string HelpBehavior()
+        => "Select one registered Library. Compare its links with the complete current source inventory.\n--dry-run shows the complete plan and writes nothing.\nAn interactive writing plan asks for confirmation unless --automatic is supplied.\nRedirected or JSON requests that would write need --automatic. External destinations need permission. Interrupted writes report recovery data.";
+
+    // @OpenForgeText library.sync.librarysync.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("library inspect --help", "Inspect one Library and its links."),
+            ("repair --help", "Correct verified link and Library problems."),
+            ("library detach --help", "Detach links while keeping source files."),
+        ];
+    // @OpenForgeText library.sync.help.details-1
+    internal static string HelpPermissionDetails()
+        => "--allow-path records permission for an exact destination outside .agents. The target is verified before writing.";
 }

@@ -61,7 +61,7 @@ internal sealed partial class CliPrompts
                 edits[row - 1] = MarkIndex(question.Marks, edit[^1]);
             }
             if (error is null) marks = edits;
-            else await WriteFrameAsync(CliText.Escape(error) + "\n", cancellationToken).ConfigureAwait(false);
+            else await WriteProseAsync(error, cancellationToken).ConfigureAwait(false);
         }
     }
 

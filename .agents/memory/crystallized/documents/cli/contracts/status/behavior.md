@@ -679,6 +679,8 @@ drift as `completed-with-warnings`, unavailable coverage as `incomplete`, unsafe
 Library/Extension collision as `blocked`, and no source inventory, adoption, or
 mutation.
 
+Status observes current source metadata and generated navigation without invoking the maintenance planner or creating Git evidence state. Missing metadata and missing chains remain observations for Doctor to explain. Completion changes the observed inventory and context sizes only after files are written.
+
 ## Related Current Sources
 
 - [Status Interface Contract](interface.md)

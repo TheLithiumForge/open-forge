@@ -47,9 +47,8 @@ public sealed class RouteRemoveDefinitionsAndBindingContractTests
      Trait("Feature", "route-remove"), Trait("Evidence", "UnitContract")]
     public void DefinitionsPreserveDescriptionsAndTerminalBoundaries()
     {
-        Assert.Contains("Remove one routed source or category", RouteRemoveDefinitions.RemoveCommand.Description, StringComparison.Ordinal);
-        Assert.Contains("record the removal", RouteRemoveDefinitions.RemoveCommand.Description, StringComparison.Ordinal);
-        Assert.Contains("release selected content ownership", RouteRemoveDefinitions.RemoveCommand.Description, StringComparison.Ordinal);
+        Assert.Contains("Remove one routed file or category", RouteRemoveDefinitions.RemoveCommand.Description, StringComparison.Ordinal);
+        Assert.Contains("remember the removal", RouteRemoveDefinitions.RemoveCommand.Description, StringComparison.Ordinal);
         Assert.Contains("ID or exact path", RouteRemoveDefinitions.SourceReference.Description, StringComparison.Ordinal);
         Assert.Contains("without writing", RouteRemoveDefinitions.DryRun.Description, StringComparison.Ordinal);
         Assert.Contains("without asking for confirmation", RouteRemoveDefinitions.Automatic.Description, StringComparison.Ordinal);

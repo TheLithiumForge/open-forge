@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge install --automatic",
+          "command": "open-forge install --workspace <workspace> --preset full-core --frontmatter root --automatic",
           "reason": "Rerun the same Install request with explicit automatic mode."
         }
       ]
@@ -346,7 +346,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge install --automatic",
+    "command": "open-forge install --workspace <workspace> --preset full-core --frontmatter root --automatic",
     "reason": "Rerun the same Install request with explicit automatic mode."
   }
 }

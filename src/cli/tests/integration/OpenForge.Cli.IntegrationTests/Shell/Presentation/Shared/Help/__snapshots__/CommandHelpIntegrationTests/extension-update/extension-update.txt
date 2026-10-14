@@ -1,0 +1,57 @@
+  Update selected managed Extensions from one reviewed source.
+
+Usage:
+  open-forge extension update [<stable-id>...] [options]
+
+Examples:
+  open-forge extension update planning --dry-run
+  open-forge extension update planning
+  open-forge extension update --all --dry-run
+
+Behavior:
+  Select installed Extension IDs or --all. Required packages are resolved first.
+  Changed or missing eligible content is updated or restored. --prune permits
+  deletion of eligible retired content.
+  --dry-run shows the checked plan and writes nothing.
+  An interactive writing plan asks for confirmation unless --automatic is
+  supplied.
+  Redirected or JSON requests that would write need --automatic. Previous bytes
+  stay in the recovery bundle.
+
+Arguments:
+  <stable-id>  Exact managed stable IDs selected from the reviewed source.
+
+Options:
+  --source <package-or-catalogue-path>
+      Read one exact local package or catalogue source.
+  --all                Select every managed package represented by the reviewed
+                       source.
+  --force              Accepted for compatibility. Ordinary update already
+                       replaces or restores eligible managed content. Adds no
+                       authority or safety bypass.
+  --prune              Delete eligible retired managed content.
+  --automatic          Disable prompts. Does not select packages or imply
+                       --force or --prune.
+  --dry-run            Preview the complete update without writing files.
+  --allow-path <path>  Permit writing to this workspace-relative path, recording
+                       it in .agents/open-forge.json.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Source and permissions: Use exact managed IDs from one reviewed source.
+  Dependencies of dependencies are also resolved first. --allow-path records
+  permission for an exact destination outside .agents. The target is verified
+  before writing.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  extension list --installed  List installed packages.
+  extension inspect --help    Compare a package with its installation.
+  cleanup --dry-run           Preview recovery-data cleanup.

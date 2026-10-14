@@ -2,7 +2,7 @@ Update needs confirmation, and this session cannot ask.
 Workspace: <workspace>
   Error  .agents/open-forge.lock.json  Confirmation is required
          Update needs confirmation, and this session cannot ask.
-         open-forge update --automatic
+         open-forge update --automatic --workspace <workspace>
          Rerun the same Update request with explicit automatic mode.
   Rerun the same Update request with explicit automatic mode.
-Next: open-forge update --automatic
+Next: open-forge update --automatic --workspace <workspace>

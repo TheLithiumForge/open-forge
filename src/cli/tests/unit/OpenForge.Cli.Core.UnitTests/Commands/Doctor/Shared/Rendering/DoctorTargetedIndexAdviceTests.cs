@@ -89,7 +89,7 @@ public sealed class DoctorTargetedIndexAdviceTests
     }
 
     [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Unrelated route findings retain their generic Index fallback")]
+    [Fact(DisplayName = "An unproven route boundary requires review without recommending Index")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
     public void UnrelatedRouteFindingKeepsExistingFallback()
     {
@@ -107,8 +107,8 @@ public sealed class DoctorTargetedIndexAdviceTests
 
         var action = Assert.Single(DoctorWording.Actions(finding));
 
-        Assert.Equal("open-forge index", action.Command);
-        Assert.Equal(CliNextActionKind.Command, action.Kind);
+        Assert.Equal("Review the route boundary in .agents/detached.md before continuing.", action.Command);
+        Assert.Equal(CliNextActionKind.Sentence, action.Kind);
     }
 
     [Trait("Boundary", "Output")]

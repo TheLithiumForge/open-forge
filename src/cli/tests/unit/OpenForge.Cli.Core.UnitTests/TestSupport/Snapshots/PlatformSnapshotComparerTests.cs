@@ -5,6 +5,55 @@ namespace OpenForge.Cli.Core.UnitTests.TestSupport.Snapshots;
 [Trait("Feature", "command-output-snapshots"), Trait("Evidence", "Unit")]
 public sealed class PlatformSnapshotComparerTests
 {
+    [Theory(DisplayName = "Platform snapshots adapt raw link evidence without hiding nonportable result targets")]
+    [Trait("Boundary", "Output"), InlineData("linux"), InlineData("macos")]
+    public void PortableTargetsStayExactWhileExpectedStateEvidenceAdapts(string platform)
+    {
+        const string windows = """
+            {
+              "effects": [
+                { "kind": "link", "target": "..\\team\\kind.md" },
+                { "target": "..\\team\\kind.md" }
+              ],
+              "expectedTarget": "..\\team\\kind.md",
+              "expectedStates": [
+                { "kind": "relative-file-link", "target": "..\\team\\kind.md" }
+              ]
+            }
+            """;
+        using var adapted = System.Text.Json.JsonDocument.Parse(PlatformSnapshotComparer.AdaptExpected(windows, platform, false));
+        var root = adapted.RootElement;
+        Assert.All(root.GetProperty("effects").EnumerateArray(), effect => Assert.Equal("..\\team\\kind.md", effect.GetProperty("target").GetString()));
+        Assert.Equal("..\\team\\kind.md", root.GetProperty("expectedTarget").GetString());
+        Assert.Equal("../team/kind.md", root.GetProperty("expectedStates")[0].GetProperty("target").GetString());
+    }
+
+    [Theory, Trait("Boundary", "Output")]
+    [InlineData("linux"), InlineData("macos")]
+    public void LinkTargetExpectationsAdaptWhileLiteralContentStaysExact(string platform)
+    {
+        const string windows = """
+            {
+              "observedTarget": "..\\team\\kind.md",
+              "rawRelativeTarget": "..\\team\\kind.md",
+              "literal": "literal\\marker"
+            }
+
+            """;
+        const string unix = """
+            {
+              "observedTarget": "../team/kind.md",
+              "rawRelativeTarget": "../team/kind.md",
+              "literal": "literal\\marker"
+            }
+
+            """;
+        Assert.Equal(windows, PlatformSnapshotComparer.AdaptExpected(windows, "windows", false));
+        Assert.Equal(unix, PlatformSnapshotComparer.AdaptExpected(windows, platform, false));
+        Assert.Equal("Observed target: ../team/kind.md\nliteral\\marker\n",
+            PlatformSnapshotComparer.AdaptExpected("Observed target: ..\\team\\kind.md\nliteral\\marker\n", platform, false));
+    }
+
     [Fact, Trait("Boundary", "Output")]
     public void ManifestSharingAdaptsOnlyTypedAdviceOnNonWindows()
     {

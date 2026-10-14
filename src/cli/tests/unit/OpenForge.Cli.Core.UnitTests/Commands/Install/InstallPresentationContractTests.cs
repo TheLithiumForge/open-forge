@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Presentation.Install;
 using OpenForge.Cli.Core.Presentation.Install.Models;
 using OpenForge.Cli.Core.Presentation.Install.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Install.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
@@ -23,6 +24,12 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Install;
 
 public sealed class InstallPresentationContractTests
 {
+    [Fact(DisplayName = "Invalid Install option wording rejects an undefined option kind")]
+    [Trait("Feature", "install-presentation"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void InvalidOptionRejectsUndefinedKind()
+        => Assert.Throws<ArgumentOutOfRangeException>(() => InstallReportSelector.InvalidOptionMessage(
+            new InstallInvalidOption((InstallOptionKind)int.MaxValue, "other")));
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Install native data preserves the frozen property order and nullable boundaries"), Trait("Feature", "install-presentation"), Trait("Evidence", "Unit")]
     public void NativeDataPreservesPropertyOrderAndNullableBoundaries()
@@ -76,7 +83,7 @@ public sealed class InstallPresentationContractTests
 
         var minimal = Select(result, CliDetail.Minimal);
         var text = CliTextRenderer.Render(minimal, CliTextStyle.Plain, InstallPresentation.Rendering.DataTextRenderer).Content;
-        Assert.StartsWith("Would install the Open Forge Framework into ", text, StringComparison.Ordinal);
+        Assert.StartsWith("Would install the Open Forge Framework", text, StringComparison.Ordinal);
         Assert.Contains("replacing 1 existing file", text, StringComparison.Ordinal);
         Assert.Contains("No files were changed.", text, StringComparison.Ordinal);
         Assert.DoesNotContain("framework/loader.md", text, StringComparison.Ordinal);
@@ -229,9 +236,7 @@ public sealed class InstallPresentationContractTests
     public void HelpAndDiagnosticsUseNativePresentation()
     {
         var help = InstallHelpSections.Create();
-        var syntax = Assert.Single(help.Sections, section => section.Heading == "Syntax");
-        Assert.Contains("open-forge install [--configure] [--preset <essentials|full-core|custom>] [--frontmatter <root|scoped>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]", syntax.Body, StringComparison.Ordinal);
-        Assert.Contains("Redirected text requests that would write require --automatic", Assert.Single(help.Sections, section => section.Heading == "Confirmation").Body, StringComparison.Ordinal);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge install [options]");
 
         var result = InstallResult.Invalid(
             new InstallBindingInput(Force: false, Automatic: false, Mode: InstallMode.Apply),

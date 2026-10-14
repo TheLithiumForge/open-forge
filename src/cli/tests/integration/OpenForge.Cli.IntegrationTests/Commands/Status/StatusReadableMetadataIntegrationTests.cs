@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 namespace OpenForge.Cli.IntegrationTests.Commands.Status;
 
 public sealed class StatusReadableMetadataIntegrationTests
@@ -59,7 +60,7 @@ public sealed class StatusReadableMetadataIntegrationTests
             using var document = StatusIntegrationApplication.ParseJson(jsonRun);
             var root = document.RootElement;
             Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
-            Assert.Equal("open-forge update", root.GetProperty("next").GetProperty("command").GetString());
+            Assert.Equal($"open-forge update --workspace {CliCommandText.Quote(workspace.Path)}", root.GetProperty("next").GetProperty("command").GetString());
 
             var findings = root.GetProperty("findings").EnumerateArray().ToArray();
             var finding = Assert.Single(

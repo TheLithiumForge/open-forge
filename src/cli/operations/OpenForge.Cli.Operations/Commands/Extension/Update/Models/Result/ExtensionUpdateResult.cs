@@ -55,6 +55,10 @@ internal sealed record ExtensionUpdateResult : ICliCommandResult
             .ThenBy(value => value.Target, StringComparer.Ordinal)
             .ThenBy(value => value.Cause, StringComparer.Ordinal)]);
         Status = ReadStatus(Findings);
+        ConfirmationCommand = formation.Request is { } request
+            ? Shared.Result.ExtensionUpdateRetryCommand.From(request, confirmationRequired: true) : null;
+        PrunePreviewCommand = formation.Request is { } pruneRequest
+            ? Shared.Result.ExtensionUpdateRetryCommand.From(pruneRequest, prunePreview: true) : null;
         Next = ExtensionUpdateDefinitions.ReadNextAction(
             Status,
             Findings,
@@ -75,6 +79,10 @@ internal sealed record ExtensionUpdateResult : ICliCommandResult
     internal bool WorkspaceExplicit => Workspace?.SelectedBy == CliWorkspaceSelectionMethod.ExplicitWorkspace;
 
     public CliNextAction? Next { get; init; }
+
+    internal string? ConfirmationCommand { get; }
+
+    internal string? PrunePreviewCommand { get; }
 
     internal ExtensionUpdateMode Mode { get; }
 

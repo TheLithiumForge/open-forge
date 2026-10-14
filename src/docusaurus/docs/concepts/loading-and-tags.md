@@ -9,13 +9,13 @@ import TabItem from "@theme/TabItem"
 
 # Loading and tags
 
-Tags help readers, human or agent, decide what to open and find related files. The loader defines eight tags: two control loading, and six classify content. None of them grants authority. Any other tag is yours to describe your own subjects.
+Loading rules say when to read a file, and file conditions limit that reading to matching work. Tags help readers, human or agent, decide what to open and find related files. The loader defines eight tags: two control loading, and six classify content. None of them grants authority. Any other tag is yours to describe your own subjects.
 
 <LoadingDiagram />
 
 ## Frontmatter
 
-Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+[Frontmatter](../glossary.md#frontmatter) is YAML metadata at the start of a Markdown file. Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
 
 <Tabs groupId="frontmatter-form">
 <TabItem value="root" label="Root" default>
@@ -52,6 +52,8 @@ The same precedence applies to `responsibility`. An explicit `open-forge` key wi
 - **tags** are bare values without `#`. In `Entries` and prose they're written with `#`, like `#LoadNow`.
 - **applyTo** (optional) narrows the file to tasks that work on matching files. [File conditions](#file-conditions) explains how.
 
+A plain user-owned routed note can omit description and tags initially. Index fills absent fields from its heading or file name and category, while keeping supplied values and body bytes. A partial header is completed in its existing form. Invalid values need an authoring edit. See [manual edits](/guides/cli#after-you-edit-files-by-hand).
+
 ## Loading tags
 
 Entries stay **on demand** unless a loading tag says otherwise. There are exactly two loading tags:
@@ -71,39 +73,11 @@ Loading tags act only through a parent that's already loaded. They can't pull in
 
 ## File conditions
 
-A routed file can list `applyTo` patterns to narrow it to the files a task works on. For example, this Directive applies only to C# files:
+In the C# example above, `applyTo: ["**/*.cs"]` limits the rule to work on C# files. See [Frontmatter](#frontmatter) for metadata forms and precedence.
 
-Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+`applyTo` only filters what a loading tag or relevance would load. It never selects or loads a file by itself. When the task works on a matching file, the source behaves as it would without a condition. A C# rule that should load automatically therefore uses `#LoadNow` with `applyTo`. The entry shows the patterns after its tags, so the agent can check them without opening the file. An [overwrite companion](../glossary.md#overwrite-companion) follows its base.
 
-<Tabs groupId="frontmatter-form">
-<TabItem value="root" label="Root" default>
-
-```yaml
----
-description: C# rules
-tags: [Directive, LoadNow]
-applyTo: ["**/*.cs"]
----
-```
-
-</TabItem>
-<TabItem value="scoped" label="Scoped">
-
-```yaml
----
-open-forge:
-  description: C# rules
-  tags: [Directive, LoadNow]
-  applyTo: ["**/*.cs"]
----
-```
-
-</TabItem>
-</Tabs>
-
-`applyTo` only filters what a loading tag or relevance would load. It never selects or loads a file by itself. When the task works on a matching file, the source behaves as it would without a condition. A C# rule that should load automatically therefore uses `#LoadNow` with `applyTo`. The entry shows the patterns after its tags, so the agent can check them without opening the file. An overwrite companion follows its base.
-
-- **Working files** are the files the task investigates, creates, changes, deletes, renames, or reviews, including planned files that don't exist yet. A rename counts both paths. Reading a Directive or following a link doesn't make that Markdown file a working file.
+- [**Working files**](../glossary.md#working-file) are the files the task investigates, creates, changes, deletes, renames, or reviews, including planned files that don't exist yet. A rename counts both paths. Reading a Directive or following a link doesn't make that Markdown file a working file.
 - **Related files join as the work reaches them.** If a C# change also needs its TypeScript caller updated, add the caller and load its context. The C# rules still cover only the C# file. A condition never grants or restricts permission to edit.
 - **Ancestors combine.** Patterns in one list are alternatives. Conditions on parent entrypoints also apply, and the same working file must match all of them.
 - **Hidden scopes stay hidden.** A matching file never opens an ancestor nobody selected. If `directives/backend/` hasn't been selected, a `csharp.md` inside it stays closed even for `src/Order.cs`.
@@ -121,7 +95,7 @@ An agent enters through `AGENTS.md` (or `CLAUDE.md` in Claude Code), which point
 - **Entrypoint at startup:** the entrypoint is read before the task begins. Linked items open when selected, tagged to load, or explicitly required by a loaded rule.
 - **Entrypoint on demand:** the entrypoint isn't read until a task opens it.
 
-The table shows Full Core. Essentials and Custom use the same loading rules for the routes present. Git-ignore does not change context loading or indexing. See [Installation](../getting-started/installation.md#choose-the-installed-routes) for setup choices. Paths are relative to `.agents/`.
+The table shows Full Core. Essentials and Custom use the same loading rules for the routes present. When Working is Git-ignored, new records stay out of ordinary Git commits, `_working.md` stays shareable, and already tracked files stay tracked. Generated `Entries` omit private contents. The CLI and normal file tools can still find and read those records locally. Git-ignore does not change the loading rules. See [Installation](../getting-started/installation.md#choose-the-installed-routes) for setup choices. Paths are relative to `.agents/`.
 
 | File                                   | Tag           | When it's read                                    |
 | -------------------------------------- | ------------- | ------------------------------------------------- |
@@ -145,7 +119,7 @@ The Memory rows show that exception. `memory/_memory.md` lists Working and Cryst
 
 Extension Memory categories, such as Decisions from [Planning](../extensions/planning.md) or Documents from [Project Documents](../extensions/project-documents.md), aren't part of a fresh install and carry no loading tag. Once installed, only their one-line entry in the parent state's `Entries` is visible at startup. The category entrypoint and its records open on demand.
 
-Run `open-forge context skills/open-forge-cli` to batch the tag-derived startup context and the required CLI guide. Plain `context` reports the loading-tag closure; it does not interpret explicit read instructions in prose. When task paths are unknown, only conditioned `#LoadNow` and `#KeepInMind` entries that a loaded parent exposes are reported as pending. Other conditioned entries stay on demand. If any entries are pending, the command returns `incomplete` with exit 3. Pass known or planned working paths with `--for` to check the matching entries.
+Run `open-forge context skills/open-forge-cli` to batch the tag-derived startup context and the required CLI guide. Plain `context` reports the loading-tag closure. It does not interpret explicit read instructions in prose. When task paths are unknown, only conditioned `#LoadNow` and `#KeepInMind` entries that a loaded parent exposes are reported as pending. Other conditioned entries stay on demand. If any entries are pending, the command returns `incomplete` with exit 3. Pass known or planned working paths with `--for` to check the matching entries.
 
 ## Status tags
 

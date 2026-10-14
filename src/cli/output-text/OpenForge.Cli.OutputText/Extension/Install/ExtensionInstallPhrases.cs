@@ -28,8 +28,8 @@ internal static class ExtensionInstallPhrases
         => $"Next: {permissionNextText}";
 
     // @OpenForgeText extension.install.phrase.next-preview-replacing-it
-    internal static string FormatNextPreviewReplacingIt(string forcePreviewNextText)
-        => $"Next: {forcePreviewNextText}  (preview replacing it)";
+    internal static string PreviewReplacingIt()
+        => "Preview replacing it.";
 
     // @OpenForgeText extension.install.phrase.replace-the-existing-file-listed-above-y-n
     internal static string FormatReplaceTheExistingFileListedAboveYN(string countText, string valueText)
@@ -44,8 +44,9 @@ internal static class ExtensionInstallPhrases
         => $"{verbText} the {rootIdText} Extension.";
 
     // @OpenForgeText extension.install.phrase.the-extension-and-packages-it-requires
-    internal static string FormatTheExtensionAndPackagesItRequires(string verbText, string rootIdText, string lengthText, string joinText)
-        => $"{verbText} the {rootIdText} Extension and {lengthText} packages it requires: {joinText}.";
+    internal static string FormatTheExtensionAndPackagesItRequires(string verbText, string rootIdText, int count, string joinText)
+        => string.Create(CultureInfo.InvariantCulture,
+            $"{verbText} the {rootIdText} Extension and {count} {(count == 1 ? "package" : "packages")} it requires: {joinText}.");
 
     // @OpenForgeText extension.install.phrase.the-extension-could-not-be-installed-nothing-was-changed
     internal static string FormatTheExtensionCouldNotBeInstalledNothingWasChanged(string idText, string sentenceText)

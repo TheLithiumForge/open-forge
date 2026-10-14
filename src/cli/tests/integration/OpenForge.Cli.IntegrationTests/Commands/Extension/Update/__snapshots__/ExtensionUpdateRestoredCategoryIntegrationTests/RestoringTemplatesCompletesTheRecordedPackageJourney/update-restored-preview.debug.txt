@@ -1,0 +1,28 @@
+Would update the core-templates Extension to 0.4.0.
+Workspace: <workspace>
+  .agents/templates/_templates.md      Entries would be updated
+  .agents/templates/core/_core.md      would be created
+  .agents/templates/core/directive.md  would be created
+  .agents/templates/core/guidance.md   would be created
+  .agents/templates/core/map.md        would be created
+  .agents/templates/core/memory.md     would be created
+  .agents/templates/core/pattern.md    would be created
+  .agents/templates/core/skill.md      would be created
+  .agents/templates/core/template.md   would be created
+    kind: generated-region
+    Before SHA-256: unavailable; After SHA-256: <sha256>; source asset: content/.agents/templates/core/_core.md; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+    Before SHA-256: unavailable; After SHA-256: <sha256>; source asset: content/.agents/templates/core/directive.md; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+    Before SHA-256: unavailable; After SHA-256: <sha256>; source asset: content/.agents/templates/core/guidance.md; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+    Before SHA-256: unavailable; After SHA-256: <sha256>; source asset: content/.agents/templates/core/map.md; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+    Before SHA-256: unavailable; After SHA-256: <sha256>; source asset: content/.agents/templates/core/memory.md; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+    Before SHA-256: unavailable; After SHA-256: <sha256>; source asset: content/.agents/templates/core/pattern.md; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+    Before SHA-256: unavailable; After SHA-256: <sha256>; source asset: content/.agents/templates/core/skill.md; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+    Before SHA-256: unavailable; After SHA-256: <sha256>; source asset: content/.agents/templates/core/template.md; verification: Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked; recovery: No recovery bundle was created.
+  Source: embedded catalogue
+  Dependency closure: core-templates
+  0 files unchanged
+  Would update 2 Entries sections.
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  Verification: targets planned but not checked; Entries planned but not checked; Extension record planned but not checked
+  No recovery bundle was created.
+No files were changed.

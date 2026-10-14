@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Cleanup.Models.Result;
 using OpenForge.Cli.Core.Commands.Cleanup.Shared.Application;
 using OpenForge.Cli.Core.Commands.Cleanup.Shared.Planning;
 using OpenForge.Cli.Core.Presentation.Cleanup;
+using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Recovery;
@@ -216,11 +217,18 @@ public sealed class CleanupBeforeOutputSnapshotTests
             new CleanupRequest(workspace.Workspace, CleanupMode.Apply), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
         Assert.Equal(before, File.ReadAllBytes(store));
+        const string prefix = "The recovery storage directory chain contains a non-directory: ";
+        var reportedStore = new FilesystemFailure(FilesystemFailureKind.InvalidPath, $"{prefix}{store}").DirectCause[prefix.Length..];
+        Assert.StartsWith(reportedStore, store, StringComparison.Ordinal);
         var renderers = CommandOutputRenderers<CleanupResult>.From(
             CleanupPresentation.Rendering,
-            output => CommandOutputNormalization.NormalizeRecoveryPaths(output, [], store),
-            output => CommandOutputNormalization.NormalizeRecoveryPaths(output, [], store));
+            NormalizeStore,
+            NormalizeStore);
         renderers.MatchDetails(result, "store-unreadable");
+
+        string NormalizeStore(string output)
+            => CommandOutputNormalization.NormalizeRecoveryPaths(
+                CommandOutputNormalization.NormalizeRecoveryPaths(output, [], store), [], reportedStore);
     }
 
 }

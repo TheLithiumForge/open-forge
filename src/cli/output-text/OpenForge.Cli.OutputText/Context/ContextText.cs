@@ -4,9 +4,37 @@ namespace OpenForge.Cli.OutputText.Context;
 
 internal static class ContextText
 {
+    // @OpenForgeText context.message.invalid-follow-links-value
+    internal static string InvalidFollowLinks(string value) => $"Invalid --follow-links value: {value}. Use a positive number or all.";
+
+    // @OpenForgeText context.wording.startup-unavailable
+    internal static string StartupUnavailable(string path) => $"Startup context is unavailable in {path}.";
+
+    // @OpenForgeText context.wording.startup-missing-loader
+    internal static string MissingLoader() => "This folder has no .agents/loader.md.";
+
+    // @OpenForgeText context.wording.startup-install-guidance
+    internal static string InstallGuidance() => "Choose your project with --workspace, or preview an installation here.";
+
+    // @OpenForgeText context.wording.counts-unavailable
+    internal static string CountsUnavailable(string? reason) => reason is null
+        ? "Context counts are unavailable."
+        : $"Context counts are unavailable. {reason}";
+
+    // @OpenForgeText context.wording.missing-for-value
+    internal static string MissingForValue() => "Option --for needs one workspace file path.";
+
+    // @OpenForgeText context.wording.for-example
+    internal static string ForExample() => "For example: open-forge context --for src/app.cs";
+
+    // @OpenForgeText context.wording.install-preview-next
+    internal static string InstallPreviewNext() => "Preview setup without changing files.";
+
+    // @OpenForgeText context.wording.help-next
+    internal static string HelpNext() => "Check the Context options.";
     // @OpenForgeText context.help.syntax
     internal static string HelpSyntax()
-        => "open-forge context [source-reference...] [--additions-only] [--for <path>...] [--content <part>[,<part>...]] [--follow-links <positive-depth|all>] [global options]";
+        => "open-forge context [<source-reference>...] [options]";
 
     // @OpenForgeText context.help.selection
     internal static string HelpSelection()
@@ -22,11 +50,11 @@ internal static class ContextText
 
     // @OpenForgeText context.help.examples
     internal static string HelpExamples()
-        => "open-forge context\nopen-forge context --for src/app.cs\nopen-forge context memory --for src/app.cs --content body\nopen-forge context .agents/memory/_memory.md --format json";
+        => "open-forge context\nopen-forge context memory --for src/app.cs\nopen-forge context memory/archived --additions-only --content body";
 
     // @OpenForgeText context.help.notes
     internal static string HelpNotes()
-        => "Context preserves authored source bytes and adds generated delimiters around each physical layer. applyTo conditions require --for paths. Without them, affected selection is reported as incomplete. It never changes source files or follows external links.";
+        => "Context preserves authored source bytes and adds generated delimiters around each physical layer. ApplyTo conditions require --for paths. Without them, affected selection is reported as incomplete. It never changes source files or follows external links.";
 
     // @OpenForgeText context.message.context-is-complete
     internal static string MessageContextIsComplete()
@@ -227,4 +255,24 @@ internal static class ContextText
     // @OpenForgeText context.help.heading.content
     internal static string HelpHeadingContent()
         => "Content";
+
+    // @OpenForgeText context.context.help.behavior
+    internal static string HelpBehavior()
+        => "With no source, read the required startup files.\nAdd source IDs or exact .agents paths to read their required context.\nRepeat --for for every known working file, including planned files.\nFile conditions are evaluated against those workspace paths. Without them, affected conditions remain pending.\n--additions-only needs a source and omits the startup set.\nBy default, return frontmatter and body. Source content stays exact.\nThis command changes no files and asks no questions.";
+
+    // @OpenForgeText context.context.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("route list", "Browse routed sources."),
+            ("route inspect --help", "Inspect one routed source."),
+            ("find --help", "Find sources by tags or headings."),
+        ];
+    // @OpenForgeText context.help.details-1
+    internal static string HelpSelectionDetails()
+        => "All inherited file conditions must match the same --for path. Without paths, affected selection is incomplete.";
+
+    // @OpenForgeText context.help.details-2
+    internal static string HelpContentAndLinksDetails()
+        => "Content parts are metadata, paths, frontmatter, headings, body, and section:<name>. Supply one comma-separated --content value. Escape commas and backslashes in section names. Generated delimiters surround each physical layer without changing authored bytes. --follow-links accepts a positive base-10 depth or all. It follows contained local Markdown links breadth-first and records broken edges. External URLs are never fetched.";
 }

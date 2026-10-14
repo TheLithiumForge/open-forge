@@ -1,5 +1,10 @@
-Installed the Open Forge Framework into <workspace>.
+Installed the Open Forge Framework.
 Workspace: <workspace>
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
 Frontmatter: root
   .agents                                                created
   .agents/directives                                     created
@@ -15,30 +20,56 @@ Frontmatter: root
   .agents/memory/working                                 created
   .agents/skills/open-forge-cli                          created
   .agents/skills/open-forge-cli/references               created
-  .agents/directives/_directives.md                      created; source: .agents/directives/_directives.md
-  .agents/guidance/_guidance.md                          created; source: .agents/guidance/_guidance.md
-  .agents/loader.md                                      created; source: .agents/loader.md
-  .agents/maps/_maps.md                                  created; source: .agents/maps/_maps.md
-  .agents/memory/_memory.md                              created; source: .agents/memory/_memory.md
-  .agents/memory/archived/_archived.md                   created; source: .agents/memory/archived/_archived.md
-  .agents/memory/crystallized/_crystallized.md           created; source: .agents/memory/crystallized/_crystallized.md
-  .agents/memory/emerging/_emerging.md                   created; source: .agents/memory/emerging/_emerging.md
-  .agents/memory/working/_working.md                     created; source: .agents/memory/working/_working.md
-  .agents/patterns/_patterns.md                          created; source: .agents/patterns/_patterns.md
-  .agents/skills/_skills.md                              created; source: .agents/skills/_skills.md
-  .agents/skills/open-forge-cli/SKILL.md                 created; source: .agents/skills/open-forge-cli/SKILL.md
-  .agents/skills/open-forge-cli/references/common.md     created; source: .agents/skills/open-forge-cli/references/common.md
-  .agents/skills/open-forge-cli/references/discovery.md  created; source: .agents/skills/open-forge-cli/references/discovery.md
-  .agents/skills/open-forge-cli/references/packages.md   created; source: .agents/skills/open-forge-cli/references/packages.md
-  .agents/skills/open-forge-cli/references/routes.md     created; source: .agents/skills/open-forge-cli/references/routes.md
-  .agents/templates/_templates.md                        created; source: .agents/templates/_templates.md
-  AGENTS.md                                              Open Forge section added, your content was kept; source: AGENTS.md
-  CLAUDE.md                                              created with an Open Forge section; source: CLAUDE.md
+  .agents/directives/_directives.md
+    created; source: .agents/directives/_directives.md
+  .agents/guidance/_guidance.md
+    created; source: .agents/guidance/_guidance.md
+  .agents/loader.md
+    created; source: .agents/loader.md
+  .agents/maps/_maps.md
+    created; source: .agents/maps/_maps.md
+  .agents/memory/_memory.md
+    created; source: .agents/memory/_memory.md
+  .agents/memory/archived/_archived.md
+    created; source: .agents/memory/archived/_archived.md
+  .agents/memory/crystallized/_crystallized.md
+    created; source: .agents/memory/crystallized/_crystallized.md
+  .agents/memory/emerging/_emerging.md
+    created; source: .agents/memory/emerging/_emerging.md
+  .agents/memory/working/_working.md
+    created; source: .agents/memory/working/_working.md
+  .agents/patterns/_patterns.md
+    created; source: .agents/patterns/_patterns.md
+  .agents/skills/_skills.md
+    created; source: .agents/skills/_skills.md
+  .agents/skills/open-forge-cli/SKILL.md
+    created; source: .agents/skills/open-forge-cli/SKILL.md
+  .agents/skills/open-forge-cli/references/common.md
+    created; source: .agents/skills/open-forge-cli/references/common.md
+  .agents/skills/open-forge-cli/references/discovery.md
+    created; source: .agents/skills/open-forge-cli/references/discovery.md
+  .agents/skills/open-forge-cli/references/packages.md
+    created; source: .agents/skills/open-forge-cli/references/packages.md
+  .agents/skills/open-forge-cli/references/routes.md
+    created; source: .agents/skills/open-forge-cli/references/routes.md
+  .agents/templates/_templates.md
+    created; source: .agents/templates/_templates.md
+  AGENTS.md
+    Open Forge section added, your content was kept; source: AGENTS.md
+  CLAUDE.md
+    created with an Open Forge section; source: CLAUDE.md
   .agents/open-forge.json                                created
-  .agents/open-forge.lock.json                           created; records the files above
-  Created 17 files and 13 directories under .agents (listed in .agents/open-forge.lock.json), and updated 1 existing file.
+  .agents/open-forge.lock.json
+    created; records the files above
+  Created 17 files and 13 directories under .agents (listed in
+  .agents/open-forge.lock.json), and updated 1 existing file.
   Added 1 section.
-  Bundled Framework fingerprint: <sha256> (19 assets).
+  Bundled Framework fingerprint:
+  <sha256> (19 assets).
   The ownership record was published and verified.
   The recovery bundle was removed.
   All written targets were verified.
+If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md
+first.
+Next: review the new files with git status and git diff, commit them, then
+      give your agent a normal task.

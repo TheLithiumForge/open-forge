@@ -1,4 +1,5 @@
 Cannot inspect toolkit: The ownership record names toolkit in a way that cannot be matched to one package.
 Workspace: <workspace>
-1 dependency, 1 errors.
+1 package, including toolkit.
+1 errors.
 Next: open-forge doctor

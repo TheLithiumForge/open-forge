@@ -71,6 +71,10 @@ every severity. `workspace` is either `{ path, selectedBy }` or `null`, and
 operation facts shared with text output. Command-local contracts define the
 exact `data` object, finding codes, effect values, and next contents.
 
+Text shows a finding action's command or sentence once. At standard and deeper
+detail, it adds the action's reason only when that reason differs from the
+displayed command or sentence. JSON retains both fields unchanged.
+
 The serializer emits one minified JSON document. Detail-gated nested members
 are omitted when the selected level does not include them; they are not replaced
 with `null` or an empty collection. Finding severity is one of `error`,
@@ -127,6 +131,14 @@ JSON is one complete stdout document for every semantic status. Bounded
 diagnostics use stderr and do not invalidate that document. Terminal help and
 version retain their shared text-only bypass and do not emit a domain result
 envelope.
+
+## Text Cancellation Presentation
+
+A cancellation before any effect says `<command> was cancelled. Nothing was
+changed.` once. Its interruption finding does not add an error-count footer or
+a duplicate diagnostic to human text. Genuine errors and known or uncertain
+partial effects remain visible. The status stays `cancelled`, exit stays 130,
+and JSON keeps the original findings, diagnostics, counts and limitations.
 
 ## Severity Vocabulary
 

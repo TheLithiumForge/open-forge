@@ -6,6 +6,5 @@ Workspace: <workspace>
          Inspect the Library before changing it.
   .agents/open-forge.json  settings updated
   .agents/open-forge.lock.json  registration removed
-  .agents/open-forge.json  settings updated
   Inspect the Library before changing it.
 Next: open-forge library inspect team-knowledge

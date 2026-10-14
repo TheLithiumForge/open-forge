@@ -38,7 +38,7 @@ internal static class CleanupDataTextRenderer
                 .Select(row => (IReadOnlyList<string>)[CliText.Escape(row.Path), CliText.Escape(row.Wording)])
                 .ToArray();
             spans.Add(new CliTextSpan(
-                CliTable.Render(rows, (column, cell) => column == 0 ? style.Subject(cell) : cell)));
+                CliTable.Render(style, rows, (column, cell) => column == 0 ? style.Subject(cell) : cell)));
 
             var details = new StringBuilder();
             foreach (var row in data.TextRows)

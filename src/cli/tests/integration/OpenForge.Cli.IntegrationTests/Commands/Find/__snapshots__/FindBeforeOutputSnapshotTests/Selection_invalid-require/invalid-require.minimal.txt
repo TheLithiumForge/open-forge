@@ -1,1 +1,2 @@
-Cannot search: --require must be all or any.
+Cannot search: Invalid --require value: invalid. Use all or any.
+Next: open-forge find --help

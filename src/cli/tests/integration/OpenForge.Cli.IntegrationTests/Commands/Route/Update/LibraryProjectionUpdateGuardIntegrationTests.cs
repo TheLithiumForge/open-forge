@@ -24,7 +24,7 @@ public sealed class LibraryProjectionUpdateGuardIntegrationTests
         Assert.Equal(5, result.ExitCode);
         Assert.Equal(string.Empty, result.Output);
         Assert.Equal(before, workspace.Snapshot());
-        Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md",
+        Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar),
             new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
     }
 }

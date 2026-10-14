@@ -279,19 +279,6 @@ internal sealed class ExtensionUpdateOperation(
             && outcome.Recovery.State == ExtensionUpdateRecoveryState.Retained
             && outcome.Recovery.ResidualPath is { } bundlePath)
         {
-            var gitPath = Path.Combine(plan.Request.Workspace.LexicalRoot, ".git");
-            var hasGitDirectory = Directory.Exists(gitPath)
-                && (File.GetAttributes(gitPath) & FileAttributes.ReparsePoint) == 0;
-            if (hasGitDirectory)
-            {
-                return result with
-                {
-                    Next = new CliNextAction(
-                        "git diff",
-                        $"Review the changes with git diff. Previous content remains in {bundlePath}."),
-                };
-            }
-
             return result with
             {
                 Next = new CliNextAction(

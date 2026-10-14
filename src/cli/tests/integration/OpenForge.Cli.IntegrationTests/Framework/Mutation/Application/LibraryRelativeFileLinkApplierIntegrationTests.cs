@@ -59,8 +59,13 @@ public sealed class LibraryRelativeFileLinkApplierIntegrationTests
             Assert.Equal(FilesystemVerificationState.Verified, result.VerificationState);
             var after = Assert.IsType<NoFollowLeafObservation>(result.After);
             Assert.Equal(delete ? NoFollowLeafState.Missing : NoFollowLeafState.RelativeFileLink, after.State);
-            Assert.Equal(delete ? null : RawTarget, new FileInfo(path).LinkTarget);
-            Assert.Equal(delete ? null : link, after.RelativeFileLink);
+            if (!delete)
+            {
+                Assert.Equal("source bytes", File.ReadAllText(path));
+            }
+            var platformTarget = RawTarget.Replace('/', Path.DirectorySeparatorChar);
+            Assert.Equal(delete ? null : platformTarget, new FileInfo(path).LinkTarget);
+            Assert.Equal(delete ? null : RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, platformTarget), after.RelativeFileLink);
             if (scenario == "dangling-delete")
             {
                 Assert.False(File.Exists(source));
@@ -145,7 +150,7 @@ public sealed class LibraryRelativeFileLinkApplierIntegrationTests
 
     private static void DeleteCreatedLink(string path)
     {
-        if (new FileInfo(path).LinkTarget == RawTarget)
+        if (new FileInfo(path).LinkTarget is RawTarget || new FileInfo(path).LinkTarget == RawTarget.Replace('/', Path.DirectorySeparatorChar))
         {
             File.Delete(path);
         }

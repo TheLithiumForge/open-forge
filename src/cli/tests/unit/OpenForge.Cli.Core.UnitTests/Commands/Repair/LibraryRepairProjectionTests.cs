@@ -1,7 +1,10 @@
+using System.Collections.Immutable;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Result;
+using OpenForge.Cli.TestSupport.Snapshots;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Comparison;
 using OpenForge.Cli.Core.Presentation.Repair;
 using OpenForge.Cli.Core.Presentation.Repair.Models;
@@ -16,6 +19,57 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class LibraryRepairProjectionTests
 {
+    [Theory(DisplayName = "Library recovery source counts and JSON count each remaining link once")]
+    [InlineData(1), InlineData(20)]
+    [Trait("Boundary", "Output"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    public void LibraryCountsDoNotDoubleCountDiagnosisAndSelection(int linkCount)
+    {
+        var proposals = Enumerable.Range(0, linkCount)
+            .Select(index => new Core.Commands.Repair.Models.Selection.RepairLibraryRecoveryProposal(
+                LibraryRepairData.Evidence(Core.Framework.Recovery.Models.Entries.RecoveryEntryKind.RelativeFileLinkDelete,
+                    targetPath: $".agents/directives/item-{index}.md")))
+            .ToImmutableArray();
+        var input = LibraryRepairData.Input(proposals[0].Evidence) with
+        {
+            Request = new(proposals[0].Evidence.Entry.Input.Context.Workspace, RepairMode.DryRun, true, [], false),
+            Libraries = proposals,
+        };
+        var plan = RepairLibraryRecoveryPlanner.Build(input);
+        var observations = proposals.SelectMany(proposal => new[] { "The projection is missing.", "The Library residual needs recovery." }
+            .Select(cause => new RepairFinding(Core.Commands.Repair.RepairFindingCode.ManualFindingRemaining, cause)
+            {
+                Observation = new(proposal.TargetPath, proposal.LibraryIdValue),
+            })).ToArray();
+        var result = RepairResultBuilder.Build(new RepairResultInput
+        {
+            Request = input.Request,
+            Plan = plan,
+            Diagnosis = RepairTestData.CompleteCoverage(),
+            Findings = observations,
+            InitialFindings = observations,
+            Preflight = new(RepairPreflightState.Ready, cause: null, RepairRecoveryState.NotRequired),
+            Application = RepairApplication.NotRequested,
+            Verification = RepairVerification.NotRequested,
+            Recovery = RepairRecovery.NotRequired,
+            PostDiagnosis = RepairPostDiagnosis.NotRequested,
+        });
+        var expected = linkCount - 1;
+        Assert.Equal(expected, result.Counts.Remaining);
+        Assert.Equal(expected, result.Counts.Manual);
+        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.All(result.Findings, finding => Assert.Contains("The Library residual needs recovery.", finding.Cause, StringComparison.Ordinal));
+        var selected = Select(result, CliDetail.Standard);
+        var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, RepairPresentation.Rendering.DataTextRenderer).Content;
+        Assert.Contains("Would restore 1 Library link.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("39", text, StringComparison.Ordinal);
+        using var document = JsonDocument.Parse(CliJsonRenderer.Render(selected, RepairPresentation.Rendering.DataJsonTypeInfo));
+        var counts = document.RootElement.GetProperty("counts");
+        Assert.Equal(expected, counts.GetProperty("problemsRemaining").GetInt32());
+        Assert.Equal(expected, counts.GetProperty("problemsNeedingHand").GetInt32());
+        Assert.Equal(expected, counts.TryGetProperty("warnings", out var warnings) ? warnings.GetInt32() : 0);
+        Assert.Equal(expected, document.RootElement.GetProperty("findings").GetArrayLength());
+        CommandOutputSnapshot.MatchSnapshot(counts.GetRawText(), $"library-counts.{linkCount}.json");
+    }
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair native Library output retains the selected recovery identity and effect"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void NativeLibraryOutputRetainsSelectedIdentity()

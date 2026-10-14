@@ -3,4 +3,4 @@ Workspace: <workspace>
   Error  guidance/old guide  Route remove was cancelled
          Route remove was cancelled. Nothing was changed.
   Rerun the same Route Remove request.
-Next: open-forge route remove
+Next: open-forge route remove 'guidance/old guide' --automatic --workspace <workspace>

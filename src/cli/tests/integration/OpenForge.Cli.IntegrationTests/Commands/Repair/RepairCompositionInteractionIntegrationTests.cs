@@ -15,6 +15,18 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
 public sealed class RepairCompositionInteractionIntegrationTests
 {
+    [Fact, Trait("Feature", "repair"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
+    public async Task InteractiveSafePreviewReplaysTheFullRequestAsAutomaticApplication()
+    {
+        using var workspace = RepairIntegrationWorkspace.Create("repair-preview-next", includeGuided: false);
+        var before = workspace.SnapshotState();
+        var run = await RunAsync(["repair", "--dry-run", "--detail=full"], workspace.Path, "y\n", standardInputRedirected: false, promptOutputRedirected: false);
+        Assert.Equal(0, run.ExitCode);
+        Assert.Equal(before, workspace.SnapshotState());
+        Assert.Contains("--automatic", run.StandardOutput);
+        Assert.Contains("--detail full", run.StandardOutput);
+        Assert.DoesNotContain("Next: open-forge repair --dry-run", run.StandardOutput);
+    }
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Composed Repair previews safe and guided selections before each question and applies once"),
         Trait("Feature", "repair"), Trait("Evidence", "Integration")]
@@ -56,13 +68,13 @@ public sealed class RepairCompositionInteractionIntegrationTests
         Assert.True(safeQuestion < guidedQuestion, run.StandardError);
         Assert.True(guidedQuestion < finalPreview, run.StandardError);
         Assert.True(finalPreview < finalQuestion, run.StandardError);
-        Assert.Contains("1. .agents/docs/guide.md", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("1. .agents/docs/replacement.md", run.StandardError, StringComparison.Ordinal);
 
         Assert.Contains("Leave this link unchanged", run.StandardError, StringComparison.Ordinal);
         var after = workspace.SnapshotState();
         Assert.Equal(before["workspace/.agents/docs/unrelated.bin"], after["workspace/.agents/docs/unrelated.bin"]);
         Assert.Contains("[Safe](guide.md)", workspace.ReadText(RepairIntegrationWorkspace.SourcePath), StringComparison.Ordinal);
-        Assert.Contains("[Guided](guide.md)", workspace.ReadText(RepairIntegrationWorkspace.SourcePath), StringComparison.Ordinal);
+        Assert.Contains("[Guided](replacement.md)", workspace.ReadText(RepairIntegrationWorkspace.SourcePath), StringComparison.Ordinal);
         workspace.AssertNoRecoveryArtifacts();
     }
 
@@ -119,7 +131,7 @@ public sealed class RepairCompositionInteractionIntegrationTests
         var run = await RunAsync(
             ["repair"],
             workspace.Files.Path,
-            "2\n1\ny\n",
+            "1\ny\n",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -132,11 +144,11 @@ public sealed class RepairCompositionInteractionIntegrationTests
         Assert.StartsWith("Repaired ", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Status:", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
-            "Library team-knowledge: include this recovery step?",
+            "Choose one Library recovery step for this run",
             run.StandardError,
             StringComparison.Ordinal);
-        Assert.Contains("1. Include", run.StandardError, StringComparison.Ordinal);
-        Assert.Contains("2. Leave out", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains($"1. {workspace.Evidence.Entry.Input.Context.Entry.TargetPath}", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("2. Leave all recovery steps out", run.StandardError, StringComparison.Ordinal);
         // The plan review renders the preview report itself at minimal detail rather than
         // printing a `Preview of selected repairs` header. This flow previews a result whose
         // Library recovery step has already run, so the preview opens with `Repaired ...`; the
@@ -148,9 +160,9 @@ public sealed class RepairCompositionInteractionIntegrationTests
 
     [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Composed Repair Library residual skip, refusal, and EOF preserve bytes"),
-        InlineData("2\n2\n", "skip"),
-        InlineData("2\n\n", "refusal"),
-        InlineData("2\n", "eof"),
+        InlineData("2\n", "skip"),
+        InlineData("\n", "refusal"),
+        InlineData("", "eof"),
         Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public async Task LibraryResidualNonSelectionPreservesWorkspace(string standardInput, string outcome)
     {
@@ -168,10 +180,10 @@ public sealed class RepairCompositionInteractionIntegrationTests
             promptOutputRedirected: false);
 
         Assert.Contains(
-            "Library team-knowledge: include this recovery step?",
+            "Choose one Library recovery step for this run",
             run.StandardError,
             StringComparison.Ordinal);
-        Assert.Contains("2. Leave out", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("2. Leave all recovery steps out", run.StandardError, StringComparison.Ordinal);
         Assert.Null(run.RemainingInput);
         Assert.Equal(before, workspace.Files.Snapshot());
         Assert.Equal(workspace.PriorText, File.ReadAllText(workspace.TargetPath).TrimEnd('\n'));

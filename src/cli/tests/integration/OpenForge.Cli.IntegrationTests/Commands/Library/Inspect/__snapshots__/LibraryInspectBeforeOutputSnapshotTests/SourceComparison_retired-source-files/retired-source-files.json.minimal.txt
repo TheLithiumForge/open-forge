@@ -55,7 +55,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge library sync team-knowledge --dry-run",
+    "command": "open-forge library sync team-knowledge --dry-run --workspace <workspace>",
     "reason": "Preview the synchronization before changing files."
   }
 }

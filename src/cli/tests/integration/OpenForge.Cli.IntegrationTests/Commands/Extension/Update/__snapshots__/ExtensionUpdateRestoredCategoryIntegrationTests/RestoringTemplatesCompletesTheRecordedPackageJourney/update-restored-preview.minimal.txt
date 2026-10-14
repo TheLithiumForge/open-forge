@@ -1,0 +1,12 @@
+Would update the core-templates Extension to 0.4.0.
+Workspace: <workspace>
+  .agents/templates/_templates.md      Entries would be updated
+  .agents/templates/core/_core.md      would be created
+  .agents/templates/core/directive.md  would be created
+  .agents/templates/core/guidance.md   would be created
+  .agents/templates/core/map.md        would be created
+  .agents/templates/core/memory.md     would be created
+  .agents/templates/core/pattern.md    would be created
+  .agents/templates/core/skill.md      would be created
+  .agents/templates/core/template.md   would be created
+No files were changed.

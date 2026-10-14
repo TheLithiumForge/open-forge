@@ -48,6 +48,12 @@ including dry-run. It never supplies deletion authority.
 Duplicated identities likewise produce information without partial inference.
 No retired state file is read, migrated, changed or deleted.
 
+An installed package with no delivered paths remains interpretable, including
+when exclusions suppressed its complete payload. Recorded dependencies still
+require recorded package identities. If identities, paths or dependencies cannot
+be interpreted, name the affected package from the observed receipts and offer
+`open-forge extension inspect <package-id>`. Infer no ownership or file effects.
+
 The existing lifecycle outcome reports the lock publication. An unchanged lock
 is preserved, a planned write reports its actual verified receipt, and a skipped
 write reports `none`/`not-requested`. Never synthesize integrity from membership.
@@ -343,8 +349,9 @@ A handled application, verification, publication or cancellation outcome stops
 new effects and reports the actual residual draft or final path. The valid final
 bundle remains after successful target and lock verification; verify its identity
 and report its exact path. Retention is successful protection, not cleanup failure.
-When `.git` is an ordinary directory, point at `git diff`; otherwise point at the
-retained bundle. No Git executable or cleanliness check is required.
+Point at the retained bundle regardless of Git tracking. JSON `previousContent`
+uses its actual path and remains null before retention or for unknown recovery.
+No Git executable or cleanliness check is required.
 Never restore, roll back, compensate, infer current target state from recovery,
 or create a journal or persisted plan. A final ZIP may remain after abrupt
 termination without a crash or power-loss guarantee.

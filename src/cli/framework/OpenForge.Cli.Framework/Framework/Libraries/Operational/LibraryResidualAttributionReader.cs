@@ -159,8 +159,8 @@ internal static class LibraryResidualAttributionReader
         }
 
         var expected = mapping.ExpectedRelativeLink.Value;
-        return string.Equals(entry.Prior.RelativeFileLink?.RawRelativeTarget, expected, StringComparison.Ordinal)
-            || string.Equals(entry.Intended.RelativeFileLink?.RawRelativeTarget, expected, StringComparison.Ordinal);
+        return Framework.Filesystem.PhysicalPaths.Shared.Links.RelativeFileLinkTarget.SameMapping(entry.Prior.RelativeFileLink?.RawRelativeTarget, expected)
+            || Framework.Filesystem.PhysicalPaths.Shared.Links.RelativeFileLinkTarget.SameMapping(entry.Intended.RelativeFileLink?.RawRelativeTarget, expected);
     }
 
     private static async ValueTask<LibraryRecoveryPriorRecord?> ReadPriorRecordAsync(

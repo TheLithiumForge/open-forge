@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge extension remove base",
+          "command": "open-forge extension remove base --workspace <workspace>",
           "reason": "Remove the unused dependency when it is no longer needed."
         }
       ]
@@ -85,7 +85,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge extension remove base",
+    "command": "open-forge extension remove base --workspace <workspace>",
     "reason": "Remove the unused dependency when it is no longer needed."
   }
 }

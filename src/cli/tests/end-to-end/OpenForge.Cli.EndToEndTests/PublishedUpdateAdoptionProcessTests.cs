@@ -146,6 +146,12 @@ public sealed class PublishedUpdateAdoptionProcessTests
         SkipUnlessWindowsConPty();
         using var workspace = await CreateFixtureAsync("task70-update-confirmed", "partial-frontmatter");
 
+        var beforePreview = workspace.SnapshotState();
+        var preview = await workspace.RunAsync("update", "--dry-run");
+        Assert.Equal(0, preview.ExitCode);
+        Assert.Contains("Would change 4 source files.", preview.StandardOutput, StringComparison.Ordinal);
+        Assert.Equal(beforePreview, workspace.SnapshotState());
+
         var terminal = await PublishedWindowsTerminal.RunAsync(
             workspace.Target,
             workspace.Path,
@@ -154,12 +160,15 @@ public sealed class PublishedUpdateAdoptionProcessTests
             "y\r");
 
         Assert.Equal(0, terminal.ExitCode);
-        var planned = terminal.Transcript.IndexOf("Planned migration", StringComparison.OrdinalIgnoreCase);
-        var migrated = terminal.Transcript.IndexOf("Migrated", StringComparison.OrdinalIgnoreCase);
+        var planned = terminal.Transcript.IndexOf("Would change 4 source files.", StringComparison.Ordinal);
+        var migrated = terminal.Transcript.IndexOf("Changed 4 source files.", StringComparison.Ordinal);
         Assert.True(planned >= 0, terminal.Transcript);
         Assert.True(migrated > planned, terminal.Transcript);
         Assert.Contains(SkillPath, terminal.Transcript, StringComparison.Ordinal);
         Assert.Contains(ReferenceCataloguePath, terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("metadata completed, your content was kept", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("local entrypoint created", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Entries updated", terminal.Transcript, StringComparison.Ordinal);
         AssertAdoptedFiles(workspace, "partial-frontmatter");
     }
 

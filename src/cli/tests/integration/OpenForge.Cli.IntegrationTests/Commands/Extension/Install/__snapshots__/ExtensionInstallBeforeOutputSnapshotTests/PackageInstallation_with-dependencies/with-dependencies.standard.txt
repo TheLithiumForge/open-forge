@@ -1,4 +1,4 @@
-Installed the toolkit Extension and 1 packages it requires: base.
+Installed the toolkit Extension and 1 package it requires: base.
 Workspace: <workspace>
   .agents/base.md     created (base)
   .agents/toolkit.md  created (toolkit)

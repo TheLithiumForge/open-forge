@@ -1,10 +1,90 @@
 using OpenForge.Cli.TestSupport.Snapshots;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
+using System.Text.Json;
+using System.Text.Encodings.Web;
 
 namespace OpenForge.Cli.Core.UnitTests.TestSupport.Snapshots;
 
 [Trait("Feature", "command-output-snapshots"), Trait("Evidence", "Unit")]
 public sealed class CommandOutputNormalizationTests
 {
+    [Theory(DisplayName = "Snapshot paths normalize shell quoting and JSON encoding across platforms"), Trait("Boundary", "Output")]
+    [InlineData(@"C:\Users\owner\Temp\ws")]
+    [InlineData(@"C:\owner's workspace\ws")]
+    [InlineData("/tmp/abc/ws")]
+    [InlineData("/var/folders/xx/long-temporary-directory/T/ws")]
+    [InlineData("/tmp/owner's workspace/ws")]
+    public void CommandPathsIgnorePlatformQuoting(string path)
+    {
+        foreach (var windowsShell in new[] { false, true })
+        {
+            var quoted = CliCommandText.Quote(path, windowsShell);
+            var actual = $"--workspace {quoted}\n--workspace {path}\n{{\"command\":\"--workspace {JsonEncodedText.Encode(quoted)}\"}}\n{{\"command\":\"--workspace {JsonEncodedText.Encode(quoted, JavaScriptEncoder.UnsafeRelaxedJsonEscaping)}\"}}";
+            const string expected = "--workspace <workspace>\n--workspace <workspace>\n{\"command\":\"--workspace <workspace>\"}\n{\"command\":\"--workspace <workspace>\"}";
+
+            Assert.Equal(expected, CommandOutputNormalization.Normalize(actual, path, "1.2.3-test"));
+            Assert.Equal("{\"path\":\"<workspace>\"}", CommandOutputNormalization.Normalize(
+                $"{{\"path\":\"{JsonEncodedText.Encode(path, JavaScriptEncoder.UnsafeRelaxedJsonEscaping)}\"}}", path, "1.2.3-test"));
+        }
+    }
+
+    [Theory(DisplayName = "Every path-placeholder helper removes only the exact owned path's shell quotes"), Trait("Boundary", "Output")]
+    [InlineData("<source>")]
+    [InlineData("<destination>")]
+    [InlineData("<catalogue>")]
+    [InlineData("<data-home>")]
+    public void DelimitedPathsShareQuoteNormalization(string placeholder)
+    {
+        const string path = @"C:\owned\path";
+        var quoted = CliCommandText.Quote(path, windowsShell: true);
+        var actual = $"{quoted}\n{path}\n{JsonEncodedText.Encode(quoted)}\n'{path}-other'\n'keep this quoted'";
+
+        Assert.Equal($"{placeholder}\n{placeholder}\n{placeholder}\n'{path}-other'\n'keep this quoted'",
+            CommandOutputNormalization.ReplaceDelimitedPath(actual, path, placeholder));
+    }
+
+    [Fact(DisplayName = "Recovery candidates and the store share shell-quote normalization"), Trait("Boundary", "Output")]
+    public void RecoveryPathsIgnorePlatformQuoting()
+    {
+        const string store = @"C:\owned\recovery";
+        const string bundle = @"C:\owned\recovery\bundle.zip";
+        var actual = $"'{bundle}'\n{JsonEncodedText.Encode($"'{store}'")}\n'{bundle}.other'";
+
+        Assert.Equal("<recovery-bundle-1>\n<recovery-store>\n'<recovery-store>\\bundle.zip.other'",
+            CommandOutputNormalization.NormalizeRecoveryPaths(actual, [bundle], store));
+    }
+
+    [Theory(DisplayName = "Temporary path lengths do not change wrapped snapshot prose"), Trait("Boundary", "Output")]
+    [InlineData("/tmp/abc/source")]
+    [InlineData(@"C:\Users\owner\AppData\Local\Temp\a-long-workspace-name\source")]
+    [InlineData("/var/folders/xx/a-long-temporary-directory/T/source")]
+    public void WrappedPathsHaveStableLayout(string path)
+    {
+        var wrapped = $"  Source:\n  {path}\n  (catalogue)\n  Package files belong under\n  {path}/content/.agents/.\n  Keep this prose.\n  Keep this separate too.\n  {path}/first.md\n    not started\n  {path}/second.md\n    created\n";
+        var unwrapped = $"  Source: {path} (catalogue)\n  Package files belong under {path}/content/.agents/.\n  Keep this prose.\n  Keep this separate too.\n  {path}/first.md\n    not started\n  {path}/second.md\n    created\n";
+        const string expected = "  Source: <extension-source> (catalogue)\n  Package files belong under <extension-source>/content/.agents/.\n  Keep this prose.\n  Keep this separate too.\n  <extension-source>/first.md\n    not started\n  <extension-source>/second.md\n    created\n";
+
+        Assert.Equal(expected, CommandOutputNormalization.Normalize(wrapped, null, "1.2.3-test", extensionSourcePath: path, normalizeTextPaths: true));
+        Assert.Equal(expected, CommandOutputNormalization.Normalize(unwrapped, null, "1.2.3-test", extensionSourcePath: path, normalizeTextPaths: true));
+        Assert.Equal("  Source: <extension-source> (catalogue)",
+            CommandOutputNormalization.Normalize($"  Source: {path}\n  (catalogue)", null, "1.2.3-test", extensionSourcePath: path, normalizeTextPaths: true));
+        Assert.Equal("  available packages: <extension-source>/extension.json is not a valid Extension manifest.",
+            CommandOutputNormalization.Normalize($"  available packages:\n  {path}/extension.json\n  is not a valid Extension manifest.",
+                null, "1.2.3-test", extensionSourcePath: path, normalizeTextPaths: true));
+        Assert.Equal("  Recovery: retained at <recovery-bundle>; 2 protected paths.",
+            CommandOutputNormalization.Normalize($"  Recovery: retained at\n  {path};\n  2 protected paths.",
+                null, "1.2.3-test", recoveryBundlePath: path, normalizeTextPaths: true));
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Path wrapping normalization preserves adjacent commands and metadata rows")]
+    public void PathSuffixDoesNotConsumeRows()
+    {
+        const string output = "  use open-forge update --workspace <workspace>\n  open-forge update --workspace <workspace>\n  Would create <workspace>/content/\n  name: Toolkit\n  description: Package description.\n";
+
+        Assert.Equal(output, CommandOutputNormalization.Normalize(output, null, "1.2.3-test", normalizeTextPaths: true));
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Cleanup snapshots normalize only the exact asserted lease operation ID member")]
     public void CleanupLeaseIdentityPreservesOtherIdentifiers()
@@ -54,10 +134,10 @@ public sealed class CommandOutputNormalizationTests
         var hash = new string('a', 64);
         // The last value carries the same shape in a position no fingerprint occupies. Redacting
         // it would rewrite a real value and freeze the wrong evidence into the capture.
-        var actual = $"\"sha256\": \"{hash}\"\nBefore SHA-256: {hash}\nThe {hash} route is unrelated.";
+        var actual = $"\"sha256\": \"{hash}\"\nBefore SHA-256: {hash}\nFramework fingerprint:\n  {hash}\nThe {hash} route is unrelated.";
 
         Assert.Equal(
-            $"\"sha256\": \"<sha256>\"\nBefore SHA-256: <sha256>\nThe {hash} route is unrelated.",
+            $"\"sha256\": \"<sha256>\"\nBefore SHA-256: <sha256>\nFramework fingerprint:\n  <sha256>\nThe {hash} route is unrelated.",
             CommandOutputNormalization.Normalize(actual, null, "1.2.3-test"));
     }
 

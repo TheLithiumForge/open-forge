@@ -2,13 +2,19 @@ Install needs confirmation, and this session cannot ask.
 Workspace: <workspace>
   Error  <workspace>  Confirmation is required [install.confirmation-required]
          Install needs confirmation, and this session cannot ask.
-         use open-forge install --automatic
-         open-forge install --automatic
+         use open-forge install --workspace <workspace> --preset full-core --frontmatter root --automatic
+         open-forge install --workspace <workspace> --preset full-core --frontmatter root --automatic
          Rerun the same Install request with explicit automatic mode.
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
 Frontmatter: root
-  Bundled Framework fingerprint: <sha256> (19 assets).
+  Bundled Framework fingerprint:
+  <sha256> (19 assets).
   Ownership record publication did not start.
   No recovery bundle was required.
   Verification was not requested.
   Rerun the same Install request with explicit automatic mode.
-Next: open-forge install --automatic
+Next: open-forge install --workspace <workspace> --preset full-core --frontmatter root --automatic

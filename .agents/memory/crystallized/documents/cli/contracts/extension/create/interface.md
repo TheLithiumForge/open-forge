@@ -21,6 +21,18 @@ The sibling [Behavior Contract](behavior.md) defines the technology-neutral
 scaffold plan and safe application. The [Extension group entrypoint](../_extension.md)
 defines group routing only. No Technical Design exists.
 
+## Help
+
+The purpose sentence is: Create a local Extension package scaffold in an existing catalogue folder.
+
+The public Usage line is:
+
+```text
+open-forge extension create [<stable-id>] [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Boundary
 
 `create` gives an author a stable local package boundary. It writes a scaffold
@@ -200,7 +212,7 @@ Next: open-forge extension create <id> --path <folder>
 ### Prompts
 
 Text input for the ID (`Extension ID (for example my-tools):`) and the
-parent folder (`Parent folder for the new Extension:`) when missing, then plan
+parent folder (`Existing parent folder for the new Extension:`, followed by `Open Forge creates a folder named <id> inside it.`) when missing, then plan
 review and `Create these files? [y/N]` unless `--automatic`.
 
 ### Representative transcripts by status
@@ -323,3 +335,9 @@ Exact wording is owned by the linked typed factories. Selection, output coordina
 CLI help syntax: [`extension.create.help.syntax`](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/Create/ExtensionCreateText.cs).
 
 <!-- @OpenForgeTextRef extension.create.help.syntax -->
+
+### Parent Folder Prompt
+
+Help says `If creation stops partway through, created files stay in the package folder. Review that folder before retrying.` Keep the create-only boundary and the explicit statement that creation makes no recovery bundle.
+
+The initial parent prompt reads `Existing parent folder for the new Extension:` followed by `Open Forge creates a folder named <id> inside it.`, using the resolved Extension ID. This explanation appears before the answer in both terminal modes. The existing-parent requirement, child-only scaffold, validation, text cancellation and confirmation behavior remain unchanged.

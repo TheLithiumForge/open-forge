@@ -283,7 +283,7 @@ internal static class LibraryDetachReportSelector
                 => new CliNextAction("open-forge doctor", LibraryDetachWording.DoctorNextReason()),
             LibraryDetachFindingCode.PermissionRequired when result.Result.Permissions.Missing.FirstOrDefault() is { } missing
                 => new CliNextAction(
-                    $"open-forge library detach {id} --allow-path {missing} --automatic",
+                    result.PermissionCommand ?? $"open-forge library detach {id} --allow-path {OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.CliCommandText.Quote(missing)} --automatic",
                     global::OpenForge.Cli.OutputText.Library.Detach.LibraryDetachText.MessageGrantTheDestinationPathThenRerunTheDetachRequest()),
             LibraryDetachFindingCode.RecoveryRetained
                 => new CliNextAction("open-forge cleanup", LibraryDetachWording.RecoveryNextReason()),
@@ -395,7 +395,7 @@ internal static class LibraryDetachReportSelector
             link.Path,
             "link",
             "delete",
-            link.RawRelativeTarget,
+            link.RelativeTarget,
             link.Expected)));
         planned.AddRange(plan.GeneratedRegions.Select(region => new PlannedEffect(
             region.Path,
@@ -488,7 +488,8 @@ internal static class LibraryDetachReportSelector
     private static string SettingsText(EffectOutcome outcome, bool dryRun)
         => outcome switch
         {
-            EffectOutcome.Planned or EffectOutcome.Done => LibraryDetachWording.SettingsRow(dryRun),
+            EffectOutcome.Planned => LibraryDetachWording.SettingsRow(true),
+            EffectOutcome.Done => LibraryDetachWording.SettingsRow(false),
             EffectOutcome.NotStarted => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotStarted(),
             EffectOutcome.Unknown => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFinalStateUnknown(),
             EffectOutcome.Failed => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelFailed(),
@@ -614,12 +615,12 @@ internal static class LibraryDetachReportSelector
             || result.Status == CliSemanticStatus.Attention
                 && effects.Any(effect => effect.Data.Kind == "link" && effect.Outcome is EffectOutcome.Done or EffectOutcome.Planned)
             || partial && effects.Any(effect => effect.Data.Kind == "link" && effect.Outcome is EffectOutcome.Done or EffectOutcome.Unknown);
-        return showLinks
-            ? effects
-                .Where(effect => effect.Data.Kind is "link" or "setting")
-                .Select(effect => new LibraryDetachDataTextRow(effect.Data.Path, effect.Data.Text))
-                .ToArray()
-            : [];
+        return effects.Where(effect => effect.Data.Kind == "link" && showLinks
+                || effect.Data.Kind == "setting"
+                    && (effect.Outcome is EffectOutcome.Done or EffectOutcome.Unknown or EffectOutcome.Failed
+                        || result.Result.Identity.Mode == LibraryMode.DryRun && effect.Outcome == EffectOutcome.Planned))
+            .Select(effect => new LibraryDetachDataTextRow(effect.Data.Path, effect.Data.Text))
+            .ToArray();
     }
 
     private static IReadOnlyList<string> TextDetails(
@@ -630,7 +631,6 @@ internal static class LibraryDetachReportSelector
         var lines = new List<string>();
         var sections = effects.Where(effect => effect.Data.Kind == "section").ToArray();
         var records = effects.Where(effect => effect.Data.Kind == "record").ToArray();
-        var settings = effects.Where(effect => effect.Data.Kind == "setting").ToArray();
         var files = effects.Where(effect => effect.Data.Kind == "file").ToArray();
         lines.AddRange(files
             .Where(effect => detail >= CliDetail.Standard || effect.Outcome is EffectOutcome.Planned or EffectOutcome.Done or EffectOutcome.Unknown)
@@ -645,7 +645,6 @@ internal static class LibraryDetachReportSelector
         {
             lines.AddRange(sections.Select(effect => effect.Data.Text));
             lines.AddRange(records.Select(effect => $".agents/open-forge.lock.json  {effect.Data.Text}"));
-            lines.AddRange(settings.Select(effect => $".agents/open-forge.json  {effect.Data.Text}"));
         }
 
         if (detail >= CliDetail.Full)

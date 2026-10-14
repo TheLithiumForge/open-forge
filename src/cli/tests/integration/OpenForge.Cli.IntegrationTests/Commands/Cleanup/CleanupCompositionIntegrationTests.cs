@@ -27,9 +27,6 @@ public sealed class CleanupCompositionIntegrationTests
 
         var directLeaves = root.StandardOutput
             .Split(Environment.NewLine, StringSplitOptions.None)
-            .SkipWhile(line => !line.Equals("Commands:", StringComparison.Ordinal))
-            .Skip(1)
-            .TakeWhile(line => line.StartsWith("  ", StringComparison.Ordinal))
             .Select(line => line.Trim())
             .Where(line => line.Length > 0)
             .Select(line => line.Split(' ', 2)[0])
@@ -44,11 +41,11 @@ public sealed class CleanupCompositionIntegrationTests
         Assert.Equal(CliOutputTarget.StandardOutput, leaf.PrimaryOutputTarget);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains(
-            "open-forge cleanup [--dry-run] [global options]",
+            "open-forge cleanup [options]",
             leaf.StandardOutput,
             StringComparison.Ordinal);
-        Assert.Contains("Catalogue", leaf.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Write policy", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Safety", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Behavior", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));
         Assert.Equal(before, workspace.SnapshotWorkspace());
         Assert.Equal(recoveryBefore, workspace.SnapshotRecovery());

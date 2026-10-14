@@ -15,12 +15,12 @@ internal static class RepairWording
         => "Library diagnosis remains";
 
     // @OpenForgeText repair.wording.inspect-remaining-library-problems
-    internal static string InspectRemainingLibraryProblems()
-        => "Inspect remaining Library problems with open-forge doctor.";
+    internal static string InspectRemainingLibraryProblems(string command)
+        => $"Inspect remaining Library problems with {command}.";
 
     // @OpenForgeText repair.wording.review-remaining-links-and-inspect-library-problems
-    internal static string ReviewRemainingLinksAndInspectLibraryProblems()
-        => "Review remaining broken links in Repair, then inspect remaining Library problems with open-forge doctor.";
+    internal static string ReviewRemainingLinksAndInspectLibraryProblems(string command)
+        => $"Review remaining broken links in Repair, then inspect remaining Library problems with {command}.";
 
     // @OpenForgeText repair.wording.broken-destination-detail
     internal static string BrokenDestination(string destination, string detail)

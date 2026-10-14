@@ -2,12 +2,13 @@ Cannot inspect toolkit: The ownership record names toolkit in a way that cannot 
 Workspace: <workspace>
   Error  toolkit  Extension identity is ambiguous
          The ownership record names toolkit in a way that cannot be matched to one package.
+1 package, including toolkit.
 Source: <extension-source>
-Dependencies
+Packages in this selection
   toolkit  1.0.0  available
 
 Files
   .agents/toolkit.md  could not be compared
-1 dependency, 1 errors.
+1 errors.
   Inspect the recorded workspace facts.
 Next: open-forge doctor

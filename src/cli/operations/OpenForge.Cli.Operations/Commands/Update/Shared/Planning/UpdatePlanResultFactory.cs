@@ -108,7 +108,7 @@ internal static class UpdatePlanResultFactory
             Comparisons = comparisons,
             GeneratedNavigation = generatedNavigation,
             Effects = resultEffects,
-            PreviousContentAvailable = UpdatePreviousContentObserver.Read(request.Workspace, resultEffects),
+            PreviousContentAvailable = UpdatePreviousContentObserver.Read(recovery),
             Lifecycle = lifecycle,
             Recovery = recovery,
             Verification = verification,

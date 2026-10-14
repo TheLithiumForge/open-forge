@@ -25,7 +25,7 @@ internal static class RepairDefinitions
 
     internal static readonly CliSyntaxDefinition RepairCommand = new(
         CommandIdentity,
-        "Repair local references and Library state.");
+        "Apply verified corrections or explicitly chosen repairs to local links and Library state.");
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
@@ -375,6 +375,8 @@ internal static class RepairDefinitions
                 code,
                 "repair.interrupted",
                 CliSemanticStatus.Interrupted),
+            RepairFindingCode.RenameProven => Definition(code, "repair.rename-proven", CliSemanticStatus.Complete),
+            RepairFindingCode.MetadataSkipped => Definition(code, "index.metadata-skipped", CliSemanticStatus.Incomplete),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(code),
                 code,
@@ -514,6 +516,8 @@ internal enum RepairFindingCode
     RecoveryFailed,
     OperationFailed,
     Interrupted,
+    RenameProven,
+    MetadataSkipped,
 }
 
 internal sealed record RepairFindingDefinition(

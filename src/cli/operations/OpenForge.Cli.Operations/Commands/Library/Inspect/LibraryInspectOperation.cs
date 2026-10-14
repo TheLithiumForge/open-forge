@@ -121,6 +121,9 @@ internal sealed class LibraryInspectOperation
         {
             Status = status,
             Workspace = request.Workspace,
+            LinkRecreation = findings.Any(finding => finding.UnreadableOnWindows)
+                ? Commands.Shared.LibraryLinks.LibraryLinkRecreationReader.Read(selected, request.Workspace)
+                : null,
             Result = new LibraryInspectPayload
             {
                 Record = new LibraryInspectRecordView

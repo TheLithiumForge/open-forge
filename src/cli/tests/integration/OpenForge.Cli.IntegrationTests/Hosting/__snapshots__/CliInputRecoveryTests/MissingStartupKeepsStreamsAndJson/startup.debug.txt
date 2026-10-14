@@ -1,0 +1,11 @@
+Startup context is unavailable in <workspace>.
+  Warning  .agents  Startup context is unavailable [context.closure-unavailable]
+         The startup files could not be resolved: The .agents source root is unavailable.
+  Warning  .agents/loader.md  Startup context is unavailable [context.closure-unavailable]
+         The startup files could not be resolved: The canonical Loader source is unavailable.
+  Warning  AGENTS.md  Source could not be read [context.layer-unavailable]
+         AGENTS.md could not be read, so it was not included.
+This folder has no .agents/loader.md.
+Choose your project with --workspace, or preview an installation here.
+  Preview setup without changing files.
+Next: open-forge install --workspace <workspace> --dry-run

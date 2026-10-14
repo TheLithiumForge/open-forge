@@ -137,12 +137,12 @@ internal static class NoFollowLeafObserver
 
     private static NoFollowLinkTargetForm ReadTargetForm(string target)
     {
-        if (Path.IsPathFullyQualified(target) || target.StartsWith('/'))
+        if (Path.IsPathFullyQualified(target) || Path.IsPathRooted(target))
         {
             return NoFollowLinkTargetForm.Absolute;
         }
 
-        if (target.Contains('\\'))
+        if (!OperatingSystem.IsWindows() && target.Contains('\\'))
         {
             return NoFollowLinkTargetForm.Unsupported;
         }

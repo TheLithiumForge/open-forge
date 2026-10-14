@@ -6,7 +6,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Inspect;
 internal static class LibraryInspectDefinitions
 {
     internal const string CommandIdentity = "library inspect";
-    internal static readonly CliSyntaxDefinition Command = new("inspect", "Inspect all source files and destination links for one Library.");
+    internal static readonly CliSyntaxDefinition Command = new("inspect", "Compare one Library's source files with its destination links.");
     internal static string ReadFindingCode(LibraryInspectFindingCode value)
         => value switch
         {

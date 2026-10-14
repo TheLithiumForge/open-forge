@@ -43,6 +43,22 @@ const config: Config = {
 
   plugins: [["@docusaurus/plugin-content-docs", guideDocs]],
 
+  // Local search: the index is built with the site and searched in the browser,
+  // with no external service. The optional AI answer widget is not installed.
+  themes: [
+    [
+      "@easyops-cn/docusaurus-search-local",
+      {
+        hashed: true,
+        indexBlog: false,
+        indexPages: false,
+        docsRouteBasePath: [siteDocs.routeBasePath, guideDocs.routeBasePath],
+        highlightSearchTermsOnTargetPage: true,
+        explicitSearchResultPath: true,
+      },
+    ],
+  ],
+
   themeConfig,
 };
 

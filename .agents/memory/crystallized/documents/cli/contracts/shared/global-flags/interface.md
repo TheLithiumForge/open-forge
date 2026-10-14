@@ -156,6 +156,40 @@ text. JSON, selected authored content, Find TSV rows, preview diffs, paths,
 identifiers and commands retain their plain rendering. Diagnostics, prompts,
 help and version remain plain. Colour never changes facts, status, stream or exit.
 
+## Text Width And Input Diagnostics
+
+Display trusted parser line breaks and suggestion indentation as readable lines. Escape control characters in argument tokens before composing those lines. A value containing an actual newline or escape character must not introduce terminal controls. Invalid format and detail values retain their allowed choices, one command-specific help action, stderr and exit 4.
+
+The host supplies the available width for text presentation. Redirected output
+uses 80 columns. Plan tables, report tables and line-mode prompts wrap prose
+at spaces. Continuation lines align under their column. If an identity and its
+action or path cannot fit, the complete identity stays on one line and the next
+cell appears on an indented line. Paths and words are never clipped or split
+to fit. An unbreakable value may exceed the width. Rows, order and counts stay
+the same.
+
+An unknown command or option names the rejected input and ends with
+`Next: open-forge --help` or the selected command's `--help` invocation.
+A missing option value names the option and gives a labeled `For example:`
+line. Parser failures remain text on stderr with exit 4, without a JSON report.
+
+A bad Install `--route` value names the complete rejected value, gives
+`<id>=add`, `<id>=remove` and `<id>=git-ignore` as the valid forms, and lists
+the built-in IDs from the existing configuration choices. It ends with
+`Next: open-forge install --help`. The original JSON findings remain unchanged.
+
+Single-select line prompts show each option's description beneath its row
+when it adds to the summary. Single-select and marked-list questions may supply
+one explanation block for the list. In a marked list it appears below the
+legend. Marked-list line prompts end with `Type cancel to stop without changes.`
+after the editing instruction. An empty line still accepts the complete marked
+list. Other line selections still cancel on an empty line.
+
+Extension Install and Update show the focused package's complete description
+before its dependency context, such as `Needs workflows.` Extension Remove
+uses the observed version and owned-path count when no description is available.
+Dependency closure, marks, keys and disabled rows keep their existing meaning.
+
 ## `--help`
 
 `--help` shows help for the selected command path.
@@ -173,12 +207,29 @@ Rules:
 - A group shows its child operations and performs no domain operation.
 - Help text uses the canonical command and flag vocabulary.
 - Help uses the host terminal width when available and 80 columns for redirected
-  output or a nonpositive width. Built-in help and appended
-  command-specific prose wrap to that width; appended prose uses two-space
-  indentation. Long unbreakable tokens may exceed the selected width.
+  output or a nonpositive width. Prose wraps at spaces and uses two-space
+  indentation. Runnable examples retain one complete logical line, even when
+  longer than the width. Long unbreakable tokens may also exceed the width.
 - Write help to stdout and return exit `0`. Composed `--format`, `--detail`,
   and `--detail-filter` flags are no-ops in this terminal mode; help remains
   ordinary text rather than an operation result envelope.
+
+### Help layout
+
+Every leaf starts with one plain purpose sentence and one public Usage line. The order is Examples, Behavior, Arguments when needed, local Options when present, a compact global-options block, additional Details when needed, Automation, and Related commands. Show two or three common examples, with preview before application. Behavior states defaults, preview, confirmation, and recovery in plain words. Details keeps only additional constraints and safety boundaries, without repeating Behavior or the option description. A typical leaf fits about 50 lines at 80 columns, and Install about 80, while every unique fact remains available.
+
+Generate Arguments and Options once from registered symbols and defaults. Leaves show their own options in full and summarize global option names once, with `See open-forge --help.` Root retains the full global option list. Options, subcommands, intent groups, and Related commands use two columns. Align wrapped descriptions under the description column. When a name exceeds its column, keep it whole and put the description on the next line, indented four spaces deeper than the name. A description never starts at the same indentation as its name.
+
+The public Usage may narrow the permissive parser synopsis for friendly errors, including `route inspect` and root `remove`. It never changes parser arity, binding, or validation. Automation is about four prose lines without a Markdown table. It keeps all seven exit mappings, one minified schema-3 JSON result on stdout for every status, stdout for text exits 0, 2, and 3, stderr for other text results, and bounded debug diagnostics on stderr.
+
+Root help orders purpose, Usage, one compact getting-started block, the three intent groups, full global options, and one `Use open-forge <command> --help` line. Preview and apply name the same preset, with short aligned descriptions:
+
+```text
+open-forge install --preset essentials --dry-run
+open-forge install --preset essentials
+```
+
+The same start block says to give the agent a normal task and offers installed users `open-forge update --dry-run`. It has no separate Managed content paragraph. Root inventory groups registered command objects by intent: Set up and manage, Read and discover, and Check and maintain. Groups show their actual child operations.
 
 ## `--version`
 

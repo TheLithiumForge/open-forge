@@ -7,16 +7,17 @@ using OpenForge.Cli.Core.Framework.Mutation.Application;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
+using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance;
 namespace OpenForge.Cli.Core.Commands.Index;
 
 internal static class IndexOperationFactory
 {
-    internal static IndexOperation Create(WorkspaceLockStoreRoot? lockStoreRoot = null)
+    internal static IndexOperation Create(WorkspaceLockStoreRoot? lockStoreRoot = null, IRoutedMaintenanceRenameEvidence? renameEvidence = null)
     {
         var physicalPathResolver = new PhysicalPathResolver();
         var validator = new FileExpectationValidator(physicalPathResolver);
         var revalidator = new MutationRevalidator(validator);
-        var projectionReader = new IndexProjectionReader(physicalPathResolver);
+        var projectionReader = new IndexProjectionReader(physicalPathResolver, renameEvidence);
         var applicationOperation = new IndexApplicationOperation(
             lockManager: lockStoreRoot is null
                 ? WorkspaceLockManager.CreateForCurrentUser()

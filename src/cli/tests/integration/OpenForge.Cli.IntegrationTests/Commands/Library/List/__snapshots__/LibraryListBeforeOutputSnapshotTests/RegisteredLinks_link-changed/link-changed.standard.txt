@@ -5,4 +5,4 @@ Workspace: <workspace>
   team-knowledge  shared/team -> .  0 links current, 1 changed
     .agents/directives/review.md  changed
   Inspect the Library before changing it.
-Next: open-forge library inspect team-knowledge
+Next: open-forge library inspect team-knowledge --workspace <workspace>

@@ -116,8 +116,8 @@ public sealed class UpdateMigrationPresentationTests
                 CliTextStyle.Plain,
                 UpdatePresentation.Rendering.DataTextRenderer).Content;
 
-            Assert.Contains("Migrated: metadata updated", text, StringComparison.Ordinal);
-            Assert.Contains("Planned migration: Entries section added", text, StringComparison.Ordinal);
+            Assert.Contains("metadata completed, your content was kept", text, StringComparison.Ordinal);
+            Assert.Contains("Entries would be updated", text, StringComparison.Ordinal);
             Assert.Contains(appliedPath, text, StringComparison.Ordinal);
             Assert.Contains(pendingPath, text, StringComparison.Ordinal);
             Assert.Contains("Migrated 1 source.", text, StringComparison.Ordinal);
@@ -157,7 +157,7 @@ public sealed class UpdateMigrationPresentationTests
 
         Assert.Equal(CliSemanticStatus.Incomplete, selected.Report.Status);
         Assert.Single(selected.Report.Findings);
-        Assert.Contains("Planned migration: metadata updated", text, StringComparison.Ordinal);
+        Assert.Contains("metadata would be completed, your content would be kept", text, StringComparison.Ordinal);
         Assert.Contains("Planned migration for 1 source.", text, StringComparison.Ordinal);
         Assert.Contains(path, text, StringComparison.Ordinal);
         Assert.DoesNotContain("Migrated:", text, StringComparison.Ordinal);
@@ -185,8 +185,8 @@ public sealed class UpdateMigrationPresentationTests
         Assert.Equal(CliSemanticStatus.Complete, selected.Report.Status);
         Assert.Empty(selected.Report.Findings);
         Assert.Single(selected.Report.Effects);
-        Assert.Contains("Migrated: metadata updated", text, StringComparison.Ordinal);
-        Assert.Equal(1, text.Split("Migrated 1 source.", StringSplitOptions.None).Length - 1);
+        Assert.Contains("metadata completed, your content was kept", text, StringComparison.Ordinal);
+        Assert.Equal(1, text.Split("Changed 1 source file.", StringSplitOptions.None).Length - 1);
         Assert.DoesNotContain("warning", text, StringComparison.OrdinalIgnoreCase);
     }
 
@@ -313,7 +313,7 @@ public sealed class UpdateMigrationPresentationTests
             CliTextStyle.Plain,
             UpdatePresentation.Rendering.DataTextRenderer).Content;
         Assert.Contains(path, text, StringComparison.Ordinal);
-        Assert.Contains("Planned migration: navigation updated", text, StringComparison.Ordinal);
+        Assert.Contains("Entries would be updated", text, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Output")]

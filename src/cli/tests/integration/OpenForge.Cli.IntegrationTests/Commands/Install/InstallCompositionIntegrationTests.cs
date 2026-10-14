@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Text.Json;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
@@ -84,8 +85,8 @@ public sealed class InstallCompositionIntegrationTests
             ConfirmationSentence + Environment.NewLine,
             applied.StandardError,
             StringComparison.Ordinal);
-        Assert.Contains("Would install the Open Forge Framework into", applied.StandardError, StringComparison.Ordinal);
-        Assert.StartsWith("Installed the Open Forge Framework into", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Would install the Open Forge Framework", applied.StandardError, StringComparison.Ordinal);
+        Assert.StartsWith("Installed the Open Forge Framework", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Created 17 files and 13 directories under .agents", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", applied.RemainingInput);
         Assert.True(workspace.AgentsDirectoryExists());
@@ -151,7 +152,7 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Contains("Install was cancelled. Nothing was changed.", run.StandardError, StringComparison.Ordinal);
         Assert.DoesNotContain("Status: interrupted", run.StandardError, StringComparison.Ordinal);
         var previewPosition = run.StandardError.IndexOf(
-            "Would install the Open Forge Framework into",
+            "Would install the Open Forge Framework",
             StringComparison.Ordinal);
         var questionPosition = run.StandardError.IndexOf(ConfirmationSentence, StringComparison.Ordinal);
         Assert.True(previewPosition >= 0 && previewPosition < questionPosition);
@@ -269,27 +270,51 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Single(
             root.StandardOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
             line => line.TrimStart().StartsWith("install", StringComparison.Ordinal));
-        Assert.Contains("Managed content", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Install establishes or verifies Framework management.", root.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains(
-            "--force and --prune permit only their documented changes",
-            string.Join(" ", root.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
-            StringComparison.Ordinal);
+        Assert.Contains("Already installed?", root.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("open-forge install --preset essentials", root.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains(
-            "open-forge install [--configure] [--preset <essentials|full-core|custom>] [--frontmatter <root|scoped>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]",
+            "open-forge install [options]",
             string.Join(" ", leaf.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
-        Assert.Contains("Setup selection", leaf.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Remove keeps existing files and their routes.",
+        Assert.Contains("Custom routes", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Remove keeps existing files and routes.",
             string.Join(" ", leaf.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)), StringComparison.Ordinal);
-        Assert.Contains("Confirmation", leaf.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("ask once after selection and checks", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Automation", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));
         Assert.Empty(workspace.SnapshotHashes());
         Assert.False(root.LockInfrastructureExists);
         Assert.False(leaf.LockInfrastructureExists);
+    }
+
+    [Fact(DisplayName = "Install next commands retain the selected workspace and explicit Custom choices")]
+    [Trait("Feature", "install-command"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
+    public async Task NextRetainsTwoWorkspaceSelection()
+    {
+        using var current = InstallOperationWorkspace.Create("install-current-workspace");
+        using var selected = InstallOperationWorkspace.Create("install-selected-workspace");
+        var beforeCurrent = current.SnapshotHashes();
+        var beforeSelected = selected.SnapshotHashes();
+        string[] arguments = ["install", "--workspace", selected.PhysicalPath, "--preset", "custom", "--route", "guidance=git-ignore",
+            "--route", "maps=remove", "--frontmatter", "scoped", "--force", "--detail", "standard", "--detail-filter", "warning"];
+        var json = await RunAsync([.. arguments, "--format", "json"], current.PhysicalPath, "unused", true, true);
+        Assert.Equal(4, json.ExitCode);
+        using var document = JsonDocument.Parse(json.StandardOutput);
+        var next = document.RootElement.GetProperty("next").GetProperty("command").GetString() ?? throw new InvalidOperationException("Retry was not supplied.");
+        Assert.Contains($"--workspace {CliCommandText.Quote(selected.PhysicalPath)}", next, StringComparison.Ordinal);
+        Assert.Contains("--preset custom", next, StringComparison.Ordinal);
+        Assert.Contains("--route guidance=git-ignore", next, StringComparison.Ordinal);
+        Assert.Contains("--route maps=remove", next, StringComparison.Ordinal);
+        Assert.Equal(10, next.Split("--route ", StringSplitOptions.None).Length - 1);
+        Assert.Contains("--frontmatter scoped --force --automatic", next, StringComparison.Ordinal);
+        Assert.EndsWith("--format json --detail standard --detail-filter warning", next, StringComparison.Ordinal);
+        var text = await RunAsync(arguments, current.PhysicalPath, "unused", true, true);
+        Assert.Equal(130, text.ExitCode);
+        Assert.Contains(CliRetryCommand.Build(arguments), text.StandardError, StringComparison.Ordinal);
+        Assert.Equal(beforeCurrent, current.SnapshotHashes());
+        Assert.Equal(beforeSelected, selected.SnapshotHashes());
     }
 
     private static async Task<InstallCompositionRun> RunAsync(

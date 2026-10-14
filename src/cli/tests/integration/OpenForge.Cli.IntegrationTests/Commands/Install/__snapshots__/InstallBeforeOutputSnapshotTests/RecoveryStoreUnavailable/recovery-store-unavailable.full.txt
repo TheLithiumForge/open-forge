@@ -3,12 +3,18 @@ Workspace: <workspace>
   Warning  <workspace>  Recovery data is unavailable [install.recovery-unavailable]
          Recovery data could not be prepared at <workspace>. Nothing was changed.
          cannot be fixed automatically
-         open-forge doctor
+         open-forge doctor --workspace <workspace>
          Inspect the reported Install boundary before rerunning it.
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
 Frontmatter: root
-  Bundled Framework fingerprint: <sha256> (19 assets).
+  Bundled Framework fingerprint:
+  <sha256> (19 assets).
   No ownership record change was requested.
   No recovery bundle was required.
   Verification was not requested.
   Inspect the reported Install boundary before rerunning it.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

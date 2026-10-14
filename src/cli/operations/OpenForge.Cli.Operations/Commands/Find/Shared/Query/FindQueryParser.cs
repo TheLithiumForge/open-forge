@@ -209,7 +209,7 @@ internal sealed class FindQueryParser
             null => FindRequirement.All,
             FindDefinitions.All => FindRequirement.All,
             FindDefinitions.Any => FindRequirement.Any,
-            _ => throw new ArgumentException("--require accepts only all or any.", nameof(value)),
+            _ => throw new FindRequirementException(value),
         };
     }
 

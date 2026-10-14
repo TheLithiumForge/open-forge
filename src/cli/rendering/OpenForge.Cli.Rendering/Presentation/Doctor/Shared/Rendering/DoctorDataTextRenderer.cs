@@ -22,6 +22,7 @@ internal static class DoctorDataTextRenderer
 
         Append(builder, data.LaneLine);
         Append(builder, data.HintLine);
+        if (data.NextLine is { } next) builder.Append($"Next: {CliText.Escape(next)}\n");
         return builder.Length == 0
             ? new CliTextDocument([])
             : new CliTextDocument([new CliTextSpan(builder.ToString())]);

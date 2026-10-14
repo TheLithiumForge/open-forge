@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Would change the Open Forge setup in <workspace>.",
+    "headline": "Would change the Open Forge setup.",
     "kind": "preview"
   },
   "findings": [],

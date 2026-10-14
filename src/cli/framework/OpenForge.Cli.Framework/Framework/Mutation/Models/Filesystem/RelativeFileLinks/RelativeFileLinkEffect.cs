@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Shared.Links;
 
 namespace OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 
@@ -83,7 +84,8 @@ internal sealed record RelativeFileLinkEffect
             destinationPath,
             link,
             RelativeFileLinkState.Missing,
-            RelativeFileLinkState.LinkIdentity(link));
+            RelativeFileLinkState.LinkIdentity(RelativeFileLinkIdentity.Create(
+                link.LinkKind, RelativeFileLinkTarget.PlatformForm(link.RawRelativeTarget))));
     }
 
     internal static RelativeFileLinkEffect Delete(

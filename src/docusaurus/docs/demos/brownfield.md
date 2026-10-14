@@ -21,7 +21,17 @@ A friend started an expense splitter and handed it to you. It works and it has t
 ## Run it
 
 1. Copy `app/` outside this repository, commit it, and run `npm test`.
-2. Install Open Forge and the [Development Toolkit](../extensions/development-toolkit.md). The Map in the next step is part of the base Framework. Decisions come from Planning, which the Toolkit installs.
+2. For a first install, choose Full Core so the next step has Maps, then install the [Development Toolkit](../extensions/development-toolkit.md). Decisions come from Planning, which the Toolkit installs.
+
+   Already installed Essentials? Skip the first-install commands. [Restore Maps](../getting-started/grow-your-framework.md#add-an-omitted-category) with `open-forge route init maps --framework --dry-run`, then the same command without `--dry-run`. Keep your other choices. If an ancestor has an explicit exclusion, restore it first as the [CLI reference](/guides/cli#route-init) explains.
+
+   ```sh
+   open-forge install --preset full-core --dry-run
+   open-forge install --preset full-core
+   open-forge extension install development-toolkit --dry-run
+   open-forge extension install development-toolkit
+   ```
+
 3. **Map what's already there.** Ask your agent:
 
    > Add a Map of this project's important files, such as the README, the author's notes, and the tests, with a line on when to read each one.
@@ -41,3 +51,5 @@ The existing tests don't catch either of these failures:
 - **The extra cent goes to whoever was typed first** instead of to the payer. The result looks correct, but it contradicts how even splits already work.
 
 Run the same request on a second copy without Open Forge and compare. Look less at whether the feature works and more at whether the rules survived.
+
+**Next:** [Grow your own framework](../getting-started/grow-your-framework.md).

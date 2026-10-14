@@ -454,12 +454,13 @@ internal sealed class ContextLoadingClosureResolver
             }
             else
             {
-                AddClosureFinding(issue.AttemptedCanonicalPath, "The .agents source root is unavailable.");
+                AddClosureFinding(issue.AttemptedCanonicalPath, "The .agents source root is unavailable.",
+                    startupMissing: issue.Code == SourceCatalogueIssueCode.RootMissing);
             }
         }
     }
 
-    private void AddClosureFinding(string path, string cause)
+    private void AddClosureFinding(string path, string cause, bool startupMissing = false)
     {
         _incomplete = true;
         if (_findings.Any(finding => finding.Code == ContextFindingCode.ClosureUnavailable
@@ -474,7 +475,8 @@ internal sealed class ContextLoadingClosureResolver
             cause: cause,
             reference: null,
             source: null,
-            path: path));
+            path: path) with
+        { StartupMissing = startupMissing });
     }
 
     private static ContextFinding Finding(

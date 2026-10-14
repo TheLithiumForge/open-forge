@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Shell.Interaction;
@@ -31,6 +32,7 @@ internal sealed class CliTerminal
     }
 
     internal bool CanPrompt => _capabilities.CanPrompt;
+    internal int Width { get; init; } = CliPresentation.DefaultWidth;
     internal bool CanReadKeys => _capabilities.CanReadKeys;
     internal bool CanRedraw => _capabilities.CanRedraw && _selectionView is not null && !_redrawUnavailable;
 

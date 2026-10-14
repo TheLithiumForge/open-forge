@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Request;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Models.Result;
 
@@ -40,6 +41,7 @@ internal sealed record RepairFinding
     }
 
     internal RepairFindingCode Code { get; }
+    internal string MachineName => RepairDefinitions.ReadMachineName(Code);
 
     internal CliSemanticStatus Status { get; }
 
@@ -55,6 +57,18 @@ internal sealed record RepairFinding
     internal RepairTargetSelection? Target { get; }
 
     internal RepairDiagnosisObservation? Observation { get; init; }
+    internal bool Protection { get; init; }
+
+    internal RepairProtectionKind? ProtectionKind { get; init; }
+
+    internal string? ProtectedPath { get; init; }
+    internal CliNextAction? OwnerAction { get; init; }
+
+    internal bool IsLibraryObservation => Code == RepairFindingCode.ManualFindingRemaining && Observation is not null;
+
+    internal bool LibraryRecoveryPlanned { get; init; }
+
+    internal bool IsUnselectedLibraryResidual { get; init; }
 }
 
 internal sealed record RepairDiagnosisObservation(string? Path, string? Identifier);

@@ -4,4 +4,4 @@ Workspace: <workspace>
          .agents/directives/review.md  linked, but its source file is gone
   .agents/directives/review.md  source file gone
   Preview the synchronization before changing files.
-Next: open-forge library sync team-knowledge --dry-run
+Next: open-forge library sync team-knowledge --dry-run --workspace <workspace>

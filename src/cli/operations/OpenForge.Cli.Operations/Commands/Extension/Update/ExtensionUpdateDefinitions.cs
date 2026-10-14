@@ -16,7 +16,7 @@ internal static class ExtensionUpdateDefinitions
 
     internal static readonly CliSyntaxDefinition UpdateCommand = new(
         name: "update",
-        description: "Update managed Extension packages from one reviewed source.");
+        description: "Update selected managed Extensions from one reviewed source.");
 
     internal static readonly CliOptionDefinition<string?> Source = new(
         name: "--source",
@@ -33,7 +33,7 @@ internal static class ExtensionUpdateDefinitions
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         name: "--force",
-        description: "Accepted for compatibility; ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
+        description: "Accepted for compatibility. Ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
         arity: CliOptionArity.None,
         defaultValue: false);
 
@@ -45,7 +45,7 @@ internal static class ExtensionUpdateDefinitions
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         name: "--automatic",
-        description: "Disable prompts; does not select packages or imply --force or --prune.",
+        description: "Disable prompts. Does not select packages or imply --force or --prune.",
         arity: CliOptionArity.None,
         defaultValue: false);
 

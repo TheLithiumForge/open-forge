@@ -1,0 +1,74 @@
+  Install the bundled Framework, or change your built-in setup.
+
+Usage:
+  open-forge install [options]
+
+Examples:
+  open-forge install --preset essentials --dry-run
+  open-forge install
+  open-forge install --configure --preset essentials --dry-run
+
+Behavior:
+  Install adds selected bundled defaults and Open Forge sections to AGENTS.md
+  and CLAUDE.md, preserving your other instructions.
+  The wizard starts with Essentials. Unattended Install and dry run use Full
+  Core unless you name a preset. Fresh unattended metadata is root unless
+  settings declare a preference.
+  Omissions stay omitted. --configure offers current setup choices, keeps
+  existing content, and can restore missing selected defaults. Identical
+  installations need no writes.
+  --dry-run shows every planned existing-file change without writes. Writing
+  plans ask once after selection and checks unless --automatic. Preview, no-op,
+  automatic, JSON, and redirected requests never prompt. JSON or redirected
+  writes require --automatic, which adds no force.
+  Save a Git copy or backup first. Successful installs keep no undo bundle. Use
+  update for other changed managed files.
+
+Options:
+  --configure        Configure built-in routes while retaining existing files.
+  --preset <preset>  Select essentials, full-core, or custom.
+  --frontmatter <frontmatter>
+      Choose where Open Forge writes file metadata: root or scoped. A fresh
+      unattended Install uses root. Change an installed workspace with
+      --configure.
+  --route <route>    Set a Custom route: <id>=<add|remove|git-ignore>.
+  --force            Allow eligible existing items to be replaced during first
+                     installation.
+  --automatic        Suppress confirmation and use deterministic safe defaults.
+  --dry-run          Preview the complete installation without writing files.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Force boundary: --force may replace only the exact eligible existing item at a
+  current Framework installation path before management is established. Checks
+  must exclude trusted owners or competing managers, route or source collisions,
+  ambiguous markers or containment, and unsafe recovery. Force cannot update
+  managed files, widen adoption, repair malformed Entries or markers, delete
+  retired content, or change other paths. Identity, ownership, expected-state,
+  bundle, verification, and recovery checks still apply. Previous content is not
+  adopted as ownership history.
+  Custom routes: Repeat --route <id>=<add|remove|git-ignore>. IDs: directives,
+  guidance, maps, patterns, skills, templates, memory/working, memory/emerging,
+  memory/crystallized, memory/archived. Remove keeps existing files and routes.
+  Add + Git-ignore shares the entrypoint, ignores route contents, and omits
+  private child Entries. Tracked files stay tracked.
+  Conversion and boundaries: A form change with --configure also converts
+  eligible owned Extension files from their recorded sources. Ordinary Install
+  uses only the Framework bundled in this CLI. It does not choose another
+  workspace, download content, change Git, repair markers, update other changed
+  managed files, or roll back target effects.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  status             Check installation and context.
+  context            Read agent instructions and context.
+  update --help      Update managed Framework files.
+  doctor             Diagnose workspace problems.
+  cleanup --dry-run  Preview recovery-data cleanup.

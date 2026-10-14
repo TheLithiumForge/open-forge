@@ -1,12 +1,50 @@
 using OpenForge.Cli.Core.Commands.Library.Models.Planning;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Observation;
 using OpenForge.Cli.Core.Commands.Library.Shared.Completion;
+using OpenForge.Cli.Core.Commands.Library.Shared.Completion.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Mutation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Completion;
 
 public sealed class LibraryMutationCompletionProjectionTests
 {
+    [Theory(DisplayName = "Library link effects report portable targets and retain raw expected-state evidence")]
+    [Trait("Boundary", "Processing"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public void LinkEffectTargetsArePortable(bool delete, bool platformSeparators)
+    {
+        // The on-disk target uses the platform separator: a backslash on Windows, a slash elsewhere.
+        const string portable = "../../shared/team-knowledge/.agents/directives/review.md";
+        var rawTarget = platformSeparators ? portable.Replace('/', Path.DirectorySeparatorChar) : portable;
+        var path = CanonicalRelativePath.Create(LibraryMutationPlanningData.Leaf);
+        var identity = RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, rawTarget);
+        var effect = delete ? RelativeFileLinkEffect.Delete(path, identity) : RelativeFileLinkEffect.Create(path, identity);
+        var result = LibraryMutationCompletionProjection.Plan(new LibraryMutationPlanProjectionInput
+        {
+            Workspace = LibraryMutationPlanningData.Workspace,
+            State = LibraryPlanState.Complete,
+            Effects = new LibraryMutationEffects
+            {
+                Directories = [],
+                Links = [effect],
+                GeneratedRegions = [],
+                OwnershipChange = null,
+            },
+            SettingsChange = null,
+        });
+
+        var link = Assert.Single(result.Links);
+        Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md", link.RelativeTarget);
+        Assert.Equal(delete ? rawTarget : null, link.Expected.RawRelativeTarget);
+        Assert.Equal(rawTarget, effect.RawRelativeTarget);
+    }
+
     [Trait("Boundary", "Processing")]
     [Fact, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     public void AttachObservationProjectsEligibleUnregisteredPath()

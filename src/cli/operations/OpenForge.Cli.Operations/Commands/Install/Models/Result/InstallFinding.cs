@@ -34,4 +34,6 @@ internal sealed record InstallFinding
     internal string Cause { get; }
 
     internal string? Subject { get; }
+    internal InstallInvalidRoute? InvalidRoute { get; init; }
+    internal InstallInvalidOption? InvalidOption { get; init; }
 }

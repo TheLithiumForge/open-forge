@@ -1,0 +1,3 @@
+Cannot search: Invalid --require value: other. Use all or any.
+Workspace: <workspace>
+Next: open-forge find --help

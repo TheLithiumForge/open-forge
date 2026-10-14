@@ -1,248 +1,516 @@
 ---
 title: Everyday flows
-description: Common situations where the CLI helps, from setting up a workspace to finding out why an agent ignored a rule, with the commands for each and why they help.
+description: Complete CLI procedures with previews, review pauses, application, and observable results.
 ---
 
 # Everyday flows
 
-Each flow starts from a common situation, then gives the commands in order and what to look for. The [command reference](/guides/cli) has every option, and the [glossary](../glossary.md) defines the terms.
+Each flow gives commands in order, with a review pause before each change. Run
+the apply block only after reviewing its preview. The [command reference](/guides/cli)
+has every option, and the [glossary](../glossary.md) defines the terms. Shell
+blocks use `\` for line continuation. In PowerShell, put a wrapped command on
+one line or use a backtick.
 
-Start with the base Framework. Later flows use Documents from the Project Documents Extension, and Decisions and their Template from Planning. The optional `development-toolkit` package installs both when you need them.
+Start with the base Framework. Later flows use Documents from Project Documents,
+and Decisions and their Template from Planning. `development-toolkit` installs
+both. Essentials leaves Templates out, so restore that category before installing
+Planning or the toolkit when their Templates are wanted.
 
 ## Set up a workspace
 
-**When:** you're adding Open Forge to a project, new or existing.
+Use this when adding Open Forge to a new or existing project.
 
-```sh
-open-forge install --preset essentials --dry-run
-open-forge install --preset essentials
-open-forge status
-```
+1. Preview the selected setup.
 
-You can now give your agent a normal task. No Extension or selected workflow is required.
+   ```sh
+   open-forge install --preset essentials --dry-run
+   ```
 
-**Look for:** what the selected plan will change. Naming Essentials makes the preview and apply use the same selection. It includes Git-ignored Working Memory, which remains readable but keeps new local records out of ordinary Git commits. Plain interactive `install` offers Essentials, Full Core, or Custom instead. The preview gives a count, and `--detail standard` lists every file. If you already have an `AGENTS.md` or `CLAUDE.md`, the install adds an Open Forge section and keeps your content. `status` shows startup context, installed Extensions, and anything needing attention. Review everything with `git status` and `git diff`, then commit.
+   Review the setup recap and the files and settings it will change. Naming
+   Essentials keeps the preview and apply on the same selection. It includes private Working contents
+   and a shared entrypoint. Use `--detail standard` for per-file reasons. Existing
+   `AGENTS.md` or `CLAUDE.md` content is kept when the Open Forge section is added.
+   In an existing `.agents` tree, also review planned Skill migrations. See
+   [installation](../getting-started/installation.md#with-the-cli) for adoption rules.
 
-For an existing `.agents/` tree, also review any planned Skill migrations. The [installation guidance](../getting-started/installation.md#with-the-cli) explains compatible metadata and navigation adoption.
+2. Apply that setup and inspect the result.
 
-**Why it helps:** you see what will be installed before any agent reads it. The CLI also records what it installed, so later updates can tell its files apart from yours.
+   ```sh
+   open-forge install --preset essentials
+   open-forge status
+   git status
+   git diff
+   ```
+
+   Check that `.agents/loader.md`, settings, and the ownership lock exist. Status
+   shows context, installed Extensions, and anything needing attention. Plain
+   interactive Install offers Essentials, Full Core, or Custom instead. New
+   private Working records stay out of ordinary Git commits.
+
+3. If your agent tool does not read `AGENTS.md` on its own, ask it to read that
+   file first. Then give your agent a normal task. No Extension or selected
+   workflow is required.
+
+The installation record lets later updates distinguish supplied files from yours.
 
 ## Change the installed routes
 
-**When:** you want to add an omitted category, keep a route's new files out of Git, or restore missing packaged scaffolding.
+Use this to add a category, change sharing choices, or restore missing packaged
+scaffolding. To restore only one left-out built-in category, use
+[`route init <category> --framework`](/guides/cli#route-init), previewed with
+`--dry-run` first. `open-forge install --configure` is the interactive way to
+change several setup choices.
 
-Run `open-forge install --configure` to use the wizard. For a repeatable change to the current selection:
+1. Preview this repeatable change to the current selection.
 
-```sh
-open-forge install --configure --preset custom \
-  --route guidance=add --route memory/working=git-ignore --dry-run
-open-forge install --configure --preset custom \
-  --route guidance=add --route memory/working=git-ignore --automatic
-```
+   ```sh
+   open-forge install --configure --preset custom \
+     --route guidance=add --route memory/working=git-ignore --dry-run
+   ```
 
-**Look for:** Guidance being added and Working's whole directory entering the Install-owned `.gitignore` section. Custom starts from the current choices, so other rows keep their selection. Ignored content still appears in navigation and loads normally. Files already tracked by Git stay tracked.
+   Look for Guidance being added and Working's contents being ignored while its
+   entrypoint stays shared. Custom starts from the current choices, so other rows
+   keep their selection. On Full Core, Guidance is already present.
 
-Custom's Remove choice omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions remain routable. Explicit configuration can restore eligible missing defaults after a checkout, with or without a lock file, while preserving authored files and narrower omissions. Missing private notes need your own copy or backup.
+2. Apply the reviewed request and check the route and sharing policy.
 
-**Why it helps:** your setup can grow with the project. [Installation](../getting-started/installation.md#configure-an-existing-workspace) explains the choices, and the [reference](/guides/cli#setup-choices) lists all row IDs and flags. To restore just one omitted canonical Core category, you can also use [`route init --framework`](/guides/cli#initialize-a-route-chain).
+   ```sh
+   open-forge install --configure --preset custom \
+     --route guidance=add --route memory/working=git-ignore --automatic
+   open-forge route inspect guidance
+   git diff
+   ```
+
+   Check `.agents/guidance/_guidance.md` and the Working rules in `.gitignore`.
+   Index leaves private child files out of shared Entries. Find and explicit
+   Context requests can still read them locally. Files already tracked by Git
+   stay tracked.
+
+Custom Remove omits supplied defaults and releases their Framework management.
+Existing files, notes, and overwrite companions remain routable. Explicit
+configuration can restore eligible missing defaults after a checkout, with or
+without a lock file, while preserving authored files and narrower omissions.
+Missing private notes need your own copy or backup. See
+[installation](../getting-started/installation.md#configure-an-existing-workspace)
+and [setup choices](/guides/cli#setup-choices).
 
 ## Choose an Extension when you need one
 
-**When:** you want extra content, such as Decisions, project documents, or development workflows.
+Use this for Decisions, project documents, or development workflows. Start from
+an installed base Framework. This example adds `development-toolkit`, which
+includes Project Documents, Planning, Flows and Scenarios, Development, and their
+Workflow Support dependency. The [catalogue](../extensions/index.md) explains
+each package.
 
-```sh
-open-forge extension list --available
-open-forge extension inspect development-toolkit
-open-forge extension install development-toolkit --dry-run
-open-forge extension install development-toolkit
-```
+1. Restore Templates before installing the toolkit on Essentials.
 
-`development-toolkit` installs Project Documents, Planning, Flows and Scenarios, and Development, plus Workflow Support, which they depend on. You can choose a smaller package instead, such as `planning`. The [catalogue](../extensions/index.md) explains each one.
+   ```sh
+   open-forge route init templates --framework --dry-run
+   ```
 
-**Look for:** the selected packages, dependencies, and planned files before confirming. To pick packages interactively, run `open-forge extension install` without IDs. For a noninteractive run, supply the IDs and `--automatic` after reviewing the preview. Use `--source <path>` for a local package or catalogue.
+   Review the restoration plan, then apply it. On Full Core, this can be a no-op.
 
-**Why it helps:** you add the files useful to your work without making the rest part of your setup.
+   ```sh
+   open-forge route init templates --framework
+   ```
+
+2. Discover the package and preview its installation.
+
+   ```sh
+   open-forge extension list --available
+   open-forge extension inspect development-toolkit
+   open-forge extension install development-toolkit --dry-run
+   ```
+
+   Review selected packages, dependencies, destinations, and file changes.
+
+3. Apply and verify the supplied routes and Template.
+
+   ```sh
+   open-forge extension install development-toolkit
+   open-forge extension list --installed
+   open-forge find --tag Template
+   open-forge doctor
+   ```
+
+   Continue when `templates/planning/decision` is listed and the Documents and
+   Decisions entrypoints exist under `.agents/memory/crystallized/`.
+
+You can choose a smaller package, such as `planning`, instead. Restore Templates
+before its installation too. With no IDs, interactive Extension Install offers
+a package picker. For unattended apply, supply the IDs and `--automatic` after
+reviewing the preview. `--source <path>` selects a separate local package or
+catalogue. If Planning is already installed without its starters, restore
+Templates first, then preview and apply its update using the
+[restore and update procedure](../extensions/index.md#if-your-setup-leaves-out-templates). See
+[Extension Install](/guides/cli#extension-install).
 
 ## Find out why an agent ignored a rule
 
-**When:** you wrote a rule and the agent behaves as if it never saw it.
+Use this when a written rule seems absent from the agent's context. The example
+assumes `directives/frontend/components` is an existing rule you wrote.
 
-```sh
-open-forge context --for src/Order.cs --for web/order.ts
-open-forge route inspect directives/frontend/components \
-  --for src/Order.cs --for web/order.ts
-```
+1. Compare startup context with the rule's conditions.
 
-**Look for:** whether the rule applies to either supplied working path. Include the
-complete path set on each invocation, including planned files that do not exist
-yet. One file must satisfy the source's whole inherited condition chain.
-`applyTo` only filters, so a matching rule still needs a loading tag, or an
-explicit request, to load.
+   ```sh
+   open-forge context --for src/Order.cs --for web/order.ts
+   open-forge route inspect directives/frontend/components \
+     --for src/Order.cs --for web/order.ts
+   open-forge find --for web/order.ts --tag Directive
+   ```
 
-If paths are unknown, only conditioned `#LoadNow` and `#KeepInMind` entries
-that a loaded parent exposes are pending. `context` reports them, returns an
-incomplete result, and exits `3`. Other conditioned entries stay on demand.
-`route inspect` can explain a nonmatching source without activating its
-automatic children. Neither command globally selects hidden ancestors or
-discovers code dependencies. If a related caller or test is part of the work,
-add its path and load its context before editing it.
+   Include every working file, including planned files. One supplied path must
+   satisfy the source's whole inherited condition chain. `applyTo` only filters,
+   so a matching rule also needs a loading tag or explicit selection. A missing
+   `LoadNow` tag or an unselected scope is a common cause.
 
-The usual causes are a missing `LoadNow` tag or a rule placed in a scope that
-the task never selects. `find --for src/Order.cs --tag=Directive` lists rules
-that match the file wherever they live. Use `route update` to correct tags or
-`applyTo`, then check `context` again.
+2. Load the scope you selected and verify that the rule is returned.
 
-Check a pattern against specific paths with `route inspect <source> --for <path>`,
-or preview the files that match right now with
-`route inspect <source> --matching-files`. If the condition chain is
-unrestricted, the preview answers `all files` without scanning. Otherwise it
-uses Git's file inventory, and falls back to a `.gitignore`-aware walk of the
-workspace when Git can't provide one. The command reference has
-[scope and completeness details](/guides/cli#current-matching-files).
+   ```sh
+   open-forge context directives/frontend/components \
+     --for src/Order.cs --for web/order.ts --additions-only
+   open-forge route inspect directives/frontend/components --matching-files
+   ```
 
-**Why it helps:** "the model didn't listen" becomes something you can check.
-Often the rule was never set to load, which is quick to fix. The command shows
-what the rules select, not what a model actually read. A file condition
-controls when context applies, not whether related files may be edited.
+   The command shows what the rules select, not what a model actually read.
+   Inspect can explain a nonmatch without activating its automatic children.
+   Matching-files lists current matches without supplying working paths. See
+   [scan scope and completeness](/guides/cli#current-matching-files).
+
+3. If metadata is wrong, preview a correction with
+   [`route update`](/guides/cli#route-update), review it, then apply the same
+   request without `--dry-run`. Check Context again with the complete file set.
+   Preserve unrelated tags and conditions when choosing the patch.
+
+Without known paths, exposed conditioned `LoadNow` and `KeepInMind` entries stay
+pending. Context returns incomplete, exit `3`. Other conditioned entries stay on
+demand. Neither command globally selects hidden ancestors or discovers code
+dependencies. Add related caller or test paths when they are part of the work.
+A file condition controls applicability, not permission to edit related files.
 
 ## Record something new
 
-**When:** you made a decision, or noticed a convention worth writing down.
+Use this after making a decision or finding a convention worth keeping. This
+example starts from the base Framework and uses Planning's Decision Template.
 
-```sh
-open-forge find --tag=Decision
-open-forge route create memory/crystallized/decisions/money-in-cents \
-  --template=templates/planning/decision \
-  --description="Every amount is a whole number of cents" \
-  --tag=Memory --tag=Decision \
-  --dry-run
-```
+1. Make the Template available before installing Planning.
 
-The Decisions category and the `decision` Template come from the Planning Extension.
+   ```sh
+   open-forge route init templates --framework --dry-run
+   ```
 
-**Look for:** whether `find` turns up a Decision that already covers it. If one does, update that one instead of adding a competing copy. Otherwise, `route create` makes the file with correct frontmatter, copies the Template's body into it, and adds it to its parent's `Entries`. You fill in the body.
+   Review the plan, then restore the category.
 
-**Why it helps:** you keep one current answer per question, and the new file is listed in `Entries` right away, so agents can find it.
+   ```sh
+   open-forge route init templates --framework
+   open-forge extension install planning --dry-run
+   ```
+
+   Review the package plan, then apply it.
+
+   ```sh
+   open-forge extension install planning
+   open-forge find --tag Template
+   ```
+
+   Continue when `templates/planning/decision` is listed. If Planning is already
+   installed without its starters, use the
+   [restore and update procedure](../extensions/index.md#if-your-setup-leaves-out-templates).
+
+2. Search for an existing answer and preview a new record if needed.
+
+   ```sh
+   open-forge find --tag Decision
+   open-forge route create memory/crystallized/decisions/money-in-cents \
+     --template templates/planning/decision \
+     --description "Every amount is a whole number of cents" \
+     --tag Memory --tag Decision --dry-run
+   ```
+
+   If a Decision already covers this question, update it instead. Otherwise,
+   review the new file, its metadata, and its parent Entries change.
+
+3. Apply the reviewed creation, then open and fill in the new file's body.
+
+   ```sh
+   open-forge route create memory/crystallized/decisions/money-in-cents \
+     --template templates/planning/decision \
+     --description "Every amount is a whole number of cents" \
+     --tag Memory --tag Decision
+   open-forge doctor
+   ```
+
+   Check `.agents/memory/crystallized/decisions/money-in-cents.md` and its entry
+   in `_decisions.md`. The Template supplies starting content. The new record
+   is maintained independently, giving agents one current answer to find.
 
 ## Reorganize without breaking links
 
-**When:** a folder has grown, or a file belongs in a narrower scope.
+Use this when a file belongs in a narrower scope. Here `billing` is a Document
+you wrote in the Documents category supplied by Project Documents. If the category
+is missing, follow the reviewed Extension flow with `project-documents` as the
+package ID. Restore Templates before installing it on Essentials too, since its
+workflow guides link to the supplied Document Templates.
 
-```sh
-open-forge references memory/crystallized/documents/billing --direction=in
-open-forge route init memory/crystallized/documents/payments --dry-run
-open-forge route init memory/crystallized/documents/payments
-open-forge route move memory/crystallized/documents/billing \
-  .agents/memory/crystallized/documents/payments/billing.md --dry-run
-open-forge doctor
-```
+1. Inspect incoming links and preview the destination scope.
 
-Here `billing` is a Document you wrote, inside the Documents category from the Project Documents Extension.
+   ```sh
+   open-forge references memory/crystallized/documents/billing --direction in
+   open-forge route init memory/crystallized/documents/payments --dry-run
+   ```
 
-**Look for:** everything that links to the file before you move it. `route init` creates the new scope, which must exist before the move can be planned. The move plan shows which links and `Entries` it updates. Run the move again without `--dry-run` to apply it, then run `doctor` to confirm nothing still points at the old place. `route move` moves only files you created, not files installed by the Framework or an Extension. To delete a file instead, use `route remove`. It records the removal and turns links to the file into plain text.
+   Review the scope plan, then create it.
 
-Both commands scan supported Markdown across the workspace for affected
-references. In a Git work tree, they skip paths Git ignores through standard
-exclude rules, including dependency and build folders such as `node_modules`,
-`bin`, `obj` and `artifacts`. Ignored Markdown is left unchanged. Tracked files
-remain covered, and the entire `.agents` tree is scanned, including Git-ignored
-private routes. Without a usable Git inventory, they keep the complete scan.
-`--detail debug` reports `gitIgnoredPaths=<count>` on stderr when paths were
-excluded. It counts skipped files and pruned directory roots, not their
-unvisited descendants. Root `remove` uses the same scan for routed subjects.
+   ```sh
+   open-forge route init memory/crystallized/documents/payments
+   open-forge route move memory/crystallized/documents/billing \
+     .agents/memory/crystallized/documents/payments/billing.md --dry-run
+   ```
 
-**Why it helps:** moving files by hand breaks links without any warning, and an agent that follows a dead link finds nothing.
+2. Review the move's links and Entries changes, then apply it.
+
+   ```sh
+   open-forge route move memory/crystallized/documents/billing \
+     .agents/memory/crystallized/documents/payments/billing.md
+   open-forge doctor
+   ```
+
+   Check that the old Billing path is absent, the new file exists, and incoming
+   links point to it. The destination parent must exist before planning a move.
+   Route Move refuses files installed by the Framework or an Extension.
+
+To delete instead, preview and review [`route remove`](/guides/cli#route-remove),
+then apply the same request. It records the removal and turns supported incoming
+links into plain text. Move and Remove scan supported workspace Markdown, retain
+tracked-file coverage, and include private `.agents` routes. Ignored files outside
+`.agents` stay unchanged. See the [reference scan rules](/guides/cli#reference-scans-for-moves-and-removals)
+for Git exclusions, fallback behavior, and debug counts.
 
 ## Keep the workspace healthy
 
-**When:** once in a while, after a big merge, or when `status` shows a warning.
+Use this after manual edits, a merge, or a Status warning. When Git retains the old file's committed content, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata.
 
-```sh
-open-forge status
-open-forge doctor
-open-forge repair --automatic --dry-run
-open-forge index --dry-run
-```
+1. Diagnose the current workspace and preview safe repairs.
 
-**Look for:** what `doctor` names and the next step it suggests. `repair --automatic` fixes broken local links that have one safe answer and reports the rest. To choose a target for those yourself, run `repair` without `--automatic` in a terminal. `index` rebuilds `Entries` that no longer match their files, usually after someone added or renamed files by hand.
+   ```sh
+   open-forge status
+   open-forge doctor
+   open-forge repair --automatic --dry-run
+   ```
 
-**Why it helps:** agents find files through `Entries`. A file that's missing from its parent's `Entries` is hidden from them.
+   Review the selected link corrections and any unresolved findings.
+
+2. Apply the reviewed safe repairs, then preview navigation changes.
+
+   ```sh
+   open-forge repair --automatic
+   open-forge index --dry-run
+   ```
+
+   Review missing metadata, new entrypoints, and Entries changes. Automatic Repair selects only currently
+   safe corrections. To choose a target yourself, use interactive Repair or
+   the [explicit relink procedure](/guides/cli#repair) as a separate reviewed task.
+   When Repair cannot ask in the current session, it lists copyable
+   `--relink ... --automatic` commands for the possible targets.
+   Interactive Repair explains candidate targets and lets you leave a link
+   unchanged. Remaining broken links stay in the result. For Library recovery,
+   choose one step or leave all recovery steps out, then review the plan.
+
+3. Apply the navigation plan and verify the result.
+
+   ```sh
+   open-forge index
+   open-forge doctor
+   ```
+
+   Check the corrected destinations and rebuilt Entries. Repair refreshes navigation affected by its corrections. Index completes unrelated new notes and folders. Follow any reported target choice or manual edit before checking Doctor again. See [After you edit files by hand](/guides/cli#after-you-edit-files-by-hand) for the full procedure. Agents use Entries to discover files. Keep
+   shared Entries current after manual edits. Private routes intentionally omit
+   their child files from shared Entries. Find can still discover those local files.
+
+Repair keeps managed files and native Skill packages protected. Follow their reported managing Update or authoring action. A partial result states what changed and what remains. Copyable commands retain the selected workspace. A Git timeout asks you to retry before editing a possibly renamed link.
 
 ## Take a Framework update
 
-**When:** a new Open Forge version is out. `update` installs the Framework bundled with your CLI, so update the CLI first.
+Upgrade the CLI first when you want a newer bundled Framework.
 
-```sh
-git commit -am "Before Open Forge update"
-open-forge update --dry-run
-open-forge update
-git diff
-open-forge cleanup --dry-run
-```
+1. Preserve your current files with version control or a separate backup, then
+   preview the update.
 
-**Look for:** every shipped file the update would replace. That includes shipped files you edited: the update replaces them and keeps their previous content in a recovery bundle. Because you committed first, `git diff` shows those changes too. To keep a change through updates, move it into an [overwrite companion](../concepts/customizing.md#overwrite-companions) (`{name}.overwrite.md`), which updates never touch. After checking the result, `cleanup` removes the recovery copies the update kept.
+   ```sh
+   git status
+   open-forge update --dry-run
+   ```
 
-The plan also lists any compatible Skill metadata or navigation it will add. These additions preserve existing Skill content and keep the files user-owned.
+   Review every replaced or restored file. Update replaces edited managed files
+   and retains their previous bytes in recovery data. Keep lasting customization
+   in an [overwrite companion](../concepts/customizing.md#overwrite-companions),
+   which Update does not touch. Compatible Skill metadata and navigation additions
+   preserve existing Skill content and keep those files user-owned.
 
-**Why it helps:** you get Framework improvements through a plan you've reviewed, and nothing is replaced without being listed first.
+2. Apply the reviewed update and inspect the files and recovery location.
+
+   ```sh
+   open-forge update
+   git diff
+   open-forge status
+   ```
+
+   Check the changed files and the reported recovery bundle before deleting it.
+   The bundle contains previous bytes. `git diff` compares tracked changes with
+   Git's saved content and cannot recover unsaved or untracked content. Keep a
+   separate backup of prior changes you need to preserve.
+
+3. Preview cleanup only after checking the update.
+
+   ```sh
+   open-forge cleanup --dry-run
+   ```
+
+   Review the exact recovery bundles and drafts selected for deletion, then apply.
+
+   ```sh
+   open-forge cleanup
+   open-forge status
+   ```
+
+   Verify the selected recovery copies are gone. Cleanup applies directly.
 
 ## Drop what you don't use
 
-**When:** a default category or an Extension doesn't fit how you work.
+Use this when a default category or Extension no longer fits. A CLI removal
+records an exclusion, so later updates keep it removed.
 
-```sh
-open-forge remove .agents/templates --dry-run
-open-forge remove orchestration --kind extension --dry-run
-```
+1. Preview the chosen removal. This example removes Templates.
 
-**Look for:** the files that go, and the exclusion recorded in `.agents/open-forge.json`.
+   ```sh
+   open-forge remove .agents/templates --dry-run
+   ```
 
-**Why it helps:** deleting a file by hand lets the next update bring it back. A removal through the CLI is recorded, so later updates leave it out.
+   Review deleted files, detached links, and the exclusion in
+   `.agents/open-forge.json`. On Essentials, an already omitted category may
+   need no file deletion.
+
+2. Apply and check the removed category and settings.
+
+   ```sh
+   open-forge remove .agents/templates
+   open-forge status
+   ```
+
+   Verify Templates is absent and its removal is recorded. To remove an installed
+   Extension instead, preview `open-forge remove orchestration --kind extension --dry-run`,
+   review it, then apply without `--dry-run`.
+
+Removing `development-toolkit` leaves its dependency packages installed. Apply
+that removal before previewing further dependency removals. An Extension Remove
+preview's next command applies the selected removal. The applied result supplies commands for
+the dependencies. Preview each further removal before applying it. A
+dependency cannot be removed while a retained package needs it. See
+[Extension Remove](/guides/cli#extension-remove).
 
 ## Share rules across repositories
 
-**When:** several repositories should follow the same team rules or share one knowledge base.
+Use this when repositories share team rules or a knowledge base. Keep the shared
+files in a contained folder, such as a Git submodule. This example assumes
+`vendor/team-rules/.agents/guidance/team/review.md` is a reviewed source file.
+Its destination needs an existing route.
 
-Keep the shared files in one folder inside each repository, for example a Git submodule, laid out the way they should appear in the workspace. Files under `.agents` need an existing scope to land in. Create one with `route init` first, such as `guidance/team`, instead of linking straight into a category the Framework installed. Then attach the folder:
+1. Restore Guidance first if Essentials left it out.
 
-```sh
-open-forge library attach team-rules vendor/team-rules --dry-run
-open-forge library attach team-rules vendor/team-rules
-```
+   ```sh
+   open-forge route init guidance --framework --dry-run
+   ```
 
-**Look for:** the list of links the attach creates. Each one is a relative file link, so the files themselves stay in the shared folder. When the shared source changes, `library sync team-rules` brings the links up to date. `library detach` removes the links and leaves the source alone.
+   Review, then apply the restoration. Full Core may need no changes.
 
-Attach also asks whether to Git-ignore those links. Choose Yes when the source
-folder is the versioned copy and each checkout should recreate its links. The
-default is No. The rules cover each projected file, so unrelated files in the
-same folder stay visible to Git. Already committed links stay tracked.
+   ```sh
+   open-forge route init guidance --framework
+   open-forge route init guidance/team --dry-run
+   ```
 
-For a script, make the choice explicit and preview the same request:
+   Review the scope plan, then create it and preview attachment.
 
-```sh
-open-forge library attach team-rules vendor/team-rules \
-  --git-ignore true --allow-path .gitignore --dry-run
-open-forge library attach team-rules vendor/team-rules \
-  --git-ignore true --allow-path .gitignore --automatic
-```
+   ```sh
+   open-forge route init guidance/team
+   open-forge library attach team-rules vendor/team-rules \
+     --git-ignore true --allow-path .gitignore --dry-run
+   ```
 
-These examples assume the projections land under an existing `.agents` scope.
-Add destination grants too if files land elsewhere. Sync remembers the choice
-and updates the owned rules as files come and go; Detach or removal cleans them
-up. Those Library commands need the ignore-file grant when they change it.
-Authored rules and entries for other Libraries survive. See the
-[Library reference](/guides/cli#keep-projected-links-out-of-git) for the full scope.
+2. Review each projected link and ignore-file change, then attach the folder.
 
-**Why it helps:** each repository links to the shared folder instead of keeping its own edited copy. When the shared source changes, `library sync` brings the links back in step.
+   ```sh
+   open-forge library attach team-rules vendor/team-rules \
+     --git-ignore true --allow-path .gitignore --automatic
+   open-forge library inspect team-rules
+   ```
+
+   Check the relative link at `.agents/guidance/team/review.md` and its Entries
+   listing. Source files stay in the shared folder. This example keeps local
+   links out of ordinary Git commits because the source folder is the versioned
+   copy. Interactive Attach offers that choice with No as the default. Use
+   `--git-ignore false` to leave ignore rules unchanged.
+
+3. After adding or removing a source file, preview and review synchronization.
+
+   ```sh
+   open-forge library sync team-rules --dry-run
+   ```
+
+   Apply the reviewed plan and check the links.
+
+   ```sh
+   open-forge library sync team-rules
+   open-forge library inspect team-rules
+   ```
+
+   Sync remembers the sharing choice and updates exact owned ignore rules as
+   files come and go. Already committed links stay tracked.
+
+4. To stop sharing, preview Detach, review its link removals, then apply it.
+
+   ```sh
+   open-forge library detach team-rules --dry-run
+   ```
+
+   ```sh
+   open-forge library detach team-rules
+   open-forge library list
+   ```
+
+   Check that projected links and registration are gone and the shared source
+   files remain. Authored ignore rules and other Libraries survive. Each projected
+   file has its own ignore rule, so unrelated files in the destination stay visible.
+
+These commands need `.gitignore` permission when changing it. The explicit Attach
+grant above is saved for later operations. Add destination grants when files land
+outside `.agents`. Library Detach and removal release their owned ignore rules.
+See [Library permissions](/guides/cli#keep-projected-links-out-of-git).
+
+If an interactive operation asks to change paths outside `.agents`, key mode
+starts focused on `Allow once`. Press Enter to approve only this run, or
+deliberately choose `1. Allow always` to save the displayed grant. Line mode
+accepts `always`, `once`, or `cancel`, and an empty line cancels.
+
+On Windows, Inspect, List, Doctor, or Sync may report unreadable legacy links
+whose on-disk targets use forward slashes. Follow the reported detach command,
+remove only that Library ID from `removedLibraries` in `.agents/open-forge.json`,
+then use the reported attach command with the same options. Preview and review
+each operation first. Source files stay intact. See
+[recreate legacy Windows links](/guides/cli#recreate-legacy-windows-links).
 
 ## Automate it
 
-**When:** you want CI, or another tool, to check the workspace.
+Use this to check workspace health in CI or another tool.
 
-```sh
-open-forge doctor --format json
-```
+1. Run a read-only diagnosis with structured output.
 
-**Look for:** the exit code. `0` means completed. Any other code means the result needs attention, so a CI job fails when `doctor` finds a warning or an error. `--format json` returns one structured result for other tools to read.
+   ```sh
+   open-forge doctor --format json
+   ```
 
-**Why it helps:** a broken link or stale `Entries` fails the check before it reaches an agent.
+2. Check its exit code and inspect findings before using the result. `0` means
+   completed. A nonzero code needs attention, so CI can fail on warnings or errors
+   such as broken links and stale Entries. JSON returns one structured result.
+   See [status and exit codes](/guides/cli#status-and-exit-codes).
+
+Next: [Command reference](/guides/cli#command-index).

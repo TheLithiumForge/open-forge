@@ -1,0 +1,115 @@
+Installed the development-toolkit Extension and 5 packages it requires: workflows, development, planning, project-documents, scenarios.
+Workspace: <workspace>
+  .agents/skills/use-workflow/SKILL.md
+    created (workflows)
+  .agents/skills/use-workflow/references/_references.md
+    created (workflows)
+  .agents/templates/workflows/_workflows.md
+    created (workflows)
+  .agents/templates/workflows/workflow.md
+    created (workflows)
+  .agents/skills/use-workflow/references/development/_development.md
+    created (development)
+  .agents/skills/use-workflow/references/development/debugging.md
+    created (development)
+  .agents/skills/use-workflow/references/development/development.md
+    created (development)
+  .agents/skills/use-workflow/references/development/review.md
+    created (development)
+  .agents/memory/crystallized/decisions/_decisions.md
+    created (planning)
+  .agents/memory/emerging/analysis/_analysis.md
+    created (planning)
+  .agents/memory/emerging/ideas/_ideas.md
+    created (planning)
+  .agents/memory/working/checkpoints/_checkpoints.md
+    created (planning)
+  .agents/patterns/work-records.md
+    created (planning)
+  .agents/skills/use-workflow/references/planning/_planning.md
+    created (planning)
+  .agents/skills/use-workflow/references/planning/planning.md
+    created (planning)
+  .agents/templates/planning/_planning.md
+    created (planning)
+  .agents/templates/planning/analysis.md
+    created (planning)
+  .agents/templates/planning/backlog.md
+    created (planning)
+  .agents/templates/planning/checkpoint.md
+    created (planning)
+  .agents/templates/planning/decision.md
+    created (planning)
+  .agents/templates/planning/idea.md
+    created (planning)
+  .agents/templates/planning/plan.md
+    created (planning)
+  .agents/templates/planning/task.md
+    created (planning)
+  .agents/memory/crystallized/documents/_documents.md
+    created (project-documents)
+  .agents/skills/use-workflow/references/project-documents/_project-documents.md
+    created (project-documents)
+  .agents/skills/use-workflow/references/project-documents/architecture.md
+    created (project-documents)
+  .agents/skills/use-workflow/references/project-documents/vision.md
+    created (project-documents)
+  .agents/templates/documents/_documents.md
+    created (project-documents)
+  .agents/templates/documents/architecture.md
+    created (project-documents)
+  .agents/templates/documents/document.md
+    created (project-documents)
+  .agents/templates/documents/maintenance-contract.md
+    created (project-documents)
+  .agents/templates/documents/principles.md
+    created (project-documents)
+  .agents/templates/documents/vision.md
+    created (project-documents)
+  .agents/templates/scenarios/_scenarios.md
+    created (scenarios)
+  .agents/templates/scenarios/run-record.md
+    created (scenarios)
+  .agents/templates/scenarios/scenario-collection.md
+    created (scenarios)
+  .agents/templates/scenarios/scenario.md
+    created (scenarios)
+  .agents/templates/scenarios/user-flow.md
+    created (scenarios)
+  .agents/memory/crystallized/_crystallized.md
+    Entries updated
+  .agents/memory/emerging/_emerging.md
+    Entries updated
+  .agents/memory/working/_working.md
+    Entries updated
+  .agents/patterns/_patterns.md
+    Entries updated
+  .agents/skills/_skills.md
+    Entries updated
+  .agents/templates/_templates.md
+    Entries updated
+  Source: embedded catalogue (embedded)
+  Dependency order: workflows, development, planning, project-documents,
+  scenarios, development-toolkit
+  .agents/open-forge.lock.json  ownership record updated
+  Entries sections unchanged: .agents/directives/_directives.md,
+  .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md,
+  .agents/memory/_memory.md, .agents/memory/archived/_archived.md,
+  .agents/memory/crystallized/decisions/_decisions.md,
+  .agents/memory/crystallized/documents/_documents.md,
+  .agents/memory/emerging/analysis/_analysis.md,
+  .agents/memory/emerging/ideas/_ideas.md,
+  .agents/memory/working/checkpoints/_checkpoints.md,
+  .agents/skills/use-workflow/references/development/_development.md,
+  .agents/skills/use-workflow/references/planning/_planning.md,
+  .agents/skills/use-workflow/references/project-documents/_project-documents.md,
+  .agents/templates/documents/_documents.md,
+  .agents/templates/planning/_planning.md,
+  .agents/templates/scenarios/_scenarios.md,
+  .agents/templates/workflows/_workflows.md
+  Permission evaluation: decision not-required; required 0; missing 0; saved no
+  Framework fingerprint:
+  <sha256>
+  Verification: targets verified; Entries verified; Extension record verified;
+  Framework record verified
+  Recovery: removed.

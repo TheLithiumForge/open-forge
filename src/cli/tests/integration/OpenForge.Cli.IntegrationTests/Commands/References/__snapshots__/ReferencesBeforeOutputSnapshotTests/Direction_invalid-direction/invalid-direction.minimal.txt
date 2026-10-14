@@ -1,2 +1,2 @@
-Cannot list references: Direction 'invalid' is not one of in, out, or both.
+Cannot list references: Invalid --direction value: invalid. Use in, out, or both.
 Next: open-forge references --help

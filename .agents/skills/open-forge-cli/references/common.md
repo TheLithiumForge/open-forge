@@ -31,7 +31,7 @@ Every command accepts these flags. Extension Create accepts `--workspace` but cr
 | `--help`                                      | Print the exact command interface and exit                                                                                                   |
 | `--version`                                   | Print the executable version and exit                                                                                                        |
 
-Quote values containing spaces and glob expressions. Repeat flags only where the command supports repetition. `route list --depth=2` requires the equals form. Content and region selectors take one comma-separated value, such as `--content frontmatter,body`.
+Quote values containing spaces and glob expressions. Repeat flags only where the command supports repetition. Route List accepts both `--depth=2` and `--depth 2`. Content and region selectors take one comma-separated value, such as `--content frontmatter,body`.
 
 ## Preview And Apply
 
@@ -40,6 +40,12 @@ Quote values containing spaces and glob expressions. Repeat flags only where the
 Only some commands support `--automatic`. It suppresses supported interaction without adding inputs, selecting packages, enabling force, or granting authority. A command that requires confirmation returns `invalid-input` without writes in a noninteractive shell unless its supported unattended mode is supplied. JSON and redirected execution never prompt.
 
 Route Init, Create, Update, Move, and Index apply their checked plans without a confirmation flag. Cleanup also applies directly, so review its deletion preview before use. Check each command's help rather than adding unsupported `--automatic`.
+
+Interactive selection explains the focused option. Line mode shows descriptions beside numbered choices, explains package marks, and accepts `cancel` to stop a package or Custom route list without changes. Cancellation before any effect reports that nothing changed, without an error row. Unknown commands and invalid option values suggest the relevant `--help` command. Invalid values name the supplied value and the allowed values. Parser choices appear on separate lines.
+
+Suggested next actions and retries keep the selected workspace and the options needed for that action, including a local Extension source and selected IDs. Use the reported command after resolving its explanation.
+
+Permission prompts keep the numbered order `1. Allow always`, `2. Allow once`, `3. Cancel`. Key mode starts focused on `Allow once`, so Enter approves only this run without saving a grant. Deliberately choose `Allow always` to save a grant for every Extension and Library. Line mode accepts `always`, `once`, or `cancel`, and an empty line cancels.
 
 `--allow-path <path>` records a supported CLI permission for an exact destination outside `.agents`. It is a write boundary, not human authorization. Supply the reviewed destination within the task's authority. `--force` permits only its command's documented initial replacement. On Framework and Extension Update it is accepted for compatibility and adds no authority.
 

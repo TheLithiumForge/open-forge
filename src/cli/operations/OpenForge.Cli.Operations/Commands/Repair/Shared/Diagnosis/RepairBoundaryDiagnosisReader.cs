@@ -5,7 +5,7 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
-internal sealed class RepairBoundaryDiagnosisReader(DoctorDiagnosisReader diagnosisReader)
+internal sealed class RepairBoundaryDiagnosisReader(DoctorDiagnosisReader diagnosisReader, RepairCatalogueReader? catalogueReader = null)
 {
     internal async ValueTask<RepairPostDiagnosis> ReadAsync(RepairRequest request)
     {
@@ -18,13 +18,19 @@ internal sealed class RepairBoundaryDiagnosisReader(DoctorDiagnosisReader diagno
                 read.Observation.LocalReferences.References,
                 RepairAuthoredReferenceBoundary.ReadRouteDocuments(read.Observation.Routes.Sources));
             var findings = new List<RepairFinding>();
-            findings.AddRange(RepairRemainingFindingReader.Read(scope.References));
+            var catalogue = catalogueReader is null ? null : await catalogueReader.ReadAsync(request.Workspace,
+                read.Observation.LocalReferences, CancellationToken.None).ConfigureAwait(false);
+            findings.AddRange(catalogue is null ? RepairRemainingFindingReader.Read(scope.References) : RepairRemainingFindingReader.ReadCatalogue(catalogue));
             findings.AddRange(RepairAuthoredReferenceBoundary.IncompleteFindings(scope.IncompleteSources));
             findings.AddRange(RepairRemainingFindingReader.ReadLibrary(read.Result.Diagnosis));
             return new RepairPostDiagnosis(
                 RepairCoverageMapper.ReadPostDiagnosisState(coverage),
                 coverage,
-                findings);
+                findings)
+            {
+                Proposals = catalogue?.Proposals.Select(input => input.Proposal).ToArray() ?? [],
+                NeedsIndex = await RepairContinuationReader.NeedsIndexAsync(request.Workspace, read.Observation.Routes, CancellationToken.None).ConfigureAwait(false),
+            };
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {

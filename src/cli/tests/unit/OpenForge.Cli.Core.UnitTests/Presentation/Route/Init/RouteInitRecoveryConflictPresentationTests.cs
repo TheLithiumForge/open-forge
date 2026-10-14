@@ -142,7 +142,7 @@ public sealed class RouteInitRecoveryConflictPresentationTests
 
         Assert.Equal(CliSemanticStatus.Failed, result.Status);
         Assert.Equal(CliSemanticStatus.Failed, report.Status);
-        Assert.Equal("open-forge route init --detail debug", report.Next?.Command);
+        Assert.Equal("open-forge route init --help", report.Next?.Command);
     }
 
     [Fact(DisplayName = "Route Init keeps its existing recovery-retention cleanup guidance"), Trait("Boundary", "Output")]

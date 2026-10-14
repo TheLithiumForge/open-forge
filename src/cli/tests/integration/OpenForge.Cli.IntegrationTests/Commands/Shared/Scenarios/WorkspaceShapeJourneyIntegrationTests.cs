@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -63,11 +64,11 @@ public sealed class WorkspaceShapeJourneyIntegrationTests
         Assert.Equal("workspace", subject.GetProperty("kind").GetString());
         Assert.Equal(workspace.PhysicalPath, subject.GetProperty("id").GetString());
         Assert.Equal(JsonValueKind.Null, subject.GetProperty("path").ValueKind);
-        Assert.Equal("open-forge update", finding.GetProperty("actions")[0].GetProperty("command").GetString());
+        Assert.Equal($"open-forge update --workspace {CliCommandText.Quote(workspace.PhysicalPath)}", finding.GetProperty("actions")[0].GetProperty("command").GetString());
 
         var next = root.GetProperty("next");
         Assert.Equal(JsonValueKind.Object, next.ValueKind);
-        Assert.Equal("open-forge update", next.GetProperty("command").GetString());
+        Assert.Equal($"open-forge update --workspace {CliCommandText.Quote(workspace.PhysicalPath)}", next.GetProperty("command").GetString());
         Assert.Equal(before, workspace.SnapshotHashes());
         Assert.Equal(recoveryBefore, workspace.RecoveryDirectoryExists());
         Assert.Equal("not-required", root.GetProperty("recovery").GetProperty("disposition").GetString());

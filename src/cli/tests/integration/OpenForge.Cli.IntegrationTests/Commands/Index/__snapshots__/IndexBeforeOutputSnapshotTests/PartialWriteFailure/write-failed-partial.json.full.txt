@@ -58,6 +58,10 @@
     "filesChecked": 1,
     "filesUpdated": 1,
     "filesCurrent": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0,
     "errors": 1
   },
   "limitations": [],
@@ -109,7 +113,9 @@
         "action": "update",
         "outcome": "not-started"
       }
-    ]
+    ],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": "<recovery-bundle>",
@@ -117,7 +123,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the reported problem before rerunning Index."
   }
 }

@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route update",
+          "command": "open-forge route update memory/project-alpha/overview --description 'After overview' --workspace <workspace>",
           "reason": "Rerun the same Route Update request."
         }
       ],
@@ -61,7 +61,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route update",
+    "command": "open-forge route update memory/project-alpha/overview --description 'After overview' --workspace <workspace>",
     "reason": "Rerun the same Route Update request."
   }
 }

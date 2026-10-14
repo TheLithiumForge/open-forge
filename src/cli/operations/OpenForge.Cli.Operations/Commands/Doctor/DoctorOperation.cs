@@ -2,13 +2,14 @@ using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
 
-internal sealed class DoctorOperation(OperationalContributorCatalogue contributors)
+internal sealed class DoctorOperation(OperationalContributorCatalogue contributors, RenameEvidenceReader? renames = null)
 {
-    private readonly DoctorDiagnosisReader _reader = new(contributors);
+    private readonly DoctorDiagnosisReader _reader = new(contributors, renames);
 
     internal async ValueTask<DoctorResult> ExecuteAsync(
         DoctorRequest request,

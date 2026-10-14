@@ -16,6 +16,13 @@ internal sealed record RepairLibraryRecoveryProposal
     internal string LibraryIdValue => Evidence.LibraryId.Value;
 
     internal string TargetPath => Evidence.Entry.Input.Context.Entry.TargetPath;
+
+    internal bool IsRelativeFileLink => Evidence.Entry.Input.Context.Entry.Kind is
+        Framework.Recovery.Models.Entries.RecoveryEntryKind.RelativeFileLinkCreate
+        or Framework.Recovery.Models.Entries.RecoveryEntryKind.RelativeFileLinkDelete;
+
+    internal bool RestoresDeletedLink => Evidence.Entry.Input.Context.Entry.Kind
+        == Framework.Recovery.Models.Entries.RecoveryEntryKind.RelativeFileLinkDelete;
 }
 
 internal sealed record RepairSelectedLibraryRecovery

@@ -24,7 +24,7 @@ public sealed class Task32ExtensionInstallPermissionNextPolicyTests
     {
         var result = PermissionRequiredResult();
         const string alternative = "  Or add \".apm/agents/team.md\" to allowInstallPaths in .agents/open-forge.json.";
-        const string nextLine = "Next: open-forge extension install team --allow-path .apm/agents/team.md";
+        const string nextLine = "Next: open-forge extension install team --allow-path .apm/agents/team.md --automatic";
         foreach (var detail in new[] { CliDetail.Minimal, CliDetail.Standard, CliDetail.Full, CliDetail.Debug })
             foreach (var filter in new CliSeverity?[] { null, CliSeverity.Error, CliSeverity.Warning })
             {
@@ -46,7 +46,7 @@ public sealed class Task32ExtensionInstallPermissionNextPolicyTests
 
                 using var json = JsonDocument.Parse(rendered.Json);
                 var next = json.RootElement.GetProperty("next");
-                Assert.Equal("open-forge extension install team --allow-path .apm/agents/team.md", next.GetProperty("command").GetString());
+                Assert.Equal("open-forge extension install team --allow-path .apm/agents/team.md --automatic", next.GetProperty("command").GetString());
                 Assert.Equal(
                     "Or add \".apm/agents/team.md\" to allowInstallPaths in .agents/open-forge.json.",
                     next.GetProperty("reason").GetString());
@@ -57,8 +57,8 @@ public sealed class Task32ExtensionInstallPermissionNextPolicyTests
     }
 
     [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Extension Install initial force preview keeps its existing Next line")]
-    public void InitialForceRequiredNextRemainsUnchanged()
+    [Fact(DisplayName = "Extension Install initial force preview keeps its reason outside the runnable Next line")]
+    public void InitialForceNextSeparatesReasonAndCommand()
     {
         var rendered = Render(
             Result(
@@ -72,8 +72,9 @@ public sealed class Task32ExtensionInstallPermissionNextPolicyTests
             .Last();
 
         Assert.Equal(
-            "Next: open-forge extension install team --force --dry-run  (preview replacing it)",
+            "Next: open-forge extension install team --automatic --force --dry-run",
             finalLine);
+        Assert.Contains("Preview replacing it.", rendered.Text, StringComparison.Ordinal);
     }
 
     private static ExtensionInstallResult PermissionRequiredResult()

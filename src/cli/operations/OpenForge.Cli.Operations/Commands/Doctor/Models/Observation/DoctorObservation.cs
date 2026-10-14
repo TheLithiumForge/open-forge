@@ -17,4 +17,7 @@ internal sealed record DoctorObservation(
     FrameworkLifecycleDoctorView FrameworkLifecycle,
     ExtensionLifecycleDoctorView ExtensionLifecycle,
     LibraryDoctorView Libraries,
-    ImmutableArray<LibraryResidualEvidence> LibraryResiduals);
+    ImmutableArray<LibraryResidualEvidence> LibraryResiduals)
+{
+    internal DoctorMaintenanceObservation? Maintenance { get; init; }
+}

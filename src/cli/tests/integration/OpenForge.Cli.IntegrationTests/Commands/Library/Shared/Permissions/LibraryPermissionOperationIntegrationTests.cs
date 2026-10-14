@@ -12,8 +12,11 @@ using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
+using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 using OpenForge.Cli.IntegrationTests.TestSupport;
+using OpenForge.Cli.TestSupport.Interaction;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Permissions;
 
@@ -330,6 +333,44 @@ public sealed class LibraryPermissionOperationIntegrationTests
         Assert.Equal(persistent, stage.RecoveryTarget is not null);
         Assert.Equal(persistent ? WorkspacePermissionAction.Create : WorkspacePermissionAction.None, stage.Result.Action);
         Assert.Equal("sentinel", input.ReadLine());
+        Assert.Equal(before, workspace.Snapshot());
+    }
+
+    [Trait("Boundary", "OS")]
+    [Theory(DisplayName = "Extension and Library key approval saves a grant only after deliberate Always selection")]
+    [InlineData(false, false), InlineData(false, true)]
+    [InlineData(true, false), InlineData(true, true)]
+    public static async Task KeyApprovalDefaultsToOnce(bool extension, bool persistent)
+    {
+        using var workspace = new LibraryMutationWorkspace();
+        var before = workspace.Snapshot();
+        var script = ScriptedCliTerminal.Keys(persistent
+            ? [new(CliKey.Up), new(CliKey.Enter)]
+            : [new(CliKey.Enter)]);
+        CliPrompt<CliPermissionQuestion, CliPermissionChoice> interaction = new CliPrompts(script.Terminal).PermissionAsync;
+        WorkspacePermissionResult result;
+        if (extension)
+        {
+            var stage = await new ExtensionPermissionOperation(interaction).DetermineAsync(
+                new(workspace.Workspace, [new("docs/a.md", ExtensionPermissionEffect.Copy)], null, true), TestContext.Current.CancellationToken);
+            Assert.Null(stage.Failure);
+            Assert.Equal(persistent, stage.Change is not null);
+            Assert.Equal(persistent, stage.RecoveryTarget is not null);
+            result = stage.Result;
+        }
+        else
+        {
+            var stage = await new LibraryPermissionOperation(interaction).DetermineAsync(
+                await RequestAsync(workspace, allowPrompt: true), TestContext.Current.CancellationToken);
+            Assert.Null(stage.Failure);
+            Assert.Equal(persistent, stage.GrantChange is not null);
+            Assert.Equal(persistent, stage.RecoveryTarget is not null);
+            result = stage.Result;
+        }
+        Assert.Equal(WorkspacePermissionDecision.Approved, result.Decision);
+        Assert.Equal(persistent ? WorkspacePermissionAction.Create : WorkspacePermissionAction.None, result.Action);
+        Assert.Equal(persistent ? WorkspacePermissionOutcome.Planned : WorkspacePermissionOutcome.NotRequested, result.Outcome);
+        Assert.Equal(0, script.LineReadCalls);
         Assert.Equal(before, workspace.Snapshot());
     }
 

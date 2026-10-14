@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 
@@ -58,6 +59,7 @@ internal sealed record RouteInitMetadataInput
 
 internal sealed record RouteInitRequest
 {
+    internal CliRetryOptions? RetryOptions { get; init; }
     internal RouteInitRequest(
         CliWorkspace workspace,
         string routeTarget,

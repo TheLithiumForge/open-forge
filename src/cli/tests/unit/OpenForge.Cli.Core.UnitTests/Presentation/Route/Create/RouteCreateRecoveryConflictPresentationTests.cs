@@ -109,17 +109,19 @@ public sealed class RouteCreateRecoveryConflictPresentationTests
     [Fact(DisplayName = "Route Create keeps failure guidance ahead of a recovery-conflict preview"), Trait("Boundary", "Output")]
     public void HigherSeverityFailureStillSelectsItsNextAction()
     {
+        const string command = "open-forge route create memory/project-alpha/overview --description 'Project overview' --responsibility 'Explains the project' --tag Docs --tag Overview";
         var result = Result(
             RecoveryConflict(RecoveryCandidatePath),
             new RouteCreateFinding(
                 RouteCreateFindingCode.OperationFailed,
                 "The operation failed.",
-                RouteCreateTestData.TargetPath));
+                RouteCreateTestData.TargetPath)) with
+        { RequestCommand = command };
         var report = RouteCreateReportSelector.Select(result, new CliSelection(CliDetail.Minimal, null));
 
         Assert.Equal(CliSemanticStatus.Failed, result.Status);
         Assert.Equal(CliSemanticStatus.Failed, report.Status);
-        Assert.Equal("open-forge route create --detail debug", report.Next?.Command);
+        Assert.Equal(command, report.Next?.Command);
     }
 
     [Fact(DisplayName = "Route Create keeps its existing recovery-retention cleanup guidance"), Trait("Boundary", "Output")]

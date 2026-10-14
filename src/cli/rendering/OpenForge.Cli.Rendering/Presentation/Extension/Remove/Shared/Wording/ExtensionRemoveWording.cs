@@ -20,6 +20,11 @@ internal static class ExtensionRemoveWording
 
     internal static string WouldRemove(string id) => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveWording.WouldRemove(id);
 
+    internal static string WouldRemove(IReadOnlyList<string> ids)
+        => ids.Count == 1
+            ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveWording.WouldRemove(ids[0])
+            : global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveWording.WouldRemoveMany(ids.Count, string.Join(", ", ids));
+
     internal static string NoFilesRecorded(string id)
         => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveWording.NoFilesRecorded(id);
 
@@ -194,7 +199,7 @@ internal static class ExtensionRemoveWording
         _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The Extension Remove finding code is not defined."),
     };
 
-    internal static string FindingMessage(ExtensionRemoveFinding finding, string id)
+    internal static string FindingMessage(ExtensionRemoveFinding finding, string id, bool preview = false)
         => finding.Code switch
         {
             ExtensionRemoveFindingCode.InvalidInput => CannotRemove(finding.Cause),
@@ -202,6 +207,8 @@ internal static class ExtensionRemoveWording
             ExtensionRemoveFindingCode.InteractionEnded => CliFindingWording.InteractionEnded(),
             ExtensionRemoveFindingCode.ConfirmationRequired => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.TitleExtensionRemove()),
             ExtensionRemoveFindingCode.OwnershipObservation => finding.Cause,
+            ExtensionRemoveFindingCode.LifecycleObservation when preview && finding.Target is { } dependency
+                => global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemovePhrases.DependencyRemovalPreview(dependency, id),
             ExtensionRemoveFindingCode.LifecycleObservation => finding.Target is { } dependency
                 ? global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemovePhrases.FormatRemainsInstalledAndIsNoLongerNeededBy($"{dependency}", $"{id}")
                 : finding.Cause,

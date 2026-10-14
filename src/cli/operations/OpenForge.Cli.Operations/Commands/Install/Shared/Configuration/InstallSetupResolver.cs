@@ -42,7 +42,11 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
         if (form.Boundary is { } formBoundary) return new(null, formBoundary);
         if (request.Setup?.Preset is null &&
             ((installed && request.Setup?.Configure != true) || !canPrompt || request.Setup is { Configure: true, Frontmatter: not null }))
-            return new(null) { Frontmatter = form.Selection };
+            return new(null)
+            {
+                Frontmatter = form.Selection,
+                Recap = !installed ? new(false, InstallPreset.FullCore, CurrentRoutes(settings, []), []) : null,
+            };
         var ignore = await _reader.ReadAsync(request.Workspace, InstallIgnoreSection.Path, token).ConfigureAwait(false);
         if (ignore.Snapshot is not { } ignoreSnapshot)
             return Stopped(ReadTargetCode(ignore), ignore.Cause ?? "The Git-ignore file is unsafe or unavailable.");
@@ -50,6 +54,8 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
         try { ignored = InstallIgnoreSection.Read(ignoreSnapshot.Bytes.AsSpan()); }
         catch (Exception exception) when (exception is InvalidDataException or DecoderFallbackException)
         { return Stopped(InstallFindingCode.TargetUnsafe, exception.Message); }
+
+        var previousRoutes = installed ? CurrentRoutes(settings, ignored) : [];
 
         var preset = request.Setup?.Preset;
         if (preset is null && canPrompt && interaction is { } presetInteraction)
@@ -67,12 +73,7 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
         var rows = InstallConfigurationChoices.Defaults(preset.Value).ToDictionary(row => row.Id, row => row.Action, StringComparer.Ordinal);
         if (preset == InstallPreset.Custom && installed)
         {
-            foreach (var id in InstallConfigurationChoices.RouteIds)
-            {
-                rows[id] = WorkspaceRemovals.IsPathRemoved(InstallConfigurationChoices.Entrypoint(id), settings.Document)
-                    ? InstallRouteAction.Remove : InstallRouteAction.Add;
-                if (rows[id] != InstallRouteAction.Remove && ignored.Contains(id, StringComparer.Ordinal)) rows[id] = InstallRouteAction.GitIgnore;
-            }
+            foreach (var row in previousRoutes) rows[row.Id] = row.Action;
         }
         var overrides = request.Setup?.Overrides ?? [];
         foreach (var row in overrides)
@@ -117,7 +118,12 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
                 }
                 else resolved = InstallFrontmatterResolver.Resolve(request.Setup, settings, installed, canPrompt: false);
             }
-            return new(configuration, resolved.Boundary) { Frontmatter = resolved.Selection };
+            var routes = configuration?.Routes ?? CurrentRoutes(settings, []);
+            return new(configuration, resolved.Boundary)
+            {
+                Frontmatter = resolved.Selection,
+                Recap = new(request.Setup?.Configure == true, configuration?.Preset ?? InstallPreset.FullCore, routes, previousRoutes),
+            };
         }
     }
 
@@ -128,4 +134,13 @@ internal sealed class InstallSetupResolver(PhysicalPathResolver paths, InstallSe
 
     private static ImmutableArray<InstallRouteSelection> Materialize(Dictionary<string, InstallRouteAction> rows)
         => InstallConfigurationChoices.RouteIds.Select(id => new InstallRouteSelection(id, rows[id])).ToImmutableArray();
+
+    private static ImmutableArray<InstallRouteSelection> CurrentRoutes(WorkspaceSettingsRead settings, ImmutableArray<string> ignored)
+        => InstallConfigurationChoices.RouteIds.Select(id => new InstallRouteSelection(id, CurrentAction(id, settings, ignored))).ToImmutableArray();
+
+    private static InstallRouteAction CurrentAction(string id, WorkspaceSettingsRead settings, ImmutableArray<string> ignored)
+    {
+        if (WorkspaceRemovals.IsPathRemoved(InstallConfigurationChoices.Entrypoint(id), settings.Document)) return InstallRouteAction.Remove;
+        return ignored.Contains(id, StringComparer.Ordinal) ? InstallRouteAction.GitIgnore : InstallRouteAction.Add;
+    }
 }

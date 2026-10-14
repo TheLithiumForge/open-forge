@@ -1,0 +1,5 @@
+Cannot search: Invalid --require value: other. Use all or any.
+Workspace: <workspace>
+  Error  find  Invalid input
+  Correct the named Find input, then rerun the request.
+Next: open-forge find --help

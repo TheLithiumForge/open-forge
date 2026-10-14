@@ -61,7 +61,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge route remove",
+    "command": "open-forge route remove 'guidance/old guide' --automatic --workspace <workspace>",
     "reason": "Rerun the same Route Remove request."
   }
 }

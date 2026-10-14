@@ -39,6 +39,18 @@ the result reports the partial state and retains recovery evidence.
 Recovery protects the exact prior lock bytes before any effects; the planned
 lock publication remains last after verified link and generated-region effects.
 
+## Help
+
+The purpose sentence is: Remove a Library's registration and destination links while keeping its source files.
+
+The public Usage line is:
+
+```text
+open-forge library detach <library-id> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Operation Boundary
 
 `library detach` removes the complete consumer projection for one registered
@@ -252,6 +264,10 @@ necessary even for existing owned links; recorded identity makes removal
 source-independent, without exempting it from revocation.
 
 Every missing permission proposal is an exact file grant. Detach does not request future-folder authority or revoke saved grants.
+Permission retries retain the Library ID, explicit workspace, existing grants,
+automatic and dry-run choices, and presentation options. They add every missing
+exact file grant and use the shared supported-shell quoting helper in both text
+and JSON.
 Directory proposals explicitly include future descendants and never cover the
 workspace root. Changing a Library source does not change destination permission. Protected paths,
 source trees, ancestry, ownership and collision checks still apply per leaf.
@@ -375,6 +391,10 @@ The command is exactly library detach; data follows the catalogue:
 | minimal  | `{ mode, id, sourceFolder, destinationFolder, registrationRemoved: bool, permissions { ... } }` plus effects |
 | standard | per effect `target`                                                                                          |
 | full     | + `expectedStates`, `verification`, `recovery` details                                                       |
+
+Removed link `target` fields use the portable mapping target with `/`.
+Full-detail `expectedStates[].rawRelativeTarget` retains the raw on-disk link
+identity as evidence, including its platform separators.
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON
@@ -552,6 +572,8 @@ Next: open-forge library detach team-knowledge
 - [library detach Interface Contract](interface.md)
 
 ## Executable Wording References
+
+Report each changed settings file once. Say `settings updated` only for a verified settings change, and `settings would be updated` for a preview. A blocked or repeated unchanged request makes no settings-update claim. Keep the planned and observed effect facts in JSON.
 
 Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 

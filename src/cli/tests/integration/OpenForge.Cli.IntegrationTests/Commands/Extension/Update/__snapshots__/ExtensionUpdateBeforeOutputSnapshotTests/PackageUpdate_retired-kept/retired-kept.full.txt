@@ -13,4 +13,4 @@ Workspace: <workspace>
   Verification: targets verified; Entries verified; Extension record verified
   No recovery bundle was needed.
   preview deleting the kept file
-Next: open-forge extension update toolkit --prune --dry-run
+Next: open-forge extension update toolkit --source <extension-source> --workspace <workspace> --prune --automatic --dry-run

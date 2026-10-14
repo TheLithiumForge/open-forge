@@ -5,4 +5,4 @@ Workspace: <workspace>
   Warning  shared/team  Source folder is unavailable
          The source folder of team-knowledge, shared/team, cannot be read.
   team-knowledge  shared/team -> .  0 links current, 1 missing
-Next: open-forge library inspect team-knowledge
+Next: open-forge library inspect team-knowledge --workspace <workspace>

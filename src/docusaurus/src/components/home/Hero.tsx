@@ -3,7 +3,9 @@ import Link from "@docusaurus/Link";
 import Heading from "@theme/Heading";
 import styles from "./home.module.css";
 
-const installCommand = "npm install -g @thelithiumforge/open-forge@beta";
+const installCommands = `npm install -g @thelithiumforge/open-forge@beta
+cd /path/to/your-project
+open-forge install`;
 
 export default function Hero(): ReactNode {
   return (
@@ -21,13 +23,23 @@ export default function Hero(): ReactNode {
           <Link className="button button--primary button--lg" to="/docs/getting-started/installation">
             Get started
           </Link>
-          <Link className="button button--secondary button--outline button--lg" to="/docs/extensions">
-            Explore extensions
+          <Link className="button button--secondary button--outline button--lg" to="/docs/demos">
+            Try a demo
           </Link>
         </div>
-        <pre className={styles.install} aria-label="Install command">
-          <span className={styles.prompt}>$</span> {installCommand}
-        </pre>
+        <div className={styles.tryIt}>
+          <Heading as="h2" className={styles.cardTitle}>
+            Try it
+          </Heading>
+          <p>With Node.js 22.18 or later</p>
+          <pre className={styles.install} aria-label="Install the CLI and set up your project">
+            <code>{installCommands}</code>
+          </pre>
+          <p>Then ask your agent for a normal task.</p>
+          <blockquote className={styles.examplePrompt}>
+            Explain how this project runs its tests. Follow <code>AGENTS.md</code>, and name the Open Forge files you read.
+          </blockquote>
+        </div>
       </div>
     </header>
   );

@@ -35,6 +35,46 @@ records current implementation and release work. No Technical Design file exists
 for Doctor, and this contract does not duplicate those mechanics or constitute
 execution proof.
 
+## Help
+
+The purpose sentence is: Diagnose workspace, route, link, and managed-file problems without changing files.
+
+The public Usage line is:
+
+```text
+open-forge doctor [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
+## Forgiving Maintenance
+
+Doctor uses the shared completion eligibility and rename observations defined by [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md). It remains read-only with six diagnostic domains and no new syntax. These Task 79 rules replace contradictory manual advice for eligible missing metadata and Index advice for a gap that cannot be completed.
+
+| Finding code and condition                                                     | Exact text                                                                                                                                                                         | Lane and next                                |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `route.metadata-required-missing`, eligible missing fields                     | `<path> needs a description or tags. Index can fill the missing fields and keep your content.`                                                                                     | targeted-operation, `open-forge index`       |
+| `route.unreachable`, eligible chain gap                                        | `<path> is inside folders without navigation files. Index can create the missing chain.`                                                                                           | targeted-operation, `open-forge index`       |
+| New `reference.target-renamed`, proven unchanged rename                        | `<old-path> was renamed to <new-path>, same content`, then `Repair can update the links and affected Entries.`                                                                     | safe-exact, `open-forge repair --automatic`  |
+| Proven move or edited rename                                                   | Replace `was renamed to` with `was moved to` across folders. Replace `same content` with `content is <S>% unchanged` or `recorded description and tags match` for the actual proof | safe-exact, `open-forge repair --automatic`  |
+| `reference.target-missing`, two strong candidates                              | `<old-path> is missing. More than one file looks like its new location.`                                                                                                           | guided-choice, `open-forge repair`           |
+| `reference.target-missing`, weak-only candidates                               | `<old-path> is missing. Its new location could not be proven.`                                                                                                                     | guided-choice, `open-forge repair`           |
+| `reference.target-missing`, no candidate                                       | `<old-path> is missing and no replacement was found.`, action `Update or remove this link in <source-path> at line <line>, column <column>.`                                       | manual-decision, exact file and location     |
+| `workspace.frontmatter-malformed`, ordinary source                             | `<path> has invalid frontmatter. <cause>`, action `Fix the frontmatter in <path>, then run open-forge index.`                                                                      | manual-decision, exact edit-and-index action |
+| `route.metadata-required-missing`, ordinary file inside a native Skill package | `<path> needs a description and tags. Index does not edit files inside a Skill package, so add them by hand.`, action `Add the missing description and tags to <path> by hand.`    | manual-decision, exact metadata edit         |
+
+A partial header in the other form is completed in its existing form, keeping supplied bytes exact, so it uses the eligible missing-fields row and `open-forge index`.
+
+Keep one finding for each occurrence or malformed physical source. Do not emit both target-missing and target-renamed for the same link. Missing metadata remains a warning until completed. A proven rename is a warning with an exact proposal. Diagnostic errors do not make completed diagnosis a failed process. Native Skill and managed metadata retain their existing authoring or managing Update actions.
+
+Choose one Next from existing safety/recovery limits, safe Repair, eligible Index, guided Repair, then exact manual editing. Doctor prints no Next when nothing remains. Each explanation says what is wrong and its action line says what to do, without repeating a sentence. A missing target inside a generated Entries region is reported once, as the stale entry Index removes. Use fresh facts after every maintenance operation. Retain selected workspace coordinates. No-Git and already-indexed cases still diagnose links, but do not claim proof when no old identity remains. The end-state rule is complete Doctor coverage with no warnings or errors after all printed operations and explicit choices or edits. The [wire inventory](../../technical-designs/forgiving-maintenance.md#safety-and-wire-inventory) is exhaustive and additive within schema 3.
+
+Doctor and Repair use the same current Entries identity records and admitted candidates. One newly generated successor row does not contradict Git-backed proof, while metadata-only proof retains its stricter identity rule. Weak reasons stay with their own link. Protected sources and targets never become safe relinks.
+
+Every incomplete result starts with `Doctor could not finish <K> checks.`, using `1 check` for one unfinished check. If the count is unavailable, use `Doctor could not finish.` Append known finding counts without saying `No problems found.` Exit codes and the JSON shape remain unchanged.
+
+When Git times out, say `Git did not answer in time, so renamed files could not be proven. Run the command again.` Suppress missing-target findings until Git can establish the evidence, report incomplete reference coverage, and retry the complete Doctor request, including its workspace. A clean Doctor prints no Next.
+
 ## Purpose And Boundary
 
 `doctor` diagnoses the complete known structural and lifecycle surface of one
@@ -569,17 +609,17 @@ the JSON detail ladder.
 
 ### Statuses and headlines
 
-| Status                  | When                                                | Headline                                                                                        | Exit | Stream |
-| ----------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---: | ------ |
-| completed               | no error, no warning, complete coverage             | `No problems found.`                                                                            |    0 | stdout |
-| completed               | Info findings only                                  | `No problems found. <N> info findings were recorded.`                                           |    0 | stdout |
-| completed-with-warnings | warnings, no errors                                 | `No errors. <W> warnings and <I> info findings were recorded.` (omit the info clause when zero) |    2 | stdout |
-| completed-with-warnings | errors present                                      | `<E> errors, <W> warnings and <I> info findings.` (singular forms when 1; omit zero parts)      |    2 | stdout |
-| incomplete              | a category could not finish                         | previous sentence + ` <K> checks could not finish.`                                             |    3 | stdout |
-| invalid-input           | operand or unknown flag                             | family `invalid-input`: `Cannot run doctor: <problem>.`                                         |    4 | stderr |
-| blocked                 | workspace missing, not a directory, unsafe boundary | `Cannot check this workspace: <reason>.`                                                        |    5 | stderr |
-| failed                  | unexpected error                                    | `Doctor stopped because of an unexpected error: <reason>.`                                      |    1 | stderr |
-| cancelled               | Ctrl+C                                              | `Doctor was cancelled.`                                                                         |  130 | stderr |
+| Status                  | When                                                | Headline                                                                                                                                   | Exit | Stream |
+| ----------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---: | ------ |
+| completed               | no error, no warning, complete coverage             | `No problems found.`                                                                                                                       |    0 | stdout |
+| completed               | Info findings only                                  | `No problems found. <N> info findings were recorded.`                                                                                      |    0 | stdout |
+| completed-with-warnings | warnings, no errors                                 | `No errors. <W> warnings and <I> info findings were recorded.` (omit the info clause when zero)                                            |    2 | stdout |
+| completed-with-warnings | errors present                                      | `<E> errors, <W> warnings and <I> info findings.` (singular forms when 1; omit zero parts)                                                 |    2 | stdout |
+| incomplete              | a category could not finish                         | `Doctor could not finish <K> checks.` (singular for 1), then known finding counts. If the count is unavailable, `Doctor could not finish.` |    3 | stdout |
+| invalid-input           | operand or unknown flag                             | family `invalid-input`: `Cannot run doctor: <problem>.`                                                                                    |    4 | stderr |
+| blocked                 | workspace missing, not a directory, unsafe boundary | `Cannot check this workspace: <reason>.`                                                                                                   |    5 | stderr |
+| failed                  | unexpected error                                    | `Doctor stopped because of an unexpected error: <reason>.`                                                                                 |    1 | stderr |
+| cancelled               | Ctrl+C                                              | `Doctor was cancelled.`                                                                                                                    |  130 | stderr |
 
 Doctor retains `completed-with-warnings` for warning-only and error-containing
 diagnoses; exposing warning rows at minimal text does not change that status,
@@ -606,6 +646,11 @@ Minimal text renders all known error and warning findings with their exact
 source/path/location, cause or message, and first action. Info findings remain
 counted but omitted; any hint for hidden findings points to `--detail full`.
 The typed next action remains governed by the Next rules below.
+
+The inline hint is `To list the info findings: open-forge doctor --detail full`.
+When the request supplied `--workspace`, the command also includes that selected
+workspace, quoted with the shared command helper. An implicit workspace adds no
+workspace option. A finding filter still suppresses this hint.
 
 `minimal`, incomplete:
 
@@ -891,7 +936,7 @@ Each status has one representative native text transcript above. JSON uses the s
 
 ### Open maintainer questions
 
-Current native output uses `To list the warnings: open-forge doctor --detail standard` and `To list the info findings`; the catalogue's shorter hint is different. At standard, full and debug, the native renderer also doubles `Fix it by hand.` where the catalogue says the manual-action sentence is emitted once. The `error-and-warnings` situation currently has no error finding and reports `No errors. 3 warnings and 3 info findings were recorded.` These wording, rendering, and situation-definition questions remain unresolved. **Maintainer decision/clarification remains open.**
+Current native output uses `To list the warnings: open-forge doctor --detail standard` and `To list the info findings`. The catalogue's shorter hint is different. The renderer emits a manual-action sentence once when its reason repeats that sentence. The `error-and-warnings` situation currently has no error finding and reports `No errors. 3 warnings and 3 info findings were recorded.` The hint wording and situation-definition questions remain unresolved. **Maintainer decision/clarification remains open.**
 
 ## Non-Goals And Architecture Boundary
 

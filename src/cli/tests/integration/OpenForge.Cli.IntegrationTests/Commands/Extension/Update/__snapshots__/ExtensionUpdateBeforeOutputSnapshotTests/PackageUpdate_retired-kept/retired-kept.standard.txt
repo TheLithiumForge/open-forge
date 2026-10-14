@@ -8,4 +8,4 @@ Workspace: <workspace>
   0 files unchanged
   Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
   preview deleting the kept file
-Next: open-forge extension update toolkit --prune --dry-run
+Next: open-forge extension update toolkit --source <extension-source> --workspace <workspace> --prune --automatic --dry-run

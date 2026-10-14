@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
+using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding.Models.Composition;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -29,11 +31,11 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
-    private readonly GeneratedNavigationFormationBuilder _formationBuilder = new();
+    private readonly RouteScaffoldSourceBuilder _sourceBuilder = new();
     private readonly GeneratedNavigationProjector _projector = new();
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
-    private readonly FrameworkMarkdownDocumentWriter _documentWriter = new();
+    private readonly RouteScaffoldComposer _scaffoldComposer = new();
     private readonly PhysicalPathResolver _physicalPathResolver = new();
     private readonly SourceRouteFactsResolver _routeFactsResolver = new();
 
@@ -59,19 +61,9 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
         var resolvedChain = chain.Chain
             ?? throw new InvalidOperationException(
                 "A successful Route Create chain build requires its chain.");
-        var intendedSources = inspection.Catalogue.Sources
-            .Where(source => !string.Equals(
-                source.Identity.CanonicalBasePath,
-                targetPath,
-                StringComparison.Ordinal)
-                && resolvedChain.Parents.All(parent => !string.Equals(
-                    parent.Identity.CanonicalBasePath,
-                    source.Identity.CanonicalBasePath,
-                    StringComparison.Ordinal)))
-            .Concat(resolvedChain.Parents)
-            .Append(destination.TargetSource)
-            .ToArray();
-        var formation = _formationBuilder.Build(inspection.Catalogue, intendedSources);
+        var formation = _sourceBuilder.Replace(
+            inspection.Catalogue,
+            resolvedChain.Parents.Append(destination.TargetSource));
         if (HasTargetCollision(formation, targetPath))
         {
             return Stop(
@@ -481,21 +473,17 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
             var id = SourceIdentity.DeriveId(entrypointPath)
                 ?? throw new InvalidOperationException(
                     "A synthetic Route Create entrypoint requires a stable automatic ID.");
-            var synthetic = new SourceLogicalSource(
-                new SourceLogicalIdentity(id, entrypointPath),
-                new SourceLayer(
-                    entrypointPath,
-                    SourceLogicalPath.ToLexicalPath(
-                        inspection.Request.Workspace.PhysicalRoot,
-                        entrypointPath),
-                    SourceDocumentForm.CanonicalEntrypoint,
-                    SourceLayerKind.Base));
+            var synthetic = _sourceBuilder.Create(inspection.Request.Workspace, entrypointPath);
             parents.Add(synthetic);
             syntheticBytes.Add(
                 entrypointPath,
-                _documentWriter.WriteOptional(
-                    new FrameworkDocumentMetadataEmission(null, [], null),
-                    IntermediateBody(id), inspection.Settings.Document.Frontmatter));
+                _scaffoldComposer.Compose(new RouteScaffoldDocument
+                {
+                    Title = id,
+                    Metadata = new FrameworkDocumentMetadataEmission(null, [], null),
+                    Form = inspection.Settings.Document.Frontmatter,
+                    IncludeDescription = false,
+                }));
         }
 
         return NavigationChainBuild.Complete(
@@ -681,23 +669,7 @@ internal sealed class RouteCreateGeneratedNavigationPlanner
                     StringComparer.Ordinal));
 
     private static string EntrypointPath(string directory)
-        => SourceLogicalPath.Combine(
-            directory,
-            $"_{SourceLogicalPath.ReadFileName(directory)}.md");
-
-    private static string IntermediateBody(string title)
-        => $"""
-
-            # {title}
-
-            ## Axioms
-
-            - inherited - No local axioms; loaded ancestor axioms remain active.
-
-            ## Entries
-
-            - none - No entries - #Empty
-            """.TrimEnd('\n');
+        => RouteScaffoldSourceBuilder.CanonicalPath(directory[(SourceLogicalPath.AgentsRoot.Length + 1)..]);
 
     private static bool TryReadText(
         SourceDocumentReadResult read,

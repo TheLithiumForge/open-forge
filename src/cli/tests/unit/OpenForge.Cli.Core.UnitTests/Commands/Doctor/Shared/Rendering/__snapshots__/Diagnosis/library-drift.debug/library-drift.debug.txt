@@ -9,3 +9,4 @@ Workspace
          read from .agents/directives/library.md
   21 links and 20 routes checked.
   1 must be fixed by hand.
+Next: open-forge library sync team-knowledge

@@ -121,7 +121,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge extension update toolkit --prune --dry-run",
+    "command": "open-forge extension update toolkit --source <extension-source> --workspace <workspace> --prune --automatic --dry-run",
     "reason": "preview deleting the kept file"
   }
 }

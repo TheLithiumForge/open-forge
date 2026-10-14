@@ -1,0 +1,52 @@
+  Update files Open Forge manages to the version bundled in this CLI.
+
+Usage:
+  open-forge update [options]
+
+Examples:
+  open-forge update --dry-run
+  open-forge update
+  open-forge update --prune --dry-run
+
+Behavior:
+  Matching content needs no writes. Changed or missing eligible managed content
+  is updated or restored.
+  --dry-run shows the checked plan and writes nothing.
+  An interactive writing plan asks for confirmation unless --automatic is
+  supplied.
+  Redirected or JSON requests that would write need --automatic.
+  --automatic adds no force or prune permission. Previous bytes are kept in the
+  recovery bundle.
+
+Options:
+  --force      Accepted for compatibility. Ordinary update already replaces or
+               restores eligible managed content. Adds no authority or safety
+               bypass.
+  --prune      Delete eligible retired managed content.
+  --automatic  Use safe defaults without prompting. Does not imply --force or
+               --prune.
+  --dry-run    Preview the complete update without writing.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Authority: Interactive confirmation happens once after checks. JSON and
+  redirected requests never prompt.
+  Management boundary: Update requires complete Framework management and uses
+  this CLI's bundled version. It may adopt compatible missing metadata or
+  required entrypoints in selected standard local routes, without claiming
+  whole-file ownership of adopted files. It cannot establish absent or unknown
+  management, fetch content, change Git, or delete recovery artifacts owned by
+  Cleanup.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  install --help     Install or configure the Framework.
+  doctor             Diagnose workspace problems.
+  cleanup --dry-run  Preview recovery-data cleanup.

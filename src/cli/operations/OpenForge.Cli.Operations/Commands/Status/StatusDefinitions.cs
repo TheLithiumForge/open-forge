@@ -14,7 +14,7 @@ internal static class StatusDefinitions
 
     internal static CliSyntaxDefinition StatusCommand { get; } = new(
         CommandIdentity,
-        "Show workspace status and recovery data.");
+        "Show whether Open Forge is installed and whether its setup needs attention.");
 
     internal static CliNextAction AttentionNextAction { get; } = new(
         CommandLines.Doctor,

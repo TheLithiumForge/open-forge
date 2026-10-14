@@ -1,0 +1,3 @@
+core-templates is already installed without its files. Update it to add them.
+Workspace: <workspace>
+Next: open-forge extension update core-templates

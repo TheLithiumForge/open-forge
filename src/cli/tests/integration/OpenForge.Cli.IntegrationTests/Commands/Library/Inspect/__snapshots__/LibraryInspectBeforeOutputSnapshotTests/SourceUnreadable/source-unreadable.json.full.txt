@@ -72,7 +72,7 @@
         "destinationPath": ".agents/directives/review.md",
         "relation": "unavailable",
         "expectedTarget": "../../shared/team/.agents/directives/review.md",
-        "observedTarget": "../../shared/team/.agents/directives/review.md"
+        "observedTarget": "..\\..\\shared\\team\\.agents\\directives\\review.md"
       }
     ],
     "inventory": {

@@ -13,8 +13,8 @@ internal static class InstallWording
     // @OpenForgeText install.wording.configure-headline
     internal static string Configured(string workspace, bool preview)
         => preview
-            ? $"Would change the Open Forge setup in {workspace}."
-            : $"Changed the Open Forge setup in {workspace}.";
+            ? "Would change the Open Forge setup."
+            : "Changed the Open Forge setup.";
 
     // @OpenForgeText install.wording.summary-with-host-files
     internal static string WithHostFiles(string summary)

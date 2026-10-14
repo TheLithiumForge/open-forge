@@ -1,351 +1,183 @@
-using System.Collections.ObjectModel;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
-using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
+[Trait("Feature", "plain-note-indexing-journey"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F03")]
 public sealed class F03PlainNoteJourneyTests
 {
-    private const string NotePath = ".agents/guidance/my-note.md";
-    private const string GuidanceEntrypointPath = ".agents/guidance/_guidance.md";
-    private const string PlainNote =
-        "# Team notes\n\n"
-        + "Keep decisions close to the work.\n\n"
-        + "- Check the result, not only the message.\n";
-    private const string EnrichedNote =
-        "---\n"
-        + "open-forge:\n"
-        + "  description: Team notes written by the maintainer\n"
-        + "  tags: [Guidance, Team]\n"
-        + "---\n\n"
-        + PlainNote;
-    private const string PartialDescriptionNote =
-        "---\n"
-        + "open-forge:\n"
-        + "  description: Team notes written by the maintainer\n"
-        + "custom-label: preserve-me\n"
-        + "---\n\n"
-        + "# Team notes\n\n"
-        + "Keep this authored body unchanged.\n";
-    private const string PartialTagsNote =
-        "---\n"
-        + "open-forge:\n"
-        + "  tags: [Guidance, Team]\n"
-        + "custom-label: preserve-me\n"
-        + "---\n\n"
-        + "# Team notes\n\n"
-        + "Keep this authored body unchanged.\n";
-    private const string MalformedNote =
-        "---\n"
-        + "open-forge:\n"
-        + "  description: [unclosed\n";
+    private const string Note = ".agents/guidance/my-note.md";
+    private const string Body = "# Team notes\r\n\r\nKeep café and 👩‍💻 exactly.\r\n\r\n- Check the result.\r\n";
 
-    [Fact(
-        DisplayName = "F03 carries a plain note through warning-only indexing, context, enrichment, and a no-op"),
-        Trait("Feature", "plain-note-indexing-journey"),
-        Trait("Evidence", "EndToEnd"),
-        Trait("Journey", "F03")]
-    public async Task PlainNoteJourneyRemainsUsableAndConvergesAfterOptionalEnrichment()
+    [Theory(DisplayName = "F03 previews and completes plain notes then preserves a hand-edited description")]
+    [InlineData(JourneyFrontmatterForm.Root), InlineData(JourneyFrontmatterForm.Scoped)]
+    [Trait("Scenarios", "X02,X04,C02-13,C05-13")]
+    public async Task PlainNote(JourneyFrontmatterForm form)
     {
-        using var workspace = CreateInstalledWorkspace("e2e-f03-main", NotePath);
-        await InstallW1Async(workspace);
-        workspace.WriteText(NotePath, PlainNote);
-        var authoredBytes = Encoding.UTF8.GetBytes(PlainNote);
+        using var journey = await PublishedMaintenanceJourney.CreateAsync("f03-plain", form);
+        journey.Write(Note, Body);
+        var expected = PublishedMaintenanceJourney.Header(form, "Team notes", ["Guidance"], "\r\n") + Body;
+        var preview = await journey.TextAsync(0, true, "index", "--dry-run");
+        AssertCompletionText(preview.StandardOutput, preview: true);
+        using (var json = await journey.JsonAsync(0, true, "index", "--dry-run")) AssertCompletion(json, "planned", ["description", "tags"], "Team notes", ["Guidance"]);
+        journey.AssertBytes(Note, Body);
 
-        var beforeIndex = workspace.SnapshotState();
-        var index = await workspace.RunAsync("index");
-
-        AssertWarningWithOptionalMetadata(index);
-        AssertOrdinaryFile(workspace.Combine(NotePath));
-        Assert.Equal(authoredBytes, File.ReadAllBytes(workspace.Combine(NotePath)));
-        var afterIndex = workspace.SnapshotState();
-        AssertOnlyPathsChanged(beforeIndex, afterIndex, GuidanceEntrypointPath);
-        Assert.NotEqual(beforeIndex[GuidanceEntrypointPath], afterIndex[GuidanceEntrypointPath]);
-        var guidanceAfterPlainIndex = File.ReadAllText(workspace.Combine(GuidanceEntrypointPath), Encoding.UTF8);
-        Assert.Contains("my-note", guidanceAfterPlainIndex, StringComparison.Ordinal);
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-
-        var beforeDoctor = SnapshotState(workspace);
-        var doctor = await RunWithoutWritesAsync(workspace, "doctor");
-        Assert.Equal(2, doctor.ExitCode);
-        Assert.Equal(string.Empty, doctor.StandardError);
-        Assert.Contains("metadata", doctor.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("Framework update did not finish", doctor.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(beforeDoctor, SnapshotState(workspace));
-
-        var beforeContext = SnapshotState(workspace);
-        var contextBeforeEnrichment = await RunWithoutWritesAsync(workspace, "context", "guidance/my-note");
-        Assert.Equal(2, contextBeforeEnrichment.ExitCode);
-        Assert.Equal(string.Empty, contextBeforeEnrichment.StandardError);
-        Assert.Contains("# Team notes", contextBeforeEnrichment.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Keep decisions close to the work.", contextBeforeEnrichment.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("metadata", contextBeforeEnrichment.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(beforeContext, SnapshotState(workspace));
-
-        workspace.WriteText(NotePath, EnrichedNote);
-        Assert.Equal(Encoding.UTF8.GetBytes(EnrichedNote), File.ReadAllBytes(workspace.Combine(NotePath)));
-
-        var beforeEnrichedIndex = workspace.SnapshotState();
-        var enrichedIndex = await workspace.RunAsync("index");
-
-        Assert.Equal(0, enrichedIndex.ExitCode);
-        Assert.Equal(string.Empty, enrichedIndex.StandardError);
-        Assert.NotEmpty(enrichedIndex.StandardOutput);
-        Assert.Equal(Encoding.UTF8.GetBytes(EnrichedNote), File.ReadAllBytes(workspace.Combine(NotePath)));
-        var afterEnrichedIndex = workspace.SnapshotState();
-        AssertOnlyPathsChanged(beforeEnrichedIndex, afterEnrichedIndex, GuidanceEntrypointPath);
-        var guidanceAfterEnrichment = File.ReadAllText(workspace.Combine(GuidanceEntrypointPath), Encoding.UTF8);
-        Assert.Contains("my-note", guidanceAfterEnrichment, StringComparison.Ordinal);
-        Assert.Contains("Team notes written by the maintainer", guidanceAfterEnrichment, StringComparison.Ordinal);
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-
-        var beforeContextAfterEnrichment = SnapshotState(workspace);
-        var contextAfterEnrichment = await RunWithoutWritesAsync(workspace, "context", "guidance/my-note");
-        Assert.Equal(0, contextAfterEnrichment.ExitCode);
-        Assert.Equal(string.Empty, contextAfterEnrichment.StandardError);
-        Assert.Contains("Team notes written by the maintainer", contextAfterEnrichment.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("# Team notes", contextAfterEnrichment.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Keep decisions close to the work.", contextAfterEnrichment.StandardOutput, StringComparison.Ordinal);
-        Assert.Equal(beforeContextAfterEnrichment, SnapshotState(workspace));
-
-        var beforeRepeat = SnapshotState(workspace);
-        var repeat = await RunWithoutWritesAsync(workspace, "index");
-
-        Assert.Equal(0, repeat.ExitCode);
-        Assert.Equal(string.Empty, repeat.StandardError);
-        AssertContainsAny(repeat.StandardOutput, "current", "nothing to do", "no change");
-        Assert.Equal(beforeRepeat, SnapshotState(workspace));
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-    }
-
-    [Fact(
-        DisplayName = "F03 plain and partial notes preview warning-only navigation without writes"),
-        Trait("Feature", "plain-note-indexing-journey"),
-        Trait("Evidence", "EndToEnd"),
-        Trait("Journey", "F03")]
-    public async Task PlainAndPartialNotesDryRunWithWarningIsReadOnly()
-    {
-        var fixtures = new[]
+        using (var applied = await journey.JsonAsync(0, false, "index"))
         {
-            ("plain", PlainNote),
-            ("partial-description", PartialDescriptionNote),
-            ("partial-tags", PartialTagsNote),
-        };
-
-        foreach (var (name, contents) in fixtures)
-        {
-            using var workspace = CreateInstalledWorkspace($"e2e-f03-dry-run-{name}", NotePath);
-            await InstallW1Async(workspace);
-            workspace.WriteText(NotePath, contents);
-            var before = SnapshotState(workspace);
-
-            var dryRun = await RunWithoutWritesAsync(workspace, "index", "--dry-run");
-
-            AssertWarningWithOptionalMetadata(dryRun);
-            Assert.Contains("my-note", dryRun.StandardOutput, StringComparison.Ordinal);
-            Assert.Equal(before, SnapshotState(workspace));
-            workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-            workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
-            Assert.Equal(contents, File.ReadAllText(workspace.Combine(NotePath), Encoding.UTF8));
+            AssertCompletion(applied, "done", ["description", "tags"], "Team notes", ["Guidance"]);
+            Assert.Equal($"open-forge doctor {journey.WorkspaceFlag}", PublishedMaintenanceJourney.Next(applied));
         }
+        journey.AssertBytes(Note, expected);
+        Assert.Contains("- [Team notes](my-note.md) - #Guidance\n", File.ReadAllText(journey.Combine(PublishedMaintenanceJourney.Guidance)), StringComparison.Ordinal);
+        var context = await journey.TextAsync(0, true, "context", "guidance/my-note");
+        Assert.Contains(Body, context.StandardOutput, StringComparison.Ordinal);
+        await journey.CleanDoctorAsync();
+        await journey.NoOpAsync("index");
+
+        var edited = expected.Replace("description: Team notes", "description: Maintainer description # keep this comment", StringComparison.Ordinal);
+        journey.Write(Note, edited);
+        await journey.TextAsync(0, false, "index");
+        journey.AssertBytes(Note, edited);
+        Assert.Contains("[Maintainer description](my-note.md)", File.ReadAllText(journey.Combine(PublishedMaintenanceJourney.Guidance)), StringComparison.Ordinal);
+        await journey.CleanDoctorAsync();
+        await journey.NoOpAsync("index");
     }
 
-    [Fact(
-        DisplayName = "F03 malformed metadata is blocked as malformed and remains distinct from optional metadata"),
-        Trait("Feature", "plain-note-indexing-journey"),
-        Trait("Evidence", "EndToEnd"),
-        Trait("Journey", "F03")]
-    public async Task MalformedMetadataRemainsDistinctAndReadOnly()
+    [Theory(DisplayName = "F03 completes partial headers in their existing form and derives headingless descriptions")]
+    [InlineData(JourneyFrontmatterForm.Root, false), InlineData(JourneyFrontmatterForm.Scoped, false)]
+    [InlineData(JourneyFrontmatterForm.Root, true), InlineData(JourneyFrontmatterForm.Scoped, true)]
+    [Trait("Scenarios", "X03,X32,X33,C05-13")]
+    public async Task PartialAndHeadingless(JourneyFrontmatterForm form, bool otherForm)
     {
-        using var workspace = CreateInstalledWorkspace("e2e-f03-malformed", NotePath);
-        await InstallW1Async(workspace);
-        workspace.WriteText(NotePath, MalformedNote);
-        var before = SnapshotState(workspace);
-
-        var index = await RunWithoutWritesAsync(workspace, "index");
-
-        Assert.Equal(5, index.ExitCode);
-        Assert.Equal(string.Empty, index.StandardOutput);
-        Assert.Contains("frontmatter", index.StandardError, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("invalid", index.StandardError, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("optional metadata", index.StandardError, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("read denied", index.StandardError, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(before, SnapshotState(workspace));
-        Assert.Equal(Encoding.UTF8.GetBytes(MalformedNote), File.ReadAllBytes(workspace.Combine(NotePath)));
-
-        var beforeDoctor = SnapshotState(workspace);
-        var doctor = await RunWithoutWritesAsync(workspace, "doctor");
-
-        Assert.Equal(2, doctor.ExitCode);
-        Assert.Equal(string.Empty, doctor.StandardError);
-        Assert.Contains("error", doctor.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("frontmatter", doctor.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("read denied", doctor.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("Framework update did not finish", doctor.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(beforeDoctor, SnapshotState(workspace));
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-        workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
-    }
-
-    [Fact(
-        DisplayName = "F03 genuine Windows read denial is incomplete and distinct from malformed metadata"),
-        Trait("Feature", "plain-note-indexing-journey"),
-        Trait("Evidence", "EndToEnd"),
-        Trait("Journey", "F03")]
-    public async Task GenuineWindowsReadDenialRemainsDistinctAndReadOnly()
-    {
-        if (!OperatingSystem.IsWindows())
+        using var journey = await PublishedMaintenanceJourney.CreateAsync("f03-partial", form);
+        var authoredForm = otherForm ? (form == JourneyFrontmatterForm.Root ? JourneyFrontmatterForm.Scoped : JourneyFrontmatterForm.Root) : form;
+        var scope = authoredForm == JourneyFrontmatterForm.Scoped ? "open-forge:\n" : "";
+        var indent = authoredForm == JourneyFrontmatterForm.Scoped ? "  " : "";
+        const string plain = "Keep the headingless body exactly.\n";
+        const string partialPath = ".agents/guidance/partial.md";
+        const string tagsPath = ".agents/guidance/tags-only.md";
+        const string fallbackPath = ".agents/guidance/moneyRounding.md";
+        var partial = $"---\n{scope}{indent}description: 'Authored description' # keep\ncustom: preserve-me\n---\n\n# Partial\n\nKeep body.\n";
+        var tags = $"---\n{scope}{indent}tags: [Guidance, Team] # keep\ncustom: preserve-me\n---\n\n# Tags only\n\nKeep body.\n";
+        journey.Write(partialPath, partial);
+        journey.Write(tagsPath, tags);
+        journey.Write(fallbackPath, plain);
+        await journey.TextAsync(0, true, "index", "--dry-run");
+        using (var preview = await journey.JsonAsync(0, true, "index", "--dry-run"))
         {
-            Assert.Skip("F03 X05 read-denial evidence requires Windows file-sharing semantics.");
+            Assert.Equal(3, preview.RootElement.GetProperty("counts").GetProperty("metadataCompleted").GetInt32());
+            var rows = preview.RootElement.GetProperty("data").GetProperty("metadata").EnumerateArray().ToArray();
+            var descriptionRow = Assert.Single(rows, row => row.GetProperty("path").GetString() == partialPath);
+            Assert.Equal(["tags"], descriptionRow.GetProperty("fields").EnumerateArray().Select(field => field.GetString()));
+            Assert.Equal(JsonValueKind.Null, descriptionRow.GetProperty("description").ValueKind);
+            var tagsRow = Assert.Single(rows, row => row.GetProperty("path").GetString() == tagsPath);
+            Assert.Equal(["description"], tagsRow.GetProperty("fields").EnumerateArray().Select(field => field.GetString()));
+            Assert.Equal("Tags only", tagsRow.GetProperty("description").GetString());
+            Assert.Equal(JsonValueKind.Null, tagsRow.GetProperty("tags").ValueKind);
         }
+        var applied = await journey.TextAsync(0, false, "index");
+        Assert.Contains("Completed metadata in 3 files.", applied.StandardOutput, StringComparison.Ordinal);
+        journey.AssertBytes(partialPath, partial.Replace($"{indent}description:", $"{indent}tags: [Guidance]\n{indent}description:", StringComparison.Ordinal));
+        journey.AssertBytes(tagsPath, tags.Replace($"{indent}tags:", $"{indent}description: Tags only\n{indent}tags:", StringComparison.Ordinal));
+        journey.AssertBytes(fallbackPath, journey.Document("Money rounding", ["Guidance"], plain));
+        await journey.CleanDoctorAsync();
+        await journey.NoOpAsync("index");
+    }
 
-        using var workspace = CreateInstalledWorkspace("e2e-f03-read-denied", NotePath);
-        await InstallW1Async(workspace);
-        workspace.WriteText(NotePath, PlainNote);
-        var before = SnapshotState(workspace);
-
-        using (var locked = new FileStream(
-                   workspace.Combine(NotePath),
-                   FileMode.Open,
-                   FileAccess.Read,
-                   FileShare.None))
+    [Fact(DisplayName = "F03 skips malformed metadata while completing its sibling and follows the named edit")]
+    [Trait("Scenarios", "X05,X44")]
+    public async Task MalformedSibling()
+    {
+        using var journey = await PublishedMaintenanceJourney.CreateAsync("f03-malformed");
+        const string badPath = ".agents/guidance/bad.md";
+        const string bad = "---\nopen-forge:\n  description: [unclosed\n";
+        journey.Write(badPath, bad);
+        journey.Write(Note, Body);
+        await journey.TextAsync(3, true, "index", "--dry-run");
+        using (var apply = await journey.JsonAsync(3, false, "index"))
         {
-            Assert.Throws<IOException>(() => File.ReadAllBytes(workspace.Combine(NotePath)));
-            var index = await workspace.RunAsync("index");
+            var finding = Assert.Single(apply.RootElement.GetProperty("findings").EnumerateArray());
+            Assert.Equal("index.metadata-skipped", finding.GetProperty("code").GetString());
+            Assert.Equal($"{badPath} has invalid frontmatter. It was left unchanged. Other files were indexed.", finding.GetProperty("message").GetString());
+            Assert.Equal(1, apply.RootElement.GetProperty("counts").GetProperty("filesSkipped").GetInt32());
+        }
+        journey.AssertBytes(badPath, bad);
+        journey.AssertBytes(Note, PublishedMaintenanceJourney.Header(journey.Form, "Team notes", ["Guidance"], "\r\n") + Body);
+        using (var diagnosis = await journey.JsonAsync(2, true, "doctor"))
+            Assert.Equal($"Fix the frontmatter in {badPath}, then run open-forge index {journey.WorkspaceFlag}.", PublishedMaintenanceJourney.Next(diagnosis));
+        journey.Write(badPath, "# Corrected\n\nThe author closed the malformed header by replacing it.\n");
+        await journey.TextAsync(0, false, "index");
+        await journey.CleanDoctorAsync();
+        await journey.NoOpAsync("index");
+    }
 
-            Assert.Equal(3, index.ExitCode);
-            Assert.Equal(string.Empty, index.StandardError);
+    private static void AssertCompletion(JsonDocument json, string outcome, string[] fields, string? description, string[]? tags)
+    {
+        var row = Assert.Single(json.RootElement.GetProperty("data").GetProperty("metadata").EnumerateArray());
+        Assert.Equal(Note, row.GetProperty("path").GetString());
+        Assert.Equal(fields, row.GetProperty("fields").EnumerateArray().Select(value => value.GetString()));
+        Assert.Equal(description, row.GetProperty("description").GetString());
+        if (tags is null) Assert.Equal(JsonValueKind.Null, row.GetProperty("tags").ValueKind);
+        else Assert.Equal(tags, row.GetProperty("tags").EnumerateArray().Select(value => value.GetString()));
+        Assert.Equal(outcome, row.GetProperty("outcome").GetString());
+        Assert.Empty(json.RootElement.GetProperty("data").GetProperty("entrypoints").EnumerateArray());
+        Assert.Equal(1, json.RootElement.GetProperty("counts").GetProperty("metadataCompleted").GetInt32());
+        Assert.Equal(0, json.RootElement.GetProperty("counts").GetProperty("entrypointsCreated").GetInt32());
+        Assert.Equal(0, json.RootElement.GetProperty("counts").GetProperty("filesSkipped").GetInt32());
+    }
+
+    [Fact(DisplayName = "F03 distinguishes real read denial and finishes after the file becomes readable")]
+    [Trait("Scenarios", "X05")]
+    public async Task ReadDenial()
+    {
+        if (!OperatingSystem.IsWindows()) Assert.Skip("F03 X05 read-denial evidence requires Windows file-sharing semantics.");
+        using var journey = await PublishedMaintenanceJourney.CreateAsync("f03-read-denial");
+        journey.Write(Note, Body);
+        using (var locked = new FileStream(journey.Combine(Note), FileMode.Open, FileAccess.Read, FileShare.None))
+        {
+            var index = await journey.TextAsync(3, false, "index");
             Assert.Contains("read", index.StandardOutput, StringComparison.OrdinalIgnoreCase);
-            Assert.DoesNotContain("frontmatter is invalid", index.StandardOutput, StringComparison.OrdinalIgnoreCase);
-            Assert.DoesNotContain("malformed", index.StandardOutput, StringComparison.OrdinalIgnoreCase);
-
-            Assert.Throws<IOException>(() => File.ReadAllBytes(workspace.Combine(NotePath)));
-            var doctor = await workspace.RunAsync("doctor");
-
-            Assert.Equal(3, doctor.ExitCode);
-            Assert.Equal(string.Empty, doctor.StandardError);
+            Assert.DoesNotContain("index.metadata-skipped", index.StandardOutput, StringComparison.Ordinal);
+            var doctor = await journey.TextAsync(3, false, "doctor");
             Assert.Contains("read", doctor.StandardOutput, StringComparison.OrdinalIgnoreCase);
-            Assert.DoesNotContain("frontmatter is invalid", doctor.StandardOutput, StringComparison.OrdinalIgnoreCase);
-            Assert.DoesNotContain("Framework update did not finish", doctor.StandardOutput, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("has invalid frontmatter", doctor.StandardOutput, StringComparison.Ordinal);
         }
-
-        Assert.Equal(before, SnapshotState(workspace));
-        Assert.Equal(Encoding.UTF8.GetBytes(PlainNote), File.ReadAllBytes(workspace.Combine(NotePath)));
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-        workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
+        journey.AssertBytes(Note, Body);
+        await journey.TextAsync(0, false, "index");
+        journey.AssertBytes(Note, PublishedMaintenanceJourney.Header(journey.Form, "Team notes", ["Guidance"], "\r\n") + Body);
+        await journey.CleanDoctorAsync();
+        await journey.NoOpAsync("index");
     }
 
-    private static PublishedJourneyWorkspace CreateInstalledWorkspace(
-        string purpose,
-        params string[] reservedFiles)
+    private static void AssertCompletionText(string text, bool preview)
     {
-        var workspace = PublishedJourneyWorkspace.Create(purpose);
-        try
-        {
-            workspace.ExpectCoreInstall();
-            workspace.ExpectFiles(reservedFiles);
-            return workspace;
-        }
-        catch
-        {
-            workspace.Dispose();
-            throw;
-        }
+        Assert.Contains(preview ? "Would complete metadata in 1 file." : "Completed metadata in 1 file.", text, StringComparison.Ordinal);
+        Assert.Contains(preview ? "metadata would be completed, your content would be kept" : "metadata completed, your content was kept", text, StringComparison.Ordinal);
+        if (preview) Assert.Contains("No files were changed.", text, StringComparison.Ordinal);
     }
 
-    private static async Task InstallW1Async(PublishedJourneyWorkspace workspace)
+    [Theory(DisplayName = "F03 completes a flow mapping without rewriting its supplied bytes")]
+    [InlineData(JourneyFrontmatterForm.Root), InlineData(JourneyFrontmatterForm.Scoped)]
+    [Trait("Scenarios", "X03,X32")]
+    public async Task FlowMapping(JourneyFrontmatterForm form)
     {
-        var install = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
-
-        Assert.Equal(0, install.ExitCode);
-        Assert.Equal(string.Empty, install.StandardError);
-        Assert.True(File.Exists(workspace.Combine("AGENTS.md")));
-        Assert.True(File.Exists(workspace.Combine(GuidanceEntrypointPath)));
-        Assert.True(File.Exists(workspace.Combine(".agents/open-forge.lock.json")));
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-    }
-
-    private static Task<ProcessRunResult> RunWithoutWritesAsync(
-        PublishedJourneyWorkspace workspace,
-        params string[] arguments)
-        => PublishedJourneyProcess.RunWithoutWritesAsync(
-            workspace.Target,
-            workspace.Path,
-            () => SnapshotState(workspace),
-            arguments,
-            workspace.ProcessEnvironment);
-
-    private static IReadOnlyDictionary<string, string> SnapshotState(PublishedJourneyWorkspace workspace)
-    {
-        var state = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        foreach (var entry in workspace.SnapshotState())
-        {
-            state[$"workspace/{entry.Key}"] = entry.Value;
-        }
-
-        AddDirectorySnapshot(
-            state,
-            "data-home",
-            workspace.LockStore.LocalApplicationDataDirectory);
-        AddDirectorySnapshot(
-            state,
-            "recovery-workspace",
-            workspace.LockStore.RecoveryWorkspaceDirectory(workspace.Path));
-        return new ReadOnlyDictionary<string, string>(state);
-    }
-
-    private static void AddDirectorySnapshot(
-        IDictionary<string, string> state,
-        string prefix,
-        string path)
-    {
-        if (!Directory.Exists(path))
-        {
-            state[prefix] = File.Exists(path)
-                ? FileState(path)
-                : "absent";
-            return;
-        }
-
-        foreach (var entry in PublishedWorkspaceTreeSnapshot.Capture(path))
-        {
-            state[$"{prefix}/{entry.Key}"] = entry.Value;
-        }
-    }
-
-    private static string FileState(string path)
-        => $"file:{Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)))}";
-
-    private static void AssertWarningWithOptionalMetadata(ProcessRunResult result)
-    {
-        Assert.Equal(2, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardError);
-        Assert.NotEmpty(result.StandardOutput);
-        Assert.Contains("optional", result.StandardOutput, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("metadata", result.StandardOutput, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static void AssertOrdinaryFile(string path)
-    {
-        var attributes = File.GetAttributes(path);
-        Assert.Equal(
-            (FileAttributes)0,
-            attributes & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device));
-    }
-
-    private static void AssertOnlyPathsChanged(
-        IReadOnlyDictionary<string, string> before,
-        IReadOnlyDictionary<string, string> after,
-        params string[] allowedPaths)
-        => PublishedJourneyAssertions.AssertOnlyFileMutations(before, after, allowedPaths);
-
-    private static void AssertContainsAny(string value, params string[] fragments)
-    {
-        Assert.True(
-            fragments.Any(fragment => value.Contains(fragment, StringComparison.OrdinalIgnoreCase)),
-            $"Expected one of [{string.Join(", ", fragments)}] in output:{Environment.NewLine}{value}");
+        using var journey = await PublishedMaintenanceJourney.CreateAsync("f03-flow", form);
+        const string body = "# Flow note\n\nKeep the flow-mapping body exactly.\n";
+        var authored = form == JourneyFrontmatterForm.Root
+            ? "---\n{description: 'Authored flow', custom: kept} # keep\n---\n\n" + body
+            : "---\nopen-forge: {tags: [Guidance, Team]} # keep\ncustom: kept\n---\n\n" + body;
+        var expected = form == JourneyFrontmatterForm.Root
+            ? "---\n{tags: [Guidance], description: 'Authored flow', custom: kept} # keep\n---\n\n" + body
+            : "---\nopen-forge: {description: \"Flow note\", tags: [Guidance, Team]} # keep\ncustom: kept\n---\n\n" + body;
+        journey.Write(Note, authored);
+        await journey.TextAsync(0, true, "index", "--dry-run");
+        using (var preview = await journey.JsonAsync(0, true, "index", "--dry-run"))
+            AssertCompletion(preview, "planned", form == JourneyFrontmatterForm.Root ? ["tags"] : ["description"], form == JourneyFrontmatterForm.Root ? null : "Flow note", form == JourneyFrontmatterForm.Root ? ["Guidance"] : null);
+        var applied = await journey.TextAsync(0, false, "index");
+        AssertCompletionText(applied.StandardOutput, false);
+        journey.AssertBytes(Note, expected);
+        await journey.CleanDoctorAsync();
+        await journey.NoOpAsync("index");
     }
 }

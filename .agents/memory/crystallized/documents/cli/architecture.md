@@ -285,6 +285,10 @@ facts, and cancellation explicitly. It constructs native interaction from
 ordinary .NET stream and redirection facts; the libraries never cache ambient console
 state.
 
+## Forgiving Maintenance
+
+Shared routed maintenance composes absent-field metadata insertion, missing entrypoint chains and intended Entries for Index and Repair. Route Init and Route Create use the shared route scaffolding while retaining their own defaults and restoration policies. Sources exposes read-only rename evidence, and root composition owns bounded Git processes. Doctor and Repair use identical candidate admission and proof interpretation. Commands retain selection, protection, expected-state revalidation, recovery, truthful partial results and one workspace-preserving continuation. [Forgiving Maintenance](technical-designs/forgiving-maintenance.md) defines the exact boundaries.
+
 ## Production Source Organization
 
 Each library retains its logical layer tree, organized by bounded capability rather than artifact type:

@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Commands.Library.Models.Result.Effects;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Observation;
 using OpenForge.Cli.Core.Commands.Library.Shared.Completion.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Shared.Links;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Libraries;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
@@ -160,7 +161,7 @@ internal static class LibraryMutationCompletionProjection
             SourceId = SourceIdentity.DeriveId(mappingObservation.Mapping.DestinationPath.Value),
             ExpectedRelativeLink = mappingObservation.Mapping.ExpectedRelativeLink.Value,
             ObservedRelativeLink = mappingObservation.Leaf.RelativeFileLink?.RawRelativeTarget,
-            State = mappingObservation.State switch
+            State = !sourceIndependent && mappingObservation.UnreadableOnWindows ? LibraryLinkViewState.Changed : mappingObservation.State switch
             {
                 LibraryMappingObservationState.Current => LibraryLinkViewState.Current,
                 LibraryMappingObservationState.Missing => LibraryLinkViewState.Missing,
@@ -170,7 +171,7 @@ internal static class LibraryMutationCompletionProjection
                 _ => throw new ArgumentOutOfRangeException(nameof(observation), mappingObservation.State, "The mapping state is not defined."),
             },
             Relation = Relation(
-                mappingObservation.State,
+                !sourceIndependent && mappingObservation.UnreadableOnWindows ? LibraryMappingObservationState.Changed : mappingObservation.State,
                 registeredPaths.Contains(mappingObservation.Mapping.SourcePath.Value),
                 eligiblePaths.Contains(mappingObservation.Mapping.SourcePath.Value),
                 sourceIndependent),
@@ -224,7 +225,7 @@ internal static class LibraryMutationCompletionProjection
                     RelativeFileLinkEffectKind.Delete => LibraryLinkEffectKind.Delete,
                     _ => throw new ArgumentOutOfRangeException(nameof(input), link.Kind, "The Library link effect kind is not defined."),
                 },
-                RawRelativeTarget = link.RawRelativeTarget,
+                RelativeTarget = RelativeFileLinkTarget.PortableForm(link.RawRelativeTarget),
                 Expected = Expected(link.Expected),
             }).ToArray() ?? [],
             GeneratedRegions = input.Effects?.GeneratedRegions.Select(change => new LibraryGeneratedRegionEffectView

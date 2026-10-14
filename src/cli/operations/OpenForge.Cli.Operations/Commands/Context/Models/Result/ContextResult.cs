@@ -111,6 +111,8 @@ internal sealed record ContextFinding
     internal IReadOnlyList<ContextSourceIdentity> Candidates { get; }
 
     internal ContextInvalidSourceKind? InvalidSourceKind { get; }
+    internal bool StartupMissing { get; init; }
+    internal bool MissingOptionValue { get; init; }
 }
 
 internal sealed record ContextResult : ICliCommandResult
@@ -144,7 +146,7 @@ internal sealed record ContextResult : ICliCommandResult
         PendingConditions = ContextResultCollections.Snapshot(pendingConditions ?? [], nameof(pendingConditions));
         Status = status;
         Next = next;
-        Counts = counts ?? ContextCounts.Unavailable("Context counts were not established.");
+        Counts = counts ?? ContextCounts.Unavailable("Context counts were not established.") with { NotEstablished = true };
     }
 
     public string Command => ContextDefinitions.CommandIdentity;

@@ -9,5 +9,4 @@ Routes and Entries
          read from .agents/directives/_directives.md
   21 links and 20 routes checked.
   1 uses the indicated command.
-  Update deterministic generated navigation.
 Next: open-forge index

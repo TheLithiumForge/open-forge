@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Request;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Observations;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 
@@ -437,6 +438,12 @@ internal sealed record RepairPlan
     internal IReadOnlyList<RepairNoOp> NoOps { get; }
 
     internal IReadOnlyList<RepairConflict> Conflicts { get; }
+
+    internal RepairMaintenancePlan? Maintenance { get; init; }
+
+    internal RenameEvidenceResult? RenameEvidence { get; init; }
+
+    internal IReadOnlyList<PlannedFileChange> FileChanges => Maintenance is { } maintenance ? maintenance.Effects.Changes : Effects.Select(effect => effect.FileChange).ToArray();
 
     internal bool IsBlocked
         => Conflicts.Count != 0

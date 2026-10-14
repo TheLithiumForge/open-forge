@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge update",
+          "command": "open-forge update --workspace <workspace>",
           "reason": "Rerun the same Update request."
         }
       ]
@@ -60,7 +60,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge update",
+    "command": "open-forge update --workspace <workspace>",
     "reason": "Rerun the same Update request."
   }
 }

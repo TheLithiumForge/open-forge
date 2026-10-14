@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Retry;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Binding;
@@ -54,7 +55,8 @@ internal sealed class RouteMoveBinding(
     internal CliBindResult<RouteMoveRequest, RouteMoveResult> Bind(
         ParseResult parseResult,
         CliInvocation invocation,
-        RouteMoveSymbols symbols)
+        RouteMoveSymbols symbols,
+        IReadOnlyList<string>? originalArguments = null)
     {
         ArgumentNullException.ThrowIfNull(parseResult);
         ArgumentNullException.ThrowIfNull(invocation);
@@ -98,7 +100,10 @@ internal sealed class RouteMoveBinding(
                 facts.SourceReference,
                 facts.DestinationTarget,
                 facts.Mode,
-                allowInteractiveSourceSelection: invocation.Presentation.Format == CliFormat.Text));
+                allowInteractiveSourceSelection: invocation.Presentation.Format == CliFormat.Text)
+            {
+                RequestCommand = originalArguments is null ? null : RouteRetryCommand.FromArguments(originalArguments),
+            });
     }
 
     internal CliRequestBinding<RouteMoveRequest, RouteMoveResult> CreateRequestBinding(
@@ -112,7 +117,7 @@ internal sealed class RouteMoveBinding(
             Command = symbols.MoveCommand,
             Help = components.Help,
             WorkspaceRequirement = CliWorkspaceRequirement.Required,
-            Binder = (parse, invocation) => Bind(parse.Result, invocation, symbols),
+            Binder = (parse, invocation) => Bind(parse.Result, invocation, symbols, parse.OriginalArguments),
             InvalidResultFactory = input => _invalidResultFactory.Create(
                 new RouteMoveInvalidResultInput
                 {

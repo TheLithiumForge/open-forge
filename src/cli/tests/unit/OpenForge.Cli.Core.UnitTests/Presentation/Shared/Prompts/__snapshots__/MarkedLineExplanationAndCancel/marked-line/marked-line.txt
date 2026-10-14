@@ -1,0 +1,11 @@
+Choose folders
++ add   - leave out
+Existing files stay and remain routable.
+
+  1. [+] One  First folder
+    Record ideas, investigate questions, preserve decisions, and organize
+    tasks, plans, backlogs, and checkpoints.
+  2. [-] Two  Second folder
+Type edits such as 2+ 2-. Press Enter on an empty line to continue.
+Type cancel to stop without changes.
+>

@@ -15,6 +15,30 @@ namespace OpenForge.Cli.Core.UnitTests.Presentation.Shared.Rendering;
 
 public sealed class CliReportRenderingTests
 {
+    [Theory(DisplayName = "Finding advice is emitted once while distinct reasons and JSON facts are retained")]
+    [InlineData((int)CliDetail.Standard), InlineData((int)CliDetail.Full), InlineData((int)CliDetail.Debug)]
+    [Trait("Boundary", "Output"), Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
+    public void FindingAdviceIsNotRepeated(int detailValue)
+    {
+        const string advice = "After applying this removal, you can preview removing base too.";
+        const string reason = "Review the retained dependency first.";
+        var report = Report() with
+        {
+            Findings = [Finding(CliSeverity.Warning, "dependency", "base") with
+            {
+                Actions = [new(advice, advice) { Kind = CliNextActionKind.Sentence }, new("open-forge doctor", reason)],
+            }],
+        };
+        var selected = CliReportTrimmer.Trim(report, new CliSelection((CliDetail)detailValue), CliCommandShape.ChangeReport);
+        var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, static (_, _, _) => new CliTextDocument([])).Content;
+        Assert.Equal(1, text.Split(advice, StringSplitOptions.None).Length - 1);
+        Assert.Equal(1, text.Split(reason, StringSplitOptions.None).Length - 1);
+        using var json = JsonDocument.Parse(CliJsonRenderer.Render(selected, Context.Data));
+        var action = json.RootElement.GetProperty("findings")[0].GetProperty("actions")[0];
+        Assert.Equal(advice, action.GetProperty("command").GetString());
+        Assert.Equal(advice, action.GetProperty("reason").GetString());
+    }
+
     private static readonly CliSemanticStatus[] WorkspaceStatuses =
     [
         CliSemanticStatus.Complete,

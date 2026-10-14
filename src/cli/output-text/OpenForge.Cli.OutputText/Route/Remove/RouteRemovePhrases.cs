@@ -4,6 +4,9 @@ namespace OpenForge.Cli.OutputText.Route.Remove;
 
 internal static class RouteRemovePhrases
 {
+    // @OpenForgeText route.remove.wording.planned-removal
+    internal static string PlannedRemoval(string settingsPath, bool directory)
+        => $"Would record this removal in {settingsPath} so updates keep this {(directory ? "folder" : "file")} removed.";
     // @OpenForgeText route.remove.phrase.some-files-under-could-not-be-listed-so-the-removal-was-not-planned
     internal static string FormatSomeFilesUnderCouldNotBeListedSoTheRemovalWasNotPlanned(string categoryFolderText)
         => $"Some files under {categoryFolderText} could not be listed, so the removal was not planned.";

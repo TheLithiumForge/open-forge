@@ -1,0 +1,9 @@
+Would record 2 Extensions (first, second) without their files, because Guidance, Templates are left out.
+  All 2 package files from first would be skipped.
+  The package file from second would be skipped.
+To add its files, restore Templates and update the package:
+  open-forge route init templates --framework --dry-run
+  open-forge extension update first --dry-run
+To add its files, restore Guidance and update the package:
+  open-forge route init guidance --framework --dry-run
+  open-forge extension update second --dry-run

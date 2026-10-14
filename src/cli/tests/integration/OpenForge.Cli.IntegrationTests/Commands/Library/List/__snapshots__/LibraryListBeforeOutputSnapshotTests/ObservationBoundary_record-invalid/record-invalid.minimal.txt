@@ -7,4 +7,4 @@ Workspace: <workspace>
   links missing: the content is not valid JSON.
   links changed: the content is not valid JSON.
   links unavailable: the content is not valid JSON.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

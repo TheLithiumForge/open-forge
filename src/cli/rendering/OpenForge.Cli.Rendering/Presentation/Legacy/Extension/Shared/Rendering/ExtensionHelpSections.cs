@@ -8,5 +8,8 @@ internal static class ExtensionHelpSections
     internal static CliHelpContent CreateGroup() => new(
     [
         new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCommandHelp(), ("  " + global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.HelpCommandHelp())),
-    ]);
+    ])
+    {
+        Usage = "open-forge extension <command> [options]",
+    };
 }

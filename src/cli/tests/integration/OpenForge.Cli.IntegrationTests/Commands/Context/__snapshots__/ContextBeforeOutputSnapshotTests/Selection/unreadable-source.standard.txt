@@ -29,11 +29,7 @@ open-forge:
 
 - [Guide](guide.md) - #Docs #Guide
 - [Reference](reference.md) - #Docs
-
-=== .agents/docs/guide.md (docs/guide) ===
-included because selected source for docs/guide
-  sources: The selected Context source layer .agents/docs/guide.md could not be read completely.
-  tokens: The selected Context source layer .agents/docs/guide.md could not be read completely.
-  bytes: The selected Context source layer .agents/docs/guide.md could not be read completely.
+Context counts are unavailable. The selected Context source layer
+.agents/docs/guide.md could not be read completely.
   Inspect the unavailable closure, source, link, or projection facts before relying on this Context result.
 Next: open-forge doctor

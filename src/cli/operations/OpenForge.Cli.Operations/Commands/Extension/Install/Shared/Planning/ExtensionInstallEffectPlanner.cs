@@ -145,7 +145,8 @@ internal sealed class ExtensionInstallEffectPlanner(
                      pair => pair.Key,
                      StringComparer.Ordinal))
         {
-            if (WorkspaceRemovals.IsPathRemoved(generated.Key, input.Settings))
+            if (mutationPaths.Contains(generated.Key)
+                || WorkspaceRemovals.IsPathRemoved(generated.Key, input.Settings))
             {
                 continue;
             }

@@ -11,6 +11,26 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Route.Create;
 
 public sealed class RouteCreatePresentationTests
 {
+    [Fact(DisplayName = "Route Create failure repeats the complete original request in text and JSON")]
+    [Trait("Boundary", "Output"), Trait("Feature", "route-create"), Trait("Evidence", "Unit")]
+    public void FailureRetainsCompleteRequest()
+    {
+        const string command = "open-forge route create 'guidance/team note' --description 'Team note' --tag Review --workspace 'team workspace' --detail full";
+        var formation = RouteCreateTestData.PreviewFormation() with
+        {
+            Effects = [],
+            Findings = [RouteCreateTestData.Finding(RouteCreateFindingCode.OperationFailed, cause: "Writing failed.")],
+        };
+        var result = RouteCreateTestData.Result(formation) with { RequestCommand = command };
+        var text = CliRenderingStage.Render(new CliPresentationRequest<RouteCreateResult>(result,
+            new CliPresentation(CliFormat.Text, CliDetail.Minimal, null)), RouteCreatePresentation.Rendering).PrimaryContent;
+        using var json = JsonDocument.Parse(CliRenderingStage.Render(new CliPresentationRequest<RouteCreateResult>(result,
+            new CliPresentation(CliFormat.Json, CliDetail.Minimal, null)), RouteCreatePresentation.Rendering).PrimaryContent);
+        Assert.Contains($"Next: {command}", text, StringComparison.Ordinal);
+        Assert.Equal(command, json.RootElement.GetProperty("next").GetProperty("command").GetString());
+        Assert.DoesNotContain("--automatic", text, StringComparison.Ordinal);
+    }
+
     [Trait("Boundary", "Output")]
     [Fact(DisplayName = "Route Create dry-run JSON retains literal changes and unavailable values"),
      Trait("Feature", "route-create"), Trait("Evidence", "Unit")]
@@ -84,6 +104,7 @@ public sealed class RouteCreatePresentationTests
     [Trait("Feature", "route-create"), Trait("Evidence", "UnitBehavior")]
     public void HumanViewsRetainPartialEffects(bool compact)
     {
+        const string command = "open-forge route create memory/project-alpha/overview --description 'Project overview' --responsibility 'Explains the project' --tag Docs --tag Overview";
         var formation = RouteCreateTestData.PreviewFormation() with
         {
             Effects = [RouteCreateTestData.CreateEffect() with
@@ -96,7 +117,7 @@ public sealed class RouteCreatePresentationTests
             Findings = [RouteCreateTestData.Finding(RouteCreateFindingCode.VerificationFailed,
                 cause: "The destination verification failed.")],
         };
-        var result = RouteCreateTestData.Result(formation);
+        var result = RouteCreateTestData.Result(formation) with { RequestCommand = command };
         var text = CliRenderingStage.Render(new CliPresentationRequest<RouteCreateResult>(result,
             new CliPresentation(CliFormat.Text, compact ? CliDetail.Minimal : CliDetail.Standard, null)),
             RouteCreatePresentation.Rendering).PrimaryContent;
@@ -105,7 +126,7 @@ public sealed class RouteCreatePresentationTests
         Assert.Contains("did not verify after it was written", text, StringComparison.Ordinal);
         Assert.Contains("Verification failed", text, StringComparison.Ordinal);
         Assert.Contains(RouteCreateTestData.TargetPath, text, StringComparison.Ordinal);
-        Assert.Contains("open-forge route create --detail debug", text, StringComparison.Ordinal);
+        Assert.Contains(command, text, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Output")]
@@ -184,10 +205,10 @@ public sealed class RouteCreatePresentationTests
             "route-create.optional-metadata",
             Assert.Single(root.GetProperty("findings").EnumerateArray()).GetProperty("code").GetString());
         Assert.Equal(
-            "open-forge route update memory/project-alpha/overview",
+            "open-forge route update --help",
             root.GetProperty("next").GetProperty("command").GetString());
         Assert.Equal(
-            "Add an optional description or tag with open-forge route update when useful.",
+            "Add a description or tags when useful. See open-forge route update --help.",
             root.GetProperty("next").GetProperty("reason").GetString());
     }
 
@@ -206,7 +227,7 @@ public sealed class RouteCreatePresentationTests
                 },
                 Findings = [RouteCreateTestData.Finding(RouteCreateFindingCode.OptionalMetadata)],
             });
-        var command = "open-forge route update memory/project-alpha/overview";
+        var command = "open-forge route update --help";
         var text = CliRenderingStage.Render(
             new CliPresentationRequest<RouteCreateResult>(
                 result,
@@ -214,10 +235,10 @@ public sealed class RouteCreatePresentationTests
             RouteCreatePresentation.Rendering).PrimaryContent;
 
         Assert.Contains(
-            $"Next: {command} (add an optional description or tag when useful).",
+            $"Add a description or tags when useful. See {command}.",
             text,
             StringComparison.Ordinal);
-        Assert.Equal(1, text.Split("Next: ", StringSplitOptions.None).Length - 1);
+        Assert.DoesNotContain("Next: ", text, StringComparison.Ordinal);
 
         using var document = JsonDocument.Parse(
             CliRenderingStage.Render(
@@ -228,7 +249,7 @@ public sealed class RouteCreatePresentationTests
         var next = document.RootElement.GetProperty("next");
         Assert.Equal(command, next.GetProperty("command").GetString());
         Assert.Equal(
-            "Add an optional description or tag with open-forge route update when useful.",
+            "Add a description or tags when useful. See open-forge route update --help.",
             next.GetProperty("reason").GetString());
     }
 
@@ -307,17 +328,7 @@ public sealed class RouteCreatePresentationTests
     public void HelpExposesOnlyAcceptedCommandSurface()
     {
         var help = RouteCreateHelpSections.Create();
-        var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
-
-        Assert.Contains("route create", text, StringComparison.Ordinal);
-        Assert.Contains("<file-target>", text, StringComparison.Ordinal);
-        Assert.Contains("--description", text, StringComparison.Ordinal);
-        Assert.Contains("--tag ", text, StringComparison.Ordinal);
-        Assert.Contains("--responsibility", text, StringComparison.Ordinal);
-        Assert.Contains("--template", text, StringComparison.Ordinal);
-        Assert.Contains("--dry-run", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("--automatic", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("--force", text, StringComparison.Ordinal);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge route create <file-target> [options]");
     }
 
     private static CliPresentationRequest<RouteCreateResult> Presentation(

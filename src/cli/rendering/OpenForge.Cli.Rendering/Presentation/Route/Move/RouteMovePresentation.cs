@@ -25,11 +25,7 @@ internal static class RouteMovePresentation
         DataTextRenderer = RouteMoveDataTextRenderer.Render,
         DataJsonTypeInfo = JsonContext.RouteMoveData,
         Shape = CliCommandShape.ChangeReport,
-        SelectText = static selected => selected with
-        {
-            TextEffects = [],
-            TextCounts = [],
-        },
+        SelectText = RouteMoveReportSelector.SelectText,
     };
 
     internal static CliHelpContent CreateHelp()

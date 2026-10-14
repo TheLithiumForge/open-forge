@@ -51,6 +51,8 @@ public sealed class CliReportInvariantsTests
         ["Status:", "Selected by:", "not-applicable", "not-requested", "residual: none", "Preflight", "Lifecycle:"],
         StringComparer.Ordinal);
 
+    private static readonly IReadOnlyDictionary<string, string> ContractHeadlineOnlyFindings = ReadContractHeadlineOnlyFindings();
+
     // These fields are deliberately null when a command status makes the
     // measurement inapplicable. A measured-but-unavailable count must still
     // link to a limitation below; this allow-list keeps the distinction
@@ -162,7 +164,7 @@ public sealed class CliReportInvariantsTests
             var fullText = ReadUtf8(byDetail["full"].Path);
             var debugText = ReadUtf8(byDetail["debug"].Path);
             Assert.True(
-                NormalizeLineEndings(fullText) == NormalizeLineEndings(debugText),
+                NormalizeLineEndings(OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots.CommandOutputDetailComparison.PromoteTextRetryDetail(fullText)) == NormalizeLineEndings(debugText),
                 $"Debug text changed the primary output for {group.Key}.");
 
             foreach (var detail in new[] { "minimal", "standard", "full", "debug" })
@@ -363,7 +365,10 @@ public sealed class CliReportInvariantsTests
             }
         }
 
-        var remaining = VisibleEscapePattern.Replace(content, string.Empty);
+        // Native relative-link targets retain their stored separators in evidence.
+        // Adapt only the same recognized path/target slots as portable snapshots.
+        var portable = OpenForge.Cli.TestSupport.Snapshots.PlatformSnapshotComparer.AdaptExpected(content, "linux", heldLock: false);
+        var remaining = VisibleEscapePattern.Replace(portable, string.Empty);
         Assert.True(!remaining.Contains('\\'), $"Unexpected backslash in {path}: {content}");
         AssertAsciiFraming(content, path);
     }
@@ -420,9 +425,19 @@ public sealed class CliReportInvariantsTests
                 && trailing[0].StartsWith("  Or add ", StringComparison.Ordinal)
                 && trailing[0].Contains("allowInstallPaths", StringComparison.Ordinal);
             Assert.True(
-                next[0].index == lines.Length - 1 || catalogueRequiredContinuation,
+                next[0].index == lines.Length - 1 || catalogueRequiredContinuation
+                    || trailing.All(line => line.StartsWith("      ", StringComparison.Ordinal) && line.Length > 6 && line[6] != ' '),
                 $"Next is not the last line in {path}.");
         }
+    }
+
+    [Fact(DisplayName = "Next prose permits indented wrapping but rejects later unrelated output")]
+    [Trait("Feature", "cli-presentation-invariants"), Trait("Evidence", "Integration"), Trait("Boundary", "Output")]
+    public void NextProseKeepsTheLastAction()
+    {
+        AssertNextRule("Next: review the files,\n      then give your agent a task.\n", "wrapped-prose");
+        Assert.ThrowsAny<Exception>(() => AssertNextRule("Next: review the files.\nUnrelated output\n", "trailing-output"));
+        Assert.ThrowsAny<Exception>(() => AssertNextRule("Next: review the files.\n  A new detail row\n", "trailing-detail"));
     }
 
     private static void AssertJsonEnvelope(
@@ -547,8 +562,9 @@ public sealed class CliReportInvariantsTests
         foreach (var command in commands)
         {
             Assert.StartsWith("open-forge ", command, StringComparison.Ordinal);
-            Assert.DoesNotContain('<', command);
-            Assert.DoesNotContain('>', command);
+            var concrete = command.Replace("<workspace>", "normalized-workspace", StringComparison.Ordinal);
+            Assert.DoesNotContain('<', concrete);
+            Assert.DoesNotContain('>', concrete);
         }
     }
 
@@ -627,6 +643,12 @@ public sealed class CliReportInvariantsTests
 
     private static void AssertTextJsonParity(string text, JsonElement root, string path)
     {
+        if (RequiredString(root, "command") == "install")
+        {
+            // First-task guidance names instruction files without reporting additional effects.
+            var firstTask = text.IndexOf("If your agent tool does not read AGENTS.md on its own", StringComparison.Ordinal);
+            if (firstTask >= 0) text = text[..firstTask];
+        }
         var cursor = 0;
         var command = RequiredString(root, "command");
         var detail = RequiredString(root, "detail");
@@ -644,6 +666,21 @@ public sealed class CliReportInvariantsTests
             }
 
             var title = RequiredString(finding, "title");
+            if (ContractHeadlineOnlyFindings.TryGetValue(RequiredString(finding, "code"), out var contractHeadline))
+            {
+                Assert.Equal(contractHeadline, FirstLine(text));
+                Assert.Equal("blocked", RequiredString(root, "status"));
+                Assert.DoesNotContain($"{CliText.Escape(subject)}  {CliText.Escape(title)}", text, StringComparison.Ordinal);
+                continue;
+            }
+            if (command == "context" && detail == "minimal"
+                && RequiredString(finding, "code") == "context.layer-unavailable" && subject == "AGENTS.md"
+                && FirstLine(text).StartsWith("Startup context is unavailable in ", StringComparison.Ordinal))
+            {
+                // Missing startup context has one recovery summary at minimal detail.
+                // The unreadable host finding remains in JSON and in higher text detail.
+                continue;
+            }
             var marker = $"{CliText.Escape(subject)}  {CliText.Escape(title)}";
             var found = text.IndexOf(marker, cursor, StringComparison.Ordinal);
             var subjectFound = text.IndexOf(CliText.Escape(subject), cursor, StringComparison.Ordinal) >= 0;
@@ -780,13 +817,21 @@ public sealed class CliReportInvariantsTests
             }
 
             var escapedPath = CliText.Escape(effectPath);
+            if (RequiredString(root, "command") == "library detach"
+                && RequiredString(effect, "kind") == "setting"
+                && RequiredString(effect, "outcome") is "planned" or "not-started"
+                && RequiredString(Required(root, "data"), "mode") != "dry-run")
+            {
+                // Applied receipts name observed settings changes. JSON keeps
+                // the unapplied settings plan without claiming it changed.
+                continue;
+            }
             var found = text.IndexOf(escapedPath, cursor, StringComparison.Ordinal);
             if (found < 0
                 && RequiredString(effect, "action") == "created"
                 && ((detail == "minimal"
                         && (path.Contains("ExtensionInstallBeforeOutputSnapshotTests", StringComparison.Ordinal)
-                            || path.Contains("InstallBeforeOutputSnapshotTests", StringComparison.Ordinal)
-                            || path.Contains("InstallChangeOutputSnapshotTests", StringComparison.Ordinal)
+                            || RequiredString(root, "command") == "install"
                             || path.Contains("LibraryAttachBeforeOutputSnapshotTests", StringComparison.Ordinal)))
                     || path.Contains("InstallBeforeOutputSnapshotTests", StringComparison.Ordinal)
                         && RequiredString(effect, "outcome") == "not-started"
@@ -988,6 +1033,17 @@ public sealed class CliReportInvariantsTests
         return builder.Append('$').ToString();
     }
 
+    private static IReadOnlyDictionary<string, string> ReadContractHeadlineOnlyFindings()
+    {
+        var path = Path.Combine(
+            RepositoryRoot(), "src", "cli", "tests", "integration", "OpenForge.Cli.IntegrationTests",
+            "Presentation", "Invariants", "Fixtures", "ContractMessageTemplates.json");
+        using var document = JsonDocument.Parse(File.ReadAllText(path));
+        return document.RootElement.GetProperty("rows").EnumerateArray()
+            .Where(row => row.TryGetProperty("textHeadlineOnly", out _))
+            .ToDictionary(row => RequiredString(row, "code"), row => RequiredString(row, "textHeadlineOnly"), StringComparer.Ordinal);
+    }
+
     private static IReadOnlyDictionary<string, IReadOnlyList<string>> ReadContractMessageTemplates()
     {
         // These independently reviewed forms were relocated verbatim from the interface contracts.
@@ -1131,7 +1187,10 @@ public sealed class CliReportInvariantsTests
             // directory under the integration project, so a new command's captures join it
             // without this loader being told about them.
             var root = IntegrationProjectRoot();
+            var helpSnapshots = Path.Combine(root, "Shell", "Presentation", "Shared", "Help", "__snapshots__");
             var all = SnapshotDirectories()
+                // Help is an informational mode, not a native operation report.
+                .Where(directory => !string.Equals(directory, helpSnapshots, StringComparison.OrdinalIgnoreCase))
                 .SelectMany(directory => Directory.EnumerateFiles(directory, "*.txt", SearchOption.AllDirectories)
                     .Select(path => Parse(path, directory)))
                 .ToArray();

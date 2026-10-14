@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Text.Json;
 using OpenForge.Cli.Hosting;
 using OpenForge.Cli.IntegrationTests.Hosting;
@@ -52,7 +53,7 @@ public sealed class ContextApplyToIntegrationTests
                 Assert.Equal(3, json.ExitCode);
                 using var document = JsonDocument.Parse(json.Output);
                 Assert.Equal("incomplete", document.RootElement.GetProperty("status").GetString());
-                Assert.Equal("open-forge context --for <path>", document.RootElement.GetProperty("next").GetProperty("command").GetString());
+                Assert.Equal($"open-forge context --detail {detail} --format json{(pathsOnly ? " --content paths" : string.Empty)} --for <path>", document.RootElement.GetProperty("next").GetProperty("command").GetString());
                 snapshots.Add($"{situation}.json.{detail}", CommandOutputNormalization.Normalize(
                     json.Output, workspace.Path, CliBuildVersion.InformationalVersion));
             }
@@ -239,9 +240,7 @@ public sealed class ContextApplyToIntegrationTests
             Assert.Equal("incomplete", root.GetProperty("status").GetString());
             var finding = Assert.Single(root.GetProperty("findings").EnumerateArray());
             Assert.Equal("context.applicability-pending", finding.GetProperty("code").GetString());
-            var expectedCommand = multipleSources
-                ? "open-forge context \"rules\" \".agents/extra guide.md\" --for <path>"
-                : "open-forge context \"rules\" --for <path>";
+            var expectedCommand = $"{CliRetryCommand.Build(["context", .. references, "--content=metadata,paths", "--format", "json"])} --for <path>";
             var nextCommand = root.GetProperty("next").GetProperty("command").GetString();
             Assert.Equal(expectedCommand, nextCommand);
             Assert.NotNull(nextCommand);
@@ -275,15 +274,14 @@ public sealed class ContextApplyToIntegrationTests
                     text.Output, workspace.Path, CliBuildVersion.InformationalVersion, normalizeTextPaths: true));
             }
             var next = await CliHostCapture.RunAsync(
-                System.CommandLine.Parsing.CommandLineParser.SplitCommandLine(
-                    nextCommand.Replace("open-forge ", string.Empty, StringComparison.Ordinal)
-                        .Replace("<path>", "src/Order.cs", StringComparison.Ordinal)).ToArray(),
+                ["context", .. references, "--content=metadata,paths", "--format", "json", "--for", "src/Order.cs"],
                 workspace.Path);
             AssertSuccessfulCommand(next);
-            Assert.Contains("CSharp rule.", next.Output, StringComparison.Ordinal);
+            using var resolved = JsonDocument.Parse(next.Output);
+            Assert.Contains(".agents/rules/csharp.md", SourcePaths(resolved.RootElement));
             if (multipleSources)
             {
-                Assert.Contains("Additional guidance.", next.Output, StringComparison.Ordinal);
+                Assert.Contains(".agents/extra guide.md", SourcePaths(resolved.RootElement));
             }
             Assert.Equal(before, workspace.SnapshotHashes());
         }

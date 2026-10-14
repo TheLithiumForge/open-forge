@@ -9,7 +9,9 @@ import {
   linkedFiles,
   loadingGuide,
   loadingLabels,
+  memoryGuide,
   memoryLoading,
+  memoryMoves,
   memoryNote,
   memoryStates,
   pitch,
@@ -104,7 +106,8 @@ function Memory(): ReactNode {
         </h3>
         <Badge loading={memoryLoading} />
       </div>
-      <ol className={styles.states}>
+      <p className={styles.stateNote}>{memoryNote}</p>
+      <ul className={styles.states} role="list">
         {memoryStates.map((state) => (
           <li key={state.name} className={styles.stateItem}>
             <div className={styles.card}>
@@ -118,11 +121,13 @@ function Memory(): ReactNode {
               </div>
               <Files rows={[linkedFiles]} lines={present([state.contents])} />
             </div>
-            {state.next ? <span className={styles.transition}>{state.next}</span> : null}
           </li>
         ))}
-      </ol>
-      <p className={styles.note}>{memoryNote}</p>
+      </ul>
+      <p className={styles.note}>
+        <strong>Possible moves: </strong>
+        {memoryMoves} <Link to={memoryGuide.href}>{memoryGuide.label}</Link>.
+      </p>
     </section>
   );
 }

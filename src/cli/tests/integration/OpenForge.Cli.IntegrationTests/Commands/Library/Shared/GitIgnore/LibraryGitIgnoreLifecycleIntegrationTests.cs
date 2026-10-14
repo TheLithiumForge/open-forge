@@ -38,7 +38,7 @@ public sealed class LibraryGitIgnoreLifecycleIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, attached.Status);
         Assert.Equal(authored + Begin + "/docs/a.md\n" + End, ReadIgnore(workspace));
         Assert.True(Assert.Single(Ownership(workspace)).GetProperty("gitIgnore").GetBoolean());
-        Assert.Equal("../shared/team-knowledge/a.md", new FileInfo(workspace.Absolute("docs/a.md")).LinkTarget);
+        Assert.Equal("../shared/team-knowledge/a.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Absolute("docs/a.md")).LinkTarget);
         Assert.Equal(LibraryMutationWorkspace.SourceBytes, File.ReadAllText(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/a.md")));
 
         workspace.Source("b.md");
@@ -234,7 +234,7 @@ public sealed class LibraryGitIgnoreLifecycleIntegrationTests
         workspace.Source(".gitignore");
         var result = await Attach(workspace, "team-knowledge", ".", requested);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.Equal("shared/team-knowledge/.gitignore", new FileInfo(workspace.Absolute(".gitignore")).LinkTarget);
+        Assert.Equal("shared/team-knowledge/.gitignore".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Absolute(".gitignore")).LinkTarget);
         Assert.False(Assert.Single(Ownership(workspace)).TryGetProperty("gitIgnore", out _));
     }
 

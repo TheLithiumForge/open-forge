@@ -19,6 +19,14 @@ internal static class IndexDataTextRenderer
         ArgumentNullException.ThrowIfNull(style);
         var spans = new List<CliTextSpan>();
         var builder = new StringBuilder();
+        var preview = data.Mode == "dry-run";
+        var completionRows = data.Metadata.Select(item => new[] { item.Path, CompletionRow(item.Outcome, global::OpenForge.Cli.OutputText.Index.IndexWording.MetadataRow(preview)) })
+            .Concat(data.Entrypoints.Select(item => new[] { item.Path, CompletionRow(item.Outcome, data.TextRenames.TryGetValue(item.Path, out var oldPath)
+                ? global::OpenForge.Cli.OutputText.Index.IndexWording.RenamedRow(Path.GetFileName(oldPath), preview)
+                : global::OpenForge.Cli.OutputText.Index.IndexWording.EntrypointRow(preview)) }))
+            .Concat(data.TextDeletions.Select(item => new[] { item.Path, CompletionRow(item.Outcome, global::OpenForge.Cli.OutputText.Index.IndexWording.DeletedRow(preview)) })).ToArray();
+        foreach (var row in completionRows)
+            builder.AppendLine($"  {style.Subject(CliText.Escape(row[0]))}  {row[1]}");
         var visible = data.TextRegions.Where(region => region.ResultAction == IndexRegionAction.Update || selection.Detail >= CliDetail.Full).ToArray();
         var rows = visible.Select(region => new[]
         {
@@ -34,7 +42,7 @@ internal static class IndexDataTextRenderer
         }).ToArray();
         if (rows.Length > 0)
         {
-            builder.Append(CliTable.Render(rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
+            builder.Append(CliTable.Render(style, rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
         }
         if (data.NothingWritten && data.CurrentCount > 0)
             builder.Append("  ").Append(IndexWording.OtherCurrent(data.CurrentCount)).Append('\n');
@@ -43,6 +51,14 @@ internal static class IndexDataTextRenderer
         if (builder.Length > 0) spans.Add(new CliTextSpan(builder.ToString()));
         if (data.Mode == "dry-run" && selection.Detail >= CliDetail.Standard)
         {
+            foreach (var metadata in data.Metadata)
+            {
+                spans.Add(new CliTextSpan(CliText.Escape(metadata.Path) + "\n"));
+                if (metadata.Description is { } description)
+                    spans.Add(new CliTextSpan(CliText.Escape($"  description: {description}") + "\n"));
+                if (metadata.Tags is { } tags)
+                    spans.Add(new CliTextSpan(CliText.Escape($"  tags: [{string.Join(", ", tags)}]") + "\n"));
+            }
             foreach (var region in visible.Where(region => region.ResultAction == IndexRegionAction.Update))
             {
                 spans.Add(new CliTextSpan(CliText.Escape(IndexWording.EntriesSection(region.Path)) + "\n"));
@@ -69,8 +85,16 @@ internal static class IndexDataTextRenderer
             };
             spans.Add(new CliTextSpan(CliText.Escape(recovery) + "\n"));
         }
-        if (data.Mode == "dry-run" && data.Changes.Count > 0)
+        if (data.Mode == "dry-run" && (data.Changes.Count > 0 || data.Metadata.Count > 0 || data.Entrypoints.Count > 0))
             spans.Add(new CliTextSpan(IndexWording.NoChanges() + "\n"));
         return new CliTextDocument(spans);
     }
+
+    private static string CompletionRow(string outcome, string completed) => outcome switch
+    {
+        "done" or "planned" => completed,
+        "not-started" => IndexWording.NotStarted(),
+        "unknown" => IndexWording.Unknown(),
+        _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
+    };
 }

@@ -2,10 +2,11 @@ toolkit is installed, but the comparison could not finish: The explicit Extensio
 Workspace: <workspace>
   Warning  <extension-source>/missing-source  Extension source is unavailable
          The source <extension-source>/missing-source could not be read, so the comparison could not finish.
+1 package, including toolkit.
 Source: <extension-source>/missing-source
-Dependencies
+Packages in this selection
   toolkit  1.0.0  available
 
 Files
   .agents/toolkit.md  could not be compared
-1 dependency, 1 warnings.
+1 warnings.

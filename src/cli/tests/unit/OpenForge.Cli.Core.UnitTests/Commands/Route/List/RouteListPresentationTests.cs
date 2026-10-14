@@ -233,17 +233,7 @@ public sealed class RouteListPresentationTests
     public void HelpSectionsDocumentAcceptedSurface()
     {
         var help = RouteListHelpSections.CreateList();
-        var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
-
-        Assert.Contains("open-forge route list [source-reference] [--depth=<non-negative-integer|all>]", text, StringComparison.Ordinal);
-        Assert.Contains("exact source ID", text, StringComparison.Ordinal);
-        Assert.Contains("The default depth is 1", text, StringComparison.Ordinal);
-        Assert.Contains("--depth=all", text, StringComparison.Ordinal);
-        Assert.Contains("--workspace <path>", text, StringComparison.Ordinal);
-        Assert.Contains("route inspect — inspect", text, StringComparison.Ordinal);
-        Assert.Contains("open-forge route list memory", text, StringComparison.Ordinal);
-        Assert.Contains("open-forge route list .agents/memory/_memory.md", text, StringComparison.Ordinal);
-        Assert.Contains("open-forge route list --depth=2 --format json", text, StringComparison.Ordinal);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge route list [<source-reference>] [options]");
     }
 
     private static CliInvocation Invocation(CliWorkspace workspace)

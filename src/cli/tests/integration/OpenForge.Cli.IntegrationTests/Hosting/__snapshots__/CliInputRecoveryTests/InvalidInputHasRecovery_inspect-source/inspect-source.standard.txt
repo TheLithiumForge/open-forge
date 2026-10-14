@@ -1,0 +1,4 @@
+Cannot inspect memroy: No source has the ID memroy.
+Workspace: <workspace>
+  Choose an ID or exact path from the route list.
+Next: open-forge route list --depth all --workspace <workspace>

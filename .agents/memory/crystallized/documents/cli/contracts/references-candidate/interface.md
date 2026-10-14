@@ -26,6 +26,18 @@ flags. The reusable [Source Universe Filters](../shared/source-universe-filters/
 contract owns the complete include/exclude expansion, union, and exclusion
 precedence used by incoming scans.
 
+## Help
+
+The purpose sentence is: Show direct authored links into and out of one source.
+
+The public Usage line is:
+
+```text
+open-forge references <source-reference> [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Boundary
 
 `references` answers two direct, one-hop questions for one selected source:
@@ -497,6 +509,8 @@ Conformance evidence must cover:
 - [CLI Architecture](../../architecture.md)
 
 ## Executable Wording References
+
+Invalid direction values say `Invalid --direction value: other. Use in, out, or both.` Substitute the escaped supplied value and retain `Next: open-forge references --help`.
 
 Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 

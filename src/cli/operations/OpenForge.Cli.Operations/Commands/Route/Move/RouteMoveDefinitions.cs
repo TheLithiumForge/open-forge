@@ -17,7 +17,7 @@ internal static class RouteMoveDefinitions
 
     internal static readonly CliSyntaxDefinition MoveCommand = new(
         "move",
-        "Move one routed source or category while preserving its route meaning.");
+        "Move one unmanaged routed file or category and update its references.");
 
     internal static readonly CliSyntaxDefinition SourceReference = new(
         "source-reference",

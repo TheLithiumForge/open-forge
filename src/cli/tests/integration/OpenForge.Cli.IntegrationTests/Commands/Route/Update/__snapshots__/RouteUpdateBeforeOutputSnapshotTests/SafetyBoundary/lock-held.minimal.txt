@@ -3,4 +3,4 @@ Workspace: <workspace>
   description: "Before overview" -> "After overview"
   .agents/memory/project-alpha/_project-alpha.md  not started
   .agents/memory/project-alpha/overview.md  not started
-Next: open-forge route update
+Next: open-forge route update memory/project-alpha/overview --description 'After overview' --workspace <workspace>

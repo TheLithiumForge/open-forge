@@ -46,7 +46,7 @@ internal static class UpdateReportSelector
         var updatedSections = entries.Count(entry => effects.Any(effect => effect.Path == entry.Path && IsCounted(effect, preview)));
         var completedChanges = effects.Count(effect => effect.ResultOutcome == UpdatePhysicalEffectOutcome.Verified);
         var suppressInterruptedFinding = result.Status == CliSemanticStatus.Interrupted && completedChanges == 0;
-        var previousContent = result.PreviousContentAvailable ? "git-diff" : null;
+        var previousContent = result.Recovery.State == UpdateRecoveryState.Retained ? result.Recovery.ResidualPath : null;
         var migrationSummaryInHeadline = result.Status == CliSemanticStatus.Complete
             && migrations.Count > 0
             && changedFiles == 0;
@@ -57,6 +57,12 @@ internal static class UpdateReportSelector
             Prune = result.Prune,
             Automatic = result.Automatic,
             PreviousContent = previousContent,
+            TextHeadline = result.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention
+                && effects.Any(effect => !effect.IsDirectory && IsCounted(effect, preview))
+                ? global::OpenForge.Cli.OutputText.Update.UpdateText.ChangedSourceFiles(
+                    effects.Where(effect => !effect.IsDirectory && IsCounted(effect, preview))
+                        .Select(effect => effect.Path).Distinct(StringComparer.Ordinal).Count(), preview)
+                : null,
             LockPath = UpdateWording.OwnershipRecordPath,
             Unchanged = selection.Detail >= CliDetail.Standard ? unchanged : null,
             EntriesSections = selection.Detail >= CliDetail.Standard ? entries : null,
@@ -66,12 +72,12 @@ internal static class UpdateReportSelector
             TextRows = TextRows(result, effects, unchanged, entries, selection.Detail, preview),
             TextSummaryLines = TextSummaryLines(
                 result,
-                effects,
                 unchanged,
-                previousContent,
                 selection.Detail,
                 preview,
-                includeMigrationSummary: !migrationSummaryInHeadline),
+                includeMigrationSummary: !migrationSummaryInHeadline
+                    && (result.Status is not (CliSemanticStatus.Complete or CliSemanticStatus.Attention)
+                        || !effects.Any(effect => !effect.IsDirectory && IsCounted(effect, preview)))),
             TextDetailLines = TextDetailLines(result, effects, selection.Detail),
             ShowNoChanges = preview && effects.Length > 0,
             SuppressInterruptedFinding = suppressInterruptedFinding,
@@ -279,13 +285,22 @@ internal static class UpdateReportSelector
 
     private static UpdateDataTextRow MigrationTextRow(UpdateMigration migration)
     {
-        var actions = migration.Actions.Select(ActionMachineName);
-        var formattedActions = global::OpenForge.Cli.OutputText.Update.UpdateText.FormatMigrationActions(actions);
+        var preview = migration.Outcome == UpdateMigrationOutcome.Planned;
+        var actions = migration.Actions.Where(action =>
+            (action != WorkspaceAdoptionAction.ContentPreserved || !migration.Actions.Contains(WorkspaceAdoptionAction.MetadataCompleted))
+            && (action is not (WorkspaceAdoptionAction.EntriesSectionAdded or WorkspaceAdoptionAction.NavigationUpdated)
+                || !migration.Actions.Contains(WorkspaceAdoptionAction.EntrypointCreated)));
+        var formattedActions = string.Join(", ", actions.Select(action => action switch
+        {
+            WorkspaceAdoptionAction.MetadataCompleted => global::OpenForge.Cli.OutputText.Update.UpdateText.MetadataCompleted(preview),
+            WorkspaceAdoptionAction.EntrypointCreated => global::OpenForge.Cli.OutputText.Update.UpdateText.LocalEntrypointCreated(preview),
+            WorkspaceAdoptionAction.EntriesSectionAdded or WorkspaceAdoptionAction.NavigationUpdated => CliChangeWording.Entries(preview),
+            WorkspaceAdoptionAction.ContentPreserved => global::OpenForge.Cli.OutputText.Update.UpdateText.ContentKept(preview),
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "The migration action is not defined."),
+        }).Distinct(StringComparer.Ordinal));
         return new UpdateDataTextRow(
             migration.Path,
-            global::OpenForge.Cli.OutputText.Update.UpdateText.FormatMigrationRow(
-                migration.Outcome == UpdateMigrationOutcome.Applied,
-                formattedActions));
+            formattedActions);
     }
 
     private static IReadOnlyList<string> MigrationSummaryLines(IReadOnlyList<UpdateMigration> migrations)
@@ -487,9 +502,7 @@ internal static class UpdateReportSelector
 
     private static IReadOnlyList<string> TextSummaryLines(
         UpdateResult result,
-        IReadOnlyList<UpdateDataEffect> effects,
         IReadOnlyList<UpdateDataPath> unchanged,
-        string? previousContent,
         CliDetail detail,
         bool preview,
         bool includeMigrationSummary)
@@ -504,9 +517,14 @@ internal static class UpdateReportSelector
         {
             lines.AddRange(MigrationSummaryLines(result.Migrations));
         }
-        if (previousContent == "git-diff")
+        if (result.Recovery.State == UpdateRecoveryState.Retained
+            && result.Recovery.ResidualPath is { } recoveryPath)
         {
-            lines.Add(UpdateWording.PreviousContent());
+            lines.Add(UpdateWording.PreviousContent(recoveryPath));
+        }
+        else if (preview && result.Recovery.ProtectedPaths.Count > 0)
+        {
+            lines.Add(global::OpenForge.Cli.OutputText.Update.UpdateText.PreviousContentWillBeKept());
         }
 
         if (detail >= CliDetail.Full && unchanged.Count > 0)

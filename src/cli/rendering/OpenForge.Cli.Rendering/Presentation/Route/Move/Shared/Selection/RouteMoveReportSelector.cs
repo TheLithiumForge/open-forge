@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.NextActions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Result;
@@ -6,6 +8,7 @@ using OpenForge.Cli.Core.Presentation.Route.Move.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -14,6 +17,9 @@ namespace OpenForge.Cli.Core.Presentation.Route.Move.Shared.Selection;
 
 internal static class RouteMoveReportSelector
 {
+    internal static CliSelectedReport<RouteMoveData> SelectText(CliSelectedReport<RouteMoveData> selected)
+        => CliCancellationSelection.BeforeEffects(selected, "route-move.interrupted") with { TextEffects = [], TextCounts = [] };
+
     internal static CliReport<RouteMoveData> Select(
         RouteMoveResult result,
         CliSelection selection)
@@ -35,7 +41,7 @@ internal static class RouteMoveReportSelector
             Counts = Counts(result),
             Data = Data(result, selection.Detail),
             Recovery = Recovery(result),
-            Next = Next(result),
+            Next = RouteNextCommand.InWorkspace(Next(result), result.WorkspacePath, result.WorkspaceExplicit),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? Diagnostics(result)
                 : [],
@@ -501,7 +507,7 @@ internal static class RouteMoveReportSelector
                 },
             RouteMoveFindingCode.DestinationParentMissing
                 => new CliNextAction(
-                    $"open-forge route init {ParentId(result)}",
+                    $"open-forge route init {CliCommandText.Quote(ParentId(result))}",
                     global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.MessageInitializeTheExactMissingDestinationParentRouteThenRerunRouteMove()),
             RouteMoveFindingCode.OwnershipClaimed
                 => OwnershipAction(result, finding),
@@ -562,7 +568,7 @@ internal static class RouteMoveReportSelector
                 or RouteMoveFindingCode.TargetChanged
                 or RouteMoveFindingCode.TargetChangedDuringApply
                 => new CliNextAction(
-                    "open-forge route move",
+                    result.RequestCommand ?? "open-forge route move --help",
                     global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.MessageWaitForTheBlockingConditionOrInspectTheChangedTargetThenRerunRouteMoveFromAFreshPlan()),
             CliSemanticStatus.Blocked => new CliNextAction(
                 "open-forge doctor",
@@ -571,10 +577,10 @@ internal static class RouteMoveReportSelector
                 "open-forge route move --help",
                 global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.MessageCorrectTheNamedRouteMoveInputThenRerunTheRequest()),
             CliSemanticStatus.Failed => new CliNextAction(
-                "open-forge route move --detail debug",
+                result.RequestCommand ?? "open-forge route move --help",
                 global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.MessageReportTheFailureAndRetryTheSameRouteMoveRequestWithBoundedDiagnostics()),
             CliSemanticStatus.Interrupted => new CliNextAction(
-                "open-forge route move",
+                result.RequestCommand ?? "open-forge route move --help",
                 global::OpenForge.Cli.OutputText.Route.Move.RouteMoveText.MessageRerunTheSameRouteMoveRequest()),
             _ => throw new ArgumentOutOfRangeException(nameof(result), result.Status, "The Route Move status is not defined."),
         };

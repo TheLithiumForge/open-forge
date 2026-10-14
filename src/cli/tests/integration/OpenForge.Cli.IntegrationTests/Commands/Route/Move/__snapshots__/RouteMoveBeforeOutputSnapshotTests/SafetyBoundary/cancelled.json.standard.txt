@@ -64,7 +64,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route move",
+    "command": "open-forge route move 'guidance/old guide' '.agents/guidance/new guide.md' --workspace <workspace>",
     "reason": "Rerun the same Route Move request."
   }
 }

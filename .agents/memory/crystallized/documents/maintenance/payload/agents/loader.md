@@ -70,7 +70,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 
 - CLI commands automate the complete plain-file contract and never become prerequisites for ordinary inspection.
 - The loader names the compact CLI surface useful for entering and checking a workspace: `--help`, `context`, `route list`, `route inspect`, `find`, `references`, `index`, `status`, and `doctor`.
-- `index` rebuilds generated `Entries` after routed files or route metadata change. `doctor` diagnoses workspace, routes, references, lifecycle, and recovery without changes after Framework structure changes and before closeout.
+- `index` completes eligible missing metadata and rooted navigation, including generated `Entries`, after manual edits. `doctor` diagnoses workspace, routes, references, lifecycle, and recovery without changes after Framework structure changes and before closeout.
 - Complete CLI help, installation lifecycles, unimplemented commands, and component internals stay outside the loader.
 
 ### Distribution And Generation

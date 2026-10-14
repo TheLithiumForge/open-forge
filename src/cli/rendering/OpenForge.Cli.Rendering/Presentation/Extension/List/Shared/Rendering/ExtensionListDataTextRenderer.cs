@@ -96,18 +96,13 @@ internal static class ExtensionListDataTextRenderer
         Func<T, IReadOnlyList<string>> details,
         CliTextStyle style)
     {
-        var table = CliTable.Render(
+        var tableRows = CliTable.RenderRows(
             rows.Select(cells).ToArray(),
-            (column, cell) => column == 0 ? style.Subject(cell) : cell);
-        var tableLines = table.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        if (tableLines.Length != rows.Count)
-        {
-            throw new InvalidOperationException("The Extension List table did not render one line per row.");
-        }
+            (column, cell) => column == 0 ? style.Subject(cell) : cell, style.Width);
 
         for (var index = 0; index < rows.Count; index++)
         {
-            builder.Append(tableLines[index]).Append('\n');
+            builder.Append(tableRows[index]);
             foreach (var detail in details(rows[index]))
             {
                 builder.Append("    ")

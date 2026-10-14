@@ -50,6 +50,24 @@ data inside that envelope, without changing those shared details. The
 command-specific repetition, seven-status, stream, placeholder-metadata, and
 native-report rules below are accepted current behavior.
 
+## Help
+
+The purpose sentence is: Create the missing navigation files in one exact route chain.
+
+The public Usage line is:
+
+```text
+open-forge route init <route-target> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
+## Shared Scaffolding for Maintenance
+
+Route Init shares neutral canonical scaffold composition, missing-chain facts and intended-membership projection with Index and Repair under [Forgiving Maintenance](../../../technical-designs/forgiving-maintenance.md#entrypoint-chain-completion-in-index). Shared mechanism does not share command policy. Index supplies prefilled category metadata and `Notes in <folder-id>`. Explicit Route Init keeps draft descriptions, `NeedsAuthoring`, final-only metadata flags, its existing advisory text and `--framework` restoration authority.
+
+The exact inherited marker and leading workspace metadata form remain. Index never clears exclusions or creates an omitted root through this helper. Route Init's human output, finding codes, effect kinds, JSON values and flags do not change. Do not call Route Init from Index or import its private planning namespace.
+
 ## Purpose
 
 `route init` makes one target folder routable by creating every missing
@@ -784,7 +802,7 @@ Workspace: <workspace>
   .agents/documents/_documents.md  not started
   .agents/documents/design/_design.md  not started
   Its description and tags are placeholders. Edit them before relying on this route.
-Next: open-forge route init --detail debug
+Next: open-forge route init documents/design --workspace '<workspace>' --detail debug
 ```
 
 ### cancelled
@@ -794,9 +812,14 @@ Route init was cancelled. Nothing was changed.
 Workspace: <workspace>
   Error  documents  Route Init was cancelled
          Route Init was cancelled. Nothing was changed.
-         open-forge route init
-Next: open-forge route init
+         open-forge route init documents --workspace '<workspace>'
+Next: open-forge route init documents --workspace '<workspace>'
 ```
+
+Route Init retries retain the target, explicit workspace, scaffold mode,
+metadata, preview mode and presentation options. Failure replaces the requested
+detail with `--detail debug`. It adds no automatic authority. Text and JSON use
+the same formed command.
 
 ## Related Current Sources
 

@@ -1,0 +1,3 @@
+Cannot list references: Invalid --direction value: other. Use in, out, or both.
+Workspace: <workspace>
+Next: open-forge references --help

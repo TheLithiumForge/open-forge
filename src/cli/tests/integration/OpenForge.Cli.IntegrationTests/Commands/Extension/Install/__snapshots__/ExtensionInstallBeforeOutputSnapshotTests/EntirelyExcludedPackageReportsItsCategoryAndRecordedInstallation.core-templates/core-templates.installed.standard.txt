@@ -1,0 +1,8 @@
+Recorded the core-templates Extension without its files, because Templates is left out.
+Workspace: <workspace>
+  All 8 package files from core-templates were skipped.
+  Source: embedded catalogue (embedded)
+  .agents/open-forge.lock.json  ownership record updated
+To add its files, restore Templates and update the package:
+  open-forge route init templates --framework --dry-run
+  open-forge extension update core-templates --dry-run

@@ -18,11 +18,11 @@ internal static class InstallDefinitions
 
     internal static readonly CliSyntaxDefinition InstallCommand = new(
         CommandIdentity,
-        "Install the bundled Framework.");
+        "Install the bundled Framework, or change your built-in setup.");
 
     internal static readonly CliOptionDefinition<bool> Force = new(
         "--force",
-        "Replace one eligible initial occupant when establishing Framework management.",
+        "Allow eligible existing items to be replaced during first installation.",
         CliOptionArity.None,
         false);
 
@@ -219,32 +219,26 @@ internal static class InstallDefinitions
         where T : struct, Enum
         => new(name, value, $"The Install {name} value is not defined.");
 
-    private static string AutomaticCommand(InstallBindingInput input)
-    {
-        var command = input.Force ? "open-forge install --force --automatic" : "open-forge install --automatic";
-        if (input.Setup is not { } setup) return command;
-        if (setup.Configure) command += " --configure";
-        if (setup.Preset is { } preset) command += " --preset " + InstallConfigurationChoices.Name(preset);
-        if (setup.Frontmatter is { } form) command += $" --frontmatter {WorkspaceSettingsDefinitions.ReadFrontmatterName(form)}";
-        foreach (var row in setup.Overrides) command += " --route " + row.Id + "=" + InstallConfigurationChoices.Name(row.Action);
-        return command;
-    }
-
     internal static CliNextAction? ReadNextAction(
         CliSemanticStatus status,
         IReadOnlyList<InstallFinding> findings,
-        InstallBindingInput input)
+        InstallBindingInput input,
+        OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace? workspace = null)
     {
         return status switch
         {
             CliSemanticStatus.Complete => null,
             CliSemanticStatus.Invalid when findings.Any(
                 finding => finding.Code == InstallFindingCode.ConfirmationRequired) => new CliNextAction(
-                command: AutomaticCommand(input),
+                command: OpenForge.Cli.Core.Commands.Install.Shared.Result.InstallNextCommand.Create(input, workspace, confirmationRequired: true),
                 reason: "Rerun the same Install request with explicit automatic mode."),
             CliSemanticStatus.Invalid => new CliNextAction(
                 command: "open-forge install --help",
                 reason: "Correct the named Install input, then rerun the request."),
+            CliSemanticStatus.Blocked when findings.Any(
+                finding => finding.Code == InstallFindingCode.TargetOccupied) => new CliNextAction(
+                command: OpenForge.Cli.Core.Commands.Install.Shared.Result.InstallNextCommand.Create(input with { Force = true, Mode = InstallMode.DryRun }, workspace),
+                reason: "Preview replacing the occupied files before approving the changes."),
             CliSemanticStatus.Blocked when findings.Any(
                 finding => finding.Code == InstallFindingCode.ManagedDivergence) => new CliNextAction(
                 command: CommandLines.Update,
@@ -259,10 +253,10 @@ internal static class InstallDefinitions
                 command: CommandLines.Cleanup,
                 reason: "Review and remove the reported recovery artifact after confirming the verified Install result."),
             CliSemanticStatus.Failed => new CliNextAction(
-                command: "open-forge install --detail debug",
+                command: OpenForge.Cli.Core.Commands.Install.Shared.Result.InstallNextCommand.Create(input, workspace, diagnostics: true),
                 reason: "Report the failure and retry the same Install request with bounded diagnostics."),
             CliSemanticStatus.Interrupted => new CliNextAction(
-                command: CommandLines.Install,
+                command: OpenForge.Cli.Core.Commands.Install.Shared.Result.InstallNextCommand.Create(input, workspace),
                 reason: "Rerun the same Install request."),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(status),

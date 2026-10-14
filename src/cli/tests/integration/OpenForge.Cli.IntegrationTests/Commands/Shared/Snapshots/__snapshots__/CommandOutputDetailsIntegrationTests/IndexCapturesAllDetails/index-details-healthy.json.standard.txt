@@ -26,7 +26,11 @@
   "counts": {
     "filesChecked": 1,
     "filesUpdated": 1,
-    "filesCurrent": 0
+    "filesCurrent": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0
   },
   "limitations": [],
   "data": {
@@ -42,11 +46,17 @@
         ]
       }
     ],
-    "unchanged": []
+    "unchanged": [],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
     "disposition": "not-required"
   },
-  "next": null
+  "next": {
+    "kind": "command",
+    "command": "open-forge index .agents/root/_root.md --detail standard --format json",
+    "reason": "Apply the checked plan."
+  }
 }

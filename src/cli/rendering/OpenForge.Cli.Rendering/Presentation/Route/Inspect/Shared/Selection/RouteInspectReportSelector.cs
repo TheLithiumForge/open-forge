@@ -14,6 +14,16 @@ namespace OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Selection;
 
 internal static class RouteInspectReportSelector
 {
+    internal static CliSelectedReport<RouteInspectData> SelectText(CliSelectedReport<RouteInspectData> selected)
+    {
+        if (!selected.Report.Findings.Any(finding => finding.Code == "route-inspect.unknown-source")) return selected with { TextCounts = [] };
+        return selected with
+        {
+            TextCounts = [],
+            TextFindings = selected.TextFindings.Where(finding => finding.Code != selected.Report.HeadlineFindingCode).ToArray(),
+        };
+    }
+
     internal static CliReport<RouteInspectData> Select(RouteInspectResult result, CliSelection selection)
     {
         ArgumentNullException.ThrowIfNull(result);
@@ -36,7 +46,9 @@ internal static class RouteInspectReportSelector
             Counts = Counts(result.Profile),
             Data = ProjectData(result, standard, full),
             Recovery = null,
-            Next = result.Next,
+            Next = result.Conditions.Any(condition => condition.Code == RouteInspectConditionCode.UnknownSource)
+                ? new CliNextAction("open-forge route list --depth all", global::OpenForge.Cli.OutputText.Shared.CliInputWording.SourceDiscoveryNext())
+                : result.Next,
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? Diagnostics(result)
                 : [],

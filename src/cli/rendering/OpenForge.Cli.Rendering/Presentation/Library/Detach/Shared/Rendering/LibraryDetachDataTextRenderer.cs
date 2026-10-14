@@ -25,7 +25,7 @@ internal static class LibraryDetachDataTextRenderer
             .ToArray();
         if (rows.Length > 0)
         {
-            builder.Append(CliTable.Render(rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
+            builder.Append(CliTable.Render(style, rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
         }
 
         foreach (var row in data.TextRows.Where(row => row.Path is null))

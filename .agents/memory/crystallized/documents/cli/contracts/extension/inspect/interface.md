@@ -29,6 +29,18 @@ envelope, source-location primitive, and status/process coordinates. The [CLI
 Architecture](../../../architecture.md) defines parser, filesystem, concrete
 serialization, and evidence boundaries.
 
+## Help
+
+The purpose sentence is: Compare one Extension's available content with its installed ownership and files.
+
+The public Usage line is:
+
+```text
+open-forge extension inspect <stable-id> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Boundary
 
 `inspect` gives package-specific read-only detail before an install, update, or
@@ -450,3 +462,7 @@ CLI help syntax: [`extension.inspect.help.syntax`](../../../../../../../../src/c
 <!-- @OpenForgeTextRef extension.inspect.phrase.the-package-at-is-invalid -->
 <!-- @OpenForgeTextRef extension.inspect.phrase.the-source-could-not-be-read-so-the-comparison-could-not-finish -->
 <!-- @OpenForgeTextRef extension.inspect.phrase.was-compared-byte-for-byte-because-it-is-not-markdown -->
+
+### Human Package Selection Labels
+
+The resolved set includes the selected package. Human output labels that set `Packages in this selection` and reports `2 packages, including planning.` or `1 package, including core-templates.` The dependency count, resolved set, order and all JSON names and values remain unchanged.

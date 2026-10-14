@@ -5,3 +5,5 @@ Workspace: <workspace>
   No verification was needed.
   Recovery: No recovery bundle was required.
   Checks after writing: completed.
+  Complete the remaining navigation and metadata.
+Next: open-forge index --workspace <workspace>

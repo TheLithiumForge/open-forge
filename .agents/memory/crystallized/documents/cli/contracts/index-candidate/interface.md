@@ -1,11 +1,23 @@
 ---
 open-forge:
   description: Current Crystallized public interface for rebuilding bounded generated `Entries` from routed topology and authored metadata
-  responsibility: Define the current public surface and observable result for the non-shipping `index` command
+  responsibility: Define the current public surface and observable result for the current `index` command
   tags: [Memory, Crystallized, CLI, Release, Command, Index, Interface, CurrentTruth]
 ---
 
 # Index Interface Contract
+
+## Help
+
+The purpose sentence is: Complete missing metadata and navigation after edits to routed Markdown.
+
+The public Usage line is:
+
+```text
+open-forge index [<source-reference>...] [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
 
 ## Status
 
@@ -21,8 +33,38 @@ The public contract defines repetition of the Boolean write-policy flags, human
 stream allocation, and structured presentation. Value-bearing repetition
 remains governed by its defining contract.
 
-The command does not ship, and this Interface Contract does not claim an
-implementation.
+The CLI is available as a public beta. Distribution records published versions,
+and CLI Development records current implementation and release work.
+
+## Forgiving Maintenance
+
+Index completes missing description and tags in eligible user-owned routed Markdown, creates missing entrypoints below existing recognized roots, and rebuilds Entries in one checked plan. This is the Task 79 D1 and D2 contract, with realization in [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md). It supersedes the former warning-only rule and missing-intermediate exclusion for eligible sources.
+
+The existing syntax and no-confirmation application remain. Preview uses `--dry-run`. No automatic, force or enrichment flag is added. Root selection includes prospective qualifying chains. Explicit leaf selection completes only its required chain and exposing parent. Detached selections gain no inferred root or completion authority.
+
+Eligible sources, exclusions, derivation, form and partial-field behavior follow the [completion rules](../../technical-designs/forgiving-maintenance.md#metadata-completion-in-index). Descriptions use the first supported visible heading, otherwise a sentence-case filename. Tags use the exact category table there, including Memory states. Native Skill packages, overwrites, whole-file managed sources, generated content and recorded excluded or private contents are not completed. Existing generated Entries in eligible managed entrypoints may still be maintained.
+
+| Result                              | Exact human text                                                                                                                                            |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Completion applied                  | `Created <K> entrypoints and completed metadata in <N> files.`, naming only non-zero parts with singular forms, for example `Completed metadata in 1 file.` |
+| Completion preview                  | `Would create <K> entrypoints and complete metadata in <N> files.`, with the same rules                                                                     |
+| Navigation rename headline, applied | `Renamed <R> navigation files.`, using `1 navigation file` for one rename. Join this part with any non-zero creation and metadata-completion parts.         |
+| Navigation rename headline, preview | `Would rename <R> navigation files.`, with the same singular and combination rules.                                                                         |
+| Metadata applied                    | `<path>  metadata completed, your content was kept`                                                                                                         |
+| Metadata preview                    | `<path>  metadata would be completed, your content would be kept`                                                                                           |
+| Entrypoint applied                  | `<path>  entrypoint created`                                                                                                                                |
+| Entrypoint preview                  | `<path>  entrypoint would be created`                                                                                                                       |
+| Navigation file renamed, applied    | `<new-path>  renamed from <old-name>, your rules were kept`, one row instead of a created and a deleted file                                                |
+| Navigation file renamed, preview    | `<new-path>  would be renamed from <old-name>, your rules would be kept`                                                                                    |
+| Malformed source                    | `<path> has invalid frontmatter. It was left unchanged. Other files were indexed.`                                                                          |
+| Malformed preview                   | `<path> has invalid frontmatter. It was left unchanged. Other files would be indexed.`                                                                      |
+| Malformed next                      | `Fix the frontmatter in <path>, then run open-forge index.`                                                                                                 |
+
+List every created path and every Entries change. Print zero completion counts honestly. Ordinary navigation-only and verified no-op headlines retain their existing text. Missing fields that can be completed are no longer warning findings. A readable malformed ordinary source gets one `index.metadata-skipped`, remains untouched and excluded from generated rows, and makes the result incomplete at exit 3. Independent valid siblings and branches continue even in a malformed-only invocation. Unreadable, unsafe, native-package and ambiguous generated boundaries retain their existing strict behavior.
+
+The completion headline counts proven canonical navigation renames separately from newly created entrypoints. Its per-file row says it was renamed and that the rules were kept. It has no separate created or deleted row. When all three parts are present, use `Created <K> entrypoints and renamed <R> navigation files and completed metadata in <N> files.` Preview uses `Would create`, `rename` and `complete`.
+
+Schema 3 stays additive. Keep existing Entries `changes` and counts. Add `metadata`, `entrypoints`, `metadataCompleted`, `entrypointsCreated`, `filesSkipped` and the appended `navigationFilesRenamed` count with the exact shapes and finite values in the [wire inventory](../../technical-designs/forgiving-maintenance.md#safety-and-wire-inventory). `entrypointsCreated` excludes canonical renames. The existing `entrypoints` array still lists canonical destinations, and file effects retain the actual Create and Delete pair. Existing file, section and directory effect kinds cover the writes. After successful application, print one next action derived from fresh observations, or `Next: open-forge doctor` for verification. Preview never claims application or health.
 
 ## Purpose
 
@@ -140,7 +182,7 @@ create another bypass. This matches repeated Boolean global flags.
 Value-bearing repetition rules are unchanged under their defining contract.
 
 `--dry-run` does not grant authority to repair headings, replace authored
-content, modify overwrites, escape the workspace, invent metadata, or perform
+content, modify overwrites, escape the workspace, overwrite supplied metadata, or perform
 another repair operation.
 
 ### Global flags
@@ -235,12 +277,12 @@ Representative form:
 open-forge index skills/experience-design
 ```
 
-A routed leaf selects only the direct entrypoint that exposes it. Regenerating
-that parent projects all of its current direct children, not only the selected
-leaf.
+A routed leaf selects its direct exposing parent and any eligible missing
+chain. Regenerating that parent projects all of its current direct children,
+not only the selected leaf.
 
 A source with no mechanically established exposing entrypoint has no valid
-generated target. The command blocks and reports a useful next action.
+generated target. The command completes an eligible missing exposing chain or blocks with a useful next action when that chain cannot be established.
 
 ### Detached entrypoint selection
 
@@ -251,9 +293,7 @@ A detached selection includes its local subtree and any direct parent present in
 that same topology. It does not invent a missing Loader or parent and does not
 classify the source as an installed Framework.
 
-A missing intermediate entrypoint leaves the lower topology detached. Explicit
-selection may maintain that complete detached topology, but it never bridges the
-gap or invents the absent intermediate parent.
+A missing intermediate entrypoint below an established root is completed under Forgiving Maintenance. A genuinely detached selection remains detached and receives no inferred root.
 
 ### Overwrite selection
 
@@ -325,30 +365,9 @@ declaration is present. Equivalent normalized declarations represent one set.
 Declarations whose normalized sets differ are invalid metadata under the
 existing Index boundary. Index does not prefer one declaration or combine them.
 
-The command preserves authored description and tag spelling. It does not infer,
-summarize, correct, normalize, or invent semantic metadata from filenames,
-titles, bodies, generated lines, or overwrite companions.
+The command preserves supplied description and tag bytes. Only missing fields in eligible files are derived under Forgiving Maintenance. Generated lines and overwrite companions never supply new metadata.
 
-For an ordinary Markdown or eligible Open Forge entrypoint source, Missing
-optional metadata remains routable and projectable through the accepted
-automatic-ID fallback and any observed valid tags. It remains Missing rather
-than becoming Complete, emits the visible `index.metadata-optional` Attention2
-finding on apply, preview, and verified no-op, and never rewrites the source.
-Native Skill, Loader, and overwrite-companion forms remain strict and do not
-use this fallback. Supplied malformed or otherwise invalid values are not
-reclassified as optional Missing.
-
-A readable malformed ordinary or native Skill metadata region may be skipped only when the
-complete selected topology, identity, and catalogue readiness are established
-and at least one independent available region has a change to apply. The safe
-regions remain projectable and executable; the skipped region remains
-`not-established`, reports `index.metadata-skipped` with its exact source and
-cause, and makes the result `incomplete`. This is not generic best-effort
-processing: unreadable or unsafe boundaries, missing native Skill metadata,
-and malformed-only selections are not admitted or silently skipped. Whether a
-description is useful or accurate remains authored responsibility and may
-become a `doctor` finding; `index` does not perform semantic search or rewrite
-prose.
+Eligible missing metadata is completed before projection. Readable malformed ordinary metadata follows Forgiving Maintenance's one-finding skip rule. Excluded ordinary sources retain observed-value fallback and its warning. Native Skill, Loader and overwrite forms retain their source-specific validation.
 
 ### Generated lines
 
@@ -402,12 +421,13 @@ leveled lookalikes do not establish this semantic section. Trailing horizontal
 heading whitespace and an initial BOM are accepted. Duplicate `## Entries`
 headings are diagnosed; no arbitrary first section is selected.
 
-Index replaces only that generated body, including any retired guard comments
-found there. Missing, stale or malformed entry lines inside an established body
+Each generated-region effect replaces only that body, including retired guard
+comments found there. Separate maintenance effects insert absent metadata,
+create missing entrypoints or rename a proven old navigation file. Missing, stale or malformed entry lines inside an established body
 may be replaced with the expected entries. A missing or ambiguous heading boundary
 blocks the plan before writes. The command does not create or repair headings.
 
-Every replacement preserves the heading and all outside bytes. Canonical generated
+Every generated-region replacement preserves its heading and all bytes outside that region, except for separately planned absent-field insertion under Forgiving Maintenance. Canonical generated
 output uses a blank line after the heading, one entry per line, a final newline,
 and a blank separator before a following section. It retains the selected LF or
 CRLF line ending. Prettier and repeated Index runs produce stable bytes for
@@ -482,10 +502,10 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 | completed               | nothing stale                                                                                                                              | `Entries sections are current in all <M> files. Nothing to do.`                                          |    0 | stdout |
 | completed               | rewritten                                                                                                                                  | `Updated the Entries section in <N> of <M> files.`                                                       |    0 | stdout |
 | completed (dry run)     | changes planned                                                                                                                            | `Would update the Entries section in <N> of <M> files.`                                                  |    0 | stdout |
-| completed-with-warnings | optional metadata warning or recovery bundle retained                                                                                      | headline + visible finding rows                                                                          |    2 | stdout |
-| incomplete              | independent safe regions applied while a readable malformed region was skipped, or a routed file, its metadata, or recovery was unreadable | `The Entries sections could not be rebuilt completely.` + verified update rows and exact limitation rows |    3 | stdout |
+| completed-with-warnings | excluded optional metadata warning or recovery bundle retained                                                                             | headline + visible finding rows                                                                          |    2 | stdout |
+| incomplete              | independent safe regions applied while a readable malformed source was skipped, or a routed file, its metadata, or recovery was unreadable | `The Entries sections could not be rebuilt completely.` + verified update rows and exact limitation rows |    3 | stdout |
 | invalid-input           | bad flag, folder operand, unknown source                                                                                                   | `Cannot index <operand>: <reason>.` / family                                                             |    4 | stderr |
-| blocked                 | malformed leaf, unsafe target, lock, changed                                                                                               | `Cannot rebuild the Entries section of <leaf's parent>.` + the leaf row                                  |    5 | stderr |
+| blocked                 | unsafe target, native metadata boundary, lock, changed                                                                                     | `Cannot rebuild the Entries section of <leaf's parent>.` + the leaf row                                  |    5 | stderr |
 | failed                  | after effects                                                                                                                              | `Index stopped after <n> of <m> files.`                                                                  |    1 | stderr |
 | cancelled               | Ctrl+C                                                                                                                                     | `Index was cancelled. Nothing was changed.` or `... Stopped after <n> of <m> files.`                     |  130 | stderr |
 
@@ -606,7 +626,7 @@ unknown counts as neither and is listed.
 
 Invalid source -> the corrected command; blocked or incomplete ->
 `open-forge doctor`; lock -> rerun; retained recovery -> `open-forge cleanup`;
-completed -> none.
+completed apply -> fresh remaining action or `open-forge doctor`.
 
 ## Errors And Boundaries
 
@@ -734,7 +754,7 @@ human text into JSON stdout.
 
 ## Executable Wording References
 
-Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
+The Forgiving Maintenance section defines current maintenance wording. The linked typed factories identify the implemented wording. Unchanged selection, output coordinates and behavioral requirements remain with their existing semantic sources. The independent fixture preserves the original reviewed message forms.
 
 CLI help syntax: [`index.help.syntax`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Index/IndexText.cs).
 

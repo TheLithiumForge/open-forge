@@ -10,4 +10,5 @@ Source: <workspace>
 Installed  (no ownership record, so installed packages cannot be listed)
 
 Available (from <workspace>)  unavailable
-  available packages: The explicit Extension source overlaps the selected workspace.
+  available packages: The explicit Extension source overlaps the selected
+  workspace.

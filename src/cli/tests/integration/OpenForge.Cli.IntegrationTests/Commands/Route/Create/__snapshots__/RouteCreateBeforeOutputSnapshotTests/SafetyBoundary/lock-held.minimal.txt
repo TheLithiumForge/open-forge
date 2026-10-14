@@ -2,4 +2,4 @@ Cannot create .agents/memory/project-alpha/overview.md: Another Open Forge comma
 Workspace: <workspace>
   .agents/memory/project-alpha/overview.md  not started
   .agents/memory/project-alpha/_project-alpha.md  not started
-Next: open-forge route create
+Next: open-forge route create memory/project-alpha/overview --description 'Project overview' --responsibility 'Explains the project' --tag Docs --tag Overview --workspace <workspace>

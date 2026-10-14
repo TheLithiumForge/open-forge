@@ -82,7 +82,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge route inspect \".agents/docs/guide.md\" --for <path>",
+    "command": "open-forge route inspect .agents/docs/guide.md --detail minimal --format json --for <path>",
     "reason": "Supply working paths with --for to evaluate pending loading conditions."
   }
 }

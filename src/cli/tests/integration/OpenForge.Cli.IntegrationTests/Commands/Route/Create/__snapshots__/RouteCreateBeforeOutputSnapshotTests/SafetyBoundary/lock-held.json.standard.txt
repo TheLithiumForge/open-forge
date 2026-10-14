@@ -76,7 +76,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route create",
+    "command": "open-forge route create memory/project-alpha/overview --description 'Project overview' --responsibility 'Explains the project' --tag Docs --tag Overview --workspace <workspace>",
     "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Create from a fresh plan."
   }
 }

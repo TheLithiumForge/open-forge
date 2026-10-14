@@ -17,14 +17,14 @@ internal static class RepairWording
     internal static string WouldRepair(int count)
         => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatWouldRepair(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(count, "link")}"));
 
-    internal static string RepairedWithRemaining(int repaired, int remaining, bool includesManual)
-        => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatRepairedStillA(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{repaired}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(repaired, "link")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{remaining}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(remaining, "problem")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(remaining, "needs", "need")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{(includesManual ? "choice or a hand" : "choice")}"));
+    internal static string RepairedWithRemaining(int repaired, int choices, int edits)
+        => Repaired(repaired) + " " + global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Remainder(choices, edits);
 
-    internal static string WouldRepairWithRemaining(int repaired, int remaining, bool includesManual)
-        => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatWouldRepairStillA(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{repaired}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(repaired, "link")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{remaining}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(remaining, "problem")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(remaining, "needs", "need")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{(includesManual ? "choice or a hand" : "choice")}"));
+    internal static string WouldRepairWithRemaining(int repaired, int choices, int edits)
+        => WouldRepair(repaired) + " " + global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Remainder(choices, edits);
 
-    internal static string NothingAutomatic(int remaining, bool includesManual)
-        => global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatNothingCouldBeRepairedAutomaticallyA(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{remaining}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(remaining, "problem")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(remaining, "needs", "need")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{(includesManual ? "choice or a hand" : "choice")}"));
+    internal static string NothingAutomatic(int choices, int edits)
+        => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.NothingAutomatic(choices, edits);
 
     internal static string Incomplete() => global::OpenForge.Cli.OutputText.Repair.RepairText.MessageRepairCouldNotCheckTheWorkspaceCompletelyNothingWasChanged();
 
@@ -42,7 +42,7 @@ internal static class RepairWording
     internal static string GuidedFinding(int candidates)
         => candidates == 0
             ? global::OpenForge.Cli.OutputText.Repair.RepairText.TitleBrokenLinkNoPossibleTargetFixByHand()
-            : global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatBrokenLinkPossible(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{candidates}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{CliText.Plural(candidates, "target")}"));
+            : global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.PossibleTargets(candidates);
 
     internal static string GuidedFinding(string destination, int candidates)
         => global::OpenForge.Cli.OutputText.Repair.RepairWording.BrokenDestination(destination, GuidedFinding(candidates));
@@ -66,6 +66,8 @@ internal static class RepairWording
 
     internal static string FindingTitle(string code) => code switch
     {
+        "RenameProven" => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ProofTitle(),
+        "MetadataSkipped" => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MalformedTitle(),
         "InvalidInput" => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleInvalidInput(),
         "ConfirmationRequired" => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleConfirmationIsRequired(),
         "RelinkInvalid" => global::OpenForge.Cli.OutputText.Repair.RepairText.TitleInvalidRelink(),
@@ -138,6 +140,10 @@ internal static class RepairWording
             "problemsNeedingChoice" => singular ? global::OpenForge.Cli.OutputText.Repair.RepairText.LabelProblemNeedingAChoice() : global::OpenForge.Cli.OutputText.Repair.RepairText.LabelProblemsNeedingAChoice(),
             "problemsNeedingHand" => singular ? global::OpenForge.Cli.OutputText.Repair.RepairText.LabelProblemNeedingAHand() : global::OpenForge.Cli.OutputText.Repair.RepairText.LabelProblemsNeedingAHand(),
             "librarySteps" => singular ? global::OpenForge.Cli.OutputText.Repair.RepairText.TitleLibraryRecoveryStep() : global::OpenForge.Cli.OutputText.Repair.RepairText.TitleLibraryRecoverySteps(),
+            "entriesUpdated" => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.EntriesUpdatedCount(),
+            "metadataCompleted" => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MetadataCompletedCount(),
+            "entrypointsCreated" => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.EntrypointsCreatedCount(),
+            "filesSkipped" => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.FilesSkippedCount(),
             "errors" => singular ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelError() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelErrors(),
             "warnings" => singular ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelWarning() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelWarnings(),
             "infos" => singular ? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelInfo() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelInfos(),
@@ -175,14 +181,33 @@ internal static class RepairWording
             ? $"{candidate.Target.CanonicalTargetPath}#{fragment}"
             : candidate.Target.CanonicalTargetPath;
 
-    internal static string CandidateDescription(RepairCandidate candidate)
+    internal static string CandidateDescription(RepairProposal proposal, RepairCandidate candidate)
     {
-        var evidence = string.Join(
-            ", ",
-            candidate.Evidence.Select(value => $"{PromptEvidenceKind(value.Kind)}: {value.Value}"));
+        var evidence = string.Join(" ", CandidateReasons(proposal.SourceCanonicalPath, candidate));
         return candidate.RecommendedForReview
             ? global::OpenForge.Cli.OutputText.Repair.RepairPhrases.FormatRecommendedForReview($"{evidence}")
             : evidence;
+    }
+
+    internal static IReadOnlyList<string> CandidateReasons(string sourceCanonicalPath, RepairCandidate candidate)
+        => candidate.Evidence.Select(evidence => CandidateEvidence(sourceCanonicalPath, candidate, evidence)).ToArray();
+
+    internal static string StrongestCandidateReason(string sourceCanonicalPath, RepairCandidate candidate)
+    {
+        if (candidate.Identity is { } identity)
+        {
+            if (identity.SameContent) return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.SameContent();
+            if (identity.Similarity is { } similarity) return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Similarity(similarity);
+            return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MetadataProof();
+        }
+        var evidence = candidate.Evidence.OrderBy(item => item.Kind).First();
+        return evidence.Kind switch
+        {
+            RepairCandidateEvidenceKind.Filename => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.SameFileName(),
+            RepairCandidateEvidenceKind.Title => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.SameTitle(),
+            RepairCandidateEvidenceKind.LiteralContent => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MatchingText(),
+            _ => CandidateEvidence(sourceCanonicalPath, candidate, evidence).TrimEnd('.'),
+        };
     }
 
     internal static string LibraryQuestion(RepairLibraryPromptQuestion question)
@@ -192,6 +217,14 @@ internal static class RepairWording
     }
 
     internal static string LeaveLinkUnchanged() => global::OpenForge.Cli.OutputText.Repair.RepairText.LeaveLinkUnchanged();
+
+    internal static string LibrarySelectionQuestion() => global::OpenForge.Cli.OutputText.Repair.RepairText.LibrarySelectionQuestion();
+
+    internal static string LibraryLinksRestored(int count, bool preview) => global::OpenForge.Cli.OutputText.Repair.RepairText.LibraryLinksRestored(count, preview);
+
+    internal static string LibraryLinksRemaining(int count, bool preview) => global::OpenForge.Cli.OutputText.Repair.RepairText.LibraryLinksRemaining(count, preview);
+
+    internal static string LeaveAllRecoveryOut() => global::OpenForge.Cli.OutputText.Repair.RepairText.LeaveAllRecoveryOut();
 
     internal static string IncludeRecovery() => global::OpenForge.Cli.OutputText.Repair.RepairText.IncludeRecovery();
 
@@ -235,10 +268,24 @@ internal static class RepairWording
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The Repair evidence kind is not defined."),
         };
 
-    private static string PromptEvidenceKind(RepairCandidateEvidenceKind kind)
-        => kind == RepairCandidateEvidenceKind.RouteNeighborhood
-            ? global::OpenForge.Cli.OutputText.Repair.RepairText.InNearbyFolder()
-            : EvidenceKind(kind);
+    private static string CandidateEvidence(string sourceCanonicalPath, RepairCandidate candidate, RepairCandidateEvidence evidence)
+    {
+        if (evidence.Kind != RepairCandidateEvidenceKind.RouteNeighborhood)
+        {
+            return $"{EvidenceKind(evidence.Kind)}: {evidence.Value}.";
+        }
+
+        return evidence.Value switch
+        {
+            "parent" => global::OpenForge.Cli.OutputText.Repair.RepairText.CandidateListsSource(),
+            "sibling" when Path.GetDirectoryName(sourceCanonicalPath)
+                == Path.GetDirectoryName(candidate.Target.CanonicalTargetPath)
+                => global::OpenForge.Cli.OutputText.Repair.RepairText.CandidateInSameFolder(),
+            "sibling" => global::OpenForge.Cli.OutputText.Repair.RepairText.CandidateSharesRouteParent(),
+            "child" => global::OpenForge.Cli.OutputText.Repair.RepairText.CandidateListedBySource(),
+            _ => $"{EvidenceKind(evidence.Kind)}: {evidence.Value}.",
+        };
+    }
 
     private static string CoverageClause(
         string subject,

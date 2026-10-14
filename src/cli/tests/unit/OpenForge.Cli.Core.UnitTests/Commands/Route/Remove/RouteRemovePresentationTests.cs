@@ -171,7 +171,7 @@ public sealed class RouteRemovePresentationTests
                 new CliPresentation(CliFormat.Text, CliDetail.Full, null)),
             RouteRemovePresentation.Rendering).PrimaryContent;
 
-        Assert.Contains("Would record persistent route removal", text, StringComparison.Ordinal);
+        Assert.Contains("Would record this removal in .agents/open-forge.json so updates keep this file removed.", text, StringComparison.Ordinal);
         Assert.Contains("Would release 1 managed content ownership claim", text, StringComparison.Ordinal);
         Assert.Contains($"Extension owner toolkit: {RouteRemoveTestData.LeafPath}", text, StringComparison.Ordinal);
         Assert.DoesNotContain("open-forge.json", result.Effects.Select(effect => effect.Path));

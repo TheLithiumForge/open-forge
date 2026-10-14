@@ -1,0 +1,10 @@
+Choose a setup
+Files already tracked by Git stay tracked.
+
+  1. Small setup  A few useful folders
+     Record ideas, investigate questions, preserve decisions, and organize
+     tasks, plans, backlogs, and checkpoints.
+  2. All folders
+     Every built-in folder
+
+Choose a number (1-2), or press Enter to cancel:

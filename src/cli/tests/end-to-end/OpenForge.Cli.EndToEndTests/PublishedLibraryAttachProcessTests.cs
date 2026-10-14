@@ -33,7 +33,7 @@ public sealed class PublishedLibraryAttachProcessTests
         {
             using var document = PublishedLibraryWorkspace.Result(
                 await workspace.RunAsync(PublishedExecutableTarget.Discover(), "library", "attach", "team-knowledge", "shared/team-knowledge", "--to", "docs", "--automatic", "--format=json"), "completed");
-            Assert.Equal("../shared/team-knowledge/README.md", new FileInfo(workspace.Combine("docs/README.md")).LinkTarget);
+            Assert.Equal("../shared/team-knowledge/README.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Combine("docs/README.md")).LinkTarget);
             Assert.Null(new DirectoryInfo(workspace.Combine("docs")).LinkTarget);
             using var record = JsonDocument.Parse(File.ReadAllText(workspace.Combine(PublishedLibraryWorkspace.RecordPath)));
             Assert.Equal(["$schema", "schemaVersion", "extensions", "libraries"], [.. record.RootElement.EnumerateObject().Select(property => property.Name)]);
@@ -51,7 +51,7 @@ public sealed class PublishedLibraryAttachProcessTests
         }
         finally
         {
-            if (new FileInfo(workspace.Combine("docs/README.md")).LinkTarget == "../shared/team-knowledge/README.md")
+            if (new FileInfo(workspace.Combine("docs/README.md")).LinkTarget == "../shared/team-knowledge/README.md".Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(workspace.Combine("docs/README.md"));
             }

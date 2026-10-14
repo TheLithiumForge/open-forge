@@ -14,7 +14,11 @@ open-forge:
 
 Use the exact docs/team.md file or the explicitly intended docs directory for a persisted grant. The sibling path docs/team does not cover docs/team.md. Preserve the distinction between one-time and saved approval.
 
-This desired behavior is pending flow validation before test implementation. A current CLI disagreement is recorded as evidence, not copied into the expectation.
+Key mode starts focused on `Allow once`, so Enter alone approves only this run.
+To save a grant, deliberately select `1. Allow always`. Line mode still accepts
+`always`, `once`, or `cancel`, and an empty line cancels. The shared
+[Workspace Permissions contract](../../contracts/shared/workspace-permissions/interface.md)
+defines the prompt and persistence boundary.
 
 ## Starting point
 
@@ -27,7 +31,7 @@ Run the steps on the actual resulting state. A linked scenario supplies a verifi
 | Step | Action                                                                                                                                                                 | Scenario                                                        | State passed forward                                                            |
 | ---: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 |    1 | open-forge extension install toolkit --source "$CAT" --automatic                                                                                                       | [C21-05](../scenarios/commands/c21-extension-install.md#c21-05) | The missing destination consent is visible and the request is blocked.          |
-|    2 | On a suitable fresh branch of the same failed state, use a real terminal and choose once.                                                                              | [C21-07](../scenarios/commands/c21-extension-install.md#c21-07) | This installation is approved, but no settings grant is saved.                  |
+|    2 | On a suitable fresh branch of the same failed state, use a real key-mode terminal and press Enter on Allow once.                                                       | [C21-07](../scenarios/commands/c21-extension-install.md#c21-07) | This installation is approved, but no settings grant is saved.                  |
 |    3 | On a separate branch, choose always for the displayed scope, or supply --allow-path docs/team.md for this exact file, or docs for the deliberately selected directory. | [X14](../scenarios/experience.md#x14)                           | The exact persisted scope is inspectable; later eligible operations may use it. |
 |    4 | Revoke the applicable grant, introduce a real update, then run the update automatically.                                                                               | [C22-09](../scenarios/commands/c22-extension-update.md#c22-09)  | Owned external content is still protected by revoked permission.                |
 

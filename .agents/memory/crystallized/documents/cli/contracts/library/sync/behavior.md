@@ -165,6 +165,15 @@ membership and physical path facts feed projection planning.
 
 ## Set Reconciliation
 
+Supported relative link targets that differ only by separator identify the same
+mapping. On Windows, a recorded matching link with `/` in its raw target is
+unreadable. Preview and application report `library-sync.mapping-blocked`, with
+no effects and no claim that the link is current. Show exact Detach and Attach
+commands using the same workspace, ID, source, destination and Git-ignore choice.
+Between those commands, instruct the user to clear the ID saved by Detach in
+`removedLibraries` from workspace settings.
+Keep raw observations in evidence. Sync does not replace or upgrade the link.
+
 Let `P` be the complete current eligible source path set and `R` be the
 selected library's registered `paths` set. Both sets use canonical source-relative strings. The recorded destination root
 derives all consumer leaves. Sync forms `P ∩ R`, `P \\ R`, and `R \\ P` in

@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge extension install team --allow-path .apm/agents/team.md",
+          "command": "open-forge extension install team --source <extension-source> --workspace <workspace> --allow-path .apm/agents/team.md --automatic",
           "reason": "Or add \".apm/agents/team.md\" to allowInstallPaths in .agents/open-forge.json."
         }
       ]
@@ -102,7 +102,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge extension install team --allow-path .apm/agents/team.md",
+    "command": "open-forge extension install team --source <extension-source> --workspace <workspace> --allow-path .apm/agents/team.md --automatic",
     "reason": "Or add \".apm/agents/team.md\" to allowInstallPaths in .agents/open-forge.json."
   }
 }

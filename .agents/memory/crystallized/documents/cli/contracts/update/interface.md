@@ -51,6 +51,18 @@ YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
 Native AOT, OS locking, isolated tests, and package journeys. This contract does not
 claim that implementation or proof.
 
+## Help
+
+The purpose sentence is: Update files Open Forge manages to the version bundled in this CLI.
+
+The public Usage line is:
+
+```text
+open-forge update [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Boundary
 
 `update` reconciles a trusted existing managed Framework state in one exact
@@ -272,8 +284,14 @@ preparation completes before the first target effect.
 
 After final verification, reopen and verify the created bundle identity and
 retain it. Successful verified retention of a finalized recovery bundle is an
-ordinary `completed` result with exit `0` and the exact bundle path. When an
-ordinary `.git` directory exists, Next is `git diff`; otherwise Next is `Review previous content in the recovery bundle at <path>.` No Git executable runs. Actual failure
+ordinary `completed` result with exit `0` and the exact bundle path. When a
+retained bundle is available, text and JSON Next use
+`Review previous content in the recovery bundle at <path>.` regardless of Git
+tracking. Human text names that bundle as the source of previous content.
+`data.previousContent` is its actual path, matching `recovery.path`. Before
+retention and for unknown recovery it is null. This uses the existing nullable
+string field and does not add a schema member.
+No Git executable runs. Actual failure
 or unsafe-residual diagnostics retain priority. Partial failure and interruption
 retain observed recovery and do not restore targets automatically. Explicit
 Cleanup owns deletion under its separate contract.
@@ -287,36 +305,36 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 
 ### Statuses and headlines
 
-| Status                  | When                                                      | Headline                                                                                                                                                       | Exit | Stream |
-| ----------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---: | ------ |
-| completed               | nothing to change                                         | `The Framework is up to date. Nothing to do.`                                                                                                                  |    0 | stdout |
-| completed               | files replaced, restored or deleted                       | `Updated <N> Framework files.` (`Updated 1 Framework file.`)                                                                                                   |    0 | stdout |
-| completed (dry run)     | changes planned                                           | `Would update <N> Framework files.`                                                                                                                            |    0 | stdout |
-| completed               | no ownership record (Info observation)                    | `No ownership record exists, so update cannot tell which files it manages. Nothing was changed.`                                                               |    0 | stdout |
-| completed-with-warnings | retired files kept without `--prune`                      | `Updated <N> Framework files. <K> files from an earlier version were kept.` or `The Framework is up to date, but <K> files from an earlier version were kept.` |    2 | stdout |
-| completed               | verified finalized recovery bundle retained               | + recovery family row                                                                                                                                          |    0 | stdout |
-| incomplete              | bundled Framework, record, target or recovery unreadable  | `Update could not start: <limitation>. Nothing was changed.`                                                                                                   |    3 | stdout |
-| invalid-input           | bad input; confirmation unavailable                       | families                                                                                                                                                       |    4 | stderr |
-| blocked                 | invalid record, conflict, unsafe target, prune ineligible | `Cannot update: <reason>.`                                                                                                                                     |    5 | stderr |
-| failed                  | after effects                                             | `Update stopped after <n> of <m> changes.`                                                                                                                     |    1 | stderr |
-| cancelled               | prompt refused, Ctrl+C                                    | `Update was cancelled. Nothing was changed.`                                                                                                                   |  130 | stderr |
+| Status                  | When                                                      | Headline                                                                                                                                                    | Exit | Stream |
+| ----------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---: | ------ |
+| completed               | nothing to change                                         | `The Framework is up to date. Nothing to do.`                                                                                                               |    0 | stdout |
+| completed               | files replaced, restored or deleted                       | `Changed <N> source files.` (`Changed 1 source file.`)                                                                                                      |    0 | stdout |
+| completed (dry run)     | changes planned                                           | `Would change <N> source files.`                                                                                                                            |    0 | stdout |
+| completed               | no ownership record (Info observation)                    | `No ownership record exists, so update cannot tell which files it manages. Nothing was changed.`                                                            |    0 | stdout |
+| completed-with-warnings | retired files kept without `--prune`                      | `Changed <N> source files. <K> files from an earlier version were kept.` or `The Framework is up to date, but <K> files from an earlier version were kept.` |    2 | stdout |
+| completed               | verified finalized recovery bundle retained               | + recovery family row                                                                                                                                       |    0 | stdout |
+| incomplete              | bundled Framework, record, target or recovery unreadable  | `Update could not start: <limitation>. Nothing was changed.`                                                                                                |    3 | stdout |
+| invalid-input           | bad input; confirmation unavailable                       | families                                                                                                                                                    |    4 | stderr |
+| blocked                 | invalid record, conflict, unsafe target, prune ineligible | `Cannot update: <reason>.`                                                                                                                                  |    5 | stderr |
+| failed                  | after effects                                             | `Update stopped after <n> of <m> changes.`                                                                                                                  |    1 | stderr |
+| cancelled               | prompt refused, Ctrl+C                                    | `Update was cancelled. Nothing was changed.`                                                                                                                |  130 | stderr |
 
 ### Text by level
 
 `minimal`, changes:
 
 ```text
-Updated 3 Framework files.
+Changed 3 source files.
   .agents/guidance/_guidance.md     replaced
   .agents/patterns/_patterns.md     restored
   .agents/workflows/_workflows.md   replaced
-  Previous content: git diff
+  Previous content is in the recovery bundle at <recovery-bundle>.
 ```
 
 `minimal`, retired kept:
 
 ```text
-Updated 1 Framework file. 1 file from an earlier version was kept.
+Changed 1 source file. 1 file from an earlier version was kept.
   .agents/guidance/_guidance.md     replaced
   .agents/guidance/old-advice.md    kept; no longer part of this release
 Next: open-forge update --prune --dry-run  (preview deleting it)
@@ -325,7 +343,7 @@ Next: open-forge update --prune --dry-run  (preview deleting it)
 `minimal`, dry run:
 
 ```text
-Would update 3 Framework files.
+Would change 3 source files.
   .agents/guidance/_guidance.md     would be replaced
   .agents/patterns/_patterns.md     would be restored
   .agents/workflows/_workflows.md   would be replaced
@@ -394,7 +412,7 @@ whole-file replacements, or both, such as
 
 | Level    | `data`                                                                                                                                    |
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| minimal  | `{ mode, force, prune, automatic, previousContent: "git-diff" \| null, lockPath }`                                                        |
+| minimal  | `{ mode, force, prune, automatic, previousContent: "<retained-bundle-path>" \| null, lockPath }`                                          |
 | standard | + `unchanged: [ { path } ]`, `entriesSections: [ { path, state } ]`                                                                       |
 | full     | + per-effect `before`, `after`, `sourceAssetPath`, `relation { current, shipped }`, `source { id, version, fingerprint }`, `verification` |
 
@@ -436,8 +454,20 @@ Dry-run rows use the preview form, such as `would be replaced`,
 `Entries would be updated` and `ownership record would be updated`. Each
 section edit appears once. Replacement counts include only planned
 replacements in a preview and verified replacements after application.
-The previous-content line is `Previous content: git diff` when `.git` exists
-and is omitted otherwise.
+When a recovery bundle is retained, every detail level says
+`Previous content is in the recovery bundle at <actual path>.`
+A preview says `Previous content will be kept in a recovery bundle.` only
+when its protected paths guarantee recovery preparation. Git diff may review
+tracked changes. It is not presented as a source of previous content.
+
+The human headline counts distinct planned source file effects in a preview
+and distinct verified source file effects after application. Local Skill files
+remain user-owned and are included in this neutral total. The confirmation
+review preserves the migration ownership facts and the same planned count.
+Ownership-record publication is separate. Per-path rows use the Task 76 labels,
+including `metadata completed, your content was kept`, `local entrypoint created`
+and `Entries updated`, with their preview forms. JSON count fields and summary
+values retain their existing meanings.
 
 ### Counts and limitations
 
@@ -447,8 +477,8 @@ and is omitted otherwise.
 ### Next rules
 
 Retired kept -> `open-forge update --prune --dry-run`; confirmation ->
-`--automatic`; successful retained recovery -> `git diff` when an ordinary
-`.git` directory exists, otherwise `Review previous content in the recovery bundle at <path>.`; actual failure or unsafe residual -> `open-forge doctor` /
+`--automatic`; successful retained recovery ->
+`Review previous content in the recovery bundle at <path>.`; actual failure or unsafe residual -> `open-forge doctor` /
 `open-forge cleanup`; no record -> `open-forge doctor`; otherwise none.
 
 The `update.recovery-artifact-retained` warning applies to recovery retained

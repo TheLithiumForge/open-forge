@@ -88,7 +88,8 @@ internal static class LibraryMutationApplicationData
     internal static RelativeFileLinkEffect Link(bool delete)
     {
         var path = CanonicalRelativePath.Create(LibraryMutationWorkspace.Leaf);
-        var identity = RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink, "../../shared/team-knowledge/.agents/directives/review.md");
+        var identity = RelativeFileLinkIdentity.Create(NoFollowLinkKind.SymbolicLink,
+            "../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar));
         return delete ? RelativeFileLinkEffect.Delete(path, identity) : RelativeFileLinkEffect.Create(path, identity);
     }
 

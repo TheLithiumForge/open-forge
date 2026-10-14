@@ -21,7 +21,7 @@ public sealed class CleanupDefinitionsAndBindingContractTests
         Assert.Equal(1, CleanupDefinitions.SchemaVersion);
         Assert.Equal("cleanup", CleanupDefinitions.CleanupCommand.Name);
         Assert.Equal(
-            "Remove recognized recovery bundles and drafts.",
+            "Delete recognized completed recovery bundles and drafts for the selected workspace.",
             CleanupDefinitions.CleanupCommand.Description);
         Assert.Equal("--dry-run", CleanupDefinitions.DryRun.Name);
         Assert.Equal(

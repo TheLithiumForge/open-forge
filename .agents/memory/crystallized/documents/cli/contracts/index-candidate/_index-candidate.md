@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Route the current Crystallized non-shipping `index` contracts for its public interface, deterministic behavior, and accepted technical design
-  responsibility: Route the current `index` contracts in candidate `contracts/index-candidate/` staging while keeping the command non-shipping
+  description: Route the current Crystallized `index` contracts for its public interface, deterministic behavior, and accepted technical design
+  responsibility: Route the current `index` contracts in candidate `contracts/index-candidate/` staging without changing command meaning
   tags: [Memory, Crystallized, CLI, Release, Command, Index, Contract, CurrentTruth]
 ---
 
@@ -9,11 +9,11 @@ open-forge:
 
 ## Status
 
-This is the current Crystallized contract set for the non-shipping `index`
+This is the current Crystallized contract set for the current `index`
 command, currently staged under `contracts/index-candidate/`. Its Interface and
 Behavior files define the public and technology-neutral contracts. Its Technical
 Design records the accepted command-local realization under the contracts and the
-accepted Architecture. The command does not ship. Candidate staging remains
+accepted Architecture. The contract directory retains its candidate name. Candidate staging remains
 until a separate accepted route migration moves the contracts to their final
 compatibility-name paths.
 
@@ -38,4 +38,4 @@ Interface or Behavior contracts.
 
 - [Current Crystallized deterministic behavior, mutation lifecycle, safety, recovery, and conformance for `index`](behavior.md) - #Memory #Crystallized #CLI #Release #Command #Index #Behavior #CurrentTruth
 - [Current Crystallized public interface for rebuilding bounded generated `Entries` from routed topology and authored metadata](interface.md) - #Memory #Crystallized #CLI #Release #Command #Index #Interface #CurrentTruth
-- [Current accepted technical design for the non-shipping `index` command](technical-design.md) - #Memory #Crystallized #CLI #Release #Command #Index #TechnicalDesign #CurrentTruth
+- [Current accepted technical design for the current `index` command](technical-design.md) - #Memory #Crystallized #CLI #Release #Command #Index #TechnicalDesign #CurrentTruth

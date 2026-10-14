@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Shared.Models;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Request;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Observations;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 
@@ -91,6 +92,8 @@ internal sealed record RepairTargetSelection
 
     internal IReadOnlyList<RepairCandidateEvidence> CandidateProvenance { get; }
 
+    internal RenameEvidenceObservation? RenameProof { get; init; }
+
     internal static RepairTargetSelection Parse(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
@@ -162,7 +165,11 @@ internal sealed record RepairCandidate
     internal IReadOnlyList<RepairCandidateEvidence> Evidence { get; }
 
     internal bool RecommendedForReview { get; }
+
+    internal RepairCandidateIdentity? Identity { get; init; }
 }
+
+internal sealed record RepairCandidateIdentity(bool SameContent, int? Similarity);
 
 internal sealed record RepairCandidateSet
 {
@@ -254,14 +261,9 @@ internal sealed record RepairProposal
         }
 
         ArgumentException.ThrowIfNullOrWhiteSpace(expectedDestination);
-        if (member == RepairCatalogueMember.MissingTargetRelink && resolution is not null)
-        {
-            throw new ArgumentException(
-                "A guided Repair proposal cannot carry a selected resolution.",
-                nameof(resolution));
-        }
-
-        if (member == RepairCatalogueMember.MissingTargetRelink && candidates is null)
+        if (member == RepairCatalogueMember.MissingTargetRelink && resolution is not null && resolution.Target.RenameProof is null)
+            throw new ArgumentException("A proven missing-target resolution requires identity evidence.", nameof(resolution));
+        if (member == RepairCatalogueMember.MissingTargetRelink && candidates is null && resolution is null)
         {
             throw new ArgumentException(
                 "A guided Repair proposal requires bounded candidate evidence.",
@@ -351,11 +353,23 @@ internal sealed record RepairProposal
 
     internal RepairCandidateSet? Candidates { get; }
 
+    internal RenameEvidenceObservation? RenameProof { get; init; }
+
+    internal RenameEvidenceObservation? SourceMoveProof { get; init; }
+
+    internal string? MissingPath { get; init; }
+
+    internal bool RenameEvidenceTimedOut { get; init; }
+
+    internal RenameResolution? RenameResolution { get; init; }
+
+    internal string? MissingAssessment => RenameResolution?.ToString();
+
     internal bool IsSafeExact
-        => Member != RepairCatalogueMember.MissingTargetRelink && Resolution is not null;
+        => Resolution is not null && (Member != RepairCatalogueMember.MissingTargetRelink || RenameProof is not null || SourceMoveProof is not null);
 
     internal bool IsGuided
-        => Member == RepairCatalogueMember.MissingTargetRelink && Resolution is null && Candidates is not null;
+        => Member == RepairCatalogueMember.MissingTargetRelink && Resolution is null && Candidates is { Items.Count: > 0 };
 }
 
 internal sealed record RepairSelectedProposal

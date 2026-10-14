@@ -7,3 +7,5 @@ Workspace: <workspace>
 Selection: .agents/root/_root.md
 No recovery bundle was needed.
 No files were changed.
+  Apply the checked plan.
+Next: open-forge index .agents/root/_root.md --detail debug

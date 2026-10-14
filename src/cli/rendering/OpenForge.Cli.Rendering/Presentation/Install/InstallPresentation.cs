@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Presentation.Install.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Install.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Presentation.Install;
@@ -25,8 +26,31 @@ internal static class InstallPresentation
         DataTextRenderer = InstallDataTextRenderer.Render,
         DataJsonTypeInfo = JsonContext.InstallData,
         Shape = CliCommandShape.ChangeReport,
-        SelectText = static selected => selected with
+        SelectText = SelectText,
+    };
+
+    internal static CliReportRendering<InstallResult, InstallData> PlanReviewRendering { get; } = Rendering with
+    {
+        Selector = static (result, selection) =>
         {
+            var report = InstallReportSelector.Select(result, selection);
+            return report with
+            {
+                Data = report.Data with
+                {
+                    ShowNoChanges = false,
+                    TextReviewHeadline = report.Headline.Sentence,
+                    TextReviewWorkspace = report.Workspace?.Path,
+                }
+            };
+        },
+        SelectText = static selected => SelectText(selected) with { ShowHeadline = false, ShowWorkspace = false },
+    };
+
+    private static CliSelectedReport<InstallData> SelectText(CliSelectedReport<InstallData> selected)
+        => InstallInputTextSelection.Select(selected with
+        {
+            ShowWorkspace = selected.Report.Workspace is not null,
             TextEffects = [],
             TextCounts = [],
             TextFindings = selected.Selection.Detail == CliDetail.Minimal
@@ -42,8 +66,7 @@ internal static class InstallPresentation
                             .Where(finding => finding.Code != InstallWireVocabulary.Name(InstallFindingCode.Interrupted))
                             .ToArray()
                         : selected.TextFindings,
-        },
-    };
+        });
 
     private static bool IsRepresentedBlockedFinding(
         CliFinding finding,

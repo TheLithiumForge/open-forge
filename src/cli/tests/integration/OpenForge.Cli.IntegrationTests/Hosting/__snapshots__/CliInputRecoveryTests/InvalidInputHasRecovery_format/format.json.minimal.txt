@@ -1,0 +1,2 @@
+Option '--format' expects a single argument but 2 were provided.
+Next: open-forge status --help

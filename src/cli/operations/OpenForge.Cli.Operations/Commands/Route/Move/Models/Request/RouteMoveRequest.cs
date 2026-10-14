@@ -10,6 +10,8 @@ internal enum RouteMoveMode
 
 internal sealed record RouteMoveRequest
 {
+    internal string? RequestCommand { get; init; }
+
     internal RouteMoveRequest(
         CliWorkspace workspace,
         string sourceReference,
@@ -66,6 +68,9 @@ internal sealed record RouteMoveRequest
             destinationTarget: DestinationTarget,
             mode: Mode,
             allowInteractiveSourceSelection: AllowInteractiveSourceSelection,
-            frozenSourceReference: exactSourceReference);
+            frozenSourceReference: exactSourceReference)
+        {
+            RequestCommand = RequestCommand,
+        };
     }
 }

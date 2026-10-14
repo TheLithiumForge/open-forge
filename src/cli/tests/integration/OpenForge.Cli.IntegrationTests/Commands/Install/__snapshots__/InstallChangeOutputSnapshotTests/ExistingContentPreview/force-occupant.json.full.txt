@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Would install the Open Forge Framework into <workspace>, replacing 1 existing file.",
+    "headline": "Would install the Open Forge Framework, replacing 1 existing file.",
     "kind": "preview"
   },
   "findings": [],

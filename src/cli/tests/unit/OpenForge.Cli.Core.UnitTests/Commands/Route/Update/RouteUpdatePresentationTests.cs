@@ -212,30 +212,7 @@ public sealed class RouteUpdatePresentationTests
     public void HelpExposesExactlyAcceptedPublicSurface()
     {
         var help = RouteUpdatePresentation.CreateHelp();
-
-        Assert.Equal(
-        [
-            "Syntax",
-            "Target",
-            "Metadata",
-            "Template",
-            "Write policy",
-            "Examples",
-            "Notes",
-        ],
-        help.Sections.Select(section => section.Heading));
-        var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
-        Assert.Contains("open-forge route update <source-reference>", text, StringComparison.Ordinal);
-        Assert.Contains("--description <text>", text, StringComparison.Ordinal);
-        Assert.Contains("--responsibility <text>", text, StringComparison.Ordinal);
-        Assert.Contains("--tag <tag>", text, StringComparison.Ordinal);
-        Assert.Contains("--template <template-reference>", text, StringComparison.Ordinal);
-        Assert.Contains("--dry-run", text, StringComparison.Ordinal);
-        Assert.Contains("exact empty responsibility removes", text, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("authored body", text, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("--force", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("--yes", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("--body", text, StringComparison.Ordinal);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge route update <source-reference> [options]");
     }
 
     private static RouteUpdateResult ProtectedBodyResult()

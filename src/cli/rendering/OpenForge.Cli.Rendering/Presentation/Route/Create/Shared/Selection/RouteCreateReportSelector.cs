@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.NextActions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Result;
@@ -40,7 +42,7 @@ internal static class RouteCreateReportSelector
             ],
             Data = data,
             Recovery = Recovery(result),
-            Next = Next(result),
+            Next = RouteNextCommand.InWorkspace(Next(result), result.WorkspacePath, result.WorkspaceExplicit),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? Diagnostics(result)
                 : [],
@@ -298,7 +300,7 @@ internal static class RouteCreateReportSelector
     {
         var code = RouteCreateWireVocabulary.Name(finding.Code);
         var subject = Subject(result, finding);
-        var action = Action(result, finding);
+        var action = RouteNextCommand.InWorkspace(Action(result, finding), result.WorkspacePath, result.WorkspaceExplicit);
         return new CliFinding
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
@@ -447,17 +449,17 @@ internal static class RouteCreateReportSelector
                 => new CliNextAction(RouteCreateWireVocabulary.RouteCreateHelpCommand, RouteCreateWording.CorrectInputReason()),
             RouteCreateFindingCode.InvalidMetadata
                 => new CliNextAction(
-                    RouteCreateWording.CorrectedCreateCommand(result.Target.Requested),
+                    "open-forge route create --help",
                     RouteCreateWording.CorrectInputReason()),
             RouteCreateFindingCode.InvalidTemplate
                 => new CliNextAction("open-forge find --tag Template", RouteCreateWording.FindTemplateReason()),
             RouteCreateFindingCode.ParentMissing
                 => new CliNextAction(
-                    $"open-forge route init {ParentId(result)}",
+                    $"open-forge route init {CliCommandText.Quote(ParentId(result))}",
                     RouteCreateWording.InitParentReason()),
             RouteCreateFindingCode.TargetContentDiffers
                 => new CliNextAction(
-                    $"open-forge route update {TargetId(result)}",
+                    "open-forge route update --help",
                     RouteCreateWording.UpdateReason()),
             RouteCreateFindingCode.RecoveryConflict
                 => new CliNextAction(
@@ -467,10 +469,10 @@ internal static class RouteCreateReportSelector
                 => new CliNextAction("open-forge cleanup", RouteCreateWording.CleanupReason()),
             RouteCreateFindingCode.OptionalMetadata
                 => new CliNextAction(
-                    $"open-forge route update {TargetId(result)}",
+                    "open-forge route update --help",
                     RouteCreateWording.AddOptionalDescriptionOrTag()),
             RouteCreateFindingCode.Interrupted
-                => new CliNextAction("open-forge route create", RouteCreateWording.RerunReason()),
+                => new CliNextAction(result.RequestCommand ?? "open-forge route create --help", RouteCreateWording.RerunReason()),
             _ => null,
         };
 
@@ -496,15 +498,15 @@ internal static class RouteCreateReportSelector
                 => null,
             CliSemanticStatus.Blocked when first?.Code is RouteCreateFindingCode.WorkspaceLockUnavailable
                 or RouteCreateFindingCode.TargetChanged
-                => new CliNextAction("open-forge route create", RouteCreateWording.RetryReason()),
+                => new CliNextAction(result.RequestCommand ?? "open-forge route create --help", RouteCreateWording.RetryReason()),
             CliSemanticStatus.Blocked
                 => new CliNextAction("open-forge doctor", global::OpenForge.Cli.OutputText.Route.Create.RouteCreateText.MessageInspectTheBlockedRouteCreateBoundaryBeforeRerunningTheRequest()),
             CliSemanticStatus.Invalid
                 => new CliNextAction(RouteCreateWireVocabulary.RouteCreateHelpCommand, RouteCreateWording.CorrectInputReason()),
             CliSemanticStatus.Failed
-                => new CliNextAction(RouteCreateWireVocabulary.VerboseRouteCreateCommand, RouteCreateWording.DebugReason()),
+                => new CliNextAction(result.RequestCommand ?? "open-forge route create --help", RouteCreateWording.DebugReason()),
             CliSemanticStatus.Interrupted
-                => new CliNextAction("open-forge route create", RouteCreateWording.RerunReason()),
+                => new CliNextAction(result.RequestCommand ?? "open-forge route create --help", RouteCreateWording.RerunReason()),
             _ => throw new ArgumentOutOfRangeException(nameof(result), result.Status, "The Route Create status is not defined."),
         };
     }

@@ -1,0 +1,4 @@
+Invalid --preset value: other. Use essentials, full-core, or custom.
+Workspace: <workspace>
+  Correct the named Install input, then rerun the request.
+Next: open-forge install --help

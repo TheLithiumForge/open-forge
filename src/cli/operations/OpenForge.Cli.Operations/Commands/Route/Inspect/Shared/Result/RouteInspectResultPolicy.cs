@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Profile;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
@@ -171,7 +172,7 @@ internal static class RouteInspectResultPolicy
         if (collision is not null && collision.Paths.Count != 0)
         {
             return new CliNextAction(
-                $"open-forge route inspect \"{collision.Paths[0]}\"",
+                $"open-forge route inspect {CliCommandText.Quote(collision.Paths[0])}",
                 "Rerun with one listed exact path to resolve the source collision.");
         }
 
@@ -192,6 +193,6 @@ internal static class RouteInspectResultPolicy
         var reference = resolution.Identity?.CanonicalWorkspaceRelativePath
             ?? resolution.Selection.RequestedReference
             ?? "<exact-path>";
-        return $"open-forge route inspect \"{reference}\"";
+        return $"open-forge route inspect {CliCommandText.Quote(reference)}";
     }
 }

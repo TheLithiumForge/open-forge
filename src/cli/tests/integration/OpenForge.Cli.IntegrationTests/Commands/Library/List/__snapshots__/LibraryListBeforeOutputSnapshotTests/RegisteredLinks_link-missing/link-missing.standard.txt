@@ -5,4 +5,4 @@ Workspace: <workspace>
   team-knowledge  shared/team -> .  0 links current, 1 missing
     .agents/directives/review.md  missing
   Repair the missing registered link.
-Next: open-forge library sync team-knowledge
+Next: open-forge library sync team-knowledge --workspace <workspace>

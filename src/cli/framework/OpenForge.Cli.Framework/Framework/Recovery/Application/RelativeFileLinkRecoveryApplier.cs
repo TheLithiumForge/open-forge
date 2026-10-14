@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.LogicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Shared.Links;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
@@ -116,6 +117,10 @@ internal static class RelativeFileLinkRecoveryApplier
         }
 
         var inverse = Inverse(entry);
+        if (inverse.Kind == RelativeFileLinkEffectKind.Delete && comparison.Input.Leaf.RelativeFileLink is { } observedLink)
+        {
+            inverse = RelativeFileLinkEffect.Delete(inverse.DestinationPath, observedLink);
+        }
         var immediate = await RelativeFileLinkRevalidator.ValidateAsync(
             physicalPathResolver,
             lease,
@@ -151,7 +156,7 @@ internal static class RelativeFileLinkRecoveryApplier
             switch (inverse.Kind)
             {
                 case RelativeFileLinkEffectKind.Create:
-                    File.CreateSymbolicLink(physicalPath, inverse.RawRelativeTarget);
+                    File.CreateSymbolicLink(physicalPath, RelativeFileLinkTarget.PlatformForm(inverse.RawRelativeTarget));
                     break;
                 case RelativeFileLinkEffectKind.Delete:
                     File.Delete(physicalPath);
@@ -269,7 +274,10 @@ internal static class RelativeFileLinkRecoveryApplier
             RecoveryEntryStateKind.Missing => observation.State == NoFollowLeafState.Missing,
             RecoveryEntryStateKind.RelativeFileLink =>
                 observation.State == NoFollowLeafState.RelativeFileLink
-                && observation.RelativeFileLink == entry.Prior.RelativeFileLink,
+                && observation.RelativeFileLink is { } observed
+                && observed.LinkKind == entry.Prior.RelativeFileLink?.LinkKind
+                && string.Equals(observed.RawRelativeTarget,
+                    RelativeFileLinkTarget.PlatformForm(entry.Prior.RelativeFileLink.RawRelativeTarget), StringComparison.Ordinal),
             RecoveryEntryStateKind.OrdinaryFile => false,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(entry),

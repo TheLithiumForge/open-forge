@@ -24,9 +24,9 @@ internal static class InstallSetupText
     // @OpenForgeText install.setup.presetquestion
     internal static string PresetQuestion() => "Choose your Open Forge setup";
     // @OpenForgeText install.setup.essentials
-    internal static string Essentials() => "Directives, Patterns, Skills, and Emerging and Crystallized Memory, plus Working Memory with its contents Git-ignored.";
+    internal static string Essentials() => "Rules, reusable patterns, skills and project memory. New notes for active work stay out of Git.";
     // @OpenForgeText install.setup.fullcore
-    internal static string FullCore() => "Directives, Guidance, Maps, Patterns, Skills, Templates and all four Memory states.";
+    internal static string FullCore() => "Everything in Essentials, plus advice, pointers to sources, starter files and archived records. All contents, including notes for active work, are shared through Git.";
     // @OpenForgeText install.setup.custom
     internal static string Custom() => "Starts from your current choices, or Essentials in a new workspace, then shows one list to change.";
     // @OpenForgeText install.setup.routequestion
@@ -40,9 +40,9 @@ internal static class InstallSetupText
     // @OpenForgeText install.setup.gitignore
     internal static string GitIgnore() => "New files stay on this machine. The entrypoint is still shared through Git.";
     // @OpenForgeText install.setup.freshremove
-    internal static string FreshRemove() => "Open Forge does not add this route.";
+    internal static string FreshRemove(string id) => $"Leave out: no {id} folder is created. You can add it later with open-forge install --configure.";
     // @OpenForgeText install.setup.essentialssummary
-    internal static string EssentialsSummary() => "Rules, patterns, skills and memory";
+    internal static string EssentialsSummary() => "Recommended. Rules, patterns, skills and memory";
     // @OpenForgeText install.setup.fullcoresummary
     internal static string FullCoreSummary() => "Every built-in folder, all shared through Git";
     // @OpenForgeText install.setup.customsummary
@@ -73,6 +73,49 @@ internal static class InstallSetupText
     internal static string CrystallizedSummary() => "Accepted knowledge";
     // @OpenForgeText install.setup.archivedsummary
     internal static string ArchivedSummary() => "Completed and historical records";
+    // @OpenForgeText install.setup.reviewcaption
+    internal static string ReviewCaption() => "Review changes";
+    // @OpenForgeText install.setup.currentmetadata
+    internal static string CurrentMetadata(string form) => $"Current metadata form: {form}";
+    // @OpenForgeText install.setup.rootdetail
+    internal static string RootDetail() => "Recommended. Metadata sits at the top of each file's frontmatter.";
+    // @OpenForgeText install.setup.scopeddetail
+    internal static string ScopedDetail() => "Choose this if other tools already use top-level frontmatter keys in your files.";
+    // @OpenForgeText install.setup.linegitignore
+    internal static string LineGitIgnore() => "~ keeps the entrypoint shared through Git. New contents are Git-ignored.";
+    // @OpenForgeText install.setup.linetracked
+    internal static string LineTracked() => "Files already tracked by Git stay tracked.";
+    // @OpenForgeText install.setup.lineleaveout
+    internal static string LineLeaveOut() => "- leaves out supplied defaults. Existing files stay and remain routable.";
+    // @OpenForgeText install.setup.linestopmanaging
+    internal static string LineStopManaging() => "Open Forge stops managing those defaults.";
+    // @OpenForgeText install.setup.essentialslabel
+    internal static string EssentialsLabel() => "Essentials";
+    // @OpenForgeText install.setup.fullcorelabel
+    internal static string FullCoreLabel() => "Full Core";
+    // @OpenForgeText install.setup.customlabel
+    internal static string CustomLabel() => "Custom";
+    // @OpenForgeText install.setup.recap
+    internal static string Setup(string preset) => $"Setup: {preset}";
+    // @OpenForgeText install.setup.addroutes
+    internal static string AddRoutes(string routes) => $"Add: {routes}";
+    // @OpenForgeText install.setup.ignoredroutes
+    internal static string IgnoredRoutes(string routes) => $"Git-ignored contents: {routes}";
+    // @OpenForgeText install.setup.leftoutroutes
+    internal static string LeftOutRoutes(string routes) => $"Leave out: {routes}";
+    // @OpenForgeText install.setup.routechange
+    internal static string RouteChange(string id, string before, string after) => $"{id}: {before} -> {after}";
+    // @OpenForgeText install.setup.existingfilesstay
+    internal static string ExistingFilesStay() => "Existing files stay and remain routable.";
+    // @OpenForgeText install.setup.none
+    internal static string None() => "none";
+    // @OpenForgeText install.setup.ignoredaction
+    internal static string IgnoredAction() => "add with Git-ignored contents";
+    // @OpenForgeText install.setup.firsttask
+    internal static string FirstTask() => """
+        If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md first.
+        Next: review the new files with git status and git diff, commit them, then give your agent a normal task.
+        """;
     // @OpenForgeText install.setup.help
-    internal static string Help() => "Use --configure to change an installed setup. Choose --preset essentials, full-core, or custom. With Custom, repeat --route <id>=<add|remove|git-ignore>. Remove keeps existing files and their routes. Add + Git-ignore shares the entrypoint, ignores route contents, and omits private child Entries.";
+    internal static string Help() => "Use --configure to change an installed setup. Choose --preset essentials, full-core, or custom. With Custom, repeat --route <id>=<add|remove|git-ignore>. Built-in IDs: directives, guidance, maps, patterns, skills, templates, memory/working, memory/emerging, memory/crystallized, memory/archived.\nRemove keeps existing files and their routes. Add + Git-ignore shares the entrypoint, ignores route contents, and omits private child Entries. Already tracked files remain tracked.";
 }

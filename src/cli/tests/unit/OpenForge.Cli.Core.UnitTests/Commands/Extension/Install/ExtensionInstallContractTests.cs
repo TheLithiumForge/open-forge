@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Commands.Extension.Install;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -149,9 +150,8 @@ public sealed class ExtensionInstallContractTests
             [finding],
             request));
 
-        var quotedWorkspace = $"'{workspacePath.Replace("'", "'\"'\"'", StringComparison.Ordinal)}'";
         Assert.Equal(
-            $"open-forge extension install base toolkit --source 'catalogue folder'\"'\"'s source' --force --automatic --dry-run --workspace {quotedWorkspace}",
+            $"open-forge extension install base toolkit --source {CliCommandText.Quote(request.SourcePath ?? throw new InvalidOperationException())} --workspace {CliCommandText.Quote(workspacePath)} --automatic --force --dry-run",
             next.Command);
 
         var allRequest = new ExtensionInstallRequest(
@@ -164,13 +164,8 @@ public sealed class ExtensionInstallContractTests
             automatic: false,
             allowInteraction: false);
         Assert.Equal(
-            "open-forge extension install --all --force --workspace '"
-                + Workspace().LexicalRoot
-                + "'",
-            ExtensionInstallDefinitions.ReadNextAction(
-                CliSemanticStatus.Blocked,
-                [finding],
-                allRequest)?.Command);
+            $"open-forge extension install --all --workspace {CliCommandText.Quote(Workspace().LexicalRoot)} --force --dry-run",
+            ExtensionInstallDefinitions.ReadNextAction(CliSemanticStatus.Blocked, [finding], allRequest)?.Command);
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             ExtensionInstallDefinitions.ReadNextAction(
                 (CliSemanticStatus)int.MaxValue,

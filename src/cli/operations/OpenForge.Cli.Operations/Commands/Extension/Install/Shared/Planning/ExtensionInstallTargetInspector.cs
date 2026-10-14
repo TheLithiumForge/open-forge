@@ -202,10 +202,19 @@ internal sealed class ExtensionInstallTargetInspector
             if (!installed.Dependencies.SequenceEqual(package.Dependencies.Order(StringComparer.Ordinal))
                 || !installed.Paths.SequenceEqual(intendedPaths))
             {
-                return Stop(
+                return new ExtensionInstallTargetInspection(null, new ExtensionInstallFinding(
                     ExtensionInstallFindingCode.PackageContentsChanged,
                     "The files or dependencies recorded for the package do not match the selected source.",
-                    package.Id);
+                    package.Id)
+                {
+                    RecordedWithoutFiles = installed.Paths.Length == 0
+                        && installed.Regions.Length == 0
+                        && string.Equals(installed.Source, sourceIdentity, StringComparison.Ordinal)
+                        && string.Equals(installed.Version, package.Version, StringComparison.Ordinal)
+                        && installed.Dependencies.SequenceEqual(package.Dependencies.Order(StringComparer.Ordinal))
+                        && package.Payload.Count > 0
+                        && package.Payload.All(file => observations[RequiredTargetPath(file)].Kind == FileExpectationKind.Missing),
+                });
             }
         }
 
@@ -215,7 +224,8 @@ internal sealed class ExtensionInstallTargetInspector
                 .Where(package => mutationPackageIds.Contains(package.Id))
                 .Where(package => currentPackages.ContainsKey(package.Id)
                     || package.Payload.Count != 0
-                    || package.Dependencies.Count != 0)
+                    || package.Dependencies.Count != 0
+                    || input.FullyExcludedPackageIds.Contains(package.Id))
                 .Select(package => new ExtensionOwnership(
                 package.Id, package.Version, sourceIdentity,
                 [.. package.Dependencies.Order(StringComparer.Ordinal)],

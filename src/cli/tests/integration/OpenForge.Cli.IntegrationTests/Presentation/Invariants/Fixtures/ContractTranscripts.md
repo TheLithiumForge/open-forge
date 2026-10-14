@@ -850,7 +850,7 @@ Next: open-forge index
 Original contract: `.agents/memory/crystallized/documents/cli/contracts/install/interface.md`.
 
 ```text
-Installed the Open Forge Framework into <workspace>.
+Installed the Open Forge Framework.
 Workspace: <workspace>
   Created 21 files and 20 directories under .agents (listed in .agents/open-forge.lock.json).
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
@@ -861,7 +861,7 @@ Workspace: <workspace>
 Original contract: `.agents/memory/crystallized/documents/cli/contracts/install/interface.md`.
 
 ```text
-Would change the Open Forge setup in <workspace>.
+Would change the Open Forge setup.
 Workspace: <workspace>
 Frontmatter: root
   .agents/loader.md             Entries would be updated

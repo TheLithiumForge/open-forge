@@ -1,0 +1,33 @@
+  Inspect or change files exposed through Open Forge navigation.
+
+Usage:
+  open-forge route <command> [options]
+
+Commands:
+  list <source-reference>     List navigable sources and their descendants.
+  inspect <source-reference>  Explain where one source belongs and when its
+                              rules or content are read.
+  init <route-target>         Create the missing navigation files in one exact
+                              route chain.
+  create <file-target>        Create one routed Markdown file below an existing
+                              root route.
+  update <source-reference>   Change selected metadata or add Template content
+                              to an eligible empty body.
+  move <source-reference> <destination-target>
+      Move one unmanaged routed file or category and update its references.
+  remove <source-reference>   Remove one routed file or category and remember
+                              the removal.
+
+Options:
+  --workspace <path>          Select the workspace explicitly.
+  --format <format>           Output format: text or json. Default: text.
+  --detail <detail>           Result detail in text and JSON: minimal, standard,
+                              full or debug. Default: minimal.
+  --detail-filter <severity>  List error, warning, info or all severities.
+                              Repeat to combine.
+  --help                      Show help and exit.
+  --version                   Show the executable version and exit.
+
+Command help:
+  Use open-forge route <command> --help for arguments, write policy, and
+  examples.

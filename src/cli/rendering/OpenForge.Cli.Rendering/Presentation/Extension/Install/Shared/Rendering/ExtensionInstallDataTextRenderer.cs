@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Presentation.Extension.Install.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Presentation.Shared.Text.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 
 namespace OpenForge.Cli.Core.Presentation.Extension.Install.Shared.Rendering;
 
@@ -40,7 +41,7 @@ internal static class ExtensionInstallDataTextRenderer
                     CliText.Escape(row.Text),
                 ])
                 .ToArray();
-            var table = CliTable.Render(rows, (column, cell) =>
+            var table = CliTable.Render(style, rows, (column, cell) =>
                 column == 0 ? style.Subject(cell) : cell);
             spans.Add(new CliTextSpan(table));
             foreach (var row in rowsWithText.Where(row => row.Detail is not null))
@@ -50,11 +51,10 @@ internal static class ExtensionInstallDataTextRenderer
         }
 
         var builder = new StringBuilder();
-        foreach (var line in data.TextDetails)
+        foreach (var text in data.TextDetails)
         {
-            builder.Append("  ")
-                .Append(CliText.Escape(line))
-                .Append('\n');
+            foreach (var line in CliSelectionText.Wrap(text, style.Width - 2))
+                builder.AppendLine($"  {line}");
         }
 
         foreach (var line in data.TextNextLines)

@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would remove the toolkit Extension.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-remove.lifecycle-observation",
+      "title": "Dependency remains installed",
+      "message": "base would remain installed after removing toolkit.",
+      "subject": {
+        "kind": "file",
+        "path": "base",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "After applying this removal, you can preview removing base too.",
+          "reason": "After applying this removal, you can preview removing base too."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 1,
+    "filesDeleted": 1,
+    "filesKept": 0,
+    "filesReleased": 0,
+    "sectionsUpdated": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "automatic": true,
+    "packages": [
+      {
+        "id": "toolkit"
+      }
+    ],
+    "orphaned": [
+      "base"
+    ],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "planned",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/toolkit.md",
+        "action": "delete",
+        "outcome": "planned",
+        "owner": "toolkit",
+        "keptFor": [],
+        "ownersBefore": [
+          "toolkit"
+        ],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/directives/_directives.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/loader.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "action": "unchanged",
+        "outcome": "unchanged",
+        "owner": null,
+        "keptFor": [],
+        "ownersBefore": [],
+        "ownersAfter": []
+      }
+    ],
+    "removalOrder": [
+      "toolkit"
+    ],
+    "entriesUnchanged": [
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/loader.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/archived/_archived.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/templates/_templates.md"
+    ],
+    "verification": {
+      "targets": "planned",
+      "entries": "planned",
+      "extensionRecord": "planned"
+    },
+    "recovery": {
+      "state": "not-created",
+      "protectedPaths": [],
+      "path": null
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension remove toolkit --automatic --workspace <workspace>",
+    "reason": "Apply this removal before previewing removal of its dependencies."
+  }
+}

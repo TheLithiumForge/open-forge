@@ -9,6 +9,38 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class LibraryRepairPlanningTests
 {
+    [Fact(DisplayName = "Automatic Library recovery selects one exact entry from several proposals")]
+    [Trait("Boundary", "Processing"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    public void AutomaticRecoverySelectsOnlyFirstEntry()
+    {
+        var first = new RepairLibraryRecoveryProposal(LibraryRepairData.Evidence());
+        var second = new RepairLibraryRecoveryProposal(LibraryRepairData.Evidence(RecoveryEntryKind.OrdinaryDelete));
+        var input = LibraryRepairData.Input(first.Evidence) with { Libraries = [first, second] };
+        var plan = RepairLibraryRecoveryPlanner.Build(input);
+        Assert.Same(first, Assert.Single(plan.Selection.Libraries.Selected).Proposal);
+        Assert.Same(second, Assert.Single(plan.Selection.Libraries.Unselected));
+        Assert.Single(plan.LibrarySteps);
+        Assert.Empty(plan.Conflicts);
+    }
+
+    [Fact(DisplayName = "Library recovery still refuses two explicitly selected entries")]
+    [Trait("Boundary", "Processing"), Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
+    public void ExplicitMultipleEntriesRemainBlocked()
+    {
+        var first = new RepairLibraryRecoveryProposal(LibraryRepairData.Evidence());
+        var second = new RepairLibraryRecoveryProposal(LibraryRepairData.Evidence(RecoveryEntryKind.OrdinaryDelete));
+        var input = LibraryRepairData.Input(first.Evidence, automatic: false) with
+        {
+            Libraries = [first, second],
+            PromptLibraries = [first, second],
+        };
+        var plan = RepairLibraryRecoveryPlanner.Build(input);
+        Assert.True(plan.IsBlocked);
+        Assert.Empty(plan.LibrarySteps);
+        Assert.Empty(plan.Selection.Libraries.Selected);
+        Assert.Equal(2, plan.Selection.Libraries.Unselected.Length);
+        Assert.All(plan.Conflicts, conflict => Assert.Equal(RepairConflictKind.OverlappingChanges, conflict.Kind));
+    }
     [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]
     [InlineData("OrdinaryCreate"), InlineData("OrdinaryReplace"), InlineData("OrdinaryReplaceGeneratedRegion")]

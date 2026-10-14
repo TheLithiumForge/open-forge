@@ -4,6 +4,7 @@ Workspace: <workspace>
          <recovery-bundle-1> is damaged and was left in place.
          Remove it by hand after review.
          Review the recovery file before removing it.
-  <recovery-bundle-1>  left in place: not recognized
+  <recovery-bundle-1>
+    left in place: not recognized
   Review the recovery file before removing it.
 Next: Remove it by hand after review.

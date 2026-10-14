@@ -95,7 +95,7 @@ public sealed class LibrarySyncApplicationIntegrationTests
             Assert.Same(preparation, execution.RecoveryPreparation);
             Assert.Equal(LibraryRecordPublicationOrder.Last, execution.RecordPublicationOrder);
             Assert.True(Assert.IsType<LibrarySourceEffectScopeFacts>(execution.SourceEffectScope).IsComplete);
-            Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md", new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
+            Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
             Assert.Equal(recordChange.IntendedBytes.ToArray(), File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
             var retained = Assert.IsType<RecoveryBundlePreparation>(preparation);
             var read = await RecoveryBundleReader.ReadFinalAsync(workspace.Workspace, retained.BundlePath, TestContext.Current.CancellationToken);
@@ -119,7 +119,7 @@ public sealed class LibrarySyncApplicationIntegrationTests
             {
                 File.Delete(preparation.BundlePath);
             }
-            if (new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget == "../../shared/team-knowledge/.agents/directives/review.md")
+            if (new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget == "../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(workspace.Absolute(LibraryMutationWorkspace.Leaf));
             }

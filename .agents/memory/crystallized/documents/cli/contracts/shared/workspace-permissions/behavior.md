@@ -51,9 +51,11 @@ add a second generated state record or a separate grant schema.
 Prompt only for a human apply request when the existing interactive session
 permits it and some destinations lack admission. Show those destinations and
 effects, plus Library file/directory scope where relevant. State that remembered
-grants apply to all Extensions and Libraries. Offer always, once and cancel;
-empty or unrecognised input cancels. Cancellation from the caller remains the
-existing interrupted outcome.
+grants apply to all Extensions and Libraries. Offer always, once and cancel in
+that numbered order. Start key-mode focus on once, so Enter approves only the
+current operation. Always requires deliberate selection. In line mode, an empty
+answer cancels and an invalid answer repeats the accepted words. Cancellation
+from the caller remains the existing interrupted outcome.
 
 Always plans an authored settings create/replace preserving unrelated keys.
 Invalid or unsafe settings cannot be repaired implicitly by that approval.

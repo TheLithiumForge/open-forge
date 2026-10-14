@@ -34,7 +34,7 @@ internal sealed class LibraryGitIgnoreCleanup(LibraryMutationWorkspace workspace
     {
         var entry = new FileInfo(workspace.Absolute(path));
         if (entry.LinkTarget is not { } target) return;
-        Assert.Contains(target, acceptedTargets);
+        Assert.Contains(target, acceptedTargets.SelectMany(value => new[] { value, value.Replace('/', Path.DirectorySeparatorChar) }));
         entry.Delete();
     }
 }

@@ -13,7 +13,7 @@ Open Forge is built on one idea: give agents a map of the workspace, not the who
 
 ## Adaptive Context Engineering
 
-Adaptive Context Engineering (ACE) combines two ideas that already work well:
+[Adaptive Context Engineering (ACE)](../glossary.md#ace) combines two ideas that already work well:
 
 - **Progressive disclosure:** show the next useful level of detail, not everything at once.
 - **Spec-driven development:** make goals, constraints, and expected results explicit enough to guide the work and check the result.
@@ -38,7 +38,7 @@ The Framework has two parts:
 - **Core** defines routing, loading, and six reusable content roles.
 - **Memory** keeps useful context as the work evolves, in four states.
 
-Full Core supplies 15 files: `AGENTS.md`, `CLAUDE.md`, the loader, the six Core category entrypoints, the Memory entrypoint with its four state entrypoints, and one Skill, `open-forge-cli`. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). Records such as Decisions, Documents, and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
+Full Core supplies 19 Framework Markdown files. They include `AGENTS.md`, `CLAUDE.md`, the loader, six Core category entrypoints, five Memory entrypoints, and the `open-forge-cli` Skill with its four reference files. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). The CLI also keeps settings and an [ownership record](../glossary.md#ownership-record) for maintenance. Records such as Decisions, Documents, and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
 
 Methods for planning, development, project documents, or coordinating several agents are optional [Extensions](../extensions/index.md). You install the ones that fit your work and skip the rest.
 
@@ -53,3 +53,5 @@ It's small on purpose too. Big predefined methodologies assume everyone works th
 This site helps you get acquainted. The rules an agent follows live in the installed files themselves, starting with [`loader.md`](../../../open-forge/.agents/loader.md). When this site and your installed files disagree, the files win.
 
 :::
+
+Next: [Routing](routing.md).

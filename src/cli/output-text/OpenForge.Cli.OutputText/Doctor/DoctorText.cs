@@ -6,7 +6,7 @@ internal static class DoctorText
 {
     // @OpenForgeText doctor.help.syntax
     internal static string HelpSyntax()
-        => "open-forge doctor [global options]";
+        => "open-forge doctor [options]";
 
     // @OpenForgeText doctor.help.inspection
     internal static string HelpInspection()
@@ -14,7 +14,7 @@ internal static class DoctorText
 
     // @OpenForgeText doctor.help.examples
     internal static string HelpExamples()
-        => "open-forge doctor --detail standard\n  open-forge doctor --format json --detail full";
+        => "open-forge doctor\nopen-forge doctor --detail standard\nopen-forge doctor --format json --detail full";
 
     // @OpenForgeText doctor.message.doctor-was-cancelled
     internal static string MessageDoctorWasCancelled()
@@ -508,13 +508,16 @@ internal static class DoctorText
     internal static string MessageNoProblemsFound()
         => "No problems found.";
 
+    internal static string MessageDoctorCouldNotFinish()
+        => "Doctor could not finish.";
+
     // @OpenForgeText doctor.title.to-list-the-warnings-open-forge-doctor-detail-standard
     internal static string TitleToListTheWarningsOpenForgeDoctorDetailStandard()
         => "To list the warnings: open-forge doctor --detail standard";
 
     // @OpenForgeText doctor.title.to-list-the-info-findings-open-forge-doctor-detail-full
-    internal static string TitleToListTheInfoFindingsOpenForgeDoctorDetailFull()
-        => "To list the info findings: open-forge doctor --detail full";
+    internal static string TitleToListTheInfoFindingsOpenForgeDoctorDetailFull(string command)
+        => $"To list the info findings: {command}";
 
     // @OpenForgeText doctor.message.the-check-could-not-finish
     internal static string MessageTheCheckCouldNotFinish()
@@ -679,4 +682,20 @@ internal static class DoctorText
     // @OpenForgeText doctor.label.external-links
     internal static string LabelExternalLinks()
         => "external links";
+
+    // @OpenForgeText doctor.doctor.help.behavior
+    internal static string HelpBehavior()
+        => "Check the selected workspace. The default summarizes problems and completed checks, with one next step when work remains.\nUse --detail standard to see each warning and its suggested action.\nThis command changes no files and asks no questions.";
+
+    // @OpenForgeText doctor.doctor.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("status", "Check installation and context."),
+            ("repair --help", "Correct verified link and Library problems."),
+            ("index --dry-run", "Fill missing metadata and update Entries."),
+        ];
+    // @OpenForgeText doctor.help.details-1
+    internal static string HelpChecksDetails()
+        => "Inspect recovery data, routes, references, managed Framework files, and managed Extensions.";
 }

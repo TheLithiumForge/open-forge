@@ -54,6 +54,8 @@ internal sealed record MarkdownHeadingFact
 
     internal bool IsTopLevel { get; }
 
+    internal bool IsVisibleTextSupported { get; init; } = true;
+
     internal string VisibleText { get; }
 
     internal int Level { get; }

@@ -1,0 +1,6 @@
+Cannot read context: No source has the ID memroy.
+Workspace: <workspace>
+Context counts are unavailable. The Context source closure could not be resolved
+completely.
+  Choose an ID or exact path from the route list.
+Next: open-forge route list --depth all --workspace <workspace>

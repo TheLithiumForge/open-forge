@@ -67,7 +67,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the unavailable inventory, reference, projection, or recovery facts before relying on this Route Move result."
   }
 }

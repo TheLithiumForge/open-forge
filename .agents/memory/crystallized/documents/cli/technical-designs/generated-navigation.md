@@ -84,6 +84,10 @@ aliases block. Broader portable case, Unicode, and device-name equivalence is
 deferred rather than guessed. Formation does not change current-visible Route or
 Context facts.
 
+## Maintenance Input
+
+Index and Repair supply intended membership after eligible metadata completion and missing-chain scaffolding. Formation itself creates no parent. A gap in observed membership remains detached until the command supplies its complete intended chain. Generated rows remain current navigation, not proof that a successor had a different old identity. Doctor and Repair use shared rename facts rather than deriving identity from the projected topology. [Forgiving Maintenance](forgiving-maintenance.md) defines completion and protection.
+
 ## Projection And Region Facts
 
 Projection consumes accepted source topology and authored metadata facts. It

@@ -80,7 +80,7 @@ public sealed class IndexRenderingTests
         Assert.Equal("update", data.GetProperty("regions")[0].GetProperty("action").GetString());
         Assert.Equal("not-requested", data.GetProperty("regions")[0].GetProperty("outcome").GetString());
         Assert.Equal("not-required", root.GetProperty("recovery").GetProperty("disposition").GetString());
-        Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
+        Assert.Equal("open-forge index", root.GetProperty("next").GetProperty("command").GetString());
         Assert.Empty(root.GetProperty("findings").EnumerateArray());
     }
 
@@ -167,8 +167,8 @@ public sealed class IndexRenderingTests
             recovery: new IndexRecovery(IndexRecoveryState.Removed, null));
         var partialText = Text(partial);
 
-        Assert.Contains("Updated the Entries section in 1 of 1 file; other sources were skipped.", partialText, StringComparison.Ordinal);
-        Assert.Contains("Skipped .agents/beta/_beta.md because its authored frontmatter metadata is malformed", partialText, StringComparison.Ordinal);
+        Assert.Contains("Updated the Entries section in 1 of 1 file. Other sources were skipped.", partialText, StringComparison.Ordinal);
+        Assert.Contains(".agents/beta/_beta.md has invalid frontmatter. It was left unchanged. Other files were indexed.", partialText, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Output")]
@@ -176,12 +176,7 @@ public sealed class IndexRenderingTests
     public void HelpUsesGlobalFlagVocabulary()
     {
         var help = IndexHelpSections.Create();
-        Assert.Contains(help.Sections, section => section.Heading == "Syntax" && section.Body.Contains("open-forge index", StringComparison.Ordinal));
-        var options = Assert.Single(help.Sections, section => section.Heading == "Global options").Body;
-        Assert.Contains("--detail", options);
-        Assert.Contains("--format", options);
-        Assert.DoesNotContain("--view", options);
-        Assert.DoesNotContain("--verbose", options);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge index [<source-reference>...] [options]");
     }
 
     private static CliSelectedReport<IndexData> Select(IndexResult result, CliDetail detail)

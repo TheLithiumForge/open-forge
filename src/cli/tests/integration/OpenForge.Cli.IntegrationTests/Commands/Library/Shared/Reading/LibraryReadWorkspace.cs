@@ -56,7 +56,7 @@ internal sealed class LibraryReadWorkspace : IDisposable
         // Independent relative-path oracle for this fixture's exact contained source root.
         var parent = System.IO.Path.GetDirectoryName(_temporary.Combine(path))
             ?? throw new InvalidOperationException("A projected file requires a parent.");
-        var target = System.IO.Path.GetRelativePath(parent, _temporary.Combine($"{SourceRoot}/{path}")).Replace('\\', '/');
+        var target = System.IO.Path.GetRelativePath(parent, _temporary.Combine($"{SourceRoot}/{path}"));
         _temporary.CreateFileSymbolicLink(path, target);
     }
 

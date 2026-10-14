@@ -1,0 +1,5 @@
+Option --for needs one workspace file path.
+Workspace: <workspace>
+For example: open-forge context --for src/app.cs
+  Check the Context options.
+Next: open-forge context --help

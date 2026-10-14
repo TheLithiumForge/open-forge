@@ -314,7 +314,7 @@ effect remains separate from Framework-owned payload comparisons and receipts.
 
 After target and ownership verification, reopen and verify the recovery bundle
 identity and retain it. Successful retention is complete with the exact bundle
-path. When an ordinary `.git` directory exists, advise `git diff`; otherwise
+path. Regardless of Git tracking,
 point at the recovery bundle. No Git executable runs. Interruption or partial
 failure retains recovery and reports observed residual state. The foundation
 never restores automatically; explicit Cleanup owns deletion separately.

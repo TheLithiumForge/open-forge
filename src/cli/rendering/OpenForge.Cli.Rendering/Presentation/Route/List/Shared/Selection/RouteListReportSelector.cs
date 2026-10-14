@@ -195,7 +195,7 @@ internal static class RouteListReportSelector
         var subject = finding.Subject ?? global::OpenForge.Cli.OutputText.Route.List.RouteListText.LabelTheSuppliedSource();
         return finding.Code switch
         {
-            RouteListPresentationFindingCode.InvalidDepth => RouteListWording.InvalidDepth(),
+            RouteListPresentationFindingCode.InvalidDepth => RouteListWording.InvalidDepth(subject),
             RouteListPresentationFindingCode.InvalidSourceReference => RouteListWording.InvalidSourceReference(subject),
             RouteListPresentationFindingCode.InvalidWorkspace or RouteListPresentationFindingCode.WorkspaceUnavailable
                 => OpenForge.Cli.Core.Presentation.Shared.Wording.CliFindingWording.WorkspaceUnavailable(subject),
@@ -244,6 +244,8 @@ internal static class RouteListReportSelector
 
         return first.Code switch
         {
+            RouteListPresentationFindingCode.InvalidDepth => result.Next is { } next
+                ? new CliNextAction(next.Command, global::OpenForge.Cli.OutputText.Route.List.RouteListText.DepthHelp()) { Kind = next.Kind } : null,
             RouteListPresentationFindingCode.InvalidSourceReference
                 or RouteListPresentationFindingCode.UnknownSource
                 => new CliNextAction(

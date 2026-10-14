@@ -30,7 +30,7 @@ internal static class InstallFrontmatterResolver
         if (canPrompt)
         {
             var initial = installed ? effective : FrontmatterForm.Root;
-            return new(null, new(WorkspaceSettingsDefinitions.ReadFrontmatterName(initial)));
+            return new(null, new(WorkspaceSettingsDefinitions.ReadFrontmatterName(initial)) { Installed = installed });
         }
         return Selected(installed ? effective : FrontmatterForm.Root);
 

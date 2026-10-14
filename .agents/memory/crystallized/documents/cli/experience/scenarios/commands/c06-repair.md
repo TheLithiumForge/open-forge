@@ -12,7 +12,7 @@ These are reviewed user outcomes. Selection does not mean execution passed. Impr
 
 **Goal:** Fix only clear, selected problems without guessing the intended content or hiding the problems left over.
 
-Existing baseline: [Interface](../../../contracts/repair/interface.md), [Behavior](../../../contracts/repair/behavior.md). Exact interface and output differences must be reconciled before implementation.
+Current contracts: [Interface](../../../contracts/repair/interface.md), [Behavior](../../../contracts/repair/behavior.md). The contracts define exact current output and operation behavior.
 
 See [scenario conventions](../_scenarios.md) and the [complete assessment](../../assessment.md).
 
@@ -429,3 +429,260 @@ Name the unavailable required fact and its consequence. Do not infer a complete 
 Prove the read failure and why this input is required. Verify known safe facts remain distinct from unknown values and that no target effect started.
 
 **Execution constraint:** Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
+
+## Maintenance Review Boundaries
+
+Protect containing sources and candidates through selection, planning and revalidation. Use Doctor's identical proof interpretation. Partial headlines name verified effects and remaining choices or edits. Incomplete previews apply safe independent work before malformed-file advice. Keep workspace coordinates in all commands. A Git timeout retries the complete request without manual-removal advice. Each non-interactive candidate appears once under its link with its strongest reason and copyable command. Navigation renames are one row and new entrypoints have no duplicate Entries row.
+
+## C06-14
+
+**Situation:** Repair an unchanged proven rename without a choice
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X37](../experience.md#x37) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-15
+
+**Situation:** Repair across-folder and source moves with navigation
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X38](../experience.md#x38) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-16
+
+**Situation:** Two strong successors remain guided
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X39](../experience.md#x39) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-17
+
+**Situation:** Singleton title guesses remain guided
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X40](../experience.md#x40) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-18
+
+**Situation:** No-Git metadata identity and its limits
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X41](../experience.md#x41) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-19
+
+**Situation:** Use committed evidence after Index removes a stale row
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X42](../experience.md#x42) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-20
+
+**Situation:** Repair edited notes only with strong evidence
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X43](../experience.md#x43) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-21
+
+**Situation:** Repair a whole folder and mixed batch
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X46](../experience.md#x46) and [X47](../experience.md#x47) for folder and batch branches. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-22
+
+**Situation:** Deleted targets require an authored edit
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X45](../experience.md#x45) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-23
+
+**Situation:** Guard combined source, target, navigation and recovery state
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X48](../experience.md#x48) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C06-24
+
+**Situation:** Publish additive proof and navigation JSON
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X49](../experience.md#x49) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge repair --automatic` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.

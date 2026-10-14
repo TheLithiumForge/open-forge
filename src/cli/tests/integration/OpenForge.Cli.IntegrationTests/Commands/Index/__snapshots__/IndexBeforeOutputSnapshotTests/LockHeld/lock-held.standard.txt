@@ -4,4 +4,4 @@ Workspace: <workspace>
          Another Open Forge command holds the workspace lock. Nothing was changed.
   .agents/root/_root.md  not started
   Retry when the other command finishes.
-Next: open-forge index
+Next: open-forge index --workspace <workspace>

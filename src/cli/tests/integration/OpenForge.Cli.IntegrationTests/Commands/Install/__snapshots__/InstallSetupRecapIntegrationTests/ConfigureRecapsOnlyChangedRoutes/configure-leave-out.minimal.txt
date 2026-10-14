@@ -1,0 +1,8 @@
+Would change the Open Forge setup.
+Workspace: <workspace>
+guidance: add -> leave out
+Existing files stay and remain routable.
+  .agents/open-forge.json       settings would be updated
+  .agents/open-forge.lock.json  ownership record would be updated
+  Would update 2 existing files.
+No files were changed.

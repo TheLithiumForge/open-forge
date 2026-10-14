@@ -17,7 +17,8 @@ export const loadingLabels: Record<Loading, string> = {
 // The pitch above the diagram, and what a fresh install reads.
 export const pitch =
   "At startup your agent reads its instructions, most main folder indexes, and the files their tags or rules require. Everything else opens when a task needs it.";
-export const startupFootprint = "A fresh install reads 12 files at startup, about 9.6k estimated tokens, including the CLI guide. What you add can change the count.";
+export const startupFootprint =
+  "Startup reads your agent instructions, the loader, installed entrypoints tagged to load, and required files such as the CLI usage Skill. Your setup determines the footprint.";
 
 // Shown between the loader and the panels, before the first card.
 export const entrypointNote =
@@ -99,7 +100,6 @@ export interface MemoryState {
   // A loading fact that applies only to this state.
   readonly loadingNote?: string;
   readonly contents?: string;
-  readonly next?: string;
 }
 
 export const memoryStates: readonly MemoryState[] = [
@@ -109,7 +109,6 @@ export const memoryStates: readonly MemoryState[] = [
     holds: "Temporary state for work in progress.",
     loading: "startup",
     contents: "Extensions add Checkpoints and Handoffs.",
-    next: "Worth keeping, not settled",
   },
   {
     name: "Emerging",
@@ -118,7 +117,6 @@ export const memoryStates: readonly MemoryState[] = [
     loading: "startup",
     loadingNote: "Also re-read at refresh points.",
     contents: "Extensions add Ideas, Analysis, and Observations.",
-    next: "Accepted",
   },
   {
     name: "Crystallized",
@@ -126,12 +124,14 @@ export const memoryStates: readonly MemoryState[] = [
     holds: "Accepted knowledge that stays current.",
     loading: "startup",
     contents: "Extensions add Decisions and Documents.",
-    next: "Replaced",
   },
   { name: "Archived", tense: "History", holds: "Kept for reference. It no longer governs current work.", loading: "demand" },
 ];
 
-export const memoryNote = "A record can skip states. An accepted choice can go straight to Crystallized.";
+export const memoryNote =
+  "These are places to keep material, not required steps. A record can start in any state that fits it. Accepted knowledge can go straight to Crystallized.";
+export const memoryMoves = "Working to Emerging when worth keeping but not settled. Emerging to Crystallized when accepted. Crystallized to Archived when replaced.";
+export const memoryGuide = { label: "Memory rules", href: "/docs/concepts/memory" } as const;
 
 // Every task. The first two steps repeat the two loading styles.
 export interface TaskStep {
@@ -163,7 +163,7 @@ export const loadingGuide = {
 } as const;
 
 export const captions: readonly string[] = [
-  "Linked files open when selected or required. `#LoadNow` reads a file when its parent index loads; `#KeepInMind` also re-reads it at task start or resume, after a context restore, and before handoff or closeout while its scope is active. Both tags act through a loaded parent. The Skills rules explicitly require the CLI usage guide at startup.",
+  "Linked files open when selected or required. `#LoadNow` reads a file when its parent index loads. `#KeepInMind` also re-reads it at task start or resume, after a context restore, and before handoff or closeout while its scope is active. Both tags act through a loaded parent. The Skills rules explicitly require the CLI usage guide at startup.",
   "A file with `applyTo` patterns applies only while the task works on a matching file.",
   "`open-forge context skills/open-forge-cli` batches the default loading-tag closure and the required CLI guide. Extensions are optional packages you add.",
 ];

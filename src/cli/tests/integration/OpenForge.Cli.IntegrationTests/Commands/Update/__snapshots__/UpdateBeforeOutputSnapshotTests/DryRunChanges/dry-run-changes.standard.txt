@@ -1,5 +1,7 @@
-Would update 1 Framework file.
+Would change 1 source file.
 Workspace: <workspace>
-  .agents/loader.md  would be replaced (your previous file would be kept in a recovery bundle)
+  .agents/loader.md
+    would be replaced (your previous file would be kept in a recovery bundle)
   18 files unchanged
+  Previous content will be kept in a recovery bundle.
 No files were changed.

@@ -55,7 +55,7 @@ public sealed class LibraryRelativeFileLinkRecoveryIntegrationTests
             var result = await RelativeFileLinkRecoveryApplier.ApplyAsync(new PhysicalPathResolver(), lease, preparation, entry, TestContext.Current.CancellationToken);
 
             Assert.Equal(RelativeFileLinkRecoveryState.Restored, result.State);
-            Assert.Equal(originalDelete ? RawTarget : null, new FileInfo(path).LinkTarget);
+            Assert.Equal(originalDelete ? RawTarget.Replace('/', Path.DirectorySeparatorChar) : null, new FileInfo(path).LinkTarget);
             Assert.Equal(originalDelete ? NoFollowLeafState.RelativeFileLink : NoFollowLeafState.Missing,
                 Assert.IsType<NoFollowLeafObservation>(result.After).State);
             Assert.True(File.Exists(preparation.BundlePath));
@@ -70,7 +70,7 @@ public sealed class LibraryRelativeFileLinkRecoveryIntegrationTests
         }
         finally
         {
-            if (new FileInfo(path).LinkTarget == RawTarget)
+            if (new FileInfo(path).LinkTarget == RawTarget.Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(path);
             }

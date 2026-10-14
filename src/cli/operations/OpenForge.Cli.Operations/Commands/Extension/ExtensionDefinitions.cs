@@ -6,5 +6,5 @@ internal static class ExtensionDefinitions
 {
     internal static readonly CliSyntaxDefinition ExtensionGroup = new(
         name: "extension",
-        description: "Manage optional Open Forge Extension packages.");
+        description: "Manage optional packages of agent rules and context.");
 }

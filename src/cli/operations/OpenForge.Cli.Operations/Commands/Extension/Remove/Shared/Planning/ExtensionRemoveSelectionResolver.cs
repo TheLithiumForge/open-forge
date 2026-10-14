@@ -55,7 +55,10 @@ internal sealed class ExtensionRemoveSelectionResolver
         var question = new CliMultiSelectQuestion<string>(
             _selectionQuestion,
             [.. extensions.OrderBy(package => package.Id, StringComparer.Ordinal)
-                .Select(package => new CliChoice<string>(package.Id, package.Id))],
+                .Select(package => new CliChoice<string>(package.Id, package.Id)
+                {
+                    InstalledPackage = new CliInstalledPackageSummary(package.Version, package.Paths.Length),
+                })],
             [.. extensions.SelectMany(package => package.Dependencies
                 .Where(displayedIds.Contains)
                 .Select(dependency => new CliDependency<string>(package.Id, dependency)))],

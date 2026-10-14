@@ -76,4 +76,36 @@ internal static class RemoveText
             _ => $"Could not confirm the outcome for {subject} {path}",
         };
     }
+
+    // @OpenForgeText remove.remove.help.helpsyntax
+    internal static string HelpSyntax()
+        => "open-forge remove <target> [options]";
+
+    // @OpenForgeText remove.remove.help.helpexamples
+    internal static string HelpExamples()
+        => "open-forge remove .agents/guidance/old.md --dry-run\nopen-forge remove .agents/guidance/old.md\nopen-forge remove planning --kind extension --dry-run";
+
+    // @OpenForgeText remove.remove.help.helpbehavior
+    internal static string HelpBehavior()
+        => "The default kind is path. Select one exact target.\n--dry-run shows the checked removal plan and writes nothing.\nAn interactive writing plan asks for confirmation unless --automatic is supplied.\nRedirected or JSON requests that would write need --automatic.\nSupported managed removals are remembered so later updates do not restore them. Interrupted writes report recovery data.";
+
+    // @OpenForgeText remove.remove.help.helpheadingkinds
+    internal static string HelpHeadingKinds()
+        => "Kinds";
+
+    // @OpenForgeText remove.remove.help.helpkinds
+    internal static string HelpKinds()
+        => "path removes an exact workspace path. Route removes a routed source or category. Extension removes an installed package. Library detaches its registration and links while keeping source files. Each kind uses its own safety and permission rules. --allow-path grants only the exact additional destination required by the selected operation.";
+
+    // @OpenForgeText remove.remove.help.helprelatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("route remove --help", "Remove a routed file or category."),
+            ("extension remove --help", "Remove an installed Extension."),
+            ("library detach --help", "Detach links while keeping source files."),
+        ];
+    // @OpenForgeText remove.help.details-1
+    internal static string HelpKindsDetails()
+        => "path removes an exact workspace path. Route removes a routed source or category. Extension removes an installed package. Library removes its registration and links while keeping source files. Each manager retains its own safety and permission rules. --allow-path grants only the exact additional destination needed.";
 }

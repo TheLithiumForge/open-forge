@@ -21,3 +21,5 @@ Some limits to know before you adopt it:
 The CLI is in public beta. Command output and some behaviors may still change before 1.0. The Framework files themselves work with or without the CLI.
 
 Found something rough? [Open an issue](https://github.com/TheLithiumForge/open-forge/issues).
+
+**Next:** [Try Open Forge in the ten-minute guide](getting-started/ten-minute-guide.md).

@@ -41,6 +41,18 @@ attach. Recovery protects the exact prior lock bytes
 before any effect; the planned lock publication remains last after verified
 link and generated-region effects.
 
+## Help
+
+The purpose sentence is: Register a local source folder and link its files into the workspace.
+
+The public Usage line is:
+
+```text
+open-forge library attach <library-id> <source-root> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Operation Boundary
 
 `library attach` registers one new consumer-local library ID and projects the
@@ -343,7 +355,13 @@ bounded facts, and debug adds bounded diagnostics on stderr. Detail does not
 change semantics, effects, counts, or status. Filters select finding severities;
 all is the default filter.
 
-Library attach resolves its ignore choice and permissions, then shows a plan review before final confirmation. --automatic suppresses prompts and defaults omitted ignore intent to false; without it the final confirmation is Apply these changes? [y/N]. Permission prompts use Allow always / Allow once / Cancel.
+Library attach resolves its ignore choice and permissions, then shows a plan
+review before final confirmation. `--automatic` suppresses prompts and defaults
+omitted ignore intent to false. Without it the final confirmation is
+`Apply these changes? [y/N]`. Permission prompts use `Allow always`, `Allow once`,
+and `Cancel` in that numbered order. Key mode starts focused on `Allow once`, so
+Enter approves only this run. Saving a grant requires deliberately choosing
+`Allow always`.
 
 When the final confirmation is required but the invocation is noninteractive or
 redirected, Attach returns `invalid-input` (Invalid4) with
@@ -421,6 +439,9 @@ The command is exactly library attach; data follows the catalogue:
 | minimal  | `{ mode, id, sourceFolder, destinationFolder, recorded: bool, permissions { decision, required, missing, saved } }` |
 | standard | + `links: [ { path, target } ]`, `inventory { eligible, excluded }`                                                 |
 | full     | + `expectedStates`, `verification`, `recovery` details                                                              |
+
+Link `target` fields use the portable mapping target with `/`. Full-detail
+`expectedStates[].target` retains the raw on-disk link identity as evidence.
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON
@@ -538,11 +559,16 @@ action when available. Counts are:
 
 Prompt rules from the catalogue:
 
-Permission (`Allow always / Allow once / Cancel`) for destinations outside
-`.agents`; plan review; `Apply these changes? [y/N]` unless `--automatic`
-(added by 04).
+Permission (`Allow always / Allow once / Cancel`, with `Allow once` initially
+focused in key mode) covers destinations outside `.agents`. A plan review and
+`Apply these changes? [y/N]` follow unless `--automatic` is supplied (added by 04).
 
 ## Representative Transcripts
+
+Permission retries retain the Library ID, source root, destination, explicit
+workspace, Git-ignore choice, existing permission paths, automatic and preview
+mode, and presentation options. Add the missing permission paths and quote each
+path for the supported shell. Text and JSON use the same command.
 
 ### completed
 

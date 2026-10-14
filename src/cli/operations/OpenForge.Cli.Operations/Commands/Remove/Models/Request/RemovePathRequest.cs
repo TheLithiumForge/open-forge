@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 
 namespace OpenForge.Cli.Core.Commands.Remove.Models.Request;
 
@@ -41,4 +42,5 @@ internal sealed record RemovePathRequest
     internal ImmutableArray<string> AllowPaths { get; }
 
     internal bool IsDryRun => Mode == RemoveMode.DryRun;
+    internal CliRetryOptions? RetryOptions { get; init; }
 }

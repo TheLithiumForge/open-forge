@@ -1,5 +1,3 @@
 Extension create was cancelled. Nothing was changed.
-  Error  <extension-source>  Extension create was cancelled [extension-create.interrupted]
-         Extension create was cancelled. Nothing was changed.
   Inspect the retained destination state, then rerun Extension Create if appropriate.
 Next: open-forge extension create

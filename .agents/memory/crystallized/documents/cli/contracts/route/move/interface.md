@@ -39,6 +39,18 @@ evidence, runtime, Native AOT, and source-layout choices. This command
 contract adds no competing implementation choice and preserves the observable
 boundaries below.
 
+## Help
+
+The purpose sentence is: Move one unmanaged routed file or category and update its references.
+
+The public Usage line is:
+
+```text
+open-forge route move <source-reference> <destination-target> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Operation Boundary
 
 `route move` moves one eligible ordinary unmanaged logical leaf or one eligible
@@ -725,7 +737,7 @@ Workspace: <workspace>
   README.md:3:13
   README.md:5:23
   notes.md:3:11
-Next: open-forge route move --detail debug
+Next: open-forge route move "guidance/old guide" ".agents/guidance/new guide.md"
 ```
 
 ### cancelled
@@ -736,8 +748,15 @@ Workspace: <workspace>
   Error  guidance/old guide  Route move was cancelled
          Route move was cancelled. Nothing was changed.
   files scanned: the reference scan was not completed
-Next: open-forge route move
+Next: open-forge route move "guidance/old guide" ".agents/guidance/new guide.md"
 ```
+
+Retry commands repeat the original operands and flags, with shell quoting for
+values that need it. Cancelling an ambiguous source choice keeps the original
+reference so retry asks again. Only missing confirmation may add `--automatic`.
+The text and JSON `next.command` values carry the same complete command.
+An explicitly selected workspace also stays on follow-up commands that act on
+that workspace. Parent route paths are quoted when needed.
 
 ## Related Current Sources
 

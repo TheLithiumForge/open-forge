@@ -1,0 +1,62 @@
+  Change selected metadata or add Template content to an eligible empty body.
+
+Usage:
+  open-forge route update <source-reference> [options]
+
+Examples:
+  open-forge route update memory/note --description "Note" --dry-run
+  open-forge route update memory/note --description "Note"
+  open-forge route update memory/note --clear-apply-to --dry-run
+
+Behavior:
+  Change only the metadata or Template content you request. Other content stays.
+  --dry-run shows the checked plan and writes nothing.
+  A verified no-op writes nothing and creates no recovery bundle.
+  This command asks no questions. Interrupted writes report retained recovery
+  data.
+
+Arguments:
+  <source-reference>  Select one existing routed source by ID or exact path.
+
+Options:
+  --description <text>     Replace the routed source description.
+  --tag <tag>              Replace the ordered tag list. Repeat for additional
+                           tags.
+  --responsibility <text>  Set the responsibility, or remove it with an exact
+                           empty value.
+  --template <template-reference>
+      Copy one routed Template body when the target body is eligible.
+  --apply-to <glob>        Replace the complete local applyTo list. Separate
+                           patterns with commas or repeat this option.
+  --clear-apply-to         Remove applyTo declarations from the root and Open
+                           Forge metadata locations.
+  --dry-run                Preview the complete update plan without writing.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Target and metadata: Use one existing ordinary source by exact ID, base path,
+  or adjacent overwrite path. ID, base path, document form, and overwrite
+  ownership stay. Request at least one metadata or Template operation. Supply
+  description, responsibility, and Template at most once. Repeated tags replace
+  the ordered list. Empty or duplicate tags are invalid. Repeated --apply-to
+  replaces the whole local list. It cannot accompany --clear-apply-to. An exact
+  empty responsibility removes the field. Whitespace alone is invalid.
+  Globs and Templates: Globs are case-sensitive and workspace-relative: *.py at
+  root, **/*.py at any depth, docs/** below docs. ! is literal. --template
+  copies only the body of one exact routed Markdown source tagged Template into
+  an empty or whitespace-only body. Authored target content is protected.
+  Write boundary: Apply locks the workspace and revalidates the target and
+  generated-navigation plan.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  route inspect --help  Inspect one routed source.
+  route create --help   Create a routed Markdown file.
+  index --dry-run       Fill missing metadata and update Entries.

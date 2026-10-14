@@ -33,6 +33,67 @@ BCL-first filesystem structure, the workspace-lock boundary, and recovery
 identity relationships. No command-local Technical Design file exists for Repair. This Interface
 Contract remains technology-neutral.
 
+## Help
+
+The purpose sentence is: Apply verified corrections or explicitly chosen repairs to local links and Library state.
+
+The public Usage line is:
+
+```text
+open-forge repair [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
+Details explains `path@line:column` with one-based numbers at the start of the link destination. Doctor's displayed link location cannot be copied directly. For `[Rule](../working/order-rule.md)` at the start of line 7, the destination starts at column 8. The expected value must match the current authored destination, and the target must be an admitted reported candidate. The worked example remains one logical command line:
+
+```text
+open-forge repair --relink ".agents/memory/crystallized/repair-note.md@7:8" "../working/order-rule.md" ".agents/memory/crystallized/order-rule.md" --dry-run
+```
+
+## Forgiving Maintenance
+
+Task 79 extends the automatic catalogue with proven manual renames and moves. The [identity evidence model](../../technical-designs/forgiving-maintenance.md#rename-and-move-evidence) defines strong evidence and unique-candidate selection. Filename, title or independent literal-content guesses remain choices, even if only one candidate exists. Nearby-route evidence alone and the broken occurrence itself do not nominate a successor. No new flag or confirmation mode is added.
+
+`repair --automatic` selects every current proven rename or move and existing safe-exact repair. It also completes eligible metadata, missing chains and generated Entries in the affected old and new route closures in the same plan. This makes one command enough for that rename's navigation. Unrelated maintenance remains Index's next job. The shared planner is called directly, never through another public command. Labels and authored bytes outside selected destination spans or absent-field insertions remain exact.
+
+An explicit relink preserves the old destination's generated Entries closure while another broken authored occurrence still points at that missing path. The stale row can be the identity evidence for its remaining choices. Refresh that closure when the last occurrence is resolved. Recompute this boundary from fresh references under the mutation lease.
+
+Each listed candidate's complete relink command also appears at every detail in its structured finding's existing `actions` array, including the explicit workspace. JSON agents can execute these actions when Next says to choose a target. Human output keeps one command beneath each candidate label.
+
+| Result                           | Exact human text                                                                                                                                                                                                                         |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unchanged rename proof           | `<old-path> was renamed to <new-path>, same content`                                                                                                                                                                                     |
+| Across-folder proof              | `<old-path> was moved to <new-path>, same content`                                                                                                                                                                                       |
+| Edited content proof             | `<old-path> was renamed to <new-path>, content is <S>% unchanged`                                                                                                                                                                        |
+| Metadata proof                   | `<old-path> was renamed to <new-path>, recorded description and tags match`                                                                                                                                                              |
+| Navigation applied               | `<path>  Entries updated`                                                                                                                                                                                                                |
+| Navigation preview               | `<path>  Entries would be updated`                                                                                                                                                                                                       |
+| Several strong candidates        | `<old-path> is missing. More than one file looks like its new location.`                                                                                                                                                                 |
+| Only weak candidates             | `<old-path> is missing. Its new location could not be proven.`                                                                                                                                                                           |
+| One candidate command            | `To use <link-relative-path> (<strongest-reason>):`, then an indented, unwrapped `open-forge repair --relink <source-path>@<line>:<column> <expected-destination> <target-path> --automatic` with the request's workspace                |
+| Candidate reason                 | `same content`, `content is <S>% unchanged` or `recorded description and tags match` when strong evidence exists, otherwise `same file name`, `same title` or the readable weak reason                                                   |
+| Non-interactive choice headline  | `Repair cannot ask for a choice in this session. Nothing was changed.` The human report omits the duplicate selection-required row and trailing count and advice lines. JSON keeps `repair.selection-required`, and exit 5 is unchanged. |
+| Other guided link                | `1 possible target.` or `<N> possible targets.`, beneath its `Broken link` finding at `<path>:<line>:<column>`                                                                                                                           |
+| Other remaining link             | `This link still needs repair.` A manual authored-link case has action `Update or remove this link in <source-path> at line <line>, column <column>.` A pending safe-exact repair keeps its retry advice.                                |
+| No successor                     | `<old-path> is missing and no replacement was found.`, action `Update or remove this link in <source-path> at line <line>, column <column>.`                                                                                             |
+| Navigation file renamed, applied | `<new-path>  renamed from <old-name>, your rules were kept`                                                                                                                                                                              |
+| Navigation file renamed, preview | `<new-path>  would be renamed from <old-name>, your rules would be kept`                                                                                                                                                                 |
+| Headline remainder               | `<N> needs a choice` and `<M> needs an edit`, joined with `and`, naming only non-zero parts, for example `Nothing could be repaired automatically. 1 problem needs a choice.`                                                            |
+| Malformed affected source        | `<path> has invalid frontmatter. Fix its frontmatter, then run open-forge index --workspace <workspace>.` An incomplete preview with independent safe effects points to applying that safe plan first.                                   |
+| Git evidence timeout             | `Git did not answer in time, so renamed files could not be proven. Run the command again.` Next repeats the complete request, including the workspace. It does not advise removing a link.                                               |
+| Managed source                   | `<path> is managed. Its managing Update owns this file.` The action uses the managing Framework or Extension Update. Repair preserves the source.                                                                                        |
+| Native package source or target  | `<path> is inside a native Skill package. Edit its SKILL.md or package resource.` Repair preserves the protected file.                                                                                                                   |
+| Excluded or private source       | `<path> is excluded or private. Restore its route or sharing intent before repairing this link.`                                                                                                                                         |
+
+An applied incomplete result names the verified link effects and remaining choices or edits. It never claims that nothing changed after applying effects. Sentence-embedded continuation commands carry the explicit workspace, just as standalone commands do.
+
+The new informational `repair.rename-proven` row states the actual evidence in preview and verified application. A proof row describes an observed rename, never an applied relink in preview. Keep existing per-occurrence old-to-new destination rows and repair counts. Completion rows use Index's exact metadata and entrypoint wording. Affected navigation safety gates belong to the same full preflight, confirmation, recovery and expected-state checks as relinks.
+
+Repair never leaves a choice without a way to make it. When it cannot ask, because the session is not interactive or `--automatic` is set, every guided link lists each candidate with its exact relink command, and the proof or reason for that candidate. A proof row sits under its own link. A renamed navigation file is one row, never a created file plus a deleted file. A created entrypoint shows only its creation row. A dry run points to the corresponding apply command, and a preview and its application select the same Next for the same state. When Repair lists copyable choices, Next is `Choose a target above, then run its command.`, ahead of Index. Safety and recovery boundaries and safe automatic repairs remain first. The chosen explicit relink completes eligible metadata, chains and generated Entries in the affected old and new route closures in the same plan. An unavailable old identity after Index with no Git stays guided or manual. A deleted note is never recreated or replaced by a nearby guess. After the choice is applied, one fresh Next points to Index for unrelated completion, another listed choice, guided Repair, a precise manual edit, or `open-forge doctor` for verification.
+
+Schema 3 adds `renames`, `navigation`, completion arrays and counts with the exact [wire inventory](../../technical-designs/forgiving-maintenance.md#safety-and-wire-inventory). Existing link, file, section and directory effect kinds suffice. Existing repair counts remain link-occurrence counts. The envelope, exits, streams, Library recovery, explicit tuples and interactive final confirmation remain unchanged.
+
 ## Purpose And Boundary
 
 `repair` applies only current diagnosis-backed, conflict-free, exact
@@ -40,7 +101,7 @@ meaning-preserving local corrections and explicitly selected contained relinks.
 It may also consume one semantically verified current-v1 Workspace Library
 residual when an already selected safe-exact effect authorizes the bounded
 no-follow recovery described below. It does not author content, labels,
-metadata, generated navigation, route topology, recovery cleanup, Framework
+unrelated metadata, unrelated generated navigation, unrelated route topology, recovery cleanup, Framework
 lifecycle, Extension lifecycle, or ownership decisions. It does not promise to
 eliminate every Doctor finding.
 
@@ -81,15 +142,15 @@ receipt, or second `fix` spelling.
 
 ## Flag Grammar And Composition
 
-| Input                                                             | Role                                                          | Value and omission                                                               | Repetition and composition                                                                                    |
-| ----------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `--automatic`                                                     | Automatic selection and non-wizard mode                       | Boolean; omission leaves selection to explicit relinks or the interactive wizard | Repeatable and idempotent. It selects every current safe-exact proposal and never selects a guided candidate. |
-| `--relink <source-location> <expected-destination> <target-path>` | Explicit local-reference selection and user intent            | Exactly three shell values per occurrence                                        | Repeatable. Identical triples deduplicate. Contradictory tuples for the same occurrence are invalid.          |
-| `--dry-run`                                                       | Sole preview policy                                           | Boolean; omission permits application when selection and authority are complete  | Repeatable and idempotent. It never creates persistent effects.                                               |
-| global flags                                                      | Workspace, presentation, diagnostics, or terminal information | The six shared values                                                            | Shared defaults, repetition, terminal, and composition rules apply.                                           |
+| Input                                                             | Role                                                          | Value and omission                                                               | Repetition and composition                                                                                                                                                       |
+| ----------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--automatic`                                                     | Automatic selection and non-wizard mode                       | Boolean; omission leaves selection to explicit relinks or the interactive wizard | Repeatable and idempotent. It selects every current safe-exact local-reference proposal and the first offered exact Library residual entry. It never selects a guided candidate. |
+| `--relink <source-location> <expected-destination> <target-path>` | Explicit local-reference selection and user intent            | Exactly three shell values per occurrence                                        | Repeatable. Identical triples deduplicate. Contradictory tuples for the same occurrence are invalid.                                                                             |
+| `--dry-run`                                                       | Sole preview policy                                           | Boolean; omission permits application when selection and authority are complete  | Repeatable and idempotent. It never creates persistent effects.                                                                                                                  |
+| global flags                                                      | Workspace, presentation, diagnostics, or terminal information | The six shared values                                                            | Shared defaults, repetition, terminal, and composition rules apply.                                                                                                              |
 
 Explicit inputs compose incrementally. `--automatic` adds all current safe-exact
-proposals to any explicit relinks. An explicit relink supplies the selection for
+local-reference proposals and at most one Library residual to explicit relinks. An explicit relink supplies the selection for
 its addressed occurrence and suppresses candidate selection for that occurrence.
 There is no hidden precedence, disjunctive mode, order winner, or fallback
 choice. An input that conflicts with another explicit input is invalid.
@@ -314,7 +375,7 @@ General Repair admits only these effects:
 | Same-target canonical case      | The authored local destination differs only in case from the exact target spelling, and physical identity is unambiguous. It is `safe-exact` only when that identity is proven.                                                                                                                                         |
 | Same-target canonical encoding  | The authored destination uses a non-canonical encoding for the same target. It is `safe-exact` only when the expected and intended bytes are exact.                                                                                                                                                                     |
 | Unique canonical fragment       | The target is the same and one canonical fragment correction is proven. It is `safe-exact` and may be selected by `--automatic`.                                                                                                                                                                                        |
-| Missing-target relink           | The authored target is missing and Doctor supplies bounded filename, title, literal-content, or structural route-neighborhood candidates. It is `guided-choice`; the user must choose in the wizard or provide an explicit `--relink` target.                                                                           |
+| Missing-target relink           | The authored target is missing and Doctor supplies bounded filename, title, literal-content, or structural route-neighborhood candidates. Weak evidence is `guided-choice`. A uniquely proven rename or move is `safe-exact` under Forgiving Maintenance.                                                               |
 | Typed Library residual recovery | A semantically verified current-v1 residual is attributed to the selected workspace's Library record and the existing automatic/guided selection shape authorizes one exact safe-exact ordinary-record, ordinary-file, or relative-file-link recovery effect. It uses no new syntax and never becomes generic rollback. |
 
 The filename, title, literal-content, and route-neighborhood evidence is finite
@@ -328,12 +389,11 @@ its actual path, identifier, and cause. It is not converted into a Markdown
 broken-link occurrence, a guided candidate, or a Repair proposal.
 
 The catalogue does not include external repairs, semantic or fuzzy target
-choices, authored prose or labels, generated navigation, route authoring or
-topology, route metadata, overwrite content, recovery-bundle or draft cleanup or restoration,
+choices, authored prose or labels, unrelated generated navigation, unrelated route authoring or topology, unrelated route metadata, overwrite content, recovery-bundle or draft cleanup or restoration,
 Framework mutation, Extension mutation, ownership adoption, or any effect that
 lacks complete verification and recovery.
 
-Generated navigation points to `index`. Known route intent points to an accepted
+Unrelated generated navigation points to `index`. Affected navigation is part of the combined Forgiving Maintenance plan. Known route intent points to an accepted
 route operation. Recovery-bundle or draft deletion belongs to the separate accepted
 [`cleanup` operation](../cleanup/interface.md). Framework and Extension lifecycle
 findings point to their accepted lifecycle operation or manual instructions.
@@ -345,6 +405,16 @@ uses no-follow logical parent/leaf/raw-target checks. It may delete only an exac
 intended created link or object to restore a prior-missing state, or recreate an
 exact deleted or dangling relative link from its stored raw target. It never
 follows, writes, or deletes a source target and blocks a third or unsafe state.
+
+### Library recovery selection
+
+When several Library residual entries are offered, the wizard asks once:
+`Choose one Library recovery step for this run`. Each option names its exact
+target and retains its recovery description. The last option is
+`Leave all recovery steps out`. Key and line mode each admit at most one entry.
+Automatic mode, including dry run, selects the first offered entry. The existing
+one-entry limit, attribution, containment, expected-state and verification checks
+remain binding. The existing plan and final confirmation follow selection.
 
 ## Diagnosis And Completeness Gate
 
@@ -566,7 +636,7 @@ Repaired 2 links.
 
 `minimal`, applied with remaining problems:
 
-Report completed link effects and each remaining problem. Guided authored-link findings name the unresolved destination before the available choices; Library findings show their actual observed subject and cause. The next action follows the rules below.
+Report completed link effects and each remaining problem. Guided authored-link findings name the unresolved destination before the available choices. Library findings show their actual observed subject and cause. The next action follows the rules below.
 
 `minimal`, nothing safe outside a terminal:
 
@@ -574,10 +644,7 @@ Report that no automatic repair was available, retain each unresolved authored d
 
 `minimal`, no selection possible (stderr):
 
-```text
-Cannot repair: repair needs to know which repairs to apply, and this session cannot ask.
-Next: open-forge repair --automatic  (apply the 6 repairs that are safe)
-```
+A choice-only request says `Repair cannot ask for a choice in this session. Nothing was changed.` Each candidate has one reason and one copyable relink command beneath its link. Next says `Choose a target above, then run its command.` If verified safe repairs await selection, the continuation can select them with `--automatic`.
 
 `minimal`, partial (stderr):
 
@@ -593,6 +660,12 @@ Next: open-forge doctor
 its possible targets as rows, the Library recovery steps selected or skipped,
 concrete Library observations with their actual path, identifier, and cause,
 and the reason for `Next`. Library observations do not gain candidate rows.
+
+The result groups Library observations by their typed path and identifier and
+retains every distinct cause. Counts and report projections use those grouped
+facts, so nineteen affected links remain nineteen problems even when diagnosis
+supplies several causes for each link. Post-diagnosis, planned recovery and
+unselected residual evidence remain available.
 
 `full` adds why each possible target was suggested, the expected and new
 SHA-256 of each rewritten file, the checks that ran (diagnosis coverage as a
@@ -673,7 +746,9 @@ unknown`.
 
 ### Next rules
 
-Remaining guided authored-link findings -> `open-forge repair`; no selection ->
+Listed copyable choices -> `Choose a target above, then run its command.`,
+ahead of Index and after safety, recovery and safe automatic repairs.
+Remaining guided authored-link findings without listed choices -> `open-forge repair`; no selection ->
 `open-forge repair --automatic`; Library-only remaining problems ->
 `open-forge doctor`; mixed authored-link and Library problems retain the Repair
 action for authored links and explain Doctor for the Library diagnosis; partial
@@ -687,31 +762,31 @@ The findings catalogue below is the command's finite error and warning vocabular
 
 ### Findings catalogue
 
-| Code                              | Severity | Family                     | Message                                                                                                                                                                                                                                                                                                                                 | Next                                                             |
-| --------------------------------- | -------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| repair.invalid-input              | error    | invalid-input              |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.relink-invalid             | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.relink-invalid`).           | `open-forge repair --help`                                       |
-| repair.contradictory-relink       | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.contradictory-relink`).     | none                                                             |
-| repair.selection-required         | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.selection-required`).       | `open-forge repair --automatic`                                  |
-| repair.missing-authority          | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.missing-authority`).        | add the path to `allowInstallPaths` in `.agents/open-forge.json` |
-| repair.diagnosis-blocked          | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.diagnosis-blocked`).        | `open-forge doctor`                                              |
-| repair.diagnosis-incomplete       | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.diagnosis-incomplete`).     | `open-forge doctor`                                              |
-| repair.proposal-unavailable       | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.proposal-unavailable`).     | `open-forge doctor --detail standard`                            |
-| repair.proposal-unsupported       | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.proposal-unsupported`).     | fix by hand                                                      |
-| repair.plan-conflict              | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.plan-conflict`).            | none                                                             |
-| repair.guided-finding-remaining   | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.guided-finding-remaining`). | `open-forge repair`                                              |
-| repair.manual-finding-remaining   | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.manual-finding-remaining`). | none                                                             |
-| repair.target-changed             | error    | target-changed             |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.target-unsafe              | error    | target-unsafe              |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.workspace-lock-unavailable | error    | workspace-lock-unavailable |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.recovery-conflict          | error    | recovery-conflict          |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.recovery-unavailable       | warning  | recovery-unavailable       |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.recovery-artifact-retained | warning  | recovery-artifact-retained |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.write-failed               | error    | write-failed               |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.verification-failed        | error    | verification-failed        |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.recovery-failed            | error    | recovery-failed            |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.operation-failed           | error    | operation-failed           |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
-| repair.interrupted                | error    | cancelled                  |                                                                                                                                                                                                                                                                                                                                         |                                                                  |
+| Code                              | Severity | Family                     | Message                                                                                                                                                                                                                                                                                                                                 | Next                                                                                                               |
+| --------------------------------- | -------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| repair.invalid-input              | error    | invalid-input              |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.relink-invalid             | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.relink-invalid`).           | `open-forge repair --help`                                                                                         |
+| repair.contradictory-relink       | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.contradictory-relink`).     | none                                                                                                               |
+| repair.selection-required         | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.selection-required`).       | Safe selections: `open-forge repair --automatic`. Target choices: a listed relink command.                         |
+| repair.missing-authority          | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.missing-authority`).        | add the path to `allowInstallPaths` in `.agents/open-forge.json`                                                   |
+| repair.diagnosis-blocked          | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.diagnosis-blocked`).        | `open-forge doctor`                                                                                                |
+| repair.diagnosis-incomplete       | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.diagnosis-incomplete`).     | `open-forge doctor`                                                                                                |
+| repair.proposal-unavailable       | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.proposal-unavailable`).     | `open-forge doctor --detail standard`                                                                              |
+| repair.proposal-unsupported       | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.proposal-unsupported`).     | fix by hand                                                                                                        |
+| repair.plan-conflict              | error    | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.plan-conflict`).            | none                                                                                                               |
+| repair.guided-finding-remaining   | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.guided-finding-remaining`). | Interactive `open-forge repair` after automatic selection, or a listed relink command when the session cannot ask. |
+| repair.manual-finding-remaining   | warning  | local                      | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Repair/Shared/Wording/RepairWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`repair.manual-finding-remaining`). | The named edit or managing Update action.                                                                          |
+| repair.target-changed             | error    | target-changed             |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.target-unsafe              | error    | target-unsafe              |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.workspace-lock-unavailable | error    | workspace-lock-unavailable |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.recovery-conflict          | error    | recovery-conflict          |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.recovery-unavailable       | warning  | recovery-unavailable       |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.recovery-artifact-retained | warning  | recovery-artifact-retained |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.write-failed               | error    | write-failed               |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.verification-failed        | error    | verification-failed        |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.recovery-failed            | error    | recovery-failed            |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.operation-failed           | error    | operation-failed           |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
+| repair.interrupted                | error    | cancelled                  |                                                                                                                                                                                                                                                                                                                                         |                                                                                                                    |
 
 ## Scenarios
 
@@ -724,9 +799,9 @@ The findings catalogue below is the command's finite error and warning vocabular
 
 Each status has one representative native text transcript above. JSON uses the same status and command facts under the schema-3 envelope.
 
-### Open maintainer questions
+### Catalogue notes
 
-The native evidence leaves four catalogue questions unresolved: whether the `relink-invalid` situation should be renamed to the current `plan-conflict` situation or accompanied by a real malformed relink case; which code and message should describe the current explicit-relink conflict; whether the dry-run warning headline should say `Would repair`; and whether the singular sentence should read `1 problem still needs a choice.` The current outputs are recorded without choosing among those alternatives. **Maintainer decision remains open.**
+The current relink validation and plan-conflict findings remain distinct. Preview headlines describe planned work, applied headlines describe verified effects, and remainders use the current choice and edit counts defined above. Historical reviewed captures retain their original catalogue identities.
 
 ## Non-Goals And Targeted Boundary
 
@@ -818,6 +893,31 @@ Conformance evidence must cover:
   cancelled/interrupted output boundary.
 - Repeatability, verified no-op behavior, preservation of user content, and
   rejection of all unsupported mutation domains.
+
+Choosing `Leave this link unchanged` without selected effects reports
+`Left 1 broken link unchanged. No files were changed.` The unresolved warning,
+`completed-with-warnings` status and exit 2 remain. An unattended run without a
+safe repair keeps its distinct automatic-repair wording.
+
+Candidate prompt and human result reasons describe typed evidence. A route parent reads
+`The file that lists this source.`. A sibling in the same filesystem folder
+reads `In the same folder as this link.`. Other route siblings read
+`Listed alongside this source in the same route.`, and a child reads
+`Listed by this source.`. Filename, title and content evidence retain their
+reasons. These descriptions do not change ordering or recommendation authority.
+JSON candidate evidence keeps its existing projection.
+
+For Library link recovery, result formation counts distinct Library ID and target
+pairs once. Diagnosis and unselected recovery entries for the same link represent
+one remaining problem. A safe planned recovery is excluded from the dry-run
+remaining, manual and warning totals. Current diagnosis still determines status.
+A one-of-twenty preview reads
+`Would restore 1 Library link. 19 Library links would still need recovery.`
+The successful result reads
+`Restored 1 Library link. 19 Library links still need recovery.`
+Human count details and JSON `problemsRemaining`, `problemsNeedingHand` and
+`warnings` use those same totals. The one-of-twenty preview reports 19 for all
+three JSON counts. Field names, schemas, statuses and exits are unchanged.
 
 ## Related Current Sources
 

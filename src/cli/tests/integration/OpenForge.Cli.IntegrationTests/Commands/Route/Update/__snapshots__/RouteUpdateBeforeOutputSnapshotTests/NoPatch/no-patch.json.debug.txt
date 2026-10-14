@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route update memory/project-alpha/overview --description \"<one sentence>\"",
+          "command": "open-forge route update --help",
           "reason": "Correct the named Route Update input, then rerun the request."
         }
       ],
@@ -61,7 +61,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route update memory/project-alpha/overview --description \"<one sentence>\"",
+    "command": "open-forge route update --help",
     "reason": "Correct the named Route Update input, then rerun the request."
   }
 }

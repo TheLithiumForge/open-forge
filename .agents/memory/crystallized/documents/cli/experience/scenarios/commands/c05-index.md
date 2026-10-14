@@ -12,7 +12,7 @@ These are reviewed user outcomes. Selection does not mean execution passed. Impr
 
 **Goal:** Make newly added or changed material discoverable without rewriting its authored content.
 
-Existing baseline: [Interface](../../../contracts/index-candidate/interface.md), [Behavior](../../../contracts/index-candidate/behavior.md). Exact interface and output differences must be reconciled before implementation.
+Current contracts: [Interface](../../../contracts/index-candidate/interface.md), [Behavior](../../../contracts/index-candidate/behavior.md). The contracts define exact current output and operation behavior.
 
 See [scenario conventions](../_scenarios.md) and the [complete assessment](../../assessment.md).
 
@@ -341,3 +341,237 @@ Index projects the checklist's root Open Forge description and tags. For the sha
 **State:** Compute the expected descriptions, tag sets, relative links, and ordering from the authored fixture independently. Compare the parent list with that projection and compare both sibling files and parent text outside `Entries` with saved bytes.
 
 **Output:** Check listed generated effects and counts against the actual changed lists. A printed success or root setting does not prove which metadata was projected.
+
+## Maintenance Review Boundaries
+
+Complete partial headers in their existing form. Protected sources stay unchanged. Rename a proven old canonical navigation file with one human row, preserving its rules. Created entrypoints have no duplicate Entries row. An incomplete result names completed and skipped work, and its edit-and-index continuation keeps the selected workspace.
+
+## C05-13
+
+**Situation:** Complete a plain note and repeat
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X02](../experience.md#x02) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C05-14
+
+**Situation:** Complete the entire deep chain
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X34](../experience.md#x34) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C05-15
+
+**Situation:** Complete partial fields in either form
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X32](../experience.md#x32) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C05-16
+
+**Situation:** Derive headingless names and category tags
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X33](../experience.md#x33) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C05-17
+
+**Situation:** Continue past malformed ordinary metadata
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X44](../experience.md#x44) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C05-18
+
+**Situation:** Respect native, managed, removed and private boundaries
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X35](../experience.md#x35) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C05-19
+
+**Situation:** Reject unknown roots and ambiguous entrypoints
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X36](../experience.md#x36) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C05-20
+
+**Situation:** Guard completion expected state and recovery
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X48](../experience.md#x48) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C05-21
+
+**Situation:** Keep schema 3 additive
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X49](../experience.md#x49) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C05-22
+
+**Situation:** Complete an explicitly selected leaf chain only
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X50](../experience.md#x50) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge index` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.

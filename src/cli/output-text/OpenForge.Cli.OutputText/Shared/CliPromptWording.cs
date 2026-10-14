@@ -20,13 +20,13 @@ internal static class CliPromptWording
     internal static string PermissionLineRule() => "Type always, once or cancel.";
 
     // @OpenForgeText shared.wording.needs
-    internal static string Needs(string labels) => $"needs: {labels}";
+    internal static string Needs(string labels) => $"Needs {labels}.";
 
     // @OpenForgeText shared.wording.needed-by
-    internal static string NeededBy(string labels) => $"needed by: {labels}";
+    internal static string NeededBy(string labels) => $"Needed by {labels}.";
 
     // @OpenForgeText shared.wording.required-by
-    internal static string RequiredBy(string labels) => $"required by {labels}";
+    internal static string RequiredBy(string labels) => $"Required by {labels}.";
 
     // @OpenForgeText shared.wording.writes-outside-agents
     internal static string Permission(string owner) => $"Allow {owner} to change these paths outside .agents?";
@@ -60,7 +60,14 @@ internal static class CliPromptWording
 
     // @OpenForgeText shared.wording.marked-list-line-instruction
     internal static string MarkedLine(string firstExample, string secondExample)
-        => $"Type a row number and a mark, such as {firstExample} or {secondExample}. Press Enter on an empty line to continue.";
+        => $"Type edits such as {firstExample} {secondExample}. Press Enter on an empty line to continue.";
+
+    // @OpenForgeText shared.wording.marked-list-line-cancel
+    internal static string MarkedLineCancel() => "Type cancel to stop without changes.";
+
+    // @OpenForgeText shared.wording.installed-package-summary
+    internal static string InstalledPackageSummary(string? version, int count)
+        => string.Create(CultureInfo.InvariantCulture, $"Version {version ?? "unknown"}, {count} owned {(count == 1 ? "file" : "files")}");
 
     // @OpenForgeText shared.wording.marked-list-invalid-edit
     internal static string MarkedRule(int count, string symbols, string example)

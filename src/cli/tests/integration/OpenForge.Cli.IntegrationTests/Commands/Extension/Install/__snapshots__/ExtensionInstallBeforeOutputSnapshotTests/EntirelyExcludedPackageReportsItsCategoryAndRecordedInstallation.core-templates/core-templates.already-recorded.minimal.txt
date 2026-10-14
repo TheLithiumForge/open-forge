@@ -1,0 +1,5 @@
+Already recorded the core-templates Extension without its files, because Templates is left out.
+  All 8 package files from core-templates were skipped.
+To add its files, restore Templates and update the package:
+  open-forge route init templates --framework --dry-run
+  open-forge extension update core-templates --dry-run

@@ -13,8 +13,8 @@ route: rules
 description: Rules
 tags: Project
 .agents/rules/_rules.md
-  applyTo: Context is incomplete while applyTo conditions await one or more --for paths.
-  sources: The Context source closure could not be resolved completely.
-  tokens: The Context source closure could not be resolved completely.
-  bytes: The Context source closure could not be resolved completely.
-Next: open-forge context "rules" --for <path>
+Context counts are unavailable. The Context source closure could not be resolved
+completely.
+  applyTo: Context is incomplete while applyTo conditions await one or more
+  --for paths.
+Next: open-forge context rules '--content=metadata,paths' --detail minimal --for <path>

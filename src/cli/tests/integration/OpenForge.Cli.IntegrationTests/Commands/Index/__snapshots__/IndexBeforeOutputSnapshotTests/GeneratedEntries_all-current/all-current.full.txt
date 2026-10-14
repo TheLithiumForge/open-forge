@@ -4,3 +4,5 @@ Workspace: <workspace>
   .agents/root/_root.md  current
 Selection: loader roots
 No recovery bundle was needed.
+  Check the workspace after indexing.
+Next: open-forge doctor --workspace <workspace>

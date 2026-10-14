@@ -24,10 +24,6 @@ internal static class ExtensionCreatePresentation
         DataTextRenderer = ExtensionCreateDataTextRenderer.Render,
         DataJsonTypeInfo = JsonContext.ExtensionCreateData,
         Shape = CliCommandShape.ChangeReport,
-        SelectText = static selected => selected with
-        {
-            TextEffects = [],
-            TextCounts = [],
-        },
+        SelectText = ExtensionCreateReportSelector.SelectText,
     };
 }

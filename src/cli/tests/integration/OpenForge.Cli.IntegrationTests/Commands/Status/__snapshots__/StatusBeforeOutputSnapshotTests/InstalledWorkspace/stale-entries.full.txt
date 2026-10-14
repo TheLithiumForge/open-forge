@@ -25,11 +25,11 @@ Workspace: <workspace>
          Rebuild the Entries section.
          cause: The generated navigation target is not current.
 Startup context
-  Shipped by this CLI:   11 files, about 6.4k tokens
-  This workspace:        11 files, about 6.2k tokens
+  Shipped by this CLI:   11 files, about 6.6k tokens
+  This workspace:        11 files, about 6.3k tokens
   May load again later:  1 file, about 0.3k tokens
 Compared with shipped: about 0.2k fewer tokens
-All routed files: 18 files, about 18.4k tokens (startup is 34%)
+All routed files: 18 files, about 21.8k tokens (startup is 29%)
 Routes: 7 root categories, 10 Entries sections current
 Framework files: 18 current
 Largest may-load-again sources
@@ -68,6 +68,6 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-18 routed files, 11 startup files, 6219 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 18355 all routed tokens, 33.881798493536919242137379626 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 18 current Framework files, 1 changed Framework files, 4 warnings.
+18 routed files, 11 startup files, 6341 startup tokens, 1 may-load-again files, 274 may-load-again tokens, 21782 all routed tokens, 29.108417693914560521543511696 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 18 current Framework files, 1 changed Framework files, 4 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

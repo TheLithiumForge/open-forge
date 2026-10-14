@@ -320,7 +320,7 @@ public sealed class PublishedShellBoundaryProcessTests
         Assert.False(string.IsNullOrWhiteSpace(result.StandardError));
         Assert.DoesNotContain("Status:", result.StandardError, StringComparison.Ordinal);
         Assert.DoesNotContain("route-move.", result.StandardError, StringComparison.Ordinal);
-        Assert.DoesNotContain("Next:", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route move --help", result.StandardError, StringComparison.Ordinal);
         workspace.AssertNoLockInfrastructure();
     }
 

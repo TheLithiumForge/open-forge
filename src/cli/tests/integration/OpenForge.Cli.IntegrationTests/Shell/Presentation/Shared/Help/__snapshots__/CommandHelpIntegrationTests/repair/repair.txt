@@ -1,0 +1,65 @@
+  Apply verified corrections or explicitly chosen repairs to local links and
+  Library state.
+
+Usage:
+  open-forge repair [options]
+
+Examples:
+  open-forge repair --automatic --dry-run
+  open-forge repair
+  open-forge repair --automatic
+
+Behavior:
+  Interactive Repair lets you choose repairs and review the writing plan.
+  --automatic selects only currently verified safe corrections and skips
+  confirmation. It never chooses a possible target for you.
+  It also fixes links after manual renames or moves when one new location is
+  proven, and refreshes affected Entries.
+  --dry-run shows the selected checked plan and writes nothing.
+  Redirected or JSON requests need explicit choices or --automatic.
+  Interrupted operations report recovery data for review. Repair does not roll
+  back changes automatically.
+
+Options:
+  --automatic  Select all currently verified safe repairs without prompting.
+  --relink <source expected target>
+      Select one exact source occurrence and contained target.
+  --dry-run    Preview the complete repair without writing files.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Relink coordinates: Use one-based path@line:column, with the column at the
+  start of the link destination. Doctor points to the link, so its displayed
+  location cannot be copied directly. Inspect the current source or use Repair's
+  destination location. For [Rule](../working/order-rule.md) at the start of
+  line 7, use column 8. The expected destination must equal the exact authored
+  value. The new contained target must be an admitted reported candidate.
+  Worked relink example:
+  open-forge repair --relink ".agents/memory/crystallized/repair-note.md@7:8" "../working/order-rule.md" ".agents/memory/crystallized/order-rule.md" --dry-run
+  Other repairs: Repair corrects path spelling, case, encoding, or unique
+  fragments while preserving the target. Explicit relinking uses a possible
+  target reported by Doctor. It can complete selected incomplete Library
+  operations only with a current-v1 recovery record, matching link identity
+  without following the link, and current permission outside .agents. No
+  recovery syntax or permission grant is added, restored, or widened. Source
+  targets stay untouched.
+  Safety: Replacements carry the expected file state, the version this CLI
+  ships, exact verification, and external recovery attribution. Repair completes
+  eligible metadata, missing navigation files, and Entries only in routes
+  affected by selected corrections. Managed files, native Skill packages,
+  overwrites, excluded or private contents, and unsafe leaves remain protected.
+  Repair is stateless and local. It does not clean recovery artifacts or invoke
+  another command.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  doctor --detail full  Diagnose workspace problems.
+  cleanup --dry-run     Preview recovery-data cleanup.
+  index --dry-run       Fill missing metadata and update Entries.

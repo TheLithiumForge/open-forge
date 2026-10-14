@@ -1,0 +1,9 @@
+core-templates is already installed without its files. Update it to add them.
+Workspace: <workspace>
+  Error  core-templates  Recorded package differs
+         core-templates is already installed without its files. Update it to add them.
+         open-forge extension update core-templates
+         Use Extension Update to bring the recorded package back in step with the source.
+  Source: embedded catalogue (embedded)
+  Use Extension Update to reconcile the managed package.
+Next: open-forge extension update core-templates

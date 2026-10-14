@@ -51,6 +51,7 @@ internal static class FindReportSelector
         var data = new FindData
         {
             Matches = matches,
+            HasInvalidRequire = result.Findings.Any(finding => finding.InvalidRequireValue is not null),
             Query = standard ? Query(result.Query, result.WorkingPaths) : null,
             SourceSet = full ? SourceSet(result.Universe) : null,
             ContentBlocks = result.Matches.SelectMany(match => ContentBlocks(match, selection.Detail)).ToArray(),
@@ -130,7 +131,7 @@ internal static class FindReportSelector
                 FindWording.NextInvalidSelector());
         }
 
-        return result.Status == CliSemanticStatus.Incomplete ? result.Next : null;
+        return result.Status is CliSemanticStatus.Invalid or CliSemanticStatus.Incomplete ? result.Next : null;
     }
 
     private static IReadOnlyList<CliCount> Counts(FindResult result)

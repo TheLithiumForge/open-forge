@@ -10,15 +10,10 @@ internal static class RepairAtomicEffectOrder
     internal static ImmutableArray<RepairAtomicEffect> Read(RepairPlan plan)
     {
         var ordered = ImmutableArray.CreateBuilder<RepairAtomicEffect>();
-        foreach (var effect in plan.Effects.OrderBy(
-            effect => effect.SourceCanonicalPath,
-            StringComparer.Ordinal))
+        foreach (var change in plan.FileChanges)
         {
-            ordered.Add(new RepairAtomicEffect(
-                ordered.Count,
-                RepairAtomicEffectKind.Reference,
-                effect,
-                libraryRecovery: null));
+            ordered.Add(new RepairAtomicEffect(ordered.Count, change,
+                plan.Effects.SingleOrDefault(effect => effect.FileChange.LogicalPath == change.LogicalPath)));
         }
 
         foreach (var effect in plan.LibrarySteps

@@ -105,7 +105,7 @@ internal sealed class RepairIntegrationWorkspace : IDisposable
                 OpenForgeDocumentSeed.Metadata(
                     description: "Docs",
                     tags: ["Docs"],
-                    body: "\n# Docs\n\nRepair integration fixture.\n"));
+                    body: "\n# Docs\n\nRepair integration fixture.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n"));
 
             var source = BuildSource(includeSafeExact, includeGuided);
             temporary.WriteText(

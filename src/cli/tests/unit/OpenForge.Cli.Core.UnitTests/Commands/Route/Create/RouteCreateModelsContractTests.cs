@@ -201,7 +201,7 @@ public sealed class RouteCreateModelsContractTests
                 Findings = [RouteCreateTestData.Finding(RouteCreateFindingCode.OptionalMetadata)],
             });
         Assert.Equal(CliSemanticStatus.Attention, optional.Status);
-        Assert.Equal("open-forge route update", optional.Next?.Command);
+        Assert.Equal("open-forge route update --help", optional.Next?.Command);
         Assert.Equal(RouteCreateRecoveryState.NotRequired, optional.Recovery.State);
         Assert.Equal(RouteCreateVerificationState.NotRequested, optional.Verification);
     }

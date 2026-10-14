@@ -125,11 +125,11 @@ public sealed class ExtensionListApplicationIntegrationTests
         Assert.Equal(0, root.ExitCode);
         Assert.Equal(0, group.ExitCode);
         Assert.Equal(0, leaf.ExitCode);
-        Assert.Contains("open-forge extension --help", root.Output, StringComparison.Ordinal);
+        Assert.Contains("Use open-forge <command> --help", root.Output, StringComparison.Ordinal);
         Assert.Contains("list", group.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge extension list", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("writes no payload", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("Automation", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("no package, installation", leaf.Output, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Host")]

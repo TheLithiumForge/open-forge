@@ -25,8 +25,11 @@ public sealed class ExtensionCreateCompositionIntegrationTests
         Assert.Equal(0, run.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, run.Status);
         Assert.Equal(
-            $"Extension ID (for example my-tools):{Environment.NewLine}"
-            + $"Parent folder for the new Extension:{Environment.NewLine}",
+            """
+            Extension ID (for example my-tools):
+            Existing parent folder for the new Extension:
+            Open Forge creates a folder named development-toolkit inside it.
+            """.ReplaceLineEndings(Environment.NewLine) + Environment.NewLine,
             run.StandardError);
         Assert.Contains("Would create the development-toolkit Extension scaffold at", run.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Would create ", run.StandardOutput, StringComparison.Ordinal);
@@ -90,7 +93,7 @@ public sealed class ExtensionCreateCompositionIntegrationTests
         switch (scope)
         {
             case "root":
-                Assert.Contains("open-forge extension --help", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Use open-forge <command> --help", run.StandardOutput, StringComparison.Ordinal);
                 break;
             case "group":
                 Assert.Contains("list", run.StandardOutput, StringComparison.Ordinal);
@@ -104,10 +107,10 @@ public sealed class ExtensionCreateCompositionIntegrationTests
                 break;
             case "leaf":
                 Assert.Contains("open-forge extension create [<stable-id>]", run.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("--dependency <stable-id>]...", run.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Required input and interaction", run.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Workspace and recovery boundary", run.StandardOutput, StringComparison.Ordinal);
-                Assert.Contains("Results and streams", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("--dependency <stable-id>", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Input and scaffold", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Boundary", run.StandardOutput, StringComparison.Ordinal);
+                Assert.Contains("Automation", run.StandardOutput, StringComparison.Ordinal);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(scope), scope, "The help scope is not defined.");

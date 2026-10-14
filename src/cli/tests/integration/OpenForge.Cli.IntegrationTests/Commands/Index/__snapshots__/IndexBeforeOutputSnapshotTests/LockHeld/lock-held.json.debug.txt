@@ -48,6 +48,10 @@
     "filesChecked": 0,
     "filesUpdated": 0,
     "filesCurrent": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0,
     "errors": 1
   },
   "limitations": [],
@@ -81,7 +85,9 @@
         "action": "update",
         "outcome": "not-started"
       }
-    ]
+    ],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
@@ -89,7 +95,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge index",
+    "command": "open-forge index --workspace <workspace>",
     "reason": "Retry when the other command finishes."
   }
 }

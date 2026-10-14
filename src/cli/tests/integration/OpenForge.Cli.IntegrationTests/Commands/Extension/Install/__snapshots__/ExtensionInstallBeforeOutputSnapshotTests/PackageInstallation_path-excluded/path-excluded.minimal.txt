@@ -1,2 +1,3 @@
-The toolkit Extension is already installed and matches the package. Nothing to do.
+Recorded the toolkit Extension without its files, because workspace settings exclude the package content.
 Workspace: <workspace>
+  The package file from toolkit was skipped.

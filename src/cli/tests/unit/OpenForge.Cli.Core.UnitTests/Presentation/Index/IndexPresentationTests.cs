@@ -48,10 +48,10 @@ public sealed class IndexPresentationTests
 
     [Trait("Boundary", "Output")]
     [Fact, Trait("Feature", "cli-presentation"), Trait("Evidence", "Unit")]
-    public void MinimalCurrentResultIsExactlyOneLineAndJsonRetainsWorkspace()
+    public void MinimalCurrentResultKeepsHeadlineAndVerificationAction()
     {
         var selected = Select(Result([IndexRegion.Unchanged(Source, 2, 2)]), CliDetail.Minimal);
-        Assert.Equal("The Entries section is current in 1 file. Nothing to do.\n", Text(selected));
+        Assert.Equal("The Entries section is current in 1 file. Nothing to do.\nNext: open-forge doctor\n", Text(selected));
         using var json = JsonDocument.Parse(Json(selected));
         Assert.Equal(3, json.RootElement.GetProperty("schemaVersion").GetInt32());
         Assert.Equal("completed", json.RootElement.GetProperty("status").GetString());
@@ -181,17 +181,18 @@ public sealed class IndexPresentationTests
             + "  \u001b[1m.agents/aa.md\u001b[22m  0 -> 1 entries\n", colored.Content, StringComparison.Ordinal);
         Assert.Contains("  .agents/a.md   0 -> 1 entries\n  .agents/aa.md  0 -> 1 entries\n", plain.Content, StringComparison.Ordinal);
         Assert.Equal(plain.Content, colored.Content.Replace("\u001b[1m", "", StringComparison.Ordinal)
-            .Replace("\u001b[22m", "", StringComparison.Ordinal));
-        Assert.EndsWith("No files were changed.\n", plain.Content, StringComparison.Ordinal);
+            .Replace("\u001b[22m", "", StringComparison.Ordinal).Replace("\u001b[2m", "", StringComparison.Ordinal).Replace("\u001b[22m", "", StringComparison.Ordinal));
+        var next = detail >= CliDetail.Standard ? "  Apply the checked plan.\nNext: open-forge index\n" : "Next: open-forge index\n";
+        Assert.EndsWith("No files were changed.\n" + next, plain.Content, StringComparison.Ordinal);
         Assert.Equal(1, plain.Content.Split("No files were changed.", StringSplitOptions.None).Length - 1);
         if (detail == CliDetail.Standard)
         {
-            Assert.EndsWith("+ - new\r\nNo files were changed.\n", plain.Content, StringComparison.Ordinal);
+            Assert.EndsWith("+ - new\r\nNo files were changed.\n" + next, plain.Content, StringComparison.Ordinal);
         }
         else if (detail >= CliDetail.Full)
         {
             Assert.EndsWith("Selection: .agents/a.md, .agents/aa.md\n"
-                + "No recovery bundle was needed.\nNo files were changed.\n", plain.Content, StringComparison.Ordinal);
+                + "No recovery bundle was needed.\nNo files were changed.\n" + next, plain.Content, StringComparison.Ordinal);
         }
 
         var authored = colored.Spans.Where(span => span.Authored).Select(span => span.Content).ToArray();

@@ -37,6 +37,10 @@
     "filesChecked": 0,
     "filesUpdated": 0,
     "filesCurrent": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0,
     "errors": 1
   },
   "limitations": [],
@@ -49,7 +53,9 @@
       "scope": "not-established",
       "sources": []
     },
-    "regions": []
+    "regions": [],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
@@ -57,7 +63,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route list --depth=all",
+    "command": "open-forge route list --depth=all --workspace <workspace>",
     "reason": "Choose a source ID or exact path."
   }
 }

@@ -50,6 +50,8 @@ internal sealed record DoctorLimitation
     public required DoctorLimitationKind Kind { get; init; }
 
     public required string Message { get; init; }
+
+    public bool GitRenameEvidenceTimedOut { get; init; }
 }
 
 internal sealed record DoctorDomainReport

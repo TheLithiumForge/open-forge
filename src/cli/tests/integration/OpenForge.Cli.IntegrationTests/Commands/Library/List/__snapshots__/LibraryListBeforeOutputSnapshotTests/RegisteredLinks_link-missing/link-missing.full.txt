@@ -9,4 +9,4 @@ Workspace: <workspace>
       Source ID: directives/review
 The Library registration was read completely.
   Repair the missing registered link.
-Next: open-forge library sync team-knowledge
+Next: open-forge library sync team-knowledge --workspace <workspace>

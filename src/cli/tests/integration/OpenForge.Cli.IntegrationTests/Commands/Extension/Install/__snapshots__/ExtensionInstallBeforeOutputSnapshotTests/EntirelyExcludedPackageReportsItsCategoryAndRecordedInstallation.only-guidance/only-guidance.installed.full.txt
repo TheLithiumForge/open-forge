@@ -1,0 +1,23 @@
+Recorded the only-guidance Extension without its files, because Guidance is left out.
+Workspace: <workspace>
+  Info  .agents/guidance/note.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/guidance/note.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  The package file from only-guidance was skipped.
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  ownership record updated
+  Entries sections unchanged: .agents/directives/_directives.md,
+  .agents/loader.md, .agents/memory/_memory.md,
+  .agents/memory/crystallized/_crystallized.md,
+  .agents/memory/emerging/_emerging.md, .agents/memory/working/_working.md,
+  .agents/patterns/_patterns.md, .agents/skills/_skills.md
+  Permission evaluation: decision not-required; required 0; missing 0; saved no
+  Framework fingerprint:
+  <sha256>
+  Verification: targets verified; Entries verified; Extension record verified;
+  Framework record verified
+  Recovery: removed.
+To add its files, restore Guidance and update the package:
+  open-forge route init guidance --framework --dry-run
+  open-forge extension update only-guidance --dry-run --source <extension-source>

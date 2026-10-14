@@ -1,0 +1,5 @@
+status=completed-with-warnings
+packages=0
+effects=0
+findings=1
+Recorded Extension identities, paths or dependencies cannot be interpreted; no ownership or file effects were inferred.

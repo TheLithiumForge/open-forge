@@ -19,7 +19,18 @@ internal sealed class RouteInitResultBuilder
             formation,
             findings,
             status,
-            RouteInitDefinitions.ReadNextAction(status, findings));
+            ReadNext(formation, findings, status));
+    }
+
+    private static Shell.Pipeline.Models.Operation.CliNextAction? ReadNext(
+        RouteInitResultFormation formation, IReadOnlyList<RouteInitFinding> findings, CliSemanticStatus status)
+    {
+        var next = RouteInitDefinitions.ReadNextAction(status, findings);
+        if (next is null || formation.Request is not { } request) return next;
+        if (next.Command is "open-forge route init" or "open-forge route init --detail debug")
+            return new(RouteInitRetryCommand.From(request, diagnostics: status == CliSemanticStatus.Failed), next.Reason);
+        return Shell.Definitions.Shared.Commands.CliRetryCommand.InWorkspace(next, formation.Workspace?.LexicalRoot,
+            formation.Workspace?.SelectedBy == Framework.Workspace.Models.CliWorkspaceSelectionMethod.ExplicitWorkspace);
     }
 
     private static CliSemanticStatus ReadStatus(

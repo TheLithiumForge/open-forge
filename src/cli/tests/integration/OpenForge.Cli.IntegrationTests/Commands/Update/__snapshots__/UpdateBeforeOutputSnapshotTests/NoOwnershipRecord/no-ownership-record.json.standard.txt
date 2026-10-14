@@ -41,7 +41,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the blocked, unavailable, or incomplete Update facts before rerunning."
   }
 }

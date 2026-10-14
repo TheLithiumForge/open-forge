@@ -1,0 +1,52 @@
+  Remove one exact path, route, Extension, or Library and remember supported
+  exclusions.
+
+Usage:
+  open-forge remove <target> [options]
+
+Examples:
+  open-forge remove .agents/guidance/old.md --dry-run
+  open-forge remove .agents/guidance/old.md
+  open-forge remove planning --kind extension --dry-run
+
+Behavior:
+  The default kind is path. Select one exact target.
+  --dry-run shows the checked removal plan and writes nothing.
+  An interactive writing plan asks for confirmation unless --automatic is
+  supplied.
+  Redirected or JSON requests that would write need --automatic.
+  Supported managed removals are remembered so later updates do not restore
+  them. Interrupted writes report recovery data.
+
+Arguments:
+  <target>  One exact path, route reference, Extension ID, or Library ID.
+
+Options:
+  --kind <kind>              Target kind: path, route, extension, or library.
+                             Defaults to path.
+  --dry-run                  Preview the selected removal without writing
+                             workspace files.
+  --automatic                Run without confirmation prompts.
+  --allow-path <allow-path>  Authorize an exact additional path where the
+                             selected manager requires it.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Kinds: path removes an exact workspace path. Route removes a routed source or
+  category. Extension removes an installed package. Library removes its
+  registration and links while keeping source files. Each manager retains its
+  own safety and permission rules. --allow-path grants only the exact additional
+  destination needed.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  route remove --help      Remove a routed file or category.
+  extension remove --help  Remove an installed Extension.
+  library detach --help    Detach links while keeping source files.

@@ -6,4 +6,4 @@ Workspace: <workspace>
 Selection: .agents/root/_root.md
 No recovery bundle was created.
   Retry when the other command finishes.
-Next: open-forge index
+Next: open-forge index --workspace <workspace>

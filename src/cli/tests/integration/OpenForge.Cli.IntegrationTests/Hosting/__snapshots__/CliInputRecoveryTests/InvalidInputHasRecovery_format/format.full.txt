@@ -1,0 +1,4 @@
+Argument 'xml' not recognized. Must be one of:
+'text'
+'json'
+Next: open-forge status --help

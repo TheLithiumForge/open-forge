@@ -8,4 +8,4 @@ Workspace: <workspace>
   Recovery: retained at <recovery-bundle>; 1 protected path.
   The deleted files are kept in a recovery bundle at <recovery-bundle>.
   after reviewing the bundle
-Next: open-forge cleanup
+Next: open-forge cleanup --workspace <workspace>

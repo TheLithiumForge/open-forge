@@ -246,7 +246,7 @@ public sealed class F18UnavailableLibrarySourceJourneyTests
     {
         var destinationParent = Path.GetDirectoryName(workspace.Combine(destinationPath))
             ?? throw new InvalidOperationException("The destination link has no parent directory.");
-        return Path.GetRelativePath(destinationParent, workspace.Combine(sourcePath)).Replace('\\', '/');
+        return Path.GetRelativePath(destinationParent, workspace.Combine(sourcePath));
     }
 
     private static void AssertRelativeLink(

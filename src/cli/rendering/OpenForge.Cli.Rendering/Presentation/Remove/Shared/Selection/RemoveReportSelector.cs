@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Remove.Models.Result;
 using OpenForge.Cli.Core.Presentation.Remove.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
@@ -9,6 +10,9 @@ namespace OpenForge.Cli.Core.Presentation.Remove.Shared.Selection;
 
 internal static class RemoveReportSelector
 {
+    internal static CliSelectedReport<RemoveData> SelectText(CliSelectedReport<RemoveData> selected)
+        => CliCancellationSelection.BeforeEffects(selected, "remove.interrupted") with { TextEffects = [] };
+
     internal static CliReport<RemoveData> Select(RemoveResult result, CliSelection selection)
     {
         ArgumentNullException.ThrowIfNull(result);

@@ -11,6 +11,8 @@ namespace OpenForge.Cli.Core.Presentation.Update.Models;
 
 internal sealed record UpdateData
 {
+    [JsonIgnore]
+    internal string? TextHeadline { get; init; }
     public required string Mode { get; init; }
 
     public required bool Force { get; init; }

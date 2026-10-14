@@ -1,2 +1,4 @@
 Nothing to repair.
 Workspace: <workspace>
+  Complete the remaining navigation and metadata.
+Next: open-forge index --workspace <workspace>

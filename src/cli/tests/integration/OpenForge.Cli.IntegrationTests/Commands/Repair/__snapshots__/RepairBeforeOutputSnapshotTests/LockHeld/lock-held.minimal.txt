@@ -1,6 +1,12 @@
 Cannot repair: another Open Forge command holds the workspace lock. Nothing was changed.
 Workspace: <workspace>
+  Warning  .agents/docs/source.md:9:8  Broken link
+         This link still needs repair.
   Warning  .agents/docs/source.md:10:10  Broken link
-         missing.md: Broken link; 4 possible targets
+         1 possible target.
+         To use replacement.md (same title):
+           open-forge repair --relink '.agents/docs/source.md@10:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>
   .agents/docs/source.md:9:8  ./guide.md -> guide.md
-Next: open-forge doctor
+  .agents/docs/index.md       not started
+  .agents/loader.md           not started
+Next: open-forge doctor --workspace <workspace>

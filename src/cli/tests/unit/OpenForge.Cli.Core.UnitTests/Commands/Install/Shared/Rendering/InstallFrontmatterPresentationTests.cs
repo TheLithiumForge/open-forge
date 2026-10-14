@@ -116,14 +116,7 @@ public sealed class InstallFrontmatterPresentationTests
     public void HelpListsOption()
     {
         var help = InstallHelpSections.Create();
-        Assert.Contains("[--frontmatter <root|scoped>]", Assert.Single(help.Sections, section => section.Heading == "Syntax").Body, StringComparison.Ordinal);
-        Assert.Equal("Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure.",
-            Assert.Single(help.Sections, section => section.Heading == "Frontmatter").Body);
-        var examples = Assert.Single(help.Sections, section => section.Heading == "Examples").Body;
-        Assert.Contains("open-forge install --frontmatter scoped --automatic", examples, StringComparison.Ordinal);
-        Assert.Contains("open-forge install --configure --frontmatter root --dry-run", examples, StringComparison.Ordinal);
-        Assert.Equal("  Ordinary Install delivers only the Framework payload embedded in the running CLI. With a form change, --configure also converts eligible owned Extension files from their recorded sources. Install does not discover another workspace, fetch content, manipulate Git, repair markers, reconcile managed divergence, or roll back target effects.",
-            Assert.Single(help.Sections, section => section.Heading == "Notes").Body);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge install [options]");
     }
 
     private static InstallData Select(InstallFrontmatter? form, CliDetail detail)

@@ -106,7 +106,9 @@ internal static class ExtensionUpdateBinding
                 "The Extension Update request requires a selected workspace.");
         }
 
-        return ReadRequest(parse.Result, symbols, workspace, invocation.Presentation);
+        return ReadRequest(parse.Result, symbols, workspace, invocation.Presentation)
+            with
+        { RetryOptions = Shell.Definitions.Shared.Commands.Models.CliRetryOptions.From(invocation) };
     }
 
     private static Option<bool> Boolean(CliOptionDefinition<bool> definition)
@@ -131,7 +133,9 @@ internal static class ExtensionUpdateBinding
                     Invalid(null, input, "The selected workspace is unavailable."));
             }
 
-            var request = ReadRequest(parse.Result, _symbols, workspace, invocation.Presentation);
+            var request = ReadRequest(parse.Result, _symbols, workspace, invocation.Presentation)
+                with
+            { RetryOptions = Shell.Definitions.Shared.Commands.Models.CliRetryOptions.From(invocation) };
             var cause = Validate(parse.Result, request);
             return cause is null
                 ? CliBindResult<ExtensionUpdateRequest, ExtensionUpdateResult>.Bound(request)

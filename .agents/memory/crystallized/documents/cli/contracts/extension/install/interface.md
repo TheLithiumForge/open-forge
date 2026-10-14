@@ -37,6 +37,18 @@ without duplicating implementation mechanics. Gate 5 must prove
 source-generated YamlDotNet and STJ serialization, fixed Markdig where used,
 real `System.IO`, Native AOT, OS locking, isolated tests, and package journeys.
 
+## Help
+
+The purpose sentence is: Install selected Extensions and their required dependencies.
+
+The public Usage line is:
+
+```text
+open-forge extension install [<stable-id>...] [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Ownership Source
 
 The generated `.agents/open-forge.lock.json` is the only ownership input and
@@ -446,15 +458,20 @@ Nothing was installed from ./mypkg: the package has no content directory.
 ```text
 Cannot install my-tools: 1 file already exists where the package would write.
   .agents/workflows/review.md
-Next: open-forge extension install my-tools --force --dry-run  (preview replacing it)
+Preview replacing it.
+Next: open-forge extension install my-tools --force --dry-run
 ```
 
 `standard` adds `Workspace:`, the source, every created file as a row with
-its package, every Entries section as a row, the grant scope, and the
+its package, the grant scope, and the
 dependency order.
 
 `full` adds the unchanged Entries sections, the permission evaluation, the
 Framework fingerprint, recovery and verification facts in words.
+
+Every generated Entries target and its effect outcome remain visible at
+`minimal`, including blocked, failed and cancelled effects. An effect that did
+not start reads `not started`.
 
 An isolated unrelated malformed ordinary-metadata finding remains visible in
 minimal apply, dry-run, and verified no-op output. It names the exact source or
@@ -608,10 +625,21 @@ Each status has one representative native text transcript above. JSON uses the s
 
 The catalogue says `--all cannot be combined with package IDs.`; the native command says `Explicit Extension IDs and --all cannot be combined.` The same wording conflict is present in Extension Update and is kept unresolved. The no-content case is current native behavior: `Nothing was installed from <extension-source>: the package has no content directory.` followed by the required content-path row. **Maintainer decision remains open.**
 
+## Next rules
+
 When required permissions are missing, preserve both existing permission
 options. In text, place the settings alternative before the runnable `Next:`
 action, which remains the final text line. Preserve the exact option strings
 and the structured `Next` action and reason.
+
+Force previews and permission retries preserve the complete typed request:
+every selected root ID or `--all`, `--source`, an explicit `--workspace`,
+existing `--allow-path` grants, authority flags, preview mode and presentation
+options. Quote each path for the supported shell. A force action adds
+`--force --dry-run`, and a permission action adds the missing `--allow-path`.
+Only missing confirmation adds `--automatic`. Text and JSON carry the same
+formed command. Category restoration and package Update previews also retain
+the selected workspace, and package Update retains the source.
 
 ## Non-Goals And Public Conformance
 
@@ -657,3 +685,21 @@ remain the output evidence.
 
 - [ExtensionInstallPhrases.cs](../../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Extension/Install/ExtensionInstallPhrases.cs)
   <!-- @OpenForgeTextRef extension.install.phrase.ownership-conflict -->
+
+### Excluded Package Files And Dependency Counts
+
+Report existing excluded-path facts for each partly excluded package in every text detail level. On Essentials, Planning says `Planning's starter files would be skipped because Templates is left out.` The applied receipt uses `were skipped`. Other categories name the actual package, excluded file count and category. File-only exclusions retain their existing path findings. Keep enabled files, package records and JSON shape unchanged. Use the same category-restoration and package-update guidance below.
+
+Human previews and results use `1 package it requires` and `2 packages it requires` with the same dependency IDs and order. A fully excluded package is recorded as installed with no owned paths. When every selected package file is excluded and ownership publication is planned or verified, the headline says `Would record the core-templates Extension without its files, because Templates is left out.` or `Recorded the core-templates Extension without its files, because Templates is left out.` Substitute the actual package IDs and excluded categories from plan facts, with plural forms for several packages or categories. Keep the skipped count, for example `All 8 package files from core-templates were skipped.` Omit separate lines that repeat the headline's exclusions or record outcome. A verified repeat says `Already recorded the core-templates Extension without its files, because Templates is left out.` It retains its no-op status and effects. A partly excluded closure keeps the normal installation headline and explains each fully excluded package below it.
+
+For each fully or partly excluded package with known category exclusions, human output supplies the complete next step:
+
+```text
+To add its files, restore Templates and update the package:
+  open-forge route init templates --framework --dry-run
+  open-forge extension update core-templates --dry-run
+```
+
+Substitute the actual categories and package ID from plan facts. Print a Route Init preview for each category, followed by that package's Update preview. File-only or directory-only exclusions retain their destination explanation without guessing a category.
+
+After restoring the category, Install still blocks and directs to Update. When the selected package has the same recorded source, version and dependencies, its record has no paths or regions, and all its current package destinations are absent, say `core-templates is already installed without its files. Update it to add them.` with `Next: open-forge extension update core-templates`. This describes the empty file record without claiming historical exclusion evidence. Other file or dependency mismatches retain their existing explanation and update action. Exclusions, ownership, JSON facts, statuses and exits stay unchanged. A declined reviewed Install plan reports cancellation with no completed Entries-update row unless an effect was verified.

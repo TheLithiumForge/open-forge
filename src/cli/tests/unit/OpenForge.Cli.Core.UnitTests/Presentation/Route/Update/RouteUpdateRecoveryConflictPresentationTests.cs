@@ -112,11 +112,12 @@ public sealed class RouteUpdateRecoveryConflictPresentationTests
         var result = Result(
             RecoveryConflict(RecoveryCandidatePath),
             RouteUpdateTestData.Finding(RouteUpdateFindingCode.OperationFailed));
+        result = result with { RequestCommand = "open-forge route update memory/project-alpha/overview --description 'After overview'" };
         var report = RouteUpdateReportSelector.Select(result, new CliSelection(CliDetail.Minimal, null));
 
         Assert.Equal(CliSemanticStatus.Failed, result.Status);
         Assert.Equal(CliSemanticStatus.Failed, report.Status);
-        Assert.Equal("open-forge route update --detail debug", report.Next?.Command);
+        Assert.Equal("open-forge route update memory/project-alpha/overview --description 'After overview'", report.Next?.Command);
     }
 
     [Fact(DisplayName = "Route Update keeps its existing recovery-retention cleanup guidance"), Trait("Boundary", "Output")]

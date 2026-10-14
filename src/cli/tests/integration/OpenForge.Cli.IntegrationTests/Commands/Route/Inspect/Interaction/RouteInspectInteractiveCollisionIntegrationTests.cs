@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Commands.Route.Inspect;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Resolution;
@@ -171,7 +172,7 @@ public sealed class RouteInspectInteractiveCollisionIntegrationTests
             RouteInspectObservationCode.AutomaticIdNotUnique,
             Assert.Single(result.Observations, observation => observation.Code == RouteInspectObservationCode.AutomaticIdNotUnique).Code);
         var next = Assert.IsType<CliNextAction>(result.Next);
-        Assert.Equal($"open-forge route inspect \"{expectedPath}\"", next.Command);
+        Assert.Equal($"open-forge route inspect {CliCommandText.Quote(expectedPath)}", next.Command);
         Assert.Equal("Rerun with the exact path for non-interactive use.", next.Reason);
     }
 

@@ -395,6 +395,19 @@ internal static class LibrarySyncPlanner
 
             var isCurrent = currentPaths.Contains(path);
             var isRegistered = registeredPaths.Contains(path);
+            if (isRegistered && observation.UnreadableOnWindows)
+            {
+                findings.Add(new LibrarySyncFinding
+                {
+                    Code = LibrarySyncFindingCode.MappingBlocked,
+                    Status = CliSemanticStatus.Blocked,
+                    LibraryId = input.Request.LibraryId.Value,
+                    Path = expected.DestinationPath.Value,
+                    Cause = "The recorded Library link is unreadable on Windows because its target uses forward slashes.",
+                    UnreadableOnWindows = true,
+                });
+                continue;
+            }
             switch (observation.State)
             {
                 case LibraryMappingObservationState.Current when isCurrent && isRegistered:
@@ -409,7 +422,8 @@ internal static class LibrarySyncPlanner
                     links.Add(RelativeFileLinkEffect.Create(expected.DestinationPath.CanonicalPath, observation.ExpectedLink));
                     break;
                 case LibraryMappingObservationState.Current when !isCurrent && isRegistered:
-                    links.Add(RelativeFileLinkEffect.Delete(expected.DestinationPath.CanonicalPath, observation.ExpectedLink));
+                    links.Add(RelativeFileLinkEffect.Delete(expected.DestinationPath.CanonicalPath,
+                        observation.Leaf.RelativeFileLink ?? throw new InvalidOperationException("An owned link requires its observed raw target.")));
                     break;
                 case LibraryMappingObservationState.Missing when !isCurrent && isRegistered:
                     Add(findings, LibrarySyncFindingCode.RetiredLinkMissing, CliSemanticStatus.Blocked,

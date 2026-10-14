@@ -61,6 +61,7 @@ internal static class LibraryDetachCompletion
             Status = status,
             Workspace = input.Request.Workspace,
             Next = ReadNext(findings),
+            PermissionCommand = LibraryDetachRetryCommand.From(input.Request, permissionStage?.Result.Missing ?? []),
             Result = new LibraryDetachPayload
             {
                 Permissions = permissionStage is null ? LibraryPermissionView.NotEvaluated() : LibraryPermissionPresentation.Project(permissionStage),

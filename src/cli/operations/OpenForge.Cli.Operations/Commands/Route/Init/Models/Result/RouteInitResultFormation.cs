@@ -6,6 +6,7 @@ namespace OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
 
 internal sealed record RouteInitResultFormation
 {
+    internal RouteInitRequest? Request { get; init; }
     internal RouteInitResultFormation(
         CliWorkspace? workspace,
         RouteInitMode mode,

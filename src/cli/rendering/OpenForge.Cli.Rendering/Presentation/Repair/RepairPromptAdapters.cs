@@ -41,7 +41,7 @@ internal static class RepairPromptAdapters
             .Select(candidate => new CliChoice<RepairTargetChoice>(
                 new RepairTargetChoice(candidate.Target),
                 RepairWording.CandidateLabel(candidate),
-                RepairWording.CandidateDescription(candidate)))
+                RepairWording.CandidateDescription(proposal, candidate)))
             .Append(new CliChoice<RepairTargetChoice>(
                 RepairTargetChoice.Skip,
                 RepairWording.LeaveLinkUnchanged()))
@@ -77,18 +77,19 @@ internal static class RepairPromptAdapters
 
     private static async ValueTask<CliPromptReply<RepairLibraryPromptAnswer>> SelectLibraryAsync(
         CliPrompts prompts,
-        RepairLibraryPromptQuestion question,
+        RepairLibrarySelectionQuestion question,
         CliPromptPolicy policy,
         CancellationToken cancellationToken)
     {
-        var choices = new[]
-        {
-            new CliChoice<RepairLibraryChoice>(RepairLibraryChoice.Select, RepairWording.IncludeRecovery(), RepairWording.LibraryRecoveryDescription(question)),
-            new CliChoice<RepairLibraryChoice>(RepairLibraryChoice.Skip, RepairWording.LeaveRecoveryOut(), RepairWording.LeaveRecoveryOutDescription()),
-        };
+        var choices = question.Steps.Select((step, index) => new CliChoice<RepairLibraryPromptAnswer>(
+                new(index),
+                step.Proposal.TargetPath,
+                RepairWording.LibraryRecoveryDescription(step)))
+            .Append(new CliChoice<RepairLibraryPromptAnswer>(new(null), RepairWording.LeaveAllRecoveryOut(), RepairWording.LeaveRecoveryOutDescription()))
+            .ToArray();
         var response = await prompts.SelectAsync(
-            new CliSelectQuestion<RepairLibraryChoice>(
-                RepairWording.LibraryQuestion(question),
+            new CliSelectQuestion<RepairLibraryPromptAnswer>(
+                RepairWording.LibrarySelectionQuestion(),
                 choices),
             policy,
             cancellationToken).ConfigureAwait(false);
@@ -100,7 +101,7 @@ internal static class RepairPromptAdapters
         }
 
         return CliPromptReply<RepairLibraryPromptAnswer>.Answered(
-            new RepairLibraryPromptAnswer(response.Value == RepairLibraryChoice.Select));
+            response.Value);
     }
 
     private sealed record RepairTargetChoice(RepairTargetSelection? Target)
@@ -109,9 +110,4 @@ internal static class RepairPromptAdapters
             = new RepairTargetChoice(Target: null);
     }
 
-    private enum RepairLibraryChoice
-    {
-        Select,
-        Skip,
-    }
 }

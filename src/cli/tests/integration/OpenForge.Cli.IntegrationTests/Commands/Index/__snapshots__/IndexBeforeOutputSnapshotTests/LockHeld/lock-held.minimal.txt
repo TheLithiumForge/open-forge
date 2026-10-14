@@ -3,4 +3,4 @@ Workspace: <workspace>
   Error  <workspace>  Workspace lock is held
          Another Open Forge command holds the workspace lock. Nothing was changed.
   .agents/root/_root.md  not started
-Next: open-forge index
+Next: open-forge index --workspace <workspace>

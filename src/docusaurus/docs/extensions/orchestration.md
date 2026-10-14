@@ -5,11 +5,29 @@ description: The Managed Delivery workflow for coordinating related tasks, depen
 
 # Task Coordination
 
-Coordinate related tasks, assign responsibilities, manage dependencies, and verify the combined result, using whatever people, agents, and tools your workspace has. The package installs one [workflow](../glossary.md#content-roles) recipe, Managed Delivery.
+Coordinate related tasks, assign responsibilities, manage dependencies, and verify the combined result, using whatever people, agents, and tools your workspace has. The package installs one [workflow](../glossary.md#workflow) recipe, Managed Delivery.
 
-- **Package ID:** `orchestration` (the display name is Task Coordination)
+- **[Package ID](../glossary.md#package-id):** `orchestration` (the display name is Task Coordination)
 - **Depends on:** [Development](development.md), [Observations and Handoffs](observations-and-handoffs.md), [Planning](planning.md)
-- **Loads at startup:** Nothing. The `use-workflow` Skill from [Workflow Support](workflows.md) opens the recipe when a task selects it.
+- **Startup visibility:** This package adds no entries to startup indexes. Its required [Planning](planning.md), [Observations and Handoffs](observations-and-handoffs.md), and [Workflow Support](workflows.md) packages add their own entries. The coordination recipe opens when a task selects it.
+
+These counts describe this package's own entries when their parent routes expose them in `Entries` and are read. Required packages add their own entries. Linked files stay on demand unless selected or required.
+
+## Install
+
+From your installed Open Forge workspace, preview the package and its required packages:
+
+```sh
+open-forge extension install orchestration --dry-run
+```
+
+Review the plan. Then apply it:
+
+```sh
+open-forge extension install orchestration
+```
+
+The CLI installs required packages from the same [catalogue](../glossary.md#catalogue). See the [Extension guide](/guides/extensions#install-an-extension) for scripts using `--automatic`, updates, removal, or a local source.
 
 ## Why it exists
 
@@ -60,3 +78,5 @@ It completes when responsibilities and state are clear, unfinished work is recov
 - Installation grants no permission to commit, integrate, publish, or contact external systems. Task completion never grants permission to merge, push, or publish.
 - If you only want Observation and Handoff records, install [Observations and Handoffs](observations-and-handoffs.md) alone.
 - Task Coordination doesn't install Project Documents or Flows and Scenarios, and isn't part of the Development Toolkit.
+
+Next: [Install this package](#install), or [update and remove Extensions](/guides/extensions#update-and-remove).

@@ -6,5 +6,5 @@ Workspace: <workspace>
          Some files under shared/team could not be listed, so the comparison could not finish.
   .agents/directives/review.md  could not be checked
       Expected target: ../../shared/team/.agents/directives/review.md
-      Observed target: ../../shared/team/.agents/directives/review.md
+      Observed target: ..\..\shared\team\.agents\directives\review.md
 Source inventory: 0 eligible files, 0 excluded items.

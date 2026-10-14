@@ -114,7 +114,9 @@ as reversible when its record must be removed if the operation stops.
 `Delete` kinds. It retains the canonical logical destination path, the finite
 relative-file-link kind, the exact raw relative target, and state-specific
 expected and intended identities. Create requires Missing and intends that
-exact `RelativeFileLink` identity. Delete requires that exact identity and
+exact platform-form `RelativeFileLink` identity. Portable mapping targets keep
+`/`, while Create uses the platform directory separator. Delete requires the
+exact observed owned identity and
 intends Missing. Link identity never includes target bytes. Only this typed
 Library relative-file-link effect may create or delete a link object; ordinary
 file effects reject every link final leaf, including a generic `Link`.
@@ -317,7 +319,10 @@ entry, the current state must be one of the exact admissible states below:
   same-directory replacement path.
 - To restore a prior `RelativeFileLink` state, the current leaf must be exact
   `Missing`. Recovery creates only the recorded relative-file-symbolic-link
-  kind with the exact raw relative target. It does not resolve the target or
+  kind with the platform form of the recorded relative target. It verifies that
+  exact created form. Ownership and recovery currency comparisons ignore only
+  separator differences, while evidence retains actual raw observations.
+  It does not resolve the target or
   read target bytes, so an exact dangling link may be recreated. A generic
   `Link`, regardless of target form, never satisfies this identity.
 
@@ -335,12 +340,12 @@ and the matching verified recovery preparation when the effect is reversible.
 It validates the parent as a real contained directory, inspects the final leaf
 without following it, and applies exactly one link-object change:
 
-1. Create uses the declared raw relative target and link kind on an exact
+1. Create uses the platform form of the declared relative target and link kind on an exact
    missing final leaf.
 2. Delete removes the exact expected relative file link on an immediate
    no-follow match.
 3. Verification inspects the final leaf without following it and requires the
-   exact intended missing or `RelativeFileLink` identity.
+   exact intended missing or platform-form `RelativeFileLink` identity.
 
 The applier never follows the link, writes its target, deletes its target, or
 uses target bytes as identity. It has no copy-delete, absolute-link, directory-

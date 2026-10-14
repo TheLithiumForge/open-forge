@@ -1,0 +1,10 @@
+How should Open Forge write file metadata?
+Current metadata form: root
+
+  1. Root keys                 description: and tags: at the top level
+     Recommended. Metadata sits at the top of each file's frontmatter.
+  2. Scoped under open-forge:  open-forge: holds description: and tags:
+     Choose this if other tools already use top-level frontmatter keys in your
+     files.
+
+Choose a number (1-2), or press Enter to cancel:

@@ -3,6 +3,9 @@ title: Grow your own framework
 description: Turn a correction you keep repeating into a rule every task starts with, and use scopes to keep specialized rules out of unrelated work.
 ---
 
+import ThemedImage from "@theme/ThemedImage";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
 # Grow your own framework
 
 The base Framework is deliberately small. The selected categories start empty apart from Memory state entrypoints and the CLI Skill. It becomes useful as you add what your project keeps teaching you.
@@ -19,9 +22,18 @@ When the workspace feels cumbersome, look for repeated content and rules that lo
 
 ## Add your first rule
 
-Use the [first rule in the ten-minute guide](ten-minute-guide.md#2-add-a-rule-and-a-reusable-shape) as a starting point. A Directive file keeps required behavior under `## Instructions` and carries `LoadNow`, so the agent reads it when its parent entrypoint loads. Root Directives apply throughout the workspace. Scoped Directives apply once their scope is selected.
+Use the [first rule in the ten-minute guide](ten-minute-guide.md#2-add-a-testing-rule) as a starting point. A Directive file keeps required behavior under `## Instructions` and carries `LoadNow`, so the agent reads it when its parent entrypoint loads. Root Directives apply throughout the workspace. Scoped Directives apply once their scope is selected.
 
-After adding a file by hand, preview `open-forge index --dry-run`, then run `open-forge index` to update its parent's `Entries`. Without the CLI, maintain that link yourself. The entry makes the file discoverable and repeats its loading tags.
+After adding a file by hand, preview `open-forge index --dry-run`, then run `open-forge index`. It fills missing descriptions and category tags, creates missing navigation files for nested folders, and updates `Entries`. Your content and supplied metadata stay intact. Run `open-forge doctor` and follow its one next step for anything left. Without the CLI, maintain the metadata and links yourself. See [After you edit files by hand](/guides/cli#after-you-edit-files-by-hand) for renames and moves too.
+
+<ThemedImage
+alt="Edit, rename, or move files by hand. Run open-forge index for new notes and folders, or open-forge repair --automatic for proven renames and moves. Run open-forge doctor and follow its one next step until no warnings or errors remain."
+sources={{
+    light: useBaseUrl("/img/manual-edits-light.svg"),
+    dark: useBaseUrl("/img/manual-edits-dark.svg"),
+  }}
+style={{ width: "100%", maxWidth: 360 }}
+/>
 
 ## Put it in the right place
 
@@ -42,21 +54,47 @@ The six Core categories and Memory are built-in routes that you can select durin
 
 ## Change your setup choices
 
-Run `open-forge install --configure` to revisit Essentials, Full Core, or Custom. Custom shows one list that starts with the current concrete selection. Mark an omitted category `+` when it becomes useful, or `~` to keep new files throughout its directory out of ordinary Git commits. Already tracked files stay tracked. Ignored content is still indexed and read.
+To revisit Essentials, Full Core, Custom, or the metadata form, run:
 
-Marking a category `-` omits supplied defaults and releases their Framework management. It keeps existing files, notes, and overwrite companions in place and routable. For actual deletion, review the separate [`remove` command](/guides/cli#remove-and-keep-removed).
+```sh
+open-forge install --configure
+```
 
-Explicit configuration can restore eligible missing packaged defaults while preserving authored files and narrower omissions. After a checkout, it can restore an ignored route's scaffolding with or without the lock file. It cannot recover private notes that weren't shared. [Installation](installation.md#configure-an-existing-workspace) covers the wizard and unattended setup, and the [CLI reference](/guides/cli#setup-choices) lists Custom row flags.
+The wizard offers the presets, with Custom starting from the current choices, and asks about the frontmatter form with the current form preselected. It shows the plan before confirmation. It preserves authored files and narrower omissions. It can also restore eligible missing packaged defaults, such as ignored Working scaffolding after a checkout, whether or not the lock file is present. Missing private notes need your own copy or backup.
+
+To change only the form while keeping route choices, run:
+
+```sh
+open-forge install --configure --frontmatter scoped --dry-run
+open-forge install --configure --frontmatter scoped --automatic
+```
+
+Configure converts unedited owned Framework and Extension files to the selected form in the same operation as the settings change. Files already in that form need no change. Edited owned files and Extension files whose source is unavailable stay unchanged and are reported. Kept files do not block the form change. Excluded files, user-authored files, Library files, and overwrite companions are never converted. Native Skills and body content, including fenced examples, stay unchanged.
+
+To switch an existing setup to Essentials, preview that exact choice, then apply it:
+
+```sh
+open-forge install --configure --preset essentials --dry-run
+open-forge install --configure --preset essentials --automatic
+```
+
+For Custom row flags, metadata precedence, and unattended combinations, see the [CLI reference](/guides/cli#setup-choices).
+
+Custom starts from your current choices. Mark an omitted category `+` to add it, or `~` to keep new contents out of ordinary Git commits while leaving its entrypoint shareable. Marking it `-` omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions stay routable. For deletion, review the separate [Remove command](/guides/cli#remove).
+
+The review and result recap the resolved setup and changed route choices. In line mode, the list explains the sharing and retention rules and accepts `cancel` to stop without changes.
+
+Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools.
 
 ## Add an omitted category
 
-You can add an omitted Core category later. Name its canonical root with `open-forge route init <category> --framework --dry-run`, review the plan, then run the same command without `--dry-run`. The [ten-minute guide](ten-minute-guide.md#2-add-a-rule-and-a-reusable-shape) shows the commands for Patterns.
+You can add an omitted Core category later. Name its canonical root with `open-forge route init <category> --framework --dry-run`, review the plan, then run the same command without `--dry-run`. The [ten-minute guide](ten-minute-guide.md#3-add-a-report-shape) shows the commands for Patterns.
 
 Selecting a Core root restores its packaged contents. For example, `skills` includes the bundled CLI Skill. Selecting a Memory state such as `memory/archived` restores only that state and necessary missing ancestors, leaving the other states as they are.
 
 If a broader ancestor was excluded, add it explicitly first. The plan clears only the selected root or state's exact exclusion. It preserves unrelated descendant and file omissions, existing authored files, and overwrite companions.
 
-This restoration applies to unscoped canonical Core roots and Memory states. A scoped target still creates its sparse entrypoint chain. See the [CLI reference](/guides/cli#initialize-a-route-chain) for the complete rules.
+This restoration applies to unscoped canonical Core roots and Memory states. A scoped target still creates its sparse entrypoint chain. See the [CLI reference](/guides/cli#route-init) for the complete rules.
 
 ## Keep it cheap with scopes
 

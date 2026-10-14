@@ -226,7 +226,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route move",
+    "command": "open-forge route move 'guidance/old guide' '.agents/guidance/new guide.md' --workspace <workspace>",
     "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Move from a fresh plan."
   }
 }

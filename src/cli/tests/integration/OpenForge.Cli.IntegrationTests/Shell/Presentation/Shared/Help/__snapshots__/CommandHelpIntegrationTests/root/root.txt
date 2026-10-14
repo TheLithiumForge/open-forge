@@ -1,0 +1,49 @@
+  Open Forge installs and maintains your project's agent rules and context.
+
+Usage:
+  open-forge [command] [options]
+
+Get started in your project folder:
+  open-forge install --preset essentials --dry-run  Preview Essentials, no edits
+  open-forge install --preset essentials            Install it
+  Then give your agent a normal task.
+  Already installed? Preview updates with open-forge update --dry-run.
+
+Set up and manage:
+  install    Install the bundled Framework, or change your built-in setup.
+  update     Update files Open Forge manages to the version bundled in this CLI.
+  remove     Remove one exact path, route, Extension, or Library and remember
+             supported exclusions.
+  extension  Manage optional packages of agent rules and context.
+  library    Manage links from local source folders into your workspace.
+
+Read and discover:
+  status      Show whether Open Forge is installed and whether its setup needs
+              attention.
+  context     Read startup instructions and the required context for selected
+              sources.
+  find        Find Markdown sources by their tags, headings, or file conditions.
+  references  Show direct authored links into and out of one source.
+  route       Inspect or change files exposed through Open Forge navigation.
+
+Check and maintain:
+  doctor   Diagnose workspace, route, link, and managed-file problems without
+           changing files.
+  index    Complete missing metadata and navigation after edits to routed
+           Markdown.
+  repair   Apply verified corrections or explicitly chosen repairs to local
+           links and Library state.
+  cleanup  Delete recognized completed recovery bundles and drafts for the
+           selected workspace.
+
+Global options:
+  --workspace <path>          Select the workspace explicitly.
+  --format <format>           Output format: text or json. Default: text.
+  --detail <detail>           Result detail in text and JSON: minimal, standard,
+                              full or debug. Default: minimal.
+  --detail-filter <severity>  List error, warning, info or all severities.
+                              Repeat to combine.
+  --help                      Show help and exit.
+  --version                   Show the executable version and exit.
+
+  Use open-forge <command> --help for options and examples.

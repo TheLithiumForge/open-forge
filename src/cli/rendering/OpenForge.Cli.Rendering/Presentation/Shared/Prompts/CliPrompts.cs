@@ -16,7 +16,7 @@ internal sealed partial class CliPrompts(CliTerminal terminal, bool standardErro
         where TAnswer : notnull;
 
     private readonly CliTerminal _terminal = terminal ?? throw new ArgumentNullException(nameof(terminal));
-    private readonly CliTextStyle _style = standardErrorColor ? CliTextStyle.Color : CliTextStyle.Plain;
+    private readonly CliTextStyle _style = (standardErrorColor ? CliTextStyle.Color : CliTextStyle.Plain).WithWidth(terminal.Width);
 
     internal bool CanPrompt(CliPromptPolicy policy) => policy.Allowed && _terminal.CanPrompt;
 
@@ -29,7 +29,7 @@ internal sealed partial class CliPrompts(CliTerminal terminal, bool standardErro
         ArgumentException.ThrowIfNullOrWhiteSpace(question.Sentence);
         while (true)
         {
-            await WriteFrameAsync(CliText.Escape(question.Sentence) + "\n", cancellationToken).ConfigureAwait(false);
+            await WriteFrameAsync(string.Join("\n", CliSelectionText.Wrap(question.Sentence, LineWidth)) + "\n", cancellationToken).ConfigureAwait(false);
             if (_terminal.CanReadKeys)
             {
                 CliKeyStroke? key;
@@ -66,13 +66,13 @@ internal sealed partial class CliPrompts(CliTerminal terminal, bool standardErro
         var emptyAnswers = 0;
         while (true)
         {
-            await WriteFrameAsync(CliText.Escape(question.Label) + "\n", cancellationToken).ConfigureAwait(false);
+            await WriteFrameAsync(string.Join("\n", CliSelectionText.Wrap(question.Label, LineWidth)) + "\n", cancellationToken).ConfigureAwait(false);
             var answer = await _terminal.ReadLineAsync(cancellationToken).ConfigureAwait(false);
             if (answer is null) return CliPromptReply<T>.Cancelled();
             if (question.Required && string.IsNullOrWhiteSpace(answer))
             {
                 if (++emptyAnswers >= 2) return CliPromptReply<T>.Cancelled();
-                await WriteFrameAsync(CliText.Escape(question.Rule) + "\n", cancellationToken).ConfigureAwait(false);
+                await WriteProseAsync(question.Rule, cancellationToken).ConfigureAwait(false);
                 continue;
             }
             emptyAnswers = 0;
@@ -81,7 +81,7 @@ internal sealed partial class CliPrompts(CliTerminal terminal, bool standardErro
                 return CliPromptReply<T>.Answered(value);
             if (validation.IsValid)
                 throw new InvalidOperationException("A valid text answer must contain a value.");
-            await WriteFrameAsync(CliText.Escape(validation.Error ?? question.Rule) + "\n", cancellationToken).ConfigureAwait(false);
+            await WriteProseAsync(validation.Error ?? question.Rule, cancellationToken).ConfigureAwait(false);
         }
     }
 

@@ -1,0 +1,3 @@
+old.md was moved to invoices/new.md, same content. Repair can update the links and affected Entries.
+SafeExact
+open-forge repair --automatic

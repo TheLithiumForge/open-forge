@@ -63,6 +63,7 @@ internal static class LibraryAttachRequestBinder
         var dryRun = parse.Result.GetValue(symbols.DryRun);
         return CliBindResult<LibraryAttachRequest, LibraryAttachResult>.Bound(new LibraryAttachRequest
         {
+            RetryOptions = Shell.Definitions.Shared.Commands.Models.CliRetryOptions.From(invocation),
             AllowPrompt = invocation.Presentation.Format == CliFormat.Text && !dryRun && !automatic,
             Automatic = automatic,
             GitIgnore = ignoreFacts.IsExplicit ? parse.Result.GetValue(symbols.GitIgnore) : null,

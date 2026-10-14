@@ -42,7 +42,7 @@ internal static class ExtensionInstallWording
             .ToArray();
         return dependencies.Length == 0
             ? global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatTheExtension($"{verb}", $"{rootId}")
-            : global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatTheExtensionAndPackagesItRequires(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{verb}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{rootId}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{dependencies.Length}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{string.Join(", ", dependencies)}"));
+            : global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatTheExtensionAndPackagesItRequires(verb, rootId, dependencies.Length, string.Join(", ", dependencies));
     }
 
     internal static string AlreadyInstalled(string id)
@@ -69,12 +69,6 @@ internal static class ExtensionInstallWording
     internal static string PermissionRequired(string id)
         => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.PermissionRequired(id);
 
-    internal static string PermissionNext(string id, string path)
-        => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.PermissionNext(id, path);
-
-    internal static string ForcePreviewNext(string id)
-        => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.ForcePreviewNext(id);
-
     internal static string PermissionAlternative(string path)
         => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.PermissionAlternative(path);
 
@@ -90,7 +84,7 @@ internal static class ExtensionInstallWording
         => CliChangeWording.Replaced(preview, recoveryKept);
 
     internal static string UpdatedSection(bool preview)
-        => preview ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWouldUpdate() : global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdated();
+        => global::OpenForge.Cli.OutputText.Shared.ChangeLabels.Entries(preview);
 
     internal static string CreatedFiles(int count, string directories, bool preview)
         => global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatUnder(string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{(preview ? "Would create" : "Created")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{count}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{Plural(count, "file")}"), string.Create(global::System.Globalization.CultureInfo.InvariantCulture, $"{directories}"));

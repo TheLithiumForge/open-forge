@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Extension.Create.Shared.Prompts;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Commands.Extension;
 using OpenForge.Cli.Core.Commands.Extension.Create;
@@ -122,7 +123,8 @@ internal static class CliExtensionComposer
                         ExtensionIdLabel = ExtensionCreateWording.ExtensionId(),
                         ExtensionIdRule = ExtensionCreateWording.ExtensionIdRule(),
                         InvalidExtensionId = ExtensionCreateWording.InvalidExtensionId,
-                        PackageFolderLabel = ExtensionCreateWording.PackageFolder(),
+                        PackageFolderText = new ExtensionCreateFolderPrompt(interaction.Prompts, interaction.Terminal.WriteAsync).AskAsync,
+                        PackageFolderLabel = ExtensionCreateWording.PackageFolder,
                         PackageFolderRule = ExtensionCreateWording.PackageFolderRule(),
                         InvalidPackageFolder = ExtensionCreateWording.InvalidPackageFolder(),
                         ConfirmationQuestion = new CliConfirmQuestion(

@@ -1,4 +1,4 @@
-No problems found. 1 info finding was recorded. 1 check could not finish.
+Doctor could not finish 1 check. 1 info finding was recorded.
 Extensions
   Info  ./packages/toolkit  Extension source cannot be read [extension.source-unavailable]
          The source of toolkit, ./packages/toolkit, cannot be read, so its files were not compared.

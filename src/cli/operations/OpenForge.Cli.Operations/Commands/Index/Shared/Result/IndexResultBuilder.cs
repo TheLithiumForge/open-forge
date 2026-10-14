@@ -20,6 +20,9 @@ internal sealed class IndexResultBuilder
             Regions = outcome.Regions,
             Recovery = outcome.Recovery,
             Findings = outcome.Findings,
+            Metadata = outcome.Metadata,
+            Entrypoints = outcome.Entrypoints,
+            Deletions = outcome.Deletions,
         });
     }
 

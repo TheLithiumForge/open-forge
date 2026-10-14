@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Text.Json;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Core.Commands.Find;
@@ -50,7 +51,7 @@ public sealed class FindApplicationIntegrationTests
         Assert.Equal(0, result.ExitCode);
         Assert.Empty(result.Error);
         var lines = result.Output.Split(Environment.NewLine, StringSplitOptions.None);
-        var discovery = Array.FindIndex(lines, line => line.Equals("Commands:", StringComparison.Ordinal));
+        var discovery = Array.FindIndex(lines, line => line.Equals("Read and discover:", StringComparison.Ordinal));
         Assert.True(discovery >= 0);
         Assert.Single(
             lines[(discovery + 1)..]
@@ -69,8 +70,8 @@ public sealed class FindApplicationIntegrationTests
         Assert.Equal(0, result.ExitCode);
         Assert.Empty(result.Error);
         Assert.Contains("open-forge find", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Source references", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Filters", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Automation", result.Output, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Host")]
@@ -262,7 +263,7 @@ public sealed class FindApplicationIntegrationTests
 
         if (expectedStatus == "incomplete")
         {
-            Assert.Equal("open-forge doctor", document.RootElement.GetProperty("next").GetProperty("command").GetString());
+            Assert.Equal($"open-forge doctor --workspace {CliCommandText.Quote(workspace.Path)}", document.RootElement.GetProperty("next").GetProperty("command").GetString());
         }
         else
         {

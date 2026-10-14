@@ -6,11 +6,11 @@ internal static class IndexText
 {
     // @OpenForgeText index.help.syntax
     internal static string HelpSyntax()
-        => "open-forge index [source-reference...] [--dry-run] [global options]";
+        => "open-forge index [<source-reference>...] [options]";
 
     // @OpenForgeText index.help.selection
     internal static string HelpSelection()
-        => "With no source operands, Index rebuilds the Loader and every reachable entrypoint region. An entrypoint selects its subtree and direct exposing parent; a routed leaf selects its direct exposing parent.";
+        => "With no source operands, Index rebuilds the Loader and every reachable entrypoint region. An entrypoint selects its subtree and direct exposing parent. A routed leaf selects its direct exposing parent.";
 
     // @OpenForgeText index.help.write-policy
     internal static string HelpWritePolicy()
@@ -18,7 +18,7 @@ internal static class IndexText
 
     // @OpenForgeText index.help.examples
     internal static string HelpExamples()
-        => "open-forge index\n  open-forge index memory --dry-run\n  open-forge index .agents/memory/_memory.md --format json";
+        => "open-forge index --dry-run\nopen-forge index\nopen-forge index memory --dry-run";
 
     // @OpenForgeText index.help.notes
     internal static string HelpNotes()
@@ -119,4 +119,20 @@ internal static class IndexText
     // @OpenForgeText index.title.index
     internal static string TitleIndex()
         => "Index";
+
+    // @OpenForgeText index.index.help.behavior
+    internal static string HelpBehavior()
+        => "With no source, rebuild the Loader and every reachable entrypoint.\n--dry-run shows the complete checked plan and writes nothing.\nFill absent metadata and create missing navigation files below existing routed roots. Keep supplied fields and authored content. This command asks no questions.\nRepeating it makes no further changes. Use Git or a backup to restore saved content.";
+
+    // @OpenForgeText index.index.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("route list", "Browse routed sources."),
+            ("doctor", "Diagnose workspace problems."),
+            ("repair --help", "Correct verified link and Library problems."),
+        ];
+    // @OpenForgeText index.help.details-1
+    internal static string HelpScopeDetails()
+        => "An entrypoint selects its subtree and direct exposing parent. A routed leaf selects its direct exposing parent and any missing chain. Index inserts absent metadata, completes navigation files, and updates unique ## Entries sections, removing retired generated guard comments. It keeps supplied fields and authored content.";
 }

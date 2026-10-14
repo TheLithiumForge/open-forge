@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install: Frontmatter must be root or scoped.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "install.invalid-input",
+      "title": "Invalid input",
+      "message": "Invalid --frontmatter value: other\n\u001B[2J. Use root or scoped.",
+      "subject": {
+        "kind": "workspace",
+        "path": null,
+        "id": "<workspace>",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge install --help",
+          "reason": "Correct the named Install input, then rerun the request."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "sectionsAdded": 0,
+    "filesReplaced": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": false,
+    "classification": null,
+    "footprint": null,
+    "lockPath": ".agents/open-forge.lock.json"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge install --help",
+    "reason": "Correct the named Install input, then rerun the request."
+  }
+}

@@ -66,9 +66,9 @@ public sealed class ExtensionRemoveInteractionIntegrationTests
         Assert.Empty(workspace.ReadExtensionOwnership().EnumerateArray());
         var output = scripted.Output.ToString();
         Assert.Contains("Choose Extensions to remove", output, StringComparison.Ordinal);
-        Assert.Contains("needed by", output, StringComparison.Ordinal);
+        Assert.Contains("Needed by", output, StringComparison.Ordinal);
         Assert.Contains("Apply these changes, including deleting 2 files? [y/N]", output, StringComparison.Ordinal);
-        var preview = output.IndexOf("Would remove the", StringComparison.Ordinal);
+        var preview = output.IndexOf("Would remove 2 Extensions: base, toolkit.", StringComparison.Ordinal);
         var previewPath = output.IndexOf(".agents/base.md", StringComparison.Ordinal);
         var delete = output.IndexOf("Apply these changes, including deleting 2 files? [y/N]", StringComparison.Ordinal);
         Assert.True(preview >= 0 && preview < delete, "The complete preview must precede confirmation.");

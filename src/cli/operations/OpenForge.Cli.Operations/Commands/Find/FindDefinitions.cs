@@ -22,25 +22,25 @@ internal static class FindDefinitions
 
     internal static readonly CliSyntaxDefinition FindCommand = new(
         CommandIdentity,
-        "Find Markdown sources by tags and headings.");
+        "Find Markdown sources by their tags, headings, or file conditions.");
 
     internal static readonly CliOptionDefinition<string[]> Include = new(
         "--include",
-        "Include one source in the search; repeat to include more.",
+        "Include one source in the search. Repeat to include more.",
         CliOptionArity.ExactlyOne,
         [],
         "source-reference");
 
     internal static readonly CliOptionDefinition<string[]> Exclude = new(
         "--exclude",
-        "Exclude one source from the search; repeat to exclude more.",
+        "Exclude one source from the search. Repeat to exclude more.",
         CliOptionArity.ExactlyOne,
         [],
         "source-reference");
 
     internal static readonly CliOptionDefinition<string[]> For = new(
         "--for",
-        "Limit results to sources that apply to one supplied workspace path; repeat for more paths.",
+        "Limit results to sources that apply to one supplied workspace path. Repeat for more paths.",
         CliOptionArity.ExactlyOne,
         [],
         "path");

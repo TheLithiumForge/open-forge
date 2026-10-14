@@ -7,9 +7,36 @@ description: A planning workflow, the Work Records Pattern, four Memory categori
 
 Turn an outcome into work that can be understood, carried out, and resumed. Keep your existing boards and task systems, and create only the records that add useful context.
 
-- **Package ID:** `planning`
+- **[Package ID](../glossary.md#package-id):** `planning`
 - **Depends on:** [Workflow Support](workflows.md)
-- **Loads at startup:** Only five entry lines. The Checkpoints entry appears in Working Memory's `Entries`, the Ideas and Analysis entries in Emerging Memory's, the Decisions entry in Crystallized Memory's, and the Work Records entry in the Patterns [entrypoint](../concepts/routing.md#entrypoints). The category entrypoints, their records, and the Pattern open on demand. The recipe and the Templates stay on demand too.
+- **Startup visibility:** This package adds five entry lines: four Memory categories and the Work Records Pattern. Checkpoints appears in Working, Ideas and Analysis in Emerging, Decisions in Crystallized, and Work Records in Patterns. Workflow Support also adds the `use-workflow` entry in Skills. Linked files open when selected or required. Recipes and Templates stay on demand.
+
+These counts describe this package's own entries when their parent routes expose them in `Entries` and are read. Required packages add their own entries. Linked files stay on demand unless selected or required.
+
+## Install
+
+Package files follow your installation choices. Essentials leaves out Templates, so Planning skips its starters and installs only its other enabled content. If you want the starters, restore the Templates category first. Preview the restoration, review the plan, then apply:
+
+```sh
+open-forge route init templates --framework --dry-run
+open-forge route init templates --framework
+```
+
+From your installed Open Forge workspace, preview the package and its required packages:
+
+```sh
+open-forge extension install planning --dry-run
+```
+
+Review the plan. Then apply it:
+
+```sh
+open-forge extension install planning
+```
+
+The CLI installs required packages from the same [catalogue](../glossary.md#catalogue). See the [Extension guide](/guides/extensions#install-an-extension) for scripts using `--automatic`, updates, removal, or a local source.
+
+If Planning is already installed without its starters, follow the result's guidance to restore Templates, then preview and apply the [package update](index.md#if-your-setup-leaves-out-templates). Plans and receipts name the skipped starters for Planning and Workflow Support.
 
 :::tip[Start with Decisions]
 
@@ -57,7 +84,7 @@ It completes when the plan covers the outcome, boundaries, dependencies, ordered
 
 **Kind:** Pattern. **Used when:** work needs durable records and the project has no suitable structure.
 
-It defines the default shape. Start with **one Task** that holds three answers together:
+It defines the default shape. Start with **one [Task](../glossary.md#task)** that holds three answers together:
 
 | Section       | Defines                                                                      |
 | ------------- | ---------------------------------------------------------------------------- |
@@ -65,7 +92,7 @@ It defines the default shape. Start with **one Task** that holds three answers t
 | Plan          | The short sequence, dependencies, and verification                           |
 | Current State | Progress, decisive evidence, blockers, and the next action                   |
 
-Split into a separate **Plan**, **Backlog**, or **Checkpoint** only when that answer needs its own maintenance. Each changing fact keeps one defining source, and external task systems keep the facts assigned to them.
+Split into a separate **[Plan](../glossary.md#plan)**, **[Backlog](../glossary.md#backlog)**, or **[Checkpoint](../glossary.md#checkpoint)** only when that answer needs its own maintenance. Each changing fact keeps one defining source, and external task systems keep the facts assigned to them.
 
 ### The Memory categories
 
@@ -102,3 +129,5 @@ Each arrives empty. Records appear as you create them.
 - The Memory categories keep their meaning wherever they're used. Shipping them in Planning doesn't narrow Decisions to planning.
 - The Templates require no status system, ID scheme, estimate, hierarchy, or approval stage you haven't chosen.
 - User Flow, Scenario, and Run Record starters live in the separate [Flows and Scenarios](scenarios.md) package.
+
+Next: [Install this package](#install), or [update and remove Extensions](/guides/extensions#update-and-remove).

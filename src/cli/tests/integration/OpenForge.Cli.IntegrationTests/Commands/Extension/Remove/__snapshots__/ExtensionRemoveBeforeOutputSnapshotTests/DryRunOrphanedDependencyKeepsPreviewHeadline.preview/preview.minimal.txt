@@ -1,0 +1,9 @@
+Would remove the toolkit Extension.
+Workspace: <workspace>
+  Warning  base  Dependency remains installed
+         base would remain installed after removing toolkit.
+         After applying this removal, you can preview removing base too.
+  .agents/open-forge.json  would record the removal in workspace settings
+  .agents/toolkit.md       would delete
+  No files were changed.
+Next: open-forge extension remove toolkit --automatic --workspace <workspace>

@@ -7,9 +7,29 @@ description: Vision and Architecture workflows, a Documents Memory category, and
 
 Keep understandable, current project knowledge without duplicating it. Keep documentation where your project already has it, or use the supplied Documents convention.
 
-- **Package ID:** `project-documents`
+- **[Package ID](../glossary.md#package-id):** `project-documents`
 - **Depends on:** [Workflow Support](workflows.md)
-- **Loads at startup:** Only one entry line: the Documents entry in Crystallized Memory's `Entries`. The category [entrypoint](../concepts/routing.md#entrypoints) and your Documents open on demand. The recipes and the Templates stay on demand too.
+- **Startup visibility:** This package adds one entry line in Crystallized Memory for Documents. Workflow Support also adds the `use-workflow` entry in Skills. The category entrypoint, records, recipes, and Templates stay on demand.
+
+These counts describe this package's own entries when their parent routes expose them in `Entries` and are read. Required packages add their own entries. Linked files stay on demand unless selected or required.
+
+## Install
+
+Package files follow your installation choices. Essentials leaves out Templates, so Extension starters are skipped. [Restore the Templates category](index.md#if-your-setup-leaves-out-templates) if you want those starters.
+
+From your installed Open Forge workspace, preview the package and its required packages:
+
+```sh
+open-forge extension install project-documents --dry-run
+```
+
+Review the plan. Then apply it:
+
+```sh
+open-forge extension install project-documents
+```
+
+The CLI installs required packages from the same [catalogue](../glossary.md#catalogue). See the [Extension guide](/guides/extensions#install-an-extension) for scripts using `--automatic`, updates, removal, or a local source.
 
 ## Why it exists
 
@@ -39,7 +59,7 @@ The Vision and Architecture workflows add one discipline that matters for both: 
 
 **Kind:** Memory category (Crystallized). **Used when:** work needs accepted current knowledge.
 
-A Document is one coherent, current explanation of a subject, written so readers don't have to piece its meaning together from past decisions. When a Document names another source as authoritative, it follows that source instead of duplicating it.
+A Document is one coherent, current explanation of a subject, written so readers don't have to piece its meaning together from past decisions. When a Document names another source as [authoritative](../glossary.md#authoritative-source), it follows that source instead of duplicating it.
 
 Documents are kept top-down. Top-level Documents give an overview of the whole and summarize each narrower Document they link to. A narrower Document explains its own part in more detail and links back up. A Document links to a Decision when that Decision's reasoning helps. When accepted knowledge changes a narrower Document, the rules ask for the summaries above it that no longer match to be updated too. [The document flow](document-flow.md) shows it with an example.
 
@@ -77,3 +97,5 @@ Documents are kept top-down. Top-level Documents give an overview of the whole a
 - Drafts stay candidates until accepted.
 - Existing documentation doesn't need to move into Memory.
 - The package works without Planning. Link to rationale wherever your workspace already keeps it.
+
+Next: [Install this package](#install), or [update and remove Extensions](/guides/extensions#update-and-remove).

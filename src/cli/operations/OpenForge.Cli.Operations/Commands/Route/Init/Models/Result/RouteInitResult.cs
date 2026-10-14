@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
+using OpenForge.Cli.Core.Commands.Route.Init.Shared.Result;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -32,6 +33,8 @@ internal sealed record RouteInitResult : ICliCommandResult
         Findings = orderedFindings;
         Status = status;
         Next = next;
+        RequestCommand = formation.Request is { } request ? RouteInitRetryCommand.From(request) : null;
+        DebugCommand = formation.Request is { } debugRequest ? RouteInitRetryCommand.From(debugRequest, diagnostics: true) : null;
     }
 
     public string Command => RouteInitDefinitions.CommandIdentity;
@@ -45,6 +48,10 @@ internal sealed record RouteInitResult : ICliCommandResult
     internal bool WorkspaceExplicit => Workspace?.SelectedBy == CliWorkspaceSelectionMethod.ExplicitWorkspace;
 
     public CliNextAction? Next { get; }
+
+    internal string? RequestCommand { get; }
+
+    internal string? DebugCommand { get; }
 
     internal RouteInitMode Mode { get; }
 

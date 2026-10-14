@@ -1,0 +1,449 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Installed the planning Extension and 1 package it requires: workflows.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/skills/use-workflow",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/planning",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/workflows",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/emerging/analysis",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/emerging/ideas",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/working/checkpoints",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/references",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/planning",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/SKILL.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "workflows",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/_references.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "workflows",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/workflows/_workflows.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "workflows",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/workflows/workflow.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "workflows",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/_decisions.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/emerging/analysis/_analysis.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/emerging/ideas/_ideas.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/working/checkpoints/_checkpoints.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/patterns/work-records.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/planning/_planning.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/planning/planning.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/planning/_planning.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/planning/analysis.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/planning/backlog.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/planning/checkpoint.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/planning/decision.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/planning/idea.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/planning/plan.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/planning/task.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/crystallized/_crystallized.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/emerging/_emerging.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/working/_working.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/skills/_skills.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/templates/_templates.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    }
+  ],
+  "counts": {
+    "packagesInstalled": 2,
+    "filesCreated": 19,
+    "filesReplaced": 0,
+    "sectionsUpdated": 6,
+    "grantsSaved": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "embedded",
+      "path": null
+    },
+    "packages": [
+      {
+        "id": "workflows",
+        "version": "0.4.0",
+        "selected": false,
+        "requiredBy": [
+          "planning"
+        ]
+      },
+      {
+        "id": "planning",
+        "version": "0.4.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": [
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/skills/use-workflow/references/_references.md",
+      ".agents/templates/_templates.md"
+    ],
+    "entriesUnchanged": [
+      ".agents/directives/_directives.md",
+      ".agents/guidance/_guidance.md",
+      ".agents/loader.md",
+      ".agents/maps/_maps.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/archived/_archived.md",
+      ".agents/memory/crystallized/decisions/_decisions.md",
+      ".agents/memory/emerging/analysis/_analysis.md",
+      ".agents/memory/emerging/ideas/_ideas.md",
+      ".agents/memory/working/checkpoints/_checkpoints.md",
+      ".agents/skills/use-workflow/references/planning/_planning.md",
+      ".agents/templates/planning/_planning.md",
+      ".agents/templates/workflows/_workflows.md"
+    ],
+    "frameworkFingerprint": "<sha256>",
+    "verification": {
+      "targets": "verified",
+      "topology": "verified",
+      "extensionsLifecycle": "verified",
+      "frameworkLifecycle": "verified"
+    },
+    "recovery": {
+      "state": "removed",
+      "protectedPaths": [
+        ".agents/memory/crystallized/_crystallized.md",
+        ".agents/memory/emerging/_emerging.md",
+        ".agents/memory/working/_working.md",
+        ".agents/patterns/_patterns.md",
+        ".agents/skills/_skills.md",
+        ".agents/templates/_templates.md",
+        ".agents/open-forge.lock.json"
+      ],
+      "residualPath": null
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "removed"
+  },
+  "next": null
+}

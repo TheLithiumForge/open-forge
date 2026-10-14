@@ -87,7 +87,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge extension inspect missing-package",
+    "command": "open-forge extension inspect missing-package --source <extension-source>",
     "reason": "Inspect the installed Extension facts."
   }
 }

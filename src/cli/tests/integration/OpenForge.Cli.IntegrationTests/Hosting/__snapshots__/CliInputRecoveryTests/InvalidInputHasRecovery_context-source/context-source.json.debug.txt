@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "invalid-input",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot read context: No source has the ID memroy.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "context.invalid-source",
+      "title": "Invalid source",
+      "message": "No source has the ID memroy.",
+      "subject": {
+        "kind": "identifier",
+        "path": "memroy",
+        "id": "memroy",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sources": null,
+    "tokens": null,
+    "bytes": null,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0,
+    "errors": 1
+  },
+  "limitations": [
+    {
+      "what": "sources",
+      "why": "The Context source closure could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "tokens",
+      "why": "The Context source closure could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "bytes",
+      "why": "The Context source closure could not be resolved completely.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "sources": [],
+    "links": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --depth all --workspace <workspace>",
+    "reason": "Choose an ID or exact path from the route list."
+  }
+}

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Presentation.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Shared.Help.Models;
 using OpenForge.Cli.Core.Presentation.Cleanup.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
@@ -6,12 +8,15 @@ namespace OpenForge.Cli.Core.Presentation.Cleanup.Shared.Help;
 internal static class CleanupHelpSections
 {
     internal static CliHelpContent Create()
-        => new(
-        [
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSyntax(), CleanupWording.HelpSyntax()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCatalogue(), CleanupWording.HelpCatalogue()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingWritePolicy(), CleanupWording.HelpWritePolicy()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingGlobalOptions(), CleanupWording.HelpGlobalOptions()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingNotes(), CleanupWording.HelpNotes()),
-        ]);
+        => CliCommandHelp.Create(new CliCommandHelpDefinition
+        {
+            Usage = global::OpenForge.Cli.OutputText.Cleanup.CleanupText.HelpSyntax(),
+            Examples = global::OpenForge.Cli.OutputText.Cleanup.CleanupText.HelpExamples(),
+            Behavior = global::OpenForge.Cli.OutputText.Cleanup.CleanupText.HelpBehavior(),
+            Details =
+            [
+                new CliHelpSection("Safety", global::OpenForge.Cli.OutputText.Cleanup.CleanupText.HelpSafetyDetails()),
+            ],
+            RelatedCommands = global::OpenForge.Cli.OutputText.Cleanup.CleanupText.HelpRelatedCommands(),
+        });
 }

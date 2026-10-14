@@ -58,9 +58,9 @@ internal sealed partial class CliPrompts
                 if (values.Count == 0) { notice = CliPromptWording.EmptySelection(); continue; }
                 var closure = RequiredBy(question, values);
                 foreach (var row in question.Choices.Where(choice => closure.ContainsKey(choice.Value) && !values.Contains(choice.Value)))
-                    await WriteFrameAsync(CliText.Escape(question.Direction == CliDependencyDirection.Requires
+                    await WriteProseAsync(question.Direction == CliDependencyDirection.Requires
                         ? CliPromptWording.AlsoIncluded(row.Label, Labels(question, closure[row.Value]))
-                        : CliPromptWording.Removing(Labels(question, closure[row.Value]), row.Label)) + "\n", cancellationToken).ConfigureAwait(false);
+                        : CliPromptWording.Removing(Labels(question, closure[row.Value]), row.Label), cancellationToken).ConfigureAwait(false);
                 return Reply(question, values, closure);
             }
 

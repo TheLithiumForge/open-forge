@@ -14,10 +14,10 @@ export default function Home(): ReactNode {
     >
       <Hero />
       <main>
-        <HowItFits />
         <StartingPoint />
-        <Features />
         <BaseFramework />
+        <HowItFits />
+        <Features />
       </main>
     </Layout>
   );

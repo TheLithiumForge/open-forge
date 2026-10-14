@@ -1,0 +1,3 @@
+The .agents source root is unavailable.
+The canonical Loader source is unavailable.
+The selected physical layer could not be read completely.

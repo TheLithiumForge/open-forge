@@ -6,7 +6,13 @@ namespace OpenForge.Cli.Core.Presentation.Shared.Text;
 internal sealed class CliTextStyle
 {
     private readonly bool _enabled;
-    private CliTextStyle(bool enabled) => _enabled = enabled;
+    private CliTextStyle(bool enabled, int width = CliPresentation.DefaultWidth)
+    {
+        _enabled = enabled;
+        Width = width;
+    }
+    internal int Width { get; }
+    internal CliTextStyle WithWidth(int width) => new(_enabled, Math.Max(1, width));
     internal static CliTextStyle Plain { get; } = new(false);
     internal static CliTextStyle Color { get; } = new(true);
 

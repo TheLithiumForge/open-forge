@@ -7,10 +7,30 @@ description: The use-workflow Skill, its recipe catalogue, and a Template for wr
 
 Find and follow installed workflows, or write your own. This package supplies the `use-workflow` Skill. Agents reach every workflow recipe that other packages install through this one Skill.
 
-- **Package ID:** `workflows`
+- **[Package ID](../glossary.md#package-id):** `workflows`
 - **Depends on:** Nothing
 - **Needed by:** [Planning](planning.md), [Project Documents](project-documents.md), [Development](development.md), and through them [Task Coordination](orchestration.md)
-- **Loads at startup:** Only one entry line: the Skill's entry in the Skills [entrypoint](../concepts/routing.md#entrypoints). `SKILL.md`, the recipe catalogue, the recipes, and the Template open on demand. Your harness may also list the Skill through its own Skill discovery, if you've set that up.
+- **Startup visibility:** This package adds one entry line in the Skills [entrypoint](../glossary.md#entrypoint) for `use-workflow`. `SKILL.md`, the recipe catalogue, recipes, and the Template stay on demand. Your harness may also list the Skill through its own discovery, if you've set that up.
+
+These counts describe this package's own entries when their parent routes expose them in `Entries` and are read. Required packages add their own entries. Linked files stay on demand unless selected or required.
+
+## Install
+
+Package files follow your installation choices. Essentials leaves out Templates, so Extension starters are skipped. [Restore the Templates category](index.md#if-your-setup-leaves-out-templates) if you want those starters.
+
+From your installed Open Forge workspace, preview the package and its required packages:
+
+```sh
+open-forge extension install workflows --dry-run
+```
+
+Review the plan. Then apply it:
+
+```sh
+open-forge extension install workflows
+```
+
+The CLI installs required packages from the same [catalogue](../glossary.md#catalogue). See the [Extension guide](/guides/extensions#install-an-extension) for scripts using `--automatic`, updates, removal, or a local source.
 
 ## Why it exists
 
@@ -47,7 +67,13 @@ Once a recipe is selected, the Skill tells the agent to follow its required step
 
 The catalogue defines the recipe convention: every recipe has one non-empty `## Goal`, `## Steps`, and `## Completion`, in that order, and may add other sections. Other packages add their recipes as scoped folders below it (`development/`, `planning/`, `project-documents/`, `orchestration/`). Installed alone, it contains no recipes.
 
-The catalogue is reached through the Skill, not through the loader's root routes. After adding or removing recipes, rebuild its `Entries` by naming it explicitly:
+Agents reach recipes through the `use-workflow` Skill. The CLI's ordinary `index` command also reaches recipe catalogues of structurally reachable native Skills. Preview reachable indexes with:
+
+```sh
+open-forge index --dry-run
+```
+
+To limit the operation to this recipe catalogue, name it explicitly:
 
 ```sh
 open-forge index .agents/skills/use-workflow/references/_references.md
@@ -70,3 +96,5 @@ A starter recipe with `Goal`, `Steps`, and `Completion` sections, plus guidance 
 - Open Forge routing and native harness discovery are separate. Make sure your harness can see `.agents/skills/use-workflow/SKILL.md` through its own Skill discovery, and that relative resource links resolve.
 - The package installs no hooks, execution engine, tool grants, or provider-specific agents.
 - A missing or deliberately removed recipe isn't permission to reinstall it.
+
+Next: [Install this package](#install), or [update and remove Extensions](/guides/extensions#update-and-remove).

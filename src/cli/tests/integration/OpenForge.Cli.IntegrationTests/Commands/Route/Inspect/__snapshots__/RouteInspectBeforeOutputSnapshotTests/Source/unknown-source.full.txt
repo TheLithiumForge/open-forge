@@ -1,8 +1,6 @@
 Cannot inspect missing/source: No source has the ID missing/source.
 Workspace: <workspace>
-  Error  missing/source  Source is unknown [route-inspect.unknown-source]
-         No source has the ID missing/source.
   Why: the source reference was not accepted
   Selection: source ID; unresolved; requested "missing/source"
-  Correct the named source or input, then rerun route inspect.
-Next: open-forge route inspect --help
+  Choose an ID or exact path from the route list.
+Next: open-forge route list --depth all

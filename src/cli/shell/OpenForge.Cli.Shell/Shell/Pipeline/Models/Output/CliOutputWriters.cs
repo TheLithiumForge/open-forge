@@ -13,6 +13,7 @@ internal sealed record CliOutputWriters
     }
 
     internal CliOutputColors Colors { get; init; } = CliOutputColors.Plain;
+    internal int Width { get; init; } = CliPresentation.DefaultWidth;
 
     internal TextWriter StandardOutput { get; }
 

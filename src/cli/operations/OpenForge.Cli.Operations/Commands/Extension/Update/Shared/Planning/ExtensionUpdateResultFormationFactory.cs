@@ -13,6 +13,7 @@ internal static class ExtensionUpdateResultFormationFactory
         IReadOnlyList<ExtensionUpdateFinding> findings)
         => new(new ExtensionUpdateResultFormation
         {
+            Request = request,
             Workspace = request.Workspace,
             Mode = request.Mode,
             Force = request.Force,

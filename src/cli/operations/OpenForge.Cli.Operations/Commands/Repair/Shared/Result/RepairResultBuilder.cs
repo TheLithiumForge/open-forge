@@ -18,7 +18,7 @@ internal static class RepairResultBuilder
         }
 
         input = input with { Plan = RepairStepOutcomeReader.Project(input) };
-        var findings = AddSelectionFindings(input.Plan.Selection, input.Findings);
+        var findings = RepairFindingFormation.Read(input);
         var counts = ReadCounts(input, findings);
         return new RepairResult(new RepairResultFormation
         {
@@ -106,20 +106,6 @@ internal static class RepairResultBuilder
             conflict.Occurrence);
     }
 
-    private static List<RepairFinding> AddSelectionFindings(
-        RepairSelection selection,
-        IReadOnlyList<RepairFinding> findings)
-    {
-        var values = findings.ToList();
-        values.AddRange(selection.Unselected
-            .Select(proposal => new RepairFinding(
-                proposal.IsGuided ? RepairFindingCode.GuidedFindingRemaining : RepairFindingCode.ManualFindingRemaining,
-                "A current Repair proposal remains unselected.",
-                proposal.SourceCanonicalPath,
-                proposal.Occurrence)));
-        return values;
-    }
-
     private static bool SameFinding(RepairFinding left, RepairFinding right)
         => left.Code == right.Code && left.SourceCanonicalPath == right.SourceCanonicalPath && left.Occurrence == right.Occurrence;
 
@@ -151,9 +137,7 @@ internal static class RepairResultBuilder
         IReadOnlyList<RepairFinding> findings)
     {
         var selection = input.Plan.Selection;
-        var remaining = input.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested
-            ? findings.Where(IsRemaining).ToArray()
-            : [.. input.PostDiagnosis.Findings.Where(IsRemaining)];
+        var remaining = RepairFindingFormation.Remaining(input, findings);
         var guided = remaining.Count(finding => finding.Code == RepairFindingCode.GuidedFindingRemaining);
         var blocked = findings.Count(finding => finding.Status == Shell.Definitions.CliSemanticStatus.Blocked);
         var verified = input.Verification.Effects.Count(effect =>
@@ -171,7 +155,7 @@ internal static class RepairResultBuilder
             guided: guided,
             blocked: blocked,
             selectedEffects: input.Plan.Effects.Count,
-            appliedEffects: input.Application.AppliedEffects,
+            appliedEffects: input.Verification.Effects.Count(effect => effect.Receipt?.EffectState == FilesystemEffectState.Applied),
             verifiedEffects: verified,
             noOps: input.Plan.NoOps.Count,
             conflicts: input.Plan.Conflicts.Count);

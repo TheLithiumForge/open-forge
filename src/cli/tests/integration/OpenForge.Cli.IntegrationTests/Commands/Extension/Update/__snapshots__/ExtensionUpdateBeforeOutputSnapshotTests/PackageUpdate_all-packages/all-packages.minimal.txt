@@ -2,5 +2,5 @@ Updated 2 Extensions.
 Workspace: <workspace>
   .agents/base.md     replaced (you had changed it and this version changes it)
   .agents/toolkit.md  replaced (you had changed it and this version changes it)
-  Previous content: recovery bundle at <recovery-bundle>
+  Previous content is in the recovery bundle at <recovery-bundle>.
 Next: Review previous content in the recovery bundle at <recovery-bundle>.

@@ -9,12 +9,29 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Application;
 using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.UnitTests.Commands.Library.Shared.Mutation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Library.Detach.Shared.Completion;
 
 public sealed class LibraryDetachCompletionTests
 {
+    [Fact(DisplayName = "Library Detach permission retry retains request options and quotes every grant")]
+    [Trait("Feature", "library-mutation"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void PermissionRetryRetainsRequest()
+    {
+        var original = LibraryMutationCompletionData.Detach().Request;
+        var request = original with
+        {
+            Workspace = new(original.Workspace.LexicalRoot, original.Workspace.PhysicalRoot, OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            Automatic = true,
+            Mode = LibraryMode.DryRun,
+            Allow = ["team folder"],
+            RetryOptions = new(CliFormat.Json, CliDetail.Full, null),
+        };
+        var command = LibraryDetachRetryCommand.From(request, ["team folder", "other's folder"]);
+        Assert.Equal($"open-forge library detach {request.LibraryId.Value} --workspace {CliCommandText.Quote(request.Workspace.LexicalRoot)} --allow-path 'team folder' --allow-path {CliCommandText.Quote("other's folder")} --automatic --dry-run --format json --detail full", command);
+    }
 
     [Trait("Boundary", "Processing")]
     [Theory, Trait("Feature", "library-mutation"), Trait("Evidence", "Unit")]

@@ -144,7 +144,7 @@ public sealed class LibraryAttachBeforeOutputSnapshotTests
             });
             artifacts.OwnRecovery(result.Result.Application.Recovery);
             Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
-            Assert.Equal(link.RawRelativeTarget, new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
+            Assert.Equal(link.RawRelativeTarget.Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
             Assert.False(File.Exists(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
             Assert.Equal(sourceBefore, File.ReadAllBytes(sourcePath));
             Assert.True(File.Exists(preparation.BundlePath));

@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge doctor",
+          "command": "open-forge doctor --workspace <workspace>",
           "reason": "Inspect the recovery store before relying on this Cleanup result."
         }
       ],
@@ -56,7 +56,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the recovery store before relying on this Cleanup result."
   }
 }

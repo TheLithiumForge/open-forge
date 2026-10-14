@@ -16,7 +16,6 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
-using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install;
@@ -306,13 +305,7 @@ internal sealed class ExtensionInstallOperation(
     {
         var sourcePackage = plan.SourceRead.Packages.FirstOrDefault(package =>
             string.Equals(package.Id, packageId, StringComparison.Ordinal));
-        if (sourcePackage is null || sourcePackage.Payload.Count == 0)
-        {
-            return false;
-        }
-
-        return sourcePackage.Payload.All(file => WorkspaceRemovals.IsPathRemoved(
-            file.TargetPath ?? file.Path,
-            plan.SettingsObservation.Document));
+        return sourcePackage is not null
+            && ExtensionInstallPayloadNormalizer.IsEntirePayloadExcluded(sourcePackage, plan.SettingsObservation.Document);
     }
 }

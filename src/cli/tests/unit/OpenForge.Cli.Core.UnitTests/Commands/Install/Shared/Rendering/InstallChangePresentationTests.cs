@@ -43,7 +43,7 @@ public sealed class InstallChangePresentationTests
             ? ScriptedCliTerminal.Keys([new(CliKey.Character, 'y')])
             : ScriptedCliTerminal.Lines(["yes"]);
         var prompts = new CliPrompts(scripted.Terminal);
-        var confirm = prompts.PlanConfirmation(InstallPresentation.Rendering,
+        var confirm = prompts.PlanConfirmation(InstallPresentation.PlanReviewRendering,
             static (InstallConfirmationFacts facts) => new CliConfirmQuestion(InstallWording.Confirmation(facts)));
         var reply = await confirm(Result(true), new(replacements), new(true), TestContext.Current.CancellationToken);
         Assert.Equal(CliPromptState.Answered, reply.State);
@@ -52,6 +52,8 @@ public sealed class InstallChangePresentationTests
         Assert.EndsWith(expected + Environment.NewLine, output, StringComparison.Ordinal);
         Assert.Contains("ownership record would be updated", output, StringComparison.Ordinal);
         Assert.Equal(0, scripted.ClearCalls);
+        Assert.DoesNotContain("No files were changed.", output, StringComparison.Ordinal);
+        Assert.StartsWith("Review changes" + Environment.NewLine + "Would ", output, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Install rejects an undefined content-change fact")]
@@ -96,7 +98,7 @@ public sealed class InstallChangePresentationTests
         var terminal = keys
             ? ScriptedCliTerminal.Keys([new(CliKey.Character, 'y')])
             : ScriptedCliTerminal.Lines(["yes"]);
-        var confirmation = new CliPrompts(terminal.Terminal).PlanConfirmation(InstallPresentation.Rendering,
+        var confirmation = new CliPrompts(terminal.Terminal).PlanConfirmation(InstallPresentation.PlanReviewRendering,
             static (InstallConfirmationFacts facts) => new CliConfirmQuestion(InstallWording.Confirmation(facts)));
         var reply = await confirmation(preview, new(0), new(true), TestContext.Current.CancellationToken);
         Assert.Equal(CliPromptState.Answered, reply.State);

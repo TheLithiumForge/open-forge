@@ -38,7 +38,7 @@ public sealed class PublishedLibrarySyncProcessTests
                 await workspace.RunAsync(target, "library", "sync", "team-knowledge", "--automatic", "--format=json"), "completed");
             Assert.Equal(EffectShapes(preview.RootElement), EffectShapes(applied.RootElement));
             Assert.Null(new FileInfo(workspace.Combine("docs/old.md")).LinkTarget);
-            Assert.Equal("../../shared/team-knowledge/future/new.md", new FileInfo(workspace.Combine("docs/future/new.md")).LinkTarget);
+            Assert.Equal("../../shared/team-knowledge/future/new.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Combine("docs/future/new.md")).LinkTarget);
             using var record = JsonDocument.Parse(File.ReadAllText(workspace.Combine(PublishedLibraryWorkspace.RecordPath)));
             Assert.Equal("future/new.md",
                 Assert.Single(Assert.Single(record.RootElement.GetProperty("libraries").EnumerateArray()).GetProperty("paths").EnumerateArray()).GetString());
@@ -47,7 +47,7 @@ public sealed class PublishedLibrarySyncProcessTests
         }
         finally
         {
-            if (new FileInfo(workspace.Combine("docs/future/new.md")).LinkTarget == "../../shared/team-knowledge/future/new.md")
+            if (new FileInfo(workspace.Combine("docs/future/new.md")).LinkTarget == "../../shared/team-knowledge/future/new.md".Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(workspace.Combine("docs/future/new.md"));
             }

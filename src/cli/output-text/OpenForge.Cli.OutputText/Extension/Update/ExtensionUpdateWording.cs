@@ -25,7 +25,7 @@ internal static class ExtensionUpdateWording
 
     // @OpenForgeText extension.update.wording.the-extension-was-not-updated-because-its-ownership-could-not-be-established
     internal static string OwnershipUnknown(string id)
-        => $"The {id} Extension was not updated because its ownership could not be established.";
+        => $"Cannot update {id}: Extension ownership could not be established.";
 
     // @OpenForgeText extension.update.wording.extension-update-stopped-after-of-changes
     internal static string Failed(int completed, int total)
@@ -34,7 +34,10 @@ internal static class ExtensionUpdateWording
     internal static string Source(string path) => global::OpenForge.Cli.OutputText.Extension.Shared.CanonicalPhrases.Source(path);
 
     // @OpenForgeText extension.update.wording.previous-content
-    internal static string PreviousContent(string value) => $"Previous content: {value}";
+    internal static string PreviousContent(string value) => $"Previous content is in the recovery bundle at {value}.";
+
+    // @OpenForgeText extension.update.wording.previous-content-will-be-kept
+    internal static string PreviousContentWillBeKept() => "Previous content will be kept in a recovery bundle.";
 
     internal static string SourceUnreadable(string path) => global::OpenForge.Cli.OutputText.Extension.Shared.CanonicalPhrases.SourceUnreadable(path);
 

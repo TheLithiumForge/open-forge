@@ -27,7 +27,7 @@ Every request comes at four levels. The levels change only how much you tell the
 
 Lower levels test what an agent notices on its own. Higher levels test whether it follows what it's given.
 
-The level 4 records come from Extensions, not from the base install: Decisions from [Planning](../extensions/planning.md), and Documents such as the Vision, Architecture, and scenarios from [Project Documents](../extensions/project-documents.md). The [Development Toolkit](../extensions/development-toolkit.md) installs both.
+Level 4 uses Decisions from [Planning](../extensions/planning.md), Vision and Architecture documents from [Project Documents](../extensions/project-documents.md), and Scenario starters from [Flows and Scenarios](../extensions/scenarios.md). [Development Toolkit](../extensions/development-toolkit.md) installs all three, plus Development and its Workflow Support dependency. Each demo links to the copy instructions for its supplied level 4 records.
 
 ## Before you start
 
@@ -38,3 +38,5 @@ The level 4 records come from Extensions, not from the base install: Decisions f
 ## Demos as evaluations
 
 The same fixed inputs can compare agents, models, and spec-driven tools. For now, each demo's `checks.md` is a manual scoring sheet. Turning the checks into a repeatable evaluation is planned work.
+
+**Next:** [Start from an empty project](greenfield.md) or [try the existing app](brownfield.md).

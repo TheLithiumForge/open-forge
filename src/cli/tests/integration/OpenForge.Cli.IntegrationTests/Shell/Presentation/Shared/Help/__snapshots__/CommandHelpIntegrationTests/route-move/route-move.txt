@@ -1,0 +1,47 @@
+  Move one unmanaged routed file or category and update its references.
+
+Usage:
+  open-forge route move <source-reference> <destination-target> [options]
+
+Examples:
+  open-forge route move guidance/old .agents/guidance/new.md --dry-run
+  open-forge route move guidance/old .agents/guidance/new.md
+
+Behavior:
+  Select one eligible unmanaged file or complete category. Managed content
+  cannot be moved.
+  --dry-run shows the complete move, reference, and generated Entries navigation
+  plan and writes nothing.
+  The destination parent must already be routable. Existing destinations stay
+  protected.
+  This command asks no questions. Interrupted writes report retained recovery
+  data.
+
+Arguments:
+  <source-reference>    Select one routed source or category by ID or exact
+                        path.
+  <destination-target>  Name the intended destination by exact path.
+
+Options:
+  --dry-run  Preview the complete move plan without writing.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Source and destination: Use an exact ID, base path, or overwrite path for an
+  ordinary Markdown leaf, or the recognized entrypoint for a complete category.
+  Destination is one exact workspace-relative .agents path. Leaf and category
+  forms must match the subject. Apply locks the workspace and revalidates the
+  move, references, and generated navigation. Move never invokes Index.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  references --help    Inspect authored links.
+  route init --help    Create missing navigation files.
+  route remove --help  Remove a routed file or category.

@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
@@ -22,6 +23,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
@@ -37,6 +39,8 @@ internal sealed class ExtensionInstallTopologyBuilder
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
     private readonly GeneratedNavigationProjector _projector = new();
+    private readonly GeneratedNavigationRegionPlanner _regionPlanner = new();
+    private readonly FrameworkContentIdentity _contentIdentity = new();
 
     internal async ValueTask<ExtensionInstallTopology> BuildAsync(
         ExtensionInstallRequest request,
@@ -52,9 +56,13 @@ internal sealed class ExtensionInstallTopologyBuilder
         CancellationToken cancellationToken,
         WorkspaceOwnershipRead? ownership = null)
     {
-        var sharing = ownership is not null ? NavigationSharingReader.FromOwnership(ownership)
-            : await NavigationSharingReader.ReadAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
+        ownership ??= await WorkspaceOwnershipReader.ReadAsync(
+            new PhysicalPathResolver(),
+            request.Workspace,
+            cancellationToken).ConfigureAwait(false);
+        var sharing = NavigationSharingReader.FromOwnership(ownership);
         if (!sharing.IsAvailable) throw new InvalidDataException(sharing.Cause);
+        var installedPaths = ownership.Document.Extensions.SelectMany(package => package.Paths).ToHashSet(StringComparer.Ordinal);
         var catalogue = await _catalogueReader.ReadAsync(
             new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
             cancellationToken).ConfigureAwait(false);
@@ -194,6 +202,14 @@ internal sealed class ExtensionInstallTopologyBuilder
                 continue;
             }
 
+            if (packageBytes.TryGetValue(region.CanonicalPath, out var canonicalBytes)
+                && installedPaths.Contains(region.CanonicalPath))
+            {
+                var currentHost = catalogue.Sources.FirstOrDefault(source => source.Identity.CanonicalBasePath == region.CanonicalPath);
+                change = await PreserveInstalledHostAsync(region, currentHost, canonicalBytes, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+
             regions.Add(new ExtensionInstallGeneratedRegion(
                 region.CanonicalPath,
                 change.IsUnchanged
@@ -203,10 +219,7 @@ internal sealed class ExtensionInstallTopologyBuilder
             {
                 packageBytes[region.CanonicalPath] = [.. change.ExpectedDocumentBytes];
             }
-            else
-            {
-                generated.Add(region.CanonicalPath, [.. change.ExpectedDocumentBytes]);
-            }
+            generated.Add(region.CanonicalPath, [.. change.ExpectedDocumentBytes]);
         }
 
         var protectedPaths = catalogue.Candidates
@@ -237,6 +250,35 @@ internal sealed class ExtensionInstallTopologyBuilder
                 protectedPaths,
                 eligibleOverlayPaths),
             findings);
+    }
+
+    private async ValueTask<GeneratedNavigationBoundedChange> PreserveInstalledHostAsync(
+        GeneratedNavigationRegion region,
+        SourceLogicalSource? current,
+        byte[] canonicalBytes,
+        CancellationToken cancellationToken)
+    {
+        var canonicalChange = region.Change
+            ?? throw new InvalidDataException("An available generated region requires its bounded change.");
+        if (current is null)
+        {
+            return canonicalChange;
+        }
+
+        var bytes = await File.ReadAllBytesAsync(current.Base.PhysicalPath, cancellationToken).ConfigureAwait(false);
+        var canonical = _contentIdentity.ReadSourceFingerprint(canonicalBytes);
+        var installed = _contentIdentity.ReadSourceFingerprint(bytes);
+        if (!canonical.IsSemantic || !installed.IsSemantic
+            || !string.Equals(canonical.Sha256, installed.Sha256, StringComparison.Ordinal))
+        {
+            return canonicalChange;
+        }
+
+        var projected = _regionPlanner.PlanProjectedEntries(
+            new GeneratedNavigationRegionInput(current, _markdownParser.Parse(StrictUtf8.GetString(bytes))),
+            region.Entries);
+        return projected.Change
+            ?? throw new InvalidDataException(projected.Cause ?? "The installed generated navigation host cannot be projected.");
     }
 
     private static IReadOnlySet<string> ReadAffectedHosts(

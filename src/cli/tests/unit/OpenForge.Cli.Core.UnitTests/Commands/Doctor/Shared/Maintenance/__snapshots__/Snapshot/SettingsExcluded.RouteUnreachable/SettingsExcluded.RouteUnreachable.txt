@@ -1,0 +1,3 @@
+Restore the intentionally removed or private route for .agents/guidance/note.md before indexing it.
+ManualDecision
+Restore the intentionally removed or private route for .agents/guidance/note.md before indexing it.

@@ -1,1 +1,2 @@
 Detached team-knowledge: removed 1 link under .. Source files in shared/team-knowledge were kept.
+  .agents/open-forge.json  settings updated

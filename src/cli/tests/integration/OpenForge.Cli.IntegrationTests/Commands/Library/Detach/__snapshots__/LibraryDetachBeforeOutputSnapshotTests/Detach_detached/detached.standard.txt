@@ -3,4 +3,3 @@ Workspace: <workspace>
   .agents/open-forge.json       settings updated
   .agents/directives/review.md  link removed
   .agents/open-forge.lock.json  registration removed
-  .agents/open-forge.json  settings updated

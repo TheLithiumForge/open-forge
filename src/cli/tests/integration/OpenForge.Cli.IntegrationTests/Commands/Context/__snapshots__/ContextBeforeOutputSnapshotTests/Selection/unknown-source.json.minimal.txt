@@ -60,7 +60,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge route list --depth=all",
-    "reason": "List source IDs and exact paths, then rerun Context."
+    "command": "open-forge route list --depth all",
+    "reason": "Choose an ID or exact path from the route list."
   }
 }

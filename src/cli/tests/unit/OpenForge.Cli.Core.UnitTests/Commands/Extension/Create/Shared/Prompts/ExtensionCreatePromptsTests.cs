@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Extension.Create.Shared.Prompts;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Presentation.Extension.Create.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Prompts;
@@ -29,9 +30,9 @@ public sealed class ExtensionCreatePromptsTests
     public async Task FolderScreens(bool keys)
     {
         var script = new ScriptedCliTerminal(new(true, keys, keys), lines: ["", "missing", "catalogue"]);
-        var question = new CliTextQuestion<string>(ExtensionCreateWording.PackageFolder(), ExtensionCreateWording.PackageFolderRule(), Required: true,
+        var question = new CliTextQuestion<string>(ExtensionCreateWording.PackageFolder("my-tools"), ExtensionCreateWording.PackageFolderRule(), Required: true,
             value => value == "catalogue" ? new(true, value, null) : new(false, null, ExtensionCreateWording.InvalidPackageFolder()));
-        var reply = await new CliPrompts(script.Terminal).TextAsync(question, new(true), CancellationToken.None);
+        var reply = await new ExtensionCreateFolderPrompt(new CliPrompts(script.Terminal), script.Terminal.WriteAsync).AskAsync(question, new(true), CancellationToken.None);
         Assert.Equal("catalogue", reply.Value);
         Assert.Equal(0, script.KeyReadCalls);
         CommandOutputSnapshot.MatchSnapshot(script.Output.ToString(), keys ? "folder.key-host.80x24" : "folder.line");

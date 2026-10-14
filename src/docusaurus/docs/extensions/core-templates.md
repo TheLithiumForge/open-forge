@@ -7,9 +7,34 @@ description: One starter file for each Core category, plus a general Memory reco
 
 Start your own workspace instructions, advice, reusable shapes, capabilities, maps, and memory without inventing each file from scratch. This is a good first Extension if you plan to write your own content.
 
-- **Package ID:** `core-templates`
+- **[Package ID](../glossary.md#package-id):** `core-templates`
 - **Depends on:** Nothing
-- **Loads at startup:** Nothing. The Templates root [entrypoint](../concepts/routing.md#entrypoints) isn't read at startup, so these starters stay on demand.
+- **Startup visibility:** This package adds no entries to startup indexes. The Templates root [entrypoint](../glossary.md#entrypoint) stays on demand, so these starters do too.
+
+These counts describe this package's own entries when their parent routes expose them in `Entries` and are read. Required packages add their own entries. Linked files stay on demand unless selected or required.
+
+## Install
+
+Package files follow your installation choices. Essentials leaves out Templates, so this package skips its starters and copies no package files. The CLI still records it as installed and names the excluded category in the result. If you want the starters, restore the Templates category before installing the package. Preview the restoration, review the plan, then apply:
+
+```sh
+open-forge route init templates --framework --dry-run
+open-forge route init templates --framework
+```
+
+From your installed Open Forge workspace, preview the package and its required packages:
+
+```sh
+open-forge extension install core-templates --dry-run
+```
+
+Review the plan. Then apply it:
+
+```sh
+open-forge extension install core-templates
+```
+
+The CLI installs required packages from the same [catalogue](../glossary.md#catalogue). See the [Extension guide](/guides/extensions#install-an-extension) for scripts using `--automatic`, updates, removal, or a local source.
 
 ## Why it exists
 
@@ -65,3 +90,5 @@ open-forge route create directives/frontend/components \
 - **The Skill starter is different.** Copy only the fenced block inside `skill.md` into `{skill-name}/SKILL.md` under your Skills scope. The wrapper is a routed Template, not a capability, and `route create` doesn't create native Skill packages.
 - Choose a specialized Template from another Extension when one already fits, such as a Task from [Planning](planning.md) or a Decision record.
 - Copies are independent. Package updates never touch the files you created from these starters.
+
+Next: [Install this package](#install), or [update and remove Extensions](/guides/extensions#update-and-remove).

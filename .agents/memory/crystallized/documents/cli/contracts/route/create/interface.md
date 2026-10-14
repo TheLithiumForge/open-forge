@@ -61,6 +61,22 @@ choices:
   shared graph or mutation boundaries, and source layout. No Route Technical
   Design exists for this command.
 
+## Help
+
+The purpose sentence is: Create one routed Markdown file below an existing root route.
+
+The public Usage line is:
+
+```text
+open-forge route create <file-target> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
+## Shared Scaffolding
+
+Route Create uses the same neutral entrypoint composition and intended-chain scaffolding as Route Init, Index and Repair. Its missing parents retain Route Create's draft defaults and its own creation policy. Index instead derives category metadata for manually created notes. [Forgiving Maintenance](../../../technical-designs/forgiving-maintenance.md) defines the shared mechanics without changing Route Create's syntax or effects.
+
 ## Purpose
 
 `route create` creates one ordinary routed Markdown file inside an existing
@@ -605,7 +621,7 @@ The file could not be created: <limitation>. Nothing was changed.
 ```text
 Cannot create .agents/memory/project-alpha/overview.md: .agents/memory/project-alpha/overview.md already exists with different content.
 Workspace: <workspace>
-Next: open-forge route update memory/project-alpha/overview
+Add a description or tags when useful. See open-forge route update --help.
 ```
 
 ### failed
@@ -617,7 +633,7 @@ Workspace: <workspace>
          Writing .agents/memory/project-alpha/_project-alpha.md failed. Stopped after 1 of 2 changes. Recovery data: <recovery-bundle>.
   Created .agents/memory/project-alpha/overview.md
   .agents/memory/project-alpha/_project-alpha.md  not started
-Next: open-forge route create --detail debug
+Next: open-forge route create memory/project-alpha/overview --description "Overview" --tag CurrentTruth
 ```
 
 ### cancelled
@@ -629,6 +645,16 @@ Workspace: <workspace>
          Route create was cancelled. Nothing was changed.
          open-forge route create
 ```
+
+Retry commands repeat the original operands and flags, with shell quoting for
+values that need it. Cancelling an ambiguous source choice keeps the original
+reference so retry asks again. Only missing confirmation may add `--automatic`.
+The text and JSON `next.command` values carry the same complete command.
+An explicitly selected workspace also stays on follow-up commands that act on
+that workspace. Parent route paths are quoted when needed.
+
+For an existing target that differs, the next action opens Route Update help. It
+does not invent metadata values for the user.
 
 ## Related Current Sources
 

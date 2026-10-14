@@ -40,6 +40,18 @@ the result reports the partial state and retains recovery evidence.
 Recovery protects the exact prior lock bytes before any effects; the planned
 lock publication remains last after verified link and generated-region effects.
 
+## Help
+
+The purpose sentence is: Bring a registered Library's links into agreement with its source files.
+
+The public Usage line is:
+
+```text
+open-forge library sync <library-id> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Operation Boundary
 
 `library sync` reconciles one registered consumer-local library with the
@@ -402,6 +414,10 @@ The command is exactly library sync; data follows the catalogue:
 | minimal  | `{ mode, id, sourceFolder, destinationFolder, permissions { ... } }` plus the effects |
 | standard | + `unchanged: [ path ]`, per effect `target`                                          |
 | full     | + `inventory`, `expectedStates`, `verification`, `recovery` details                   |
+
+Created and removed link `target` fields use the portable mapping target with
+`/`. Full-detail `expectedStates[].target` retains the raw on-disk link identity
+as evidence, including its platform separators.
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON

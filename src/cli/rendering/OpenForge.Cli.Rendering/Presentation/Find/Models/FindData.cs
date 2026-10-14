@@ -18,6 +18,9 @@ internal sealed record FindData
 
     [JsonIgnore]
     internal bool PrependBlankLine { get; init; }
+
+    [JsonIgnore]
+    internal bool HasInvalidRequire { get; init; }
 }
 
 internal sealed record FindDataMatch

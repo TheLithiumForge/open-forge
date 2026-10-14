@@ -5,11 +5,36 @@ description: Four Templates for describing user journeys and expected outcomes, 
 
 # Flows and Scenarios
 
-Describe the experience you want people to have, then record what actually happens when someone tries it. This package installs four [Templates](../glossary.md#content-roles): copy-ready starting files that you copy, adapt, and then maintain on their own. They fit planning, exploration, and verification.
+Describe the experience you want people to have, then record what actually happens when someone tries it. This package installs four [Templates](../glossary.md#template): copy-ready starting files that you copy, adapt, and then maintain on their own. They fit planning, exploration, and verification.
 
-- **Package ID:** `scenarios`
+- **[Package ID](../glossary.md#package-id):** `scenarios`
 - **Depends on:** Nothing
-- **Loads at startup:** Nothing. The Templates root entrypoint isn't read at startup, so these starters stay on demand.
+- **Startup visibility:** This package adds no entries to startup indexes. The Templates root [entrypoint](../glossary.md#entrypoint) stays on demand, so these starters do too.
+
+These counts describe this package's own entries when their parent routes expose them in `Entries` and are read. Required packages add their own entries. Linked files stay on demand unless selected or required.
+
+## Install
+
+Package files follow your installation choices. Essentials leaves out Templates, so this package skips its starters and copies no package files. The CLI still records it as installed and names the excluded category in the result. If you want the starters, restore the Templates category before installing the package. Preview the restoration, review the plan, then apply:
+
+```sh
+open-forge route init templates --framework --dry-run
+open-forge route init templates --framework
+```
+
+From your installed Open Forge workspace, preview the package and its required packages:
+
+```sh
+open-forge extension install scenarios --dry-run
+```
+
+Review the plan. Then apply it:
+
+```sh
+open-forge extension install scenarios
+```
+
+The CLI installs required packages from the same [catalogue](../glossary.md#catalogue). See the [Extension guide](/guides/extensions#install-an-extension) for scripts using `--automatic`, updates, removal, or a local source.
 
 ## Why it exists
 
@@ -48,7 +73,7 @@ These starters used to ship with Planning. They moved into their own package so 
 | `scenario-collection.md` | Group related scenarios without copying their expectations                                | Purpose, Shared Context, Scenarios, Coverage Boundaries                                              |
 | `run-record.md`          | Record what happened during one run                                                       | Basis, Verified Starting State, Actions And Observations, Independent Checks, Verdict, Follow-Up     |
 
-A **Scenario** can describe something that doesn't exist yet. A **Run Record** describes an actual attempt. Neither establishes acceptance on its own. A **Scenario Collection** groups cases but doesn't put them in order. A **User Flow** connects scenarios in order, passing each step's resulting state to the next.
+A **[Scenario](../glossary.md#scenario)** can describe something that doesn't exist yet. A **[Run Record](../glossary.md#run-record)** describes an actual attempt. Neither establishes acceptance on its own. A **[Scenario Collection](../glossary.md#scenario-collection)** groups cases but doesn't put them in order. A **[User Flow](../glossary.md#user-flow)** connects scenarios in order, passing each step's resulting state to the next.
 
 ## How to use it
 
@@ -60,3 +85,5 @@ A **Scenario** can describe something that doesn't exist yet. A **Run Record** d
 
 - These records work for products, services, or other work. They don't need an executable plan, a task tracker, a test runner, or the Planning Extension.
 - Copies you made when these starters shipped with Planning stay where they are. Moving the starters to this package doesn't move or rewrite them. An existing installation needs a reviewed transition: see [moving from the earlier package layout](/guides/extensions#moving-from-the-earlier-package-layout).
+
+Next: [Install this package](#install), or [update and remove Extensions](/guides/extensions#update-and-remove).

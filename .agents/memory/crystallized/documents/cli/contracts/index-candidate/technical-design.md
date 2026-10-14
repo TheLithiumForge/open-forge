@@ -1,6 +1,6 @@
 ---
 open-forge:
-  description: Current accepted technical design for the non-shipping `index` command
+  description: Current accepted technical design for the current `index` command
   responsibility: Define the accepted command-local realization subordinate to the `index` contracts and CLI Architecture
   tags: [Memory, Crystallized, CLI, Release, Command, Index, TechnicalDesign, CurrentTruth]
 ---
@@ -9,7 +9,7 @@ open-forge:
 
 ## Status And Authority
 
-This is the current accepted Technical Design for the non-shipping `index`
+This is the current accepted Technical Design for the current `index`
 command. The [Interface Contract](interface.md) and [Behavior
 Contract](behavior.md) remain authoritative for public and technology-neutral
 meaning. The accepted [Shared Result Coordinates](../shared/result-coordinates/interface.md)
@@ -24,11 +24,15 @@ at exact feature candidate
 `4e89d945b38a2d1e24600dd22789b55e4395a534`. Local squash integration is proved
 at `09aa03eddb97831ff544afe1eac54ad9af501f5c`: its tree
 `2dcfca18020980a9cafbc429a72930af3368df5f` exactly equals final Index closeout
-tip `2b353c48978ee88e53345be8037776181612222c`. The command does not ship.
+tip `2b353c48978ee88e53345be8037776181612222c`. Published versions are recorded in CLI Distribution.
 
-The 2026-10-01 Task 47 freeze adds a bounded command-local Skill catalogue
-selection bridge. The existing candidate hash and executable evidence do not
-establish that this bridge is implemented or verified.
+The bounded command-local Skill catalogue selection bridge remains part of
+current Index selection. Historical candidate hashes below are execution
+provenance rather than the source for current maintenance behavior.
+
+## Forgiving Maintenance Realization
+
+[Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md) extends the existing region-only plan with absent-field completion and rooted missing-chain creation. Its intended-membership formation, original-span edits, one-effect-per-target assembly and wire inventory replace the old warning-only and gap-exclusion realization for eligible ordinary sources. Existing parsers, generated boundaries, native Skill bridge, physical identity and recovery mechanics remain. Historical candidate evidence below does not prove this addition.
 
 ## Accepted Runtime Boundary
 
@@ -161,10 +165,12 @@ boundary cannot be established. The section reader handles bounded replacement; 
 not a whole-document formatter.
 
 The design never renders a whole Markdown or YAML document back from parsed
-facts. Markdig provides structure where structure is needed, while replacement uses the exact
-local byte range and preserves every byte outside the generated interior,
-including authored frontmatter, headings, prose, links, whitespace, line
-endings. Serialization emits stable accepted generated
+facts. Markdig provides structure where structure is needed. Generated-region
+replacement uses the exact local byte range and preserves outside bytes.
+Separate maintenance effects insert only absent metadata fields, create missing
+entrypoints or rename a proven old navigation file. Supplied frontmatter,
+headings, prose, links and line endings remain exact outside those effects.
+Serialization emits stable accepted generated
 bytes, canonical containing-file-relative destinations, and no query strings or
 fragments.
 

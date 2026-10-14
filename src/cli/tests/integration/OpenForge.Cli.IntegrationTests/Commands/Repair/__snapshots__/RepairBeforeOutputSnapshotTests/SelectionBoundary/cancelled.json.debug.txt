@@ -30,6 +30,54 @@
       "candidates": [],
       "evidence": [],
       "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "repair.manual-finding-remaining",
+      "title": "Broken link",
+      "message": "This link still needs repair.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 9,
+          "column": 8
+        }
+      },
+      "category": null,
+      "resolution": "manual-decision",
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "repair.guided-finding-remaining",
+      "title": "Broken link",
+      "message": "1 possible target.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 10,
+          "column": 10
+        }
+      },
+      "category": null,
+      "resolution": "guided-choice",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge repair --relink '.agents/docs/source.md@10:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>",
+          "reason": "To use replacement.md (same title):"
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
     }
   ],
   "effects": [],
@@ -39,7 +87,12 @@
     "problemsNeedingChoice": 1,
     "problemsNeedingHand": 1,
     "librarySteps": 0,
-    "errors": 1
+    "errors": 1,
+    "warnings": 2,
+    "entriesUpdated": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0
   },
   "limitations": [],
   "data": {
@@ -63,7 +116,16 @@
           "column": 10
         },
         "kind": "guided",
-        "candidates": []
+        "candidates": [
+          {
+            "path": ".agents/docs/replacement.md",
+            "reasons": [
+              "title match: Guided",
+              "content match: Guided",
+              "nearby route: sibling"
+            ]
+          }
+        ]
       }
     ],
     "diagnosis": {
@@ -76,7 +138,11 @@
       "targets": "not-requested",
       "resultingBytes": "not-requested",
       "postConditions": "not-requested"
-    }
+    },
+    "renames": [],
+    "navigation": [],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
@@ -84,7 +150,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge repair",
+    "command": "open-forge repair --workspace <workspace>",
     "reason": "Rerun the same Repair request from a fresh diagnosis."
   }
 }

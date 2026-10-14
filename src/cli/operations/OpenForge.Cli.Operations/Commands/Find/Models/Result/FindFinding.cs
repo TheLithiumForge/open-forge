@@ -18,6 +18,8 @@ internal enum FindSelectorRole
 
 internal sealed record FindFinding
 {
+    internal string? InvalidRequireValue { get; init; }
+
     internal FindFinding(
         FindFindingCode code,
         CliSemanticStatus status,

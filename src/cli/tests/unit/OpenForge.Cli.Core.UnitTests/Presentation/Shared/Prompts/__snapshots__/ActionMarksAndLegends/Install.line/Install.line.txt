@@ -1,9 +1,11 @@
 Choose packages
 + install   * also installed
 
-  1. [ ] app        Application tools   needs: runtime
+  1. [ ] app        Application tools
+    Needs runtime.
   2. [ ] runtime    Runtime tools
   3. [ ] installed  Installed
+    An existing package
 
 Choose numbers separated by spaces, "all", or press Enter to cancel:
 Also included: runtime, required by app.

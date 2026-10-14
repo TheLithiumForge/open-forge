@@ -7,7 +7,7 @@ Workspace: <workspace>
       Observed target: unavailable
   .agents/directives/review.md  current
       Expected target: ../../shared/team/.agents/directives/review.md
-      Observed target: ../../shared/team/.agents/directives/review.md
+      Observed target: ..\..\shared\team\.agents\directives\review.md
 Source inventory: 2 eligible files, 0 excluded items.
   Preview the synchronization before changing files.
-Next: open-forge library sync team-knowledge --dry-run
+Next: open-forge library sync team-knowledge --dry-run --workspace <workspace>

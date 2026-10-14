@@ -2,13 +2,13 @@
 
 Extensions are optional packages of workspace content: instructions, advice, reusable shapes, workflows, templates, Memory categories, native skills, and supporting files. Pick the packages that help your work, then adapt what they install as your needs change.
 
-Apart from the `open-forge-cli` Skill, the base Framework contains none of this content. It ships 15 files: `AGENTS.md`, `CLAUDE.md`, the loader, six category entrypoints, the Memory entrypoint with its four state entrypoints, and the `open-forge-cli` Skill. Record categories such as Decisions, Checkpoints, or Observations, workflow recipes, and starter Templates all come from Extensions or from you.
+Apart from the `open-forge-cli` Skill, the base Framework contains none of this content. Full Core supplies 19 Framework Markdown files: `AGENTS.md`, `CLAUDE.md`, the loader, six Core category entrypoints, five Memory entrypoints, and the `open-forge-cli` Skill with its four reference files. Essentials and Custom follow your installation choices. The CLI also keeps settings and an [ownership record](https://thelithiumforge.github.io/open-forge/docs/glossary#ownership-record) for maintenance. Record categories such as Decisions, Checkpoints, or Observations, workflow recipes, and starter Templates all come from Extensions or from you.
 
-An Extension is a way to distribute files. Routed content takes the role and scope of the route it lands in. Native capabilities and support files follow the tools that use them. The package manifest helps manage installation, but the installed files carry everything an agent needs to understand them.
+An Extension is a way to distribute files. Routed content takes the role and scope of the route it lands in. Native capabilities and support files follow the tools that use them. The package [manifest](https://thelithiumforge.github.io/open-forge/docs/glossary#manifest) helps manage installation, but the installed files carry everything an agent needs to understand them.
 
 ## Choose a package
 
-The [first-party catalogue](../src/extensions/README.md) describes every package and its dependencies.
+The [catalogue](https://thelithiumforge.github.io/open-forge/docs/glossary#catalogue) is the set of available packages. The [first-party catalogue](../src/extensions/README.md) describes every package and its [dependencies](https://thelithiumforge.github.io/open-forge/docs/glossary#dependency).
 
 | Package ID                  | Name                      | Use it to                                                                                                           |
 | --------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -23,13 +23,21 @@ The [first-party catalogue](../src/extensions/README.md) describes every package
 | `development-toolkit`       | Development Toolkit       | Install Project Documents, Planning, Flows and Scenarios, and Development together.                                 |
 | `workflows`                 | Workflow Support          | Find and follow installed workflows, or create your own using the supplied template.                                |
 
+Package files follow your installation choices. Essentials leaves out Templates, so Extension starters are skipped. [Restore the Templates category](#if-your-setup-leaves-out-templates) before choosing a package for its starters.
+
 Core Templates is a good first pick when you want to write your own workspace content. It has no dependencies and isn't part of Development Toolkit. When a more specialized starter already fits the work, use that instead.
 
 Project Documents, Planning, and Development each depend on Workflow Support. Task Coordination retains the ID `orchestration` and depends on Development, Observations and Handoffs, and Planning. Workflow Support installs once through those dependencies.
 
 Development Toolkit contains dependencies only. It includes Flows and Scenarios directly, so Toolkit users keep the scenario starters that used to come with Planning. Core Templates, Collaboration, Observations and Handoffs, and Task Coordination remain separate choices. Neither Flows and Scenarios nor Observations and Handoffs requires other extensions.
 
-Workflow methods live under `.agents/skills/use-workflow/references/`, grouped by the package that supplies them. Agents reach that tree through the Skill, not through the loader's root routes, so name it explicitly when you rebuild its `Entries`:
+Workflow methods live under `.agents/skills/use-workflow/references/`, grouped by the package that supplies them. Agents reach recipes through the `use-workflow` Skill. The CLI's ordinary `index` command also reaches recipe catalogues of structurally reachable native Skills. Preview reachable indexes with:
+
+```sh
+open-forge index --dry-run
+```
+
+To limit the operation to this recipe catalogue, name it explicitly:
 
 ```sh
 open-forge index .agents/skills/use-workflow/references/_references.md
@@ -46,7 +54,44 @@ To inspect or install local changes, add `--source /path/to/open-forge/src/exten
 
 ## Install an Extension
 
-Set up the base Framework first. From your project, preview the selected package and its dependencies:
+Set up the base Framework first.
+
+### If your setup leaves out Templates
+
+Package files follow your installation choices. Essentials leaves out Templates, so it skips starter files from Extensions. Core Templates and Flows and Scenarios contain only starters. Planning installs its other enabled content, but skips its starters while Templates is left out.
+
+When every file is excluded, the result names the skipped files and category and records the package as installed without copying package files. It suggests a `route init templates --framework --dry-run` preview. This differs from a package whose files were already installed.
+
+Plans and receipts also name packages with only some files excluded, including Planning and Workflow Support when their starters are skipped. The guidance previews restoring the category, then updating each affected package. Its commands keep the selected workspace and any local source.
+
+Restore the Templates category first if you want those starters. Preview the restoration, review the plan, then apply:
+
+```sh
+open-forge route init templates --framework --dry-run
+open-forge route init templates --framework
+```
+
+Then preview and install the package:
+
+```sh
+open-forge extension install core-templates --dry-run
+open-forge extension install core-templates
+```
+
+For a script or another non-interactive package install, add `--automatic` to the package command.
+
+If Planning is already installed without its starters, restore Templates using the preview and apply commands above. Then preview its update, review the plan, and apply:
+
+```sh
+open-forge extension update planning --dry-run
+open-forge extension update planning --automatic
+```
+
+Use the affected package's ID and the same `--source` when updating from a local catalogue.
+
+### Preview and apply a package
+
+From your project, preview the selected package and its dependencies:
 
 ```sh
 open-forge extension install orchestration --dry-run
@@ -60,9 +105,17 @@ open-forge extension install orchestration \
   --dry-run
 ```
 
-Review the proposed files, then run the command again without `--dry-run` to apply it. When it runs interactively, it shows the plan and asks before applying it. If you are running from another directory, add `--workspace /path/to/project` to both commands. Check the resulting diff before adopting the content.
+Review the proposed files, then apply the package:
+
+```sh
+open-forge extension install orchestration
+```
+
+For a local source, keep the same `--source` value when applying. When it runs interactively, it shows the plan and asks before applying it. If you are running from another directory, add `--workspace /path/to/project` to both commands. Check the resulting diff before adopting the content.
 
 You can select several package IDs in one request. `--all` selects all packages in the chosen source. `--automatic` disables prompting. A script or other non-interactive run needs it to apply changes, because nothing can answer the question. It does not select packages or authorize overwrites for you.
+
+Inspect counts the complete selection, including the package you named. For example, `2 packages, including planning.` means Planning and its required Workflow Support package. Use `--detail standard` to see `Packages in this selection`. A cancelled install changes no files and does not report Entries updates.
 
 Install doesn't replace an existing file on its own. If a file already sits where a package file goes, an interactive run can ask to replace it, and other runs stop and name the file. `--force` replaces such a file with the package version, but only when no package, the Framework, or another manager claims it and the other safety checks pass. To change files that a package already manages, use `update`.
 
@@ -85,7 +138,7 @@ open-forge extension update orchestration \
   --dry-run
 ```
 
-A normal update replaces package files that differ from the package, including files you edited, and restores missing ones. The previous bytes go into a recovery bundle, and the preview marks each edited file, so review it and save the edits you want to keep. Retired content, which the package no longer ships, stays unless you add `--prune`:
+A normal update replaces package files that differ from the package, including files you edited, and restores missing ones. The previous bytes go into a [recovery bundle](https://thelithiumforge.github.io/open-forge/docs/glossary#recovery-bundle), and the preview marks each edited file, so review it and save the edits you want to keep. Retired content, which the package no longer ships, stays unless you add `--prune`:
 
 | Option               | What it selects                                                               |
 | -------------------- | ----------------------------------------------------------------------------- |
@@ -104,9 +157,13 @@ open-forge extension remove orchestration --dry-run
 
 Removal releases the package's ownership and keeps files that another package still owns. It deletes eligible files whose last owner is being removed, including files you edited, so review the preview and save any customizations you need first. An installed package that depends on it blocks removal unless you remove that package too. Its own dependencies stay installed, and the result names any that nothing else needs. You don't need the original source catalogue.
 
-The selected IDs are recorded in `removedExtensions` in `.agents/open-forge.json`, so later installation, updates and dependency resolution keep them removed. To reinstall a package, explicitly clear its ID and any covering path exclusions, then install it. The root command `open-forge remove orchestration --kind extension` provides the same package operation.
+These [exclusions](https://thelithiumforge.github.io/open-forge/docs/glossary#exclusion) are recorded in `removedExtensions` in `.agents/open-forge.json`, so later installation, updates and dependency resolution keep them removed. To reinstall a package, explicitly clear its ID and any covering path exclusions, then install it. The root command `open-forge remove orchestration --kind extension` provides the same package operation.
 
 The [CLI guide](cli.md#extension-operations) covers the command surface. When an operation reports an incomplete change or retained recovery files, follow its reported next action. Managed changes preserve recovery evidence where required. They do not promise automatic rollback.
+
+A removal preview names every selected package, including packages with no installed files. Removing an umbrella such as `development-toolkit` keeps its dependency packages installed unless you also select them for removal. Previous removed bytes remain in the reported recovery bundle until you review and clean it up.
+
+An `extension remove` preview describes dependencies that would remain and suggests applying the selected removal. Apply it before previewing further dependency removals. The applied result supplies those dependency-removal commands. Shared-file rows name the packages that still own each retained file.
 
 ## Moving from the earlier package layout
 
@@ -170,6 +227,8 @@ Apply the reviewed command without `--dry-run`, then add complete files under `c
 
 Use `--dependency <stable-id>` for each dependency and `--package-version <text>` to choose the version. In scripts, supply the package ID and `--path` explicitly and add `--automatic`. Without it, a non-interactive create stops because it can't ask for confirmation. Creating a manifest records dependency IDs without proving they are available. Installation resolves them from the selected source.
 
+If creation stops partway through, created files stay in the package folder. Review that folder before retrying. Create does not make a recovery bundle or install the package in a workspace.
+
 ## Package format
 
 A package contains a manifest, optional package documentation, and files arranged as they will appear in the target workspace:
@@ -196,7 +255,7 @@ A minimal manifest is:
 }
 ```
 
-Use a stable package ID and list dependencies as unique, sorted IDs that don't include the package itself. The manifest accepts only these five fields. A package may provide one content role, a useful combination, or only dependencies. A dependency-only package may omit `content/`.
+Use a stable [package ID](https://thelithiumforge.github.io/open-forge/docs/glossary#package-id) and list dependencies as unique, sorted IDs that don't include the package itself. The manifest accepts only these five fields. A package may provide one content role, a useful combination, or only dependencies. A dependency-only package may omit `content/`.
 
 Add complete files, including entrypoints where new routed folders require them. Write links for the installed layout. The assembled Framework and declared dependencies may supply destinations outside the package itself.
 
@@ -204,9 +263,9 @@ Native Skill packages retain their own `SKILL.md` metadata and resources. Suppor
 
 ### Files used by other tools
 
-Managed installation writes a file outside `.agents/`, such as an agent definition consumed by another tool, only when `allowInstallPaths` in `.agents/open-forge.json` admits its path. A grant is a workspace-relative file or directory path, and every Extension and Library shares it. Destinations inside `.agents/` need no grant.
+Managed installation writes a file outside `.agents/`, such as an agent definition consumed by another tool, only when `allowInstallPaths` in `.agents/open-forge.json` admits its path. A [path grant](https://thelithiumforge.github.io/open-forge/docs/glossary#path-grant) is a workspace-relative file or directory path, and every Extension and Library shares it. Destinations inside `.agents/` need no grant.
 
-When a grant is missing, an interactive apply asks once for the complete missing set. You can allow it always (saved to the settings), allow it once (this run only), or cancel. Dry runs, JSON output, redirected input, and `--automatic` never ask. They report the missing grant instead. To grant a path without a prompt, add `--allow-path <path>` to `extension install`, `update`, or `remove`. A dry run writes nothing, even with `--allow-path`.
+When a grant is missing, an interactive apply asks once for the complete missing set. You can allow it always (saved to the settings), allow it once (this run only), or cancel. Key mode starts focused on `Allow once`, so Enter approves only this run. Deliberately choose `Allow always` to save a grant. Line mode accepts `always`, `once`, or `cancel`, and an empty line cancels. Dry runs, JSON output, redirected input, and `--automatic` never ask. They report the missing grant instead. To grant a path without a prompt, add `--allow-path <path>` to `extension install`, `update`, or `remove`. A dry run writes nothing, even with `--allow-path`.
 
 `--force` and `--prune` do not bypass those grants. Keep one manager per installed path. Installing a capability through another tool does not by itself satisfy an Open Forge package dependency.
 

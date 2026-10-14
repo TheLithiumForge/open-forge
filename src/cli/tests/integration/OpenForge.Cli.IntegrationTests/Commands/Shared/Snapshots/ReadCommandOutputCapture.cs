@@ -112,20 +112,20 @@ internal sealed class ReadCommandOutputCapture(
             && textPrimary[CliDetail.Full].StandardOutput
             && textPrimary[CliDetail.Debug].StandardOutput)
         {
-            Assert.Equal(textPrimary[CliDetail.Full].Content, textPrimary[CliDetail.Debug].Content);
+            Assert.Equal(CommandOutputDetailComparison.PromoteTextRetryDetail(textPrimary[CliDetail.Full].Content), textPrimary[CliDetail.Debug].Content);
         }
 
         if (!scenario.ShellDiagnostic
             && !textPrimary[CliDetail.Full].StandardOutput
             && !textPrimary[CliDetail.Debug].StandardOutput)
         {
-            var fullContent = textPrimary[CliDetail.Full].Content;
+            var fullContent = CommandOutputDetailComparison.PromoteTextRetryDetail(textPrimary[CliDetail.Full].Content);
             var debugContent = textPrimary[CliDetail.Debug].Content;
             Assert.True(
                 debugContent.StartsWith(fullContent, StringComparison.Ordinal),
                 $"Debug text changed the primary output for {scenario.Situation}.");
             var diagnostics = debugContent[fullContent.Length..].TrimEnd('\r', '\n');
-            if (diagnostics.Length > 0)
+            if (debugContent.Length > fullContent.Length)
             {
                 snapshots[$"{scenario.Situation}.debug"] = CommandOutputNormalization.Normalize(
                     fullContent,
@@ -134,13 +134,14 @@ internal sealed class ReadCommandOutputCapture(
                     recoveryBundlePath,
                     extensionSourcePath,
                     normalizeTextPaths: true);
-                snapshots[$"{scenario.Situation}.debug.diagnostics"] = CommandOutputNormalization.Normalize(
-                    diagnostics,
-                    workspacePath,
-                    CliBuildVersion.InformationalVersion,
-                    recoveryBundlePath,
-                    extensionSourcePath,
-                    normalizeTextPaths: true);
+                if (diagnostics.Length > 0)
+                    snapshots[$"{scenario.Situation}.debug.diagnostics"] = CommandOutputNormalization.Normalize(
+                        diagnostics,
+                        workspacePath,
+                        CliBuildVersion.InformationalVersion,
+                        recoveryBundlePath,
+                        extensionSourcePath,
+                        normalizeTextPaths: true);
                 textPrimary[CliDetail.Debug] = (false, fullContent);
             }
         }

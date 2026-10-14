@@ -110,6 +110,15 @@ internal enum RepairAtomicEffectKind
 
 internal sealed record RepairAtomicEffect
 {
+    internal RepairAtomicEffect(int ordinal, PlannedFileChange fileChange, RepairEffect? reference)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(ordinal);
+        ArgumentNullException.ThrowIfNull(fileChange);
+        Ordinal = ordinal;
+        Kind = RepairAtomicEffectKind.Reference;
+        Reference = reference;
+        FileChange = fileChange;
+    }
     internal RepairAtomicEffect(int ordinal, RepairAtomicEffectKind kind, RepairEffect? reference, RepairLibraryRecoveryEffect? libraryRecovery)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(ordinal);
@@ -127,12 +136,14 @@ internal sealed record RepairAtomicEffect
         Ordinal = ordinal;
         Kind = kind;
         Reference = reference;
+        FileChange = reference?.FileChange;
         LibraryRecovery = libraryRecovery;
     }
 
     internal int Ordinal { get; }
     internal RepairAtomicEffectKind Kind { get; }
     internal RepairEffect? Reference { get; }
+    internal PlannedFileChange? FileChange { get; }
     internal RepairLibraryRecoveryEffect? LibraryRecovery { get; }
 }
 

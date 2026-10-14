@@ -1,10 +1,13 @@
 Workspace: <workspace>
   docs              Documents
-                    .agents/docs/_docs.md   #Docs
+    .agents/docs/_docs.md
+    #Docs
     docs/guide      Guide
-                    .agents/docs/guide.md   #Docs #Guide
+      .agents/docs/guide.md
+      #Docs #Guide
     docs/reference  Reference
-                    .agents/docs/reference.md   #Docs
+      .agents/docs/reference.md
+      #Docs
   Parent: none
   Depth: absolute 0; relative 0
   Kind: entrypoint; direct children: 2

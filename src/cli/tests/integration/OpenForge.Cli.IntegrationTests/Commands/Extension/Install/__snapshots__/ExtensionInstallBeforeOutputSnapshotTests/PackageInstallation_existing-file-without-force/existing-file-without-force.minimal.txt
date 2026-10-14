@@ -1,4 +1,5 @@
 Cannot install toolkit: 1 file already exists where the package would write.
 Workspace: <workspace>
   .agents/toolkit.md
-Next: open-forge extension install toolkit --force --dry-run  (preview replacing it)
+Preview replacing it.
+Next: open-forge extension install toolkit --source <extension-source> --workspace <workspace> --automatic --force --dry-run

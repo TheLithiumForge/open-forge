@@ -69,7 +69,7 @@ public sealed class LibraryListObservationTests
         Assert.Equal(".agents/directives/review.md", path.SourcePath);
         Assert.Equal(path.SourcePath, path.DestinationPath);
         Assert.Equal("../../shared/team/.agents/directives/review.md", path.ExpectedRelativeLink);
-        Assert.Equal(path.ExpectedRelativeLink, path.ObservedRelativeLink);
+        Assert.Equal(path.ExpectedRelativeLink?.Replace('/', Path.DirectorySeparatorChar), path.ObservedRelativeLink);
         Assert.Equal("directives/review", path.SourceId);
         Assert.Equal(LibraryLinkViewState.Current, path.State);
         Assert.Equal(LibraryListInventoryState.NotRequested, first.Result.Inventory);
@@ -130,7 +130,7 @@ public sealed class LibraryListObservationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         var path = Assert.Single(Assert.Single(result.Result.Libraries).Paths);
         Assert.Equal(LibraryLinkViewState.Current, path.State);
-        Assert.Equal(LibraryReadWorkspace.ReviewTarget, path.ObservedRelativeLink);
+        Assert.Equal(LibraryReadWorkspace.ReviewTarget.Replace('/', Path.DirectorySeparatorChar), path.ObservedRelativeLink);
         Assert.Equal(before, fixture.Snapshot());
     }
 

@@ -1,0 +1,3 @@
+    skills/open-forge-cli  Use the CLI to load workspace context, find sources, maintain routes and
+                           links, and preview installation changes.
+    guidance/example       Advice for recurring choices

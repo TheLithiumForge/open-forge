@@ -13,7 +13,13 @@ public sealed class CliPermissionPromptsTests
     [Trait("Feature", "cli-interaction"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
     public async Task ChoiceScreens(int choice)
     {
-        var keys = Enumerable.Repeat<CliKeyStroke?>(new(CliKey.Down), choice).Append(new(CliKey.Enter));
+        CliKeyStroke?[] keys = choice switch
+        {
+            0 => [new(CliKey.Up), new(CliKey.Enter)],
+            1 => [new(CliKey.Enter)],
+            2 => [new(CliKey.Down), new(CliKey.Enter)],
+            _ => throw new ArgumentOutOfRangeException(nameof(choice)),
+        };
         var script = ScriptedCliTerminal.Keys(keys);
         var reply = await new CliPrompts(script.Terminal).PermissionAsync(Question(), new(true), CancellationToken.None);
         Assert.Equal(choice == 2 ? CliPromptState.Cancelled : CliPromptState.Answered, reply.State);
@@ -55,7 +61,7 @@ public sealed class CliPermissionPromptsTests
     {
         var script = ScriptedCliTerminal.Keys([new(CliKey.Enter)]);
         var reply = await new CliPrompts(script.Terminal).PermissionAsync(Question() with { Owner = "catalogue/extensions/development-toolkit" }, new(true), CancellationToken.None);
-        Assert.Equal(CliPermissionChoice.Always, reply.Value);
+        Assert.Equal(CliPermissionChoice.Once, reply.Value);
         CommandOutputSnapshot.MatchSnapshot(Assert.Single(script.Frames), "permission.compact.key.80x24");
     }
 

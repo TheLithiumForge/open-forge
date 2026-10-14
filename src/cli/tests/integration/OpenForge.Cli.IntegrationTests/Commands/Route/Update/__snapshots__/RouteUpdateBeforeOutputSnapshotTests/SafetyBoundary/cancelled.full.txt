@@ -2,7 +2,7 @@ Route update was cancelled. Nothing was changed.
 Workspace: <workspace>
   Error  memory/project-alpha/overview  Route update was cancelled [route-update.interrupted]
          Route update was cancelled. Nothing was changed.
-         open-forge route update
+         open-forge route update memory/project-alpha/overview --description 'After overview' --workspace <workspace>
          Rerun the same Route Update request.
   Rerun the same Route Update request.
-Next: open-forge route update
+Next: open-forge route update memory/project-alpha/overview --description 'After overview' --workspace <workspace>

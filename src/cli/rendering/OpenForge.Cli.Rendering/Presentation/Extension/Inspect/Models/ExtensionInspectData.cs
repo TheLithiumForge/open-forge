@@ -4,6 +4,9 @@ namespace OpenForge.Cli.Core.Presentation.Extension.Inspect.Models;
 
 internal sealed record ExtensionInspectData
 {
+    [JsonIgnore]
+    internal string? TextPackagesLine { get; init; }
+
     public required string Id { get; init; }
 
     public required ExtensionInspectDataVersion? Installed { get; init; }

@@ -1,6 +1,7 @@
-Updated 2 Framework files.
+Changed 2 source files.
 Workspace: <workspace>
   .agents/guidance               created
   .agents/guidance/_guidance.md  created
   .agents/loader.md              Entries updated
+  Previous content is in the recovery bundle at <recovery-bundle>.
 Next: Review previous content in the recovery bundle at <recovery-bundle>.

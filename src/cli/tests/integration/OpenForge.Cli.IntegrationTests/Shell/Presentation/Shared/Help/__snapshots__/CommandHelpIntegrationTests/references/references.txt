@@ -1,0 +1,48 @@
+  Show direct authored links into and out of one source.
+
+Usage:
+  open-forge references <source-reference> [options]
+
+Examples:
+  open-forge references memory
+  open-forge references skills/open-forge-cli --direction out
+  open-forge references memory --direction in
+
+Behavior:
+  Supply one source ID or exact .agents path. The default direction is both.
+  Generated Entries links are excluded. Incoming filters select which sources
+  are inspected.
+  This command changes no files and asks no questions.
+
+Arguments:
+  <source-reference>  Select one source ID or exact .agents/... Path.
+
+Options:
+  --direction <in|out|both>  Select incoming, outgoing, or both direct reference
+                             sections.
+  --include <source-reference>
+      Include one source reference in the incoming scan.
+  --exclude <source-reference>
+      Exclude one source reference from the incoming scan.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Direction and filters: Direction values in, out, and both are exact and
+  case-sensitive. Each --include or --exclude consumes one source reference.
+  Includes combine and exclusions take priority. Filters affect only incoming
+  references and cannot accompany --direction out.
+  Boundary: This deterministic report does not fetch URLs, load target bodies,
+  follow links, build an index, or repair destinations.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  context --help  Read agent instructions and context.
+  doctor          Diagnose workspace problems.
+  repair --help   Correct verified link and Library problems.

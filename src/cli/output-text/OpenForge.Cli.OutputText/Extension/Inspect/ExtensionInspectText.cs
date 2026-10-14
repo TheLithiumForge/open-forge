@@ -182,7 +182,10 @@ internal static class ExtensionInspectText
 
     // @OpenForgeText extension.inspect.title.dependencies
     internal static string TitleDependencies()
-        => "Dependencies";
+        => "Packages in this selection";
+
+    internal static string PackagesInSelection(int count, string id)
+        => string.Create(CultureInfo.InvariantCulture, $"{count} {(count == 1 ? "package" : "packages")}, including {id}.");
 
     // @OpenForgeText extension.inspect.title.files
     internal static string TitleFiles()
@@ -214,7 +217,7 @@ internal static class ExtensionInspectText
 
     // @OpenForgeText extension.inspect.help.syntax
     internal static string HelpSyntax()
-        => "open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global options]";
+        => "open-forge extension inspect <stable-id> [options]";
 
     // @OpenForgeText extension.inspect.help.heading.subject-and-source
     internal static string HelpHeadingSubjectAndSource()
@@ -222,7 +225,7 @@ internal static class ExtensionInspectText
 
     // @OpenForgeText extension.inspect.help.subject-and-source
     internal static string HelpSubjectAndSource()
-        => "Supply one exact lowercase stable ID. Available package details come from the bundled catalogue, or only from the separate local package or catalogue named by --source. There is no fallback, network, registry, cache, or approximate ID matching.";
+        => "Supply one exact lowercase Extension ID. Available package details come from the bundled catalogue, or only from the separate local package or catalogue named by --source. There is no fallback, network, registry, cache, or approximate ID matching.";
 
     // @OpenForgeText extension.inspect.help.inspection
     internal static string HelpInspection()
@@ -230,7 +233,7 @@ internal static class ExtensionInspectText
 
     // @OpenForgeText extension.inspect.help.examples
     internal static string HelpExamples()
-        => "open-forge extension inspect development-toolkit\n  open-forge extension inspect development-toolkit --source ./packages/toolkit --format json";
+        => "open-forge extension inspect planning\nopen-forge extension inspect planning --format json";
 
     // @OpenForgeText extension.inspect.help.heading.fingerprint-boundary
     internal static string HelpHeadingFingerprintBoundary()
@@ -238,5 +241,25 @@ internal static class ExtensionInspectText
 
     // @OpenForgeText extension.inspect.help.fingerprint-boundary
     internal static string HelpFingerprintBoundary()
-        => "open-forge-markdown-v1 uses strict UTF-8, LF-only normalization, heading-bounded Entries exclusion, and exact-byte fallback. Current and intended hashes describe this comparison; no stored baseline is read.";
+        => "open-forge-markdown-v1 uses strict UTF-8, LF-only normalization, heading-bounded Entries exclusion, and exact-byte fallback. Current and intended hashes describe this comparison. No stored baseline is read.";
+
+    // @OpenForgeText extension.inspect.extensioninspect.help.behavior
+    internal static string HelpBehavior()
+        => "Supply one exact Extension ID. Use the bundled catalogue unless --source names a local source.\nCompare the available package with its recorded installation and current files.\nThis command changes no files and asks no questions.";
+
+    // @OpenForgeText extension.inspect.extensioninspect.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("extension list", "List installed and available packages."),
+            ("extension install --help", "Install an Extension package."),
+            ("extension update --help", "Update managed Extension files."),
+        ];
+    // @OpenForgeText extension.inspect.help.details-1
+    internal static string HelpSourceAndComparisonDetails()
+        => "IDs are lowercase and exact. A local package or catalogue must be disjoint. There is no fallback, network, registry, cache, or approximate matching. Inspection reports ownership, dependencies, paths, current bytes, generated boundaries, and current-versus-intended differences. It does not execute package content or invoke another command.";
+
+    // @OpenForgeText extension.inspect.help.details-2
+    internal static string HelpFingerprintsDetails()
+        => "open-forge-markdown-v1 uses strict UTF-8, LF-only normalization, heading-bounded Entries exclusion, and exact-byte fallback. Current and intended hashes describe this comparison. No stored baseline is read.";
 }

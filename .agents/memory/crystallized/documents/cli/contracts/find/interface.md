@@ -31,6 +31,18 @@ contract defines automatic source IDs, canonical paths, overwrite identity, and
 result display. The shared [Global CLI Flags](../shared/global-flags/interface.md)
 contract defines the global flags used here.
 
+## Help
+
+The purpose sentence is: Find Markdown sources by their tags, headings, or file conditions.
+
+The public Usage line is:
+
+```text
+open-forge find [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose
 
 - `find` returns a deterministic flat inventory of Open Forge
@@ -347,7 +359,11 @@ memory/archived                 .agents/memory/archived/_archived.md
 memory/crystallized             .agents/memory/crystallized/_crystallized.md
 ```
 
-Two columns, aligned with spaces, id then path. IDs may contain spaces, so
+Two columns, aligned with spaces when they fit, id then path. At narrower
+widths the complete ID stays on one line and its complete path appears on an
+indented line below. Descriptions wrap at spaces. Match evidence stays beneath
+its own logical row after wrapping. Rows, order and counts are unchanged.
+IDs may contain spaces, so
 nothing promises that whitespace splits the row; JSON is the machine form.
 
 `standard`:
@@ -447,7 +463,7 @@ The findings catalogue below is the command's finite error and warning vocabular
 
 | Code                         | Severity | Family                | Message                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Next                                |
 | ---------------------------- | -------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| find.invalid-input           | error    | invalid-input         | examples: `--require must be all or any.`, `--within <value> is not a known region.`                                                                                                                                                                                                                                                                                                                                                                                                                       |                                     |
+| find.invalid-input           | error    | invalid-input         | examples: `Invalid --require value: <value>. Use all or any.`, `--within <value> is not a known region.`                                                                                                                                                                                                                                                                                                                                                                                                   |                                     |
 | find.invalid-selector        | error    | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Find/Shared/Wording/FindWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`find.invalid-selector`).                                                                                                                                                                                  | `open-forge route list --depth=all` |
 | find.workspace-unavailable   | error    | workspace-unavailable |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                     |
 | find.workspace-unsafe        | error    | workspace-unsafe      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                     |
@@ -1113,6 +1129,8 @@ predicates using AND.
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
 
 ## Executable Wording References
+
+Invalid requirement values say `Invalid --require value: other. Use all or any.` Substitute the escaped supplied value and retain `Next: open-forge find --help`. Validation, JSON shape, streams and exits stay unchanged.
 
 Exact wording is owned by the linked typed factories. Selection, output coordinates and behavioral requirements remain in this contract and its existing semantic owners. The independent fixture preserves the original reviewed message forms.
 

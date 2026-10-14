@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route init memory/project-alpha",
+          "command": "open-forge route init memory/project-alpha --workspace <workspace>",
           "reason": "Create the missing parent route, then rerun Route Create."
         }
       ],
@@ -69,7 +69,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route init memory/project-alpha",
+    "command": "open-forge route init memory/project-alpha --workspace <workspace>",
     "reason": "Create the missing parent route, then rerun Route Create."
   }
 }

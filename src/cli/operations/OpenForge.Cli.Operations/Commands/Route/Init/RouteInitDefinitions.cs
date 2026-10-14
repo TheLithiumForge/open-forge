@@ -14,7 +14,7 @@ internal static partial class RouteInitDefinitions
 
     internal static readonly CliSyntaxDefinition InitCommand = new(
         "init",
-        "Initialize every missing entrypoint in one exact route chain.");
+        "Create the missing navigation files in one exact route chain.");
 
     internal static readonly CliSyntaxDefinition RouteTarget = new(
         "route-target",

@@ -182,7 +182,7 @@ internal static class ExtensionListText
 
     // @OpenForgeText extension.list.help.syntax
     internal static string HelpSyntax()
-        => "open-forge extension list [--installed] [--available] [--source <package-or-catalogue-path>] [global options]";
+        => "open-forge extension list [options]";
 
     // @OpenForgeText extension.list.help.heading.sections
     internal static string HelpHeadingSections()
@@ -190,7 +190,7 @@ internal static class ExtensionListText
 
     // @OpenForgeText extension.list.help.sections
     internal static string HelpSections()
-        => "With neither filter, show Installed then Available. --installed or --available alone selects one section; together they select both. Repeating a section flag has no additional effect.";
+        => "With neither filter, show Installed then Available. --installed or --available alone selects one section. Together they select both. Repeating a section flag has no additional effect.";
 
     // @OpenForgeText extension.list.help.heading.source-and-workspace
     internal static string HelpHeadingSourceAndWorkspace()
@@ -202,9 +202,24 @@ internal static class ExtensionListText
 
     // @OpenForgeText extension.list.help.examples
     internal static string HelpExamples()
-        => "open-forge extension list\n  open-forge extension list --installed --format json\n  open-forge extension list --available --source D:/packages/open-forge";
+        => "open-forge extension list\nopen-forge extension list --installed\nopen-forge extension list --available --source packages";
 
     // @OpenForgeText extension.list.help.notes
     internal static string HelpNotes()
-        => "Extension List is deterministic and read-only. An available package is not necessarily installed. Installed packages are still listed when their source is unavailable. The command writes no payload, lifecycle, generated navigation, backup, cache, temporary file, or diagnostic artifact.";
+        => "Extension List is deterministic and read-only. An available package is not necessarily installed. Installed packages are still listed when their source is unavailable. The command writes no package files, installation records, generated navigation, backup, cache, temporary file, or diagnostic artifact.";
+
+    // @OpenForgeText extension.list.extensionlist.help.behavior
+    internal static string HelpBehavior()
+        => "By default, show both installed and available packages.\nAvailable packages come from the bundled catalogue unless --source names a local source.\nAn available package may not be installed. Installed packages remain listed when their source is unavailable.\nThis command changes no files and asks no questions.";
+
+    // @OpenForgeText extension.list.extensionlist.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("extension inspect --help", "Compare a package with its installation."),
+            ("extension install --help", "Install an Extension package."),
+        ];
+    // @OpenForgeText extension.list.help.details-1
+    internal static string HelpFiltersAndSourcesDetails()
+        => "--installed or --available selects one section. Together they select both. Installed precedes Available. Repeating a filter has no effect. Installed facts come from .agents/open-forge.lock.json. Unavailable ownership means unknown coverage. A local source must be disjoint. No network, registry, cache, or fallback is used. The command is deterministic and writes no package, installation, navigation, backup, cache, temporary, or diagnostic artifact.";
 }

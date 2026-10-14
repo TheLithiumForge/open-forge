@@ -23,4 +23,4 @@ Workspace: <workspace>
   .agents/guidance/old guide.overwrite.md: delete file / file:<sha256> -> missing / not started
   12 files scanned; 9 links found.
   Wait for the blocking condition or inspect the changed target, then rerun Route Move from a fresh plan.
-Next: open-forge route move
+Next: open-forge route move 'guidance/old guide' '.agents/guidance/new guide.md' --workspace <workspace>

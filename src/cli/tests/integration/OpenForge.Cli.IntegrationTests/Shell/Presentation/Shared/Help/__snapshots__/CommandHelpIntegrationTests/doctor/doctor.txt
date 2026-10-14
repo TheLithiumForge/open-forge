@@ -1,0 +1,34 @@
+  Diagnose workspace, route, link, and managed-file problems without changing
+  files.
+
+Usage:
+  open-forge doctor [options]
+
+Examples:
+  open-forge doctor
+  open-forge doctor --detail standard
+  open-forge doctor --format json --detail full
+
+Behavior:
+  Check the selected workspace. The default summarizes problems and completed
+  checks, with one next step when work remains.
+  Use --detail standard to see each warning and its suggested action.
+  This command changes no files and asks no questions.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Checks: Inspect recovery data, routes, references, managed Framework files,
+  and managed Extensions.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  status           Check installation and context.
+  repair --help    Correct verified link and Library problems.
+  index --dry-run  Fill missing metadata and update Entries.

@@ -9,4 +9,4 @@ Workspace: <workspace>
       Source ID: linked/review
 The Library registration was read completely.
   Inspect the reported Library state.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

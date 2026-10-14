@@ -2,8 +2,13 @@ Install needs confirmation, and this session cannot ask.
 Workspace: <workspace>
   Error  <workspace>  Confirmation is required
          Install needs confirmation, and this session cannot ask.
-         open-forge install --automatic
+         open-forge install --workspace <workspace> --preset full-core --frontmatter root --automatic
          Rerun the same Install request with explicit automatic mode.
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
 Frontmatter: root
   Rerun the same Install request with explicit automatic mode.
-Next: open-forge install --automatic
+Next: open-forge install --workspace <workspace> --preset full-core --frontmatter root --automatic

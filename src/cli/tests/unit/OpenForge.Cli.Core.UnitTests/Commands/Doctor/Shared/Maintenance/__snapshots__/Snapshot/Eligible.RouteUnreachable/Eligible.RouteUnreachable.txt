@@ -1,0 +1,3 @@
+.agents/guidance/note.md is inside folders without navigation files. Index can create the missing chain.
+TargetedOperation
+open-forge index

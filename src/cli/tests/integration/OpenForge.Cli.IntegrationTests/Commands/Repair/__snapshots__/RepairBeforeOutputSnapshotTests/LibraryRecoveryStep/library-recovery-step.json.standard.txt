@@ -9,7 +9,7 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "Repaired 1 link. 1 problem still needs a choice or a hand.",
+    "headline": "Repaired 1 link. 1 problem needs an edit.",
     "kind": "warnings"
   },
   "findings": [
@@ -45,7 +45,11 @@
     "problemsNeedingChoice": 0,
     "problemsNeedingHand": 1,
     "librarySteps": 1,
-    "warnings": 1
+    "warnings": 1,
+    "entriesUpdated": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0
   },
   "limitations": [],
   "data": {
@@ -65,7 +69,11 @@
         "path": ".agents/directives/review.md",
         "selected": true
       }
-    ]
+    ],
+    "renames": [],
+    "navigation": [],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,

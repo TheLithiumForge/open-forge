@@ -22,7 +22,7 @@ internal static class ContextDefinitions
 
     internal static readonly CliSyntaxDefinition ContextCommand = new(
         name: CommandIdentity,
-        description: "Read startup context and selected sources.");
+        description: "Read startup instructions and the required context for selected sources.");
 
     internal static readonly CliOptionDefinition<bool> AdditionsOnly = new(
         name: "--additions-only",
@@ -46,7 +46,7 @@ internal static class ContextDefinitions
 
     internal static readonly CliOptionDefinition<string[]> For = new(
         name: "--for",
-        description: "Workspace file path used to evaluate applyTo conditions; repeat for additional files.",
+        description: "Workspace file path used to evaluate applyTo conditions. Repeat for additional files.",
         arity: CliOptionArity.ExactlyOne,
         defaultValue: [],
         valueName: "path");

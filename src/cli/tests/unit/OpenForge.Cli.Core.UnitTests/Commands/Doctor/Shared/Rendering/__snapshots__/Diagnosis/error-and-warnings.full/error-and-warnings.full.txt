@@ -4,7 +4,6 @@ Workspace
          The frontmatter block is not closed.
          fix by hand
          Fix it by hand.
-         Fix it by hand.
          state: blocked
          read from .agents/directives/broken.md
 Links
@@ -19,7 +18,6 @@ Links
   Warning  .agents/directives/second.md:12:4  Broken link [reference.target-missing]
          The linked file was not found: missing.md. No possible target was found.
          needs a choice
-         Fix the link by hand.
          Fix the link by hand.
          state: missing
          read from .agents/directives/second.md
@@ -39,5 +37,4 @@ Routes and Entries
          read from .agents/routes.md
   21 links and 20 routes checked.
   2 need a choice, 1 must be fixed by hand.
-  Review the findings and choose a repair.
 Next: open-forge repair

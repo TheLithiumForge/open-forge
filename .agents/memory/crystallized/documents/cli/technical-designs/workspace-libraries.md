@@ -147,10 +147,21 @@ unavailable eligible ordinary file or unsafe required boundary prevents a
 complete inventory. A readable prefix never permits retirement.
 
 `LibraryMapping` is the sole derivation of three facts: source-relative path,
-workspace-relative destination path and exact raw relative link target. For
+workspace-relative destination path and portable relative mapping target. For
 source suffix `p`, derive source `sourceRoot/p` and destination `p` when the root
-is `.`, otherwise `destinationRoot/p`. Derive the raw `/` target from the
-actual destination parent to the source. A workspace-root leaf has the workspace
+is `.`, otherwise `destinationRoot/p`. Derive the portable `/` mapping target from the
+actual destination parent to the source. Create the on-disk target with the platform
+directory separator and verify that exact platform form. Keep actual raw observations
+in evidence. Mapping ownership and currency comparisons ignore separator differences.
+Library result and effect targets use the portable mapping form on every platform,
+including created and removed links. Attach `data.links[].target`, Sync and Detach
+`data.effects[].target`, and List and Inspect `expectedTarget` use `/`.
+List and Inspect `observedTarget`, mutation expected-state link targets, and
+unreadable-link finding evidence retain the raw on-disk target. These evidence
+fields may contain platform separators. Recovery manifests and before/after
+observations also retain raw identities under the
+[Mutation And Recovery design](mutation-and-recovery.md).
+A workspace-root leaf has the workspace
 root as its parent. No source bytes or target resolution establish link identity.
 
 `LibraryMappingSetRequest` carries one workspace, both roots and the complete
@@ -227,8 +238,8 @@ Every mutator follows one complete plan:
    recognized command-owned bundle after complete operation verification.
 
 Before every effect, repeat no-follow leaf, ordinary ancestry and expected-state
-checks. Relative-file-link Create accepts missing and produces the exact raw
-symbolic link. Delete accepts that exact link and produces missing. Ordinary
+checks. Relative-file-link Create accepts missing and produces the exact platform-form
+symbolic link. Delete accepts the observed owned link and produces missing. Ordinary
 file effects never operate through links. The source target is never written,
 removed or used as recovery payload. Failure/cancellation stops new effects;
 verified effects and actual permission outcome remain visible. There is no
@@ -252,6 +263,15 @@ retained evidence. Cleanup only deletes recognized bundles through its existing
 explicit guarded path and never applies entries.
 
 ## Read-Only And Other Consumers
+
+On Windows, a recorded matching link with `/` in its raw target is unreadable.
+Inspect, Sync preview and application, and Doctor report that condition with
+exact Detach and Attach commands using the same workspace, ID, source root,
+destination root and Git-ignore choice. Between those commands, instruct the
+user to remove the ID saved by Detach from `removedLibraries` in workspace settings.
+Sync blocks without effects and does
+not call such a link current. Detach still recognizes and safely deletes the
+owned link. No new effect or automatic replacement is introduced.
 
 List observes records, bounded source availability and registered mapped leaves
 without a source inventory. Inspect inventories the selected root completely

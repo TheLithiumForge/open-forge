@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.Shell.Interaction;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
@@ -34,7 +35,10 @@ internal static class CliHostTerminalFactory
         var selectionView = capabilities.CanRedraw
             ? new CliTerminalSelectionView(adapter.ReadViewport, ClearView)
             : null;
-        return new CliTerminal(capabilities, adapter.WriteAsync, adapter.ReadLineAsync, adapter.ReadKeyAsync, selectionView);
+        return new CliTerminal(capabilities, adapter.WriteAsync, adapter.ReadLineAsync, adapter.ReadKeyAsync, selectionView)
+        {
+            Width = ReadViewport()?.Width ?? CliPresentation.DefaultWidth,
+        };
     }
 
     internal static CliTerminalCapabilities ResolveCapabilities(

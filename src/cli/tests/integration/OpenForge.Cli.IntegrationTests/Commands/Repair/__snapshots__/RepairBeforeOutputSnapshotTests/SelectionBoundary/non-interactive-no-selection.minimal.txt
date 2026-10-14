@@ -1,3 +1,9 @@
-Cannot repair: repair needs to know which repairs to apply, and this session cannot ask. Nothing was changed.
+Repair cannot ask for a choice in this session. Nothing was changed.
 Workspace: <workspace>
-Next: open-forge repair --automatic
+  Warning  .agents/docs/source.md:9:8  Broken link
+         This link still needs repair.
+  Warning  .agents/docs/source.md:10:10  Broken link
+         1 possible target.
+         To use replacement.md (same title):
+           open-forge repair --relink '.agents/docs/source.md@10:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>
+Next: open-forge repair --automatic --workspace <workspace>

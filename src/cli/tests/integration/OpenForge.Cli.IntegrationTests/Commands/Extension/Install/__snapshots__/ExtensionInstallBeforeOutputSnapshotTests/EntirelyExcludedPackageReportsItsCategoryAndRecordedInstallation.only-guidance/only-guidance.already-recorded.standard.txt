@@ -1,0 +1,8 @@
+Already recorded the only-guidance Extension without its files, because Guidance is left out.
+Workspace: <workspace>
+  The package file from only-guidance was skipped.
+  Source: <extension-source> (catalogue)
+  .agents/open-forge.lock.json  ownership record unchanged
+To add its files, restore Guidance and update the package:
+  open-forge route init guidance --framework --dry-run
+  open-forge extension update only-guidance --dry-run --source <extension-source>

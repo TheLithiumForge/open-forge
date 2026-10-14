@@ -115,7 +115,7 @@ internal static class LibrarySyncReportSelector
                 Path = link.Path,
                 Action = link.Kind == LibraryLinkEffectKind.Create ? "add" : "remove",
                 Outcome = Outcome(result, link.Path),
-                Target = includeTargets ? link.RawRelativeTarget : null,
+                Target = includeTargets ? link.RelativeTarget : null,
                 IsLink = true,
                 Suffix = link.Kind == LibraryLinkEffectKind.Delete ? global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.LabelItsSourceFileIsGone() : null,
             });
@@ -420,7 +420,7 @@ internal static class LibrarySyncReportSelector
         }
 
         var finding = result.Result.Findings.FirstOrDefault(finding => finding.Status == result.Status);
-        if (finding is null || finding.Path is null)
+        if (finding is null || finding.Path is null || finding.UnreadableOnWindows)
         {
             return [];
         }
@@ -600,7 +600,9 @@ internal static class LibrarySyncReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = LibrarySyncWording.MachineCode(finding.Code),
-            Title = LibrarySyncWording.FindingTitle(finding.Code),
+            Title = finding.UnreadableOnWindows
+                ? global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Title()
+                : LibrarySyncWording.FindingTitle(finding.Code),
             Message = Message(result, finding, id),
             Subject = kind == CliSubjectKind.Identifier
                 ? new CliSubject(kind, null, subject)
@@ -608,11 +610,18 @@ internal static class LibrarySyncReportSelector
             Category = LibrarySyncWording.Family(finding.Code),
             Resolution = action is null ? null : CliResolution.TargetedOperation,
             Actions = action is null ? [] : [action],
+            Evidence = finding.UnreadableOnWindows
+                ? [new CliEvidence("observed target", result.Result.Projection.Mappings.First(mapping => mapping.DestinationPath == finding.Path).ObservedRelativeLink ?? "")]
+                : [],
         };
     }
 
     private static string Message(LibrarySyncResult result, LibrarySyncFinding? finding, string id)
     {
+        if (finding?.UnreadableOnWindows == true)
+        {
+            return global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Unreadable(finding.Path ?? id);
+        }
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Shared.SharedText.MessageTheResultDidNotContainAFinding();
@@ -686,6 +695,10 @@ internal static class LibrarySyncReportSelector
 
     private static string BlockedReason(LibrarySyncResult result, LibrarySyncFinding? finding, string id)
     {
+        if (finding?.UnreadableOnWindows == true)
+        {
+            return global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Unreadable(finding.Path ?? id);
+        }
         if (finding is null)
         {
             return global::OpenForge.Cli.OutputText.Library.Sync.LibrarySyncText.LabelTheSynchronizationIsBlocked();
@@ -731,6 +744,12 @@ internal static class LibrarySyncReportSelector
 
     private static CliNextAction? Next(LibrarySyncResult result, string id)
     {
+        if (result.LinkRecreation is { } recreation)
+        {
+            return Presentation.Shared.Wording.LibraryLinkRecreationWording.Next(
+                workspace: recreation.Workspace, id: recreation.Id, sourceRoot: recreation.SourceRoot,
+                destinationRoot: recreation.DestinationRoot, gitIgnore: recreation.GitIgnore);
+        }
         if (result.Next is not null)
         {
             return result.Next;

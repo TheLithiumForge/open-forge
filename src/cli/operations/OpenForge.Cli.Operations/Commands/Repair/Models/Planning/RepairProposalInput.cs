@@ -38,7 +38,7 @@ internal sealed record RepairProposalInput
     internal static RepairProposalInput From(RepairableReferenceInput input)
     {
         ArgumentNullException.ThrowIfNull(input);
-        var proposal = input.CatalogueMember == RepairCatalogueMember.MissingTargetRelink
+        var proposal = input.CatalogueMember == RepairCatalogueMember.MissingTargetRelink && input.Target.RenameProof is null
             ? new RepairProposal(
                 input.CatalogueMember,
                 input.SourceCanonicalPath,
@@ -51,7 +51,8 @@ internal sealed record RepairProposalInput
                 input.Occurrence,
                 input.ExpectedDestination,
                 input.IntendedDestination,
-                input.Target);
+                input.Target)
+            { RenameProof = input.Target.RenameProof };
         return new RepairProposalInput(proposal, input.OccurrenceState, input.ObservedDestination);
     }
 }

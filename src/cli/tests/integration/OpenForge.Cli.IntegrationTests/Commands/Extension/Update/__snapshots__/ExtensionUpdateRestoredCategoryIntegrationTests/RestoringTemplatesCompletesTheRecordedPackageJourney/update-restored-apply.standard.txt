@@ -1,0 +1,19 @@
+Updated the core-templates Extension to 0.4.0.
+Workspace: <workspace>
+  .agents/templates/_templates.md      Entries updated
+  .agents/templates/core/_core.md      created
+  .agents/templates/core/directive.md  created
+  .agents/templates/core/guidance.md   created
+  .agents/templates/core/map.md        created
+  .agents/templates/core/memory.md     created
+  .agents/templates/core/pattern.md    created
+  .agents/templates/core/skill.md      created
+  .agents/templates/core/template.md   created
+  Previous content is in the recovery bundle at <recovery-bundle>.
+  Source: embedded catalogue
+  Dependency closure: core-templates
+  0 files unchanged
+  Updated 2 Entries sections.
+  Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
+  Previous content remains available for review.
+Next: Review previous content in the recovery bundle at <recovery-bundle>.

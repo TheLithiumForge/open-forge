@@ -7,6 +7,9 @@ internal static class ExtensionRemoveWording
     // @OpenForgeText extension.remove.wording.would-remove-the-extension
     internal static string WouldRemove(string id) => $"Would remove the {id} Extension.";
 
+    internal static string WouldRemoveMany(int count, string ids)
+        => string.Create(CultureInfo.InvariantCulture, $"Would remove {count} Extensions: {ids}.");
+
     // @OpenForgeText extension.remove.wording.no-files-are-recorded-for-so-there-is-nothing-to-remove
     internal static string NoFilesRecorded(string id)
         => $"No files are recorded for {id}, so there is nothing to remove.";

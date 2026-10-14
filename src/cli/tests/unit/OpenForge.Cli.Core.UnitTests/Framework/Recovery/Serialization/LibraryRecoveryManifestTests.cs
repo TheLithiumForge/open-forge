@@ -70,7 +70,7 @@ public sealed class LibraryRecoveryManifestTests
             rows.Add(original.Replace("\"priorPayload\":null", "\"priorPayload\":\"payload/000000.bin\"", StringComparison.Ordinal));
             rows.Add(original.Replace("\"linkKind\":\"relative-file-symbolic-link\"", "\"linkKind\":\"directory-symbolic-link\"", StringComparison.Ordinal));
             rows.Add(original.Replace("../shared/.agents/a.md", "/outside/a.md", StringComparison.Ordinal));
-            rows.Add(original.Replace("../shared/.agents/a.md", "..\\\\shared\\\\a.md", StringComparison.Ordinal));
+            rows.Add(original.Replace("../shared/.agents/a.md", "\\\\outside/a.md", StringComparison.Ordinal));
             rows.Add(original.Replace($"\"intended\":{Link}", $"\"intended\":{Missing}", StringComparison.Ordinal));
             rows.Add(original.Replace($"\"prior\":{Missing}", $"\"prior\":{Link}", StringComparison.Ordinal));
             rows.Add(original.Replace("\"length\":null", "\"length\":1", StringComparison.Ordinal));

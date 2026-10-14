@@ -164,21 +164,7 @@ public sealed class RouteInitPresentationTests
     public void HelpFormationExposesAcceptedTargetAndOptionSpellings()
     {
         var help = RouteInitHelpSections.Create();
-        var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
-
-        Assert.Contains("route init", text, StringComparison.Ordinal);
-        Assert.Contains(
-            "open-forge route init <route-target> [--framework] [--description <text>] [--responsibility <text>] "
-            + "[--tag <tag>]... [--apply-to <glob>]... [--dry-run] [global options]", text, StringComparison.Ordinal);
-        Assert.Contains("<route-target>", text, StringComparison.Ordinal);
-        Assert.Contains("--framework", text, StringComparison.Ordinal);
-        Assert.Contains("--description", text, StringComparison.Ordinal);
-        Assert.Contains("--responsibility", text, StringComparison.Ordinal);
-        Assert.Contains("--tag ", text, StringComparison.Ordinal);
-        Assert.Contains("--apply-to", text, StringComparison.Ordinal);
-        Assert.Contains("--dry-run", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("--automatic", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("--scope", text, StringComparison.Ordinal);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge route init <route-target> [options]");
     }
 
     private static CliRenderedOutput Render(

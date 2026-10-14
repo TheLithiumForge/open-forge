@@ -1,7 +1,6 @@
 Recorded removal intent for Library unknown.
 Workspace: <workspace>
   .agents/open-forge.json  settings updated
-  .agents/open-forge.json  settings updated
   Expected .agents/open-forge.json: missing; length unavailable; SHA-256 unavailable; target unavailable
   Verification: all changed targets were verified; registration was not published.
   Recovery: bundle removed; no residual effects.

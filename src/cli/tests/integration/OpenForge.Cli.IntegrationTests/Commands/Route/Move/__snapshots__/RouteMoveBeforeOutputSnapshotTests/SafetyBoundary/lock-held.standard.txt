@@ -12,4 +12,4 @@ Workspace: <workspace>
   README.md:5:23  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
   notes.md:3:11  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
   Wait for the blocking condition or inspect the changed target, then rerun Route Move from a fresh plan.
-Next: open-forge route move
+Next: open-forge route move 'guidance/old guide' '.agents/guidance/new guide.md' --workspace <workspace>

@@ -1,0 +1,63 @@
+  Create one routed Markdown file below an existing root route.
+
+Usage:
+  open-forge route create <file-target> [options]
+
+Examples:
+  open-forge route create memory/note --description "Note" --dry-run
+  open-forge route create memory/note --description "Note"
+  open-forge route create memory/note --template templates/route --dry-run
+
+Behavior:
+  Select a new Markdown file below an existing root route.
+  --dry-run shows the same destination and generated Entries navigation changes
+  and writes nothing.
+  Missing intermediate route folders and entrypoints can be created. Differing
+  existing content stays protected.
+  This command asks no questions. Interrupted writes report retained recovery
+  data.
+
+Arguments:
+  <file-target>  Select one route ID or exact ordinary Markdown path.
+
+Options:
+  --description <text>     Set the destination description.
+  --tag <tag>              Add one ordered destination tag. Repeat for
+                           additional tags.
+  --apply-to <glob>        Apply the destination using workspace-relative glob
+                           patterns. Separate patterns with commas or repeat
+                           this option.
+  --responsibility <text>  Set the optional destination responsibility.
+  --template <template-reference>
+      Copy the body of one existing routed Template.
+  --dry-run                Preview the complete creation plan without writing.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Target and metadata: Use one ordinary Markdown source ID or exact .agents path
+  below exactly one existing root. Unknown roots are refused. Missing
+  description or tags yields a warning and a next action to add them. Supply
+  --description, --responsibility, and --template at most once. Tags are
+  ordered. Exact duplicates are invalid. Repeated --apply-to values may contain
+  comma-separated patterns.
+  Globs and Templates: Globs are case-sensitive and relative to the workspace:
+  *.py at root, **/*.py at any depth, docs/** below docs. ! is literal.
+  --template copies only the body of one exact routed Markdown source tagged
+  Template, keeping explicit destination metadata and no continuing Template
+  relationship.
+  Boundary: Create does not initialize a new root, create lifecycle ownership,
+  infer metadata, or invoke Index. Intermediate entrypoints use canonical
+  filenames.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  route init --help    Create missing navigation files.
+  route update --help  Change routed metadata or Template content.
+  index --dry-run      Fill missing metadata and update Entries.

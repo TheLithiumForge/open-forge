@@ -247,13 +247,14 @@ public sealed class RouteMoveApplicationIntegrationTests
         Assert.Contains("<source-reference> <destination-target>", result.Output, StringComparison.Ordinal);
         Assert.Contains("Name the intended destination by exact path.", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--recursive", result.Output, StringComparison.Ordinal);
-        Assert.Contains("completed: exit 0 and text stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("completed-with-warnings: exit 2 and text stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("incomplete: exit 3 and text stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("invalid-input: exit 4 and text stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("blocked: exit 5 and text stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("failed: exit 1 and text stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("cancelled: exit 130 and text stderr.", result.Output, StringComparison.Ordinal);
+        var footer = string.Join(" ", result.Output.Split(Environment.NewLine).Select(line => line.Trim()));
+        Assert.Contains("0 completed", footer, StringComparison.Ordinal);
+        Assert.Contains("2 completed with warnings", footer, StringComparison.Ordinal);
+        Assert.Contains("3 incomplete", footer, StringComparison.Ordinal);
+        Assert.Contains("4 invalid input", footer, StringComparison.Ordinal);
+        Assert.Contains("5 blocked", footer, StringComparison.Ordinal);
+        Assert.Contains("1 failed", footer, StringComparison.Ordinal);
+        Assert.Contains("130 cancelled", footer, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));
         Assert.Equal(before, workspace.SnapshotHashes());
     }

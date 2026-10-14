@@ -47,7 +47,7 @@ internal static class LibraryInspectDataTextRenderer
                     file.DestinationPath,
                     LibraryInspectWording.Relation(file.Relation),
                 }).ToArray();
-                builder.Append(CliTable.Render(rows, (column, cell) =>
+                builder.Append(CliTable.Render(style, rows, (column, cell) =>
                     column == 0 ? style.Subject(cell) : cell));
             }
         }

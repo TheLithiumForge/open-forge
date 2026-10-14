@@ -81,7 +81,7 @@ internal static class CliReportTrimmer
                 Evidence = selection.Detail >= CliDetail.Full ? finding.Evidence : [],
                 Provenance = selection.Detail >= CliDetail.Full ? finding.Provenance : null,
                 Resolution = selection.Detail >= CliDetail.Standard ? finding.Resolution : null,
-                Actions = selection.Detail >= CliDetail.Standard ? finding.Actions : finding.Actions.Take(1).ToArray(),
+                Actions = selection.Detail >= CliDetail.Standard || finding.TextChoices.Count != 0 ? finding.Actions : finding.Actions.Take(1).ToArray(),
             }).ToArray();
         var findings = SelectFindings(text: false);
         var textFindings = SelectFindings(text: true);
@@ -93,8 +93,8 @@ internal static class CliReportTrimmer
             Counts = counts.Values.ToArray(),
             Limitations = report.Limitations.Concat(counts.Values
                 .Where(count => count.Value is null && count.UnavailableReason is not null)
-                .Select(count => new CliLimitation(count.Label, count.UnavailableReason!)))
-                .Distinct().ToArray(),
+                .Select(count => new CliLimitation(count.Label, count.UnavailableReason!) { CountName = count.Name }))
+                .DistinctBy(limitation => (limitation.What, limitation.Why, limitation.Subject)).ToArray(),
             Diagnostics = selection.Detail == CliDetail.Debug ? report.Diagnostics : [],
         };
         var showWorkspace = report.Workspace is { } workspace

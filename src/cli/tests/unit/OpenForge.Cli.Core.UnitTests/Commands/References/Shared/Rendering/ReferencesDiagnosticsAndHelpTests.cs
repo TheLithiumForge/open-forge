@@ -73,21 +73,6 @@ public sealed class ReferencesDiagnosticsAndHelpTests
     public void HelpSectionsExposeCompletePublicContract()
     {
         var help = ReferencesHelpSections.Create();
-        var text = string.Join(
-            Environment.NewLine,
-            help.Sections.Select(section => $"{section.Heading}:\n{section.Body}"));
-
-        Assert.Contains("references <source-reference>", text, StringComparison.Ordinal);
-        Assert.Contains("--direction", text, StringComparison.Ordinal);
-        Assert.Contains("in|out|both", text, StringComparison.Ordinal);
-        Assert.Contains("default: both", text, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("--include", text, StringComparison.Ordinal);
-        Assert.Contains("--exclude", text, StringComparison.Ordinal);
-        Assert.Contains("--format", text, StringComparison.Ordinal);
-        Assert.Contains("--detail", text, StringComparison.Ordinal);
-        Assert.Contains("--detail-filter", text, StringComparison.Ordinal);
-        Assert.Contains("Examples", text, StringComparison.Ordinal);
-        Assert.Contains("Related commands", text, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", text, StringComparison.Ordinal);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge references <source-reference> [options]");
     }
 }

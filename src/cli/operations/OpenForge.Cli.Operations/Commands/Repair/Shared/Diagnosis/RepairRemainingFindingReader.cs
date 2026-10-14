@@ -2,11 +2,16 @@ using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
+using OpenForge.Cli.Core.Commands.Repair.Models.Diagnosis;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
 internal static class RepairRemainingFindingReader
 {
+    internal static IEnumerable<RepairFinding> ReadCatalogue(RepairCatalogueRead catalogue)
+        => catalogue.Findings.Concat(catalogue.Proposals.Select(input => new RepairFinding(
+            input.Proposal.IsGuided ? RepairFindingCode.GuidedFindingRemaining : RepairFindingCode.ManualFindingRemaining,
+            "A current local-reference finding remains.", input.Proposal.SourceCanonicalPath, input.Proposal.Occurrence)));
     internal static IEnumerable<RepairFinding> ReadLibrary(DoctorDiagnosis diagnosis)
     {
         ArgumentNullException.ThrowIfNull(diagnosis);

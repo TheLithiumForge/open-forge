@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing.Models.Input;
 
@@ -42,6 +43,7 @@ internal static class LibraryDetachRequestBinder
             LibraryId = libraryId,
             Mode = dryRun ? LibraryMode.DryRun : LibraryMode.Apply,
             Allow = [.. CliOptionResultFactsReader.ReadValues(parse.Result, symbols.Allow)],
+            RetryOptions = CliRetryOptions.From(invocation),
         });
     }
 

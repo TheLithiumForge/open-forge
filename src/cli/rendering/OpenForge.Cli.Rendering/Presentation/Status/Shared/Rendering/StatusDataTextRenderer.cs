@@ -220,7 +220,7 @@ internal static class StatusDataTextRenderer
         StringBuilder builder,
         IEnumerable<IReadOnlyList<string>> rows,
         CliTextStyle style)
-        => builder.Append(CliTable.Render(
+        => builder.Append(CliTable.Render(style,
             rows.ToArray(),
             (column, cell) => column == 0 ? style.Subject(cell) : cell));
 

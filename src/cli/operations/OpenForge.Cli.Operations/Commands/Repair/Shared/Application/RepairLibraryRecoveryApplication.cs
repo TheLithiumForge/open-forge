@@ -43,7 +43,7 @@ internal static class RepairLibraryRecoveryApplication
                 []);
         }
 
-        var changes = plan.Effects.Select(effect => effect.FileChange).ToArray();
+        var changes = plan.FileChanges.ToArray();
         if (changes.Length != 0)
         {
             var validation = await services.Preflight.ValidateAsync(
@@ -241,7 +241,7 @@ internal static class RepairLibraryRecoveryApplication
                 }
 
             }
-            var changes = plan.Effects.Select(effect => effect.FileChange).ToArray();
+            var changes = plan.FileChanges.ToArray();
             var validation = changes.Length == 0
                 ? MutationValidationResult.Valid()
                 : await services.Revalidator.ValidateAsync(
@@ -362,7 +362,7 @@ internal static class RepairLibraryRecoveryApplication
                 switch (step.Kind)
                 {
                     case RepairAtomicEffectKind.Reference:
-                        var reference = step.Reference
+                        var reference = step.FileChange
                             ?? throw new ArgumentException("A reference effect payload is required.", nameof(prepared));
                         var referenceReceipt = await ApplyReferenceAsync(
                             prepared,
@@ -455,12 +455,12 @@ internal static class RepairLibraryRecoveryApplication
 
     private static async ValueTask<FileChangeReceipt> ApplyReferenceAsync(
         RepairLibraryPreparedApplication prepared,
-        RepairEffect effect,
+        PlannedFileChange effect,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(prepared);
         ArgumentNullException.ThrowIfNull(effect);
-        var index = prepared.Plan.Effects.ToList().IndexOf(effect);
+        var index = prepared.Plan.FileChanges.ToList().IndexOf(effect);
         if (index < 0 || index >= prepared.ReferenceChecks.Length)
         {
             throw new ArgumentException("A reference effect requires its all-effect revalidation check.", nameof(effect));
@@ -468,9 +468,9 @@ internal static class RepairLibraryRecoveryApplication
 
         return await prepared.Services.Applier.ApplyAsync(
             prepared.Lease,
-            effect.FileChange,
+            effect,
             prepared.ReferenceChecks[index],
-            prepared.ForwardPreparation,
+            effect.Kind == PlannedFileChangeKind.Create ? null : prepared.ForwardPreparation,
             cancellationToken).ConfigureAwait(false);
     }
 
@@ -594,7 +594,7 @@ internal static class RepairLibraryRecoveryApplication
             + execution.LibraryReceipts.Count(IsApplied);
         var verified = execution.ReferenceReceipts.All(IsVerified)
             && execution.LibraryReceipts.All(IsVerified)
-            && applied == plan.Effects.Count
+            && applied == plan.FileChanges.Count
                 + plan.LibrarySteps.Count(step => step.Effect is not null);
         var application = execution.UnexpectedFailure is { } unexpected
             ? new RepairApplication(RepairApplicationState.Failed, applied, unexpected.Cause)
@@ -625,7 +625,8 @@ internal static class RepairLibraryRecoveryApplication
                     : coverage.SelectedScope == RepairCoverageState.Complete
                         ? RepairVerificationState.Verified
                         : RepairVerificationState.Failed),
-            referenceVerification?.Effects ?? []);
+            referenceVerification?.Effects ?? [])
+        { FileReceipts = execution.ReferenceReceipts, FileStates = referenceVerification?.FileStates ?? new Dictionary<string, RepairVerificationState>(StringComparer.Ordinal) };
         var postDiagnosis = execution.ReferencePostVerification?.Diagnosis
             ?? (execution.PostDiagnosis is { } read && coverage is { } observedCoverage
                 ? ReadPostDiagnosis(read, observedCoverage)

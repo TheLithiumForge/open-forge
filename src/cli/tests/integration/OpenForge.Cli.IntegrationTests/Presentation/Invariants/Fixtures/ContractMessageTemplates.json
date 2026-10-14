@@ -55,7 +55,7 @@
     },
     {
       "code": "context.invalid-link-depth",
-      "forms": ["--follow-links must be a positive number or all."]
+      "forms": ["Invalid --follow-links value: <value>. Use a positive number or all."]
     },
     {
       "code": "context.overwrite-ambiguous",
@@ -229,7 +229,7 @@
     },
     {
       "code": "extension-install.package-contents-changed",
-      "forms": ["The files or dependencies recorded for <id> do not match the selected source."]
+      "forms": ["The files or dependencies recorded for <id> do not match the selected source.", "<id> is already installed without its files. Update it to add them."]
     },
     {
       "code": "extension-install.topology-verification-failed",
@@ -258,7 +258,7 @@
     },
     {
       "code": "extension-remove.lifecycle-observation",
-      "forms": ["<dependency> remains installed and is no longer needed by <id>."]
+      "forms": ["<dependency> remains installed and is no longer needed by <id>.", "<dependency> would remain installed after removing <id>."]
     },
     {
       "code": "extension-remove.dependency-blocked",
@@ -286,7 +286,10 @@
     },
     {
       "code": "extension-update.lifecycle-observation",
-      "forms": ["<id> is not recorded as installed, so it was not updated."]
+      "forms": [
+        "<id> is not recorded as installed, so it was not updated.",
+        "Recorded Extension identities, paths or dependencies cannot be interpreted; no ownership or file effects were inferred."
+      ]
     },
     {
       "code": "extension-update.managed-divergence",
@@ -578,7 +581,7 @@
     },
     {
       "code": "references.invalid-direction",
-      "forms": ["--direction must be in, out, or both."]
+      "forms": ["Invalid --direction value: <value>. Use in, out, or both."]
     },
     {
       "code": "references.invalid-filter",
@@ -626,7 +629,8 @@
     },
     {
       "code": "repair.selection-required",
-      "forms": ["Repair needs to know which repairs to apply, and this session cannot ask."]
+      "forms": ["Repair needs to know which repairs to apply, and this session cannot ask."],
+      "textHeadlineOnly": "Repair cannot ask for a choice in this session. Nothing was changed."
     },
     {
       "code": "repair.missing-authority",
@@ -654,11 +658,11 @@
     },
     {
       "code": "repair.guided-finding-remaining",
-      "forms": ["<path>:l:c  Broken link; <N> possible targets", "<destination>: Broken link; <N> possible targets"]
+      "forms": ["1 possible target.", "<N> possible targets.", "<old-path> is missing. More than one file looks like its new location.", "<old-path> is missing. Its new location could not be proven.", "This link still needs repair.", "Git did not answer in time, so renamed files could not be proven. Run the command again."]
     },
     {
       "code": "repair.manual-finding-remaining",
-      "forms": ["<path>:l:c  <title>; fix by hand", "The registered Library projection is not current."]
+      "forms": ["<old-path> is missing and no replacement was found.", "This link still needs repair.", "The registered Library projection is not current.", "Git did not answer in time, so renamed files could not be proven. Run the command again.", "<path> is managed. Its managing Update owns this file.", "<path> is inside a native Skill package. Edit its SKILL.md or package resource.", "<path> is excluded or private. Restore its route or sharing intent before repairing this link.", "<path> is protected from Repair."]
     },
     {
       "code": "route-create.invalid-target",
@@ -770,7 +774,7 @@
     },
     {
       "code": "route-list.invalid-depth",
-      "forms": ["--depth must be a whole number or all."]
+      "forms": ["Invalid --depth value: <value>. Use a whole number from 0, or all."]
     },
     {
       "code": "route-list.loader-subject",

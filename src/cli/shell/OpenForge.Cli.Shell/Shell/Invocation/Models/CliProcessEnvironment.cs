@@ -1,8 +1,10 @@
+using OpenForge.Cli.Core.Shell.Presentation.Models;
+
 namespace OpenForge.Cli.Core.Shell.Invocation.Models;
 
 internal sealed record CliProcessEnvironment
 {
-    internal const int DefaultHelpWidth = 80;
+    internal const int DefaultHelpWidth = CliPresentation.DefaultWidth;
 
     internal CliProcessEnvironment(string currentDirectory, int helpWidth = DefaultHelpWidth)
     {

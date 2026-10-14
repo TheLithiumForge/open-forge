@@ -15,7 +15,7 @@ internal static class ExtensionInspectDefinitions
 
     internal static readonly CliSyntaxDefinition InspectCommand = new(
         name: "inspect",
-        description: "Inspect one installed or available Extension package.");
+        description: "Compare one Extension's available content with its installed ownership and files.");
 
     internal static readonly CliOptionDefinition<string?> Source = new(
         name: "--source",

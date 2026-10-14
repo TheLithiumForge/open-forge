@@ -15,6 +15,10 @@ At its core, it's Markdown, rules, and links. Install it, ask your agent to work
 
 ## Start using it
 
+Already have `AGENTS.md` or `CLAUDE.md`? Install adds a marked Open Forge section and keeps your existing text. It also creates the selected files under `.agents/`. Save your current work before trying it.
+
+For a trial, use a separate local clone and copy any additional local files you need. [Installation](getting-started/installation.md#try-it-and-undo-a-trial) explains the baseline and undo steps.
+
 With Node.js 22.18 or later:
 
 ```sh
@@ -23,11 +27,13 @@ cd /path/to/your-project
 open-forge install
 ```
 
-Choose Essentials for a smaller start, Full Core for every built-in route, or Custom to choose each one. Review the selected plan before confirming, then check the new files with `git status` and `git diff` before committing. [Installation](getting-started/installation.md) explains the choices, other setup methods, and `install --configure` for an existing workspace.
+For a first try, choose Essentials. Keep Root keys unless your workspace already declares another metadata form. Review the plan before applying it, then inspect the new files and changes with `git status` and `git diff`. [Installation](getting-started/installation.md) explains the other choices, other setup methods, and how to change your setup later.
 
-Now ask your agent for a normal task. For a first try in an existing project:
+Now ask your agent for a normal task. In an existing project, ask how its tests run:
 
 > Explain how this project runs its tests. Follow `AGENTS.md`, and name the Open Forge files you read.
+
+In a new project, give the agent a first build request. Try the [greenfield demo](demos/greenfield.md) for a concrete example.
 
 You don't need to choose a workflow, install Extensions, or write a specification first. The [ten-minute guide](getting-started/ten-minute-guide.md) takes you through adding a rule, keeping a useful fact, and finding context for the next task. The [demos](demos/index.md) give you a project to try it on.
 
@@ -75,7 +81,9 @@ The [Concepts](concepts/index.md) section covers each part in depth.
 
 ## What you actually install
 
-Full Core supplies 15 Markdown files. Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with its whole directory Git-ignored. Working still loads normally, but new local records stay out of ordinary Git commits. Custom follows your selection. [Installation](getting-started/installation.md#choose-the-installed-routes) covers the exact choices.
+Full Core supplies 19 Markdown files, including four supporting CLI guides that are opened when needed. Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory. Custom follows your selection.
+
+Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools. [Installation](getting-started/installation.md#choose-the-installed-routes) covers the exact choices.
 
 <details>
 <summary>See the Full Core files and startup details</summary>
@@ -90,6 +98,11 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
   patterns/_patterns.md           <- reusable shapes for code, files, and documents
   skills/_skills.md               <- native SKILL.md capabilities
   skills/open-forge-cli/SKILL.md  <- how to use the CLI, read at startup
+  skills/open-forge-cli/references/
+    discovery.md                  <- reading and discovery
+    routes.md                     <- route maintenance
+    packages.md                   <- Framework and packages
+    common.md                     <- shared options and results
   templates/_templates.md         <- copy-ready starting files
   maps/_maps.md                   <- pointers to important local and external sources
   memory/

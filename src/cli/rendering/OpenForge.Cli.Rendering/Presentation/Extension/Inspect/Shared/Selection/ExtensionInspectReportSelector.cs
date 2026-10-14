@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Extension.Shared.NextActions;
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Extension.Inspect.Models.Result;
 using OpenForge.Cli.Core.Presentation.Extension.Inspect.Models;
@@ -39,6 +40,9 @@ internal static class ExtensionInspectReportSelector
             .ToArray();
         var data = new ExtensionInspectData
         {
+            TextPackagesLine = result.Counts.Dependencies is { } packageCount && packageCount > 0 && result.Subject.Id is { } id
+                ? global::OpenForge.Cli.OutputText.Extension.Inspect.ExtensionInspectText.PackagesInSelection(packageCount, id)
+                : null,
             Id = result.Subject.Id ?? result.Subject.Supplied ?? "unknown",
             Installed = result.Installed.Package is { } installed
                 ? new ExtensionInspectDataVersion { Version = installed.Version }
@@ -101,7 +105,7 @@ internal static class ExtensionInspectReportSelector
                 .ToArray(),
             Counts = ReadCounts(result),
             Data = data,
-            Next = ExtensionInspectWording.Next(result),
+            Next = ExtensionNextCommand.InSource(ExtensionInspectWording.Next(result), result.Source.Explicit ? result.Source.Supplied : null),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? new[]
                 {

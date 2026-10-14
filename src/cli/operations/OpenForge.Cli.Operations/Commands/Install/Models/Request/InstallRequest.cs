@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 
@@ -42,6 +43,10 @@ internal sealed record InstallRequest
     }
 
     internal InstallSetupInput? Setup { get; init; }
+
+    internal CliRetryOptions? RetryOptions { get; init; }
+
+    internal InstallSetupRecap? SetupRecap { get; init; }
 
     internal InstallConfiguration? Configuration { get; init; }
 

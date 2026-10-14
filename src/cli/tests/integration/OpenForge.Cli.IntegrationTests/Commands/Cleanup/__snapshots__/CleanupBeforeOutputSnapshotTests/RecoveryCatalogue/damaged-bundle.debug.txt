@@ -4,7 +4,8 @@ Workspace: <workspace>
          <recovery-bundle-1> is damaged and was left in place.
          Remove it by hand after review.
          Review the recovery file before removing it.
-  <recovery-bundle-1>  left in place: not recognized
+  <recovery-bundle-1>
+    left in place: not recognized
     integrity check: malformed
   No workspace lock was needed.
   No final recovery-store check was needed.

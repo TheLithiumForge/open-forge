@@ -6,6 +6,18 @@ open-forge:
 
 # remove Interface Contract
 
+## Help
+
+The purpose sentence is: Remove one exact path, route, Extension, or Library and remember supported exclusions.
+
+The public Usage line is:
+
+```text
+open-forge remove <target> [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose
 
 `remove` removes one selected thing from the workspace and records the choice in
@@ -35,6 +47,11 @@ target's namespace rather than changing the remove operation. Repeated Boolean
 flags are idempotent. Repeat `--allow-path` for multiple explicit path grants;
 it keeps the [shared permission meaning](../shared/workspace-permissions/interface.md).
 The [global flags](../shared/global-flags/interface.md) apply unchanged.
+
+Confirmation retries retain the target, selected kind, explicit workspace,
+permission grants, operation choices and presentation options. Actions for
+corrected spelling or category removal retain those choices while selecting the corrected
+target and kind. Paths use the shared supported-shell quoting helper.
 
 | Kind        | Target                                     | Removal boundary                                                                                                             |
 | ----------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -73,6 +90,13 @@ permission requirements for any planned ignore-file change.
 and ownership changes without writing settings, files, locks or recovery state.
 Applying requires the normal plan confirmation or explicit `--automatic` consent.
 JSON never prompts. Detail and format options do not change deletion authority.
+
+When a preview offers an immediate apply action, it repeats the complete selected
+request without `--dry-run`. It retains the target kind, explicit workspace,
+path grants and presentation options, quoted with the shared command helper.
+It retains `--automatic` only when supplied. Text and JSON carry the same command.
+Delegated Route and Library previews and ordinary path previews retain their
+command-specific next-action policy.
 
 There is no force, recursive, batch, saved-plan or rollback mode. A directory is
 already an explicit complete-tree selection. Protected workspace controls, Git

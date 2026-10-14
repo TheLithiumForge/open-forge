@@ -1,0 +1,3 @@
+.agents/guidance/invoices/_billing.md looks like this folder's old navigation file.
+ManualDecision
+Rename .agents/guidance/invoices/_billing.md to _invoices.md to keep its rules, or delete it, then run open-forge index.

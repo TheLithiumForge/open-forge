@@ -29,8 +29,16 @@ internal delegate ValueTask<CliPromptReply<bool>> CliPlanConfirmation<TResult, T
     where TResult : ICliCommandResult where TQuestion : notnull;
 
 internal sealed record CliConfirmQuestion(string Sentence);
-internal sealed record CliChoice<T>(T Value, string Label, string? Description = null, string? Summary = null) where T : notnull;
-internal sealed record CliSelectQuestion<T>(string Question, IReadOnlyList<CliChoice<T>> Choices) where T : notnull;
+internal sealed record CliChoice<T>(T Value, string Label, string? Description = null, string? Summary = null) where T : notnull
+{
+    internal CliInstalledPackageSummary? InstalledPackage { get; init; }
+}
+internal sealed record CliInstalledPackageSummary(string? Version, int OwnedFiles);
+internal sealed record CliSelectQuestion<T>(string Question, IReadOnlyList<CliChoice<T>> Choices) where T : notnull
+{
+    internal IReadOnlyList<string> Context { get; init; } = [];
+    internal IReadOnlyList<string> LineExplanations { get; init; } = [];
+}
 internal enum CliDependencyDirection { Requires, Dependents }
 internal enum CliSelectionAction { Install, Update, Remove }
 internal sealed record CliDependency<T>(T Value, T Dependency) where T : notnull;

@@ -7,4 +7,4 @@ Workspace: <workspace>
 Selection: .agents/alpha/_alpha.md, .agents/beta/_beta.md
 The recovery bundle was retained at <recovery-bundle>.
   Inspect the reported problem before rerunning Index.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

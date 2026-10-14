@@ -67,7 +67,7 @@ internal static class ExtensionUpdateWording
         => planned ? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.LabelRestoreItWasMissing() : global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.LabelRestoredItWasMissing();
 
     internal static string CreateRow(bool planned)
-        => planned ? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.LabelCreateNewInThisVersion() : global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.LabelCreatedNewInThisVersion();
+        => CliChangeWording.Created(planned);
 
     internal static string DeleteRow(bool planned)
         => planned ? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.LabelDeleteNoLongerPartOfThePackage() : global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.LabelDeletedNoLongerPartOfThePackage();

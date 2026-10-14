@@ -9,5 +9,8 @@ internal static class LibraryHelpSections
     internal static CliHelpContent CreateGroup() => new(
     [
         new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCommandHelp(), ("  " + global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.HelpCommandHelp())),
-    ]);
+    ])
+    {
+        Usage = "open-forge library <command> [options]",
+    };
 }

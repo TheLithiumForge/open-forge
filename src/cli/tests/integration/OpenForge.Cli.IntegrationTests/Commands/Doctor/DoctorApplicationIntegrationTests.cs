@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.IntegrationTests.Framework.Recovery;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
@@ -7,6 +8,25 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Doctor;
 
 public sealed class DoctorApplicationIntegrationTests
 {
+    [Theory(DisplayName = "Doctor's inline info command retains the explicit quoted workspace without writes")]
+    [InlineData("minimal"), InlineData("standard")]
+    [Trait("Boundary", "Host"), Trait("Feature", "doctor-command"), Trait("Evidence", "Integration")]
+    public async Task InfoHintRetainsExplicitWorkspace(string detail)
+    {
+        using var workspace = TemporaryWorkspace.Create("doctor hint's workspace");
+        var before = workspace.SnapshotHashes();
+        var run = await CliHostCapture.RunAsync(["doctor", "--workspace", workspace.Path, "--detail", detail], workspace.Path);
+        Assert.Equal(2, run.ExitCode);
+        Assert.Equal(string.Empty, run.Error);
+        var hint = Assert.Single(run.Output.Split('\n'), line => line.Contains("To list the info findings:", StringComparison.Ordinal)).TrimEnd('\r');
+        Assert.Equal($"  To list the info findings: open-forge doctor --detail full --workspace {CliCommandText.Quote(workspace.Path)}", hint);
+        var full = await CliHostCapture.RunAsync(["doctor", "--detail", "full", "--workspace", workspace.Path, "--format", "json"], workspace.Path);
+        Assert.Equal(2, full.ExitCode);
+        using var report = JsonDocument.Parse(full.Output);
+        Assert.NotEmpty(report.RootElement.GetProperty("findings").EnumerateArray());
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
     [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Doctor diagnoses a representative workspace with six retained domains and no writes"), Trait("Feature", "doctor-command"), Trait("Evidence", "Integration")]
     public async Task RepresentativeWorkspaceRetainsSixDomainsWithoutWrites()

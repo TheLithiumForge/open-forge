@@ -35,7 +35,7 @@ public sealed class RouteCreateCompositionIntegrationTests
         Assert.Contains("--dry-run", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--automatic", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--force", result.Output, StringComparison.Ordinal);
-        Assert.Contains("open-forge route create <file-target> [--description <text>] [--tag <tag>...]", string.Join(" ", result.Output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)), StringComparison.Ordinal);
+        Assert.Contains("open-forge route create <file-target> [options]", string.Join(" ", result.Output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)), StringComparison.Ordinal);
         Assert.Contains("--description <text>", result.Output, StringComparison.Ordinal);
         Assert.Contains("--tag <tag>", result.Output, StringComparison.Ordinal);
         Assert.Contains("--apply-to <glob>", result.Output, StringComparison.Ordinal);
@@ -134,7 +134,7 @@ public sealed class RouteCreateCompositionIntegrationTests
                 .Select(pattern => pattern.GetString()));
             Assert.Equal("removed", root.GetProperty("recovery").GetProperty("disposition").GetString());
             Assert.Equal(
-                "open-forge route update " + RouteCreateIntegrationWorkspace.TargetId,
+                "open-forge route update --help",
                 root.GetProperty("next").GetProperty("command").GetString());
         }
 
@@ -296,9 +296,9 @@ public sealed class RouteCreateCompositionIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, leaf.Status);
         Assert.Equal(string.Empty, leaf.StandardError);
         Assert.Contains("open-forge route create <file-target>", leaf.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Metadata", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Target and metadata", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("Template", leaf.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Write policy", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Behavior", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
         Assert.False(Directory.Exists(missingWorkspace));
         Assert.False(group.LockInfrastructureExists);

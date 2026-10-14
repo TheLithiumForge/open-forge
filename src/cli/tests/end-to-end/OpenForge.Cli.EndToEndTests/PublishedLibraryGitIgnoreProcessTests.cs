@@ -91,7 +91,7 @@ public sealed class PublishedLibraryGitIgnoreProcessTests
         var help = await workspace.RunAsync("library", "attach", "--help");
         Assert.Equal(0, help.ExitCode);
         Assert.Contains("--git-ignore <true|false>", help.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("--to .agents/libraries/shared", help.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("--to docs", help.StandardOutput, StringComparison.Ordinal);
         var before = workspace.SnapshotState();
         using var result = Result(await workspace.RunAsync("library", "attach", "team", "source", "--to", "docs", "--git-ignore", "true", "--allow-path", "docs", "--allow-path", ".gitignore", "--dry-run", "--detail=full", "--format=json"));
         Assert.Equal("create", result.RootElement.GetProperty("data").GetProperty("gitIgnore").GetProperty("action").GetString());
@@ -136,7 +136,7 @@ public sealed class PublishedLibraryGitIgnoreProcessTests
             Assert.True(choice >= 0 && permission > choice && preview > permission && confirmation > preview, terminal.Transcript);
             Assert.Equal(answer == "yes", File.Exists(workspace.Combine(".gitignore")));
             Assert.Equal(answer == "yes", ReadLibrary(workspace).TryGetProperty("gitIgnore", out _));
-            Assert.Equal("../source/a.md", new FileInfo(workspace.Combine("docs/a.md")).LinkTarget);
+            Assert.Equal("../source/a.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Combine("docs/a.md")).LinkTarget);
             if (answer == "yes") Assert.Equal(Section, File.ReadAllText(workspace.Combine(".gitignore")));
         }
         Assert.Equal(SourceBody, File.ReadAllText(workspace.Combine("source/a.md")));

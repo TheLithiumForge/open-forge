@@ -46,7 +46,7 @@ public sealed class StatusCompositionIntegrationTests
 
     [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root composition registers status between index and context with truthful help"), Trait("Feature", "status-command"), Trait("Evidence", "Integration")]
-    public async Task RootCompositionRegistersStatusBetweenIndexAndContextWithTruthfulHelp()
+    public async Task RootCompositionGroupsStatusWithReadCommandsAndTruthfulHelp()
     {
         using var workspace = StatusIntegrationWorkspace.Create("status-help");
         workspace.SeedLockBytes([0x91, 0x92]);
@@ -57,9 +57,6 @@ public sealed class StatusCompositionIntegrationTests
         var rootHelp = await StatusIntegrationApplication.RunAsync(workspace, "--help");
         var directLeaves = rootHelp.StandardOutput
             .Split(Environment.NewLine, StringSplitOptions.None)
-            .SkipWhile(line => !line.Equals("Commands:", StringComparison.Ordinal))
-            .Skip(1)
-            .TakeWhile(line => line.StartsWith("  ", StringComparison.Ordinal))
             .Select(line => line.Trim())
             .Where(line => line.Length > 0)
             .Select(line => line.Split(' ', 2)[0])
@@ -68,7 +65,7 @@ public sealed class StatusCompositionIntegrationTests
         Assert.Equal(0, rootHelp.ExitCode);
         Assert.Equal(string.Empty, rootHelp.StandardError);
         Assert.Contains("status", directLeaves);
-        Assert.Equal(["find", "index", "status", "context", "references", "install"], directLeaves);
+        Assert.Equal(["install", "status", "context", "find", "references", "index"], directLeaves);
         Assert.Equal(1, directLeaves.Count(name => name == "status"));
 
         var missing = workspace.Combine("missing-status-help");
@@ -76,7 +73,7 @@ public sealed class StatusCompositionIntegrationTests
             workspace, "status", "--help", "--workspace", missing);
         Assert.Equal(0, leafHelp.ExitCode);
         Assert.Equal(string.Empty, leafHelp.StandardError);
-        Assert.Contains("open-forge status [global options]", leafHelp.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("open-forge status [options]", leafHelp.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("schemaVersion", leafHelp.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Startup context", leafHelp.StandardOutput, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));

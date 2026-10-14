@@ -1,0 +1,3 @@
+Invalid --frontmatter value: other\n\u001B[2J. Use root or scoped.
+Workspace: <workspace>
+Next: open-forge install --help

@@ -81,3 +81,5 @@ The Flows and Scenarios Extension separates expectation from result. Write what 
 
 - **You can preview every change.** CLI commands that change files accept `--dry-run`, and the plan lists what would change. Add `--detail standard` to see every file.
 - **Removed stays removed.** Delete a default with `open-forge remove`, and later updates respect it.
+
+**Next:** [Try Open Forge in the ten-minute guide](getting-started/ten-minute-guide.md).

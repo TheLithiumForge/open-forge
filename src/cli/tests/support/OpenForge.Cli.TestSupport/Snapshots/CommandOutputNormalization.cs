@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Encodings.Web;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -60,6 +61,7 @@ public static partial class CommandOutputNormalization
         if (normalizeTextPaths)
         {
             normalized = NormalizeTextPaths(normalized);
+            normalized = NormalizeWrappedPaths(normalized);
         }
 
         return Sha256().Replace(normalized, "<sha256>");
@@ -98,15 +100,28 @@ public static partial class CommandOutputNormalization
         ArgumentNullException.ThrowIfNull(output);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         ArgumentException.ThrowIfNullOrWhiteSpace(placeholder);
+        // Match the whole shell token before its bare path. Both shell spellings are
+        // recognized so apostrophes and JSON-escaped quotes stay platform-neutral.
+        output = ReplaceQuotedPath(output, path.Replace("'", "''", StringComparison.Ordinal), placeholder);
+        output = ReplaceQuotedPath(output, path.Replace("'", "'\\''", StringComparison.Ordinal), placeholder);
+        output = ReplaceDelimited(output, JsonEncodedText.Encode(path, JavaScriptEncoder.UnsafeRelaxedJsonEscaping).ToString(), placeholder);
         return ReplaceDelimited(
             ReplaceDelimited(output, JsonEncodedText.Encode(path).ToString(), placeholder), path, placeholder);
+    }
+
+    private static string ReplaceQuotedPath(string output, string escapedPath, string placeholder)
+    {
+        var quoted = $"'{escapedPath}'";
+        output = ReplaceDelimited(output, JsonEncodedText.Encode(quoted, JavaScriptEncoder.UnsafeRelaxedJsonEscaping).ToString(), placeholder);
+        return ReplaceDelimited(
+            ReplaceDelimited(output, JsonEncodedText.Encode(quoted).ToString(), placeholder), quoted, placeholder);
     }
 
     private static string ReplacePath(string output, string path, string placeholder)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         var encoded = JsonEncodedText.Encode(path).ToString();
-        var replaced = ReplaceDelimited(ReplaceDelimited(output, encoded, placeholder), path, placeholder);
+        var replaced = ReplaceDelimitedPath(output, path, placeholder);
         return ReplaceClamped(ReplaceClamped(replaced, encoded, placeholder), path, placeholder);
     }
 
@@ -256,6 +271,28 @@ public static partial class CommandOutputNormalization
     private static bool IsPathTerminator(char value)
         => char.IsWhiteSpace(value) || value is '"' or '\'' or ',' or ';' or ')' or ']' or '}';
 
+    private static string NormalizeWrappedPaths(string output)
+        // A long temporary path is an unsplit token on its own continuation line.
+        // Join only that token to its unfinished, equally indented prefix and an
+        // optional parenthesized label or sentence ending. Commands, metadata and
+        // path-table rows stay exact.
+        => WrappedPathSuffix().Replace(WrappedPath().Replace(output, match =>
+        {
+            var label = match.Groups["label"];
+            var suffix = label.Success ? $" {label.Value}" : string.Empty;
+            return $"{match.Groups["indent"].Value}{match.Groups["prefix"].Value} {match.Groups["path"].Value}{suffix}";
+        }), "${line} ${suffix}");
+
+    [GeneratedRegex(
+        @"^(?<indent> +)(?<prefix>[^\s<>][^\n<>]*)(?<![.?!])\n\k<indent>(?<path><(?:workspace|extension-source|recovery-bundle(?:-\d+)?|temp)>[^\s]*)(?:\n\k<indent>(?<label>\([^\n]+\)))?(?=\n|$)",
+        RegexOptions.Multiline | RegexOptions.CultureInvariant)]
+    private static partial Regex WrappedPath();
+
+    [GeneratedRegex(
+        @"^(?<line>(?<indent> +)[^\s<>][^\n<>]*<(?:workspace|extension-source|recovery-bundle(?:-\d+)?|temp)>[^\s]*)(?<![.?!])\n\k<indent>(?<suffix>\([^\n]+\)|[a-z0-9][^\n:]*[.?!])(?=\n|$)",
+        RegexOptions.Multiline | RegexOptions.CultureInvariant)]
+    private static partial Regex WrappedPathSuffix();
+
     private static bool AreHexDigits(StringBuilder value, int start)
     {
         for (var index = start; index < start + 4; index++)
@@ -279,7 +316,7 @@ public static partial class CommandOutputNormalization
     // value for good. These are every anchor the corpus actually uses; a new one must be added here
     // rather than by relaxing the rule.
     [GeneratedRegex(
-        @"(?<=file:|""[A-Za-z]*(?:[Ss]ha256|[Ff]ingerprint)""\s*:\s*""|""(?:before|after)""\s*:\s*""|SHA-256:?\s|[Ff]ingerprint[:=]\s?|(?:Before|After):\s)[0-9a-fA-F]{64}(?![0-9a-fA-F])",
+        @"(?<=file:|""[A-Za-z]*(?:[Ss]ha256|[Ff]ingerprint)""\s*:\s*""|""(?:before|after)""\s*:\s*""|SHA-256:?\s|[Ff]ingerprint[:=]\s*|(?:Before|After):\s)[0-9a-fA-F]{64}(?![0-9a-fA-F])",
         RegexOptions.CultureInvariant)]
     private static partial Regex Sha256();
 }

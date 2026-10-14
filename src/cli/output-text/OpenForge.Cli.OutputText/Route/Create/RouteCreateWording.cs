@@ -92,9 +92,9 @@ internal static class RouteCreateWording
 
     // @OpenForgeText route.create.next.add-optional-description-or-tag
     internal static string AddOptionalDescriptionOrTag()
-        => "Add an optional description or tag with open-forge route update when useful.";
+        => "Add a description or tags when useful. See open-forge route update --help.";
 
     // @OpenForgeText route.create.next.optional-metadata-inline
     internal static string OptionalMetadataNext(string command)
-        => $"Next: {command} (add an optional description or tag when useful).";
+        => $"Add a description or tags when useful. See {command}.";
 }

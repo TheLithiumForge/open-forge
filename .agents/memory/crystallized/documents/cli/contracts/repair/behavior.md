@@ -223,6 +223,12 @@ when the current facts still prove all of those values.
 
 ### Typed Workspace Library residual proposals
 
+An invocation admits at most one exact Library residual entry. Interactive key
+and line mode choose that entry in one single-selection question or leave all
+entries out. Automatic mode selects the first offered entry, including in dry
+run. A multi-entry explicit selection remains blocked by the existing planner
+limit. Selection does not bypass any recovery safety check.
+
 The proposal resolver may also admit a `library.recovery-safe-exact` finding
 only when a neutral producer has semantically verified current-v1 attribution to
 the selected workspace's consumer Library record and one exact typed residual
@@ -454,9 +460,7 @@ identity, containment, and recovery-bundle facts immediately before effects. A
 changed fact blocks before that effect can write.
 
 Each selected ordinary local-reference effect writes only the computed
-destination literal in its addressed Markdown source. It preserves labels,
-authored metadata, route topology, generated navigation, overwrite layers, and
-unrelated bytes. It never replaces a divergent file or authors missing content.
+destination literal in its addressed Markdown source. It preserves labels, existing metadata, overwrite layers and unrelated bytes. The same plan may complete affected metadata, chains and generated navigation under Forgiving Maintenance. It never replaces supplied authored meaning. Only eligible absent fields and canonical scaffolds may be added under Forgiving Maintenance.
 
 For a selected Library residual, application performs only the typed no-follow
 effect admitted by preflight: delete the exact intended created record/link/
@@ -588,6 +592,18 @@ selected repair. A typed Library residual is selected only through its existing
 safe-exact authority and reaches `completed` only after its exact no-follow
 effect verifies. `completed` does not mean every Doctor finding is gone.
 
+## Forgiving Maintenance
+
+Consume the shared rename observation model before missing-target proposals become guided candidates. Prove old absence, candidate identity, strong evidence and uniqueness over the complete admitted universe. One strong candidate forms an exact resolution. Two remain guided. Revalidate proof and candidate cardinality under the lease, including HEAD identity when used. No-Git absence is not fabricated history.
+
+Plan authored relinks first against original occurrences. Compose shared affected-closure metadata, chain and Entries maintenance over intended bytes, then coalesce to one final effect per physical file. Existing-field and body preservation, target-fragment checks, no-follow guards and whole-plan safety remain. The operation shares one verified recovery bundle and retains its current confirmation and monotonic application rules. No public Index invocation or fixpoint loop is introduced.
+
+Fresh post-diagnosis chooses the Interface's single next step from actual remaining work. Automatic guided-only results must not recommend the same automatic command. No-successor links require a named authored edit. Schema and exact text additions follow the Interface and [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md#safety-and-wire-inventory).
+
+Apply the shared protection policy to both the containing link source and every candidate target during diagnosis, selection, planning and under-lease revalidation. Managed content, native Skill packages and resources, overwrites, exclusions, private contents and unsafe leaves are not authored-link repair targets. Preserve protected bytes and report the managing Update or precise authoring action.
+
+A Git timeout keeps links visible without advice to remove them and retries the complete request. Partial application headlines count verified effects and remaining choices or edits. All continuation commands retain the explicit workspace, even inside prose. For an incomplete preview with independent safe effects, applying that safe plan precedes malformed-frontmatter advice.
+
 ## Read-Only And Mutation Boundaries
 
 The diagnosis, candidate, and planning stages have no persistent effects. The
@@ -596,7 +612,7 @@ literal effects or the typed Workspace Library residual effects above, after the
 complete gate, preflight, confirmation where required, verified recovery-bundle
 preparation, and revalidation.
 
-Repair never mutates generated navigation, route topology, route metadata,
+Outside its affected-closure Forgiving Maintenance plan, Repair never mutates generated navigation, route topology, route metadata,
 overwrites, recovery bundles or drafts, Framework files, Extension files, receipts,
 manifests, ownership, or authored labels and prose. It never accepts a force,
 apply, yes, preview, suggestions, or all flag as an authority shortcut.
@@ -680,6 +696,13 @@ executable proof.
 - [Shared CLI Operation Contract](../../shared-operation-contract.md)
 
 ## Library Destination Permissions
+
+Result formation identifies a Library problem by its Library ID and target.
+Diagnosis and unselected-residual bookkeeping for that same target count once.
+Distinct diagnostic causes remain available on the combined finding. A safe
+planned link recovery is excluded from the preview's remaining, manual and
+warning totals. Current diagnosis still determines status and exit. Verified
+application uses post-diagnosis observations. Text and JSON share these counts.
 
 Library recovery derives every destination from the recorded `sourceRoot`,
 `destinationRoot` and source-relative suffix. It preserves source independence:

@@ -1,0 +1,3 @@
+Review the route boundary in .agents/guidance/note.md before continuing.
+ManualDecision
+Review the route boundary in .agents/guidance/note.md before continuing.

@@ -32,7 +32,7 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
     {
         var parent = System.IO.Path.GetDirectoryName(path)
             ?? throw new InvalidOperationException("A projection needs a parent.");
-        var target = System.IO.Path.GetRelativePath(parent, $"{SourceRoot}/{path}").Replace('\\', '/');
+        var target = System.IO.Path.GetRelativePath(parent, $"{SourceRoot}/{path}");
         _workspace.CreateFileSymbolicLink(path, target);
     }
 
@@ -92,7 +92,7 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
             {"allowInstallPaths":["docs"]}
             """);
 
-    internal void MappedLink(string path, string target) => _workspace.CreateFileSymbolicLink(path, target);
+    internal void MappedLink(string path, string target) => _workspace.CreateFileSymbolicLink(path, target.Replace('/', System.IO.Path.DirectorySeparatorChar));
 
     internal IReadOnlyDictionary<string, string> Snapshot()
     {
@@ -149,7 +149,7 @@ internal sealed class PublishedLibraryWorkspace : IDisposable
     {
         _store.Dispose();
         var projection = new FileInfo(Combine(ReviewPath));
-        if (projection.LinkTarget == RawReviewTarget)
+        if (projection.LinkTarget == RawReviewTarget || projection.LinkTarget == RawReviewTarget.Replace('/', System.IO.Path.DirectorySeparatorChar))
         {
             File.Delete(projection.FullName);
         }

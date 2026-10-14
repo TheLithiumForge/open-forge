@@ -6,5 +6,5 @@ internal static class RouteDefinitions
 {
     internal static readonly CliSyntaxDefinition RouteGroup = new(
         "route",
-        "Inspect and maintain routed sources.");
+        "Inspect or change files exposed through Open Forge navigation.");
 }

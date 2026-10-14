@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route init documents --description \"<one sentence>\" --tag <Tag>",
+          "command": "open-forge route init documents --description \"<one sentence>\" --tag <Tag> --workspace <workspace>",
           "reason": "Correct the named Route Init input, then rerun the request."
         }
       ]
@@ -58,7 +58,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route init documents --description \"<one sentence>\" --tag <Tag>",
+    "command": "open-forge route init documents --description \"<one sentence>\" --tag <Tag> --workspace <workspace>",
     "reason": "Correct the named Route Init input, then rerun the request."
   }
 }

@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route update",
+          "command": "open-forge route update memory/project-alpha/overview --description 'After overview' --workspace <workspace>",
           "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan."
         }
       ],
@@ -90,7 +90,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route update",
+    "command": "open-forge route update memory/project-alpha/overview --description 'After overview' --workspace <workspace>",
     "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Update from a fresh plan."
   }
 }

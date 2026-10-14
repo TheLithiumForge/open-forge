@@ -9,7 +9,7 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "Cannot list routes: --depth must be a whole number or all.",
+    "headline": "Cannot list routes: Invalid --depth value: -1. Use a whole number from 0, or all.",
     "kind": "cannot-start"
   },
   "findings": [
@@ -17,7 +17,7 @@
       "severity": "error",
       "code": "route-list.invalid-depth",
       "title": "Invalid depth",
-      "message": "--depth must be a whole number or all.",
+      "message": "Invalid --depth value: -1. Use a whole number from 0, or all.",
       "subject": {
         "kind": "identifier",
         "path": null,
@@ -43,5 +43,9 @@
     "rows": []
   },
   "recovery": null,
-  "next": null
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --help",
+    "reason": "Choose a supported depth using Route List help."
+  }
 }

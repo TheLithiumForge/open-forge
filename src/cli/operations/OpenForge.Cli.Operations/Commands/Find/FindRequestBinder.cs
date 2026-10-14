@@ -60,7 +60,8 @@ internal sealed class FindRequestBinder(
                     _resultBuilder,
                     queryInput,
                     invocation.Workspace,
-                    exception.Message));
+                    exception.Message,
+                    (exception as FindRequirementException)?.Value));
         }
     }
 }
@@ -139,7 +140,8 @@ internal static class FindBindingSupport
         FindResultBuilder resultBuilder,
         FindQueryInput input,
         CliWorkspace? workspace,
-        string cause)
+        string cause,
+        string? invalidRequireValue = null)
     {
         ArgumentNullException.ThrowIfNull(resultBuilder);
         ArgumentNullException.ThrowIfNull(input);
@@ -170,7 +172,8 @@ internal static class FindBindingSupport
             null,
             null,
             null,
-            []);
+            [])
+        { InvalidRequireValue = invalidRequireValue };
         return resultBuilder.Build(
             CreatePreOperationInput(
                 input,

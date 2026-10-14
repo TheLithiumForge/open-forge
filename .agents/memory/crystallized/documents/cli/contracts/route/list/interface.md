@@ -25,6 +25,20 @@ contract owns the six global flags and their common presentation and error rules
 Those sources remain authoritative for their complete shared meaning; this file
 records only how `route list` uses them.
 
+## Help
+
+The purpose sentence is: List navigable sources and their descendants.
+
+The public Usage line is:
+
+```text
+open-forge route list [<source-reference>] [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
+Help accepts both `--depth 1` and `--depth=1`. The default, numerical range, and `all` meaning remain unchanged.
+
 ## Purpose And Boundary
 
 `route list` answers which routed material exists in the current workspace and
@@ -209,6 +223,15 @@ even when that parent is outside the selected result. Detached or genuinely
 parentless selection reports a null parent with the matching provenance.
 
 ## Human Output
+
+Invalid depth messages include the escaped supplied value and the existing Route List help action. Print the explanation once. Validation, range, JSON membership and exit 4 stay unchanged.
+
+Descriptions wrap at spaces to the host width, with continuation lines under
+the description column. When columns cannot fit, the complete ID stays on one
+line and its description appears below it, indented. Paths remain complete on
+their own indented lines when requested, with tags below. Every row, hierarchy
+level, description, path, tag, order and count remains available. JSON is
+unchanged. See [shared text width](../../shared/global-flags/interface.md#text-width-and-input-diagnostics).
 
 Every semantic result is rendered by the shared native report. --format text
 is the default text format. The applicable global flags are --workspace <path>,
@@ -396,7 +419,8 @@ Next: open-forge doctor
 ### invalid-input
 
 ```text
-Cannot list routes: --depth must be a whole number or all.
+Cannot list routes: Invalid --depth value: -1. Use a whole number from 0, or all.
+Next: open-forge route list --help
 ```
 
 ### blocked

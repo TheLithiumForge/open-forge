@@ -48,6 +48,10 @@ structure, the workspace-lock boundary, and recovery identity relationships.
 This contract does not choose those
 details and remains technology-neutral.
 
+## Shared Scaffolding
+
+Neutral entrypoint composition and intended-chain formation are shared with Route Create, Index and Repair. Explicit Init retains draft defaults, final-only metadata flags and Framework restoration authority. Maintenance supplies its own prefilled metadata and never clears exclusions through this helper.
+
 ## Operation Invariants
 
 - For unchanged workspace bytes and the same explicit input, resolution selects
@@ -274,6 +278,12 @@ sets `needsAuthoring: true`. Existing unchanged entrypoints are not new, and an
 unchanged existing `NeedsAuthoring` tag does not change a verified no-op.
 Planned changes alone do not form `completed-with-warnings`, and the resolver
 does not score health or semantic quality.
+
+## Shared Scaffolding for Maintenance
+
+Route Init shares neutral canonical scaffold composition, missing-chain facts and intended-membership projection with Index and Repair under [Forgiving Maintenance](../../../technical-designs/forgiving-maintenance.md#entrypoint-chain-completion-in-index). Shared mechanism does not share command policy. Index supplies prefilled category metadata and `Notes in <folder-id>`. Explicit Route Init keeps draft descriptions, `NeedsAuthoring`, final-only metadata flags, its existing advisory text and `--framework` restoration authority.
+
+The exact inherited marker and leading workspace metadata form remain. Index never clears exclusions or creates an omitted root through this helper. Route Init's human output, finding codes, effect kinds, JSON values and flags do not change. Do not call Route Init from Index or import its private planning namespace.
 
 ## Current Facts And Coverage
 

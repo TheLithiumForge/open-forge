@@ -91,7 +91,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge extension update toolkit --dry-run",
+    "command": "open-forge extension update toolkit --dry-run --source <extension-source>",
     "reason": "Review the selected package changes before applying them."
   }
 }

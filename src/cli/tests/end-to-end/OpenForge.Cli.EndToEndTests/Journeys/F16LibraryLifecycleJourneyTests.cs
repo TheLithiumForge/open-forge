@@ -337,7 +337,7 @@ public sealed class F16LibraryLifecycleJourneyTests
         Assert.Equal(
             System.IO.Path.GetRelativePath(
                 workspace.Combine(DestinationRoot),
-                workspace.Combine($"{SourceRoot}/{member}.md")).Replace('\\', '/'),
+                workspace.Combine($"{SourceRoot}/{member}.md")),
             LinkTarget(workspace, member));
     }
 

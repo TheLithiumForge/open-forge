@@ -2,7 +2,7 @@ The recovery store could not be read completely. Nothing was removed.
 Workspace: <workspace>
   Warning  cleanup  Recovery store is incomplete
          The recovery store at <recovery-store> could not be read completely.
-         open-forge doctor
+         open-forge doctor --workspace <workspace>
          Inspect the recovery store before relying on this Cleanup result.
   Inspect the recovery store before relying on this Cleanup result.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

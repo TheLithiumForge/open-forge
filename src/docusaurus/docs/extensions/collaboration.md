@@ -7,9 +7,31 @@ description: Guidance for exploring ideas and converging on decisions, and a Bra
 
 Explore an uncertain direction with concrete alternatives, useful questions, and enough detail to make a decision.
 
-- **Package ID:** `collaboration`
+- **[Package ID](../glossary.md#package-id):** `collaboration`
 - **Depends on:** Nothing
-- **Loads at startup:** Only one entry line: the Guidance file's entry in the Guidance [entrypoint](../concepts/routing.md#entrypoints). The Guidance itself opens on demand. The Template stays on demand too, because the Templates root entrypoint isn't read at startup.
+- **Startup visibility:** This package adds one entry line in the Guidance [entrypoint](../glossary.md#entrypoint). The Guidance file and the Template stay on demand.
+
+These counts describe this package's own entries when their parent routes expose them in `Entries` and are read. Required packages add their own entries. Linked files stay on demand unless selected or required.
+
+## Install
+
+Package files follow your installation choices. Essentials leaves out Templates, so Extension starters are skipped. [Restore the Templates category](index.md#if-your-setup-leaves-out-templates) if you want those starters.
+
+Essentials also leaves out Guidance, so it skips this package's advice. If you want the advice too, preview `open-forge route init guidance --framework --dry-run`, then restore the category with `open-forge route init guidance --framework`.
+
+From your installed Open Forge workspace, preview the package and its required packages:
+
+```sh
+open-forge extension install collaboration --dry-run
+```
+
+Review the plan. Then apply it:
+
+```sh
+open-forge extension install collaboration
+```
+
+The CLI installs required packages from the same [catalogue](../glossary.md#catalogue). See the [Extension guide](/guides/extensions#install-an-extension) for scripts using `--automatic`, updates, removal, or a local source.
 
 ## Why it exists
 
@@ -61,3 +83,5 @@ Sections: `Starting Point`, `Directions Worth Comparing`, `Recommendation And Ne
 - Collaboration clarifies a direction. [Planning](planning.md) organizes accepted work into a sequence. Either works on its own, and exploration isn't a required stage before action.
 - Keep a saved brainstorm in an existing Emerging Memory scope until its outcomes are accepted. Then move accepted outcomes into the sources that define them.
 - This package adds no brainstorming category, task lifecycle, or acceptance rule of its own.
+
+Next: [Install this package](#install), or [update and remove Extensions](/guides/extensions#update-and-remove).

@@ -31,6 +31,18 @@ source-ID derivation; a Library ID remains outside that source-reference grammar
 The [Workspace Libraries Technical Design](../../../technical-designs/workspace-libraries.md)
 defines shared realization detail without changing this public contract.
 
+## Help
+
+The purpose sentence is: Compare one Library's source files with its destination links.
+
+The public Usage line is:
+
+```text
+open-forge library inspect <library-id> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Boundary
 
 `library inspect` explains one exact consumer-local Library record. It performs
@@ -240,6 +252,9 @@ The command is exactly library inspect; data follows the catalogue:
 | minimal  | `{ id, sourceFolder, destinationFolder, current: bool, files: [ { sourcePath, destinationPath, relation } ] }` (only non-current files at minimal; all at standard) |
 | standard | all files                                                                                                                                                           |
 | full     | + per file `expectedTarget`, `observedTarget`, `inventory { eligible, excluded }`                                                                                   |
+
+`expectedTarget` uses the portable mapping target with `/`. `observedTarget`
+retains the raw on-disk target as evidence, including its platform separators.
 
 Human and JSON output are projections of one typed result. data is null only at
 the parser boundary before command binding. There is no alternate JSON

@@ -35,6 +35,18 @@ this public surface. Shared flag and source-reference meaning remains in the
 contracts. Generated navigation uses the complete [Index Interface Contract](../../index-candidate/interface.md)
 projection.
 
+## Help
+
+The purpose sentence is: Change selected metadata or add Template content to an eligible empty body.
+
+The public Usage line is:
+
+```text
+open-forge route update <source-reference> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose
 
 `route update` changes explicitly selected Open Forge metadata on one existing
@@ -688,7 +700,7 @@ memory/project-alpha/overview could not be updated: <limitation>. Nothing was ch
 
 ```text
 Cannot update memory/project-alpha/overview: Nothing to update: pass --description, --responsibility, --tag or --template.
-Next: open-forge route update memory/project-alpha/overview --description "<one sentence>"
+Next: open-forge route update --help
 ```
 
 ### blocked
@@ -705,7 +717,7 @@ Next: open-forge route list --depth=all
 Route update stopped after 1 of 2 changes.
 Workspace: <workspace>
   description: "Before overview" -> "After overview"
-Next: open-forge route update --detail debug
+Next: open-forge route update memory/project-alpha/overview --description "After overview"
 ```
 
 ### cancelled
@@ -713,8 +725,15 @@ Next: open-forge route update --detail debug
 ```text
 Route update was cancelled. Nothing was changed.
 Workspace: <workspace>
-Next: open-forge route update
+Next: open-forge route update memory/project-alpha/overview --description "After overview"
 ```
+
+Retry commands repeat the original operands and flags, with shell quoting for
+values that need it. Cancelling an ambiguous source choice keeps the original
+reference so retry asks again. Only missing confirmation may add `--automatic`.
+The text and JSON `next.command` values carry the same complete command.
+An explicitly selected workspace also stays on follow-up commands that act on
+that workspace. Parent route paths are quoted when needed.
 
 ## Related Current Sources
 

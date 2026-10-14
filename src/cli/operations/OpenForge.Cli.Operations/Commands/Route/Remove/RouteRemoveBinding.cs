@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Retry;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Binding;
@@ -49,7 +50,8 @@ internal sealed class RouteRemoveBinding(
     internal CliBindResult<RouteRemoveRequest, RouteRemoveResult> Bind(
         ParseResult parseResult,
         CliInvocation invocation,
-        RouteRemoveSymbols symbols)
+        RouteRemoveSymbols symbols,
+        IReadOnlyList<string>? originalArguments = null)
     {
         ArgumentNullException.ThrowIfNull(parseResult);
         ArgumentNullException.ThrowIfNull(invocation);
@@ -89,7 +91,10 @@ internal sealed class RouteRemoveBinding(
                 facts.Mode,
                 automatic,
                 allowInteractiveSourceSelection: invocation.Presentation.Format == CliFormat.Text && !automatic,
-                allowInteractiveConfirmation: invocation.Presentation.Format == CliFormat.Text && !automatic));
+                allowInteractiveConfirmation: invocation.Presentation.Format == CliFormat.Text && !automatic)
+            {
+                RequestCommand = originalArguments is null ? null : RouteRetryCommand.FromArguments(originalArguments),
+            });
     }
 
     internal CliRequestBinding<RouteRemoveRequest, RouteRemoveResult> CreateRequestBinding(
@@ -103,7 +108,7 @@ internal sealed class RouteRemoveBinding(
             Command = symbols.RemoveCommand,
             Help = components.Help,
             WorkspaceRequirement = CliWorkspaceRequirement.Required,
-            Binder = (parse, invocation) => Bind(parse.Result, invocation, symbols),
+            Binder = (parse, invocation) => Bind(parse.Result, invocation, symbols, parse.OriginalArguments),
             InvalidResultFactory = input => _invalidResultFactory.Create(new RouteRemoveInvalidResultInput
             {
                 Workspace = null,

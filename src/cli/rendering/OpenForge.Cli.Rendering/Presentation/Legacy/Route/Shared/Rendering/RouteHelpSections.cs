@@ -12,6 +12,9 @@ internal static class RouteHelpSections
             new CliHelpSection(
                 global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCommandHelp(),
                 ("  " + global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.HelpCommandHelp())),
-        ]);
+        ])
+        {
+            Usage = "open-forge route <command> [options]",
+        };
     }
 }

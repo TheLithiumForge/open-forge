@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
+using OpenForge.Cli.Core.Commands.Extension.Install.Shared.Result;
 using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -295,6 +296,8 @@ internal sealed record ExtensionInstallFinding
     internal string? Target { get; }
 
     internal string Cause { get; }
+
+    internal bool RecordedWithoutFiles { get; init; }
 }
 
 internal sealed record ExtensionInstallResultFacts
@@ -304,6 +307,8 @@ internal sealed record ExtensionInstallResultFacts
     internal required ExtensionInstallSource? Source { get; init; }
 
     internal required IReadOnlyList<ExtensionInstallPackage> Packages { get; init; }
+
+    internal IReadOnlyList<ExtensionInstallExcludedPackage> ExcludedPackages { get; init; } = [];
 
     internal required ExtensionInstallFramework? Framework { get; init; }
 
@@ -338,6 +343,7 @@ internal sealed record ExtensionInstallResultFacts
                 package.SelectedRoot,
                 package.Dependencies))],
             Framework = value.Framework,
+            ExcludedPackages = [.. value.ExcludedPackages.Select(package => package with { Categories = [.. package.Categories] })],
             Footprint = value.Footprint is null
                 ? null
                 : new ExtensionInstallFootprint(
@@ -390,6 +396,7 @@ internal sealed record ExtensionInstallResult : ICliCommandResult
         Selection = facts.Selection;
         Source = facts.Source;
         Packages = Snapshot(facts.Packages, nameof(facts.Packages));
+        ExcludedPackages = Snapshot(facts.ExcludedPackages, nameof(facts.ExcludedPackages));
         Framework = facts.Framework;
         Footprint = facts.Footprint;
         Effects = Snapshot(facts.Effects, nameof(facts.Effects));
@@ -408,6 +415,10 @@ internal sealed record ExtensionInstallResult : ICliCommandResult
             .ThenBy(value => value.Cause, StringComparer.Ordinal)]);
         Status = ReadStatus(Findings);
         Next = ExtensionInstallDefinitions.ReadNextAction(Status, Findings, input.Request);
+        ForcePreviewCommand = input.Request is { } request ? ExtensionInstallRetryCommand.From(request, forcePreview: true) : null;
+        PermissionCommand = input.Request is { } permissionRequest && MissingPermissions.FirstOrDefault() is { } permission
+            ? ExtensionInstallRetryCommand.From(permissionRequest, permission: permission)
+            : null;
     }
 
     public string Command => ExtensionInstallDefinitions.CommandIdentity;
@@ -422,6 +433,10 @@ internal sealed record ExtensionInstallResult : ICliCommandResult
 
     public CliNextAction? Next { get; }
 
+    internal string? ForcePreviewCommand { get; }
+
+    internal string? PermissionCommand { get; }
+
     internal ExtensionInstallMode Mode { get; }
 
     internal bool Force { get; }
@@ -433,6 +448,8 @@ internal sealed record ExtensionInstallResult : ICliCommandResult
     internal ExtensionInstallSource? Source { get; }
 
     internal IReadOnlyList<ExtensionInstallPackage> Packages { get; }
+
+    internal IReadOnlyList<ExtensionInstallExcludedPackage> ExcludedPackages { get; }
 
     internal ExtensionInstallFramework? Framework { get; }
 

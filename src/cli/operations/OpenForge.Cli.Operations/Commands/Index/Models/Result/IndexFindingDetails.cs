@@ -7,6 +7,7 @@ internal sealed record IndexFindingDetails
     internal IndexInputProblem? InputProblem { get; init; }
     internal string? CorrectedSourceId { get; init; }
     internal IndexMetadataProblem? MetadataProblem { get; init; }
+    internal bool IsNativeSkill { get; init; }
     internal int? Line { get; init; }
     internal int? Column { get; init; }
 }

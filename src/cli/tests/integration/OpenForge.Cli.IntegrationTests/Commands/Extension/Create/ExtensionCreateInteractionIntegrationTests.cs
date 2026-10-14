@@ -70,6 +70,11 @@ public sealed class ExtensionCreateInteractionIntegrationTests
             Assert.Equal(direct.Manifest.Dependencies, interactive.Manifest.Dependencies);
             Assert.Equal(direct.IntendedEffects.Select(effect => effect.Kind), interactive.IntendedEffects.Select(effect => effect.Kind));
             Assert.Equal(ExpectedPromptCount(scenario), CountPromptLines(prompts.ToString()));
+            if (scenario is "zero" or "one-catalogue")
+            {
+                Assert.Contains("Existing parent folder for the new Extension:", prompts.ToString(), StringComparison.Ordinal);
+                Assert.Contains("Open Forge creates a folder named development-toolkit inside it.", prompts.ToString(), StringComparison.Ordinal);
+            }
             Assert.Empty(directCatalogue.SnapshotHashes());
             Assert.Empty(interactiveCatalogue.SnapshotHashes());
         }
@@ -205,7 +210,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
 
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.Interrupted);
-        Assert.Equal(5, CountPromptLines(prompts.ToString()));
+        Assert.Equal(6, CountPromptLines(prompts.ToString()));
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
@@ -231,7 +236,7 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         var scripted = ScriptedCliTerminal.Lines(lines, canPrompt);
         var terminalPrompts = new CliPrompts(scripted.Terminal);
         var result = await ExtensionCreateOperationFactory
-            .Create(ExtensionInteractionTestFactory.ForCreate(terminalPrompts))
+            .Create(ExtensionInteractionTestFactory.ForCreate(terminalPrompts, scripted.Terminal.WriteAsync))
             .ExecuteAsync(request, cancellationToken);
         prompts?.Write(scripted.Output.ToString());
         return result;
@@ -256,7 +261,8 @@ public sealed class ExtensionCreateInteractionIntegrationTests
         };
 
     private static int CountPromptLines(string prompts)
-        => prompts.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries).Length;
+        => prompts.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
+            .Count(line => !line.StartsWith("Existing parent folder for the new Extension:", StringComparison.Ordinal));
 
     private static void DeleteDestination(string destination)
     {

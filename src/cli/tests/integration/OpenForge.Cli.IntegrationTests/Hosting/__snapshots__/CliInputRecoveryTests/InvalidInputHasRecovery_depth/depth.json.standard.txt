@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 3,
+  "command": "route list",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot list routes: Invalid --depth value: -1. Use a whole number from 0, or all.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-list.invalid-depth",
+      "title": "Invalid depth",
+      "message": "Invalid --depth value: -1. Use a whole number from 0, or all.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "-1",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routes": 0,
+    "roots": 0,
+    "depth": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "subject": null,
+    "depth": null,
+    "rows": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --help",
+    "reason": "Choose a supported depth using Route List help."
+  }
+}

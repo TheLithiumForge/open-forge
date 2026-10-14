@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Extension.Shared.NextActions;
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -25,6 +26,8 @@ internal static class ExtensionInstallReportSelector
         var preview = result.Mode == ExtensionInstallMode.DryRun;
         var changedSections = result.GeneratedNavigation?.Regions
             .Where(region => region.State == ExtensionInstallGeneratedRegionState.Changed)
+            .Where(region => result.Effects.Any(effect => effect.Path == region.Path
+                && effect.Outcome == (preview ? ExtensionInstallEffectOutcome.Planned : ExtensionInstallEffectOutcome.Verified)))
             .Select(region => region.Path)
             .Order(StringComparer.Ordinal)
             .ToArray() ?? [];
@@ -90,7 +93,7 @@ internal static class ExtensionInstallReportSelector
                 ? new CliWorkspaceEcho(path, result.WorkspaceExplicit)
                 : null,
             Findings = result.Findings
-                .Select(finding => Finding(result, finding, primaryId))
+                .Select(finding => ExtensionNextCommand.InSource(Finding(result, finding, primaryId), result.Source?.Path))
                 .ToArray(),
             Effects = projectedEffects,
             Counts = counts,
@@ -107,7 +110,7 @@ internal static class ExtensionInstallReportSelector
                     _ => throw new ArgumentOutOfRangeException(nameof(result), result.Recovery.State,
                         "The Extension Install recovery state is not defined."),
                 }),
-            Next = Next(result, primaryId),
+            Next = ExtensionNextCommand.InSource(Next(result, primaryId), result.Source?.Path),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? new[]
                 {
@@ -128,6 +131,17 @@ internal static class ExtensionInstallReportSelector
         bool noOp)
     {
         var finding = FirstForStatus(result);
+        if (result.Status == CliSemanticStatus.Complete && AllPackagesExcluded(result)
+            && (noOp || result.Lifecycle.Outcome is ExtensionInstallLifecycleOutcome.Planned or ExtensionInstallLifecycleOutcome.Verified))
+        {
+            var kind = result.Mode == ExtensionInstallMode.DryRun ? CliHeadlineKind.Preview : CliHeadlineKind.Done;
+            var categories = result.ExcludedPackages.SelectMany(package => package.Categories)
+                .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+            return new CliHeadline(
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.RecordedExcludedPackages(
+                    result.ExcludedPackages.Select(package => package.Id).ToArray(), ExclusionReason(categories), result.Mode == ExtensionInstallMode.DryRun, noOp),
+                noOp ? CliHeadlineKind.NothingToDo : kind);
+        }
         return result.Status switch
         {
             CliSemanticStatus.Complete when noOp => new(
@@ -169,6 +183,9 @@ internal static class ExtensionInstallReportSelector
                         primaryId,
                         ExtensionInstallWording.InitialForceRequired(CountFindingTargets(result, finding.Code))),
                     CliHeadlineKind.Blocked),
+            CliSemanticStatus.Blocked when finding?.RecordedWithoutFiles == true => new(
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.RecordedWithoutFiles(finding.Target ?? primaryId),
+                CliHeadlineKind.Blocked),
             CliSemanticStatus.Blocked => new(
                 ExtensionInstallWording.Blocked(
                     primaryId,
@@ -310,11 +327,11 @@ internal static class ExtensionInstallReportSelector
                 $"open-forge extension update {package}",
                 global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.MessageUseExtensionUpdateToBringTheRecordedPackageBackInStepWithTheSource()),
             ExtensionInstallFindingCode.InitialForceRequired => new CliNextAction(
-                ExtensionInstallWording.ForcePreviewNext(primaryId),
+                result.ForcePreviewCommand ?? throw new InvalidOperationException("Force preview requires the complete request."),
                 global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.MessagePreviewReplacingTheExistingFileBeforeRerunningTheInstallation()),
             ExtensionInstallFindingCode.PermissionRequired when result.MissingPermissions.FirstOrDefault() is { } path
                 => new CliNextAction(
-                    ExtensionInstallWording.PermissionNext(primaryId, path),
+                    result.PermissionCommand ?? throw new InvalidOperationException("Permission retry requires the complete request."),
                     ExtensionInstallWording.PermissionAlternative(path)),
             ExtensionInstallFindingCode.RecoveryArtifactRetained when result.Next is { } recovery => recovery,
             ExtensionInstallFindingCode.SettingsInvalid or ExtensionInstallFindingCode.SettingsUnavailable => new CliNextAction(
@@ -368,6 +385,8 @@ internal static class ExtensionInstallReportSelector
             ExtensionInstallFindingCode.LifecycleObservation
                 or ExtensionInstallFindingCode.MetadataProjectionSkipped => finding.Cause,
             ExtensionInstallFindingCode.ManagedDivergence => CliFindingWording.ManagedDivergence(target),
+            ExtensionInstallFindingCode.PackageContentsChanged when finding.RecordedWithoutFiles =>
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.RecordedWithoutFiles(target),
             ExtensionInstallFindingCode.PackageContentsChanged => ExtensionInstallWording.PackageContentsChanged(target),
             ExtensionInstallFindingCode.InitialForceRequired => CliFindingWording.TargetOccupied(target),
             ExtensionInstallFindingCode.OwnershipConflict =>
@@ -624,12 +643,9 @@ internal static class ExtensionInstallReportSelector
 
             if (effect.Kind == ExtensionInstallEffectKind.GeneratedRegion)
             {
-                if (detail >= CliDetail.Standard)
-                {
-                    rows.Add(new ExtensionInstallDataTextRow(
-                        effect.Path,
-                        EffectText(effect, preview, result.Recovery.State)));
-                }
+                rows.Add(new ExtensionInstallDataTextRow(
+                    effect.Path,
+                    EffectText(effect, preview, result.Recovery.State)));
 
                 continue;
             }
@@ -694,6 +710,37 @@ internal static class ExtensionInstallReportSelector
         var minimal = detail == CliDetail.Minimal;
         var standard = detail >= CliDetail.Standard;
         var full = detail >= CliDetail.Full;
+        if (result.Status == CliSemanticStatus.Complete)
+        {
+            foreach (var package in result.ExcludedPackages)
+            {
+                if (!package.EntirePayloadExcluded)
+                {
+                    details.Add(global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.PartiallyExcludedFiles(
+                        package.Name, package.FileCount, package.Categories.Select(CategoryLabel).ToArray(), preview));
+                    continue;
+                }
+                details.Add(global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.ExcludedFiles(
+                    package.Id,
+                    package.FileCount,
+                    AllPackagesExcluded(result) ? null : package.Categories.Select(CategoryLabel).ToArray(),
+                    preview));
+                if (AllPackagesExcluded(result))
+                {
+                    continue;
+                }
+                if (result.Lifecycle.Action == ExtensionInstallLifecycleAction.Publish
+                    && result.Lifecycle.Outcome is ExtensionInstallLifecycleOutcome.Planned or ExtensionInstallLifecycleOutcome.Verified)
+                {
+                    details.Add(global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.RecordedExcludedPackage(
+                        package.Id, ExclusionReason(package.Categories), preview));
+                }
+                else
+                {
+                    details.Add(ExclusionReason(package.Categories) + ".");
+                }
+            }
+        }
         if (minimal)
         {
             var creates = result.Effects
@@ -792,17 +839,53 @@ internal static class ExtensionInstallReportSelector
             return
             [
                 $"  {ExtensionInstallWording.PermissionAlternative(path)}",
-                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatNext($"{ExtensionInstallWording.PermissionNext(primaryId, path)}"),
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatNext($"{result.PermissionCommand ?? throw new InvalidOperationException("Permission retry requires the complete request.")}"),
             ];
         }
 
         if (result.Findings.Any(finding => finding.Code == ExtensionInstallFindingCode.InitialForceRequired))
         {
-            return [global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatNextPreviewReplacingIt($"{ExtensionInstallWording.ForcePreviewNext(primaryId)}")];
+            return
+            [
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.PreviewReplacingIt(),
+                global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallPhrases.FormatNext(result.ForcePreviewCommand ?? throw new InvalidOperationException("Force preview requires the complete request.")),
+            ];
+        }
+
+        if (result.Status == CliSemanticStatus.Complete)
+        {
+            return result.ExcludedPackages.Where(package => package.Categories.Count > 0)
+                .SelectMany(package => new[]
+                {
+                    global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.IncludeCategory(
+                        string.Join(", ", package.Categories.Select(CategoryLabel))),
+                }.Concat(package.Categories.Select(category => PreviewCommand(result, ["route", "init", category, "--framework", "--dry-run"])))
+                    .Append(PreviewCommand(result, ["extension", "update", package.Id, "--dry-run"], result.Source?.Path)))
+                .ToArray();
         }
 
         return [];
     }
+
+    private static string PreviewCommand(ExtensionInstallResult result, List<string> arguments, string? source = null)
+    {
+        Shell.Definitions.Shared.Commands.CliRetryCommand.Add(arguments, "--source", source);
+        if (result.WorkspaceExplicit) Shell.Definitions.Shared.Commands.CliRetryCommand.Add(arguments, "--workspace", result.WorkspacePath);
+        return global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.PreviewCommand(
+            Shell.Definitions.Shared.Commands.CliRetryCommand.Build(arguments));
+    }
+
+    private static string CategoryLabel(string category)
+        => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(category);
+
+    private static bool AllPackagesExcluded(ExtensionInstallResult result)
+        => result.Packages.Count > 0 && result.Packages.Count == result.ExcludedPackages.Count(package => package.EntirePayloadExcluded);
+
+    private static string ExclusionReason(IReadOnlyList<string> categories)
+        => categories.Count == 0
+            ? global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.ExcludedPaths()
+            : global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallWording.ExcludedCategories(
+                string.Join(", ", categories.Select(CategoryLabel)), categories.Count);
 
     private static CliNextAction? Next(ExtensionInstallResult result, string primaryId)
     {
@@ -810,14 +893,14 @@ internal static class ExtensionInstallReportSelector
             && result.MissingPermissions.FirstOrDefault() is { } path)
         {
             return new CliNextAction(
-                ExtensionInstallWording.PermissionNext(primaryId, path),
+                result.PermissionCommand ?? throw new InvalidOperationException("Permission retry requires the complete request."),
                 ExtensionInstallWording.PermissionAlternative(path));
         }
 
         if (result.Findings.Any(finding => finding.Code == ExtensionInstallFindingCode.InitialForceRequired))
         {
             return new CliNextAction(
-                ExtensionInstallWording.ForcePreviewNext(primaryId),
+                result.ForcePreviewCommand ?? throw new InvalidOperationException("Force preview requires the complete request."),
                 global::OpenForge.Cli.OutputText.Extension.Install.ExtensionInstallText.MessagePreviewReplacingTheExistingFileBeforeRerunningTheInstallation());
         }
 

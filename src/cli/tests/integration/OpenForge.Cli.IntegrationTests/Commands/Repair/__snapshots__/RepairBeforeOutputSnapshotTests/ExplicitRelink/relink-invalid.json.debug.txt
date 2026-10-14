@@ -38,7 +38,7 @@
       "severity": "warning",
       "code": "repair.guided-finding-remaining",
       "title": "Broken link",
-      "message": "missing.md: Broken link; 4 possible targets",
+      "message": "1 possible target.",
       "subject": {
         "kind": "file",
         "path": ".agents/docs/source.md",
@@ -50,7 +50,13 @@
       },
       "category": null,
       "resolution": "guided-choice",
-      "actions": [],
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge repair --relink '.agents/docs/source.md@9:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>",
+          "reason": "To use replacement.md (same title):"
+        }
+      ],
       "candidates": [],
       "evidence": [],
       "provenance": null
@@ -63,7 +69,11 @@
     "problemsNeedingChoice": 1,
     "problemsNeedingHand": 0,
     "librarySteps": 0,
-    "warnings": 2
+    "warnings": 2,
+    "entriesUpdated": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0
   },
   "limitations": [],
   "data": {
@@ -80,29 +90,11 @@
         "kind": "guided",
         "candidates": [
           {
-            "path": ".agents/docs/guide.md",
-            "reasons": [
-              "nearby route: sibling"
-            ]
-          },
-          {
-            "path": ".agents/docs/index.md",
-            "reasons": [
-              "nearby route: parent"
-            ]
-          },
-          {
             "path": ".agents/docs/replacement.md",
             "reasons": [
               "title match: Guided",
               "content match: Guided",
               "nearby route: sibling"
-            ]
-          },
-          {
-            "path": ".agents/docs/source.md",
-            "reasons": [
-              "content match: Guided"
             ]
           }
         ]
@@ -118,7 +110,11 @@
       "targets": "not-requested",
       "resultingBytes": "not-requested",
       "postConditions": "not-requested"
-    }
+    },
+    "renames": [],
+    "navigation": [],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
@@ -126,7 +122,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge doctor --detail standard",
+    "command": "open-forge doctor --detail standard --workspace <workspace>",
     "reason": "Inspect unavailable Repair diagnosis or recovery facts before relying on this result."
   }
 }

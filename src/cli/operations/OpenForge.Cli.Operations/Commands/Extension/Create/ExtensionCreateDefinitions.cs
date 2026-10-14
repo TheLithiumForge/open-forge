@@ -16,7 +16,7 @@ internal static class ExtensionCreateDefinitions
 
     internal static readonly CliSyntaxDefinition CreateCommand = new(
         name: "create",
-        description: "Create one local Extension package scaffold.");
+        description: "Create a local Extension package scaffold in an existing catalogue folder.");
 
     internal static readonly CliOptionDefinition<string?> Path = new(
         name: "--path",
@@ -48,7 +48,7 @@ internal static class ExtensionCreateDefinitions
 
     internal static readonly CliOptionDefinition<string[]> Dependency = new(
         name: "--dependency",
-        description: "Record one stable Extension dependency ID; repeat for additional dependencies.",
+        description: "Record one stable Extension dependency ID. Repeat for additional dependencies.",
         arity: CliOptionArity.ExactlyOne,
         defaultValue: [],
         valueName: "stable-id");

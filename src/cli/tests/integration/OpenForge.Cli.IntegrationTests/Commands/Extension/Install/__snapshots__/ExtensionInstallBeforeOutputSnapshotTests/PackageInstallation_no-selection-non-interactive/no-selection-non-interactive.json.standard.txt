@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge extension list",
+          "command": "open-forge extension list --source <extension-source> --workspace <workspace>",
           "reason": "List the available Extensions, then rerun the request with an explicit selection."
         }
       ]
@@ -68,7 +68,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge extension list",
+    "command": "open-forge extension list --source <extension-source> --workspace <workspace>",
     "reason": "List the available Extensions, then rerun the request with an explicit selection."
   }
 }

@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Binding;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
+using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Shell.Parsing;
@@ -25,7 +26,13 @@ internal static class InstallBindingInputReader
         var preset = InstallConfigurationChoices.ReadPreset(presetText);
         var overrides = new Dictionary<string, InstallRouteAction>(StringComparer.Ordinal);
         string? error = null;
-        if (presetText is not null && preset is null) error = "Preset must be essentials, full-core, or custom.";
+        InstallInvalidRoute? invalidRoute = null;
+        InstallInvalidOption? invalidOption = null;
+        if (presetText is not null && preset is null)
+        {
+            error = "Preset must be essentials, full-core, or custom.";
+            invalidOption = new(InstallOptionKind.Preset, presetText);
+        }
         foreach (var text in result.GetValue(symbols.Route) ?? [])
         {
             var parts = text.Split('=');
@@ -33,6 +40,7 @@ internal static class InstallBindingInputReader
                 || InstallConfigurationChoices.ReadAction(parts[1]) is not { } action)
             {
                 error = "Each route must name a built-in ID and add, remove, or git-ignore.";
+                invalidRoute ??= new InstallInvalidRoute(text, InstallConfigurationChoices.RouteIds);
                 continue;
             }
             if (overrides.TryGetValue(parts[0], out var existing) && existing != action)
@@ -49,6 +57,7 @@ internal static class InstallBindingInputReader
             if (!WorkspaceSettingsDefinitions.TryReadFrontmatter(value, out var form))
             {
                 error = "Frontmatter must be root or scoped.";
+                invalidOption ??= new(InstallOptionKind.Frontmatter, value);
                 continue;
             }
             if (frontmatter is { } previous && previous != form)
@@ -63,6 +72,7 @@ internal static class InstallBindingInputReader
         return new InstallBindingInput(
             Force: result.GetValue(symbols.Force),
             Automatic: result.GetValue(symbols.Automatic),
-            Mode: dryRun ? InstallMode.DryRun : InstallMode.Apply, Setup: setup, SetupError: error);
+            Mode: dryRun ? InstallMode.DryRun : InstallMode.Apply, Setup: setup, SetupError: error)
+        { InvalidRoute = invalidRoute, InvalidOption = invalidOption };
     }
 }

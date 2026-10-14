@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Retry;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
@@ -23,6 +24,20 @@ internal sealed class RouteRemoveOperation(
     private readonly CliPlanConfirmation<RouteRemoveResult, RouteRemoveConfirmationQuestion>? _confirmation = confirmation;
 
     internal async ValueTask<RouteRemoveResult> ExecuteAsync(
+        RouteRemoveRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var result = await ExecuteCoreAsync(request, cancellationToken).ConfigureAwait(false);
+        var command = RouteRemoveRetryCommand.From(request);
+        return result with
+        {
+            RequestCommand = command,
+            Next = RouteRetryCommand.Complete(result.Next, "open-forge route remove", command, result.Findings.Any(finding => finding.Code == RouteRemoveFindingCode.ConfirmationRequired)),
+        };
+    }
+
+    private async ValueTask<RouteRemoveResult> ExecuteCoreAsync(
         RouteRemoveRequest request,
         CancellationToken cancellationToken)
     {

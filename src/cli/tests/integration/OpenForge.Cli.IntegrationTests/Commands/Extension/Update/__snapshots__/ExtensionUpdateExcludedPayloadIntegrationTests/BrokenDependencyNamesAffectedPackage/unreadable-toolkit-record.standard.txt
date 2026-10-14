@@ -1,0 +1,10 @@
+Cannot update development-toolkit: Extension ownership could not be established.
+Workspace: <workspace>
+  Warning  development-toolkit  Extension record was not updated
+         Recorded Extension identities, paths or dependencies cannot be interpreted; no ownership or file effects were inferred.
+         open-forge extension inspect development-toolkit
+         Inspect the reported Extension state.
+  Dependency closure: none
+  0 files unchanged
+  Grant: required none; missing none; decision not evaluated; action no action; outcome no outcome recorded
+No files were changed.

@@ -4,6 +4,9 @@ namespace OpenForge.Cli.OutputText.References;
 
 internal static class ReferencesText
 {
+    // @OpenForgeText references.message.invalid-direction-value
+    internal static string InvalidDirection(string value) => $"Invalid --direction value: {value}. Use in, out, or both.";
+
     // @OpenForgeText references.message.the-scan-is-incomplete
     internal static string MessageTheScanIsIncomplete()
         => "The scan is incomplete.";
@@ -170,7 +173,7 @@ internal static class ReferencesText
 
     // @OpenForgeText references.help.syntax
     internal static string HelpSyntax()
-        => "open-forge references <source-reference> [--direction in|out|both] [--include <source-reference>]... [--exclude <source-reference>]... [global options]";
+        => "open-forge references <source-reference> [options]";
 
     // @OpenForgeText references.help.heading.source-and-direction
     internal static string HelpHeadingSourceAndDirection()
@@ -178,7 +181,7 @@ internal static class ReferencesText
 
     // @OpenForgeText references.help.source-and-direction
     internal static string HelpSourceAndDirection()
-        => "source-reference accepts one source ID or exact .agents/... path. --direction selects in, out, or both; default: both. Direction values are exact and case-sensitive.";
+        => "source-reference accepts one source ID or exact .agents/... Path. --direction selects in, out, or both. Default: both. Direction values are exact and case-sensitive.";
 
     // @OpenForgeText references.help.heading.incoming-filters
     internal static string HelpHeadingIncomingFilters()
@@ -190,13 +193,29 @@ internal static class ReferencesText
 
     // @OpenForgeText references.help.examples
     internal static string HelpExamples()
-        => "open-forge references memory\n  open-forge references memory --direction in --include directives --exclude working/checkpoints\n  open-forge references .agents/loader.md --direction out --format json";
+        => "open-forge references memory\nopen-forge references skills/open-forge-cli --direction out\nopen-forge references memory --direction in";
 
     // @OpenForgeText references.help.related-commands
-    internal static string HelpRelatedCommands()
-        => "open-forge find — discover sources by authored predicates.\n  open-forge route list — list routed source identities.\n  open-forge doctor — inspect unavailable or blocked source facts.";
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("context --help", "Read agent instructions and context."),
+            ("doctor", "Diagnose workspace problems."),
+            ("repair --help", "Correct verified link and Library problems."),
+        ];
 
     // @OpenForgeText references.help.notes
     internal static string HelpNotes()
         => "References is a deterministic, read-only report of direct references. It does not fetch URLs, load target bodies, follow links, write files, build an index, or repair destinations.";
+
+    // @OpenForgeText references.references.help.behavior
+    internal static string HelpBehavior()
+        => "Supply one source ID or exact .agents path. The default direction is both.\nGenerated Entries links are excluded. Incoming filters select which sources are inspected.\nThis command changes no files and asks no questions.";
+    // @OpenForgeText references.help.details-1
+    internal static string HelpDirectionAndFiltersDetails()
+        => "Direction values in, out, and both are exact and case-sensitive. Each --include or --exclude consumes one source reference. Includes combine and exclusions take priority. Filters affect only incoming references and cannot accompany --direction out.";
+
+    // @OpenForgeText references.help.details-2
+    internal static string HelpBoundaryDetails()
+        => "This deterministic report does not fetch URLs, load target bodies, follow links, build an index, or repair destinations.";
 }

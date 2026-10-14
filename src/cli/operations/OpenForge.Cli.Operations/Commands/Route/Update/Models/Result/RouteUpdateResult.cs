@@ -69,7 +69,9 @@ internal sealed record RouteUpdateResult : ICliCommandResult
     internal bool WorkspaceExplicit
         => Workspace?.SelectedBy == CliWorkspaceSelectionMethod.ExplicitWorkspace;
 
-    public CliNextAction? Next { get; }
+    public CliNextAction? Next { get; init; }
+
+    internal string? RequestCommand { get; init; }
 
     internal RouteUpdateMode Mode { get; }
 

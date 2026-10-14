@@ -2,13 +2,14 @@ Cannot install: 1 Framework file has changed since they were installed.
 Workspace: <workspace>
   Error  <workspace>  Framework files have changed [install.managed-divergence]
          <workspace> has changed since it was installed. Install does not replace changed files.
-         use open-forge update
-         open-forge update
+         use open-forge update --workspace <workspace>
+         open-forge update --workspace <workspace>
          Update the existing managed Framework state from a fresh plan.
 Frontmatter: root
-  Bundled Framework fingerprint: <sha256> (19 assets).
+  Bundled Framework fingerprint:
+  <sha256> (19 assets).
   The existing ownership record was preserved.
   No recovery bundle was required.
   Verification was not requested.
   Update the existing managed Framework state from a fresh plan.
-Next: open-forge update
+Next: open-forge update --workspace <workspace>

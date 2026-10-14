@@ -1,5 +1,6 @@
+using OpenForge.Cli.Core.Presentation.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Shared.Help.Models;
 using OpenForge.Cli.Core.Presentation.Install.Shared.Wording;
-using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Presentation.Install.Shared.Help;
@@ -7,18 +8,17 @@ namespace OpenForge.Cli.Core.Presentation.Install.Shared.Help;
 internal static class InstallHelpSections
 {
     internal static CliHelpContent Create()
-        => new(
-        [
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSyntax(), InstallWording.HelpSyntax()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Install.InstallText.HelpHeadingEstablishment(), InstallWording.HelpEstablishment()),
-            new CliHelpSection("Setup selection", global::OpenForge.Cli.OutputText.Install.InstallSetupText.Help()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Install.InstallText.HelpHeadingFrontmatter(), global::OpenForge.Cli.OutputText.Install.InstallText.HelpFrontmatter()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingWritePolicy(), InstallWording.HelpWritePolicy()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Install.InstallText.HelpHeadingConfirmation(), InstallWording.HelpConfirmation()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingGlobalOptions(), InstallWording.HelpGlobalOptions()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingExamples(), InstallWording.HelpExamples()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingRelatedCommands(), InstallWording.HelpRelatedCommands()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingResultsAndStreams(), CliResultHelp.ResultsAndStreams()),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingNotes(), InstallWording.HelpNotes()),
-        ]);
+        => CliCommandHelp.Create(new CliCommandHelpDefinition
+        {
+            Usage = global::OpenForge.Cli.OutputText.Install.InstallText.HelpSyntax(),
+            Examples = global::OpenForge.Cli.OutputText.Install.InstallText.HelpExamples(),
+            Behavior = global::OpenForge.Cli.OutputText.Install.InstallText.HelpBehavior(),
+            Details =
+            [
+                new CliHelpSection("Force boundary", global::OpenForge.Cli.OutputText.Install.InstallText.HelpForceBoundaryDetails()),
+                new CliHelpSection("Custom routes", global::OpenForge.Cli.OutputText.Install.InstallText.HelpCustomRoutesDetails()),
+                new CliHelpSection("Conversion and boundaries", global::OpenForge.Cli.OutputText.Install.InstallText.HelpConversionAndBoundariesDetails()),
+            ],
+            RelatedCommands = global::OpenForge.Cli.OutputText.Install.InstallText.HelpRelatedCommands(),
+        });
 }

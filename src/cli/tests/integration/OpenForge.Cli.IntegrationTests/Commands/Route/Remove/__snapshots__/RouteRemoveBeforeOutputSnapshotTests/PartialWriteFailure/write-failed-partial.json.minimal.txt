@@ -108,7 +108,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge cleanup  (after reviewing the bundle)",
+    "command": "open-forge cleanup --workspace <workspace>",
     "reason": "after reviewing the bundle"
   }
 }

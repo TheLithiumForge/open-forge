@@ -1,7 +1,14 @@
 Choose your Open Forge setup
 
-  1. Essentials  Rules, patterns, skills and memory
+  1. Essentials  Recommended. Rules, patterns, skills and memory
+     Rules, reusable patterns, skills and project memory. New notes for active
+     work stay out of Git.
   2. Full Core   Every built-in folder, all shared through Git
+     Everything in Essentials, plus advice, pointers to sources, starter files
+     and archived records. All contents, including notes for active work, are
+     shared through Git.
   3. Custom      Choose each folder on the next screen
+     Starts from your current choices, or Essentials in a new workspace, then
+     shows one list to change.
 
 Choose a number (1-3), or press Enter to cancel:

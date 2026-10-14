@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 3,
+  "command": "route inspect",
+  "status": "invalid-input",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot inspect memroy: No source has the ID memroy.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "route-inspect.unknown-source",
+      "title": "Source is unknown",
+      "message": "No source has the ID memroy.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "memroy",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "ownBytes": null,
+    "ownTokens": null,
+    "addedFiles": null,
+    "addedBytes": null,
+    "addedTokens": null,
+    "loadNowFiles": null,
+    "loadNowBytes": null,
+    "loadNowTokens": null,
+    "directChildren": null,
+    "descendants": null,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "id": null,
+    "path": null,
+    "kind": null,
+    "entrypointForm": null,
+    "overwritePath": null,
+    "belongs": {
+      "routeChain": null,
+      "parent": null,
+      "directChildren": null,
+      "descendants": null
+    },
+    "read": {
+      "atStart": null,
+      "automaticallyWhen": null,
+      "mayReadAgain": null
+    },
+    "size": {
+      "own": null,
+      "adds": null,
+      "loadNow": null
+    },
+    "selection": {
+      "kind": "source-id",
+      "method": "unresolved",
+      "requested": "memroy"
+    },
+    "statusReason": "the source reference was not accepted"
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge route list --depth all --workspace <workspace>",
+    "reason": "Choose an ID or exact path from the route list."
+  }
+}

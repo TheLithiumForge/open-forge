@@ -63,6 +63,8 @@ internal sealed record RouteUpdatePatchRequest
 
 internal sealed record RouteUpdateRequest
 {
+    internal string? RequestCommand { get; init; }
+
     internal RouteUpdateRequest(
         CliWorkspace workspace,
         string sourceReference,
@@ -123,6 +125,9 @@ internal sealed record RouteUpdateRequest
             templateReference: TemplateReference,
             mode: Mode,
             allowInteractiveSourceSelection: AllowInteractiveSourceSelection,
-            frozenSourceReference: exactSourceReference);
+            frozenSourceReference: exactSourceReference)
+        {
+            RequestCommand = RequestCommand,
+        };
     }
 }

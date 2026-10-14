@@ -1,0 +1,1 @@
+open-forge route update guidance/note --description 'Revised note' --responsibility '' --tag Review --tag CurrentTruth --apply-to 'src/**/*.cs' --workspace 'team workspace' --dry-run --format json --detail full --automatic

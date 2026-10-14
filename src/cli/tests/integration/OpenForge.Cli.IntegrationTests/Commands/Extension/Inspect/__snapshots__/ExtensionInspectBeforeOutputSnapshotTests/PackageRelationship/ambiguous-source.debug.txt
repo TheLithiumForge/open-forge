@@ -4,8 +4,9 @@ Workspace: <workspace>
          The ownership record names toolkit in a way that cannot be matched to one package.
          fix by hand
          Cause: The Extension source contains duplicate stable IDs.
+1 package, including toolkit.
 Source: <extension-source>
-Dependencies
+Packages in this selection
   toolkit  1.0.0  available
 
 Files
@@ -17,6 +18,6 @@ Resolution order: toolkit
 Registered in
   none
 Record coverage: complete
-1 dependency, 1 errors.
+1 errors.
   Inspect the recorded workspace facts.
 Next: open-forge doctor

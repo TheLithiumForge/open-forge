@@ -19,7 +19,7 @@ public sealed class ExtensionRemoveDefinitionsTests
         Assert.Equal("extension remove", ExtensionRemoveDefinitions.CommandIdentity);
         Assert.Equal(1, ExtensionRemoveDefinitions.SchemaVersion);
         Assert.Equal("remove", ExtensionRemoveDefinitions.RemoveCommand.Name);
-        Assert.Contains("Release selected managed Extension ownership", ExtensionRemoveDefinitions.RemoveCommand.Description, StringComparison.Ordinal);
+        Assert.Contains("Remove selected Extension ownership", ExtensionRemoveDefinitions.RemoveCommand.Description, StringComparison.Ordinal);
         Assert.Equal("stable-id", ExtensionRemoveDefinitions.StableId.Name);
         Assert.Equal("--automatic", ExtensionRemoveDefinitions.Automatic.Name);
         Assert.Equal("--dry-run", ExtensionRemoveDefinitions.DryRun.Name);

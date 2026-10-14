@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Retry;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route.Create.Models.Binding;
@@ -19,7 +20,8 @@ internal static class RouteCreateRequestBinder
     internal static CliBindResult<RouteCreateRequest, RouteCreateResult> Bind(
         ParseResult parseResult,
         CliInvocation invocation,
-        RouteCreateSymbols symbols)
+        RouteCreateSymbols symbols,
+        IReadOnlyList<string>? originalArguments = null)
     {
         var target = parseResult.GetValue(symbols.FileTarget);
         var descriptionFacts = CliOptionResultFactsReader.Read(parseResult, symbols.Description);
@@ -82,7 +84,10 @@ internal static class RouteCreateRequestBinder
                     responsibility: facts.Responsibility,
                     applyTo: facts.ApplyTo),
                 templateReference: facts.Template,
-                mode: facts.Mode));
+                mode: facts.Mode)
+            {
+                RequestCommand = originalArguments is null ? null : RouteRetryCommand.FromArguments(originalArguments),
+            });
     }
 
     private static RouteCreateBindingValidation ValidateGrammar(

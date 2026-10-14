@@ -70,7 +70,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the reported Library state."
   }
 }

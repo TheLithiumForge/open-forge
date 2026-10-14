@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Retry;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Binding;
@@ -129,7 +130,10 @@ internal sealed partial class RouteUpdateBinding(RouteUpdateSymbols symbols)
                 patch: facts.Patch,
                 templateReference: facts.Template,
                 mode: facts.Mode,
-                allowInteractiveSourceSelection: invocation.Presentation.Format == CliFormat.Text));
+                allowInteractiveSourceSelection: invocation.Presentation.Format == CliFormat.Text)
+            {
+                RequestCommand = RouteRetryCommand.FromArguments(originalArguments),
+            });
     }
 
     private static Option<string?> CreateSingleton(

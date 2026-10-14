@@ -28,7 +28,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge library attach <id> <source-folder>",
+    "command": "open-forge library attach <id> <source-folder> --workspace <workspace>",
     "reason": "Register a Library before listing it."
   }
 }

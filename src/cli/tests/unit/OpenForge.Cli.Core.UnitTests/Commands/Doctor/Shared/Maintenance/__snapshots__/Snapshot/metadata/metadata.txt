@@ -1,0 +1,3 @@
+old.md was renamed to new.md, recorded description and tags match. Repair can update the links and affected Entries.
+SafeExact
+open-forge repair --automatic

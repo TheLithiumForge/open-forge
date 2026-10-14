@@ -1,7 +1,5 @@
 Cannot read context: docs/guide matches more than one source. Use the exact path.
 Workspace: <workspace>
-  Error  docs/guide  Source is ambiguous
-         docs/guide matches more than one source. Use the exact path.
 === AGENTS.md ===
 included because workspace entry
 # Workspace
@@ -29,6 +27,5 @@ open-forge:
 
 - [Guide](guide.md) - #Docs #Guide
 - [Reference](reference.md) - #Docs
-  sources: The selected Context sources could not be resolved completely.
-  tokens: The selected Context sources could not be resolved completely.
-  bytes: The selected Context sources could not be resolved completely.
+Context counts are unavailable. The selected Context sources could not be
+resolved completely.

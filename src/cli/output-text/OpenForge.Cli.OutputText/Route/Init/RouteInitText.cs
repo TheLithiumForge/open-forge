@@ -170,7 +170,7 @@ internal static class RouteInitText
 
     // @OpenForgeText route.init.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route init <route-target> [--framework] [--description <text>] [--responsibility <text>] [--tag <tag>]... [--apply-to <glob>]... [--dry-run] [global options]";
+        => "open-forge route init <route-target> [options]";
 
     // @OpenForgeText route.init.help.target
     internal static string HelpTarget()
@@ -182,7 +182,7 @@ internal static class RouteInitText
 
     // @OpenForgeText route.init.help.scaffold-mode
     internal static string HelpScaffoldMode()
-        => "Generic mode uses the fixed draft scaffold. --framework uses the embedded Framework topology. An exact canonical Core root or Memory state restores its missing payload and clears only its exact exclusions; other targets create one sparse scoped chain. Restoration requires an installed safe Loader and preserves authored files. Repeating --framework has no additional effect.";
+        => "Generic mode uses the fixed draft entrypoint files. --framework uses the bundled Framework route layout. An exact canonical Core root route or Memory state restores missing bundled files and clears only its exact exclusions. Other targets create one chain of entrypoints for that scope without copying all defaults. Restoration requires a safely installed Loader and keeps authored files. Repeating --framework has no additional effect.";
 
     // @OpenForgeText route.init.help.metadata
     internal static string HelpMetadata()
@@ -190,17 +190,37 @@ internal static class RouteInitText
 
     // @OpenForgeText route.init.help.write-policy
     internal static string HelpWritePolicy()
-        => "Omit --dry-run to apply the complete checked plan. --dry-run previews the same directories, entrypoints, payload, settings, generated-region effects, and bounded changes without writing files. Repeating the command makes no further changes.";
+        => "Omit --dry-run to apply the complete checked plan. --dry-run previews the same directories, entrypoints, bundled files, settings, generated Entries navigation, and limited planned changes without writing files. Repeating the command makes no further changes.";
 
     // @OpenForgeText route.init.help.examples
     internal static string HelpExamples()
-        => "open-forge route init memory/project-alpha/documents\n  open-forge route init memory/project-alpha/documents --description \"Project documents\" --tag Memory --apply-to \"**/*.cs\" --apply-to \"**/*.ts\"\n  open-forge route init \"memory/Mobile App/working\" --framework --dry-run\n  open-forge route init skills --framework --dry-run\n  open-forge route init memory/archived --framework\n  open-forge route init .agents/memory/project-alpha/documents/_documents.md --format json";
+        => "open-forge route init memory/project --dry-run\nopen-forge route init memory/project\nopen-forge route init templates --framework --dry-run";
 
     // @OpenForgeText route.init.help.related-commands
-    internal static string HelpRelatedCommands()
-        => "open-forge route update — author an existing entrypoint.\n  open-forge doctor — inspect blocked or unavailable route and safety facts.\n  open-forge cleanup — remove a reported retained recovery artifact after review.";
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("route create --help", "Create a routed Markdown file."),
+            ("route update --help", "Change routed metadata or Template content."),
+            ("doctor", "Diagnose workspace problems."),
+        ];
 
     // @OpenForgeText route.init.help.notes
     internal static string HelpNotes()
         => "Route Init does not instantiate a Template, infer route meaning, rewrite authored content, normalize compatibility filenames, repair malformed generated regions, manipulate Git, or create commits.";
+
+    // @OpenForgeText route.init.routeinit.help.behavior
+    internal static string HelpBehavior()
+        => "Generic mode creates missing entrypoints. --framework restores selected bundled defaults.\n--dry-run shows the checked plan and writes nothing.\nExisting files stay protected. Repeating the command makes no further changes.\nThis command asks no questions. Interrupted writes report retained recovery data.";
+    // @OpenForgeText route.init.help.details-1
+    internal static string HelpTargetAndRestorationDetails()
+        => "An exact-path target must use the canonical entrypoint filename. The Loader is never created. Generic mode uses fixed draft entrypoints. --framework uses the bundled layout. An exact canonical Core root route or Memory state restores missing bundled files and clears only its exact exclusions. Other targets get one entrypoint chain without all defaults. Restoration needs a safely installed Loader. Repeating --framework has no effect.";
+
+    // @OpenForgeText route.init.help.details-2
+    internal static string HelpMetadataDetails()
+        => "Metadata applies only to a missing generic final target. Supply description and responsibility at most once. Tags are ordered. Empty or duplicate tags are invalid. Repeated --apply-to values may contain comma-separated patterns. Globs are case-sensitive and workspace-relative: *.py at root, **/*.py at any depth, docs/** below docs. ! is literal.";
+
+    // @OpenForgeText route.init.help.details-3
+    internal static string HelpBoundaryDetails()
+        => "Init does not instantiate a Template, infer route meaning, rewrite authored content, normalize compatibility filenames, repair generated regions, manipulate Git, or create commits.";
 }

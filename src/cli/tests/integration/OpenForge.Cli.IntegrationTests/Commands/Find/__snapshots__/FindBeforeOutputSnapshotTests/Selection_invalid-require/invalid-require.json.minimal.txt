@@ -9,7 +9,7 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "Cannot search: --require must be all or any.",
+    "headline": "Cannot search: Invalid --require value: invalid. Use all or any.",
     "kind": "cannot-start"
   },
   "findings": [
@@ -17,7 +17,7 @@
       "severity": "error",
       "code": "find.invalid-input",
       "title": "Invalid input",
-      "message": "--require must be all or any.",
+      "message": "Invalid --require value: invalid. Use all or any.",
       "subject": {
         "kind": "identifier",
         "path": null,
@@ -40,5 +40,9 @@
     "matches": []
   },
   "recovery": null,
-  "next": null
+  "next": {
+    "kind": "command",
+    "command": "open-forge find --help",
+    "reason": "Correct the named Find input, then rerun the request."
+  }
 }

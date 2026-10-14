@@ -9,6 +9,8 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
+using OpenForge.Cli.Core.Commands.Index.Shared.Result;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Index.Shared.Operation;
 
@@ -76,7 +78,7 @@ internal sealed class IndexApplicationOperation(
         {
             if (!await _projectionReader.VerifyOwnershipAsync(application.Plan, cancellationToken).ConfigureAwait(false))
                 return FinishBeforePreparation(application, IndexFindingCode.TargetChanged,
-                    cause: "The route-sharing lock changed after Index planning.");
+                    cause: "Workspace inputs or selected rename evidence changed after Index planning.");
             validation = await _revalidator.ValidateAsync(
                     lease,
                     application.Plan.Updates,
@@ -106,6 +108,8 @@ internal sealed class IndexApplicationOperation(
                 source: validationMapping.Source);
         }
 
+        if (application.Plan.RecoveryTargets.Count == 0)
+            return await ApplyPreparedAsync(new(application, lease, validation, preparation: null), cancellationToken).ConfigureAwait(false);
         var preparation = await IndexRecoveryLifecycle.PrepareAsync(application, cancellationToken)
             .ConfigureAwait(false);
         if (!preparation.CanApply)
@@ -135,14 +139,12 @@ internal sealed class IndexApplicationOperation(
         CancellationToken cancellationToken)
     {
         var regions = prepared.Application.Plan.Regions.ToArray();
-        var updateRegionIndices = regions
-            .Select((region, index) => (region, index))
-            .Where(item => item.region.Action == IndexRegionAction.Update)
-            .Select(item => item.index)
-            .ToArray();
         for (var index = 0; index < prepared.Application.Plan.Updates.Count; index++)
         {
-            var regionIndex = updateRegionIndices[index];
+            var change = prepared.Application.Plan.Updates[index];
+            var regionIndex = Array.FindIndex(regions, region => SourceLogicalPath.ToLexicalPath(prepared.Application.Request.Workspace.LexicalRoot, region.Source.Path) == change.LogicalPath);
+            var path = Path.GetRelativePath(prepared.Application.Request.Workspace.LexicalRoot, change.LogicalPath).Replace('\\', '/');
+            var source = regionIndex >= 0 ? regions[regionIndex].Source : null;
             FileChangeReceipt receipt;
             try
             {
@@ -150,31 +152,34 @@ internal sealed class IndexApplicationOperation(
                         lease: prepared.Lease,
                         change: prepared.Application.Plan.Updates[index],
                         check: prepared.Validation.Checks[index],
-                        recoveryPreparation: prepared.Preparation,
+                        recoveryPreparation: change.Kind == PlannedFileChangeKind.Create ? null : prepared.Preparation,
                         cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                regions[regionIndex] = regions[regionIndex].WithOutcome(IndexRegionOutcome.Unknown);
+                if (regionIndex >= 0 && regions[regionIndex].Action == IndexRegionAction.Update) regions[regionIndex] = regions[regionIndex].WithOutcome(IndexRegionOutcome.Unknown);
+                prepared.Application.EffectOutcomes[path] = IndexRegionOutcome.Unknown;
                 return FinishPrepared(
                     prepared: prepared,
                     regions: regions,
                     findingCode: IndexFindingCode.Interrupted,
-                    source: regions[regionIndex].Source);
+                    source: source);
             }
             catch (Exception)
             {
-                regions[regionIndex] = regions[regionIndex].WithOutcome(IndexRegionOutcome.Unknown);
+                if (regionIndex >= 0 && regions[regionIndex].Action == IndexRegionAction.Update) regions[regionIndex] = regions[regionIndex].WithOutcome(IndexRegionOutcome.Unknown);
+                prepared.Application.EffectOutcomes[path] = IndexRegionOutcome.Unknown;
                 return FinishPrepared(
                     prepared: prepared,
                     regions: regions,
                     findingCode: IndexFindingCode.OperationFailed,
-                    source: regions[regionIndex].Source);
+                    source: source);
             }
 
             var mapping = IndexMutationMapper.ReadReceipt(receipt);
-            regions[regionIndex] = regions[regionIndex].WithOutcome(mapping.Outcome);
+            if (regionIndex >= 0 && regions[regionIndex].Action == IndexRegionAction.Update) regions[regionIndex] = regions[regionIndex].WithOutcome(mapping.Outcome);
+            prepared.Application.EffectOutcomes[path] = mapping.Outcome;
             if (!mapping.ShouldContinue)
             {
                 return FinishPrepared(
@@ -183,7 +188,7 @@ internal sealed class IndexApplicationOperation(
                     findingCode: mapping.FindingCode
                         ?? throw new InvalidOperationException(
                             "A stopped Index receipt requires its finding code."),
-                    source: regions[regionIndex].Source);
+                    source: source);
             }
         }
 
@@ -201,7 +206,8 @@ internal sealed class IndexApplicationOperation(
         {
             fresh = await _projectionReader.ReadAsync(
                     prepared.Application.Request,
-                    cancellationToken)
+                    cancellationToken,
+                    prepared.Application.Plan.Input.Projection.Selection.Targets.Select(source => source.Identity.CanonicalBasePath).ToArray())
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -235,6 +241,8 @@ internal sealed class IndexApplicationOperation(
                 source: verification.Source);
         }
 
+        if (prepared.Preparation is null)
+            return Finish(prepared.Application, regions, IndexRecovery.NotRequired, finding: null);
         var deletion = await IndexRecoveryLifecycle.DeleteAsync(prepared, cancellationToken)
             .ConfigureAwait(false);
         return Finish(
@@ -269,9 +277,9 @@ internal sealed class IndexApplicationOperation(
         => Finish(
             application: prepared.Application,
             regions: regions,
-            recovery: new IndexRecovery(
-                state: IndexRecoveryState.Retained,
-                residualPath: prepared.Preparation.BundlePath),
+            recovery: prepared.Preparation is { } preparation
+                ? new IndexRecovery(IndexRecoveryState.Retained, preparation.BundlePath)
+                : new IndexRecovery(IndexRecoveryState.NotCreated, residualPath: null),
             finding: IndexMutationMapper.CreateFinding(
                 code: findingCode,
                 cause: cause,
@@ -296,6 +304,9 @@ internal sealed class IndexApplicationOperation(
             Regions = regions,
             Recovery = recovery,
             Findings = findings,
+            Metadata = IndexCompletionProjector.Metadata(application.Plan, application.EffectOutcomes),
+            Entrypoints = IndexCompletionProjector.Entrypoints(application.Plan, application.EffectOutcomes),
+            Deletions = IndexCompletionProjector.Deletions(application.Plan, application.EffectOutcomes),
         };
     }
 }

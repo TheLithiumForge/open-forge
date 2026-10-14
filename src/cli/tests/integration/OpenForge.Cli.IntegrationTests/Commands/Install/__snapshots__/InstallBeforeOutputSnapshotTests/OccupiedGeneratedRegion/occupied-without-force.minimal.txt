@@ -1,8 +1,18 @@
-Installed the Open Forge Framework into <workspace>, replacing 1 existing file.
+Installed the Open Forge Framework, replacing 1 existing file.
 Workspace: <workspace>
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
 Frontmatter: scoped
   .agents/memory/_memory.md            replaced
   .agents/memory/_memory.overwrite.md  Migrated: content preserved
-  Created 17 files and 12 directories under .agents, and replaced 1 existing file.
+  Created 17 files and 12 directories under .agents, and replaced 1 existing
+  file.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Migrated 1 source.
+If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md
+first.
+Next: review the new files with git status and git diff, commit them, then
+      give your agent a normal task.

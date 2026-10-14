@@ -1,3 +1,4 @@
+using OpenForge.Cli.TestSupport.Snapshots;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -5,6 +6,7 @@ using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Remove.Models;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Interaction;
 
@@ -18,46 +20,57 @@ public sealed class ExtensionRemoveApplicationInteractionIntegrationTests
      Trait("Feature", "extension-remove"), Trait("Evidence", "Integration")]
     public async Task ComposedDependentSelectionIsFrozenAndAppliedOnce()
     {
-        using var workspace = ExtensionInstallIntegrationWorkspace.Create(
-            "extension-remove-composed-dependent-selection");
-        await workspace.SeedFrameworkAsync();
-        using var source = ExtensionInstallCatalogue.Create(
-            "extension-remove-composed-dependent-selection-source");
-        source.AddPackage("base", [], (".agents/base.md", Document("Base")));
-        source.AddPackage(
-            "toolkit",
-            ["base"],
-            (".agents/toolkit.md", Document("Toolkit")));
-        await InstallAllAsync(workspace, source);
-        var sourceBefore = source.Snapshot();
-        var scripted = ScriptedCliTerminal.Lines(["1", "yes"]);
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var detail in CommandOutputDetailVocabulary.All)
+        {
+            var detailName = CommandOutputDetailVocabulary.Name(detail);
+            using var workspace = ExtensionInstallIntegrationWorkspace.Create(
+                "extension-remove-composed-dependent-selection");
+            await workspace.SeedFrameworkAsync();
+            using var source = ExtensionInstallCatalogue.Create(
+                "extension-remove-composed-dependent-selection-source");
+            source.AddPackage("base", [], (".agents/base.md", Document("Base")));
+            source.AddPackage(
+                "toolkit",
+                ["base"],
+                (".agents/toolkit.md", Document("Toolkit")));
+            await InstallAllAsync(workspace, source);
+            var sourceBefore = source.Snapshot();
+            var scripted = ScriptedCliTerminal.Lines(["1", "yes"]);
 
-        var run = await RunAsync(
-            workspace,
-            ["extension", "remove"],
-            scripted);
+            var run = await RunAsync(
+                workspace,
+                ["extension", "remove", "--detail", detailName],
+                scripted);
 
-        Assert.Equal(0, run.ExitCode);
-        Assert.Equal(CliSemanticStatus.Complete, run.Status);
-        Assert.Equal(string.Empty, run.StandardError);
-        Assert.False(File.Exists(workspace.Combine(".agents/base.md")));
-        Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
-        Assert.Empty(workspace.ReadExtensionOwnership().EnumerateArray());
-        Assert.Equal(sourceBefore, source.Snapshot());
+            Assert.Equal(0, run.ExitCode);
+            Assert.Equal(CliSemanticStatus.Complete, run.Status);
+            if (detail != CliDetail.Debug) Assert.Equal(string.Empty, run.StandardError);
+            Assert.False(File.Exists(workspace.Combine(".agents/base.md")));
+            Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
+            Assert.Empty(workspace.ReadExtensionOwnership().EnumerateArray());
+            Assert.Equal(sourceBefore, source.Snapshot());
 
-        var prompts = run.TerminalOutput;
-        Assert.Equal(2, scripted.LineReadCalls);
-        Assert.Equal(1, Count(prompts, "Choose Extensions to remove"));
-        Assert.Contains("needed by", prompts, StringComparison.Ordinal);
-        Assert.Equal(1, Count(prompts, "Apply these changes, including deleting 2 files? [y/N]"));
-        Assert.Contains("Would remove the base Extension.", prompts, StringComparison.Ordinal);
-        Assert.Contains("Removed 2 Extensions: base, toolkit.", run.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("Would remove", run.StandardOutput, StringComparison.Ordinal);
-        Assert.DoesNotContain("Apply these changes, including deleting 2 files? [y/N]", run.StandardOutput, StringComparison.Ordinal);
-        Assert.True(
-            prompts.IndexOf("Would remove the base Extension.", StringComparison.Ordinal)
-                < prompts.IndexOf("Apply these changes, including deleting 2 files? [y/N]", StringComparison.Ordinal),
-            "The retained dependent-closure preview must precede confirmation.");
+            var prompts = run.TerminalOutput;
+            snapshots.Add($"dependent-preview.{detailName}", CommandOutputNormalization.ReplaceDelimitedPath(prompts, workspace.Path, "<workspace>"));
+            if (detail == CliDetail.Debug && run.StandardError.Length > 0)
+            {
+                snapshots.Add("dependent-preview.debug.diagnostics", CommandOutputNormalization.ReplaceDelimitedPath(run.StandardError, workspace.Path, "<workspace>"));
+            }
+            Assert.Equal(2, scripted.LineReadCalls);
+            Assert.Equal(1, Count(prompts, "Choose Extensions to remove"));
+            Assert.Contains("Needed by", prompts, StringComparison.Ordinal);
+            Assert.Equal(1, Count(prompts, "Apply these changes, including deleting 2 files? [y/N]"));
+            Assert.Contains("Would remove 2 Extensions: base, toolkit.", prompts, StringComparison.Ordinal);
+            Assert.Contains("Removed 2 Extensions: base, toolkit.", run.StandardOutput, StringComparison.Ordinal);
+            Assert.DoesNotContain("Would remove", run.StandardOutput, StringComparison.Ordinal);
+            Assert.DoesNotContain("Apply these changes, including deleting 2 files? [y/N]", run.StandardOutput, StringComparison.Ordinal);
+            Assert.True(
+                prompts.IndexOf("Would remove 2 Extensions: base, toolkit.", StringComparison.Ordinal)
+                    < prompts.IndexOf("Apply these changes, including deleting 2 files? [y/N]", StringComparison.Ordinal),
+                "The retained dependent-closure preview must precede confirmation.");
+        }
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
     }
 
     [Trait("Boundary", "Host")]
@@ -141,10 +154,10 @@ public sealed class ExtensionRemoveApplicationInteractionIntegrationTests
         Assert.Equal(beforeWorkspace, workspace.Snapshot());
         Assert.Equal(beforeSource, source.Snapshot());
         Assert.Equal(2, scripted.LineReadCalls);
-        Assert.Contains("Would remove the base Extension.", run.TerminalOutput, StringComparison.Ordinal);
+        Assert.Contains("Would remove 2 Extensions: base, toolkit.", run.TerminalOutput, StringComparison.Ordinal);
         Assert.Equal(1, Count(run.TerminalOutput, "Apply these changes, including deleting 2 files? [y/N]"));
         Assert.True(
-            run.TerminalOutput.IndexOf("Would remove the base Extension.", StringComparison.Ordinal)
+            run.TerminalOutput.IndexOf("Would remove 2 Extensions: base, toolkit.", StringComparison.Ordinal)
                 < run.TerminalOutput.IndexOf("Apply these changes, including deleting 2 files? [y/N]", StringComparison.Ordinal),
             "The retained dependent-closure preview must precede cancellation.");
     }

@@ -23,6 +23,7 @@ internal sealed record InstallSetupBoundary(InstallFindingCode Code, string Caus
 internal sealed record InstallSetupResolution(InstallConfiguration? Configuration, InstallSetupBoundary? Boundary = null, bool Cancelled = false)
 {
     internal InstallFrontmatterSelection? Frontmatter { get; init; }
+    internal InstallSetupRecap? Recap { get; init; }
 }
 
 internal sealed record InstallIgnoreSectionSpan(int Start, int EndExclusive, string Body);

@@ -1,12 +1,33 @@
 using System.Text.Json;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Remove;
 
 public sealed class RemoveRootTextIntegrationTests
 {
+    [Fact(DisplayName = "Root Remove confirmation retry retains target kind workspace and presentation without writes")]
+    [Trait("Feature", "remove-root"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
+    public async Task ConfirmationRetryRetainsRequest()
+    {
+        using var workspace = RemoveRootIntegrationWorkspace.Create("remove retry workspace's");
+        const string target = "old team's note.txt";
+        workspace.WriteText(target, "Keep until confirmed.\n");
+        var before = workspace.SnapshotHashes();
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+        var completion = await workspace.RunAsync(["remove", target, "--kind", "path", "--workspace", workspace.Path,
+            "--format", "json", "--detail", "full", "--detail-filter", "error"], output, error);
+        Assert.Equal(4, completion.ExitCode);
+        Assert.Equal(string.Empty, error.ToString());
+        using var report = JsonDocument.Parse(output.ToString());
+        Assert.Equal($"open-forge remove {CliCommandText.Quote(target)} --kind path --workspace {CliCommandText.Quote(workspace.Path)} --automatic --format json --detail full --detail-filter error",
+            report.RootElement.GetProperty("next").GetProperty("command").GetString());
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
     [Trait("Boundary", "Host")]
     [Theory(DisplayName = "Root Remove preview text describes planned effects truthfully at every detail level")]
     [InlineData("minimal")]

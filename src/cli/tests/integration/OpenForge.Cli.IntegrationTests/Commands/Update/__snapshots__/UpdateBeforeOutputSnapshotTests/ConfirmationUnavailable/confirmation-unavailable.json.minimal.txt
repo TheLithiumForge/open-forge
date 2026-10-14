@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge update --automatic",
+          "command": "open-forge update --automatic --workspace <workspace>",
           "reason": "Rerun the same Update request with explicit automatic mode."
         }
       ]
@@ -60,7 +60,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge update --automatic",
+    "command": "open-forge update --automatic --workspace <workspace>",
     "reason": "Rerun the same Update request with explicit automatic mode."
   }
 }

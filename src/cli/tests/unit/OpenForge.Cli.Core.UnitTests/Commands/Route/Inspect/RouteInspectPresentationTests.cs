@@ -101,41 +101,8 @@ public sealed class RouteInspectPresentationTests
     public void HelpSectionsDocumentAcceptedPresentationSurface()
     {
         var help = RouteInspectHelpSections.CreateInspect();
-        var text = string.Join(Environment.NewLine, help.Sections.Select(section => section.Body));
-
-        CommandOutputSnapshot.MatchSnapshot(
-            Assert.Single(help.Sections, section => section.Heading == "Notes").Body,
-            "notes");
-
-        Assert.Contains("open-forge route inspect <source-reference>", text, StringComparison.Ordinal);
-        Assert.Contains("source-id", text, StringComparison.Ordinal);
-        Assert.Contains(".agents/", text, StringComparison.Ordinal);
-        Assert.Contains("./.agents/", text, StringComparison.Ordinal);
-        Assert.Contains("--workspace <path>", text, StringComparison.Ordinal);
-        Assert.Contains("--format", text, StringComparison.Ordinal);
-        Assert.Contains("--detail=<minimal|standard|full|debug>", text, StringComparison.Ordinal);
-        Assert.Contains("--detail-filter", text, StringComparison.Ordinal);
-        Assert.Contains("completed", text, StringComparison.Ordinal);
-        Assert.Contains("completed-with-warnings", text, StringComparison.Ordinal);
-        Assert.Contains("incomplete", text, StringComparison.Ordinal);
-        Assert.Contains("invalid-input", text, StringComparison.Ordinal);
-        Assert.Contains("blocked", text, StringComparison.Ordinal);
-        Assert.Contains("failed", text, StringComparison.Ordinal);
-        Assert.Contains("cancelled", text, StringComparison.Ordinal);
-        Assert.Contains("exit 0", text, StringComparison.Ordinal);
-        Assert.Contains("exit 130", text, StringComparison.Ordinal);
-        Assert.Contains("open-forge route inspect memory/working", text, StringComparison.Ordinal);
-        Assert.Contains("open-forge route inspect directives/backend/csharp --matching-files", text, StringComparison.Ordinal);
-        Assert.Contains("route inspect --help", text, StringComparison.Ordinal);
-        Assert.Contains("route inspect --version", text, StringComparison.Ordinal);
-        Assert.Contains("--detail", text, StringComparison.Ordinal);
-        Assert.Contains("JSON", text, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("route list", text, StringComparison.Ordinal);
-        Assert.Contains("context — use", text, StringComparison.Ordinal);
-        Assert.Contains("open-forge context [source-reference...]", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("context — unavailable", text, StringComparison.Ordinal);
-        Assert.Contains("doctor — diagnose workspace conditions without changing them.", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("doctor — unavailable", text, StringComparison.Ordinal);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge route inspect <source-reference> [options]");
+        CommandOutputSnapshot.MatchSnapshot(help.Sections[0].Children.Single(section => section.Heading == "Source and matching files").Body, "notes");
     }
 
     [Trait("Boundary", "Output")]

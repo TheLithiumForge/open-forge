@@ -39,6 +39,8 @@ Select the scope, then apply file conditions. One supplied path must satisfy all
 
 Without known working files, exposed conditioned `#LoadNow` and `#KeepInMind` sources remain pending and return `incomplete` (exit 3). Other conditioned sources stay on demand. Resolve pending conditions before relying on those rules.
 
+If Context cannot resolve a source, read its explanation and use the reported Route List command to find valid IDs. It includes `--depth all` and the selected `--workspace` when supplied. Text and JSON report the same workspace-aware action. Unavailable counts are explained once. An error result does not provide usable context for that source.
+
 Batch related selections and use bounded links when their explanations matter:
 
 ```sh
@@ -79,7 +81,7 @@ Incoming filters cannot be used with `--direction out`. References does not read
 
 ## `route list [<source-reference>]`
 
-List source IDs and paths to orient scope selection. `--depth=<non-negative-integer|all>` is its only command flag. Default: `1`. Use `--depth=0` for selected roots, `--depth=2` for a bounded subtree, or `--depth=all` for all descendants. The equals form is required.
+List source IDs and paths to orient scope selection. `--depth <non-negative-integer|all>` is its only command flag. Default: `1`. Use `--depth=0` for selected roots, `--depth=2` for a bounded subtree, or `--depth=all` for all descendants. Both space-separated and equals forms are accepted.
 
 ## `route inspect <source-reference>`
 
@@ -99,5 +101,7 @@ Get a quick summary of installation, startup and continuity context, generated n
 ## `doctor`
 
 Diagnose workspace, routes, references, recovery, Framework files, and managed Extensions without changes. It has no command-specific flags. Use `--detail standard` for reasons or `--format json --detail full` for evidence. Run after routed changes and resolve or report findings within the task.
+
+Doctor and Repair use the same rename evidence and protected-source rules. Doctor gives one next step and none when clean. A Git timeout marks reference coverage incomplete without manual-removal advice and repeats the complete request, including its workspace.
 
 Continue with [route maintenance](routes.md) for edits or [Framework and packages](packages.md) for lifecycle changes.

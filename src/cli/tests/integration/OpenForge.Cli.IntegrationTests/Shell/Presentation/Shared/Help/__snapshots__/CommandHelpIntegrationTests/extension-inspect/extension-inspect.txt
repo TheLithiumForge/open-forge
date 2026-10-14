@@ -1,0 +1,47 @@
+  Compare one Extension's available content with its installed ownership and
+  files.
+
+Usage:
+  open-forge extension inspect <stable-id> [options]
+
+Examples:
+  open-forge extension inspect planning
+  open-forge extension inspect planning --format json
+
+Behavior:
+  Supply one exact Extension ID. Use the bundled catalogue unless --source names
+  a local source.
+  Compare the available package with its recorded installation and current
+  files.
+  This command changes no files and asks no questions.
+
+Arguments:
+  <stable-id>  One exact lowercase Extension stable ID.
+
+Options:
+  --source <package-or-catalogue-path>
+      Read one exact local package or catalogue source.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Source and comparison: IDs are lowercase and exact. A local package or
+  catalogue must be disjoint. There is no fallback, network, registry, cache, or
+  approximate matching. Inspection reports ownership, dependencies, paths,
+  current bytes, generated boundaries, and current-versus-intended differences.
+  It does not execute package content or invoke another command.
+  Fingerprints: open-forge-markdown-v1 uses strict UTF-8, LF-only normalization,
+  heading-bounded Entries exclusion, and exact-byte fallback. Current and
+  intended hashes describe this comparison. No stored baseline is read.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  extension list            List installed and available packages.
+  extension install --help  Install an Extension package.
+  extension update --help   Update managed Extension files.

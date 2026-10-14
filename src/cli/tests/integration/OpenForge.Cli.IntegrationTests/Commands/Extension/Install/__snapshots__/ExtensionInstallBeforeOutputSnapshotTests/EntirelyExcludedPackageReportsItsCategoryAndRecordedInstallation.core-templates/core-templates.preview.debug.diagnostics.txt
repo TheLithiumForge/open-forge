@@ -1,0 +1,12 @@
+status=completed
+packages=1
+effects=0
+findings=8
+'.agents/templates/core/_core.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/core/directive.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/core/guidance.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/core/map.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/core/memory.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/core/pattern.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/core/skill.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/core/template.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.

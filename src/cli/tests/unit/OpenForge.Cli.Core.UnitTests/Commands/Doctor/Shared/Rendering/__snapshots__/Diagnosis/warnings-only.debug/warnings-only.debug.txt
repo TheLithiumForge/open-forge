@@ -12,7 +12,6 @@ Links
          The linked file was not found: missing.md. No possible target was found.
          needs a choice
          Fix the link by hand.
-         Fix the link by hand.
          state: missing
          read from .agents/directives/second.md
   Info  .agents/directives/review.md  Link target type is unsupported [reference.target-unsupported]
@@ -31,5 +30,4 @@ Routes and Entries
          read from .agents/routes.md
   21 links and 20 routes checked.
   2 need a choice.
-  Review the findings and choose a repair.
 Next: open-forge repair

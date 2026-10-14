@@ -4,4 +4,4 @@ Workspace: <workspace>
   19 files unchanged
   Verification was not requested.
   Rerun the same Update request.
-Next: open-forge update
+Next: open-forge update --workspace <workspace>

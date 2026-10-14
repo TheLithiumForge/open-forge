@@ -7,6 +7,18 @@ open-forge:
 
 # Status Interface Contract
 
+## Help
+
+The purpose sentence is: Show whether Open Forge is installed and whether its setup needs attention.
+
+The public Usage line is:
+
+```text
+open-forge status [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Status And Boundary
 
 This is the current Crystallized Interface Contract for the accepted `status`
@@ -33,6 +45,10 @@ defines startup and continuity loading. The [routing model](../../../framework/r
 define the Framework meaning measured by this command. Those sources remain the
 authorities for their detailed Framework meanings; this Interface defines only
 what `status` exposes about them.
+
+## Maintenance Orientation
+
+Status reports whether observed generated navigation matches the current sources and identifies incomplete metadata comparisons. It does not complete missing fields, scaffold chains or repair links. Use Doctor for diagnosis and its next action, then preview Index or Repair. Prefilled maintenance tags do not imply acceptance. Context-size figures reflect current source bytes, including installed Skill guidance.
 
 ## Purpose
 
@@ -517,9 +533,11 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 
 `minimal`, healthy:
 
+The bundled Full Core snapshot uses scoped metadata and no workspace additions. Its counts below use Status's character-based token estimate, not a model-specific tokenizer.
+
 ```text
 Open Forge is installed and current.
-  Startup reads 19 of 22 routed files, about 8.0k tokens.
+  Startup reads 11 of 18 routed files, about 6.6k tokens.
 ```
 
 `minimal`, healthy with Extensions and a Library:

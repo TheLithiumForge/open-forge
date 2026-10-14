@@ -7,6 +7,5 @@ Workspace: <workspace>
   .agents/open-forge.json       settings updated
   .agents/directives/review.md  link removed
   .agents/open-forge.lock.json  not started
-  .agents/open-forge.json  settings updated
   Retry the same Library detach request with bounded diagnostics.
 Next: open-forge library detach team-knowledge --detail debug

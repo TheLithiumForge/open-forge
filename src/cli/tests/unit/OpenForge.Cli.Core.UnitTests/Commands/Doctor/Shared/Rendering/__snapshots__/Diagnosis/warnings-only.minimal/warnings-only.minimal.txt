@@ -6,3 +6,4 @@ No errors. 2 warnings and 3 info findings were recorded.
          The linked file was not found: missing.md. No possible target was found.
          Fix the link by hand.
   To list the info findings: open-forge doctor --detail full
+Next: open-forge repair

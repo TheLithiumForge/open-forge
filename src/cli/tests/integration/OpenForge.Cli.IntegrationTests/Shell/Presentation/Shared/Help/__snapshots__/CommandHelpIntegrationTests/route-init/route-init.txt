@@ -1,0 +1,65 @@
+  Create the missing navigation files in one exact route chain.
+
+Usage:
+  open-forge route init <route-target> [options]
+
+Examples:
+  open-forge route init memory/project --dry-run
+  open-forge route init memory/project
+  open-forge route init templates --framework --dry-run
+
+Behavior:
+  Generic mode creates missing entrypoints. --framework restores selected
+  bundled defaults.
+  --dry-run shows the checked plan and writes nothing.
+  Existing files stay protected. Repeating the command makes no further changes.
+  This command asks no questions. Interrupted writes report retained recovery
+  data.
+
+Arguments:
+  <route-target>  Select one exact route ID or .agents entrypoint path.
+
+Options:
+  --framework              Use the trusted embedded Framework topology and
+                           managed entrypoint assets.
+  --description <text>     Set the missing generic final target description.
+  --responsibility <text>  Set or explicitly omit the missing generic final
+                           target responsibility.
+  --tag <tag>              Add one ordered tag to the missing generic final
+                           target.
+  --apply-to <glob>        Set glob patterns for the missing generic final
+                           target. Separate patterns with commas or repeat this
+                           option.
+  --dry-run                Preview the complete initialization without writing
+                           files.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Target and restoration: An exact-path target must use the canonical entrypoint
+  filename. The Loader is never created. Generic mode uses fixed draft
+  entrypoints. --framework uses the bundled layout. An exact canonical Core root
+  route or Memory state restores missing bundled files and clears only its exact
+  exclusions. Other targets get one entrypoint chain without all defaults.
+  Restoration needs a safely installed Loader. Repeating --framework has no
+  effect.
+  Metadata: Metadata applies only to a missing generic final target. Supply
+  description and responsibility at most once. Tags are ordered. Empty or
+  duplicate tags are invalid. Repeated --apply-to values may contain
+  comma-separated patterns. Globs are case-sensitive and workspace-relative:
+  *.py at root, **/*.py at any depth, docs/** below docs. ! is literal.
+  Boundary: Init does not instantiate a Template, infer route meaning, rewrite
+  authored content, normalize compatibility filenames, repair generated regions,
+  manipulate Git, or create commits.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  route create --help  Create a routed Markdown file.
+  route update --help  Change routed metadata or Template content.
+  doctor               Diagnose workspace problems.

@@ -17,15 +17,15 @@ internal static class IndexDefinitions
 
     internal static readonly CliSyntaxDefinition IndexCommand = new(
         CommandIdentity,
-        "Rebuild generated Entries for selected routes.");
+        "Complete missing metadata and navigation after edits to routed Markdown.");
 
     internal static readonly CliSyntaxDefinition Sources = new(
         "source-reference",
-        "Select zero or more source IDs or exact .agents/... paths.");
+        "Select zero or more source IDs or exact .agents/... Paths.");
 
     internal static readonly CliOptionDefinition<bool> DryRun = new(
         "--dry-run",
-        "Preview all generated Entries changes without writing files.",
+        "Preview metadata, navigation files, and Entries changes without writing files.",
         CliOptionArity.None,
         false,
         null);

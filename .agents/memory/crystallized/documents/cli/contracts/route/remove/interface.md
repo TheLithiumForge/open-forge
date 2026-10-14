@@ -39,6 +39,20 @@ evidence, runtime, Native AOT, and source-layout choices. This command
 contract adds no competing implementation choice and preserves the observable
 boundaries below.
 
+## Help
+
+The purpose sentence is: Remove one routed file or category and remember the removal.
+
+The public Usage line is:
+
+```text
+open-forge route remove <source-reference> [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
+Help states that safety checks can allow Framework- and Extension-managed removal. A writing plan asks for confirmation unless `--automatic` is supplied. Details distinguishes ordinary leaf eligibility from a complete category, explains exclusions and ownership release, and keeps the reference, recovery, and incomplete-scan boundaries. Move retains its unmanaged-only restriction.
+
 ## Purpose And Operation Boundary
 
 `route remove` removes one eligible ordinary logical leaf or one
@@ -639,8 +653,21 @@ Next: open-forge cleanup  (after reviewing the bundle)
 ```text
 Route remove was cancelled. Nothing was changed.
 Workspace: <workspace>
-Next: open-forge route remove
+Next: open-forge route remove guidance/note
 ```
+
+Retry commands repeat the original operands and flags, with shell quoting for
+values that need it. Cancelling an ambiguous source choice keeps the original
+reference so retry asks again. Only missing confirmation may add `--automatic`.
+The text and JSON `next.command` values carry the same complete command.
+An explicitly selected workspace also stays on follow-up commands that act on
+that workspace. Parent route paths are quoted when needed.
+
+At minimal detail, a planned persistent exclusion reads
+`Would record this removal in .agents/open-forge.json so updates keep this file removed.`
+A category or directory uses `folder` instead of `file`. The absence of claims
+needing release is shown from standard detail. When claims change, every detail
+level names the manager and affected paths.
 
 ## Related Current Sources
 

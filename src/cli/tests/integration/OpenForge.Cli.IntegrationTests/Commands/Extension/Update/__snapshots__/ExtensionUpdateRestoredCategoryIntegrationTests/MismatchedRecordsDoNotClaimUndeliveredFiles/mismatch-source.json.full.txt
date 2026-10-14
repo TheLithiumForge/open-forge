@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "blocked",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot install core-templates: The files or dependencies recorded for core-templates do not match the selected source.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "extension-install.package-contents-changed",
+      "title": "Recorded package differs",
+      "message": "The files or dependencies recorded for core-templates do not match the selected source.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "core-templates",
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension update core-templates",
+          "reason": "Use Extension Update to bring the recorded package back in step with the source."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "force": false,
+    "automatic": false,
+    "source": {
+      "kind": "embedded",
+      "path": null
+    },
+    "packages": [
+      {
+        "id": "core-templates",
+        "version": "0.4.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-evaluated",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": [],
+    "entriesUnchanged": [],
+    "verification": {
+      "targets": "not-requested",
+      "topology": "not-requested",
+      "extensionsLifecycle": "not-requested",
+      "frameworkLifecycle": "not-requested"
+    },
+    "recovery": {
+      "state": "not-required",
+      "protectedPaths": [],
+      "residualPath": null
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension update core-templates",
+    "reason": "Use Extension Update to reconcile the managed package."
+  }
+}

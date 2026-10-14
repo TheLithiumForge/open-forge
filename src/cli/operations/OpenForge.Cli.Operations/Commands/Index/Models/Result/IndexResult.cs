@@ -76,6 +76,9 @@ internal sealed record IndexResult : ICliCommandResult
         Regions = new ReadOnlyCollection<IndexRegion>(orderedRegions);
         Recovery = formation.Recovery;
         Findings = new ReadOnlyCollection<IndexFinding>(orderedFindings);
+        Metadata = formation.Metadata;
+        Entrypoints = formation.Entrypoints;
+        Deletions = formation.Deletions;
         Counts = new IndexCounts(Regions);
         Status = status;
         Next = IndexDefinitions.ReadNextAction(status, Findings);
@@ -104,6 +107,9 @@ internal sealed record IndexResult : ICliCommandResult
     internal IReadOnlyList<IndexFinding> Findings { get; }
 
     internal IndexCounts Counts { get; }
+    internal IReadOnlyList<IndexMetadataCompletion> Metadata { get; }
+    internal IReadOnlyList<IndexEntrypointCompletion> Entrypoints { get; }
+    internal IReadOnlyList<IndexFileDeletion> Deletions { get; }
 
     internal static IEnumerable<IndexFinding> OrderFindings(IEnumerable<IndexFinding> findings)
         => findings
@@ -185,7 +191,7 @@ internal sealed record IndexResult : ICliCommandResult
         if ((status == CliSemanticStatus.Complete || optionalOnly)
             && formation.Mode == IndexMode.Apply)
         {
-            var expectedRecovery = updates.Length == 0
+            var expectedRecovery = updates.Length == 0 && formation.Metadata.Count == 0
                 ? IndexRecoveryState.NotRequired
                 : IndexRecoveryState.Removed;
             if (updates.Any(region => region.Outcome != IndexRegionOutcome.Verified)
@@ -203,35 +209,6 @@ internal sealed record IndexResult : ICliCommandResult
                 || regions.Any(region => region.Action == IndexRegionAction.NotEstablished)))
         {
             throw new ArgumentException("Index attention requires a fully verified application with a retained artifact.", nameof(formation));
-        }
-
-        if (status == CliSemanticStatus.Incomplete && skipped.Length > 0)
-        {
-            var skippedPaths = skipped
-                .Select(finding => finding.Details?.ParentPath)
-                .Where(path => path is not null)
-                .Cast<string>()
-                .ToHashSet(StringComparer.Ordinal);
-            var unavailable = regions
-                .Where(region => region.Action == IndexRegionAction.NotEstablished)
-                .ToArray();
-            if (formation.Selection.Scope == IndexSelectionScope.NotEstablished
-                || formation.Selection.Sources.Count == 0
-                || regions.Count == 0
-                || updates.Length == 0
-                || unavailable.Length == 0
-                || unavailable.Length == regions.Count
-                || unavailable.Any(region => !skippedPaths.Contains(region.Source.Path)))
-            {
-                throw new ArgumentException("An incomplete Index result with skipped metadata requires an independently established updated subset.", nameof(formation));
-            }
-
-            if (formation.Mode == IndexMode.Apply
-                && (updates.Any(region => region.Outcome != IndexRegionOutcome.Verified)
-                    || formation.Recovery.State is not (IndexRecoveryState.Removed or IndexRecoveryState.Retained)))
-            {
-                throw new ArgumentException("An applied incomplete Index result requires verified independent updates and exact recovery disposition.", nameof(formation));
-            }
         }
 
         if (status is CliSemanticStatus.Complete or CliSemanticStatus.Attention
@@ -258,4 +235,7 @@ internal sealed record IndexResultFormation
     public required IndexRecovery Recovery { get; init; }
 
     public required IEnumerable<IndexFinding> Findings { get; init; }
+    public IReadOnlyList<IndexMetadataCompletion> Metadata { get; init; } = [];
+    public IReadOnlyList<IndexEntrypointCompletion> Entrypoints { get; init; } = [];
+    public IReadOnlyList<IndexFileDeletion> Deletions { get; init; } = [];
 }

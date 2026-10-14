@@ -29,7 +29,7 @@ public sealed class PublishedExtensionInspectProcessTests
         Assert.Equal(string.Empty, help.StandardError);
         Assert.Contains("open-forge extension inspect <stable-id>", help.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("--source <package-or-catalogue-path>", help.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", help.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Automation", help.StandardOutput, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missingWorkspace));
         Assert.Equal(beforeSource, working.SnapshotSource());
     }
@@ -85,7 +85,9 @@ public sealed class PublishedExtensionInspectProcessTests
         }
         else
         {
-            Assert.Equal(expectedNext, root.GetProperty("next").GetProperty("command").GetString());
+            var source = OperatingSystem.IsWindows() ? $"'{working.SourcePath}'" : working.SourcePath;
+            var workspace = OperatingSystem.IsWindows() ? $"'{working.Path}'" : working.Path;
+            Assert.Equal($"{expectedNext} --source {source} --workspace {workspace}", root.GetProperty("next").GetProperty("command").GetString());
         }
 
         Assert.Equal(beforeWorkspace, working.SnapshotState());

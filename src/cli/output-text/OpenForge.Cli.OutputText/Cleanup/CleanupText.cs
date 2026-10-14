@@ -22,7 +22,7 @@ internal static class CleanupText
 
     // @OpenForgeText cleanup.help.syntax
     internal static string HelpSyntax()
-        => "open-forge cleanup [--dry-run] [global options]";
+        => "open-forge cleanup [options]";
 
     // @OpenForgeText cleanup.help.catalogue
     internal static string HelpCatalogue()
@@ -195,4 +195,23 @@ internal static class CleanupText
     // @OpenForgeText cleanup.label.unfinished-drafts
     internal static string LabelUnfinishedDrafts()
         => "unfinished drafts";
+
+    // @OpenForgeText cleanup.cleanup.help.examples
+    internal static string HelpExamples()
+        => "open-forge cleanup --dry-run\nopen-forge cleanup";
+
+    // @OpenForgeText cleanup.cleanup.help.behavior
+    internal static string HelpBehavior()
+        => "The default deletes every recognized completed recovery bundle and draft in the current catalogue.\n--dry-run lists the same deletion plan and writes nothing.\nCleanup asks no questions or confirmation. Review a preview first.\nDeletion removes that recovery data. Save anything you still need before applying.";
+
+    // @OpenForgeText cleanup.cleanup.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("status --detail full", "Check installation and context."),
+            ("repair --help", "Correct verified link and Library problems."),
+        ];
+    // @OpenForgeText cleanup.help.details-1
+    internal static string HelpSafetyDetails()
+        => "Only completed recovery bundles and drafts with exact expected names for the selected workspace are eligible. Unknown, malformed, unsupported, unavailable, or unsafe items stay. Apply holds the workspace lock. Preview takes no lock. Each run rechecks the catalogue and verifies every deletion. No operands, selectors, force mode, age or glob filters, or arbitrary recursive deletion are accepted.";
 }

@@ -26,7 +26,7 @@ internal static class RouteInspectPresentation
         DataTextRenderer = RouteInspectDataTextRenderer.Render,
         DataJsonTypeInfo = JsonContext.RouteInspectData,
         Shape = CliCommandShape.Data,
-        SelectText = static selected => selected with { TextCounts = [] },
+        SelectText = RouteInspectReportSelector.SelectText,
     };
 
     internal static CliHelpContent CreateHelp()

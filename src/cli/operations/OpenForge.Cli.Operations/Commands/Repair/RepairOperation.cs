@@ -36,15 +36,12 @@ internal sealed class RepairOperation
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        if (!request.HasSelectionAuthority)
-        {
-            return RepairResultBuilder.SelectionRequired(request);
-        }
-
         IReadOnlyList<RepairFinding> initialFindings = [];
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
+            if (!request.HasSelectionAuthority)
+                return await BoundaryAsync(request, SelectionUnavailableFinding(), []).ConfigureAwait(false);
             var diagnosis = await _components.DiagnosisReader.ReadAsync(
                 new DoctorRequest(request.Workspace),
                 cancellationToken).ConfigureAwait(false);
@@ -116,6 +113,8 @@ internal sealed class RepairOperation
         if (CanPlan(facts) && safeInputs.Length != 0)
         {
             var safePlan = RepairPlanner.Build(request, safeInputs);
+            if (_components.MaintenancePlanner is { } safeMaintenance)
+                safePlan = await safeMaintenance.CompleteAsync(safePlan, catalogue, cancellationToken).ConfigureAwait(false);
             var safePreflight = await _components.Application.PreflightAsync(safePlan, cancellationToken)
                 .ConfigureAwait(false);
             if (safePreflight.Outcome.Preflight.State == RepairPreflightState.Ready)
@@ -179,32 +178,26 @@ internal sealed class RepairOperation
         ImmutableArray<RepairLibraryRecoveryProposal> selectedLibraries = [];
         if (!libraryProposals.IsEmpty)
         {
-            var selected = ImmutableArray.CreateBuilder<RepairLibraryRecoveryProposal>();
-            foreach (var proposal in libraryProposals)
+            var answer = await _components.Interaction.SelectLibrary(
+                new RepairLibrarySelectionQuestion([.. libraryProposals.Select(proposal => new RepairLibraryPromptQuestion(proposal))]),
+                policy,
+                cancellationToken).ConfigureAwait(false);
+            if (answer.State == CliPromptState.Unavailable)
             {
-                var answer = await _components.Interaction.SelectLibrary(
-                    new RepairLibraryPromptQuestion(proposal),
-                    policy,
-                    cancellationToken).ConfigureAwait(false);
-                if (answer.State == CliPromptState.Unavailable)
-                {
-                    return await BoundaryAsync(facts, SelectionUnavailableFinding())
-                        .ConfigureAwait(false);
-                }
-
-                if (answer.State != CliPromptState.Answered)
-                {
-                    return await BoundaryAsync(facts, CancelledFinding())
-                        .ConfigureAwait(false);
-                }
-
-                if (answer.Value.Selected)
-                {
-                    selected.Add(proposal);
-                }
+                return await BoundaryAsync(facts, SelectionUnavailableFinding())
+                    .ConfigureAwait(false);
             }
 
-            selectedLibraries = selected.ToImmutable();
+            if (answer.State != CliPromptState.Answered)
+            {
+                return await BoundaryAsync(facts, CancelledFinding())
+                    .ConfigureAwait(false);
+            }
+
+            if (answer.Value.SelectedIndex is { } index)
+            {
+                selectedLibraries = [libraryProposals[index]];
+            }
         }
 
         var plan = libraryProposals.IsEmpty
@@ -233,6 +226,8 @@ internal sealed class RepairOperation
         CliPromptPolicy? policy = null)
     {
         var request = facts.Request;
+        if (_components.MaintenancePlanner is { } maintenance)
+            plan = await maintenance.CompleteAsync(plan, facts.Catalogue, cancellationToken).ConfigureAwait(false);
         var findings = ReadFindings(facts, plan);
         var outcome = BeforeApplication();
         IReadOnlyList<FileExpectation> targets = [];
@@ -272,11 +267,11 @@ internal sealed class RepairOperation
             }
         }
 
-        if (request.Mode == RepairMode.Apply && outcome.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested)
+        if ((request.Mode == RepairMode.Apply || plan.IsNoOp) && outcome.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested)
         {
             outcome = outcome with
             {
-                PostDiagnosis = await new RepairBoundaryDiagnosisReader(_components.DiagnosisReader).ReadAsync(request)
+                PostDiagnosis = await new RepairBoundaryDiagnosisReader(_components.DiagnosisReader, _components.CatalogueReader).ReadAsync(request)
                     .ConfigureAwait(false),
             };
         }
@@ -380,7 +375,7 @@ internal sealed class RepairOperation
         RepairFinding finding,
         IReadOnlyList<RepairFinding> initialFindings)
     {
-        var diagnosis = await new RepairBoundaryDiagnosisReader(_components.DiagnosisReader)
+        var diagnosis = await new RepairBoundaryDiagnosisReader(_components.DiagnosisReader, _components.CatalogueReader)
             .ReadAsync(request).ConfigureAwait(false);
         return RepairResultBuilder.Boundary(request, finding, diagnosis, initialFindings);
     }

@@ -1,4 +1,5 @@
-using OpenForge.Cli.Core.Presentation.Shared.Wording;
+using OpenForge.Cli.Core.Presentation.Shared.Help;
+using OpenForge.Cli.Core.Presentation.Shared.Help.Models;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.OutputText.Route.Inspect;
 
@@ -7,32 +8,15 @@ namespace OpenForge.Cli.Core.Presentation.Route.Inspect.Shared.Help;
 internal static class RouteInspectHelpSections
 {
     internal static CliHelpContent CreateInspect()
-    {
-        return new CliHelpContent(
-        [
-            new CliHelpSection(
-                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSyntax(),
-                ("  " + global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpSyntax())),
-            new CliHelpSection(
-                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSourceReferences(),
-                ("  " + global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpSourceReferences())),
-            new CliHelpSection(
-                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingInheritedGlobalOptions(),
-                ("  " + global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpInheritedGlobalOptions())),
-            new CliHelpSection(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingResultsAndStreams(), CliResultHelp.ResultsAndStreams()),
-            new CliHelpSection(
-                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingExamples(),
-                ("  " + global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpExamples())),
-            new CliHelpSection(
-                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingRelatedCommands(),
-                ("  " + global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpRelatedCommands())),
-            new CliHelpSection(
-                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingNotes(),
-                $"""
-                  {RouteInspectText.HelpNotes()}
-                  {RouteInspectText.HelpMatchingFiles()}
-                  {RouteInspectText.HelpMatchingFilesScope()}
-                """),
-        ]);
-    }
+        => CliCommandHelp.Create(new CliCommandHelpDefinition
+        {
+            Usage = global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpSyntax(),
+            Examples = global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpExamples(),
+            Behavior = global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpBehavior(),
+            Details =
+            [
+                new CliHelpSection("Source and matching files", global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpSourceAndMatchingFilesDetails()),
+            ],
+            RelatedCommands = global::OpenForge.Cli.OutputText.Route.Inspect.RouteInspectText.HelpRelatedCommands(),
+        });
 }

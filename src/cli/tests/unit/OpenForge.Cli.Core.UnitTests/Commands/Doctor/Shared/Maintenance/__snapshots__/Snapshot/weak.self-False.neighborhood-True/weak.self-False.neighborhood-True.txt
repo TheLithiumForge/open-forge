@@ -1,0 +1,3 @@
+.agents/guidance/old.md is missing and no replacement was found.
+ManualDecision
+Update or remove this link in .agents/guidance/source.md at line 4, column 3.

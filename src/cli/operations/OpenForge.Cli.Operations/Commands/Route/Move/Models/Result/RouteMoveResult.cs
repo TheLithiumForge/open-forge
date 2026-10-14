@@ -46,7 +46,9 @@ internal sealed record RouteMoveResult : ICliCommandResult
 
     internal string? WorkspacePhysicalPath => Workspace?.PhysicalRoot;
 
-    public CliNextAction? Next { get; }
+    public CliNextAction? Next { get; init; }
+
+    internal string? RequestCommand { get; init; }
 
     internal RouteMoveMode Mode { get; }
 

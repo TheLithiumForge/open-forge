@@ -54,7 +54,7 @@ internal sealed class RemovePathOperation
                     RemoveFindingCode.ConfirmationRequired,
                     CliSemanticStatus.Invalid,
                     "Remove needs confirmation, and this session cannot ask.",
-                    "open-forge remove \"" + plan.Target + "\" --automatic");
+                    RemoveRetryCommand.From(request, plan.Target, confirmationRequired: true));
             }
 
             var reply = await _confirmation(

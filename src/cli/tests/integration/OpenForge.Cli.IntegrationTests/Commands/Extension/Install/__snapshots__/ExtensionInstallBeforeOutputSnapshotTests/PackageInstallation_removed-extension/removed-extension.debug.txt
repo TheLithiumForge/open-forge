@@ -6,7 +6,8 @@ Workspace: <workspace>
          This Extension ID is present in removedExtensions.
   Source: <extension-source> (catalogue)
   Entries sections unchanged: none
-  Verification: targets not checked; Entries not checked; Extension record not checked; Framework record not checked
+  Verification: targets not checked; Entries not checked; Extension record not
+  checked; Framework record not checked
   Recovery: not-required.
   Workspace removal settings currently exclude the requested install.
 Next: Remove the selected Extension ID from removedExtensions in .agents/open-forge.json, then rerun extension install.

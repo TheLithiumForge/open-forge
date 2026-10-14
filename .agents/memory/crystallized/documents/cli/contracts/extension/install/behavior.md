@@ -37,6 +37,12 @@ and claims. If selected content needs a missing excluded ancestor, report the
 structural blocker instead of restoring it. Force and automatic mode do not
 clear exclusions. Revalidate the exact settings observation under the lease.
 
+Keep each selected package and required dependency in the verified installation
+receipt even when exclusions suppress every file it contributes. Such a package
+has an empty path list and retains its actual dependency list. Its installed
+identity appears in the install summary and Extension List, and remains readable
+by Extension Update and Doctor. Do not claim or deliver excluded destinations.
+
 ## Ownership Source
 
 The generated `.agents/open-forge.lock.json` is the only ownership input and
@@ -344,6 +350,12 @@ consumer destination-admission rules. A missing or duplicate top-level
 `## Entries` section blocks; force never repairs it. Include generated effects in the same parent plan and never invoke a hidden
 index subprocess.
 
+Include reviewed generated-region effects on already-installed dependency hosts.
+Preserve their authored bytes when semantic identity matches the selected source,
+and change only their Entries interiors. Each target has one final effect with
+its original expected-state guard, including when package delivery also changes
+that host. Managed source divergence retains its existing update boundary.
+
 ## Normal And Initial Force Planning
 
 For each selected root and dependency:
@@ -479,6 +491,9 @@ lifecycle publication,
 preservation, verification, recovery, status, and one next action. Human and
 JSON renderers consume it once. Use the seven statuses and streams from the
 Interface.
+
+Completed-update rows describe verified effects only. A blocked result with no
+effects applied never reports planned Entries changes as completed updates.
 
 Conformance must cover source and selection rules, dependency failures and
 ordering, Framework-anchor gating, trusted/untrusted/absent/unavailable state,

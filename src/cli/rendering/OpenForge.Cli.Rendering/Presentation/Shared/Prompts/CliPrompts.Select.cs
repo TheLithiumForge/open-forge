@@ -25,6 +25,7 @@ internal sealed partial class CliPrompts
             var frame = new CliSelectionFrame
             {
                 Question = question.Question,
+                Context = question.Context,
                 Rows = question.Choices.Select(row => new CliSelectionRow(row.Label, Summary: row.Summary)).ToArray(),
                 Focus = cursor,
                 Position = CliPromptWording.Position(cursor, question.Choices.Count),
@@ -49,18 +50,22 @@ internal sealed partial class CliPrompts
     {
         while (true)
         {
-            var frame = new StringBuilder().Append(CliText.Escape(question.Question)).Append("\n\n");
+            var frame = new StringBuilder();
+            AppendLineProse(frame, question.Question);
+            foreach (var context in question.Context) AppendLineProse(frame, context);
+            foreach (var explanation in question.LineExplanations) AppendLineProse(frame, explanation);
+            frame.Append('\n');
             var labelWidth = question.Choices.Max(row => CliSelectionText.Width(row.Label));
             var numberWidth = question.Choices.Count.ToString(CultureInfo.InvariantCulture).Length;
             for (var index = 0; index < question.Choices.Count; index++)
             {
                 var row = question.Choices[index];
-                frame.Append($"  {(index + 1).ToString(CultureInfo.InvariantCulture).PadLeft(numberWidth)}. {CliText.Escape(row.Label)}");
-                if ((row.Summary ?? row.Description) is { } summary)
-                    frame.Append(' ', labelWidth - CliSelectionText.Width(row.Label) + 2).Append(CliText.Escape(summary));
-                frame.Append('\n');
+                var label = $"  {(index + 1).ToString(CultureInfo.InvariantCulture).PadLeft(numberWidth)}. {CliText.Escape(row.Label)}";
+                AppendLineChoice(frame, label, row.Summary, labelWidth - CliSelectionText.Width(row.Label) + 2);
+                if (row.Description is { } description && description != row.Summary) AppendLineProse(frame, description, "     ");
             }
-            frame.Append('\n').Append(CliPromptWording.SelectLine(question.Choices.Count)).Append('\n');
+            frame.Append('\n');
+            AppendLineProse(frame, CliPromptWording.SelectLine(question.Choices.Count));
             await WriteFrameAsync(frame.ToString(), cancellationToken).ConfigureAwait(false);
             var answer = await _terminal.ReadLineAsync(cancellationToken).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(answer)) return CliPromptReply<T>.Cancelled();

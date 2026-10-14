@@ -7,17 +7,18 @@ interface HomeStyles {
   readonly cardLink: string;
   readonly cardTitle: string;
   readonly eyebrow: string;
+  readonly examplePrompt: string;
   readonly featureGrid: string;
+  readonly featureLinks: string;
+  readonly frameworkDetails: string;
   readonly hero: string;
   readonly heroGlow: string;
   readonly heroGrid: string;
-  readonly highlight: string;
   readonly install: string;
   readonly lead: string;
   readonly pathGrid: string;
   readonly pathLinks: string;
   readonly pathPoints: string;
-  readonly prompt: string;
   readonly section: string;
   readonly sectionAlt: string;
   readonly sectionLead: string;
@@ -28,6 +29,7 @@ interface HomeStyles {
   readonly sublead: string;
   readonly title: string;
   readonly titleAccent: string;
+  readonly tryIt: string;
 }
 
 declare const styles: HomeStyles;

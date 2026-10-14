@@ -49,8 +49,8 @@ public sealed class CliTextTests
     {
         IReadOnlyList<IReadOnlyList<string>> rows = [new[] { "a\n", "first" }, new[] { "long😀", "second" }];
         var text = CliTable.Render(rows, static (column, cell) => column == 0 ? CliTextStyle.Color.Subject(cell) : cell);
-        Assert.Equal("  \u001b[1ma\\n\u001b[22m    first\n  \u001b[1mlong😀\u001b[22m  second\n", text);
-        Assert.Equal("  a\\n    first\n  long😀  second\n", CliTable.Render(rows));
+        Assert.Equal("  \u001b[1ma\\n\u001b[22m     first\n  \u001b[1mlong😀\u001b[22m  second\n", text);
+        Assert.Equal("  a\\n     first\n  long😀  second\n", CliTable.Render(rows));
     }
 
     [Trait("Boundary", "Output")]

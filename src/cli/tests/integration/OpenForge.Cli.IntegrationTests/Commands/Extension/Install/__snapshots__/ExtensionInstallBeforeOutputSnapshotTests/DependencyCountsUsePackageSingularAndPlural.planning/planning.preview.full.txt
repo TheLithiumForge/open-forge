@@ -1,0 +1,71 @@
+Would install the planning Extension and 1 package it requires: workflows.
+Workspace: <workspace>
+  .agents/skills/use-workflow/SKILL.md
+    Would create (workflows)
+  .agents/skills/use-workflow/references/_references.md
+    Would create (workflows)
+  .agents/templates/workflows/_workflows.md
+    Would create (workflows)
+  .agents/templates/workflows/workflow.md
+    Would create (workflows)
+  .agents/memory/crystallized/decisions/_decisions.md
+    Would create (planning)
+  .agents/memory/emerging/analysis/_analysis.md
+    Would create (planning)
+  .agents/memory/emerging/ideas/_ideas.md
+    Would create (planning)
+  .agents/memory/working/checkpoints/_checkpoints.md
+    Would create (planning)
+  .agents/patterns/work-records.md
+    Would create (planning)
+  .agents/skills/use-workflow/references/planning/_planning.md
+    Would create (planning)
+  .agents/skills/use-workflow/references/planning/planning.md
+    Would create (planning)
+  .agents/templates/planning/_planning.md
+    Would create (planning)
+  .agents/templates/planning/analysis.md
+    Would create (planning)
+  .agents/templates/planning/backlog.md
+    Would create (planning)
+  .agents/templates/planning/checkpoint.md
+    Would create (planning)
+  .agents/templates/planning/decision.md
+    Would create (planning)
+  .agents/templates/planning/idea.md
+    Would create (planning)
+  .agents/templates/planning/plan.md
+    Would create (planning)
+  .agents/templates/planning/task.md
+    Would create (planning)
+  .agents/memory/crystallized/_crystallized.md
+    Entries would be updated
+  .agents/memory/emerging/_emerging.md
+    Entries would be updated
+  .agents/memory/working/_working.md
+    Entries would be updated
+  .agents/patterns/_patterns.md
+    Entries would be updated
+  .agents/skills/_skills.md
+    Entries would be updated
+  .agents/templates/_templates.md
+    Entries would be updated
+  Source: embedded catalogue (embedded)
+  Dependency order: workflows, planning
+  .agents/open-forge.lock.json  ownership record would be updated
+  Entries sections unchanged: .agents/directives/_directives.md,
+  .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md,
+  .agents/memory/_memory.md, .agents/memory/archived/_archived.md,
+  .agents/memory/crystallized/decisions/_decisions.md,
+  .agents/memory/emerging/analysis/_analysis.md,
+  .agents/memory/emerging/ideas/_ideas.md,
+  .agents/memory/working/checkpoints/_checkpoints.md,
+  .agents/skills/use-workflow/references/planning/_planning.md,
+  .agents/templates/planning/_planning.md,
+  .agents/templates/workflows/_workflows.md
+  Permission evaluation: decision not-required; required 0; missing 0; saved no
+  Framework fingerprint:
+  <sha256>
+  Verification: targets planned; Entries planned; Extension record planned;
+  Framework record planned
+  Recovery: not-created.

@@ -442,11 +442,11 @@ internal static class RouteInspectText
 
     // @OpenForgeText route.inspect.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route inspect <source-reference> [--for <path>]... [--matching-files] [global options]";
+        => "open-forge route inspect <source-reference> [options]";
 
     // @OpenForgeText route.inspect.help.source-references
     internal static string HelpSourceReferences()
-        => "Use one source-id or one exact .agents/... or ./.agents/... path. Supply a source reference to run this command.";
+        => "Use one source-id or one exact .agents/... Or ./.agents/... Path. Supply a source reference to run this command.";
 
     // @OpenForgeText route.inspect.help.inherited-global-options
     internal static string HelpInheritedGlobalOptions()
@@ -454,13 +454,25 @@ internal static class RouteInspectText
 
     // @OpenForgeText route.inspect.help.examples
     internal static string HelpExamples()
-        => "open-forge route inspect memory/working\n  open-forge route inspect memory/working --for src/cli/App.cs\n  open-forge route inspect memory/working --for src/cli/App.cs --for tests/AppTests.cs\n  open-forge route inspect directives/backend/csharp --matching-files\n  open-forge route inspect .agents/memory/_memory.md --detail minimal\n  open-forge route inspect memory/working --format json --detail standard\n  open-forge route inspect --help\n  open-forge route inspect --version";
+        => "open-forge route inspect memory\nopen-forge route inspect memory --for src/a.cs --for tests/a.cs\nopen-forge route inspect directives --matching-files";
 
     // @OpenForgeText route.inspect.help.related-commands
-    internal static string HelpRelatedCommands()
-        => "route list — list routed sources and descendants.\n  context — use open-forge context [source-reference...] to read selected source content.\n  doctor — diagnose workspace conditions without changing them.";
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("route list", "Browse routed sources."),
+            ("context --help", "Read agent instructions and context."),
+            ("doctor", "Diagnose workspace problems."),
+        ];
 
     // @OpenForgeText route.inspect.help.notes
     internal static string HelpNotes()
-        => "Inspect reports one route profile without authored source bodies, ordinary links, diagnosis, recommendations, or mutation. JSON always writes one complete result document to stdout; verbose diagnostics are bounded and use stderr.";
+        => "Inspect reports one route profile without authored source bodies, ordinary links, diagnosis, recommendations, or mutation. JSON always writes one complete result document to stdout. Verbose diagnostics are bounded and use stderr.";
+
+    // @OpenForgeText route.inspect.routeinspect.help.behavior
+    internal static string HelpBehavior()
+        => "Select exactly one source ID or exact .agents path.\nRepeat --for for known working files to evaluate file conditions. Without paths, affected conditions stay pending.\n--matching-files scans for files the source applies to. Source bodies are not returned.\nThis command changes no files and asks no questions.";
+    // @OpenForgeText route.inspect.help.details-1
+    internal static string HelpSourceAndMatchingFilesDetails()
+        => "Exact .agents/... and ./.agents/... paths are accepted. Inspect returns no ordinary links, diagnosis, or recommendations. Matching files do not select or load a source. No restrictive applyTo condition means all files without a scan. --for is independent of scanning. At most 100 matches are listed. Git scans use existing tracked and untracked files, excluding ignored untracked files. Otherwise Open Forge walks the workspace with its .gitignore rules. Scans stay contained, never following symbolic links or entering submodules.";
 }

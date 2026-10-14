@@ -24,7 +24,7 @@ internal static class ExtensionRemoveDataTextRenderer
             var rows = data.TextRows
                 .Select(row => (IReadOnlyList<string>)[CliText.Escape(row.Path), CliText.Escape(row.Text)])
                 .ToArray();
-            builder.Append(CliTable.Render(rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
+            builder.Append(CliTable.Render(style, rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
             if (selection.Detail >= CliDetail.Standard)
             {
                 foreach (var row in data.TextRows.Where(row => row.Detail is not null))

@@ -141,6 +141,7 @@ internal sealed class ExtensionUpdatePlan
         Topology = new ExtensionUpdateTopologySnapshot(input.Topology);
         Result = new ExtensionUpdateResult(new ExtensionUpdateResultFormation
         {
+            Request = input.Request,
             Workspace = input.Request.Workspace,
             Mode = input.Request.Mode,
             Force = input.Request.Force,

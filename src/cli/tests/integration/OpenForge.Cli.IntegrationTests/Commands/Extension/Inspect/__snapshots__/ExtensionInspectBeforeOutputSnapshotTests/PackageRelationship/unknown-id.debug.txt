@@ -5,7 +5,7 @@ Workspace: <workspace>
          Cause: The requested package is not available from the selected source.
          Package: unknown
 Source: <extension-source>
-Dependencies
+Packages in this selection
   none
 
 Files
@@ -17,4 +17,4 @@ Registered in
 Record coverage: complete
 1 errors.
   List available Extensions.
-Next: open-forge extension list
+Next: open-forge extension list --source <extension-source>

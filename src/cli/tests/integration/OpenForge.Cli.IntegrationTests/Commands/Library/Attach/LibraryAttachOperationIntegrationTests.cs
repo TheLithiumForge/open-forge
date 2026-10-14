@@ -46,12 +46,12 @@ public sealed class LibraryAttachOperationIntegrationTests
             Assert.Equal(CliSemanticStatus.Complete, restored.Status);
             Assert.Equal("docs/README.md", Assert.Single(restored.Result.Plan.Links).Path);
             Assert.Equal(sourceBytes, File.ReadAllBytes(sourcePath));
-            Assert.Equal("../shared/team-knowledge/README.md", new FileInfo(workspace.Absolute("docs/README.md")).LinkTarget);
+            Assert.Equal("../shared/team-knowledge/README.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Absolute("docs/README.md")).LinkTarget);
         }
         finally
         {
             var linkPath = workspace.Absolute("docs/README.md");
-            if (new FileInfo(linkPath).LinkTarget == "../shared/team-knowledge/README.md")
+            if (new FileInfo(linkPath).LinkTarget == "../shared/team-knowledge/README.md".Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(linkPath);
             }
@@ -112,7 +112,7 @@ public sealed class LibraryAttachOperationIntegrationTests
         finally
         {
             if (new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget
-                == "../../shared/team-knowledge/.agents/directives/review.md")
+                == "../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(workspace.Absolute(LibraryMutationWorkspace.Leaf));
             }

@@ -19,7 +19,7 @@ public sealed class UpdateDefinitionsAndRequestContractTests
         Assert.Empty(symbols.UpdateCommand.Arguments);
         Assert.Equal(4, symbols.UpdateCommand.Options.Count);
         Assert.Equal(
-            "Accepted for compatibility; ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
+            "Accepted for compatibility. Ordinary update already replaces or restores eligible managed content. Adds no authority or safety bypass.",
             UpdateDefinitions.Force.Description);
     }
 

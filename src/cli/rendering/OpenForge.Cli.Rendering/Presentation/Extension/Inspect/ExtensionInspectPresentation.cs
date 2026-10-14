@@ -28,6 +28,7 @@ internal static class ExtensionInspectPresentation
         Shape = CliCommandShape.ChangeReport,
         SelectText = static selected => selected with
         {
+            TextCounts = selected.TextCounts.Where(count => count.Name != "dependencies").ToArray(),
             TextFindings = selected.TextFindings
                 .Where(finding => !ExtensionInspectWording.IsFileDifferenceCode(finding.Code))
                 .ToArray(),

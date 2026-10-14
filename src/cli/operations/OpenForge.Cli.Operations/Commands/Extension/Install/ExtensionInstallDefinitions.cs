@@ -16,7 +16,7 @@ internal static class ExtensionInstallDefinitions
 
     internal static readonly CliSyntaxDefinition InstallCommand = new(
         name: "install",
-        description: "Install reviewed Extension packages into the selected Framework workspace.");
+        description: "Install selected Extensions and their required dependencies.");
 
     internal static readonly CliOptionDefinition<string?> Source = new(
         name: "--source",
@@ -39,7 +39,7 @@ internal static class ExtensionInstallDefinitions
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
-        "Disable prompts; does not select packages or imply --force.",
+        "Disable prompts. Does not select packages or imply --force.",
         CliOptionArity.None,
         false);
 
@@ -304,7 +304,7 @@ internal static class ExtensionInstallDefinitions
             CliSemanticStatus.Complete => null,
             CliSemanticStatus.Invalid => new CliNextAction(
                 confirmation is not null
-                    ? "open-forge extension install --automatic"
+                    ? Shared.Result.ExtensionInstallRetryCommand.From(request ?? throw new InvalidOperationException("Confirmation requires the Extension Install request."), confirmationRequired: true)
                     : selection is not null
                     ? "open-forge extension list"
                     : "open-forge extension install --help",
@@ -317,8 +317,8 @@ internal static class ExtensionInstallDefinitions
                 $"open-forge extension update {divergence.Target}",
                 "Use Extension Update to reconcile the managed package."),
             CliSemanticStatus.Blocked when force is not null => new CliNextAction(
-                ForceCommand(request ?? throw new InvalidOperationException(
-                    "An initial-force finding requires the normalized Extension Install request.")),
+                Shared.Result.ExtensionInstallRetryCommand.From(request ?? throw new InvalidOperationException(
+                    "An initial-force finding requires the normalized Extension Install request."), forcePreview: true),
                 "Rerun the same exact Extension Install request with force authority."),
             CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete when findings.Any(finding =>
                 finding.Code is ExtensionInstallFindingCode.SettingsInvalid
@@ -355,47 +355,6 @@ internal static class ExtensionInstallDefinitions
             "Workspace removal settings currently exclude the requested install.")
         { Kind = CliNextActionKind.Sentence };
     }
-
-    private static string ForceCommand(ExtensionInstallRequest request)
-    {
-        var arguments = new List<string> { "open-forge", "extension", "install" };
-        if (request.All)
-        {
-            arguments.Add("--all");
-        }
-        else
-        {
-            arguments.AddRange(request.RequestedIds);
-        }
-
-        if (request.SourcePath is { } sourcePath)
-        {
-            arguments.Add("--source");
-            arguments.Add(QuoteArgument(sourcePath));
-        }
-
-        arguments.Add("--force");
-        if (request.Automatic)
-        {
-            arguments.Add("--automatic");
-        }
-
-        if (request.Mode == ExtensionInstallMode.DryRun)
-        {
-            arguments.Add("--dry-run");
-        }
-
-        if (request.Workspace.SelectedBy == CliWorkspaceSelectionMethod.ExplicitWorkspace)
-        {
-            arguments.Add("--workspace");
-            arguments.Add(QuoteArgument(request.Workspace.LexicalRoot));
-        }
-
-        return string.Join(' ', arguments);
-    }
-
-    private static string QuoteArgument(string value)
-        => $"'{value.Replace("'", "'\"'\"'", StringComparison.Ordinal)}'";
 
     private static ArgumentOutOfRangeException Undefined<T>(string name, T value)
         where T : struct, Enum

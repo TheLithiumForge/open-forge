@@ -145,6 +145,8 @@ public sealed class RepairFiniteMappingTests
             (RepairFindingCode.RecoveryFailed, "repair.recovery-failed", CliSemanticStatus.Failed),
             (RepairFindingCode.OperationFailed, "repair.operation-failed", CliSemanticStatus.Failed),
             (RepairFindingCode.Interrupted, "repair.interrupted", CliSemanticStatus.Interrupted),
+            (RepairFindingCode.RenameProven, "repair.rename-proven", CliSemanticStatus.Complete),
+            (RepairFindingCode.MetadataSkipped, "index.metadata-skipped", CliSemanticStatus.Incomplete),
         };
 
         Assert.Equal(Enum.GetValues<RepairFindingCode>(), expected.Select(value => value.Code));

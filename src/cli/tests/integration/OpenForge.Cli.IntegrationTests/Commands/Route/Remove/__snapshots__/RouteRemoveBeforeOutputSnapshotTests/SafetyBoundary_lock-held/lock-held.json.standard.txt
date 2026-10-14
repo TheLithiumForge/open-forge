@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route remove",
+          "command": "open-forge route remove 'guidance/old guide' --automatic --workspace <workspace>",
           "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan."
         }
       ]
@@ -114,7 +114,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge route remove",
+    "command": "open-forge route remove 'guidance/old guide' --automatic --workspace <workspace>",
     "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Remove from a fresh plan."
   }
 }

@@ -246,7 +246,7 @@ internal static class IndexMutationMapper
                 || check.Expectation != change.Expectation
                 || check.Actual is not { } actual
                 || actual.Expectation != change.Expectation
-                || !PhysicalIdentityTracker.PathComparer.Equals(
+                || change.Expectation.Kind != FileExpectationKind.Missing && !PhysicalIdentityTracker.PathComparer.Equals(
                     check.PhysicalPath,
                     change.Expectation.PhysicalPath))
             {
@@ -437,7 +437,7 @@ internal static class IndexMutationMapper
             .Where(finding => finding.Code is IndexFindingCode.MetadataOptional or IndexFindingCode.MetadataSkipped)
             .ToArray();
         var freshFindings = fresh.Findings
-            .Where(finding => finding.Code is IndexFindingCode.MetadataOptional or IndexFindingCode.MetadataUnsafe)
+            .Where(finding => finding.Code is IndexFindingCode.MetadataOptional or IndexFindingCode.MetadataUnsafe or IndexFindingCode.MetadataSkipped)
             .ToArray();
         if (original.Findings.Count != originalFindings.Length
             || fresh.Findings.Count != freshFindings.Length
@@ -483,7 +483,7 @@ internal static class IndexMutationMapper
         IndexFindingCode fresh)
         => original == IndexFindingCode.MetadataOptional
             ? fresh == IndexFindingCode.MetadataOptional
-            : fresh == IndexFindingCode.MetadataUnsafe;
+            : fresh is IndexFindingCode.MetadataUnsafe or IndexFindingCode.MetadataSkipped;
 
     private static bool SameFreshMetadataIdentity(
         IndexFinding expected,

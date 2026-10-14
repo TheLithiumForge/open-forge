@@ -87,7 +87,8 @@ internal sealed class ContextRequestBinder(ContextSymbols symbols)
             findings.Add(InvalidFinding(
                 ContextFindingCode.InvalidWorkingPath,
                 ContextDefinitions.For.Name,
-                string.Empty));
+                string.Empty) with
+            { MissingOptionValue = true });
         }
 
         foreach (var source in input.Sources)

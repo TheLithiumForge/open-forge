@@ -42,6 +42,10 @@ a persistent shared grant through the settings writer. It writes nothing under
 names `--allow-path` and the authored settings file as the available remedy.
 
 An eligible interactive apply can choose allow always, allow once, or cancel.
+Key mode keeps the numbered order `1. Allow always`, `2. Allow once`, `3. Cancel`
+and starts focused on `Allow once`. Enter approves only the current operation.
+Choose `Allow always` deliberately to save a grant. Line mode accepts `always`,
+`once`, or `cancel`, and an empty line cancels.
 Always publishes the displayed paths to settings. Once grants only the current
 operation and writes no settings. Cancel authorizes no content effects. Neither
 choice adds ownership or bypasses a destination, source or physical boundary.

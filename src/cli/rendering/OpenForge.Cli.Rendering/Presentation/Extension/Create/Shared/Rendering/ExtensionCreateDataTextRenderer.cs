@@ -40,7 +40,7 @@ internal static class ExtensionCreateDataTextRenderer
             var rows = rowsWithWording
                 .Select(row => (IReadOnlyList<string>)[row.Path, row.Wording])
                 .ToArray();
-            spans.Add(new CliTextSpan(CliTable.Render(rows, (column, cell) =>
+            spans.Add(new CliTextSpan(CliTable.Render(style, rows, (column, cell) =>
                 column == 0
                     ? style.Subject(cell)
                     : cell)));

@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
@@ -24,7 +25,7 @@ internal static class CliTextRenderer
         var builder = new StringBuilder();
         if (selected.ShowHeadline)
         {
-            builder.Append(style.Status(CliText.Escape(report.Headline.Sentence), report.Status)).Append('\n');
+            builder.Append(style.Status(CliText.Escape(selected.TextHeadline.Sentence), report.Status)).Append('\n');
         }
 
         if (selected.ShowWorkspace && report.Workspace is { } workspace)
@@ -55,7 +56,8 @@ internal static class CliTextRenderer
                 _ => throw new ArgumentOutOfRangeException(nameof(selected)),
             };
             var reason = effect.Reason is { } value ? $" ({CliText.Escape(value)})" : string.Empty;
-            builder.Append($"  {style.Subject(CliText.Escape(effect.Path))}  {action}{reason}\n");
+            builder.Append(CliTable.Render(style, [[effect.Path, action + reason]],
+                (column, cell) => column == 0 ? style.Subject(cell) : cell));
             if (selection.Detail >= CliDetail.Full)
             {
                 if (effect.Before is { } before)
@@ -75,7 +77,9 @@ internal static class CliTextRenderer
         builder.Clear();
         foreach (var limitation in selected.TextLimitations)
         {
-            builder.Append($"  {CliText.Escape(limitation.What)}: {CliText.Escape(limitation.Why)}\n");
+            var text = limitation.Why.Length == 0 ? limitation.What : $"{limitation.What}: {limitation.Why}";
+            foreach (var line in CliSelectionText.Wrap(text, style.Width - 2))
+                builder.Append($"  {line}\n");
         }
 
         var counts = selected.TextCounts.Where(count => count.Value is > 0)
@@ -85,9 +89,9 @@ internal static class CliTextRenderer
             builder.Append(style.Dim(string.Join(", ", counts) + ".")).Append('\n');
         }
 
-        if (selected.ShowNext && report.Next is { } next)
+        if (selected.ShowNext && (selected.TextNext ?? report.Next) is { } next)
         {
-            if (selection.Detail >= CliDetail.Standard)
+            if (selection.Detail >= CliDetail.Standard && selected.ShowNextReason)
             {
                 builder.Append($"  {style.Dim(CliText.Escape(next.Reason))}\n");
             }
@@ -113,7 +117,7 @@ internal static class CliTextRenderer
 
         var code = selection.Detail >= CliDetail.Full ? $" [{CliText.Escape(finding.Code)}]" : string.Empty;
         builder.Append($"  {style.Severity(finding.Severity.ToString(), finding.Severity)}  {style.Subject(CliText.Escape(subject))}  {CliText.Escape(finding.Title)}{code}\n");
-        builder.Append($"         {CliText.Escape(finding.Message)}\n");
+        if (finding.Message.Length > 0) builder.Append($"         {CliText.Escape(finding.Message)}\n");
         if (selection.Detail >= CliDetail.Full && finding.Resolution is { } resolution)
         {
             var command = finding.Actions.FirstOrDefault(action => action.Kind == CliNextActionKind.Command)?.Command;
@@ -126,7 +130,7 @@ internal static class CliTextRenderer
         foreach (var action in finding.Actions)
         {
             builder.Append($"         {CliText.Escape(action.Command)}\n");
-            if (selection.Detail >= CliDetail.Standard)
+            if (selection.Detail >= CliDetail.Standard && !string.Equals(action.Command, action.Reason, StringComparison.Ordinal))
             {
                 builder.Append($"         {style.Dim(CliText.Escape(action.Reason))}\n");
             }
@@ -135,6 +139,13 @@ internal static class CliTextRenderer
         foreach (var candidate in finding.Candidates)
         {
             builder.Append($"         {CliText.Escape(candidate.Subject.Path ?? candidate.Subject.Id ?? string.Empty)}: {CliText.Escape(string.Join("; ", candidate.Reasons))}\n");
+        }
+
+        foreach (var choice in finding.TextChoices)
+        {
+            foreach (var line in CliSelectionText.Wrap(choice.Label, style.Width - 9))
+                builder.Append($"         {CliText.Escape(line)}\n");
+            builder.Append($"           {CliText.Escape(choice.Command)}\n");
         }
 
         foreach (var evidence in finding.Evidence)

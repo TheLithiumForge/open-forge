@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route update memory/project-alpha/overview",
+          "command": "open-forge route update --help",
           "reason": "Update the existing route explicitly, then rerun Route Create if needed."
         }
       ]
@@ -56,7 +56,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route update memory/project-alpha/overview",
+    "command": "open-forge route update --help",
     "reason": "Update the existing route explicitly, then rerun Route Create if needed."
   }
 }

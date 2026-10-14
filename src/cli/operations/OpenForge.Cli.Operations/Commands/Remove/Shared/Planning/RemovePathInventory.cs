@@ -176,7 +176,7 @@ internal sealed class RemovePathInventory
         var matches = registrations.Libraries
             .SelectMany(library => LibraryPathIdentity.Mappings(library)
                 .Where(mapping => string.Equals(mapping.DestinationPath.Value, relativePath, StringComparison.Ordinal)
-                    && mapping.ExpectedRelativeLink.Value == linkIdentity.RawRelativeTarget)
+                    && Framework.Filesystem.PhysicalPaths.Shared.Links.RelativeFileLinkTarget.SameMapping(mapping.ExpectedRelativeLink.Value, linkIdentity.RawRelativeTarget))
                 .Select(mapping => (Library: library, Mapping: mapping)))
             .ToArray();
         if (matches.Length != 1)

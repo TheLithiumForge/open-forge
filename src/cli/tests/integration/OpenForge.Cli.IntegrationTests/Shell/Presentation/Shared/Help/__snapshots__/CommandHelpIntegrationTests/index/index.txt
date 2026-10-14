@@ -1,0 +1,46 @@
+  Complete missing metadata and navigation after edits to routed Markdown.
+
+Usage:
+  open-forge index [<source-reference>...] [options]
+
+Examples:
+  open-forge index --dry-run
+  open-forge index
+  open-forge index memory --dry-run
+
+Behavior:
+  With no source, rebuild the Loader and every reachable entrypoint.
+  --dry-run shows the complete checked plan and writes nothing.
+  Fill absent metadata and create missing navigation files below existing routed
+  roots. Keep supplied fields and authored content. This command asks no
+  questions.
+  Repeating it makes no further changes. Use Git or a backup to restore saved
+  content.
+
+Arguments:
+  <source-reference>  Select zero or more source IDs or exact .agents/... Paths.
+
+Options:
+  --dry-run  Preview metadata, navigation files, and Entries changes without
+             writing files.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Scope: An entrypoint selects its subtree and direct exposing parent. A routed
+  leaf selects its direct exposing parent and any missing chain. Index inserts
+  absent metadata, completes navigation files, and updates unique ## Entries
+  sections, removing retired generated guard comments. It keeps supplied fields
+  and authored content.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  route list     Browse routed sources.
+  doctor         Diagnose workspace problems.
+  repair --help  Correct verified link and Library problems.

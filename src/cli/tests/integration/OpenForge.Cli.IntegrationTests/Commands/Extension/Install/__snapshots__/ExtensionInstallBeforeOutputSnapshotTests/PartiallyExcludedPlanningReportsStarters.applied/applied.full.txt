@@ -1,0 +1,88 @@
+Installed the planning Extension and 1 package it requires: workflows.
+Workspace: <workspace>
+  Info  .agents/templates/planning/_planning.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/planning/_planning.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/planning/analysis.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/planning/analysis.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/planning/backlog.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/planning/backlog.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/planning/checkpoint.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/planning/checkpoint.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/planning/decision.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/planning/decision.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/planning/idea.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/planning/idea.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/planning/plan.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/planning/plan.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/planning/task.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/planning/task.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/workflows/_workflows.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/workflows/_workflows.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/workflows/workflow.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/workflows/workflow.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  .agents/skills/use-workflow/SKILL.md
+    created (workflows)
+  .agents/skills/use-workflow/references/_references.md
+    created (workflows)
+  .agents/memory/crystallized/decisions/_decisions.md
+    created (planning)
+  .agents/memory/emerging/analysis/_analysis.md
+    created (planning)
+  .agents/memory/emerging/ideas/_ideas.md
+    created (planning)
+  .agents/memory/working/checkpoints/_checkpoints.md
+    created (planning)
+  .agents/patterns/work-records.md
+    created (planning)
+  .agents/skills/use-workflow/references/planning/_planning.md
+    created (planning)
+  .agents/skills/use-workflow/references/planning/planning.md
+    created (planning)
+  .agents/memory/crystallized/_crystallized.md                  Entries updated
+  .agents/memory/emerging/_emerging.md                          Entries updated
+  .agents/patterns/_patterns.md                                 Entries updated
+  .agents/skills/_skills.md                                     Entries updated
+  Planning's starter files were skipped because Templates is left out.
+  Workflow Support's starter files were skipped because Templates is left out.
+  Source: embedded catalogue (embedded)
+  Dependency order: workflows, planning
+  .agents/open-forge.lock.json  ownership record updated
+  Entries sections unchanged: .agents/directives/_directives.md,
+  .agents/loader.md, .agents/memory/_memory.md,
+  .agents/memory/crystallized/decisions/_decisions.md,
+  .agents/memory/emerging/analysis/_analysis.md,
+  .agents/memory/emerging/ideas/_ideas.md, .agents/memory/working/_working.md,
+  .agents/memory/working/checkpoints/_checkpoints.md,
+  .agents/skills/use-workflow/references/planning/_planning.md
+  Permission evaluation: decision not-required; required 0; missing 0; saved no
+  Framework fingerprint:
+  <sha256>
+  Verification: targets verified; Entries verified; Extension record verified;
+  Framework record verified
+  Recovery: removed.
+To add its files, restore Templates and update the package:
+  open-forge route init templates --framework --dry-run
+  open-forge extension update planning --dry-run
+To add its files, restore Templates and update the package:
+  open-forge route init templates --framework --dry-run
+  open-forge extension update workflows --dry-run

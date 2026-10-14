@@ -4,4 +4,4 @@ Workspace: <workspace>
   .agents/aaa.md           deleted
   .agents/toolkit.md       not started
   The deleted files are kept in a recovery bundle at <recovery-bundle>.
-Next: open-forge cleanup  (after reviewing the bundle)
+Next: open-forge cleanup --workspace <workspace>

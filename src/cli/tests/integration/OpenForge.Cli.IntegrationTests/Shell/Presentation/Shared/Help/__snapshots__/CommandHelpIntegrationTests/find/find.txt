@@ -1,0 +1,57 @@
+  Find Markdown sources by their tags, headings, or file conditions.
+
+Usage:
+  open-forge find [options]
+
+Examples:
+  open-forge find
+  open-forge find --tag Directive
+  open-forge find --for src/app.cs
+
+Behavior:
+  With no filters, list the available Markdown sources.
+  Tags and headings select matching sources. Repeat --for for known working
+  files.
+  All requested conditions must match by default. --require any accepts any
+  requested condition.
+  This command changes no files and asks no questions.
+
+Options:
+  --include <source-reference>
+      Include one source in the search. Repeat to include more.
+  --exclude <source-reference>
+      Exclude one source from the search. Repeat to exclude more.
+  --for <path>                Limit results to sources that apply to one
+                              supplied workspace path. Repeat for more paths.
+  --tag <tag>                 Match one authored tag value.
+  --heading <heading>         Match one complete Markdown heading.
+  --require <all|any>         Require all or any of the supplied tag and heading
+                              matches.
+  --within <part[,part...]>   Choose where to match tags and headings.
+  --content <part[,part...]>  Choose which parts of matched sources to show.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Filters: Each --include or --exclude takes one exact source ID or .agents
+  Markdown path. Includes combine, exclusions take priority, and unresolved
+  references prevent the search. Repeat tags or headings for more values. --for
+  uses workspace-relative paths and keeps sources without file conditions. This
+  filter combines with tag and heading predicates independently of --require.
+  Content and scope: --within selects document, frontmatter, body, or
+  section:<name>. Combine parts with commas in one value. --content returns
+  metadata, frontmatter, headings, body, or section:<name>. Find is
+  deterministic and creates no index, cache, receipt, network request, mutation
+  authority, or workspace write.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  context --help     Read agent instructions and context.
+  references --help  Inspect authored links.
+  route list         Browse routed sources.

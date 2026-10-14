@@ -1,0 +1,32 @@
+  Manage optional packages of agent rules and context.
+
+Usage:
+  open-forge extension <command> [options]
+
+Commands:
+  list                 List installed Extensions and Extensions available from a
+                       bundled or local source.
+  inspect <stable-id>  Compare one Extension's available content with its
+                       installed ownership and files.
+  create <stable-id>   Create a local Extension package scaffold in an existing
+                       catalogue folder.
+  install <stable-id>  Install selected Extensions and their required
+                       dependencies.
+  update <stable-id>   Update selected managed Extensions from one reviewed
+                       source.
+  remove <stable-id>   Remove selected Extension ownership and eligible files
+                       while keeping shared paths.
+
+Options:
+  --workspace <path>          Select the workspace explicitly.
+  --format <format>           Output format: text or json. Default: text.
+  --detail <detail>           Result detail in text and JSON: minimal, standard,
+                              full or debug. Default: minimal.
+  --detail-filter <severity>  List error, warning, info or all severities.
+                              Repeat to combine.
+  --help                      Show help and exit.
+  --version                   Show the executable version and exit.
+
+Command help:
+  Use open-forge extension <command> --help for selection, write policy, and
+  examples.

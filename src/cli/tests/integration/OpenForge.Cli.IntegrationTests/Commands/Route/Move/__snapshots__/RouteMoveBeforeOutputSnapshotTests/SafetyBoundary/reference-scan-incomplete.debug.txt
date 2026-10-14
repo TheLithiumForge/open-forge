@@ -7,4 +7,4 @@ Workspace: <workspace>
   Effects:
   12 files scanned; 0 links found.
   Inspect the unavailable inventory, reference, projection, or recovery facts before relying on this Route Move result.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

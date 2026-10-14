@@ -38,7 +38,11 @@ internal static class ExtensionRemovePhrases
 
     // @OpenForgeText extension.remove.phrase.kept-still-owned-by
     internal static string FormatKeptStillOwnedBy(string joinText)
-        => $"kept; still owned by {joinText}";
+        => $"kept, still owned by {joinText}";
+
+    // @OpenForgeText extension.remove.phrase.dependency-removal-preview
+    internal static string DependencyRemovalPreview(string dependency, string id)
+        => $"{dependency} would remain installed after removing {id}.";
 
     // @OpenForgeText extension.remove.phrase.remains-installed-and-is-no-longer-needed-by
     internal static string FormatRemainsInstalledAndIsNoLongerNeededBy(string dependencyText, string idText)

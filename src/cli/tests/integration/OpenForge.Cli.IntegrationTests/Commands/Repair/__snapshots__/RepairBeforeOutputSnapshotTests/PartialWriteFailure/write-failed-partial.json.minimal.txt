@@ -26,6 +26,23 @@
       },
       "category": null,
       "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "repair.manual-finding-remaining",
+      "title": "Broken link",
+      "message": "This link still needs repair.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/source.md",
+        "id": null,
+        "location": {
+          "line": 9,
+          "column": 8
+        }
+      },
+      "category": null,
+      "actions": []
     }
   ],
   "effects": [
@@ -44,6 +61,22 @@
       "outcome": "planned",
       "reason": "./guide.md -> guide.md",
       "owner": null
+    },
+    {
+      "path": ".agents/docs/index.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
     }
   ],
   "counts": {
@@ -52,7 +85,12 @@
     "problemsNeedingChoice": 0,
     "problemsNeedingHand": 1,
     "librarySteps": 0,
-    "errors": 1
+    "errors": 1,
+    "warnings": 1,
+    "entriesUpdated": 1,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0
   },
   "limitations": [],
   "data": {
@@ -88,7 +126,22 @@
         "kind": "manual",
         "candidates": 0
       }
-    ]
+    ],
+    "renames": [],
+    "navigation": [
+      {
+        "path": ".agents/docs/index.md",
+        "before": 0,
+        "after": 4
+      },
+      {
+        "path": ".agents/loader.md",
+        "before": 1,
+        "after": 1
+      }
+    ],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": "<recovery-bundle>",
@@ -96,7 +149,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge repair --detail debug",
+    "command": "open-forge repair --detail debug --workspace <workspace>",
     "reason": "Inspect the bounded failure details and rerun Repair from a fresh plan."
   }
 }

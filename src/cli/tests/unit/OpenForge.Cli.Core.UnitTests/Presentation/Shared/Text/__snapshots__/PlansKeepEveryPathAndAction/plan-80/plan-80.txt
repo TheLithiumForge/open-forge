@@ -1,0 +1,6 @@
+  .agents/skills/use-workflow/references/planning/_planning.md
+    would record the removal in workspace settings
+  .agents/a folder/another folder/complete source.md
+    metadata would move under open-forge:
+  .gitignore
+    Open Forge Git-ignore rules would be updated

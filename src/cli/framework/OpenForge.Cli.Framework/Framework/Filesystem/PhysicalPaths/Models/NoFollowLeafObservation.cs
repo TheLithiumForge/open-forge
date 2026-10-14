@@ -60,11 +60,11 @@ internal sealed record RelativeFileLinkIdentity
 
         ArgumentException.ThrowIfNullOrWhiteSpace(rawRelativeTarget);
         if (Path.IsPathFullyQualified(rawRelativeTarget)
-            || rawRelativeTarget.Contains('\\')
-            || rawRelativeTarget.StartsWith('/'))
+            || (!OperatingSystem.IsWindows() && rawRelativeTarget.Contains('\\'))
+            || Path.IsPathRooted(rawRelativeTarget))
         {
             throw new ArgumentException(
-                "A relative file-link identity requires the exact slash-separated relative target.",
+                "A relative file-link identity requires a relative target with portable or platform separators.",
                 nameof(rawRelativeTarget));
         }
 

@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Commands.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Remove.Models.Result;
 using OpenForge.Cli.Core.Commands.Remove.Models.Selection;
 using OpenForge.Cli.Core.Commands.Remove.Shared.Selection;
+using OpenForge.Cli.Core.Commands.Remove.Shared.Planning;
 using OpenForge.Cli.Core.Commands.Route.Remove;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Framework.Libraries.Models.Identity;
@@ -25,7 +26,10 @@ using OpenForge.Cli.Core.Presentation.Shared.Rendering.Models;
 using OpenForge.Cli.Core.Shell.Composition;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Shared.Replay;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
@@ -59,7 +63,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
         ArgumentNullException.ThrowIfNull(libraryOperation);
         ArgumentNullException.ThrowIfNull(help);
 
-        Command = new Command("remove", "Remove one exact workspace path, route, Extension, or Library.");
+        Command = new Command("remove", "Remove one exact path, route, Extension, or Library and remember supported exclusions.");
         _target = new Argument<string?>("target")
         {
             Description = "One exact path, route reference, Extension ID, or Library ID.",
@@ -151,6 +155,9 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
                 CliSemanticStatus.Blocked,
                 dispatch.Cause), invocation.Presentation, writers).ConfigureAwait(false);
         }
+        var retryRequest = new RemovePathRequest(workspace, dispatch.Target, dryRun ? RemoveMode.DryRun : RemoveMode.Apply,
+            automatic, allowInteractiveConfirmation: invocation.Presentation.Format == CliFormat.Text && !automatic, allowPaths: allowPaths)
+        { RetryOptions = CliRetryOptions.From(invocation) };
         if (dispatch.IsEntrypointFile)
         {
             var directory = Path.GetDirectoryName(dispatch.Target)?.Replace('\\', '/') ?? dispatch.Target;
@@ -161,7 +168,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
                 RemoveFindingCode.EntryPointRequiresRoute,
                 CliSemanticStatus.Blocked,
                 "This file is a routed category entrypoint. Select its category directory or use --kind route.",
-                $"open-forge remove \"{directory}\" --kind route",
+                RemoveRetryCommand.From(retryRequest, directory, "route"),
                 "Remove the category through its routed entrypoint so companions and navigation are handled together."), invocation.Presentation, writers).ConfigureAwait(false);
         }
         if (allowPaths.Length > 0 && dispatch.Kind is not (RemoveKind.Extension or RemoveKind.Library))
@@ -175,13 +182,11 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
                 "--allow-path is available only when removing an Extension or Library."), invocation.Presentation, writers).ConfigureAwait(false);
         }
 
-        var mode = dryRun ? RemoveMode.DryRun : RemoveMode.Apply;
         switch (dispatch.Kind)
         {
             case RemoveKind.Path:
                 return await _pathPipeline.ExecuteAsync(
-                    new RemovePathRequest(workspace, dispatch.Target, mode, automatic,
-                        allowInteractiveConfirmation: invocation.Presentation.Format == CliFormat.Text && !automatic),
+                    retryRequest,
                     invocation.Presentation,
                     writers,
                     cancellationToken).ConfigureAwait(false);
@@ -196,7 +201,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
                         allowInteractiveConfirmation: invocation.Presentation.Format == CliFormat.Text && !automatic),
                     invocation.Presentation,
                     writers,
-                    cancellationToken).ConfigureAwait(false);
+                    cancellationToken, Replay("route remove")).ConfigureAwait(false);
             case RemoveKind.Extension:
                 return await _extensionPipeline.ExecuteAsync(
                     new ExtensionRemoveRequest(
@@ -208,7 +213,7 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
                         allowPath: allowPaths),
                     invocation.Presentation,
                     writers,
-                    cancellationToken).ConfigureAwait(false);
+                    cancellationToken, Replay("extension remove")).ConfigureAwait(false);
             case RemoveKind.Library:
                 return await _libraryPipeline.ExecuteAsync(
                     new LibraryDetachRequest
@@ -219,12 +224,27 @@ internal sealed class CliRootRemoveCommandBinding : ICliCommandBinding
                         Automatic = automatic,
                         Mode = dryRun ? LibraryMode.DryRun : LibraryMode.Apply,
                         Allow = allowPaths,
+                        RetryOptions = CliRetryOptions.From(invocation),
                     },
                     invocation.Presentation,
                     writers,
-                    cancellationToken).ConfigureAwait(false);
+                    cancellationToken, Replay("library detach")).ConfigureAwait(false);
             default:
                 throw new ArgumentOutOfRangeException(nameof(dispatch), dispatch.Kind, "The root Remove kind is not defined.");
+        }
+
+        CliRequestReplay Replay(string delegatedCommand)
+        {
+            var command = $"open-forge {delegatedCommand}";
+            var kind = dispatch.Kind.ToString().ToLowerInvariant();
+            return new(command, $"{command} {CliCommandText.Quote(dispatch.Target)}",
+                RemoveRetryCommand.From(retryRequest, kind: kind),
+                RemoveRetryCommand.From(retryRequest, kind: kind, diagnostics: true),
+                RemoveRetryCommand.From(retryRequest, kind: kind, confirmationRequired: true))
+            {
+                WorkspaceSpecified = workspace.SelectedBy == OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspaceSelectionMethod.ExplicitWorkspace,
+                ApplyCommand = CliRequestReplayReader.Read(parse, Command).ApplyCommand,
+            };
         }
     }
 

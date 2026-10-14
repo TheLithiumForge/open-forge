@@ -9,7 +9,7 @@ namespace OpenForge.Cli.Core.Commands.Repair.Models.Interaction;
 
 internal sealed record RepairInteraction(
     CliPrompt<RepairReferencePromptQuestion, RepairReferencePromptAnswer> SelectReference,
-    CliPrompt<RepairLibraryPromptQuestion, RepairLibraryPromptAnswer> SelectLibrary,
+    CliPrompt<RepairLibrarySelectionQuestion, RepairLibraryPromptAnswer> SelectLibrary,
     CliPlanConfirmation<RepairResult, RepairConfirmationQuestion> Confirm);
 
 internal sealed record RepairReferencePromptQuestion
@@ -88,7 +88,10 @@ internal enum RepairLibraryPromptEntryKind
     RelativeFileLinkDelete,
 }
 
-internal sealed record RepairLibraryPromptAnswer(bool Selected);
+internal sealed record RepairLibrarySelectionQuestion(
+    System.Collections.Immutable.ImmutableArray<RepairLibraryPromptQuestion> Steps);
+
+internal sealed record RepairLibraryPromptAnswer(int? SelectedIndex);
 
 internal enum RepairConfirmationKind
 {

@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge extension list --installed",
+          "command": "open-forge extension list --installed --source <extension-source> --workspace <workspace>",
           "reason": "List the installed Extensions, then rerun the request with an explicit selection."
         }
       ]
@@ -69,7 +69,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge extension list --installed",
+    "command": "open-forge extension list --installed --source <extension-source> --workspace <workspace>",
     "reason": "List the installed Extensions, then rerun the request with an explicit selection."
   }
 }

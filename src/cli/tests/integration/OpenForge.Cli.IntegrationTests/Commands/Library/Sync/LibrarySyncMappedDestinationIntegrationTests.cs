@@ -53,7 +53,7 @@ public sealed class LibrarySyncMappedDestinationIntegrationTests
 
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Null(new FileInfo(workspace.Absolute("docs/old.md")).LinkTarget);
-            Assert.Equal("../../shared/team-knowledge/future/new.md", new FileInfo(workspace.Absolute("docs/future/new.md")).LinkTarget);
+            Assert.Equal("../../shared/team-knowledge/future/new.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Absolute("docs/future/new.md")).LinkTarget);
             Assert.Null(new DirectoryInfo(workspace.Absolute("docs/future")).LinkTarget);
             Assert.Equal(LibraryMutationWorkspace.SourceBytes, File.ReadAllText(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/future/new.md")));
             Assert.Equal(permissionBefore, File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json")));
@@ -62,7 +62,7 @@ public sealed class LibrarySyncMappedDestinationIntegrationTests
         }
         finally
         {
-            if (new FileInfo(workspace.Absolute("docs/future/new.md")).LinkTarget == "../../shared/team-knowledge/future/new.md")
+            if (new FileInfo(workspace.Absolute("docs/future/new.md")).LinkTarget == "../../shared/team-knowledge/future/new.md".Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(workspace.Absolute("docs/future/new.md"));
             }

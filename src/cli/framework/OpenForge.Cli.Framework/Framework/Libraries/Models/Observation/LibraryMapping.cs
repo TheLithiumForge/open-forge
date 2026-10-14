@@ -98,6 +98,8 @@ internal sealed record LibraryMappingObservation
 
     internal string? Cause { get; }
 
+    internal bool UnreadableOnWindows { get; init; }
+
     internal static LibraryMappingObservation Create(
         LibraryMapping mapping,
         NoFollowLeafObservation leaf,

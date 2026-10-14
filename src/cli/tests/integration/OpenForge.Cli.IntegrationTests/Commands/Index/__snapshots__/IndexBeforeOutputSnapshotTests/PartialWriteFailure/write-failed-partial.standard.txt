@@ -5,4 +5,4 @@ Workspace: <workspace>
   .agents/alpha/_alpha.md  unknown -> 1 entries
   .agents/beta/_beta.md    not started
   Inspect the reported problem before rerunning Index.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

@@ -1,0 +1,57 @@
+  Install selected Extensions and their required dependencies.
+
+Usage:
+  open-forge extension install [<stable-id>...] [options]
+
+Examples:
+  open-forge extension install planning --dry-run
+  open-forge extension install planning
+  open-forge extension install planning --automatic
+
+Behavior:
+  Use the bundled catalogue unless --source names a local source. Required
+  packages are installed first.
+  Interactive text can offer a package picker and asks for confirmation of a
+  writing plan.
+  --dry-run shows the checked plan and writes nothing.
+  Redirected or JSON requests that would write need --automatic and a complete
+  selection.
+  --automatic adds no force. --force applies only during first installation.
+  Interrupted writes report recovery data.
+
+Arguments:
+  <stable-id>  Exact stable IDs selected from the reviewed source.
+
+Options:
+  --source <package-or-catalogue-path>
+      Read one exact local package or catalogue source.
+  --all                Select every package in the reviewed source.
+  --force              Replace eligible existing content during initial
+                       installation.
+  --automatic          Disable prompts. Does not select packages or imply
+                       --force.
+  --dry-run            Preview the complete installation without writing files.
+  --allow-path <path>  Permit writing to this workspace-relative path, recording
+                       it in .agents/open-forge.json.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Selection and layout: Select exact IDs, --all, or the sole package in a
+  one-package source. Automatic and non-interactive requests never choose
+  packages. A package has extension.json beside content/, with files such as
+  content/.agents/guidance/example.md. The manifest accepts exactly id, name,
+  description, version, and dependencies. A catalogue contains such packages.
+  Managed changes: Use extension update to change already managed content.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  extension list            List installed and available packages.
+  extension inspect --help  Compare a package with its installation.
+  extension update --help   Update managed Extension files.

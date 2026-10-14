@@ -34,6 +34,18 @@ records its implementation and execution evidence. The CLI is available as a pub
 [CLI Development](../../../../../working/cli-development/_cli-development.md) records current
 implementation and release work.
 
+## Help
+
+The purpose sentence is: Delete recognized completed recovery bundles and drafts for the selected workspace.
+
+The public Usage line is:
+
+```text
+open-forge cleanup [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Operation Boundary
 
 `cleanup` removes every verified recovery final or ordinary exact-name draft

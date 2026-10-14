@@ -3,11 +3,11 @@ Workspace: <workspace>
   Error  unknown  Extension package is unavailable
          No Extension has the ID unknown in <extension-source>.
 Source: <extension-source>
-Dependencies
+Packages in this selection
   none
 
 Files
   none
 1 errors.
   List available Extensions.
-Next: open-forge extension list
+Next: open-forge extension list --source <extension-source>

@@ -1,0 +1,6 @@
+Cannot list references: Invalid --direction value: other. Use in, out, or both.
+Workspace: <workspace>
+  Error  other  Direction is invalid
+0 in, 0 out
+  see the accepted options
+Next: open-forge references --help

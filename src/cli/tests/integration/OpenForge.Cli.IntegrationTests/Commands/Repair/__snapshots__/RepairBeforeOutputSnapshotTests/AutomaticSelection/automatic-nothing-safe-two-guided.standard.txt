@@ -1,17 +1,11 @@
 Nothing could be repaired automatically. 2 problems need a choice.
 Workspace: <workspace>
   Warning  .agents/docs/source.md:9:10  Broken link
-         missing.md: Broken link; 4 possible targets
+         1 possible target.
+         To use replacement.md (same title):
+           open-forge repair --relink '.agents/docs/source.md@9:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>
   Warning  .agents/docs/source.md:10:18  Broken link
-         missing.md: Broken link; 4 possible targets
-  .agents/docs/source.md:9:10   possible target: .agents/docs/guide.md
-  .agents/docs/source.md:9:10   possible target: .agents/docs/index.md
-  .agents/docs/source.md:9:10   possible target: .agents/docs/replacement.md
-  .agents/docs/source.md:9:10   possible target: .agents/docs/source.md
-  .agents/docs/source.md:10:18  possible target: .agents/docs/guide.md
-  .agents/docs/source.md:10:18  possible target: .agents/docs/index.md
-  .agents/docs/source.md:10:18  possible target: .agents/docs/replacement.md
-  .agents/docs/source.md:10:18  possible target: .agents/docs/source.md
-2 problems remaining, 2 problems needing a choice, 2 warnings.
-  Review remaining broken links in Repair, then select a possible target in the interactive prompt or provide an explicit --relink target.
-Next: open-forge repair
+         1 possible target.
+         To use replacement.md (same title):
+           open-forge repair --relink '.agents/docs/source.md@10:18' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>
+Next: Choose a target above, then run its command.

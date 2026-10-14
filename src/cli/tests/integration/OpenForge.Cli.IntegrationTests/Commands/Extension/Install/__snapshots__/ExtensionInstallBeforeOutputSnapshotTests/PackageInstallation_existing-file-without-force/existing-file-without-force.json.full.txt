@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge extension install toolkit --force --dry-run",
+          "command": "open-forge extension install toolkit --source <extension-source> --workspace <workspace> --automatic --force --dry-run",
           "reason": "Preview replacing the existing file before rerunning the installation."
         }
       ],
@@ -118,7 +118,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge extension install toolkit --force --dry-run",
+    "command": "open-forge extension install toolkit --source <extension-source> --workspace <workspace> --automatic --force --dry-run",
     "reason": "Preview replacing the existing file before rerunning the installation."
   }
 }

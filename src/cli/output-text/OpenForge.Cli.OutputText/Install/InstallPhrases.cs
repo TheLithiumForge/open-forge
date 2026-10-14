@@ -6,19 +6,19 @@ internal static class InstallPhrases
 {
     // @OpenForgeText install.phrase.installed-the-open-forge-framework-into-replacing-existing
     internal static string FormatInstalledTheOpenForgeFrameworkIntoReplacingExisting(string workspaceText, string replacementsText, string cliTextPluralText)
-        => $"Installed the Open Forge Framework into {workspaceText}, replacing {replacementsText} existing {cliTextPluralText}.";
+        => $"Installed the Open Forge Framework, replacing {replacementsText} existing {cliTextPluralText}.";
 
     // @OpenForgeText install.phrase.installed-the-open-forge-framework-into
     internal static string FormatInstalledTheOpenForgeFrameworkInto(string workspaceText)
-        => $"Installed the Open Forge Framework into {workspaceText}.";
+        => "Installed the Open Forge Framework.";
 
     // @OpenForgeText install.phrase.would-install-the-open-forge-framework-into-replacing-existing
     internal static string FormatWouldInstallTheOpenForgeFrameworkIntoReplacingExisting(string workspaceText, string replacementsText, string cliTextPluralText)
-        => $"Would install the Open Forge Framework into {workspaceText}, replacing {replacementsText} existing {cliTextPluralText}.";
+        => $"Would install the Open Forge Framework, replacing {replacementsText} existing {cliTextPluralText}.";
 
     // @OpenForgeText install.phrase.would-install-the-open-forge-framework-into
     internal static string FormatWouldInstallTheOpenForgeFrameworkInto(string workspaceText)
-        => $"Would install the Open Forge Framework into {workspaceText}.";
+        => "Would install the Open Forge Framework.";
 
     // @OpenForgeText install.phrase.install-could-not-start-nothing-was-changed
     internal static string FormatInstallCouldNotStartNothingWasChanged(string trimSentenceText)

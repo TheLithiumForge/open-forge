@@ -18,6 +18,10 @@ internal static class ExtensionInspectDataTextRenderer
         ArgumentNullException.ThrowIfNull(selection);
         ArgumentNullException.ThrowIfNull(style);
         var builder = new StringBuilder();
+        if (data.TextPackagesLine is { } packagesLine)
+        {
+            builder.Append(CliText.Escape(packagesLine)).Append('\n');
+        }
         if (selection.Detail == CliDetail.Minimal)
         {
             if (data.TextSummaryLine is { Length: > 0 } summary)
@@ -45,7 +49,7 @@ internal static class ExtensionInspectDataTextRenderer
         }
         else
         {
-            builder.Append(CliTable.Render(
+            builder.Append(CliTable.Render(style,
                 data.TextDependencies,
                 (column, cell) => column == 0 ? style.Subject(cell) : cell));
         }
@@ -60,7 +64,7 @@ internal static class ExtensionInspectDataTextRenderer
             var rows = data.TextFiles
                 .Select(file => (IReadOnlyList<string>)[file.Path, RelationText(file.Relation)])
                 .ToArray();
-            builder.Append(CliTable.Render(
+            builder.Append(CliTable.Render(style,
                 rows,
                 (column, cell) => column == 0 ? style.Subject(cell) : cell));
         }

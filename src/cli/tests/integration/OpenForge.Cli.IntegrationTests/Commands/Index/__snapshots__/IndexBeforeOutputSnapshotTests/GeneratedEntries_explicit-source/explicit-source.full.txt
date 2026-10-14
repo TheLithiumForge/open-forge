@@ -4,3 +4,5 @@ Workspace: <workspace>
   .agents/root/_root.md  unknown -> 1 entries
 Selection: .agents/root/_root.md
 The recovery bundle was removed.
+  Check the workspace after indexing.
+Next: open-forge doctor --workspace <workspace>

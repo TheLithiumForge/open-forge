@@ -1,3 +1,3 @@
 Cannot create the routed file: --template missing-template is not a routed Template.
 Workspace: <workspace>
-Next: open-forge find --tag Template
+Next: open-forge find --tag Template --workspace <workspace>

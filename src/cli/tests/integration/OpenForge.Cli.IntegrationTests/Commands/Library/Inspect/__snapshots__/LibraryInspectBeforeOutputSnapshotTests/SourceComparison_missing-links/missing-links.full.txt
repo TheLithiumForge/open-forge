@@ -7,4 +7,4 @@ Workspace: <workspace>
       Observed target: unavailable
 Source inventory: 1 eligible file, 0 excluded items.
   Preview the synchronization before changing files.
-Next: open-forge library sync team-knowledge --dry-run
+Next: open-forge library sync team-knowledge --dry-run --workspace <workspace>

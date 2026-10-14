@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route list --depth=all",
+          "command": "open-forge route list --depth=all --workspace <workspace>",
           "reason": "Choose a routed source, then rerun Route Update."
         }
       ]
@@ -57,7 +57,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route list --depth=all",
+    "command": "open-forge route list --depth=all --workspace <workspace>",
     "reason": "Choose a routed source, then rerun Route Update."
   }
 }

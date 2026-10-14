@@ -38,7 +38,7 @@
     "force": true,
     "prune": false,
     "automatic": true,
-    "previousContent": null,
+    "previousContent": "<recovery-bundle>",
     "lockPath": ".agents/open-forge.lock.json"
   },
   "recovery": {

@@ -4,10 +4,10 @@ Workspace: <workspace>
          filesystem access was denied.
   .agents/aaa.md      replaced (you had changed it and this version changes it)
   .agents/toolkit.md  not started
-  Previous content: recovery bundle at <recovery-bundle>
+  Previous content is in the recovery bundle at <recovery-bundle>.
   Source: <extension-source>
   Dependency closure: toolkit
   0 files unchanged
   Grant: required none; missing none; decision not needed; action no action; outcome no outcome recorded
   Inspect the partial update and its recovery bundle.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

@@ -5,7 +5,23 @@ description: The four Memory states, what belongs in each, and how records move 
 
 # Memory
 
-Memory asks one question: **what is worth remembering for current or future work?** It's self-growing Markdown state: people and agents add useful records and routed scopes as the work produces them. Unselected branches don't enter active context.
+Memory asks one question: **what is worth remembering for current or future work?** It's self-growing Markdown state: people and agents add useful [records](../glossary.md#record) and routed scopes as the work produces them. Unselected branches don't enter active context.
+
+This illustrative record is an example after you accept the requirement. Use your workspace's selected [frontmatter](../glossary.md#frontmatter) form when copying:
+
+```md title=".agents/memory/crystallized/export-limit.md (illustrative)"
+---
+description: Accepted limit for CSV exports
+tags: [Memory, CurrentTruth]
+---
+
+# CSV export limit
+
+Exports contain at most 10,000 rows.
+This limit was accepted for the first version.
+```
+
+This [record](../glossary.md#record) belongs in Crystallized because it states accepted knowledge. An unaccepted possibility belongs in Emerging. You can save a record directly under a state without installing a record category.
 
 ## Four states
 
@@ -20,7 +36,7 @@ Memory asks one question: **what is worth remembering for current or future work
 
 The states describe how to treat material. They're not quality scores or required stages, and a record doesn't have to pass through every state.
 
-The table describes each state when present. [Installation](../getting-started/installation.md#choose-the-installed-routes) lets you select them. Essentials omits Archived and Git-ignores the whole Working directory. Working stays fully available for local continuity and loads normally. Keep your own copy of private notes you need on another machine, since Git won't share new ignored records.
+The table describes each state when present. [Installation](../getting-started/installation.md#choose-the-installed-routes) lets you select them. Essentials omits Archived. It keeps new Working records out of ordinary Git commits and leaves `_working.md` shareable. Already tracked files stay tracked. Generated `Entries` omit private contents. The CLI and normal file tools can still find and read those records locally. Working loads normally. Keep a copy of local notes you need on another machine.
 
 ### Working
 

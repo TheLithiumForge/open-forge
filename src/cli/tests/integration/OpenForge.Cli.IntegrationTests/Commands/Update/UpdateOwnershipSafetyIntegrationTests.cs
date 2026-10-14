@@ -128,19 +128,11 @@ public sealed class UpdateOwnershipSafetyIntegrationTests
         Assert.Equal(UpdateVerificationState.Verified, result.Verification);
         Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
         var next = Assert.IsType<CliNextAction>(result.Next);
-        if (hasGit)
-        {
-            Assert.Contains(result.Recovery.ResidualPath!, next.Reason);
-            Assert.Equal("git diff", next.Command);
-        }
-        else
-        {
-            var bundlePath = Assert.IsType<string>(result.Recovery.ResidualPath);
-            Assert.Equal(
-                $"Review previous content in the recovery bundle at {bundlePath}.",
-                next.Command);
-            Assert.Equal("Previous content remains available for review.", next.Reason);
-            Assert.Equal(CliNextActionKind.Sentence, next.Kind);
-        }
+        var bundlePath = Assert.IsType<string>(result.Recovery.ResidualPath);
+        Assert.Equal(
+            $"Review previous content in the recovery bundle at {bundlePath}.",
+            next.Command);
+        Assert.Equal("Previous content remains available for review.", next.Reason);
+        Assert.Equal(CliNextActionKind.Sentence, next.Kind);
     }
 }

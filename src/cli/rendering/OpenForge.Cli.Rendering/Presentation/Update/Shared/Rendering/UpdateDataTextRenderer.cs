@@ -20,7 +20,7 @@ internal static class UpdateDataTextRenderer
             .ToArray();
         if (rows.Length > 0)
         {
-            spans.Add(new CliTextSpan(CliTable.Render(rows, (column, cell) =>
+            spans.Add(new CliTextSpan(CliTable.Render(style, rows, (column, cell) =>
                 column == 0 ? style.Subject(cell) : cell)));
         }
 

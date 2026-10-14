@@ -18,7 +18,7 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Application;
 
-internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
+internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader, RepairCatalogueReader? catalogueReader = null)
 {
     private readonly DoctorDiagnosisReader _diagnosisReader = diagnosisReader;
 
@@ -69,7 +69,7 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
 
         var completePlanRequired = execution.UnexpectedFailure is null
             && execution.Cancellation is null
-            && execution.ReferenceReceipts.Length == plan.Effects.Count;
+            && execution.ReferenceReceipts.Length == plan.FileChanges.Count;
         var verification = await VerifyCoreAsync(
             plan,
             execution.ReferenceReceipts,
@@ -134,7 +134,8 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
                 postConditions: RepairVerificationState.Unknown,
                 effects: plan.Effects.Select(effect => new RepairEffectVerification(
                     effect, receipts.SingleOrDefault(receipt => ReferenceEquals(receipt.Change, effect.FileChange)),
-                    Targets: RepairVerificationState.Unknown, ResultingBytes: RepairVerificationState.Unknown))),
+                    Targets: RepairVerificationState.Unknown, ResultingBytes: RepairVerificationState.Unknown)))
+            { FileReceipts = receipts },
             RepairPostDiagnosis.NotRequested, []);
 
     private async ValueTask<RepairPostVerification> VerifyCoreAsync(
@@ -150,7 +151,7 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
             .ConfigureAwait(false);
     }
 
-    private static async ValueTask<RepairPostVerification> VerifyCoreAsync(
+    private async ValueTask<RepairPostVerification> VerifyCoreAsync(
         RepairPlan plan,
         IReadOnlyList<FileChangeReceipt> receipts,
         bool completePlanRequired,
@@ -159,10 +160,12 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
     {
         var coverage = RepairCoverageMapper.Read(read);
         var findings = ReadCoverageFindings(coverage).ToList();
+        var catalogue = catalogueReader is null ? null : await catalogueReader.ReadAsync(plan.Request.Workspace,
+            read.Observation.LocalReferences, cancellationToken).ConfigureAwait(false);
         var scope = RepairAuthoredReferenceBoundary.Filter(
             read.Observation.LocalReferences.References,
             RepairAuthoredReferenceBoundary.ReadRouteDocuments(read.Observation.Routes.Sources));
-        findings.AddRange(RepairRemainingFindingReader.Read(scope.References));
+        findings.AddRange(catalogue is null ? RepairRemainingFindingReader.Read(scope.References) : RepairRemainingFindingReader.ReadCatalogue(catalogue));
         findings.AddRange(RepairAuthoredReferenceBoundary.IncompleteFindings(scope.IncompleteSources));
         findings.AddRange(RepairRemainingFindingReader.ReadLibrary(read.Result.Diagnosis));
         var appliedEffects = plan.Effects.Where(effect => receipts.Any(receipt =>
@@ -171,10 +174,15 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
         var validator = new FileExpectationValidator(new PhysicalPathResolver());
         foreach (var effect in plan.Effects)
         {
-            var receipt = receipts.SingleOrDefault(value => ReferenceEquals(value.Change, effect.FileChange));
+            var relocated = plan.Maintenance?.Intent.Entrypoints.SingleOrDefault(entrypoint => entrypoint.DeleteBefore?.LogicalPath == effect.FileChange.LogicalPath);
+            var finalLogicalPath = relocated?.Before.LogicalPath ?? effect.FileChange.LogicalPath;
+            var finalChange = plan.FileChanges.Single(change => change.LogicalPath == finalLogicalPath);
+            var receipt = receipts.SingleOrDefault(value => ReferenceEquals(value.Change, finalChange));
             var applied = receipt?.EffectState == FilesystemEffectState.Applied;
             var actual = await validator.ValidateAsync(plan.Request.Workspace,
-                applied || completePlanRequired ? effect.IntendedState.Expectation : effect.ExpectedState.Expectation, cancellationToken)
+                applied || completePlanRequired ? FileStateSnapshot.File(finalChange.LogicalPath,
+                    relocated?.Source.Base.PhysicalPath ?? effect.IntendedState.PhysicalPath ?? throw new InvalidOperationException(), finalChange.IntendedBytes.AsSpan()).Expectation
+                    : effect.ExpectedState.Expectation, cancellationToken)
                 .ConfigureAwait(false);
             var bytes = ReadBytesVerification(receipt, actual.State, completePlanRequired);
             var targets = RepairVerificationState.NotRequested;
@@ -182,7 +190,7 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
             {
                 var targetsMatch = plan.Steps.Where(step => ReferenceEquals(step.Effect, effect)).All(step =>
                     read.Observation.LocalReferences.References.Any(reference =>
-                        MatchesOccurrence(appliedEffects, step.SelectedProposal, reference)));
+                        MatchesOccurrence(appliedEffects, step.SelectedProposal, reference, plan.Maintenance is not null, relocated?.Source.Identity.CanonicalBasePath)));
                 targets = targetsMatch ? RepairVerificationState.Verified : RepairVerificationState.Failed;
             }
 
@@ -191,12 +199,26 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
 
         var noOpsVerified = plan.Steps.Where(step => step.NoOp is not null).All(step =>
             read.Observation.LocalReferences.References.Any(reference => MatchesOccurrence(appliedEffects, step.SelectedProposal, reference)));
+        var fileStates = new Dictionary<string, RepairVerificationState>(StringComparer.Ordinal);
+        foreach (var change in plan.FileChanges)
+        {
+            var receipt = receipts.SingleOrDefault(value => ReferenceEquals(value.Change, change));
+            var expected = receipt?.EffectState == FilesystemEffectState.Applied || completePlanRequired
+                ? change.Kind == PlannedFileChangeKind.Delete ? FileExpectation.Missing(change.LogicalPath)
+                    : FileStateSnapshot.File(change.LogicalPath, Path.Combine(plan.Request.Workspace.PhysicalRoot,
+                        Path.GetRelativePath(plan.Request.Workspace.LexicalRoot, change.LogicalPath)), change.IntendedBytes.AsSpan()).Expectation
+                : change.Expectation;
+            var actual = await validator.ValidateAsync(plan.Request.Workspace, expected, cancellationToken).ConfigureAwait(false);
+            fileStates.Add(change.LogicalPath, ReadBytesVerification(receipt, actual.State, completePlanRequired));
+        }
+        var maintenanceBytes = Aggregate(fileStates.Values);
         var verification = new RepairVerification(
             targets: noOpsVerified ? Aggregate(effects.Select(effect => effect.Targets)) : RepairVerificationState.Failed,
-            resultingBytes: Aggregate(effects.Select(effect => effect.ResultingBytes)),
+            resultingBytes: Aggregate(effects.Select(effect => effect.ResultingBytes).Append(maintenanceBytes)),
             postConditions: coverage.SelectedScope == RepairCoverageState.Complete
                 ? RepairVerificationState.Verified : RepairVerificationState.Planned,
-            effects: effects);
+            effects: effects)
+        { FileReceipts = receipts, FileStates = new System.Collections.ObjectModel.ReadOnlyDictionary<string, RepairVerificationState>(fileStates) };
         if (verification.Targets is RepairVerificationState.Failed or RepairVerificationState.Unknown
             || verification.ResultingBytes is RepairVerificationState.Failed or RepairVerificationState.Unknown)
         {
@@ -207,7 +229,11 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
 
         return new RepairPostVerification(
             verification,
-            new RepairPostDiagnosis(RepairCoverageMapper.ReadPostDiagnosisState(coverage), coverage, findings),
+            new RepairPostDiagnosis(RepairCoverageMapper.ReadPostDiagnosisState(coverage), coverage, findings)
+            {
+                NeedsIndex = await RepairContinuationReader.NeedsIndexAsync(plan.Request.Workspace, read.Observation.Routes, cancellationToken).ConfigureAwait(false),
+                Proposals = catalogue?.Proposals.Select(input => input.Proposal).ToArray() ?? [],
+            },
             findings);
     }
 
@@ -252,7 +278,8 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
             ? RepairVerificationState.Verified : RepairVerificationState.Planned;
     }
 
-    private static bool MatchesOccurrence(IReadOnlyList<RepairEffect> appliedEffects, RepairSelectedProposal selected, LocalReferenceObservation reference)
+    private static bool MatchesOccurrence(IReadOnlyList<RepairEffect> appliedEffects, RepairSelectedProposal selected, LocalReferenceObservation reference,
+        bool composed = false, string? relocatedPath = null)
     {
         var originalOffset = selected.Proposal.Occurrence.ByteOffset;
         var offset = originalOffset + appliedEffects
@@ -260,9 +287,9 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader)
             .SelectMany(effect => effect.Changes)
             .Where(change => change.Occurrence.ByteOffset < originalOffset)
             .Sum(change => Encoding.UTF8.GetByteCount(change.IntendedDestination) - change.Occurrence.ByteLength);
-        return reference.SourcePath == selected.Proposal.SourceCanonicalPath
-            && reference.DestinationLocation?.ByteOffset == offset
-            && reference.DestinationLocation.ByteLength == Encoding.UTF8.GetByteCount(selected.Resolution.IntendedDestination)
+        return reference.SourcePath == (relocatedPath ?? selected.Proposal.SourceCanonicalPath)
+            && (composed || reference.DestinationLocation?.ByteOffset == offset)
+            && reference.DestinationLocation?.ByteLength == Encoding.UTF8.GetByteCount(selected.Resolution.IntendedDestination)
             && reference.Destination == selected.Resolution.IntendedDestination
             && reference.Facts.Target.Path == Uri.UnescapeDataString(selected.Resolution.Target.CanonicalTargetPath)
             && reference.Facts.Target.Resolution == SourceLinkTargetResolution.Complete

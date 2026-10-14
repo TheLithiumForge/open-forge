@@ -22,7 +22,7 @@ internal static class LibraryListText
 
     // @OpenForgeText library.list.help.syntax
     internal static string HelpSyntax()
-        => "open-forge library list [global options]";
+        => "open-forge library list [options]";
 
     // @OpenForgeText library.list.help.inspection
     internal static string HelpInspection()
@@ -30,7 +30,7 @@ internal static class LibraryListText
 
     // @OpenForgeText library.list.help.examples
     internal static string HelpExamples()
-        => "open-forge library list\n  open-forge library list --format json";
+        => "open-forge library list\nopen-forge library list --format json";
 
     // @OpenForgeText library.list.message.register-a-library-before-listing-it
     internal static string MessageRegisterALibraryBeforeListingIt()
@@ -131,4 +131,16 @@ internal static class LibraryListText
     // @OpenForgeText library.list.label.available
     internal static string LabelAvailable()
         => "available";
+
+    // @OpenForgeText library.list.librarylist.help.behavior
+    internal static string HelpBehavior()
+        => "List every registered Library and its link status in the selected workspace, without scanning all source files.\nThis command changes no files and asks no questions.";
+
+    // @OpenForgeText library.list.librarylist.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("library inspect --help", "Inspect one Library and its links."),
+            ("library attach --help", "Link a local source folder."),
+        ];
 }

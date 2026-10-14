@@ -2,6 +2,12 @@ Repair was cancelled. Nothing was changed.
 Workspace: <workspace>
   Error  repair.interrupted  Repair was cancelled
          Repair was cancelled. Nothing was changed.
-2 problems remaining, 1 problem needing a choice, 1 problem needing a hand, 1 error.
+  Warning  .agents/docs/source.md:9:8  Broken link
+         This link still needs repair.
+  Warning  .agents/docs/source.md:10:10  Broken link
+         1 possible target.
+         To use replacement.md (same title):
+           open-forge repair --relink '.agents/docs/source.md@10:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>
+2 problems remaining, 1 problem needing a choice, 1 problem needing a hand, 1 error, 2 warnings.
   Rerun the same Repair request from a fresh diagnosis.
-Next: open-forge repair
+Next: open-forge repair --workspace <workspace>

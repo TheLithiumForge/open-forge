@@ -111,7 +111,7 @@ public sealed class F28SwitchFrontmatterFormJourneyTests
 
         var update = await workspace.RunAsync("update", "--automatic");
         JourneyPayloadAssertions.AssertCompleted(update);
-        Assert.Contains("Updated", update.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Changed 1 source file.", update.StandardOutput, StringComparison.Ordinal);
         JourneyPayloadAssertions.AssertDelivered(workspace, sources, JourneyFrontmatterForm.Root, NotePath);
         JourneyPayloadAssertions.AssertEntries(workspace, GuidancePath, expectedEntries);
         Assert.Equal(noteBytes, File.ReadAllBytes(workspace.Combine(NotePath)));

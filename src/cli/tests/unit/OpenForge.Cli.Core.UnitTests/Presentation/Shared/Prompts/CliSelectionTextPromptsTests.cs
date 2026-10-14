@@ -6,11 +6,11 @@ namespace OpenForge.Cli.Core.UnitTests.Presentation.Shared.Prompts;
 
 public sealed class CliSelectionTextPromptsTests
 {
-    [Theory(DisplayName = "Selection text wraps whole words and only splits words wider than a row")]
+    [Theory(DisplayName = "Selection text wraps at spaces and retains overlong words")]
     [InlineData("one two three", 7, "one two|three")]
     [InlineData("keep  both spaces", 10, "keep  both|spaces")]
-    [InlineData("first abcdefghijkl last", 6, "first|abcdef|ghijkl|last")]
-    [InlineData("abcdefghi x", 6, "abcdef|ghi x")]
+    [InlineData("first abcdefghijkl last", 6, "first|abcdefghijkl|last")]
+    [InlineData("abcdefghi x", 6, "abcdefghi|x")]
     [InlineData("ab 😀 cd", 4, "ab|😀|cd")]
     [InlineData("one\ttwo three", 10, @"one\ttwo|three")]
     [Trait("Feature", "cli-interaction"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]

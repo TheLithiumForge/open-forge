@@ -421,7 +421,7 @@ public sealed class F13DeliberateReplacementJourneyTests
         var parent = Path.GetDirectoryName(destination)
             ?? throw new InvalidOperationException("A Library link has no parent directory.");
         Assert.Equal(
-            Path.GetRelativePath(parent, workspace.Combine(sourcePath)).Replace('\\', '/'),
+            Path.GetRelativePath(parent, workspace.Combine(sourcePath)),
             actual);
     }
 

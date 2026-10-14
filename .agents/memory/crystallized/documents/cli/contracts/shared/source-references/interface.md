@@ -295,6 +295,13 @@ required. A filesystem symlink projection at an eligible `.agents/...`
 destination retains its canonical destination path and normal destination-derived
 automatic source ID.
 
+## Unknown Source Guidance
+
+An unknown source ID names the rejected value and points to
+`open-forge route list --depth all` in human text. It does not guess, correct
+spelling or change case-sensitive resolution. Invalid input stays on stderr
+with exit 4. JSON retains its command-owned next action and findings.
+
 ## Errors
 
 - An empty source reference is invalid.

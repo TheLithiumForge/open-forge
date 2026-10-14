@@ -1,0 +1,43 @@
+  List navigable sources and their descendants.
+
+Usage:
+  open-forge route list [<source-reference>] [options]
+
+Examples:
+  open-forge route list
+  open-forge route list memory
+  open-forge route list memory --depth all
+
+Behavior:
+  With no source, list the root routes and their direct children.
+  The default descendant depth is 1. --depth 0 lists selected roots only.
+  This command changes no files and asks no questions.
+
+Arguments:
+  <source-reference>  Select one routed entrypoint or routed leaf by exact
+                      source ID or .agents path.
+
+Options:
+  --depth <non-negative-integer|all>
+      Include routed descendants through a non-negative descendant depth or all.
+      Default: 1.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Sources and depth: Exact .agents/... and ./.agents/... paths are accepted,
+  such as .agents/memory/_memory.md. IDs belong to the current workspace and are
+  not fuzzy matches or path guesses. Depth accepts integers from 0 to 2147483647
+  or all. Both --depth 1 and --depth=1 are accepted.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  route inspect --help  Inspect one routed source.
+  context --help        Read agent instructions and context.
+  find --help           Find sources by tags or headings.

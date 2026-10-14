@@ -11,4 +11,4 @@ Workspace: <workspace>
       Source ID: directives/review
 The Library registration was read completely.
   Inspect the Library before changing it.
-Next: open-forge library inspect team-knowledge
+Next: open-forge library inspect team-knowledge --workspace <workspace>

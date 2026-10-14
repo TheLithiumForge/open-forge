@@ -79,7 +79,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge route inspect --help",
-    "reason": "Correct the named source or input, then rerun route inspect."
+    "command": "open-forge route list --depth all",
+    "reason": "Choose an ID or exact path from the route list."
   }
 }

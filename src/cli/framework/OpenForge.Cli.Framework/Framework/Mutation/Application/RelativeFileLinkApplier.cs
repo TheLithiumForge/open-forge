@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Shared.Links;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Receipts;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.RelativeFileLinks;
@@ -116,7 +117,7 @@ internal static class RelativeFileLinkApplier
             switch (input.Effect.Kind)
             {
                 case RelativeFileLinkEffectKind.Create:
-                    File.CreateSymbolicLink(physicalPath, input.Effect.RawRelativeTarget);
+                    File.CreateSymbolicLink(physicalPath, RelativeFileLinkTarget.PlatformForm(input.Effect.RawRelativeTarget));
                     break;
                 case RelativeFileLinkEffectKind.Delete:
                     File.Delete(physicalPath);

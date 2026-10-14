@@ -30,11 +30,11 @@ internal static class ExtensionRemoveText
 
     // @OpenForgeText extension.remove.help.syntax
     internal static string HelpSyntax()
-        => "open-forge extension remove [<stable-id>...] [--automatic] [--dry-run] [--allow-path <path>] [global options]";
+        => "open-forge extension remove [<stable-id>...] [options]";
 
     // @OpenForgeText extension.remove.help.selection
     internal static string HelpSelection()
-        => "Select exact managed stable IDs, or choose from the interactive package list. A dependency cannot be removed while a retained package needs it.";
+        => "Select exact managed Extension IDs, or choose from the interactive package list. A dependency cannot be removed while a retained package needs it.";
 
     // @OpenForgeText extension.remove.help.ownership
     internal static string HelpOwnership()
@@ -70,7 +70,15 @@ internal static class ExtensionRemoveText
 
     // @OpenForgeText extension.remove.label.kept-still-owned-by-none
     internal static string LabelKeptStillOwnedByNone()
-        => "kept; still owned by none";
+        => "kept, still owned by none";
+
+    // @OpenForgeText extension.remove.message.dependency-after-removal
+    internal static string DependencyAfterRemoval(string dependency)
+        => $"After applying this removal, you can preview removing {dependency} too.";
+
+    // @OpenForgeText extension.remove.message.apply-selected-removal
+    internal static string ApplySelectedRemoval()
+        => "Apply this removal before previewing removal of its dependencies.";
 
     // @OpenForgeText extension.remove.label.would-update
     internal static string LabelWouldUpdate()
@@ -131,4 +139,24 @@ internal static class ExtensionRemoveText
     // @OpenForgeText extension.remove.help.heading.ownership-and-recovery
     internal static string HelpHeadingOwnershipAndRecovery()
         => "Ownership and recovery";
+
+    // @OpenForgeText extension.remove.extensionremove.help.examples
+    internal static string HelpExamples()
+        => "open-forge extension remove planning --dry-run\nopen-forge extension remove planning\nopen-forge extension remove planning --automatic";
+
+    // @OpenForgeText extension.remove.extensionremove.help.behavior
+    internal static string HelpBehavior()
+        => "Select installed Extension IDs or use the interactive picker.\nA dependency stays while a retained package needs it. Shared paths stay.\n--dry-run shows the checked plan and writes nothing.\nAn interactive writing plan asks for confirmation unless --automatic is supplied.\nRedirected or JSON requests that would write need --automatic. Retained recovery data supports review after an interruption.";
+
+    // @OpenForgeText extension.remove.extensionremove.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("extension list --installed", "List installed packages."),
+            ("extension inspect --help", "Compare a package with its installation."),
+            ("remove --help", "Choose one exact removal target."),
+        ];
+    // @OpenForgeText extension.remove.help.details-1
+    internal static string HelpOwnershipAndPermissionsDetails()
+        => "Removing the last owner deletes eligible existing files, including edited files. A recovery bundle saves their bytes before deletion and remains after success. --allow-path records permission for an exact destination outside .agents. The target is verified before writing.";
 }

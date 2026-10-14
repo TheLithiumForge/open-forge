@@ -1,0 +1,3 @@
+Option --workspace needs a value.
+For example: open-forge context --workspace <path>
+Next: open-forge context --help

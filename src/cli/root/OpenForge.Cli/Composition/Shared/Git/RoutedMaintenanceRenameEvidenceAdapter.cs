@@ -1,0 +1,103 @@
+using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
+using System.Text;
+using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding.Models.Rename;
+using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Input;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Observations;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+
+namespace OpenForge.Cli.Composition.Shared.Git;
+
+internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReader reader) : IRoutedMaintenanceRenameEvidence
+{
+    private readonly ConditionalWeakTable<RouteScaffoldRenameProof, RenameEvidenceResult> _observations = new();
+    private readonly PhysicalPathResolver _paths = new();
+
+    internal async ValueTask<RenameEvidenceResult> ReadEvidenceAsync(CliWorkspace workspace, CancellationToken token)
+    {
+        var catalogue = await new SourceCatalogueReader().ReadAsync(new(workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
+        var ownership = await WorkspaceOwnershipReader.ReadAsync(_paths, workspace, token).ConfigureAwait(false);
+        var settings = await WorkspaceSettingsReader.ReadAsync(_paths, workspace, token).ConfigureAwait(false);
+        var policy = new RenameEvidencePolicy
+        {
+            ManagedPaths = [.. ownership.Document.ManagedPaths().Select(claim => claim.Path)],
+            PackageRoots = [.. catalogue.Sources.Where(source => source.Base.Form == SourceDocumentForm.Skill)
+                .Select(source => SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath))],
+            ExcludedPaths = [.. catalogue.Candidates.Where(candidate => WorkspaceRemovals.IsPathRemoved(candidate.CanonicalPath, settings.Document))
+                .Select(candidate => candidate.CanonicalPath), .. settings.Document.RemovedFiles, .. settings.Document.RemovedDirectories],
+            PrivatePaths = [.. (ownership.Document.Framework?.GitIgnoredRoutes ?? []).Select(route => route.Directory)],
+            ProjectionPaths = [.. ownership.Document.Libraries.SelectMany(library => library.Paths)],
+        };
+        var identities = ImmutableArray.CreateBuilder<RenameRecordedIdentity>();
+        // Managed navigation may record an unmanaged child's identity. Admission still filters each recorded child.
+        var recordPolicy = policy with { ManagedPaths = [] };
+        var parser = new MarkdownDocumentParser();
+        foreach (var source in catalogue.Sources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form) || source.Base.Form == SourceDocumentForm.Loader))
+        {
+            var path = source.Identity.CanonicalBasePath;
+            if (!RenameCandidateAdmission.Allows(path, recordPolicy) && path != SourceLogicalPath.LoaderPath) continue;
+            if (NoFollowLeafObserver.Observe(_paths, workspace, SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, path), token).State != NoFollowLeafState.OrdinaryFile) continue;
+            try
+            {
+                var bytes = await File.ReadAllBytesAsync(source.Base.PhysicalPath, token).ConfigureAwait(false);
+                var snapshot = FileStateSnapshot.File(SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, path), source.Base.PhysicalPath, bytes);
+                identities.AddRange(RenameRecordedEntryReader.Read(path, snapshot, parser.Parse(Encoding.UTF8.GetString(bytes))));
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
+            {
+                // Unavailable optional records do not invent old identities.
+            }
+        }
+        return await reader.ReadAsync(new()
+        {
+            Workspace = workspace,
+            CandidatePaths = [.. catalogue.Candidates.Select(candidate => candidate.CanonicalPath)],
+            MissingPaths = [],
+            CandidateUniverseComplete = !catalogue.IsCancelled && catalogue.Issues.Count == 0
+                && ownership.State is WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete
+                && settings.State is WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete,
+            Policy = policy,
+            RecordedIdentities = identities.ToImmutable(),
+            PolicyExpectations = [ownership.Snapshot?.Expectation ?? FileExpectation.Missing(ownership.LogicalPath),
+                settings.Snapshot?.Expectation ?? FileExpectation.Missing(settings.LogicalPath)],
+        }, token).ConfigureAwait(false);
+    }
+
+    public async ValueTask<RouteScaffoldRenameProof?> ReadAsync(CliWorkspace workspace, RouteScaffoldRenameCandidate candidate, CancellationToken token)
+    {
+        if (candidate.OldSource is not { } source) return null;
+        var evidence = await ReadEvidenceAsync(workspace, token).ConfigureAwait(false);
+        var move = RenameCanonicalEntrypointEvidence.Read(evidence).SingleOrDefault(move => move.Proof.NewPath == source.Identity.CanonicalBasePath
+            && move.CanonicalPath == candidate.Destination.Identity.CanonicalBasePath);
+        if (move is null) return null;
+        var proof = new RouteScaffoldRenameProof
+        {
+            OldCanonicalPath = move.Proof.OldPath,
+            CurrentCanonicalPath = move.Proof.NewPath,
+            CurrentContentHash = move.Proof.NewHash,
+            Basis = move.Proof.Basis == RenameEvidenceBasis.CommittedContent ? RouteScaffoldRenameBasis.CommittedContent : RouteScaffoldRenameBasis.GitRemoval,
+            Similarity = move.Proof.Similarity,
+        };
+        _observations.Add(proof, evidence);
+        return proof;
+    }
+
+    public async ValueTask<bool> VerifyAsync(CliWorkspace workspace, RouteScaffoldRenameProof proof, CancellationToken token)
+        => _observations.TryGetValue(proof, out var previous)
+            && RenameEvidenceRevalidator.IsCurrent(previous, await ReadEvidenceAsync(workspace, token).ConfigureAwait(false), proof.OldCanonicalPath);
+}

@@ -17,7 +17,7 @@ internal static class RepairLibraryResultFormation
         var referencePlan = RepairStepOutcomeReader.Project(input);
         var plan = ProjectLibrarySteps(referencePlan, input.LibraryExecution);
         input = input with { Plan = plan };
-        var findings = AddSelectionFindings(plan, input.Findings);
+        var findings = RepairFindingFormation.Read(input);
         var counts = ReadCounts(input, findings);
         return new RepairResult(new RepairResultFormation
         {
@@ -58,7 +58,8 @@ internal static class RepairLibraryResultFormation
             [.. plan.LibrarySteps.Select(step => step with
             {
                 Outcome = ReadOutcome(step, execution, effects),
-            })]);
+            })])
+        { Maintenance = plan.Maintenance, RenameEvidence = plan.RenameEvidence };
     }
 
     private static RepairStepOutcome ReadOutcome(
@@ -102,30 +103,12 @@ internal static class RepairLibraryResultFormation
             && (uint)index < (uint)effects.Length
             && ReferenceEquals(effects[index].LibraryRecovery, selected);
 
-    private static List<RepairFinding> AddSelectionFindings(
-        RepairPlan plan,
-        IReadOnlyList<RepairFinding> findings)
-    {
-        var values = findings.ToList();
-        values.AddRange(plan.Selection.Unselected.Select(proposal => new RepairFinding(
-            proposal.IsGuided ? RepairFindingCode.GuidedFindingRemaining : RepairFindingCode.ManualFindingRemaining,
-            "A current Repair proposal remains unselected.",
-            proposal.SourceCanonicalPath,
-            proposal.Occurrence)));
-        values.AddRange(plan.Selection.Libraries.Unselected.Select(proposal => new RepairFinding(
-            RepairFindingCode.ManualFindingRemaining,
-            "A current typed Library residual remains unselected.")));
-        return values;
-    }
-
     private static RepairCounts ReadCounts(
         RepairResultInput input,
         IReadOnlyList<RepairFinding> findings)
     {
         var plan = input.Plan;
-        var remaining = input.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested
-            ? findings.Where(IsRemaining).ToArray()
-            : [.. input.PostDiagnosis.Findings.Where(IsRemaining)];
+        var remaining = RepairFindingFormation.Remaining(input, findings);
         var referenceVerified = input.Verification.Effects.Count(effect =>
             effect.Receipt?.EffectState == FilesystemEffectState.Applied
             && effect.ResultingBytes == RepairVerificationState.Verified
@@ -146,7 +129,8 @@ internal static class RepairLibraryResultFormation
             guided: remaining.Count(finding => finding.Code == RepairFindingCode.GuidedFindingRemaining),
             blocked: findings.Count(finding => finding.Status == Shell.Definitions.CliSemanticStatus.Blocked),
             selectedEffects: plan.Effects.Count + plan.LibrarySteps.Count(step => step.Effect is not null),
-            appliedEffects: input.Application.AppliedEffects,
+            appliedEffects: input.Verification.Effects.Count(effect => effect.Receipt?.EffectState == FilesystemEffectState.Applied)
+                + (input.LibraryExecution?.LibraryReceipts.Count(IsApplied) ?? 0),
             verifiedEffects: referenceVerified + libraryVerified,
             noOps: plan.NoOps.Count + plan.LibrarySteps.Count(step => step.Outcome == RepairStepOutcome.NoOp),
             conflicts: plan.Conflicts.Count);
@@ -174,9 +158,6 @@ internal static class RepairLibraryResultFormation
             .Sum(change => Encoding.UTF8.GetByteCount(change.IntendedDestination) - change.Occurrence.ByteLength);
         return before.Occurrence.ByteOffset + shift == current.Occurrence.ByteOffset;
     }
-
-    private static bool IsRemaining(RepairFinding finding)
-        => finding.Code is RepairFindingCode.GuidedFindingRemaining or RepairFindingCode.ManualFindingRemaining;
 
     private static bool IsApplied(RepairLibraryRecoveryReceipt receipt)
         => receipt.Kind switch

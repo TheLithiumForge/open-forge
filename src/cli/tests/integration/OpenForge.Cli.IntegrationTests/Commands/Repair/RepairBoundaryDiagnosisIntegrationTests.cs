@@ -31,7 +31,7 @@ public sealed class RepairBoundaryDiagnosisIntegrationTests
         Assert.Equal(changed, workspace.ReadText(RepairIntegrationWorkspace.SourcePath));
         Assert.Equal(RepairPostDiagnosisState.Complete, result.PostDiagnosis.State);
         Assert.Contains(result.PostDiagnosis.Findings, finding =>
-            finding.Code == RepairFindingCode.GuidedFindingRemaining
+            finding.Code == RepairFindingCode.ManualFindingRemaining
             && finding.SourceCanonicalPath == RepairIntegrationWorkspace.SourcePath
             && finding.Occurrence?.Line == prefix.Count(character => character == '\n') + 1
             && finding.Occurrence.ByteOffset == Encoding.UTF8.GetByteCount(prefix));

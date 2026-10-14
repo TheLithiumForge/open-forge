@@ -6,7 +6,7 @@ open-forge:
 
 # User Flows
 
-These flows define useful user outcomes selected under the maintainer's request. The [review boundary](../_experience.md) distinguishes intended behavior, existing contracts, and actual run evidence. Validate this selection before implementing new tests.
+These flows define useful user outcomes selected under the maintainer's request. The [review boundary](../_experience.md) distinguishes intended behavior, existing contracts and actual run evidence. F03, F05, F08 and F29 to F31 describe current Task 79 behavior. Validate other proposed changes before implementing new tests.
 
 ## Entries
 
@@ -38,3 +38,6 @@ These flows define useful user outcomes selected under the maintainer's request.
 - [Install optional collaboration and planning content without unrelated packages](f26-select-only-needed-extensions.md) - #Memory #Document #CLI #UserFlow #Evergreen
 - [Start a workspace in root form and keep working in it](f27-start-a-workspace-in-root-form-and-keep-working-in-it.md) - #Memory #Document #CLI #UserFlow #Evergreen
 - [Switch an existing workspace's metadata form without losing edits during conversion](f28-switch-an-existing-workspace-metadata-form-without-losing-edits.md) - #Memory #Document #CLI #UserFlow #Evergreen
+- [Catch up after manual file renames and moves](f29-catch-up-after-manual-file-renames-and-moves.md) - #Memory #Document #CLI #UserFlow #Evergreen
+- [Index deep plain notes](f30-index-deep-plain-notes.md) - #Memory #Document #CLI #UserFlow #Evergreen
+- [Follow Doctor after a batch of manual edits](f31-follow-doctor-after-a-batch-of-manual-edits.md) - #Memory #Document #CLI #UserFlow #Evergreen

@@ -77,6 +77,9 @@ internal sealed class IndexOperation(
                 Regions = plan.Regions,
                 Recovery = IndexRecovery.NotRequired,
                 Findings = projection.Findings,
+                Metadata = IndexCompletionProjector.Metadata(plan),
+                Entrypoints = IndexCompletionProjector.Entrypoints(plan),
+                Deletions = IndexCompletionProjector.Deletions(plan),
             });
         }
 

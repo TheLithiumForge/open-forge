@@ -172,6 +172,10 @@ internal sealed class ExtensionInstallPlanner
                 MutationPackageIds = mutationPackages
                     .Select(package => package.Id)
                     .ToHashSet(StringComparer.Ordinal),
+                FullyExcludedPackageIds = source.Packages
+                    .Where(package => ExtensionInstallPayloadNormalizer.IsEntirePayloadExcluded(package, settingsObservation.Document))
+                    .Select(package => package.Id)
+                    .ToHashSet(StringComparer.Ordinal),
                 Ownership = foundation.Ownership,
                 FrameworkOwnership = foundation.FrameworkOwnership,
                 Settings = settingsObservation.Document,
@@ -227,7 +231,12 @@ internal sealed class ExtensionInstallPlanner
                 FrameworkOwnership = foundation.FrameworkOwnership,
                 Topology = foundation.Topology,
                 EffectPlan = effectPlan,
-            });
+            }) with
+        {
+            ExcludedPackages = ExtensionInstallPayloadNormalizer.ReadExcludedPackages(
+                source.Packages.Where(package => packageFacts.Any(selected => selected.Id == package.Id)),
+                settingsObservation.Document),
+        };
 
         var plan = ExtensionInstallPlan.Create(new ExtensionInstallPlanInput
         {

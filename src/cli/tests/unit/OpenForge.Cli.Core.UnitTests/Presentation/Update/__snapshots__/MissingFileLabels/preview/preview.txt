@@ -1,4 +1,4 @@
-Would update 3 Framework files.
+Would change 3 source files.
   .agents/loader.md             would be restored
   .agents/memory/_memory.md     would be created
   AGENTS.md                     would be created with an Open Forge section

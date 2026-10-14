@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 3,
+  "command": "extension remove",
+  "status": "completed-with-warnings",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would remove the toolkit Extension.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-remove.lifecycle-observation",
+      "title": "Dependency remains installed",
+      "message": "base would remain installed after removing toolkit.",
+      "subject": {
+        "kind": "file",
+        "path": "base",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "After applying this removal, you can preview removing base too.",
+          "reason": "After applying this removal, you can preview removing base too."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesRemoved": 1,
+    "filesDeleted": 1,
+    "filesKept": 0,
+    "filesReleased": 0,
+    "sectionsUpdated": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "automatic": true,
+    "packages": [
+      {
+        "id": "toolkit"
+      }
+    ],
+    "orphaned": [
+      "base"
+    ],
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    },
+    "effects": [
+      {
+        "path": ".agents/open-forge.json",
+        "action": "record-exclusion",
+        "outcome": "planned",
+        "owner": null,
+        "keptFor": []
+      },
+      {
+        "path": ".agents/toolkit.md",
+        "action": "delete",
+        "outcome": "planned",
+        "owner": "toolkit",
+        "keptFor": []
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge extension remove toolkit --automatic --workspace <workspace>",
+    "reason": "Apply this removal before previewing removal of its dependencies."
+  }
+}

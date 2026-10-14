@@ -157,7 +157,7 @@ public sealed class ExtensionCreateStagingIntegrationTests
     {
         var scripted = ScriptedCliTerminal.Lines([], canPrompt: false);
         return ExtensionCreateOperationFactory.Create(
-            ExtensionInteractionTestFactory.ForCreate(new CliPrompts(scripted.Terminal)));
+            ExtensionInteractionTestFactory.ForCreate(new CliPrompts(scripted.Terminal), scripted.Terminal.WriteAsync));
     }
 
     private static ExtensionCreateRequest Request(string cataloguePath)

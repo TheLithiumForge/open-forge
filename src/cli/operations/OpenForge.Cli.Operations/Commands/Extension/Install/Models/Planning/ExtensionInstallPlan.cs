@@ -401,6 +401,8 @@ internal sealed record ExtensionInstallTargetInspectionInput
     internal required IReadOnlyList<ExtensionPackageFact> Packages { get; init; }
     internal IReadOnlySet<string> MutationPackageIds { get; init; }
         = new HashSet<string>(StringComparer.Ordinal);
+    internal IReadOnlySet<string> FullyExcludedPackageIds { get; init; }
+        = new HashSet<string>(StringComparer.Ordinal);
     internal required WorkspaceOwnershipRead Ownership { get; init; }
     internal required OpenForge.Cli.Core.Framework.Settings.Models.Document.WorkspaceSettingsDocument Settings { get; init; }
     internal required FrameworkOwnership? FrameworkOwnership { get; init; }

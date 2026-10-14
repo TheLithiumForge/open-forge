@@ -9,6 +9,35 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
 public sealed class RepairInteractionIntegrationTests
 {
+    [Fact(DisplayName = "Leaving a guided broken link unchanged acknowledges the explicit choice")]
+    [Trait("Boundary", "OS"), Trait("Feature", "repair"), Trait("Evidence", "Integration")]
+    public async Task ExplicitLeaveUnchangedMakesNoEffects()
+    {
+        using var workspace = RepairIntegrationWorkspace.Create("repair-leave-unchanged");
+        var source = workspace.Combine(RepairIntegrationWorkspace.SourcePath);
+        File.WriteAllText(source, File.ReadAllText(source).Replace("[Safe](./guide.md)", string.Empty, StringComparison.Ordinal));
+        var before = workspace.SnapshotState();
+        var confirmations = 0;
+        var components = RepairOperationFactory.CreateDefaultComponents() with
+        {
+            Interaction = new RepairInteraction(
+                static (_, _, _) => ValueTask.FromResult(CliPromptReply<RepairReferencePromptAnswer>.Answered(RepairReferencePromptAnswer.Skip())),
+                static (_, _, _) => ValueTask.FromResult(CliPromptReply<RepairLibraryPromptAnswer>.Answered(new(null))),
+                (_, _, _, _) =>
+                {
+                    confirmations++;
+                    return ValueTask.FromResult(CliPromptReply<bool>.Answered(false));
+                }),
+        };
+        var result = await new RepairOperation(components).ExecuteAsync(workspace.Request(allowInteraction: true), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(0, confirmations);
+        Assert.Equal(0, result.Application.AppliedEffects);
+        Assert.Equal(1, result.Counts.Remaining);
+        Assert.Equal(before, workspace.SnapshotState());
+        Commands.Shared.Snapshots.CommandOutputRenderers<RepairResult>.From(Core.Presentation.Repair.RepairPresentation.Rendering)
+            .MatchDetails(result, "left-unchanged");
+    }
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Repair safe approval leaves bytes unchanged until final confirmation"),
         Trait("Feature", "repair"), Trait("Evidence", "Integration")]
@@ -50,7 +79,8 @@ public sealed class RepairInteractionIntegrationTests
 
         Assert.Equal(["Safe", "Reference", "Final"], calls);
         Assert.Equal(2, result.Counts.SelectedFindings);
-        Assert.Equal(1, result.Application.AppliedEffects);
+        Assert.Equal(result.Plan!.FileChanges.Count, result.Application.AppliedEffects);
+        Assert.Equal(1, result.Counts.AppliedEffects);
         Assert.Contains("guide.md", workspace.ReadText(RepairIntegrationWorkspace.SourcePath), StringComparison.Ordinal);
         Assert.Contains("replacement.md", workspace.ReadText(RepairIntegrationWorkspace.SourcePath), StringComparison.Ordinal);
         workspace.AssertNoRecoveryArtifacts();
@@ -105,7 +135,7 @@ public sealed class RepairInteractionIntegrationTests
             static (_, _, _) => ValueTask.FromResult(
                 CliPromptReply<RepairReferencePromptAnswer>.Answered(RepairReferencePromptAnswer.Skip())),
             static (_, _, _) => ValueTask.FromResult(
-                CliPromptReply<RepairLibraryPromptAnswer>.Answered(new RepairLibraryPromptAnswer(false))),
+                CliPromptReply<RepairLibraryPromptAnswer>.Answered(new RepairLibraryPromptAnswer(null))),
             (preview, question, policy, cancellationToken) =>
             {
                 calls.Add(question.Kind.ToString());
@@ -127,7 +157,7 @@ public sealed class RepairInteractionIntegrationTests
                         RepairReferencePromptAnswer.Selected(workspace.GuidedRelink())));
             },
             static (_, _, _) => ValueTask.FromResult(
-                CliPromptReply<RepairLibraryPromptAnswer>.Answered(new RepairLibraryPromptAnswer(false))),
+                CliPromptReply<RepairLibraryPromptAnswer>.Answered(new RepairLibraryPromptAnswer(null))),
             (preview, question, policy, cancellationToken) =>
             {
                 calls.Add(question.Kind.ToString());
@@ -139,7 +169,7 @@ public sealed class RepairInteractionIntegrationTests
             static (_, _, _) => ValueTask.FromResult(
                 CliPromptReply<RepairReferencePromptAnswer>.Answered(RepairReferencePromptAnswer.Skip())),
             static (_, _, _) => ValueTask.FromResult(
-                CliPromptReply<RepairLibraryPromptAnswer>.Answered(new RepairLibraryPromptAnswer(false))),
+                CliPromptReply<RepairLibraryPromptAnswer>.Answered(new RepairLibraryPromptAnswer(null))),
             static (_, question, _, _) => ValueTask.FromResult(
                 question.Kind == RepairConfirmationKind.Safe
                     ? CliPromptReply<bool>.Answered(true)
@@ -150,6 +180,6 @@ public sealed class RepairInteractionIntegrationTests
             static (_, _, _) => ValueTask.FromResult(
                 CliPromptReply<RepairReferencePromptAnswer>.Cancelled()),
             static (_, _, _) => ValueTask.FromResult(
-                CliPromptReply<RepairLibraryPromptAnswer>.Answered(new RepairLibraryPromptAnswer(false))),
+                CliPromptReply<RepairLibraryPromptAnswer>.Answered(new RepairLibraryPromptAnswer(null))),
             static (_, _, _, _) => ValueTask.FromResult(CliPromptReply<bool>.Answered(true)));
 }

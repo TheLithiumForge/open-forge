@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Index.Models.Planning;
+using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance;
 using OpenForge.Cli.Core.Commands.Index.Models.Projection;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -20,16 +21,19 @@ internal sealed class IndexPlanBuilder
         {
             var region = FormRegion(input, projected);
             regions.Add(region);
-            if (input.Projection.IsExecutable && region.Action == IndexRegionAction.Update)
+            if (input.Projection.IsExecutable && region.Action == IndexRegionAction.Update && input.Projection.Maintenance is null)
             {
                 recoveryTargets.Add(FormRecoveryTarget(input, projected));
             }
         }
 
+        var effects = input.Projection.IsExecutable && input.Projection.Maintenance is not null
+            ? RoutedMaintenanceEffectAssembler.Assemble(input.Request.Workspace, input.Projection.Maintenance, input.Projection.Projection) : null;
         return new IndexPlan(
             input: input,
             regions: regions,
-            recoveryTargets: recoveryTargets);
+            recoveryTargets: effects is null ? recoveryTargets : effects.RecoveryTargets,
+            changes: effects?.Changes);
     }
 
     private static IndexRegion FormRegion(

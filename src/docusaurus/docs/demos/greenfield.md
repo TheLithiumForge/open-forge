@@ -8,6 +8,12 @@ description: Build a small expense splitter from an empty folder, with requests 
 
 Start from an empty folder and a request for a command-line tool that splits shared expenses between friends. The whole demo is in [`demos/expense-splitter/greenfield`](../../../../demos/expense-splitter/greenfield/).
 
+For a first try, start with level 1:
+
+> Build a small command-line tool that helps a group of friends split shared expenses and see who owes whom.
+
+The other levels let you compare how more detail changes the result.
+
 ## Run it
 
 1. Create an empty project outside this repository, and commit a starting point.
@@ -20,7 +26,7 @@ Start from an empty folder and a request for a command-line tool that splits sha
 
    Decisions, and Documents such as a Vision or Architecture, come from these Extensions, not from the base install.
 
-3. Pick a seed level and give your agent that request:
+3. Give your agent the level 1 request above, or choose another level for a comparison:
 
    | Level | Request                                                                                                                              |
    | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -40,3 +46,5 @@ Start from an empty folder and a request for a command-line tool that splits sha
 - **Rounding.** Someone has to pay the extra cent. Does the agent choose a rule and tell you, or does it happen by accident?
 - **Reasons.** Do the choices end up as Decisions with their reasons, or only in the conversation?
 - **Level 4.** With the records in place, does the agent follow them, or rediscover them?
+
+**Next:** [Grow your own framework](../getting-started/grow-your-framework.md).

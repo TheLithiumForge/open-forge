@@ -114,8 +114,8 @@ public sealed class LibrarySyncOperationIntegrationTests
             Assert.Single(intended.Libraries).Paths);
         Assert.Equal(before, workspace.Snapshot());
         Assert.Equal(ownershipBytes, File.ReadAllBytes(workspace.Absolute(LibraryMutationWorkspace.RecordPath)));
-        Assert.Equal(currentTarget, new FileInfo(currentDestination).LinkTarget);
-        Assert.Equal(retiredTarget, new FileInfo(retiredDestination).LinkTarget);
+        Assert.Equal(currentTarget.Replace('/', Path.DirectorySeparatorChar), new FileInfo(currentDestination).LinkTarget);
+        Assert.Equal(retiredTarget.Replace('/', Path.DirectorySeparatorChar), new FileInfo(retiredDestination).LinkTarget);
         Assert.Equal(sourceBytes, File.ReadAllBytes(currentSource));
         Assert.False(File.Exists(retiredSource));
     }
@@ -177,7 +177,7 @@ public sealed class LibrarySyncOperationIntegrationTests
         finally
         {
             if (new FileInfo(workspace.Absolute("three.md")).LinkTarget
-                == "shared/team-knowledge/three.md")
+                == "shared/team-knowledge/three.md".Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(workspace.Absolute("three.md"));
             }

@@ -1,0 +1,55 @@
+  Register a local source folder and link its files into the workspace.
+
+Usage:
+  open-forge library attach <library-id> <source-root> [options]
+
+Examples:
+  open-forge library attach shared vendor/shared --to docs --dry-run
+  open-forge library attach shared vendor/shared --to docs
+  open-forge library attach shared vendor/shared --git-ignore true --dry-run
+
+Behavior:
+  Both source and destination paths are workspace-relative. --to defaults to the
+  workspace root.
+  --dry-run shows the complete plan and writes nothing.
+  Interactive omission of --git-ignore offers No or Yes. Unattended and preview
+  omission means false.
+  An interactive writing plan asks for confirmation unless --automatic is
+  supplied.
+  Redirected or JSON requests that would write need --automatic. External
+  destinations need permission. Interrupted writes report recovery data.
+
+Arguments:
+  <library-id>   Select one exact Library management ID.
+  <source-root>  Select a source directory by its workspace-relative path.
+
+Options:
+  --to <directory>           Create file links below this workspace-relative
+                             directory.
+  --git-ignore <true|false>  Add exact projected Library links to the workspace
+                             Git-ignore file. Default: false.
+  --dry-run                  Preview the complete plan without writing.
+  --automatic                Disable prompts. Does not select or alter Library
+                             targets.
+  --allow-path <path>        Permit writing to this workspace-relative path,
+                             recording it in .agents/open-forge.json.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Links and permission: The source directory must be contained in the workspace.
+  Created file links are relative. --git-ignore true ignores exact linked files
+  and needs permission for .gitignore. Destinations outside .agents need the
+  applicable workspace permission.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  library list            List registered Libraries.
+  library inspect --help  Inspect one Library and its links.
+  library sync --help     Update links from current source files.

@@ -1,4 +1,6 @@
 The scaffold could not be created: <extension-source>/toolkit could not be read. Nothing was changed.
-  <extension-source>/toolkit/extension.json    not started
-  <extension-source>/toolkit/content/.agents/  not started
+  <extension-source>/toolkit/extension.json
+    not started
+  <extension-source>/toolkit/content/.agents/
+    not started
 Next: open-forge extension create --detail debug

@@ -6,9 +6,11 @@ using OpenForge.Cli.Core.Presentation.Repair.Models;
 using OpenForge.Cli.Core.Presentation.Repair.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Presentation.Repair.Shared.Selection;
@@ -26,6 +28,9 @@ internal static class RepairReportSelector
         var libraryEffects = ReadLibraryEffects(result, libraryRecovery);
         var hasWork = repairs.Count > 0 || libraryEffects.Count > 0;
         var plannedLinks = repairs.Count + libraryEffects.Count;
+        var textLibraryCounts = ReadTextLibraryCounts(result);
+        var sourceFindings = ReadFindings(result).ToArray();
+        var findings = sourceFindings.Select(finding => Finding(result, finding)).ToArray();
         var data = new RepairData
         {
             Mode = CliReportVocabulary.Name(result.Mode),
@@ -37,11 +42,18 @@ internal static class RepairReportSelector
                 : null,
             Diagnosis = selection.Detail >= CliDetail.Full ? Coverage(result.Diagnosis) : null,
             Verification = selection.Detail >= CliDetail.Full ? Verification(result, hasWork) : null,
-            TextRows = ReadTextRows(result, repairs, remaining, libraryRecovery, libraryEffects, selection.Detail),
+            Renames = result.MaintenanceResults.Renames.Select(rename => new RepairDataRename(rename.OldPath, rename.NewPath, rename.Evidence, rename.Similarity)
+            { Proof = selection.Detail >= CliDetail.Full ? rename.Proof : null }).ToArray(),
+            Navigation = result.MaintenanceResults.Navigation.Select(row => new RepairDataNavigation(row.Path, row.Before, row.After)).ToArray(),
+            Metadata = result.MaintenanceResults.Metadata,
+            Entrypoints = result.MaintenanceResults.Entrypoints,
+            TextRows = [.. ReadTextRows(result, repairs, remaining, libraryRecovery, libraryEffects, selection), .. MaintenanceRows(result)],
             TextDetailLines = selection.Detail >= CliDetail.Full
                 ? ReadTextDetails(result, repairs, hasWork)
                 : PartialTextDetails(result),
             ShowNoChanges = result.Mode == RepairMode.DryRun && plannedLinks > 0,
+            TextHeadline = TextHeadline(result, plannedLinks, textLibraryCounts),
+            TextLibraryCounts = textLibraryCounts,
         };
 
         return new CliReport<RepairData>
@@ -53,11 +65,12 @@ internal static class RepairReportSelector
             Workspace = result.WorkspacePath is { } path
                 ? new CliWorkspaceEcho(path, result.WorkspaceExplicit)
                 : null,
-            Findings = ReadFindings(result).Select(finding => Finding(result, finding)).ToArray(),
+            Findings = findings,
             Effects =
             [
                 .. repairs.Select(Effect),
                 .. libraryEffects,
+                .. result.MaintenanceResults.Effects.Select(MaintenanceEffect),
             ],
             Counts = Counts(result, plannedLinks),
             Limitations = Limitations(result),
@@ -96,8 +109,9 @@ internal static class RepairReportSelector
                     From = change.ExpectedDestination,
                     To = change.IntendedDestination,
                     Before = includeHashes ? effect.BeforeHash : null,
-                    After = includeHashes ? effect.AfterHash : null,
+                    After = AfterHash(result, effect, includeHashes),
                     Outcome = step?.Outcome ?? RepairStepOutcome.Planned,
+                    TextProofs = result.MaintenanceResults.LinkRenames.TryGetValue((effect.SourceCanonicalPath, change.OccurrenceView.Line, change.OccurrenceView.Column), out var proofs) ? proofs : [],
                 });
             }
         }
@@ -109,6 +123,13 @@ internal static class RepairReportSelector
             .ToArray();
     }
 
+    private static string? AfterHash(RepairResult result, RepairEffect effect, bool includeHashes)
+    {
+        if (!includeHashes) return null;
+        if (result.MaintenanceResults.FinalHashes.TryGetValue(effect.SourceCanonicalPath, out var finalHash)) return finalHash;
+        return effect.AfterHash;
+    }
+
     private static IReadOnlyList<RepairDataRemaining> ReadRemaining(
         RepairResult result,
         CliDetail detail)
@@ -117,14 +138,12 @@ internal static class RepairReportSelector
         var seen = new HashSet<(string? Path, int? Line, int? Column, string? ObservationCause)>();
         var seenLibraryObservations = new HashSet<(string Code, string? Path, string? Identifier, string Cause)>();
         var selection = result.Selection;
-        if (selection is not null)
+        var proposals = result.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested ? selection?.Unselected ?? [] : result.PostDiagnosis.Proposals;
+        foreach (var proposal in proposals)
         {
-            foreach (var proposal in selection.Unselected)
-            {
-                var candidates = proposal.Candidates?.Items ?? [];
-                remaining.Add(Remaining(proposal, candidates, detail));
-                seen.Add((proposal.SourceCanonicalPath, proposal.OccurrenceView.Line, proposal.OccurrenceView.Column, null));
-            }
+            var candidates = proposal.Candidates?.Items ?? [];
+            remaining.Add(Remaining(proposal, candidates, detail));
+            seen.Add((proposal.SourceCanonicalPath, proposal.OccurrenceView.Line, proposal.OccurrenceView.Column, null));
         }
 
         foreach (var finding in RemainingFindings(result))
@@ -166,44 +185,13 @@ internal static class RepairReportSelector
     }
 
     private static IReadOnlyList<RepairFinding> ReadFindings(RepairResult result)
-    {
-        var findings = result.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested
-            ? result.Findings
-            : result.Findings
-                .Where(finding => !IsLibraryObservation(finding))
-                .Concat(result.PostDiagnosis.Findings.Where(IsLibraryObservation));
-        var seenLibraryObservations = new HashSet<(string Code, string? Path, string? Identifier, string Cause)>();
-        var projected = new List<RepairFinding>();
-        foreach (var finding in findings)
-        {
-            if (finding.Observation is { } observation
-                && !seenLibraryObservations.Add((
-                    finding.Code.ToString(),
-                    observation.Path,
-                    observation.Identifier,
-                    finding.Cause)))
-            {
-                continue;
-            }
-
-            projected.Add(finding);
-        }
-
-        return projected;
-    }
+        => result.ReportFindings;
 
     private static IEnumerable<RepairFinding> RemainingFindings(RepairResult result)
-    {
-        var findings = result.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested
-            ? result.Findings
-            : result.PostDiagnosis.Findings;
-        return findings.Where(finding => finding.Code.ToString() is
-            "GuidedFindingRemaining" or "ManualFindingRemaining");
-    }
+        => result.RemainingFindings;
 
     private static bool IsLibraryObservation(RepairFinding finding)
-        => finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.ManualFindingRemaining
-            && finding.Observation is not null;
+        => finding.IsLibraryObservation;
 
     private static RepairDataRemaining Remaining(
         RepairProposal proposal,
@@ -215,7 +203,8 @@ internal static class RepairReportSelector
             Location = new RepairDataLocation(proposal.OccurrenceView.Line, proposal.OccurrenceView.Column),
             Kind = proposal.IsGuided ? "guided" : "manual",
             Candidates = CandidateShape(candidates, detail),
-            TextCandidates = candidates.Select(candidate => Candidate(candidate, includeReasons: detail >= CliDetail.Full)).ToArray(),
+            TextCandidates = candidates.Select(candidate => Candidate(candidate, includeReasons: true,
+                sourceCanonicalPath: proposal.SourceCanonicalPath)).ToArray(),
         };
 
     private static RepairDataRemaining Remaining(
@@ -230,7 +219,8 @@ internal static class RepairReportSelector
                 : null,
             Kind = finding.Code.ToString() == "GuidedFindingRemaining" ? "guided" : "manual",
             Candidates = CandidateShape(candidates, detail),
-            TextCandidates = candidates.Select(candidate => Candidate(candidate, includeReasons: detail >= CliDetail.Full)).ToArray(),
+            TextCandidates = candidates.Select(candidate => Candidate(candidate, includeReasons: true,
+                sourceCanonicalPath: finding.SourceCanonicalPath)).ToArray(),
         };
 
     private static RepairDataCandidates CandidateShape(
@@ -249,12 +239,14 @@ internal static class RepairReportSelector
         };
     }
 
-    private static RepairDataCandidate Candidate(RepairCandidate candidate, bool includeReasons)
+    private static RepairDataCandidate Candidate(RepairCandidate candidate, bool includeReasons, string? sourceCanonicalPath = null)
         => new()
         {
             Path = RepairWording.Target(candidate.Target),
             Reasons = includeReasons
-                ? candidate.Evidence.Select(RepairWording.CandidateReason).ToArray()
+                ? sourceCanonicalPath is null
+                    ? candidate.Evidence.Select(RepairWording.CandidateReason).ToArray()
+                    : RepairWording.CandidateReasons(sourceCanonicalPath, candidate)
                 : null,
         };
 
@@ -343,9 +335,11 @@ internal static class RepairReportSelector
         IReadOnlyList<RepairDataRemaining> remaining,
         IReadOnlyList<RepairDataLibraryRecovery> libraryRecovery,
         IReadOnlyList<CliEffect> libraryEffects,
-        CliDetail detail)
+        CliSelection selection)
     {
         var rows = new List<RepairDataTextRow>();
+        var detail = selection.Detail;
+        var cannotAsk = CannotAsk(result);
         var partial = result.Status is CliSemanticStatus.Failed or CliSemanticStatus.Interrupted;
         foreach (var repair in repairs)
         {
@@ -358,6 +352,8 @@ internal static class RepairReportSelector
                 ? PartialRepairWording(repair.Outcome)
                 : $"{repair.From} -> {repair.To}";
             rows.Add(new RepairDataTextRow(path, wording));
+            if (selection.Filter is null || selection.Filter.Contains(CliSeverity.Info))
+                rows.AddRange(repair.TextProofs.Select(proof => new RepairDataTextRow("", ProofMessage(proof, detail >= CliDetail.Full))));
         }
 
         foreach (var effect in libraryEffects)
@@ -394,36 +390,24 @@ internal static class RepairReportSelector
                     ? RepairWording.GuidedFinding(item.Candidates.ItemCount)
                     : RepairWording.ManualFinding();
                 var proposal = item.Location is { } occurrence
-                    ? result.Selection?.Unselected.FirstOrDefault(value =>
+                    ? (result.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested ? result.Selection?.Unselected : result.PostDiagnosis.Proposals)?.FirstOrDefault(value =>
                         string.Equals(value.SourceCanonicalPath, item.Path, StringComparison.Ordinal)
                         && value.OccurrenceView.Line == occurrence.Line
                         && value.OccurrenceView.Column == occurrence.Column)
                     : null;
-                var wording = proposal is { } matched
+                var wording = proposal?.MissingPath is { } missing ? MissingMessage(proposal, missing) : proposal is { } matched
                     ? global::OpenForge.Cli.OutputText.Repair.RepairPhrases.RemainingLink(
                         matched.ExpectedDestination,
                         assessment)
                     : assessment;
                 rows.Add(new RepairDataTextRow(location, wording));
+                if (proposal is { IsGuided: false, MissingPath: not null, RenameEvidenceTimedOut: false })
+                    rows.Add(new("", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ManualEdit(proposal.SourceCanonicalPath, proposal.OccurrenceView.Line, proposal.OccurrenceView.Column)));
             }
         }
 
-        if (detail >= CliDetail.Standard)
+        if (detail >= CliDetail.Standard || cannotAsk)
         {
-            foreach (var item in remaining)
-            {
-                var location = item.Location is { } value
-                    ? RepairWording.Location(item.Path, value.Line, value.Column)
-                    : item.Path;
-                foreach (var candidate in item.TextCandidates)
-                {
-                    var wording = detail >= CliDetail.Full && candidate.Reasons is { Count: > 0 }
-                        ? global::OpenForge.Cli.OutputText.Repair.RepairPhrases.TargetCandidateWithEvidence($"{candidate.Path}", $"{string.Join("; ", candidate.Reasons)}")
-                        : global::OpenForge.Cli.OutputText.Repair.RepairPhrases.TargetCandidate($"{candidate.Path}");
-                    rows.Add(new RepairDataTextRow(location, wording));
-                }
-            }
-
             foreach (var library in libraryRecovery.Where(value => !value.Selected))
             {
                 rows.Add(new RepairDataTextRow(library.Path, global::OpenForge.Cli.OutputText.Repair.RepairText.LabelSkipped()));
@@ -475,6 +459,12 @@ internal static class RepairReportSelector
     {
         var primary = PrimaryFinding(result);
         var repaired = result.Mode == RepairMode.DryRun ? plannedLinks : result.Counts.Repaired;
+        if (result.Status == CliSemanticStatus.Attention && PendingProposals(result).Any(proposal => proposal.RenameEvidenceTimedOut))
+        {
+            var prefix = "";
+            if (repaired > 0) prefix = (result.Mode == RepairMode.DryRun ? RepairWording.WouldRepair(repaired) : RepairWording.Repaired(repaired)) + " ";
+            return new(prefix + global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.GitTimedOut(), CliHeadlineKind.Warnings);
+        }
         return result.Status switch
         {
             CliSemanticStatus.Complete when repaired == 0 && plannedLinks == 0
@@ -484,13 +474,13 @@ internal static class RepairReportSelector
             CliSemanticStatus.Complete
                 => new(RepairWording.Repaired(repaired), CliHeadlineKind.Done),
             CliSemanticStatus.Attention when repaired == 0
-                => new(RepairWording.NothingAutomatic(result.Counts.Remaining, result.Counts.Manual > 0), CliHeadlineKind.Warnings),
+                => new(RepairWording.NothingAutomatic(result.Counts.Guided, result.Counts.Manual), CliHeadlineKind.Warnings),
             CliSemanticStatus.Attention when result.Mode == RepairMode.DryRun
-                => new(RepairWording.WouldRepairWithRemaining(repaired, result.Counts.Remaining, result.Counts.Manual > 0), CliHeadlineKind.Warnings),
+                => new(RepairWording.WouldRepairWithRemaining(repaired, result.Counts.Guided, result.Counts.Manual), CliHeadlineKind.Warnings),
             CliSemanticStatus.Attention
-                => new(RepairWording.RepairedWithRemaining(repaired, result.Counts.Remaining, result.Counts.Manual > 0), CliHeadlineKind.Warnings),
+                => new(RepairWording.RepairedWithRemaining(repaired, result.Counts.Guided, result.Counts.Manual), CliHeadlineKind.Warnings),
             CliSemanticStatus.Incomplete
-                => new(RepairWording.Incomplete(), CliHeadlineKind.Incomplete),
+                => IncompleteHeadline(result, repaired),
             CliSemanticStatus.Invalid
                 => new(RepairWording.Invalid(FindingMessage(result, primary)), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Blocked
@@ -503,14 +493,79 @@ internal static class RepairReportSelector
         };
     }
 
+    private static CliHeadline IncompleteHeadline(RepairResult result, int repaired)
+    {
+        if (repaired == 0) return new(RepairWording.Incomplete(), CliHeadlineKind.Incomplete);
+        var edits = result.Counts.Manual + result.MaintenanceResults.FilesSkipped;
+        var sentence = result.Mode == RepairMode.DryRun ? RepairWording.WouldRepair(repaired) : RepairWording.Repaired(repaired);
+        if (result.Counts.Guided > 0 || edits > 0)
+            sentence += " " + global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Remainder(result.Counts.Guided, edits);
+        else sentence += " " + global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.IncompleteWork();
+        return new(sentence, CliHeadlineKind.Incomplete);
+    }
+
+    private static RepairDataLibraryCounts? ReadTextLibraryCounts(RepairResult result)
+    {
+        if (result.Status is not (CliSemanticStatus.Complete or CliSemanticStatus.Attention)
+            || result.Plan is not { } plan)
+        {
+            return null;
+        }
+
+        var libraryLinks = plan.LibrarySteps
+            .Where(step => step.Selection.Proposal.RestoresDeletedLink && step.Effect is not null)
+            .ToArray();
+        if (libraryLinks.Length > 0 && plan.Steps.Count == 0
+            && plan.Selection.Libraries.Selected.All(value => value.Proposal.RestoresDeletedLink))
+        {
+            var affected = plan.Selection.Libraries.Selected.Select(value => value.Proposal)
+                .Concat(plan.Selection.Libraries.Unselected)
+                .Where(proposal => proposal.IsRelativeFileLink)
+                .Select(proposal => (proposal.LibraryIdValue, proposal.TargetPath))
+                .Distinct()
+                .Count();
+            var restored = libraryLinks.Count(step => result.Mode == RepairMode.DryRun
+                ? step.Outcome == RepairStepOutcome.Planned
+                : step.Outcome == RepairStepOutcome.Verified);
+            return new(Restored: restored, Remaining: affected - restored, Preview: result.Mode == RepairMode.DryRun);
+        }
+
+        return null;
+    }
+
+    private static string? TextHeadline(RepairResult result, int plannedLinks, RepairDataLibraryCounts? libraryCounts)
+    {
+        if (result.Findings.Any(finding => finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.SelectionRequired))
+            return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.CannotAsk();
+        if (libraryCounts is not null)
+        {
+            return global::OpenForge.Cli.OutputText.Repair.RepairPhrases.RestoredLibraryLinks(
+                libraryCounts.Restored, libraryCounts.Remaining, result.Mode == RepairMode.DryRun);
+        }
+
+        if (result.SelectionMode == RepairSelectionMode.InteractivePrompt
+            && result.Status == CliSemanticStatus.Attention
+            && result.Plan is { } plan && plannedLinks == 0 && result.Counts.Repaired == 0)
+        {
+            var skipped = plan.Selection.Unselected.Count(proposal => proposal.IsGuided);
+            if (skipped > 0)
+            {
+                return global::OpenForge.Cli.OutputText.Repair.RepairPhrases.LeftBrokenLinksUnchanged(skipped);
+            }
+        }
+
+        return null;
+    }
+
     private static string? HeadlineFindingCode(RepairResult result)
     {
         var finding = PrimaryFinding(result);
         return finding is null || result.Status == CliSemanticStatus.Complete
+            || result.Status == CliSemanticStatus.Incomplete && result.Plan is { Effects.Count: > 0 }
             || finding.Code is global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.GuidedFindingRemaining
                 or global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.ManualFindingRemaining
             ? null
-            : MachineCode(finding.Code);
+            : finding.MachineName;
     }
 
     private static RepairFinding? PrimaryFinding(RepairResult result)
@@ -545,13 +600,16 @@ internal static class RepairReportSelector
         var subject = new CliSubject(
             path is null ? CliSubjectKind.Identifier : CliSubjectKind.File,
             path,
-            finding.Observation?.Identifier ?? (path is null ? MachineCode(finding.Code) : null),
+            finding.Observation?.Identifier ?? (path is null ? finding.MachineName : null),
             occurrence is { } location ? new CliSourceLocation(location.Line, location.Column) : null);
         var candidates = proposal?.Candidates?.Items ?? [];
         var resolution = finding.Code.ToString() switch
         {
+            _ when finding.OwnerAction is { Kind: CliNextActionKind.Command } => CliResolution.TargetedOperation,
+            _ when finding.OwnerAction is not null => CliResolution.ManualDecision,
             "GuidedFindingRemaining" => CliResolution.GuidedChoice,
             "ManualFindingRemaining" => CliResolution.ManualDecision,
+            "MetadataSkipped" => CliResolution.ManualDecision,
             "ProposalUnavailable"
                 or "FactsConflicting"
                 or "ProposalUnsupported"
@@ -563,10 +621,12 @@ internal static class RepairReportSelector
                 or "RecoveryConflict" => CliResolution.BlockedRepair,
             _ => (CliResolution?)null,
         };
+        IReadOnlyList<CliFindingTextChoice> choices = finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.GuidedFindingRemaining
+            && proposal is { RenameEvidenceTimedOut: false } ? candidates.Select(candidate => TextChoice(result, proposal, candidate)).ToArray() : [];
         return new CliFinding
         {
-            Severity = CliReportVocabulary.Severity(finding.Status),
-            Code = MachineCode(finding.Code),
+            Severity = FindingSeverity(finding),
+            Code = finding.MachineName,
             Title = finding.Observation is null
                 ? RepairWording.FindingTitle(finding.Code.ToString())
                 : global::OpenForge.Cli.OutputText.Repair.RepairWording.RemainingLibraryDiagnosis(),
@@ -574,7 +634,34 @@ internal static class RepairReportSelector
             Subject = subject,
             Resolution = resolution,
             Candidates = [],
+            TextChoices = choices,
+            Actions = FindingActions(finding, proposal, subject, choices),
         };
+    }
+
+    private static IReadOnlyList<CliNextAction> FindingActions(RepairFinding finding, RepairProposal? proposal, CliSubject subject,
+        IReadOnlyList<CliFindingTextChoice> choices)
+    {
+        if (finding.Protection) return [ProtectionAction(finding)];
+        if (finding.OwnerAction is { } ownerAction) return [ownerAction];
+        if (finding.Protection || proposal is { RenameEvidenceTimedOut: true }) return [];
+        if (choices.Count != 0) return choices.Select(choice => new CliNextAction(choice.Command, choice.Label)).ToArray();
+        if (finding.Code != global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.ManualFindingRemaining
+            || finding.Observation is not null || proposal is { IsSafeExact: true } || subject.Path is null || subject.Location is null) return [];
+        var text = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ManualEdit(subject.Path, subject.Location.Line, subject.Location.Column);
+        return [new(text, text) { Kind = CliNextActionKind.Sentence }];
+    }
+
+    private static CliFindingTextChoice TextChoice(RepairResult result, RepairProposal proposal, RepairCandidate candidate)
+    {
+        var target = RepairWording.Target(candidate.Target);
+        var relativePath = Path.GetRelativePath(Path.GetDirectoryName(proposal.SourceCanonicalPath) ?? "", candidate.Target.CanonicalTargetPath).Replace('\\', '/');
+        var label = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ToUse(relativePath,
+            RepairWording.StrongestCandidateReason(proposal.SourceCanonicalPath, candidate));
+        var source = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{proposal.SourceCanonicalPath}@{proposal.OccurrenceView.Line}:{proposal.OccurrenceView.Column}");
+        var arguments = new List<string> { "repair", "--relink", source, proposal.ExpectedDestination, target, "--automatic" };
+        if (result.WorkspaceExplicit) CliRetryCommand.Add(arguments, "--workspace", result.WorkspacePath);
+        return new(label, CliRetryCommand.Build(arguments));
     }
 
     private static string FindingMessage(RepairResult result, RepairFinding? finding)
@@ -585,12 +672,15 @@ internal static class RepairReportSelector
         }
 
         var proposal = Proposal(result, finding);
+        if (finding.Protection) return ProtectionMessage(finding);
         var path = finding.SourceCanonicalPath ?? proposal?.SourceCanonicalPath ?? FailurePath(result, finding.Code.ToString());
         var occurrence = finding.OccurrenceView ?? proposal?.OccurrenceView;
         return finding.Code.ToString() switch
         {
+            "GuidedFindingRemaining" or "ManualFindingRemaining" when proposal?.MissingPath is { } missing && !proposal.IsSafeExact
+                => MissingMessage(proposal, missing),
             "GuidedFindingRemaining" when proposal is not null
-                => RepairWording.GuidedFinding(proposal.ExpectedDestination, proposal.Candidates?.Items.Count ?? 0),
+                => RepairWording.GuidedFinding(proposal.Candidates?.Items.Count ?? 0),
             "GuidedFindingRemaining" => RepairWording.GuidedFinding(0),
             "ManualFindingRemaining" when finding.Observation is not null => finding.Cause,
             "ManualFindingRemaining" => RepairWording.ManualFinding(),
@@ -621,6 +711,8 @@ internal static class RepairReportSelector
             "RecoveryFailed" => CliFindingWording.RecoveryFailed(),
             "OperationFailed" => CliFindingWording.OperationFailed(global::OpenForge.Cli.OutputText.Repair.RepairText.TitleRepair(), TrimSentence(finding.Cause)),
             "Interrupted" => RepairWording.Cancelled(),
+            "RenameProven" => result.MaintenanceResults.Renames.Where(rename => rename.OldPath == finding.SourceCanonicalPath).Select(rename => ProofMessage(rename, true)).FirstOrDefault() ?? finding.Cause,
+            "MetadataSkipped" when path is not null => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Malformed(path, IndexCommand(result)),
             _ => finding.Cause,
         };
     }
@@ -628,8 +720,8 @@ internal static class RepairReportSelector
     private static string? FailurePath(RepairResult result, string code)
         => code is "WriteFailed" or "VerificationFailed" or "TargetChanged"
             && result.Plan is { } plan
-                ? plan.Effects
-                    .Skip(result.Application.AppliedEffects)
+                ? result.MaintenanceResults.FailurePath ?? plan.Effects
+                    .Skip(result.Counts.AppliedEffects)
                     .Select(effect => effect.SourceCanonicalPath)
                     .FirstOrDefault()
                 : null;
@@ -662,19 +754,52 @@ internal static class RepairReportSelector
 
     private static CliNextAction? Next(RepairResult result)
     {
+        if (result.Recovery.ResidualPath is not null || result.Findings.Any(finding =>
+            finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.RecoveryArtifactRetained)) return result.Next;
+        if (PendingProposals(result).Any(proposal => proposal.RenameEvidenceTimedOut))
+            return new("open-forge repair", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.GitRetryReason());
+        if (result.Findings.Any(finding => finding.Code is global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.ContradictoryRelink
+            or global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.PlanConflict or global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.TargetUnsafe)) return null;
+        if (result.Mode == RepairMode.DryRun && result.Plan is { IsBlocked: false } safePreview && !safePreview.IsNoOp
+            && result.Findings.All(finding => finding.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention
+                || finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.MetadataSkipped))
+            return new("open-forge repair --automatic", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ApplyPreviewReason()) { AppliesRequest = true };
+        if (result.ReportFindings.FirstOrDefault(finding => finding.Protection) is { } protection) return ProtectionAction(protection);
+        if (CannotAsk(result)
+            && result.Findings.Count > 0
+            && result.Findings.All(finding => finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.SelectionRequired)
+            && result.Diagnosis.SelectedScope == RepairCoverageState.Complete)
+        {
+            if (result.PostDiagnosis.Proposals.Any(proposal => proposal.IsSafeExact) && result.Next is { } safe)
+                return safe with { AppliesRequest = true };
+            if (ListsCopyableChoices(result)) return ChoiceNext();
+            if (result.PostDiagnosis.NeedsIndex)
+                return new("open-forge index", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.CompleteIndexReason());
+            if (result.Counts.Guided > 0)
+                return new(global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ChooseTarget(), RepairWording.NextAttentionReason()) { Kind = CliNextActionKind.Sentence };
+            var manual = result.PostDiagnosis.Proposals.FirstOrDefault(proposal => proposal.MissingPath is not null);
+            if (manual is not null)
+                return new(global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ManualEdit(manual.SourceCanonicalPath, manual.OccurrenceView.Line, manual.OccurrenceView.Column), global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.NoReplacementReason()) { Kind = CliNextActionKind.Sentence };
+        }
+        if (result.Recovery.ResidualPath is null && result.Status == CliSemanticStatus.Incomplete
+            && result.Findings.All(finding => finding.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention || finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.MetadataSkipped)
+            && result.Findings.FirstOrDefault(finding => finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.MetadataSkipped) is { SourceCanonicalPath: { } malformed })
+        {
+            if (ListsCopyableChoices(result)) return ChoiceNext();
+            return new(global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.CorrectMetadata(malformed, IndexCommand(result)), global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.CorrectMetadataReason()) { Kind = CliNextActionKind.Sentence };
+        }
+        if (result.Recovery.ResidualPath is not null || result.Status is not (CliSemanticStatus.Complete or CliSemanticStatus.Attention))
+            return result.Next;
+        if (result.Mode == RepairMode.DryRun && result.Plan is { IsBlocked: false } preview
+            && !preview.IsNoOp)
+            return new("open-forge repair --automatic", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ApplyPreviewReason()) { AppliesRequest = true };
+        if (ListsCopyableChoices(result)) return ChoiceNext();
+        if (result.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention
+            && result.Recovery.ResidualPath is null && result.PostDiagnosis.NeedsIndex)
+            return new("open-forge index", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.CompleteIndexReason());
         if (result.Status == CliSemanticStatus.Complete)
         {
-            return null;
-        }
-
-        var codes = result.Findings
-            .Select(finding => finding.Code.ToString())
-            .ToHashSet(StringComparer.Ordinal);
-        if (codes.Contains("ContradictoryRelink")
-            || codes.Contains("PlanConflict")
-            || codes.Contains("TargetUnsafe"))
-        {
-            return null;
+            return new("open-forge doctor", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.VerifyDoctorReason());
         }
 
         if (result.Status == CliSemanticStatus.Attention
@@ -683,18 +808,20 @@ internal static class RepairReportSelector
         {
             var remaining = RemainingFindings(result).ToArray();
             var hasLibraryObservations = remaining.Any(IsLibraryObservation);
-            if (hasLibraryObservations && !remaining.Any(finding => !IsLibraryObservation(finding)))
+            var repeatsLibraryChoice = result.Mode == RepairMode.DryRun
+                && result.Plan is { LibrarySteps.IsEmpty: false, Selection.Libraries.Unselected.IsEmpty: false };
+            if (hasLibraryObservations && !remaining.Any(finding => !IsLibraryObservation(finding)) && !repeatsLibraryChoice)
             {
                 return new CliNextAction(
                     "open-forge doctor",
-                    global::OpenForge.Cli.OutputText.Repair.RepairWording.InspectRemainingLibraryProblems());
+                    global::OpenForge.Cli.OutputText.Repair.RepairWording.InspectRemainingLibraryProblems(DoctorCommand(result)));
             }
 
             if (hasLibraryObservations && remainingAction.Command == "open-forge repair")
             {
                 return new CliNextAction(
                     remainingAction.Command,
-                    global::OpenForge.Cli.OutputText.Repair.RepairWording.ReviewRemainingLinksAndInspectLibraryProblems())
+                    global::OpenForge.Cli.OutputText.Repair.RepairWording.ReviewRemainingLinksAndInspectLibraryProblems(DoctorCommand(result)))
                 {
                     Kind = remainingAction.Kind,
                 };
@@ -705,29 +832,144 @@ internal static class RepairReportSelector
             && result.Next is { } attention
             && attention.Command == "open-forge repair")
         {
+            var manual = (result.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested ? result.Selection?.Unselected : result.PostDiagnosis.Proposals)?
+                .FirstOrDefault(proposal => !proposal.IsGuided && proposal.MissingPath is not null);
+            if (result.Counts.Guided == 0 && manual is not null)
+                return new(global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ManualEdit(manual.SourceCanonicalPath, manual.OccurrenceView.Line, manual.OccurrenceView.Column),
+                    global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.NoReplacementReason())
+                { Kind = CliNextActionKind.Sentence };
             return new CliNextAction(attention.Command, RepairWording.NextAttentionReason())
             {
                 Kind = attention.Kind,
+                UsesInteractiveRequest = true,
             };
         }
 
         return result.Next;
     }
 
+    private static bool CannotAsk(RepairResult result)
+        => result.SelectionMode != RepairSelectionMode.InteractivePrompt || result.Findings.Any(finding =>
+            finding.Code is global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.SelectionRequired
+                or global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.ConfirmationRequired);
+
+    private static bool ListsCopyableChoices(RepairResult result)
+        => CannotAsk(result) && ReadFindings(result).Any(finding =>
+            finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.GuidedFindingRemaining
+            && Proposal(result, finding) is { RenameEvidenceTimedOut: false, Candidates.Items.Count: > 0 });
+
+    private static CliNextAction ChoiceNext()
+        => new(global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ChooseTarget(), RepairWording.NextAttentionReason())
+        { Kind = CliNextActionKind.Sentence };
+
+    private static string IndexCommand(RepairResult result)
+        => CliRetryCommand.BuildInWorkspace(["index"], result.WorkspacePath, result.WorkspaceExplicit);
+
+    private static string DoctorCommand(RepairResult result)
+        => CliRetryCommand.BuildInWorkspace(["doctor"], result.WorkspacePath, result.WorkspaceExplicit);
+
+    private static string ProtectionMessage(RepairFinding finding)
+    {
+        var path = finding.ProtectedPath ?? finding.SourceCanonicalPath ?? "";
+        if (finding.OwnerAction is not null) return global::OpenForge.Cli.OutputText.Repair.RepairProtectionText.Managed(path);
+        return finding.ProtectionKind switch
+        {
+            RepairProtectionKind.NativePackage => global::OpenForge.Cli.OutputText.Repair.RepairProtectionText.NativePackage(path),
+            RepairProtectionKind.PrivateOrExcluded => global::OpenForge.Cli.OutputText.Repair.RepairProtectionText.PrivateOrExcluded(path),
+            _ => global::OpenForge.Cli.OutputText.Repair.RepairProtectionText.Protected(path),
+        };
+    }
+
+    private static CliNextAction ProtectionAction(RepairFinding finding)
+    {
+        if (finding.OwnerAction is { } owner) return new(owner.Command, global::OpenForge.Cli.OutputText.Repair.RepairProtectionText.ManagingUpdateReason());
+        var text = ProtectionMessage(finding);
+        if (finding.ProtectionKind == RepairProtectionKind.UnsupportedForm && finding.SourceCanonicalPath is { } path && finding.OccurrenceView is { } location)
+            text = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ManualEdit(path, location.Line, location.Column);
+        return new(text, text) { Kind = CliNextActionKind.Sentence };
+    }
+
+    private static IEnumerable<RepairProposal> PendingProposals(RepairResult result)
+        => result.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested ? result.Selection?.Unselected ?? [] : result.PostDiagnosis.Proposals;
+
     private static RepairProposal? Proposal(RepairResult result, RepairFinding finding)
-        => result.Selection?.Unselected.FirstOrDefault(proposal =>
+        => (result.PostDiagnosis.State == RepairPostDiagnosisState.NotRequested ? result.Selection?.Unselected : result.PostDiagnosis.Proposals)?.FirstOrDefault(proposal =>
             proposal.SourceCanonicalPath == finding.SourceCanonicalPath
             && proposal.OccurrenceView == finding.OccurrenceView);
 
     private static IReadOnlyList<CliCount> Counts(RepairResult result, int plannedLinks)
-        =>
-        [
+    {
+        var counts = new List<CliCount>
+        {
             new CliCount("linksRepaired", global::OpenForge.Cli.OutputText.Repair.RepairText.LabelLinksRepaired(), result.Mode == RepairMode.DryRun ? plannedLinks : result.Counts.Repaired),
             new CliCount("problemsRemaining", global::OpenForge.Cli.OutputText.Repair.RepairText.LabelProblemsRemaining(), result.Counts.Remaining),
             new CliCount("problemsNeedingChoice", global::OpenForge.Cli.OutputText.Repair.RepairText.LabelProblemsNeedingAChoice(), result.Counts.Guided),
             new CliCount("problemsNeedingHand", global::OpenForge.Cli.OutputText.Repair.RepairText.LabelProblemsNeedingAHand(), result.Counts.Manual),
             new CliCount("librarySteps", global::OpenForge.Cli.OutputText.Repair.RepairText.TitleLibraryRecoverySteps(), result.Plan is { } plan ? plan.LibrarySteps.Length : 0),
-        ];
+        };
+        // Keep the pre-existing severity counts ahead of additive maintenance members.
+        foreach (var severity in Enum.GetValues<CliSeverity>())
+        {
+            var name = severity switch { CliSeverity.Error => "errors", CliSeverity.Warning => "warnings", CliSeverity.Info => "infos", _ => throw new ArgumentOutOfRangeException(nameof(severity)) };
+            var total = ReadFindings(result).LongCount(finding => FindingSeverity(finding) == severity);
+            if (total > 0) counts.Add(new(name, name, total));
+        }
+        counts.AddRange([
+            new CliCount("entriesUpdated", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.EntriesUpdatedCount(), result.MaintenanceResults.Navigation.Count(row => row.Outcome is "done" or "planned")),
+            new CliCount("metadataCompleted", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MetadataCompletedCount(), result.MaintenanceResults.Metadata.Count(row => row.Outcome is "done" or "planned")),
+            new CliCount("entrypointsCreated", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.EntrypointsCreatedCount(), result.MaintenanceResults.Entrypoints.Count(row => row.Outcome is "done" or "planned")),
+            new CliCount("filesSkipped", global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.FilesSkippedCount(), result.MaintenanceResults.FilesSkipped),
+        ]);
+        return counts;
+    }
+
+    private static string MissingMessage(RepairProposal proposal, string missing)
+    {
+        if (proposal.RenameEvidenceTimedOut) return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.GitTimedOut();
+        if (!proposal.IsGuided) return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.NoCandidate(missing);
+        if (proposal.MissingAssessment is "SeveralStrongCandidates" or "Contradictory")
+            return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Several(missing);
+        return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Weak(missing);
+    }
+
+    private static string ProofMessage(RepairRename rename, bool full = false)
+    {
+        var evidence = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MetadataProof();
+        if (rename.SameContent) evidence = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.SameContent();
+        else if (rename.Similarity is { } score) evidence = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Similarity(score);
+        var oldPath = rename.OldPath;
+        var newPath = rename.NewPath;
+        if (!full)
+        {
+            var oldParts = oldPath.Split('/');
+            var newParts = newPath.Split('/');
+            if (oldParts.Length > 2 && newParts.Length > 2 && oldParts[0] == ".agents" && newParts[0] == ".agents" && oldParts[1] == newParts[1])
+            {
+                var prefix = oldParts[0].Length + oldParts[1].Length + 2;
+                oldPath = oldPath[prefix..];
+                newPath = newPath[prefix..];
+            }
+        }
+        return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Proof(oldPath, newPath, rename.Moved, evidence);
+    }
+
+    private static IEnumerable<RepairDataTextRow> MaintenanceRows(RepairResult result)
+    {
+        var preview = result.Mode == RepairMode.DryRun;
+        foreach (var row in result.MaintenanceResults.Metadata.Where(row => row.Outcome is "planned" or "done"))
+            yield return new(row.Path, global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Metadata(preview));
+        foreach (var row in result.MaintenanceResults.Entrypoints.Where(row => row.Outcome is "planned" or "done"))
+        {
+            var rename = result.MaintenanceResults.NavigationRenames.FirstOrDefault(rename => rename.Path == row.Path && rename.Outcome == row.Outcome);
+            yield return new(row.Path, rename is null ? global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Entrypoint(preview)
+                : global::OpenForge.Cli.OutputText.Index.IndexWording.RenamedRow(rename.OldName, preview));
+        }
+        foreach (var row in result.MaintenanceResults.Navigation.Where(row => row.Outcome is "planned" or "done"
+            && !result.MaintenanceResults.Entrypoints.Any(entrypoint => entrypoint.Path == row.Path)))
+            yield return new(row.Path, global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Navigation(preview));
+        foreach (var effect in result.MaintenanceResults.Effects.Where(effect => effect.Outcome is "not-started" or "unknown"))
+            yield return new(effect.Path, LibraryEffectWording(MaintenanceEffect(effect).Outcome));
+    }
 
     private static IReadOnlyList<CliLimitation> Limitations(RepairResult result)
         => result.Findings
@@ -739,6 +981,8 @@ internal static class RepairReportSelector
                     ? new CliSubject(CliSubjectKind.File, path)
                     : null))
             .Distinct()
+            .Concat(PendingProposals(result).Any(proposal => proposal.RenameEvidenceTimedOut)
+                ? [new CliLimitation(global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.GitTimedOut(), "")] : [])
             .ToArray();
 
     private static CliRecovery Recovery(RepairResult result)
@@ -872,8 +1116,31 @@ internal static class RepairReportSelector
         int rightColumn)
         => leftPath == rightPath && leftLine == rightLine && leftColumn == rightColumn;
 
-    private static string MachineCode<T>(T code) where T : struct, Enum
-        => $"repair.{CliReportVocabulary.Name(code)}";
+    private static CliEffect MaintenanceEffect(RepairMaintenanceEffect effect)
+        => new()
+        {
+            Path = effect.Path,
+            Kind = effect.Kind == "section" ? CliEffectKind.Section : CliEffectKind.File,
+            Action = effect.Action switch
+            {
+                "created" => CliEffectAction.Created,
+                "deleted" => CliEffectAction.Deleted,
+                "rewritten" => CliEffectAction.Rewritten,
+                _ => throw new ArgumentOutOfRangeException(nameof(effect)),
+            },
+            Outcome = effect.Outcome switch
+            {
+                "planned" => CliEffectOutcome.Planned,
+                "done" => CliEffectOutcome.Done,
+                "not-started" => CliEffectOutcome.NotStarted,
+                "unknown" => CliEffectOutcome.Unknown,
+                _ => throw new ArgumentOutOfRangeException(nameof(effect)),
+            },
+        };
 
     private static string TrimSentence(string value) => value.Trim().TrimEnd('.');
+
+    private static CliSeverity FindingSeverity(RepairFinding finding)
+        => finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.MetadataSkipped
+            ? CliSeverity.Error : CliReportVocabulary.Severity(finding.Status);
 }

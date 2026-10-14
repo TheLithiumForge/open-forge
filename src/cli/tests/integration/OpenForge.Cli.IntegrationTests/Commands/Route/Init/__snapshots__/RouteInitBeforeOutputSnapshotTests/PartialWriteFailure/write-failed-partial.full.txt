@@ -15,4 +15,4 @@ Workspace: <workspace>
     Verification: not-started
   Recovery: the recovery bundle was retained at <recovery-bundle>.
   Report the failure and retry the same Route Init request with bounded diagnostics.
-Next: open-forge route init --detail debug
+Next: open-forge route init documents/design --detail debug --workspace <workspace>

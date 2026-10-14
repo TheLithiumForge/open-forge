@@ -1,11 +1,12 @@
 ---
-title: Your first task
+title: How agents load context
+sidebar_label: How agents load context
 description: What happens when an agent starts work in an Open Forge workspace, and how to check what it loaded.
 ---
 
-# Your first task
+# How agents load context
 
-Give your agent a real task. You don't need a spec up front. Start with the request and add detail as the work calls for it.
+An agent starts with your instructions and folder indexes, then opens the branches its task needs.
 
 For one walkthrough from installation to a saved useful fact, follow the [ten-minute guide](ten-minute-guide.md). This page explains what the agent loads and how to check it.
 
@@ -13,11 +14,13 @@ For a first look at what the agent reads, try a small task in an existing projec
 
 > Explain how this project runs its tests. Follow `AGENTS.md`, and name the Open Forge files you read.
 
-The answer should describe the test setup and list the loader, entrypoints, and any CLI usage guide it read.
+In a new project, give the agent a first build request instead. The [greenfield demo](../demos/greenfield.md) supplies one you can try.
+
+For the test request, the answer should describe the test setup and list the loader, entrypoints, and any CLI usage guide it read.
 
 For everyday work, just ask for the result you want: fix a bug, explain a part of the code, or add a feature. You don't need to name every Open Forge file or command. Review the agent's work as usual, and keep useful corrections in the workspace when you want them to apply next time.
 
-The rest of this page explains what happens underneath. The [ten-minute guide](ten-minute-guide.md#2-add-a-rule-and-a-reusable-shape) shows how to add your first rule and Pattern.
+The rest of this page explains what happens underneath. The [ten-minute guide](ten-minute-guide.md#2-add-a-testing-rule) shows how to add your first rule and Pattern.
 
 <details>
 <summary>See the agent's loading sequence</summary>
@@ -58,13 +61,13 @@ With the CLI installed, you can see what the rules load at startup:
 open-forge context skills/open-forge-cli
 ```
 
-When you know which files the task will touch, pass every path with `--for`. You can include planned files that do not exist yet. For example, if the task adds a C# file and updates its TypeScript caller, select the relevant routes and include both paths:
+When you know which files the task will touch, pass every path with `--for`. You can include planned files that do not exist yet. In a workspace with `directives/csharp` and `directives/frontend` routes, select both and supply every working file, including planned files:
 
 ```sh
-open-forge context --for src/orders/new-order.cs --for web/orders.ts
+open-forge context directives/csharp directives/frontend --for src/orders/new-order.cs --for web/orders.ts
 ```
 
-Context checks the conditions on entries those routes expose. Adding the TypeScript path lets its own rules apply without extending C# rules to that file. Context uses the paths you supply and does not infer related files. If the paths aren't known yet, startup works as usual for entries without conditions. Only conditioned `#LoadNow` and `#KeepInMind` entries that a loaded parent exposes remain pending. Other conditioned entries stay on demand.
+Use your workspace's actual route names. `--for` checks file conditions. It does not select a scope by itself. Context checks the conditions on entries those routes expose. Adding the TypeScript path lets its own rules apply without extending C# rules to that file. Context uses the paths you supply and does not infer related files. If the paths aren't known yet, startup works as usual for entries without conditions. Only conditioned `#LoadNow` and `#KeepInMind` entries that a loaded parent exposes remain pending. Other conditioned entries stay on demand.
 
 To see the route tree, or inspect how one file behaves:
 

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Text.Json;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Commands.Extension.Install;
@@ -386,7 +387,7 @@ public sealed class ExtensionInstallInteractionIntegrationTests
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         using var document = JsonDocument.Parse(result.StandardOutput);
         Assert.Equal(
-            "open-forge extension install toolkit --force --dry-run",
+            $"open-forge extension install toolkit --source {CliCommandText.Quote(source.Path)} --workspace {CliCommandText.Quote(workspace.Path)} --automatic --force --dry-run --format json",
             document.RootElement.GetProperty("next").GetProperty("command").GetString());
         Assert.Equal(before, workspace.Snapshot());
     }

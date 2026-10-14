@@ -145,7 +145,7 @@ public sealed class ExtensionCreateCatalogueIntegrationTests
             Mode = mode,
         };
         return await ExtensionCreateOperationFactory.Create(
-            ExtensionInteractionTestFactory.ForCreate(prompts)).ExecuteAsync(request, cancellationToken);
+            ExtensionInteractionTestFactory.ForCreate(prompts, scripted.Terminal.WriteAsync)).ExecuteAsync(request, cancellationToken);
     }
 
     private static void DeleteDestination(string destination)

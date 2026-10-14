@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Parsing.Shared.Replay;
 
 namespace OpenForge.Cli.Core.Shell.Composition;
 
@@ -49,7 +50,7 @@ internal sealed class CliReportCommandBinding<TRequest, TResult, TData> : ICliCo
             throw new InvalidOperationException("A binding must return a request or a concrete invalid result.");
         }
 
-        return _pipeline.ExecuteAsync(request, invocation.Presentation, writers, cancellationToken);
+        return _pipeline.ExecuteAsync(request, invocation.Presentation, writers, cancellationToken, CliRequestReplayReader.Read(parse, Command));
     }
 
     public ValueTask<CliProcessCompletion> PresentInvalidAsync(

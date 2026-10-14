@@ -1,0 +1,22 @@
+Extension install was cancelled. Nothing was changed.
+Workspace: <workspace>
+  .agents/skills/use-workflow/SKILL.md
+    not started
+  .agents/skills/use-workflow/references/_references.md
+    not started
+  .agents/templates/workflows/_workflows.md
+    not started
+  .agents/templates/workflows/workflow.md
+    not started
+  .agents/skills/use-workflow/references/development/_development.md
+    not started
+  .agents/skills/use-workflow/references/development/debugging.md
+    not started
+  .agents/skills/use-workflow/references/development/development.md
+    not started
+  .agents/skills/use-workflow/references/development/review.md
+    not started
+  .agents/skills/_skills.md
+    not started
+  .agents/templates/_templates.md
+    not started

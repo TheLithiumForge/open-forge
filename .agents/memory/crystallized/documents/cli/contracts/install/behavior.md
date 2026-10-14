@@ -111,6 +111,11 @@ never prompt. A non-prompt-capable human application that would write is
 same command with `--automatic`. Automatic never supplies force or bypasses a
 safety boundary. Decorative prompt wording is not contract meaning.
 
+Preserve typed workspace, setup and output choices for Install retry commands.
+The missing-confirmation action adds only `--automatic`. A cancellation retains
+Configure and explicit choices without adding automatic mode or answers from
+the cancelled wizard. Text and JSON project the same next command.
+
 ## Configuration Planning
 
 Resolve setup selection through the existing Shell prompt contracts before
@@ -118,6 +123,11 @@ planning or exact-no-op admission. Selection observes concrete settings,
 ordinary route presence and the Install-owned Git-ignore section. It does not
 write files. Preserve one resolved immutable selection in the request and plan.
 Use the Interface's deterministic policy when interaction is unavailable.
+
+Retain a non-wire recap of the resolved selection and prior route actions for
+presentation. Fresh plans and receipts name the resolved setup. Configure
+compares the prior and selected actions and shows only changes. This recap
+changes no settings, plan effects or JSON fields.
 
 Ordinary first setup selection retains the existing safe initial-establishment
 and bounded adoption rules below, using the prospective selected settings.

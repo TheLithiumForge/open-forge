@@ -6,6 +6,10 @@ open-forge:
 
 # Command Scenarios
 
+## Task 79 coverage
+
+Task 79 changes X02 to X05 and X16 and adds X32 to X50 for completion, identity evidence, safety and batch continuation. Command cases C05-13 to C05-22, C02-13 to C02-20 and C06-14 to C06-24 support changed F03, F05 and F08 and new F29 to F31. These specify current command behavior. The Task record retains accepted form and folder-rename decisions and historical outputs.
+
 ## Entries
 
 - [status: scenario collection](c01-status.md) - #Memory #Document #CLI #Scenario #Evergreen

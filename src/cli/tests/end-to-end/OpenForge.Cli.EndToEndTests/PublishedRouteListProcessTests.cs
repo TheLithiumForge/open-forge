@@ -60,7 +60,7 @@ public sealed class PublishedRouteListProcessTests
         using var document = JsonDocument.Parse(result.StandardOutput);
         Assert.Equal("invalid-input", document.RootElement.GetProperty("status").GetString());
         Assert.Equal("route-list.invalid-depth", document.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
-        Assert.Equal(JsonValueKind.Null, document.RootElement.GetProperty("next").ValueKind);
+        Assert.Equal("open-forge route list --help", document.RootElement.GetProperty("next").GetProperty("command").GetString());
     }
 
 }

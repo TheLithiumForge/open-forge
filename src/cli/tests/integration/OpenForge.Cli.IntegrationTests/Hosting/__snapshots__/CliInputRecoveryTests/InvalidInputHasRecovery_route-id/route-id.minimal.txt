@@ -1,0 +1,6 @@
+Invalid --route value: memroy=add.
+Workspace: <workspace>
+Use <id>=add, <id>=remove, or <id>=git-ignore.
+Built-in IDs: directives, guidance, maps, patterns, skills, templates,
+memory/working, memory/emerging, memory/crystallized, memory/archived.
+Next: open-forge install --help

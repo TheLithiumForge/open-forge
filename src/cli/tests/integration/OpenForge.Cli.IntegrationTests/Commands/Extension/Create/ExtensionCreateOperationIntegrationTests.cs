@@ -125,7 +125,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal(expectedPromptCount, CountPromptLines(prompts.ToString()));
-        Assert.DoesNotContain("name", prompts.ToString(), StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Extension name:", prompts.ToString(), StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("description", prompts.ToString(), StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("version", prompts.ToString(), StringComparison.OrdinalIgnoreCase);
         _ = missingFacts;
@@ -192,9 +192,10 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal("development-toolkit", result.Manifest!.Id);
         Assert.True(CountPromptLines(prompts.ToString()) >= 4);
-        Assert.Contains("'BAD ID' is not a valid Extension ID. Use lowercase letters and digits, with single hyphens between them, up to 128 characters.", prompts.ToString(), StringComparison.Ordinal);
-        Assert.Contains("Enter an existing folder. Open Forge creates a folder named after the Extension ID inside it.", prompts.ToString(), StringComparison.Ordinal);
-        Assert.Contains("That folder does not exist. Enter an existing folder.", prompts.ToString(), StringComparison.Ordinal);
+        var words = string.Join(" ", prompts.ToString().Split(Environment.NewLine).Select(line => line.Trim()));
+        Assert.Contains("'BAD ID' is not a valid Extension ID. Use lowercase letters and digits, with single hyphens between them, up to 128 characters.", words, StringComparison.Ordinal);
+        Assert.Contains("Enter an existing folder. Open Forge creates a folder named after the Extension ID inside it.", words, StringComparison.Ordinal);
+        Assert.Contains("That folder does not exist. Enter an existing folder.", words, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "OS")]
@@ -241,7 +242,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
         Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
         Assert.Equal("development-toolkit", result.StableId);
         Assert.Contains(result.Findings, finding => finding.Code == ExtensionCreateFindingCode.Interrupted);
-        Assert.Equal(4, CountPromptLines(prompts.ToString()));
+        Assert.Equal(5, CountPromptLines(prompts.ToString()));
         Assert.Equal(before, catalogue.SnapshotHashes());
     }
 
@@ -269,7 +270,7 @@ public sealed class ExtensionCreateOperationIntegrationTests
         var before = catalogue.SnapshotHashes();
 
         var result = await ExtensionCreateOperationFactory
-            .Create(ExtensionInteractionTestFactory.ForCreate(prompts))
+            .Create(ExtensionInteractionTestFactory.ForCreate(prompts, terminal.WriteAsync))
             .ExecuteAsync(
                 Request(
                     stableId: null,
@@ -362,14 +363,15 @@ public sealed class ExtensionCreateOperationIntegrationTests
         var scripted = ScriptedCliTerminal.Lines(lines, canPrompt);
         var terminalPrompts = new CliPrompts(scripted.Terminal);
         var result = await ExtensionCreateOperationFactory
-            .Create(ExtensionInteractionTestFactory.ForCreate(terminalPrompts))
+            .Create(ExtensionInteractionTestFactory.ForCreate(terminalPrompts, scripted.Terminal.WriteAsync))
             .ExecuteAsync(request, cancellationToken);
         prompts?.Write(scripted.Output.ToString());
         return result;
     }
 
     private static int CountPromptLines(string prompts)
-        => prompts.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries).Length;
+        => prompts.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
+            .Count(line => !line.StartsWith("Existing parent folder for the new Extension:", StringComparison.Ordinal));
 
     private static ExtensionCreateRequest Request(
         string? stableId,

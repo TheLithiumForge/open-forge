@@ -7,7 +7,7 @@ namespace OpenForge.Cli.Core.Commands.Library.Attach;
 internal static class LibraryAttachDefinitions
 {
     internal const string CommandIdentity = "library attach";
-    internal static readonly CliSyntaxDefinition Command = new("attach", "Register one Library source and create relative file links.");
+    internal static readonly CliSyntaxDefinition Command = new("attach", "Register a local source folder and link its files into the workspace.");
     internal static readonly CliOptionDefinition<bool> GitIgnore = new(
         "--git-ignore",
         "Add exact projected Library links to the workspace Git-ignore file.",
@@ -16,7 +16,7 @@ internal static class LibraryAttachDefinitions
         "true|false");
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
-        "Disable prompts; does not select or alter Library targets.",
+        "Disable prompts. Does not select or alter Library targets.",
         CliOptionArity.None,
         false);
     internal static string ReadFindingCode(LibraryAttachFindingCode value)

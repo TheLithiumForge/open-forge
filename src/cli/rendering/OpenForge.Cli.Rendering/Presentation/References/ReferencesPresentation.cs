@@ -32,11 +32,9 @@ internal static class ReferencesPresentation
             // The headline is the source path when there are rows, so the listed findings must
             // not repeat a row-state fact the `out` row already prints inline. This trims text
             // only: the report, and therefore JSON, keeps every finding at every level.
-            TextFindings = selected.Selection.Detail >= CliDetail.Full
-                ? selected.TextFindings
-                : selected.TextFindings
-                    .Where(finding => !ReferencesWireVocabulary.IsRowState(finding.Code))
-                    .ToArray(),
+            TextFindings = selected.TextFindings.Where(finding => selected.Selection.Detail >= CliDetail.Full
+                    || !ReferencesWireVocabulary.IsRowState(finding.Code))
+                .Select(finding => finding.Code == "references.invalid-direction" ? finding with { Message = string.Empty } : finding).ToArray(),
             TextCounts = [],
         },
     };

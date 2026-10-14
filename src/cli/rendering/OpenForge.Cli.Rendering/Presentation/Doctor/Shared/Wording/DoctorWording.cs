@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Presentation.Doctor.Shared.Wording;
@@ -162,6 +163,7 @@ internal static class DoctorWording
             DoctorFindingKind.RouteOverwriteIndependentIndex => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleOverwriteIsListedIndependently(),
             DoctorFindingKind.RouteCompatibilityConflict => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleRouteNamesConflict(),
             DoctorFindingKind.ReferenceTargetMissing => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleBrokenLink(),
+            DoctorFindingKind.ReferenceTargetRenamed => global::OpenForge.Cli.OutputText.Doctor.DoctorMaintenanceText.RenameTitle(),
             DoctorFindingKind.ReferenceFragmentMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLinkedHeadingWasNotFound(),
             DoctorFindingKind.ReferenceFragmentUnverified => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLinkedHeadingCouldNotBeChecked(),
             DoctorFindingKind.ReferenceDestinationMalformed => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLinkDestinationIsInvalid(),
@@ -210,6 +212,7 @@ internal static class DoctorWording
     internal static string Message(DoctorFinding finding)
     {
         ArgumentNullException.ThrowIfNull(finding);
+        if (finding.Maintenance is { } maintenance) return DoctorMaintenanceWording.Message(finding, maintenance);
         var path = Path(finding);
         return finding.Kind switch
         {
@@ -321,10 +324,11 @@ internal static class DoctorWording
 
     internal static IReadOnlyList<CliNextAction> Actions(DoctorFinding finding)
     {
+        if (finding.Maintenance is { } maintenance) return DoctorMaintenanceWording.Actions(finding, maintenance);
         var actions = finding.Actions
-            .Where(action => action.Command is not null || action.Operation == DoctorNextOperation.Index)
             .Select(action => RenderAction(finding, action))
             .ToList();
+        if (finding.Actions.Count > 0) return actions;
         var fallback = FallbackAction(finding);
         if (fallback is not null
             && (!IsGeneratedNavigationFinding(finding.Kind) || !HasExplicitIndexAction(finding))
@@ -373,21 +377,29 @@ internal static class DoctorWording
     }
 
     internal static string ChecksSummary(DoctorCoverageCounts counts)
-        => counts.Checks is { } checks && counts.ChecksComplete is { } complete
-            ? complete == checks
-                ? global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatChecksComplete($"{complete}")
-                : global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatOfChecksComplete($"{complete}", $"{checks}")
-            : string.Empty;
+    {
+        if (counts.Checks is not { } checks || counts.ChecksComplete is not { } complete) return string.Empty;
+        if (complete == checks) return global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatChecksComplete($"{complete}");
+        return global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatOfChecksComplete($"{complete}", $"{checks}");
+    }
 
     internal static string IncompleteCheckSummary(DoctorCoverageCounts counts)
     {
         if (counts.Checks is not { } checks || counts.ChecksComplete is not { } complete || complete >= checks)
         {
-            return string.Empty;
+            return global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageDoctorCouldNotFinish();
         }
 
         var remaining = checks - complete;
         return global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatCouldNotFinish($"{remaining}", $"{CliTextPlural(remaining, "check")}");
+    }
+
+    internal static string IncompleteHeadline(DoctorCoverageCounts counts, long errors, long warnings, long infos)
+    {
+        var sentence = IncompleteCheckSummary(counts);
+        if (errors > 0 || warnings > 0) return $"{sentence} {CountFindings(errors, warnings, infos)}";
+        if (infos > 0) return $"{sentence} {Recorded(infos)}.";
+        return sentence;
     }
 
     internal static string CountFindings(long errors, long warnings, long infos)
@@ -423,14 +435,21 @@ internal static class DoctorWording
             : global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageNoProblemsFound();
     }
 
-    internal static string Hint(long warnings, long infos, CliDetail detail)
+    internal static string Hint(long warnings, long infos, CliDetail detail, string? workspace)
         => detail switch
         {
             CliDetail.Minimal when warnings > 0 => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleToListTheWarningsOpenForgeDoctorDetailStandard(),
-            CliDetail.Minimal when infos > 0 => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleToListTheInfoFindingsOpenForgeDoctorDetailFull(),
-            CliDetail.Standard when infos > 0 => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleToListTheInfoFindingsOpenForgeDoctorDetailFull(),
+            CliDetail.Minimal when infos > 0 => InfoHint(workspace),
+            CliDetail.Standard when infos > 0 => InfoHint(workspace),
             _ => string.Empty,
         };
+
+    private static string InfoHint(string? workspace)
+    {
+        var arguments = new List<string> { "doctor", "--detail", "full" };
+        CliRetryCommand.Add(arguments, "--workspace", workspace);
+        return global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleToListTheInfoFindingsOpenForgeDoctorDetailFull(CliRetryCommand.Build(arguments));
+    }
 
     internal static string HelpSyntax() => ("  " + global::OpenForge.Cli.OutputText.Doctor.DoctorText.HelpSyntax());
 
@@ -445,14 +464,10 @@ internal static class DoctorWording
 
     internal static string IncompleteLine(DoctorDomainKind domain, DoctorDomainReport report)
     {
+        if (report.Limitations.Any(limitation => limitation.GitRenameEvidenceTimedOut))
+            return global::OpenForge.Cli.OutputText.Doctor.DoctorMaintenanceText.GitTimeout();
         var category = Category(domain);
-        var finding = report.Findings.FirstOrDefault();
-        var why = finding is null
-            ? report.Limitations.FirstOrDefault()?.Message ?? global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageTheCheckCouldNotFinish()
-            : domain == DoctorDomainKind.ExtensionLifecycle
-                && finding.Kind == DoctorFindingKind.ExtensionSourceUnavailable
-                ? global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatThePackageSourceCannotBeRead($"{finding.Subject.Path ?? "<source>"}")
-                : EnsureSentence(Message(finding));
+        var why = IncompleteReason(domain, report);
         var label = domain switch
         {
             DoctorDomainKind.ExtensionLifecycle => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleExtensionsWereNotChecked(),
@@ -464,6 +479,21 @@ internal static class DoctorWording
         };
         return $"{label}: {why}";
     }
+
+    private static string IncompleteReason(DoctorDomainKind domain, DoctorDomainReport report)
+    {
+        var finding = report.Findings.FirstOrDefault();
+        if (finding is null)
+            return report.Limitations.FirstOrDefault()?.Message ?? global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageTheCheckCouldNotFinish();
+        if (domain == DoctorDomainKind.ExtensionLifecycle && finding.Kind == DoctorFindingKind.ExtensionSourceUnavailable)
+            return global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatThePackageSourceCannotBeRead($"{finding.Subject.Path ?? "<source>"}");
+        return EnsureSentence(Message(finding));
+    }
+
+    internal static string Limitation(DoctorLimitation limitation)
+        => limitation.GitRenameEvidenceTimedOut
+            ? global::OpenForge.Cli.OutputText.Doctor.DoctorMaintenanceText.GitTimeout()
+            : limitation.Message;
 
     internal static string LaneSummary(IReadOnlyList<DoctorFinding> findings)
     {
@@ -544,6 +574,10 @@ internal static class DoctorWording
 
     private static string LibraryProjectionRetargeted(DoctorFinding finding)
     {
+        if (finding.LinkRecreation is not null)
+        {
+            return global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Unreadable(Path(finding));
+        }
         var expected = finding.Subject.Library?.ProjectionExpectedTarget ?? global::OpenForge.Cli.OutputText.Doctor.DoctorText.LabelTheExpectedTarget();
         var actual = finding.Subject.Library?.ProjectionActualTarget ?? global::OpenForge.Cli.OutputText.Doctor.DoctorText.LabelTheActualTarget();
         return global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatNoLongerLinksToItLinksTo($"{Path(finding)}", $"{expected}", $"{actual}");
@@ -575,6 +609,7 @@ internal static class DoctorWording
 
     private static CliNextAction RenderAction(DoctorFinding finding, DoctorNextAction action)
     {
+        if (action.Kind == DoctorNextActionKind.ManualDecision) return Sentence(action.Reason);
         if (action.Operation != DoctorNextOperation.Index)
         {
             return new CliNextAction(action.Command!, action.Reason);
@@ -635,6 +670,12 @@ internal static class DoctorWording
 
     private static CliNextAction? FallbackAction(DoctorFinding finding)
     {
+        if (finding.LinkRecreation is { } recreation)
+        {
+            return Presentation.Shared.Wording.LibraryLinkRecreationWording.Next(
+                workspace: recreation.Workspace, id: recreation.Id, sourceRoot: recreation.SourceRoot,
+                destinationRoot: recreation.DestinationRoot, gitIgnore: recreation.GitIgnore);
+        }
         var id = finding.Subject.Identifier ?? "<id>";
         var path = finding.Subject.Path ?? finding.Subject.Identifier ?? "the reported file";
         return finding.Kind switch
@@ -644,8 +685,8 @@ internal static class DoctorWording
             DoctorFindingKind.WorkspaceLoaderMalformed => Action("open-forge update", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageRestoreTheShippedLoader()),
             DoctorFindingKind.WorkspaceEntryMissing or DoctorFindingKind.WorkspaceRootMissing
                 or DoctorFindingKind.RouteEntrypointMissing => Action($"open-forge route init {id}", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageCreateTheMissingRouteEntrypoint()),
-            DoctorFindingKind.WorkspaceDetached => Action("open-forge index", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageIndexTheRoutedParentBeforeLoadingThisSource()),
-            DoctorFindingKind.RouteUnreachable => Action("open-forge index", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageRefreshTheRouteIndex()),
+            DoctorFindingKind.WorkspaceDetached => null,
+            DoctorFindingKind.RouteUnreachable => Sentence(global::OpenForge.Cli.OutputText.Doctor.DoctorMaintenanceText.ReviewBoundary(path)),
             DoctorFindingKind.RouteGeneratedRegionStale or DoctorFindingKind.RouteGeneratedRegionMissing
                 or DoctorFindingKind.RouteGeneratedEntryMissing or DoctorFindingKind.RouteGeneratedEntryExtra
                 or DoctorFindingKind.RouteGeneratedEntryOrder or DoctorFindingKind.RouteGeneratedEntryPath
@@ -723,9 +764,11 @@ internal static class DoctorWording
         };
 
     private static string EnsureSentence(string value)
-        => string.IsNullOrWhiteSpace(value)
-            ? global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageTheCheckCouldNotFinish()
-            : value.EndsWith(".", StringComparison.Ordinal) ? value : value + ".";
+    {
+        if (string.IsNullOrWhiteSpace(value)) return global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageTheCheckCouldNotFinish();
+        if (value.EndsWith(".", StringComparison.Ordinal)) return value;
+        return value + ".";
+    }
 
     private static string CliTextPlural(long value, string singular)
         => value == 1 ? singular : singular switch

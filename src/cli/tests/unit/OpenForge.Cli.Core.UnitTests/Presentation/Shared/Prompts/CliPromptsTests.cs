@@ -263,7 +263,7 @@ public sealed class CliPromptsTests
         Assert.Equal(CliPromptState.Answered, reply.State);
         Assert.Equal(["runtime"], reply.Value.Chosen);
         Assert.Equal(["app"], reply.Value.Required);
-        Assert.Contains("needed by", scripted.Output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Needed by", scripted.Output.ToString(), StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Input")]
@@ -348,11 +348,12 @@ public sealed class CliPromptsTests
             CancellationToken.None);
 
         Assert.Equal(CliPromptState.Answered, reply.State);
-        Assert.Equal(CliPermissionChoice.Always, reply.Value);
+        Assert.Equal(CliPermissionChoice.Once, reply.Value);
         var frame = Assert.Single(scripted.Frames);
         Assert.Contains("Allow memory-starters to change these paths outside .agents?", frame, StringComparison.Ordinal);
         Assert.Contains("templates/memory (folder and everything below it)", frame, StringComparison.Ordinal);
-        Assert.Contains("> 1. Allow always", frame, StringComparison.Ordinal);
+        Assert.Contains("  1. Allow always", frame, StringComparison.Ordinal);
+        Assert.Contains("> 2. Allow once", frame, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Input")]
@@ -374,6 +375,11 @@ public sealed class CliPromptsTests
         var cancelReply = await new CliPrompts(cancel.Terminal).PermissionAsync(
             PermissionQuestion(), new CliPromptPolicy(Allowed: true), CancellationToken.None);
         Assert.Equal(CliPromptState.Cancelled, cancelReply.State);
+
+        var empty = ScriptedCliTerminal.Lines([""]);
+        var emptyReply = await new CliPrompts(empty.Terminal).PermissionAsync(
+            PermissionQuestion(), new CliPromptPolicy(Allowed: true), CancellationToken.None);
+        Assert.Equal(CliPromptState.Cancelled, emptyReply.State);
 
         var eof = ScriptedCliTerminal.Lines([null]);
         var eofReply = await new CliPrompts(eof.Terminal).PermissionAsync(

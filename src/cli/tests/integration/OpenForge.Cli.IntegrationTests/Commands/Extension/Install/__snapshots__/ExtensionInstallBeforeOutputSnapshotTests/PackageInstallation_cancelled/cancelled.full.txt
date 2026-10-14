@@ -3,5 +3,6 @@ Workspace: <workspace>
   Error  selected  Extension install was cancelled [extension-install.interrupted]
          Extension install was cancelled. Nothing was changed.
   Entries sections unchanged: none
-  Verification: targets not checked; Entries not checked; Extension record not checked; Framework record not checked
+  Verification: targets not checked; Entries not checked; Extension record not
+  checked; Framework record not checked
   Recovery: not-required.

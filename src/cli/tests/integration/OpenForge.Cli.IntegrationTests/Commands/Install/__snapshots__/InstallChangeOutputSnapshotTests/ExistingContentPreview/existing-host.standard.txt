@@ -1,5 +1,10 @@
-Would install the Open Forge Framework into <workspace>.
+Would install the Open Forge Framework.
 Workspace: <workspace>
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
 Frontmatter: root
   .agents/directives/_directives.md                      would be created
   .agents/guidance/_guidance.md                          would be created
@@ -18,10 +23,13 @@ Frontmatter: root
   .agents/skills/open-forge-cli/references/packages.md   would be created
   .agents/skills/open-forge-cli/references/routes.md     would be created
   .agents/templates/_templates.md                        would be created
-  AGENTS.md                                              Open Forge section would be added, your content would be kept
-  CLAUDE.md                                              would be created with an Open Forge section
+  AGENTS.md
+    Open Forge section would be added, your content would be kept
+  CLAUDE.md
+    would be created with an Open Forge section
   .agents/open-forge.json                                would be created
   .agents/open-forge.lock.json                           would be created
-  Would create 17 files and 13 directories under .agents, and update 1 existing file.
+  Would create 17 files and 13 directories under .agents, and update 1 existing
+  file.
   Would add 1 section.
 No files were changed.

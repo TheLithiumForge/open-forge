@@ -38,6 +38,8 @@ Four principles guide adoption:
 
 ### Step by step
 
+Save your current work before adoption. For a trial, use a separate local clone and copy any additional local files you need. [Try it and undo a trial](installation.md#try-it-and-undo-a-trial) explains the saved baseline, how to restore changed tracked files, and how to remove only trial additions. Keep any work you want, and preserve an existing `.agents/` tree.
+
 1. **Install with a dry run and review the diff.** If you already have an
    `AGENTS.md` or `CLAUDE.md`, installation adds an Open Forge section and keeps
    your content. For a first install into an unmanaged project, the CLI can
@@ -47,7 +49,7 @@ Four principles guide adoption:
    adopts compatible Skills while reconciling owned Framework content. See
    [With the CLI](installation.md#with-the-cli) for details. The example selects
    Full Core, which includes Maps for the next step. If you prefer Essentials,
-   add Maps later with `install --configure`. The last two
+   [restore Maps](grow-your-framework.md#add-an-omitted-category) later without changing your other choices. The last two
    commands preview and install the Development Toolkit, which brings Planning
    for Decisions. Skip them if you don't want it yet.
 
@@ -82,7 +84,7 @@ No. Installation adds a clearly marked Open Forge section and keeps everything y
 Startup reads `AGENTS.md`, the loader, installed entrypoints tagged to load, and any files their rules require. Run `open-forge status` to estimate the tag-selected context in your workspace. Reading an entrypoint gives the agent its rules and one line per item. Linked files open when selected, tagged to load, or required by a loaded rule. Specialized rules live in [scopes](../concepts/scopes.md) that load when selected, and Memory records open when relevant. First-party Extensions add at most their entry lines at startup. Adding knowledge doesn't mean every task reads more of it.
 
 **What if the agent writes something wrong into Memory?**
-Everything is plain Markdown that you can inspect and correct. Tracked changes appear in `git diff`. Essentials Git-ignores Working Memory, so review its local records directly. The rules keep unconfirmed findings in Emerging Memory and reserve Crystallized for what you accept. Tags alone never make something authoritative.
+Everything is plain Markdown that you can inspect and correct. Tracked changes appear in `git diff`. Review new Git-ignored Working records directly with the CLI or your normal file tools. The rules keep unconfirmed findings in Emerging Memory and reserve Crystallized for what you accept. Tags alone never make something authoritative.
 
 **We already keep ADRs. Do we switch to Decisions?**
 You don't have to. Keep your ADRs and add a Map that points to them. Decisions from the Planning Extension are a convention, not a requirement.
@@ -91,4 +93,6 @@ You don't have to. Keep your ADRs and add a Map that points to them. Decisions f
 Give each package or service its own scope, so its rules load only for work on it. A task that touches two packages selects both.
 
 **Does it work for a team?**
-Yes. Shared files live in the repository and get reviewed like code, and everyone's agents read the same rules. Git-ignored Working notes remain local unless you share them separately.
+Yes. Shared files live in the repository and get reviewed like code, and everyone's agents read the same rules. Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools.
+
+**Next:** [Try the ten-minute guide](ten-minute-guide.md).

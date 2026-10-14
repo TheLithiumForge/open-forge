@@ -10,6 +10,20 @@ import TabItem from "@theme/TabItem"
 
 Routing is how an agent finds the right context. Instead of reading every file, it starts at the loader and follows short links whose descriptions tell it whether a branch is worth opening.
 
+Here is an illustrative route from the [loader](../glossary.md#loader) to a file:
+
+```text
+.agents/loader.md
+  -> directives/_directives.md    <- entrypoint: rules and Entries
+       -> testing.md             <- Directive: required behavior
+```
+
+The Directives entrypoint links to the file with one line under `Entries`:
+
+```md
+- [Run tests before finishing a code change](testing.md) - #Directive #LoadNow
+```
+
 ## The loader
 
 An agent enters through `AGENTS.md`, which tells it to read `.agents/loader.md` before starting a task. In Claude Code, `CLAUDE.md` imports both files. The loader defines:
@@ -17,18 +31,16 @@ An agent enters through `AGENTS.md`, which tells it to read `.agents/loader.md` 
 - the terms used everywhere else, such as `entrypoint`, `route`, and `scope`
 - the rules (called **Axioms**) that apply to the whole workspace
 - what each defined tag means, including the two loading tags
-- the frontmatter fields: `description`, `responsibility`, `tags`, and `applyTo`
+- the [frontmatter](../glossary.md#frontmatter) fields: `description`, `responsibility`, `tags`, and `applyTo`
 - the **root routes**: Directives, Guidance, Maps, Memory, Patterns, Skills, and Templates
 
 A root route exists only because the loader lists it. A folder called `patterns/` somewhere deeper in the tree is an ordinary scope with that name. It doesn't gain the Patterns rules.
 
 ## Entrypoints
 
-Every routed folder has exactly one **entrypoint**, named after the folder with a leading underscore: `directives/_directives.md`, `memory/working/_working.md`, `directives/frontend/_frontend.md`.
+Every routed folder has exactly one [**entrypoint**](../glossary.md#entrypoint), named after the folder with a leading underscore: `directives/_directives.md`, `memory/working/_working.md`, `directives/frontend/_frontend.md`.
 
 An entrypoint has a predictable shape:
-
-Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
 
 <Tabs groupId="frontmatter-form">
 <TabItem value="root" label="Root" default>
@@ -84,9 +96,15 @@ Patterns define reusable default shapes that make related work consistent...
 </TabItem>
 </Tabs>
 
+### Frontmatter forms
+
+For [frontmatter](../glossary.md#frontmatter), choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
+
 When an `open-forge` mapping exists, root descriptions and tags belong to another tool. Open Forge does not merge them. `applyTo` is read at both locations, with equivalent sets counting once and conflicting sets rejected.
 
 The same precedence applies to `responsibility`. Frontmatter alone does not create a route. Native `SKILL.md` files keep their own metadata contract. [Loading and tags](loading-and-tags.md#frontmatter) explains the fields and how the workspace chooses its output form.
+
+You can write a plain Markdown file inside a routed category and run `open-forge index`. It fills missing descriptions and category tags, creates missing entrypoints in nested folders, and updates Entries while keeping your content and supplied values. Preview with `--dry-run` first. [Manual edits](/guides/cli#after-you-edit-files-by-hand) covers renames and moves too.
 
 | Part                      | What it does                                                    |
 | ------------------------- | --------------------------------------------------------------- |
@@ -117,13 +135,16 @@ An entrypoint with no children has a placeholder line so the section is never am
 
 `open-forge index` rebuilds `Entries` from the files' frontmatter. Without the CLI, update the list by hand whenever a file's path, description, or tags change.
 
+After a folder rename, Index keeps a compatibility entrypoint or renames a proven old canonical navigation file while preserving its rules. Without proof, Doctor explains how to keep the rules in the current entrypoint. Index completes only folders below existing roots and preserves exclusions and protected content.
+
 ## How an agent navigates
 
-1. Read an entrypoint, including its Axioms.
-2. Read every child whose entry is tagged `#LoadNow` or `#KeepInMind`, in listed order.
-3. Scan the other entries. Open the children whose descriptions, tags, or paths matter for the task.
-4. Repeat for each selected child entrypoint.
-5. Skip everything else. An unselected branch costs one line of context, not its whole contents.
+1. Read the entrypoint and follow applicable Axioms and required-read instructions.
+2. For automatically loaded children, check their own and inherited `applyTo` conditions against the task's [working files](../glossary.md#working-file). Report pending conditions when those files are unknown.
+3. Read each applicable `#LoadNow` or `#KeepInMind` child in listed order.
+4. Select other children whose descriptions, tags, paths, or links matter for the task. Check their conditions before applying them.
+5. Repeat for each selected child entrypoint. Read an [overwrite companion](../glossary.md#overwrite-companion) immediately after its base.
+6. Leave unrelated branches closed. A matching path does not select an unexposed scope.
 
 When search or a direct link selects a file deep in the tree, the agent loads that file's ancestor entrypoints before using it, so inherited rules still apply.
 

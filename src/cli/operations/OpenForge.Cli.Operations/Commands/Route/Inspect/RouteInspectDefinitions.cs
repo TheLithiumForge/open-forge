@@ -12,7 +12,7 @@ internal static class RouteInspectDefinitions
 
     internal static readonly CliSyntaxDefinition InspectCommand = new(
         "inspect",
-        "Explain one source's route behavior without returning authored content.");
+        "Explain where one source belongs and when its rules or content are read.");
 
     internal static readonly CliSyntaxDefinition SourceReference = new(
         "source-reference",
@@ -20,7 +20,7 @@ internal static class RouteInspectDefinitions
 
     internal static readonly CliOptionDefinition<string[]> WorkingPath = new(
         "--for",
-        "Explain applicability for one workspace-relative working path; repeat for more paths.",
+        "Explain applicability for one workspace-relative working path. Repeat for more paths.",
         CliOptionArity.ExactlyOne,
         [],
         "path");

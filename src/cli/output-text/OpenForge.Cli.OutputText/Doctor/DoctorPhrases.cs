@@ -302,7 +302,7 @@ internal static class DoctorPhrases
 
     // @OpenForgeText doctor.phrase.could-not-finish
     internal static string FormatCouldNotFinish(string remainingText, string cliTextPluralText)
-        => $"{remainingText} {cliTextPluralText} could not finish.";
+        => $"Doctor could not finish {remainingText} {cliTextPluralText}.";
 
     // @OpenForgeText doctor.phrase.findings
     internal static string FormatFindings(string partsText)

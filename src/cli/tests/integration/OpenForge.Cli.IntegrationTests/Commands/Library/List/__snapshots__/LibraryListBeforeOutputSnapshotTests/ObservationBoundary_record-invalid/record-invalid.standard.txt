@@ -8,4 +8,4 @@ Workspace: <workspace>
   links changed: the content is not valid JSON.
   links unavailable: the content is not valid JSON.
   Inspect the reported Library state.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

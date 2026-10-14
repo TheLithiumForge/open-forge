@@ -56,7 +56,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge library sync team-knowledge",
+    "command": "open-forge library sync team-knowledge --workspace <workspace>",
     "reason": "Repair the missing registered link."
   }
 }

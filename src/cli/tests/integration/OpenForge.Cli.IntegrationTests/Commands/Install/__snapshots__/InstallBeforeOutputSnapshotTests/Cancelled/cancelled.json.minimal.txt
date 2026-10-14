@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge install",
+          "command": "open-forge install --workspace <workspace> --preset full-core --frontmatter root",
           "reason": "Rerun the same Install request."
         }
       ]
@@ -345,7 +345,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge install",
+    "command": "open-forge install --workspace <workspace> --preset full-core --frontmatter root",
     "reason": "Rerun the same Install request."
   }
 }

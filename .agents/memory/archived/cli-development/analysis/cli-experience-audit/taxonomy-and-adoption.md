@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: "Historical record: Whether the shipped memory categories and scoping model match how the workspace is actually used, why implementers skip the framework after planning, and how much should ship by default"
-  tags: [Memory, Analysis, Contextual, Framework, Taxonomy, Memory, Scope, Adoption, Extension, Archived, Historical]
+  tags: [Memory, Analysis, Contextual, Framework, Taxonomy, Scope, Adoption, Extension, Archived, Historical]
 ---
 
 # Taxonomy And Adoption

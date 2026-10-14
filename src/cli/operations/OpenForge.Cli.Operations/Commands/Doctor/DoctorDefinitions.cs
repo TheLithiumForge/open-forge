@@ -11,7 +11,7 @@ internal static class DoctorDefinitions
 
     internal static CliSyntaxDefinition DoctorCommand { get; } = new(
         CommandIdentity,
-        "Diagnose workspace and managed content problems.");
+        "Diagnose workspace, route, link, and managed-file problems without changing files.");
 
     internal static string ReadFindingKind(DoctorFindingKind kind)
         => kind switch
@@ -76,6 +76,7 @@ internal static class DoctorDefinitions
             DoctorFindingKind.RouteOverwriteIndependentIndex => "route.overwrite-independent-index",
             DoctorFindingKind.RouteCompatibilityConflict => "route.compatibility-conflict",
             DoctorFindingKind.ReferenceTargetMissing => "reference.target-missing",
+            DoctorFindingKind.ReferenceTargetRenamed => "reference.target-renamed",
             DoctorFindingKind.ReferenceFragmentMissing => "reference.fragment-missing",
             DoctorFindingKind.ReferenceFragmentUnverified => "reference.fragment-unverified",
             DoctorFindingKind.ReferenceDestinationMalformed => "reference.destination-malformed",

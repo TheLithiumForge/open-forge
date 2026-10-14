@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: "Historical record: Which painpoints trace to the original Framework design rather than to the contracts or the implementation, judged against how the workspace was actually used"
-  tags: [Memory, Analysis, Contextual, Framework, Design, Retrospective, Routing, Memory, Loading, Archived, Historical]
+  tags: [Memory, Analysis, Contextual, Framework, Design, Retrospective, Routing, Loading, Archived, Historical]
 ---
 
 # Original Design Assessment

@@ -16,11 +16,23 @@ internal static class RepairDataTextRenderer
         var spans = new List<CliTextSpan>();
         if (data.TextRows.Count > 0)
         {
-            var rows = data.TextRows
-                .Select(row => (IReadOnlyList<string>)[row.Path, row.Wording])
-                .ToArray();
-            spans.Add(new CliTextSpan(CliTable.Render(rows, (column, cell) =>
-                column == 0 ? style.Subject(cell) : cell)));
+            var rows = new List<IReadOnlyList<string>>();
+            void FlushRows()
+            {
+                if (rows.Count == 0) return;
+                spans.Add(new CliTextSpan(CliTable.Render(style, rows, (column, cell) => column == 0 ? style.Subject(cell) : cell)));
+                rows.Clear();
+            }
+            foreach (var row in data.TextRows)
+            {
+                if (row.IsCommand)
+                {
+                    FlushRows();
+                    spans.Add(new CliTextSpan("  " + CliText.Escape(row.Wording) + "\n"));
+                }
+                else rows.Add([row.Path, row.Wording]);
+            }
+            FlushRows();
         }
 
         var builder = new StringBuilder();

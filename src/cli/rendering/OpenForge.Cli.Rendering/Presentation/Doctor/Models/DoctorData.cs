@@ -21,6 +21,9 @@ internal sealed record DoctorData
 
     [JsonIgnore]
     internal string? HintLine { get; init; }
+
+    [JsonIgnore]
+    internal string? NextLine { get; init; }
 }
 
 internal sealed record DoctorDataCategory

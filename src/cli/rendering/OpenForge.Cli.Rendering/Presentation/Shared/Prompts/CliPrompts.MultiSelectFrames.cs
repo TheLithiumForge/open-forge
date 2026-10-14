@@ -14,10 +14,11 @@ internal sealed partial class CliPrompts
     {
         var rows = question.Choices.Select(row => new CliSelectionRow(
             row.Label, SelectionMark(row.Value, question, chosen, required), question.Disabled.Contains(row.Value),
-            question.Disabled.Contains(row.Value) ? CliPromptWording.InstalledSummary() : row.Summary ?? row.Description)).ToArray();
+            question.Disabled.Contains(row.Value) ? CliPromptWording.InstalledSummary() : row.Summary ?? ChoiceDescription(row))).ToArray();
         var focused = question.Choices[cursor];
         var context = DependencyContext(question, focused.Value, chosen, required);
         var details = new List<string>();
+        if (ChoiceDescription(focused) is { } description) details.Add(description);
         if (context is not null) details.Add(context);
         return new CliSelectionFrame
         {
@@ -28,6 +29,7 @@ internal sealed partial class CliPrompts
             Focus = cursor,
             Position = CliPromptWording.MultiPosition(cursor, rows.Length, chosen.Count, required.Keys.Count(value => !chosen.Contains(value))),
             Details = details,
+            KeepLastDetail = context is not null,
             Notice = notice,
             Controls = [CliPromptWording.MultiControls()],
         };
@@ -36,8 +38,10 @@ internal sealed partial class CliPrompts
     private string MultiLineFrame<T>(CliMultiSelectQuestion<T> question, HashSet<T> chosen,
         Dictionary<T, HashSet<T>> required, string? notice) where T : notnull
     {
-        var frame = new StringBuilder().Append(CliText.Escape(question.Question)).Append('\n')
-            .Append(CliPromptWording.Legend(question.Action, question.Dependencies.Count > 0)).Append("\n\n");
+        var frame = new StringBuilder();
+        AppendLineProse(frame, question.Question);
+        AppendLineItems(frame, CliPromptWording.Legend(question.Action, question.Dependencies.Count > 0));
+        frame.Append('\n');
         var labelWidth = question.Choices.Max(row => CliSelectionText.Width(row.Label));
         var numberWidth = question.Choices.Count.ToString(CultureInfo.InvariantCulture).Length;
         for (var index = 0; index < question.Choices.Count; index++)
@@ -45,13 +49,14 @@ internal sealed partial class CliPrompts
             var row = question.Choices[index];
             var mark = SelectionMark(row.Value, question, chosen, required);
             var text = $"  {(index + 1).ToString(CultureInfo.InvariantCulture).PadLeft(numberWidth)}. {mark} {CliText.Escape(row.Label)}";
-            var summary = question.Disabled.Contains(row.Value) ? CliPromptWording.InstalledSummary() : row.Summary ?? row.Description;
-            if (summary is not null) text += new string(' ', labelWidth - CliSelectionText.Width(row.Label) + 2) + CliText.Escape(summary);
-            if (DependencyContext(question, row.Value, chosen, required) is { } context) text += "   " + CliText.Escape(context);
-            frame.Append(question.Disabled.Contains(row.Value) ? _style.Dim(text) : text).Append('\n');
+            var summary = question.Disabled.Contains(row.Value) ? CliPromptWording.InstalledSummary() : row.Summary ?? ChoiceDescription(row);
+            AppendLineChoice(frame, text, summary, labelWidth - CliSelectionText.Width(row.Label) + 2);
+            if (ChoiceDescription(row) is { } description && description != summary) AppendLineProse(frame, description, "    ");
+            if (DependencyContext(question, row.Value, chosen, required) is { } context) AppendLineProse(frame, context, "    ");
         }
-        frame.Append('\n').Append(CliPromptWording.MultiLine()).Append('\n');
-        if (notice is not null) frame.Append(CliText.Escape(notice)).Append('\n');
+        frame.Append('\n');
+        AppendLineProse(frame, CliPromptWording.MultiLine());
+        if (notice is not null) AppendLineProse(frame, notice);
         return frame.ToString();
     }
 
@@ -62,6 +67,11 @@ internal sealed partial class CliPrompts
         if (required.ContainsKey(value) && !question.Disabled.Contains(value)) return "[*]";
         return "[ ]";
     }
+
+    private static string? ChoiceDescription<T>(CliChoice<T> choice) where T : notnull
+        => choice.Description ?? (choice.InstalledPackage is { } package
+            ? global::OpenForge.Cli.OutputText.Shared.CliPromptWording.InstalledPackageSummary(package.Version, package.OwnedFiles)
+            : null);
 
     private static string? DependencyContext<T>(CliMultiSelectQuestion<T> question, T value, HashSet<T> chosen,
         Dictionary<T, HashSet<T>> required) where T : notnull

@@ -200,7 +200,7 @@ internal sealed class ExtensionInstallSelectionResolver
         var question = new CliMultiSelectQuestion<string>(
             _selectionQuestion,
             [.. source.Packages.OrderBy(package => package.Id, StringComparer.Ordinal).Select(package =>
-                new CliChoice<string>(package.Id, package.Id, package.Description))],
+                new CliChoice<string>(package.Id, package.Id, Description: package.Description, Summary: package.Description))],
             [.. source.Packages.SelectMany(package => package.Dependencies
                 .Where(displayedIds.Contains)
                 .Select(dependency => new CliDependency<string>(package.Id, dependency)))],

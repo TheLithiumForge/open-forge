@@ -1,4 +1,5 @@
-Updated 1 Framework file.
+Changed 1 source file.
 Workspace: <workspace>
   .agents/loader.md  replaced (your previous file is in the recovery bundle)
+  Previous content is in the recovery bundle at <recovery-bundle>.
 Next: Review previous content in the recovery bundle at <recovery-bundle>.

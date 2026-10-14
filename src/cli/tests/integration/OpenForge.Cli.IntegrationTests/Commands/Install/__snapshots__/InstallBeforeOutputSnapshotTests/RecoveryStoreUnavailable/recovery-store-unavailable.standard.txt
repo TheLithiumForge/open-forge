@@ -2,8 +2,13 @@ Install could not start: The recovery workspace storage path is not a directory.
 Workspace: <workspace>
   Warning  <workspace>  Recovery data is unavailable
          Recovery data could not be prepared at <workspace>. Nothing was changed.
-         open-forge doctor
+         open-forge doctor --workspace <workspace>
          Inspect the reported Install boundary before rerunning it.
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
 Frontmatter: root
   Inspect the reported Install boundary before rerunning it.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

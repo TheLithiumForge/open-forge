@@ -54,7 +54,7 @@ public sealed class InstallFrontmatterBindingTests
         var input = Read(["--configure", "--frontmatter", form]);
         var next = InstallDefinitions.ReadNextAction(CliSemanticStatus.Invalid,
             [new InstallFinding(InstallFindingCode.ConfirmationRequired, "Confirmation is unavailable.")], input);
-        Assert.Equal($"open-forge install --automatic --configure --frontmatter {form}", next?.Command);
+        Assert.Equal($"open-forge install --configure --frontmatter {form} --automatic", next?.Command);
     }
 
     private static InstallBindingInput Read(string[] arguments)

@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.NextActions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
@@ -35,7 +37,7 @@ internal static class RouteRemoveReportSelector
             Counts = Counts(result),
             Data = Data(result, selection.Detail),
             Recovery = Recovery(result),
-            Next = Next(result),
+            Next = RouteNextCommand.InWorkspace(Next(result), result.WorkspacePath, result.WorkspaceExplicit),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? Diagnostics(result)
                 : [],
@@ -74,7 +76,9 @@ internal static class RouteRemoveReportSelector
             rows.Add(RouteRemoveWording.PersistenceSettings(result.Persistence.Settings));
         }
 
-        if (result.Persistence.Ownership.Outcome != RouteRemovePersistenceOutcome.NotEstablished)
+        if (result.Persistence.Ownership.Outcome != RouteRemovePersistenceOutcome.NotEstablished
+            && (detail >= CliDetail.Standard || !result.Persistence.Ownership.Claims.IsEmpty
+                || result.Persistence.Ownership.Outcome != RouteRemovePersistenceOutcome.Unchanged))
         {
             rows.Add(RouteRemoveWording.PersistenceOwnership(result.Persistence.Ownership));
         }
@@ -118,7 +122,7 @@ internal static class RouteRemoveReportSelector
             details.Add(RouteRemoveWording.Recovery(removedEffects.Length, recovery));
         }
 
-        if (detail >= CliDetail.Full)
+        if (!result.Persistence.Ownership.Claims.IsEmpty)
         {
             details.AddRange(result.Persistence.Ownership.Claims.Select(claim =>
                 $"  {RouteRemoveWording.OwnershipClaim(claim)}"));
@@ -239,7 +243,7 @@ internal static class RouteRemoveReportSelector
 
     private static CliFinding Finding(RouteRemoveResult result, RouteRemoveFinding finding)
     {
-        var action = Action(result, finding);
+        var action = RouteNextCommand.InWorkspace(Action(result, finding), result.WorkspacePath, result.WorkspaceExplicit);
         var subject = Subject(result, finding);
         return new CliFinding
         {
@@ -403,7 +407,7 @@ internal static class RouteRemoveReportSelector
                 => new CliNextAction("open-forge route list --depth=all", RouteRemoveWording.ListReason()),
             RouteRemoveFindingCode.ConfirmationRequired
                 => new CliNextAction(
-                    $"open-forge route remove \"{result.Source.Requested}\" --automatic",
+                    result.Next?.Command ?? "open-forge route remove --help",
                     global::OpenForge.Cli.OutputText.Route.Remove.RouteRemoveText.MessageRerunRouteRemoveWithAutomatic()),
             RouteRemoveFindingCode.CategoryInventoryIncomplete
                 or RouteRemoveFindingCode.ReferenceCoverageIncomplete
@@ -419,9 +423,9 @@ internal static class RouteRemoveReportSelector
             RouteRemoveFindingCode.WorkspaceLockUnavailable
                 or RouteRemoveFindingCode.TargetChanged
                 or RouteRemoveFindingCode.TargetChangedDuringApply
-                => new CliNextAction("open-forge route remove", RouteRemoveWording.RetryReason()),
+                => new CliNextAction(result.RequestCommand ?? "open-forge route remove --help", RouteRemoveWording.RetryReason()),
             RouteRemoveFindingCode.OperationFailed
-                => new CliNextAction(VerboseRouteRemoveCommand, RouteRemoveWording.DebugReason()),
+                => new CliNextAction(result.RequestCommand ?? "open-forge route remove --help", RouteRemoveWording.DebugReason()),
             _ => null,
         };
 
@@ -444,8 +448,8 @@ internal static class RouteRemoveReportSelector
             CliSemanticStatus.Invalid => new CliNextAction(RouteRemoveHelpCommand, RouteRemoveWording.HelpReason()),
             CliSemanticStatus.Incomplete => new CliNextAction("open-forge doctor", RouteRemoveWording.DoctorReason()),
             CliSemanticStatus.Blocked => null,
-            CliSemanticStatus.Failed => new CliNextAction(VerboseRouteRemoveCommand, RouteRemoveWording.DebugReason()),
-            CliSemanticStatus.Interrupted => new CliNextAction("open-forge route remove", RouteRemoveWording.RerunReason()),
+            CliSemanticStatus.Failed => new CliNextAction(result.RequestCommand ?? "open-forge route remove --help", RouteRemoveWording.DebugReason()),
+            CliSemanticStatus.Interrupted => new CliNextAction(result.RequestCommand ?? "open-forge route remove --help", RouteRemoveWording.RerunReason()),
             _ => throw new ArgumentOutOfRangeException(nameof(result), result.Status, "The Route Remove status is not defined."),
         };
     }

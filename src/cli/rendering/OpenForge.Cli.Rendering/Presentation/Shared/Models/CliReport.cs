@@ -25,6 +25,9 @@ internal sealed record CliHeadline(string Sentence, CliHeadlineKind Kind);
 internal enum CliHeadlineKind { Done, NothingToDo, Preview, Warnings, Incomplete, CannotStart, Blocked, Failed, Cancelled }
 internal sealed record CliWorkspaceEcho(string Path, bool Explicit);
 internal sealed record CliCount(string Name, string Label, decimal? Value, string? UnavailableReason = null);
-internal sealed record CliLimitation(string What, string Why, CliSubject? Subject = null);
+internal sealed record CliLimitation(string What, string Why, CliSubject? Subject = null)
+{
+    internal string? CountName { get; init; }
+}
 internal sealed record CliRecovery(string? Path, CliRecoveryDisposition Disposition);
 internal enum CliRecoveryDisposition { NotRequired, Removed, Retained, Unknown, Failed }

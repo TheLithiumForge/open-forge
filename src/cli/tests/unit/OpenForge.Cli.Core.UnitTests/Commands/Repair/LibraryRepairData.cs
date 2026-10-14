@@ -21,7 +21,8 @@ internal static class LibraryRepairData
 {
     internal static LibraryResidualEvidence Evidence(
         RecoveryEntryKind kind = RecoveryEntryKind.RelativeFileLinkCreate,
-        RecoveryBundleTargetComparisonState comparison = RecoveryBundleTargetComparisonState.Intended)
+        RecoveryBundleTargetComparisonState comparison = RecoveryBundleTargetComparisonState.Intended,
+        string? targetPath = null)
     {
         var workspace = LibraryMutationPlanningData.Workspace;
         var ordinary = RecoveryEntryState.Ordinary(RecoveryContentIdentity.FromBytes(LibraryMutationPlanningData.RecordBytes()));
@@ -56,6 +57,7 @@ internal static class LibraryRepairData
         {
             target = ".agents/directives/_directives.md";
         }
+        target = targetPath ?? target;
 
         var entry = RecoveryEntry.Create(0, CanonicalRelativePath.Create(target), kind, prior, intended,
             prior.Kind == RecoveryEntryStateKind.OrdinaryFile ? "payloads/00000000.bin" : null);

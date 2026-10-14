@@ -1,7 +1,8 @@
 toolkit 1.0.0 is installed. 2 files need attention.
 Workspace: <workspace>
+1 package, including toolkit.
 Source: <extension-source>
-Dependencies
+Packages in this selection
   toolkit  1.0.0  available
 
 Files
@@ -16,6 +17,6 @@ Resolution order: toolkit
 Registered in
   none
 Record coverage: complete
-1 file changed, 1 file retired, 1 dependency, 2 warnings.
+1 file changed, 1 file retired, 2 warnings.
   Review the selected package changes before applying them.
-Next: open-forge extension update toolkit --dry-run
+Next: open-forge extension update toolkit --dry-run --source <extension-source>

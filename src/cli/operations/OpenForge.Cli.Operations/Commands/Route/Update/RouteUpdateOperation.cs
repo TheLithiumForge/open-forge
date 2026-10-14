@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Retry;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Result;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Planning;
@@ -24,6 +25,20 @@ internal sealed class RouteUpdateOperation
     }
 
     internal async ValueTask<RouteUpdateResult> ExecuteAsync(
+        RouteUpdateRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var result = await ExecuteCoreAsync(request, cancellationToken).ConfigureAwait(false);
+        var command = RouteUpdateRetryCommand.From(request);
+        return result with
+        {
+            RequestCommand = command,
+            Next = RouteRetryCommand.Complete(result.Next, "open-forge route update", command, false),
+        };
+    }
+
+    private async ValueTask<RouteUpdateResult> ExecuteCoreAsync(
         RouteUpdateRequest request,
         CancellationToken cancellationToken)
     {

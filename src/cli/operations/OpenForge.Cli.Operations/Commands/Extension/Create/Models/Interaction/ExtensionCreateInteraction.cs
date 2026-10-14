@@ -17,7 +17,9 @@ internal sealed record ExtensionCreateInteraction
 
     internal required Func<string, string> InvalidExtensionId { get; init; }
 
-    internal required string PackageFolderLabel { get; init; }
+    internal required CliPrompt<CliTextQuestion<string>, string> PackageFolderText { get; init; }
+
+    internal required Func<string, string> PackageFolderLabel { get; init; }
 
     internal required string PackageFolderRule { get; init; }
 

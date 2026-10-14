@@ -1,0 +1,3 @@
+.agents/guidance/note.md is outside the folders Open Forge routes.
+ManualDecision
+Move .agents/guidance/note.md into a category such as .agents/guidance/, or add its folder to .agents/loader.md.

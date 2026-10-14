@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route init",
+          "command": "open-forge route init documents --workspace <workspace>",
           "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."
         }
       ]
@@ -89,7 +89,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route init",
+    "command": "open-forge route init documents --workspace <workspace>",
     "reason": "Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan."
   }
 }

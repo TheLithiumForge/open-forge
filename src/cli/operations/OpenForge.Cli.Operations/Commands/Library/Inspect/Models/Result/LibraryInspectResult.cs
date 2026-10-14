@@ -16,4 +16,6 @@ internal sealed record LibraryInspectResult : ICliCommandResult
 
     public required LibraryInspectPayload Result { get; init; }
     public CliNextAction? Next => null;
+
+    internal Commands.Shared.LibraryLinks.Models.LibraryLinkRecreation? LinkRecreation { get; init; }
 }

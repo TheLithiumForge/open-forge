@@ -1,0 +1,55 @@
+  Read startup instructions and the required context for selected sources.
+
+Usage:
+  open-forge context [<source-reference>...] [options]
+
+Examples:
+  open-forge context
+  open-forge context memory --for src/app.cs
+  open-forge context memory/archived --additions-only --content body
+
+Behavior:
+  With no source, read the required startup files.
+  Add source IDs or exact .agents paths to read their required context.
+  Repeat --for for every known working file, including planned files.
+  File conditions are evaluated against those workspace paths. Without them,
+  affected conditions remain pending.
+  --additions-only needs a source and omits the startup set.
+  By default, return frontmatter and body. Source content stays exact.
+  This command changes no files and asks no questions.
+
+Arguments:
+  <source-reference>  Zero or more source IDs or exact .agents paths.
+
+Options:
+  --additions-only            Show only sources added beyond the required
+                              startup context.
+  --content <part[,part...]>  Choose content parts as one comma-separated list.
+  --follow-links <positive-depth|all>
+      Follow contained local Markdown links to a positive depth or all.
+  --for <path>                Workspace file path used to evaluate applyTo
+                              conditions. Repeat for additional files.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Selection: All inherited file conditions must match the same --for path.
+  Without paths, affected selection is incomplete.
+  Content and links: Content parts are metadata, paths, frontmatter, headings,
+  body, and section:<name>. Supply one comma-separated --content value. Escape
+  commas and backslashes in section names. Generated delimiters surround each
+  physical layer without changing authored bytes. --follow-links accepts a
+  positive base-10 depth or all. It follows contained local Markdown links
+  breadth-first and records broken edges. External URLs are never fetched.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  route list            Browse routed sources.
+  route inspect --help  Inspect one routed source.
+  find --help           Find sources by tags or headings.

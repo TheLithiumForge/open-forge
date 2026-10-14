@@ -26,7 +26,7 @@ The folder a file lands in tells you its role:
 
 ## Then check the tags
 
-Every Extension file except a native `SKILL.md` carries the `Extension` tag in its frontmatter, plus tags for its role:
+Every Extension file except a native `SKILL.md` carries the `Extension` tag in its [frontmatter](../glossary.md#frontmatter), plus tags for its role:
 
 Choose root fields or an `open-forge:` mapping for your workspace. Both are readable in every workspace. New files follow `.agents/open-forge.json`. A missing `frontmatter` setting means scoped.
 
@@ -60,7 +60,7 @@ When an `open-forge` mapping exists, root descriptions and tags belong to anothe
 
 Look for the role tag: `Template`, `Guidance`, `Pattern`, `Workflow`, `Memory`, `Decision`, and so on. A `SKILL.md` keeps its harness's own frontmatter instead, with no Open Forge tags.
 
-A `LoadNow` or `KeepInMind` tag would make a file load as soon as its parent entrypoint (the `_{folder}.md` file that lists it under `Entries`) is read. First-party Extension files carry neither, so all of them are on demand. At startup, an agent sees at most a file's one-line entry in a parent entrypoint that's already loaded. It opens the file only when a task needs it.
+A `LoadNow` or `KeepInMind` tag would make a file load as soon as its parent [entrypoint](../glossary.md#entrypoint) (the `_{folder}.md` file that lists it under `Entries`) is read. First-party Extension files carry neither, so all of them are on demand. At startup, an agent sees at most a file's one-line entry in a parent entrypoint that's already loaded. It opens the file only when a task needs it.
 
 ## Templates: `{prompts}` and source guidance
 
@@ -125,3 +125,5 @@ It means the entrypoint adds no rules of its own. It can still explain its folde
 ## Package READMEs
 
 Each package in the source catalogue has a `README.md` and an `extension.json` manifest. Those stay in the catalogue and aren't installed into your workspace. The installed files carry everything an agent needs to understand them.
+
+Next: [Choose an Extension](index.md#choose-by-need).

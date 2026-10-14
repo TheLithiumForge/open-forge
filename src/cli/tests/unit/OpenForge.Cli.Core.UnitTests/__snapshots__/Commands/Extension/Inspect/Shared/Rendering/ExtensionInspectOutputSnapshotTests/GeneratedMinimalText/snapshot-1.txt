@@ -1,5 +1,6 @@
 toolkit 1.0.0 is installed. 2 files need attention. Version 2.0.0 is available.
+1 package, including toolkit.
   Warning  .agents/changed.md  changed since it was installed
   Warning  .agents/retired.md  no longer part of the package
-2 files unchanged, 1 file changed, 1 file retired, 1 dependency, 2 warnings.
+2 files unchanged, 1 file changed, 1 file retired, 2 warnings.
 Next: open-forge extension update toolkit --dry-run

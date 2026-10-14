@@ -23,8 +23,8 @@ internal static class LibraryHumanPresentationData
             Directories = [],
             Links =
             [
-                new() { Path = "docs/first.md", Kind = effect, RawRelativeTarget = "../shared/first.md", Expected = expected },
-                new() { Path = "docs/second.md", Kind = effect, RawRelativeTarget = "../shared/second.md", Expected = expected with { RawRelativeTarget = effect == LibraryLinkEffectKind.Create ? null : "../shared/second.md" } },
+                new() { Path = "docs/first.md", Kind = effect, RelativeTarget = "../shared/first.md", Expected = expected },
+                new() { Path = "docs/second.md", Kind = effect, RelativeTarget = "../shared/second.md", Expected = expected with { RawRelativeTarget = effect == LibraryLinkEffectKind.Create ? null : "../shared/second.md" } },
             ],
             GeneratedRegions = [],
             RecordEffect = LibraryRecordEffect.Replace,

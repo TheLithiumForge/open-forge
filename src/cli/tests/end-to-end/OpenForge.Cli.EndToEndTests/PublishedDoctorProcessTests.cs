@@ -6,6 +6,53 @@ namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedDoctorProcessTests
 {
+    [Fact(DisplayName = "Published info-only Doctor prints no Next and retains a null JSON next"), Trait("Feature", "doctor-command"), Trait("Evidence", "EndToEnd")]
+    public async Task InformationalDoctorHasNoNext()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = DoctorWorkspace.Create(healthy: true);
+        var json = await RunWithoutWritesAsync(target, working, ["doctor", "--format=json", "--detail=full"]);
+        Assert.Equal(0, json.ExitCode);
+        using var document = JsonDocument.Parse(json.StandardOutput);
+        Assert.Equal(JsonValueKind.Null, document.RootElement.GetProperty("next").ValueKind);
+        Assert.DoesNotContain(document.RootElement.GetProperty("findings").EnumerateArray(), finding => finding.GetProperty("severity").GetString() is "error" or "warning");
+        var text = await RunWithoutWritesAsync(target, working, ["doctor", "--detail=standard"]);
+        Assert.DoesNotContain("Next:", text.StandardOutput, StringComparison.Ordinal);
+    }
+
+    [Fact(DisplayName = "Published Doctor separates the outside-folder explanation from its sole manual Next"), Trait("Feature", "doctor-command"), Trait("Evidence", "EndToEnd")]
+    public async Task OutsideFolderHasOneManualAction()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = DoctorWorkspace.Create(healthy: true);
+        working.CreateFile(".agents/unknown/note.md", "# Note\n");
+        const string action = "Move .agents/unknown/note.md into a category such as .agents/guidance/, or add its folder to .agents/loader.md.";
+        foreach (var detail in new[] { "minimal", "standard" })
+        {
+            var result = await RunWithoutWritesAsync(target, working, ["doctor", $"--detail={detail}"]);
+            Assert.Equal(2, result.ExitCode);
+            Assert.Contains(".agents/unknown/note.md is outside the folders Open Forge routes.", result.StandardOutput, StringComparison.Ordinal);
+            Assert.Contains($"Next: {action}", result.StandardOutput, StringComparison.Ordinal);
+            Assert.Equal(1, result.StandardOutput.Split(action, StringSplitOptions.None).Length - 1);
+        }
+    }
+
+    [Fact(DisplayName = "Published Doctor reports a missing generated destination only as an Entry"), Trait("Feature", "doctor-command"), Trait("Evidence", "EndToEnd")]
+    public async Task MissingGeneratedTargetBelongsToIndex()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var working = DoctorWorkspace.Create(healthy: true);
+        working.ReplaceText(".agents/status/_status.md", HealthyRoot("- [Deleted](deleted.md) - #Status"));
+        var result = await RunWithoutWritesAsync(target, working, ["doctor", "--format=json", "--detail=full", "--workspace", working.Path]);
+        using var document = JsonDocument.Parse(result.StandardOutput);
+        Assert.DoesNotContain(document.RootElement.GetProperty("findings").EnumerateArray(), finding => finding.GetProperty("code").GetString() == "reference.target-missing");
+        Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray(), finding => finding.GetProperty("code").GetString() == "route.generated-entry-extra");
+        Assert.StartsWith("open-forge index", document.RootElement.GetProperty("next").GetProperty("command").GetString(), StringComparison.Ordinal);
+    }
+
+    private static string HealthyRoot(string entries) => OpenForgeDocumentSeed.Metadata("Status", ["Status"],
+        $"\n# Status\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n\n{entries}\n");
+
     [Fact(DisplayName = "Published Doctor help is reachable without inspecting a workspace"), Trait("Feature", "doctor-command"), Trait("Evidence", "EndToEnd")]
     public async Task HelpIsReachableWithoutWorkspaceInspection()
     {
@@ -30,16 +77,26 @@ public sealed class PublishedDoctorProcessTests
         var target = PublishedExecutableTarget.Discover();
         using var working = DoctorWorkspace.Create();
 
+        working.CreateFile(".agents/status/plain-note.md", "# Plain note\n\nKeep my authored words.\n");
+
         var result = await RunWithoutWritesAsync(
             target,
             working,
-            ["doctor", "--format=json", "--detail=full"]);
+            ["doctor", "--format=json", "--detail=full", "--workspace", working.Path]);
 
         Assert.Equal(2, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         using var document = JsonDocument.Parse(result.StandardOutput);
         AssertDoctorGraph(document.RootElement, "completed-with-warnings");
         AssertExtensionOwnershipObservation(document.RootElement);
+        var metadata = Assert.Single(document.RootElement.GetProperty("findings").EnumerateArray(), finding =>
+            finding.GetProperty("code").GetString() == "route.metadata-required-missing"
+            && finding.GetProperty("subject").GetProperty("path").GetString() == ".agents/status/plain-note.md");
+        Assert.Equal("targeted-operation", metadata.GetProperty("resolution").GetString());
+        Assert.Single(metadata.GetProperty("actions").EnumerateArray());
+        var next = document.RootElement.GetProperty("next").GetProperty("command").GetString() ?? throw new InvalidOperationException();
+        Assert.StartsWith("open-forge index --workspace ", next, StringComparison.Ordinal);
+        Assert.Contains(working.Path, next, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Published Doctor keeps invalid and blocked journeys on the contracted error stream"), Trait("Feature", "doctor-command"), Trait("Evidence", "EndToEnd")]
@@ -135,7 +192,7 @@ public sealed class PublishedDoctorProcessTests
         internal IReadOnlyDictionary<string, string> EnvironmentVariables
             => _lockStore.EnvironmentVariables;
 
-        internal static DoctorWorkspace Create()
+        internal static DoctorWorkspace Create(bool healthy = false)
         {
             var workspace = TemporaryWorkspace.Create("doctor-e2e");
             var lockStore = PublishedWorkspaceLockStore.Create("doctor-e2e-lock-store");
@@ -154,6 +211,12 @@ public sealed class PublishedDoctorProcessTests
                         description: "Status",
                         tags: ["Status"],
                         body: "\n# Status\n\nDoctor evidence.\n"));
+                if (healthy)
+                {
+                    workspace.ReplaceText(".agents/loader.md", GeneratedLoaderDocumentBuilder.Build("- [Status](status/_status.md) - #Status")
+                        .Replace("# Open Forge Loader", "# Open Forge Loader\n\n## Axioms\n\n- Follow the selected rules.", StringComparison.Ordinal) + "\n");
+                    workspace.ReplaceText(".agents/status/_status.md", HealthyRoot("- none - No entries - #Empty"));
+                }
                 return new DoctorWorkspace(workspace, lockStore);
             }
             catch
@@ -168,6 +231,8 @@ public sealed class PublishedDoctorProcessTests
 
         internal string CreateFile(string relativePath, string contents)
             => _workspace.CreateFile(relativePath, contents);
+
+        internal void ReplaceText(string relativePath, string contents) => _workspace.ReplaceText(relativePath, contents);
 
         internal IReadOnlyDictionary<string, string> SnapshotState()
         {

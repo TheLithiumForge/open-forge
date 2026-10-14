@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Application;
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Result;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -124,12 +125,14 @@ internal sealed record RepairResult : ICliCommandResult
         Verification = formation.Facts.Verification;
         Recovery = formation.Facts.Recovery;
         PostDiagnosis = formation.Facts.PostDiagnosis;
+        ReportFindings = RepairFindingFormation.Report(this);
+        RemainingFindings = RepairFindingFormation.Remaining(this);
         // Post-diagnosis owns current Library observations. Keep operation and
         // selection findings, but do not retain a resolved observation as status.
         IReadOnlyList<RepairFinding> currentFindings = PostDiagnosis.State == RepairPostDiagnosisState.NotRequested
             ? Findings
             : Findings.Where(finding => finding.Code != RepairFindingCode.ManualFindingRemaining
-                || finding.Observation is null).ToArray();
+                || finding.Observation is null || finding.IsUnselectedLibraryResidual).ToArray();
         Status = ReadStatus(
             Mode,
             currentFindings,
@@ -139,6 +142,7 @@ internal sealed record RepairResult : ICliCommandResult
             Status,
             [.. currentFindings, .. PostDiagnosis.Findings],
             Recovery.Residual == RepairResidualState.Retained);
+        MaintenanceResults = RepairMaintenanceResultReader.Read(this);
     }
 
     public string Command => RepairDefinitions.CommandIdentity;
@@ -172,6 +176,10 @@ internal sealed record RepairResult : ICliCommandResult
 
     internal IReadOnlyList<RepairFinding> Findings { get; }
 
+    internal IReadOnlyList<RepairFinding> ReportFindings { get; }
+
+    internal IReadOnlyList<RepairFinding> RemainingFindings { get; }
+
     internal IReadOnlyList<string> AffectedPaths { get; }
 
     internal RepairCounts Counts { get; }
@@ -185,6 +193,8 @@ internal sealed record RepairResult : ICliCommandResult
     internal RepairRecovery Recovery { get; }
 
     internal RepairPostDiagnosis PostDiagnosis { get; }
+
+    internal RepairMaintenanceResults MaintenanceResults { get; }
 
     internal static RepairResult Empty(
         CliWorkspace? workspace,

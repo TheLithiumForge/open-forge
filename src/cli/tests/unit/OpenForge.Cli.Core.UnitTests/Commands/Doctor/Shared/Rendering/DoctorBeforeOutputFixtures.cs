@@ -1,17 +1,24 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Doctor.Shared.Rendering;
 
 internal static class DoctorBeforeOutputFixtures
 {
+    private static readonly string ExplicitWorkspacePath = Path.Combine(Path.GetTempPath(), "doctor hint's workspace");
+
     internal static DoctorResult Create(string situation)
         => situation switch
         {
             "healthy" => Diagnosis([]),
             "info-only" => Diagnosis([OwnershipMissing()]),
+            "info-only-explicit-workspace" => Diagnosis([OwnershipMissing()]) with
+            {
+                Workspace = new CliWorkspace(ExplicitWorkspacePath, ExplicitWorkspacePath, CliWorkspaceSelectionMethod.ExplicitWorkspace),
+            },
             "warnings-only" => Diagnosis([.. BrokenLinks(), .. InformationalFindings()]),
             "error-and-warnings" => Diagnosis([MalformedMetadata(), .. BrokenLinks(), .. InformationalFindings()]),
             "incomplete" => Diagnosis([UnavailableExtension()], DoctorCoverageState.Incomplete),

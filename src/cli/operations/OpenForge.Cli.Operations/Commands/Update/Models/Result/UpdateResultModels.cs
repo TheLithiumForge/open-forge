@@ -312,7 +312,10 @@ internal sealed record UpdateResult : ICliCommandResult
                     migration.Actions,
                     migration.Fields,
                     migration.Derivation,
-                    UpdateMigrationOutcome.Planned))
+                    UpdateMigrationOutcome.Planned)
+                {
+                    IsUserOwnedSource = migration.IsUserOwnedSource,
+                })
                 .ToArray(),
             Lifecycle = Lifecycle,
             Recovery = Recovery,

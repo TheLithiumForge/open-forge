@@ -1,0 +1,14 @@
+status=completed
+packages=2
+effects=20
+findings=10
+'.agents/templates/planning/_planning.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/planning/analysis.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/planning/backlog.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/planning/checkpoint.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/planning/decision.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/planning/idea.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/planning/plan.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/planning/task.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/workflows/_workflows.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
+'.agents/templates/workflows/workflow.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.

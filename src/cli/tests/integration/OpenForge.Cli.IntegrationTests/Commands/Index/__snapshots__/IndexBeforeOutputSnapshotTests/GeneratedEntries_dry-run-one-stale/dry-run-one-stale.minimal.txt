@@ -3,3 +3,4 @@ Workspace: <workspace>
   .agents/loader.md      1 -> 1 entries
   .agents/root/_root.md  unknown -> 1 entries
 No files were changed.
+Next: open-forge index --workspace <workspace>

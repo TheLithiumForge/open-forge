@@ -43,7 +43,7 @@ internal static class RouteInitReportSelector
             ],
             Data = Data(result, selection.Detail),
             Recovery = Recovery(result),
-            Next = Next(result),
+            Next = CompleteNext(result, Next(result)),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? Diagnostics(result)
                 : [],
@@ -479,7 +479,7 @@ internal static class RouteInitReportSelector
                 => new CliNextAction("open-forge update", RouteInitWording.UpdateReason()),
             RouteInitFindingCode.WorkspaceLockUnavailable
                 or RouteInitFindingCode.TargetChanged
-                => new CliNextAction("open-forge route init", RouteInitWording.RetryReason()),
+                => new CliNextAction(result.RequestCommand ?? "open-forge route init --help", RouteInitWording.RetryReason()),
             RouteInitFindingCode.RecoveryArtifactRetained
                 => new CliNextAction("open-forge cleanup", RouteInitWording.CleanupReason()),
             RouteInitFindingCode.RecoveryConflict
@@ -487,7 +487,7 @@ internal static class RouteInitReportSelector
                     "open-forge cleanup --dry-run",
                     global::OpenForge.Cli.OutputText.Route.Shared.RouteSharedText.NextRecoveryConflictReason()),
             RouteInitFindingCode.Interrupted
-                => new CliNextAction("open-forge route init", RouteInitWording.RerunReason()),
+                => new CliNextAction(result.RequestCommand ?? "open-forge route init --help", RouteInitWording.RerunReason()),
             _ => null,
         };
 
@@ -516,12 +516,18 @@ internal static class RouteInitReportSelector
             CliSemanticStatus.Blocked
                 => new CliNextAction("open-forge doctor", RouteInitWording.DoctorReason()),
             CliSemanticStatus.Failed
-                => new CliNextAction("open-forge route init --detail debug", RouteInitWording.DebugReason()),
+                => new CliNextAction(result.DebugCommand ?? "open-forge route init --help", RouteInitWording.DebugReason()),
             CliSemanticStatus.Interrupted
-                => new CliNextAction("open-forge route init", RouteInitWording.RerunReason()),
+                => new CliNextAction(result.RequestCommand ?? "open-forge route init --help", RouteInitWording.RerunReason()),
             _ => throw new ArgumentOutOfRangeException(nameof(result), result.Status,
                 "The Route Init status is not defined."),
         };
+    }
+
+    private static CliNextAction? CompleteNext(RouteInitResult result, CliNextAction? next)
+    {
+        if (next?.Command == result.RequestCommand || next?.Command == result.DebugCommand) return next;
+        return OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.CliRetryCommand.InWorkspace(next, result.WorkspacePath, result.WorkspaceExplicit);
     }
 
     private static CliEffect Effect(

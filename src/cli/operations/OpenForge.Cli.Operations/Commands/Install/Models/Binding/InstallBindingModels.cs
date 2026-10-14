@@ -1,6 +1,8 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 using System.CommandLine;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
+using OpenForge.Cli.Core.Commands.Install.Models.Result;
 
 namespace OpenForge.Cli.Core.Commands.Install.Models.Binding;
 
@@ -66,5 +68,12 @@ internal sealed record InstallBindingInput(
     InstallConfiguration? Configuration = null,
     string? SetupError = null)
 {
+    internal OpenForge.Cli.Core.Framework.Documents.Metadata.Models.FrontmatterForm? ResolvedFrontmatter { get; init; }
+    internal CliRetryOptions? RetryOptions { get; init; }
+
+    internal InstallSetupRecap? SetupRecap { get; init; }
+
     internal bool IsDryRun => Mode == InstallMode.DryRun;
+    internal InstallInvalidRoute? InvalidRoute { get; init; }
+    internal InstallInvalidOption? InvalidOption { get; init; }
 }

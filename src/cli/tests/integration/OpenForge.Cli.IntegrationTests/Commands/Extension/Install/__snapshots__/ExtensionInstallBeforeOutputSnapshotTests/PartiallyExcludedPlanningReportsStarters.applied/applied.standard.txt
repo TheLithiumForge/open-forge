@@ -1,0 +1,35 @@
+Installed the planning Extension and 1 package it requires: workflows.
+Workspace: <workspace>
+  .agents/skills/use-workflow/SKILL.md
+    created (workflows)
+  .agents/skills/use-workflow/references/_references.md
+    created (workflows)
+  .agents/memory/crystallized/decisions/_decisions.md
+    created (planning)
+  .agents/memory/emerging/analysis/_analysis.md
+    created (planning)
+  .agents/memory/emerging/ideas/_ideas.md
+    created (planning)
+  .agents/memory/working/checkpoints/_checkpoints.md
+    created (planning)
+  .agents/patterns/work-records.md
+    created (planning)
+  .agents/skills/use-workflow/references/planning/_planning.md
+    created (planning)
+  .agents/skills/use-workflow/references/planning/planning.md
+    created (planning)
+  .agents/memory/crystallized/_crystallized.md                  Entries updated
+  .agents/memory/emerging/_emerging.md                          Entries updated
+  .agents/patterns/_patterns.md                                 Entries updated
+  .agents/skills/_skills.md                                     Entries updated
+  Planning's starter files were skipped because Templates is left out.
+  Workflow Support's starter files were skipped because Templates is left out.
+  Source: embedded catalogue (embedded)
+  Dependency order: workflows, planning
+  .agents/open-forge.lock.json  ownership record updated
+To add its files, restore Templates and update the package:
+  open-forge route init templates --framework --dry-run
+  open-forge extension update planning --dry-run
+To add its files, restore Templates and update the package:
+  open-forge route init templates --framework --dry-run
+  open-forge extension update workflows --dry-run

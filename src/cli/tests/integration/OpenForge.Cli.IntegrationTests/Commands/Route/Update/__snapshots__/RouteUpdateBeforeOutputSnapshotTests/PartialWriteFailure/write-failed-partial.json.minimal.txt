@@ -74,7 +74,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route update --detail debug",
-    "reason": "Report the failure and retry the same Route Update request with bounded diagnostics."
+    "command": "open-forge route update memory/project-alpha/overview --description 'After overview' --workspace <workspace>",
+    "reason": "Address the reported failure, then retry the same Route Update request."
   }
 }

@@ -2,7 +2,7 @@ Cannot initialize .agents/documents/_documents.md: Another Open Forge command ho
 Workspace: <workspace>
   Error  documents  Workspace lock is held [route-init.workspace-lock-unavailable]
          Another Open Forge command holds the workspace lock. Nothing was changed.
-         open-forge route init
+         open-forge route init documents --workspace <workspace>
          Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.
   Scaffold: generic
   description: Draft route for documents; replace this description before relying on it for selection
@@ -11,4 +11,4 @@ Workspace: <workspace>
   Its description and tags are placeholders. Edit them before relying on this route.
   Recovery: no recovery bundle was created.
   Wait for the blocking condition or inspect the changed target, then rerun Route Init from a fresh plan.
-Next: open-forge route init
+Next: open-forge route init documents --workspace <workspace>

@@ -5,4 +5,4 @@ Workspace: <workspace>
   .agents/guidance/old guide.md -> .agents/guidance/new guide.md
   .agents/guidance/old guide.overwrite.md -> .agents/guidance/new guide.overwrite.md
   Inspect the unavailable inventory, reference, projection, or recovery facts before relying on this Route Move result.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

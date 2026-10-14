@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs",
+          "command": "open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs/review.md --automatic",
           "reason": "Allow the destination folder, then rerun the same request."
         }
       ]
@@ -95,7 +95,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs",
+    "command": "open-forge library attach team-knowledge shared/team-knowledge --to . --allow-path docs/review.md --automatic",
     "reason": "Allow the destination folder, then rerun the same request."
   }
 }

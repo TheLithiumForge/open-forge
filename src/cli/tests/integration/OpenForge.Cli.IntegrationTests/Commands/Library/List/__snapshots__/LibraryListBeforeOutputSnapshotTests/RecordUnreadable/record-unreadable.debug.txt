@@ -9,4 +9,4 @@ The Library registration record could not be read.
   links changed: .agents/open-forge.lock.json could not be read.
   links unavailable: .agents/open-forge.lock.json could not be read.
   Inspect the reported Library state.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

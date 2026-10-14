@@ -75,7 +75,7 @@ internal static class RouteCreateBinding
             Command = symbols.CreateCommand,
             Help = components.Help,
             WorkspaceRequirement = CliWorkspaceRequirement.Required,
-            Binder = (parse, invocation) => RouteCreateRequestBinder.Bind(parse.Result, invocation, symbols),
+            Binder = (parse, invocation) => RouteCreateRequestBinder.Bind(parse.Result, invocation, symbols, parse.OriginalArguments),
             InvalidResultFactory = RouteCreateInvalidResultFactory.CreateContextualInvalidResult,
             Operation = components.Operation.ExecuteAsync,
         };

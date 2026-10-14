@@ -15,6 +15,43 @@ namespace OpenForge.Cli.Core.Presentation.Context.Shared.Selection;
 
 internal static class ContextReportSelector
 {
+    internal static CliSelectedReport<ContextData> SelectText(CliSelectedReport<ContextData> selected)
+    {
+        var report = selected.Report;
+        var data = report.Data;
+        var findings = selected.TextFindings
+            .Where(finding => finding.Code != report.HeadlineFindingCode
+                || finding.Candidates.Count > 0 || finding.Evidence.Count > 0 || finding.Actions.Count > 0 || finding.Provenance is not null)
+            .Select(finding => finding.Code == report.HeadlineFindingCode ? finding with { Message = string.Empty } : finding)
+            .Select(finding => finding.Code == "context.applicability-pending" && finding.Subject.Kind == CliSubjectKind.Workspace
+                ? finding with { Subject = new CliSubject(CliSubjectKind.Identifier, Id: "context") } : finding)
+            .ToArray();
+        if (data.StartupMissing && selected.Selection.Detail == CliDetail.Minimal)
+            findings = findings.Where(finding => finding.Code is not ("context.closure-unavailable" or "context.layer-unavailable")).ToArray();
+        var limitations = selected.TextLimitations.Where(limitation => limitation.CountName is null).ToArray();
+        var headline = selected.TextHeadline;
+        var next = selected.TextNext ?? report.Next;
+        if (data.StartupMissing)
+        {
+            headline = new CliHeadline(global::OpenForge.Cli.OutputText.Context.ContextText.StartupUnavailable(report.Workspace?.Path ?? "the selected workspace"), CliHeadlineKind.Incomplete);
+        }
+        else if (data.MissingForValue)
+        {
+            headline = new CliHeadline(global::OpenForge.Cli.OutputText.Context.ContextText.MissingForValue(), CliHeadlineKind.CannotStart);
+        }
+        return selected with
+        {
+            ShowHeadline = report.Status is CliSemanticStatus.Invalid or CliSemanticStatus.Blocked or CliSemanticStatus.Failed or CliSemanticStatus.Interrupted
+                || data.EmptyAdditions || data.StartupMissing,
+            ShowWorkspace = !data.StartupMissing && selected.ShowWorkspace,
+            TextHeadline = headline,
+            TextNext = next,
+            TextFindings = findings,
+            TextCounts = [],
+            TextLimitations = limitations,
+        };
+    }
+
     internal static CliReport<ContextData> Select(ContextResult result, CliSelection selection)
     {
         ArgumentNullException.ThrowIfNull(result);
@@ -33,7 +70,8 @@ internal static class ContextReportSelector
         var data = new ContextData
         {
             Sources = selectedLayers.Select(selected => selected.Source).ToArray(),
-            ContentBlocks = selectedLayers.Select(selected => selected.Block).ToArray(),
+            ContentBlocks = selectedLayers.Where(selected => selected.WasRead || result.Presentation.Content.Effective is [{ Kind: ContextContentPartKind.Paths }])
+                .Select(selected => selected.Block).ToArray(),
             Summary = standard && result.Counts.Sources is { } sources && result.Counts.Tokens is { } tokens
                 ? ContextWording.Summary(sources, tokens)
                 : null,
@@ -48,6 +86,11 @@ internal static class ContextReportSelector
             TokenCount = result.Counts.Tokens,
             LinksFollowed = result.Counts.LinksFollowed,
             LinksNotFollowed = result.Counts.LinksNotFollowed,
+            StartupMissing = result.Status == CliSemanticStatus.Incomplete && result.Findings.Any(finding => finding.StartupMissing),
+            MissingForValue = result.Findings.Any(finding => finding.MissingOptionValue),
+            CountLimitation = result.Counts.UnavailableReason,
+            CountsNotEstablished = result.Counts.NotEstablished,
+            TextGuidance = Guidance(result),
         };
         var findings = result.Findings.Select(finding => Finding(result, finding)).ToArray();
         var counts = Counts(result);
@@ -76,11 +119,20 @@ internal static class ContextReportSelector
                     : [])
                 .ToArray(),
             Data = data,
-            Next = Next(result),
+            Next = OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.CliRetryCommand.InWorkspace(Next(result), result.WorkspacePath, result.WorkspaceExplicit),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? result.Findings.Select(finding => finding.Cause).ToArray()
                 : [],
         };
+    }
+
+    private static IReadOnlyList<string> Guidance(ContextResult result)
+    {
+        if (result.Findings.Any(finding => finding.StartupMissing))
+            return [global::OpenForge.Cli.OutputText.Context.ContextText.MissingLoader(), global::OpenForge.Cli.OutputText.Context.ContextText.InstallGuidance()];
+        if (result.Findings.Any(finding => finding.MissingOptionValue))
+            return [global::OpenForge.Cli.OutputText.Context.ContextText.ForExample()];
+        return [];
     }
 
     private static SelectedLayer SelectLayer(
@@ -94,7 +146,7 @@ internal static class ContextReportSelector
         var parts = Parts(result, source, layer, detail);
         return new SelectedLayer(
             Source(source, layer, parts, standard, full),
-            Block(source, layer, parts, standard, full));
+            Block(source, layer, parts, standard, full), layer.WasRead);
     }
 
     private static CliHeadline Headline(ContextResult result)
@@ -152,11 +204,23 @@ internal static class ContextReportSelector
 
     private static CliNextAction? Next(ContextResult result)
     {
+        if (result.Findings.Any(finding => finding.Code == ContextFindingCode.InvalidLinkDepth))
+            return result.Next;
+
+        if (result.Status == CliSemanticStatus.Incomplete && result.Findings.Any(finding => finding.StartupMissing))
+        {
+            var arguments = new List<string> { "install" };
+            if (result.WorkspaceExplicit) Shell.Definitions.Shared.Commands.CliRetryCommand.Add(arguments, "--workspace", result.WorkspacePath);
+            arguments.Add("--dry-run");
+            return new CliNextAction(Shell.Definitions.Shared.Commands.CliRetryCommand.Build(arguments), global::OpenForge.Cli.OutputText.Context.ContextText.InstallPreviewNext());
+        }
+        if (result.Findings.Any(finding => finding.MissingOptionValue))
+            return new CliNextAction("open-forge context --help", global::OpenForge.Cli.OutputText.Context.ContextText.HelpNext());
         if (result.Findings.Any(finding => finding.Code == ContextFindingCode.InvalidSource))
         {
             return new CliNextAction(
-                "open-forge route list --depth=all",
-                ContextWording.ChooseSourceNext());
+                "open-forge route list --depth all",
+                global::OpenForge.Cli.OutputText.Shared.CliInputWording.SourceDiscoveryNext());
         }
 
         if (result.Findings.Any(finding => finding.Code is
@@ -179,7 +243,7 @@ internal static class ContextReportSelector
         if (result.Findings.Any(finding => finding.Code == ContextFindingCode.ApplicabilityPending))
         {
             var references = result.Selection.RequestedSources
-                .Select(source => $"\"{source.Supplied}\"");
+                .Select(source => OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.CliCommandText.Quote(source.Supplied));
             var command = string.Join(" ", new[] { "open-forge context" }.Concat(references));
             return new CliNextAction(
                 $"{command} --for <path>",
@@ -486,5 +550,5 @@ internal static class ContextReportSelector
             .Select(ContextWording.Reason)
             .ToArray();
 
-    private sealed record SelectedLayer(ContextDataSource Source, CliContentBlock Block);
+    private sealed record SelectedLayer(ContextDataSource Source, CliContentBlock Block, bool WasRead);
 }

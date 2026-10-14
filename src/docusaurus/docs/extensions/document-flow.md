@@ -71,3 +71,5 @@ Project Documents doesn't ask you to move anything. Your README, a wiki, or a fo
 | Link to the source that defines the current result, and keep exact specifications there                       | [Decisions category](../../../extensions/planning/content/.agents/memory/crystallized/decisions/_decisions.md), from Planning                   |
 | Put detail in the narrowest source that defines it, and update that source when accepted direction changes it | [Loader](../../../open-forge/.agents/loader.md), Core. The flow builds on this general rule                                                     |
 | Update affected sources before other work depends on them, and no later than closeout                         | [Memory entrypoint](../../../open-forge/.agents/memory/_memory.md), base Framework. The flow builds on this general rule too                    |
+
+Next: [Project Documents](project-documents.md) and [Planning](planning.md).

@@ -41,12 +41,12 @@ public sealed class PublishedExtensionRemoveProcessTests
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.Contains(
-            "open-forge extension remove [<stable-id>...] [--automatic] [--dry-run] [--allow-path <path>] [global options]",
+            "open-forge extension remove [<stable-id>...] [options]",
             string.Join(" ", result.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
-        Assert.Contains("Selection and dependencies", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Ownership and recovery", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("A dependency stays", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Ownership and permissions", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Automation", result.StandardOutput, StringComparison.Ordinal);
         lockStore.AssertNoInfrastructure();
     }
 
@@ -181,7 +181,8 @@ public sealed class PublishedExtensionRemoveProcessTests
         Assert.Equal("retained", appliedRoot.GetProperty("recovery").GetProperty("disposition").GetString());
         Assert.True(File.Exists(appliedRoot.GetProperty("recovery").GetProperty("path").GetString()));
         Assert.Empty(appliedRoot.GetProperty("findings").EnumerateArray());
-        Assert.Equal("open-forge cleanup  (after reviewing the bundle)", appliedRoot.GetProperty("next").GetProperty("command").GetString());
+        var selectedWorkspace = OperatingSystem.IsWindows() ? $"'{working.WorkspacePath}'" : working.WorkspacePath;
+        Assert.Equal($"open-forge cleanup --workspace {selectedWorkspace}", appliedRoot.GetProperty("next").GetProperty("command").GetString());
         Assert.False(File.Exists(working.TargetPath));
         Assert.Equal(unownedBytes, File.ReadAllBytes(unownedPath));
         Assert.Equal(sourceBefore, working.SnapshotSource());
@@ -244,7 +245,9 @@ public sealed class PublishedExtensionRemoveProcessTests
         }
         else
         {
-            Assert.Equal("open-forge cleanup  (after reviewing the bundle)", root.GetProperty("next").GetProperty("command").GetString());
+            var workspace = root.GetProperty("workspace").GetProperty("path").GetString();
+            var quoted = OperatingSystem.IsWindows() ? $"'{workspace}'" : workspace;
+            Assert.Equal($"open-forge cleanup --workspace {quoted}", root.GetProperty("next").GetProperty("command").GetString());
         }
         var dataNames = new List<string>
         {

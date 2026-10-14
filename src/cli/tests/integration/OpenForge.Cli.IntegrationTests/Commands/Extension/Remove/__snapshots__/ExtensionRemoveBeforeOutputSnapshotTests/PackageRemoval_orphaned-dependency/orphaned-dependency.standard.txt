@@ -2,9 +2,10 @@ Removed the toolkit Extension. base remains installed and is no longer needed by
 Workspace: <workspace>
   Warning  base  Dependency remains installed
          base remains installed and is no longer needed by toolkit.
-         open-forge extension remove base
+         open-forge extension remove base --workspace <workspace>
          Remove the unused dependency when it is no longer needed.
-  .agents/open-forge.json                       recorded the removal in workspace settings
+  .agents/open-forge.json
+    recorded the removal in workspace settings
   .agents/toolkit.md                            deleted
   .agents/directives/_directives.md             unchanged
   .agents/guidance/_guidance.md                 unchanged
@@ -23,4 +24,4 @@ Workspace: <workspace>
   .agents/open-forge.lock.json  updated
   The deleted files are kept in a recovery bundle at <recovery-bundle>.
   Remove the unused dependency when it is no longer needed.
-Next: open-forge extension remove base
+Next: open-forge extension remove base --workspace <workspace>

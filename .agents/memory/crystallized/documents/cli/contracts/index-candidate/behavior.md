@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Current Crystallized deterministic behavior, mutation lifecycle, safety, recovery, and conformance for `index`
-  responsibility: Define how the current non-shipping `index` operation resolves, projects, applies, verifies, and recovers without choosing technology
+  responsibility: Define how the current `index` operation resolves, projects, applies, verifies, and recovers without choosing technology
   tags: [Memory, Crystallized, CLI, Release, Command, Index, Behavior, CurrentTruth]
 ---
 
@@ -10,11 +10,11 @@ open-forge:
 ## Status And Boundary
 
 This is the current Crystallized technology-neutral Behavior Contract for the
-non-shipping `index` operation. The [Interface Contract](interface.md) defines
+current `index` operation. The [Interface Contract](interface.md) defines
 the complete public syntax, observable output, semantic result names, and error
 surface that this behavior satisfies. The [Technical Design](technical-design.md)
-records the accepted realization without changing this contract. The command
-does not ship, and this file does not claim an implementation.
+records the accepted realization without changing this contract. The CLI is available as a public beta. Current implementation and release work
+are recorded separately in CLI Development.
 
 The accepted [Shared Result Coordinates](../shared/result-coordinates/interface.md)
 defines the shared exact structured-result schema and numeric process-exit
@@ -61,6 +61,16 @@ capability. GN1 remains Complete. Index owns command selection, plan
 orchestration, status, findings, presentation, and its use of M1 mechanics. It
 does not turn Generated Navigation into an applier or universal mutation
 coordinator.
+
+## Forgiving Maintenance
+
+Plan completion before generated projection. Establish selected recognized roots, settings exclusions, ownership and private-route policy. Read all eligible Markdown and classify fields as present, absent, malformed or unavailable. Derive only absent fields, preserve existing spans, and verify the intended metadata. Reuse shared scaffold composition to add qualifying missing ancestors as intended membership. Project final direct-child navigation over those intended bytes.
+
+Use [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md) for the exact eligibility and derivation tables, scaffold content and wire inventory. Existing Route Init draft defaults and explicit restoration policy are not Index defaults. Exclusions are read and preserved, never cleared. A readable malformed ordinary source emits one `index.metadata-skipped`, has no metadata write, and is omitted from generated rows. Its own malformed entrypoint region and dependent work stay untouched. Independent siblings and branches remain executable. Incomplete status does not depend on another changed region being present.
+
+Coalesce all edits to one physical target into one final effect. Create entrypoints with final Entries, outer to inner. Apply ordinary metadata and existing-region changes in canonical order. Use the same complete plan for preview and application, with no public command calls. Retain no-follow checks, expected bytes, original body preservation, one verified recovery bundle for covered existing files, monotonic effects and fresh verification. Repeating successful input is a byte no-op.
+
+Completion extends application authority only to absent fields and required canonical entrypoint creates. It does not grant whole-document formatting, supplied-value replacement, native package editing, managed authored-content editing or restoration. JSON and text use the Interface's exact new rows and additive values.
 
 ## Route Sharing
 
@@ -148,14 +158,12 @@ semantics, including Skill metadata validation, are unchanged.
 Parent inclusion and descendant completeness are treated as dependencies of the
 resolved request. No higher ancestor is added solely by ancestry.
 
-Leaf resolution applies the [Routed-leaf selection](interface.md#routed-leaf-selection)
-rules: it resolves the exposing relationship from current topology and blocks
-when the public target precondition cannot be established.
+Leaf resolution first completes an eligible exposing chain under Forgiving Maintenance. It blocks only when the required relationship cannot safely be established.
 
 Detached resolution accepts only the conditions in [Detached entrypoint
 selection](interface.md#detached-entrypoint-selection); it never creates absent
 routing context. A missing intermediate entrypoint keeps a lower complete
-topology detached; resolution never bridges the gap or invents a parent.
+topology detached; eligible rooted gaps are completed. Genuinely detached resolution never invents a root.
 
 An overwrite reference is normalized to the base logical source under the
 shared [CLI Source References Behavior Contract](../shared/source-references/behavior.md).
@@ -220,22 +228,11 @@ remain invalid metadata under the existing Index boundary. Index never prefers
 one declaration or unions their patterns.
 
 Projection carries authored metadata through without semantic rewriting and
-rejects invented fallback meaning. Eligible ordinary Missing optional metadata
-uses the accepted automatic-ID fallback and observed valid tags, remains
-Missing, and contributes an optional warning without making the projection
-incomplete. Native Skill, Loader, and overwrite-companion forms do not use that
+derives only absent eligible fields under Forgiving Maintenance. Excluded ordinary Missing metadata retains observed-value fallback and its warning. Native Skill, Loader, and overwrite-companion forms do not use that
 fallback. Supplied malformed values remain malformed and are never treated as
 Missing.
 
-Required-metadata validation applies before a complete projection can enter a
-mutation plan. If a selected closure has a readable malformed ordinary or native Skill
-metadata region, the complete topology and identities are otherwise available,
-and an independent available region has a change, projection may retain the
-malformed region as `MetadataSkipped` and form an executable safe subset. The
-skipped region has no effect or recovery entry. Unreadable or unsafe boundaries,
-missing native Skill metadata, and malformed-only selections remain
-non-executable; no generic continue-on-error rule applies. Semantic usefulness
-remains outside the operation.
+Metadata admission follows Forgiving Maintenance. Malformed ordinary sources have no write and one skip finding. Native and unavailable safety boundaries remain strict.
 
 ### Generated body
 
@@ -278,7 +275,8 @@ headings are diagnosed; no arbitrary first section is selected.
 Once the boundary and replacement preconditions are established, malformed body
 content is replaceable. Exact retired guard comments remain readable as migration
 input and disappear when Index rewrites the body. The second run is a verified
-no-op. Outside bytes remain exact; no whole-file formatting is introduced.
+no-op. Outside bytes remain exact except for separately planned absent-field
+insertion. Whole-file formatting is outside Index authority.
 
 ## Complete Planning
 
@@ -288,7 +286,7 @@ observation for every planned target during initial preflight. A blocked target
 safety or other unsafe/unreadable boundary blocks every planned update. The
 narrow `MetadataSkipped` case above may instead retain the readable malformed
 region as `not-established` and apply only the independent safe changed region
-or regions; malformed-only remains `blocked` with no effects. This is bounded
+or regions; readable ordinary malformed-only input is incomplete with no effects. This is bounded
 independent execution, not generic best-effort or silent skipping.
 
 Planning classifies each selected region as `update` when its current bounded
@@ -324,9 +322,7 @@ authored bytes or private recovery material.
 A dry run with changes is `completed` when the complete plan and application
 preconditions were established safely. It reports that regions would be updated
 and that no files changed, and does not claim on-disk verification of bytes that
-were not written. A dry run with eligible optional Missing metadata retains its
-visible warning and `completed-with-warnings`/Attention2 status without a
-recovery artifact. A dry run with an independent safe region and a skipped
+were not written. A dry run with eligible absent metadata previews completion without a missing-field warning or recovery artifact. Excluded ordinary missing metadata retains its existing warning. A dry run with an independent safe region and a skipped
 readable malformed region remains `incomplete`, names the exact skipped source
 and cause, and performs no effects.
 
@@ -337,10 +333,7 @@ confirmation to replace every changed body inside the selected machine-owned
 generated boundary. Application does not prompt again and does not accept
 `--yes`.
 
-Application authority remains bounded to changed generated interiors. It does
-not permit heading repair, authored-content replacement, whole-file formatting,
-overwrite mutation, path escape, metadata invention, or another repair
-operation.
+Application authority covers changed generated interiors and absent-field insertion and qualifying entrypoint creates under Forgiving Maintenance. It does not permit heading repair, supplied-field replacement, whole-file formatting, overwrite mutation, path escape or unrelated repair.
 
 A verified no-op has no affected mutation path and therefore does not create a
 bundle. For an actual update with one or more existing targets to replace,
@@ -588,9 +581,7 @@ concerns. Conforming implementation evidence must cover:
   policy, duplicate, overlapping, compatible-alias collapse, incompatible-alias
   blocking, and deferred portable-equivalence behavior.
 - Filesystem-derived direct children independent of current generated lines.
-- Required metadata, native source metadata, eligible ordinary Missing optional
-  values with automatic-ID fallback, supplied malformed values, and the absence
-  of invented fallback meaning.
+- Eligible ordinary absent-field completion, excluded observed-value fallback, strict native metadata, readable malformed skip behavior and supplied-value preservation.
 - Declared `applyTo` patterns in the suffix after tags, no inherited-condition
   expansion, complete inventory independent of a task working-file set, and
   unchanged unconditioned entry lines.
@@ -598,7 +589,7 @@ concerns. Conforming implementation evidence must cover:
   ordering, and stable output bytes.
 - Valid stale bodies, malformed bodies inside a valid heading body, and every invalid
   heading boundary.
-- Byte preservation outside generated interiors.
+- Byte preservation outside generated interiors and explicitly inserted absent metadata fields.
 - Complete planning, exact dry-run diffs, independent safe-region execution,
   exact skipped metadata identity/cause, no persistent dry-run effects, and
   dry-run proof that optional warnings do not create recovery artifacts.

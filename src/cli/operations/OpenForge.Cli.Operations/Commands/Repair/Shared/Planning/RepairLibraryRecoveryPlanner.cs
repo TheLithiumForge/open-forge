@@ -150,7 +150,7 @@ internal static class RepairLibraryRecoveryPlanner
             }
 
             var origins = ImmutableArray.CreateBuilder<RepairSelectionOrigin>();
-            if (input.Request.Automatic)
+            if (input.Request.Automatic && selected.Count == 0)
             {
                 origins.Add(RepairSelectionOrigin.Automatic);
             }

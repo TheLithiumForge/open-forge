@@ -37,7 +37,7 @@ public sealed class LibraryProjectionRemoveGuardIntegrationTests
         Assert.Equal(LibraryMutationWorkspace.Leaf, finding.GetProperty("subject").GetProperty("path").GetString());
         Assert.False(string.IsNullOrWhiteSpace(finding.GetProperty("message").GetString()));
         Assert.Equal(before, workspace.Snapshot());
-        Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md",
+        Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar),
             new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
     }
 }

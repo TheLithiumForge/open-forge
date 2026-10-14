@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -36,7 +37,8 @@ public sealed class ExtensionCreateApplicationInteractionIntegrationTests
 
         var prompts = scripted.Output.ToString();
         Assert.Contains("Extension ID (for example my-tools):", prompts, StringComparison.Ordinal);
-        Assert.Contains("Parent folder for the new Extension:", prompts, StringComparison.Ordinal);
+        Assert.Contains("Existing parent folder for the new Extension:", prompts, StringComparison.Ordinal);
+        Assert.Contains("Open Forge creates a folder named toolkit inside it.", prompts, StringComparison.Ordinal);
         Assert.Contains("Would create the toolkit Extension scaffold at", prompts, StringComparison.Ordinal);
         Assert.Contains("Create these files? [y/N]", prompts, StringComparison.Ordinal);
         Assert.True(
@@ -166,10 +168,9 @@ public sealed class ExtensionCreateApplicationInteractionIntegrationTests
             Assert.Equal(before, catalogue.SnapshotHashes());
             if (scenario == "json")
             {
-                Assert.Contains(
-                    "open-forge extension create --automatic",
-                    run.StandardOutput,
-                    StringComparison.Ordinal);
+                using var document = System.Text.Json.JsonDocument.Parse(run.StandardOutput);
+                Assert.Equal($"open-forge extension create toolkit --path {CliCommandText.Quote(catalogue.Path)} --format json --automatic",
+                    document.RootElement.GetProperty("next").GetProperty("command").GetString());
                 Assert.Equal(string.Empty, run.StandardError);
             }
             else

@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Shell.Parsing;
 using OpenForge.Cli.Core.Shell.Pipeline;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.Commands.Shared;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install;
 
@@ -98,7 +99,7 @@ internal sealed class ExtensionInstallRequestBinder(ExtensionInstallSymbols symb
                     "The selected workspace is unavailable."));
         }
 
-        var request = ReadRequest(parse.Result, workspace, invocation.Presentation);
+        var request = ReadRequest(parse.Result, workspace, invocation.Presentation) with { RetryOptions = CliRetryOptions.From(invocation) };
         var cause = Validate(parse.Result, request);
         return cause is null
             ? CliBindResult<ExtensionInstallRequest, ExtensionInstallResult>.Bound(request)

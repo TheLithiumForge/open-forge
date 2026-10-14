@@ -252,9 +252,11 @@
   font-size: 0.8rem;
 }
 
+/* The states are an unordered set, so they can sit side by side when there is room. */
 .states {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -276,17 +278,11 @@
   font-weight: 600;
 }
 
-.transition {
-  align-self: center;
-  padding: 3px 0;
-  color: var(--ifm-color-emphasis-700);
-  font-size: 0.76rem;
-}
-
-.transition::before {
-  margin-right: 6px;
-  color: var(--map-memory);
-  content: "↓";
+.stateNote {
+  margin: 0 0 12px;
+  color: var(--ifm-font-color-base);
+  font-size: 0.82rem;
+  line-height: 1.4;
 }
 
 .note {

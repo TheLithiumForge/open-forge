@@ -10,4 +10,6 @@ internal sealed record LibraryInspectFinding
     public required string? LibraryId { get; init; }
     public required string? Path { get; init; }
     public required string Cause { get; init; }
+
+    internal bool UnreadableOnWindows { get; init; }
 }

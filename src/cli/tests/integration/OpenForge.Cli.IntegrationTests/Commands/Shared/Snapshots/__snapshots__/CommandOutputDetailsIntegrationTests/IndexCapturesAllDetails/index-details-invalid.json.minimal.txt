@@ -33,12 +33,18 @@
     "filesChecked": 0,
     "filesUpdated": 0,
     "filesCurrent": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0,
     "errors": 1
   },
   "limitations": [],
   "data": {
     "mode": "apply",
-    "changes": []
+    "changes": [],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,

@@ -262,6 +262,43 @@ public sealed class ExtensionUpdateReportSelectorTests
         Assert.Equal(0, selected.Report.Counts.Single(count => count.Name == "sectionsUpdated").Value);
     }
 
+    [Theory(DisplayName = "Extension Update previous-content advice names retained bytes and promises only protected previews")]
+    [InlineData((int)ExtensionUpdateMode.Apply, (int)ExtensionUpdateRecoveryState.Retained, true, "Previous content is in the recovery bundle at /recovery/previous.zip.")]
+    [InlineData((int)ExtensionUpdateMode.Apply, (int)ExtensionUpdateRecoveryState.Unknown, true, null)]
+    [InlineData((int)ExtensionUpdateMode.DryRun, (int)ExtensionUpdateRecoveryState.NotCreated, true, "Previous content will be kept in a recovery bundle.")]
+    [InlineData((int)ExtensionUpdateMode.DryRun, (int)ExtensionUpdateRecoveryState.NotRequired, false, null)]
+    [Trait("Feature", "extension-update"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public void PreviousContentAdviceUsesActualRecoveryFacts(int mode, int state, bool protectedPath, string? expected)
+    {
+        var recoveryState = (ExtensionUpdateRecoveryState)state;
+        var recovery = new ExtensionUpdateRecovery(
+            recoveryState,
+            protectedPath ? [".agents/aaa.md"] : [],
+            residualPath: recoveryState is ExtensionUpdateRecoveryState.Retained or ExtensionUpdateRecoveryState.Unknown
+                ? "/recovery/previous.zip"
+                : null);
+        var selected = Select(Result(
+            (ExtensionUpdateMode)mode,
+            WorkspacePermissionResult.NotEvaluated,
+            [mode == (int)ExtensionUpdateMode.DryRun ? ExtensionUpdateEffectOutcome.Planned : ExtensionUpdateEffectOutcome.Verified],
+            recovery: recovery), CliDetail.Minimal);
+        var advice = selected.Report.Data.TextDetails.Where(line => line.StartsWith("Previous content", StringComparison.Ordinal)).ToArray();
+        if (expected is null)
+        {
+            Assert.Empty(advice);
+        }
+        else
+        {
+            Assert.Equal(expected, Assert.Single(advice));
+        }
+        Assert.DoesNotContain("Previous content: git diff", selected.Report.Data.TextDetails);
+        Assert.DoesNotContain("Previous content is in", Json(selected), StringComparison.Ordinal);
+        Assert.DoesNotContain("Previous content will be kept", Json(selected), StringComparison.Ordinal);
+        using var document = JsonDocument.Parse(Json(selected));
+        var previous = document.RootElement.GetProperty("data").GetProperty("previousContent");
+        Assert.Equal(recoveryState == ExtensionUpdateRecoveryState.Retained ? recovery.ResidualPath : null, previous.GetString());
+    }
+
     private static CliSelectedReport<ExtensionUpdateData> Select(
         ExtensionUpdateResult result,
         CliDetail detail)
@@ -282,7 +319,8 @@ public sealed class ExtensionUpdateReportSelectorTests
         IReadOnlyList<ExtensionUpdateFinding>? findings = null,
         bool includeRetainedFile = false,
         IReadOnlyList<ExtensionUpdateGeneratedRegion>? generatedRegions = null,
-        bool generatedEffect = false)
+        bool generatedEffect = false,
+        ExtensionUpdateRecovery? recovery = null)
     {
         var paths = outcomes
             .Select((_, index) => index == 0 ? ".agents/aaa.md" : ".agents/toolkit.md")
@@ -353,7 +391,7 @@ public sealed class ExtensionUpdateReportSelectorTests
                 mode == ExtensionUpdateMode.DryRun
                     ? ExtensionUpdateLifecycleOutcome.Planned
                     : ExtensionUpdateLifecycleOutcome.NotStarted),
-            Recovery = new ExtensionUpdateRecovery(
+            Recovery = recovery ?? new ExtensionUpdateRecovery(
                 ExtensionUpdateRecoveryState.NotCreated,
                 [],
                 residualPath: null),

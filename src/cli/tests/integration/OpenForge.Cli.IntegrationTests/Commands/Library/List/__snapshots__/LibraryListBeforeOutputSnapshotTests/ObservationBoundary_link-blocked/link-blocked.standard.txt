@@ -5,4 +5,4 @@ Workspace: <workspace>
   team-knowledge  shared/team -> .  0 links current, 1 unavailable
     .agents/linked/review.md  blocked
   Inspect the reported Library state.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

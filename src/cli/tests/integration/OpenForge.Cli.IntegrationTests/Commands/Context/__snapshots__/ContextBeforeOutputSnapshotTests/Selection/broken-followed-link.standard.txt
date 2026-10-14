@@ -40,10 +40,7 @@ open-forge:
 # Guide
 
 [Missing](missing.md).
-  sources: The followed Context links could not be resolved completely.
-  tokens: The followed Context links could not be resolved completely.
-  bytes: The followed Context links could not be resolved completely.
-  links followed: The followed Context links could not be resolved completely.
-  links not followed: The followed Context links could not be resolved completely.
+Context counts are unavailable. The followed Context links could not be resolved
+completely.
   Inspect the unavailable closure, source, link, or projection facts before relying on this Context result.
 Next: open-forge doctor

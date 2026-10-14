@@ -25,12 +25,12 @@ internal sealed class RouteInitOperation(
         var build = await PlanBuilder.BuildAsync(request, cancellationToken).ConfigureAwait(false);
         if (build.Plan is not { } plan)
         {
-            return ResultBuilder.Build(build.Formation);
+            return ResultBuilder.Build(build.Formation with { Request = request });
         }
 
         if (request.IsDryRun)
         {
-            return ResultBuilder.Build(build.Formation);
+            return ResultBuilder.Build(build.Formation with { Request = request });
         }
 
         if (plan.IsNoOp)
@@ -56,10 +56,10 @@ internal sealed class RouteInitOperation(
                     null),
                 Models.Result.RouteInitVerificationState.Verified,
                 preview.Findings);
-            return ResultBuilder.Build(formation);
+            return ResultBuilder.Build(formation with { Request = request });
         }
 
         var outcome = await ApplicationOperation.ExecuteAsync(plan, cancellationToken).ConfigureAwait(false);
-        return ResultBuilder.Build(outcome.Formation);
+        return ResultBuilder.Build(outcome.Formation with { Request = request });
     }
 }

@@ -16,10 +16,10 @@ public sealed class PublishedRouteInspectProcessTests
         Assert.Equal(0, result.ExitCode);
         Assert.Empty(result.StandardError);
         var text = string.Join(" ", result.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
-        Assert.Contains("[--matching-files]", text, StringComparison.Ordinal);
+        Assert.Contains("--matching-files", text, StringComparison.Ordinal);
         Assert.Contains("List current workspace files matching this source's own and inherited applyTo conditions.", text, StringComparison.Ordinal);
-        Assert.Contains("Matching files do not select or load a source. A source with no restrictive applyTo condition answers all files without scanning. --for supplies working paths independently of this scan. At most 100 matching paths are listed.", text, StringComparison.Ordinal);
-        Assert.Contains("In a Git work tree, the scan lists existing tracked and untracked files and excludes ignored untracked files. Without a usable Git inventory, it walks the workspace and applies its .gitignore files using Open Forge rules. The scan stays inside the workspace and does not follow symbolic links or enter submodules.", text, StringComparison.Ordinal);
+        Assert.Contains("Matching files do not select or load a source. No restrictive applyTo condition means all files without a scan. --for is independent of scanning. At most 100 matches are listed.", text, StringComparison.Ordinal);
+        Assert.Contains("Git scans use existing tracked and untracked files, excluding ignored untracked files. Otherwise Open Forge walks the workspace with its .gitignore rules. Scans stay contained, never following symbolic links or entering submodules.", text, StringComparison.Ordinal);
     }
 
     [Theory(DisplayName = "Published matching-files composes with repeated working paths without changing applicability"),
@@ -182,7 +182,7 @@ public sealed class PublishedRouteInspectProcessTests
             "Cannot inspect root/collision: root/collision matches more than one source. Use the exact path.",
             result.StandardError,
             StringComparison.Ordinal);
-        Assert.Contains("Next: open-forge route inspect \".agents/root/collision.md\"", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route inspect .agents/root/collision.md --detail minimal", result.StandardError, StringComparison.Ordinal);
     }
 
 }

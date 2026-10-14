@@ -1,7 +1,7 @@
 Updated the toolkit Extension to 2.0.0.
 Workspace: <workspace>
-  .agents/new.md  created (new in this version)
-  Previous content: recovery bundle at <recovery-bundle>
+  .agents/new.md  created
+  Previous content is in the recovery bundle at <recovery-bundle>.
   Source: <extension-source>
   Dependency closure: toolkit
   1 file unchanged

@@ -54,7 +54,10 @@ internal sealed class ContextProjectionBuilder
                     kind: Layer(graphLayer.Kind),
                     path: graphLayer.CanonicalPath,
                     inclusionReasons: layerReasons,
-                    projections: projections));
+                    projections: projections)
+                {
+                    WasRead = graphLayer.ReadState == FileReadState.Complete,
+                });
             }
 
             AddLogicalSectionFindings(graphSource, content, state);

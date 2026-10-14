@@ -3,4 +3,4 @@ Workspace: <workspace>
   Error  <workspace>  Index was cancelled
          Index was cancelled. Nothing was changed.
   Rerun the same Index request.
-Next: open-forge index
+Next: open-forge index --workspace <workspace>

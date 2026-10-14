@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge doctor",
+          "command": "open-forge doctor --workspace <workspace>",
           "reason": "Inspect the reported Route Remove boundary before relying on this result."
         }
       ]
@@ -67,7 +67,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the reported Route Remove boundary before relying on this result."
   }
 }

@@ -22,18 +22,12 @@ namespace OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help;
 public sealed class CliResultHelpTests
 {
     private static readonly string Expected = string.Join(Environment.NewLine,
-        "  Text completed, completed-with-warnings, and incomplete results use stdout; invalid-input, blocked, failed, and cancelled results use stderr.",
-        "  JSON writes one minified schema-version-3 envelope to stdout for every semantic status. Debug diagnostics use bounded stderr.",
-        "  completed: exit 0 and text stdout.",
-        "  failed: exit 1 and text stderr.",
-        "  completed-with-warnings: exit 2 and text stdout.",
-        "  incomplete: exit 3 and text stdout.",
-        "  invalid-input: exit 4 and text stderr.",
-        "  blocked: exit 5 and text stderr.",
-        "  cancelled: exit 130 and text stderr.");
+        "--format json: one minified schema-3 JSON result on stdout for every status.",
+        "Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4 invalid input, 5 blocked, 130 cancelled.",
+        "Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.");
 
     [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Every command with a Results and streams section renders the one shared body"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Every command renders the shared status and stream body under Automation"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
     public void CommandsShareOneResultsAndStreamsBody()
     {
         (string Command, CliHelpContent Help)[] commands =
@@ -57,19 +51,19 @@ public sealed class CliResultHelpTests
 
         foreach (var (command, help) in commands)
         {
-            var section = Assert.Single(help.Sections, value => value.Heading == "Results and streams");
+            var section = Assert.Single(help.Sections, value => value.Heading == "Automation");
             Assert.Equal($"{command}: {Expected}", $"{command}: {section.Body}");
         }
     }
 
     [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Commands that close their Notes with the shared body keep it verbatim"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
-    public void NotesSectionsAppendTheSameSharedBody()
+    [Fact(DisplayName = "Move and Update keep Automation separate from their command details"), Trait("Feature", "command-help"), Trait("Evidence", "Unit")]
+    public void AutomationRemainsSeparateFromDetails()
     {
-        var moveNotes = $"  Route Move never moves lifecycle-managed content, initializes a missing parent route, overwrites a destination, prompts, or invokes Index as a subprocess.\n{Expected}";
-        var updateNotes = $"  Global workspace, format, detail, detail-filter, help, and version options retain their shared meaning.\n{Expected}";
-
-        Assert.Equal(moveNotes, Assert.Single(RouteMoveHelpSections.Create().Sections, section => section.Heading == "Notes").Body);
-        Assert.Equal(updateNotes, Assert.Single(RouteUpdateHelpSections.Create().Sections, section => section.Heading == "Notes").Body);
+        foreach (var help in new[] { RouteMoveHelpSections.Create(), RouteUpdateHelpSections.Create() })
+        {
+            Assert.Equal(Expected, Assert.Single(help.Sections, section => section.Heading == "Automation").Body);
+            Assert.DoesNotContain(help.Sections[0].Children, section => section.Body.Contains("130 cancelled", StringComparison.Ordinal));
+        }
     }
 }

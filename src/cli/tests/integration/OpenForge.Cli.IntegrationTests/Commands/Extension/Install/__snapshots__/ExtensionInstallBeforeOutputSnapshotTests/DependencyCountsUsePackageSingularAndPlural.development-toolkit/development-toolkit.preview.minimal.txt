@@ -1,0 +1,18 @@
+Would install the development-toolkit Extension and 5 packages it requires: workflows, development, planning, project-documents, scenarios.
+  .agents/memory/crystallized/_crystallized.md  Entries would be updated
+  .agents/memory/emerging/_emerging.md          Entries would be updated
+  .agents/memory/working/_working.md            Entries would be updated
+  .agents/patterns/_patterns.md                 Entries would be updated
+  .agents/skills/_skills.md                     Entries would be updated
+  .agents/templates/_templates.md               Entries would be updated
+  Would create 38 files under .agents/memory/crystallized/decisions,
+  .agents/memory/crystallized/documents, .agents/memory/emerging/analysis,
+  .agents/memory/emerging/ideas, .agents/memory/working/checkpoints,
+  .agents/patterns, .agents/skills/use-workflow,
+  .agents/skills/use-workflow/references,
+  .agents/skills/use-workflow/references/development,
+  .agents/skills/use-workflow/references/planning,
+  .agents/skills/use-workflow/references/project-documents,
+  .agents/templates/documents, .agents/templates/planning,
+  .agents/templates/scenarios, .agents/templates/workflows
+  Would update the Entries section of 7 files

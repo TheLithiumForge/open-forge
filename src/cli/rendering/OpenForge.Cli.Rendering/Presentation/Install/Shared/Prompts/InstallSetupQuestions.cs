@@ -28,21 +28,24 @@ internal static class InstallSetupQuestions
     {
         CliChoice<string>[] choices =
         [
-            new(Value: InstallFrontmatter.Root, Label: InstallSetupText.RootLabel(), Summary: InstallSetupText.RootExample()),
-            new(Value: InstallFrontmatter.Scoped, Label: InstallSetupText.ScopedLabel(), Summary: InstallSetupText.ScopedExample()),
+            new(Value: InstallFrontmatter.Root, Label: InstallSetupText.RootLabel(), Summary: InstallSetupText.RootExample(), Description: InstallSetupText.RootDetail()),
+            new(Value: InstallFrontmatter.Scoped, Label: InstallSetupText.ScopedLabel(), Summary: InstallSetupText.ScopedExample(), Description: InstallSetupText.ScopedDetail()),
         ];
         if (question.InitialForm == InstallFrontmatter.Scoped) choices = [choices[1], choices[0]];
         else if (question.InitialForm != InstallFrontmatter.Root) throw new ArgumentOutOfRangeException(nameof(question));
-        return new(InstallSetupText.FrontmatterQuestion(), choices);
+        return new(InstallSetupText.FrontmatterQuestion(), choices)
+        {
+            Context = question.Installed ? [InstallSetupText.CurrentMetadata(question.InitialForm)] : [],
+        };
     }
 
     internal static CliSelectQuestion<InstallPreset> Preset(InstallPreset initial)
     {
         CliChoice<InstallPreset>[] choices =
         [
-            new(InstallPreset.Essentials, Label: "Essentials", Description: InstallSetupText.Essentials(), Summary: InstallSetupText.EssentialsSummary()),
-            new(InstallPreset.FullCore, Label: "Full Core", Description: InstallSetupText.FullCore(), Summary: InstallSetupText.FullCoreSummary()),
-            new(InstallPreset.Custom, Label: "Custom", Description: InstallSetupText.Custom(), Summary: InstallSetupText.CustomSummary()),
+            new(InstallPreset.Essentials, Label: InstallSetupText.EssentialsLabel(), Description: InstallSetupText.Essentials(), Summary: InstallSetupText.EssentialsSummary()),
+            new(InstallPreset.FullCore, Label: InstallSetupText.FullCoreLabel(), Description: InstallSetupText.FullCore(), Summary: InstallSetupText.FullCoreSummary()),
+            new(InstallPreset.Custom, Label: InstallSetupText.CustomLabel(), Description: InstallSetupText.Custom(), Summary: InstallSetupText.CustomSummary()),
         ];
         if (initial == InstallPreset.Custom) choices = [choices[2], choices[0], choices[1]];
         return new(InstallSetupText.PresetQuestion(), choices);
@@ -53,7 +56,12 @@ internal static class InstallSetupQuestions
             [new(Symbol: "+", Legend: InstallSetupText.AddLegend()), new(Symbol: "~", Legend: InstallSetupText.GitIgnoreLegend()), new(Symbol: "-", Legend: InstallSetupText.RemoveLegend())],
             question.Routes.Select(row => new CliMarkedRow<string>(Value: row.Id, Label: row.Id, Summary: Summaries[row.Id](), Mark: Mark(row.Action),
                 Lock: question.Locks.FirstOrDefault(fixedRow => fixedRow.Id == row.Id) is { } fixedRow ? InstallSetupText.ExplicitOverride(row.Id, fixedRow.Action) : null)).ToArray(),
-            (_, mark) => Details(mark, question.Installed));
+            (id, mark) => Details(id, mark, question.Installed))
+        {
+            LineExplanations = question.Installed
+                ? [InstallSetupText.LineGitIgnore(), InstallSetupText.LineTracked(), InstallSetupText.LineLeaveOut(), InstallSetupText.LineStopManaging()]
+                : [InstallSetupText.LineGitIgnore(), InstallSetupText.LineTracked(), InstallSetupText.LineLeaveOut()],
+        };
 
     internal static async ValueTask<CliPromptReply<ImmutableArray<InstallRouteSelection>>> RoutesAsync(
         CliPrompts prompts, InstallRouteQuestion question, CliPromptPolicy policy, CancellationToken token)
@@ -75,11 +83,11 @@ internal static class InstallSetupQuestions
         return index >= 0 ? index : throw new ArgumentOutOfRangeException(nameof(action));
     }
 
-    private static string? Details(int mark, bool installed) => MarkActions[mark] switch
+    private static string? Details(string id, int mark, bool installed) => MarkActions[mark] switch
     {
         InstallRouteAction.Add => installed ? InstallSetupText.Add() : null,
         InstallRouteAction.GitIgnore => InstallSetupText.GitIgnore(),
-        InstallRouteAction.Remove => installed ? InstallSetupText.Retention() : InstallSetupText.FreshRemove(),
+        InstallRouteAction.Remove => installed ? InstallSetupText.Retention() : InstallSetupText.FreshRemove(id),
         _ => throw new ArgumentOutOfRangeException(nameof(mark)),
     };
 }

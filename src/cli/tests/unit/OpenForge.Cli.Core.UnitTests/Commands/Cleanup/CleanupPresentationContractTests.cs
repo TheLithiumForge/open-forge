@@ -152,22 +152,7 @@ public sealed class CleanupPresentationContractTests
     public void HelpRetainsStableSectionsAndBoundaries()
     {
         var help = CleanupHelpSections.Create();
-        var headings = help.Sections.Select(section => section.Heading);
-        var text = string.Join(
-            Environment.NewLine,
-            help.Sections.Select(section => $"{section.Heading}\n{section.Body}"));
-
-        Assert.Equal(["Syntax", "Catalogue", "Write policy", "Global options", "Notes"], headings);
-        Assert.Contains("open-forge cleanup [--dry-run] [global options]", text, StringComparison.Ordinal);
-        Assert.Contains("every recognized completed recovery bundle and draft with an exact expected name", text, StringComparison.Ordinal);
-        Assert.Contains("without locking the workspace or writing files", text, StringComparison.Ordinal);
-        Assert.Contains("--workspace <path>, --format <text|json>, --detail <minimal|standard|full|debug>, --detail-filter <error|warning|info|all>, --help, and --version", text, StringComparison.Ordinal);
-        Assert.Contains("accepts no operands, selectors, prompts, confirmations", text, StringComparison.Ordinal);
-        Assert.Contains("force mode, age filters, glob filters,", text, StringComparison.Ordinal);
-        Assert.Contains("or arbitrary recursive deletion.", text, StringComparison.Ordinal);
-        Assert.Contains("rechecks the exact catalogue before making changes", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("--force", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("--automatic", text, StringComparison.Ordinal);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge cleanup [options]");
     }
 
     private static CliSelectedReport<CleanupData> Select(CleanupResult result, CliDetail detail)

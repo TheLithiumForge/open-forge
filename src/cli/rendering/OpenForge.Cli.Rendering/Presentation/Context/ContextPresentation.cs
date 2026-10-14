@@ -25,20 +25,6 @@ internal static class ContextPresentation
         DataTextRenderer = ContextDataTextRenderer.Render,
         DataJsonTypeInfo = JsonContext.ContextData,
         Shape = CliCommandShape.Data,
-        SelectText = static selected => selected with
-        {
-            ShowHeadline = selected.Report.Status is CliSemanticStatus.Invalid
-                or CliSemanticStatus.Blocked
-                or CliSemanticStatus.Failed
-                or CliSemanticStatus.Interrupted
-                || selected.Report.Data.EmptyAdditions,
-            TextFindings = selected.TextFindings
-                .Select(finding => finding.Code == "context.applicability-pending"
-                    && finding.Subject.Kind == CliSubjectKind.Workspace
-                        ? finding with { Subject = new CliSubject(CliSubjectKind.Identifier, Id: "context") }
-                        : finding)
-                .ToArray(),
-            TextCounts = [],
-        },
+        SelectText = ContextReportSelector.SelectText,
     };
 }

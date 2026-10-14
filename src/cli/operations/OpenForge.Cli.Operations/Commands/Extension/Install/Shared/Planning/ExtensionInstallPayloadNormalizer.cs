@@ -5,12 +5,31 @@ using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Extensions.Identity;
 using OpenForge.Cli.Core.Framework.Extensions.Models;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Shared.Planning;
 
 internal static class ExtensionInstallPayloadNormalizer
 {
+    internal static bool IsEntirePayloadExcluded(ExtensionPackageFact package, WorkspaceSettingsDocument settings)
+        => package.Payload.Count > 0
+            && package.Payload.All(file => WorkspaceRemovals.IsPathRemoved(file.TargetPath ?? file.Path, settings));
+
+    internal static IReadOnlyList<ExtensionInstallExcludedPackage> ReadExcludedPackages(
+        IEnumerable<ExtensionPackageFact> packages,
+        WorkspaceSettingsDocument settings)
+        => packages.Where(package => package.Payload.Any(file => WorkspaceRemovals.IsPathRemoved(file.TargetPath ?? file.Path, settings)))
+            .Select(package => new ExtensionInstallExcludedPackage(
+                Id: package.Id,
+                Name: package.Name,
+                FileCount: package.Payload.Count(file => WorkspaceRemovals.IsPathRemoved(file.TargetPath ?? file.Path, settings)),
+                Categories: settings.RemovedCategories.Where(category => package.Payload.Any(file =>
+                        (file.TargetPath ?? file.Path).StartsWith(WorkspaceSettingsDefinitions.ImplicitPathPrefix + category + "/", StringComparison.Ordinal)))
+                    .Order(StringComparer.Ordinal).ToArray(),
+                EntirePayloadExcluded: IsEntirePayloadExcluded(package, settings)))
+            .ToArray();
+
     internal static ExtensionInstallPayloadNormalization Normalize(
         IReadOnlyList<ExtensionPackageFact> packages,
         WorkspaceSettingsDocument settings)

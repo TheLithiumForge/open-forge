@@ -22,12 +22,12 @@ public sealed class ContextPresentationTests
     private const string OverwriteHeading = "=== .agents/projects/guide.overwrite.md (projects/guide, overwrite) ===";
 
     [Theory(DisplayName = "Context next action distinguishes pending conditions from closure failures"), Trait("Boundary", "Output"), Trait("Feature", "context"), Trait("Evidence", "Unit")]
-    [InlineData(true, null, "open-forge context \"projects/guide\" --for <path>")]
+    [InlineData(true, null, "open-forge context projects/guide --for <path>")]
     [InlineData(true, (int)ContextFindingCode.LayerUnavailable, "open-forge doctor")]
     [InlineData(true, (int)ContextFindingCode.ClosureUnavailable, "open-forge doctor")]
     [InlineData(true, (int)ContextFindingCode.ApplicabilityInvalid, "open-forge doctor")]
-    [InlineData(true, (int)ContextFindingCode.InvalidSource, "open-forge route list --depth=all")]
-    [InlineData(true, (int)ContextFindingCode.TargetCaseMismatch, "open-forge context \"projects/guide\" --for <path>")]
+    [InlineData(true, (int)ContextFindingCode.InvalidSource, "open-forge route list --depth all")]
+    [InlineData(true, (int)ContextFindingCode.TargetCaseMismatch, "open-forge context projects/guide --for <path>")]
     [InlineData(false, (int)ContextFindingCode.ApplicabilityInvalid, "open-forge doctor")]
     [InlineData(false, (int)ContextFindingCode.InvalidWorkingPath, null)]
     [InlineData(false, (int)ContextFindingCode.ClosureUnavailable, "open-forge doctor")]
@@ -126,7 +126,7 @@ public sealed class ContextPresentationTests
                     text,
                     StringComparison.Ordinal);
                 Assert.Contains(
-                    "Next: open-forge context \"projects/guide\" --for <path>",
+                    "Next: open-forge context projects/guide --for <path>",
                     text,
                     StringComparison.Ordinal);
             }
@@ -291,12 +291,7 @@ public sealed class ContextPresentationTests
     public void HelpRetainsPublicGrammarAndStreamGuidance()
     {
         var help = ContextHelpSections.Create();
-        var text = string.Join('\n', help.Sections.Select(section => $"{section.Heading}\n{section.Body}"));
-
-        Assert.Contains("--additions-only", text, StringComparison.Ordinal);
-        Assert.Contains("--follow-links <positive-depth|all>", text, StringComparison.Ordinal);
-        Assert.Contains("Text completed, completed-with-warnings, and incomplete results use stdout", text, StringComparison.Ordinal);
-        Assert.Contains("preserves authored source bytes", text, StringComparison.Ordinal);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge context [<source-reference>...] [options]");
     }
 
     [Trait("Boundary", "Output")]

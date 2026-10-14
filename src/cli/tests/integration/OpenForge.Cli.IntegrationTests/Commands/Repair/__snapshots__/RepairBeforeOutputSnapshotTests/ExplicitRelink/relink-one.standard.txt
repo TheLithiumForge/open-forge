@@ -1,4 +1,8 @@
 Repaired 1 link.
 Workspace: <workspace>
   .agents/docs/source.md:9:10  missing.md -> replacement.md
-1 link repaired.
+  .agents/docs/index.md        Entries updated
+  .agents/loader.md            Entries updated
+1 link repaired, 2 Entries updated.
+  Verify the workspace after Repair.
+Next: open-forge doctor --workspace <workspace>

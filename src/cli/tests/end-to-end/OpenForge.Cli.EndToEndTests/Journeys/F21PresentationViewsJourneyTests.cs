@@ -5,6 +5,7 @@ using OpenForge.Cli.EndToEndTests.Shared.Journeys;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -396,9 +397,8 @@ public sealed class F21PresentationViewsJourneyTests
     private static string NormalizeRunCoordinates(string output, string workspacePath)
     {
         var fullPath = Path.GetFullPath(workspacePath);
-        return output
-            .Replace(fullPath, "<workspace>", StringComparison.Ordinal)
-            .Replace(fullPath.Replace('\\', '/'), "<workspace>", StringComparison.Ordinal);
+        var normalized = CommandOutputNormalization.ReplaceDelimitedPath(output, fullPath, "<workspace>");
+        return CommandOutputNormalization.ReplaceDelimitedPath(normalized, fullPath.Replace('\\', '/'), "<workspace>");
     }
 
     private static IReadOnlyDictionary<string, string> SnapshotState(PublishedJourneyWorkspace workspace)

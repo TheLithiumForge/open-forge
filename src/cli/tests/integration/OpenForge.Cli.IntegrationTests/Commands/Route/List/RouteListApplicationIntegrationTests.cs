@@ -122,7 +122,7 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Equal(string.Empty, root.Error);
         Assert.Equal(string.Empty, group.Error);
         Assert.Equal(string.Empty, leaf.Error);
-        Assert.Contains("route list", root.Output, StringComparison.Ordinal);
+        Assert.Contains("Read and discover:", root.Output, StringComparison.Ordinal);
         var groupCommands = group.Output
             .Split(Environment.NewLine, StringSplitOptions.None)
             .SkipWhile(line => !line.Equals("Commands:", StringComparison.Ordinal))
@@ -138,12 +138,13 @@ public sealed class RouteListApplicationIntegrationTests
         Assert.Contains("remove <source-reference>", group.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("Operations:", group.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("available —", group.Output, StringComparison.Ordinal);
-        Assert.Contains("open-forge route list [source-reference]", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("route inspect — inspect", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("The default depth is 1", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("open-forge route list [<source-reference>] [options]", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("route inspect --help", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("The default descendant depth is 1", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("open-forge route list memory", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("open-forge route list .agents/memory/_memory.md", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("open-forge route list --depth=2 --format json", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains(".agents/memory/_memory.md", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("open-forge route list memory --depth all", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("Both --depth 1 and --depth=1 are accepted.", leaf.Output, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Host")]

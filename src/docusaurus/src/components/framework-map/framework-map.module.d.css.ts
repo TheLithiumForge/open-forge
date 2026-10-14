@@ -27,10 +27,10 @@ interface FrameworkMapStyles {
   readonly roles: string;
   readonly startup: string;
   readonly stateItem: string;
+  readonly stateNote: string;
   readonly states: string;
   readonly steps: string;
   readonly tense: string;
-  readonly transition: string;
 }
 
 declare const styles: FrameworkMapStyles;

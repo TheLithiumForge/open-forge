@@ -68,7 +68,7 @@ internal static class LibraryAttachReportSelector
             .Select(link => new LibraryAttachDataLink
             {
                 Path = link.Path,
-                Target = link.RawRelativeTarget,
+                Target = link.RelativeTarget,
             })
             .ToArray();
         var permissionSaved = PermissionSaved(payload.Permissions);
@@ -564,7 +564,7 @@ internal static class LibraryAttachReportSelector
                 or LibraryAttachFindingCode.RecoveryUnavailable
                 => new CliNextAction("open-forge doctor", LibraryAttachWording.DoctorNextReason()),
             LibraryAttachFindingCode.PermissionRequired
-                => new CliNextAction(PermissionCommand(payload), LibraryAttachWording.PermissionNextReason()),
+                => new CliNextAction(result.PermissionCommand ?? PermissionCommand(payload), LibraryAttachWording.PermissionNextReason()),
             LibraryAttachFindingCode.DestinationCollision
                 => new CliNextAction(global::OpenForge.Cli.OutputText.Library.Attach.LibraryAttachText.LabelChooseAnotherToFolder(), LibraryAttachWording.CollisionNextReason())
                 {
@@ -857,7 +857,8 @@ internal static class LibraryAttachReportSelector
         var id = payload.Identity.LibraryId ?? "<library-id>";
         var source = payload.Identity.SourceRoot ?? "<source-root>";
         var destination = payload.Identity.DestinationRoot ?? ".";
-        return $"open-forge library attach {id} {source} --to {destination} --allow-path {PermissionFolder(payload)}";
+        return Shell.Definitions.Shared.Commands.CliRetryCommand.Build(
+            ["library", "attach", id, source, "--to", destination, "--allow-path", PermissionFolder(payload)]);
     }
 
     private static string LinkFolder(LibraryAttachPayload payload)

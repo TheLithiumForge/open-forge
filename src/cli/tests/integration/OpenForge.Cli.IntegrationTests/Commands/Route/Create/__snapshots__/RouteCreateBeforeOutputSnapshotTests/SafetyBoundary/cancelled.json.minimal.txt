@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route create",
+          "command": "open-forge route create memory/project-alpha/overview --description 'Project overview' --responsibility 'Explains the project' --tag Docs --tag Overview --workspace <workspace>",
           "reason": "Rerun the same Route Create request."
         }
       ]
@@ -56,7 +56,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route create",
+    "command": "open-forge route create memory/project-alpha/overview --description 'Project overview' --responsibility 'Explains the project' --tag Docs --tag Overview --workspace <workspace>",
     "reason": "Rerun the same Route Create request."
   }
 }

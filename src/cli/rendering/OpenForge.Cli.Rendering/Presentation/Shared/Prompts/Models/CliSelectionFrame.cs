@@ -4,6 +4,7 @@ internal sealed record CliSelectionRow(string Label, string Mark = "", bool Disa
 
 internal sealed record CliSelectionFrame
 {
+    internal bool KeepLastDetail { get; init; }
     public required string Question { get; init; }
     public required IReadOnlyList<CliSelectionRow> Rows { get; init; }
     public required int Focus { get; init; }

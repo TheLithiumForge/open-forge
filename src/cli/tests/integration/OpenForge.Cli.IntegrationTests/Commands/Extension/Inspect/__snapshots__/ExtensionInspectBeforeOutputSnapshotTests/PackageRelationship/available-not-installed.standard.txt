@@ -1,9 +1,9 @@
 toolkit 1.0.0 is available and not installed.
 Workspace: <workspace>
+1 package, including toolkit.
 Source: <extension-source>
-Dependencies
+Packages in this selection
   toolkit  1.0.0  available
 
 Files
   .agents/toolkit.md  not applicable
-1 dependency.

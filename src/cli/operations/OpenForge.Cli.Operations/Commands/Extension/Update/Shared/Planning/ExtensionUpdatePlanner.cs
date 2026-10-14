@@ -132,10 +132,12 @@ internal sealed class ExtensionUpdatePlanner
         var sharing = NavigationSharingReader.FromOwnership(ownership);
         if (!sharing.IsAvailable) return Stop(request, ExtensionUpdateFindingCode.GeneratedRegionUnsafe, sharing.Cause);
 
-        if (!HasInterpretableOwnership(ownership.Document.Extensions))
+        if (ReadUninterpretablePackage(ownership.Document.Extensions) is { } affectedPackage)
         {
-            return Stop(request, ExtensionUpdateFindingCode.LifecycleObservation,
-                "Recorded Extension identities, paths or dependencies cannot be interpreted; no ownership or file effects were inferred.");
+            return Stop(request, new ExtensionUpdateFinding(
+                ExtensionUpdateFindingCode.LifecycleObservation,
+                "Recorded Extension identities, paths or dependencies cannot be interpreted; no ownership or file effects were inferred.",
+                affectedPackage));
         }
 
         RecoveryBundleCatalogueResult recovery;
@@ -767,14 +769,29 @@ internal sealed class ExtensionUpdatePlanner
         }
     }
 
-    private static bool HasInterpretableOwnership(ImmutableArray<ExtensionOwnership> packages)
+    private static string? ReadUninterpretablePackage(ImmutableArray<ExtensionOwnership> packages)
     {
-        if (packages.GroupBy(package => package.Id, StringComparer.Ordinal).Any(group => group.Count() != 1)
-            || packages.Any(package => !ExtensionIdentity.IsValidStableId(package.Id)
-                || package.Paths.Any(path => !ExtensionDestinationPolicy.IsAllowed(path)))
-            || packages.SelectMany(package => package.Paths).Distinct(StringComparer.Ordinal)
-                .GroupBy(PortableWorkspacePath.CreatePortableKey, StringComparer.Ordinal)
-                .Any(group => group.Count() != 1)) return false;
+        var duplicate = packages.GroupBy(package => package.Id, StringComparer.Ordinal).FirstOrDefault(group => group.Count() != 1);
+        if (duplicate is not null)
+        {
+            return duplicate.Key;
+        }
+
+        var invalid = packages.FirstOrDefault(package => !ExtensionIdentity.IsValidStableId(package.Id)
+            || package.Paths.Any(path => !ExtensionDestinationPolicy.IsAllowed(path)));
+        if (invalid is not null)
+        {
+            return invalid.Id;
+        }
+
+        var alias = packages.SelectMany(package => package.Paths).Distinct(StringComparer.Ordinal)
+            .GroupBy(PortableWorkspacePath.CreatePortableKey, StringComparer.Ordinal)
+            .FirstOrDefault(group => group.Count() != 1);
+        if (alias is not null)
+        {
+            return packages.First(package => package.Paths.Contains(alias.First(), StringComparer.Ordinal)).Id;
+        }
+
         var byId = packages.ToDictionary(package => package.Id, StringComparer.Ordinal);
         var visiting = new HashSet<string>(StringComparer.Ordinal);
         var complete = new HashSet<string>(StringComparer.Ordinal);
@@ -787,7 +804,7 @@ internal sealed class ExtensionUpdatePlanner
             complete.Add(id);
             return true;
         }
-        return packages.All(package => Visit(package.Id));
+        return packages.FirstOrDefault(package => !Visit(package.Id))?.Id;
     }
 
     private static bool IsExpectedRecovery(

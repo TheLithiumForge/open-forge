@@ -10,6 +10,8 @@ internal enum RouteRemoveMode
 
 internal sealed record RouteRemoveRequest
 {
+    internal string? RequestCommand { get; init; }
+
     internal RouteRemoveRequest(
         CliWorkspace workspace,
         string sourceReference,
@@ -70,6 +72,9 @@ internal sealed record RouteRemoveRequest
             automatic: Automatic,
             allowInteractiveSourceSelection: AllowInteractiveSourceSelection,
             allowInteractiveConfirmation: AllowInteractiveConfirmation,
-            frozenSourceReference: exactSourceReference);
+            frozenSourceReference: exactSourceReference)
+        {
+            RequestCommand = RequestCommand,
+        };
     }
 }

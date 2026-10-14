@@ -1,0 +1,26 @@
+  List registered Libraries and their link status.
+
+Usage:
+  open-forge library list [options]
+
+Examples:
+  open-forge library list
+  open-forge library list --format json
+
+Behavior:
+  List every registered Library and its link status in the selected workspace,
+  without scanning all source files.
+  This command changes no files and asks no questions.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  library inspect --help  Inspect one Library and its links.
+  library attach --help   Link a local source folder.

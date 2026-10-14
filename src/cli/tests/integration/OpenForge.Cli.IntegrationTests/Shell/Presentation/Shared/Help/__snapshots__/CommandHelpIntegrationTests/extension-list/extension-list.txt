@@ -1,0 +1,46 @@
+  List installed Extensions and Extensions available from a bundled or local
+  source.
+
+Usage:
+  open-forge extension list [options]
+
+Examples:
+  open-forge extension list
+  open-forge extension list --installed
+  open-forge extension list --available --source packages
+
+Behavior:
+  By default, show both installed and available packages.
+  Available packages come from the bundled catalogue unless --source names a
+  local source.
+  An available package may not be installed. Installed packages remain listed
+  when their source is unavailable.
+  This command changes no files and asks no questions.
+
+Options:
+  --installed  Show installed packages. Combine with --available to show both.
+  --available  Show available packages. Combine with --installed to show both.
+  --source <package-or-catalogue-path>
+      Read one exact local package or catalogue source.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Filters and sources: --installed or --available selects one section. Together
+  they select both. Installed precedes Available. Repeating a filter has no
+  effect. Installed facts come from .agents/open-forge.lock.json. Unavailable
+  ownership means unknown coverage. A local source must be disjoint. No network,
+  registry, cache, or fallback is used. The command is deterministic and writes
+  no package, installation, navigation, backup, cache, temporary, or diagnostic
+  artifact.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  extension inspect --help  Compare a package with its installation.
+  extension install --help  Install an Extension package.

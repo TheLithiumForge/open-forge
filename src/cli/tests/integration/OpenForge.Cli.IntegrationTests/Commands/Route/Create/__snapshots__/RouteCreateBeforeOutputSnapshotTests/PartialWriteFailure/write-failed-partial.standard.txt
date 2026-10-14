@@ -7,5 +7,5 @@ Workspace: <workspace>
   responsibility: Explains the project
   Created .agents/memory/project-alpha/overview.md
   .agents/memory/project-alpha/_project-alpha.md  not started
-  Report the failure and retry the same Route Create request with bounded diagnostics.
-Next: open-forge route create --detail debug
+  Address the reported failure, then retry the same Route Create request.
+Next: open-forge route create memory/project-alpha/overview --description 'Project overview' --responsibility 'Explains the project' --tag Docs --tag Overview --workspace <workspace>

@@ -1,4 +1,9 @@
 Install needs confirmation, and this session cannot ask.
 Workspace: <workspace>
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
 Frontmatter: root
-Next: open-forge install --automatic
+Next: open-forge install --workspace <workspace> --preset full-core --frontmatter root --automatic

@@ -11,7 +11,7 @@ internal sealed record LibraryLinkEffectView
 
     public required LibraryLinkEffectKind Kind { get; init; }
 
-    public required string RawRelativeTarget { get; init; }
+    public required string RelativeTarget { get; init; }
     public required LibraryExpectedState Expected { get; init; }
 
 }

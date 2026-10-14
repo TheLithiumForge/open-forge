@@ -25,19 +25,21 @@ internal static class FindDataTextRenderer
                 ? new[] { match.Id, match.Path, match.Description ?? string.Empty }
                 : new[] { match.Id, match.Path })
             .ToArray();
-        var tableLines = CliTable.Render(
+        var tableRows = CliTable.RenderRows(
                 rows,
-                (column, cell) => column == 0 ? style.Subject(cell) : cell)
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                (column, cell) => column == 0 ? style.Subject(cell) : cell,
+                width: style.Width,
+                wrapLastColumn: standard,
+                unwrappedColumns: new HashSet<int> { 1 });
 
-        if (data.PrependBlankLine && (tableLines.Length > 0 || data.ContentBlocks.Count > 0))
+        if (data.PrependBlankLine && (tableRows.Count > 0 || data.ContentBlocks.Count > 0))
         {
             spans.Add(new CliTextSpan("\n"));
         }
 
-        for (var index = 0; index < tableLines.Length; index++)
+        for (var index = 0; index < tableRows.Count; index++)
         {
-            spans.Add(new CliTextSpan(tableLines[index] + "\n"));
+            spans.Add(new CliTextSpan(tableRows[index]));
             if (standard && data.Matches[index].Applicability is { } applicability)
             {
                 AppendApplicability(spans, applicability);

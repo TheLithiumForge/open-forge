@@ -15,6 +15,10 @@ internal sealed record CliNextAction
     internal string Reason { get; }
 
     internal CliNextActionKind Kind { get; init; } = CliNextActionKind.Command;
+
+    internal bool AppliesRequest { get; init; }
+
+    internal bool UsesInteractiveRequest { get; init; }
 }
 
 internal enum CliNextActionKind { Command, Sentence }

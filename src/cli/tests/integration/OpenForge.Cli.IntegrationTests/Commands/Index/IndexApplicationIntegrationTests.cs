@@ -57,7 +57,7 @@ public sealed class IndexApplicationIntegrationTests
         if (correctedId is not null)
         {
             Assert.Equal("Cannot index .agents/root: it is a folder, not a source.", json.RootElement.GetProperty("summary").GetProperty("headline").GetString());
-            Assert.Equal("open-forge index root", json.RootElement.GetProperty("next").GetProperty("command").GetString());
+            Assert.Equal("open-forge index root --format json", json.RootElement.GetProperty("next").GetProperty("command").GetString());
         }
         else if (operand == "missing-source")
         {
@@ -98,10 +98,10 @@ public sealed class IndexApplicationIntegrationTests
             line => line.TrimStart().StartsWith("index", StringComparison.Ordinal));
         Assert.Equal(0, help.ExitCode);
         Assert.Equal(string.Empty, help.Error);
-        Assert.Contains("open-forge index [source-reference...] [--dry-run]", help.Output, StringComparison.Ordinal);
+        Assert.Contains("open-forge index [<source-reference>...] [options]", help.Output, StringComparison.Ordinal);
         var normalizedHelp = string.Join(' ', help.Output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
-        Assert.Contains("--detail <minimal|standard|full|debug>", normalizedHelp, StringComparison.Ordinal);
-        Assert.Contains("--detail-filter <error|warning|info|all>", normalizedHelp, StringComparison.Ordinal);
+        Assert.Contains("Global options: --workspace, --format, --detail", normalizedHelp, StringComparison.Ordinal);
+        Assert.Contains("--detail-filter", normalizedHelp, StringComparison.Ordinal);
         Assert.Equal(0, version.ExitCode);
         Assert.Equal(string.Empty, version.Error);
         Assert.False(Directory.Exists(missing));

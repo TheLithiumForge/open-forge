@@ -1,0 +1,3 @@
+.agents/guidance/old.md is missing. Its new location could not be proven.
+GuidedChoice
+open-forge repair

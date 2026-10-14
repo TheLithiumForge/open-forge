@@ -13,6 +13,7 @@ using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Parsing;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init;
 
@@ -158,7 +159,8 @@ internal static class RouteInitBinding
                     responsibilityFacts.IsExplicit,
                     responsibility,
                     tags,
-                    applyTo.Patterns)));
+                    applyTo.Patterns))
+            { RetryOptions = CliRetryOptions.From(invocation) });
     }
 
     private static RouteInitResult CreateContextualInvalidResult(

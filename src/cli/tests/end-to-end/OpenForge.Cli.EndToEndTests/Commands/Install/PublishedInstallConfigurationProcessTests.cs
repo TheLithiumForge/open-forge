@@ -89,11 +89,15 @@ public sealed class PublishedInstallConfigurationProcessTests
         Assert.Equal(apply ? 0 : 130, terminal.ExitCode);
         Assert.Contains("Essentials", terminal.Transcript, StringComparison.Ordinal);
         var plan = terminal.Transcript.IndexOf("Would ", StringComparison.Ordinal);
+        var heading = terminal.Transcript.IndexOf("Review changes", StringComparison.Ordinal);
         var confirmation = terminal.Transcript.IndexOf("Apply these changes? [y/N]", StringComparison.Ordinal);
-        Assert.True(plan >= 0 && confirmation > plan, terminal.Transcript);
+        Assert.True(heading >= 0 && plan > heading && confirmation > plan, terminal.Transcript);
+        Assert.DoesNotContain("No files were changed.", terminal.Transcript[plan..confirmation], StringComparison.Ordinal);
         Assert.DoesNotContain("\u001b[2J", terminal.Transcript[plan..], StringComparison.Ordinal);
         if (apply)
         {
+            Assert.Contains("If your agent tool", terminal.Transcript, StringComparison.Ordinal);
+            Assert.Contains("Next:", terminal.Transcript, StringComparison.Ordinal);
             Assert.True(File.Exists(workspace.Combine(".agents/memory/working/_working.md")));
             Assert.False(File.Exists(workspace.Combine(".agents/guidance/_guidance.md")));
             Assert.Contains("/.agents/memory/working/", File.ReadAllText(workspace.Combine(".gitignore")), StringComparison.Ordinal);
@@ -123,8 +127,8 @@ public sealed class PublishedInstallConfigurationProcessTests
         Assert.Equal(0, terminal.ExitCode);
         Assert.Contains("Choose what Open Forge sets up", terminal.Transcript, StringComparison.Ordinal);
         Assert.DoesNotContain("Choose how to configure", terminal.Transcript, StringComparison.Ordinal);
-        Assert.Contains("Would change the Open Forge setup in", terminal.Transcript, StringComparison.Ordinal);
-        Assert.Contains("Changed the Open Forge setup in", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Would change the Open Forge setup", terminal.Transcript, StringComparison.Ordinal);
+        Assert.Contains("Changed the Open Forge setup", terminal.Transcript, StringComparison.Ordinal);
         Assert.Contains("Entries would be updated", terminal.Transcript, StringComparison.Ordinal);
         Assert.Contains("ownership record would be updated", terminal.Transcript, StringComparison.Ordinal);
         Assert.Contains("Apply these changes? [y/N]", terminal.Transcript, StringComparison.Ordinal);
@@ -135,6 +139,51 @@ public sealed class PublishedInstallConfigurationProcessTests
         Assert.DoesNotContain("\u001b[2J", terminal.Transcript[plan..], StringComparison.Ordinal);
         Assert.True(File.Exists(workspace.Combine(".agents/guidance/_guidance.md")));
         Assert.False(File.Exists(workspace.Combine(".agents/templates/_templates.md")));
+    }
+
+    [Fact(DisplayName = "A copied Install retry runs in the explicitly selected workspace with its setup choices")]
+    [Trait("Feature", "install-configuration"), Trait("Evidence", "EndToEnd")]
+    public async Task CopiedRetryRetainsSelectedWorkspace()
+    {
+        using var current = Create("e2e-install-current");
+        using var selected = Create("e2e-install-selected");
+        const string selectedFolder = "selected workspace's files";
+        var selectedPath = selected.Combine(selectedFolder);
+        selected.ExpectFiles(PublishedInstallWorkspace.EmbeddedPayloadPaths
+            .Concat(["AGENTS.md", "CLAUDE.md", ".agents/open-forge.lock.json", ".agents/open-forge.json", ".gitignore"])
+            .Select(path => Path.Combine(selectedFolder, path)).ToArray());
+        Directory.CreateDirectory(selectedPath);
+        _ = current.LockStore.Track(selectedPath);
+        var before = current.SnapshotState();
+        var stopped = await current.RunAsync("install", "--workspace", selectedPath, "--preset", "custom", "--route", "guidance=git-ignore",
+            "--route", "maps=remove", "--frontmatter", "scoped", "--format", "json");
+        Assert.Equal(4, stopped.ExitCode);
+        using var document = JsonDocument.Parse(stopped.StandardOutput);
+        var command = document.RootElement.GetProperty("next").GetProperty("command").GetString()
+            ?? throw new InvalidOperationException("Install did not supply a retry command.");
+        string executable;
+        string invocation;
+        if (OperatingSystem.IsWindows())
+        {
+            executable = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "WindowsPowerShell", "v1.0", "powershell.exe");
+            invocation = $"& '{current.Target.ExecutablePath.Replace("'", "''", StringComparison.Ordinal)}'{command["open-forge".Length..]}";
+        }
+        else
+        {
+            executable = "/bin/sh";
+            invocation = $"'{current.Target.ExecutablePath.Replace("'", "'\"'\"'", StringComparison.Ordinal)}'{command["open-forge".Length..]}";
+        }
+        var arguments = OperatingSystem.IsWindows() ? new[] { "-NoProfile", "-Command", invocation } : new[] { "-c", invocation };
+        var applied = await ProcessRunner.RunAsync(new ProcessRunRequest(executable, arguments, current.Path)
+        { EnvironmentVariables = current.ProcessEnvironment }, TestContext.Current.CancellationToken);
+        Assert.Equal(0, applied.ExitCode);
+        Assert.Equal(before, current.SnapshotState());
+        Assert.True(File.Exists(Path.Combine(selectedPath, ".agents", "guidance", "_guidance.md")));
+        Assert.False(File.Exists(Path.Combine(selectedPath, ".agents", "maps", "_maps.md")));
+        using var receipt = JsonDocument.Parse(applied.StandardOutput);
+        Assert.Equal("scoped", receipt.RootElement.GetProperty("data").GetProperty("frontmatter").GetProperty("form").GetString());
+        Assert.Contains(receipt.RootElement.GetProperty("data").GetProperty("configuration").GetProperty("routes").EnumerateArray(),
+            route => route.GetProperty("id").GetString() == "guidance" && route.GetProperty("action").GetString() == "git-ignore");
     }
 
     private static PublishedJourneyWorkspace Create(string purpose)

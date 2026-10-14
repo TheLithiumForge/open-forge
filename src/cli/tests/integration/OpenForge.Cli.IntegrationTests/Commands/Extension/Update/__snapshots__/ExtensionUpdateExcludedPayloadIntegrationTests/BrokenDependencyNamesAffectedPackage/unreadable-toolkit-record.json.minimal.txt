@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "completed-with-warnings",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Cannot update development-toolkit: Extension ownership could not be established.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "extension-update.lifecycle-observation",
+      "title": "Extension record was not updated",
+      "message": "Recorded Extension identities, paths or dependencies cannot be interpreted; no ownership or file effects were inferred.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "development-toolkit",
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge extension inspect development-toolkit",
+          "reason": "Inspect the reported Extension state."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesUpdated": 0,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 0,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "force": false,
+    "prune": false,
+    "automatic": false,
+    "source": null,
+    "packages": [],
+    "previousContent": null,
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-evaluated",
+      "action": "none",
+      "outcome": "not-requested"
+    }
+  },
+  "recovery": null,
+  "next": null
+}

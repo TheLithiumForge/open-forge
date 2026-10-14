@@ -22,4 +22,4 @@ Axioms
   Inherited rules from: none
   Local rules: no
   Rerun with the exact path for non-interactive use.
-Next: open-forge route inspect ".agents/docs/guide.md"
+Next: open-forge route inspect .agents/docs/guide.md

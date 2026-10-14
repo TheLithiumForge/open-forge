@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Text.Json;
 using System.Security.Cryptography;
 using System.Text;
@@ -167,9 +168,9 @@ public sealed class ExtensionInspectApplicationIntegrationTests
             result.Output,
             StringComparison.Ordinal);
         Assert.Contains("--source <package-or-catalogue-path>", result.Output, StringComparison.Ordinal);
-        Assert.Contains("--workspace <path>", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", result.Output, StringComparison.Ordinal);
-        Assert.Matches(@"never\s+writes", result.Output);
+        Assert.Contains("Global options: --workspace", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Automation", result.Output, StringComparison.Ordinal);
+        Assert.Contains("changes no files", result.Output, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 
@@ -197,7 +198,7 @@ public sealed class ExtensionInspectApplicationIntegrationTests
         using var document = JsonDocument.Parse(result.Output);
         var root = document.RootElement;
         Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
-        Assert.Equal("open-forge extension update toolkit --dry-run", root.GetProperty("next").GetProperty("command").GetString());
+        Assert.Equal($"open-forge extension update toolkit --dry-run --source {CliCommandText.Quote(fixture.Source.Path)} --workspace {CliCommandText.Quote(fixture.Workspace.Path)}", root.GetProperty("next").GetProperty("command").GetString());
 
         var commandResult = root.GetProperty("data");
         Assert.Equal("toolkit", commandResult.GetProperty("id").GetString());
@@ -237,7 +238,7 @@ public sealed class ExtensionInspectApplicationIntegrationTests
         var root = document.RootElement;
         Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
         Assert.Equal(
-            "open-forge extension update toolkit --dry-run",
+            $"open-forge extension update toolkit --dry-run --source {CliCommandText.Quote(fixture.Source.Path)} --workspace {CliCommandText.Quote(fixture.Workspace.Path)}",
             root.GetProperty("next").GetProperty("command").GetString());
         Assert.Equal(
             "extension-inspect.path-changed",

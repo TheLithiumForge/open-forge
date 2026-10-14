@@ -12,5 +12,5 @@ Workspace: <workspace>
   README.md:3:13  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
   README.md:5:23  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
   notes.md:3:11  .agents/guidance/old guide.md -> .agents/guidance/new guide.md
-  Report the failure and retry the same Route Move request with bounded diagnostics.
-Next: open-forge route move --detail debug
+  Address the reported failure, then retry the same Route Move request.
+Next: open-forge route move 'guidance/old guide' '.agents/guidance/new guide.md' --workspace <workspace>

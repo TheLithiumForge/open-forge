@@ -56,8 +56,8 @@ public sealed class PublishedRouteInitRestorationProcessTests
         var help = await PublishedProcessTestSupport.RunWithoutWritesAsync(target, workspace.Path, workspace.SnapshotState,
             ["route", "init", "--help"], workspace.ProcessEnvironment);
         Assert.Equal(0, help.ExitCode);
-        Assert.Contains("route init skills --framework --dry-run", help.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("exact canonical Core root or Memory state", help.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("route init templates --framework --dry-run", help.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("canonical Core root", help.StandardOutput, StringComparison.Ordinal);
         Assert.Empty(help.StandardError);
     }
 }

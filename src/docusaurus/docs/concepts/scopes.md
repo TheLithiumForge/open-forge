@@ -5,11 +5,11 @@ description: How folder placement narrows where content applies, and how that ke
 
 # Scopes
 
-A **scope** is a folder in a route that narrows where the content after it applies. Scopes let Open Forge grow without every task reading more.
+A **scope** is a folder in a [route](../glossary.md#route) that narrows where the content after it applies. Scopes let Open Forge grow without every task reading more.
 
 ## A scope is just a folder with an entrypoint
 
-There's no separate scope syntax. Any routed folder below a root route can act as a scope. Its entrypoint says what the scope means, and everything after it in the path applies only within that subject.
+An [entrypoint](../glossary.md#entrypoint) makes the folder routable. There's no separate scope syntax. Any routed folder below a root route can act as a scope. Its entrypoint says what the scope means, and everything after it in the path applies only within that subject.
 
 ```text
 .agents/directives/
@@ -76,6 +76,8 @@ open-forge route init directives/frontend \
 
 The preview shows the new `directives/frontend/_frontend.md` and the updated `Entries` in `directives/_directives.md`. Run the command again without `--dry-run` to apply it.
 
-By hand: create the folder, add `_{folder-name}.md` with a description, tags, a title, `## Axioms`, and `## Entries`, then add an entry for it in the parent entrypoint.
+You can also create nested folders and put a plain Markdown note at the bottom. Below an existing routed category, preview `open-forge index --dry-run`, then run `open-forge index`. It creates every missing entrypoint with metadata and lists each child. You can refine the descriptions and tags later.
+
+Without the CLI, create the folder, add `_{folder-name}.md` with a description, tags, a title, `## Axioms`, and `## Entries`, then add an entry for it in the parent entrypoint.
 
 Next: [Loading and tags](loading-and-tags.md).

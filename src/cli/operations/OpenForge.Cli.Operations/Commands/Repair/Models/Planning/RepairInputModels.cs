@@ -94,7 +94,7 @@ internal sealed record RepairableReferenceInput
 
         ArgumentNullException.ThrowIfNull(target);
         if (catalogueMember == RepairCatalogueMember.MissingTargetRelink
-            && target.CandidateProvenance.Count == 0)
+            && target.CandidateProvenance.Count == 0 && target.RenameProof is null)
         {
             throw new ArgumentException(
                 "A missing-target Repair input requires selected candidate provenance.",
@@ -110,7 +110,7 @@ internal sealed record RepairableReferenceInput
         }
 
         if (catalogueMember == RepairCatalogueMember.MissingTargetRelink
-            && selectionOrigin == RepairSelectionOrigin.Automatic)
+            && selectionOrigin == RepairSelectionOrigin.Automatic && target.RenameProof is null)
         {
             throw new ArgumentException(
                 "Automatic Repair selection cannot select a missing-target candidate.",

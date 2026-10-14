@@ -43,6 +43,11 @@ internal sealed class IndexProjectionBuilder
 
         var catalogueReadiness = ResolveCatalogue(context.Formation, context.Selection);
         var findings = catalogueReadiness.Findings.ToList();
+        if (context.Maintenance is { } maintenance)
+            findings.AddRange(maintenance.Limitations.Where(item => item.Malformed).Select(item => new IndexFinding(
+                IndexFindingCode.MetadataSkipped, sourceOccurrence: null,
+                source: IndexLogicalSourceProjector.Project(context.Formation.Catalogue.FindByPath(item.Path) ?? throw new InvalidOperationException(), context.Formation),
+                cause: item.Cause, candidates: [])));
         var metadataFindings = new List<IndexFinding>();
         var unavailableTargetPaths = catalogueReadiness.UnavailableTargetPaths.ToHashSet(StringComparer.Ordinal);
         var regions = new List<IndexProjectionRegionInput>();
@@ -50,6 +55,14 @@ internal sealed class IndexProjectionBuilder
         foreach (var target in context.Selection.Targets)
         {
             var targetPath = target.Identity.CanonicalBasePath;
+            if (context.Maintenance?.Limitations.Any(item => item.Malformed && (item.Path == targetPath
+                || context.Formation.FindSource(item.Path) is { } malformed && SourceFormClassifier.IsEntrypoint(malformed.Base.Form)
+                    && targetPath.StartsWith(SourceLogicalPath.ReadParent(item.Path) + "/", StringComparison.Ordinal))) == true)
+            {
+                unavailableTargetPaths.Add(targetPath);
+                regions.Add(IndexProjectionRegionInput.Unavailable(target, "Malformed entrypoint metadata was left unchanged."));
+                continue;
+            }
             if (unavailableTargetPaths.Contains(targetPath))
             {
                 regions.Add(IndexProjectionRegionInput.Unavailable(target, CatalogueUnavailableCause));
@@ -76,6 +89,11 @@ internal sealed class IndexProjectionBuilder
             var targetAvailable = true;
             foreach (var child in ReadDirectChildren(context.Formation, target))
             {
+                if (context.Maintenance?.Limitations.Any(item => item.Path == child.Identity.CanonicalBasePath && item.Malformed) == true)
+                {
+                    if (SourceFormClassifier.IsEntrypoint(child.Base.Form)) targetAvailable = false;
+                    continue;
+                }
                 if (metadata.ContainsKey(child.Identity.CanonicalBasePath))
                 {
                     continue;
@@ -123,6 +141,7 @@ internal sealed class IndexProjectionBuilder
                         Details = new IndexFindingDetails
                         {
                             ParentPath = targetPath,
+                            IsNativeSkill = child.Base.Form == SourceDocumentForm.Skill,
                             MetadataProblem = unclosed ? IndexMetadataProblem.UnclosedFrontmatter
                                 : missing ? IndexMetadataProblem.Missing : IndexMetadataProblem.Invalid,
                             Line = unclosed ? 1 : null,
@@ -144,8 +163,9 @@ internal sealed class IndexProjectionBuilder
         }
 
         var readiness = new IndexProjectionReadiness(
-            DeduplicateFindings(findings),
-            unavailableTargetPaths);
+            DeduplicateFindings(findings.Where(finding => finding.Code != IndexFindingCode.MetadataSkipped)),
+            unavailableTargetPaths,
+            hasMetadataLimitations: findings.Any(finding => finding.Code == IndexFindingCode.MetadataSkipped));
         return Form(new IndexProjectionAssembly
         {
             Formation = context.Formation,
@@ -153,7 +173,7 @@ internal sealed class IndexProjectionBuilder
             Regions = regions,
             Metadata = metadata.Values,
             Readiness = readiness,
-            MetadataFindings = metadataFindings,
+            MetadataFindings = metadataFindings.Concat(findings.Where(finding => finding.Code == IndexFindingCode.MetadataSkipped)).ToArray(),
         });
     }
 
@@ -178,6 +198,7 @@ internal sealed class IndexProjectionBuilder
         foreach (var region in projection.Regions.Where(region =>
                      region.State == GeneratedNavigationRegionState.Unavailable
                      && !unavailableTargetPaths.Contains(region.CanonicalPath)
+                     && !findings.Any(finding => finding.Code == IndexFindingCode.MetadataSkipped)
                      && !findings.Any(finding => finding.Details?.ParentPath == region.CanonicalPath)))
         {
             var reason = region.UnavailableReason
@@ -305,6 +326,8 @@ internal sealed class IndexProjectionBuilder
         IndexProjectionDocumentRole role,
         CancellationToken cancellationToken)
     {
+        if (context.Maintenance?.Documents.TryGetValue(source.Identity.CanonicalBasePath, out var intended) == true)
+            return IndexProjectionDocumentAcquisition.Complete(intended);
         var result = await context.Reader
             .ReadAsync(source.Base, cancellationToken)
             .ConfigureAwait(false);
@@ -326,6 +349,7 @@ internal sealed class IndexProjectionBuilder
         var children = ReadDirectChildren(formation, target);
         var sources = children
             .Prepend(target)
+            .Where(source => ReferenceEquals(formation.Catalogue.FindByPath(source.Identity.CanonicalBasePath), source))
             .DistinctBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal);
         var includedScope = CreateScope(target);
         var excludedScopes = children

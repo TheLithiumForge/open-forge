@@ -20,6 +20,10 @@ internal static class LocalReferenceDoctorCandidateProjector
                     candidate.Destination,
                     reference.Destination,
                     StringComparison.Ordinal))
+            .Where(candidate => reference.Facts.Target.Resolution != Framework.Sources.Models.References.SourceLinkTargetResolution.Missing
+                || candidate.Candidate.Path != reference.SourcePath
+                    && candidate.Candidate.Path != reference.RoutePath
+                    && candidate.Bases.Any(basis => basis.Kind != LocalReferenceCandidateBasisKind.RouteNeighborhood))
             .Select(candidate => new DoctorCandidate
             {
                 Subject = DoctorDomainSupport.Subject(

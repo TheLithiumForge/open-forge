@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Commands.Extension.Remove;
@@ -11,6 +12,7 @@ using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
@@ -21,6 +23,53 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Extension.Remove;
 [Trait("Feature", "command-output-snapshots"), Trait("Evidence", "Integration")]
 public sealed class ExtensionRemoveBeforeOutputSnapshotTests
 {
+    [Theory(DisplayName = "Root and Extension removal previews offer the selected apply request and dependency advice once")]
+    [InlineData(false, "text"), InlineData(false, "json"), InlineData(true, "text"), InlineData(true, "json")]
+    [Trait("Feature", "extension-remove"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]
+    public async Task PreviewNextAppliesSelectedRemoval(bool root, string format)
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("remove retry's workspace");
+        await workspace.SeedFrameworkAsync();
+        using var source = ExtensionInstallCatalogue.Create("remove-retry-source");
+        source.AddPackage("toolkit", ["base"], (".agents/toolkit.md", "# Toolkit\n"));
+        source.AddPackage("base", [], (".agents/base.md", "# Base\n"));
+        Assert.Equal(0, (await workspace.RunAsync(["extension", "install", "--all", "--source", source.Path, "--automatic"])).ExitCode);
+        var before = workspace.Snapshot();
+        string[] selection = root ? ["remove", "--kind", "extension", "toolkit"] : ["extension", "remove", "toolkit"];
+        string[] apply = [.. selection, "--workspace", workspace.Path,
+            "--allow-path", "docs/probe.md", "--automatic", "--format", format, "--detail", "standard", "--detail-filter", "warning"];
+        var preview = await workspace.RunAsync([.. apply, "--dry-run"]);
+        Assert.Equal(2, preview.ExitCode);
+        Assert.Equal(string.Empty, preview.StandardError);
+        var command = root ? "remove --kind extension toolkit" : "extension remove toolkit";
+        var expected = $"open-forge {command} --workspace {CliCommandText.Quote(workspace.Path)} --allow-path docs/probe.md --automatic --format {format} --detail standard --detail-filter warning";
+        string next;
+        if (format == "json")
+        {
+            using var json = JsonDocument.Parse(preview.StandardOutput);
+            next = Assert.IsType<string>(json.RootElement.GetProperty("next").GetProperty("command").GetString());
+            var finding = Assert.Single(json.RootElement.GetProperty("findings").EnumerateArray());
+            Assert.Equal("sentence", Assert.Single(finding.GetProperty("actions").EnumerateArray()).GetProperty("kind").GetString());
+        }
+        else
+        {
+            next = Assert.Single(preview.StandardOutput.Split('\n'), line => line.StartsWith("Next: ", StringComparison.Ordinal))[6..].TrimEnd('\r');
+            const string advice = "After applying this removal, you can preview removing base too.";
+            Assert.Equal(1, preview.StandardOutput.Split(advice, StringSplitOptions.None).Length - 1);
+        }
+        Assert.Equal(expected, next);
+        Assert.Equal(before, workspace.Snapshot());
+        var applied = await workspace.RunAsync(apply);
+        Assert.Equal(2, applied.ExitCode);
+        Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
+        Assert.True(File.Exists(workspace.Combine(".agents/base.md")));
+        if (format == "json")
+        {
+            using var receipt = JsonDocument.Parse(applied.StandardOutput);
+            Assert.StartsWith("open-forge extension remove base", receipt.RootElement.GetProperty("next").GetProperty("command").GetString(), StringComparison.Ordinal);
+        }
+    }
+
     private static readonly CommandOutputRenderers<ExtensionRemoveResult> Renderers = CommandOutputRenderers<ExtensionRemoveResult>.From(ExtensionRemovePresentation.Rendering);
 
     [Trait("Boundary", "Output")]
@@ -180,7 +229,9 @@ public sealed class ExtensionRemoveBeforeOutputSnapshotTests
                 ExtensionRemovePresentation.Rendering);
             Assert.Equal(CliHeadlineKind.Warnings, selected.Report.Headline.Kind);
             Assert.Equal("Would remove the toolkit Extension.", selected.Report.Headline.Sentence);
-            Assert.Equal("open-forge extension remove base", selected.Report.Next?.Command);
+            Assert.Equal($"open-forge extension remove toolkit --automatic --workspace {CliCommandText.Quote(workspace.Path)}", selected.Report.Next?.Command);
+            var finding = Assert.Single(selected.Report.Findings, finding => finding.Code == "extension-remove.lifecycle-observation");
+            Assert.Equal(CliNextActionKind.Sentence, Assert.Single(finding.Actions).Kind);
 
             var rendered = CommandOutputRenderers<ExtensionRemoveResult>.Render(
                 new CliPresentationRequest<ExtensionRemoveResult>(
@@ -191,5 +242,21 @@ public sealed class ExtensionRemoveBeforeOutputSnapshotTests
             Assert.DoesNotContain("Removed the toolkit Extension.", rendered, StringComparison.Ordinal);
             Assert.Equal(1, rendered.Split(noFilesWereChanged, StringSplitOptions.None).Length - 1);
         }
+        Renderers.MatchDetails(result, "preview", extensionSourcePath: source.Path, testName: nameof(DryRunOrphanedDependencyKeepsPreviewHeadline) + ".preview");
+
+        var applied = await ExtensionRemoveOperationFactory.Create(
+                ExtensionInteractionTestFactory.ForRemove(prompts), workspace.LockStoreRoot)
+            .ExecuteAsync(new ExtensionRemoveRequest(workspace.Workspace, ExtensionRemoveMode.Apply, ["toolkit"],
+                automatic: true, allowInteraction: false), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Attention, applied.Status);
+        Assert.Equal(ExtensionRemoveLifecycleOutcome.Verified, applied.Lifecycle.Outcome);
+        Assert.False(File.Exists(workspace.Combine(".agents/toolkit.md")));
+        Assert.True(File.Exists(workspace.Combine(".agents/base.md")));
+        var receipt = CliReportSelection.Select(applied, new CliSelection(CliDetail.Standard), ExtensionRemovePresentation.Rendering).Report;
+        Assert.Equal(CliNextActionKind.Command, receipt.Next?.Kind);
+        var appliedFinding = Assert.Single(receipt.Findings, finding => finding.Code == "extension-remove.lifecycle-observation");
+        Assert.Equal(CliNextActionKind.Command, Assert.Single(appliedFinding.Actions).Kind);
+        Renderers.MatchDetails(applied, "applied", applied.Recovery.ResidualPath, source.Path,
+            testName: nameof(DryRunOrphanedDependencyKeepsPreviewHeadline) + ".applied");
     }
 }

@@ -11,7 +11,9 @@ import {
   linkedFiles,
   loadingGuide,
   loadingLabels,
+  memoryGuide,
   memoryLoading,
+  memoryMoves,
   memoryNote,
   memoryStates,
   pitch,
@@ -25,7 +27,7 @@ import type { Theme } from "./svg-parts.ts";
 
 const WIDTH = 900;
 const CORE = { x: 20, width: 520, cardWidth: 241, gap: 10 };
-const MEMORY = { x: 556, width: 324, gap: 24 };
+const MEMORY = { x: 556, width: 324, gap: 10 };
 const NODES = [
   { x: 110, width: 300 },
   { x: 470, width: 320 },
@@ -156,7 +158,9 @@ const MEMORY_HEADING = 70;
 const coreRows = [0, 2, 4].map((index) => Math.max(coreCards[index]?.height ?? 0, coreCards[index + 1]?.height ?? 0));
 const coreHeight = 46 + coreRows.reduce((sum, row) => sum + row, 0) + (coreRows.length - 1) * CORE.gap + 14;
 const memoryNoteLines = wrap(memoryNote, MEMORY.width - 28, 11.5);
-const memoryHeight = MEMORY_HEADING + memoryCards.reduce((sum, item) => sum + item.height, 0) + (memoryCards.length - 1) * MEMORY.gap + 16 + memoryNoteLines.length * 15 + 8;
+const memoryMovesLines = wrap(`Possible moves: ${memoryMoves}`, MEMORY.width - 28, 11.5);
+const memoryCardsTop = MEMORY_HEADING + memoryNoteLines.length * 15 + 12;
+const memoryHeight = memoryCardsTop + memoryCards.reduce((sum, item) => sum + item.height, 0) + (memoryCards.length - 1) * MEMORY.gap + 16 + memoryMovesLines.length * 15 + 26;
 const PANEL_HEIGHT = Math.max(coreHeight, memoryHeight);
 const STEPS_TOP = PANEL_TOP + PANEL_HEIGHT + 24;
 const CAPTION = { top: STEPS_TOP + 58, width: WIDTH - 160 };
@@ -213,21 +217,24 @@ function core(theme: Theme): string {
 
 function memory(theme: Theme): string {
   const x = MEMORY.x + 14;
-  const width = MEMORY.width - 28;
-  let y = PANEL_TOP + MEMORY_HEADING;
+  let y = PANEL_TOP + memoryCardsTop;
   let markup =
     box(MEMORY.x, PANEL_TOP, MEMORY.width, PANEL_HEIGHT, theme.panel, theme.memory, 14) +
     panelTitle(x, "Memory", "WHAT TO REMEMBER", theme) +
-    badge(x, PANEL_TOP + 40, memoryLoading, theme);
-  memoryStates.forEach((state, index) => {
-    const item = memoryCards[index];
-    if (!item) return;
+    badge(x, PANEL_TOP + 40, memoryLoading, theme) +
+    text(x, PANEL_TOP + MEMORY_HEADING, memoryNoteLines, { size: 11.5, fill: theme.text }, 15);
+  memoryCards.forEach((item) => {
     markup += item.draw(x, y, item.height, theme);
     y += item.height;
-    if (state.next) markup += text(x + width / 2, y + 16, [`↓ ${state.next}`], { size: 11.5, fill: theme.muted, anchor: "middle" });
     y += MEMORY.gap;
   });
-  return markup + text(x, PANEL_TOP + PANEL_HEIGHT - 14 - (memoryNoteLines.length - 1) * 15, memoryNoteLines, { size: 11.5, fill: theme.muted }, 15);
+  const movesTop = PANEL_TOP + PANEL_HEIGHT - 38 - (memoryMovesLines.length - 1) * 15;
+  const href = new URL(`${siteBaseUrl}${memoryGuide.href.slice(1)}`, siteUrl).href;
+  return (
+    markup +
+    text(x, movesTop, memoryMovesLines, { size: 11.5, fill: theme.muted }, 15) +
+    `<a href="${escape(href)}" text-decoration="underline">${text(x, PANEL_TOP + PANEL_HEIGHT - 14, [memoryGuide.label], { size: 11.5, fill: theme.line })}</a>`
+  );
 }
 
 // The first two steps repeat the two loading styles.

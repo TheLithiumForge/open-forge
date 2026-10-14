@@ -119,11 +119,12 @@ public sealed class RouteMoveRecoveryConflictPresentationTests
         var result = Result(
             RecoveryConflict(CliSemanticStatus.Blocked, RecoveryCandidatePath),
             RecoveryConflict(CliSemanticStatus.Failed, RouteMoveTestData.SourcePath, RouteMoveFindingCode.OperationFailed));
+        result = result with { RequestCommand = "open-forge route move 'memory/guides/old guide' '.agents/memory/archive/new guide.md'" };
         var report = RouteMoveReportSelector.Select(result, new CliSelection(CliDetail.Minimal, null));
 
         Assert.Equal(CliSemanticStatus.Failed, result.Status);
         Assert.Equal(CliSemanticStatus.Failed, report.Status);
-        Assert.Equal("open-forge route move --detail debug", report.Next?.Command);
+        Assert.Equal("open-forge route move 'memory/guides/old guide' '.agents/memory/archive/new guide.md'", report.Next?.Command);
     }
 
     [Fact(DisplayName = "Route Move keeps its existing recovery-retention cleanup guidance"), Trait("Boundary", "Output")]

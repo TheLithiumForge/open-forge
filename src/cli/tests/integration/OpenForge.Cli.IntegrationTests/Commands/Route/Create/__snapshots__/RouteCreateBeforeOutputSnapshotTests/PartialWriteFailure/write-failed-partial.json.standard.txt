@@ -76,7 +76,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route create --detail debug",
-    "reason": "Report the failure and retry the same Route Create request with bounded diagnostics."
+    "command": "open-forge route create memory/project-alpha/overview --description 'Project overview' --responsibility 'Explains the project' --tag Docs --tag Overview --workspace <workspace>",
+    "reason": "Address the reported failure, then retry the same Route Create request."
   }
 }

@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: Install Open Forge, choose routes and a frontmatter form, and change those choices later.
+description: Install Open Forge in your project, review its changes, and try it with your agent.
 ---
 
 import Tabs from "@theme/Tabs"
@@ -20,9 +20,21 @@ cd /path/to/your-project
 open-forge install
 ```
 
-The interactive install offers Essentials, Full Core, or Custom, then asks how to write file metadata, with root keys preselected. It shows the selected plan and asks before applying it. For a smaller start, choose Essentials. Check the result with `git status` and `git diff`, including the new files, and commit it.
+For a first try, choose the recommended Essentials setup. Keep Root keys unless your workspace already declares another metadata form. Before asking for confirmation, the plan shows your setup: the folders it adds, the ones whose contents stay out of Git, the ones it leaves out, and the metadata form. Check the result with `git status` and `git diff`, including the new files, before committing it.
+
+Already have `AGENTS.md` or `CLAUDE.md`? Install adds a marked Open Forge section and keeps your existing text. It also creates the selected files under `.agents/`. To experiment without touching your checkout, [try it in a separate clone](#try-it-and-undo-a-trial).
 
 Continue with the [ten-minute guide](ten-minute-guide.md) to try a task, add a rule, and save a useful fact. Installing is a setup step. Your agent doesn't repeat it at startup. The base works without Extensions or a chosen workflow.
+
+## Try it and undo a trial
+
+Save your current work before installation. Use a Git commit or a separate backup for tracked changes, and copy untracked or ignored files you need to preserve. Keep the install plan and compare the result with that baseline using `git status` and `git diff`.
+
+For a trial, clone your local repository into a separate folder and install there. The clone contains committed files. Copy any additional local files needed to run the project, then use the quick-start commands in the clone. Your original checkout stays unchanged.
+
+To undo an installation in the original checkout, compare the install plan with your saved baseline. Restore the tracked files changed by the trial and remove only the files it added. Keep any work you want before removing trial files. Do not delete an existing `.agents/` tree wholesale. Git cannot recover files or changes you never saved.
+
+For individual managed-file removals or conflicts, read the [Install reference](/guides/cli#install) and [Remove reference](/guides/cli#remove).
 
 ## Choose the installed routes
 
@@ -36,29 +48,11 @@ The first interactive install offers three choices:
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. You can add them later. Full Core includes the base categories, not optional Extensions or an agent runtime.
 
-Git-ignored routes keep their entrypoint eligible for Git, so teammates receive the route and its rules. New local records stay private. Commit the entrypoint and `.agents/open-forge*.json` files. Index reads the lock's sharing policy and omits private contents from generated Entries. Agents can still find and read those contents locally. Git-ignore doesn't untrack files already committed to Git.
+Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools. Commit the entrypoint and `.agents/open-forge*.json` files to share the route and its settings. The same sharing policy applies to any Custom route marked `~`. Git-ignore controls ordinary sharing, not local access.
 
-Custom shows one list, starting from your current choices in an existing workspace, or Essentials in a fresh one:
+Custom shows one list, starting from your current choices in an existing workspace, or Essentials in a fresh one. Each row names a category, marks its action, and explains what it supplies. The focused detail explains what the action does.
 
-```text
-Choose what Open Forge sets up
-+ add   ~ add, keep contents out of Git   - leave out
-
-> [+] directives           Rules agents must follow
-  [-] guidance             Advice for recurring choices
-  [-] maps                 Pointers to important sources
-  [+] patterns             Reusable shapes for code and documents
-  [+] skills               Packaged agent capabilities
-  [-] templates            Copy-ready starter files
-  [~] memory/working       Notes for active work
-  [+] memory/emerging      Findings not accepted yet
-  [+] memory/crystallized  Accepted knowledge
-  [-] memory/archived      Completed and historical records
-
-up/down move   + ~ - set   space next   enter done   esc cancel
-```
-
-Press `+`, `~` or `-` to set the focused row, or space to move it to the next mark, then press Enter. Without key input, type edits such as `2+ 9~` and press Enter on an empty line to continue.
+Press `+`, `~` or `-` to set the focused row, or space to move it to the next mark, then press Enter. Without key input, the numbered list explains each choice. Type edits such as `2+ 9~` and press Enter on an empty line to continue. It says `Type cancel to stop without changes.` Cancelling before application leaves files and settings unchanged.
 
 - **`-` leave out** omits supplied defaults and releases their Framework management. Existing files, notes, and overwrite companions stay in place and remain routable.
 - **`~` add, keep contents out of Git** installs the route, records its sharing policy, then ignores its contents with an exception for its entrypoint. Other Git-ignore rules stay yours.
@@ -95,41 +89,11 @@ open-forge:
 </TabItem>
 </Tabs>
 
-After resolving the preset, first interactive Install asks `How should Open Forge write file metadata?` and shows a short example of each form. The choices are `Root keys` (`description: and tags: at the top level`) and `Scoped under open-forge:` (`open-forge: holds description: and tags:`). Root is preselected when no preference is already declared in settings. `--frontmatter root` or `--frontmatter scoped` skips the question.
-
-A fresh Install uses the explicit flag, then a preference already declared in settings. With neither, unattended Install chooses root. Every fresh Install writes the resolved `frontmatter` key. Ordinary repeated Install and Update retain the effective form and never ask.
-
-When an `open-forge` mapping exists, root descriptions and tags belong to another tool. Open Forge does not merge them. `applyTo` is read at both locations, with equivalent sets counting once and conflicting sets rejected.
-
-The same precedence applies to `responsibility`. Root metadata alone does not make a file a routed source. Native `SKILL.md` metadata keeps its own contract.
+Root keys are the recommended first choice unless settings already declare another preference. Choose the scoped form when other tools already use top-level frontmatter keys in your files. Both forms remain readable. `--frontmatter root` or `--frontmatter scoped` supplies the choice without its question. The [CLI reference](/guides/cli#setup-choices) defines metadata precedence and unattended combinations, and [metadata and file conditions](/guides/cli#frontmatter-and-metadata) explains how fields are read.
 
 ## Configure an existing workspace
 
-To revisit those choices, run:
-
-```sh
-open-forge install --configure
-```
-
-The wizard offers the presets, with Custom starting from the current choices, and asks about the frontmatter form with the current form preselected. It shows the plan before confirmation. It preserves authored files and narrower omissions. It can also restore eligible missing packaged defaults, such as ignored Working scaffolding after a checkout, whether or not the lock file is present. Missing private notes need your own copy or backup.
-
-To change only the form while keeping route choices, run:
-
-```sh
-open-forge install --configure --frontmatter scoped --dry-run
-open-forge install --configure --frontmatter scoped --automatic
-```
-
-Configure converts unedited owned Framework and Extension files to the selected form in the same operation as the settings change. Files already in that form need no change. Edited owned files and Extension files whose source is unavailable stay unchanged and are reported. Kept files do not block the form change. Excluded files, user-authored files, Library files, and overwrite companions are never converted. Native Skills and body content, including fenced examples, stay unchanged.
-
-For a repeatable preview or unattended setup, name the preset explicitly:
-
-```sh
-open-forge install --configure --preset essentials --dry-run
-open-forge install --configure --preset essentials --automatic
-```
-
-Dry-run, automatic, JSON, and redirected requests never ask setup questions. Noninteractive `--configure` requires `--preset` or `--frontmatter`. With a preset alone it retains the effective form and checks eligible owned files for conversion. An ordinary unattended first install keeps Full Core and existing omissions, with root frontmatter unless settings already declare a preference. See the [CLI reference](/guides/cli#setup-choices) for Custom row flags and exact combinations.
+To change an installed setup, follow [Change your setup choices](grow-your-framework.md#change-your-setup-choices). The how-to covers the wizard, changing only the metadata form, and previewing a preset change.
 
 <details>
 <summary>Other installation methods and existing-workspace details</summary>
@@ -165,7 +129,7 @@ Clone the repository and follow the [local setup guide](/guides/development#link
 
 ## 2. Install the Framework
 
-Full Core supplies 15 Markdown files: `AGENTS.md`, the `CLAUDE.md` bridge, the loader, one entrypoint for each Core category and Memory state, and the `open-forge-cli` Skill. Essentials selects fewer routes, and Custom follows your selection. Records such as Decisions and Checkpoints, and workflow recipes, come from optional [Extensions](#add-extensions-optional) or from you.
+Full Core supplies 19 Markdown files: `AGENTS.md`, the `CLAUDE.md` bridge, the loader, the Core and Memory entrypoints, the `open-forge-cli` Skill, and its four supporting guides. The guides are `discovery.md`, `routes.md`, `packages.md`, and `common.md` under `.agents/skills/open-forge-cli/references/`, opened when needed. Essentials selects fewer routes, and Custom follows your selection. Records such as Decisions and Checkpoints, and workflow recipes, come from optional [Extensions](#add-extensions-optional) or from you.
 
 The CLI records what it manages so it can update those files later. A manual copy supplies Full Core, which you can adapt by hand.
 
@@ -242,12 +206,14 @@ If an existing host still uses the legacy `<!-- open-forge:start -->` and
 `open-forge update --automatic` to apply it under the normal update rules.
 Content outside the recognized managed section stays unchanged. See the
 [CLI reference](/guides/cli#update) for the complete boundary, recovery, and
-blocked-write behavior. `index` only rebuilds generated navigation and does
-not convert these hosts.
+blocked-write behavior. `index` maintains routed metadata and navigation and
+does not convert these hosts.
 
 ## 3. Review and commit
 
 Whichever route you took, review the result with `git status` and `git diff`, then commit it. A fresh install adds new files, which `git status` lists and `git diff` alone doesn't show. That's the whole setup.
+
+The first successful CLI install also explains the next agent step. If your agent tool does not read `AGENTS.md` on its own, ask it to read that file first, then give it a normal task.
 
 Installing and updating are things you do when maintaining the workspace. Agents don't repeat them at startup.
 

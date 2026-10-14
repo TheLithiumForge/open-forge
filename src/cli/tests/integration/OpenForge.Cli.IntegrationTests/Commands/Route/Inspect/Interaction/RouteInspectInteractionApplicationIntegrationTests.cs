@@ -108,7 +108,7 @@ public sealed class RouteInspectInteractionApplicationIntegrationTests
         Assert.Equal(ExpectedPrompt(), run.StandardError);
         Assert.Contains($"{CollisionId}  {FirstCandidate}", run.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain("Selection:", run.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Next: open-forge route inspect \".agents/root/collision.md\"", run.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route inspect .agents/root/collision.md", run.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", run.RemainingInput);
     }
 }

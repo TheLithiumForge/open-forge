@@ -1,8 +1,9 @@
-Updated 1 Framework file. 1 file from an earlier version was kept.
+Changed 1 source file.
 Workspace: <workspace>
   Warning  .agents/guidance/retired-framework.md  Retired content kept
          .agents/guidance/retired-framework.md is no longer part of this release, so it was kept.
-         open-forge update --prune --dry-run
+         open-forge update --prune --dry-run --workspace <workspace>
   .agents/guidance/_guidance.md          Entries updated
   .agents/guidance/retired-framework.md  kept; no longer part of this release
-Next: open-forge update --prune --dry-run
+  Previous content is in the recovery bundle at <recovery-bundle>.
+Next: open-forge update --prune --dry-run --workspace <workspace>

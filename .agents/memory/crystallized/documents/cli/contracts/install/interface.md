@@ -61,6 +61,20 @@ YamlDotNet and STJ serialization, fixed Markdig where used, real `System.IO`,
 Native AOT, OS locking, isolated tests, and package journeys. The accepted
 lifecycle direction does not claim that implementation or proof.
 
+## Help
+
+The purpose sentence is: Install the bundled Framework, or change your built-in setup.
+
+The public Usage line is:
+
+```text
+open-forge install [options]
+```
+
+Follow the [shared help template](../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
+Behavior states the fresh wizard's Essentials choice, the unattended and preview Full Core default, and the root metadata default unless settings declare a preference. Details includes Existing files, the exact first-installation force boundary, all ten Custom route IDs, omission and Git sharing rules, metadata conversion, and the absence of a successful-install undo bundle.
+
 ## Purpose And Boundary
 
 `install` establishes management of the embedded Framework in one exact
@@ -328,7 +342,11 @@ values are invalid input. Identical repeated values are idempotent.
 
 A first prompt-capable interactive apply offers the three presets, with
 Essentials first. Explicit `--configure` offers selection even on an installed
-workspace. Custom then shows one marked list of the ten rows with their current
+workspace. The question identifies the setup stage. Essentials keeps its label
+and order and shows `Recommended.` in its row summary. Its focused detail reads
+`Rules, reusable patterns, skills and project memory. New notes for active work stay out of Git.`
+Full Core's focused detail reads `Everything in Essentials, plus advice, pointers to sources, starter files and archived records. All contents, including notes for active work, are shared through Git.`
+Custom then shows one marked list of the ten rows with their current
 marks, under the question `Choose what Open Forge sets up` and the legend
 `+ add   ~ add, keep contents out of Git   - leave out`. Each row shows its ID
 and a short summary. Rows supplied by `--route` are locked. The shared marked
@@ -356,6 +374,22 @@ up/down move   + ~ - set   space next   enter done   esc cancel
 
 Ordinary repeated Install remains quiet when its exact state is already current.
 
+In line mode, preset descriptions appear below their rows when they add
+information. Custom prints these explanations once below the legend:
+
+```text
+~ keeps the entrypoint shared through Git. New contents are Git-ignored.
+Files already tracked by Git stay tracked.
+- leaves out supplied defaults. Existing files stay and remain routable.
+```
+
+An installed workspace also shows `Open Forge stops managing those defaults.`
+The edit instructions end with `Type cancel to stop without changes.` The
+accepted edit grammar and empty-line continuation stay the same. A focused
+leave-out row in a fresh workspace names the omitted folder and the
+`open-forge install --configure` command for adding it later. Installed
+workspaces keep the existing retention detail.
+
 After the preset choice, first interactive Install asks
 `How should Open Forge write file metadata?` with root preselected. The choices are:
 
@@ -363,6 +397,11 @@ After the preset choice, first interactive Install asks
 | -------------------------- | ------------------------------------------ |
 | `Root keys`                | `description: and tags: at the top level`  |
 | `Scoped under open-forge:` | `open-forge: holds description: and tags:` |
+
+The question identifies the metadata stage. Configure shows
+`Current metadata form: root` or `Current metadata form: scoped`. Root keys have
+the focused detail `Recommended. Metadata sits at the top of each file's frontmatter.`
+Scoped has `Choose this if other tools already use top-level frontmatter keys in your files.`
 
 An explicit `--frontmatter` skips the question. Every fresh Install writes the
 resolved `frontmatter` key. A fresh unattended Install uses the flag, then an
@@ -605,49 +644,72 @@ The command uses the shared native report. The default detail is `minimal`; `sta
 
 ### Statuses and headlines
 
-| Status                  | When                                                 | Headline                                                                                        | Exit | Stream |
-| ----------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---: | ------ |
-| completed               | fresh install                                        | `Installed the Open Forge Framework into <workspace>.`                                          |    0 | stdout |
-| completed               | force replaced existing files                        | `Installed the Open Forge Framework into <workspace>, replacing <N> existing files.`            |    0 | stdout |
-| completed               | `--configure` on an installed workspace              | `Changed the Open Forge setup in <workspace>.`                                                  |    0 | stdout |
-| completed               | already installed and current                        | `Open Forge is already installed and current. Nothing to do.`                                   |    0 | stdout |
-| completed (dry run)     | install plan                                         | `Would install the Open Forge Framework into <workspace>.` (+ `, replacing <N> existing files`) |    0 | stdout |
-| completed (dry run)     | `--configure` plan on an installed workspace         | `Would change the Open Forge setup in <workspace>.`                                             |    0 | stdout |
-| completed-with-warnings | recovery bundle retained after success               | headline as completed + family `recovery-artifact-retained` row                                 |    2 | stdout |
-| incomplete              | bundled Framework, lock or recovery store unreadable | `Install could not start: <limitation>. Nothing was changed.`                                   |    3 | stdout |
-| invalid-input           | bad input; confirmation unavailable                  | family `invalid-input` / `confirmation-required`                                                |    4 | stderr |
-| blocked                 | occupied paths without force                         | `Cannot install: <N> files already exist where the Framework would write.`                      |    5 | stderr |
-| blocked                 | changed Framework files (managed divergence)         | `Cannot install: <N> Framework files have changed since they were installed.`                   |    5 | stderr |
-| blocked                 | other boundary                                       | `Cannot install: <reason>.`                                                                     |    5 | stderr |
-| failed                  | write or verification failed after effects           | `Install stopped after <n> of <m> changes.`                                                     |    1 | stderr |
-| cancelled               | no at the prompt, Ctrl+C, end of input               | `Install was cancelled. Nothing was changed.`                                                   |  130 | stderr |
+The separate Workspace line carries the full path in both the confirmation review and the result. Wrap the review headline, setup recap, summary and closing prose at spaces, accounting for indentation. Keep command and path tokens complete, and preserve counts, recap facts and confirmation.
+
+An invalid frontmatter value says `Invalid --frontmatter value: other. Use root or scoped.` An invalid preset says `Invalid --preset value: other. Use essentials, full-core, or custom.` Substitute the escaped supplied value. Print the explanation once, followed by the existing `Next: open-forge install --help` action. JSON findings retain the same fields with the supplied value in the message.
+
+| Status                  | When                                                 | Headline                                                                       | Exit | Stream |
+| ----------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------ | ---: | ------ |
+| completed               | fresh install                                        | `Installed the Open Forge Framework.`                                          |    0 | stdout |
+| completed               | force replaced existing files                        | `Installed the Open Forge Framework, replacing <N> existing files.`            |    0 | stdout |
+| completed               | `--configure` on an installed workspace              | `Changed the Open Forge setup.`                                                |    0 | stdout |
+| completed               | already installed and current                        | `Open Forge is already installed and current. Nothing to do.`                  |    0 | stdout |
+| completed (dry run)     | install plan                                         | `Would install the Open Forge Framework.` (+ `, replacing <N> existing files`) |    0 | stdout |
+| completed (dry run)     | `--configure` plan on an installed workspace         | `Would change the Open Forge setup.`                                           |    0 | stdout |
+| completed-with-warnings | recovery bundle retained after success               | headline as completed + family `recovery-artifact-retained` row                |    2 | stdout |
+| incomplete              | bundled Framework, lock or recovery store unreadable | `Install could not start: <limitation>. Nothing was changed.`                  |    3 | stdout |
+| invalid-input           | bad input; confirmation unavailable                  | family `invalid-input` / `confirmation-required`                               |    4 | stderr |
+| blocked                 | occupied paths without force                         | `Cannot install: <N> files already exist where the Framework would write.`     |    5 | stderr |
+| blocked                 | changed Framework files (managed divergence)         | `Cannot install: <N> Framework files have changed since they were installed.`  |    5 | stderr |
+| blocked                 | other boundary                                       | `Cannot install: <reason>.`                                                    |    5 | stderr |
+| failed                  | write or verification failed after effects           | `Install stopped after <n> of <m> changes.`                                    |    1 | stderr |
+| cancelled               | no at the prompt, Ctrl+C, end of input               | `Install was cancelled. Nothing was changed.`                                  |  130 | stderr |
 
 ### Text by level
 
 `minimal`, fresh:
 
 ```text
-Installed the Open Forge Framework into D:/work/myrepo.
+Installed the Open Forge Framework.
 Workspace: D:/work/myrepo
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working, memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
+Frontmatter: root
   Created <N> files and <N> directories under .agents (listed in .agents/open-forge.lock.json).
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
+If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md first.
+Next: review the new files with git status and git diff, commit them, then give your agent a normal task.
 ```
 
 `minimal`, existing `AGENTS.md`:
 
 ```text
-Installed the Open Forge Framework into D:/work/myrepo.
+Installed the Open Forge Framework.
 Workspace: D:/work/myrepo
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working, memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
+Frontmatter: root
   AGENTS.md  Open Forge section added, your content was kept
   CLAUDE.md  created with an Open Forge section
   Created <N> files and <N> directories under .agents (listed in .agents/open-forge.lock.json).
+If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md first.
+Next: review the new files with git status and git diff, commit them, then give your agent a normal task.
 ```
 
 `minimal`, dry run:
 
 ```text
-Would install the Open Forge Framework into D:/work/myrepo.
+Would install the Open Forge Framework.
 Workspace: D:/work/myrepo
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working, memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
+Frontmatter: root
   .agents/open-forge.lock.json  would be created
   Would create <N> files and <N> directories under .agents, plus AGENTS.md and CLAUDE.md.
   Nothing that already exists would be changed.
@@ -657,9 +719,10 @@ No files were changed.
 `minimal`, Configure dry run that adds Guidance and Git-ignores Archived Memory:
 
 ```text
-Would change the Open Forge setup in D:/work/myrepo.
+Would change the Open Forge setup.
 Workspace: D:/work/myrepo
-Frontmatter: root
+guidance: leave out -> add
+memory/archived: leave out -> add with Git-ignored contents
   .agents/loader.md             Entries would be updated
   .agents/memory/_memory.md     Entries would be updated
   .agents/open-forge.json       settings would be updated
@@ -672,7 +735,7 @@ No files were changed.
 `minimal`, occupied, `--force`:
 
 ```text
-Installed the Open Forge Framework into D:/work/myrepo, replacing 2 existing files.
+Installed the Open Forge Framework, replacing 2 existing files.
 Workspace: D:/work/myrepo
   .agents/loader.md      replaced
   .agents/maps/_maps.md  replaced
@@ -733,8 +796,29 @@ words.
 
 ### Prompts
 
-The plan shows `Frontmatter: root` or `Frontmatter: scoped`. When the form
-changes, it shows the transition, such as `Frontmatter: scoped -> root`.
+Fresh plans and receipts show a compact resolved setup recap above the effect
+rows: `Setup`, `Add`, `Git-ignored contents`, `Leave out`, and `Frontmatter`.
+Empty route groups show `none`. Unattended previews name the resolved Full Core
+default. The recap adds no JSON fields and persists no preset identity.
+
+Configure shows only changed route rows, such as `guidance: add -> leave out`
+or `guidance: add -> add with Git-ignored contents`. A leave-out change is
+followed by `Existing files stay and remain routable.` A changed metadata form
+shows its transition, such as `Frontmatter: scoped -> root`. Unchanged metadata
+is omitted from Configure text while remaining in JSON.
+
+The confirmation review starts with `Review changes`, before its
+`Would install ...` or `Would change ...` headline, and omits
+`No files were changed.` Dry-run results retain that line. Cancellation and
+redirected results continue to state that nothing was changed.
+
+A first successful installation ends with these two text-only lines. Verified
+no-ops and Configure results omit them, and JSON is unchanged:
+
+```text
+If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md first.
+Next: review the new files with git status and git diff, commit them, then give your agent a normal task.
+```
 
 In a terminal without `--automatic`: plan review at `minimal` on stderr, then
 `Apply these changes? [y/N]`. When the plan replaces whole existing files, the
@@ -860,11 +944,25 @@ host regions remain separate populations.
 
 ### Next rules
 
-Blocked occupied -> `open-forge install --force --dry-run`; managed divergence
--> `open-forge update`; confirmation unavailable -> `open-forge install
---automatic`; partial or retained recovery -> `open-forge doctor` or
-`open-forge cleanup`; completed -> none (the old `open-forge context`
-suggestion is not printed; help covers it).
+Blocked occupied directs to an Install force preview. Managed divergence directs
+to `open-forge update`. Partial or retained recovery directs to
+`open-forge doctor` or `open-forge cleanup`.
+
+Install retry commands come from typed request facts. They retain the explicitly
+selected workspace with shell quoting, `--configure`, `--preset`, every
+`--route`, `--frontmatter`, `--force`, and relevant format, detail and finding
+filter options. Only a missing-confirmation reason adds `--automatic`.
+After setup is resolved, retries use the resolved preset, all Custom route
+choices and the resolved frontmatter form. An Essentials force preview therefore
+includes `--preset essentials --frontmatter root --force --dry-run` when Root
+keys were selected. Cancellation before setup is resolved resumes the original
+request without adding automatic mode. A cancelled
+Configure wizard therefore suggests `open-forge install --configure`, plus any
+explicit choices and workspace. Choices made only inside the cancelled wizard
+are not added to the retry. Text and JSON share the same command value.
+
+Completed results have no structured next action. First-install text adds the
+task guidance above, while verified no-op and Configure results remain quiet.
 
 ## Errors And Boundaries
 

@@ -17,7 +17,11 @@
   "counts": {
     "filesChecked": 2,
     "filesUpdated": 0,
-    "filesCurrent": 2
+    "filesCurrent": 2,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0
   },
   "limitations": [],
   "data": {
@@ -52,11 +56,17 @@
         "action": "unchanged",
         "outcome": "already-current"
       }
-    ]
+    ],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
     "disposition": "not-required"
   },
-  "next": null
+  "next": {
+    "kind": "command",
+    "command": "open-forge doctor --workspace <workspace>",
+    "reason": "Check the workspace after indexing."
+  }
 }

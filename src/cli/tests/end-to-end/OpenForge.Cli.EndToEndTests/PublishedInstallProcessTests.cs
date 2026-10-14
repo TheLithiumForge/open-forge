@@ -92,7 +92,7 @@ public sealed class PublishedInstallProcessTests
             "Install needs confirmation, and this session cannot ask.",
             result.StandardError,
             StringComparison.Ordinal);
-        Assert.Contains("open-forge install --automatic", result.StandardError, StringComparison.Ordinal);
+        Assert.Contains("open-forge install --preset full-core --frontmatter root --automatic", result.StandardError, StringComparison.Ordinal);
         workspace.AssertNoLockInfrastructure();
     }
 

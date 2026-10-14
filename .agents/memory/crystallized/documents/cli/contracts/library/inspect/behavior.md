@@ -175,7 +175,14 @@ Use these relations:
   facts.
 
 The comparison is exact over the canonical path sets and expected/observed link
-identity. It does not infer equality from file bytes, nearby paths, source
+identity, ignoring only separator differences in supported relative link targets.
+On Windows, a recorded matching link whose raw target uses `/` is unreadable.
+Report it as `changed` with `library-inspect.link-changed`, explain that it is
+unreadable on Windows, and show exact Detach and Attach commands for the same
+workspace, ID, source, destination and Git-ignore choice. Between those commands,
+instruct the user to clear the ID saved by Detach in `removedLibraries` from
+workspace settings. Retain the actual raw
+target in evidence. It does not infer equality from file bytes, nearby paths, source
 names, or directory order. A complete empty path set is a valid complete
 comparison when the source inventory proves it.
 

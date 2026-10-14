@@ -1,0 +1,572 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Would install the development-toolkit Extension and 5 packages it requires: workflows, development, planning, project-documents, scenarios.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/skills/use-workflow",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/templates/documents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/templates/planning",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/templates/scenarios",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/templates/workflows",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/crystallized/documents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/emerging/analysis",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/emerging/ideas",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/working/checkpoints",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/references",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/development",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/planning",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/project-documents",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/use-workflow/SKILL.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "workflows"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/_references.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "workflows"
+    },
+    {
+      "path": ".agents/templates/workflows/_workflows.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "workflows"
+    },
+    {
+      "path": ".agents/templates/workflows/workflow.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "workflows"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/development/_development.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "development"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/development/debugging.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "development"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/development/development.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "development"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/development/review.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "development"
+    },
+    {
+      "path": ".agents/memory/crystallized/decisions/_decisions.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/memory/emerging/analysis/_analysis.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/memory/emerging/ideas/_ideas.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/memory/working/checkpoints/_checkpoints.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/patterns/work-records.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/planning/_planning.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/planning/planning.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/templates/planning/_planning.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/templates/planning/analysis.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/templates/planning/backlog.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/templates/planning/checkpoint.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/templates/planning/decision.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/templates/planning/idea.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/templates/planning/plan.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/templates/planning/task.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/memory/crystallized/documents/_documents.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/project-documents/_project-documents.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/project-documents/architecture.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/skills/use-workflow/references/project-documents/vision.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/templates/documents/_documents.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/templates/documents/architecture.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/templates/documents/document.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/templates/documents/maintenance-contract.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/templates/documents/principles.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/templates/documents/vision.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "project-documents"
+    },
+    {
+      "path": ".agents/templates/scenarios/_scenarios.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "scenarios"
+    },
+    {
+      "path": ".agents/templates/scenarios/run-record.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "scenarios"
+    },
+    {
+      "path": ".agents/templates/scenarios/scenario-collection.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "scenarios"
+    },
+    {
+      "path": ".agents/templates/scenarios/scenario.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "scenarios"
+    },
+    {
+      "path": ".agents/templates/scenarios/user-flow.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "scenarios"
+    },
+    {
+      "path": ".agents/memory/crystallized/_crystallized.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/emerging/_emerging.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/working/_working.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/patterns/_patterns.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/skills/_skills.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/templates/_templates.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "packagesInstalled": 5,
+    "filesCreated": 38,
+    "filesReplaced": 0,
+    "sectionsUpdated": 6,
+    "grantsSaved": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "force": false,
+    "automatic": false,
+    "source": {
+      "kind": "embedded",
+      "path": null
+    },
+    "packages": [
+      {
+        "id": "workflows",
+        "version": "0.4.0",
+        "selected": false,
+        "requiredBy": [
+          "development",
+          "planning",
+          "project-documents"
+        ]
+      },
+      {
+        "id": "development",
+        "version": "0.4.0",
+        "selected": false,
+        "requiredBy": [
+          "development-toolkit"
+        ]
+      },
+      {
+        "id": "planning",
+        "version": "0.4.0",
+        "selected": false,
+        "requiredBy": [
+          "development-toolkit"
+        ]
+      },
+      {
+        "id": "project-documents",
+        "version": "0.4.0",
+        "selected": false,
+        "requiredBy": [
+          "development-toolkit"
+        ]
+      },
+      {
+        "id": "scenarios",
+        "version": "0.4.0",
+        "selected": false,
+        "requiredBy": [
+          "development-toolkit"
+        ]
+      },
+      {
+        "id": "development-toolkit",
+        "version": "0.4.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": [
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md",
+      ".agents/skills/use-workflow/references/_references.md",
+      ".agents/templates/_templates.md"
+    ]
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

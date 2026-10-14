@@ -5,23 +5,41 @@ const sidebars: SidebarsConfig = {
     "intro",
     {
       type: "category",
-      label: "Getting started",
+      label: "Start here",
       collapsed: false,
-      items: ["getting-started/installation", "getting-started/greenfield-and-brownfield"],
+      items: ["getting-started/installation", "getting-started/ten-minute-guide"],
     },
-    "getting-started/ten-minute-guide",
-    "highlights",
     {
       type: "category",
-      label: "Concepts",
-      link: { type: "doc", id: "concepts/index" },
-      items: ["concepts/routing", "concepts/scopes", "concepts/loading-and-tags", "concepts/core-categories", "concepts/memory", "concepts/customizing"],
+      label: "Try a demo",
+      link: { type: "doc", id: "demos/index" },
+      items: ["demos/greenfield", "demos/brownfield"],
+    },
+    {
+      type: "category",
+      label: "How-to guides",
+      items: ["getting-started/greenfield-and-brownfield", "getting-started/grow-your-framework"],
+    },
+    {
+      type: "category",
+      label: "Understand Open Forge",
+      items: [
+        "highlights",
+        {
+          type: "category",
+          label: "Concepts",
+          link: { type: "doc", id: "concepts/index" },
+          items: ["concepts/routing", "concepts/scopes", "concepts/loading-and-tags", "concepts/core-categories", "concepts/memory", "concepts/customizing"],
+        },
+        { type: "doc", id: "getting-started/first-task", label: "How agents load context" },
+        "limits",
+      ],
     },
     {
       type: "category",
       label: "Using the CLI",
       link: { type: "doc", id: "cli/index" },
-      items: ["cli/flows", { type: "link", label: "Command reference", href: "/guides/cli" }],
+      items: ["cli/flows"],
     },
     {
       type: "category",
@@ -51,12 +69,9 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Demos",
-      link: { type: "doc", id: "demos/index" },
-      items: ["demos/greenfield", "demos/brownfield"],
+      label: "Reference",
+      items: ["glossary", { type: "link", label: "Command reference", href: "/guides/cli" }],
     },
-    "glossary",
-    "limits",
   ],
 };
 

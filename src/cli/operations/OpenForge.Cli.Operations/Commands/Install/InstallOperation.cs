@@ -44,7 +44,7 @@ internal sealed class InstallOperation(
                         ? InstallManagementState.Incomplete : InstallManagementState.Blocked;
                     return InitialResult(request, state, boundary.Code, boundary.Cause);
                 }
-                request = request with { Configuration = setup.Configuration, Frontmatter = setup.Frontmatter };
+                request = request with { Configuration = setup.Configuration, Frontmatter = setup.Frontmatter, SetupRecap = setup.Recap };
             }
             build = await _planBuilder.BuildAsync(request, cancellationToken)
                 .ConfigureAwait(false);
@@ -235,7 +235,8 @@ internal sealed class InstallOperation(
             input: new InstallBindingInput(
                 Force: plan.Request.Force,
                 Automatic: plan.Request.Automatic,
-                Mode: InstallMode.DryRun, Setup: plan.Request.Setup, Configuration: plan.Request.Configuration),
+                Mode: InstallMode.DryRun, Setup: plan.Request.Setup, Configuration: plan.Request.Configuration)
+            { RetryOptions = plan.Request.RetryOptions, SetupRecap = plan.Request.SetupRecap, ResolvedFrontmatter = plan.Request.Frontmatter?.Form },
             findings: [],
             summary: Summary(
                 plan.ManagementState,

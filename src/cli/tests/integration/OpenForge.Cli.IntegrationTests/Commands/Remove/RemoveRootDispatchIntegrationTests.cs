@@ -16,6 +16,41 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Remove;
 
 public sealed class RemoveRootDispatchIntegrationTests
 {
+    [Theory(DisplayName = "Root path Route and Library previews retain their existing next-action policy with an explicit workspace")]
+    [InlineData("path", "old team's note.txt"), InlineData("route", "guide/article"), InlineData("library", "team-knowledge")]
+    [Trait("Boundary", "Host"), Trait("Feature", "remove-root"), Trait("Evidence", "Integration")]
+    public async Task SuccessfulPreviewsKeepNextActionPolicy(string kind, string target)
+    {
+        using var workspace = SeedRoutedWorkspace("remove preview's workspace");
+        workspace.WriteText("old team's note.txt", "Keep until applied.\n");
+        workspace.CreateDirectory("shared/team-knowledge/.agents");
+        File.WriteAllBytes(workspace.Combine(".agents/open-forge.lock.json"), WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with
+        {
+            Libraries = [new("team-knowledge", "shared/team-knowledge", ".", [])],
+        }));
+        var before = workspace.SnapshotHashes();
+        foreach (var format in new[] { "text", "json" })
+        {
+            using var output = new StringWriter();
+            using var error = new StringWriter();
+            var completion = await workspace.RunAsync(["remove", target, "--kind", kind, "--workspace", workspace.Path,
+                "--dry-run", "--detail", "standard", "--format", format], output, error);
+            Assert.Equal(0, completion.ExitCode);
+            Assert.Equal(string.Empty, error.ToString());
+            if (format == "json")
+            {
+                using var report = JsonDocument.Parse(output.ToString());
+                Assert.Equal("remove", report.RootElement.GetProperty("command").GetString());
+                Assert.Equal(JsonValueKind.Null, report.RootElement.GetProperty("next").ValueKind);
+            }
+            else
+            {
+                Assert.DoesNotContain("Next:", output.ToString(), StringComparison.Ordinal);
+            }
+            Assert.Equal(before, workspace.SnapshotHashes());
+        }
+    }
+
     [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Root Remove is one direct root binding with the exact public syntax")]
     [Trait("Feature", "remove-root"), Trait("Evidence", "Integration")]
@@ -40,7 +75,7 @@ public sealed class RemoveRootDispatchIntegrationTests
         Assert.Equal(string.Empty, error.ToString());
         Assert.Contains("open-forge remove <target>", output.ToString(), StringComparison.Ordinal);
         Assert.Contains("--kind", output.ToString(), StringComparison.Ordinal);
-        Assert.Contains("--allow-path path", output.ToString(), StringComparison.Ordinal);
+        Assert.Contains("--allow-path <allow-path>", output.ToString(), StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Host")]
@@ -156,7 +191,7 @@ public sealed class RemoveRootDispatchIntegrationTests
         {
             Assert.Equal("remove", report.RootElement.GetProperty("command").GetString());
             Assert.Equal("remove.entry-point-requires-route", report.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
-            Assert.Contains("\".agents/guide\" --kind route", report.RootElement.GetProperty("next").GetProperty("command").GetString(), StringComparison.Ordinal);
+            Assert.Contains(".agents/guide --kind route", report.RootElement.GetProperty("next").GetProperty("command").GetString(), StringComparison.Ordinal);
         }
 
         output.GetStringBuilder().Clear();

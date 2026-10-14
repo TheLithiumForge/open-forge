@@ -1,4 +1,4 @@
-Repaired 1 link. 1 problem still needs a choice or a hand.
+Repaired 1 link. 1 problem needs an edit.
   Warning  .agents/directives/review.md  Library diagnosis remains
          The registered Library projection is not current.
   .agents/directives/review.md  restored from recovery

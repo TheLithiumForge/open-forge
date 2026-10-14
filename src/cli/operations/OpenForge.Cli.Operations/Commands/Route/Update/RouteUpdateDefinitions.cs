@@ -23,7 +23,7 @@ internal static class RouteUpdateDefinitions
 
     internal static readonly CliSyntaxDefinition UpdateCommand = new(
         RouteUpdateCommandName,
-        "Update selected metadata or eligible Template body content on one routed source.");
+        "Change selected metadata or add Template content to an eligible empty body.");
 
     internal static readonly CliSyntaxDefinition SourceReference = new(
         SourceReferenceValueName,
@@ -38,7 +38,7 @@ internal static class RouteUpdateDefinitions
 
     internal static readonly CliOptionDefinition<string[]> Tag = new(
         "--tag",
-        "Replace the ordered tag list; repeat for additional tags.",
+        "Replace the ordered tag list. Repeat for additional tags.",
         CliOptionArity.ExactlyOne,
         [],
         TagValueName);

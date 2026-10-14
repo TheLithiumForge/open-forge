@@ -123,7 +123,7 @@ public sealed class F02NativeSkillJourneyTests
         Assert.Contains("team-notes", listed.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
             "Organize a team's notes into clear decisions and follow-up work.",
-            listed.StandardOutput,
+            string.Join(" ", listed.StandardOutput.Split(Environment.NewLine).Select(line => line.Trim())),
             StringComparison.Ordinal);
         Assert.DoesNotContain(NativeReferencePath, listed.StandardOutput, StringComparison.Ordinal);
         Assert.DoesNotContain(NativeAssetPath, listed.StandardOutput, StringComparison.Ordinal);

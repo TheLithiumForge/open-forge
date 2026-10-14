@@ -83,7 +83,7 @@ internal static class IndexRecoveryLifecycle
         }
 
         var candidates = catalogue.Candidates
-            .Where(candidate => RecoveryBundleIdentity.Matches(candidate, prepared.Preparation))
+            .Where(candidate => RecoveryBundleIdentity.Matches(candidate, prepared.Preparation ?? throw new InvalidOperationException()))
             .ToArray();
         if (candidates.Length != 1)
         {
@@ -127,7 +127,7 @@ internal static class IndexRecoveryLifecycle
         => new(
             recovery: new IndexRecovery(
                 IndexRecoveryState.Retained,
-                prepared.Preparation.BundlePath),
+                prepared.Preparation?.BundlePath),
             findingCode: findingCode);
 
     private static IndexDeletionMapping Unknown(
@@ -136,7 +136,7 @@ internal static class IndexRecoveryLifecycle
         => new(
             recovery: new IndexRecovery(
                 IndexRecoveryState.Unknown,
-                prepared.Preparation.BundlePath),
+                prepared.Preparation?.BundlePath),
             findingCode: findingCode);
 
     private static ArgumentOutOfRangeException InvalidCatalogueState(

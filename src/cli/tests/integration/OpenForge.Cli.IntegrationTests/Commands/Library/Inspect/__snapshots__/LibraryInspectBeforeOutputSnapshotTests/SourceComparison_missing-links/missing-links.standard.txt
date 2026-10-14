@@ -4,4 +4,4 @@ Workspace: <workspace>
          .agents/directives/review.md  missing
   .agents/directives/review.md  missing
   Preview the synchronization before changing files.
-Next: open-forge library sync team-knowledge --dry-run
+Next: open-forge library sync team-knowledge --dry-run --workspace <workspace>

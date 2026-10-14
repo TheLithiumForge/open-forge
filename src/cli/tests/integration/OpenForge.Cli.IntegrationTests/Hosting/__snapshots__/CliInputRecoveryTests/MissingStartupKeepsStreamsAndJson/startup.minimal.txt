@@ -1,0 +1,4 @@
+Startup context is unavailable in <workspace>.
+This folder has no .agents/loader.md.
+Choose your project with --workspace, or preview an installation here.
+Next: open-forge install --workspace <workspace> --dry-run

@@ -133,7 +133,7 @@ public sealed class LibraryRepairRecoveryIntegrationTests
             case "record-create":
             case "link-create": Assert.Null(new FileInfo(workspace.TargetPath).LinkTarget); Assert.False(File.Exists(workspace.TargetPath)); break;
             case "link-delete":
-                Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md", new FileInfo(workspace.TargetPath).LinkTarget);
+                Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.TargetPath).LinkTarget);
                 break;
             default: Assert.Equal(workspace.PriorText, File.ReadAllText(workspace.TargetPath)); break;
         }

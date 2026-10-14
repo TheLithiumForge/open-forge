@@ -1,44 +1,31 @@
-Description:
-
 Usage:
-  inspect
-
-Syntax:
-  open-forge extension inspect <stable-id> [--source <package-or-catalogue-path>] [global options]
-
-Subject and source:
-  Supply one exact lowercase stable ID. Available package details come from the bundled catalogue,
-  or only from the separate local package or catalogue named by --source. There is no fallback,
-  network, registry, cache, or approximate ID matching.
-
-Inspection:
-  Inspect reports ownership, available package, dependency, path, current-byte, generated-boundary,
-  and current-versus-intended comparison facts. It never writes, mutates, executes package content,
-  or invokes another command.
-
-Global options:
-  --workspace <path>, --format <text|json>, --detail <minimal|standard|full|debug>, --detail-filter
-  <error|warning|info|all>, --help, and --version apply to this command. --detail selects detail in
-  text and JSON.
+  open-forge extension inspect <stable-id> [options]
 
 Examples:
-  open-forge extension inspect development-toolkit
-  open-forge extension inspect development-toolkit --source ./packages/toolkit --format json
+  open-forge extension inspect planning
+  open-forge extension inspect planning --format json
 
-Results and streams:
-  Text completed, completed-with-warnings, and incomplete results use stdout; invalid-input,
-  blocked, failed, and cancelled results use stderr.
-  JSON writes one minified schema-version-3 envelope to stdout for every semantic status. Debug
-  diagnostics use bounded stderr.
-  completed: exit 0 and text stdout.
-  failed: exit 1 and text stderr.
-  completed-with-warnings: exit 2 and text stdout.
-  incomplete: exit 3 and text stdout.
-  invalid-input: exit 4 and text stderr.
-  blocked: exit 5 and text stderr.
-  cancelled: exit 130 and text stderr.
+Behavior:
+  Supply one exact Extension ID. Use the bundled catalogue unless --source names a local source.
+  Compare the available package with its recorded installation and current files.
+  This command changes no files and asks no questions.
 
-Fingerprint boundary:
-  open-forge-markdown-v1 uses strict UTF-8, LF-only normalization, heading-bounded Entries
-  exclusion, and exact-byte fallback. Current and intended hashes describe this comparison; no
-  stored baseline is read.
+Details:
+  Source and comparison: IDs are lowercase and exact. A local package or catalogue must be disjoint.
+  There is no fallback, network, registry, cache, or approximate matching. Inspection reports
+  ownership, dependencies, paths, current bytes, generated boundaries, and current-versus-intended
+  differences. It does not execute package content or invoke another command.
+  Fingerprints: open-forge-markdown-v1 uses strict UTF-8, LF-only normalization, heading-bounded
+  Entries exclusion, and exact-byte fallback. Current and intended hashes describe this comparison.
+  No stored baseline is read.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4 invalid input, 5
+  blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  extension list            List installed and available packages.
+  extension install --help  Install an Extension package.
+  extension update --help   Update managed Extension files.

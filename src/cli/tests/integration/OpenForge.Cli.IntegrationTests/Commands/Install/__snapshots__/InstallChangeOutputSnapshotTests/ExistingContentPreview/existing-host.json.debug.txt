@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Would install the Open Forge Framework into <workspace>.",
+    "headline": "Would install the Open Forge Framework.",
     "kind": "preview"
   },
   "findings": [],

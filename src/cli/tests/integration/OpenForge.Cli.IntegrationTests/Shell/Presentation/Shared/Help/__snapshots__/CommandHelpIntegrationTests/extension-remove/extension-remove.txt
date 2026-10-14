@@ -1,0 +1,49 @@
+  Remove selected Extension ownership and eligible files while keeping shared
+  paths.
+
+Usage:
+  open-forge extension remove [<stable-id>...] [options]
+
+Examples:
+  open-forge extension remove planning --dry-run
+  open-forge extension remove planning
+  open-forge extension remove planning --automatic
+
+Behavior:
+  Select installed Extension IDs or use the interactive picker.
+  A dependency stays while a retained package needs it. Shared paths stay.
+  --dry-run shows the checked plan and writes nothing.
+  An interactive writing plan asks for confirmation unless --automatic is
+  supplied.
+  Redirected or JSON requests that would write need --automatic. Retained
+  recovery data supports review after an interruption.
+
+Arguments:
+  <stable-id>  Select one exact managed Extension ID.
+
+Options:
+  --automatic          Disable prompts. Does not select packages or permit extra
+                       deletion.
+  --dry-run            Preview the complete removal without writing files.
+  --allow-path <path>  Permit writing to this workspace-relative path, recording
+                       it in .agents/open-forge.json.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Ownership and permissions: Removing the last owner deletes eligible existing
+  files, including edited files. A recovery bundle saves their bytes before
+  deletion and remains after success. --allow-path records permission for an
+  exact destination outside .agents. The target is verified before writing.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  extension list --installed  List installed packages.
+  extension inspect --help    Compare a package with its installation.
+  remove --help               Choose one exact removal target.

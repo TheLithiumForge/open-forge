@@ -589,6 +589,8 @@ identity mechanics live in the [Mutation And Recovery Technical
 Design](../../../technical-designs/mutation-and-recovery.md). This contract does
 not change them.
 
+Shared scaffold composition supplies canonical missing entrypoints and intended membership. Route Create retains its draft metadata, source selection, exclusions, no-follow and expected-state policies. It does not invoke Route Init or Index.
+
 ## Related Current Sources
 
 - [route create Command Contract Set](_create.md)

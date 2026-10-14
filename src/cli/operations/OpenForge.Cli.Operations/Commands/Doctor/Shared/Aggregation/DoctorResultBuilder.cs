@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Maintenance;
 using OpenForge.Cli.Core.Framework.OperationalContributors;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
@@ -32,7 +33,7 @@ internal static class DoctorResultBuilder
                 observation.LibraryResiduals),
             RecoveryResidualDoctorInspector.Inspect(observation.RecoveryResiduals),
             RouteDoctorInspector.Inspect(observation.Routes),
-            LocalReferenceDoctorInspector.Inspect(observation.LocalReferences),
+            LocalReferenceDoctorInspector.Inspect(observation.LocalReferences, observation.Maintenance),
             FrameworkLifecycleDoctorInspector.Inspect(
                 observation.FrameworkLifecycle,
                 observation.RecoveryResiduals,
@@ -44,6 +45,7 @@ internal static class DoctorResultBuilder
                     .ToHashSet(StringComparer.Ordinal)),
             ExtensionLifecycleDoctorInspector.Inspect(observation.ExtensionLifecycle),
         };
+        domains = DoctorMaintenanceGuidance.Apply(domains, observation);
         var coverage = domains.Max(domain => domain.Coverage);
         var status = DoctorResultPolicy.ReadStatus(coverage, domains);
         return new DoctorResult
@@ -71,18 +73,21 @@ internal static class DoctorResultBuilder
         var coverage = status == CliSemanticStatus.Blocked
             ? DoctorCoverageState.Blocked
             : DoctorCoverageState.Incomplete;
-        var firstFindings = kind is { } findingKind
-            ? new[]
-            {
+        DoctorFinding[] firstFindings = [];
+        if (kind is { } findingKind)
+        {
+            var observedState = status == CliSemanticStatus.Blocked
+                ? DoctorObservedState.Blocked
+                : DoctorObservedState.Incomplete;
+            firstFindings =
+            [
                 DoctorDomainSupport.Create(
                     DoctorDomainSupport.Error(findingKind, cause),
                     DoctorDomainSupport.Subject(DoctorSubjectKind.Workspace, workspace?.LexicalRoot),
                     DoctorDomainSupport.Provenance(DoctorDomainKind.WorkspaceEntry, DoctorProvenanceSource.WorkspaceEntry, workspace?.LexicalRoot),
-                    [new DoctorStateEvidence(status == CliSemanticStatus.Blocked
-                        ? DoctorObservedState.Blocked
-                        : DoctorObservedState.Incomplete)]),
-            }
-            : [];
+                    [new DoctorStateEvidence(observedState)]),
+            ];
+        }
         var domains = Enum.GetValues<DoctorDomainKind>()
             .Select((domain, index) => EventDomain(domain, coverage, cause, index == 0 ? firstFindings : []))
             .ToArray();

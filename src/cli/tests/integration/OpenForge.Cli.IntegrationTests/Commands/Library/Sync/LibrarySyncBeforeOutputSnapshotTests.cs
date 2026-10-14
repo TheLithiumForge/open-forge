@@ -93,6 +93,7 @@ public sealed class LibrarySyncBeforeOutputSnapshotTests
         }
         artifacts.OwnRecovery(result.Result.Application.Recovery);
         Assert.Equal((CliSemanticStatus)status, result.Status);
+        Assert.All(result.Result.Plan.Links, link => Assert.DoesNotContain('\\', link.RelativeTarget));
         if (situation is "links-added" or "registered-link-gone" or "write-failed-partial") Assert.NotNull(new FileInfo(workspace.Absolute(target)).LinkTarget);
         else if (situation == "links-removed") Assert.Null(new FileInfo(workspace.Absolute(target)).LinkTarget);
         else if (situation == "both")

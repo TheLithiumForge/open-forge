@@ -35,14 +35,22 @@
     "problemsNeedingChoice": 0,
     "problemsNeedingHand": 0,
     "librarySteps": 0,
-    "errors": 1
+    "errors": 1,
+    "entriesUpdated": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0
   },
   "limitations": [],
   "data": {
     "mode": "apply",
     "selection": "prompt",
     "repairs": [],
-    "remaining": []
+    "remaining": [],
+    "renames": [],
+    "navigation": [],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,

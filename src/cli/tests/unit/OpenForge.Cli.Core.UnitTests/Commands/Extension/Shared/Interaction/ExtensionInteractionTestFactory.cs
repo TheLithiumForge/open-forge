@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Extension.Create.Shared.Prompts;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Interaction;
@@ -25,7 +26,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Extension.Shared.Interaction;
 
 internal static class ExtensionInteractionTestFactory
 {
-    internal static ExtensionCreateInteraction ForCreate(CliPrompts prompts)
+    internal static ExtensionCreateInteraction ForCreate(CliPrompts prompts, CliTerminalWrite write)
     {
         ArgumentNullException.ThrowIfNull(prompts);
         return new ExtensionCreateInteraction
@@ -34,7 +35,8 @@ internal static class ExtensionInteractionTestFactory
             ExtensionIdLabel = ExtensionCreateWording.ExtensionId(),
             ExtensionIdRule = ExtensionCreateWording.ExtensionIdRule(),
             InvalidExtensionId = ExtensionCreateWording.InvalidExtensionId,
-            PackageFolderLabel = ExtensionCreateWording.PackageFolder(),
+            PackageFolderText = new ExtensionCreateFolderPrompt(prompts, write).AskAsync,
+            PackageFolderLabel = ExtensionCreateWording.PackageFolder,
             PackageFolderRule = ExtensionCreateWording.PackageFolderRule(),
             InvalidPackageFolder = ExtensionCreateWording.InvalidPackageFolder(),
             ConfirmationQuestion = new CliConfirmQuestion(ExtensionCreateWording.ConfirmCreate()),

@@ -68,7 +68,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge library inspect team-knowledge",
+    "command": "open-forge library inspect team-knowledge --workspace <workspace>",
     "reason": "Inspect the Library before changing it."
   }
 }

@@ -29,7 +29,7 @@ internal static class RouteListWording
     internal static string InvalidSourceReference(string operand)
         => global::OpenForge.Cli.OutputText.Route.List.RouteListWording.InvalidSourceReference(operand);
 
-    internal static string InvalidDepth() => global::OpenForge.Cli.OutputText.Route.List.RouteListText.MessageDepthMustBeAWholeNumberOrAll();
+    internal static string InvalidDepth(string value) => global::OpenForge.Cli.OutputText.Route.List.RouteListText.InvalidDepth(value);
 
     internal static string LoaderSubject()
         => global::OpenForge.Cli.OutputText.Route.List.RouteListText.MessageTheLoaderIsTheRootOfEveryRouteRunRouteListWithoutAnOperand();

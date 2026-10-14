@@ -293,6 +293,9 @@ internal sealed record RepairVerification
 
     internal IReadOnlyList<RepairEffectVerification> Effects { get; }
 
+    internal IReadOnlyList<OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files.FileChangeReceipt> FileReceipts { get; init; } = [];
+    internal IReadOnlyDictionary<string, RepairVerificationState> FileStates { get; init; } = new Dictionary<string, RepairVerificationState>(StringComparer.Ordinal);
+
     internal RepairVerificationState Targets { get; }
 
     internal RepairVerificationState ResultingBytes { get; }
@@ -450,6 +453,9 @@ internal sealed record RepairPostDiagnosis
     internal RepairDiagnosisCoverage Coverage { get; }
 
     internal IReadOnlyList<RepairFinding> Findings { get; }
+
+    internal bool NeedsIndex { get; init; }
+    internal IReadOnlyList<RepairProposal> Proposals { get; init; } = [];
 
     internal static RepairPostDiagnosis NotRequested { get; } = new(
         RepairPostDiagnosisState.NotRequested,

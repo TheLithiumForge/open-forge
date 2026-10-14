@@ -116,7 +116,7 @@
         "kind": "relative-file-link",
         "length": null,
         "sha256": null,
-        "rawRelativeTarget": "../../shared/team-knowledge/.agents/directives/review.md"
+        "rawRelativeTarget": "..\\..\\shared\\team-knowledge\\.agents\\directives\\review.md"
       },
       {
         "path": ".agents/open-forge.lock.json",

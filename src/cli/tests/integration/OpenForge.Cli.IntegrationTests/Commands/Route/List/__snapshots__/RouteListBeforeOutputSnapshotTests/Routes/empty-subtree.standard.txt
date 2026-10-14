@@ -1,3 +1,4 @@
 Workspace: <workspace>
   docs/reference  Reference
-                  .agents/docs/reference.md   #Docs
+    .agents/docs/reference.md
+    #Docs

@@ -1,9 +1,11 @@
 Choose packages
 - remove   * also removed
 
-  1. [ ] app        Application tools   needed by: runtime
+  1. [ ] app        Application tools
+    Needed by runtime.
   2. [ ] runtime    Runtime tools
   3. [ ] installed  Installed
+    An existing package
 
 Choose numbers separated by spaces, "all", or press Enter to cancel:
 Removing app also removes runtime.

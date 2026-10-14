@@ -78,13 +78,13 @@ public sealed class ContextApplicationIntegrationTests
         Assert.Equal(0, leaf.ExitCode);
         Assert.Equal(string.Empty, leaf.Error);
         Assert.Contains("open-forge context", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("[source-reference...]", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("[<source-reference>...]", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("--additions-only", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("--content ", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("--follow-links ", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("Examples", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", leaf.Output, StringComparison.Ordinal);
-        Assert.Contains("Context preserves authored source bytes", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("Automation", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("without changing authored bytes", leaf.Output, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

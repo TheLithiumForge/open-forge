@@ -73,7 +73,7 @@ public sealed class FindPresentationTests
 
         Assert.Equal(CliOutputTarget.StandardError, output.PrimaryTarget);
         Assert.Contains("Cannot search:", output.PrimaryContent, StringComparison.Ordinal);
-        Assert.DoesNotContain("Next:", output.PrimaryContent, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge find --help", output.PrimaryContent, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Output")]
@@ -125,24 +125,7 @@ public sealed class FindPresentationTests
     public void HelpUsesNativeFindSections()
     {
         var help = FindPresentation.CreateHelp();
-
-        Assert.Equal(
-            [
-                "Syntax",
-                "Source references",
-                "Predicates and regions",
-                "Content and views",
-                "Inherited global options",
-                "Results and streams",
-                "Examples",
-                "Related commands",
-                "Notes",
-            ],
-            help.Sections.Select(section => section.Heading));
-        var results = Assert.Single(help.Sections, section => section.Heading == "Results and streams").Body;
-        Assert.Contains("completed-with-warnings", results, StringComparison.Ordinal);
-        Assert.Contains("130", results, StringComparison.Ordinal);
-        Assert.Contains("stderr", results, StringComparison.OrdinalIgnoreCase);
+        OpenForge.Cli.Core.UnitTests.Shell.Presentation.Shared.Help.CliHelpAssertions.PublicTemplate(help, "open-forge find [options]");
     }
 
     private static CliRenderedOutput Render(

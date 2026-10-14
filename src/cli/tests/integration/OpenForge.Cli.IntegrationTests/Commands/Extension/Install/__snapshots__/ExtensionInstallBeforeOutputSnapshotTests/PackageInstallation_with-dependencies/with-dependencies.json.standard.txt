@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Installed the toolkit Extension and 1 packages it requires: base.",
+    "headline": "Installed the toolkit Extension and 1 package it requires: base.",
     "kind": "done"
   },
   "findings": [],

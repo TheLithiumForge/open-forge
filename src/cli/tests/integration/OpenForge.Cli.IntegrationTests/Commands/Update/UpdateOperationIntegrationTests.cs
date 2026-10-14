@@ -40,7 +40,8 @@ public sealed class UpdateOperationIntegrationTests
         var expected = mixed
             ? "Apply these changes, including replacing 1 existing file and deleting 1 file? [y/N]"
             : "Apply these changes, including replacing 1 existing file? [y/N]";
-        Assert.EndsWith(expected + Environment.NewLine, terminal.Output.ToString(), StringComparison.Ordinal);
+        var words = string.Join(" ", terminal.Output.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(line => line.Trim()));
+        Assert.EndsWith(expected, words, StringComparison.Ordinal);
         Assert.Contains("would be replaced (your previous file would be kept in a recovery bundle)", terminal.Output.ToString(), StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
         Assert.False(workspace.RecoveryDirectoryExists());
@@ -316,7 +317,7 @@ public sealed class UpdateOperationIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Theory(DisplayName = "Update offers repository or recovery-bundle review after verified retention"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
+    [Theory(DisplayName = "Update offers bundle review after verified retention with or without Git"), Trait("Feature", "update"), Trait("Evidence", "Integration")]
     [InlineData(true)]
     [InlineData(false)]
     public async Task VerifiedRetentionOffersRepositoryOrRecoveryBundleReview(bool hasGitDirectory)
@@ -336,22 +337,11 @@ public sealed class UpdateOperationIntegrationTests
         Assert.Equal(UpdateRecoveryState.Retained, result.Recovery.State);
         var bundlePath = Assert.IsType<string>(result.Recovery.ResidualPath);
         var next = Assert.IsType<CliNextAction>(result.Next);
-        if (hasGitDirectory)
-        {
-            Assert.Equal("git diff", next.Command);
-            Assert.Equal(
-                $"Review the changes with git diff. Previous content remains in {bundlePath}.",
-                next.Reason);
-            Assert.Equal(CliNextActionKind.Command, next.Kind);
-        }
-        else
-        {
-            Assert.Equal(
-                $"Review previous content in the recovery bundle at {bundlePath}.",
-                next.Command);
-            Assert.Equal("Previous content remains available for review.", next.Reason);
-            Assert.Equal(CliNextActionKind.Sentence, next.Kind);
-        }
+        Assert.Equal(
+            $"Review previous content in the recovery bundle at {bundlePath}.",
+            next.Command);
+        Assert.Equal("Previous content remains available for review.", next.Reason);
+        Assert.Equal(CliNextActionKind.Sentence, next.Kind);
     }
 
     [Trait("Boundary", "OS")]

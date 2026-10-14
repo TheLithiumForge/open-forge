@@ -17,15 +17,15 @@ internal static class ExtensionRemoveDefinitions
 
     internal static readonly CliSyntaxDefinition RemoveCommand = new(
         name: "remove",
-        description: "Release selected managed Extension ownership and remove only eligible content.");
+        description: "Remove selected Extension ownership and eligible files while keeping shared paths.");
 
     internal static readonly CliSyntaxDefinition StableId = new(
         name: "stable-id",
-        description: "Select one exact managed Extension stable ID.");
+        description: "Select one exact managed Extension ID.");
 
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         name: "--automatic",
-        description: "Disable prompts; does not select packages or permit extra deletion.",
+        description: "Disable prompts. Does not select packages or permit extra deletion.",
         arity: CliOptionArity.None,
         defaultValue: false);
 

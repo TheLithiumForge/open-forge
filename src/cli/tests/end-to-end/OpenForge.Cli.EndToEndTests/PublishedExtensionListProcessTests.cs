@@ -30,7 +30,7 @@ public sealed class PublishedExtensionListProcessTests
         Assert.Contains("--installed", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("--available", leaf.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("--source", leaf.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", leaf.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Automation", leaf.StandardOutput, StringComparison.Ordinal);
     }
 
     [Fact(DisplayName = "Published Extension List reports trusted Installed and embedded Available facts without writes"), Trait("Feature", "extension-list"), Trait("Evidence", "EndToEnd")]

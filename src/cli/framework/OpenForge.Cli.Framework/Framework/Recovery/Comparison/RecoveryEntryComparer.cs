@@ -78,18 +78,24 @@ internal static class RecoveryEntryComparer
         RecoveryEntryState observed,
         RecoveryEntry entry)
     {
-        if (observed == entry.Prior)
+        if (SameState(observed, entry.Prior))
         {
             return RecoveryBundleTargetComparisonState.Prior;
         }
 
-        if (observed == entry.Intended)
+        if (SameState(observed, entry.Intended))
         {
             return RecoveryBundleTargetComparisonState.Intended;
         }
 
         return RecoveryBundleTargetComparisonState.Third;
     }
+
+    private static bool SameState(RecoveryEntryState observed, RecoveryEntryState expected)
+        => observed == expected
+            || (observed.RelativeFileLink is { } actual && expected.RelativeFileLink is { } link
+                && actual.LinkKind == link.LinkKind
+                && Framework.Filesystem.PhysicalPaths.Shared.Links.RelativeFileLinkTarget.SameMapping(actual.RawRelativeTarget, link.RawRelativeTarget));
 
     private static RecoveryEntryComparison Classified(
         RecoveryEntryComparisonInput input,

@@ -23,7 +23,7 @@ internal static class RouteCreateDefinitions
 
     internal static readonly CliSyntaxDefinition CreateCommand = new(
         RouteCreateCommandName,
-        "Create one ordinary routed Markdown file below an existing parent.");
+        "Create one routed Markdown file below an existing root route.");
 
     internal static readonly CliSyntaxDefinition FileTarget = new(
         FileTargetValueName,
@@ -38,7 +38,7 @@ internal static class RouteCreateDefinitions
 
     internal static readonly CliOptionDefinition<string[]> Tag = new(
         "--tag",
-        "Add one ordered destination tag; repeat for additional tags.",
+        "Add one ordered destination tag. Repeat for additional tags.",
         CliOptionArity.ExactlyOne,
         [],
         TagValueName);
@@ -277,8 +277,8 @@ internal static class RouteCreateDefinitions
             && Contains(findings, RouteCreateFindingCode.OptionalMetadata))
         {
             return new CliNextAction(
-                CommandLines.RouteUpdate,
-                "Add an optional description or tag with Route Update when useful.");
+                "open-forge route update --help",
+                "Add a description or tags when useful. See open-forge route update --help.");
         }
 
         return status switch

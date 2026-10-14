@@ -1,489 +1,144 @@
-using System.Security.Cryptography;
-using System.Text;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
-using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
+[Trait("Feature", "nested-scope-journey"), Trait("Evidence", "EndToEnd"), Trait("Journey", "F05")]
 public sealed class F05NestedScopeJourneyTests
 {
-    private const string TargetId = "guidance/team/new-topic/notes";
-    private const string RootEntrypointPath = ".agents/guidance/_guidance.md";
-    private const string TeamDirectoryPath = ".agents/guidance/team";
-    private const string TeamEntrypointPath = ".agents/guidance/team/_team.md";
-    private const string NewTopicDirectoryPath = ".agents/guidance/team/new-topic";
-    private const string NewTopicEntrypointPath = ".agents/guidance/team/new-topic/_new-topic.md";
-    private const string LeafPath = ".agents/guidance/team/new-topic/notes.md";
-    private const string PatternsEntrypointPath = ".agents/patterns/_patterns.md";
-    private const string ReadmePath = "README.md";
-    private const string ReadmeText = "# Outside\n\nThis authored README must survive the journey.\n";
-    private const string AuthoredRootGuidance =
-        "---\n"
-        + "open-forge:\n"
-        + "  description: Guidance\n"
-        + "  tags: [Guidance]\n"
-        + "---\n"
-        + "# Guidance\n\n"
-        + "This authored root guidance must survive route creation.\n\n"
-        + "## Entries\n\n"
-        + "- none - No entries - #Empty\n";
+    private const string Id = "guidance/team/new-topic/notes";
+    private const string Leaf = ".agents/guidance/team/new-topic/notes.md";
+    private const string Team = ".agents/guidance/team/_team.md";
+    private const string Topic = ".agents/guidance/team/new-topic/_new-topic.md";
+    private const string Body = "# Team notes\n\nKeep this authored body exactly.\n";
+    private const string Patterns = ".agents/patterns/_patterns.md";
+    private const string Readme = "# Outside\n\nThis authored README must survive route creation.\n";
+    private const string ParentPrefix = "# Guidance\n\nKeep this authored parent prefix.\n\n## Axioms\n\n- Preserve team rules.\n\n## Entries\n\n";
+    private const string ParentSuffix = "\n## Maintainer notes\n\nKeep this authored suffix, including café 👩‍💻.\n";
 
-    private static readonly string[] CreatedRouteFiles =
-    [
-        TeamEntrypointPath,
-        NewTopicEntrypointPath,
-        LeafPath,
-    ];
-
-    [Fact(
-        DisplayName = "F05 creates, refines, inspects, contextualizes, and repeats a nested scope")]
-    [Trait("Feature", "nested-scope-journey")]
-    [Trait("Evidence", "EndToEnd")]
-    [Trait("Journey", "F05")]
-    public async Task CreateRefineInspectContextAndRepeatNoOp()
+    [Fact(DisplayName = "F05 indexes a manually nested note then deliberately refines its tags")]
+    [Trait("Scenarios", "X34,C05-14,C15-02,C02-14")]
+    public async Task ManualScope()
     {
-        using var workspace = PublishedJourneyWorkspace.Create("f05-nested-scope");
-        workspace.ExpectCoreInstall();
-        workspace.ExpectFiles([ReadmePath, .. CreatedRouteFiles]);
-
-        var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
-        AssertSuccessfulHuman(installed);
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-
-        workspace.WriteText(ReadmePath, ReadmeText);
-        Assert.True(File.Exists(workspace.Combine(RootEntrypointPath)));
-        Assert.False(Directory.Exists(workspace.Combine(TeamDirectoryPath)));
-        Assert.False(File.Exists(workspace.Combine(TeamEntrypointPath)));
-        Assert.False(Directory.Exists(workspace.Combine(NewTopicDirectoryPath)));
-        Assert.False(File.Exists(workspace.Combine(NewTopicEntrypointPath)));
-        Assert.False(File.Exists(workspace.Combine(LeafPath)));
-
-        workspace.WriteText(RootEntrypointPath, AuthoredRootGuidance);
-        var authoredRootBytes = File.ReadAllBytes(workspace.Combine(RootEntrypointPath));
-        Assert.Equal(Encoding.UTF8.GetBytes(AuthoredRootGuidance), authoredRootBytes);
-
-        var beforeCreate = workspace.SnapshotState();
-        var create = await workspace.RunAsync(
-            "route",
-            "create",
-            TargetId,
-            "--description",
-            "Team topic notes",
-            "--tag=Guidance");
-
-        AssertSuccessfulHuman(create);
-        AssertRouteTopology(workspace);
-        AssertEntriesOutsideRegionPreserved(
-            authoredRootBytes,
-            File.ReadAllBytes(workspace.Combine(RootEntrypointPath)));
-        PublishedJourneyAssertions.AssertOnlyFileMutations(
-            beforeCreate,
-            workspace.SnapshotState(),
-            AllowedCreateChanges.ToArray());
-
-        var createdLeaf = File.ReadAllText(workspace.Combine(LeafPath), Encoding.UTF8);
-        Assert.Contains("description: Team topic notes", createdLeaf, StringComparison.Ordinal);
-        Assert.Contains("tags: [Guidance]", createdLeaf, StringComparison.Ordinal);
-        Assert.DoesNotContain("tags: [Guidance, Team]", createdLeaf, StringComparison.Ordinal);
-        AssertNoSuppliedIntermediateMetadata(workspace, TeamEntrypointPath);
-        AssertNoSuppliedIntermediateMetadata(workspace, NewTopicEntrypointPath);
-        Assert.Equal(ReadmeText, File.ReadAllText(workspace.Combine(ReadmePath), Encoding.UTF8));
-
-        var createdLeafBody = ReadBody(createdLeaf);
-        var update = await workspace.RunAsync(
-            "route",
-            "update",
-            TargetId,
-            "--tag=Guidance",
-            "--tag=Team");
-
-        AssertSuccessfulHuman(update);
-        var updatedLeaf = File.ReadAllText(workspace.Combine(LeafPath), Encoding.UTF8);
-        Assert.Contains("tags: [Guidance, Team]", updatedLeaf, StringComparison.Ordinal);
-        Assert.DoesNotContain("tags: [Team, Guidance]", updatedLeaf, StringComparison.Ordinal);
-        Assert.Equal(createdLeafBody, ReadBody(updatedLeaf));
-
-        var inspect = await workspace.RunAsync("route", "inspect", TargetId);
-        AssertSuccessfulHuman(inspect);
-        Assert.Contains(
-            "guidance/team/new-topic/notes",
-            Normalize(inspect.StandardOutput),
-            StringComparison.OrdinalIgnoreCase);
-        Assert.Contains(
-            "guidance/team",
-            Normalize(inspect.StandardOutput),
-            StringComparison.OrdinalIgnoreCase);
-
-        var context = await workspace.RunAsync("context", TargetId);
-        AssertSuccessfulHuman(context);
-        Assert.Contains(
-            "guidance/team/new-topic",
-            Normalize(context.StandardOutput),
-            StringComparison.OrdinalIgnoreCase);
-        Assert.Contains(
-            "notes",
-            Normalize(context.StandardOutput),
-            StringComparison.OrdinalIgnoreCase);
-
-        var beforeNoOp = SnapshotWithLock(workspace, workspace.Path);
-        var noOp = await PublishedJourneyProcess.RunWithoutWritesAsync(
-            workspace.Target,
-            workspace.Path,
-            () => SnapshotWithLock(workspace, workspace.Path),
-            [
-                "route",
-                "update",
-                TargetId,
-                "--tag=Guidance",
-                "--tag=Team",
-            ],
-            workspace.ProcessEnvironment);
-
-        Assert.Equal(0, noOp.ExitCode);
-        Assert.Equal(string.Empty, noOp.StandardError);
-        Assert.NotEmpty(noOp.StandardOutput);
-        Assert.Equal(beforeNoOp, SnapshotWithLock(workspace, workspace.Path));
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-        workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
-
-        PublishedJourneyAssertions.AssertOnlyFileMutations(
-            beforeCreate,
-            workspace.SnapshotState(),
-            AllowedCreateChanges.ToArray());
-        Assert.Equal(ReadmeText, File.ReadAllText(workspace.Combine(ReadmePath), Encoding.UTF8));
-        Assert.Equal(
-            beforeCreate[PatternsEntrypointPath],
-            workspace.SnapshotState()[PatternsEntrypointPath]);
+        using var journey = await PublishedMaintenanceJourney.CreateAsync("f05-manual");
+        journey.Expect(Team, Topic);
+        journey.Write(Leaf, Body);
+        var preview = await journey.TextAsync(0, true, "index", "--dry-run");
+        AssertScopeText(preview.StandardOutput, true);
+        using (var json = await journey.JsonAsync(0, true, "index", "--dry-run"))
+        {
+            Assert.Equal(2, json.RootElement.GetProperty("counts").GetProperty("entrypointsCreated").GetInt32());
+            Assert.Equal(1, json.RootElement.GetProperty("counts").GetProperty("metadataCompleted").GetInt32());
+            Assert.Equal([Team, Topic], json.RootElement.GetProperty("data").GetProperty("entrypoints").EnumerateArray().Select(row => row.GetProperty("path").GetString()).Order(StringComparer.Ordinal));
+        }
+        var applied = await journey.TextAsync(0, false, "index");
+        AssertScopeText(applied.StandardOutput, false);
+        journey.AssertBytes(Leaf, journey.Document("Team notes", ["Guidance"], Body));
+        journey.AssertBytes(Team, journey.Scaffold("guidance/team", "Team", ["Guidance"], "- [Notes in guidance/team/new-topic](new-topic/_new-topic.md) - #Guidance"));
+        journey.AssertBytes(Topic, journey.Scaffold("guidance/team/new-topic", "New topic", ["Guidance"], "- [Team notes](notes.md) - #Guidance"));
+        await journey.TextAsync(0, false, "route", "update", Id, "--tag", "Guidance", "--tag", "Team");
+        journey.AssertBytes(Leaf, journey.Document("Team notes", ["Guidance", "Team"], Body));
+        var inspect = await journey.TextAsync(0, true, "route", "inspect", Id);
+        Assert.Contains(Id, inspect.StandardOutput, StringComparison.Ordinal);
+        var context = await journey.TextAsync(0, true, "context", Id);
+        Assert.Contains(Body, context.StandardOutput, StringComparison.Ordinal);
+        await journey.NoOpAsync("index");
+        await journey.CleanDoctorAsync();
     }
 
-    [Fact(
-        DisplayName = "F05 labels explicit Route Init as a separate nested-scope recovery")]
-    [Trait("Feature", "nested-scope-journey")]
-    [Trait("Evidence", "EndToEnd")]
-    [Trait("Journey", "F05")]
-    public async Task ExplicitInitRecoveryCreatesTheSameNestedLeaf()
+    [Theory(DisplayName = "F05 retains explicit Route Create and Init alternatives")]
+    [InlineData(false), InlineData(true)]
+    [Trait("Scenarios", "C14-09,C13-01,C15-02,C15-06")]
+    public async Task ExplicitCreation(bool initialize)
     {
-        using var workspace = PublishedJourneyWorkspace.Create("f05-init-recovery");
-        workspace.ExpectCoreInstall();
-        workspace.ExpectFiles(CreatedRouteFiles);
-
-        var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
-        AssertSuccessfulHuman(installed);
-
-        var init = await workspace.RunAsync(
-            "route",
-            "init",
-            "guidance/team/new-topic");
-        AssertSuccessfulHuman(init);
-
-        var create = await workspace.RunAsync(
-            "route",
-            "create",
-            TargetId,
-            "--description",
-            "Team topic notes",
-            "--tag=Guidance");
-        AssertSuccessfulHuman(create);
-
-        AssertRouteTopology(workspace);
-        Assert.Contains(
-            "description: Team topic notes",
-            File.ReadAllText(workspace.Combine(LeafPath), Encoding.UTF8),
-            StringComparison.Ordinal);
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-        workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
+        using var journey = await PublishedMaintenanceJourney.CreateAsync("f05-cli");
+        journey.Expect(Team, Topic, Leaf);
+        journey.Write("README.md", Readme);
+        var patterns = journey.Document("Patterns", ["Pattern"], $"# Patterns\n\n## Axioms\n\n{PublishedMaintenanceJourney.Inherited}\n\n## Entries\n\n- none - No entries - #Empty\n");
+        journey.Write(Patterns, patterns);
+        journey.Write(".agents/loader.md", "# Open Forge Loader\n\n## Axioms\n\n- Preserve authored content.\n\n## Entries\n\n"
+            + "- [Guidance](guidance/_guidance.md) - #Guidance\n- [Memory](memory/_memory.md) - #Memory\n- [Patterns](patterns/_patterns.md) - #Pattern\n");
+        journey.Write(PublishedMaintenanceJourney.Guidance, journey.Document("Guidance", ["Guidance"], ParentPrefix + "- none - No entries - #Empty\n" + ParentSuffix));
+        var before = PublishedWorkspaceTreeSnapshot.Capture(journey.Path);
+        string[] allowedChanges = [PublishedMaintenanceJourney.Guidance, ".agents/guidance/team", Team, ".agents/guidance/team/new-topic", Topic, Leaf];
+        if (initialize) await journey.TextAsync(0, false, "route", "init", "guidance/team/new-topic");
+        using (var preview = await journey.JsonAsync(0, true, "route", "create", Id, "--description", "Team topic notes", "--tag", "Guidance", "--dry-run"))
+        {
+            Assert.Equal("completed", preview.RootElement.GetProperty("status").GetString());
+            Assert.Equal("dry-run", preview.RootElement.GetProperty("data").GetProperty("mode").GetString());
+            Assert.Equal(Leaf, preview.RootElement.GetProperty("data").GetProperty("target").GetProperty("path").GetString());
+            Assert.Equal(Topic, preview.RootElement.GetProperty("data").GetProperty("listedIn").GetString());
+        }
+        var create = await journey.TextAsync(0, false, "route", "create", Id, "--description", "Team topic notes", "--tag", "Guidance");
+        Assert.Contains($"Created {Leaf}", create.StandardOutput, StringComparison.Ordinal);
+        AssertExplicitBytes(journey, initialize, ["Guidance"]);
+        PublishedJourneyAssertions.AssertOnlyFileMutations(before, PublishedWorkspaceTreeSnapshot.Capture(journey.Path), allowedChanges);
+        await journey.TextAsync(0, false, "route", "update", Id, "--tag", "Guidance", "--tag", "Team");
+        AssertExplicitBytes(journey, initialize, ["Guidance", "Team"]);
+        var repeat = await journey.TextAsync(0, true, "route", "update", Id, "--tag", "Guidance", "--tag", "Team");
+        Assert.Contains($"{Id} already has these values. Nothing to do.", repeat.StandardOutput, StringComparison.Ordinal);
+        using (var repeated = await journey.JsonAsync(0, true, "route", "update", Id, "--tag", "Guidance", "--tag", "Team"))
+        {
+            Assert.Equal("completed", repeated.RootElement.GetProperty("status").GetString());
+            Assert.Empty(repeated.RootElement.GetProperty("effects").EnumerateArray());
+        }
+        journey.AssertBytes("README.md", Readme);
+        journey.AssertBytes(Patterns, patterns);
+        Assert.Equal(before[Patterns], PublishedWorkspaceTreeSnapshot.Capture(journey.Path)[Patterns]);
+        Assert.Equal(before["README.md"], PublishedWorkspaceTreeSnapshot.Capture(journey.Path)["README.md"]);
+        PublishedJourneyAssertions.AssertOnlyFileMutations(before, PublishedWorkspaceTreeSnapshot.Capture(journey.Path), allowedChanges);
+        await journey.TextAsync(0, false, "index");
+        await journey.TextAsync(0, true, "context", Id);
+        await journey.CleanDoctorAsync();
+        await journey.NoOpAsync("index");
     }
 
-    [Fact(
-        DisplayName = "F05 framework Route Init blocks without implicit installation")]
-    [Trait("Feature", "nested-scope-journey")]
-    [Trait("Evidence", "EndToEnd")]
-    [Trait("Journey", "F05")]
-    public async Task FrameworkInitWithoutInstallIsBlocked()
-    {
-        using var workspace = PublishedJourneyWorkspace.Create("f05-framework-without-install");
-        workspace.ExpectFiles(ReadmePath);
-        workspace.WriteText(ReadmePath, ReadmeText);
-        var before = workspace.SnapshotState();
-
-        var result = await PublishedJourneyProcess.RunWithoutWritesAsync(
-            workspace.Target,
-            workspace.Path,
-            workspace.SnapshotState,
-            [
-                "route",
-                "init",
-                "guidance/team",
-                "--framework",
-            ],
-            workspace.ProcessEnvironment);
-
-        Assert.Equal(5, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.NotEmpty(result.StandardError);
-        Assert.Contains("install", result.StandardError, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(before, workspace.SnapshotState());
-        Assert.False(Directory.Exists(workspace.Combine(".agents")));
-        workspace.LockStore.AssertNoInfrastructure();
-    }
-
-    [Fact(
-        DisplayName = "F05 rejects an unknown root without inventing a route")]
-    [Trait("Feature", "nested-scope-journey")]
-    [Trait("Evidence", "EndToEnd")]
-    [Trait("Journey", "F05")]
+    [Fact(DisplayName = "F05 refuses an unknown root without changing workspace or stores"), Trait("Scenarios", "C14-08")]
     public async Task UnknownRootCreateIsInvalidAndReadOnly()
     {
-        using var workspace = PublishedJourneyWorkspace.Create("f05-unknown-root");
-        workspace.ExpectCoreInstall();
-        workspace.ExpectFiles(ReadmePath);
-
-        var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(JourneyFrontmatterForm.Root, "--automatic"));
-        AssertSuccessfulHuman(installed);
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-        workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
-        workspace.WriteText(ReadmePath, ReadmeText);
-        Assert.True(File.Exists(workspace.Combine(RootEntrypointPath)));
-        Assert.True(Directory.Exists(workspace.Combine(".agents/guidance")));
-
-        var before = SnapshotAllOwnedState(workspace);
-
-        var result = await PublishedJourneyProcess.RunWithoutWritesAsync(
-            workspace.Target,
-            workspace.Path,
-            () => SnapshotAllOwnedState(workspace),
-            [
-                "route",
-                "create",
-                "nonsense/team/notes",
-                "--description",
-                "Team topic notes",
-                "--tag=Guidance",
-            ],
-            workspace.ProcessEnvironment);
-
-        Assert.Equal(4, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardOutput);
-        Assert.NotEmpty(result.StandardError);
-        Assert.Equal(before, SnapshotAllOwnedState(workspace));
-        Assert.True(Directory.Exists(workspace.Combine(".agents/guidance")));
-        Assert.False(Directory.Exists(workspace.Combine(".agents/nonsense")));
-        workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
-        workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);
+        using var journey = await PublishedMaintenanceJourney.CreateAsync("f05-unknown-root");
+        journey.Write("README.md", Readme);
+        var result = await journey.TextAsync(4, true, "route", "create", "nonsense/team/notes", "--description", "Team topic notes", "--tag", "Guidance");
+        Assert.DoesNotContain("route init", result.StandardError, StringComparison.Ordinal);
+        Assert.False(Directory.Exists(journey.Combine(".agents/nonsense")));
+        journey.AssertBytes("README.md", Readme);
+        await journey.CleanDoctorAsync();
+        await journey.NoOpAsync("index");
     }
 
-    private static IReadOnlySet<string> AllowedCreateChanges { get; } =
-        new HashSet<string>(
-        [
-            RootEntrypointPath,
-            TeamDirectoryPath,
-            TeamEntrypointPath,
-            NewTopicDirectoryPath,
-            NewTopicEntrypointPath,
-            LeafPath,
-        ],
-        StringComparer.Ordinal);
-
-    private static void AssertSuccessfulHuman(ProcessRunResult result)
+    private static void AssertExplicitBytes(PublishedMaintenanceJourney journey, bool initialized, string[] tags)
     {
-        Assert.Equal(0, result.ExitCode);
-        Assert.Equal(string.Empty, result.StandardError);
-        Assert.NotEmpty(result.StandardOutput);
-    }
-
-    private static void AssertRouteTopology(PublishedJourneyWorkspace workspace)
-    {
-        Assert.True(Directory.Exists(workspace.Combine(TeamDirectoryPath)));
-        Assert.True(File.Exists(workspace.Combine(TeamEntrypointPath)));
-        Assert.True(Directory.Exists(workspace.Combine(NewTopicDirectoryPath)));
-        Assert.True(File.Exists(workspace.Combine(NewTopicEntrypointPath)));
-        Assert.True(File.Exists(workspace.Combine(LeafPath)));
-
-        var root = Normalize(File.ReadAllText(workspace.Combine(RootEntrypointPath), Encoding.UTF8));
-        var team = Normalize(File.ReadAllText(workspace.Combine(TeamEntrypointPath), Encoding.UTF8));
-        var newTopic = Normalize(File.ReadAllText(workspace.Combine(NewTopicEntrypointPath), Encoding.UTF8));
-
-        Assert.Contains("team/_team.md", root, StringComparison.Ordinal);
-        Assert.Contains("new-topic/_new-topic.md", team, StringComparison.Ordinal);
-        Assert.Contains("notes.md", newTopic, StringComparison.Ordinal);
-        AssertExactGeneratedEntries(
-            root,
-            [RelativeEntryPath(RootEntrypointPath, TeamEntrypointPath)]);
-        AssertExactGeneratedEntries(
-            team,
-            [RelativeEntryPath(TeamEntrypointPath, NewTopicEntrypointPath)]);
-        AssertExactGeneratedEntries(
-            newTopic,
-            [RelativeEntryPath(NewTopicEntrypointPath, LeafPath)]);
-    }
-
-    private static void AssertEntriesOutsideRegionPreserved(byte[] before, byte[] after)
-    {
-        var beforeRegion = SplitEntriesRegion(before);
-        var afterRegion = SplitEntriesRegion(after);
-        Assert.Equal(beforeRegion.Prefix, afterRegion.Prefix);
-        Assert.Equal(beforeRegion.Suffix, afterRegion.Suffix);
-    }
-
-    private static ByteEntriesRegion SplitEntriesRegion(byte[] document)
-    {
-        var marker = Encoding.UTF8.GetBytes("## Entries");
-        var markerStart = document.AsSpan().IndexOf(marker);
-        Assert.True(markerStart >= 0, "The route document has no Entries heading.");
-        var bodyStart = markerStart + marker.Length;
-        var nextHeadingMarker = Encoding.UTF8.GetBytes("\n## ");
-        var nextHeadingOffset = document.AsSpan(bodyStart).IndexOf(nextHeadingMarker);
-        return nextHeadingOffset < 0
-            ? new ByteEntriesRegion(
-                document[..bodyStart],
-                document[bodyStart..],
-                Array.Empty<byte>())
-            : new ByteEntriesRegion(
-                document[..bodyStart],
-                document[bodyStart..(bodyStart + nextHeadingOffset)],
-                document[(bodyStart + nextHeadingOffset)..]);
-    }
-
-    private static void AssertExactGeneratedEntries(
-        string document,
-        IReadOnlyList<string> expectedPaths)
-    {
-        var region = SplitEntriesRegion(document);
-        var lines = region.Body
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var actualPaths = new List<string>(lines.Length);
-        foreach (var line in lines)
+        string teamDescription = "guidance/team";
+        string topicDescription = "guidance/team/new-topic";
+        string categoryTags = "";
+        if (initialized)
         {
-            Assert.StartsWith("- [", line, StringComparison.Ordinal);
-            var linkStart = line.IndexOf("](", StringComparison.Ordinal);
-            Assert.True(linkStart >= 0, $"Generated Entries row has no Markdown link: {line}");
-            var linkEnd = line.IndexOf(')', linkStart + 2);
-            Assert.True(linkEnd > linkStart + 2, $"Generated Entries row has no link target: {line}");
-            actualPaths.Add(line[(linkStart + 2)..linkEnd]);
+            teamDescription = "Draft route for guidance/team; replace this description before relying on it for selection";
+            topicDescription = "Draft route for guidance/team/new-topic; replace this description before relying on it for selection";
+            categoryTags = " - #NeedsAuthoring";
         }
-
-        Assert.Equal(expectedPaths, actualPaths);
-    }
-
-    private static string RelativeEntryPath(string parentEntrypointPath, string childPath)
-    {
-        var parentDirectory = Path.GetDirectoryName(parentEntrypointPath)
-            ?? throw new InvalidOperationException("The authored route fixture parent has no directory.");
-        return Path.GetRelativePath(parentDirectory, childPath).Replace('\\', '/');
-    }
-
-    private static EntriesRegion SplitEntriesRegion(string document)
-    {
-        var marker = "## Entries";
-        var markerStart = document.IndexOf(marker, StringComparison.Ordinal);
-        Assert.True(markerStart >= 0, "The route document has no Entries heading.");
-        var bodyStart = markerStart + marker.Length;
-        var nextHeading = document.IndexOf("\n## ", bodyStart, StringComparison.Ordinal);
-        return nextHeading < 0
-            ? new EntriesRegion(document[..bodyStart], document[bodyStart..], string.Empty)
-            : new EntriesRegion(
-                document[..bodyStart],
-                document[bodyStart..nextHeading],
-                document[nextHeading..]);
-    }
-
-    private static void AssertNoSuppliedIntermediateMetadata(
-        PublishedJourneyWorkspace workspace,
-        string relativePath)
-    {
-        var frontMatter = ExtractFrontMatter(
-            File.ReadAllText(workspace.Combine(relativePath), Encoding.UTF8));
-        Assert.DoesNotContain("description:", frontMatter, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("tags:", frontMatter, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static IReadOnlyDictionary<string, string> SnapshotWithLock(
-        PublishedJourneyWorkspace workspace,
-        string workspacePath)
-    {
-        var state = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        foreach (var pair in workspace.SnapshotState())
+        journey.AssertBytes(PublishedMaintenanceJourney.Guidance,
+            journey.Document("Guidance", ["Guidance"], ParentPrefix + $"- [{teamDescription}](team/_team.md){categoryTags}\n" + ParentSuffix));
+        var teamBody = $"# guidance/team\n\n## Axioms\n\n{PublishedMaintenanceJourney.Inherited}\n\n## Entries\n\n- [{topicDescription}](new-topic/_new-topic.md){categoryTags}\n";
+        var topicBody = $"# guidance/team/new-topic\n\n## Axioms\n\n{PublishedMaintenanceJourney.Inherited}\n\n## Entries\n\n- [Team topic notes](notes.md) - {string.Join(" ", tags.Select(tag => "#" + tag))}\n";
+        if (initialized)
         {
-            state[pair.Key] = pair.Value;
+            teamBody = journey.Document(teamDescription, ["NeedsAuthoring"], teamBody.Replace("# guidance/team\n\n", $"# team\n\n{teamDescription}.\n\n", StringComparison.Ordinal));
+            topicBody = journey.Document(topicDescription, ["NeedsAuthoring"], topicBody.Replace("# guidance/team/new-topic\n\n", $"# new-topic\n\n{topicDescription}.\n\n", StringComparison.Ordinal));
         }
-
-        var lockPath = workspace.LockStore.Track(workspacePath);
-        state[$"external-lock:{workspacePath}"] = PathState(lockPath);
-        return state;
-    }
-
-    private static IReadOnlyDictionary<string, string> SnapshotExternalStore(
-        PublishedJourneyWorkspace workspace)
-    {
-        var root = workspace.LockStore.LocalApplicationDataDirectory;
-        return Directory.Exists(root)
-            ? PublishedWorkspaceTreeSnapshot.Capture(root)
-            : new Dictionary<string, string>(StringComparer.Ordinal);
-    }
-
-    private static IReadOnlyDictionary<string, string> SnapshotAllOwnedState(
-        PublishedJourneyWorkspace workspace)
-    {
-        var state = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        foreach (var pair in workspace.SnapshotState())
+        else
         {
-            state[$"workspace/{pair.Key}"] = pair.Value;
+            teamBody = "---\nopen-forge: {}\n---\n\n" + teamBody;
+            topicBody = "---\nopen-forge: {}\n---\n\n" + topicBody;
         }
-
-        foreach (var pair in SnapshotExternalStore(workspace))
-        {
-            state[$"external/{pair.Key}"] = pair.Value;
-        }
-
-        return state;
+        journey.AssertBytes(Team, teamBody);
+        journey.AssertBytes(Topic, topicBody);
+        journey.AssertBytes(Leaf, PublishedMaintenanceJourney.Header(journey.Form, "Team topic notes", tags).TrimEnd('\n') + "\n");
     }
 
-    private static string PathState(string path)
+    private static void AssertScopeText(string text, bool preview)
     {
-        if (!File.Exists(path))
-        {
-            return "absent";
-        }
-
-        var info = new FileInfo(path);
-        return string.Join(
-            ";",
-            $"length={info.Length}",
-            $"creationUtcTicks={info.CreationTimeUtc.Ticks}",
-            $"lastWriteUtcTicks={info.LastWriteTimeUtc.Ticks}",
-            $"sha256={Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)))}");
+        Assert.Contains(preview ? "Would create 2 entrypoints and complete metadata in 1 file." : "Created 2 entrypoints and completed metadata in 1 file.", text, StringComparison.Ordinal);
+        Assert.Contains(preview ? "entrypoint would be created" : "entrypoint created", text, StringComparison.Ordinal);
     }
-
-    private static string ReadBody(string document)
-    {
-        var normalized = document.Replace("\r\n", "\n", StringComparison.Ordinal);
-        var first = normalized.IndexOf("---\n", StringComparison.Ordinal);
-        if (first < 0)
-        {
-            return normalized;
-        }
-
-        var second = normalized.IndexOf("\n---\n", first + 4, StringComparison.Ordinal);
-        return second < 0 ? normalized : normalized[(second + 5)..];
-    }
-
-    private static string ExtractFrontMatter(string document)
-    {
-        var normalized = document.Replace("\r\n", "\n", StringComparison.Ordinal);
-        var first = normalized.IndexOf("---\n", StringComparison.Ordinal);
-        if (first < 0)
-        {
-            return string.Empty;
-        }
-
-        var second = normalized.IndexOf("\n---\n", first + 4, StringComparison.Ordinal);
-        return second < 0 ? string.Empty : normalized[(first + 4)..second];
-    }
-
-    private static string Normalize(string value)
-        => value.Replace('\\', '/');
-
-    private sealed record EntriesRegion(string Prefix, string Body, string Suffix);
-    private sealed record ByteEntriesRegion(byte[] Prefix, byte[] Body, byte[] Suffix);
 }

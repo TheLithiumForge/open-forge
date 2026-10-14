@@ -9,6 +9,11 @@ internal static class RouteRemoveWording
 {
     internal static string PersistenceSettings(RouteRemoveSettingsRemoval settings)
     {
+        if (settings.Outcome == RouteRemovePersistenceOutcome.Planned)
+        {
+            return global::OpenForge.Cli.OutputText.Route.Remove.RouteRemovePhrases.PlannedRemoval(settings.Path,
+                !settings.Categories.IsEmpty || !settings.Directories.IsEmpty);
+        }
         var targets = settings.Categories.Select(category => $"category .agents/{category}")
             .Concat(settings.Files.Select(path => $"file {path}"))
             .Concat(settings.Directories.Select(path => $"directory {path}"));

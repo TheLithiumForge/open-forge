@@ -19,11 +19,11 @@ internal static class ReferencesDefinitions
 
     internal static readonly CliSyntaxDefinition ReferencesCommand = new(
         CommandIdentity,
-        "Show direct incoming and outgoing references.");
+        "Show direct authored links into and out of one source.");
 
     internal static readonly CliSyntaxDefinition Source = new(
         "source-reference",
-        "Select one source ID or exact .agents/... path.");
+        "Select one source ID or exact .agents/... Path.");
 
     internal static readonly CliOptionDefinition<string?> Direction = new(
         "--direction",

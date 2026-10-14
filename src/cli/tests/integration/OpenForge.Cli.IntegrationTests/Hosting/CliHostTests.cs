@@ -26,11 +26,11 @@ public sealed class CliHostTests
             TestContext.Current.CancellationToken);
 
         Assert.Equal(0, exitCode);
-        Assert.Contains("Inspect and maintain an Open Forge workspace.", standardOutput.ToString(), StringComparison.Ordinal);
-        Assert.Contains("Getting started:", standardOutput.ToString(), StringComparison.Ordinal);
-        Assert.Contains("route list", standardOutput.ToString(), StringComparison.Ordinal);
-        Assert.Contains("open-forge route --help", standardOutput.ToString(), StringComparison.Ordinal);
-        Assert.Contains("remove <target>", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Open Forge installs and maintains your project's agent rules and context.", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Get started in your project folder:", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Read and discover:", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Use open-forge <command> --help", standardOutput.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Set up and manage:", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("--format", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("--detail", standardOutput.ToString(), StringComparison.Ordinal);
         Assert.Contains("--detail-filter", standardOutput.ToString(), StringComparison.Ordinal);

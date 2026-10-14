@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "invalid-input",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot install: Each route must name a built-in ID and add, remove, or git-ignore.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "install.invalid-input",
+      "title": "Invalid input",
+      "message": "Cannot install: Each route must name a built-in ID and add, remove, or git-ignore.",
+      "subject": {
+        "kind": "workspace",
+        "path": null,
+        "id": "<workspace>",
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge install --help",
+          "reason": "Correct the named Install input, then rerun the request."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "sectionsAdded": 0,
+    "filesReplaced": 0,
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "force": false,
+    "automatic": false,
+    "classification": null,
+    "footprint": null,
+    "lockPath": ".agents/open-forge.lock.json"
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge install --help",
+    "reason": "Correct the named Install input, then rerun the request."
+  }
+}

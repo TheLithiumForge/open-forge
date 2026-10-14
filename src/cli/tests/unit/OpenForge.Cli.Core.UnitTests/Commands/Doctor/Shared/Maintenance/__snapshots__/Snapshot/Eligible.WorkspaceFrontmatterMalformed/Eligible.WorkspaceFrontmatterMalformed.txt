@@ -1,0 +1,3 @@
+.agents/guidance/note.md has invalid frontmatter.
+ManualDecision
+Fix the frontmatter in .agents/guidance/note.md, then run open-forge index --workspace <workspace>.

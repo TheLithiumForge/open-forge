@@ -7,4 +7,4 @@ Workspace: <workspace>
   links missing: .agents/open-forge.lock.json could not be read.
   links changed: .agents/open-forge.lock.json could not be read.
   links unavailable: .agents/open-forge.lock.json could not be read.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

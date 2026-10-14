@@ -10,13 +10,14 @@ using OpenForge.Cli.Core.Framework.Recovery.Models.Preparation;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
+using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
 
 internal sealed class RouteInitProspectiveTopologyPlanner
 {
-    private readonly GeneratedNavigationFormationBuilder _formationBuilder = new();
+    private readonly RouteScaffoldSourceBuilder _sourceBuilder = new();
     private readonly GeneratedNavigationProjector _projector = new();
 
     internal RouteInitProspectiveTopology Build(
@@ -45,12 +46,9 @@ internal sealed class RouteInitProspectiveTopologyPlanner
         var added = proposed
             .Where(source => !observedByPath.ContainsKey(source.Identity.CanonicalBasePath))
             .ToArray();
-        var intended = current.ObservedSources
-            .Concat(added)
-            .ToArray();
         return new RouteInitProspectiveTopology(
             current,
-            _formationBuilder.Build(current.Catalogue, intended),
+            _sourceBuilder.Add(current.Catalogue, proposed),
             added);
     }
 

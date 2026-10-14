@@ -97,6 +97,10 @@ internal static class LibraryInspectReportSelector
 
     private static CliHeadline Headline(LibraryInspectResult result)
     {
+        if (result.LinkRecreation is { } recreation)
+        {
+            return new(global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Headline(recreation.Id), CliHeadlineKind.Warnings);
+        }
         var finding = result.Result.Findings.FirstOrDefault(finding => finding.Status == result.Status)
             ?? result.Result.Findings.FirstOrDefault();
         var id = result.Result.Record.Id ?? finding?.LibraryId ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheSuppliedId();
@@ -148,7 +152,9 @@ internal static class LibraryInspectReportSelector
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = code,
-            Title = LibraryInspectWording.FindingTitle(finding.Code),
+            Title = finding.UnreadableOnWindows
+                ? global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Title()
+                : LibraryInspectWording.FindingTitle(finding.Code),
             Message = Message(result, finding),
             Subject = new CliSubject(SubjectKind(finding.Code), finding.Path, finding.LibraryId ?? finding.Path ?? global::OpenForge.Cli.OutputText.Library.Inspect.LibraryInspectText.LabelLibraryInspect()),
         };
@@ -164,7 +170,13 @@ internal static class LibraryInspectReportSelector
         _ => CliSubjectKind.File,
     };
 
-    private static string Message(LibraryInspectResult result, LibraryInspectFinding finding) => finding.Code switch
+    private static string Message(LibraryInspectResult result, LibraryInspectFinding finding) => finding switch
+    {
+        { UnreadableOnWindows: true } => global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Unreadable(finding.Path ?? finding.LibraryId ?? ""),
+        _ => FindingMessage(result, finding),
+    };
+
+    private static string FindingMessage(LibraryInspectResult result, LibraryInspectFinding finding) => finding.Code switch
     {
         LibraryInspectFindingCode.InvalidId => LibraryInspectWording.InvalidId(finding.LibraryId),
         LibraryInspectFindingCode.UnknownId => LibraryInspectWording.UnknownId(finding.LibraryId ?? global::OpenForge.Cli.OutputText.Library.Shared.LibrarySharedText.LabelTheSuppliedId()),
@@ -201,6 +213,12 @@ internal static class LibraryInspectReportSelector
 
     private static CliNextAction? Next(LibraryInspectResult result)
     {
+        if (result.LinkRecreation is { } recreation)
+        {
+            return Presentation.Shared.Wording.LibraryLinkRecreationWording.Next(
+                workspace: recreation.Workspace, id: recreation.Id, sourceRoot: recreation.SourceRoot,
+                destinationRoot: recreation.DestinationRoot, gitIgnore: recreation.GitIgnore);
+        }
         var first = result.Result.Findings.FirstOrDefault();
         if (first is null)
         {

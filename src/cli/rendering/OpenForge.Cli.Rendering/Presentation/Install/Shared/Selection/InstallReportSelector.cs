@@ -15,6 +15,13 @@ namespace OpenForge.Cli.Core.Presentation.Install.Shared.Selection;
 
 internal static class InstallReportSelector
 {
+    internal static string InvalidOptionMessage(InstallInvalidOption option) => option.Kind switch
+    {
+        InstallOptionKind.Preset => global::OpenForge.Cli.OutputText.Install.InstallInputText.InvalidPreset(option.Value),
+        InstallOptionKind.Frontmatter => global::OpenForge.Cli.OutputText.Install.InstallInputText.InvalidFrontmatter(option.Value),
+        _ => throw new ArgumentOutOfRangeException(nameof(option), option.Kind, "The Install option is not defined."),
+    };
+
     private const string AgentsRootPath = ".agents";
 
     internal static CliReport<InstallData> Select(InstallResult result, CliSelection selection)
@@ -65,6 +72,8 @@ internal static class InstallReportSelector
         var kept = result.Frontmatter?.Kept.Select(file => new InstallDataFrontmatterKeptFile(file.Path, KeptReason(file.Reason))).ToArray() ?? [];
         var data = new InstallData
         {
+            InvalidRoute = result.Findings.Select(finding => finding.InvalidRoute).FirstOrDefault(value => value is not null),
+            InvalidOption = result.Findings.Select(finding => finding.InvalidOption).FirstOrDefault(value => value is not null),
             Frontmatter = result.Frontmatter is { } form ? new InstallDataFrontmatter
             {
                 Form = form.Form,
@@ -113,6 +122,14 @@ internal static class InstallReportSelector
                 : null,
             Migrations = migrations,
             TextRows = textRows,
+            TextSetupLines = InstallSetupRecapSelector.Select(result),
+            ShowFrontmatter = (result.Input.Setup?.Configure != true && result.Input.Configuration?.Configure != true) || result.Frontmatter?.Changed == true,
+            ShowFirstTask = !preview && result.Status == CliSemanticStatus.Complete
+                && result.Input.Setup?.Configure != true
+                && result.Input.Configuration?.Configure != true
+                && facts.Lifecycle.Outcome != InstallLifecycleOutcome.AlreadyCurrent
+                && facts.Verification.State == InstallResultVerificationState.Verified
+                && completedChanges > 0,
             TextSummaryLines = SelectTextSummaryLines(
                 effects,
                 facts.Migrations,
@@ -289,6 +306,7 @@ internal static class InstallReportSelector
     private static string Message(InstallResult result, InstallFinding finding, string path, InstallData data)
         => finding.Code switch
         {
+            InstallFindingCode.InvalidInput when finding.InvalidOption is { } option => InvalidOptionMessage(option),
             InstallFindingCode.InvalidInput => CliFindingWording.InvalidInput(global::OpenForge.Cli.OutputText.Install.InstallText.LabelInstall(), TrimSentence(finding.Cause)),
             InstallFindingCode.ConfirmationRequired => CliFindingWording.ConfirmationRequired(global::OpenForge.Cli.OutputText.Install.InstallText.TitleInstall()),
             InstallFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(path),
@@ -338,19 +356,19 @@ internal static class InstallReportSelector
         => code switch
         {
             InstallFindingCode.TargetOccupied => new CliNextAction(
-                InstallWording.NextOccupiedCommand(),
+                result.Next?.Command ?? throw new InvalidOperationException("An occupied target requires a preview command."),
                 InstallWording.NextOccupiedReason()),
             InstallFindingCode.ManagedDivergence => new CliNextAction(
                 InstallWording.NextDivergenceCommand(),
                 InstallWording.NextDivergenceReason()),
             InstallFindingCode.ConfirmationRequired => new CliNextAction(
-                InstallWording.NextConfirmationCommand(result.Force),
+                result.Next?.Command ?? throw new InvalidOperationException("A confirmation boundary requires a retry command."),
                 InstallWording.NextConfirmationReason()),
             InstallFindingCode.RecoveryArtifactRetained => new CliNextAction(
                 InstallWording.NextRecoveryCommand(),
                 InstallWording.NextRecoveryReason()),
             InstallFindingCode.Interrupted => new CliNextAction(
-                InstallWording.NextInterruptedCommand(),
+                result.Next?.Command ?? throw new InvalidOperationException("A cancelled request requires a retry command."),
                 InstallWording.NextInterruptedReason()),
             InstallFindingCode.InvalidInput => new CliNextAction(
                 InstallWording.NextHelpCommand(),
@@ -368,19 +386,19 @@ internal static class InstallReportSelector
                 InstallWording.NextRecoveryCommand(),
                 InstallWording.NextRecoveryReason()),
             CliSemanticStatus.Invalid when result.Findings.Any(finding => finding.Code == InstallFindingCode.ConfirmationRequired) => new CliNextAction(
-                InstallWording.NextConfirmationCommand(result.Force),
+                result.Next?.Command ?? throw new InvalidOperationException("A confirmation boundary requires a retry command."),
                 InstallWording.NextConfirmationReason()),
             CliSemanticStatus.Invalid => new CliNextAction(
                 InstallWording.NextHelpCommand(),
                 InstallWording.NextHelpReason()),
             CliSemanticStatus.Blocked when result.Findings.Any(finding => finding.Code == InstallFindingCode.TargetOccupied) => new CliNextAction(
-                InstallWording.NextOccupiedCommand(),
+                result.Next?.Command ?? throw new InvalidOperationException("An occupied target requires a preview command."),
                 InstallWording.NextOccupiedReason()),
             CliSemanticStatus.Blocked when result.Findings.Any(finding => finding.Code == InstallFindingCode.ManagedDivergence) => new CliNextAction(
                 InstallWording.NextDivergenceCommand(),
                 InstallWording.NextDivergenceReason()),
             CliSemanticStatus.Interrupted => new CliNextAction(
-                InstallWording.NextInterruptedCommand(),
+                result.Next?.Command ?? throw new InvalidOperationException("A cancelled request requires a retry command."),
                 InstallWording.NextInterruptedReason()),
             _ => new CliNextAction(InstallWording.NextDoctorCommand(), InstallWording.NextDoctorReason()),
         };

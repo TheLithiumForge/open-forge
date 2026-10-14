@@ -1,6 +1,16 @@
-Installed the Open Forge Framework into <workspace>.
+Installed the Open Forge Framework.
 Workspace: <workspace>
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
 Frontmatter: root
   AGENTS.md  Open Forge section added, your content was kept
   CLAUDE.md  created with an Open Forge section
-  Created 17 files and 13 directories under .agents (listed in .agents/open-forge.lock.json), and updated 1 existing file.
+  Created 17 files and 13 directories under .agents (listed in
+  .agents/open-forge.lock.json), and updated 1 existing file.
+If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md
+first.
+Next: review the new files with git status and git diff, commit them, then
+      give your agent a normal task.

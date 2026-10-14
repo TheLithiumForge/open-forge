@@ -1,6 +1,7 @@
 Workspace: <workspace>
   docs  Documents
-        .agents/docs/_docs.md   #Docs
+    .agents/docs/_docs.md
+    #Docs
   Parent: none
   Depth: absolute 0; relative 0
   Kind: entrypoint; direct children: 2

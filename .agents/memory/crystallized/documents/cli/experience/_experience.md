@@ -8,13 +8,13 @@ open-forge:
 
 ## Scope And Acceptance
 
-The maintainer requested a forgiving, helpful CLI on 2026-09-19 and delegated assessment and preservation of useful scenarios. This collection records that reviewed selection. The flow list and detailed target changes remain subject to maintainer validation before new tests are implemented.
+The maintainer requested a forgiving, helpful CLI on 2026-09-19 and delegated assessment and preservation of useful scenarios. This collection retains that reviewed selection. Task 79's F03, F05, F08 and F29 to F31 now describe implemented command behavior under accepted D1 to D4. Other proposed target changes still require validation before new tests.
 
 A selected scenario is an intended user outcome, not evidence that the CLI passes it. Current [command contracts](../contracts/_contracts.md) remain the source for the existing command interface and precise output. Where a target differs, the scenario marks it explicitly. This collection does not import the supplied pack's proposed contracts, message catalogue, or generated renderer.
 
 ## Experience Direction
 
-Continue useful work when its required inputs and intended effects are known. Missing optional frontmatter should allow indexing with a warning and preserved authored bytes. Prefer clear no-ops for already absent requested items. Keep unrelated damage from blocking independent work. Preserve ambiguous or user-changed content rather than guessing destructive actions. Report partial results honestly and explain the shortest useful next action.
+Continue useful work when its required inputs and intended effects are known. Task 79 D1 makes Index fill missing metadata while preserving bodies and supplied fields. D2 completes missing rooted chains, and D3 repairs uniquely proven manual renames or moves. Prefer clear no-ops for already absent requested items. Keep unrelated damage from blocking independent work. Preserve ambiguous or user-changed content rather than guessing destructive actions. Report partial results honestly and explain the shortest useful next action.
 
 Write expectations before observing a run. Check actual state independently of the output. Separate outcome, preservation, and communication verdicts; warning exit codes do not by themselves prove a failure.
 

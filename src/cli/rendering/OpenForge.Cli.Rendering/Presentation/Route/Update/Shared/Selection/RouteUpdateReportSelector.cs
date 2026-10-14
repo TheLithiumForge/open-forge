@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Presentation.Route.Shared.NextActions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Globalization;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Update.Models.Request;
@@ -40,7 +42,7 @@ internal static class RouteUpdateReportSelector
             ],
             Data = Data(result, selection.Detail),
             Recovery = Recovery(result),
-            Next = Next(result),
+            Next = RouteNextCommand.InWorkspace(Next(result), result.WorkspacePath, result.WorkspaceExplicit),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? Diagnostics(result)
                 : [],
@@ -306,7 +308,7 @@ internal static class RouteUpdateReportSelector
     private static CliFinding Finding(RouteUpdateResult result, RouteUpdateFinding finding)
     {
         var code = RouteUpdateWireVocabulary.Name(finding.Code);
-        var action = Action(result, finding);
+        var action = RouteNextCommand.InWorkspace(Action(result, finding), result.WorkspacePath, result.WorkspaceExplicit);
         return new CliFinding
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
@@ -440,7 +442,7 @@ internal static class RouteUpdateReportSelector
                 global::OpenForge.Cli.OutputText.Route.Update.RouteUpdateText.MessageChooseARoutedSourceThenRerunRouteUpdate()),
             RouteUpdateFindingCode.InvalidInput
                 or RouteUpdateFindingCode.InvalidPatch => new CliNextAction(
-                RouteUpdateCommand(result),
+                "open-forge route update --help",
                 RouteUpdateWording.CorrectInputReason()),
             RouteUpdateFindingCode.InvalidTemplate => new CliNextAction(
                 "open-forge find --tag Template",
@@ -456,11 +458,11 @@ internal static class RouteUpdateReportSelector
                 RouteUpdateWording.CleanupReason()),
             RouteUpdateFindingCode.WorkspaceLockUnavailable
                 or RouteUpdateFindingCode.TargetChanged => new CliNextAction(
-                "open-forge route update",
+                result.RequestCommand ?? "open-forge route update --help",
                 RouteUpdateWording.RetryReason()),
             RouteUpdateFindingCode.TemplateBodyProtected => null,
             RouteUpdateFindingCode.Interrupted => new CliNextAction(
-                "open-forge route update",
+                result.RequestCommand ?? "open-forge route update --help",
                 RouteUpdateWording.RerunReason()),
             _ => null,
         };
@@ -486,10 +488,10 @@ internal static class RouteUpdateReportSelector
                 : null,
             CliSemanticStatus.Incomplete => null,
             CliSemanticStatus.Failed => new CliNextAction(
-                RouteUpdateWireVocabulary.VerboseRouteUpdateCommand,
+                result.RequestCommand ?? "open-forge route update --help",
                 RouteUpdateWording.DebugReason()),
             CliSemanticStatus.Interrupted => new CliNextAction(
-                "open-forge route update",
+                result.RequestCommand ?? "open-forge route update --help",
                 RouteUpdateWording.RerunReason()),
             _ => null,
         };
@@ -578,11 +580,6 @@ internal static class RouteUpdateReportSelector
 
     private static bool HasFinding(RouteUpdateResult result, RouteUpdateFindingCode code)
         => result.Findings.Any(finding => finding.Code == code);
-
-    private static string RouteUpdateCommand(RouteUpdateResult result)
-        => result.Target.Requested is { Length: > 0 } target
-            ? $"open-forge route update {target} --description \"<one sentence>\""
-            : RouteUpdateWireVocabulary.RouteUpdateHelpCommand;
 
     private static string TrimSentence(string value) => value.Trim().TrimEnd('.');
 

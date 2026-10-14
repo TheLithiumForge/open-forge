@@ -1,0 +1,41 @@
+  Delete recognized completed recovery bundles and drafts for the selected
+  workspace.
+
+Usage:
+  open-forge cleanup [options]
+
+Examples:
+  open-forge cleanup --dry-run
+  open-forge cleanup
+
+Behavior:
+  The default deletes every recognized completed recovery bundle and draft in
+  the current catalogue.
+  --dry-run lists the same deletion plan and writes nothing.
+  Cleanup asks no questions or confirmation. Review a preview first.
+  Deletion removes that recovery data. Save anything you still need before
+  applying.
+
+Options:
+  --dry-run  Preview cleanup without locking the workspace or writing files.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Safety: Only completed recovery bundles and drafts with exact expected names
+  for the selected workspace are eligible. Unknown, malformed, unsupported,
+  unavailable, or unsafe items stay. Apply holds the workspace lock. Preview
+  takes no lock. Each run rechecks the catalogue and verifies every deletion. No
+  operands, selectors, force mode, age or glob filters, or arbitrary recursive
+  deletion are accepted.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  status --detail full  Check installation and context.
+  repair --help         Correct verified link and Library problems.

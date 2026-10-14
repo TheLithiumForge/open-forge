@@ -11,6 +11,7 @@ Choose what Open Forge sets up
   [+] memory/emerging      Findings not accepted yet
   [+] memory/crystallized  Accepted knowledge
   [-] memory/archived      Completed and historical records
-Open Forge does not add this route.
+Leave out: no directives folder is created. You can add it later with
+open-forge install --configure.
 
 up/down move   + ~ - set   space next   enter done   esc cancel

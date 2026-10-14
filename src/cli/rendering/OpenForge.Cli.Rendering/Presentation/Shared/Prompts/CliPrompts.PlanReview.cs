@@ -68,7 +68,8 @@ internal sealed partial class CliPrompts
         where TQuestion : notnull
     {
         var selected = CliReportSelection.Select(request.Preview, new CliSelection(CliDetail.Minimal), request.Rendering);
-        var document = CliTextRenderer.Render(selected, _style, request.Rendering.DataTextRenderer);
+        var width = _terminal.ReadSelectionViewport()?.Width ?? _terminal.Width;
+        var document = CliTextRenderer.Render(selected, _style.WithWidth(width), request.Rendering.DataTextRenderer);
         foreach (var span in document.Spans)
             await _terminal.WriteAsync((span.Authored ? span.Content : CliText.PlatformLineEndings(span.Content)).AsMemory(), cancellationToken).ConfigureAwait(false);
         await WriteFrameAsync("\n", cancellationToken).ConfigureAwait(false);

@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge extension update toolkit",
+          "command": "open-forge extension update toolkit --workspace <workspace>",
           "reason": "Update the owning Extension before rerunning Route Move."
         }
       ]
@@ -69,7 +69,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge extension update toolkit",
+    "command": "open-forge extension update toolkit --workspace <workspace>",
     "reason": "Update the owning Extension before rerunning Route Move."
   }
 }

@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge update --prune --dry-run",
+          "command": "open-forge update --prune --dry-run --workspace <workspace>",
           "reason": "Preview deleting the retained files before applying the prune."
         }
       ]
@@ -61,7 +61,7 @@
     "force": false,
     "prune": false,
     "automatic": true,
-    "previousContent": null,
+    "previousContent": "<recovery-bundle>",
     "lockPath": ".agents/open-forge.lock.json",
     "unchanged": [
       {
@@ -132,7 +132,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge update --prune --dry-run",
+    "command": "open-forge update --prune --dry-run --workspace <workspace>",
     "reason": "Preview deleting the retained files before applying the prune."
   }
 }

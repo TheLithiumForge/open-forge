@@ -12,7 +12,7 @@ internal static class CliSelectionText
 
     internal static int Width(string text) => Columns(CliText.Escape(text));
 
-    internal static IReadOnlyList<string> Wrap(string text, int width)
+    internal static IReadOnlyList<string> Wrap(string text, int width, bool splitLongTokens = false)
     {
         var lines = new List<string>();
         var line = new StringBuilder();
@@ -42,6 +42,12 @@ internal static class CliSelectionText
             {
                 line.Append(' ', spaces);
                 columns += spaces;
+            }
+            if (!splitLongTokens)
+            {
+                line.Append(word);
+                columns += wordColumns;
+                continue;
             }
             var elements = StringInfo.GetTextElementEnumerator(word);
             while (elements.MoveNext())

@@ -11,4 +11,14 @@ internal sealed class CliHelpContent
     }
 
     internal IReadOnlyList<CliHelpSection> Sections { get; }
+
+    internal string? Usage { get; init; }
+
+    internal IReadOnlyList<CliHelpSection> Introduction { get; init; } = [];
+
+    internal IReadOnlyList<CliHelpCommandGroup> CommandGroups { get; init; } = [];
+
+    internal bool SummarizeGlobalOptions { get; init; }
+
+    internal string? Footer { get; init; }
 }

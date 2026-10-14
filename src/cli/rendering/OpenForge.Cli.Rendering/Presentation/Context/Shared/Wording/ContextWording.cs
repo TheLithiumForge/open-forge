@@ -209,7 +209,7 @@ internal static class ContextWording
                     finding.Subject ?? finding.Reference ?? global::OpenForge.Cli.OutputText.Context.ContextText.LabelTheRequestedSource()),
             ContextFindingCode.InvalidSource => reason,
             ContextFindingCode.InvalidContent => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatContentIsNotAKnownPartUseMetadataPathsFrontmatterHeadingsBodyOrSectionName($"{finding.Subject ?? "value"}"),
-            ContextFindingCode.InvalidLinkDepth => global::OpenForge.Cli.OutputText.Context.ContextText.MessageFollowLinksMustBeAPositiveNumberOrAll(),
+            ContextFindingCode.InvalidLinkDepth => global::OpenForge.Cli.OutputText.Context.ContextText.InvalidFollowLinks(finding.Subject ?? ""),
             ContextFindingCode.InvalidWorkingPath => global::OpenForge.Cli.OutputText.Context.ContextText.MessageForMustHaveOneWorkspaceFilePath(),
             ContextFindingCode.ApplicabilityPending => global::OpenForge.Cli.OutputText.Context.ContextText.MessageApplyToCouldNotBeEvaluatedWithoutFor(),
             ContextFindingCode.ApplicabilityInvalid => global::OpenForge.Cli.OutputText.Context.ContextText.MessageApplyToInvalid(),

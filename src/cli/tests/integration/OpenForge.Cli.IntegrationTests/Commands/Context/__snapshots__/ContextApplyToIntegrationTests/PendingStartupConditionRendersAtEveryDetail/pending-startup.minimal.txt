@@ -23,8 +23,8 @@ open-forge:
 ## Entries
 
 - [C# style rules for every C# file](csharp.md) - #Directive #LoadNow - applies to `**/*.cs`
-  applyTo: Context is incomplete while applyTo conditions await one or more --for paths.
-  sources: The Context source closure could not be resolved completely.
-  tokens: The Context source closure could not be resolved completely.
-  bytes: The Context source closure could not be resolved completely.
-Next: open-forge context --for <path>
+Context counts are unavailable. The Context source closure could not be resolved
+completely.
+  applyTo: Context is incomplete while applyTo conditions await one or more
+  --for paths.
+Next: open-forge context --detail minimal --for <path>

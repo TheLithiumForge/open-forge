@@ -22,7 +22,7 @@ internal static class RepairRecoveryLifecycle
             RepairDefinitions.CommandIdentity,
             effects[0].RecoveryAttribution,
             operationId,
-            [.. effects.Select(effect => RecoveryBundleTarget.Create(
+            plan.Maintenance?.Effects.RecoveryTargets ?? [.. effects.Select(effect => RecoveryBundleTarget.Create(
                 effect.FileChange,
                 effect.ExpectedState))]);
         return await RecoveryBundleStore.PrepareAsync(input, cancellationToken).ConfigureAwait(false);

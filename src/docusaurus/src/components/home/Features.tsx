@@ -66,6 +66,9 @@ export default function Features(): ReactNode {
             </article>
           ))}
         </div>
+        <p className={styles.featureLinks}>
+          <Link to="/docs/extensions">Explore extensions</Link>
+        </p>
       </div>
     </section>
   );

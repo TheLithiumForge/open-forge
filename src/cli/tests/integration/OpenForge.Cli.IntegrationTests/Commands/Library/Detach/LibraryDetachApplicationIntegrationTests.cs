@@ -64,7 +64,7 @@ public sealed class LibraryDetachApplicationIntegrationTests
             }
             if (scenario == "changed-leaf")
             {
-                Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md",
+                Assert.Equal("../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar),
                     new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget);
                 File.Delete(workspace.Absolute(LibraryMutationWorkspace.Leaf));
                 using var replacement = new FileStream(workspace.Absolute(LibraryMutationWorkspace.Leaf), FileMode.CreateNew, FileAccess.Write);
@@ -130,7 +130,7 @@ public sealed class LibraryDetachApplicationIntegrationTests
             {
                 File.Delete(replacementPath);
             }
-            if (new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget == "../../shared/team-knowledge/.agents/directives/review.md")
+            if (new FileInfo(workspace.Absolute(LibraryMutationWorkspace.Leaf)).LinkTarget == "../../shared/team-knowledge/.agents/directives/review.md".Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(workspace.Absolute(LibraryMutationWorkspace.Leaf));
             }

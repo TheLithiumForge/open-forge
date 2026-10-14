@@ -10,5 +10,4 @@ Extensions
          read from .agents/toolkit/example.md
   21 links and 20 routes checked.
   1 uses the indicated command.
-  Reconcile the Extension files.
 Next: open-forge extension update toolkit

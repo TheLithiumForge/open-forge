@@ -4,4 +4,4 @@ Workspace: <workspace>
          Index was cancelled. Nothing was changed.
 No recovery bundle was needed.
   Rerun the same Index request.
-Next: open-forge index
+Next: open-forge index --workspace <workspace>

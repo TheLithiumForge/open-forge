@@ -133,6 +133,10 @@ public sealed class RouteUpdateInteractionApplicationIntegrationTests
         Assert.Equal(CliSemanticStatus.Interrupted, run.Completion.Status);
         Assert.Equal(1, run.Terminal.LineReadCalls);
         Assert.Contains("Route update was cancelled. Nothing was changed.", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("--description 'Should not apply'", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("--workspace", run.StandardError, StringComparison.Ordinal);
+        Assert.Contains("--detail=minimal", run.StandardError, StringComparison.Ordinal);
+        Assert.DoesNotContain("--automatic", run.StandardError, StringComparison.Ordinal);
         Assert.Equal(string.Empty, run.StandardOutput);
         Assert.Equal(before, workspace.SnapshotHashes());
     }

@@ -120,7 +120,7 @@
         "kind": "relative-file-link",
         "length": null,
         "sha256": null,
-        "rawRelativeTarget": "../shared/team-knowledge/docs/review.md"
+        "rawRelativeTarget": "..\\shared\\team-knowledge\\docs\\review.md"
       },
       {
         "path": ".agents/open-forge.lock.json",

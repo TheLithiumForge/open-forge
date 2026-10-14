@@ -24,9 +24,6 @@ open-forge:
 
 - [Guide](guide.md) - #Docs #Guide
 - [Reference](reference.md) - #Docs
-
-=== .agents/docs/guide.md (docs/guide) ===
-  sources: The selected Context source layer .agents/docs/guide.md could not be read completely.
-  tokens: The selected Context source layer .agents/docs/guide.md could not be read completely.
-  bytes: The selected Context source layer .agents/docs/guide.md could not be read completely.
+Context counts are unavailable. The selected Context source layer
+.agents/docs/guide.md could not be read completely.
 Next: open-forge doctor

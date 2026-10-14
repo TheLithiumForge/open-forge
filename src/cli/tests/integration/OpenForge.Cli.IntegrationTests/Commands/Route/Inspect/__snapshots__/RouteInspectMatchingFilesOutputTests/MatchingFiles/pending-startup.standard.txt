@@ -22,4 +22,4 @@ Axioms
   Inherited rules from: none
   Local rules: no
   Supply working paths with --for to evaluate pending loading conditions.
-Next: open-forge route inspect ".agents/maps/_maps.md" --for <path>
+Next: open-forge route inspect .agents/maps/_maps.md --detail standard --for <path>

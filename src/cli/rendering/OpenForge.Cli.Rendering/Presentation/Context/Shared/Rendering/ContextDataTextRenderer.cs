@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Presentation.Shared.Content;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Presentation.Shared.Text.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 
 namespace OpenForge.Cli.Core.Presentation.Context.Shared.Rendering;
 
@@ -15,6 +16,8 @@ internal static class ContextDataTextRenderer
         ArgumentNullException.ThrowIfNull(data);
         ArgumentNullException.ThrowIfNull(style);
         var spans = new List<CliTextSpan>();
+        foreach (var guidance in data.TextGuidance)
+            foreach (var line in CliSelectionText.Wrap(guidance, style.Width)) spans.Add(new CliTextSpan(line + "\n"));
         if (data.Summary is { } summary)
         {
             spans.Add(new CliTextSpan(summary + "\n"));
@@ -28,6 +31,10 @@ internal static class ContextDataTextRenderer
         {
             AppendLinks(spans, links, style);
         }
+
+        if (!data.StartupMissing && !data.MissingForValue && data.CountLimitation is { } reason)
+            foreach (var line in CliSelectionText.Wrap(global::OpenForge.Cli.OutputText.Context.ContextText.CountsUnavailable(data.CountsNotEstablished ? null : reason), style.Width))
+                spans.Add(new CliTextSpan(line + "\n"));
 
         return new CliTextDocument(spans);
     }

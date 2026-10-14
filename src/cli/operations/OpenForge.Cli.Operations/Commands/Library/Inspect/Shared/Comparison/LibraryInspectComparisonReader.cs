@@ -67,6 +67,19 @@ internal sealed class LibraryInspectComparisonReader(PhysicalPathResolver resolv
                 ObservedRelativeLink = observation.Leaf.RelativeFileLink?.RawRelativeTarget,
             });
             AddComparisonFinding(findings, selected, mapping.DestinationPath.Value, relation, observation.Cause);
+            if (registeredPath is not null && observation.UnreadableOnWindows)
+            {
+                comparisons[^1] = comparisons[^1] with { Relation = LibraryComparisonRelation.Changed };
+                findings.Add(new LibraryInspectFinding
+                {
+                    Code = LibraryInspectFindingCode.LinkChanged,
+                    Status = CliSemanticStatus.Attention,
+                    LibraryId = selected.Id.Value,
+                    Path = mapping.DestinationPath.Value,
+                    Cause = "The recorded Library link is unreadable on Windows because its target uses forward slashes.",
+                    UnreadableOnWindows = true,
+                });
+            }
         }
 
         return new LibraryInspectComparisonRead

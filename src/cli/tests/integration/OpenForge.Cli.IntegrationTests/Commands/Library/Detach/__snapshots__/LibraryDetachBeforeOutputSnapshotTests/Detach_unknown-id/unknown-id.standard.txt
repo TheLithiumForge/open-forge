@@ -1,4 +1,3 @@
 Recorded removal intent for Library unknown.
 Workspace: <workspace>
   .agents/open-forge.json  settings updated
-  .agents/open-forge.json  settings updated

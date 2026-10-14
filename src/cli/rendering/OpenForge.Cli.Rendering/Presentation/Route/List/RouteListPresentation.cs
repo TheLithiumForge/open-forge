@@ -33,6 +33,8 @@ internal static class RouteListPresentation
                 && selected.Report.Data.Rows.Count > 0
                 && selected.Report.Findings.Count == 0),
             TextCounts = [],
+            TextFindings = selected.TextFindings
+                .Select(finding => finding.Code == "route-list.invalid-depth" ? finding with { Message = string.Empty } : finding).ToArray(),
         },
     };
 

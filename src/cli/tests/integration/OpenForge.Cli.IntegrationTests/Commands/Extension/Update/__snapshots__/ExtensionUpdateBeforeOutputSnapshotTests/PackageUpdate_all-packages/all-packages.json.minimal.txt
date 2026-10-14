@@ -63,7 +63,7 @@
         "to": "1.0.0"
       }
     ],
-    "previousContent": null,
+    "previousContent": "<recovery-bundle>",
     "permissions": {
       "required": [],
       "missing": [],

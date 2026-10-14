@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Presentation.Extension.Create.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
+using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -18,6 +19,9 @@ namespace OpenForge.Cli.Core.Presentation.Extension.Create.Shared.Selection;
 
 internal static class ExtensionCreateReportSelector
 {
+    internal static CliSelectedReport<ExtensionCreateData> SelectText(CliSelectedReport<ExtensionCreateData> selected)
+        => CliCancellationSelection.BeforeEffects(selected, "extension-create.interrupted") with { TextEffects = [], TextCounts = [] };
+
     internal static CliReport<ExtensionCreateData> Select(
         ExtensionCreateResult result,
         CliSelection selection)

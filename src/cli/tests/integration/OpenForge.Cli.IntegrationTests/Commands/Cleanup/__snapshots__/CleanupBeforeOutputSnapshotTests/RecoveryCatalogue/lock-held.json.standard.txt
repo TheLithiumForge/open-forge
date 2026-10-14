@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge cleanup",
+          "command": "open-forge cleanup --workspace <workspace>",
           "reason": "Rerun Cleanup from a fresh catalogue."
         }
       ]
@@ -97,7 +97,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge cleanup",
+    "command": "open-forge cleanup --workspace <workspace>",
     "reason": "Rerun Cleanup from a fresh catalogue."
   }
 }

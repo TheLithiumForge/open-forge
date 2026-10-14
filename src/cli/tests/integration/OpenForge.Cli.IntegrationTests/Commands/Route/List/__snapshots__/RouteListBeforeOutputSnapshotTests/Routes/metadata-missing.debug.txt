@@ -4,11 +4,13 @@ Workspace: <workspace>
          .agents/docs/guide.md has no description in its frontmatter.
 
   docs              Documents
-                    .agents/docs/_docs.md   #Docs
+    .agents/docs/_docs.md
+    #Docs
     docs/guide      (no description)
-                    .agents/docs/guide.md
+      .agents/docs/guide.md
     docs/reference  Reference
-                    .agents/docs/reference.md   #Docs
+      .agents/docs/reference.md
+      #Docs
   Parent: none
   Depth: absolute 0; relative 0
   Kind: entrypoint; direct children: 2

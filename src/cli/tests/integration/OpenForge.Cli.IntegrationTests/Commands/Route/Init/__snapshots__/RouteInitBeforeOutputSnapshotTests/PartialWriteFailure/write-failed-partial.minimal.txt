@@ -6,4 +6,4 @@ Workspace: <workspace>
   .agents/documents/_documents.md  not started
   .agents/documents/design/_design.md  not started
   Its description and tags are placeholders. Edit them before relying on this route.
-Next: open-forge route init --detail debug
+Next: open-forge route init documents/design --detail debug --workspace <workspace>

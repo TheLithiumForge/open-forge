@@ -1,4 +1,4 @@
-Updated 3 Framework files.
+Changed 3 source files.
   .agents/loader.md             restored
   .agents/memory/_memory.md     created
   AGENTS.md                     created with an Open Forge section

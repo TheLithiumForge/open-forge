@@ -1,0 +1,4 @@
+Invalid --frontmatter value: other\n\u001B[2J. Use root or scoped.
+Workspace: <workspace>
+  Correct the named Install input, then rerun the request.
+Next: open-forge install --help

@@ -8,6 +8,25 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
 
 public sealed class RepairResultTests
 {
+    [Fact(DisplayName = "Repair forms nineteen grouped Library observations once and preserves all distinct causes")]
+    [Trait("Feature", "repair"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
+    public void GroupedLibraryObservationsAreResultFacts()
+    {
+        var findings = Enumerable.Range(1, 19).SelectMany(index => new[]
+        {
+            new RepairFinding(RepairFindingCode.ManualFindingRemaining, "The link is missing.")
+            { Observation = new RepairDiagnosisObservation($"folder/file{index}.md", "shared") },
+            new RepairFinding(RepairFindingCode.ManualFindingRemaining, "The recorded link cannot be read.")
+            { Observation = new RepairDiagnosisObservation($"folder/file{index}.md", "shared") },
+        }).ToList();
+        findings.Add(findings[0]);
+        var result = RepairTestData.Result(findings);
+        Assert.Equal(39, result.Findings.Count);
+        Assert.Equal(19, result.ReportFindings.Count);
+        Assert.Equal(19, result.RemainingFindings.Count);
+        Assert.All(result.ReportFindings, finding => Assert.Equal("The link is missing. The recorded link cannot be read.", finding.Cause));
+    }
+
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Repair result applies failed invalid blocked incomplete interrupted and attention precedence without parsing causes"), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public void ResultStatusPrecedenceIsTyped()

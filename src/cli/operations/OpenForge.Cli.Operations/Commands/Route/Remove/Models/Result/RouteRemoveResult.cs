@@ -39,7 +39,9 @@ internal sealed record RouteRemoveResult : ICliCommandResult
 
     public CliWorkspace? Workspace { get; }
 
-    public CliNextAction? Next { get; }
+    public CliNextAction? Next { get; init; }
+
+    internal string? RequestCommand { get; init; }
 
     internal string? WorkspacePath => Workspace?.LexicalRoot;
 

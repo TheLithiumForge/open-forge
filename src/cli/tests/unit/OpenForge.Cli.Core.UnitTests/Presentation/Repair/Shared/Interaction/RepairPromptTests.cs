@@ -56,7 +56,7 @@ public sealed class RepairPromptTests
     }
 
     [Trait("Boundary", "Input")]
-    [Theory(DisplayName = "Repair Library prompt keeps Include before Leave out"),
+    [Theory(DisplayName = "Repair Library prompt selects one exact target or leaves every step out"),
         InlineData("1", true), InlineData("2", false), Trait("Feature", "repair"), Trait("Evidence", "Unit")]
     public async Task SelectsOrSkipsLibraryResidual(string line, bool expectedSelected)
     {
@@ -65,15 +65,15 @@ public sealed class RepairPromptTests
             new CliPrompts(scripted.Terminal),
             RepairPresentation.Rendering);
         var reply = await interaction.SelectLibrary(
-            new RepairLibraryPromptQuestion(new RepairLibraryRecoveryProposal(LibraryRepairData.Evidence())),
+            new RepairLibrarySelectionQuestion([new RepairLibraryPromptQuestion(new RepairLibraryRecoveryProposal(LibraryRepairData.Evidence()))]),
             new CliPromptPolicy(true),
             TestContext.Current.CancellationToken);
 
         Assert.Equal(CliPromptState.Answered, reply.State);
-        Assert.Equal(expectedSelected, reply.Value.Selected);
+        Assert.Equal(expectedSelected, reply.Value.SelectedIndex is not null);
         var output = scripted.Output.ToString();
-        Assert.Contains("1. Include", output, StringComparison.Ordinal);
-        Assert.Contains("2. Leave out", output, StringComparison.Ordinal);
+        Assert.Contains("1. .agents/", output, StringComparison.Ordinal);
+        Assert.Contains("2. Leave all recovery steps out", output, StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Input")]
@@ -210,8 +210,8 @@ public sealed class RepairPromptTests
         foreach (var script in new[] { keys, lines })
         {
             var interaction = RepairPromptAdapters.Create(new(script.Terminal), RepairPresentation.Rendering);
-            var reply = await interaction.SelectLibrary(question, new(true), CancellationToken.None);
-            Assert.Equal(script == lines, reply.Value.Selected);
+            var reply = await interaction.SelectLibrary(new RepairLibrarySelectionQuestion([question]), new(true), CancellationToken.None);
+            Assert.Equal(script == lines, reply.Value.SelectedIndex is not null);
         }
         CommandOutputSnapshot.MatchSnapshot(keys.Frames[0], $"library.{kind}.{prior}.key.80x24");
         CommandOutputSnapshot.MatchSnapshot(lines.Output.ToString(), $"library.{kind}.{prior}.line");
@@ -232,4 +232,34 @@ public sealed class RepairPromptTests
                         new RepairCandidateEvidence(RepairCandidateEvidenceKind.RouteNeighborhood, ".agents/docs", location: null)],
                     recommendedForReview: true),
             ]));
+
+    [Theory(DisplayName = "Library recovery asks once and selects at most one exact step")]
+    [InlineData(80, 24, false), InlineData(100, 30, false), InlineData(80, 24, true), InlineData(100, 30, true)]
+    [Trait("Feature", "repair"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]
+    public async Task LibraryRecoverySingleSelection(int width, int height, bool leaveAllOut)
+    {
+        var question = new RepairLibrarySelectionQuestion([
+            new(new RepairLibraryRecoveryProposal(LibraryRepairData.Evidence(RecoveryEntryKind.RelativeFileLinkCreate))),
+            new(new RepairLibraryRecoveryProposal(LibraryRepairData.Evidence(RecoveryEntryKind.OrdinaryDelete))),
+        ]);
+        var strokes = new List<CliKeyStroke?> { new(CliKey.Down) };
+        if (leaveAllOut)
+        {
+            strokes.Add(new(CliKey.Down));
+        }
+        strokes.Add(new(CliKey.Enter));
+        var keys = ScriptedCliTerminal.Keys(strokes);
+        keys.Viewport = new(width, height);
+        var lines = ScriptedCliTerminal.Lines([leaveAllOut ? "3" : "2"]);
+        foreach (var script in new[] { keys, lines })
+        {
+            var interaction = RepairPromptAdapters.Create(new(script.Terminal), RepairPresentation.Rendering);
+            var reply = await interaction.SelectLibrary(question, new(true), CancellationToken.None);
+            Assert.Equal(CliPromptState.Answered, reply.State);
+            Assert.Equal(leaveAllOut ? (int?)null : 1, reply.Value.SelectedIndex);
+        }
+        Assert.Equal(1, lines.LineReadCalls);
+        CommandOutputSnapshot.MatchSnapshot(keys.Frames[0], $"single-selection.key.{width}x{height}.{leaveAllOut}");
+        CommandOutputSnapshot.MatchSnapshot(lines.Output.ToString(), $"single-selection.line.{width}x{height}.{leaveAllOut}");
+    }
 }

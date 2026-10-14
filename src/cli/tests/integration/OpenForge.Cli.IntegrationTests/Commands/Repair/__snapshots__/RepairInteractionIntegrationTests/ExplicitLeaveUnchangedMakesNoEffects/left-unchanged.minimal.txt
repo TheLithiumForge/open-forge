@@ -1,0 +1,7 @@
+Left 1 broken link unchanged. No files were changed.
+Workspace: <workspace>
+  Warning  .agents/docs/source.md:10:10  Broken link
+         1 possible target.
+         To use replacement.md (same title):
+           open-forge repair --relink '.agents/docs/source.md@10:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>
+Next: open-forge index --workspace <workspace>

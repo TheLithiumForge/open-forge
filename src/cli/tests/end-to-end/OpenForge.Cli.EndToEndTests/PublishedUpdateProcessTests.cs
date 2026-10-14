@@ -19,7 +19,7 @@ public sealed class PublishedUpdateProcessTests
         Assert.Equal(0, help.ExitCode);
         Assert.Equal(string.Empty, help.StandardError);
         Assert.Contains(
-            "open-forge update [--force] [--prune] [--automatic] [--dry-run] [global options]",
+            "open-forge update [options]",
             string.Join(" ", help.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
         Assert.Contains("--force", help.StandardOutput, StringComparison.Ordinal);

@@ -8,6 +8,7 @@ namespace OpenForge.Cli.Core.Presentation.Shared.Prompts;
 
 internal sealed partial class CliPrompts
 {
+    private const CliPermissionChoice DefaultPermissionChoice = CliPermissionChoice.Once;
     private const int PathPageControlRows = 1;
     private const int MinimumPathRows = 1;
 
@@ -25,7 +26,7 @@ internal sealed partial class CliPrompts
             new CliChoice<CliPermissionChoice>(CliPermissionChoice.Once, CliPromptWording.Once(), CliPromptWording.OnceReason()),
             new CliChoice<CliPermissionChoice>(CliPermissionChoice.Cancel, CliPromptWording.Cancel(), CliPromptWording.CancelReason()),
         };
-        var cursor = 0;
+        var cursor = Array.FindIndex(choices, static choice => choice.Value == DefaultPermissionChoice);
         var pathOffset = 0;
         while (_terminal.ReadSelectionViewport() is { } viewport)
         {
@@ -43,7 +44,7 @@ internal sealed partial class CliPrompts
             }
             var reviewText = question.Paths.Select(PermissionPath);
             if (compactOwner) reviewText = reviewText.Prepend(question.Owner);
-            var pathRows = reviewText.SelectMany(text => CliSelectionText.Wrap(text, width)).ToArray();
+            var pathRows = reviewText.SelectMany(text => CliSelectionText.Wrap(text, width, splitLongTokens: true)).ToArray();
             var pageSize = Math.Max(MinimumPathRows, CliSelectionFrameRenderer.ContextCapacity(viewport, frameHeading, controlRows)
                 - PathPageControlRows - stickyContext.Count);
             var pageCount = Math.Max(1, (pathRows.Length + pageSize - 1) / pageSize);
@@ -71,11 +72,13 @@ internal sealed partial class CliPrompts
             else if (key.Value.Key == CliKey.Character && key.Value.Character is >= '1' and <= '3')
                 return PermissionReply(choices[key.Value.Character - '1'].Value);
         }
-        var heading = new StringBuilder().Append(CliText.Escape(CliPromptWording.Permission(question.Owner))).Append("\n\n");
+        var heading = new StringBuilder();
+        AppendLineProse(heading, CliPromptWording.Permission(question.Owner));
+        heading.Append('\n');
         foreach (var path in question.Paths) heading.Append("  ").Append(CliText.Escape(PermissionPath(path))).Append('\n');
         heading.Append('\n');
         foreach (var choice in choices)
-            heading.AppendLine($"  {CliText.Escape(choice.Label)}  {CliText.Escape(choice.Description ?? string.Empty)}");
+            AppendLineChoice(heading, $"  {CliText.Escape(choice.Label)}", choice.Description, 2);
         await WriteFrameAsync(heading.ToString(), cancellationToken).ConfigureAwait(false);
         while (true)
         {

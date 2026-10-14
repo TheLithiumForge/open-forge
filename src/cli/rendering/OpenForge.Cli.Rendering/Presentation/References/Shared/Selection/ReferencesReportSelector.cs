@@ -154,6 +154,8 @@ internal static class ReferencesReportSelector
                 => new(result.Source?.Path ?? string.Empty, CliHeadlineKind.Warnings),
             CliSemanticStatus.Incomplete
                 => new(result.Source?.Path ?? string.Empty, CliHeadlineKind.Incomplete),
+            CliSemanticStatus.Invalid when finding is { Code: ReferencesFindingCode.InvalidDirection }
+                => new(ReferencesWording.CannotList(Message(finding)), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Invalid
                 => new(ReferencesWording.CannotList(Cause(finding)), CliHeadlineKind.CannotStart),
             CliSemanticStatus.Blocked when finding is { Code: ReferencesFindingCode.PhysicalAlias }
@@ -232,7 +234,7 @@ internal static class ReferencesReportSelector
         {
             ReferencesFindingCode.InvalidInput => ReferencesWording.InvalidInput(finding.Cause),
             ReferencesFindingCode.InvalidSource => InvalidSource(finding),
-            ReferencesFindingCode.InvalidDirection => ReferencesWording.InvalidDirection(),
+            ReferencesFindingCode.InvalidDirection => global::OpenForge.Cli.OutputText.References.ReferencesText.InvalidDirection(finding.Subject ?? ""),
             ReferencesFindingCode.InvalidFilter => InvalidFilter(finding),
             ReferencesFindingCode.WorkspaceUnavailable
                 => CliFindingWording.WorkspaceUnavailable(finding.Path ?? finding.Subject ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheWorkspace()),

@@ -14,8 +14,6 @@ internal static class CliSelectionFrameRenderer
     private const int ExpandedSpacingRows = 2;
     private const int CompactHeadingRows = 1;
     private const int ExpandedHeadingRows = 2;
-    private const int CompactDetailRows = 2;
-    private const int ExpandedDetailRows = 4;
     private const int MaximumNoticeRows = 2;
     private const int PreferredChoiceRows = 3;
     private const int MinimumChoiceRows = 1;
@@ -35,8 +33,7 @@ internal static class CliSelectionFrameRenderer
         var legend = frame.Legend is { } legendText ? CliSelectionText.WrapItems(legendText, width).ToArray() : [];
         var controls = frame.Controls.SelectMany(text => CliSelectionText.WrapItems(text, width)).ToArray();
         var context = frame.Context.Select(text => CliSelectionText.Clip(text, width)).ToArray();
-        var details = frame.Details.SelectMany(text => CliSelectionText.Wrap(text, width))
-            .Take(viewport.Height >= ExpandedHeight ? ExpandedDetailRows : CompactDetailRows).ToArray();
+        var details = frame.Details.SelectMany(text => CliSelectionText.Wrap(text, width)).ToArray();
         var notices = frame.Notice is { } notice ? CliSelectionText.Wrap(notice, width).Take(MaximumNoticeRows).ToArray() : [];
         var reserved = heading.Count + legend.Length + controls.Length + context.Length + notices.Length + (expanded ? ExpandedSpacingRows : 0);
         if (reserved + MinimumChoiceRows > capacity) return null;
@@ -71,7 +68,13 @@ internal static class CliSelectionFrameRenderer
             var clipped = CliSelectionText.Clip(text, width);
             output.AppendLine(row.Disabled ? style.Dim(clipped) : clipped);
         }
-        foreach (var line in details.Take(detailRows)) output.AppendLine(line);
+        var visibleDetails = details.Take(detailRows);
+        if (frame.KeepLastDetail && details.Length > detailRows && detailRows > 0)
+        {
+            var last = CliSelectionText.Wrap(frame.Details[^1], width);
+            visibleDetails = details.Take(Math.Max(0, detailRows - last.Count)).Concat(last.Take(detailRows));
+        }
+        foreach (var line in visibleDetails) output.AppendLine(line);
         foreach (var line in notices) output.AppendLine(line);
         if (expanded) output.AppendLine();
         foreach (var line in controls) output.AppendLine(line);

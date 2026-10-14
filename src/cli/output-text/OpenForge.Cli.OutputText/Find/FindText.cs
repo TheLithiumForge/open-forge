@@ -4,6 +4,9 @@ namespace OpenForge.Cli.OutputText.Find;
 
 internal static class FindText
 {
+    // @OpenForgeText find.message.invalid-require-value
+    internal static string InvalidRequire(string value) => $"Invalid --require value: {value}. Use all or any.";
+
     // @OpenForgeText find.message.the-search-is-incomplete
     internal static string MessageTheSearchIsIncomplete()
         => "The search is incomplete.";
@@ -102,7 +105,7 @@ internal static class FindText
 
     // @OpenForgeText find.help.syntax
     internal static string HelpSyntax()
-        => "open-forge find [--include <source-reference>]... [--exclude <source-reference>]... [--for <path>]... [--tag <tag>]... [--heading <heading>]... [--require <all|any>] [--within <part>[,<part>...]] [--content <part>[,<part>...]] [global options]";
+        => "open-forge find [options]";
 
     // @OpenForgeText find.help.source-references
     internal static string HelpSourceReferences()
@@ -134,7 +137,7 @@ internal static class FindText
 
     // @OpenForgeText find.help.predicates-and-regions
     internal static string HelpPredicatesAndRegions()
-        => "Repeat --tag or --heading to match more values. --require accepts all or any. --within selects document, frontmatter, body, or section:<name>; combine parts with commas in one value.";
+        => "Repeat --tag or --heading to match more values. --require accepts all or any. --within selects document, frontmatter, body, or section:<name>. Combine parts with commas in one value.";
 
     // @OpenForgeText find.help.heading.content-and-views
     internal static string HelpHeadingContentAndViews()
@@ -150,13 +153,29 @@ internal static class FindText
 
     // @OpenForgeText find.help.examples
     internal static string HelpExamples()
-        => "open-forge find\n  open-forge find --tag Architecture\n  open-forge find --heading Instructions --detail minimal\n  open-forge find --tag Architecture --content section:Target\n  open-forge find --include docs --exclude guide --format json";
+        => "open-forge find\nopen-forge find --tag Directive\nopen-forge find --for src/app.cs";
 
     // @OpenForgeText find.help.related-commands
-    internal static string HelpRelatedCommands()
-        => "open-forge route list — list routed source identities.\n  open-forge doctor — inspect unavailable or blocked source facts.\n  open-forge context — select and measure command context.";
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("context --help", "Read agent instructions and context."),
+            ("references --help", "Inspect authored links."),
+            ("route list", "Browse routed sources."),
+        ];
 
     // @OpenForgeText find.help.notes
     internal static string HelpNotes()
         => "Find is a deterministic, read-only source inventory. It creates no index, cache, receipt, network request, mutation authority, or workspace write.";
+
+    // @OpenForgeText find.find.help.behavior
+    internal static string HelpBehavior()
+        => "With no filters, list the available Markdown sources.\nTags and headings select matching sources. Repeat --for for known working files.\nAll requested conditions must match by default. --require any accepts any requested condition.\nThis command changes no files and asks no questions.";
+    // @OpenForgeText find.help.details-1
+    internal static string HelpFiltersDetails()
+        => "Each --include or --exclude takes one exact source ID or .agents Markdown path. Includes combine, exclusions take priority, and unresolved references prevent the search. Repeat tags or headings for more values. --for uses workspace-relative paths and keeps sources without file conditions. This filter combines with tag and heading predicates independently of --require.";
+
+    // @OpenForgeText find.help.details-2
+    internal static string HelpContentAndScopeDetails()
+        => "--within selects document, frontmatter, body, or section:<name>. Combine parts with commas in one value. --content returns metadata, frontmatter, headings, body, or section:<name>. Find is deterministic and creates no index, cache, receipt, network request, mutation authority, or workspace write.";
 }

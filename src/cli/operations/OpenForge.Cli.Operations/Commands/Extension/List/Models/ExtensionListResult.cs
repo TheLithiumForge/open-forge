@@ -193,6 +193,7 @@ internal sealed record ExtensionListAvailableRow
 
 internal sealed record ExtensionListSource
 {
+    public string? Supplied { get; init; }
     public required string Identity { get; init; }
 
     public required ExtensionListSourceKind? Kind { get; init; }

@@ -118,7 +118,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge route inspect \".agents/maps/_maps.md\" --for <path>",
+    "command": "open-forge route inspect .agents/maps/_maps.md --detail debug --format json --for <path>",
     "reason": "Supply working paths with --for to evaluate pending loading conditions."
   }
 }

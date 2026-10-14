@@ -7,10 +7,10 @@ namespace OpenForge.Cli.Core.Commands.Library.Sync;
 internal static class LibrarySyncDefinitions
 {
     internal const string CommandIdentity = "library sync";
-    internal static readonly CliSyntaxDefinition Command = new("sync", "Synchronize a registered Library with all its source files.");
+    internal static readonly CliSyntaxDefinition Command = new("sync", "Bring a registered Library's links into agreement with its source files.");
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
-        "Disable prompts; does not select or alter Library targets.",
+        "Disable prompts. Does not select or alter Library targets.",
         CliOptionArity.None,
         false);
     internal static string ReadFindingCode(LibrarySyncFindingCode value)

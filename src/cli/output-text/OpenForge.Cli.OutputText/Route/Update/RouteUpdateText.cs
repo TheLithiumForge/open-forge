@@ -42,7 +42,7 @@ internal static class RouteUpdateText
 
     // @OpenForgeText route.update.message.report-the-failure-and-retry-the-same-route-update-request-with-bounded-diagnostics
     internal static string MessageReportTheFailureAndRetryTheSameRouteUpdateRequestWithBoundedDiagnostics()
-        => "Report the failure and retry the same Route Update request with bounded diagnostics.";
+        => "Address the reported failure, then retry the same Route Update request.";
 
     // @OpenForgeText route.update.message.rerun-the-same-route-update-request
     internal static string MessageRerunTheSameRouteUpdateRequest()
@@ -110,7 +110,7 @@ internal static class RouteUpdateText
 
     // @OpenForgeText route.update.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route update <source-reference> [--description <text>] [--responsibility <text>] [--tag <tag>]... [--apply-to <glob>]... | [--clear-apply-to] [--template <template-reference>] [--dry-run] [global options]";
+        => "open-forge route update <source-reference> [options]";
 
     // @OpenForgeText route.update.help.target
     internal static string HelpTarget()
@@ -122,7 +122,7 @@ internal static class RouteUpdateText
 
     // @OpenForgeText route.update.help.template
     internal static string HelpTemplate()
-        => "--template <template-reference> copies only the body of one exact routed Markdown source tagged Template when the target body is empty or whitespace.\n  The target's authored body content is protected; target metadata and identity remain unchanged.";
+        => "--template <template-reference> copies only the body of one exact routed Markdown source tagged Template when the target body is empty or whitespace.\n  The target's authored body content is protected. Target metadata and identity remain unchanged.";
 
     // @OpenForgeText route.update.help.write-policy
     internal static string HelpWritePolicy()
@@ -130,9 +130,33 @@ internal static class RouteUpdateText
 
     // @OpenForgeText route.update.help.examples
     internal static string HelpExamples()
-        => "open-forge route update memory/project-alpha/overview --description \"Project overview\"\n  open-forge route update .agents/memory/project-alpha/overview.md --responsibility \"\" --tag Docs --tag Memory\n  open-forge route update memory/project-alpha/overview --template templates/route --dry-run";
+        => "open-forge route update memory/note --description \"Note\" --dry-run\nopen-forge route update memory/note --description \"Note\"\nopen-forge route update memory/note --clear-apply-to --dry-run";
 
     // @OpenForgeText route.update.help.notes
     internal static string HelpNotes()
         => "Global workspace, format, detail, detail-filter, help, and version options retain their shared meaning.";
+
+    // @OpenForgeText route.update.routeupdate.help.behavior
+    internal static string HelpBehavior()
+        => "Change only the metadata or Template content you request. Other content stays.\n--dry-run shows the checked plan and writes nothing.\nA verified no-op writes nothing and creates no recovery bundle.\nThis command asks no questions. Interrupted writes report retained recovery data.";
+
+    // @OpenForgeText route.update.routeupdate.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("route inspect --help", "Inspect one routed source."),
+            ("route create --help", "Create a routed Markdown file."),
+            ("index --dry-run", "Fill missing metadata and update Entries."),
+        ];
+    // @OpenForgeText route.update.help.details-1
+    internal static string HelpTargetAndMetadataDetails()
+        => "Use one existing ordinary source by exact ID, base path, or adjacent overwrite path. ID, base path, document form, and overwrite ownership stay. Request at least one metadata or Template operation. Supply description, responsibility, and Template at most once. Repeated tags replace the ordered list. Empty or duplicate tags are invalid. Repeated --apply-to replaces the whole local list. It cannot accompany --clear-apply-to. An exact empty responsibility removes the field. Whitespace alone is invalid.";
+
+    // @OpenForgeText route.update.help.details-2
+    internal static string HelpGlobsAndTemplatesDetails()
+        => "Globs are case-sensitive and workspace-relative: *.py at root, **/*.py at any depth, docs/** below docs. ! is literal. --template copies only the body of one exact routed Markdown source tagged Template into an empty or whitespace-only body. Authored target content is protected.";
+
+    // @OpenForgeText route.update.help.details-3
+    internal static string HelpWriteBoundaryDetails()
+        => "Apply locks the workspace and revalidates the target and generated-navigation plan.";
 }

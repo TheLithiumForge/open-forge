@@ -1,3 +1,6 @@
+using System.Text.Json.Nodes;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.TestSupport.Snapshots;
 using OpenForge.Cli.Core.Commands.Extension.Install;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Install.Models.Result;
@@ -183,4 +186,121 @@ public sealed class ExtensionInstallBeforeOutputSnapshotTests
     {
         if (result.Recovery.ResidualPath is { } path) Assert.True(File.Exists(path));
     }
+
+    [Theory, InlineData("core-templates", "templates"), InlineData("only-guidance", "guidance")]
+    [Trait("Feature", "extension-install"), Trait("Evidence", "Integration"), Trait("Boundary", "Output")]
+    public async Task EntirelyExcludedPackageReportsItsCategoryAndRecordedInstallation(string id, string category)
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-excluded-wording");
+        using var source = ExtensionInstallCatalogue.Create("extension-install-excluded-wording-source");
+        var setup = await workspace.RunAsync(["install", "--preset", "essentials", "--automatic"]);
+        Assert.Equal(0, setup.ExitCode);
+        string? sourcePath = null;
+        if (id == "only-guidance")
+        {
+            source.AddPackage(id, [], (".agents/guidance/note.md", "A package note.\n"));
+            sourcePath = source.Path;
+            var settings = JsonNode.Parse(workspace.ReadText(".agents/open-forge.json"))!.AsObject();
+            settings["removedCategories"] = new JsonArray(category);
+            workspace.ReplaceText(".agents/open-forge.json", settings.ToJsonString());
+        }
+
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        var operation = CreateOperation(workspace, ScriptedCliTerminal.Lines([], canPrompt: false));
+        var before = workspace.Snapshot();
+        var preview = await operation.ExecuteAsync(Request(workspace, id: id, sourcePath: sourcePath, mode: ExtensionInstallMode.DryRun), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, preview.Status);
+        Assert.Equal(before, workspace.Snapshot());
+        Renderers.MatchDetails(preview, id + ".preview", extensionSourcePath: sourcePath, snapshotCollector: snapshots);
+
+        var installed = await operation.ExecuteAsync(Request(workspace, id: id, sourcePath: sourcePath, mode: ExtensionInstallMode.Apply), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, installed.Status);
+        var receipt = Assert.Single(workspace.ReadExtensionOwnership().EnumerateArray());
+        Assert.Equal(id, receipt.GetProperty("id").GetString());
+        Assert.Empty(receipt.GetProperty("paths").EnumerateArray());
+        if (category == "templates") Assert.False(Directory.Exists(workspace.Combine(".agents/templates")));
+        if (id == "only-guidance") Assert.False(File.Exists(workspace.Combine(".agents/guidance/note.md")));
+        Renderers.MatchDetails(installed, id + ".installed", extensionSourcePath: sourcePath, snapshotCollector: snapshots);
+
+        var recorded = workspace.Snapshot();
+        var repeated = await operation.ExecuteAsync(Request(workspace, id: id, sourcePath: sourcePath, mode: ExtensionInstallMode.Apply), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, repeated.Status);
+        Assert.Equal(recorded, workspace.Snapshot());
+        Renderers.MatchDetails(repeated, id + ".already-recorded", extensionSourcePath: sourcePath, snapshotCollector: snapshots);
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: $"{nameof(EntirelyExcludedPackageReportsItsCategoryAndRecordedInstallation)}.{id}");
+    }
+
+    [Theory, InlineData("planning"), InlineData("development-toolkit")]
+    [Trait("Feature", "extension-install"), Trait("Evidence", "Integration"), Trait("Boundary", "Output")]
+    public async Task DependencyCountsUsePackageSingularAndPlural(string id)
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-dependency-wording");
+        await workspace.SeedFrameworkAsync();
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
+        var operation = CreateOperation(workspace, ScriptedCliTerminal.Lines([], canPrompt: false));
+        var before = workspace.Snapshot();
+        var preview = await operation.ExecuteAsync(Request(workspace, id: id, sourcePath: null, mode: ExtensionInstallMode.DryRun), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, preview.Status);
+        Assert.Equal(before, workspace.Snapshot());
+        Renderers.MatchDetails(preview, id + ".preview", snapshotCollector: snapshots);
+        var applied = await operation.ExecuteAsync(Request(workspace, id: id, sourcePath: null, mode: ExtensionInstallMode.Apply), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, applied.Status);
+        Assert.NotEmpty(workspace.ReadExtensionOwnership().EnumerateArray());
+        Renderers.MatchDetails(applied, id + ".installed", snapshotCollector: snapshots);
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: $"{nameof(DependencyCountsUsePackageSingularAndPlural)}.{id}");
+    }
+
+    [Fact, Trait("Feature", "extension-install"), Trait("Evidence", "Integration"), Trait("Boundary", "Output")]
+    public async Task CancelledReviewedPlanHasNoCompletedEntriesUpdate()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("extension-install-cancel-wording");
+        await workspace.SeedFrameworkAsync();
+        var before = workspace.Snapshot();
+        var scripted = ScriptedCliTerminal.Lines(["no"]);
+        var result = await CreateOperation(workspace, scripted).ExecuteAsync(new ExtensionInstallRequest(
+            ImplicitWorkspace(workspace), ExtensionInstallMode.Apply, ["development"], all: false, sourcePath: null,
+            force: false, automatic: false, allowInteraction: true), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Interrupted, result.Status);
+        Assert.Contains("Would update the Entries section", scripted.Output.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain("Updated the Entries section", scripted.Output.ToString(), StringComparison.Ordinal);
+        Assert.Equal(before, workspace.Snapshot());
+        Renderers.MatchDetails(result, "cancelled-plan");
+    }
+
+    private static ExtensionInstallOperation CreateOperation(ExtensionInstallIntegrationWorkspace workspace, ScriptedCliTerminal scripted)
+        => ExtensionInstallOperationFactory.Create(ExtensionInteractionTestFactory.ForInstall(new CliPrompts(scripted.Terminal)), workspace.LockStoreRoot);
+
+    [Fact(DisplayName = "Planning on Essentials reports skipped starters in its preview and receipt")]
+    [Trait("Feature", "extension-install"), Trait("Evidence", "Integration"), Trait("Boundary", "Output")]
+    public async Task PartiallyExcludedPlanningReportsStarters()
+    {
+        using var workspace = ExtensionInstallIntegrationWorkspace.Create("planning-partial-exclusion");
+        Assert.Equal(0, (await workspace.RunAsync(["install", "--preset", "essentials", "--automatic"])).ExitCode);
+        var operation = CreateOperation(workspace, ScriptedCliTerminal.Lines([], canPrompt: false));
+        var before = workspace.Snapshot();
+        var preview = await operation.ExecuteAsync(Request(workspace, "planning", null, ExtensionInstallMode.DryRun), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, preview.Status);
+        var excluded = Assert.Single(preview.ExcludedPackages, package => package.Id == "planning");
+        Assert.Equal("planning", excluded.Id);
+        Assert.Equal("Planning", excluded.Name);
+        Assert.False(excluded.EntirePayloadExcluded);
+        Assert.Equal(["templates"], excluded.Categories);
+        Assert.Equal(before, workspace.Snapshot());
+        Renderers.MatchDetails(preview, "preview", testName: nameof(PartiallyExcludedPlanningReportsStarters) + ".preview");
+        var applied = await operation.ExecuteAsync(Request(workspace, "planning", null, ExtensionInstallMode.Apply), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, applied.Status);
+        Assert.Equal(excluded.FileCount, Assert.Single(applied.ExcludedPackages, package => package.Id == "planning").FileCount);
+        Assert.False(Directory.Exists(workspace.Combine(".agents/templates")));
+        var planning = Assert.Single(workspace.ReadExtensionOwnership().EnumerateArray(), package => package.GetProperty("id").GetString() == "planning");
+        Assert.NotEmpty(planning.GetProperty("paths").EnumerateArray());
+        Assert.DoesNotContain(planning.GetProperty("paths").EnumerateArray(), path => path.GetString() is { } value && value.StartsWith(".agents/templates/", StringComparison.Ordinal));
+        Renderers.MatchDetails(applied, "applied", testName: nameof(PartiallyExcludedPlanningReportsStarters) + ".applied");
+    }
+
+    private static ExtensionInstallRequest Request(ExtensionInstallIntegrationWorkspace workspace, string id, string? sourcePath, ExtensionInstallMode mode)
+        => new(ImplicitWorkspace(workspace), mode, [id], all: false, sourcePath: sourcePath,
+            force: false, automatic: mode == ExtensionInstallMode.Apply, allowInteraction: false);
+
+    private static CliWorkspace ImplicitWorkspace(ExtensionInstallIntegrationWorkspace workspace)
+        => new(lexicalRoot: workspace.Path, physicalRoot: workspace.Path, selectedBy: CliWorkspaceSelectionMethod.CurrentDirectory);
 }

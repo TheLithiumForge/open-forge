@@ -7,6 +7,11 @@ namespace OpenForge.Cli.Core.Presentation.Install.Models;
 
 internal sealed record InstallData
 {
+    [JsonIgnore]
+    internal InstallInvalidRoute? InvalidRoute { get; init; }
+    [JsonIgnore]
+    internal InstallInvalidOption? InvalidOption { get; init; }
+
     public required string Mode { get; init; }
 
     public required bool Force { get; init; }
@@ -47,6 +52,15 @@ internal sealed record InstallData
     internal IReadOnlyList<InstallDataTextRow> TextRows { get; init; } = [];
 
     [JsonIgnore]
+    internal IReadOnlyList<string> TextSetupLines { get; init; } = [];
+
+    [JsonIgnore]
+    internal bool ShowFirstTask { get; init; }
+
+    [JsonIgnore]
+    internal bool ShowFrontmatter { get; init; } = true;
+
+    [JsonIgnore]
     internal IReadOnlyList<string> TextSummaryLines { get; init; } = [];
 
     [JsonIgnore]
@@ -54,6 +68,12 @@ internal sealed record InstallData
 
     [JsonIgnore]
     internal bool ShowNoChanges { get; init; }
+
+    [JsonIgnore]
+    internal string? TextReviewHeadline { get; init; }
+
+    [JsonIgnore]
+    internal string? TextReviewWorkspace { get; init; }
 
     [JsonIgnore]
     internal bool SuppressInterruptedFinding { get; init; }

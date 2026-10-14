@@ -22,7 +22,7 @@ public sealed class PublishedLibraryInspectProcessTests
         Assert.Equal("docs/_guide.md", comparison.GetProperty("destinationPath").GetString());
         Assert.Equal("_guide.md", comparison.GetProperty("sourcePath").GetString());
         Assert.Equal(
-            comparison.GetProperty("expectedTarget").GetString(),
+            comparison.GetProperty("expectedTarget").GetString()?.Replace('/', Path.DirectorySeparatorChar),
             comparison.GetProperty("observedTarget").GetString());
         Assert.Equal(PublishedLibraryWorkspace.SourceBody, File.ReadAllText(workspace.Combine("shared/team-knowledge/_guide.md")));
         workspace.AssertNoInfrastructure();

@@ -7,7 +7,6 @@ using OpenForge.Cli.Core.Presentation.Extension.Update.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Extension.Update.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Presentation.Extension.Update;
@@ -31,14 +30,6 @@ internal static class ExtensionUpdatePresentation
         {
             TextEffects = [],
             TextCounts = [],
-            Report = selected.Report with
-            {
-                Next = selected.Selection.Detail == CliDetail.Minimal
-                    && selected.Report.Next is { } next
-                    && next.Command.Contains("--prune --dry-run", StringComparison.Ordinal)
-                        ? new CliNextAction($"{next.Command}  ({next.Reason})", next.Reason)
-                        : selected.Report.Next,
-            },
         },
     };
 

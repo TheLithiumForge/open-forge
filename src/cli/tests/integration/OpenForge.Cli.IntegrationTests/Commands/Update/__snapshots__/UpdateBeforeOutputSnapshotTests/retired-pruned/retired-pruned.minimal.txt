@@ -1,4 +1,6 @@
-Updated 1 Framework file.
+Changed 1 source file.
 Workspace: <workspace>
-  .agents/guidance/retired-framework.md  deleted (no longer part of this release)
+  .agents/guidance/retired-framework.md
+    deleted (no longer part of this release)
+  Previous content is in the recovery bundle at <recovery-bundle>.
 Next: Review previous content in the recovery bundle at <recovery-bundle>.

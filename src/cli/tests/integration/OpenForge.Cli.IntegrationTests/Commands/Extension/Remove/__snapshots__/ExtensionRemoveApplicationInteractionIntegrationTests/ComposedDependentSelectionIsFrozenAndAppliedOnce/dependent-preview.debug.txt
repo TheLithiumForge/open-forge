@@ -1,0 +1,16 @@
+Choose Extensions to remove
+- remove   * also removed
+
+  1. [ ] base     Version 1.0.0, 1 owned file
+    Needed by toolkit.
+  2. [ ] toolkit  Version 1.0.0, 1 owned file
+
+Choose numbers separated by spaces, "all", or press Enter to cancel:
+Removing base also removes toolkit.
+Would remove 2 Extensions: base, toolkit.
+  .agents/open-forge.json  would record the removal in workspace settings
+  .agents/base.md          would delete
+  .agents/toolkit.md       would delete
+  No files were changed.
+
+Apply these changes, including deleting 2 files? [y/N]

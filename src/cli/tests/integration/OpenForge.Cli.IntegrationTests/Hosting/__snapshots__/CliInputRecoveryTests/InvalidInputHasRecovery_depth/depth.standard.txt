@@ -1,0 +1,5 @@
+Cannot list routes: Invalid --depth value: -1. Use a whole number from 0, or all.
+Workspace: <workspace>
+  Error  -1  Invalid depth
+  Choose a supported depth using Route List help.
+Next: open-forge route list --help

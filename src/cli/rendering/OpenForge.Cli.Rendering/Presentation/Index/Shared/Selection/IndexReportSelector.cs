@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Presentation.Index.Shared.Selection;
@@ -21,32 +22,48 @@ internal static class IndexReportSelector
         ArgumentNullException.ThrowIfNull(result);
         ArgumentNullException.ThrowIfNull(selection);
         var preview = result.Mode == IndexMode.DryRun;
-        var updated = result.Regions.Count(region => region.Outcome is IndexRegionOutcome.Applied or IndexRegionOutcome.Verified
+        var existing = result.Regions.Where(region => !result.Entrypoints.Any(item => item.Path == region.Source.Path)).ToArray();
+        var updated = existing.Count(region => region.Outcome is IndexRegionOutcome.Applied or IndexRegionOutcome.Verified
             || preview && region.Outcome == IndexRegionOutcome.NotRequested);
-        var current = result.Regions.Count(region => region.Outcome == IndexRegionOutcome.AlreadyCurrent);
+        var current = existing.Count(region => region.Outcome == IndexRegionOutcome.AlreadyCurrent);
         var checkedFiles = updated + current;
-        var nothingWritten = result.Regions.All(region => region.Outcome is not (IndexRegionOutcome.Applied or IndexRegionOutcome.Verified or IndexRegionOutcome.Unknown));
-        var regions = result.Regions.Select(region => Project(region, selection.Detail >= CliDetail.Standard)).ToArray();
+        var nothingWritten = result.Metadata.All(item => !IsWritten(item.Outcome)) && result.Entrypoints.All(item => !IsWritten(item.Outcome)) && result.Regions.All(region => region.Outcome is not (IndexRegionOutcome.Applied or IndexRegionOutcome.Verified or IndexRegionOutcome.Unknown));
+        var regions = existing.Select(region => Project(region, selection.Detail >= CliDetail.Standard)).ToArray();
+        var renames = result.Entrypoints.SelectMany(entrypoint => result.Deletions.Where(deletion =>
+            Path.GetDirectoryName(deletion.Path) == Path.GetDirectoryName(entrypoint.Path)
+            && deletion.Outcome == entrypoint.Outcome && (preview || IsWritten(entrypoint.Outcome)))
+            .Select(deletion => KeyValuePair.Create(entrypoint.Path, deletion.Path))).ToDictionary(StringComparer.Ordinal);
+        var renamed = result.Entrypoints.Count(item => renames.ContainsKey(item.Path) && IsCounted(item.Outcome, preview));
         return new CliReport<IndexData>
         {
             Command = result.Command,
             Status = result.Status,
-            Headline = Headline(result, preview, updated, checkedFiles),
+            Headline = Headline(result, preview: preview, updated: updated, checkedFiles: checkedFiles, renamed: renamed),
             HeadlineFindingCode = result.Findings.Count == 1
                 && result.Findings[0].Details?.InputProblem == IndexInputProblem.Folder
                     ? result.Findings[0].MachineCode : null,
             Workspace = result.WorkspacePath is { } workspace ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit) : null,
             Findings = result.Findings.Select(finding => Finding(result, finding, updated)).ToArray(),
-            Effects = regions.Where(region => region.ResultAction == IndexRegionAction.Update).Select(Effect).ToArray(),
+            Effects = regions.Where(region => region.ResultAction == IndexRegionAction.Update && !result.Metadata.Any(item => item.Path == region.Path)).Select(Effect)
+                .Concat(result.Metadata.Where(item => !result.Entrypoints.Any(entrypoint => entrypoint.Path == item.Path))
+                    .Select(item => CompletionEffect(item.Path, item.Outcome, CliEffectAction.Rewritten)))
+                .Concat(result.Entrypoints.Select(item => CompletionEffect(item.Path, item.Outcome, CliEffectAction.Created)))
+                .Concat(result.Deletions.Select(item => CompletionEffect(item.Path, item.Outcome, CliEffectAction.Deleted))).ToArray(),
             Counts =
             [
                 new CliCount("filesChecked", global::OpenForge.Cli.OutputText.Index.IndexText.LabelFilesChecked(), checkedFiles),
                 new CliCount("filesUpdated", global::OpenForge.Cli.OutputText.Index.IndexText.LabelFilesUpdated(), updated),
                 new CliCount("filesCurrent", global::OpenForge.Cli.OutputText.Index.IndexText.LabelFilesCurrent(), current),
+                new CliCount("metadataCompleted", "Metadata completed", result.Metadata.Count(item => IsCounted(item.Outcome, preview))),
+                new CliCount("entrypointsCreated", "Entrypoints created", result.Entrypoints.Count(item => IsCounted(item.Outcome, preview)) - renamed),
+                new CliCount("filesSkipped", "Files skipped", result.Findings.Count(item => item.Code == IndexFindingCode.MetadataSkipped)),
+                new CliCount("navigationFilesRenamed", global::OpenForge.Cli.OutputText.Index.IndexWording.NavigationFilesRenamed(), renamed),
             ],
             Data = new IndexData
             {
                 Mode = preview ? "dry-run" : "apply",
+                Metadata = result.Metadata.Select(item => new IndexDataMetadata(item.Path, item.Fields, item.Description, item.Tags?.ToArray(), Outcome(item.Outcome))).ToArray(),
+                Entrypoints = result.Entrypoints.Select(item => new IndexDataEntrypoint(item.Path, Outcome(item.Outcome))).ToArray(),
                 Changes = regions.Where(region => region.ResultAction == IndexRegionAction.Update)
                     .Select(region => new IndexDataChange(region.Path, region.Before, region.After)
                     {
@@ -62,6 +79,8 @@ internal static class IndexReportSelector
                 Recovery = result.Recovery,
                 NothingWritten = nothingWritten && result.Status is CliSemanticStatus.Blocked or CliSemanticStatus.Incomplete,
                 CurrentCount = current,
+                TextDeletions = result.Deletions.Where(item => !renames.ContainsValue(item.Path)).Select(item => new IndexDataEntrypoint(item.Path, Outcome(item.Outcome))).ToArray(),
+                TextRenames = renames,
             },
             Recovery = new CliRecovery(result.Recovery.ResidualPath, result.Recovery.State switch
             {
@@ -78,8 +97,12 @@ internal static class IndexReportSelector
         };
     }
 
-    private static CliHeadline Headline(IndexResult result, bool preview, int updated, int checkedFiles)
+    private static CliHeadline Headline(IndexResult result, bool preview, int updated, int checkedFiles, int renamed)
     {
+        if ((result.Metadata.Count > 0 || result.Entrypoints.Count > 0) && result.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention or CliSemanticStatus.Incomplete)
+            return new(global::OpenForge.Cli.OutputText.Index.IndexWording.Completion(metadata: result.Metadata.Count(item => IsCounted(item.Outcome, preview)),
+                entrypoints: result.Entrypoints.Count(item => IsCounted(item.Outcome, preview)) - renamed, renames: renamed, preview: preview),
+                preview ? CliHeadlineKind.Preview : CliHeadlineKind.Done);
         var first = result.Findings.FirstOrDefault(finding => finding.Status == result.Status);
         return result.Status switch
         {
@@ -184,7 +207,8 @@ internal static class IndexReportSelector
             IndexFindingCode.RecoveryConflict => CliFindingWording.RecoveryConflict(path),
             IndexFindingCode.DiscoveryIncomplete => IndexWording.DiscoveryIncomplete(path),
             IndexFindingCode.MetadataIncomplete => CliFindingWording.MetadataIncomplete(path),
-            IndexFindingCode.MetadataSkipped => IndexWording.MetadataSkipped(path),
+            IndexFindingCode.MetadataSkipped when finding.Details?.IsNativeSkill == true => IndexWording.MetadataSkipped(path),
+            IndexFindingCode.MetadataSkipped => global::OpenForge.Cli.OutputText.Index.IndexWording.MetadataSkipped(path, result.Mode == IndexMode.DryRun),
             IndexFindingCode.ProjectionIncomplete => CliFindingWording.ProjectionUnavailable(path, reason),
             IndexFindingCode.RecoveryUnavailable => CliFindingWording.RecoveryUnavailable(path),
             IndexFindingCode.RecoveryArtifactRetained => CliFindingWording.RecoveryRetained(recovery),
@@ -199,12 +223,15 @@ internal static class IndexReportSelector
         };
         return new CliFinding
         {
-            Severity = CliReportVocabulary.Severity(finding.Status),
+            Severity = finding.Code == IndexFindingCode.MetadataSkipped && finding.Details?.IsNativeSkill != true ? CliSeverity.Error : CliReportVocabulary.Severity(finding.Status),
             Code = finding.MachineCode,
             Title = finding.Code == IndexFindingCode.MetadataUnsafe ? IndexWording.FrontmatterInvalidTitle() : IndexWording.FindingTitle(finding.Code),
             Message = message,
             Subject = new CliSubject(finding.Source is null ? CliSubjectKind.Identifier : CliSubjectKind.Source, finding.Source?.Path,
                 finding.Source?.Id ?? path, finding.Details is { Line: { } line, Column: { } column } ? new CliSourceLocation(line, column) : null),
+            Evidence = finding.Code == IndexFindingCode.MetadataSkipped ? [new CliEvidence("Cause", finding.Cause)] : [],
+            Actions = finding.Code == IndexFindingCode.MetadataSkipped && finding.Details?.IsNativeSkill != true ? [new CliNextAction(EditFrontmatter(result, path), EditFrontmatter(result, path)) { Kind = CliNextActionKind.Sentence },
+                new CliNextAction(finding.Cause, finding.Cause) { Kind = CliNextActionKind.Sentence }] : [],
             Candidates = finding.Candidates.Select(candidate => new CliCandidate(new CliSubject(CliSubjectKind.Source, candidate.Path, candidate.Id), [])).ToArray(),
         };
     }
@@ -212,7 +239,9 @@ internal static class IndexReportSelector
     private static CliNextAction? Next(IndexResult result)
         => result.Status switch
         {
-            CliSemanticStatus.Complete => null,
+            CliSemanticStatus.Complete when result.Mode == IndexMode.DryRun && result.Counts.Updates == 0 && result.Metadata.Count == 0 && result.Entrypoints.Count == 0 => null,
+            CliSemanticStatus.Complete when result.Mode == IndexMode.DryRun => new CliNextAction("open-forge index", global::OpenForge.Cli.OutputText.Index.IndexWording.ApplyPreview()) { AppliesRequest = true },
+            CliSemanticStatus.Complete => new CliNextAction("open-forge doctor", global::OpenForge.Cli.OutputText.Index.IndexWording.Verify()),
             CliSemanticStatus.Invalid when result.Findings.FirstOrDefault(finding => finding.Details?.CorrectedSourceId is not null)?.Details?.CorrectedSourceId is { } id =>
                 new CliNextAction(IndexWording.CorrectedSource(id), IndexWording.ChooseSource()),
             CliSemanticStatus.Invalid when result.Findings.Any(finding => finding.Code == IndexFindingCode.InvalidSource) =>
@@ -224,8 +253,38 @@ internal static class IndexReportSelector
                 && result.Findings.All(finding => finding.Code == IndexFindingCode.MetadataOptional) => null,
             CliSemanticStatus.Attention => new CliNextAction("open-forge cleanup", IndexWording.InspectRecovery()),
             CliSemanticStatus.Interrupted => new CliNextAction("open-forge index", IndexWording.Retry()),
+            CliSemanticStatus.Incomplete when result.Findings.FirstOrDefault(finding => finding.Code == IndexFindingCode.MetadataSkipped && finding.Details?.IsNativeSkill != true)?.Source?.Path is { } path =>
+                new CliNextAction(EditFrontmatter(result, path), EditFrontmatter(result, path)) { Kind = CliNextActionKind.Sentence },
             _ => new CliNextAction("open-forge doctor", IndexWording.Inspect()),
         };
+
+    private static bool IsWritten(IndexRegionOutcome outcome) => outcome is IndexRegionOutcome.Applied or IndexRegionOutcome.Verified or IndexRegionOutcome.Unknown;
+    private static string EditFrontmatter(IndexResult result, string path)
+        => global::OpenForge.Cli.OutputText.Index.IndexWording.EditFrontmatter(path,
+            CliRetryCommand.BuildInWorkspace(["index"], result.WorkspacePath, result.WorkspaceExplicit));
+    private static bool IsCounted(IndexRegionOutcome outcome, bool preview) => outcome == IndexRegionOutcome.Verified || preview && outcome == IndexRegionOutcome.NotRequested;
+    private static string Outcome(IndexRegionOutcome outcome) => outcome switch
+    {
+        IndexRegionOutcome.NotRequested => "planned",
+        IndexRegionOutcome.Verified => "done",
+        IndexRegionOutcome.NotStarted => "not-started",
+        IndexRegionOutcome.Applied or IndexRegionOutcome.Unknown => "unknown",
+        _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
+    };
+    private static CliEffect CompletionEffect(string path, IndexRegionOutcome outcome, CliEffectAction action) => new()
+    {
+        Path = path,
+        Kind = CliEffectKind.File,
+        Action = action,
+        Outcome = outcome switch
+        {
+            IndexRegionOutcome.NotRequested => CliEffectOutcome.Planned,
+            IndexRegionOutcome.Verified => CliEffectOutcome.Done,
+            IndexRegionOutcome.NotStarted => CliEffectOutcome.NotStarted,
+            IndexRegionOutcome.Applied or IndexRegionOutcome.Unknown => CliEffectOutcome.Unknown,
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
+        },
+    };
 
     private static string Reason(string sentence) => sentence.TrimEnd('.');
 }

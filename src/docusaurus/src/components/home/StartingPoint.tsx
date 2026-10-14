@@ -13,43 +13,21 @@ interface Path {
 const paths: readonly Path[] = [
   {
     title: "Starting something new",
-    lead: "The requirements are still taking shape, so keep planning light.",
+    lead: "Give your agent a first build request. Keep planning light while the requirements take shape.",
     points: [
       { key: "request", content: "Start from a request, not a full specification" },
-      {
-        key: "decisions",
-        content: (
-          <>
-            Record <Link to="/docs/extensions/planning">Decisions</Link> as you make them
-          </>
-        ),
-      },
-      {
-        key: "rules",
-        content: (
-          <>
-            Turn the conversation into rules and specs with <Link to="/docs/extensions/core-templates">Core Templates</Link> and{" "}
-            <Link to="/docs/extensions/project-documents">Project Documents</Link>
-          </>
-        ),
-      },
+      { key: "questions", content: "Answer the choices that matter as the agent asks" },
+      { key: "review", content: "Review what it builds, then keep useful outcomes for the next task" },
     ],
     demo: "/docs/demos/greenfield",
   },
   {
     title: "Joining an existing codebase",
-    lead: "The code shows what the system does. The reasons usually live somewhere else.",
+    lead: "Ask how the tests run, then try a small change. Point the agent to the reasons behind the code.",
     points: [
-      { key: "map", content: "Point a Map at your existing docs instead of moving them" },
-      {
-        key: "decisions",
-        content: (
-          <>
-            Record <Link to="/docs/highlights#decisions-keep-the-why">Decisions</Link> for important choices from now on
-          </>
-        ),
-      },
-      { key: "rules", content: "Add a Directive when a mistake repeats, not in advance" },
+      { key: "sources", content: "Link to the docs you already have instead of moving them" },
+      { key: "reasons", content: "Keep the reasons behind important choices from now on" },
+      { key: "rules", content: "Add a rule when a mistake repeats, not in advance" },
     ],
     demo: "/docs/demos/brownfield",
   },
@@ -81,11 +59,6 @@ export default function StartingPoint(): ReactNode {
             </article>
           ))}
         </div>
-        <aside className={styles.highlight}>
-          <strong>Keep the reasons.</strong> A Decision, from the Planning Extension, records what was chosen and why. The reason stays on record after the conversation ends and
-          the people involved move on, so a later agent tempted to "clean it up" can find out why first.{" "}
-          <Link to="/docs/highlights#decisions-keep-the-why">See the highlights →</Link>
-        </aside>
       </div>
     </section>
   );

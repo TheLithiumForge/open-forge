@@ -73,10 +73,10 @@ public sealed class F01InstallReadinessJourneyTests
         var dryRunExternalBefore = SnapshotExternalStore(workspace);
         var dryRun = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--dry-run"));
         AssertCompleted(dryRun);
-        Assert.Contains("Would install the Open Forge Framework into", dryRun.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Would install the Open Forge Framework", dryRun.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(
             $"Would create {ExpectedPayloadPaths().Count} files and {ExpectedPayloadDirectories().Count} directories under .agents, plus AGENTS.md and CLAUDE.md.",
-            dryRun.StandardOutput,
+            string.Join(' ', dryRun.StandardOutput.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
         Assert.Contains(OwnershipPath, dryRun.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("No files were changed.", dryRun.StandardOutput, StringComparison.Ordinal);
@@ -87,7 +87,7 @@ public sealed class F01InstallReadinessJourneyTests
         var beforeInstall = CaptureEntryKinds(workspace.Path);
         var installed = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertCompleted(installed);
-        Assert.Contains("Installed the Open Forge Framework into", installed.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Installed the Open Forge Framework", installed.StandardOutput, StringComparison.Ordinal);
 
         var afterInstall = CaptureEntryKinds(workspace.Path);
         var createdPaths = afterInstall.Keys
@@ -367,7 +367,7 @@ public sealed class F01InstallReadinessJourneyTests
         var externalBeforePreview = SnapshotExternalStore(workspace);
         var preview = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--dry-run"));
         AssertCompleted(preview);
-        Assert.Contains("Would install the Open Forge Framework into", preview.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Would install the Open Forge Framework", preview.StandardOutput, StringComparison.Ordinal);
         Assert.Contains("replacing 1 existing file", preview.StandardOutput, StringComparison.Ordinal);
         Assert.Contains(OccupiedPath, preview.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(beforePreview, workspace.SnapshotState());
@@ -454,7 +454,7 @@ public sealed class F01InstallReadinessJourneyTests
 
         var applied = await workspace.RunAsync(JourneyFrontmatter.InstallArguments(form, "--automatic"));
         AssertCompleted(applied);
-        Assert.Contains("Installed the Open Forge Framework into", applied.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Installed the Open Forge Framework", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Equal(readme, File.ReadAllText(workspace.Combine(ReadmePath)));
         workspace.LockStore.AssertPersistentZeroByteLock(workspace.Path);
         workspace.LockStore.AssertNoRecoveryArtifacts(workspace.Path);

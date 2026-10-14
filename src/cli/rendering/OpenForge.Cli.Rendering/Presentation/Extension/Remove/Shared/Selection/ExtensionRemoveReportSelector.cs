@@ -274,7 +274,7 @@ internal static class ExtensionRemoveReportSelector
 
         if (result.Status == CliSemanticStatus.Complete && result.Mode == ExtensionRemoveMode.DryRun)
         {
-            return new(ExtensionRemoveWording.WouldRemove(id), CliHeadlineKind.Preview);
+            return new(ExtensionRemoveWording.WouldRemove(result.Selection?.Ids ?? [id]), CliHeadlineKind.Preview);
         }
 
         return result.Status switch
@@ -307,7 +307,7 @@ internal static class ExtensionRemoveReportSelector
     {
         if (result.Mode == ExtensionRemoveMode.DryRun)
         {
-            return ExtensionRemoveWording.WouldRemove(id);
+            return ExtensionRemoveWording.WouldRemove(result.Selection?.Ids ?? [id]);
         }
 
         var dependency = result.Findings.FirstOrDefault(finding => finding.Code == ExtensionRemoveFindingCode.LifecycleObservation)?.Target;
@@ -338,7 +338,12 @@ internal static class ExtensionRemoveReportSelector
                 global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageClearCoveringExclusionsThenRunIndex(),
                 global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageClearCoveringExclusionsThenRunIndex())
             { Kind = CliNextActionKind.Sentence },
-            ExtensionRemoveFindingCode.LifecycleObservation when finding.Target is { } dependency => new CliNextAction($"open-forge extension remove {dependency}", global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageRemoveTheUnusedDependencyWhenItIsNoLongerNeeded()),
+            ExtensionRemoveFindingCode.LifecycleObservation when result.Mode == ExtensionRemoveMode.DryRun && finding.Target is { } dependency
+                => new CliNextAction(
+                    global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.DependencyAfterRemoval(dependency),
+                    global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.DependencyAfterRemoval(dependency))
+                { Kind = CliNextActionKind.Sentence },
+            ExtensionRemoveFindingCode.LifecycleObservation when RemovalApplied(result) && finding.Target is { } dependency => new CliNextAction($"open-forge extension remove {dependency}", global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageRemoveTheUnusedDependencyWhenItIsNoLongerNeeded()),
             ExtensionRemoveFindingCode.RecoveryArtifactRetained => new CliNextAction("open-forge cleanup", global::OpenForge.Cli.OutputText.Shared.SharedText.MessageReviewAndRemoveTheReportedRecoveryBundle()),
             _ => null,
         };
@@ -347,7 +352,7 @@ internal static class ExtensionRemoveReportSelector
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = ExtensionRemoveWording.FindingCode(finding.Code),
             Title = ExtensionRemoveWording.FindingTitle(finding.Code),
-            Message = ExtensionRemoveWording.FindingMessage(finding, id),
+            Message = ExtensionRemoveWording.FindingMessage(finding, id, result.Mode == ExtensionRemoveMode.DryRun),
             Subject = new CliSubject(kind, kind == CliSubjectKind.File ? subject : null, kind == CliSubjectKind.Identifier ? subject : null),
             Resolution = finding.Status == CliSemanticStatus.Attention
                 || finding.Code == ExtensionRemoveFindingCode.PathExcluded
@@ -378,7 +383,19 @@ internal static class ExtensionRemoveReportSelector
             }
         }
 
-        if (result.Status == CliSemanticStatus.Attention
+        if (result.Mode == ExtensionRemoveMode.DryRun && result.Status == CliSemanticStatus.Attention
+            && result.Findings.Any(finding => finding.Code == ExtensionRemoveFindingCode.LifecycleObservation))
+        {
+            var arguments = new List<string> { "extension", "remove" };
+            arguments.AddRange(result.Selection?.Ids ?? [primaryId]);
+            if (result.Automatic) arguments.Add("--automatic");
+            return new CliNextAction(
+                Shell.Definitions.Shared.Commands.CliRetryCommand.Build(arguments),
+                global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.ApplySelectedRemoval())
+            { AppliesRequest = true };
+        }
+
+        if (RemovalApplied(result) && result.Status == CliSemanticStatus.Attention
             && result.Findings.FirstOrDefault(finding => finding.Code == ExtensionRemoveFindingCode.LifecycleObservation) is { Target: { } dependency })
         {
             return new CliNextAction($"open-forge extension remove {dependency}", global::OpenForge.Cli.OutputText.Extension.Remove.ExtensionRemoveText.MessageRemoveTheUnusedDependencyWhenItIsNoLongerNeeded());
@@ -490,6 +507,10 @@ internal static class ExtensionRemoveReportSelector
 
     private static int CompletedChanges(ExtensionRemoveResult result)
         => result.Effects.Count(effect => effect.Outcome == ExtensionRemoveEffectOutcome.Verified);
+
+    private static bool RemovalApplied(ExtensionRemoveResult result)
+        => result.Mode != ExtensionRemoveMode.DryRun
+            && result.Lifecycle.Outcome == ExtensionRemoveLifecycleOutcome.Verified;
 
     private static string EnumName(Enum value)
         => System.Text.Json.JsonNamingPolicy.KebabCaseLower.ConvertName(value.ToString());

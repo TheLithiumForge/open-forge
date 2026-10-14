@@ -1,6 +1,10 @@
 Repair stopped after 1 of 2 links were rewritten.
 Workspace: <workspace>
+  Warning  .agents/docs/source.md:9:8  Broken link
+         This link still needs repair.
   .agents/docs/aaa.md:8:8     rewritten
   .agents/docs/source.md:9:8  not started
+  .agents/docs/index.md       Entries updated
+  .agents/loader.md           not started
   Recovery data: <recovery-bundle>
-Next: open-forge repair --detail debug
+Next: open-forge repair --detail debug --workspace <workspace>

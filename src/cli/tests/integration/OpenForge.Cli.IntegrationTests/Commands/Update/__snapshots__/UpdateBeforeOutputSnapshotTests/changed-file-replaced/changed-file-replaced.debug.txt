@@ -1,7 +1,8 @@
-Updated 1 Framework file.
+Changed 1 source file.
 Workspace: <workspace>
   .agents/loader.md  replaced (your previous file is in the recovery bundle)
   .agents/loader.md  unchanged (line endings differ)
+  Previous content is in the recovery bundle at <recovery-bundle>.
   18 files unchanged
   .agents/loader.md current SHA-256: <sha256>
   .agents/loader.md shipped SHA-256: <sha256>

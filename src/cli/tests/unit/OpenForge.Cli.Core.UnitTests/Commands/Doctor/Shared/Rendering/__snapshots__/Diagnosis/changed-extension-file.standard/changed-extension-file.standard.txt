@@ -5,5 +5,4 @@ Extensions
          open-forge extension update toolkit
          Reconcile the Extension files.
   21 links and 20 routes checked.
-  Reconcile the Extension files.
 Next: open-forge extension update toolkit

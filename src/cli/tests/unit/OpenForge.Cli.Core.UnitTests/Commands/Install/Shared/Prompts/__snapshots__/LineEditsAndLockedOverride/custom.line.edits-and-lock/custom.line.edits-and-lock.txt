@@ -1,8 +1,12 @@
 Choose what Open Forge sets up
 + add   ~ add, keep contents out of Git   - leave out
+~ keeps the entrypoint shared through Git. New contents are Git-ignored.
+Files already tracked by Git stay tracked.
+- leaves out supplied defaults. Existing files stay and remain routable.
 
    1. [+] directives           Rules agents must follow
-directives is set by --route directives=add. Change that option to change this row.
+    directives is set by --route directives=add. Change that option to change
+    this row.
    2. [-] guidance             Advice for recurring choices
    3. [-] maps                 Pointers to important sources
    4. [+] patterns             Reusable shapes for code and documents
@@ -12,13 +16,18 @@ directives is set by --route directives=add. Change that option to change this r
    8. [+] memory/emerging      Findings not accepted yet
    9. [+] memory/crystallized  Accepted knowledge
   10. [-] memory/archived      Completed and historical records
-Type a row number and a mark, such as 2+ or 7~. Press Enter on an empty line to continue.
+Type edits such as 2+ 7~. Press Enter on an empty line to continue.
+Type cancel to stop without changes.
 >
 Choose what Open Forge sets up
 + add   ~ add, keep contents out of Git   - leave out
+~ keeps the entrypoint shared through Git. New contents are Git-ignored.
+Files already tracked by Git stay tracked.
+- leaves out supplied defaults. Existing files stay and remain routable.
 
    1. [+] directives           Rules agents must follow
-directives is set by --route directives=add. Change that option to change this row.
+    directives is set by --route directives=add. Change that option to change
+    this row.
    2. [+] guidance             Advice for recurring choices
    3. [-] maps                 Pointers to important sources
    4. [+] patterns             Reusable shapes for code and documents
@@ -28,14 +37,20 @@ directives is set by --route directives=add. Change that option to change this r
    8. [+] memory/emerging      Findings not accepted yet
    9. [~] memory/crystallized  Accepted knowledge
   10. [-] memory/archived      Completed and historical records
-Type a row number and a mark, such as 2+ or 7~. Press Enter on an empty line to continue.
+Type edits such as 2+ 7~. Press Enter on an empty line to continue.
+Type cancel to stop without changes.
 >
-directives is set by --route directives=add. Change that option to change this row.
+directives is set by --route directives=add. Change that option to change this
+row.
 Choose what Open Forge sets up
 + add   ~ add, keep contents out of Git   - leave out
+~ keeps the entrypoint shared through Git. New contents are Git-ignored.
+Files already tracked by Git stay tracked.
+- leaves out supplied defaults. Existing files stay and remain routable.
 
    1. [+] directives           Rules agents must follow
-directives is set by --route directives=add. Change that option to change this row.
+    directives is set by --route directives=add. Change that option to change
+    this row.
    2. [+] guidance             Advice for recurring choices
    3. [-] maps                 Pointers to important sources
    4. [+] patterns             Reusable shapes for code and documents
@@ -45,5 +60,6 @@ directives is set by --route directives=add. Change that option to change this r
    8. [+] memory/emerging      Findings not accepted yet
    9. [~] memory/crystallized  Accepted knowledge
   10. [-] memory/archived      Completed and historical records
-Type a row number and a mark, such as 2+ or 7~. Press Enter on an empty line to continue.
+Type edits such as 2+ 7~. Press Enter on an empty line to continue.
+Type cancel to stop without changes.
 >

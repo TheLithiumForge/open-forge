@@ -49,6 +49,7 @@ internal static class LibraryAttachCompletion
             [input.Request.SourceRoot]);
         return new LibraryAttachResult
         {
+            PermissionCommand = permissionStage is null ? null : LibraryAttachRetryCommand.From(input.Request, permissionStage.Result.Missing),
             Status = status,
             Workspace = input.Request.Workspace,
             Next = ReadNext(findings),

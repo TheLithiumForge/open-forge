@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Commands.Extension.Install;
@@ -446,7 +447,7 @@ public sealed class ExtensionInstallMutationIntegrationTests
         var root = document.RootElement;
         Assert.Contains(root.GetProperty("findings").EnumerateArray(), finding =>
             finding.GetProperty("code").GetString() == "extension-install.managed-divergence");
-        Assert.Equal("open-forge extension update toolkit", root.GetProperty("next").GetProperty("command").GetString());
+        Assert.Equal($"open-forge extension update toolkit --source {CliCommandText.Quote(source.Path)}", root.GetProperty("next").GetProperty("command").GetString());
         Assert.Empty(root.GetProperty("effects").EnumerateArray());
         Assert.Equal("not-required", root.GetProperty("recovery").GetProperty("disposition").GetString());
         Assert.Equal(beforeBlocked, workspace.Snapshot());

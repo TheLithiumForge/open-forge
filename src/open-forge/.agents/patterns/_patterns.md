@@ -20,11 +20,13 @@ Patterns define reusable default shapes that make related work consistent, easy 
 
 ### Shape And Application
 
-- Keep each Pattern focused on one reusable shape. Show it as the main content through a concrete example, tree, table, diagram, or artifact outline. Use brief text for applicability, labels, and meaningful variations.
-- Keep required behavior in its defining Directive, Axiom, or accepted requirement and link it when needed. Put procedures and substantial choice rationale in their matching sources. Example names and values illustrate the shape unless an applicable requirement fixes them.
-- Use examples that are valid for their APIs, formats, and tools. Label intentionally incomplete examples as schematic.
-- Treat an applicable Pattern as the default shape in its scope. A justified adaptation is allowed within the authority already granted for the work. Explain material departures before other work depends on them.
-- When a Directive, Axiom, or accepted requirement makes a shape mandatory, follow that requirement. Ask only when a departure needs authority that has not been granted.
+- Show one reusable shape as the main content through a concrete example, tree, table, diagram, or annotated outline of the expected result. A reviewer given the Pattern and real code or files should be able to compare their structure without further explanation.
+- Add brief applicability notes. Label which parts are required, optional or repeatable, how they nest and relate, and which names, values and orders are fixed or only illustrative.
+- Link related sources for required rules, advice, maps, procedures, and starting files, and say which of them bind the shape. Sources that apply the shape should link back to its Pattern.
+- Keep required behavior, procedures, and substantial choice rationale in their defining sources. Example names and values illustrate the shape unless an applicable requirement fixes them.
+- Use examples that are valid for their APIs, formats, and tools. Label intentionally incomplete examples as schematic and identify what is omitted.
+- Treat an applicable Pattern as the default shape in its scope. A justified adaptation is allowed within the authority already granted for the work. Explain material departures before other work depends on them. A justified adaptation is still a departure, so a review reports it separately from conformance.
+- When an applicable rule or accepted requirement makes a shape mandatory, follow it. Ask only when a departure needs authority that has not been granted.
 
 ## Entries
 

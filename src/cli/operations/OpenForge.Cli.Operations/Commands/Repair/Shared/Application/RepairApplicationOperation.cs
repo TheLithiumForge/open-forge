@@ -34,7 +34,7 @@ internal sealed class RepairApplicationOperation(
             return await RepairLibraryRecoveryApplication.PreflightAsync(_mutation, plan, cancellationToken).ConfigureAwait(false);
         }
 
-        var changes = plan.Effects.Select(effect => effect.FileChange).ToArray();
+        var changes = plan.FileChanges.ToArray();
         var validation = await _preflight.ValidateAsync(plan.Request.Workspace, changes, cancellationToken).ConfigureAwait(false);
         if (validation.State != MutationValidationState.Valid)
         {
@@ -60,7 +60,7 @@ internal sealed class RepairApplicationOperation(
                 _mutation, _planRevalidator, _postVerifier, plan, targets, cancellationToken).ConfigureAwait(false);
         }
 
-        var changes = plan.Effects.Select(effect => effect.FileChange).ToArray();
+        var changes = plan.FileChanges.ToArray();
         if (changes.Length == 0)
         {
             return plan.Request.Mode == RepairMode.DryRun
@@ -148,10 +148,11 @@ internal sealed class RepairApplicationOperation(
                     "The complete Repair plan changed during recovery preparation.").ConfigureAwait(false);
             }
 
-            for (var index = 0; index < plan.Effects.Count; index++)
+            for (var index = 0; index < plan.FileChanges.Count; index++)
             {
                 var receipt = await _fileChangeApplier.ApplyAsync(
-                    lease, plan.Effects[index].FileChange, validation.Checks[index], preparation, cancellationToken)
+                    lease, plan.FileChanges[index], validation.Checks[index],
+                    plan.FileChanges[index].Kind == PlannedFileChangeKind.Create ? null : preparation, cancellationToken)
                     .ConfigureAwait(false);
                 receipts.Add(receipt);
                 if (receipt.EffectState != FilesystemEffectState.Applied

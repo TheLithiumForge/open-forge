@@ -75,6 +75,8 @@ internal sealed record RouteCreateMetadataInput
 
 internal sealed record RouteCreateRequest
 {
+    internal string? RequestCommand { get; init; }
+
     internal RouteCreateRequest(
         CliWorkspace workspace,
         string fileTarget,

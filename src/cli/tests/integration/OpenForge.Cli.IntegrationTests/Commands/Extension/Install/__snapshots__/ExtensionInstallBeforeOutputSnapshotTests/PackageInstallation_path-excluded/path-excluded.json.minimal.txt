@@ -9,8 +9,8 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "The toolkit Extension is already installed and matches the package. Nothing to do.",
-    "kind": "nothing-to-do"
+    "headline": "Recorded the toolkit Extension without its files, because workspace settings exclude the package content.",
+    "kind": "done"
   },
   "findings": [],
   "effects": [],
@@ -48,7 +48,7 @@
   },
   "recovery": {
     "path": null,
-    "disposition": "not-required"
+    "disposition": "removed"
   },
   "next": null
 }

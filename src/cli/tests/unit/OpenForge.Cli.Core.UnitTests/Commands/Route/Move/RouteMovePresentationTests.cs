@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Collections.Immutable;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
@@ -24,9 +25,9 @@ public sealed class RouteMovePresentationTests
         using var report = JsonDocument.Parse(json);
         Assert.Equal(0, report.RootElement.GetProperty("counts").GetProperty("linksRewritten").GetInt32());
         Assert.Single(report.RootElement.GetProperty("data").GetProperty("rewrittenLinks").EnumerateArray());
-        CommandOutputSnapshot.MatchSnapshot(CommandOutputNormalization.ReplaceDelimitedPath(
-            Render(result, CliFormat.Text, CliDetail.Standard).PrimaryContent,
-            result.WorkspacePath!, "<workspace>"), "failed-rewrites");
+        var text = Render(result, CliFormat.Text, CliDetail.Standard).PrimaryContent;
+        var normalized = CommandOutputNormalization.ReplaceDelimitedPath(text, result.WorkspacePath!, "<workspace>");
+        CommandOutputSnapshot.MatchSnapshot(normalized, "failed-rewrites");
     }
 
     [Trait("Boundary", "Output")]
@@ -69,7 +70,7 @@ public sealed class RouteMovePresentationTests
         Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
         Assert.Equal("file", data.GetProperty("subject").GetString());
         Assert.Equal("retained", root.GetProperty("recovery").GetProperty("disposition").GetString());
-        Assert.Equal("open-forge cleanup", root.GetProperty("next").GetProperty("command").GetString());
+        Assert.Equal($"open-forge cleanup --workspace {CliCommandText.Quote(RouteMoveTestData.Workspace().LexicalRoot)}", root.GetProperty("next").GetProperty("command").GetString());
     }
 
     [Trait("Boundary", "Output")]
@@ -164,16 +165,17 @@ public sealed class RouteMovePresentationTests
 
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "Route Move native output preserves failed and cancelled status actions")]
-    [InlineData((int)CliSemanticStatus.Failed, "Route move stopped after 0 of 4 changes.", "open-forge route move --detail debug")]
-    [InlineData((int)CliSemanticStatus.Interrupted, "Route move was cancelled. Nothing was changed.", "open-forge route move")]
+    [InlineData((int)CliSemanticStatus.Failed, "Route move stopped after 0 of 4 changes.")]
+    [InlineData((int)CliSemanticStatus.Interrupted, "Route move was cancelled. Nothing was changed.")]
     [Trait("Feature", "route-move")]
     [Trait("Evidence", "UnitBehavior")]
     public void FailedAndInterruptedResultsUseNativeStatusActions(
         int statusValue,
-        string expectedHeadline,
-        string expectedCommand)
+        string expectedHeadline)
     {
         var result = Result((CliSemanticStatus)statusValue);
+        var expectedCommand = result.RequestCommand;
+        Assert.NotNull(expectedCommand);
         var text = Render(result, CliFormat.Text, CliDetail.Minimal);
         var json = Render(result, CliFormat.Json, CliDetail.Minimal);
         using var document = JsonDocument.Parse(json.PrimaryContent);
@@ -280,7 +282,11 @@ public sealed class RouteMovePresentationTests
             Findings = [finding],
         };
 
-        return new RouteMoveResult(formation, status, next: null);
+        var workspace = Assert.IsType<OpenForge.Cli.Core.Framework.Workspace.Models.CliWorkspace>(formation.Workspace);
+        return new RouteMoveResult(formation, status, next: null)
+        {
+            RequestCommand = $"open-forge route move {CliCommandText.Quote(formation.Source.Requested)} {CliCommandText.Quote(formation.Destination.Requested)} --workspace {CliCommandText.Quote(workspace.LexicalRoot)}",
+        };
     }
 
     private static ImmutableArray<RouteMoveEffect> Effects(

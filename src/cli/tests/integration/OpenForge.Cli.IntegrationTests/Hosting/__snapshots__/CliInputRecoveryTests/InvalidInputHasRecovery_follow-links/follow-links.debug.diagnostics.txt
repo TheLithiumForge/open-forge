@@ -1,0 +1,1 @@
+Follow-links must be a positive base-10 integer or all; zero is invalid.

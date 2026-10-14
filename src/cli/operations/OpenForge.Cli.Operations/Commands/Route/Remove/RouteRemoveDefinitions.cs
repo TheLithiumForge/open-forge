@@ -17,7 +17,7 @@ internal static class RouteRemoveDefinitions
 
     internal static readonly CliSyntaxDefinition RemoveCommand = new(
         "remove",
-        "Remove one routed source or category, record the removal, and release selected content ownership.");
+        "Remove one routed file or category and remember the removal.");
 
     internal static readonly CliSyntaxDefinition SourceReference = new(
         "source-reference",

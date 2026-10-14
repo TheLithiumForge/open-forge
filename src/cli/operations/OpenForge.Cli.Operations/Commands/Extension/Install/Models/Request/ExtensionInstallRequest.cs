@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Install.Models.Request;
 
@@ -12,6 +13,7 @@ internal enum ExtensionInstallMode
 
 internal sealed record ExtensionInstallRequest
 {
+    internal CliRetryOptions? RetryOptions { get; init; }
     internal ExtensionInstallRequest(
         CliWorkspace workspace,
         ExtensionInstallMode mode,

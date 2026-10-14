@@ -402,17 +402,33 @@ internal static class StatusText
 
     // @OpenForgeText status.help.syntax
     internal static string HelpSyntax()
-        => "open-forge status [global options]";
+        => "open-forge status [options]";
 
     // @OpenForgeText status.help.inspection
     internal static string HelpInspection()
         => "Inspect the selected workspace's installation, startup and continuity context, generated navigation, lifecycle, managed targets, and exact recovery candidates.";
 
     // @OpenForgeText status.help.related-commands
-    internal static string HelpRelatedCommands()
-        => "open-forge doctor — diagnose unavailable or attention-requiring operational facts.\n  open-forge context — return startup or selected authored context.";
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("doctor", "Diagnose workspace problems."),
+            ("context", "Read agent instructions and context."),
+            ("install --help", "Install or configure the Framework."),
+        ];
 
     // @OpenForgeText status.help.notes
     internal static string HelpNotes()
         => "Status is deterministic, stateless, and read-only. It does not acquire a workspace lock, repair lifecycle state, restore recovery data, or modify the workspace.";
+
+    // @OpenForgeText status.status.help.examples
+    internal static string HelpExamples()
+        => "open-forge status\nopen-forge status --detail standard\nopen-forge status --format json";
+
+    // @OpenForgeText status.status.help.behavior
+    internal static string HelpBehavior()
+        => "Inspect the current workspace, or select another with --workspace.\nThe default gives a short installation and context summary.\nUse --detail standard for reasons and next actions. This command changes no files and asks no questions.";
+    // @OpenForgeText status.help.details-1
+    internal static string HelpCoverageDetails()
+        => "Inspect installation, startup and continuity context, generated navigation, lifecycle, managed targets, and exact recovery candidates. This deterministic, stateless command takes no workspace lock, repairs no lifecycle state, and restores no recovery data.";
 }

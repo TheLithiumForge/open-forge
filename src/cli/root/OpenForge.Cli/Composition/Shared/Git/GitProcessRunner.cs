@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using OpenForge.Cli.Composition.Shared.Git.Models;
 
 namespace OpenForge.Cli.Composition.Shared.Git;
 
@@ -9,7 +10,31 @@ internal sealed class GitProcessRunner(
     Action<ProcessStartInfo>? configureProcess = null,
     Action<Process>? processStarted = null)
 {
-    internal async Task<(int ExitCode, string Output, string Error)?> RunAsync(string root, string[] arguments, CancellationToken cancellationToken)
+    internal Task<(int ExitCode, string Output, string Error)?> RunAsync(string root, string[] arguments, CancellationToken cancellationToken)
+        => RunCoreAsync(new(root, arguments),
+            readOutput: process => process.StandardOutput.ReadToEndAsync(CancellationToken.None),
+            readError: process => process.StandardError.ReadToEndAsync(CancellationToken.None), cancellationToken);
+
+    internal Task<(int ExitCode, byte[] Output, byte[] Error)?> RunBytesAsync(string root, string[] arguments, CancellationToken cancellationToken)
+        => RunCoreAsync(new(root, arguments),
+            readOutput: process => ReadBytesAsync(process.StandardOutput.BaseStream),
+            readError: process => ReadBytesAsync(process.StandardError.BaseStream), cancellationToken);
+
+    internal Task<(int ExitCode, byte[] Output, byte[] Error)?> RunBytesWithInputAsync(
+        string root, string[] arguments, byte[] standardInput, CancellationToken cancellationToken)
+        => RunCoreAsync(new(root, arguments, standardInput),
+            readOutput: process => ReadBytesAsync(process.StandardOutput.BaseStream),
+            readError: process => ReadBytesAsync(process.StandardError.BaseStream), cancellationToken);
+
+    private static async Task<byte[]> ReadBytesAsync(Stream stream)
+    {
+        using var bytes = new MemoryStream();
+        await stream.CopyToAsync(bytes, CancellationToken.None).ConfigureAwait(false);
+        return bytes.ToArray();
+    }
+
+    private async Task<(int ExitCode, T Output, T Error)?> RunCoreAsync<T>(GitProcessInvocation invocation,
+        Func<Process, Task<T>> readOutput, Func<Process, Task<T>> readError, CancellationToken cancellationToken)
     {
         var start = new ProcessStartInfo(gitExecutable)
         {
@@ -17,14 +42,15 @@ internal sealed class GitProcessRunner(
             CreateNoWindow = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
+            RedirectStandardInput = invocation.StandardInput is not null,
             StandardOutputEncoding = new UTF8Encoding(false, true),
         };
         start.ArgumentList.Add("--no-optional-locks");
         start.ArgumentList.Add("-c");
         start.ArgumentList.Add("core.fsmonitor=false");
         start.ArgumentList.Add("-C");
-        start.ArgumentList.Add(root);
-        foreach (var argument in arguments)
+        start.ArgumentList.Add(invocation.Root);
+        foreach (var argument in invocation.Arguments)
         {
             start.ArgumentList.Add(argument);
         }
@@ -50,11 +76,17 @@ internal sealed class GitProcessRunner(
 
         // Windows pipe reads can retain native IO after a cancelled task completes.
         // Cancel the process wait, then reap the child and drain both pipes before disposal.
-        var output = process.StandardOutput.ReadToEndAsync(CancellationToken.None);
-        var error = process.StandardError.ReadToEndAsync(CancellationToken.None);
+        var output = readOutput(process);
+        var error = readError(process);
         try
         {
             processStarted?.Invoke(process);
+            if (invocation.StandardInput is { } input)
+            {
+                await process.StandardInput.BaseStream.WriteAsync(input, cancellationToken).ConfigureAwait(false);
+                await process.StandardInput.BaseStream.FlushAsync(cancellationToken).ConfigureAwait(false);
+                process.StandardInput.Close();
+            }
             await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
             return (process.ExitCode, await output.ConfigureAwait(false), await error.ConfigureAwait(false));
         }

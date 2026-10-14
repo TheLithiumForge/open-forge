@@ -29,8 +29,8 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route update memory/project-alpha/overview",
-          "reason": "Add an optional description or tag with open-forge route update when useful."
+          "command": "open-forge route update --help",
+          "reason": "Add a description or tags when useful. See open-forge route update --help."
         }
       ],
       "candidates": [],
@@ -95,7 +95,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route update memory/project-alpha/overview",
-    "reason": "Add an optional description or tag with open-forge route update when useful."
+    "command": "open-forge route update --help",
+    "reason": "Add a description or tags when useful. See open-forge route update --help."
   }
 }

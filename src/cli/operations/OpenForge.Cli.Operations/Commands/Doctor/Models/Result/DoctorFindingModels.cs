@@ -127,6 +127,7 @@ internal enum DoctorFindingKind
     ExtensionPartialLifecycle,
     ExtensionOwnershipCollision,
     ExtensionBridgeRegistration,
+    ReferenceTargetRenamed,
 }
 
 internal sealed record DoctorFinding
@@ -150,4 +151,7 @@ internal sealed record DoctorFinding
     public required DoctorExactProposal? Proposal { get; init; }
 
     public required IReadOnlyList<DoctorNextAction> Actions { get; init; }
+
+    internal Commands.Shared.LibraryLinks.Models.LibraryLinkRecreation? LinkRecreation { get; init; }
+    internal DoctorMaintenanceAdvice? Maintenance { get; init; }
 }

@@ -136,7 +136,7 @@ public sealed class InstallBindingTests
             Mode: InstallMode.Apply);
         var result = InstallResult.Invalid(
             input,
-            Workspace(),
+            new CliWorkspace(Workspace().LexicalRoot, Workspace().PhysicalRoot, CliWorkspaceSelectionMethod.CurrentDirectory),
             [new InstallFinding(
                 InstallFindingCode.ConfirmationRequired,
                 "Install requires confirmation before writing.")]);

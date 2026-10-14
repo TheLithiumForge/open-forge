@@ -34,7 +34,7 @@ internal static class RouteCreateText
 
     // @OpenForgeText route.create.message.report-the-failure-and-retry-the-same-route-create-request-with-bounded-diagnostics
     internal static string MessageReportTheFailureAndRetryTheSameRouteCreateRequestWithBoundedDiagnostics()
-        => "Report the failure and retry the same Route Create request with bounded diagnostics.";
+        => "Address the reported failure, then retry the same Route Create request.";
 
     // @OpenForgeText route.create.message.rerun-the-same-route-create-request
     internal static string MessageRerunTheSameRouteCreateRequest()
@@ -78,11 +78,11 @@ internal static class RouteCreateText
 
     // @OpenForgeText route.create.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route create <file-target> [--description <text>] [--tag <tag>...] [--apply-to <glob>...] [--responsibility <text>] [--template <template-reference>] [--dry-run] [global options]";
+        => "open-forge route create <file-target> [options]";
 
     // @OpenForgeText route.create.help.target
     internal static string HelpTarget()
-        => "<file-target> selects one ordinary Markdown source ID or exact .agents path below exactly one existing routable root. Missing intermediate route directories and entrypoints are created beneath that root; unknown roots are refused.";
+        => "<file-target> selects one ordinary Markdown source ID or exact .agents path below exactly one existing routable root. Missing intermediate route directories and entrypoints are created beneath that root. Unknown roots are refused.";
 
     // @OpenForgeText route.create.help.metadata
     internal static string HelpMetadata()
@@ -98,9 +98,33 @@ internal static class RouteCreateText
 
     // @OpenForgeText route.create.help.examples
     internal static string HelpExamples()
-        => "open-forge route create memory/project-alpha/overview --description \"Project overview\" --tag Docs --apply-to \"**/*.cs\"\n  open-forge route create .agents/memory/project-alpha/overview.md --description \"Project overview\" --tag Docs --template templates/route --dry-run";
+        => "open-forge route create memory/note --description \"Note\" --dry-run\nopen-forge route create memory/note --description \"Note\"\nopen-forge route create memory/note --template templates/route --dry-run";
 
     // @OpenForgeText route.create.help.notes
     internal static string HelpNotes()
         => "Route Create does not initialize a new root, overwrite differing content, create lifecycle ownership, infer metadata, or invoke Index as a subprocess. It may create missing intermediate route directories and canonical entrypoints below an existing root.";
+
+    // @OpenForgeText route.create.routecreate.help.behavior
+    internal static string HelpBehavior()
+        => "Select a new Markdown file below an existing root route.\n--dry-run shows the same destination and generated Entries navigation changes and writes nothing.\nMissing intermediate route folders and entrypoints can be created. Differing existing content stays protected.\nThis command asks no questions. Interrupted writes report retained recovery data.";
+
+    // @OpenForgeText route.create.routecreate.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("route init --help", "Create missing navigation files."),
+            ("route update --help", "Change routed metadata or Template content."),
+            ("index --dry-run", "Fill missing metadata and update Entries."),
+        ];
+    // @OpenForgeText route.create.help.details-1
+    internal static string HelpTargetAndMetadataDetails()
+        => "Use one ordinary Markdown source ID or exact .agents path below exactly one existing root. Unknown roots are refused. Missing description or tags yields a warning and a next action to add them. Supply --description, --responsibility, and --template at most once. Tags are ordered. Exact duplicates are invalid. Repeated --apply-to values may contain comma-separated patterns.";
+
+    // @OpenForgeText route.create.help.details-2
+    internal static string HelpGlobsAndTemplatesDetails()
+        => "Globs are case-sensitive and relative to the workspace: *.py at root, **/*.py at any depth, docs/** below docs. ! is literal. --template copies only the body of one exact routed Markdown source tagged Template, keeping explicit destination metadata and no continuing Template relationship.";
+
+    // @OpenForgeText route.create.help.details-3
+    internal static string HelpBoundaryDetails()
+        => "Create does not initialize a new root, create lifecycle ownership, infer metadata, or invoke Index. Intermediate entrypoints use canonical filenames.";
 }

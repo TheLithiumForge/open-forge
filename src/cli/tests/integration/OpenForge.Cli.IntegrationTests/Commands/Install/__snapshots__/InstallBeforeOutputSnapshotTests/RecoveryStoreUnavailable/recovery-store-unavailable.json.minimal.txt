@@ -28,7 +28,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge doctor",
+          "command": "open-forge doctor --workspace <workspace>",
           "reason": "Inspect the reported Install boundary before rerunning it."
         }
       ]
@@ -64,7 +64,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the reported Install boundary before rerunning it."
   }
 }

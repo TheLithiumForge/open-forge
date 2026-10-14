@@ -7,6 +7,23 @@ description: The six content roles in Core, the question each one answers, and h
 
 Core gives content six roles, called categories. Each category answers one question. To place something, pick the category whose question it answers. The table shows the loading rules when a category is present. [Installation](../getting-started/installation.md#choose-the-installed-routes) lets you select the built-in routes you need.
 
+This illustrative Directive requires behavior. It is not a shipped testing policy. Use your workspace's selected [frontmatter](../glossary.md#frontmatter) form when copying:
+
+```md title=".agents/directives/testing.md (illustrative)"
+---
+description: Run tests before finishing a code change
+tags: [Directive, LoadNow]
+---
+
+# Test code changes
+
+## Instructions
+
+- Run the project's tests before calling a code change done.
+```
+
+This is a Directive because it requires behavior. A [Pattern](../glossary.md#pattern) would show a reusable shape instead, such as an API response. The table below helps you choose the role.
+
 | Category                  | Question it answers                                                         | At startup                                      |
 | ------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------- |
 | [Directives](#directives) | What behavior is required in this scope?                                    | Entrypoint at startup, plus its Directive files |
@@ -16,7 +33,7 @@ Core gives content six roles, called categories. Each category answers one quest
 | [Templates](#templates)   | What starting content can be copied, adapted, and maintained independently? | Entrypoint on demand                            |
 | [Maps](#maps)             | Where is a useful local or external source, and when should it be used?     | Entrypoint at startup                           |
 
-"Entrypoint at startup" means the agent reads the category's purpose, rules, and one line per item. Linked items open when selected, tagged to load, or required by a loaded rule. Directives directly in `directives/` must carry `#LoadNow`, and the Skills rules require the CLI usage guide. "Entrypoint on demand" means the entrypoint itself waits until selected. [Loading and tags](loading-and-tags.md#what-loads-at-startup-in-a-fresh-install) lists every startup file.
+["Entrypoint at startup"](../glossary.md#entrypoint-at-startup) means the agent reads the category's purpose, rules, and one line per item. Linked items open when selected, tagged to load, or required by a loaded rule. Directives directly in `directives/` must carry `#LoadNow`, and the Skills rules require the CLI usage guide. "Entrypoint on demand" means the entrypoint itself waits until selected. [Loading and tags](loading-and-tags.md#what-loads-at-startup-in-a-fresh-install) lists every startup file.
 
 In a fresh install, each selected category entrypoint lists no items except Skills, which lists `open-forge-cli`. You or an [Extension](../extensions/index.md) add the rest.
 
@@ -27,7 +44,7 @@ In a fresh install, each selected category entrypoint lists no items except Skil
 State the required action, its conditions, and meaningful exceptions in the instructions. Examples can clarify a rule, but the obligation remains understandable from the instructions themselves.
 
 - Every Directive file directly in a Directives folder must carry `#LoadNow`, because it's mandatory there. Without the tag, it stays on demand.
-- Each Directive file keeps its instructions under a non-empty `## Instructions` heading.
+- Each Directive file keeps its required [Instructions](../glossary.md#instructions) under a non-empty `## Instructions` heading.
 - Files in the root `directives/` folder apply to the whole workspace. A scoped folder like `directives/frontend/` loads only when selected, and its Directives then add to the root ones. A narrower Directive never cancels a broader one.
 
 Use a Directive when behavior is mandatory in a scope, such as a correction you keep repeating. If the right approach depends on the situation, use Guidance instead.
@@ -40,11 +57,13 @@ Use a Directive when behavior is mandatory in a scope, such as a correction you 
 
 **Reusable shapes.** A Pattern defines a concrete, inspectable shape: how an API response looks, how a test file is organized, where a component's files live. Each Pattern covers one shape.
 
-Show the shape as the main content through a concrete example, folder tree, table, diagram, or outline. Keep prose focused on when it applies and the labels or variations needed to understand it.
+Show the expected result as the main content through a concrete example, folder tree, table, diagram, or annotated outline. A reviewer given the Pattern and real code or files should be able to compare their structure. Brief notes explain when it applies, label required, optional and repeatable parts and their nesting and relationships, and say which names, values and orders are fixed or only illustrative.
 
 Shared shapes make related work consistent and easier to inspect. In review, work that departs from the local Pattern stands out.
 
-A Pattern is the default shape in its scope. A justified departure is allowed, and the agent explains material departures before other work depends on them. When a Directive makes a shape mandatory, the agent follows the Directive.
+Link related sources for required rules, advice, maps, procedures, and starting files, and say which of them bind the shape. Sources that use a shape should link back to its Pattern, so readers can find the shape from either direction. Required behavior and procedures stay in their defining sources.
+
+A Pattern is the default shape in its scope. A justified departure is allowed, and the agent explains material departures before other work depends on them. A justified adaptation is still a departure, so a review reports it separately from conformance. When a Directive makes a shape mandatory, the agent follows the Directive.
 
 ## Skills
 

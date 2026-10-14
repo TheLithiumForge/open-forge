@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 3,
+  "command": "extension install",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Already recorded the core-templates Extension without its files, because Templates is left out.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "code": "extension-install.path-excluded",
+      "title": "Extension path is excluded",
+      "message": "'.agents/templates/core/_core.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/templates/core/_core.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.",
+          "reason": "Workspace removal settings exclude this payload path."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "extension-install.path-excluded",
+      "title": "Extension path is excluded",
+      "message": "'.agents/templates/core/directive.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/templates/core/directive.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.",
+          "reason": "Workspace removal settings exclude this payload path."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "extension-install.path-excluded",
+      "title": "Extension path is excluded",
+      "message": "'.agents/templates/core/guidance.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/templates/core/guidance.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.",
+          "reason": "Workspace removal settings exclude this payload path."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "extension-install.path-excluded",
+      "title": "Extension path is excluded",
+      "message": "'.agents/templates/core/map.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/templates/core/map.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.",
+          "reason": "Workspace removal settings exclude this payload path."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "extension-install.path-excluded",
+      "title": "Extension path is excluded",
+      "message": "'.agents/templates/core/memory.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/templates/core/memory.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.",
+          "reason": "Workspace removal settings exclude this payload path."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "extension-install.path-excluded",
+      "title": "Extension path is excluded",
+      "message": "'.agents/templates/core/pattern.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/templates/core/pattern.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.",
+          "reason": "Workspace removal settings exclude this payload path."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "extension-install.path-excluded",
+      "title": "Extension path is excluded",
+      "message": "'.agents/templates/core/skill.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/templates/core/skill.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.",
+          "reason": "Workspace removal settings exclude this payload path."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "info",
+      "code": "extension-install.path-excluded",
+      "title": "Extension path is excluded",
+      "message": "'.agents/templates/core/template.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/templates/core/template.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "informational",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.",
+          "reason": "Workspace removal settings exclude this payload path."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "packagesInstalled": 0,
+    "filesCreated": 0,
+    "filesReplaced": 0,
+    "sectionsUpdated": 0,
+    "grantsSaved": 0,
+    "infos": 8
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "automatic": true,
+    "source": {
+      "kind": "embedded",
+      "path": null
+    },
+    "packages": [
+      {
+        "id": "core-templates",
+        "version": "0.4.0",
+        "selected": true,
+        "requiredBy": []
+      }
+    ],
+    "permissions": {
+      "decision": "not-required",
+      "required": [],
+      "missing": [],
+      "saved": false
+    },
+    "selection": {
+      "method": "explicit-ids"
+    },
+    "sections": [],
+    "entriesUnchanged": [
+      ".agents/directives/_directives.md",
+      ".agents/loader.md",
+      ".agents/memory/_memory.md",
+      ".agents/memory/crystallized/_crystallized.md",
+      ".agents/memory/emerging/_emerging.md",
+      ".agents/memory/working/_working.md",
+      ".agents/patterns/_patterns.md",
+      ".agents/skills/_skills.md"
+    ],
+    "frameworkFingerprint": "<sha256>",
+    "verification": {
+      "targets": "verified",
+      "topology": "verified",
+      "extensionsLifecycle": "verified",
+      "frameworkLifecycle": "verified"
+    },
+    "recovery": {
+      "state": "not-required",
+      "protectedPaths": [],
+      "residualPath": null
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

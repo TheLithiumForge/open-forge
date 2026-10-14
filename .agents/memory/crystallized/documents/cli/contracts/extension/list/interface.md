@@ -23,6 +23,18 @@ technology-neutral read-only behavior. The [Extension group entrypoint](../_exte
 defines only routing and help. Shared Global Flags define workspace and
 presentation flags once.
 
+## Help
+
+The purpose sentence is: List installed Extensions and Extensions available from a bundled or local source.
+
+The public Usage line is:
+
+```text
+open-forge extension list [options]
+```
+
+Follow the [shared help template](../../shared/global-flags/interface.md#--help): common Examples, Behavior, generated Arguments when needed, full local Options once, one compact global-options block, additional Details when needed, shared Automation, and two-column Related commands. Details never repeats Behavior. Keep runnable examples on one logical line. Help does not change operand parsing or validation.
+
 ## Purpose And Boundary
 
 `list` answers which Extension packages are installed and which are available.

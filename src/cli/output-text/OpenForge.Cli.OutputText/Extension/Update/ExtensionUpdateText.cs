@@ -10,11 +10,11 @@ internal static class ExtensionUpdateText
 
     // @OpenForgeText extension.update.help.syntax
     internal static string HelpSyntax()
-        => "open-forge extension update [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--prune] [--automatic] [--dry-run] [--allow-path <path>] [global options]";
+        => "open-forge extension update [<stable-id>...] [options]";
 
     // @OpenForgeText extension.update.help.selection
     internal static string HelpSelection()
-        => "Select exact managed stable IDs or --all from one reviewed source. Dependencies, including dependencies of dependencies, are resolved first.";
+        => "Select exact managed Extension IDs or --all from one reviewed source. Dependencies, including dependencies of dependencies, are resolved first.";
 
     // @OpenForgeText extension.update.help.authority
     internal static string HelpAuthority()
@@ -91,14 +91,6 @@ internal static class ExtensionUpdateText
     // @OpenForgeText extension.update.label.restored-it-was-missing
     internal static string LabelRestoredItWasMissing()
         => "restored (it was missing)";
-
-    // @OpenForgeText extension.update.label.create-new-in-this-version
-    internal static string LabelCreateNewInThisVersion()
-        => "create (new in this version)";
-
-    // @OpenForgeText extension.update.label.created-new-in-this-version
-    internal static string LabelCreatedNewInThisVersion()
-        => "created (new in this version)";
 
     // @OpenForgeText extension.update.label.delete-no-longer-part-of-the-package
     internal static string LabelDeleteNoLongerPartOfThePackage()
@@ -211,4 +203,24 @@ internal static class ExtensionUpdateText
     // @OpenForgeText extension.update.label.retained
     internal static string LabelRetained()
         => "retained";
+
+    // @OpenForgeText extension.update.extensionupdate.help.examples
+    internal static string HelpExamples()
+        => "open-forge extension update planning --dry-run\nopen-forge extension update planning\nopen-forge extension update --all --dry-run";
+
+    // @OpenForgeText extension.update.extensionupdate.help.behavior
+    internal static string HelpBehavior()
+        => "Select installed Extension IDs or --all. Required packages are resolved first.\nChanged or missing eligible content is updated or restored. --prune permits deletion of eligible retired content.\n--dry-run shows the checked plan and writes nothing.\nAn interactive writing plan asks for confirmation unless --automatic is supplied.\nRedirected or JSON requests that would write need --automatic. Previous bytes stay in the recovery bundle.";
+
+    // @OpenForgeText extension.update.extensionupdate.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("extension list --installed", "List installed packages."),
+            ("extension inspect --help", "Compare a package with its installation."),
+            ("cleanup --dry-run", "Preview recovery-data cleanup."),
+        ];
+    // @OpenForgeText extension.update.help.details-1
+    internal static string HelpSourceAndPermissionsDetails()
+        => "Use exact managed IDs from one reviewed source. Dependencies of dependencies are also resolved first. --allow-path records permission for an exact destination outside .agents. The target is verified before writing.";
 }

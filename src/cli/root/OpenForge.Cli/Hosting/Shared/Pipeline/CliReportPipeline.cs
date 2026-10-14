@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 
 namespace OpenForge.Cli.Core.Shell.Pipeline;
 
@@ -16,16 +17,16 @@ internal sealed class CliReportPipeline<TRequest, TResult, TData>(
     where TResult : ICliCommandResult where TData : class
 {
     internal async ValueTask<CliProcessCompletion> ExecuteAsync(
-        TRequest request, CliPresentation presentation, CliOutputWriters writers, CancellationToken cancellationToken)
+        TRequest request, CliPresentation presentation, CliOutputWriters writers, CancellationToken cancellationToken, CliRequestReplay? replay = null)
     {
         var result = await CliOperationStage.InvokeAsync(new CliOperationRequest<TRequest>(request), operation, cancellationToken).ConfigureAwait(false);
-        return await PresentAsync(result.Result, presentation, writers).ConfigureAwait(false);
+        return await PresentAsync(result.Result, presentation, writers, replay).ConfigureAwait(false);
     }
 
-    internal async ValueTask<CliProcessCompletion> PresentAsync(TResult result, CliPresentation presentation, CliOutputWriters writers)
+    internal async ValueTask<CliProcessCompletion> PresentAsync(TResult result, CliPresentation presentation, CliOutputWriters writers, CliRequestReplay? replay = null)
     {
-        var request = CliPresentationStage.Create(result, presentation with { Colors = writers.Colors });
-        var output = CliRenderingStage.Render(request, rendering);
+        var request = CliPresentationStage.Create(result, presentation with { Colors = writers.Colors, Width = writers.Width });
+        var output = CliRenderingStage.Render(request, rendering, replay);
         var receipt = await CliOutputStage.WriteAsync(output, writers, CancellationToken.None).ConfigureAwait(false);
         return CliCompletionStage.Complete(receipt);
     }

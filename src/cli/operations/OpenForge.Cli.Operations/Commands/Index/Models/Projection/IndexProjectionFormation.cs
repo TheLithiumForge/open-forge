@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Models;
 
 namespace OpenForge.Cli.Core.Commands.Index.Models.Projection;
 
@@ -20,6 +21,8 @@ internal sealed record IndexProjectionContext
     public required IndexSelectionResolution Selection { get; init; }
 
     public required SourceDocumentReader Reader { get; init; }
+
+    internal RoutedMaintenanceIntent? Maintenance { get; init; }
 }
 
 internal sealed record IndexProjectionAssembly
@@ -143,7 +146,8 @@ internal sealed record IndexProjectionReadiness
 {
     internal IndexProjectionReadiness(
         IEnumerable<IndexFinding> findings,
-        IEnumerable<string> unavailableTargetPaths)
+        IEnumerable<string> unavailableTargetPaths,
+        bool hasMetadataLimitations = false)
     {
         ArgumentNullException.ThrowIfNull(findings);
         ArgumentNullException.ThrowIfNull(unavailableTargetPaths);
@@ -165,12 +169,9 @@ internal sealed record IndexProjectionReadiness
                 "Index projection readiness targets require unique canonical paths.",
                 nameof(unavailableTargetPaths));
         }
-        if ((findingValues.Length == 0) != (pathValues.Length == 0))
-        {
-            throw new ArgumentException(
-                "Index projection readiness findings must exactly identify unavailable targets.",
-                nameof(unavailableTargetPaths));
-        }
+
+        if (!hasMetadataLimitations && (findingValues.Length == 0) != (pathValues.Length == 0))
+            throw new ArgumentException("Index projection readiness findings must exactly identify unavailable targets.", nameof(unavailableTargetPaths));
 
         Findings = new ReadOnlyCollection<IndexFinding>(IndexResult.OrderFindings(findingValues).ToArray());
         UnavailableTargetPaths = new ReadOnlyCollection<string>(pathValues);
@@ -184,6 +185,8 @@ internal sealed record IndexProjectionReadiness
 internal sealed record IndexProjectionFormation
 {
     internal FileExpectation? OwnershipExpectation { get; init; }
+    internal FileExpectation? SettingsExpectation { get; init; }
+    internal RoutedMaintenanceIntent? Maintenance { get; init; }
 
     internal IndexProjectionFormation(
         IndexSelectionResolution selection,
@@ -236,7 +239,7 @@ internal sealed record IndexProjectionFormation
             .Select(region => region.CanonicalPath)
             .ToHashSet(StringComparer.Ordinal);
         var nonOptionalFindings = findingValues
-            .Where(finding => finding.Code != IndexFindingCode.MetadataOptional)
+            .Where(finding => finding.Code is not (IndexFindingCode.MetadataOptional or IndexFindingCode.MetadataSkipped))
             .ToArray();
         if (projection.IsComplete && nonOptionalFindings.Length != 0)
         {
@@ -244,7 +247,7 @@ internal sealed record IndexProjectionFormation
                 "A complete Index projection can carry only optional metadata findings.",
                 nameof(findings));
         }
-        if (!projection.IsComplete
+        if (!projection.IsComplete && !findingValues.Any(finding => finding.Code == IndexFindingCode.MetadataSkipped)
             && (nonOptionalFindings.Length == 0
                 || nonOptionalFindings.Select(ReadFindingPath).Any(path => path is null)
                 || !nonOptionalFindings
@@ -272,17 +275,11 @@ internal sealed record IndexProjectionFormation
 
     internal IReadOnlyList<IndexFinding> Findings { get; }
 
-    internal bool IsComplete => Projection.IsComplete;
+    internal bool IsComplete => Projection.IsComplete && !Findings.Any(finding => finding.Code == IndexFindingCode.MetadataSkipped);
 
     internal bool IsExecutable
-        => IsComplete
-            ? Findings.All(finding => finding.Code == IndexFindingCode.MetadataOptional)
-            : Findings
-                .Where(finding => finding.Code != IndexFindingCode.MetadataOptional)
-                .All(finding => finding.Code == IndexFindingCode.MetadataSkipped)
-                && Findings.Any(finding => finding.Code == IndexFindingCode.MetadataSkipped)
-                && Regions.Any(region => region.Region.State == GeneratedNavigationRegionState.Available
-                    && region.Region.Change?.Kind == GeneratedNavigationChangeKind.Update);
+        => Findings.All(finding => finding.Code is IndexFindingCode.MetadataOptional or IndexFindingCode.MetadataSkipped)
+            && (Projection.IsComplete || Findings.Any(finding => finding.Code == IndexFindingCode.MetadataSkipped));
 
     private static string? ReadFindingPath(IndexFinding finding)
         => finding.Details?.ParentPath ?? finding.Source?.Path;

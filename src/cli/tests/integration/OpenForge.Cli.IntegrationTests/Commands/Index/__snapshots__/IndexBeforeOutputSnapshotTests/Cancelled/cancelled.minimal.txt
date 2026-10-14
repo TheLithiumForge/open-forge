@@ -2,4 +2,4 @@ Index was cancelled. Nothing was changed.
 Workspace: <workspace>
   Error  <workspace>  Index was cancelled
          Index was cancelled. Nothing was changed.
-Next: open-forge index
+Next: open-forge index --workspace <workspace>

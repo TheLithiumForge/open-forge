@@ -31,7 +31,7 @@ internal sealed record InstallResult : ICliCommandResult
         Input = input;
         Findings = new ReadOnlyCollection<InstallFinding>(materialized);
         Status = ReadStatus(materialized);
-        Next = InstallDefinitions.ReadNextAction(Status, Findings, input);
+        Next = InstallDefinitions.ReadNextAction(Status, Findings, input, workspace);
         Summary = summary;
         Facts = facts ?? (summary is null
             ? InstallResultFactsFactory.Empty()
@@ -87,7 +87,8 @@ internal sealed record InstallResult : ICliCommandResult
             input: new InstallBindingInput(
                 Force: request.Force,
                 Automatic: request.Automatic,
-                Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration),
+                Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration)
+            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form },
             findings: findings,
             summary: summary)
         { Frontmatter = InstallResultFactsFactory.Frontmatter(request.Frontmatter, []) };
@@ -104,7 +105,8 @@ internal sealed record InstallResult : ICliCommandResult
             input: new InstallBindingInput(
                 Force: request.Force,
                 Automatic: request.Automatic,
-                Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration),
+                Mode: request.Mode, Setup: request.Setup, Configuration: request.Configuration)
+            { RetryOptions = request.RetryOptions, SetupRecap = request.SetupRecap, ResolvedFrontmatter = request.Frontmatter?.Form },
             findings: findings,
             summary: summary,
             facts: facts)

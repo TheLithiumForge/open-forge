@@ -11,10 +11,14 @@ internal sealed record CliSelectedReport<TData>(CliReport<TData> Report, CliSele
 {
     internal bool ShowHeadline { get; init; } = true;
     internal bool ShowNext { get; init; } = true;
+    internal bool ShowNextReason { get; init; } = true;
+    internal CliHeadline TextHeadline { get; init; } = Report.Headline;
+    internal CliNextAction? TextNext { get; init; }
     internal IReadOnlyList<CliFinding> TextFindings { get; init; } = Report.Findings;
     internal IReadOnlyList<CliEffect> TextEffects { get; init; } = Report.Effects;
     internal IReadOnlyList<CliCount> TextCounts { get; init; } = Report.Counts;
     internal IReadOnlyList<CliLimitation> TextLimitations { get; init; } = Report.Limitations;
+    internal IReadOnlyList<string> TextDiagnostics { get; init; } = Report.Diagnostics;
 }
 
 internal delegate CliReport<TData> CliReportSelector<in TResult, TData>(TResult result, CliSelection selection)

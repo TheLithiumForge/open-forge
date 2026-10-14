@@ -37,7 +37,8 @@ public sealed class ExtensionUpdateApplicationInteractionIntegrationTests
         var expected = mixed
             ? "Apply these changes, including replacing 1 existing file and deleting 1 file? [y/N]"
             : "Apply these changes, including replacing 1 existing file? [y/N]";
-        Assert.EndsWith(expected + Environment.NewLine, run.TerminalOutput, StringComparison.Ordinal);
+        var words = string.Join(" ", run.TerminalOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(line => line.Trim()));
+        Assert.EndsWith(expected, words, StringComparison.Ordinal);
         Assert.Equal(before, workspace.Snapshot());
     }
 

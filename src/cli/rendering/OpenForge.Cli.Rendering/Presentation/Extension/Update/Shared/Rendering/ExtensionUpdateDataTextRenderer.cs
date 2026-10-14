@@ -24,7 +24,7 @@ internal static class ExtensionUpdateDataTextRenderer
             var rows = data.TextRows
                 .Select(row => (IReadOnlyList<string>)[row.Path, row.Text])
                 .ToArray();
-            builder.Append(CliTable.Render(rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
+            builder.Append(CliTable.Render(style, rows, (column, cell) => column == 0 ? style.Subject(cell) : cell));
             if (selection.Detail >= Shell.Definitions.CliDetail.Standard)
             {
                 foreach (var row in data.TextRows.Where(row => row.Detail is not null))

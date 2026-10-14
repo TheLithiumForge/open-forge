@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
+using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 
@@ -217,10 +218,7 @@ internal sealed class RouteInitTargetPlanner
             || segment.Any(char.IsControl);
 
     private static string ReadCanonicalEntrypointPath(IReadOnlyList<string> segments)
-    {
-        var folder = $"{SourceLogicalPath.AgentsRoot}/{string.Join('/', segments)}";
-        return $"{folder}/_{segments[^1]}.md";
-    }
+        => RouteScaffoldSourceBuilder.CanonicalPath(string.Join('/', segments));
 
     private static RouteInitTargetResolution Resolved(RouteInitTargetFacts target)
         => new(RouteInitTargetResolutionState.Resolved, target, Cause: null);

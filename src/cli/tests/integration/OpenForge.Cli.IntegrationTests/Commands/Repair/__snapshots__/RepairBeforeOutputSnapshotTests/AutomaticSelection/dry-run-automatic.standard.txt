@@ -2,5 +2,9 @@ Would repair 2 links.
 Workspace: <workspace>
   .agents/docs/source.md:9:8    ./guide.md -> guide.md
   .agents/docs/source.md:10:16  ./guide.md -> guide.md
+  .agents/docs/index.md         Entries would be updated
+  .agents/loader.md             Entries would be updated
 No files were changed.
-2 links repaired.
+2 links repaired, 2 Entries updated.
+  Apply the previewed repairs.
+Next: open-forge repair --automatic --workspace <workspace>

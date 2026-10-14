@@ -4,12 +4,16 @@ using OpenForge.Cli.Core.Commands.Doctor.Models.Request;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Aggregation;
 using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Maintenance;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
 
-internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue contributors)
+internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue contributors, RenameEvidenceReader? renames = null)
 {
     private readonly OperationalContributorCatalogue _contributors = contributors;
+    private readonly DoctorMaintenanceReader _maintenance = new(renames ?? new RenameEvidenceReader(new PhysicalPathResolver()));
 
     internal async ValueTask<DoctorDiagnosisRead> ReadAsync(
         DoctorRequest request,
@@ -39,6 +43,8 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
         var libraries = await _contributors.Libraries.ReadDoctorAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
         var libraryResiduals = await LibraryResidualAttributionReader.ReadAsync(
             request.Workspace, libraries, recovery, cancellationToken).ConfigureAwait(false);
+        var maintenance = await _maintenance.ReadAsync(routes, references, sharing, cancellationToken).ConfigureAwait(false);
+        routes = DoctorMaintenanceRouteProjection.Read(routes, maintenance, sharing.Sharing);
         cancellationToken.ThrowIfCancellationRequested();
         var observation = new DoctorObservation(
             workspace,
@@ -48,7 +54,10 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
             framework,
             extensions,
             libraries,
-            libraryResiduals);
+            libraryResiduals)
+        {
+            Maintenance = maintenance,
+        };
         var result = DoctorResultBuilder.Build(request, observation);
         return new DoctorDiagnosisRead(observation, result);
     }

@@ -4,6 +4,12 @@ namespace OpenForge.Cli.OutputText.Route.List;
 
 internal static class RouteListText
 {
+    // @OpenForgeText route.list.message.invalid-depth-value
+    internal static string InvalidDepth(string value) => $"Invalid --depth value: {value}. Use a whole number from 0, or all.";
+
+    // @OpenForgeText route.list.message.depth-help
+    internal static string DepthHelp() => "Choose a supported depth using Route List help.";
+
     // @OpenForgeText route.list.message.the-listing-is-incomplete
     internal static string MessageTheListingIsIncomplete()
         => "The listing is incomplete.";
@@ -158,15 +164,15 @@ internal static class RouteListText
 
     // @OpenForgeText route.list.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route list [source-reference] [--depth=<non-negative-integer|all>] [global options]";
+        => "open-forge route list [<source-reference>] [options]";
 
     // @OpenForgeText route.list.help.source-references
     internal static string HelpSourceReferences()
-        => "source-reference is either an exact source ID such as memory or an exact .agents/... or ./.agents/... path such as .agents/memory/_memory.md. IDs use the current workspace and are not fuzzy or path guesses.";
+        => "source-reference is either an exact source ID such as memory or an exact .agents/... Or ./.agents/... Path such as .agents/memory/_memory.md. IDs use the current workspace and are not fuzzy or path guesses.";
 
     // @OpenForgeText route.list.help.depth
     internal static string HelpDepth()
-        => "The default depth is 1. Use --depth=0 for selected roots only, a whole number from 0 to 2147483647 for a bounded descendant depth, or --depth=all for all routed descendants. The equals form is required for --depth.";
+        => "The default depth is 1. Use --depth 0 for selected roots only, a whole number from 0 to 2147483647 for a bounded descendant depth, or --depth all for all routed descendants. Both --depth 1 and --depth=1 are accepted.";
 
     // @OpenForgeText route.list.help.inherited-global-options
     internal static string HelpInheritedGlobalOptions()
@@ -174,9 +180,21 @@ internal static class RouteListText
 
     // @OpenForgeText route.list.help.examples
     internal static string HelpExamples()
-        => "open-forge route list\n  open-forge route list memory\n  open-forge route list .agents/memory/_memory.md\n  open-forge route list memory --depth=all\n  open-forge route list --depth=2 --format json";
+        => "open-forge route list\nopen-forge route list memory\nopen-forge route list memory --depth all";
 
     // @OpenForgeText route.list.help.related-commands
-    internal static string HelpRelatedCommands()
-        => "route inspect — inspect one source's route behavior.\n  find — find Markdown sources by authored tags and structural headings.\n  context — return ordered startup and selected source content.";
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("route inspect --help", "Inspect one routed source."),
+            ("context --help", "Read agent instructions and context."),
+            ("find --help", "Find sources by tags or headings."),
+        ];
+
+    // @OpenForgeText route.list.routelist.help.behavior
+    internal static string HelpBehavior()
+        => "With no source, list the root routes and their direct children.\nThe default descendant depth is 1. --depth 0 lists selected roots only.\nThis command changes no files and asks no questions.";
+    // @OpenForgeText route.list.help.details-1
+    internal static string HelpSourcesAndDepthDetails()
+        => "Exact .agents/... and ./.agents/... paths are accepted, such as .agents/memory/_memory.md. IDs belong to the current workspace and are not fuzzy matches or path guesses. Depth accepts integers from 0 to 2147483647 or all. Both --depth 1 and --depth=1 are accepted.";
 }

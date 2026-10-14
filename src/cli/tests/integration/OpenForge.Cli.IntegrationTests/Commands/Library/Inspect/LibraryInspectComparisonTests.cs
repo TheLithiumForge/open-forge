@@ -46,9 +46,9 @@ public sealed class LibraryInspectComparisonTests
             comparisons.Select(path => path.Relation));
         Assert.Null(comparisons[0].Registered);
         Assert.NotNull(comparisons[4].Registered);
-        Assert.Equal("../../shared/team/.agents/directives/current.md", comparisons[2].ObservedRelativeLink);
+        Assert.Equal("../../shared/team/.agents/directives/current.md".Replace('/', Path.DirectorySeparatorChar), comparisons[2].ObservedRelativeLink);
         Assert.Null(comparisons[3].ObservedRelativeLink);
-        Assert.Equal("../../shared/team/.agents/directives/retired.md", comparisons[4].ObservedRelativeLink);
+        Assert.Equal("../../shared/team/.agents/directives/retired.md".Replace('/', Path.DirectorySeparatorChar), comparisons[4].ObservedRelativeLink);
         foreach (var comparison in comparisons)
         {
             Assert.Equal(comparison.SourcePath, comparison.DestinationPath);

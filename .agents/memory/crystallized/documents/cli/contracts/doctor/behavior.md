@@ -227,6 +227,15 @@ The resolution lanes are formed as follows:
 
 ## Domain 1: Workspace And Entry
 
+Library mapping identity ignores only separator differences in supported
+relative link targets. A recorded matching Windows link with `/` in its raw
+target is unreadable. Report `library.projection-retargeted` with an unreadable
+Windows explanation, exact Detach and Attach commands preserving the recorded
+workspace, ID, roots and Git-ignore choice, and actual raw target evidence.
+Between those commands, instruct the user to clear the ID saved by Detach in
+`removedLibraries` from workspace settings.
+This diagnostic does not propose an automatic Repair effect.
+
 The first stage establishes the selected workspace, `.agents` boundary, Loader,
 recognized entrypoints, source identity, parse coverage, root reachability, and
 detached facts. It derives source IDs from current paths for evidence only. It
@@ -789,6 +798,16 @@ Architecture](../../architecture.md) defines the parser, filesystem abstraction,
 hashing constraints, and AOT process boundary. Gate 5 must prove source-generated YamlDotNet and STJ
 serialization, fixed Markdig where used, real `System.IO`, Native AOT, OS
 locking, isolated tests, and package journeys.
+
+## Forgiving Maintenance
+
+Consume shared ordinary-file completion eligibility, root-chain eligibility and proven rename facts. Do not derive action from message text. A missing-field or gap finding is targeted Index only when that selected operation can complete it. Excluded or detached roots, managed sources, native packages, unsafe boundaries and unavailable required reads keep their actual limits and useful actions.
+
+For missing references, evaluate all strong identity evidence before cardinality. One unique candidate forms `reference.target-renamed` and an exact proposal. Two strong candidates or weak-only matches remain guided. No candidate remains manual. Optional unavailable Git evidence does not prevent other checks and creates no persistent state. Current or HEAD stale Entries may prove former metadata identity but never define current topology. See the [evidence model](../../technical-designs/forgiving-maintenance.md#rename-and-move-evidence).
+
+Deduplicate malformed metadata findings by physical source and retain the precise edit-and-index action. Select one Next in the Interface's order. Keep domain coverage distinct from findings, and verify the stated continuation through a clean Doctor. New and changed exact text, codes and additive evidence values are defined by the Interface and [wire inventory](../../technical-designs/forgiving-maintenance.md#safety-and-wire-inventory).
+
+Doctor uses the same current Entries records, candidate admission and identity interpretation as Repair. Do not attach one occurrence's weak reason to another link. Managed and native package sources or targets retain their protected boundary. A Git timeout suppresses missing-target findings without manual-edit advice, marks reference coverage incomplete and makes Next repeat the complete request, including its workspace. Other unavailable optional Git evidence does not block independent diagnosis.
 
 ## Related Current Sources
 

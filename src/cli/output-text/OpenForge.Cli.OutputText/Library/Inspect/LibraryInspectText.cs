@@ -18,7 +18,7 @@ internal static class LibraryInspectText
 
     // @OpenForgeText library.inspect.help.syntax
     internal static string HelpSyntax()
-        => "open-forge library inspect <library-id> [global options]";
+        => "open-forge library inspect <library-id> [options]";
 
     // @OpenForgeText library.inspect.help.inspection
     internal static string HelpInspection()
@@ -26,7 +26,7 @@ internal static class LibraryInspectText
 
     // @OpenForgeText library.inspect.help.examples
     internal static string HelpExamples()
-        => "open-forge library inspect shared\n  open-forge library inspect shared --format json";
+        => "open-forge library inspect shared\nopen-forge library inspect shared --format json";
 
     // @OpenForgeText library.inspect.title.the-comparison-could-not-finish
     internal static string TitleTheComparisonCouldNotFinish()
@@ -75,4 +75,17 @@ internal static class LibraryInspectText
     // @OpenForgeText library.inspect.title.library-inspect-was-cancelled
     internal static string TitleLibraryInspectWasCancelled()
         => "Library inspect was cancelled";
+
+    // @OpenForgeText library.inspect.libraryinspect.help.behavior
+    internal static string HelpBehavior()
+        => "Select exactly one registered Library. Inspect all its source files and destination links.\nThis command changes no files and asks no questions.";
+
+    // @OpenForgeText library.inspect.libraryinspect.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("library list", "List registered Libraries."),
+            ("library sync --help", "Update links from current source files."),
+            ("repair --help", "Correct verified link and Library problems."),
+        ];
 }

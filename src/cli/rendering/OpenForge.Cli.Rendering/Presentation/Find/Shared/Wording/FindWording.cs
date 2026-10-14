@@ -86,6 +86,8 @@ internal static class FindWording
         var reason = finding.Cause.TrimEnd('.');
         return finding.Code switch
         {
+            FindFindingCode.InvalidInput when finding.InvalidRequireValue is { } value
+                => global::OpenForge.Cli.OutputText.Find.FindText.InvalidRequire(value),
             FindFindingCode.InvalidInput => InvalidInputProblem(finding.Cause),
             FindFindingCode.InvalidSelector => InvalidSelector(finding),
             FindFindingCode.WorkspaceUnavailable => CliFindingWording.WorkspaceUnavailable(path),
@@ -216,11 +218,6 @@ internal static class FindWording
     private static string InvalidInputProblem(string cause)
     {
         var problem = cause.TrimEnd('.');
-        if (problem.StartsWith("--require accepts only all or any", StringComparison.Ordinal))
-        {
-            return global::OpenForge.Cli.OutputText.Find.FindText.MessageRequireMustBeAllOrAny();
-        }
-
         if (problem.StartsWith("Unknown Find region '", StringComparison.Ordinal)
             && problem.EndsWith("'", StringComparison.Ordinal))
         {

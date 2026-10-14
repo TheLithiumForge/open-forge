@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
-using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
+using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding.Models.Composition;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 
 namespace OpenForge.Cli.Core.Commands.Route.Init.Shared.Planning;
@@ -11,36 +12,25 @@ internal sealed record RouteInitComposedScaffold(
 
 internal sealed class RouteInitScaffoldComposer
 {
-    private readonly FrameworkMarkdownDocumentWriter _documentWriter = new();
+    private readonly RouteScaffoldComposer _composer = new();
 
     internal RouteInitComposedScaffold Compose(string id, string title, RouteInitMetadata metadata, FrontmatterForm form)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(title);
         ArgumentNullException.ThrowIfNull(metadata);
-        var body = $"""
-
-            # {title}
-
-            {metadata.Description}.
-
-            ## Axioms
-
-            - inherited - No local axioms; loaded ancestor axioms remain active.
-
-            ## Entries
-
-            - none - No entries - #Empty
-            """.TrimEnd('\n');
-        var bytes = _documentWriter.Write(
-            new FrameworkDocumentMetadata(
+        var bytes = _composer.Compose(new RouteScaffoldDocument
+        {
+            Title = title,
+            Metadata = new FrameworkDocumentMetadataEmission(
                 description: metadata.Description,
                 tags: metadata.Tags,
                 responsibility: metadata.Responsibility)
             {
                 ApplyTo = metadata.ApplyTo,
             },
-            body, form);
+            Form = form,
+        });
         return new RouteInitComposedScaffold(
             metadata,
             bytes);

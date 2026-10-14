@@ -1,0 +1,51 @@
+Already recorded the core-templates Extension without its files, because Templates is left out.
+Workspace: <workspace>
+  Info  .agents/templates/core/_core.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/core/_core.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/core/directive.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/core/directive.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/core/guidance.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/core/guidance.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/core/map.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/core/map.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/core/memory.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/core/memory.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/core/pattern.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/core/pattern.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/core/skill.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/core/skill.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  Info  .agents/templates/core/template.md  Extension path is excluded [extension-install.path-excluded]
+         '.agents/templates/core/template.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file
+         Remove the matching path from removedCategories, removedFiles, or removedDirectories in .agents/open-forge.json, then rerun extension install.
+         Workspace removal settings exclude this payload path.
+  All 8 package files from core-templates were skipped.
+  Source: embedded catalogue (embedded)
+  .agents/open-forge.lock.json  ownership record unchanged
+  Entries sections unchanged: .agents/directives/_directives.md,
+  .agents/loader.md, .agents/memory/_memory.md,
+  .agents/memory/crystallized/_crystallized.md,
+  .agents/memory/emerging/_emerging.md, .agents/memory/working/_working.md,
+  .agents/patterns/_patterns.md, .agents/skills/_skills.md
+  Permission evaluation: decision not-required; required 0; missing 0; saved no
+  Framework fingerprint:
+  <sha256>
+  Verification: targets verified; Entries verified; Extension record verified;
+  Framework record verified
+  Recovery: not-required.
+To add its files, restore Templates and update the package:
+  open-forge route init templates --framework --dry-run
+  open-forge extension update core-templates --dry-run

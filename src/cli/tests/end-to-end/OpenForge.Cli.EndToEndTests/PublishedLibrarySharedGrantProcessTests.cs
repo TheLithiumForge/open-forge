@@ -55,7 +55,7 @@ public sealed class PublishedLibrarySharedGrantProcessTests
         }
         finally
         {
-            if (new FileInfo(workspace.Combine("docs/README.md")).LinkTarget == "../shared/team-knowledge/README.md")
+            if (new FileInfo(workspace.Combine("docs/README.md")).LinkTarget == "../shared/team-knowledge/README.md".Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(workspace.Combine("docs/README.md"));
             }

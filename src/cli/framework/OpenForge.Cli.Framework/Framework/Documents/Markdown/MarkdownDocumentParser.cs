@@ -100,7 +100,10 @@ internal sealed class MarkdownDocumentParser
             !heading.IsSetext,
             ReadFragmentIdentifier(heading),
             span,
-            isTopLevel: heading.Parent is MarkdownDocument);
+            isTopLevel: heading.Parent is MarkdownDocument)
+        {
+            IsVisibleTextSupported = MarkdownInlineTextReader.HasSupportedHeadingText(heading.Inline),
+        };
     }
 
     private static string? ReadFragmentIdentifier(HeadingBlock heading)

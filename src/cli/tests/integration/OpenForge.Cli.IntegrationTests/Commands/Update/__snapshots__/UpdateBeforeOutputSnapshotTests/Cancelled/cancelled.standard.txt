@@ -2,4 +2,4 @@ Update was cancelled. Nothing was changed.
 Workspace: <workspace>
   19 files unchanged
   Rerun the same Update request.
-Next: open-forge update
+Next: open-forge update --workspace <workspace>

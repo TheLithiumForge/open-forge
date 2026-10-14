@@ -41,14 +41,14 @@ internal static class IndexPhrases
         string updatedText,
         string filesText,
         string pluralText)
-        => $"Updated the Entries section in {updatedText} of {filesText} {pluralText}; other sources were skipped.";
+        => $"Updated the Entries section in {updatedText} of {filesText} {pluralText}. Other sources were skipped.";
 
     // @OpenForgeText index.phrase.would-update-the-entries-section-in-of-other-sources-were-skipped
     internal static string FormatWouldUpdateTheEntriesSectionInOfOtherSourcesWereSkipped(
         string updatedText,
         string filesText,
         string pluralText)
-        => $"Would update the Entries section in {updatedText} of {filesText} {pluralText}; other sources were skipped.";
+        => $"Would update the Entries section in {updatedText} of {filesText} {pluralText}. Other sources were skipped.";
 
     // @OpenForgeText index.phrase.optional-metadata-is-missing-for-observed-values-were-used
     internal static string FormatOptionalMetadataIsMissingForObservedValuesWereUsed(string pathText)

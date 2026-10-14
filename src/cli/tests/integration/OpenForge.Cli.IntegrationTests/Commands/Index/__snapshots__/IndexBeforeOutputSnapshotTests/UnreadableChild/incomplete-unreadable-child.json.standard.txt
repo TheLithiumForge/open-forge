@@ -34,13 +34,19 @@
     "filesChecked": 0,
     "filesUpdated": 0,
     "filesCurrent": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0,
     "warnings": 1
   },
   "limitations": [],
   "data": {
     "mode": "apply",
     "changes": [],
-    "unchanged": []
+    "unchanged": [],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
@@ -48,7 +54,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge doctor",
+    "command": "open-forge doctor --workspace <workspace>",
     "reason": "Inspect the reported problem before rerunning Index."
   }
 }

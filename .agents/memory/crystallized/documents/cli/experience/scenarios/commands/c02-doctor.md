@@ -12,7 +12,7 @@ These are reviewed user outcomes. Selection does not mean execution passed. Impr
 
 **Goal:** Understand real problems and their consequences, with an honest account of what was checked.
 
-Existing baseline: [Interface](../../../contracts/doctor/interface.md), [Behavior](../../../contracts/doctor/behavior.md). Exact interface and output differences must be reconciled before implementation.
+Current contracts: [Interface](../../../contracts/doctor/interface.md), [Behavior](../../../contracts/doctor/behavior.md). The contracts define exact current output and operation behavior.
 
 See [scenario conventions](../_scenarios.md) and the [complete assessment](../../assessment.md).
 
@@ -349,3 +349,191 @@ Doctor compares the intended payload rendered to root and finds no managed-conte
 **State:** Compare owned files with independently rendered canonical sources and retain the full pre-request tree. Verify that Doctor preserves content, settings, ownership, and recovery state.
 
 **Output:** Check that applicable checks completed and no changed-target finding arose solely from root form. Keep informational reference observations separate from managed changes.
+
+## Maintenance Review Boundaries
+
+Doctor and Repair share current Entries identity records and occurrence-specific candidates. Protected sources and targets keep their managing or authoring actions. A Git timeout suppresses manual-removal advice for possibly renamed links and retries the complete request. Each next action keeps the selected workspace, and a clean Doctor prints no Next.
+
+## C02-13
+
+**Situation:** Missing metadata has an Index next step
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X02](../experience.md#x02) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge doctor` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C02-14
+
+**Situation:** Deep missing chain has a working Index action
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X34](../experience.md#x34) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge doctor` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C02-15
+
+**Situation:** Proven rename or move has an automatic Repair action
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X38](../experience.md#x38) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge doctor` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C02-16
+
+**Situation:** Ambiguous or weak identity needs a choice
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X39](../experience.md#x39) and [X40](../experience.md#x40) for strong ambiguity and singleton weak evidence. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge doctor` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C02-17
+
+**Situation:** No Git and already-indexed evidence limits stay truthful
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X41](../experience.md#x41) and [X42](../experience.md#x42), with and without stale identity. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge doctor` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C02-18
+
+**Situation:** A mixed batch reaches clean Doctor by printed steps
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X47](../experience.md#x47) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge doctor` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C02-19
+
+**Situation:** Malformed frontmatter and deletion need precise edits
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X44](../experience.md#x44) and [X45](../experience.md#x45) for malformed metadata and deleted targets. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge doctor` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## C02-20
+
+**Situation:** Unsafe or excluded routes never get futile Index advice
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use [X36](../experience.md#x36) and its exact branch state. No fresh workspace is substituted between journey steps.
+
+### Steps
+
+1. Run `open-forge doctor` with the selected workspace.
+2. For mutating commands preview first, then apply and run the printed continuation.
+
+### Expected result
+
+Follow the linked scenario and the command Interface's exact Task 79 text, finding codes and additive values. A complete result never hides an unproven target or skipped file.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.

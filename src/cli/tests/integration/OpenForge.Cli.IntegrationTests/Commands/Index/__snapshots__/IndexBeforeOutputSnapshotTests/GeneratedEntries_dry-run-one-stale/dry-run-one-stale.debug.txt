@@ -11,3 +11,5 @@ Workspace: <workspace>
 Selection: loader roots
 No recovery bundle was needed.
 No files were changed.
+  Apply the checked plan.
+Next: open-forge index --workspace <workspace>

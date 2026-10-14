@@ -38,7 +38,7 @@ public sealed class LibraryAttachMappedDestinationIntegrationTests
             var result = await new LibraryAttachOperation(permissions, LibraryPermissionTestPrompt.AttachConfirmation()).ExecuteAsync(request, TestContext.Current.CancellationToken);
 
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
-            Assert.Equal(rawTarget, new FileInfo(workspace.Absolute(destination)).LinkTarget);
+            Assert.Equal(rawTarget.Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Absolute(destination)).LinkTarget);
             Assert.Equal(LibraryMutationWorkspace.SourceBytes, File.ReadAllText(workspace.Absolute($"{LibraryMutationWorkspace.SourceRoot}/README.md")));
             Assert.Equal("sentinel", input.ReadLine());
             Assert.Equal("approved", result.Result.Permissions.Decision);
@@ -58,7 +58,7 @@ public sealed class LibraryAttachMappedDestinationIntegrationTests
         }
         finally
         {
-            if (new FileInfo(workspace.Absolute(destination)).LinkTarget == rawTarget)
+            if (new FileInfo(workspace.Absolute(destination)).LinkTarget == rawTarget.Replace('/', Path.DirectorySeparatorChar))
             {
                 File.Delete(workspace.Absolute(destination));
             }

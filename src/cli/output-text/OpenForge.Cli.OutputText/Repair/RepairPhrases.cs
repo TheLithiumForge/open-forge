@@ -4,6 +4,27 @@ namespace OpenForge.Cli.OutputText.Repair;
 
 internal static class RepairPhrases
 {
+    // @OpenForgeText repair.wording.left-broken-links-unchanged
+    internal static string LeftBrokenLinksUnchanged(int count)
+        => string.Create(CultureInfo.InvariantCulture, $"Left {count} broken {(count == 1 ? "link" : "links")} unchanged. No files were changed.");
+
+    // @OpenForgeText repair.wording.restored-library-links
+    internal static string RestoredLibraryLinks(int restored, int remaining, bool preview)
+    {
+        var action = preview ? "Would restore" : "Restored";
+        var sentence = string.Create(CultureInfo.InvariantCulture, $"{action} {restored} Library {(restored == 1 ? "link" : "links")}.");
+        if (remaining == 0)
+        {
+            return sentence;
+        }
+
+        var verb = preview ? "would still need" : "still need";
+        if (remaining == 1 && !preview)
+        {
+            verb = "still needs";
+        }
+        return string.Create(CultureInfo.InvariantCulture, $"{sentence} {remaining} Library {(remaining == 1 ? "link" : "links")} {verb} recovery.");
+    }
     // @OpenForgeText repair.target.candidate-with-evidence
     internal static string TargetCandidateWithEvidence(string pathText, string joinText)
         => $"possible target: {pathText} ({joinText})";
@@ -97,7 +118,7 @@ internal static class RepairPhrases
 
     // @OpenForgeText repair.phrase.recommended-for-review
     internal static string FormatRecommendedForReview(string evidenceText)
-        => $"{evidenceText}, suggested";
+        => $"Suggested for review. {evidenceText}";
 
     // @OpenForgeText repair.phrase.library-recover-at
     internal static string FormatLibraryRecoveryQuestion(string libraryId)

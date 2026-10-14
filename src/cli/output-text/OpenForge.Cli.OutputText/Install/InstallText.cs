@@ -70,7 +70,7 @@ internal static class InstallText
 
     // @OpenForgeText install.help.syntax
     internal static string HelpSyntax()
-        => "open-forge install [--configure] [--preset <essentials|full-core|custom>] [--frontmatter <root|scoped>] [--route <id>=<add|remove|git-ignore>...] [--force] [--automatic] [--dry-run] [global options]";
+        => "open-forge install [options]";
 
     // @OpenForgeText install.help.frontmatter
     internal static string HelpFrontmatter()
@@ -81,7 +81,7 @@ internal static class InstallText
 
     // @OpenForgeText install.help.establishment
     internal static string HelpEstablishment()
-        => "Install adds selected bundled defaults to the workspace. Ordinary unattended first Install uses Full Core and retains existing omissions. An identical managed installation needs no changes. Explicit configuration can restore missing selected defaults and retains existing content. Use open-forge update to reconcile other managed changes.";
+        => "Install adds selected bundled defaults. An unattended first Install uses Full Core and keeps existing omissions. An identical managed installation needs no changes. Explicit configuration can restore missing selected defaults and keeps existing content. Use open-forge update to update other changed managed files.";
 
     // @OpenForgeText install.help.write-policy
     internal static string HelpWritePolicy()
@@ -93,11 +93,11 @@ internal static class InstallText
 
     // @OpenForgeText install.help.examples
     internal static string HelpExamples()
-        => "open-forge install\n  open-forge install --automatic --dry-run --format json\n  open-forge install --force\n  open-forge install --force --automatic --dry-run\n  open-forge install --frontmatter scoped --automatic\n  open-forge install --configure --frontmatter root --dry-run";
+        => "open-forge install --preset essentials --dry-run\nopen-forge install\nopen-forge install --configure --preset essentials --dry-run";
 
     // @OpenForgeText install.help.notes
     internal static string HelpNotes()
-        => "Ordinary Install delivers only the Framework payload embedded in the running CLI. With a form change, --configure also converts eligible owned Extension files from their recorded sources. Install does not discover another workspace, fetch content, manipulate Git, repair markers, reconcile managed divergence, or roll back target effects.";
+        => "Ordinary Install delivers only the Framework files bundled in the running CLI. With a form change, --configure also converts eligible owned Extension files from their recorded sources. Install does not choose another workspace, download content, change Git, repair markers, update changed managed files, or roll back target effects.";
 
     // @OpenForgeText install.label.sections-added
     internal static string LabelSectionsAdded()
@@ -281,9 +281,51 @@ internal static class InstallText
 
     // @OpenForgeText install.help.heading.establishment
     internal static string HelpHeadingEstablishment()
-        => "Establishment";
+        => "First installation";
 
     // @OpenForgeText install.help.heading.confirmation
     internal static string HelpHeadingConfirmation()
         => "Confirmation";
+
+    // @OpenForgeText install.install.help.behavior
+    internal static string HelpBehavior()
+        => "Install adds selected bundled defaults and Open Forge sections to AGENTS.md and CLAUDE.md, preserving your other instructions.\nThe wizard starts with Essentials. Unattended Install and dry run use Full Core unless you name a preset. Fresh unattended metadata is root unless settings declare a preference.\nOmissions stay omitted. --configure offers current setup choices, keeps existing content, and can restore missing selected defaults. Identical installations need no writes.\n--dry-run shows every planned existing-file change without writes. Writing plans ask once after selection and checks unless --automatic. Preview, no-op, automatic, JSON, and redirected requests never prompt. JSON or redirected writes require --automatic, which adds no force.\nSave a Git copy or backup first. Successful installs keep no undo bundle. Use update for other changed managed files.";
+
+    // @OpenForgeText install.install.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("status", "Check installation and context."),
+            ("context", "Read agent instructions and context."),
+            ("update --help", "Update managed Framework files."),
+            ("doctor", "Diagnose workspace problems."),
+            ("cleanup --dry-run", "Preview recovery-data cleanup."),
+        ];
+
+    // @OpenForgeText install.install.help.existingfiles
+    internal static string HelpExistingFiles()
+        => "Install adds Open Forge sections to AGENTS.md and CLAUDE.md. Your instructions outside those sections stay. The plan shows each existing file that changes before you approve it. Save changes you may want to restore with Git or a backup before installing. Successful installs do not keep an undo bundle.";
+
+    // @OpenForgeText install.install.help.forceboundary
+    internal static string HelpForceBoundary()
+        => "--force allows replacement only of an exact existing item at an installation path before management is established. Complete checks must show no trusted owner or competing manager, route or source collision, ambiguous marker or containment boundary, or unsafe recovery state.\nForce does not update managed files, widen adoption, repair malformed Entries or managed markers, delete retired content, or change files outside the exact current Framework paths. It does not bypass identity, ownership, expected-state, bundle, verification, or recovery checks. Previous content is not adopted as ownership history.";
+
+    // @OpenForgeText install.install.help.helpheadingexistingfiles
+    internal static string HelpHeadingExistingFiles()
+        => "Existing files";
+
+    // @OpenForgeText install.install.help.helpheadingforceboundary
+    internal static string HelpHeadingForceBoundary()
+        => "Force during first installation";
+    // @OpenForgeText install.help.details-1
+    internal static string HelpForceBoundaryDetails()
+        => "--force may replace only the exact eligible existing item at a current Framework installation path before management is established. Checks must exclude trusted owners or competing managers, route or source collisions, ambiguous markers or containment, and unsafe recovery. Force cannot update managed files, widen adoption, repair malformed Entries or markers, delete retired content, or change other paths. Identity, ownership, expected-state, bundle, verification, and recovery checks still apply. Previous content is not adopted as ownership history.";
+
+    // @OpenForgeText install.help.details-2
+    internal static string HelpCustomRoutesDetails()
+        => "Repeat --route <id>=<add|remove|git-ignore>. IDs: directives, guidance, maps, patterns, skills, templates, memory/working, memory/emerging, memory/crystallized, memory/archived. Remove keeps existing files and routes. Add + Git-ignore shares the entrypoint, ignores route contents, and omits private child Entries. Tracked files stay tracked.";
+
+    // @OpenForgeText install.help.details-3
+    internal static string HelpConversionAndBoundariesDetails()
+        => "A form change with --configure also converts eligible owned Extension files from their recorded sources. Ordinary Install uses only the Framework bundled in this CLI. It does not choose another workspace, download content, change Git, repair markers, update other changed managed files, or roll back target effects.";
 }

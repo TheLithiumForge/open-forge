@@ -41,6 +41,7 @@ internal static class LibrarySyncCompletion
             ? LibraryMutationCompletionProjection.NotStarted()
             : LibraryMutationCompletionProjection.Application(input.Request.Workspace, input.Execution, EffectCount(plan));
         var sourceRoot = observations?.Source.Source.Request.SourceRoot;
+        var selected = observations?.Record.Record?.Libraries.FirstOrDefault(library => library.Id == input.Request.LibraryId);
         var protectedSources = sourceRoot is null ? [] : new[] { sourceRoot };
         var status = LibraryMutationCompletionProjection.Status(
             planState,
@@ -54,6 +55,9 @@ internal static class LibrarySyncCompletion
             Status = status,
             Workspace = input.Request.Workspace,
             Next = ReadNext(findings),
+            LinkRecreation = selected is not null && findings.Any(finding => finding.UnreadableOnWindows)
+                ? Commands.Shared.LibraryLinks.LibraryLinkRecreationReader.Read(selected, input.Request.Workspace)
+                : null,
             Result = new LibrarySyncPayload
             {
                 Permissions = permissionStage is null ? LibraryPermissionView.NotEvaluated() : LibraryPermissionPresentation.Project(permissionStage),

@@ -2,8 +2,8 @@ Cannot move guidance/old guide: .agents/guidance/old guide.md is managed by the 
 Workspace: <workspace>
   Error  .agents/guidance/old guide.md  Source is managed
          .agents/guidance/old guide.md is managed by the toolkit Extension, so Route Move cannot move it.
-         open-forge extension update toolkit
+         open-forge extension update toolkit --workspace <workspace>
          Update the owning Extension before rerunning Route Move.
   files scanned: the reference scan was not completed
   Update the owning Extension before rerunning Route Move.
-Next: open-forge extension update toolkit
+Next: open-forge extension update toolkit --workspace <workspace>

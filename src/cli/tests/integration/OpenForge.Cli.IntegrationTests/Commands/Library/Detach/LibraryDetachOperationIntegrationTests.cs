@@ -6,6 +6,9 @@ using OpenForge.Cli.Core.Commands.Library.Models.Application;
 using OpenForge.Cli.Core.Commands.Library.Models.Request;
 using OpenForge.Cli.Core.Commands.Library.Models.Result.Coordinates.Effects;
 using OpenForge.Cli.Core.Commands.Library.Shared.Permissions;
+using OpenForge.Cli.Core.Presentation.Library.Detach;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Mutation;
 using OpenForge.Cli.IntegrationTests.Commands.Library.Shared.Permissions;
@@ -53,6 +56,12 @@ public sealed class LibraryDetachOperationIntegrationTests
             Assert.Equal("team-knowledge", Assert.Single(updated.RootElement.GetProperty("removedLibraries").EnumerateArray()).GetString());
         }
         Assert.NotEqual(originalSettings, File.ReadAllBytes(workspace.Absolute(".agents/open-forge.json")));
+        foreach (var detail in CommandOutputDetailVocabulary.All)
+        {
+            var text = CommandOutputRenderers<LibraryDetachResult>.Render(new CliPresentationRequest<LibraryDetachResult>(
+                applied, new(CliFormat.Text, detail, null)), LibraryDetachPresentation.Rendering);
+            Assert.Equal(1, text.Split("settings updated", StringSplitOptions.None).Length - 1);
+        }
 
         var afterDetach = workspace.Snapshot();
         var repeated = await new LibraryDetachOperation(workspace.Permissions).ExecuteAsync(
@@ -63,6 +72,12 @@ public sealed class LibraryDetachOperationIntegrationTests
         Assert.Empty(repeated.Result.Plan.Links);
         Assert.Equal(LibraryApplicationState.NoOp, repeated.Result.Application.State);
         Assert.Equal(afterDetach, workspace.Snapshot());
+        foreach (var detail in CommandOutputDetailVocabulary.All)
+        {
+            var text = CommandOutputRenderers<LibraryDetachResult>.Render(new CliPresentationRequest<LibraryDetachResult>(
+                repeated, new(CliFormat.Text, detail, null)), LibraryDetachPresentation.Rendering);
+            Assert.DoesNotContain("settings updated", text, StringComparison.Ordinal);
+        }
     }
 
     [Trait("Boundary", "OS")]

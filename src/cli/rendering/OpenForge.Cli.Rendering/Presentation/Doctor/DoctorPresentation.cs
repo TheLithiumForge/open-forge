@@ -27,13 +27,7 @@ internal static class DoctorPresentation
         DataTextRenderer = DoctorDataTextRenderer.Render,
         DataJsonTypeInfo = JsonContext.DoctorData,
         Shape = CliCommandShape.Diagnosis,
-        SelectText = static selected => selected with
-        {
-            TextCounts = [],
-            TextLimitations = [],
-            ShowNext = selected.Selection.Detail != CliDetail.Minimal
-                || selected.Report.Status != CliSemanticStatus.Attention,
-        },
+        SelectText = DoctorTextSelector.Select,
     };
 
     internal static CliHelpContent CreateHelp()

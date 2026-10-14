@@ -33,7 +33,7 @@
             "path": ".agents/directives/review.md",
             "state": "current",
             "expectedTarget": "../../shared/team/.agents/directives/review.md",
-            "observedTarget": "../../shared/team/.agents/directives/review.md",
+            "observedTarget": "..\\..\\shared\\team\\.agents\\directives\\review.md",
             "sourceId": "directives/review"
           }
         ]

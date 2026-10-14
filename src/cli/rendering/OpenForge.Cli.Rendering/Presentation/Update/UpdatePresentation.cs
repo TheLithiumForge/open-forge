@@ -30,6 +30,9 @@ internal static class UpdatePresentation
         Shape = CliCommandShape.ChangeReport,
         SelectText = static selected => selected with
         {
+            TextHeadline = selected.Report.Data.TextHeadline is { } headline
+                ? new(headline, selected.Report.Headline.Kind)
+                : selected.Report.Headline,
             ShowWorkspace = selected.Report.Workspace?.Explicit == true
                 || selected.Selection.Detail >= CliDetail.Standard
                 || selected.Report.Status is CliSemanticStatus.Blocked

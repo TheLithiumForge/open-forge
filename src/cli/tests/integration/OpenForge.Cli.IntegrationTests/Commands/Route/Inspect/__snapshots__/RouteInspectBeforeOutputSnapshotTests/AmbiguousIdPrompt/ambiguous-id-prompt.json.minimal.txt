@@ -88,7 +88,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge route inspect \".agents/docs/guide.md\"",
+    "command": "open-forge route inspect .agents/docs/guide.md",
     "reason": "Rerun with the exact path for non-interactive use."
   }
 }

@@ -36,10 +36,12 @@ internal sealed class LibraryMutationWorkspace : IDisposable
     internal void Source(string path = Leaf) => SourceAt(SourceRoot, path);
     internal void SourceAt(string sourceRoot, string path) => Write($"{sourceRoot}/{path}", SourceBytes);
     internal void Directory(string path) => _workspace.CreateDirectory(path);
+    internal void RawLink(string path, string rawTarget) => _workspace.CreateFileSymbolicLink(path, rawTarget);
     internal void Link(string path = Leaf, string? rawTarget = null)
     {
         var parent = System.IO.Path.GetDirectoryName(path) ?? throw new InvalidOperationException("Missing projection parent.");
-        _workspace.CreateFileSymbolicLink(path, rawTarget ?? System.IO.Path.GetRelativePath(parent, $"{SourceRoot}/{path}").Replace('\\', '/'));
+        var target = rawTarget ?? System.IO.Path.GetRelativePath(parent, $"{SourceRoot}/{path}");
+        _workspace.CreateFileSymbolicLink(path, target.Replace('/', System.IO.Path.DirectorySeparatorChar));
     }
 
     internal void ConsumerRoute()

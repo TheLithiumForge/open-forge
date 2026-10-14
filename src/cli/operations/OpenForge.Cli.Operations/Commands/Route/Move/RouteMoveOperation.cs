@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Route.Shared.Retry;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Move.Models.Request;
@@ -19,6 +20,20 @@ internal sealed class RouteMoveOperation(
     private readonly RouteMoveResultBuilder _resultBuilder = resultBuilder;
 
     internal async ValueTask<RouteMoveResult> ExecuteAsync(
+        RouteMoveRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var result = await ExecuteCoreAsync(request, cancellationToken).ConfigureAwait(false);
+        var command = RouteMoveRetryCommand.From(request);
+        return result with
+        {
+            RequestCommand = command,
+            Next = RouteRetryCommand.Complete(result.Next, "open-forge route move", command, false),
+        };
+    }
+
+    private async ValueTask<RouteMoveResult> ExecuteCoreAsync(
         RouteMoveRequest request,
         CancellationToken cancellationToken)
     {

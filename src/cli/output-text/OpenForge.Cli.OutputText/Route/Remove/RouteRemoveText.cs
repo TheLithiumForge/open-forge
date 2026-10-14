@@ -38,7 +38,7 @@ internal static class RouteRemoveText
 
     // @OpenForgeText route.remove.message.report-the-failure-and-retry-the-same-route-remove-request-with-bounded-diagnostics
     internal static string MessageReportTheFailureAndRetryTheSameRouteRemoveRequestWithBoundedDiagnostics()
-        => "Report the failure and retry the same Route Remove request with bounded diagnostics.";
+        => "Address the reported failure, then retry the same Route Remove request.";
 
     // @OpenForgeText route.remove.message.rerun-the-same-route-remove-request
     internal static string MessageRerunTheSameRouteRemoveRequest()
@@ -106,17 +106,41 @@ internal static class RouteRemoveText
 
     // @OpenForgeText route.remove.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route remove <source-reference> [--dry-run] [--automatic] [global options]";
+        => "open-forge route remove <source-reference> [options]";
 
     // @OpenForgeText route.remove.help.write-policy
     internal static string HelpWritePolicy()
-        => "Omit --dry-run to apply the complete locked and revalidated removal, persistent exclusion, ownership-release, reference-detachment, and generated-navigation plan. --dry-run previews that same plan without writing. --automatic applies the plan without asking for confirmation.";
+        => "Omit --dry-run to apply the complete removal plan while holding the workspace lock and rechecking the current files. The plan removes the subject, records exclusions, releases matching managed claims, detaches supported incoming references, and updates generated Entries navigation. --dry-run previews that same plan without writing. --automatic applies it without confirmation.";
 
     // @OpenForgeText route.remove.help.examples
     internal static string HelpExamples()
-        => "open-forge route remove guidance/old-guide\n  open-forge route remove .agents/memory/projects/alpha/_alpha.md --dry-run\n  open-forge route remove guidance/old-guide --automatic";
+        => "open-forge route remove guidance --dry-run\nopen-forge route remove guidance\nopen-forge route remove guidance --automatic";
 
     // @OpenForgeText route.remove.help.notes
     internal static string HelpNotes()
-        => "Route Remove records the selected file or directory exclusion and releases its Framework or Extension content claims after verified removal. It never follows links, prompts when --automatic is omitted, or invokes another command as a subprocess.";
+        => "Route Remove records the selected file or directory exclusion and releases its Framework or Extension content claims after verified removal. It does not follow links or run another command. An interactive writing plan asks for confirmation unless --automatic is supplied. Redirected or JSON requests that would write need --automatic.";
+
+    // @OpenForgeText route.remove.routeremove.help.behavior
+    internal static string HelpBehavior()
+        => "--dry-run shows the complete plan and writes nothing.\nA category selects its whole routed category, not just the entrypoint.\nFramework- and Extension-managed content can be removed when safety checks allow it.\nOpen Forge records the removal so updates do not restore it.\nAn interactive writing plan asks for confirmation unless --automatic is supplied.\nRedirected or JSON requests that would write need --automatic.\nInterrupted removals report retained recovery data for review.";
+
+    // @OpenForgeText route.remove.routeremove.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("remove --help", "Choose one exact removal target."),
+            ("references --help", "Inspect authored links."),
+            ("cleanup --dry-run", "Preview recovery-data cleanup."),
+        ];
+
+    // @OpenForgeText route.remove.routeremove.help.source
+    internal static string HelpSource()
+        => "Select one ordinary routed Markdown file by exact ID, base path, or overwrite path, or one complete category by its recognized entrypoint. Framework- and Extension-managed content can be removed when safety checks allow it.\nThe Loader and .agents root are protected. A leaf cannot be a native Skill, non-Markdown resource, or orphan or ambiguous overwrite. A category includes all contained regular files and folders, including native and binary resources. Links, special files, incomplete scans, unsafe references, and nested .git repositories block the whole removal.\nSupported incoming links outside the removed subject are replaced with their visible labels. Removal records exclusions and releases managed claims after verification. To restore content, clear all covering exclusions in .agents/open-forge.json and explicitly run the relevant installer or updater.";
+    // @OpenForgeText route.remove.help.details-1
+    internal static string HelpSafetyDetails()
+        => "Select a Markdown file by exact ID, base path, or overwrite path, or a category by its recognized entrypoint. The Loader and .agents root are protected. A leaf cannot be a native Skill, non-Markdown resource, or orphan or ambiguous overwrite. Categories include all contained regular files and folders, including native and binary resources. Links, special files, incomplete scans, unsafe references, or nested .git repositories block the whole removal.";
+
+    // @OpenForgeText route.remove.help.details-2
+    internal static string HelpReferencesAndRestorationDetails()
+        => "Supported incoming links outside the subject become their visible labels. Apply locks the workspace, rechecks files, releases matching managed claims after verification, and updates generated Entries. Removal records file or directory exclusions. To restore content, clear every covering exclusion in .agents/open-forge.json and explicitly run the relevant installer or updater. Remove never follows links or invokes another command.";
 }

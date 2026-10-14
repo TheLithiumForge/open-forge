@@ -41,6 +41,7 @@ internal static class ExtensionListResultBuilder
             selection: request.Selection,
             source: new ExtensionListSource
             {
+                Supplied = request.ExplicitSource,
                 Identity = source.Identity,
                 Kind = source.Kind switch
                 {
@@ -83,6 +84,7 @@ internal static class ExtensionListResultBuilder
                 ? null
                 : new ExtensionListSource
                 {
+                    Supplied = request.ExplicitSource,
                     Identity = request.ExplicitSource,
                     Kind = null,
                     State = ExtensionListSourceState.Unavailable,

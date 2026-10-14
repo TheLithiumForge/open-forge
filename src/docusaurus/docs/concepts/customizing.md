@@ -15,9 +15,9 @@ Every installed file is yours. Add, adapt, replace, or remove the defaults as yo
 | Add a local adjustment that survives updates | Create an adjacent `{name}.overwrite.md`. | Leaves the overwrite alone.                                                |
 | Stop using the file entirely                 | Remove it with `open-forge remove`.       | Keeps it removed.                                                          |
 
-In a CLI-managed install, a direct edit to a shipped file lasts until the next update. Put a change you want to keep in an overwrite companion instead.
+In a CLI-managed install, a direct edit to a shipped file lasts until the next update. Put a change you want to keep in an [overwrite companion](../glossary.md#overwrite-companion) instead.
 
-An update reports every path it replaces, restores, deletes, or retains, and keeps a recovery bundle when existing bytes need protecting. Review `open-forge update --dry-run` before applying one, and commit your edits first so `git diff` shows what changed.
+An update reports every path it replaces, restores, deletes, or retains, and keeps a [recovery bundle](../glossary.md#recovery-bundle) when existing bytes need protecting. Review `open-forge update --dry-run` before applying one, and commit your edits first so `git diff` shows what changed.
 
 ## Overwrite companions
 
@@ -50,7 +50,7 @@ open-forge remove .agents/templates --dry-run
 open-forge remove planning --kind extension --dry-run
 ```
 
-The CLI records exclusions in `.agents/open-forge.json`:
+The CLI records [exclusions](../glossary.md#exclusion) in `.agents/open-forge.json`:
 
 ```json
 {
@@ -93,6 +93,8 @@ Compatible Skill adoption can add missing metadata and navigation to user-owned 
 
 You may move, rename, or restructure routes. Moving a managed route may end automatic updates for it, but it doesn't change what the content means once loaded. A familiar folder name in a new place doesn't gain root-route behavior.
 
+For user-owned notes, Index completes missing metadata and navigation after manual creation. Repair fixes proven renames or moves and their affected Entries. Managed files, native Skill packages and resources, overwrite companions, and excluded or private contents keep their own maintenance boundaries. Follow the reported Update or authoring action. See [manual edits](/guides/cli#after-you-edit-files-by-hand).
+
 ## Managed versus meaningful
 
 Management and meaning are separate:
@@ -102,4 +104,4 @@ Management and meaning are separate:
 
 An Extension's files mean exactly what their route says, whether they were installed by the CLI or copied by hand.
 
-Continue with [Extensions](../extensions/index.md), or look up a term in the [Glossary](../glossary.md).
+Next: [Extensions](../extensions/index.md), or look up a term in the [Glossary](../glossary.md).

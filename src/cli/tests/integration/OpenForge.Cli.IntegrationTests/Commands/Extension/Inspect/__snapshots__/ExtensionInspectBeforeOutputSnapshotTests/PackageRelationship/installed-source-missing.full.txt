@@ -3,8 +3,9 @@ Workspace: <workspace>
   Warning  <extension-source>/missing-source  Extension source is unavailable [extension-inspect.source-unavailable]
          The source <extension-source>/missing-source could not be read, so the comparison could not finish.
          Cause: The explicit Extension source does not exist.
+1 package, including toolkit.
 Source: <extension-source>/missing-source
-Dependencies
+Packages in this selection
   toolkit  1.0.0  available
 
 Files
@@ -16,4 +17,4 @@ Resolution order: toolkit
 Registered in
   none
 Record coverage: complete
-1 dependency, 1 warnings.
+1 warnings.

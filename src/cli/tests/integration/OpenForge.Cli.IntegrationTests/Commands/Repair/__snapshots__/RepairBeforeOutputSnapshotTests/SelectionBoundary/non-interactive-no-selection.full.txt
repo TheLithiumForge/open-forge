@@ -1,12 +1,16 @@
-Cannot repair: repair needs to know which repairs to apply, and this session cannot ask. Nothing was changed.
+Repair cannot ask for a choice in this session. Nothing was changed.
 Workspace: <workspace>
-  Error  repair.selection-required  Selection required [repair.selection-required]
-         Repair needs to know which repairs to apply, and this session cannot ask.
-  Diagnosis coverage: Workspace and path were not checked; route and heading were not checked; local references were not checked; selected scope was not checked.
+  Warning  .agents/docs/source.md:9:8  Broken link [repair.manual-finding-remaining]
+         This link still needs repair.
+         fix by hand
+  Warning  .agents/docs/source.md:10:10  Broken link [repair.guided-finding-remaining]
+         1 possible target.
+         needs a choice
+         To use replacement.md (same title):
+           open-forge repair --relink '.agents/docs/source.md@10:10' missing.md .agents/docs/replacement.md --automatic --workspace <workspace>
+  Diagnosis coverage: Workspace and path were checked; route and heading were checked; local references were checked; selected scope was checked.
   Checks before writing: not run.
   No verification was needed.
   Recovery: No recovery bundle was required.
-  Checks after writing: not run.
-1 error.
-  Select safe-exact repairs with --automatic, provide an explicit --relink target, or use the interactive Repair prompt.
-Next: open-forge repair --automatic
+  Checks after writing: completed.
+Next: open-forge repair --automatic --workspace <workspace>

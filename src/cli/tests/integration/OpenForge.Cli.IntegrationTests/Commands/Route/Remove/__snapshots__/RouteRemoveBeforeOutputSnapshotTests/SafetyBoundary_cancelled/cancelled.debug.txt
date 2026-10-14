@@ -4,4 +4,4 @@ Workspace: <workspace>
          Route remove was cancelled. Nothing was changed.
   Scanned 0 files and found 0 links.
   Rerun the same Route Remove request.
-Next: open-forge route remove
+Next: open-forge route remove 'guidance/old guide' --automatic --workspace <workspace>

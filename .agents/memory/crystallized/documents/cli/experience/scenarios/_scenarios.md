@@ -14,6 +14,10 @@ Added cases retain a useful user outcome; improved cases state the revised targe
 
 Flow validation is required before new test implementation. Current command contracts define the exact existing interface, while these cases expose desired differences for reconciliation. A missing fixture produces not-run or fixture-unavailable, never a product pass.
 
+## Task 79 coverage
+
+Task 79 changes X02 to X05 and X16 and adds X32 to X50 for completion, identity evidence, safety and batch continuation. Command cases C05-13 to C05-22, C02-13 to C02-20 and C06-14 to C06-24 support changed F03, F05 and F08 and new F29 to F31. These specify current command behavior. The Task record retains accepted form and folder-rename decisions and historical outputs.
+
 ## Entries
 
 - [Reviewed command-local scenario collections](commands/_commands.md) - #Memory #Document #CLI #Scenario

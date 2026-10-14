@@ -35,7 +35,7 @@ public sealed class F22OptionalMetadataJourneyTests
 
         Assert.Equal(2, create.ExitCode);
         Assert.Equal(string.Empty, create.StandardError);
-        AssertOptionalMetadataAction(create.StandardOutput);
+        AssertOptionalMetadataGuidance(create.StandardOutput);
 
         var targetAfterCreate = File.ReadAllText(workspace.Combine(TargetPath), Encoding.UTF8);
         var parentAfterCreate = File.ReadAllText(workspace.Combine(ParentPath), Encoding.UTF8);
@@ -184,20 +184,11 @@ public sealed class F22OptionalMetadataJourneyTests
                 Prefix = "# Guidance\n\nAuthored guidance introduction.",
             }));
 
-    private static void AssertOptionalMetadataAction(string output)
+    private static void AssertOptionalMetadataGuidance(string output)
     {
-        var nextActions = output
-            .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
-            .Where(line => line.StartsWith("Next:", StringComparison.Ordinal))
-            .ToArray();
-        Assert.True(
-            nextActions.Any(line =>
-                line.Contains(TargetId, StringComparison.Ordinal)
-                && line.Contains("optional", StringComparison.OrdinalIgnoreCase)
-                && line.Contains("description", StringComparison.OrdinalIgnoreCase)
-                && line.Contains("tag", StringComparison.OrdinalIgnoreCase)
-                && !line.Contains("required", StringComparison.OrdinalIgnoreCase)),
-            "The optional-metadata next action must retain guidance/new-note and describe description/tags as optional.");
+        Assert.Contains(TargetPath, output, StringComparison.Ordinal);
+        Assert.Contains("without optional description or tags", output, StringComparison.Ordinal);
+        Assert.Contains("Add a description or tags when useful. See open-forge route update --help.", output, StringComparison.Ordinal);
     }
 
     private static void AssertAllowedRouteMutation(

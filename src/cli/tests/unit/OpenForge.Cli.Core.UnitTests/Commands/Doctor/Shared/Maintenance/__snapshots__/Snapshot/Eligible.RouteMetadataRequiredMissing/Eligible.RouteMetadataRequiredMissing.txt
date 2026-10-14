@@ -1,0 +1,3 @@
+.agents/guidance/note.md needs a description or tags. Index can fill the missing fields and keep your content.
+TargetedOperation
+open-forge index

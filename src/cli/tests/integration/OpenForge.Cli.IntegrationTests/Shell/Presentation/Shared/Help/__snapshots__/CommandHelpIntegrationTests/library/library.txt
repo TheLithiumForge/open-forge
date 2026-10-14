@@ -1,0 +1,28 @@
+  Manage links from local source folders into your workspace.
+
+Usage:
+  open-forge library <command> [options]
+
+Commands:
+  list                  List registered Libraries and their link status.
+  inspect <library-id>  Compare one Library's source files with its destination
+                        links.
+  attach <library-id> <source-root>
+      Register a local source folder and link its files into the workspace.
+  sync <library-id>     Bring a registered Library's links into agreement with
+                        its source files.
+  detach <library-id>   Remove a Library's registration and destination links
+                        while keeping its source files.
+
+Options:
+  --workspace <path>          Select the workspace explicitly.
+  --format <format>           Output format: text or json. Default: text.
+  --detail <detail>           Result detail in text and JSON: minimal, standard,
+                              full or debug. Default: minimal.
+  --detail-filter <severity>  List error, warning, info or all severities.
+                              Repeat to combine.
+  --help                      Show help and exit.
+  --version                   Show the executable version and exit.
+
+Command help:
+  Use open-forge library <command> --help for arguments and examples.

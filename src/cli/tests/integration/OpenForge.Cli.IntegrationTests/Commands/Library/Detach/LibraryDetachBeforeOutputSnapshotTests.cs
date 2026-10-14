@@ -84,6 +84,7 @@ public sealed class LibraryDetachBeforeOutputSnapshotTests
         }
         artifacts.OwnRecovery(result.Result.Application.Recovery);
         Assert.Equal((CliSemanticStatus)status, result.Status);
+        Assert.All(result.Result.Plan.Links, link => Assert.DoesNotContain('\\', link.RelativeTarget));
         if (situation is "detached" or "detached-no-links" or "write-failed-partial") Assert.Null(new FileInfo(workspace.Absolute(target)).LinkTarget);
         else if (situation is "registered-link-gone" or "changed-occupant")
         {

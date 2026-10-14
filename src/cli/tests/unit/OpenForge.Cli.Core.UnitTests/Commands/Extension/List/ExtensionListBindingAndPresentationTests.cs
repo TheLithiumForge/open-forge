@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Extension.List.Models;
@@ -58,7 +59,7 @@ public sealed class ExtensionListBindingAndPresentationTests
         Assert.Single(commandResult.GetProperty("available").EnumerateArray());
         Assert.Equal("embedded-catalogue", commandResult.GetProperty("source").GetProperty("kind").GetString());
         Assert.False(Assert.Single(commandResult.GetProperty("available").EnumerateArray()).TryGetProperty("installed", out _));
-        Assert.Equal("open-forge extension install <id>", root.GetProperty("next").GetProperty("command").GetString());
+        Assert.Equal($"open-forge extension install <id> --workspace {CliCommandText.Quote(result.WorkspacePath ?? throw new InvalidOperationException())}", root.GetProperty("next").GetProperty("command").GetString());
     }
 
     [Fact(DisplayName = "Extension List JSON retains nullable full installed fields at their selected detail"), Trait("Feature", "extension-list"), Trait("Evidence", "Unit"), Trait("Boundary", "Output")]

@@ -2,6 +2,6 @@ Cannot install: 1 Framework file has changed since they were installed.
 Workspace: <workspace>
   Error  <workspace>  Framework files have changed
          <workspace> has changed since it was installed. Install does not replace changed files.
-         open-forge update
+         open-forge update --workspace <workspace>
 Frontmatter: root
-Next: open-forge update
+Next: open-forge update --workspace <workspace>

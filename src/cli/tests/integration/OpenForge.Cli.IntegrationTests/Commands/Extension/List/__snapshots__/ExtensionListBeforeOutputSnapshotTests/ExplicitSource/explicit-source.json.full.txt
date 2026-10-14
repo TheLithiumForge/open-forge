@@ -64,7 +64,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge extension install <id>",
+    "command": "open-forge extension install <id> --source <extension-source>",
     "reason": "Install one of the available Extensions."
   }
 }

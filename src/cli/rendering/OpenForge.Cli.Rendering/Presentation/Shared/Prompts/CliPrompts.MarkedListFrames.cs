@@ -28,21 +28,27 @@ internal sealed partial class CliPrompts
         };
     }
 
-    private static string MarkedLineFrame<T>(CliMarkedListQuestion<T> question, IReadOnlyList<int> marks) where T : notnull
+    private string MarkedLineFrame<T>(CliMarkedListQuestion<T> question, IReadOnlyList<int> marks) where T : notnull
     {
-        var output = new StringBuilder().AppendLine(CliText.Escape(question.Question)).AppendLine(MarkedLegend(question.Marks)).AppendLine();
+        var output = new StringBuilder();
+        AppendLineProse(output, question.Question);
+        AppendLineItems(output, MarkedLegend(question.Marks));
+        foreach (var explanation in question.LineExplanations) AppendLineProse(output, explanation);
+        output.AppendLine();
         var labelWidth = question.Rows.Max(row => CliSelectionText.Width(row.Label));
         var numberWidth = question.Rows.Count.ToString(CultureInfo.InvariantCulture).Length;
         for (var index = 0; index < question.Rows.Count; index++)
         {
             var row = question.Rows[index];
             var label = CliText.Escape(row.Label);
-            var summary = row.Summary is { } text
-                ? $"{new string(' ', labelWidth - CliSelectionText.Width(row.Label) + 2)}{CliText.Escape(text)}" : string.Empty;
-            output.AppendLine($"  {(index + 1).ToString(CultureInfo.InvariantCulture).PadLeft(numberWidth)}. [{question.Marks[marks[index]].Symbol}] {label}{summary}");
-            if (row.Lock is { } reason) output.AppendLine(CliText.Escape(reason));
+            AppendLineChoice(output, $"  {(index + 1).ToString(CultureInfo.InvariantCulture).PadLeft(numberWidth)}. [{question.Marks[marks[index]].Symbol}] {label}",
+                row.Summary, labelWidth - CliSelectionText.Width(row.Label) + 2);
+            if (row.Description is { } description && description != row.Summary) AppendLineProse(output, description, "    ");
+            if (row.Lock is { } reason) AppendLineProse(output, reason, "    ");
         }
-        output.AppendLine(CliPromptWording.MarkedLine(question.Marks, question.Rows.Count)).AppendLine(">");
+        AppendLineProse(output, CliPromptWording.MarkedLine(question.Marks, question.Rows.Count));
+        AppendLineProse(output, global::OpenForge.Cli.OutputText.Shared.CliPromptWording.MarkedLineCancel());
+        output.AppendLine(">");
         return output.ToString();
     }
 

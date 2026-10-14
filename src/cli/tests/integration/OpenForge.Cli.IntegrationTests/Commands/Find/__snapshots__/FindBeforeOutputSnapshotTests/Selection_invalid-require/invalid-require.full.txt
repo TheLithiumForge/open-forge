@@ -1,5 +1,6 @@
-Cannot search: --require must be all or any.
+Cannot search: Invalid --require value: invalid. Use all or any.
 Workspace: <workspace>
   Error  find  Invalid input [find.invalid-input]
-         --require must be all or any.
 1 errors.
+  Correct the named Find input, then rerun the request.
+Next: open-forge find --help

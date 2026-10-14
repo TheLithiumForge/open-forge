@@ -1,6 +1,9 @@
-Library team-knowledge: include this recovery step?
+Choose one Library recovery step for this run
 
-  1. Include    Restore the deleted file at .agents/open-forge.libraries.json from the recovery bundle.
-  2. Leave out  Leave this recovery step out of the plan.
+  1. .agents/open-forge.libraries.json
+     Restore the deleted file at .agents/open-forge.libraries.json from the
+     recovery bundle.
+  2. Leave all recovery steps out
+     Leave all recovery steps out of the plan.
 
 Choose a number (1-2), or press Enter to cancel:

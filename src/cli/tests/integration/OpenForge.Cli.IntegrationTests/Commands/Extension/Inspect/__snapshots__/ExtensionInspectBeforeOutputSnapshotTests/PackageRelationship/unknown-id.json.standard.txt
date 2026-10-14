@@ -57,7 +57,7 @@
   "recovery": null,
   "next": {
     "kind": "command",
-    "command": "open-forge extension list",
+    "command": "open-forge extension list --source <extension-source>",
     "reason": "List available Extensions."
   }
 }

@@ -5,5 +5,4 @@ Routes and Entries
          open-forge index
          Update deterministic generated navigation.
   21 links and 20 routes checked.
-  Update deterministic generated navigation.
 Next: open-forge index

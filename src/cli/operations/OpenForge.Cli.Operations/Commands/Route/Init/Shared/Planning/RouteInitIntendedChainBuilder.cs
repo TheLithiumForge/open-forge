@@ -2,6 +2,7 @@ using System.Text;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Planning;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Init.Models.Result;
+using OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 using OpenForge.Cli.Core.Framework.Distribution.Shared.Content;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Metadata;
@@ -23,6 +24,7 @@ internal sealed class RouteInitIntendedChainBuilder
 
     private readonly RouteInitMetadataResolver _metadataResolver = new();
     private readonly RouteInitScaffoldComposer _scaffoldComposer = new();
+    private readonly RouteScaffoldSourceBuilder _sourceBuilder = new();
     private readonly SourceDocumentSnapshotReader _snapshotReader = new();
     private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly FrameworkDocumentMetadataParser _frameworkMetadataParser = new();
@@ -149,7 +151,7 @@ internal sealed class RouteInitIntendedChainBuilder
             var title = chain.Id.Split('/')[^1];
             var scaffold = _scaffoldComposer.Compose(chain.Id, title, metadata, inspection.Settings.Document.Frontmatter);
             var source = aligned?.IntendedSource
-                ?? CreateSource(request, chain.Id, chain.CanonicalMissingPath);
+                ?? _sourceBuilder.Create(request.Workspace, chain.CanonicalMissingPath);
             var userContent = new RouteInitProspectiveSourceContent(
                 source,
                 MissingSnapshot(request, source.Identity.CanonicalBasePath),
@@ -230,27 +232,4 @@ internal sealed class RouteInitIntendedChainBuilder
         => FileStateSnapshot.Missing(
             SourceLogicalPath.ToLexicalPath(request.Workspace.LexicalRoot, canonicalPath));
 
-    private static SourceLogicalSource CreateSource(
-        RouteInitRequest request,
-        string id,
-        string canonicalPath)
-    {
-        if (!SourceFormClassifier.TryClassify(canonicalPath, out var form))
-        {
-            throw new RouteInitPlanningException(
-                RouteInitFindingCode.InvalidTarget,
-                "The intended route source form is invalid.",
-                incomplete: false);
-        }
-
-        return new SourceLogicalSource(
-            new SourceLogicalIdentity(id, canonicalPath),
-            new SourceLayer(
-                canonicalPath,
-                Path.GetFullPath(SourceLogicalPath.ToLexicalPath(
-                    request.Workspace.PhysicalRoot,
-                    canonicalPath)),
-                form,
-                SourceLayerKind.Base));
-    }
 }

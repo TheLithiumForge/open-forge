@@ -4,6 +4,20 @@ namespace OpenForge.Cli.OutputText.Shared;
 
 internal static class SharedText
 {
+    // @OpenForgeText shared.help.default-value
+    internal static string HelpDefaultValue(string value) => $"Default: {value}.";
+
+    // @OpenForgeText shared.help.heading.purpose
+    internal static string HelpHeadingPurpose() => "Purpose";
+
+    // @OpenForgeText shared.help.heading.arguments
+    internal static string HelpHeadingArguments() => "Arguments";
+
+    // @OpenForgeText shared.help.heading.options
+    internal static string HelpHeadingOptions() => "Options";
+
+    // @OpenForgeText shared.help.heading.commands
+    internal static string HelpHeadingCommands() => "Commands";
     // @OpenForgeText shared.help.global-options
     internal static string HelpGlobalOptions()
         => "--workspace <path>, --format <text|json>, --detail <minimal|standard|full|debug>, --detail-filter <error|warning|info|all>, --help, and --version apply to this command.";
@@ -828,11 +842,11 @@ internal static class SharedText
 
     // @OpenForgeText shared.message.text-completed-completed-with-warnings-and-incomplete-results-use-stdout-invalid-input-blocked-failed-and-cancelled-results-use-stderr
     internal static string MessageTextCompletedCompletedWithWarningsAndIncompleteResultsUseStdoutInvalidInputBlockedFailedAndCancelledResultsUseStderr()
-        => "Text completed, completed-with-warnings, and incomplete results use stdout; invalid-input, blocked, failed, and cancelled results use stderr.";
+        => "Text completed, completed-with-warnings, and incomplete results use stdout. Invalid-input, blocked, failed, and cancelled results use stderr.";
 
     // @OpenForgeText shared.message.json-writes-one-minified-schema-version-3-envelope-to-stdout-for-every-semantic-status-debug-diagnostics-use-bounded-stderr
     internal static string MessageJsonWritesOneMinifiedSchemaVersion3EnvelopeToStdoutForEverySemanticStatusDebugDiagnosticsUseBoundedStderr()
-        => "JSON writes one minified schema-version-3 envelope to stdout for every semantic status. Debug diagnostics use bounded stderr.";
+        => "--format json writes one minified schema-3 result to stdout for every status. Debug diagnostics use bounded stderr.";
 
     // @OpenForgeText shared.label.stdout
     internal static string LabelStdout()
@@ -874,6 +888,26 @@ internal static class SharedText
     internal static string HelpHeadingResultsAndStreams()
         => "Results and streams";
 
+    // @OpenForgeText shared.help.automation.json
+    internal static string HelpAutomationJson()
+        => "--format json: one minified schema-3 JSON result on stdout for every status.";
+
+    // @OpenForgeText shared.help.automation.exit-codes
+    internal static string HelpAutomationExitCodes(string mappings)
+        => $"Exit codes: {mappings}.";
+
+    // @OpenForgeText shared.help.automation.mapping
+    internal static string HelpAutomationMapping(string exitCode, string status)
+        => $"{exitCode} {status}";
+
+    // @OpenForgeText shared.help.automation.streams
+    internal static string HelpAutomationStreams(string stdoutExits)
+        => $"Text exits {stdoutExits}: stdout. Others and bounded debug diagnostics: stderr.";
+
+    // @OpenForgeText shared.help.global-options-summary
+    internal static string HelpGlobalOptionsSummary(string names)
+        => $"Global options: {names}. See open-forge --help.";
+
     // @OpenForgeText shared.help.heading.inspection
     internal static string HelpHeadingInspection()
         => "Inspection";
@@ -900,7 +934,7 @@ internal static class SharedText
 
     // @OpenForgeText shared.help.root-description
     internal static string HelpRootDescription()
-        => "Inspect and maintain an Open Forge workspace.";
+        => "Open Forge installs and maintains your project's agent rules and context.";
 
     // @OpenForgeText shared.help.workspace-description
     internal static string HelpWorkspaceDescription()
@@ -912,11 +946,11 @@ internal static class SharedText
 
     // @OpenForgeText shared.help.detail-description
     internal static string HelpDetailDescription()
-        => "Result detail: minimal, standard, full or debug.";
+        => "Result detail in text and JSON: minimal, standard, full or debug.";
 
     // @OpenForgeText shared.help.severity-description
     internal static string HelpSeverityDescription()
-        => "List error, warning, info or all severities; repeat to combine.";
+        => "List error, warning, info or all severities. Repeat to combine.";
 
     // @OpenForgeText shared.help.help-description
     internal static string HelpHelpDescription()
@@ -936,15 +970,23 @@ internal static class SharedText
 
     // @OpenForgeText shared.help.heading.getting-started
     internal static string HelpHeadingGettingStarted()
-        => "Getting started";
+        => "Get started in your project folder";
+
+    // @OpenForgeText shared.help.getting-started-rows
+    internal static IReadOnlyList<(string Label, string? Description)> HelpGettingStartedRows()
+        =>
+        [
+            ("open-forge install --preset essentials --dry-run", "Preview Essentials, no edits"),
+            ("open-forge install --preset essentials", "Install it"),
+        ];
 
     // @OpenForgeText shared.help.getting-started-examples
     internal static string HelpGettingStartedExamples()
-        => "open-forge install --dry-run\n  open-forge context\n  open-forge route list\n  open-forge doctor";
+        => "open-forge install --preset essentials --dry-run\nopen-forge install --preset essentials";
 
     // @OpenForgeText shared.help.command-help-description
     internal static string HelpCommandHelpDescription()
-        => "Use open-forge <command> --help for options and examples.\n  Use open-forge route --help, open-forge extension --help, or\n  open-forge library --help to list their subcommands.";
+        => "Use open-forge <command> --help for options and examples.";
 
     // @OpenForgeText shared.help.heading.managed-content
     internal static string HelpHeadingManagedContent()
@@ -952,5 +994,49 @@ internal static class SharedText
 
     // @OpenForgeText shared.help.managed-content-description
     internal static string HelpManagedContentDescription()
-        => "Install establishes or verifies Framework management. Update reconciles managed files; --force and --prune permit only their documented changes.";
+        => "Install adds or configures the bundled Framework. After upgrading the CLI, preview managed-file updates with open-forge update --dry-run.";
+
+    // @OpenForgeText shared.shared.help.headingusage
+    internal static string HelpHeadingUsage()
+        => "Usage";
+
+    // @OpenForgeText shared.shared.help.headingbehavior
+    internal static string HelpHeadingBehavior()
+        => "Behavior";
+
+    // @OpenForgeText shared.shared.help.headingdetails
+    internal static string HelpHeadingDetails()
+        => "Details";
+
+    // @OpenForgeText shared.shared.help.headingautomation
+    internal static string HelpHeadingAutomation()
+        => "Automation";
+
+    // @OpenForgeText shared.shared.help.headingsetupandmanage
+    internal static string HelpHeadingSetUpAndManage()
+        => "Set up and manage";
+
+    // @OpenForgeText shared.shared.help.headingreadanddiscover
+    internal static string HelpHeadingReadAndDiscover()
+        => "Read and discover";
+
+    // @OpenForgeText shared.shared.help.headingcheckandmaintain
+    internal static string HelpHeadingCheckAndMaintain()
+        => "Check and maintain";
+
+    // @OpenForgeText shared.shared.help.gettingstartedbefore
+    internal static string HelpGettingStartedBefore()
+        => "Get started in your project folder. Preview Essentials without changing files, then install the same preset:";
+
+    // @OpenForgeText shared.shared.help.gettingstartedafter
+    internal static string HelpGettingStartedAfter()
+        => "Then give your agent a normal task.\nAlready installed? Preview updates with open-forge update --dry-run.";
+
+    // @OpenForgeText shared.shared.help.helpheadingpreviewtheninstall
+    internal static string HelpHeadingPreviewThenInstall()
+        => "Preview, then install";
+
+    // @OpenForgeText shared.shared.help.helpheadingfirstagenttask
+    internal static string HelpHeadingFirstAgentTask()
+        => "First agent task";
 }

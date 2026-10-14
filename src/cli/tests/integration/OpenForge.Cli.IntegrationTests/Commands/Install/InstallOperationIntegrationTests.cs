@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Install;
@@ -458,7 +459,7 @@ public sealed class InstallOperationIntegrationTests
                 RequireEffects = true,
             });
         var nonPromptNext = Assert.IsType<CliNextAction>(nonPromptResult.Next);
-        Assert.Equal("open-forge install --automatic", nonPromptNext.Command);
+        Assert.Equal($"open-forge install --workspace {CliCommandText.Quote(nonPromptWorkspace.PhysicalPath)} --preset full-core --frontmatter root --automatic", nonPromptNext.Command);
         Assert.Equal(nonPromptBefore, nonPromptWorkspace.SnapshotHashes());
         Assert.False(nonPromptWorkspace.AgentsDirectoryExists());
 

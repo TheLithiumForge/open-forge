@@ -1,5 +1,7 @@
-Parent folder for the new Extension:
-Enter an existing folder. Open Forge creates a folder named after the Extension ID inside it.
-Parent folder for the new Extension:
+Existing parent folder for the new Extension:
+Open Forge creates a folder named my-tools inside it.
+Enter an existing folder. Open Forge creates a folder named after the Extension
+ID inside it.
+Open Forge creates a folder named my-tools inside it.
 That folder does not exist. Enter an existing folder.
-Parent folder for the new Extension:
+Open Forge creates a folder named my-tools inside it.

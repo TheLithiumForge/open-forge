@@ -6,4 +6,4 @@ Workspace: <workspace>
 Selection: .agents/root/_root.md
 No recovery bundle was needed.
   Inspect the reported problem before rerunning Index.
-Next: open-forge doctor
+Next: open-forge doctor --workspace <workspace>

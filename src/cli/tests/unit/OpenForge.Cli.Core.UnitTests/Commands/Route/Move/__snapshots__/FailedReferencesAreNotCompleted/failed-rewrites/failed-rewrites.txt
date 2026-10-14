@@ -6,5 +6,5 @@ Workspace: <workspace>
   .agents/guidance/_guidance.md  failed
   Could not confirm the update of 1 link:
   README.md:3:2  .agents/memory/guides/old guide.md -> .agents/memory/archive/new guide.md
-  Report the failure and retry the same Route Move request with bounded diagnostics.
-Next: open-forge route move --detail debug
+  Address the reported failure, then retry the same Route Move request.
+Next: open-forge route move 'memory/guides/old guide' '.agents/memory/archive/new guide.md' --workspace <workspace>

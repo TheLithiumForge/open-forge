@@ -34,7 +34,11 @@
   "counts": {
     "filesChecked": 2,
     "filesUpdated": 2,
-    "filesCurrent": 0
+    "filesCurrent": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0,
+    "navigationFilesRenamed": 0
   },
   "limitations": [],
   "data": {
@@ -50,11 +54,17 @@
         "before": null,
         "after": 1
       }
-    ]
+    ],
+    "metadata": [],
+    "entrypoints": []
   },
   "recovery": {
     "path": null,
     "disposition": "not-required"
   },
-  "next": null
+  "next": {
+    "kind": "command",
+    "command": "open-forge index --workspace <workspace>",
+    "reason": "Apply the checked plan."
+  }
 }

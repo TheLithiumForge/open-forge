@@ -37,7 +37,7 @@ internal static class LibraryMutationCompletionData
     {
         var path = LibraryMutationPlanningData.Absolute(LibraryMutationPlanningData.Leaf);
         var missing = NoFollowLeafObservation.Missing(path);
-        var linked = NoFollowLeafObservation.CreateRelativeFileLink(path, link.Link);
+        var linked = NoFollowLeafObservation.CreateRelativeFileLink(path, link.Intended.Link ?? link.Link);
         var recordAfter = record.Kind == PlannedFileChangeKind.Delete
             ? FileStateSnapshot.Missing(record.LogicalPath)
             : FileStateSnapshot.File(record.LogicalPath, record.LogicalPath, record.IntendedBytes.AsSpan());

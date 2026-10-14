@@ -7,10 +7,10 @@ namespace OpenForge.Cli.Core.Commands.Library.Detach;
 internal static class LibraryDetachDefinitions
 {
     internal const string CommandIdentity = "library detach";
-    internal static readonly CliSyntaxDefinition Command = new("detach", "Remove a Library registration and its links; preserve source files.");
+    internal static readonly CliSyntaxDefinition Command = new("detach", "Remove a Library's registration and destination links while keeping its source files.");
     internal static readonly CliOptionDefinition<bool> Automatic = new(
         "--automatic",
-        "Disable prompts; does not select or alter Library targets.",
+        "Disable prompts. Does not select or alter Library targets.",
         CliOptionArity.None,
         false);
     internal static string ReadFindingCode(LibraryDetachFindingCode value)

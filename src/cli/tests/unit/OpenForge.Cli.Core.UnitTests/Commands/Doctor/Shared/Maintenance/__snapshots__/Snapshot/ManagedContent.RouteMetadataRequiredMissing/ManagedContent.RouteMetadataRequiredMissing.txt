@@ -1,0 +1,3 @@
+.agents/guidance/note.md needs a description or tags. Its managing Update operation can restore its metadata.
+TargetedOperation
+open-forge update

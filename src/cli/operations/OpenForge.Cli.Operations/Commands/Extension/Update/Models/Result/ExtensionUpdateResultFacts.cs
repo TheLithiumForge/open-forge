@@ -408,6 +408,7 @@ internal sealed record ExtensionUpdateResultFacts
 
 internal sealed record ExtensionUpdateResultFormation
 {
+    internal OpenForge.Cli.Core.Commands.Extension.Update.Models.Request.ExtensionUpdateRequest? Request { get; init; }
     internal required CliWorkspace? Workspace { get; init; }
 
     internal required ExtensionUpdateMode Mode { get; init; }

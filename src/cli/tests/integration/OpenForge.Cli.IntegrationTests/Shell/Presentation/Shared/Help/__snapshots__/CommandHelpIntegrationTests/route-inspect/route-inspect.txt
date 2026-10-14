@@ -1,0 +1,51 @@
+  Explain where one source belongs and when its rules or content are read.
+
+Usage:
+  open-forge route inspect <source-reference> [options]
+
+Examples:
+  open-forge route inspect memory
+  open-forge route inspect memory --for src/a.cs --for tests/a.cs
+  open-forge route inspect directives --matching-files
+
+Behavior:
+  Select exactly one source ID or exact .agents path.
+  Repeat --for for known working files to evaluate file conditions. Without
+  paths, affected conditions stay pending.
+  --matching-files scans for files the source applies to. Source bodies are not
+  returned.
+  This command changes no files and asks no questions.
+
+Arguments:
+  <source-reference>  Select one source by its ID or exact .agents path.
+
+Options:
+  --matching-files <matching-files>
+      List current workspace files matching this source's own and inherited
+      applyTo conditions. Default: false.
+  --for <path>  Explain applicability for one workspace-relative working path.
+                Repeat for more paths.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Source and matching files: Exact .agents/... and ./.agents/... paths are
+  accepted. Inspect returns no ordinary links, diagnosis, or recommendations.
+  Matching files do not select or load a source. No restrictive applyTo
+  condition means all files without a scan. --for is independent of scanning. At
+  most 100 matches are listed. Git scans use existing tracked and untracked
+  files, excluding ignored untracked files. Otherwise Open Forge walks the
+  workspace with its .gitignore rules. Scans stay contained, never following
+  symbolic links or entering submodules.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  route list      Browse routed sources.
+  context --help  Read agent instructions and context.
+  doctor          Diagnose workspace problems.

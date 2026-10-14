@@ -5,12 +5,32 @@ description: Memory categories and Templates for saving useful observations and 
 
 # Observations and Handoffs
 
-Save an observation worth revisiting, or give the next person, agent, or session enough information to resume work. The package adds two [Memory](../concepts/memory.md) categories and a starter [Template](../glossary.md#content-roles) for each.
+Save an observation worth revisiting, or give the next person, agent, or session enough information to resume work. The package adds two [Memory](../concepts/memory.md) categories and a starter [Template](../glossary.md#template) for each.
 
-- **Package ID:** `observations-and-handoffs`
+- **[Package ID](../glossary.md#package-id):** `observations-and-handoffs`
 - **Depends on:** Nothing
 - **Needed by:** [Task Coordination](orchestration.md)
-- **Loads at startup:** Only two entry lines. The Handoffs entry appears in Working Memory's `Entries`, and the Observations entry appears in Emerging Memory's `Entries`. Both category entrypoints and their records open on demand. The starters stay on demand too.
+- **Startup visibility:** This package adds two entry lines: Handoffs in Working Memory and Observations in Emerging Memory. The category entrypoints, records, and starters stay on demand.
+
+These counts describe this package's own entries when their parent routes expose them in `Entries` and are read. Required packages add their own entries. Linked files stay on demand unless selected or required.
+
+## Install
+
+Package files follow your installation choices. Essentials leaves out Templates, so Extension starters are skipped. [Restore the Templates category](index.md#if-your-setup-leaves-out-templates) if you want those starters.
+
+From your installed Open Forge workspace, preview the package and its required packages:
+
+```sh
+open-forge extension install observations-and-handoffs --dry-run
+```
+
+Review the plan. Then apply it:
+
+```sh
+open-forge extension install observations-and-handoffs
+```
+
+The CLI installs required packages from the same [catalogue](../glossary.md#catalogue). See the [Extension guide](/guides/extensions#install-an-extension) for scripts using `--automatic`, updates, removal, or a local source.
 
 ## Why it exists
 
@@ -73,3 +93,5 @@ The Observation starter keeps interpretation separate from fact: "What It Might 
 - Either record works alone. Neither needs task coordination or a development workflow. An Observation can come from solo work, a conversation, or a tool.
 - A Handoff isn't a status page. Keep changing task state in the existing working record.
 - These categories used to ship with Task Coordination. Their Memory paths are unchanged, and their Templates now live under `templates/observations-and-handoffs/`.
+
+Next: [Install this package](#install), or [update and remove Extensions](/guides/extensions#update-and-remove).

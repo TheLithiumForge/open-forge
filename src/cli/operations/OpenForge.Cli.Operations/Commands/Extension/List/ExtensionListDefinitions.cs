@@ -13,17 +13,17 @@ internal static class ExtensionListDefinitions
 
     internal static readonly CliSyntaxDefinition ListCommand = new(
         name: "list",
-        description: "List installed and available Extension packages.");
+        description: "List installed Extensions and Extensions available from a bundled or local source.");
 
     internal static readonly CliOptionDefinition<bool> Installed = new(
         name: "--installed",
-        description: "Show installed packages; combine with --available to show both.",
+        description: "Show installed packages. Combine with --available to show both.",
         arity: CliOptionArity.None,
         defaultValue: false);
 
     internal static readonly CliOptionDefinition<bool> Available = new(
         name: "--available",
-        description: "Show available packages; combine with --installed to show both.",
+        description: "Show available packages. Combine with --installed to show both.",
         arity: CliOptionArity.None,
         defaultValue: false);
 

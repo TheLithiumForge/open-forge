@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Extension.Shared.NextActions;
 using System.Globalization;
 using OpenForge.Cli.Core.Commands.Extension.List.Models;
 using OpenForge.Cli.Core.Presentation.Extension.List.Models;
@@ -73,7 +74,7 @@ internal static class ExtensionListReportSelector
                 ShowAvailableDependencies = selection.Detail >= CliDetail.Standard,
                 IsHealthyAvailableHint = isHealthyAvailableHint,
             },
-            Next = next,
+            Next = ExtensionNextCommand.InSource(next, result.Source?.Supplied),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? new[]
                 {

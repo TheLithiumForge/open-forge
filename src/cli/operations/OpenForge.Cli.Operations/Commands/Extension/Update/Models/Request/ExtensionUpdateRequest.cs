@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 
 namespace OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 
@@ -12,6 +13,7 @@ internal enum ExtensionUpdateMode
 
 internal sealed record ExtensionUpdateRequest
 {
+    internal CliRetryOptions? RetryOptions { get; init; }
     internal ExtensionUpdateRequest(
         CliWorkspace workspace,
         ExtensionUpdateMode mode,

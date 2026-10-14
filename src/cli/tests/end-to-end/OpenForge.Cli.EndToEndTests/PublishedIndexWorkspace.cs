@@ -13,6 +13,7 @@ internal sealed class PublishedIndexWorkspace : IDisposable
 
     private readonly TemporaryWorkspace _workspace;
     private readonly PublishedWorkspaceLockStore _lockStore;
+    private readonly List<string> _generatedFiles = [];
 
     private PublishedIndexWorkspace(
         TemporaryWorkspace workspace,
@@ -32,6 +33,19 @@ internal sealed class PublishedIndexWorkspace : IDisposable
 
     internal Task<string> ReadRootAsync(CancellationToken cancellationToken)
         => File.ReadAllTextAsync(_workspace.Combine(RootPath), cancellationToken);
+
+    internal string ReadText(string path) => File.ReadAllText(_workspace.Combine(path));
+    internal void WriteText(string path, string text) => _workspace.WriteText(path, text);
+    internal void TrackGeneratedFiles(params string[] paths) => _generatedFiles.AddRange(paths);
+
+    internal static PublishedIndexWorkspace CreateRooted()
+    {
+        var workspace = Create();
+        workspace.WriteText(".agents/loader.md", "# Loader\n\n## Entries\n\n- [Root](root/_root.md) - #Workspace\n");
+        workspace._workspace.ReplaceText(RootPath, OpenForgeDocumentSeed.Metadata("Root", ["Workspace"],
+            "# Root\n\n## Entries\n\n- [Child](child.md) - #Docs\n"));
+        return workspace;
+    }
 
     internal static PublishedIndexWorkspace Create()
     {
@@ -70,6 +84,12 @@ internal sealed class PublishedIndexWorkspace : IDisposable
 
     public void Dispose()
     {
+        foreach (var path in _generatedFiles.Select(path => _workspace.Combine(path)))
+        {
+            if (!File.Exists(path)) continue;
+            Assert.Equal((FileAttributes)0, File.GetAttributes(path) & (FileAttributes.Directory | FileAttributes.ReparsePoint));
+            File.Delete(path);
+        }
         _lockStore.Dispose();
         _workspace.Dispose();
     }

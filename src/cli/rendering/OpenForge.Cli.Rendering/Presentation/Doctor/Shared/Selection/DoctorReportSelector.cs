@@ -60,7 +60,7 @@ internal static class DoctorReportSelector
             LaneLine = selection.Detail >= CliDetail.Full
                 ? DoctorWording.LaneSummary(findings)
                 : null,
-            HintLine = Hint(infos, selection),
+            HintLine = Hint(result, infos, selection),
         };
         return new CliReport<DoctorData>
         {
@@ -76,7 +76,10 @@ internal static class DoctorReportSelector
             Counts = Counts(coverageCounts, errors, warnings, infos, result.Diagnosis),
             Limitations = Limitations(domains),
             Data = data,
-            Next = Next(result.Status, findings),
+            Next = result.Status == CliSemanticStatus.Incomplete
+                && result.Diagnosis.Domains.SelectMany(domain => domain.Limitations).Any(limitation => limitation.GitRenameEvidenceTimedOut)
+                ? new CliNextAction("open-forge doctor", global::OpenForge.Cli.OutputText.Doctor.DoctorMaintenanceText.GitTimeout())
+                : DoctorNextActionSelector.Select(result.Status, findings),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? Diagnostics(domains)
                 : [],
@@ -138,7 +141,7 @@ internal static class DoctorReportSelector
                 Warnings = values.LongCount(finding => finding.Severity == DoctorFindingSeverity.Warning),
                 Infos = values.LongCount(finding => finding.Severity == DoctorFindingSeverity.Information),
             },
-            Limitations = domain?.Limitations.Select(limitation => limitation.Message).ToArray() ?? [],
+            Limitations = domain?.Limitations.Select(DoctorWording.Limitation).ToArray() ?? [],
             Lanes = !includeLanes
                 ? null
                 : new DoctorDataLanes
@@ -169,10 +172,9 @@ internal static class DoctorReportSelector
             CliSemanticStatus.Blocked => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatCannotCheckThisWorkspace($"{EventReason(diagnosis, "the workspace cannot be checked")}"),
             CliSemanticStatus.Failed => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatDoctorStoppedBecauseOfAnUnexpectedError($"{EventReason(diagnosis, "the operation failed")}"),
             CliSemanticStatus.Interrupted => global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageDoctorWasCancelled(),
-            _ => DoctorWording.CountFindings(errors, warnings, infos)
-                + (status == CliSemanticStatus.Incomplete
-                    ? $" {DoctorWording.IncompleteCheckSummary(diagnosis.CoverageCounts ?? UnavailableCoverageCounts())}"
-                    : string.Empty),
+            CliSemanticStatus.Incomplete => DoctorWording.IncompleteHeadline(diagnosis.CoverageCounts ?? UnavailableCoverageCounts(),
+                errors: errors, warnings: warnings, infos: infos),
+            _ => DoctorWording.CountFindings(errors, warnings, infos),
         };
         return new(sentence, status switch
         {
@@ -190,7 +192,7 @@ internal static class DoctorReportSelector
     private static string EventReason(DoctorDiagnosis diagnosis, string fallback)
     {
         var reason = diagnosis.Domains.SelectMany(domain => domain.Limitations)
-            .Select(limitation => limitation.Message)
+            .Select(DoctorWording.Limitation)
             .FirstOrDefault();
         if (string.IsNullOrWhiteSpace(reason))
         {
@@ -222,7 +224,9 @@ internal static class DoctorReportSelector
                 _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Severity, "The Doctor finding severity is not defined."),
             },
             Code = DoctorWording.MachineCode(finding.Kind),
-            Title = DoctorWording.Title(finding.Kind),
+            Title = finding.LinkRecreation is not null
+                ? global::OpenForge.Cli.OutputText.Library.Shared.LibraryLinkRecreationText.Title()
+                : DoctorWording.Title(finding.Kind),
             Message = DoctorWording.Message(finding),
             Subject = Subject(finding),
             Category = DoctorWording.Category(finding.Kind),
@@ -301,7 +305,8 @@ internal static class DoctorReportSelector
         DoctorDiagnosis diagnosis)
     {
         var reason = diagnosis.Domains.SelectMany(domain => domain.Limitations)
-            .Select(limitation => limitation.Message)
+            .Where(limitation => !limitation.GitRenameEvidenceTimedOut)
+            .Select(DoctorWording.Limitation)
             .FirstOrDefault();
         return
         [
@@ -324,17 +329,25 @@ internal static class DoctorReportSelector
     private static IReadOnlyList<CliLimitation> Limitations(IReadOnlyList<DoctorDomainReport?> domains)
         => domains
             .Where(domain => domain is not null && domain.Coverage != DoctorCoverageState.Complete)
-            .SelectMany(domain => domain!.Limitations.Count > 0
-                ? domain.Limitations.Select(limitation => new CliLimitation(
-                    DoctorWording.Category(domain.Domain),
-                    limitation.Message,
-                    domain.Boundary.Path is { } path ? new CliSubject(CliSubjectKind.Directory, path) : null))
-                : [new CliLimitation(
-                    DoctorWording.Category(domain.Domain),
-                    DoctorWording.IncompleteLine(domain.Domain, domain),
-                    null)])
+            .SelectMany(domain => DomainLimitations(domain!))
             .Distinct()
             .ToArray();
+
+    private static IEnumerable<CliLimitation> DomainLimitations(DoctorDomainReport domain)
+    {
+        if (domain.Limitations.Count > 0)
+        {
+            return domain.Limitations.Select(limitation => new CliLimitation(
+                DoctorWording.Category(domain.Domain),
+                DoctorWording.Limitation(limitation),
+                domain.Boundary.Path is { } path ? new CliSubject(CliSubjectKind.Directory, path) : null));
+        }
+
+        return [new CliLimitation(
+            DoctorWording.Category(domain.Domain),
+            DoctorWording.IncompleteLine(domain.Domain, domain),
+            null)];
+    }
 
     private static IReadOnlyList<string> Diagnostics(IReadOnlyList<DoctorDomainReport?> domains)
         => domains
@@ -355,82 +368,18 @@ internal static class DoctorReportSelector
             _ => throw new ArgumentOutOfRangeException(nameof(domain), domain, "The Doctor domain boundary is not defined."),
         };
 
-    private static CliNextAction? Next(CliSemanticStatus status, IReadOnlyList<DoctorFinding> findings)
+    private static string? Hint(DoctorResult result, long infos, CliSelection selection)
     {
-        if (status is CliSemanticStatus.Invalid or CliSemanticStatus.Blocked or CliSemanticStatus.Failed or CliSemanticStatus.Interrupted)
-        {
-            return null;
-        }
-
-        var safe = findings.Count(finding => finding.Resolution == DoctorResolutionLane.SafeExact);
-        if (safe > 0)
-        {
-            return new CliNextAction(
-                "open-forge repair --dry-run",
-                global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatPreviewThatSafeToApply($"{safe}", $"{Plural(safe, "repair")}", $"{(safe == 1 ? "is" : "are")}"));
-        }
-
-        CliNextAction? targetedSentence = null;
-        foreach (var domain in DomainOrder)
-        {
-            var finding = findings.FirstOrDefault(value => value.Provenance.Domain == domain
-                && value.Resolution == DoctorResolutionLane.TargetedOperation);
-            if (finding is null)
-            {
-                continue;
-            }
-
-            if (finding.Actions.Any(value => value.Operation == DoctorNextOperation.Index && value.Command is null))
-            {
-                finding = findings.FirstOrDefault(value => value.Provenance.Domain == domain
-                    && value.Resolution == DoctorResolutionLane.TargetedOperation
-                    && value.Actions.Any(action => action.Operation == DoctorNextOperation.Index && action.Command is not null))
-                    ?? finding;
-            }
-
-            var actions = DoctorWording.Actions(finding);
-            var action = actions.FirstOrDefault(value => value.Kind == CliNextActionKind.Command);
-            if (action is not null)
-            {
-                return action;
-            }
-
-            if (targetedSentence is null
-                && finding.Actions.Any(value => value.Operation == DoctorNextOperation.Index && value.Command is null))
-            {
-                targetedSentence = actions.FirstOrDefault(value => value.Kind == CliNextActionKind.Sentence);
-            }
-        }
-
-        if (targetedSentence is not null)
-        {
-            return targetedSentence;
-        }
-
-        if (findings.Any(finding => finding.Resolution == DoctorResolutionLane.GuidedChoice))
-        {
-            return new CliNextAction("open-forge repair", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageReviewTheFindingsAndChooseARepair());
-        }
-
-        var manual = findings.FirstOrDefault(finding => finding.Severity == DoctorFindingSeverity.Error
-            && finding.Resolution == DoctorResolutionLane.ManualDecision);
-        return manual is null
-            ? null
-            : new CliNextAction(
-                global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatEditByHand($"{manual.Subject.Path ?? manual.Subject.Identifier ?? "the reported file"}"),
-                global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageEditTheReportedFileByHand())
-            {
-                Kind = CliNextActionKind.Sentence
-            };
+        if (selection.Filter is not null) return null;
+        return DoctorWording.Hint(0, infos, selection.Detail, result.WorkspaceExplicit ? result.WorkspacePath : null);
     }
 
-    private static string? Hint(long infos, CliSelection selection)
-        => selection.Filter is not null
-            ? null
-            : DoctorWording.Hint(0, infos, selection.Detail);
-
     private static string JoinFacts(string first, string second)
-        => string.IsNullOrEmpty(first) ? second : string.IsNullOrEmpty(second) ? first : $"{first} {second}";
+    {
+        if (string.IsNullOrEmpty(first)) return second;
+        if (string.IsNullOrEmpty(second)) return first;
+        return $"{first} {second}";
+    }
 
     private static string Plural(long count, string singular)
         => count == 1 ? singular : singular + "s";

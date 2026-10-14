@@ -7,12 +7,30 @@ description: Development, Debugging, and Review workflow recipes that work with 
 
 Implement changes, investigate defects, and review results using your project's technologies, rules, and verification tools. No task tracker or record taxonomy is required.
 
-The package installs three [workflow](../glossary.md#content-roles) recipes. A recipe is a Markdown method with a Goal, Steps, and Completion, reached through the `use-workflow` Skill from [Workflow Support](workflows.md).
+The package installs three [workflow](../glossary.md#workflow) recipes. A recipe is a Markdown method with a Goal, Steps, and Completion, reached through the `use-workflow` Skill from [Workflow Support](workflows.md).
 
-- **Package ID:** `development`
+- **[Package ID](../glossary.md#package-id):** `development`
 - **Depends on:** [Workflow Support](workflows.md)
 - **Needed by:** [Task Coordination](orchestration.md), [Development Toolkit](development-toolkit.md)
-- **Loads at startup:** Nothing. The `use-workflow` Skill opens a recipe when a task selects it.
+- **Startup visibility:** This package adds no entries to startup indexes. Its required Workflow Support package adds the `use-workflow` entry in Skills. Recipes open when a task selects them.
+
+These counts describe this package's own entries when their parent routes expose them in `Entries` and are read. Required packages add their own entries. Linked files stay on demand unless selected or required.
+
+## Install
+
+From your installed Open Forge workspace, preview the package and its required packages:
+
+```sh
+open-forge extension install development --dry-run
+```
+
+Review the plan. Then apply it:
+
+```sh
+open-forge extension install development
+```
+
+The CLI installs required packages from the same [catalogue](../glossary.md#catalogue). See the [Extension guide](/guides/extensions#install-an-extension) for scripts using `--automatic`, updates, removal, or a local source.
 
 ## Why it exists
 
@@ -73,3 +91,5 @@ The recipe has the agent first record exactly what it's reviewing: the baseline,
 
 - Development depends only on Workflow Support. It doesn't install Planning, Project Documents, Observations and Handoffs, or an agent hierarchy.
 - The three recipes stay separate methods within the shared selector Skill. They may use several configured Skills and tools, and they don't replace your harness's native behavior.
+
+Next: [Install this package](#install), or [update and remove Extensions](/guides/extensions#update-and-remove).

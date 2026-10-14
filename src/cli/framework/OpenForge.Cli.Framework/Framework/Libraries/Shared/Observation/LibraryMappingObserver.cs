@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Libraries.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Shared.Links;
 
 namespace OpenForge.Cli.Core.Framework.Libraries.Shared.Observation;
 
@@ -67,7 +68,7 @@ internal static class LibraryMappingObserver
         var expected = RelativeFileLinkIdentity.Create(
             NoFollowLinkKind.SymbolicLink,
             request.Mapping.ExpectedRelativeLink.Value);
-        return observed.State switch
+        var observation = observed.State switch
         {
             NoFollowLeafState.Missing => LibraryMappingObservation.Create(
                 request.Mapping,
@@ -76,7 +77,8 @@ internal static class LibraryMappingObserver
             NoFollowLeafState.RelativeFileLink => LibraryMappingObservation.Create(
                 request.Mapping,
                 observed,
-                observed.RelativeFileLink == expected
+                observed.RelativeFileLink is { } actual && actual.LinkKind == expected.LinkKind
+                    && RelativeFileLinkTarget.SameMapping(actual.RawRelativeTarget, expected.RawRelativeTarget)
                     ? LibraryMappingObservationState.Current
                     : LibraryMappingObservationState.Changed),
             NoFollowLeafState.OrdinaryFile => LibraryMappingObservation.Create(
@@ -102,6 +104,11 @@ internal static class LibraryMappingObserver
                 nameof(request),
                 observed.State,
                 "The no-follow leaf state is not defined."),
+        };
+        return observation with
+        {
+            UnreadableOnWindows = observation.State == LibraryMappingObservationState.Current
+                && RelativeFileLinkTarget.UnreadableOnWindows(observed.RelativeFileLink?.RawRelativeTarget),
         };
     }
 }

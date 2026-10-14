@@ -93,7 +93,15 @@ internal static class CliCompositionRoot
         var library = CliLibraryComposer.Compose(interaction);
         var rootRemove = CliRootRemoveComposer.Compose(interaction, inputs.LockStoreRoot);
         var tree = CliCommandTree.Create(
-            CreateRootHelp(),
+            CreateRootHelp(
+            [
+                new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSetUpAndManage(),
+                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command]),
+                new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingReadAndDiscover(),
+                    [standalone.StatusBinding.Command, standalone.ContextBinding.Command, standalone.FindBinding.Command, standalone.ReferencesBinding.Command, route.Branch.Command]),
+                new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCheckAndMaintain(),
+                    [standalone.DoctorBinding.Command, standalone.IndexBinding.Command, standalone.RepairBinding.Command, standalone.CleanupBinding.Command]),
+            ]),
             [route.Branch, extension.Branch, library.Branch],
             [
                 route.ListBinding,
@@ -146,17 +154,20 @@ internal static class CliCompositionRoot
         return new(terminal, new CliPrompts(terminal, inputs.StandardErrorColor));
     }
 
-    private static CliHelpContent CreateRootHelp()
-        => new(
-        [
-            new CliHelpSection(
-                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingGettingStarted(),
-                ("  " + global::OpenForge.Cli.OutputText.Shared.SharedText.HelpGettingStartedExamples())),
-            new CliHelpSection(
-                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCommandHelp(),
-                ("  " + global::OpenForge.Cli.OutputText.Shared.SharedText.HelpCommandHelpDescription())),
-            new CliHelpSection(
-                global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingManagedContent(),
-                ("  " + global::OpenForge.Cli.OutputText.Shared.SharedText.HelpManagedContentDescription())),
-        ]);
+    private static CliHelpContent CreateRootHelp(IReadOnlyList<CliHelpCommandGroup> groups)
+        => new([])
+        {
+            Usage = "open-forge [command] [options]",
+            Introduction =
+            [
+                new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingGettingStarted(),
+                    global::OpenForge.Cli.OutputText.Shared.SharedText.HelpGettingStartedAfter())
+                {
+                    Rows = global::OpenForge.Cli.OutputText.Shared.SharedText.HelpGettingStartedRows(),
+                    MaximumNameWidth = int.MaxValue,
+                },
+            ],
+            CommandGroups = groups,
+            Footer = global::OpenForge.Cli.OutputText.Shared.SharedText.HelpCommandHelpDescription(),
+        };
 }

@@ -28,17 +28,18 @@ public sealed class RouteInitApplicationIntegrationTests
         Assert.Contains("--dry-run", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--automatic", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--force", result.Output, StringComparison.Ordinal);
-        Assert.Contains("[--framework]", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Omit --dry-run to apply the complete checked plan.", result.Output, StringComparison.Ordinal);
+        Assert.Contains("--framework", result.Output, StringComparison.Ordinal);
+        Assert.Contains("--dry-run shows the checked plan and writes nothing.", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--template", result.Output, StringComparison.Ordinal);
         Assert.DoesNotContain("--yes", result.Output, StringComparison.Ordinal);
-        Assert.Contains("completed: exit 0 and text stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("completed-with-warnings: exit 2 and text stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("incomplete: exit 3 and text stdout.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("invalid-input: exit 4 and text stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("blocked: exit 5 and text stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("failed: exit 1 and text stderr.", result.Output, StringComparison.Ordinal);
-        Assert.Contains("cancelled: exit 130 and text stderr.", result.Output, StringComparison.Ordinal);
+        var footer = string.Join(" ", result.Output.Split(Environment.NewLine).Select(line => line.Trim()));
+        Assert.Contains("0 completed", footer, StringComparison.Ordinal);
+        Assert.Contains("2 completed with warnings", footer, StringComparison.Ordinal);
+        Assert.Contains("3 incomplete", footer, StringComparison.Ordinal);
+        Assert.Contains("4 invalid input", footer, StringComparison.Ordinal);
+        Assert.Contains("5 blocked", footer, StringComparison.Ordinal);
+        Assert.Contains("1 failed", footer, StringComparison.Ordinal);
+        Assert.Contains("130 cancelled", footer, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missing));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
@@ -196,7 +197,7 @@ public sealed class RouteInitApplicationIntegrationTests
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.Error);
         Assert.Contains("open-forge route init", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Scaffold mode", result.Output, StringComparison.Ordinal);
-        Assert.Contains("Results and streams", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Target and restoration", result.Output, StringComparison.Ordinal);
+        Assert.Contains("Automation", result.Output, StringComparison.Ordinal);
     }
 }

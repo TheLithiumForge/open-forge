@@ -2,7 +2,8 @@ Registered the team-knowledge Library from shared/team-knowledge.
 Workspace: <workspace>
   Info  .  Ownership record is missing [library-attach.ownership-observation]
          No ownership record exists, so the team-knowledge Library cannot be read from it.
-  .agents/directives/review.md  -> ../../shared/team-knowledge/.agents/directives/review.md
+  .agents/directives/review.md
+    -> ../../shared/team-knowledge/.agents/directives/review.md
   Created 1 link under .agents/directives
   Source inventory: 1 eligible file, 0 excluded items
   .agents/open-forge.lock.json records the Library

@@ -101,7 +101,7 @@ public sealed class LibraryExtensionRemoveOwnershipIntegrationTests
         using var document = JsonDocument.Parse(run.StandardOutput);
         Assert.Equal("blocked", document.RootElement.GetProperty("status").GetString());
         Assert.Empty(document.RootElement.GetProperty("data").GetProperty("effects").EnumerateArray());
-        Assert.Equal("../../shared/team-knowledge/.agents/toolkit/note.md", new FileInfo(workspace.Combine(Target)).LinkTarget);
+        Assert.Equal("../../shared/team-knowledge/.agents/toolkit/note.md".Replace('/', Path.DirectorySeparatorChar), new FileInfo(workspace.Combine(Target)).LinkTarget);
         Assert.Equal(Body, File.ReadAllText(workspace.Combine(SourceTarget)));
         Assert.Equal(before, workspace.Snapshot());
         Assert.Equal(sourceBefore, source.Snapshot());
@@ -149,6 +149,7 @@ public sealed class LibraryExtensionRemoveOwnershipIntegrationTests
 
         internal void CreateProjectionLink(string rawTarget)
         {
+            rawTarget = rawTarget.Replace('/', Path.DirectorySeparatorChar);
             File.CreateSymbolicLink(workspace.Combine(Target), rawTarget);
             _projectionLinkTarget = rawTarget;
         }

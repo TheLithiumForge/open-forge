@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 3,
+  "command": "install",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would change the Open Forge setup.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "setting",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "record",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesCreated": 0,
+    "directoriesCreated": 0,
+    "sectionsAdded": 0,
+    "filesReplaced": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "force": false,
+    "automatic": true,
+    "classification": "safe-absence",
+    "footprint": {
+      "files": 0,
+      "directories": 0,
+      "sections": 2
+    },
+    "lockPath": ".agents/open-forge.lock.json",
+    "configuration": {
+      "configure": true,
+      "preset": "custom",
+      "routes": [
+        {
+          "id": "directives",
+          "action": "add"
+        },
+        {
+          "id": "guidance",
+          "action": "remove"
+        },
+        {
+          "id": "maps",
+          "action": "add"
+        },
+        {
+          "id": "patterns",
+          "action": "add"
+        },
+        {
+          "id": "skills",
+          "action": "add"
+        },
+        {
+          "id": "templates",
+          "action": "add"
+        },
+        {
+          "id": "memory/working",
+          "action": "add"
+        },
+        {
+          "id": "memory/emerging",
+          "action": "add"
+        },
+        {
+          "id": "memory/crystallized",
+          "action": "add"
+        },
+        {
+          "id": "memory/archived",
+          "action": "add"
+        }
+      ]
+    },
+    "frontmatter": {
+      "form": "root"
+    }
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

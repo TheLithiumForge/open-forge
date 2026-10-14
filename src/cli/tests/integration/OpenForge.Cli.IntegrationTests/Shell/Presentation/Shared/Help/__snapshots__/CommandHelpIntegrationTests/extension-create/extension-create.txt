@@ -1,0 +1,66 @@
+  Create a local Extension package scaffold in an existing catalogue folder.
+
+Usage:
+  open-forge extension create [<stable-id>] [options]
+
+Examples:
+  open-forge extension create my-tools --path packages --dry-run
+  open-forge extension create my-tools --path packages
+  open-forge extension create
+
+Behavior:
+  The catalogue folder must already exist. Supply an Extension ID and --path, or
+  answer the interactive questions.
+  Apply is the default. --dry-run shows the exact plan and writes nothing.
+  A writing plan asks for confirmation unless --automatic is supplied.
+  Redirected or JSON requests need both required values and --automatic to
+  write.
+  If creation stops partway through, created files stay in the package folder.
+  Review that folder before retrying. No workspace installation is created.
+
+Arguments:
+  <stable-id>  One exact lowercase Extension stable ID.
+
+Options:
+  --path <catalogue-path>   Select the exact destination catalogue parent.
+  --name <text>             Override the package display name.
+  --description <text>      Override the package description.
+  --package-version <text>  Override the descriptive package version.
+  --dependency <stable-id>  Record one stable Extension dependency ID. Repeat
+                            for additional dependencies.
+  --automatic               Disable prompting after all required inputs are
+                            explicit.
+  --dry-run                 Preview the exact scaffold plan without writing.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Input and scaffold: Interactive input lets you correct invalid values.
+  Supplying the ID and --path avoids input questions. Automatic, JSON, or
+  redirected input fails if either is missing. Dry run and verified no-ops need
+  no write confirmation. Only <catalogue>/<stable-id>/ is inspected. No parent
+  marker is required. A missing destination is created. An identical scaffold
+  needs no writes. Divergent, partial, additional, unknown, or colliding content
+  blocks. The scaffold contains only extension.json and content/.agents/.
+  Manifest: Name defaults to the ID split on hyphens, with each first ASCII
+  letter uppercased. Description defaults to `Open Forge Extension package
+  <stable-id>.`, version to `0.1.0`, and dependencies to none. Supply nonblank
+  --name, --description, and --package-version at most once. Dependencies must
+  be distinct valid non-self IDs. They are written in ordinal order without
+  resolving availability.
+  Boundary: --automatic infers no input or authority. --workspace is a no-op.
+  Create writes no lifecycle or generated navigation state, takes no workspace
+  lock, and creates no recovery bundle. Its separate create-only destination
+  never uses Replace or Delete, restores, rolls back, or compensates for
+  retained partial state.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  extension inspect --help  Compare a package with its installation.
+  extension install --help  Install an Extension package.

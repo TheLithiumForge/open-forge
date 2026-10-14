@@ -46,7 +46,7 @@ values are invalid settings. `schemaVersion` stays 1. This setting controls
 output, not reading. Every workspace reads both forms under the [Markdown
 Syntax contract](../framework/markdown/syntax.md#frontmatter).
 
-New route metadata and Install adoption use the selected form. Framework and
+New route metadata, new maintenance headers and Install adoption use the selected form. Index and affected-closure Repair complete a partial header in its existing form, keeping supplied fields and body bytes. Framework and
 Extension delivery renders `.md` files under `.agents/`, except `SKILL.md`,
 whose leading frontmatter has an `open-forge` mapping. Only that mapping moves.
 Scoped rendering preserves canonical bytes. Root rendering rejects collisions
@@ -77,6 +77,10 @@ remains unchanged. Replanning retains the exact lock observation. The
 [sharing record](technical-designs/lifecycle-provenance.md#stored-ownership)
 grants no deletion authority, and [generated navigation](technical-designs/generated-navigation.md#callable-surface)
 defines the pure projection boundary.
+
+## Maintenance After Manual Edits
+
+[Index](contracts/index-candidate/interface.md) completes eligible missing metadata and rooted navigation. [Repair](contracts/repair/interface.md) repairs uniquely proven renames or moves and maintains affected routes in one plan. [Doctor](contracts/doctor/interface.md) shares their eligibility and identity evidence and gives one actionable continuation. Protection applies to link sources and targets through selection and revalidation. Partial reports name verified effects and remaining work. Continuation commands preserve explicit workspace coordinates, including inside prose. Git timeout retries precede manual edits for possibly renamed links. Exact wording and finite wire additions belong to the command contracts and [maintenance design](technical-designs/forgiving-maintenance.md).
 
 ## Command And Group Shape
 
@@ -247,7 +251,10 @@ press Enter to cancel:`. An exact path or ID is its flag equivalent.
   The operand or option is its flag equivalent.
 - Permission selection asks `Allow <owner> to change these paths outside .agents?`,
   lists each path, and shows `Allow always`, `Allow once`, and `Cancel` with a
-  one-line description each, in key and line mode. Line mode asks
+  one-line description each, in key and line mode. Key mode keeps the order
+  `1. Allow always`, `2. Allow once`, `3. Cancel` and starts focused on
+  `Allow once`. Enter approves only this run. Saving a grant requires deliberately
+  choosing `Allow always`. Line mode asks
   `Type always, once or cancel:` and accepts `always`, `once`, or `cancel`. The flag equivalent is
   `--allow-path <path>` and means allow always.
 
@@ -546,6 +553,22 @@ uses the exact runnable command or short sentence and its reason, and remains
 the final text line. For Extension Install PermissionRequired results with
 MissingPermissions, preserve both existing permission options and place the
 settings alternative before the runnable `Next:` action.
+
+Retry and next commands preserve the facts needed for the intended request.
+Same-command retries retain operands, operation options and supplied presentation
+options. Workspace-dependent actions retain an explicit `--workspace`, and
+Extension source-dependent actions retain `--source`. Quote values for the
+supported shell. A diagnostic retry replaces the detail option with
+`--detail debug`. A retry adds `--automatic` only for missing confirmation, or
+preserves it when supplied. Separate accepted command-local next-action policies,
+such as Context's targeted case-mismatch action, retain their meaning.
+Resolved wizard choices come from the command's typed result facts. Cancellation
+before choices are resolved may reopen that wizard. Text, JSON and per-finding
+actions use the same complete command.
+
+Full and debug retain the same result facts. When a retry does not request
+diagnostics, its command retains the requested detail option, so those command
+strings may differ. Bounded run diagnostics remain on stderr.
 
 When recovery warning coexists with another
 command-local completed-with-warnings condition, exact recovery cleanup

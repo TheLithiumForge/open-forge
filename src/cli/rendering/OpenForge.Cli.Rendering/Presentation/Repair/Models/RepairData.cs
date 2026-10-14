@@ -23,6 +23,11 @@ internal sealed record RepairData
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public RepairDataVerification? Verification { get; init; }
 
+    public IReadOnlyList<RepairDataRename> Renames { get; init; } = [];
+    public IReadOnlyList<RepairDataNavigation> Navigation { get; init; } = [];
+    public IReadOnlyList<RepairCompletedMetadata> Metadata { get; init; } = [];
+    public IReadOnlyList<RepairCompletedEntrypoint> Entrypoints { get; init; } = [];
+
     [JsonIgnore]
     internal IReadOnlyList<RepairDataTextRow> TextRows { get; init; } = [];
 
@@ -31,7 +36,16 @@ internal sealed record RepairData
 
     [JsonIgnore]
     internal bool ShowNoChanges { get; init; }
+
+    [JsonIgnore]
+    internal string? TextHeadline { get; init; }
+
+    [JsonIgnore]
+    internal RepairDataLibraryCounts? TextLibraryCounts { get; init; }
+
 }
+
+internal sealed record RepairDataLibraryCounts(int Restored, int Remaining, bool Preview);
 
 internal sealed record RepairDataRepair
 {
@@ -51,6 +65,9 @@ internal sealed record RepairDataRepair
 
     [JsonIgnore]
     internal RepairStepOutcome Outcome { get; init; }
+
+    [JsonIgnore]
+    internal IReadOnlyList<RepairRename> TextProofs { get; init; } = [];
 }
 
 [JsonConverter(typeof(OpenForge.Cli.Core.Presentation.Repair.Shared.Rendering.RepairDataCandidatesConverter))]
@@ -154,4 +171,14 @@ internal sealed record RepairDataVerification
     public required string PostConditions { get; init; }
 }
 
-internal sealed record RepairDataTextRow(string Path, string Wording);
+internal sealed record RepairDataTextRow(string Path, string Wording)
+{
+    internal bool IsCommand { get; init; }
+}
+
+internal sealed record RepairDataRename(string OldPath, string NewPath, string Evidence, int? Similarity)
+{
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public RepairRenameProof? Proof { get; init; }
+}
+internal sealed record RepairDataNavigation(string Path, int Before, int After);

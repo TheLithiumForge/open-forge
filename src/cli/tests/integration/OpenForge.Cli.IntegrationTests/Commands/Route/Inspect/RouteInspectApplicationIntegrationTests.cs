@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.TestSupport;
 using System.Text.Json;
 using OpenForge.Cli.Hosting;
@@ -48,7 +49,7 @@ public sealed class RouteInspectApplicationIntegrationTests
             "open-forge route inspect <source-reference>",
             leaf.Output,
             StringComparison.Ordinal);
-        Assert.Contains("--workspace <path>", leaf.Output, StringComparison.Ordinal);
+        Assert.Contains("Global options: --workspace", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("--for <path>", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("--format", leaf.Output, StringComparison.Ordinal);
         Assert.Contains("route list", leaf.Output, StringComparison.Ordinal);
@@ -459,7 +460,7 @@ public sealed class RouteInspectApplicationIntegrationTests
             finding.GetProperty("candidates").EnumerateArray()
                 .Select(candidate => candidate.GetProperty("subject").GetProperty("path").GetString()));
         Assert.Equal(
-            "open-forge route inspect \".agents/root/collision.md\"",
+            $"open-forge route inspect .agents/root/collision.md --workspace {CliCommandText.Quote(workspace.Path)} --format json --detail full",
             blockedDocument.RootElement.GetProperty("next").GetProperty("command").GetString());
         Assert.Equal(
             "Rerun with one listed exact path to resolve the source collision.",
@@ -497,7 +498,7 @@ public sealed class RouteInspectApplicationIntegrationTests
 
         Assert.Equal(4, invalid.ExitCode);
         Assert.Empty(invalid.Output);
-        Assert.Contains("Next: open-forge route inspect --help", invalid.Error, StringComparison.Ordinal);
+        Assert.Contains("Next: open-forge route list --depth all", invalid.Error, StringComparison.Ordinal);
     }
 
     private static RouteInspectProfileIntegrationWorkspace CompleteWorkspace(

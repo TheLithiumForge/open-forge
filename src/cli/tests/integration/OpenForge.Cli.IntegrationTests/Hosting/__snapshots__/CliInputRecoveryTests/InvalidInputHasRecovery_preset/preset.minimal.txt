@@ -1,0 +1,3 @@
+Invalid --preset value: other. Use essentials, full-core, or custom.
+Workspace: <workspace>
+Next: open-forge install --help

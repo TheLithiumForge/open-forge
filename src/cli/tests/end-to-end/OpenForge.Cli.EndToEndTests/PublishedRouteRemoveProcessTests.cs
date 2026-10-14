@@ -179,7 +179,7 @@ public sealed class PublishedRouteRemoveProcessTests
         int exit,
         string stream)
         => Assert.Contains(
-            $"{status}: exit {exit} and text {stream}.",
-            help,
+            $"{exit} {status.Replace('-', ' ')}",
+            string.Join(" ", help.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)),
             StringComparison.Ordinal);
 }

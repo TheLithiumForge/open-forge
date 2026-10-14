@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge route init",
+          "command": "open-forge route init documents --workspace <workspace>",
           "reason": "Rerun the same Route Init request."
         }
       ],
@@ -64,7 +64,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge route init",
+    "command": "open-forge route init documents --workspace <workspace>",
     "reason": "Rerun the same Route Init request."
   }
 }

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Extension.Shared.NextActions;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Effects;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Request;
 using OpenForge.Cli.Core.Commands.Extension.Update.Models.Result;
@@ -98,7 +99,7 @@ internal static class ExtensionUpdateReportSelector
                 From = package.FromVersion,
                 To = package.ToVersion,
             }).ToArray(),
-            PreviousContent = result.Next?.Command == "git diff" ? "git-diff" : null,
+            PreviousContent = result.Recovery.State == ExtensionUpdateRecoveryState.Retained ? result.Recovery.ResidualPath : null,
             Permissions = Permissions(result),
             Unchanged = standard ? unchanged : null,
             Sections = standard ? sections : null,
@@ -118,7 +119,7 @@ internal static class ExtensionUpdateReportSelector
                 ? new CliWorkspaceEcho(workspacePath, result.WorkspaceExplicit)
                 : null,
             Findings = result.Findings
-                .Select(finding => Finding(result, finding, primaryId))
+                .Select(finding => ExtensionNextCommand.InSource(Finding(result, finding, primaryId), sourcePath))
                 .ToArray(),
             Effects = allEffects.Select(effect => effect.Effect).ToArray(),
             Counts = Counts(result, selectedIds, allEffects, unchanged.Length, sections.Length),
@@ -126,7 +127,7 @@ internal static class ExtensionUpdateReportSelector
             Recovery = result.Recovery.ResidualPath is { } path
                 ? new CliRecovery(path, CliRecoveryDisposition.Retained)
                 : null,
-            Next = Next(result, selectedIds, primaryId, allEffects),
+            Next = ExtensionNextCommand.InSource(Next(result, selectedIds, primaryId, allEffects), result.Source?.Path),
             Diagnostics = selection.Detail == CliDetail.Debug
                 ? new[]
                 {
@@ -410,13 +411,14 @@ internal static class ExtensionUpdateReportSelector
         bool full)
     {
         var details = new List<string>();
-        if (result.Next?.Command == "git diff")
+        if (result.Recovery.State == ExtensionUpdateRecoveryState.Retained
+            && result.Recovery.ResidualPath is { } recoveryPath)
         {
-            details.Add(ExtensionUpdateWording.PreviousContent("git diff"));
+            details.Add(ExtensionUpdateWording.PreviousContent(recoveryPath));
         }
-        else if (result.Recovery.ResidualPath is { } recoveryPath)
+        else if (result.Mode == ExtensionUpdateMode.DryRun && result.Recovery.ProtectedPaths.Count > 0)
         {
-            details.Add(ExtensionUpdateWording.PreviousContent(global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdatePhrases.FormatRecoveryBundleAt($"{recoveryPath}")));
+            details.Add(global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateWording.PreviousContentWillBeKept());
         }
 
         if (GrantPaths(result) is { Count: > 0 } grants
@@ -534,13 +536,23 @@ internal static class ExtensionUpdateReportSelector
         ExtensionUpdateResult result,
         ExtensionUpdateFinding? finding,
         string id)
-        => finding is null
-            ? global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageTheExtensionUpdateCouldNotBeClassified()
-            : ExtensionUpdateWording.FindingMessage(
-                finding,
-                id,
-                result.Source?.Path,
-                result.Recovery.ResidualPath);
+    {
+        if (finding is null)
+        {
+            return global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageTheExtensionUpdateCouldNotBeClassified();
+        }
+
+        if (finding.Code == ExtensionUpdateFindingCode.LifecycleObservation && result.Selection is null)
+        {
+            return finding.Cause;
+        }
+
+        return ExtensionUpdateWording.FindingMessage(
+            finding,
+            id,
+            result.Source?.Path,
+            result.Recovery.ResidualPath);
+    }
 
     private static string HeadlineReason(
         ExtensionUpdateResult result,
@@ -614,6 +626,12 @@ internal static class ExtensionUpdateReportSelector
                     $"open-forge extension inspect {conflictId}",
                     global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageInspectTheInstalledExtensionIdentityBeforeRetryingTheUpdate()),
             },
+            ExtensionUpdateFindingCode.LifecycleObservation when finding.Target is { } affectedPackage => new[]
+            {
+                new CliNextAction(
+                    $"open-forge extension inspect {affectedPackage}",
+                    global::OpenForge.Cli.OutputText.Extension.Shared.ExtensionSharedText.MessageInspectTheReportedExtensionState()),
+            },
             ExtensionUpdateFindingCode.LifecycleObservation => new[]
             {
                 new CliNextAction(
@@ -666,11 +684,7 @@ internal static class ExtensionUpdateReportSelector
             Severity = CliReportVocabulary.Severity(finding.Status),
             Code = ExtensionUpdateWording.FindingCode(finding.Code),
             Title = ExtensionUpdateWording.FindingTitle(finding.Code),
-            Message = ExtensionUpdateWording.FindingMessage(
-                finding,
-                id,
-                result.Source?.Path,
-                result.Recovery.ResidualPath),
+            Message = FindingMessage(result, finding, id),
             Subject = new CliSubject(
                 kind,
                 kind is CliSubjectKind.File or CliSubjectKind.Source ? subject : null,
@@ -720,7 +734,7 @@ internal static class ExtensionUpdateReportSelector
         if (result.Findings.Any(finding => finding.Code == ExtensionUpdateFindingCode.ConfirmationRequired))
         {
             return new CliNextAction(
-                "open-forge extension update --automatic",
+                result.ConfirmationCommand ?? "open-forge extension update --help",
                 global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.MessageRerunExtensionUpdateWithAutomaticOrUseAnInteractiveTerminalToSupplyConfirmation());
         }
 
@@ -728,7 +742,7 @@ internal static class ExtensionUpdateReportSelector
         if (kept > 0)
         {
             return new CliNextAction(
-                $"open-forge extension update {primaryId} --prune --dry-run",
+                result.PrunePreviewCommand ?? $"open-forge extension update {primaryId} --prune --dry-run",
                 global::OpenForge.Cli.OutputText.Extension.Update.ExtensionUpdateText.LabelPreviewDeletingTheKeptFile());
         }
 

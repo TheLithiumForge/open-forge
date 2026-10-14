@@ -1,0 +1,10 @@
+Choose Extensions to install
++ install   * also installed
+
+> [ ] planning   Record ideas, investigate questions, preserve decisions, and organize tasks, pl...
+  [ ] workflows  Repeatable workflows
+Record ideas, investigate questions, preserve decisions, and organize tasks, plans, backlogs, and
+checkpoints.
+Needs workflows.
+
+up/down move   space toggle   a all   n none   enter next   esc cancel

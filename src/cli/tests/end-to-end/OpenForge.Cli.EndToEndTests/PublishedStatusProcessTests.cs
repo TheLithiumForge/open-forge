@@ -7,7 +7,7 @@ namespace OpenForge.Cli.EndToEndTests;
 public sealed class PublishedStatusProcessTests
 {
     private static readonly string[] ExpectedRootLeafOrder =
-        ["find", "index", "status", "context", "references", "install"];
+        ["install", "status", "context", "find", "references", "index"];
 
     [Fact(DisplayName = "Published root and Status help expose the direct leaf in implemented order without workspace inspection"), Trait("Feature", "status-command"), Trait("Evidence", "EndToEnd")]
     public async Task PublishedRootAndStatusHelpExposeTheDirectLeafInImplementedOrderWithoutWorkspaceInspection()
@@ -159,9 +159,6 @@ public sealed class PublishedStatusProcessTests
     private static IReadOnlyList<string> ReadImplementedRootLeaves(string help)
     {
         return help.Split(Environment.NewLine, StringSplitOptions.None)
-            .SkipWhile(line => line != "Commands:")
-            .Skip(1)
-            .TakeWhile(line => !string.IsNullOrWhiteSpace(line))
             .Select(line => line.TrimStart().Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries).FirstOrDefault())
             .Where(token => token is not null && ExpectedRootLeafOrder.Contains(token, StringComparer.Ordinal))
             .OfType<string>()

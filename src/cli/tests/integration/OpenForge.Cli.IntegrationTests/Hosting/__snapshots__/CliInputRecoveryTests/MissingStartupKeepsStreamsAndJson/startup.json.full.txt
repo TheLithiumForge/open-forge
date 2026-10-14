@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "incomplete",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Context could not be read completely.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "context.closure-unavailable",
+      "title": "Startup context is unavailable",
+      "message": "The startup files could not be resolved: The .agents source root is unavailable.",
+      "subject": {
+        "kind": "identifier",
+        "path": ".agents",
+        "id": ".agents",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "context.closure-unavailable",
+      "title": "Startup context is unavailable",
+      "message": "The startup files could not be resolved: The canonical Loader source is unavailable.",
+      "subject": {
+        "kind": "identifier",
+        "path": ".agents/loader.md",
+        "id": ".agents/loader.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "context.layer-unavailable",
+      "title": "Source could not be read",
+      "message": "AGENTS.md could not be read, so it was not included.",
+      "subject": {
+        "kind": "source",
+        "path": "AGENTS.md",
+        "id": "AGENTS.md",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sources": null,
+    "tokens": null,
+    "bytes": null,
+    "linksFollowed": 0,
+    "linksNotFollowed": 0,
+    "warnings": 3
+  },
+  "limitations": [
+    {
+      "what": "sources",
+      "why": "The Context source closure could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "tokens",
+      "why": "The Context source closure could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "bytes",
+      "why": "The Context source closure could not be resolved completely.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "unavailable"
+          },
+          {
+            "part": "body",
+            "state": "unavailable"
+          }
+        ]
+      }
+    ],
+    "links": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge install --workspace <workspace> --dry-run",
+    "reason": "Preview setup without changing files."
+  }
+}

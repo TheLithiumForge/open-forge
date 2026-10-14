@@ -6,7 +6,7 @@ using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
 
-public sealed class PublishedRepairProcessTests
+public sealed partial class PublishedRepairProcessTests
 {
     [Fact(DisplayName = "Published Repair help succeeds without inspecting or writing a workspace"),
      Trait("Feature", "repair"), Trait("Evidence", "EndToEnd")]
@@ -55,7 +55,7 @@ public sealed class PublishedRepairProcessTests
         Assert.Equal("repair", root.GetProperty("command").GetString());
         Assert.Equal("completed-with-warnings", root.GetProperty("status").GetString());
         Assert.Equal(
-            "Would repair 1 link. 1 problem still needs a choice.",
+            "Would repair 1 link. 1 problem needs a choice.",
             root.GetProperty("summary").GetProperty("headline").GetString());
         // The native report publishes the command's own facts: the safe-exact rewrite is a
         // planned effect, the guided link is a remaining problem, and `data` carries only the
@@ -70,9 +70,11 @@ public sealed class PublishedRepairProcessTests
         var remaining = Assert.Single(repair.GetProperty("remaining").EnumerateArray());
         Assert.Equal(RepairWorkspace.SourcePath, remaining.GetProperty("path").GetString());
         Assert.Equal("guided", remaining.GetProperty("kind").GetString());
-        Assert.Equal(4, remaining.GetProperty("candidates").GetInt32());
+        Assert.Equal(1, remaining.GetProperty("candidates").GetInt32());
         // A dry run plans the effect without applying it.
-        var effect = Assert.Single(root.GetProperty("effects").EnumerateArray());
+        var effect = Assert.Single(root.GetProperty("effects").EnumerateArray(), effect => effect.GetProperty("kind").GetString() == "link");
+        Assert.Contains(root.GetProperty("effects").EnumerateArray(), effect => effect.GetProperty("kind").GetString() == "section");
+        Assert.Equal(2, root.GetProperty("counts").GetProperty("entriesUpdated").GetInt32());
         Assert.Equal("link", effect.GetProperty("kind").GetString());
         Assert.Equal("rewritten", effect.GetProperty("action").GetString());
         Assert.Equal("planned", effect.GetProperty("outcome").GetString());
@@ -94,7 +96,7 @@ public sealed class PublishedRepairProcessTests
         Assert.Equal(2, textResult.ExitCode);
         Assert.Equal(string.Empty, textResult.StandardError);
         Assert.Equal(
-            "Would repair 1 link. 1 problem still needs a choice.",
+            "Would repair 1 link. 1 problem needs a choice.",
             textResult.StandardOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries)[0].TrimEnd('\r'));
     }
 
@@ -136,7 +138,8 @@ public sealed class PublishedRepairProcessTests
         Assert.Equal(RepairWorkspace.GuidedExpectedDestination, appliedRepair.GetProperty("from").GetString());
         Assert.Equal("replacement.md", appliedRepair.GetProperty("to").GetString());
         Assert.Empty(appliedResult.GetProperty("remaining").EnumerateArray());
-        var appliedEffect = Assert.Single(appliedRoot.GetProperty("effects").EnumerateArray());
+        var appliedEffect = Assert.Single(appliedRoot.GetProperty("effects").EnumerateArray(), effect => effect.GetProperty("kind").GetString() == "link");
+        Assert.Contains(appliedRoot.GetProperty("effects").EnumerateArray(), effect => effect.GetProperty("kind").GetString() == "section");
         Assert.Equal("rewritten", appliedEffect.GetProperty("action").GetString());
         Assert.Equal("done", appliedEffect.GetProperty("outcome").GetString());
         Assert.Equal(1, appliedRoot.GetProperty("counts").GetProperty("linksRepaired").GetInt32());
@@ -283,7 +286,7 @@ public sealed class PublishedRepairProcessTests
                     OpenForgeDocumentSeed.Metadata(
                         description: "Docs",
                         tags: ["Docs"],
-                        body: "\n# Docs\n\nRepair published fixture.\n"));
+                        body: "\n# Docs\n\nRepair published fixture.\n\n## Axioms\n\n- inherited - No local axioms; loaded ancestor axioms remain active.\n\n## Entries\n"));
                 workspace.WriteText(
                     SourcePath,
                     OpenForgeDocumentSeed.Metadata(

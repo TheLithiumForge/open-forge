@@ -29,7 +29,7 @@
       "actions": [
         {
           "kind": "command",
-          "command": "open-forge install --dry-run",
+          "command": "open-forge install --dry-run --workspace <workspace>",
           "reason": "Establish a trusted current Framework installation before rerunning Route Init in Framework mode."
         }
       ]
@@ -59,7 +59,7 @@
   },
   "next": {
     "kind": "command",
-    "command": "open-forge install --dry-run",
+    "command": "open-forge install --dry-run --workspace <workspace>",
     "reason": "Establish a trusted current Framework installation before rerunning Route Init in Framework mode."
   }
 }

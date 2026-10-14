@@ -82,7 +82,7 @@ internal static class RouteMoveText
 
     // @OpenForgeText route.move.message.report-the-failure-and-retry-the-same-route-move-request-with-bounded-diagnostics
     internal static string MessageReportTheFailureAndRetryTheSameRouteMoveRequestWithBoundedDiagnostics()
-        => "Report the failure and retry the same Route Move request with bounded diagnostics.";
+        => "Address the reported failure, then retry the same Route Move request.";
 
     // @OpenForgeText route.move.message.rerun-the-same-route-move-request
     internal static string MessageRerunTheSameRouteMoveRequest()
@@ -190,7 +190,7 @@ internal static class RouteMoveText
 
     // @OpenForgeText route.move.help.syntax
     internal static string HelpSyntax()
-        => "open-forge route move <source-reference> <destination-target> [--dry-run] [global options]";
+        => "open-forge route move <source-reference> <destination-target> [options]";
 
     // @OpenForgeText route.move.help.heading.destination
     internal static string HelpHeadingDestination()
@@ -206,9 +206,25 @@ internal static class RouteMoveText
 
     // @OpenForgeText route.move.help.examples
     internal static string HelpExamples()
-        => "open-forge route move guidance/old-guide .agents/archive/new-guide.md\n  open-forge route move .agents/guidance/topics/_topics.md .agents/archive/topics/_topics.md --dry-run";
+        => "open-forge route move guidance/old .agents/guidance/new.md --dry-run\nopen-forge route move guidance/old .agents/guidance/new.md";
 
     // @OpenForgeText route.move.help.notes
     internal static string HelpNotes()
         => "Route Move never moves lifecycle-managed content, initializes a missing parent route, overwrites a destination, prompts, or invokes Index as a subprocess.";
+
+    // @OpenForgeText route.move.routemove.help.behavior
+    internal static string HelpBehavior()
+        => "Select one eligible unmanaged file or complete category. Managed content cannot be moved.\n--dry-run shows the complete move, reference, and generated Entries navigation plan and writes nothing.\nThe destination parent must already be routable. Existing destinations stay protected.\nThis command asks no questions. Interrupted writes report retained recovery data.";
+
+    // @OpenForgeText route.move.routemove.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("references --help", "Inspect authored links."),
+            ("route init --help", "Create missing navigation files."),
+            ("route remove --help", "Remove a routed file or category."),
+        ];
+    // @OpenForgeText route.move.help.details-1
+    internal static string HelpSourceAndDestinationDetails()
+        => "Use an exact ID, base path, or overwrite path for an ordinary Markdown leaf, or the recognized entrypoint for a complete category. Destination is one exact workspace-relative .agents path. Leaf and category forms must match the subject. Apply locks the workspace and revalidates the move, references, and generated navigation. Move never invokes Index.";
 }

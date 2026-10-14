@@ -1,1 +1,2 @@
 Unrecognized command or argument 'unexpected-operand'.
+Next: open-forge library list --help

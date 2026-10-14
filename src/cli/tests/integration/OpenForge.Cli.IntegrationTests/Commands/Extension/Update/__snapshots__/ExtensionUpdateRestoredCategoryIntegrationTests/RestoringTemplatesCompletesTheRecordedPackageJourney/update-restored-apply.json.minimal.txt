@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 3,
+  "command": "extension update",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Updated the core-templates Extension to 0.4.0.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/templates/_templates.md",
+      "kind": "section",
+      "action": "replaced",
+      "outcome": "done",
+      "reason": "Entries section updated",
+      "owner": null
+    },
+    {
+      "path": ".agents/templates/core/_core.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "new content in this version",
+      "owner": "core-templates"
+    },
+    {
+      "path": ".agents/templates/core/directive.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "new content in this version",
+      "owner": "core-templates"
+    },
+    {
+      "path": ".agents/templates/core/guidance.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "new content in this version",
+      "owner": "core-templates"
+    },
+    {
+      "path": ".agents/templates/core/map.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "new content in this version",
+      "owner": "core-templates"
+    },
+    {
+      "path": ".agents/templates/core/memory.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "new content in this version",
+      "owner": "core-templates"
+    },
+    {
+      "path": ".agents/templates/core/pattern.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "new content in this version",
+      "owner": "core-templates"
+    },
+    {
+      "path": ".agents/templates/core/skill.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "new content in this version",
+      "owner": "core-templates"
+    },
+    {
+      "path": ".agents/templates/core/template.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "new content in this version",
+      "owner": "core-templates"
+    }
+  ],
+  "counts": {
+    "packagesUpdated": 1,
+    "filesReplaced": 0,
+    "filesRestored": 0,
+    "filesCreated": 8,
+    "filesDeleted": 0,
+    "filesKept": 0,
+    "filesUnchanged": 0,
+    "sectionsUpdated": 2
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "force": false,
+    "prune": false,
+    "automatic": true,
+    "source": {
+      "kind": "embedded",
+      "path": null
+    },
+    "packages": [
+      {
+        "id": "core-templates",
+        "from": "0.4.0",
+        "to": "0.4.0"
+      }
+    ],
+    "previousContent": "<recovery-bundle>",
+    "permissions": {
+      "required": [],
+      "missing": [],
+      "decision": "not-required",
+      "action": "none",
+      "outcome": "not-requested"
+    }
+  },
+  "recovery": {
+    "path": "<recovery-bundle>",
+    "disposition": "retained"
+  },
+  "next": {
+    "kind": "sentence",
+    "command": "Review previous content in the recovery bundle at <recovery-bundle>.",
+    "reason": "Previous content remains available for review."
+  }
+}

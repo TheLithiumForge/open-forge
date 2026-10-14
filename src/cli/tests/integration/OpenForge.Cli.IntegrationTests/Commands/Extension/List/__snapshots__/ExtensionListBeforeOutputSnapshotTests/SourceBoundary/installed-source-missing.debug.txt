@@ -17,4 +17,4 @@ Installed
 Available (from <extension-source>)
   toolkit  1.0.0  Extension package toolkit.
   Inspect the installed Extension facts.
-Next: open-forge extension inspect missing-package
+Next: open-forge extension inspect missing-package --source <extension-source>

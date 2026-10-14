@@ -46,7 +46,7 @@ public sealed class CliSelectionViewportTests
         Assert.Equal(["package-02", "package-25"], reply.Value.Required);
         Assert.All(script.Frames, frame => AssertBounded(frame, width, height));
         Assert.Contains("> [*] package-02", script.Frames[^1], StringComparison.Ordinal);
-        Assert.Contains("required by package-01", script.Frames[2], StringComparison.Ordinal);
+        Assert.Contains("Required by package-01.", script.Frames[2], StringComparison.Ordinal);
         Assert.Contains("unchoose package-01 first.", script.Frames[^1].Replace(Environment.NewLine, " ", StringComparison.Ordinal), StringComparison.Ordinal);
         Assert.Contains("up/down move   space toggle   a all", script.Frames[^1], StringComparison.Ordinal);
         Assert.Contains("n none   enter next   esc cancel", script.Frames[^1], StringComparison.Ordinal);
@@ -84,7 +84,7 @@ public sealed class CliSelectionViewportTests
         var paths = new[] { new CliPermissionPath(longPath, false) }
             .Concat(Enumerable.Range(1, 10).Select(index => new CliPermissionPath($"docs/file-{index:00}.md", false))).ToArray();
         var keys = Enumerable.Repeat(new CliKeyStroke(CliKey.PageDown), 20)
-            .Concat([new(CliKey.PageUp), new(CliKey.PageDown), new(CliKey.Down), new(CliKey.Enter)]);
+            .Concat([new(CliKey.PageUp), new(CliKey.PageDown), new(CliKey.Enter)]);
         var script = ScriptedCliTerminal.Keys(keys.Select(key => (CliKeyStroke?)key));
         script.Viewport = new(40, 12);
 
@@ -116,7 +116,7 @@ public sealed class CliSelectionViewportTests
 
         var reply = await new CliPrompts(script.Terminal).PermissionAsync(new(owner, paths), new(true), CancellationToken.None);
 
-        Assert.Equal(CliPermissionChoice.Always, reply.Value);
+        Assert.Equal(CliPermissionChoice.Once, reply.Value);
         Assert.All(script.Frames, frame =>
         {
             AssertBounded(frame, width, height);
@@ -181,7 +181,7 @@ public sealed class CliSelectionViewportTests
 
     private static CliChoice<string>[] Choices(int count)
         => Enumerable.Range(1, count).Select(index => new CliChoice<string>($"package-{index:00}", $"package-{index:00}",
-            $"Details for package-{index:00}: " + new string('d', 120))).ToArray();
+            $"Details for package-{index:00}: " + string.Join(" ", Enumerable.Repeat("useful package description", 5)))).ToArray();
 
     private static void AssertBounded(string frame, int width, int height)
     {

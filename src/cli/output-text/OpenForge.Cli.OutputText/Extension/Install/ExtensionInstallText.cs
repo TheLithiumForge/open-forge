@@ -10,15 +10,15 @@ internal static class ExtensionInstallText
 
     // @OpenForgeText extension.install.help.syntax
     internal static string HelpSyntax()
-        => "open-forge extension install [<stable-id>...] [--source <package-or-catalogue-path>] [--all] [--force] [--automatic] [--dry-run] [global options]";
+        => "open-forge extension install [<stable-id>...] [options]";
 
     // @OpenForgeText extension.install.help.selection
     internal static string HelpSelection()
-        => "Select exact stable IDs, --all, or the sole package in a one-package source. Dependencies are mandatory and installed first.";
+        => "Select exact Extension IDs, --all, or the sole package in a one-package source. Dependencies are mandatory and installed first.";
 
     // @OpenForgeText extension.install.help.layout
     internal static string HelpLayout()
-        => "A package directory holds extension.json beside a content/ directory, and the payload lives under content/ (for example content/.agents/guidance/example.md). The manifest accepts exactly id, name, description, version and dependencies. A catalogue is a directory of such packages.";
+        => "A package directory holds extension.json beside a content/ directory. Package files live under content/, for example content/.agents/guidance/example.md. The manifest accepts exactly id, name, description, version and dependencies. A catalogue is a directory of such packages.";
 
     // @OpenForgeText extension.install.help.interaction
     internal static string HelpInteraction()
@@ -171,4 +171,28 @@ internal static class ExtensionInstallText
     // @OpenForgeText extension.install.help.heading.initial-force
     internal static string HelpHeadingInitialForce()
         => "Initial force";
+
+    // @OpenForgeText extension.install.extensioninstall.help.examples
+    internal static string HelpExamples()
+        => "open-forge extension install planning --dry-run\nopen-forge extension install planning\nopen-forge extension install planning --automatic";
+
+    // @OpenForgeText extension.install.extensioninstall.help.behavior
+    internal static string HelpBehavior()
+        => "Use the bundled catalogue unless --source names a local source. Required packages are installed first.\nInteractive text can offer a package picker and asks for confirmation of a writing plan.\n--dry-run shows the checked plan and writes nothing.\nRedirected or JSON requests that would write need --automatic and a complete selection.\n--automatic adds no force. --force applies only during first installation. Interrupted writes report recovery data.";
+
+    // @OpenForgeText extension.install.extensioninstall.help.relatedcommands
+    internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
+        =>
+        [
+            ("extension list", "List installed and available packages."),
+            ("extension inspect --help", "Compare a package with its installation."),
+            ("extension update --help", "Update managed Extension files."),
+        ];
+    // @OpenForgeText extension.install.help.details-1
+    internal static string HelpSelectionAndLayoutDetails()
+        => "Select exact IDs, --all, or the sole package in a one-package source. Automatic and non-interactive requests never choose packages. A package has extension.json beside content/, with files such as content/.agents/guidance/example.md. The manifest accepts exactly id, name, description, version, and dependencies. A catalogue contains such packages.";
+
+    // @OpenForgeText extension.install.help.details-2
+    internal static string HelpManagedChangesDetails()
+        => "Use extension update to change already managed content.";
 }

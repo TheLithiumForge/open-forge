@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Presentation.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Presentation;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Repair;
@@ -54,7 +55,7 @@ public sealed class RepairProjectionTests
         Assert.Empty(data.GetProperty("repairs").EnumerateArray());
         Assert.Empty(data.GetProperty("remaining").EnumerateArray());
         Assert.Equal(0, root.GetProperty("counts").GetProperty("linksRepaired").GetInt32());
-        Assert.Null(root.GetProperty("next").GetString());
+        Assert.Equal("open-forge doctor", root.GetProperty("next").GetProperty("command").GetString());
         Assert.DoesNotContain("verified", Json(NoOpResult(), CliDetail.Minimal), StringComparison.OrdinalIgnoreCase);
     }
 
@@ -68,7 +69,7 @@ public sealed class RepairProjectionTests
             ["schemaVersion", "command", "status", "detail", "filter", "workspace", "summary", "findings", "effects", "counts", "limitations", "data", "recovery", "next"],
             document.RootElement.EnumerateObject().Select(property => property.Name));
         Assert.Equal(
-            ["mode", "selection", "repairs", "remaining", "diagnosis", "verification"],
+            ["mode", "selection", "repairs", "remaining", "diagnosis", "verification", "renames", "navigation", "metadata", "entrypoints"],
             document.RootElement.GetProperty("data").EnumerateObject().Select(property => property.Name));
     }
 
@@ -81,7 +82,7 @@ public sealed class RepairProjectionTests
         var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, RepairPresentation.Rendering.DataTextRenderer).Content;
         using var document = JsonDocument.Parse(Json(selected));
 
-        Assert.Equal($"Nothing to repair.\nWorkspace: {RepairTestData.WorkspaceRoot}\n", text);
+        Assert.Equal($"Nothing to repair.\nWorkspace: {RepairTestData.WorkspaceRoot}\nNext: open-forge doctor\n", text);
         Assert.Equal("Nothing to repair.", document.RootElement.GetProperty("summary").GetProperty("headline").GetString());
         Assert.DoesNotContain("verified", text, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("verified", Json(selected), StringComparison.OrdinalIgnoreCase);
@@ -113,8 +114,8 @@ public sealed class RepairProjectionTests
         var text = CliTextRenderer.Render(minimal, CliTextStyle.Plain, RepairPresentation.Rendering.DataTextRenderer).Content;
 
         Assert.Contains($"{RepairTestData.SourcePath}:1:13", text, StringComparison.Ordinal);
-        Assert.Contains("Broken link; 2 possible targets", text, StringComparison.Ordinal);
-        Assert.DoesNotContain("\"target.md\"; Broken link; 2 possible targets", text, StringComparison.Ordinal);
+        Assert.Contains("2 possible targets.", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"target.md\"; 2 possible targets.", text, StringComparison.Ordinal);
         Assert.Empty(minimal.Report.Effects);
         Assert.Empty(minimal.Report.Data.Repairs);
 
@@ -140,7 +141,7 @@ public sealed class RepairProjectionTests
         var text = CliTextRenderer.Render(selected, CliTextStyle.Plain, RepairPresentation.Rendering.DataTextRenderer).Content;
 
         Assert.Contains($"{RepairTestData.SourcePath}:1:13", text, StringComparison.Ordinal);
-        Assert.Contains("\"target.md\"; Broken link; 2 possible targets", text, StringComparison.Ordinal);
+        Assert.Contains("2 possible targets.", text, StringComparison.Ordinal);
         Assert.Empty(selected.Report.Effects);
     }
 
@@ -211,7 +212,7 @@ public sealed class RepairProjectionTests
         Assert.Empty(selected.Report.Findings);
         Assert.Empty(selected.Report.Data.Remaining);
         Assert.Equal(CliSemanticStatus.Complete, selected.Report.Status);
-        Assert.Null(selected.Report.Next);
+        Assert.Equal("open-forge doctor", selected.Report.Next?.Command);
     }
 
     [Trait("Boundary", "Processing")]
@@ -245,7 +246,7 @@ public sealed class RepairProjectionTests
             CliDetail.Minimal);
 
         Assert.Equal("open-forge doctor", selected.Report.Next?.Command);
-        Assert.Equal("Inspect remaining Library problems with open-forge doctor.", selected.Report.Next?.Reason);
+        Assert.Equal($"Inspect remaining Library problems with open-forge doctor --workspace {CliCommandText.Quote(RepairTestData.WorkspaceRoot)}.", selected.Report.Next?.Reason);
     }
 
     [Trait("Boundary", "Processing")]
@@ -262,7 +263,7 @@ public sealed class RepairProjectionTests
 
         Assert.Equal("open-forge repair", selected.Report.Next?.Command);
         Assert.Equal(
-            "Review remaining broken links in Repair, then inspect remaining Library problems with open-forge doctor.",
+            $"Review remaining broken links in Repair, then inspect remaining Library problems with open-forge doctor --workspace {CliCommandText.Quote(RepairTestData.WorkspaceRoot)}.",
             selected.Report.Next?.Reason);
     }
 
@@ -384,7 +385,8 @@ public sealed class RepairProjectionTests
                     : new RepairPostDiagnosis(
                         RepairPostDiagnosisState.Complete,
                         RepairTestData.CompleteCoverage(),
-                        [finding]),
+                        [finding])
+                    { Proposals = [proposal] },
             },
             mode: RepairMode.Apply,
             automatic: true,

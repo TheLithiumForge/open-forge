@@ -79,6 +79,7 @@ internal sealed record ContextLayer
     internal IReadOnlyList<ContextInclusionReason> InclusionReasons { get; }
 
     internal IReadOnlyList<ContextProjection> Projections { get; }
+    internal bool WasRead { get; init; } = true;
 }
 
 internal sealed record ContextSource

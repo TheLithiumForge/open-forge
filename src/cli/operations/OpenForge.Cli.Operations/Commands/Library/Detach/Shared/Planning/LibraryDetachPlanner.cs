@@ -259,7 +259,8 @@ internal static class LibraryDetachPlanner
             switch (observation.State)
             {
                 case LibraryMappingObservationState.Current:
-                    links.Add(RelativeFileLinkEffect.Delete(expected.DestinationPath.CanonicalPath, observation.ExpectedLink));
+                    links.Add(RelativeFileLinkEffect.Delete(expected.DestinationPath.CanonicalPath,
+                        observation.Leaf.RelativeFileLink ?? throw new InvalidOperationException("An owned link requires its observed raw target.")));
                     break;
                 case LibraryMappingObservationState.Missing:
                     Add(findings, LibraryDetachFindingCode.RegisteredLinkMissing, CliSemanticStatus.Attention,

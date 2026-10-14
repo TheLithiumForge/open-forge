@@ -52,144 +52,99 @@ Record actual outcome, state, and communication separately from this specificati
 
 ## X02
 
-**Situation:** Index a plain note without rewriting it
+**Situation:** Index fills metadata in a plain note
 
-**Disposition:** Improved and added. Indexing must not insert unsolicited metadata or require an enrichment ritual.
-
-**Who:** A maintainer completing the user task, not a developer invoking internal CLI methods.
-
-**Goal:** Index a plain note without rewriting it
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
 
 ### Starting point
 
-Copy docs/cli-experience-fixtures/content/plain-note.md to .agents/guidance/my-note.md without adding frontmatter. Keep the body bytes as the authorship oracle.
-
-Fixture: `ROUTES`.
+ROUTES has `.agents/guidance/my-note.md` with a heading and no header. Keep the original body bytes.
 
 ### Steps
 
-1. Copy the plain-note fixture to .agents/guidance/my-note.md without frontmatter.
-2. open-forge index
-3. Inspect the note bytes and generated guidance Entries.
-4. open-forge index
-5. Optionally, in a separate branch, author a description or tags and reindex. This is not required for the note to be usable.
+1. Run `open-forge index`.
+2. Read the note through Context.
+3. Run the printed Doctor command, then repeat Index.
 
 ### Expected result
 
-**Reviewed target:** Index the plain readable note with a real source identity and a concise missing-metadata warning. Preserve the entire file byte-for-byte. A repeated index is a navigation no-op even while optional metadata remains absent; optional later enrichment changes only fields the user authors.
-
-### What the person sees
-
-Explain the independently observed result, useful warning, or genuinely necessary stop. Avoid requiring the user to repair unrelated content. Exact copy remains to be reviewed against the current interface.
+Index inserts heading-derived description and `[Guidance]` in the selected form. It prints `metadata completed, your content was kept`. The note is listed, Doctor is clean and repeat Index changes no bytes.
 
 ### Verification
 
-Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
 
 ## X03
 
-**Situation:** Index partial metadata without changing authored values
+**Situation:** Complete only missing metadata
 
-**Disposition:** Improved and added. Partial metadata already carries authored meaning and should remain untouched by index.
-
-**Who:** A maintainer completing the user task, not a developer invoking internal CLI methods.
-
-**Goal:** Index partial metadata without changing authored values
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
 
 ### Starting point
 
-Run two separate copies: partial-description.md has an authored description but no tags; partial-tags.md has authored tags but no description. Both have distinctive body text and an unrelated metadata field.
-
-Fixture: `ROUTES`.
+Separate description-only and tags-only valid headers include comments, an unknown field and distinctive bodies.
 
 ### Steps
 
-1. Run independent copies for a description-only header and a tags-only header.
-2. Copy the selected fixture to .agents/guidance/my-note.md.
-3. open-forge index
-4. Compare the complete note bytes and the generated navigation.
+1. Index each copy.
+2. Compare supplied fields and body slices.
+3. Run Doctor and repeat Index.
 
 ### Expected result
 
-**Reviewed target:** Index both partial-metadata notes using available authored values and their actual source identity. Warn only about the missing optional fields. Preserve all existing YAML, unrelated fields and body bytes; do not insert fields or normalize values.
-
-### What the person sees
-
-Explain the independently observed result, useful warning, or genuinely necessary stop. Avoid requiring the user to repair unrelated content. Exact copy remains to be reviewed against the current interface.
+Only absent fields are inserted. Existing description, tag order, unrelated YAML and body bytes remain exact. Both copies converge without missing-metadata warnings.
 
 ### Verification
 
-Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
 
 ## X04
 
-**Situation:** Preview indexing a plain note without metadata edits
+**Situation:** Preview metadata and navigation together
 
-**Disposition:** Improved and added. Preview should describe useful navigation work, not automatic metadata scaffolding.
-
-**Who:** A maintainer completing the user task, not a developer invoking internal CLI methods.
-
-**Goal:** Preview indexing a plain note without metadata edits
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
 
 ### Starting point
 
-Use the X02 plain note, with no metadata or list updates applied yet.
-
-Fixture: `ROUTES`.
+Use X02 before its first Index.
 
 ### Steps
 
-1. Use the plain note from X02 before indexing.
-2. open-forge index --dry-run
-3. Compare every file, directory, settings and recovery artifact.
+1. Run `open-forge index --dry-run`.
+2. Compare the entire workspace and data home.
+3. Apply Index and compare the intended effects.
 
 ### Expected result
 
-**Reviewed target:** Preview the generated navigation for the plain note, explain missing optional metadata, and write nothing. Do not propose metadata insertion or imply that the authored note must be repaired before indexing.
-
-### What the person sees
-
-Explain the independently observed result, useful warning, or genuinely necessary stop. Avoid requiring the user to repair unrelated content. Exact copy remains to be reviewed against the current interface.
+Preview shows inserted fields, Entries changes and `No files were changed.` No lock, bundle, directory, temporary file or metadata is created. For unchanged inputs the apply plan matches.
 
 ### Verification
 
-Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
 
 ## X05
 
-**Situation:** Do not treat missing, partial, malformed and unreadable metadata as one problem
+**Situation:** Keep absent, partial, malformed and unavailable metadata distinct
 
-**Disposition:** Improved and added. The distinction is valuable, but metadata assistance and whole-operation blocking contradict the forgiving target.
-
-**Who:** A maintainer completing the user task, not a developer invoking internal CLI methods.
-
-**Goal:** Do not treat missing, partial, malformed and unreadable metadata as one problem
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
 
 ### Starting point
 
-Use four isolated copies: no header, valid partial header, unclosed YAML header, and genuine account-level read denial. Keep the intended user operation identical.
-
-Fixture: `ROUTES`.
+Four separate ROUTES copies contain a plain note, a valid partial header, an unclosed header and a genuinely unreadable required source.
 
 ### Steps
 
-1. Run open-forge index in each copy.
-2. Run open-forge doctor in each resulting copy.
-3. Compare cause, status, affected file and next action across the four cases.
+1. Index each copy.
+2. Run Doctor on each resulting state.
+3. Correct malformed frontmatter or release the denied read, then follow the printed continuation.
 
 ### Expected result
 
-**Reviewed target:** Missing or partial optional metadata yields usable indexing with a warning and no authored-file edits. Malformed syntax and genuine read denial have distinct causes and limit only work that needs those facts. Continue independent complete checks/lists, preserve affected authored files, and never invent a failed Framework update.
-
-### What the person sees
-
-Explain the independently observed result, useful warning, or genuinely necessary stop. Avoid requiring the user to repair unrelated content. Exact copy remains to be reviewed against the current interface.
+Absent and partial fields are completed. Readable malformed ordinary frontmatter is untouched, has one `index.metadata-skipped` and yields incomplete exit 3 even alone. Required unreadability keeps its distinct strict read boundary. Neither is called a failed Framework update. Doctor names the exact authoring edit and subsequent Index.
 
 ### Verification
 
-Observe whether the reviewed target is achieved. Compare affected paths, relevant ownership and source bytes independently of the report. Preserve content outside the requested change. Record current disagreement as a failure or unresolved contract difference, not a new expectation.
-
-**Execution constraint:** Prove any denied read genuinely fails under the invoking account; missing or malformed metadata is not an I/O failure.
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state. Prove denied reads with the invoking account, using a real exclusive handle or ACL boundary.
 
 ## X06
 
@@ -556,42 +511,27 @@ Observe whether the reviewed target is achieved. Compare affected paths, relevan
 
 ## X16
 
-**Situation:** Judge partial repair within the actual repair scope
+**Situation:** Keep required affected navigation inside the repair gate
 
-**Disposition:** Added. Worth retaining as an independently checked user outcome: Unrelated problems do not automatically invalidate a completed selected repair.
-
-**Who:** A maintainer completing the user task, not a developer invoking internal CLI methods.
-
-**Goal:** Judge partial repair within the actual repair scope
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
 
 ### Starting point
 
-Fork two cases: an unrelated Library drift finding plus one exact repairable link; and a malformed required route/navigation boundary plus that same link.
-
-Fixture: `LINKS`.
+Fork one unrelated Library drift plus one exact relink, and one unsafe generated boundary in the proven rename's affected route.
 
 ### Steps
 
-1. open-forge doctor
-2. open-forge repair --automatic --dry-run
-3. open-forge repair --automatic
-4. open-forge doctor
+1. Run Doctor.
+2. Preview automatic Repair, then apply if its plan is executable.
+3. Follow remaining actions and run Doctor.
 
 ### Expected result
 
-Unrelated problems do not automatically invalidate a completed selected repair. A required unsafe route boundary still prevents the operation. The final diagnosis must show the remaining real problems without claiming repair promised to fix everything.
-
-### What the person sees
-
-Report the selected repair effects and remaining independent findings. Do not imply that a bounded repair guarantees a globally clean workspace.
+Unrelated damage remains visible while independent relinks proceed. An unsafe affected navigation target blocks the entire combined relink and navigation plan before effects. A readable malformed unrelated ordinary source uses the explicit skip lane rather than a guessed rewrite.
 
 ### Verification
 
-- Compare repaired spans and untouched unrelated defects.
-- Verify the blocked counterpart performs no edit.
-- Keep outcome, diagnostic severity and residual issue set separate.
-
-Record actual outcome, state, and communication separately from this specification.
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state. Verify source literals, target expectations and required closure membership, not merely exit code.
 
 ## X17
 
@@ -1153,3 +1093,462 @@ Delivery or conversion identifies the actual selected files and form. Configure 
 **State:** Check the entire independently enumerated delivery set, expected form, exact bytes, and projected navigation. Check native and ineligible assets separately. Compare the edited owned file and user note with their pre-conversion byte copies, and verify that inventory hashes continue to identify canonical repository bytes.
 
 **Output:** Compare reported paths, effects, form, and kept reasons with actual delivery and preservation results. Record outcome, state, and communication separately from this specification.
+
+## X32
+
+**Situation:** Root and scoped forms with partial headers
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Run root and scoped workspaces, including a valid partial header in the other form and a flow mapping. The other-form header is completed in its existing form.
+
+### Steps
+
+1. Preview and apply Index.
+2. Run Doctor, then repeat Index.
+
+### Expected result
+
+Insert only absent fields and preserve supplied bytes. Complete partial headers in their existing form, including the other-form branch and flow mappings. New headers use the workspace form. Do not move supplied fields or change reader precedence.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X33
+
+**Situation:** Headingless filename and category derivation
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Create headingless deploy-checklist.md and moneyRounding.md, a note with Setext heading, and one note for every design category and Memory state.
+
+### Steps
+
+1. Preview and apply Index.
+2. Inspect descriptions, ordered tags and generated rows.
+
+### Expected result
+
+Use `Deploy checklist`, `Money rounding` or the first supported heading, with the exact design category table. Derive LoadNow only for ordinary Directive files as required by that category. Do not infer acceptance or business-topic tags, and leave child entrypoints on demand.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X34
+
+**Situation:** Deep note without entrypoints or metadata
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Create memory/crystallized/platform/payments/stripe/node.md with no intermediate entrypoints or frontmatter.
+
+### Steps
+
+1. Run Doctor and preview its Index action.
+2. Apply Index.
+3. Read through Context, run Doctor and repeat Index.
+
+### Expected result
+
+Create all three canonical scope entrypoints with prefilled metadata, the inherited marker and final direct-child Entries. Complete the note. One apply makes it reachable and Doctor clean.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X35
+
+**Situation:** Excluded and component-owned sources stay untouched
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Seed empty and resource-only folders, an omitted route, removedFiles and removedDirectories, a private gitIgnoredRoutes record, managed Markdown, an overwrite and a native Skill package containing plain resources.
+
+### Steps
+
+1. Preview and apply Index with default and explicit selections.
+2. Repeat with no Git and with a generally ignored file outside recorded private policy.
+
+### Expected result
+
+Never create or complete excluded, native, managed authored or resource-only content. Keep the shared private entrypoint without private rows. General Gitignore alone does not silently change Index policy.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+Repair applies the same protection boundary to link sources and targets during selection, planning and revalidation. Protected managed or native package bytes remain exact, with the managing Update or authoring action reported.
+
+## X36
+
+**Situation:** Unknown roots and competing entrypoints
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Put a deep note outside recognized roots and another below a folder with two recognized entrypoints.
+
+### Steps
+
+1. Run Doctor, then Index for each declared scope.
+2. Resolve the precise boundary and retry.
+
+### Expected result
+
+Do not create a root or choose a canonical preference. Print an action that actually resolves the boundary, without a futile Index retry.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X37
+
+**Situation:** Unchanged tracked file renamed by hand
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+LINKS has a committed non-empty note and an incoming authored link. Rename the note without editing it.
+
+### Steps
+
+1. Run Doctor.
+2. Preview and apply automatic Repair.
+3. Read References and run Doctor.
+
+### Expected result
+
+One proven identity is relinked without target selection. The proof says `same content`. Repair refreshes affected Entries and Doctor is clean.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X38
+
+**Situation:** Move across folders and repair outgoing relative links
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Two tracked notes move into new scopes. One has incoming links and an outgoing relative link whose source directory changed.
+
+### Steps
+
+1. Run Doctor.
+2. Preview and apply automatic Repair.
+3. Inspect both incoming and outgoing References, then Doctor.
+
+### Expected result
+
+Prove each old/new identity, compute destination from each actual containing file, complete new scope chains and keep labels, fragments and unrelated bytes.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X39
+
+**Situation:** Two strong successors require a choice
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+A tracked missing note has two current byte-identical successors with different paths.
+
+### Steps
+
+1. Run automatic Repair preview and apply.
+2. Follow its interactive Repair next step and select one target.
+3. Run Doctor.
+
+### Expected result
+
+Automatic Repair does not pick by order, path proximity or score. The link stays untouched until chosen. The guided continuation can finish without an automatic retry loop.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+When Repair cannot ask, list each candidate once under its own link with the strongest proof or readable reason and a copyable command. Preserve the explicit workspace. Automatic choices point to guided Repair, while a non-interactive choice-only request tells the user to run the chosen command.
+
+## X40
+
+**Situation:** One title or filename guess remains a choice
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+No old content or metadata signature is available. Exactly one candidate has the old filename or matching title.
+
+### Steps
+
+1. Run Doctor and automatic Repair.
+2. Provide the measured exact `--relink` intent.
+3. Run Doctor.
+
+### Expected result
+
+A singleton weak guess is never called a proven rename. An explicit choice changes only the selected destination and affected navigation.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X41
+
+**Situation:** No Git with and without stale metadata identity
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+No-Git copies retain a unique valid stale description/tags signature, duplicate that signature, or retain only a title.
+
+### Steps
+
+1. Run Doctor and automatic Repair before Index.
+2. Follow guided or exact manual actions when proof is absent.
+3. Run Doctor.
+
+### Expected result
+
+Only the unique full admitted metadata signature proves identity. Duplicate or title-only evidence remains guided. No Git is not an indexing failure.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X42
+
+**Situation:** Index runs before repair
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Fork Git and no-Git workspaces after a manual rename. Run Index to remove the old Entries row.
+
+### Steps
+
+1. Run Doctor and automatic Repair.
+2. For no-Git without old identity, supply exact relink intent.
+3. Run Doctor.
+
+### Expected result
+
+Git HEAD still proves old content or metadata after Index. No-Git history is not invented. The explicit continuation still reaches clean Doctor.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+Doctor and Repair must agree after Index changes current Entries. A generated successor row does not contradict committed proof. Weak hints stay with their occurrence. A Git timeout postpones Doctor's missing-target findings and keeps Repair's unresolved links visible. Both retry the complete request without manual-removal advice.
+
+## X43
+
+**Situation:** Rename and edit content
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use a committed multi-line note. Make one candidate score exactly 90, another below 90 without metadata proof, and one below 90 with unique recorded metadata proof.
+
+### Steps
+
+1. Preview and apply automatic Repair where proof is strong.
+2. Choose explicitly in the weak branch.
+3. Inspect proof text, preserved edited bytes and Doctor.
+
+### Expected result
+
+Apply the design's weighted line score and unique metadata rule. Never say same content for changed bytes. Preserve the user's new body.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X44
+
+**Situation:** Malformed sibling does not stop a deep valid note
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Place a readable malformed ordinary file beside a valid plain note behind a new chain. Also fork malformed-only and malformed-entrypoint copies.
+
+### Steps
+
+1. Preview and apply Index.
+2. Follow its exact frontmatter edit and Index action.
+3. Run Doctor.
+
+### Expected result
+
+Emit one skip finding per bad source, complete and list independent valid siblings, and keep malformed bytes exact. Malformed entrypoint-dependent work stays untouched. After explicit correction, Index converges.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+Incomplete Index and Repair instructions keep the explicit workspace inside edit-and-index prose. An incomplete Repair preview with safe independent effects points to applying them first. Applied partial headlines state verified effects and remaining choices or edits.
+
+## X45
+
+**Situation:** Deleted note has no successor
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Delete a referenced note, retaining no strong successor.
+
+### Steps
+
+1. Run Doctor and Index.
+2. Follow the precise link-edit action, choosing to remove the reference.
+3. Run Doctor.
+
+### Expected result
+
+Index removes only stale navigation. Repair never recreates the note, relinks to a nearby guess or deletes authored link text. The user's named edit reaches clean Doctor.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X46
+
+**Situation:** Whole folder rename or move
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Fork a folder containing compatibility index.md and a canonical _billing.md. Include several tracked children and incoming and outgoing links.
+
+### Steps
+
+1. Rename or move the folder by hand.
+2. Run Doctor, preview and apply Repair, then Index if printed.
+3. Review local Axioms for the canonical-filename branch and verify Context and Doctor.
+
+### Expected result
+
+Prove each file independently and preserve compatibility entrypoints. With committed-content or near-identical Git proof, rename the old canonical navigation file and keep its description, Axioms and body. Show one rename row. Without proof, create the new entrypoint and preserve the old file. Doctor then directs the user to copy any wanted rules into the new file before deleting the old one.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X47
+
+**Situation:** Follow every next step after a mixed batch
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Combine unchanged renames, edited moves, deep plain and partial notes, one deleted note and a renamed compatibility-entrypoint folder in one workspace.
+
+### Steps
+
+1. Run Doctor.
+2. Follow each printed preview, apply, Index, guided choice or exact manual edit without resetting state.
+3. Run final Doctor and repeat Index and automatic Repair.
+
+### Expected result
+
+The continuation has one executable next action at each stage. Safe work completes, deletion meaning is explicit, Doctor ends complete with no warnings or errors, and repeats are byte no-ops.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X48
+
+**Situation:** Changed expected state and interrupted combined plan
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Form metadata, entrypoint, relink and Entries effects, then synchronize a source edit, candidate disappearance, HEAD change, lock contention or failure after one verified effect.
+
+### Steps
+
+1. Preview the exact plan.
+2. Trigger the real boundary during apply.
+3. Inspect residual state and replan from Doctor.
+
+### Expected result
+
+No stale effect overwrites the new bytes. Preflight failure writes nothing. Post-effect failure preserves verified effects and exact recovery facts without rollback. Fresh continuation never replays old evidence.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X49
+
+**Situation:** Additive JSON and exact text at every detail
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+Use a completion plan, a proven rename, a skip finding and an ambiguous successor in separate copies.
+
+### Steps
+
+1. Run text and schema-3 JSON at minimal, standard, full and debug detail.
+2. Preview, apply and repeat each plan.
+
+### Expected result
+
+Existing fields and effect kinds remain. New arrays, counts and evidence use only the design's exhaustive values. Text proof and next actions agree with typed JSON and independently observed effects.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.
+
+## X50
+
+**Situation:** Explicit selection completes only the required chain
+
+**Disposition:** Accepted current Task 79 behavior under D1 to D4.
+
+### Starting point
+
+A deep guidance leaf and an unrelated deep patterns leaf both need completion. Also provide a complete detached explicit entrypoint selection.
+
+### Steps
+
+1. Index the exact guidance leaf path.
+2. Inspect patterns, then run default Index.
+3. Maintain the detached selection explicitly.
+
+### Expected result
+
+Explicit leaf completion includes its chain and exposing parent only. Default selection completes both recognized roots. Detached maintenance invents no root or completion authority.
+
+### Verification
+
+Compare actual bodies, supplied metadata, comments, unknown keys, directory inventory and generated rows independently of output. Record streams and exit, then run the printed continuation on the same state.

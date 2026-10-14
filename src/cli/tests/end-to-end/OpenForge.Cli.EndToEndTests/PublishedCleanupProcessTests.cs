@@ -24,11 +24,11 @@ public sealed class PublishedCleanupProcessTests
         Assert.Equal(0, result.ExitCode);
         Assert.Equal(string.Empty, result.StandardError);
         Assert.Contains(
-            "open-forge cleanup [--dry-run] [global options]",
+            "open-forge cleanup [options]",
             result.StandardOutput,
             StringComparison.Ordinal);
-        Assert.Contains("Catalogue", result.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Write policy", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Safety", result.StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("Behavior", result.StandardOutput, StringComparison.Ordinal);
         Assert.False(Directory.Exists(missingWorkspace));
         workspace.AssertNoLockInfrastructure();
     }

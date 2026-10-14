@@ -1,0 +1,11 @@
+Choose one Library recovery step for this run
+
+  1. .agents/directives/review.md
+     Remove the Library link created at .agents/directives/review.md.
+  2. .agents/open-forge.libraries.json
+     Restore the deleted file at .agents/open-forge.libraries.json from the
+     recovery bundle.
+  3. Leave all recovery steps out
+     Leave all recovery steps out of the plan.
+
+Choose a number (1-3), or press Enter to cancel:

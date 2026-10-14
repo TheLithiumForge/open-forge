@@ -27,7 +27,7 @@ internal static class UpdateResultBuilder
             Comparisons = preview.Comparisons,
             GeneratedNavigation = preview.GeneratedNavigation,
             Effects = effects,
-            PreviousContentAvailable = UpdatePreviousContentObserver.Read(execution.Request.Workspace, effects),
+            PreviousContentAvailable = UpdatePreviousContentObserver.Read(recovery),
             Lifecycle = lifecycle,
             Recovery = recovery,
             Verification = verification,
@@ -37,18 +37,6 @@ internal static class UpdateResultBuilder
         if (result.Next is null && verification == UpdateVerificationState.Verified
             && recovery.State == UpdateRecoveryState.Retained && recovery.ResidualPath is { } bundlePath)
         {
-            var gitPath = Path.Combine(execution.Request.Workspace.LexicalRoot, ".git");
-            var hasGitDirectory = Directory.Exists(gitPath) && (File.GetAttributes(gitPath) & FileAttributes.ReparsePoint) == 0;
-            if (hasGitDirectory)
-            {
-                return result with
-                {
-                    Next = new(
-                        "git diff",
-                        $"Review the changes with git diff. Previous content remains in {bundlePath}."),
-                };
-            }
-
             return result with
             {
                 Next = new CliNextAction(

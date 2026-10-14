@@ -131,7 +131,7 @@ internal static class UpdateWording
     internal static string FormatOnlyRow() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUnchangedLineEndingsDiffer();
     internal static string EntriesSectionUpdated() => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleEntriesSectionUpdated();
     internal static string LockUpdated() => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpdated();
-    internal static string PreviousContent() => global::OpenForge.Cli.OutputText.Update.UpdateText.TitlePreviousContentGitDiff();
+    internal static string PreviousContent(string path) => global::OpenForge.Cli.OutputText.Update.UpdateText.PreviousContentInBundle(path);
     internal static string NoFilesChanged() => global::OpenForge.Cli.OutputText.Shared.SharedText.MessageNoFilesWereChanged();
 
     internal static string UnchangedCount(int count)

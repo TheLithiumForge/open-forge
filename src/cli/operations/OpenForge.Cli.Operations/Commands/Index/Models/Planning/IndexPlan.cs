@@ -32,7 +32,8 @@ internal sealed record IndexPlan
     internal IndexPlan(
         IndexPlanningInput input,
         IEnumerable<IndexRegion> regions,
-        IEnumerable<RecoveryBundleTarget> recoveryTargets)
+        IEnumerable<RecoveryBundleTarget> recoveryTargets,
+        IEnumerable<PlannedFileChange>? changes = null)
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(input.Request);
@@ -52,13 +53,13 @@ internal sealed record IndexPlan
             .ToArray();
 
         ValidateRegions(input, regionValues);
-        ValidateRecoveryTargets(input, regionValues, targetValues);
+        var changeValues = (changes ?? targetValues.Select(target => target.Change)).ToArray();
+        if (changes is null) ValidateRecoveryTargets(input, regionValues, targetValues);
+        else ValidateMaintenanceEffects(input, changeValues, targetValues);
         Input = input;
         Regions = new ReadOnlyCollection<IndexRegion>(regionValues);
         RecoveryTargets = new ReadOnlyCollection<RecoveryBundleTarget>(targetValues);
-        Updates = new ReadOnlyCollection<PlannedFileChange>(targetValues
-            .Select(target => target.Change)
-            .ToArray());
+        Updates = new ReadOnlyCollection<PlannedFileChange>(changeValues);
     }
 
     internal IndexPlanningInput Input { get; }
@@ -74,6 +75,25 @@ internal sealed record IndexPlan
     internal bool IsExecutable => Input.Projection.IsExecutable;
 
     internal bool IsNoOp => IsExecutable && Updates.Count == 0;
+
+    private static void ValidateMaintenanceEffects(IndexPlanningInput input, PlannedFileChange[] changes, RecoveryBundleTarget[] recovery)
+    {
+        if (!input.Projection.IsExecutable && changes.Length != 0
+            || changes.Select(change => change.Expectation.PhysicalPath ?? change.LogicalPath).Distinct(PhysicalIdentityTracker.PathComparer).Count() != changes.Length)
+            throw new ArgumentException("Index effects require an executable plan with one effect per physical file.", nameof(changes));
+        var existing = changes.Where(change => change.Kind != PlannedFileChangeKind.Create).ToArray();
+        if (existing.Length != recovery.Length || existing.Where((change, index) => recovery[index].Change != change
+            || recovery[index].Before.Expectation != change.Expectation || !recovery[index].Before.HasBytes).Any())
+            throw new ArgumentException("Every existing Index effect requires its exact original-byte recovery target.", nameof(recovery));
+        foreach (var region in input.Projection.Regions.Where(region => region.Region.Change?.RequiresUpdate == true))
+        {
+            var path = SourceLogicalPath.ToLexicalPath(input.Request.Workspace.LexicalRoot, region.Source.Path);
+            var effect = changes.Single(change => change.LogicalPath == path);
+            var projected = region.Region.Change ?? throw new InvalidOperationException();
+            if (!effect.IntendedBytes.AsSpan().SequenceEqual(projected.ExpectedDocumentBytes.AsSpan()))
+                throw new ArgumentException("Index effects must carry the final projected document.", nameof(changes));
+        }
+    }
 
     private static void ValidateRegions(
         IndexPlanningInput input,

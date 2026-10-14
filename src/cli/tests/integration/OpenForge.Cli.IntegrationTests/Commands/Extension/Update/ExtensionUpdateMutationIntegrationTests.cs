@@ -70,21 +70,14 @@ public sealed class ExtensionUpdateMutationIntegrationTests
         var bundlePath = Assert.IsType<string>(recovery.GetProperty("path").GetString());
         await AssertPriorAsync(workspace, bundlePath, ".agents/toolkit/_toolkit.md", Document("User divergence"));
         var next = document.RootElement.GetProperty("next");
-        if (git)
-        {
-            Assert.Equal("git diff", next.GetProperty("command").GetString());
-            Assert.Contains(bundlePath, next.GetProperty("reason").GetString(), StringComparison.Ordinal);
-        }
-        else
-        {
-            Assert.Equal(
-                $"Review previous content in the recovery bundle at {bundlePath}.",
-                next.GetProperty("command").GetString());
-            Assert.Equal(
-                "Previous content remains available for review.",
-                next.GetProperty("reason").GetString());
-            Assert.Equal("sentence", next.GetProperty("kind").GetString());
-        }
+        Assert.Equal(
+            $"Review previous content in the recovery bundle at {bundlePath}.",
+            next.GetProperty("command").GetString());
+        Assert.Equal(
+            "Previous content remains available for review.",
+            next.GetProperty("reason").GetString());
+        Assert.Equal("sentence", next.GetProperty("kind").GetString());
+        Assert.Equal(bundlePath, root.GetProperty("data").GetProperty("previousContent").GetString());
         Assert.Equal(sourceBefore, source.Snapshot());
     }
 

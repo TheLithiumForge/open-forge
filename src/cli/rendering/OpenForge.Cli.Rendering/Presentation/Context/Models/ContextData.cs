@@ -29,6 +29,21 @@ internal sealed record ContextData
     internal bool EmptyAdditions { get; init; }
 
     [JsonIgnore]
+    internal bool StartupMissing { get; init; }
+
+    [JsonIgnore]
+    internal bool MissingForValue { get; init; }
+
+    [JsonIgnore]
+    internal string? CountLimitation { get; init; }
+
+    [JsonIgnore]
+    internal bool CountsNotEstablished { get; init; }
+
+    [JsonIgnore]
+    internal IReadOnlyList<string> TextGuidance { get; init; } = [];
+
+    [JsonIgnore]
     internal long? SourceCount { get; init; }
 
     [JsonIgnore]

@@ -1,0 +1,30 @@
+  Compare one Library's source files with its destination links.
+
+Usage:
+  open-forge library inspect <library-id> [options]
+
+Examples:
+  open-forge library inspect shared
+  open-forge library inspect shared --format json
+
+Behavior:
+  Select exactly one registered Library. Inspect all its source files and
+  destination links.
+  This command changes no files and asks no questions.
+
+Arguments:
+  <library-id>  Select one exact Library management ID.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  library list         List registered Libraries.
+  library sync --help  Update links from current source files.
+  repair --help        Correct verified link and Library problems.

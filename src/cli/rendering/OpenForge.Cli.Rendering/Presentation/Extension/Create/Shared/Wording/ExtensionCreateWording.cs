@@ -1,4 +1,5 @@
 using System.Globalization;
+using OpenForge.Cli.OutputText.Extension.Create;
 using OpenForge.Cli.Core.Commands.Extension.Create.Models.Result;
 
 namespace OpenForge.Cli.Core.Presentation.Extension.Create.Shared.Wording;
@@ -12,7 +13,8 @@ internal static class ExtensionCreateWording
     internal static string InvalidExtensionId(string value)
         => global::OpenForge.Cli.OutputText.Extension.Create.ExtensionCreateWording.InvalidExtensionId(value);
 
-    internal static string PackageFolder() => global::OpenForge.Cli.OutputText.Extension.Create.ExtensionCreateText.HeadingPackageFolder();
+    internal static string PackageFolder(string id)
+        => ExtensionCreateText.PackageFolderExplanation(id);
 
     internal static string PackageFolderRule() => global::OpenForge.Cli.OutputText.Extension.Create.ExtensionCreateText.MessageEnterAnExistingOrdinaryDirectory();
 
