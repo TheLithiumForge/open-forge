@@ -1,9 +1,18 @@
+import { commandData, commandProperty } from "./suite-diagnostics.ts";
+
 function passed(name: string, started: number): void {
   process.stdout.write(`[PASS] ${name} (${((Date.now() - started) / 1000).toFixed(1)}s)\n`);
 }
 
+/** A GitHub error annotation for a failed stage. Annotations are public, unlike job logs. */
+export function stageFailureAnnotation(name: string, message: string): string {
+  return `::error title=${commandProperty(`${name} failed`)}::${commandData(message)}`;
+}
+
 function failed(name: string, error: unknown): Error {
-  return new Error(`[FAIL] ${name}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+  const message = error instanceof Error ? error.message : String(error);
+  if (process.env["GITHUB_ACTIONS"] === "true") process.stdout.write(`${stageFailureAnnotation(name, message)}\n`);
+  return new Error(`[FAIL] ${name}: ${message}`, { cause: error });
 }
 
 export function runStage<T>(name: string, action: () => T): T {

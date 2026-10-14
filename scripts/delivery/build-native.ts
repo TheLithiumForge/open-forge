@@ -1,5 +1,5 @@
 import { cpSync, mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import type { SupportedRuntime } from "./package-model.ts";
 import { compileLauncher } from "./npm/stage.ts";
 import { runStage } from "./stage.ts";
@@ -8,7 +8,8 @@ import { managedBuild, type BuildRestoreOptions } from "./managed-build.ts";
 import { readOptions } from "./options.ts";
 import { repositoryRoot } from "./repository.ts";
 import { candidateVersion, committedVersion } from "./version.ts";
-import { Configuration, hostRuntime, deliveryDirectory, DevelopmentPublish, nativeDirectory, Projects, suites, TestAssemblies } from "./layout.ts";
+import { Configuration, hostRuntime, deliveryDirectory, deliveryLog, DevelopmentPublish, nativeDirectory, Projects, suites, TestAssemblies } from "./layout.ts";
+import { nativeCompilerProperties } from "./native-publish.ts";
 import { createManifest } from "./manifest.ts";
 import { sourceIdentity } from "./source.ts";
 import { removeOutputs, resetOutput } from "./output.ts";
@@ -23,12 +24,16 @@ function nativeBuild(root: string, rid: SupportedRuntime, version: string, optio
   runStage("Build managed solution", () => managedBuild(root, version, options));
   for (const [name, assembly] of Object.entries(TestAssemblies)) cpSync(join(root, "artifacts/bin", assembly, "release"), join(absolute, "build", name), { recursive: true });
   const properties = ["-p:OpenForgeSkipDevelopmentPublish=true", `-p:OpenForgeCliVersion=${version}`];
+  const nativeProperties = [...properties, ...nativeCompilerProperties(rid)];
   for (const [project, folder] of [
     [Projects.cli, "open-forge"],
     [Projects.integration, "integration"],
     [Projects.public, "end-to-end"],
   ]) {
     if (project === undefined || folder === undefined) throw new Error("Missing publish project.");
+    // A per-project log lets a failure report the compiler's own error lines.
+    const log = join(root, deliveryLog(rid, `publish-${folder}`));
+    mkdirSync(dirname(log), { recursive: true });
     runStage(`Publish native ${folder} (${rid})`, () =>
       run(
         "dotnet",
@@ -44,9 +49,10 @@ function nativeBuild(root: string, rid: SupportedRuntime, version: string, optio
           "--no-restore",
           "--output",
           `${nativeDirectory(rid)}/${folder}`,
-          ...properties,
+          ...nativeProperties,
         ],
         root,
+        log,
       ),
     );
   }
