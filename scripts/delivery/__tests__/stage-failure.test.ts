@@ -16,4 +16,8 @@ test("a failure excerpt keeps the last error lines, or the last lines when none 
   assert.deepEqual(failureExcerpt(output, 12), ["ILC: error IL1005: one", "ILC exited with code 137"]);
   assert.deepEqual(failureExcerpt(output, 1), ["ILC exited with code 137"]);
   assert.deepEqual(failureExcerpt("one\r\ntwo\nthree\n", 2), ["two", "three"]);
+  assert.deepEqual(failureExcerpt("Generating native code\nld: b(l) ARM64 branch out of range\nclang: error: linker command failed", 12), [
+    "ld: b(l) ARM64 branch out of range",
+    "clang: error: linker command failed",
+  ]);
 });

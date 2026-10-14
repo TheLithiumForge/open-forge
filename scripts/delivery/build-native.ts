@@ -9,7 +9,7 @@ import { readOptions } from "./options.ts";
 import { repositoryRoot } from "./repository.ts";
 import { candidateVersion, committedVersion } from "./version.ts";
 import { Configuration, hostRuntime, deliveryDirectory, deliveryLog, DevelopmentPublish, nativeDirectory, Projects, suites, TestAssemblies } from "./layout.ts";
-import { nativeCompilerProperties } from "./native-publish.ts";
+import { nativeCompilerProperties, ShippedCliFolder } from "./native-publish.ts";
 import { createManifest } from "./manifest.ts";
 import { sourceIdentity } from "./source.ts";
 import { removeOutputs, resetOutput } from "./output.ts";
@@ -24,9 +24,8 @@ function nativeBuild(root: string, rid: SupportedRuntime, version: string, optio
   runStage("Build managed solution", () => managedBuild(root, version, options));
   for (const [name, assembly] of Object.entries(TestAssemblies)) cpSync(join(root, "artifacts/bin", assembly, "release"), join(absolute, "build", name), { recursive: true });
   const properties = ["-p:OpenForgeSkipDevelopmentPublish=true", `-p:OpenForgeCliVersion=${version}`];
-  const nativeProperties = [...properties, ...nativeCompilerProperties(rid)];
   for (const [project, folder] of [
-    [Projects.cli, "open-forge"],
+    [Projects.cli, ShippedCliFolder],
     [Projects.integration, "integration"],
     [Projects.public, "end-to-end"],
   ]) {
@@ -49,7 +48,8 @@ function nativeBuild(root: string, rid: SupportedRuntime, version: string, optio
           "--no-restore",
           "--output",
           `${nativeDirectory(rid)}/${folder}`,
-          ...nativeProperties,
+          ...properties,
+          ...nativeCompilerProperties(rid, folder),
         ],
         root,
         log,

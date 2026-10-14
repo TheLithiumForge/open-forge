@@ -341,7 +341,12 @@ tests. In GitHub Actions, failed tests and hung tests also become annotations,
 so they appear on the run page and in `ci:watch` without a signed-in log
 download. `test:delivery` and `test:package-layout` annotate their failed tests
 the same way through [github-test-reporter.ts](github-test-reporter.ts), so a
-failed `checks` job names its test too. The longest suite, public, takes under half of the test step, which
+failed `checks` job names its test too. Any other failed stage becomes one
+annotation with its exit status. Each native publish writes
+`artifacts/delivery/logs/<RID>/publish-<folder>.log`, and its failure annotation
+carries that log's last error and linker lines. On osx-arm64, the native test
+executables are optimized for size, because linking the full-size Integration
+tests failed there. The shipped CLI keeps its default optimization. The longest suite, public, takes under half of the test step, which
 has taken up to 22 minutes on osx-x64. The 20-minute deadline is about twice
 that suite's time on the slowest host. With the slowest build and suites
 observed so far, a stall in the last suite reaches its deadline by about minute

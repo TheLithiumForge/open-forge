@@ -29,7 +29,7 @@ export function failureExcerpt(output: string, limit: number): string[] {
     .split(/\r?\n/u)
     .map((line) => line.trimEnd())
     .filter((line) => line.trim());
-  const errors = lines.filter((line) => /\berror\b|exited with code|killed|out of memory/iu.test(line));
+  const errors = lines.filter((line) => /\berror\b|exited with code|killed|out of memory|out of range|undefined symbols|^\s*ld: /iu.test(line));
   return (errors.length > 0 ? errors : lines).slice(-limit);
 }
 
