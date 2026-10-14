@@ -8,7 +8,7 @@ open-forge:
 
 **Who:** A maintainer who nests new notes in folders without learning entrypoint conventions.
 
-**Behavior:** The current CLI implements this journey. The [Task record](../../../../../working/cli-development/tasks/task79-forgiving-maintenance.md) retains design decisions and historical reproduction evidence.
+**Behavior:** The current CLI implements this journey. The [Task record](../../../../../archived/cli-development/tasks/task79-forgiving-maintenance.md) retains design decisions and historical reproduction evidence.
 
 ## Contract
 

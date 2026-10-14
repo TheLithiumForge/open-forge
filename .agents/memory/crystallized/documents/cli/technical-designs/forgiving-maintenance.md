@@ -11,7 +11,7 @@ open-forge:
 
 After manual edits, Index completes missing metadata and navigation. Repair fixes links when evidence identifies one renamed or moved file. Doctor gives the next action that can actually resolve the remaining problem.
 
-The maintainer's [Task 79 decisions D1 to D5](../../../../working/cli-development/tasks/task79-forgiving-maintenance.md#accepted-decisions) define the accepted outcome. This design defines the current realization. It is not an implementation receipt. The [Index](../contracts/index-candidate/interface.md), [Doctor](../contracts/doctor/interface.md) and [Repair](../contracts/repair/interface.md) contracts define public behavior. The [CLI Architecture](../architecture.md), [Generated Navigation](generated-navigation.md) and [Mutation and Recovery](mutation-and-recovery.md) remain the implementation boundaries.
+The maintainer's [Task 79 decisions D1 to D5](../../../../archived/cli-development/tasks/task79-forgiving-maintenance.md#accepted-decisions) define the accepted outcome. This design defines the current realization. It is not an implementation receipt. The [Index](../contracts/index-candidate/interface.md), [Doctor](../contracts/doctor/interface.md) and [Repair](../contracts/repair/interface.md) contracts define public behavior. The [CLI Architecture](../architecture.md), [Generated Navigation](generated-navigation.md) and [Mutation and Recovery](mutation-and-recovery.md) remain the implementation boundaries.
 
 ## Shared Capabilities
 
@@ -234,4 +234,4 @@ Promote neutral entrypoint composition and intended-chain planning from Route In
 
 Put neutral rename observations beside `Framework/Sources/Operational` reference facts. Root composition owns Git process execution and injects observations. Doctor and Repair consume the same evidence interpretation. No runtime registry, generic mutation engine, new dependency or persistent identity database is needed.
 
-The [Task test and slice plan](../../../../working/cli-development/tasks/task79-forgiving-maintenance.md#ds1-end-to-end-test-plan) defines owned production paths, cheap evidence and complete published-process journeys. It includes changed F03, F05 and F08 and new F29 to F31, independently checked bytes, expected-state drift, recovery, additive JSON and continuation to clean Doctor.
+The [Task test and slice plan](../../../../archived/cli-development/tasks/task79-forgiving-maintenance.md#ds1-end-to-end-test-plan) defines owned production paths, cheap evidence and complete published-process journeys. It includes changed F03, F05 and F08 and new F29 to F31, independently checked bytes, expected-state drift, recovery, additive JSON and continuation to clean Doctor.

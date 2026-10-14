@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 78 to make the documentation, CLI help and every wizard clear, easy to explain and simple to use, through a UX audit and the changes it supports
-  tags: [Memory, Working, Task, CLI, Documentation, Site, Wizard, Prompts, Help, UserExperience, Wording, Contextual, Active]
+  description: "Historical record: clear documentation, compact help and simple wizards with local site search and an Allow once permission default, released in beta13"
+  tags: [Memory, Task, CLI, Documentation, Site, Wizard, Prompts, Help, UserExperience, Wording, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 78: Clear docs and wizards
@@ -12,11 +12,11 @@ A newcomer can explain Open Forge, each command and each wizard step in one plai
 
 The maintainer asked on 2026-10-12: "Go thro the documentation and cli wizards and make sure we are - clear - easy to explain, and actually good ux / ui. Both you claude and sols need to use some ux/ux skills to make sure we offer a simple to use, streamlined, easy to underatand ui, wizard, docs." They named Sol 6.1 at xhigh for the workers.
 
-Status: Task 78 “Clear docs and wizards” (phase 3/3): milestone 6/6 — complete with local search and the Allow once default, every gate passed on the Task 80 stack at `0b6a259d0`; integrates as one squash with Tasks 79 and 80.
+Status: Task 78 “Clear docs and wizards” (phase 3/3): milestone 6/6 — released in beta13 with Tasks 79 and 80.
 
 ## Relationship to open Tasks
 
-Tasks [61](task61-documentation-accuracy-and-voice.md), [66](task66-council-polish.md) and [67](task67-diagram-labels.md) delivered documentation accuracy, polish and diagram simplification, integrated in `a8bbf4677`. Their maintainer reviews remain open. Task 78 builds on that content and does not reopen their decisions. [Task 76](../../../archived/cli-development/tasks/task76-simple-wizards-and-honest-change-wording.md) decisions D1 to D11 stay accepted. Tasks 34, 37 and 39 stay paused or unselected. Task 78 may resolve findings they recorded, and records any overlap at closeout.
+Tasks [61](../../../working/cli-development/tasks/task61-documentation-accuracy-and-voice.md), [66](../../../working/cli-development/tasks/task66-council-polish.md) and [67](../../../working/cli-development/tasks/task67-diagram-labels.md) delivered documentation accuracy, polish and diagram simplification, integrated in `a8bbf4677`. Their maintainer reviews remain open. Task 78 builds on that content and does not reopen their decisions. [Task 76](../../../archived/cli-development/tasks/task76-simple-wizards-and-honest-change-wording.md) decisions D1 to D11 stay accepted. Tasks 34, 37 and 39 stay paused or unselected. Task 78 may resolve findings they recorded, and records any overlap at closeout.
 
 ## Decision boundary
 

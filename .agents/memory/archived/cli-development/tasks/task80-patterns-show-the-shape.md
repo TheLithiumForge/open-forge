@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Queue Task 80 to make the shipped Patterns entrypoint correct, so every Pattern shows its shape visually for people and agents and links to and from the other Core categories
-  tags: [Memory, Working, Task, Framework, Pattern, Core, Linking, Documentation, Contextual, Queued]
+  description: "Historical record: shipped Patterns Axioms that show a visual expected result and link both ways without naming categories, blind-reviewed and released in beta13"
+  tags: [Memory, Task, Framework, Pattern, Core, Linking, Documentation, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 80: Patterns show the shape
@@ -14,9 +14,9 @@ The maintainer asked on 2026-10-13:
 
 > "Make sure the patterns actually represent what I want - a visual representation easy to understand for people and agents of how something should be, basically throw a reviewer on some piece of code and show the pattern and it should be understandable. We already did a pass for that, just wanted to make sure of it. Also make sure you encourage linking and referencing to and from patterns to other core categories (we do not name them though)."
 
-The maintainer then narrowed the scope on 2026-10-13: the shipped `patterns.md` file is what matters most and must be correct. Maintenance of this repository's own Patterns moves to [Task 81](task81-own-patterns-maintenance.md), after the next beta deployment and release.
+The maintainer then narrowed the scope on 2026-10-13: the shipped `patterns.md` file is what matters most and must be correct. Maintenance of this repository's own Patterns moves to [Task 81](../../../working/cli-development/tasks/task81-own-patterns-maintenance.md), after the next beta deployment and release.
 
-Status: Task 80 “Patterns show the shape” (phase 3/3): complete, every gate passed on the stack at `0b6a259d0`.
+Status: Task 80 “Patterns show the shape” (phase 3/3): released in beta13 with Tasks 78 and 79.
 
 ## Scope
 

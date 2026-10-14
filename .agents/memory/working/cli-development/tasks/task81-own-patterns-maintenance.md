@@ -8,7 +8,7 @@ open-forge:
 
 ## Outcome
 
-This repository's own Patterns under `.agents/patterns/`, and the bundled Extension Patterns, follow the corrected shipped entrypoint from [Task 80](task80-patterns-show-the-shape.md). Required behavior lives in Directives. Each Pattern keeps only its visual shape, with brief applicability notes and links to the related sources.
+This repository's own Patterns under `.agents/patterns/`, and the bundled Extension Patterns, follow the corrected shipped entrypoint from [Task 80](../../../archived/cli-development/tasks/task80-patterns-show-the-shape.md). Required behavior lives in Directives. Each Pattern keeps only its visual shape, with brief applicability notes and links to the related sources.
 
 The maintainer asked on 2026-10-13 that “any maintenance for our own files regarding how the patterns … switch back to directives plus just the visual pattern” be scheduled as the next task after another beta deployment and release.
 

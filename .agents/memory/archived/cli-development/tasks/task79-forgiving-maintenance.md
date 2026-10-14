@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 79 to make the CLI forgive manual edits, so renamed or moved files, plain notes without frontmatter and deeply nested new folders all keep working through index, doctor and repair
-  tags: [Memory, Working, Task, CLI, Index, Repair, Doctor, Frontmatter, Routing, UserFlow, Scenario, Contextual, Active]
+  description: "Historical record: forgiving maintenance after manual edits, with metadata completion, entrypoint chains, proven rename repair and one Doctor next step, released in beta13"
+  tags: [Memory, Task, CLI, Index, Repair, Doctor, Frontmatter, Routing, UserFlow, Scenario, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 79: Forgiving maintenance after manual edits
@@ -22,7 +22,7 @@ The maintainer asked on 2026-10-13:
 
 They asked for user flows, scenarios, documents and end-to-end tests that prove these journeys.
 
-Status: Task 79 “Forgiving maintenance after manual edits” (phase 3/3): milestone 5/5 — complete, every gate passed again on the Task 80 stack at `0b6a259d0`; integrates as one squash with Tasks 78 and 80.
+Status: Task 79 “Forgiving maintenance after manual edits” (phase 3/3): milestone 5/5 — released in beta13 with Tasks 78 and 80.
 
 ## Current behavior (beta.12 plus Task 78, reproduced 2026-10-13)
 
