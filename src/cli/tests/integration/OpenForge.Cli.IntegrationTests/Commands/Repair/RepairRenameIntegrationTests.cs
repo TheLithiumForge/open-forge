@@ -462,7 +462,8 @@ public sealed class RepairRenameIntegrationTests
             case "candidate": fixture.Write(".agents/guidance/command-design.md", "# Changed\n"); break;
             case "disappeared": File.Delete(fixture.PathFor(".agents/guidance/command-design.md")); break;
             case "second-candidate": fixture.Write(".agents/guidance/second-design.md", File.ReadAllText(fixture.PathFor(".agents/guidance/command-design.md"))); break;
-            case "head": await fixture.GitAsync("update-ref", "HEAD", (await fixture.GitAsync("rev-parse", "HEAD^")).Trim()); break;
+            // A fresh commit over the same tree moves HEAD without needing repository history, which shallow CI clones lack.
+            case "head": await fixture.GitAsync("update-ref", "HEAD", (await fixture.GitAsync("-c", "user.name=Open Forge Tests", "-c", "user.email=tests@open-forge.invalid", "commit-tree", "HEAD^{tree}", "-m", "Move HEAD")).Trim()); break;
             case "lost-proof": await fixture.GitAsync("update-ref", "-d", "HEAD"); break;
             case "settings": fixture.Write(".agents/open-forge.json", "{\"schemaVersion\":1,\"frontmatter\":\"root\"}"); break;
             case "entries": fixture.Write(".agents/guidance/_guidance.md", "# Guidance\n\n## Entries\n\n## Entries\n"); break;
