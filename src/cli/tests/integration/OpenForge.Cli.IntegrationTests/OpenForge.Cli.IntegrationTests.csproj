@@ -15,6 +15,12 @@
     <PackageReference Include="xunit.v3.aot.mtp-v2" />
   </ItemGroup>
 
+  <!-- Apple's default linker asserts in Fixup.cpp (largeAddends) on this large native test executable.
+       The classic linker links it. The shipped CLI keeps the default linker. -->
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">
+    <LinkerArg Include="-Wl,-ld_classic" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="../../../framework/OpenForge.Cli.Framework/OpenForge.Cli.Framework.csproj" />
     <ProjectReference Include="../../../shell/OpenForge.Cli.Shell/OpenForge.Cli.Shell.csproj" />

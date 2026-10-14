@@ -344,9 +344,10 @@ the same way through [github-test-reporter.ts](github-test-reporter.ts), so a
 failed `checks` job names its test too. Any other failed stage becomes one
 annotation with its exit status. Each native publish writes
 `artifacts/delivery/logs/<RID>/publish-<folder>.log`, and its failure annotation
-carries that log's last error and linker lines. On osx-arm64, the native test
-executables are optimized for size, because linking the full-size Integration
-tests failed there. The shipped CLI keeps its default optimization. The longest suite, public, takes under half of the test step, which
+carries that log's last error and linker lines. On osx-arm64, the native
+Integration tests link with Apple's classic linker (`-Wl,-ld_classic`), because
+the default linker asserts on that large executable. The shipped CLI keeps the
+default linker. The longest suite, public, takes under half of the test step, which
 has taken up to 22 minutes on osx-x64. The 20-minute deadline is about twice
 that suite's time on the slowest host. With the slowest build and suites
 observed so far, a stall in the last suite reaches its deadline by about minute
