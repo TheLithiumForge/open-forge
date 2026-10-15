@@ -2,9 +2,9 @@ import { isAbsolute, relative } from "node:path";
 import type { ReportedTest } from "./test-report.ts";
 
 export const SuiteLimits = {
-  // The longest suite, public, takes under half of the test step, which has taken up to 22 minutes
-  // on osx-x64. Twice that suite's time stops a stall with diagnostics well before the job limit.
-  deadlineMinutes: 20,
+  // The longest suite, public, takes under half of the test step, which has taken up to 33 minutes
+  // on osx-x64. Twice that suite's time stops a stall with diagnostics before the 90-minute job limit.
+  deadlineMinutes: 30,
   heartbeatMinutes: 2,
   // xUnit names a test still running after this many seconds, and repeats it each interval.
   longRunningSeconds: 120,
@@ -46,6 +46,12 @@ export function heartbeat(suite: string, elapsedMilliseconds: number, logBytes: 
 
 export function deadlineFailure(suite: string, minutes: number, processes: string): string {
   return `Test ${suite} did not finish within ${minutes} minutes and was stopped. Running processes: ${processes}`;
+}
+
+/** A GitHub notice with a passing suite's time, so suite times compare across Builds without a signed-in log download. */
+export function durationAnnotation(suite: string, milliseconds: number, passed: number): string {
+  const minutes = (milliseconds / minutesToMilliseconds(1)).toFixed(1);
+  return `::notice title=${commandProperty(`Test ${suite} time`)}::${commandData(`${passed} tests passed in ${minutes} min.`)}`;
 }
 
 export function slowestSummary(suite: string, tests: readonly ReportedTest[]): string[] {

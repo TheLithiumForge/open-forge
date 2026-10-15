@@ -7,6 +7,7 @@ import { failedTests, qualifyReport, reportedTests, slowestTests } from "./test-
 import {
   completeLines,
   deadlineFailure,
+  durationAnnotation,
   failureAnnotation,
   heartbeat,
   hungTestArguments,
@@ -112,12 +113,14 @@ export async function runSuites(root: string, selections: readonly Suite[], repo
   for (const suite of selections) {
     const output = join(reports, suite.name);
     mkdirSync(output, { recursive: true });
+    const started = Date.now();
     const count = await runStageAsync(`Test ${suite.name}`, async () => {
       await runSuite(root, suite, output);
       const platform = suite.name !== "unit" ? process.platform : undefined;
       return qualifyReport(readResults(output), platform);
     });
     process.stdout.write(`${suite.name}: ${count.passed} tests passed; ${count.skipped} platform exclusions.\n`);
+    if (inGithubActions()) process.stdout.write(`${durationAnnotation(suite.name, Date.now() - started, count.passed)}\n`);
     for (const line of slowestSummary(suite.name, slowestTests(reportedTests(readResults(output)), SuiteLimits.slowestTests))) process.stdout.write(`${line}\n`);
   }
 }

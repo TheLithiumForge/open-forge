@@ -5,6 +5,7 @@ import {
   commandData,
   commandProperty,
   completeLines,
+  durationAnnotation,
   failureAnnotation,
   heartbeat,
   hungTestArguments,
@@ -52,6 +53,7 @@ test("annotations escape workflow command text and link repository files", () =>
   assert.equal(failureAnnotation(Root, "integration", failed), "::error file=src/Test.cs,line=12,title=Test integration failed::Install keeps content: Expected 1%0AActual 2");
   assert.equal(failureAnnotation(Root, "unit", { ...failed, file: undefined, message: "" }), "::error title=Test unit failed::Install keeps content");
   assert.equal(longRunningAnnotation("public", Report), `::warning title=Test public long-running test::${Report}`);
+  assert.equal(durationAnnotation("public", minutesToMilliseconds(12) + 18_000, 376), "::notice title=Test public time::376 tests passed in 12.3 min.");
 });
 
 test("reports yield failed and slowest tests, and unreadable reports yield none", () => {

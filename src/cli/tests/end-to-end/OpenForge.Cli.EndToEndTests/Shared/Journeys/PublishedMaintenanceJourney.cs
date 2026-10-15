@@ -149,7 +149,9 @@ internal sealed class PublishedMaintenanceJourney : IDisposable
     {
         var start = new ProcessStartInfo("git") { WorkingDirectory = Path, UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true };
         foreach (var item in _environment) start.Environment[item.Key] = item.Value;
-        foreach (var argument in arguments) start.ArgumentList.Add(argument);
+        // Newer Git runs automatic maintenance detached after a commit, and its lock would race the read-only snapshots.
+        string[] gitArguments = ["-c", "maintenance.auto=false", "-c", "gc.auto=0", .. arguments];
+        foreach (var argument in gitArguments) start.ArgumentList.Add(argument);
         using var process = Process.Start(start) ?? throw new InvalidOperationException("Git did not start.");
         var output = process.StandardOutput.ReadToEndAsync(TestContext.Current.CancellationToken);
         var error = process.StandardError.ReadToEndAsync(TestContext.Current.CancellationToken);

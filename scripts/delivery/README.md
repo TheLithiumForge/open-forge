@@ -332,14 +332,15 @@ Each `test:built` and `test` suite writes its runner output to
   report while it runs. The suite prints new reports at each two-minute check.
 - Every two minutes the suite prints how long it has run and how much it has
   logged.
-- A suite still running after 20 minutes is stopped with every process it
+- A suite still running after 30 minutes is stopped with every process it
   started. Before stopping it, the runner lists running processes in
   `processes.txt` next to the log, then prints the log tail and fails.
 
 A failed suite names each failed test. A passing suite prints its three slowest
 tests. In GitHub Actions, failed tests and hung tests also become annotations,
 so they appear on the run page and in `ci:watch` without a signed-in log
-download. `test:delivery` and `test:package-layout` annotate their failed tests
+download. Each passing suite also leaves a notice with its time, so suite times
+compare across Builds. `test:delivery` and `test:package-layout` annotate their failed tests
 the same way through [github-test-reporter.ts](github-test-reporter.ts), so a
 failed `checks` job names its test too. Any other failed stage becomes one
 annotation with its exit status. Each native publish writes
