@@ -27,13 +27,15 @@ internal sealed class SourceReadSessionReader
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(workspace);
-        var documentReader = new SourceDocumentReader(workspace);
+        var paths = _physicalPathResolver.CreateReadSession();
+        var documentReader = new SourceDocumentReader(workspace, paths);
         var catalogue = await new SourceCatalogueReader()
-            .ReadAsync(
+            .ReadSessionAsync(
                 new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
+                paths,
                 cancellationToken)
             .ConfigureAwait(false);
-        var agentsResolution = _physicalPathResolver.ResolveCandidate(
+        var agentsResolution = paths.ResolveCandidate(
             workspace.LexicalRoot,
             workspace.PhysicalRoot,
             SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, SourceLogicalPath.AgentsRoot));

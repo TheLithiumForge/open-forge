@@ -13,19 +13,17 @@ namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Maintenance;
 internal static class DoctorRenameFindingFactory
 {
     internal static DoctorFinding Create(LocalReferenceObservation reference, RenameEvidenceResult evidence,
-        IReadOnlyList<LocalReferenceCandidateObservation> observations)
+        IReadOnlyList<LocalReferenceCandidateObservation> observations, RenameWeakCandidateFilter? candidateFilter = null)
     {
         var oldPath = reference.Facts.Target.Path ?? throw new ArgumentException("The missing reference has no canonical target path.", nameof(reference));
         var resolution = evidence.Find(oldPath) ?? new RenamePathResolution(oldPath,
             evidence.Facts.CandidateUniverseComplete ? RenameResolution.NoCandidate : RenameResolution.IncompleteUniverse, [], [], []);
         if (resolution.Proven is not null) return Create(reference, resolution, evidence);
         // Repair's weak hints belong to one source occurrence. Global identity evidence remains shared.
-        var weak = RenameWeakCandidateFilter.Read(
-            weak: [.. observations.Where(candidate => candidate.SourcePath == reference.SourcePath && candidate.Destination == reference.Destination)
+        var weak = (candidateFilter ?? new RenameWeakCandidateFilter(evidence.Facts.Candidates, evidence.Facts.Candidates)).Read(
+            [.. observations.Where(candidate => candidate.SourcePath == reference.SourcePath && candidate.Destination == reference.Destination)
                 .Select(candidate => new RenameWeakCandidate(oldPath, candidate))],
-            candidates: evidence.Facts.Candidates,
-            aliases: evidence.Facts.Candidates,
-            oldPath: oldPath);
+            oldPath);
         resolution = resolution with
         {
             Resolution = resolution.Resolution == RenameResolution.NoCandidate && weak.Length > 0 ? RenameResolution.WeakOnly : resolution.Resolution,

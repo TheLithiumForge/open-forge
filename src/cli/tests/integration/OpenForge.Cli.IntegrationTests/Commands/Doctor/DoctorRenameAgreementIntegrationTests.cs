@@ -66,7 +66,7 @@ public sealed class DoctorRenameAgreementIntegrationTests
     [InlineData("proven", "Proven")]
     [InlineData("metadata-only", "Proven")]
     [InlineData("contradicted", "WeakOnly")]
-    [InlineData("contradicted-committed", "Contradictory")]
+    [InlineData("contradicted-committed", "WeakOnly")]
     [InlineData("two-strong", "SeveralStrongCandidates")]
     [InlineData("weak-only", "WeakOnly")]
     [InlineData("deleted", "NoCandidate")]
@@ -153,12 +153,12 @@ public sealed class DoctorRenameAgreementIntegrationTests
         Assert.Equal($"open-forge doctor --workspace {CliCommandText.Quote(workspace.Root)}", report.Next?.Command);
         Assert.Equal(workspace.Root, report.Workspace?.Path);
         Assert.Single(report.Limitations);
-        Assert.Equal("Git did not answer in time, so renamed files could not be proven. Run the command again.", report.Limitations[0].Why);
+        Assert.Equal("Rename evidence did not finish in time, so renamed files could not be proven. Run the command again.", report.Limitations[0].Why);
         Assert.DoesNotContain(report.Findings, finding => finding.Code is "reference.target-missing" or "reference.target-renamed");
         foreach (var detail in Enum.GetValues<CliDetail>())
         {
             var text = CliRenderingStage.Render(new CliPresentationRequest<DoctorResult>(diagnosis.Result, new(CliFormat.Text, detail, null)), DoctorPresentation.Rendering).PrimaryContent;
-            const string limitation = "Git did not answer in time, so renamed files could not be proven. Run the command again.";
+            const string limitation = "Rename evidence did not finish in time, so renamed files could not be proven. Run the command again.";
             Assert.StartsWith("Doctor could not finish 1 check.", text, StringComparison.Ordinal);
             Assert.DoesNotContain("No problems found", text, StringComparison.Ordinal);
             Assert.Equal(1, text.Split(limitation, StringSplitOptions.None).Length - 1);

@@ -50,10 +50,11 @@ internal static class RepairOperationFactory
         PhysicalPathResolver physicalPathResolver,
         RepairRenameServices? renames)
     {
-        var diagnosisReader = new DoctorDiagnosisReader(operationalContributors);
+        var diagnosisReader = new DoctorDiagnosisReader(operationalContributors, renames?.DiagnosisReader);
         var validator = new FileExpectationValidator(physicalPathResolver);
         var revalidator = new MutationRevalidator(validator);
-        var catalogueReader = new RepairCatalogueReader(physicalPathResolver, renames?.Read);
+        var catalogueReader = new RepairCatalogueReader(physicalPathResolver, renames?.Read, renames?.ReadReferences,
+            retainDiagnosisEvidence: renames?.DiagnosisReader is not null);
         var maintenance = new RepairMaintenancePlanner(physicalPathResolver, renames?.Scaffolding);
         var application = new RepairApplicationOperation(
             new RepairMutationServices(

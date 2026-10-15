@@ -658,11 +658,11 @@
     },
     {
       "code": "repair.guided-finding-remaining",
-      "forms": ["1 possible target.", "<N> possible targets.", "<old-path> is missing. More than one file looks like its new location.", "<old-path> is missing. Its new location could not be proven.", "This link still needs repair.", "Git did not answer in time, so renamed files could not be proven. Run the command again."]
+      "forms": ["1 possible target.", "<N> possible targets.", "<old-path> is missing. More than one file looks like its new location.", "<old-path> is missing. Its new location could not be proven.", "This link still needs repair.", "Rename evidence did not finish in time, so renamed files could not be proven. Run the command again."]
     },
     {
       "code": "repair.manual-finding-remaining",
-      "forms": ["<old-path> is missing and no replacement was found.", "This link still needs repair.", "The registered Library projection is not current.", "Git did not answer in time, so renamed files could not be proven. Run the command again.", "<path> is managed. Its managing Update owns this file.", "<path> is inside a native Skill package. Edit its SKILL.md or package resource.", "<path> is excluded or private. Restore its route or sharing intent before repairing this link.", "<path> is protected from Repair."]
+      "forms": ["<old-path> is missing and no replacement was found.", "This link still needs repair.", "The registered Library projection is not current.", "Rename evidence did not finish in time, so renamed files could not be proven. Run the command again.", "<path> is managed. Its managing Update owns this file.", "<path> is inside a native Skill package. Edit its SKILL.md or package resource.", "<path> is excluded or private. Restore its route or sharing intent before repairing this link.", "<path> is protected from Repair."]
     },
     {
       "code": "route-create.invalid-target",

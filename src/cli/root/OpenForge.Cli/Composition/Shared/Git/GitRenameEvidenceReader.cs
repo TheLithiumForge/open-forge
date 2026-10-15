@@ -14,13 +14,15 @@ internal sealed class GitRenameEvidenceReader
     internal static readonly TimeSpan Deadline = TimeSpan.FromSeconds(5);
     private readonly GitProcessRunner _git;
     private readonly TimeProvider _timeProvider;
+    private readonly PhysicalPathResolver _physicalPaths;
 
     internal GitRenameEvidenceReader(string gitExecutable = "git", Action<ProcessStartInfo>? configureProcess = null,
-        TimeProvider? timeProvider = null, Action<Process>? processStarted = null)
+        TimeProvider? timeProvider = null, Action<Process>? processStarted = null, PhysicalPathResolver? physicalPaths = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(gitExecutable);
         _git = new GitProcessRunner(gitExecutable, configureProcess, processStarted);
         _timeProvider = timeProvider ?? TimeProvider.System;
+        _physicalPaths = physicalPaths ?? new();
     }
 
     internal async ValueTask<RenameGitObservation> ReadAsync(RenameGitRequest request, CancellationToken cancellationToken)
@@ -30,16 +32,15 @@ internal sealed class GitRenameEvidenceReader
         var root = request.Workspace.PhysicalRoot;
         try
         {
-            var probe = await Run(["rev-parse", "--is-inside-work-tree"]);
-            if (probe is null) return Unavailable(RenameGitAvailability.Unavailable);
-            if (probe is not { ExitCode: 0 } inside || inside.Output.Trim() != "true") return Unavailable(RenameGitAvailability.NoRepository);
-            var prefixResult = await Run(["rev-parse", "--show-prefix"]);
-            if (prefixResult is not { ExitCode: 0 } prefixRead) return Unavailable(RenameGitAvailability.Unavailable);
-            var prefix = prefixRead.Output.TrimEnd('\r', '\n');
+            var probe = await Run(["rev-parse", "--is-inside-work-tree", "--show-prefix", "--verify", "--quiet", "HEAD^{commit}"]);
+            if (probe is not { } readMetadata) return Unavailable(RenameGitAvailability.Unavailable);
+            var metadata = readMetadata.Output.Split('\n');
+            if (metadata.Length < 2 || metadata[0].TrimEnd('\r') != "true") return Unavailable(RenameGitAvailability.NoRepository);
+            if (metadata.Length < 3) return Unavailable(RenameGitAvailability.Unavailable);
+            var prefix = metadata[1].TrimEnd('\r');
             if (prefix.Length > 0) _ = SourceWorkspaceRelativePath.Validate(prefix.TrimEnd('/'), nameof(request), false);
-            var headResult = await Run(["rev-parse", "--verify", "--quiet", "HEAD^{commit}"]);
-            if (headResult is not { ExitCode: 0 } headRead) return Unavailable(RenameGitAvailability.Unborn);
-            var head = headRead.Output.Trim();
+            if (readMetadata.ExitCode != 0) return Unavailable(RenameGitAvailability.Unborn);
+            var head = string.Join('\n', metadata.Skip(2)).Trim();
             if (!IsObjectId(head)) return Unavailable(RenameGitAvailability.Unavailable);
 
             var tree = await Run(["ls-tree", "-r", "-z", "--full-tree", head]);
@@ -50,7 +51,7 @@ internal sealed class GitRenameEvidenceReader
                 PackageRoots = request.Policy.PackageRoots.AddRange(inventory.Where(path => Path.GetFileName(path.Path) == "SKILL.md")
                     .Select(path => SourceLogicalPath.ReadParent(path.Path))).Distinct(StringComparer.Ordinal).ToImmutableArray(),
             };
-            var resolver = new PhysicalPathResolver();
+            var resolver = _physicalPaths.CreateReadSession();
             var blockedPhysicalPaths = RenameCandidateAdmission.ReadBlockedPhysicalPaths(request.Workspace, resolver, policy);
             var admitted = inventory.Where(path => RenameCandidateAdmission.Allows(path.Path, policy)
                 && !RenameCandidateAdmission.IsPathPhysicallyBlocked(request.Workspace, resolver, path.Path, blockedPhysicalPaths)).ToImmutableArray();

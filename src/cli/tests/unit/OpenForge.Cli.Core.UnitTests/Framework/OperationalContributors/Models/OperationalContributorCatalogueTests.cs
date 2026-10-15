@@ -94,7 +94,8 @@ public sealed class OperationalContributorCatalogueTests
     {
         public ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(
             CliWorkspace workspace,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            RouteDoctorView? routes = null)
             => throw NotInvoked();
     }
 

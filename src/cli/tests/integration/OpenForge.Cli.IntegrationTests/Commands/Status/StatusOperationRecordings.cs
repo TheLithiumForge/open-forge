@@ -154,7 +154,8 @@ internal sealed class StatusOperationRecordings
 
         public ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(
             CliWorkspace workspace,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            RouteDoctorView? routes = null)
         {
             Calls++;
             throw new InvalidOperationException("Status must not invoke local-reference facts.");

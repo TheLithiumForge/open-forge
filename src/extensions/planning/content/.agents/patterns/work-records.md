@@ -6,41 +6,38 @@ open-forge:
 
 # Work Records
 
-Use the project's declared task source and established record conventions. This Pattern supplies a default where no suitable structure exists. Small work may need only the current conversation.
+## Shape
 
-## Start With One Task
+| Task content  | Defines                                                                 | Status                         |
+| ------------- | ----------------------------------------------------------------------- | ------------------------------ |
+| Outcome       | Accepted result, scope, exclusions, constraints and completion evidence | Default content responsibility |
+| Plan          | Short sequence, dependencies and verification                           | Default content responsibility |
+| Current State | Continuation progress, decisive evidence, blockers and next action      | Default content responsibility |
 
-| Section       | Defines                                                                        |
-| ------------- | ------------------------------------------------------------------------------ |
-| Outcome       | The accepted result, scope, exclusions, constraints, and completion evidence   |
-| Plan          | The short sequence, dependencies, and verification                             |
-| Current State | Progress needed for continuation, decisive evidence, blockers, and next action |
+These are content responsibilities, not a mandatory schema. Existing project headings may express them. Names and order are illustrative.
 
-These are content responsibilities, not a new mandatory schema. Existing project headings may express them. Keep the three answers together until one needs separate scope, lifetime, or coordination.
+```text
+declared task source
+  Task: outcome + plan + current state
+    -> separate Plan, when sequence needs independent maintenance
+    -> Checkpoint, when additional live continuation state is needed
+Backlog -> selected Task
+Handoff -> sealed actual-transfer boundary, when required
+current project knowledge -> its defining local document or external system
+```
 
-## Split Only What Needs Its Own Source
+| Optional separate record | Use when                                               | Default sections                                                                             |
+| ------------------------ | ------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Plan                     | Sequence and dependencies need independent maintenance | Outcome Source, Steps And Dependencies, Verification And Completion                          |
+| Backlog                  | Candidate work needs selection and priority view       | Scope, Items                                                                                 |
+| Checkpoint               | Additional live state is needed to resume a workstream | Goal And Sources, Current State, Accepted Direction And Evidence, Open Questions, Next Steps |
 
-| Record     | Use when                                               | Default sections                                                                             |
-| ---------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| Plan       | Sequence and dependencies need independent maintenance | Outcome Source, Steps And Dependencies, Verification And Completion                          |
-| Backlog    | Candidate work needs a selection and priority view     | Scope, Items                                                                                 |
-| Checkpoint | Additional live state is needed to resume a workstream | Goal And Sources, Current State, Accepted Direction And Evidence, Open Questions, Next Steps |
+Links express fixed relationships when those optional records exist. Repeated Tasks and steps are allowed. A separate file should answer a separately maintained question instead of repeating the Task in another format.
 
-[Planning Templates](../templates/planning/_planning.md) provide optional starting files. A separate file should answer a separate maintained question, not repeat the Task in another format.
+## Applicability And Sources
 
-## Keep Relationships Clear
+The project's declared task source and established conventions come first. This is a default where no suitable structure exists. Small work may need only the current conversation. Ideas, Analysis and Decisions are optional, with no mandatory predecessor chain.
 
-- A Backlog lists work awaiting selection. Once a Task exists, link to it. A listed idea is not automatically accepted work.
-- The Task defines the outcome and completion criteria. A separate Plan defines the sequence only when separated. The Task then links to it.
-- A Checkpoint records additional live continuation state. Link to the Task and Plan rather than repeating their specifications or finished history.
-- A Handoff, when required by an actual transfer, seals that boundary. It does not replace the live state source.
-- An Idea preserves a possibility. Analysis preserves evidence and reasoning. A Decision preserves an accepted choice and rationale. None is a mandatory predecessor to a Task. A small accepted choice may remain in the existing source when no separate record helps.
-- Current project knowledge stays in its defining source, whether local documentation or an external system. Task records carry only the context needed to execute.
-
-Each changing fact has one defining source. Use external task systems for the facts assigned to them. Local records may add context those systems do not maintain. Do not introduce a second board, status catalogue, or sequence by copying.
-
-## Complete And Retire
-
-Report the delivered outcome, decisive evidence, limitations, and remaining work. Move still-current knowledge into its defining sources before retaining or archiving the working record under workspace rules.
-
-A status records what happened. It does not accept its own result, authorize new scope, or grant permission to integrate or publish.
+- [Work Record Relationships](../directives/planning/work-records.md) binds source relationships and completion behavior without making this default schema mandatory.
+- [Planning workflow](../skills/use-workflow/references/planning/planning.md) supplies the procedure.
+- [Planning Templates](../templates/planning/_planning.md) provide optional starting files.

@@ -1,12 +1,35 @@
 using System.Diagnostics;
 using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Git;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Operational.Shared.RenameEvidence;
 
 [Trait("Feature", "rename-evidence"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
 public sealed class RenameGitFailureIntegrationTests
 {
+    [Fact(DisplayName = "Git admission shares ordinary ancestors within each observation and reacquires leaves on every pass")]
+    public async Task AdmissionReadsOnlyOrdinaryAncestorsOnce()
+    {
+        using var repository = new RenameEvidenceGitWorkspace();
+        await repository.InitializeAsync();
+        var reads = new Dictionary<string, int>(PhysicalIdentityTracker.PathComparer);
+        var paths = new PhysicalPathResolver(path =>
+        {
+            reads[path] = reads.GetValueOrDefault(path) + 1;
+            return LinkTargetReader.Read(path);
+        });
+        var reader = new GitRenameEvidenceReader(configureProcess: repository.Configure, physicalPaths: paths);
+        for (var pass = 0; pass < 2; pass++)
+        {
+            reads.Clear();
+            var result = await reader.ReadAsync(new(repository.Workspace, new() { PackageRoots = [".agents/skills"] }), TestContext.Current.CancellationToken);
+            Assert.Equal(RenameGitAvailability.Available, result.Availability);
+            Assert.Equal(1, reads[repository.PathFor(".agents")]);
+            Assert.Equal(1, reads[repository.PathFor(".agents/guidance/_guidance.md")]);
+        }
+    }
+
     [Fact(DisplayName = "Each Git invocation gets its own deadline across a longer evidence read")]
     public async Task DeadlineIsPerInvocation()
     {
@@ -22,7 +45,7 @@ public sealed class RenameGitFailureIntegrationTests
             });
         var result = await adapter.ReadAsync(new(repository.Workspace, new()), TestContext.Current.CancellationToken);
         Assert.Equal(RenameGitAvailability.Available, result.Availability);
-        Assert.True(invocations >= 6);
+        Assert.Equal(4, invocations);
         Assert.NotEmpty(result.Blobs);
     }
 

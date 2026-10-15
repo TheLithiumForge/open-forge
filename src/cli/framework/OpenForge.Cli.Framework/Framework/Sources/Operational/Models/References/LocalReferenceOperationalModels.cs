@@ -1,4 +1,6 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
@@ -130,4 +132,10 @@ internal sealed record LocalReferenceDoctorView(
     IReadOnlyList<LocalReferenceObservation> References,
     LocalReferenceCandidateScanState CandidateScan,
     IReadOnlyList<LocalReferenceCandidateObservation> Candidates,
-    IReadOnlyList<LocalReferenceGraphFinding> GraphFindings);
+    IReadOnlyList<LocalReferenceGraphFinding> GraphFindings)
+{
+    internal SourceCatalogue? Catalogue { get; init; }
+
+    internal IReadOnlyDictionary<string, MarkdownDocumentFacts> Documents { get; init; }
+        = new Dictionary<string, MarkdownDocumentFacts>(StringComparer.Ordinal);
+}

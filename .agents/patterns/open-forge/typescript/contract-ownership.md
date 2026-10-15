@@ -6,20 +6,33 @@ open-forge:
 
 # TypeScript Contract Ownership
 
-## TypeScript Specialization
+## Shape
 
-Apply the runner- and language-neutral [Contract Ownership](../../software/contract-ownership.md) Pattern first. This specialization owns only the TypeScript mechanics used to define and validate the exact contract.
+```text
+semantic contract document
+  -> focused TypeScript contract module
+       named runtime values -> derived union type
+       exact exported types
+  -> generated exact reader reference, when required
+  <- conformance tests + stable fixtures
 
-- Export exact types and named values from focused source modules.
-- Derive union types from their owning readonly const objects when that is clearer than an enum.
-- Use `satisfies` for structural checking where useful.
-- Do not use workspace-owned `as Type` assertions to manufacture contract conformance.
-- Do not maintain handwritten declaration mirrors for documentation.
-- Keep runtime validation beside the untrusted boundary it protects.
+untrusted input -> adjacent runtime validation -> typed contract value
+```
 
-## Review Checks
+| Part                                                          | Status                             |
+| ------------------------------------------------------------- | ---------------------------------- |
+| Focused production exports, no handwritten declaration mirror | Required                           |
+| Boundary-local runtime validation                             | Required                           |
+| Union derived from readonly const values                      | Optional when clearer than an enum |
+| `satisfies` for structural checking                           | Optional where useful              |
+| Workspace-owned `as Type` to manufacture conformance          | Invalid                            |
 
-- The generic Contract Ownership review checks pass.
-- TypeScript declarations and named values remain focused production exports.
-- TypeScript assertions do not manufacture workspace-owned contract conformance.
-- Runtime validation remains beside its untrusted boundary.
+Names and filenames are illustrative. Relationships specialize the generic shape.
+
+## Applicability And Sources
+
+For exact TypeScript contracts described by semantic documents, generated reference and conformance evidence.
+
+- [Contract Ownership](../../software/contract-ownership.md) supplies the generic shape.
+- [Contract Ownership Directive](../../../directives/software/contract-ownership.md) binds generic source boundaries.
+- [TypeScript Source Structure](../../../directives/open-forge/typescript/typescript-source-structure.md#exact-contracts-and-named-values) binds TypeScript mechanics.

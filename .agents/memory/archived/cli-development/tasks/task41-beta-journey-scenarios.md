@@ -10,7 +10,7 @@ open-forge:
 [review](../analysis/open-task-review/task41-beta-journey-scenarios.md). The experience flow
 collection and Task 45's 82 journey cases replaced it. The H1 to H7 output
 checks and defect B-5 moved to [Task 39](../../../working/cli-development/tasks/task39-output-audit.md). Selecting
-further journeys stays in the [beta follow-ups](../../../working/cli-development/tasks/beta-follow-ups.md) backlog.
+further journeys stays in the [beta follow-ups](../../../working/cli-development/tasks/beta-follow-up-backlog.md) backlog.
 
 The sections below are the record as it stood before closing.
 

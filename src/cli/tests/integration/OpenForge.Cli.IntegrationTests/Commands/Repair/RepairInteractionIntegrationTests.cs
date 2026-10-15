@@ -9,6 +9,38 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Repair;
 
 public sealed class RepairInteractionIntegrationTests
 {
+    [Fact(DisplayName = "Repair reacquires sibling catalogue facts after interaction before the final navigation review")]
+    [Trait("Boundary", "OS"), Trait("Feature", "repair"), Trait("Evidence", "Integration")]
+    public async Task FinalPlanIncludesSiblingCreatedDuringInteraction()
+    {
+        using var workspace = RepairIntegrationWorkspace.Create("repair-prompt-catalogue", includeGuided: false);
+        var finalReviews = 0;
+        var siblingIncluded = false;
+        var components = RepairOperationFactory.CreateDefaultComponents() with
+        {
+            Interaction = new(
+                (_, _, _) => throw new InvalidOperationException(),
+                (_, _, _) => throw new InvalidOperationException(),
+                (preview, question, _, _) =>
+                {
+                    if (question.Kind == RepairConfirmationKind.Safe)
+                    {
+                        workspace.AddEarlierSafeSource();
+                        return ValueTask.FromResult(CliPromptReply<bool>.Answered(true));
+                    }
+                    finalReviews++;
+                    siblingIncluded = preview.Plan?.Maintenance?.Intent.Formation.FindSource(".agents/docs/aaa.md") is not null
+                        && preview.Plan.FileChanges.Any(change => System.Text.Encoding.UTF8.GetString(change.IntendedBytes.AsSpan())
+                            .Contains("[Earlier source](aaa.md)", StringComparison.Ordinal));
+                    return ValueTask.FromResult(CliPromptReply<bool>.Answered(false));
+                }),
+        };
+
+        await new RepairOperation(components).ExecuteAsync(workspace.Request(allowInteraction: true), TestContext.Current.CancellationToken);
+        Assert.Equal(1, finalReviews);
+        Assert.True(siblingIncluded);
+    }
+
     [Fact(DisplayName = "Leaving a guided broken link unchanged acknowledges the explicit choice")]
     [Trait("Boundary", "OS"), Trait("Feature", "repair"), Trait("Evidence", "Integration")]
     public async Task ExplicitLeaveUnchangedMakesNoEffects()

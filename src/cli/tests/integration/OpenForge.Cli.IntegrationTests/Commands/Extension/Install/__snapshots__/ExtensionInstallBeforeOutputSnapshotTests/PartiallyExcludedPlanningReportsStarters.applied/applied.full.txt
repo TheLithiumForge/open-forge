@@ -44,6 +44,10 @@ Workspace: <workspace>
     created (workflows)
   .agents/skills/use-workflow/references/_references.md
     created (workflows)
+  .agents/directives/planning/_planning.md
+    created (planning)
+  .agents/directives/planning/work-records.md
+    created (planning)
   .agents/memory/crystallized/decisions/_decisions.md
     created (planning)
   .agents/memory/emerging/analysis/_analysis.md
@@ -58,6 +62,7 @@ Workspace: <workspace>
     created (planning)
   .agents/skills/use-workflow/references/planning/planning.md
     created (planning)
+  .agents/directives/_directives.md                             Entries updated
   .agents/memory/crystallized/_crystallized.md                  Entries updated
   .agents/memory/emerging/_emerging.md                          Entries updated
   .agents/patterns/_patterns.md                                 Entries updated
@@ -67,7 +72,7 @@ Workspace: <workspace>
   Source: embedded catalogue (embedded)
   Dependency order: workflows, planning
   .agents/open-forge.lock.json  ownership record updated
-  Entries sections unchanged: .agents/directives/_directives.md,
+  Entries sections unchanged: .agents/directives/planning/_planning.md,
   .agents/loader.md, .agents/memory/_memory.md,
   .agents/memory/crystallized/decisions/_decisions.md,
   .agents/memory/emerging/analysis/_analysis.md,

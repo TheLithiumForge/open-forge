@@ -18,7 +18,10 @@ internal sealed record RenameRecordedIdentity
     public FileExpectation? RecordExpectation { get; init; }
 }
 
-internal sealed record RenameCurrentCandidate(string Path, FileStateSnapshot Snapshot, RenameContent Content, RenameMetadataSignature? Metadata);
+internal sealed record RenameCurrentCandidate(string Path, FileStateSnapshot Snapshot, RenameContent Content, RenameMetadataSignature? Metadata)
+{
+    public bool IsUnchangedAtHead { get; init; }
+}
 
 internal sealed record RenameMissingPath(string Path, FileExpectation Expectation);
 

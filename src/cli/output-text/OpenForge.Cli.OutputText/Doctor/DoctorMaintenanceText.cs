@@ -3,7 +3,7 @@ namespace OpenForge.Cli.OutputText.Doctor;
 internal static class DoctorMaintenanceText
 {
     internal static string GitTimeout()
-        => "Git did not answer in time, so renamed files could not be proven. Run the command again.";
+        => "Rename evidence did not finish in time, so renamed files could not be proven. Run the command again.";
     internal static string RenameTitle() => "Linked file was renamed or moved";
     internal static string MissingFields(string path)
         => $"{path} needs a description or tags. Index can fill the missing fields and keep your content.";

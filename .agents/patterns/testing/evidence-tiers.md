@@ -8,46 +8,37 @@ open-forge:
 
 ## Shape
 
-Use increasing evidence depth without moving focused tests away from the behavior
-they prove. Use the following evidence terms when the test system supports
-durable test classification.
+| Tier            | Proves                                                    | Typical boundary                                               | Placement                                                          |
+| --------------- | --------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Unit            | One cheap focused method, class, function or step         | In-memory inputs and explicit dependencies                     | Beside production subject or in its one-to-one mirrored test scope |
+| Integration     | One module or command at a selected real boundary         | Filesystem, process, database, network adapter, package layout | Beside production subject or in its one-to-one mirrored test scope |
+| EndToEnd        | Complete critical journey through the delivered interface | Whole built artifact, service, UI or public surface            | System boundary                                                    |
+| PackageEndToEnd | Complete journey through packed or wrapped delivery       | Packed artifact, wrapper, launcher or distribution boundary    | System boundary                                                    |
 
-| Tier            | Proves                                                      | Typical boundary                                                                        |
-| --------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Unit            | One cheap, focused method, class, function, or step         | In-memory inputs and explicit dependencies                                              |
-| Integration     | One module or command at a selected real system boundary    | Filesystem, process, database, network adapter, package layout, or equivalent           |
-| EndToEnd        | A complete critical journey through the delivered interface | Whole built artifact, deployed service, user interface, or another public surface       |
-| PackageEndToEnd | A complete journey through a packed or wrapped delivery     | Packed artifact, package-manager wrapper, launcher, or equivalent distribution boundary |
+```text
+subject/
+  production behavior
+  focused Unit and Integration evidence
+  fixtures and support, when needed
+system boundary/
+  small intentional set of complete journeys
+  packed delivery journeys, when applicable
+```
 
-Most behavior belongs in the lowest tier that proves the relevant contract.
-`EndToEnd` evidence proves the delivered composition, and `PackageEndToEnd`
-evidence proves the packed delivery path. Neither is the default home for
-detailed branch logic.
+Boundary distinctions and locality are required. Concrete paths and mechanisms are illustrative. A separate test root is optional when materially cleaner and mirrors production paths one-to-one. Classification names apply when the test system supports durable classification.
 
-Keep unit and integration evidence beside its production subject until
-demonstrated reuse needs a nearer shared test-support scope. When a language or
-build system makes separate test projects or roots materially cleaner, use a
-physical test tree that mirrors production feature or capability paths one-to-one.
-Keep fixtures and support at the nearest mirrored scope. Place complete-system
-and package journeys at the system boundary because they prove dispatch,
-packaging, rendering, completion, and several capabilities together. Do not link
-test files into production folders merely to simulate locality.
+| Evidence part                                                      | Status                                                          |
+| ------------------------------------------------------------------ | --------------------------------------------------------------- |
+| Focused stable snapshot projection                                 | Optional when clearer than explicit assertions                  |
+| Safety invariants, destructive effects, critical state transitions | Direct assertions when broad diffs could hide them              |
+| Delivered-interface snapshot content                               | Stable public evidence only                                     |
+| Doubles and normalization                                          | Local evidence-based reason, known environmental variation only |
+| Snapshot baseline update                                           | Explicit mutation                                               |
 
-Prefer real functions and boundaries plus observable resulting state. A test double closes only a boundary that cannot be exercised safely and deterministically with the real implementation.
+## Applicability And Sources
 
-## Snapshots
+Most behavior belongs at the lowest tier that proves its contract. Delivered and packed journeys are not the default home for detailed branch logic. Real functions, boundaries and observable resulting state are preferable.
 
-Snapshot a focused stable projection only when it communicates the complete reviewed result better than explicit assertions. Keep safety invariants, destructive effects, and critical state transitions as direct assertions when they could disappear inside a broad snapshot diff.
-
-Snapshots of a delivered interface contain only stable public evidence. Normalize only known environmental variation; do not broadly scrub output until it ceases to prove the contract.
-
-## Review Checks
-
-- Each evidence tier proves a distinct boundary without duplicating lower-tier branch coverage.
-- The system boundary has a small, intentional set of complete journeys.
-- Package journeys prove the packed or wrapped delivery boundary rather than only the unpacked executable.
-- Test support sits at the nearest common scope of real consumers, including a nearest mirrored scope when test roots are separate.
-- A separate test root mirrors production paths one-to-one and is materially cleaner for its language or build system.
-- No test file is linked into a production folder merely to simulate locality.
-- Doubles and normalizations have a local, evidence-based reason.
-- Snapshot updates are explicit mutations rather than an ordinary test side effect.
+- [Test Evidence Integrity](../../directives/open-forge/testing/evidence-integrity.md) binds evidence boundaries, doubles and snapshots.
+- [Source Locality](../../directives/source-locality.md) binds production and mirrored test placement.
+- [Nearest Shared Scope](../software/source-locality/nearest-shared-scope.md) shows promotion of reused support.

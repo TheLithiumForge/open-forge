@@ -152,3 +152,11 @@ open-forge:
   - [CA1062: Validate arguments of public methods](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1062)
   - [CA2264: Do not pass a non-nullable value to ThrowIfNull](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2264)
   - [IDE0028: Collection initialization](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0028)
+
+### Enum Mapping Evidence
+
+- Keep finite enum mappings at the nearest scope that owns their meaning. Group multiple named members in one arm only when they intentionally share exactly the same meaning.
+- When the mapping is a closed public or persisted contract, add one focused coverage assertion comparing the explicitly specified named cases with `Enum.GetValues<TEnum>()`. A newly authored member requires an intentional mapping decision. Do not substitute broad inventory or hash snapshots for semantic assertions.
+- Do not claim that the compiler proves named-member completeness when a discard arm handles the open numeric value space. Use a stronger closed type only when the domain independently needs one, not merely to replace the direct native C# shape.
+
+The [Exhaustive C# Enum Switch Pattern](../../patterns/software/exhaustive-csharp-enum-switch.md) shows the mapping and evidence. The existing enum rule above defines the rejecting arm and direct tests.

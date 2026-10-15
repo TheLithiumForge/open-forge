@@ -175,7 +175,7 @@ public sealed class RepairRenameIntegrationTests
         foreach (var file in before) Assert.Equal(file.Value, File.ReadAllBytes(file.Key));
         Assert.Equal(before.Count, Directory.GetFiles(fixture.PathFor(".agents"), "*", SearchOption.AllDirectories).Length);
         var report = RepairReportSelector.Select(result, new(CliDetail.Standard));
-        Assert.Contains(report.Limitations, limitation => limitation.What.Contains("Git did not answer in time", StringComparison.Ordinal));
+        Assert.Contains(report.Limitations, limitation => limitation.What.Contains("Rename evidence did not finish in time", StringComparison.Ordinal));
         Assert.DoesNotContain(report.Findings, finding => finding.Code == "repair.rename-proven");
         Assert.DoesNotContain(report.Findings.SelectMany(finding => finding.Actions), action => action.Command.StartsWith("Update or remove this link", StringComparison.Ordinal));
         var retry = $"open-forge repair --automatic --workspace '{fixture.Root}' --format json --detail full";
@@ -417,7 +417,7 @@ public sealed class RepairRenameIntegrationTests
             Assert.Empty(result.MaintenanceResults.Renames);
             Assert.Contains("[Rounding](rounding.md)", File.ReadAllText(fixture.PathFor(".agents/guidance/notes.md")));
             var report = RepairReportSelector.Select(result, new(CliDetail.Standard));
-            Assert.Contains(report.Limitations, limitation => limitation.What.Contains("Git did not answer in time", StringComparison.Ordinal));
+            Assert.Contains(report.Limitations, limitation => limitation.What.Contains("Rename evidence did not finish in time", StringComparison.Ordinal));
             Assert.Equal("open-forge repair", report.Next?.Command);
         }
         else
@@ -612,7 +612,7 @@ public sealed class RepairRenameIntegrationTests
         var operation = new RepairOperation(RepairOperationFactory.CreateDefaultComponents(new(scaffold.ReadEvidenceAsync, scaffold)));
         var result = await operation.ExecuteAsync(new(fixture.Workspace, RepairMode.DryRun, true, [], false), TestContext.Current.CancellationToken);
         var report = RepairReportSelector.Select(result, new(CliDetail.Standard));
-        Assert.Contains(report.Limitations, limitation => limitation.What.Contains("Git did not answer in time", StringComparison.Ordinal));
+        Assert.Contains(report.Limitations, limitation => limitation.What.Contains("Rename evidence did not finish in time", StringComparison.Ordinal));
         Assert.Equal("open-forge repair", report.Next?.Command);
         var retry = $"open-forge repair --automatic --dry-run --workspace '{fixture.Root}' --format json --detail full";
         var replay = new CliRequestReplay("open-forge repair", "open-forge repair", retry, retry, retry)

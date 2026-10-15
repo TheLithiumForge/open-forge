@@ -37,6 +37,12 @@ internal static class SourceFormClassifier
             return true;
         }
 
+        if (!fileName.StartsWith('_') && fileName is not ("index.md" or "references.md"))
+        {
+            form = SourceDocumentForm.Markdown;
+            return true;
+        }
+
         var parent = SourceLogicalPath.ReadParent(canonicalPath);
         form = ReadEntrypointForm(fileName, parent) ?? SourceDocumentForm.Markdown;
         return true;

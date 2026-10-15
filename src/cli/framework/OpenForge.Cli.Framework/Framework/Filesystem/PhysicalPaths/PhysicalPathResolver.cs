@@ -5,13 +5,36 @@ namespace OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 
 internal sealed class PhysicalPathResolver
 {
+    private readonly PathComponentReadSession? _readSession;
+    private readonly Func<string, PathComponent> _componentReader;
+
+    internal PhysicalPathResolver(PathComponentReadSession? readSession = null)
+    {
+        _readSession = readSession;
+        _componentReader = LinkTargetReader.Read;
+    }
+
+    internal PhysicalPathResolver(Func<string, PathComponent> componentReader)
+    {
+        _componentReader = componentReader;
+    }
+
+    private PhysicalPathResolver(Func<string, PathComponent> componentReader, PathComponentReadSession readSession)
+    {
+        _componentReader = componentReader;
+        _readSession = readSession;
+    }
+
+    internal PhysicalPathResolver CreateReadSession()
+        => new(_componentReader, new PathComponentReadSession(_componentReader));
+
     internal PhysicalPathResolution ResolveRoot(string workspaceRoot)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
         try
         {
             var normalized = Path.GetFullPath(workspaceRoot);
-            return new PathComponentWalker(new PhysicalIdentityTracker())
+            return new PathComponentWalker(new PhysicalIdentityTracker(), _readSession, _componentReader)
                 .ResolveUnboundedAbsolute(normalized, normalized);
         }
         catch (PlatformNotSupportedException exception)
@@ -47,7 +70,7 @@ internal sealed class PhysicalPathResolver
             }
 
             var relative = Path.GetRelativePath(lexicalRoot, candidate);
-            return new PathComponentWalker(new PhysicalIdentityTracker())
+            return new PathComponentWalker(new PhysicalIdentityTracker(), _readSession, _componentReader)
                 .ResolveContainedRelative(candidate, physicalRoot, relative);
         }
         catch (PlatformNotSupportedException exception)

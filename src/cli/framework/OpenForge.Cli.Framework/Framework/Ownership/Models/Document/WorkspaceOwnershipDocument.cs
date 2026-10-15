@@ -74,6 +74,14 @@ internal sealed record WorkspaceOwnershipDocument(
     /// </summary>
     internal bool IsKnownSchemaVersion => SchemaVersion == WorkspaceOwnershipDefinitions.SchemaVersion;
 
+    internal bool HasManagedPath(string path)
+    {
+        if (Framework?.Paths.Contains(path, StringComparer.Ordinal) == true) return true;
+        foreach (var extension in Extensions)
+            if (extension.Paths.Contains(path, StringComparer.Ordinal)) return true;
+        return false;
+    }
+
     internal IEnumerable<OwnedPath> ManagedPaths()
         => (Framework?.Paths.Select(path => new OwnedPath(path, OwnedPathManager.Framework, Framework.Source.Id)) ?? [])
             .Concat(Extensions.SelectMany(extension => extension.Paths.Select(path =>

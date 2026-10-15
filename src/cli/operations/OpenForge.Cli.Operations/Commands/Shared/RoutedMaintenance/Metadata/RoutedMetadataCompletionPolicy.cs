@@ -44,14 +44,14 @@ internal sealed class RoutedMetadataCompletionPolicy
         if (form == SourceDocumentForm.Skill
             || context.NativeSkillPaths.Any(skill => RoutedMetadataDefaults.IsAncestor(path, SourceLogicalPath.ReadParent(skill))))
             return RoutedMetadataEligibility.NativePackage;
-        if (context.Ownership.ManagedPaths().Any(claim => claim.Path == path)) return RoutedMetadataEligibility.ManagedContent;
+        if (context.Ownership.HasManagedPath(path)) return RoutedMetadataEligibility.ManagedContent;
         if ((context.Ownership.Framework?.Regions ?? []).Concat(context.Ownership.Extensions.SelectMany(owner => owner.Regions))
                 .Any(region => region.Path == path && region.Region != WorkspaceOwnershipDefinitions.EntriesRegion))
             return RoutedMetadataEligibility.GeneratedContent;
         if (WorkspaceRemovals.IsPathRemoved(path, context.Settings)) return RoutedMetadataEligibility.SettingsExcluded;
 
-        var sharing = new SourceSharing(context.Ownership.Framework?.GitIgnoredRoutes ?? []);
-        if (!sharing.Includes(path))
+        var privateRoutes = context.Ownership.Framework?.GitIgnoredRoutes ?? [];
+        if (!privateRoutes.IsEmpty && !new SourceSharing(privateRoutes).Includes(path))
             return RoutedMetadataEligibility.PrivateContent;
         if (context.Ownership.Libraries.Any(library => library.Paths.Contains(path, StringComparer.Ordinal)))
             return RoutedMetadataEligibility.LibraryProjection;
@@ -69,6 +69,7 @@ internal sealed class RoutedMetadataCompletionPolicy
             {
                 CanonicalPath = input.File.CanonicalPath,
                 Bytes = input.Bytes,
+                Document = input.Document,
                 Form = context.Settings.Frontmatter,
                 DefaultTags = RoutedMetadataDefaults.Tags(input.File),
             });

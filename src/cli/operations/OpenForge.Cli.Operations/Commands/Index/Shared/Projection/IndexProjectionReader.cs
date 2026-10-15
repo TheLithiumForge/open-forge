@@ -38,14 +38,12 @@ internal sealed class IndexProjectionReader
     private readonly IndexSelectionResolver _selectionResolver;
     private readonly IndexProjectionBuilder _projectionBuilder = new();
     private readonly PhysicalPathResolver _paths;
-    private readonly FileExpectationValidator _expectations;
     private readonly RoutedMaintenancePlanner _maintenance;
     private readonly SourceReferenceResolver _references;
 
     internal IndexProjectionReader(PhysicalPathResolver physicalPathResolver, IRoutedMaintenanceRenameEvidence? renameEvidence = null)
     {
         _paths = physicalPathResolver;
-        _expectations = new(physicalPathResolver);
         _maintenance = new(physicalPathResolver, renameEvidence);
         _references = new SourceReferenceResolver(
             (workspace, canonicalPath) => physicalPathResolver.ResolveCandidate(
@@ -163,15 +161,16 @@ internal sealed class IndexProjectionReader
 
     internal async ValueTask<bool> VerifyOwnershipAsync(IndexPlan plan, CancellationToken token)
     {
+        var expectations = new FileExpectationValidator(_paths.CreateReadSession());
         foreach (var expectation in new[] { plan.Input.Projection.OwnershipExpectation, plan.Input.Projection.SettingsExpectation }.Where(item => item is not null))
         {
-            var result = await _expectations.ValidateAsync(plan.Input.Request.Workspace, expectation ?? throw new InvalidOperationException(), token).ConfigureAwait(false);
+            var result = await expectations.ValidateAsync(plan.Input.Request.Workspace, expectation ?? throw new InvalidOperationException(), token).ConfigureAwait(false);
             token.ThrowIfCancellationRequested();
             if (result.State != FileExpectationValidationState.Matched) return false;
         }
         foreach (var snapshot in plan.Input.Projection.Maintenance?.Originals.Values ?? [])
         {
-            var result = await _expectations.ValidateAsync(plan.Input.Request.Workspace, snapshot.Expectation, token).ConfigureAwait(false);
+            var result = await expectations.ValidateAsync(plan.Input.Request.Workspace, snapshot.Expectation, token).ConfigureAwait(false);
             if (result.State != FileExpectationValidationState.Matched) return false;
         }
         return plan.Input.Projection.Maintenance is not { } intent || await _maintenance.VerifyProofsAsync(intent, token).ConfigureAwait(false);

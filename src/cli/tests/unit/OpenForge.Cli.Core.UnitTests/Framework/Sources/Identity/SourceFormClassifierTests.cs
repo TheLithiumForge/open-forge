@@ -5,6 +5,24 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
 public sealed class SourceFormClassifierTests
 {
+    [Fact(DisplayName = "Plain Markdown classification does not allocate parent-path facts"),
+        Trait("Boundary", "Processing"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void PlainMarkdownDoesNotDeriveParents()
+    {
+        Assert.Equal(Allocated(".agents/a/note.md"), Allocated(".agents/long/parent/tree/with/many/folders/and/a/long/directory/name/note.md"));
+
+        static long Allocated(string path)
+        {
+            for (var index = 0; index < 100; index++) Assert.True(SourceFormClassifier.Matches(path, SourceDocumentForm.Markdown));
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            var classified = 0;
+            for (var index = 0; index < 1000; index++) if (SourceFormClassifier.Matches(path, SourceDocumentForm.Markdown)) classified++;
+            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+            Assert.Equal(1000, classified);
+            return allocated;
+        }
+    }
+
     [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral source-form classification recognizes every accepted source spelling"),
         InlineData(".agents/loader.md", nameof(SourceDocumentForm.Loader)),

@@ -18,7 +18,6 @@ internal static class ReferencesOperationFactory
         var physicalPathResolverImplementation = new PhysicalPathResolver();
         var sourceSessionReader = new SourceReadSessionReader(physicalPathResolverImplementation);
         var neutralPhysicalPathResolver = CreateNeutralPhysicalPathResolver(physicalPathResolverImplementation);
-        var physicalPathResolver = CreatePhysicalPathResolver(physicalPathResolverImplementation);
         var sourceReferenceResolver = new SourceReferenceResolver(neutralPhysicalPathResolver);
         var universeFilterResolver = new SourceUniverseFilterResolver(sourceReferenceResolver);
         ReferencesLayerReader layerReader = static (reader, layer, cancellationToken) =>
@@ -33,7 +32,7 @@ internal static class ReferencesOperationFactory
             layerReader: layerReader,
             markdownParser: markdownParser);
         var destinationResolver = new ReferencesDestinationResolver(
-            physicalPathResolver: physicalPathResolver,
+            physicalPaths: physicalPathResolverImplementation,
             strictUtf8Reader: strictUtf8Reader,
             markdownParser: markdownParser);
         var resultBuilder = new ReferencesResultBuilder();
@@ -51,10 +50,4 @@ internal static class ReferencesOperationFactory
             workspace.PhysicalRoot,
             SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, canonicalPath));
 
-    private static ReferencesPhysicalPathResolver CreatePhysicalPathResolver(
-        PhysicalPathResolver physicalPathResolver)
-        => (workspace, lexicalPath) => physicalPathResolver.ResolveCandidate(
-            workspace.LexicalRoot,
-            workspace.PhysicalRoot,
-            lexicalPath);
 }

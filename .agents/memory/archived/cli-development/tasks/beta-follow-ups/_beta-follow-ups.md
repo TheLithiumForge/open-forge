@@ -6,7 +6,7 @@ open-forge:
 
 # Archived Beta Follow-ups
 
-The D1–D6, E1–E2, and N1–N3 corrections and the Tasks 42/43 documentation repairs were completed and squash-integrated into `develop`. Their records moved here on 2026-09-25. The remaining follow-ups stay in [Beta follow-ups](../../../../working/cli-development/tasks/beta-follow-ups.md).
+The D1–D6, E1–E2, and N1–N3 corrections and the Tasks 42/43 documentation repairs were completed and squash-integrated into `develop`. Their records moved here on 2026-09-25. The remaining follow-ups stay in [Beta follow-ups](../../../../working/cli-development/tasks/beta-follow-up-backlog.md).
 
 ## Axioms
 

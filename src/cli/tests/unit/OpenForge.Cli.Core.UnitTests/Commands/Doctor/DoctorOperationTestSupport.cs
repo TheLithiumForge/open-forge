@@ -175,7 +175,8 @@ internal sealed class DoctorOperationTestSupport
     {
         public ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(
             CliWorkspace workspace,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            RouteDoctorView? routes = null)
         {
             calls.Add("local-references");
             return ValueTask.FromResult(new LocalReferenceDoctorView(

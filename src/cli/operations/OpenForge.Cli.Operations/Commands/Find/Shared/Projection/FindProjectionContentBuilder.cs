@@ -161,12 +161,13 @@ internal sealed class FindProjectionContentBuilder
         FindContentPart part,
         MarkdownDocumentFacts document)
     {
+        Utf8SourceMap? locations = null;
         var headings = document.Headings
             .Select(heading => new FindProjectedHeading(
                 heading.VisibleText,
                 heading.Level,
                 heading.Form,
-                MapLocation(document.Source, heading.Span),
+                (locations ??= new Utf8SourceMap(document.Source)).Map(heading.Span.Start, heading.Span.Length),
                 heading.IsCanonical))
             .ToArray();
         return new FindProjection(

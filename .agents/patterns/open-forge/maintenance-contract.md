@@ -8,29 +8,32 @@ open-forge:
 
 ## Shape
 
-The [Payload Maintenance contract](../../memory/crystallized/documents/maintenance/payload/_payload.md#axioms) is authoritative for the source-wording boundary.
+```text
+frontmatter
+  description                            required metadata
+  tags                                   required metadata
+  responsibility                         optional edit boundary, no authority grant
+# <subject>                              illustrative title
+## Source                                required
+  canonical source link + responsibility
+  true counterparts, when present
+## Contract                              required
+  smallest complete invariants, boundaries, change obligations
+  ### <distinct concern>                 optional, repeatable
+  statement + relative supporting link
+## Verification                          required
+  observable tests or checks + links
+  manual verification when no automated check exists
+```
 
-The [maintenance contract template](../../templates/documents/maintenance-contract.md) provides copy-ready starting content. This pattern remains the continuing shape used when creating or reviewing an instantiated maintenance document.
+The section names, order and relationships are fixed. Subject and concern names are illustrative. Optional Contract subsections fit distinct concerns such as patching, generation, loading, scope, integration or an external contract.
 
-Organize each current maintenance document as:
+## Applicability And Sources
 
-1. `Source` - link to the canonical source, state its responsibility, and identify true counterparts.
-2. `Contract` - define the smallest complete set of maintainer-level invariants, boundaries, and change obligations.
-3. `Verification` - link to the tests or checks that prove the contract remains aligned; state necessary manual verification when no automated check exists.
+For current maintenance documents. Positive, closed descriptions are preferable where practical. A negative constraint helps when it closes a concrete risk more precisely.
 
-Add optional frontmatter `responsibility` when one stable sentence will help keep the document's maintenance concerns local. Treat it as a boundary for future edits, not as an authority grant or replacement for the `Source` section.
+Optional `responsibility` fits when one stable sentence helps keep future edits local.
 
-Place relative links beside the contract or verification statement they support. Include a relationship when it creates a maintenance consequence.
-
-Use optional level-3 subsections inside `Contract` when the source has distinct concerns such as patching, generation, loading, scope, integration, or an external contract. Name each optional subsection after the actual concern and require it to clarify a distinct part of the contract.
-
-State the valid shape as positively and completely as practical. Prefer a closed requirement such as “contains only A and B” over a list of forbidden examples that leaves unintended alternatives open. Use a negative constraint only when it closes a concrete risk more precisely than a positive boundary.
-
-## Review Checks
-
-- The `Source` section identifies the authoritative runtime source through a link and a concise responsibility.
-- Every `Contract` statement narrows the valid design space or identifies a real change obligation.
-- Relevant counterparts, dependencies, decisions, consumers, and external contracts are linked where they affect maintenance.
-- Optional subsections clarify genuinely distinct concerns.
-- Historical rationale stays in decisions or archives.
-- `Verification` names observable evidence rather than repeating the contract.
+- [Deliberate Framework Change](../../directives/open-forge/framework/deliberate-framework-change.md#maintenance-documents) binds the maintenance shape and editing rules.
+- [Payload Maintenance](../../memory/crystallized/documents/maintenance/payload/_payload.md#axioms) binds the source-wording boundary.
+- [Maintenance contract template](../../templates/documents/maintenance-contract.md) supplies optional starting content.

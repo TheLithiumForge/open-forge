@@ -8,9 +8,7 @@ open-forge:
 
 ## Shape
 
-Give a semantic string or number one named runtime definition and derive its type from that definition.
-
-Use a readonly const object when values cross JSON, file, process, or library boundaries, or when ordinary object access and iteration remain useful:
+Complete declarations with illustrative names and values. The enum and readonly object represent different concepts, not duplicate definitions of one concept.
 
 ```ts
 export const DocumentState = {
@@ -20,82 +18,43 @@ export const DocumentState = {
 } as const;
 
 export type DocumentState = (typeof DocumentState)[keyof typeof DocumentState];
-```
 
-Use an enum when enum semantics make a contained TypeScript boundary clearer:
-
-```ts
 export enum TraversalState {
   unseen = "unseen",
   visiting = "visiting",
   complete = "complete",
 }
-```
 
-Choose one representation for one concept. Do not define an enum and a const object that repeat the same values.
-
-## Mappings
-
-Build mappings from named values:
-
-```ts
 export const TraversalRank = {
   [TraversalState.unseen]: 0,
   [TraversalState.visiting]: 1,
   [TraversalState.complete]: 2,
 } as const satisfies Record<TraversalState, number>;
-```
 
-`satisfies` is deliberate here because the mapping retains its concrete inferred keys and values while TypeScript checks that every state is covered.
-
-Consumers use `TraversalState.visiting` and `TraversalRank[state]`. They do not repeat `"visiting"` or its policy number.
-
-Keep protocol versions named:
-
-```ts
 export const FormatVersion = {
   current: 1,
 } as const;
 ```
 
-The new CLI's concrete result statuses and exit values remain unsettled. This
-general TypeScript Pattern demonstrates a representation without defining that
-protocol.
+| Part                                                | Status                                          |
+| --------------------------------------------------- | ----------------------------------------------- |
+| One named runtime definition per semantic value set | Required                                        |
+| Derived union instead of restated members           | Required when a union represents that value set |
+| Named mapping keys and complete typed record        | Required                                        |
+| Runtime values beside their contract                | Required                                        |
+| Object or enum representation                       | Choice, one per concept                         |
+| Example values, member names and order              | Illustrative                                    |
 
-## Placement
+## Applicability And Sources
 
-Place a value object beside the contract it defines:
+For protocol-significant or otherwise magic strings and numbers. A value is magic when its semantic or control meaning is unclear locally, must stay consistent across consumers, participates in a protocol or is risky to change by search and replacement. Ordinary one-off copy, fixture content and self-explanatory local arithmetic are not automatically magic.
 
-- CLI-wide schema versions, operation ids, result statuses, message levels, and exit values live at CLI scope.
-- Command or family diagnostic codes begin inside that command or family.
-- A domain-specific state object remains with its domain.
-- Move a definition only to the nearest common ancestor of demonstrated consumers.
+A readonly const object fits JSON, file, process or library boundaries and useful object access or iteration. An enum fits a contained boundary when enum semantics read more clearly. `satisfies` retains the mapping's inferred keys and values while checking coverage.
 
-Do not create one global constants catalogue. Sharing follows meaning and actual reuse, not the fact that several values are literals.
+The CLI's result statuses and exit values are defined by its
+[shared operation contract](../../../memory/crystallized/documents/cli/shared-operation-contract.md).
+This general TypeScript Pattern demonstrates a representation without defining
+that protocol.
 
-## Magic Boundary
-
-A value is magic when its semantic or control meaning is not obvious from the use site, must remain consistent across consumers, participates in a protocol, or would be risky to change through search and replacement.
-
-Ordinary one-off presentation copy, test fixture content, and self-explanatory local arithmetic are not automatically magic merely because they are strings or numbers. Name them when repetition, domain meaning, or change risk makes that useful.
-
-At minimum, always name:
-
-- Schema and format versions.
-- Command and operation identifiers.
-- Result statuses and message levels.
-- Diagnostic and error codes.
-- Exit values.
-- Lifecycle and persistence states.
-- Wire-format discriminants.
-- Retry, timeout, size, and count limits whose values express policy.
-
-## Review Checks
-
-- No protocol-significant string or number is repeated raw at use sites.
-- One enum or readonly const object owns each semantic value set.
-- Type unions derive from the runtime source instead of restating its members.
-- Mappings use named keys and satisfy a complete typed record.
-- Diagnostic codes remain local until reuse is real.
-- A global constants dumping ground does not replace meaningful placement.
-- Ordinary presentation copy is not buried behind unnecessary indirection.
+- [TypeScript Source Structure](../../../directives/open-forge/typescript/typescript-source-structure.md#exact-contracts-and-named-values) binds naming, mapping and placement.
+- [Source Locality](../../../directives/source-locality.md) binds promotion.

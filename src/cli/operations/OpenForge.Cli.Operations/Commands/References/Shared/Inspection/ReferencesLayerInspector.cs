@@ -1,9 +1,10 @@
+using OpenForge.Cli.Core.Commands.References.Shared.Documents;
 using OpenForge.Cli.Core.Commands.References.Models.Inspection;
 using OpenForge.Cli.Core.Commands.References.Models.Occurrence;
 using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Models.Source;
-using OpenForge.Cli.Core.Commands.References.Shared.Documents;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.Parsing;
 using OpenForge.Cli.Core.Commands.References.Shared.Extraction;
 using OpenForge.Cli.Core.Commands.References.Shared.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
@@ -35,6 +36,9 @@ internal sealed class ReferencesLayerInspector
         _layerReader = layerReader;
         _markdownParser = markdownParser;
     }
+
+    internal ReferencesLayerInspector CreateReadSession(MarkdownDocumentCache documents)
+        => new(_layerReader, source => documents.Parse(_markdownParser.Invoke, source));
 
     internal async ValueTask<ReferencesLayerInspectionResult> InspectAsync(
         ReferencesLayerInspectionInput input,

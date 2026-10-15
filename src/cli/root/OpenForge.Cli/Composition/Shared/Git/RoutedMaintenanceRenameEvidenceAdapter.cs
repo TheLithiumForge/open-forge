@@ -16,6 +16,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Input;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Observations;
@@ -26,13 +27,17 @@ namespace OpenForge.Cli.Composition.Shared.Git;
 internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReader reader) : IRoutedMaintenanceRenameEvidence
 {
     private readonly ConditionalWeakTable<RouteScaffoldRenameProof, RenameEvidenceResult> _observations = new();
-    private readonly PhysicalPathResolver _paths = new();
 
-    internal async ValueTask<RenameEvidenceResult> ReadEvidenceAsync(CliWorkspace workspace, CancellationToken token)
+    internal ValueTask<RenameEvidenceResult> ReadEvidenceAsync(CliWorkspace workspace, CancellationToken token)
+        => ReadEvidenceAsync(workspace, references: null, token);
+
+    internal async ValueTask<RenameEvidenceResult> ReadEvidenceAsync(CliWorkspace workspace, LocalReferenceDoctorView? references, CancellationToken token)
     {
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new(workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
-        var ownership = await WorkspaceOwnershipReader.ReadAsync(_paths, workspace, token).ConfigureAwait(false);
-        var settings = await WorkspaceSettingsReader.ReadAsync(_paths, workspace, token).ConfigureAwait(false);
+        var paths = new PhysicalPathResolver().CreateReadSession();
+        var catalogue = references?.Catalogue
+            ?? await new SourceCatalogueReader().ReadAsync(new(workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
+        var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
+        var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
         var policy = new RenameEvidencePolicy
         {
             ManagedPaths = [.. ownership.Document.ManagedPaths().Select(claim => claim.Path)],
@@ -51,12 +56,15 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
         {
             var path = source.Identity.CanonicalBasePath;
             if (!RenameCandidateAdmission.Allows(path, recordPolicy) && path != SourceLogicalPath.LoaderPath) continue;
-            if (NoFollowLeafObserver.Observe(_paths, workspace, SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, path), token).State != NoFollowLeafState.OrdinaryFile) continue;
+            if (NoFollowLeafObserver.Observe(paths, workspace, SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, path), token).State != NoFollowLeafState.OrdinaryFile) continue;
             try
             {
                 var bytes = await File.ReadAllBytesAsync(source.Base.PhysicalPath, token).ConfigureAwait(false);
                 var snapshot = FileStateSnapshot.File(SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, path), source.Base.PhysicalPath, bytes);
-                identities.AddRange(RenameRecordedEntryReader.Read(path, snapshot, parser.Parse(Encoding.UTF8.GetString(bytes))));
+                var text = Encoding.UTF8.GetString(bytes);
+                var document = references?.Documents.TryGetValue(path, out var retained) == true && string.Equals(retained.Source, text, StringComparison.Ordinal)
+                    ? retained : parser.Parse(text);
+                identities.AddRange(RenameRecordedEntryReader.Read(path, snapshot, document));
             }
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
             {
@@ -73,6 +81,7 @@ internal sealed class RoutedMaintenanceRenameEvidenceAdapter(RenameEvidenceReade
                 && settings.State is WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete,
             Policy = policy,
             RecordedIdentities = identities.ToImmutable(),
+            Documents = references?.Documents ?? ImmutableDictionary<string, OpenForge.Cli.Core.Framework.Documents.Markdown.Models.MarkdownDocumentFacts>.Empty,
             PolicyExpectations = [ownership.Snapshot?.Expectation ?? FileExpectation.Missing(ownership.LogicalPath),
                 settings.Snapshot?.Expectation ?? FileExpectation.Missing(settings.LogicalPath)],
         }, token).ConfigureAwait(false);

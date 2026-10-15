@@ -1,11 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.Parsing;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Acquisition;
 using OpenForge.Cli.Core.Framework.Sources.References.Shared.Resolution;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
@@ -33,6 +36,53 @@ internal sealed class SourceLinkDestinationResolver
     private readonly SourceLinkPhysicalPathResolver _physicalPathResolver;
     private readonly SourceLinkStrictUtf8Reader _strictUtf8Reader;
     private readonly SourceLinkMarkdownParser _markdownParser;
+    private readonly SourceFileAcquisition? _acquisition;
+    private readonly PhysicalPathResolver? _physicalPaths;
+    private readonly SourceLinkDestinationResolver? _origin;
+
+    internal SourceLinkDestinationResolver CreateSession(SourceCatalogue catalogue)
+        => CreateSession(new MarkdownDocumentCache());
+
+    internal SourceLinkDestinationResolver CreateSession(MarkdownDocumentCache documents)
+        => new(_origin ?? this, documents);
+
+    internal SourceLinkDestinationResolver CreateSession(SourceReadSession session)
+        => new(_origin ?? this, session.DocumentReader.Documents, session.DocumentReader.PhysicalPaths, session.DocumentReader.Acquisition);
+
+    internal SourceLinkDestinationResolver CreateSession(SourceFileAcquisition acquisition)
+        => new(_origin ?? this, acquisition.Documents, acquisition: acquisition);
+
+    internal void RetainDocument(MarkdownDocumentFacts document)
+        => _acquisition?.RetainDocument(document);
+
+    internal void RetainSource(SourceLayer layer, MarkdownDocumentFacts document)
+        => RetainDocument(document);
+
+    internal MarkdownDocumentFacts ParseDocument(string source)
+        => _markdownParser(source);
+
+    private SourceLinkDestinationResolver(SourceLinkDestinationResolver resolver, MarkdownDocumentCache documents,
+        PhysicalPathResolver? physicalPaths = null, SourceFileAcquisition? acquisition = null)
+    {
+        _origin = resolver;
+        var physicalResolver = resolver._physicalPathResolver;
+        if (resolver._physicalPaths is { } paths)
+        {
+            var session = physicalPaths ?? paths.CreateReadSession();
+            physicalResolver = (workspace, path) => session.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, path);
+        }
+        _acquisition = acquisition ?? new SourceFileAcquisition(documents, resolver._strictUtf8Reader.Invoke, resolver._markdownParser.Invoke);
+        _physicalPathResolver = physicalResolver;
+        _strictUtf8Reader = _acquisition.ReadAsync;
+        _markdownParser = _acquisition.ParseDocument;
+    }
+
+    internal SourceLinkDestinationResolver(
+        PhysicalPathResolver physicalPaths, SourceLinkStrictUtf8Reader strictUtf8Reader, SourceLinkMarkdownParser markdownParser)
+        : this((workspace, path) => physicalPaths.ResolveCandidate(workspace.LexicalRoot, workspace.PhysicalRoot, path), strictUtf8Reader, markdownParser)
+    {
+        _physicalPaths = physicalPaths;
+    }
 
     internal SourceLinkDestinationResolver(
         SourceLinkPhysicalPathResolver physicalPathResolver,
@@ -282,7 +332,7 @@ internal sealed class SourceLinkDestinationResolver
             return Malformed(rawFragment, SourceLinkTargetResolution.Malformed, "A local destination must identify a file, not a directory.");
         }
 
-        var layerMatches = SourceLinkTargetIdentityReader.ReadTargetLayers(input.Catalogue.Sources, physicalTargetPath);
+        var layerMatches = input.Catalogue.FindLayersByPhysicalPath(physicalTargetPath);
         if (layerMatches.Count > 1)
         {
             return new SourceLinkDestinationFacts

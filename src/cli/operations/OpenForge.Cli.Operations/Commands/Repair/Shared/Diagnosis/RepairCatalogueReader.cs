@@ -5,7 +5,6 @@ using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
-using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
@@ -13,12 +12,19 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Observations;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Acquisition;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
-internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathResolver, RepairRenameRead? renameRead = null)
+internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathResolver, RepairRenameRead? renameRead = null,
+    RepairRenameReferenceRead? renameReferenceRead = null, bool retainDiagnosisEvidence = false, RepairTargetReader? targets = null)
 {
+    internal const int MaximumConcurrentProposals = 16;
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
     private readonly PhysicalPathResolver _physicalPathResolver = physicalPathResolver;
 
@@ -26,79 +32,107 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
         CliWorkspace workspace,
         LocalReferenceDoctorView view,
         CancellationToken cancellationToken,
-        IReadOnlyList<RepairRelinkRequest>? relinks = null)
+        IReadOnlyList<RepairRelinkRequest>? relinks = null,
+        DoctorMaintenanceObservation? maintenance = null)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(view);
         var findings = new List<RepairFinding>();
-        var protection = await new RepairProtectionReader(_physicalPathResolver).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var protection = await new RepairProtectionReader(_physicalPathResolver).ReadAsync(workspace, cancellationToken, view.Catalogue).ConfigureAwait(false);
         if (protection.Policy is not { } policy)
             return new([], [new(RepairFindingCode.DiagnosisIncomplete, "Repair source settings or ownership could not be established.")]);
+        var retainedEvidence = retainDiagnosisEvidence ? maintenance?.Renames : null;
         var snapshots = await ReadSnapshotsAsync(workspace, view, findings, cancellationToken)
             .ConfigureAwait(false);
-        var documents = ReadSnapshotDocuments(snapshots, findings);
+        var documents = ReadSnapshotDocuments(snapshots, view.Documents, findings);
         var scope = RepairAuthoredReferenceBoundary.Filter(view.References, documents);
-        var evidence = renameRead is null ? null : await renameRead(workspace, cancellationToken).ConfigureAwait(false);
-        AddBoundaryFindings(findings, scope.IncompleteSources);
-        var proposals = new List<RepairProposalInput>();
-        foreach (var reference in scope.References
-            .OrderBy(value => value.SourcePath, StringComparer.Ordinal)
-            .ThenBy(value => value.DestinationLocation?.ByteOffset))
+        RenameEvidenceResult? evidence = retainedEvidence;
+        if (!retainDiagnosisEvidence || maintenance is null)
         {
+            if (renameReferenceRead is not null)
+                evidence = await renameReferenceRead(workspace, view, cancellationToken).ConfigureAwait(false);
+            else if (renameRead is not null)
+                evidence = await renameRead(workspace, cancellationToken).ConfigureAwait(false);
+        }
+        var catalogue = view.Catalogue
+            ?? (await new SourceReadSessionReader(_physicalPathResolver).ReadAsync(workspace, cancellationToken).ConfigureAwait(false)).Catalogue;
+        var targetAcquisition = new SourceFileAcquisition();
+        foreach (var document in view.Documents.Values) targetAcquisition.RetainDocument(document);
+        var targetReader = targets ?? new RepairTargetReader(catalogue, acquisition: targetAcquisition);
+        var candidateFilter = evidence is null ? null : new RenameWeakCandidateFilter(evidence.Facts.Candidates, evidence.Facts.Candidates);
+        var renameReader = new RepairRenameProposalReader(_physicalPathResolver, targetReader, candidateFilter);
+        var candidatesByOccurrence = view.Candidates.ToLookup(candidate => (candidate.SourcePath, candidate.Destination));
+        AddBoundaryFindings(findings, scope.IncompleteSources);
+        var references = scope.References
+            .OrderBy(value => value.SourcePath, StringComparer.Ordinal)
+            .ThenBy(value => value.DestinationLocation?.ByteOffset).ToArray();
+        var proposalReads = new RepairProposalInput?[references.Length];
+        var proposalFindings = new RepairFinding?[references.Length];
+        await Parallel.ForEachAsync(Enumerable.Range(0, references.Length), new ParallelOptions
+        {
+            MaxDegreeOfParallelism = MaximumConcurrentProposals,
+            CancellationToken = cancellationToken,
+        }, async (index, token) =>
+        {
+            var reference = references[index];
             if (reference.Kind != LocalReferenceKind.Link
-                || reference.DestinationLocation is null)
+                || reference.DestinationLocation is null
+                || reference.Facts.Target.Resolution == SourceLinkTargetResolution.Complete && reference.Canonicalizations.Count == 0)
             {
-                continue;
+                return;
             }
 
             if (!RepairProtectionReader.Allows(reference.SourcePath, policy))
             {
                 if (RepairRemainingFindingReader.Read([reference]).Any())
-                    findings.Add(RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation, reference.SourcePath, policy));
-                continue;
+                    proposalFindings[index] = RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation, reference.SourcePath, policy);
+                return;
             }
-            if (!snapshots.TryGetValue(reference.SourcePath, out var snapshot)) continue;
+            if (!snapshots.TryGetValue(reference.SourcePath, out var snapshot)) return;
+            var referenceView = view with { Candidates = candidatesByOccurrence[(reference.SourcePath, reference.Destination)].ToArray() };
             if (reference.Facts.Target.Path is { } originalTarget && !RepairProtectionReader.Allows(originalTarget, policy))
             {
                 if (RepairRemainingFindingReader.Read([reference]).Any())
-                    findings.Add(RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation, originalTarget, policy));
-                continue;
+                    proposalFindings[index] = RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation, originalTarget, policy);
+                return;
             }
 
-            var proposal = evidence is null ? null : await new RepairRenameProposalReader(_physicalPathResolver).ReadAsync(
-                workspace, reference, view, evidence, cancellationToken).ConfigureAwait(false);
-            proposal ??= ReadProposal(reference, RepairRenameProposalReader.FilterWeak(view, reference, evidence));
+            var proposal = evidence is null ? null : await renameReader.ReadAsync(
+                workspace, reference, referenceView, evidence, token).ConfigureAwait(false);
+            proposal ??= ReadProposal(reference, RepairRenameProposalReader.FilterWeak(referenceView, reference, evidence, candidateFilter));
             if (proposal?.Candidates is not null)
             {
                 var protectedTarget = proposal.Candidates.Items.FirstOrDefault(candidate =>
                     !RepairProtectionReader.Allows(Uri.UnescapeDataString(candidate.Target.CanonicalTargetPath), policy));
-                proposal = await ResolveCandidatesAsync(workspace, proposal, relinks ?? [], policy, cancellationToken).ConfigureAwait(false);
+                proposal = await targetReader.ResolveCandidatesAsync(workspace, proposal, relinks ?? [], policy, token).ConfigureAwait(false);
                 if (proposal.Candidates is { Items.Count: 0 } && protectedTarget is not null)
                 {
-                    findings.Add(RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation,
-                        Uri.UnescapeDataString(protectedTarget.Target.CanonicalTargetPath), policy));
-                    continue;
+                    proposalFindings[index] = RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation,
+                        Uri.UnescapeDataString(protectedTarget.Target.CanonicalTargetPath), policy);
+                    return;
                 }
             }
             if (proposal is null)
             {
-                continue;
+                return;
             }
             if (proposal.Target is { } target && !RepairProtectionReader.Allows(Uri.UnescapeDataString(target.CanonicalTargetPath), policy))
             {
-                findings.Add(RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation,
-                    Uri.UnescapeDataString(target.CanonicalTargetPath), policy));
-                continue;
+                proposalFindings[index] = RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation,
+                    Uri.UnescapeDataString(target.CanonicalTargetPath), policy);
+                return;
             }
 
-            proposals.Add(new RepairProposalInput(
+            proposalReads[index] = new RepairProposalInput(
                 proposal,
                 new RepairOccurrenceState(
                     reference.SourcePath,
                     reference.DestinationLocation,
                     snapshot),
-                reference.Destination));
-        }
+                reference.Destination);
+        }).ConfigureAwait(false);
+        var proposals = proposalReads.OfType<RepairProposalInput>().ToArray();
+        findings.AddRange(proposalFindings.OfType<RepairFinding>());
 
         findings.AddRange(RepairRemainingFindingReader.Read(scope.References).Where(finding =>
             !findings.Any(existing => existing.Protection && existing.SourceCanonicalPath == finding.SourceCanonicalPath && existing.Occurrence == finding.Occurrence)
@@ -107,47 +141,12 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
                 && input.Proposal.Occurrence == finding.Occurrence)));
         return new RepairCatalogueRead(proposals, findings)
         {
+            Catalogue = catalogue,
             RenameEvidence = evidence,
+            Documents = documents.Concat(evidence?.Facts.Candidates.Select(candidate => KeyValuePair.Create(candidate.Path, candidate.Content.Document)) ?? [])
+                .DistinctBy(item => item.Key).ToDictionary(item => item.Key, item => item.Value, StringComparer.Ordinal),
             MissingTargetReferences = scope.References.Where(reference => reference.Kind == LocalReferenceKind.Link
                 && reference.DestinationLocation is not null && reference.Facts.Target is { Resolution: SourceLinkTargetResolution.Missing, Path: not null }).ToArray(),
-        };
-    }
-
-    private static async ValueTask<RepairProposal> ResolveCandidatesAsync(
-        CliWorkspace workspace, RepairProposal proposal, IReadOnlyList<RepairRelinkRequest> relinks, RoutedMetadataPolicyContext policy, CancellationToken cancellationToken)
-    {
-        var requested = relinks.SingleOrDefault(relink => relink.SourceCanonicalPath == proposal.SourceCanonicalPath
-            && relink.Line == proposal.Occurrence.Line && relink.Column == proposal.Occurrence.Column);
-        var candidates = new List<RepairCandidate>();
-        var reader = new RepairTargetReader();
-        foreach (var candidate in proposal.Candidates?.Items ?? [])
-        {
-            var target = candidate.Target;
-            if (!RepairProtectionReader.Allows(Uri.UnescapeDataString(target.CanonicalTargetPath), policy)) continue;
-            if (requested is not null
-                && Uri.UnescapeDataString(requested.Target.CanonicalTargetPath) == Uri.UnescapeDataString(target.CanonicalTargetPath))
-            {
-                target = new RepairTargetSelection(requested.Target.CanonicalTargetPath, requested.Target.TargetFragment, candidate.Evidence) { RenameProof = candidate.Target.RenameProof };
-            }
-
-            var readTarget = target.RenameProof is { } proof && proof.NewPath != Uri.UnescapeDataString(target.CanonicalTargetPath)
-                && !File.Exists(Path.Combine(workspace.LexicalRoot, Uri.UnescapeDataString(target.CanonicalTargetPath).Replace('/', Path.DirectorySeparatorChar)))
-                ? new RepairTargetSelection(proof.NewPath, target.TargetFragment) : target;
-            var facts = await reader.ResolveAsync(workspace, proposal.SourceCanonicalPath, readTarget, cancellationToken).ConfigureAwait(false);
-            if (facts.Target.Resolution == SourceLinkTargetResolution.Complete)
-            {
-                candidates.Add(new RepairCandidate(target, candidate.Evidence, candidate.RecommendedForReview) { Identity = candidate.Identity });
-            }
-        }
-
-        return new RepairProposal(proposal.Member, proposal.SourceCanonicalPath, proposal.Occurrence,
-            proposal.ExpectedDestination, new RepairCandidateSet(candidates))
-        {
-            MissingPath = proposal.MissingPath,
-            RenameResolution = proposal.RenameResolution,
-            RenameProof = proposal.RenameProof,
-            SourceMoveProof = proposal.SourceMoveProof,
-            RenameEvidenceTimedOut = proposal.RenameEvidenceTimedOut
         };
     }
 
@@ -203,6 +202,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
         CancellationToken cancellationToken)
     {
         var snapshots = new Dictionary<string, FileStateSnapshot>(StringComparer.Ordinal);
+        var paths = _physicalPathResolver.CreateReadSession();
         foreach (var sourcePath in view.References
             .Select(reference => reference.SourcePath)
             .Distinct(StringComparer.Ordinal)
@@ -211,7 +211,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
             var lexicalPath = Path.Combine(
                 workspace.LexicalRoot,
                 sourcePath.Replace('/', Path.DirectorySeparatorChar));
-            var resolution = _physicalPathResolver.ResolveCandidate(
+            var resolution = paths.ResolveCandidate(
                 workspace.LexicalRoot,
                 workspace.PhysicalRoot,
                 lexicalPath);
@@ -243,6 +243,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
 
     private static IReadOnlyDictionary<string, MarkdownDocumentFacts> ReadSnapshotDocuments(
         IReadOnlyDictionary<string, FileStateSnapshot> snapshots,
+        IReadOnlyDictionary<string, MarkdownDocumentFacts> retained,
         List<RepairFinding> findings)
     {
         var parser = new MarkdownDocumentParser();
@@ -251,7 +252,9 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
         {
             try
             {
-                var document = parser.Parse(StrictUtf8.GetString(snapshot.Bytes.AsSpan()));
+                var text = StrictUtf8.GetString(snapshot.Bytes.AsSpan());
+                var document = retained.TryGetValue(sourcePath, out var parsed) && string.Equals(parsed.Source, text, StringComparison.Ordinal)
+                    ? parsed : parser.Parse(text);
                 documents.Add(sourcePath, document);
             }
             catch (DecoderFallbackException)

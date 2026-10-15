@@ -52,7 +52,7 @@ The header "Scenarios written, not yet run" is stale. Verified history:
 1. Move H1 to H7 into Task 39 as its per-command checklist, with Run 1's rule to check claims against the workspace.
 2. Move B-5 into Task 39.
 3. Sort the Task 61 CLI findings into defects, wording, and accepted behaviour inside the proposed findings Task, using this Task's acceptance shape.
-4. Keep the backlog line "Select the next useful user journeys" in [beta follow-ups](../../../../working/cli-development/tasks/beta-follow-ups.md). Give it an owner when selected, since Tasks 41 and 45 would both be closed.
+4. Keep the backlog line "Select the next useful user journeys" in [beta follow-ups](../../../../working/cli-development/tasks/beta-follow-up-backlog.md). Give it an owner when selected, since Tasks 41 and 45 would both be closed.
 5. Update the beta ordering in the task index, then archive the record with `run-1.md`, `scenario-example.md`, and the journey lists.
 
 ## Pros And Cons

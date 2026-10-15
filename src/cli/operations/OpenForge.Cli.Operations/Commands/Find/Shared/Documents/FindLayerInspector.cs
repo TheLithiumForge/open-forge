@@ -43,7 +43,7 @@ internal sealed class FindLayerInspector(
 
         var source = read.Read?.Value
             ?? throw new InvalidOperationException("A complete source document read requires source text.");
-        var document = _markdownDocumentReader(source);
+        var document = input.DocumentReader.Documents.Parse(_markdownDocumentReader.Invoke, source);
         var frontmatter = _frontmatterFactsReader(new FindFrontmatterInput(input.Layer, document));
         var bodyTags = _bodyTagScanner.Scan(new FindBodyTagInput(document));
         return new FindLayerInspectionFacts(

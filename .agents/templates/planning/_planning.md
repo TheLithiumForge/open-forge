@@ -31,3 +31,7 @@ A separate `Plan` holds the sequence. A `Backlog` holds selection context. A `Ch
 - [Preserve a useful possibility with its motivation, uncertainties, and smallest worthwhile experiment](idea.md) - #Extension #Template #Memory #Idea
 - [Maintain a separate sequence only when its steps and dependencies need their own source](plan.md) - #Extension #Template #Planning #Plan #Memory
 - [Keep one task's outcome, short plan, and current state together](task.md) - #Extension #Template #Planning #Task #Memory
+
+## Related Rules
+
+[Work Record Relationships](../../directives/planning/work-records.md) defines the source and completion boundaries shown by the [Work Records Pattern](../../patterns/work-records.md).

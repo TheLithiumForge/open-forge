@@ -11,19 +11,22 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Shared.ReferenceMaintenance;
 
 internal sealed class ReferenceProtectionReader(PhysicalPathResolver paths)
 {
-    internal async ValueTask<ReferenceProtectionRead> ReadAsync(CliWorkspace workspace, CancellationToken token)
+    private static readonly RoutedMetadataCompletionPolicy ProtectionPolicy = new();
+    internal async ValueTask<ReferenceProtectionRead> ReadAsync(CliWorkspace workspace, CancellationToken token, SourceCatalogue? retainedCatalogue = null)
     {
         var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
         var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete)
             || settings.State is not (WorkspaceSettingsReadState.Absent or WorkspaceSettingsReadState.Complete)) return new(null, []);
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new(workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
+        var catalogue = retainedCatalogue
+            ?? await new SourceCatalogueReader().ReadAsync(new(workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
         return new(new()
         {
             Settings = settings.Document,
@@ -36,9 +39,10 @@ internal sealed class ReferenceProtectionReader(PhysicalPathResolver paths)
 
     internal static bool Allows(string path, RoutedMetadataPolicyContext policy)
         // Library records do not own ordinary authored bytes; physical projections retain their no-follow boundaries.
-        => Read(path, policy).Protection is RoutedMetadataEligibility.Eligible or RoutedMetadataEligibility.LibraryProjection;
+        => ProtectionPolicy.Protection(path, policy)
+            is RoutedMetadataEligibility.Eligible or RoutedMetadataEligibility.LibraryProjection;
 
     internal static ReferenceProtection Read(string path, RoutedMetadataPolicyContext policy)
-        => new(new RoutedMetadataCompletionPolicy().Protection(path, policy),
+        => new(ProtectionPolicy.Protection(path, policy),
             policy.Ownership.ManagedPaths().FirstOrDefault(claim => claim.Path == path));
 }

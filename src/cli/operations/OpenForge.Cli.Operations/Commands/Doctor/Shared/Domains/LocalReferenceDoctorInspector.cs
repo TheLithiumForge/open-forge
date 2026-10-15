@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Mod
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Maintenance;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Git;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 
@@ -15,11 +16,14 @@ internal static class LocalReferenceDoctorInspector
 
     internal static DoctorDomainReport Inspect(LocalReferenceDoctorView view, DoctorMaintenanceObservation? maintenance = null)
     {
+        var candidatesByOccurrence = view.Candidates.ToLookup(candidate => (candidate.SourcePath, candidate.Destination));
+        var candidateFilter = maintenance?.Renames is { } evidence
+            ? new RenameWeakCandidateFilter(evidence.Facts.Candidates, evidence.Facts.Candidates) : null;
         var findings = view.References
             .SelectMany(observation => CreateFindings(
                 observation,
                 view.CandidateScan == LocalReferenceCandidateScanState.Complete,
-                view.Candidates, maintenance))
+                candidatesByOccurrence[(observation.SourcePath, observation.Destination)].ToArray(), maintenance, candidateFilter))
             .ToArray();
         var coverage = DoctorDomainSupport.Coverage(view.State);
         if (view.References.Any(reference =>
@@ -82,7 +86,8 @@ internal static class LocalReferenceDoctorInspector
         LocalReferenceObservation observation,
         bool candidateScanComplete,
         IReadOnlyList<LocalReferenceCandidateObservation> observations,
-        DoctorMaintenanceObservation? maintenance)
+        DoctorMaintenanceObservation? maintenance,
+        RenameWeakCandidateFilter? candidateFilter)
     {
         var target = observation.Facts.Target;
         if (target.Resolution == SourceLinkTargetResolution.Missing
@@ -123,7 +128,7 @@ internal static class LocalReferenceDoctorInspector
         }
         if (target.Resolution == SourceLinkTargetResolution.Missing && target.Path is not null && renames is not null)
         {
-            yield return DoctorRenameFindingFactory.Create(observation, renames, candidateScanComplete ? observations : []);
+            yield return DoctorRenameFindingFactory.Create(observation, renames, candidateScanComplete ? observations : [], candidateFilter);
             yield break;
         }
         var candidates = candidateScanComplete

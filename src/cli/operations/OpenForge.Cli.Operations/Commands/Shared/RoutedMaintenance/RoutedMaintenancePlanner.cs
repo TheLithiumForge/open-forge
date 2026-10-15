@@ -17,6 +17,7 @@ using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models.Formation;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
@@ -24,7 +25,8 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 namespace OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance;
 
 // Completion precedes intended membership and direct-child projection, per Forgiving Maintenance.
-internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRoutedMaintenanceRenameEvidence? renameEvidence = null)
+internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRoutedMaintenanceRenameEvidence? renameEvidence = null,
+    RoutedMaintenanceSnapshotRead? readSnapshot = null)
 {
     private readonly RoutedMetadataCompletionPolicy _policy = new();
     private readonly RouteScaffoldSourceBuilder _sources = new();
@@ -39,22 +41,38 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
         var replacements = new Dictionary<string, ImmutableArray<byte>>(StringComparer.Ordinal);
         var limitations = new List<RoutedMaintenanceLimitation>();
         var eligible = new List<SourceLogicalSource>();
-        var reader = new SourceDocumentReader(catalogue.Workspace);
+        var readPaths = paths.CreateReadSession();
+        var reader = new SourceDocumentReader(catalogue.Workspace, readPaths);
+        var roots = request.RootPaths.Select(path => (Path: path, Folder: SourceLogicalPath.ReadParent(path))).ToArray();
+        var entrypointsByFolder = catalogue.Sources.Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form))
+            .Select(source => source.Identity.CanonicalBasePath).Select(path => (Path: path, Folder: SourceLogicalPath.ReadParent(path))).ToArray();
+        var acquisitions = new List<(SourceLogicalSource Source, RoutedMetadataFileFacts Facts, SourceLayerVerification Verification)>();
         foreach (var source in request.SelectedSources.OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
             .DistinctBy(source => source.Base.PhysicalPath, PhysicalIdentityTracker.PathComparer))
         {
             var path = source.Identity.CanonicalBasePath;
-            var facts = Facts(source, request);
-            var leaf = NoFollowLeafObserver.Observe(paths, catalogue.Workspace, SourceLogicalPath.ToLexicalPath(catalogue.Workspace.LexicalRoot, path), token);
+            var facts = Facts(source);
+            var leaf = NoFollowLeafObserver.Observe(readPaths, catalogue.Workspace, SourceLogicalPath.ToLexicalPath(catalogue.Workspace.LexicalRoot, path), token);
             facts = facts with { IsSafeOrdinaryLeaf = leaf.State == NoFollowLeafState.OrdinaryFile };
             if (_policy.Evaluate(facts, request.Policy) != RoutedMetadataEligibility.Eligible) continue;
-            var read = await reader.ReadAsync(source.Base, token).ConfigureAwait(false);
-            if (read.Read?.State != FileReadState.Complete) continue;
-            var original = await new SourceDocumentSnapshotReader().ReadAsync(catalogue.Workspace, read, token).ConfigureAwait(false);
+            var verification = reader.Verify(source.Base, token);
+            if (verification.State == SourceLayerVerificationState.Cancelled) token.ThrowIfCancellationRequested();
+            if (verification.State != SourceLayerVerificationState.Verified) continue;
+            acquisitions.Add((source, facts, verification));
+        }
+        var snapshots = await new RoutedMaintenanceSnapshotReader(readSnapshot)
+            .ReadAsync(catalogue.Workspace, acquisitions.Select(item => item.Verification).ToArray(), token).ConfigureAwait(false);
+        for (var index = 0; index < acquisitions.Count; index++)
+        {
+            token.ThrowIfCancellationRequested();
+            if (snapshots[index] is not { } original) continue;
+            var (source, facts, _) = acquisitions[index];
+            var path = source.Identity.CanonicalBasePath;
             originals.Add(path, original);
             var bytes = request.IntendedBytes.TryGetValue(path, out var intended) ? intended : original.Bytes;
-            var result = _policy.Complete(new() { File = facts, Bytes = bytes }, request.Policy).Completion;
-            documents.Add(path, _parser.Parse(Encoding.UTF8.GetString(result.Bytes.AsSpan())));
+            request.ObservedDocuments.TryGetValue(path, out var observedDocument);
+            var result = _policy.Complete(new() { File = facts, Bytes = bytes, Document = observedDocument }, request.Policy).Completion;
+            documents.Add(path, result.Document ?? _parser.Parse(Encoding.UTF8.GetString(result.Bytes.AsSpan())));
             if (result.State is FrameworkMetadataCompletionState.Malformed or FrameworkMetadataCompletionState.Unsafe)
             {
                 limitations.Add(new(path, result.Cause ?? "The authored metadata is invalid.", result.State == FrameworkMetadataCompletionState.Malformed));
@@ -95,14 +113,14 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
             var metadata = completions[index];
             if (!metadata.Completion.Fields.Contains(FrameworkMetadataField.Tags)) continue;
             var source = catalogue.FindByPath(metadata.Path) ?? throw new InvalidOperationException();
-            var facts = Facts(source, request, intendedEntrypointPaths);
+            var facts = Facts(source, intendedEntrypointPaths);
             if (metadata.Completion.Tags is { } currentTags && currentTags.SequenceEqual(RoutedMetadataDefaults.Tags(facts), StringComparer.Ordinal)) continue;
             var original = originals[metadata.Path];
             var bytes = request.IntendedBytes.TryGetValue(metadata.Path, out var intended) ? intended : original.Bytes;
             var completion = _policy.Complete(new() { File = facts, Bytes = bytes }, request.Policy).Completion;
             completions[index] = new(metadata.Path, completion);
             replacements[metadata.Path] = completion.Bytes;
-            documents[metadata.Path] = _parser.Parse(Encoding.UTF8.GetString(completion.Bytes.AsSpan()));
+            documents[metadata.Path] = completion.Document ?? _parser.Parse(Encoding.UTF8.GetString(completion.Bytes.AsSpan()));
         }
         var entrypoints = new List<RouteScaffoldEntrypointIntent>();
         var removed = new List<string>();
@@ -111,13 +129,13 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
         foreach (var gap in discovery.Gaps)
         {
             var source = _sources.Create(catalogue.Workspace, gap.CanonicalPath);
-            var leaf = NoFollowLeafObserver.Observe(paths, catalogue.Workspace, SourceLogicalPath.ToLexicalPath(catalogue.Workspace.LexicalRoot, gap.CanonicalPath), token);
+            var leaf = NoFollowLeafObserver.Observe(readPaths, catalogue.Workspace, SourceLogicalPath.ToLexicalPath(catalogue.Workspace.LexicalRoot, gap.CanonicalPath), token);
             if (leaf.State != NoFollowLeafState.Missing)
             {
                 limitations.Add(new(gap.CanonicalPath, "The intended entrypoint path is occupied or unsafe.", false));
                 continue;
             }
-            var tags = RoutedMetadataDefaults.Tags(Facts(source, request, intendedEntrypointPaths));
+            var tags = RoutedMetadataDefaults.Tags(Facts(source, intendedEntrypointPaths));
             var scaffold = new RouteScaffoldComposer().Compose(RouteScaffoldComposer.FolderDocument(gap.FolderId,
                 FrameworkMetadataDescriptionDeriver.SentenceCase(SourceLogicalPath.ReadFileName(SourceLogicalPath.ReadParent(gap.CanonicalPath))), tags, request.Policy.Settings.Frontmatter));
             var old = eligible.Where(item => SourceLogicalPath.ReadParent(item.Identity.CanonicalBasePath) == SourceLogicalPath.ReadParent(gap.CanonicalPath)
@@ -138,7 +156,7 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
                 intent = intent with { IntendedBytes = movedBytes };
             if (intent.IsRename)
             {
-                var completed = _policy.Complete(new() { File = Facts(source, request, intendedEntrypointPaths), Bytes = intent.IntendedBytes }, request.Policy).Completion;
+                var completed = _policy.Complete(new() { File = Facts(source, intendedEntrypointPaths), Bytes = intent.IntendedBytes }, request.Policy).Completion;
                 if (completed.State == FrameworkMetadataCompletionState.Completed)
                 {
                     intent = intent with { IntendedBytes = completed.Bytes };
@@ -176,6 +194,23 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
             RenameProofs = [.. proofs],
             Replacements = replacements.ToImmutableDictionary(StringComparer.Ordinal),
         };
+
+        RoutedMetadataFileFacts Facts(SourceLogicalSource source, IEnumerable<string>? intendedEntrypoints = null)
+        {
+            var path = source.Identity.CanonicalBasePath;
+            return new()
+            {
+                CanonicalPath = path,
+                LoaderRootEntrypointPath = roots.FirstOrDefault(root => RoutedMetadataDefaults.IsAncestor(path, root.Folder)).Path,
+                RouteEntrypointPaths = [.. entrypointsByFolder.Where(item => RoutedMetadataDefaults.IsAncestor(path, item.Folder)).Select(item => item.Path)
+                    .Concat((intendedEntrypoints ?? []).Where(entrypoint => RoutedMetadataDefaults.IsAncestor(path, SourceLogicalPath.ReadParent(entrypoint))))],
+                IsSelected = true,
+                IsReadable = true,
+                IsSafeOrdinaryLeaf = true,
+                IsGeneratedFile = false,
+                HasManagedAuthoredRegions = false,
+            };
+        }
     }
 
     internal async ValueTask<bool> VerifyProofsAsync(RoutedMaintenanceIntent intent, CancellationToken token)
@@ -185,22 +220,4 @@ internal sealed class RoutedMaintenancePlanner(PhysicalPathResolver paths, IRout
         return true;
     }
 
-    private static RoutedMetadataFileFacts Facts(SourceLogicalSource source, RoutedMaintenanceRequest request, IEnumerable<string>? intendedEntrypoints = null)
-    {
-        var path = source.Identity.CanonicalBasePath;
-        var root = request.RootPaths.FirstOrDefault(root => RoutedMetadataDefaults.IsAncestor(path, SourceLogicalPath.ReadParent(root)));
-        return new()
-        {
-            CanonicalPath = path,
-            LoaderRootEntrypointPath = root,
-            RouteEntrypointPaths = [.. request.Catalogue.Sources.Where(item => SourceFormClassifier.IsEntrypoint(item.Base.Form))
-                .Select(item => item.Identity.CanonicalBasePath).Concat(intendedEntrypoints ?? [])
-                .Where(entrypoint => RoutedMetadataDefaults.IsAncestor(path, SourceLogicalPath.ReadParent(entrypoint)))],
-            IsSelected = true,
-            IsReadable = true,
-            IsSafeOrdinaryLeaf = true,
-            IsGeneratedFile = false,
-            HasManagedAuthoredRegions = false,
-        };
-    }
 }

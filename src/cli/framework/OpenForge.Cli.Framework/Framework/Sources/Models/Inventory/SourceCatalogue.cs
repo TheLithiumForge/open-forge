@@ -13,6 +13,7 @@ internal sealed class SourceCatalogue
     private readonly IReadOnlyDictionary<string, IReadOnlyList<SourceCandidate>> _candidatesById;
     private readonly IReadOnlyDictionary<string, IReadOnlyList<SourceLogicalSource>> _sourcesById;
     private readonly IReadOnlyDictionary<string, SourceLogicalSource> _sourcesByPath;
+    private readonly IReadOnlyDictionary<string, IReadOnlyList<(SourceLogicalSource Source, SourceLayer Layer)>> _layersByPhysicalPath;
 
     internal SourceCatalogue(
         CliWorkspace workspace,
@@ -95,6 +96,15 @@ internal sealed class SourceCatalogue
         }
 
         _sourcesByPath = new ReadOnlyDictionary<string, SourceLogicalSource>(sourcesByPath);
+        _layersByPhysicalPath = orderedSources
+            .SelectMany(source => (source.Overwrite is { } overwrite ? new[] { source.Base, overwrite } : [source.Base])
+                .Select(layer => (Source: source, Layer: layer)))
+            .GroupBy(item => item.Layer.PhysicalPath, PhysicalIdentityTracker.PathComparer)
+            .ToDictionary(group => group.Key,
+                group => (IReadOnlyList<(SourceLogicalSource Source, SourceLayer Layer)>)Array.AsReadOnly(group
+                    .OrderBy(item => item.Source.Identity.AutomaticId, StringComparer.Ordinal)
+                    .ThenBy(item => item.Source.Identity.CanonicalBasePath, StringComparer.Ordinal)
+                    .ThenBy(item => item.Layer.Kind).ToArray()), PhysicalIdentityTracker.PathComparer);
     }
 
     internal CliWorkspace Workspace { get; }
@@ -106,6 +116,9 @@ internal sealed class SourceCatalogue
     internal IReadOnlyList<SourceCatalogueIssue> Issues { get; }
 
     internal bool IsCancelled { get; }
+
+    internal IReadOnlyList<(SourceLogicalSource Source, SourceLayer Layer)> FindLayersByPhysicalPath(string physicalPath)
+        => _layersByPhysicalPath.TryGetValue(physicalPath, out var layers) ? layers : [];
 
     internal SourceCandidate? FindCandidateByPath(string canonicalPath)
     {

@@ -7,24 +7,42 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Mod
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 
-internal static class RenameWeakCandidateFilter
+internal sealed class RenameWeakCandidateFilter
 {
-    internal static ImmutableArray<LocalReferenceCandidateObservation> Read(
-        ImmutableArray<RenameWeakCandidate> weak,
-        ImmutableArray<RenameCurrentCandidate> candidates,
-        ImmutableArray<RenameCurrentCandidate> aliases,
-        string oldPath)
+    // Index immutable evidence already acquired by the reader; this never resolves or reads a filesystem path.
+    private readonly Dictionary<string, RenameCurrentCandidate> _aliases = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _paths = new(StringComparer.Ordinal);
+    private readonly ILookup<string?, RenameCurrentCandidate> _physicalCandidates;
+
+    internal RenameWeakCandidateFilter(ImmutableArray<RenameCurrentCandidate> candidates,
+        ImmutableArray<RenameCurrentCandidate> aliases, Action? candidateExamined = null)
+    {
+        _physicalCandidates = candidates.ToLookup(candidate =>
+        {
+            candidateExamined?.Invoke();
+            _paths.Add(candidate.Path);
+            return candidate.Snapshot.PhysicalPath;
+        }, PhysicalIdentityTracker.PathComparer);
+        foreach (var alias in aliases)
+        {
+            candidateExamined?.Invoke();
+            _aliases.TryAdd(alias.Path, alias);
+        }
+    }
+
+    internal bool ContainsCandidate(string path) => _paths.Contains(path);
+
+    internal ImmutableArray<LocalReferenceCandidateObservation> Read(ImmutableArray<RenameWeakCandidate> weak, string oldPath)
     {
         var admitted = ImmutableArray.CreateBuilder<LocalReferenceCandidateObservation>();
         foreach (var observation in weak.Where(weak => weak.OldPath == oldPath).Select(weak => weak.Candidate))
         {
             if (!observation.Bases.Any(basis => basis.Kind != LocalReferenceCandidateBasisKind.RouteNeighborhood)) continue;
-            var alias = aliases.FirstOrDefault(candidate => candidate.Path == observation.Candidate.Path);
-            if (alias is null) continue;
-            var candidate = candidates.First(current => PhysicalIdentityTracker.PathComparer.Equals(current.Snapshot.PhysicalPath, alias.Snapshot.PhysicalPath));
+            if (!_aliases.TryGetValue(observation.Candidate.Path, out var alias)) continue;
+            var candidate = _physicalCandidates[alias.Snapshot.PhysicalPath].First();
             var sourcePath = observation.SourcePath;
             if (SourceOverwritePath.HasSuffix(sourcePath)) sourcePath = SourceOverwritePath.ReadBasePath(sourcePath);
-            var source = aliases.FirstOrDefault(current => current.Path == sourcePath);
+            _aliases.TryGetValue(sourcePath, out var source);
             if (sourcePath == candidate.Path || sourcePath == alias.Path
                 || source is not null && PhysicalIdentityTracker.PathComparer.Equals(source.Snapshot.PhysicalPath, candidate.Snapshot.PhysicalPath)) continue;
             admitted.Add(LocalReferenceCandidateObservation.Create(observation.SourcePath, observation.Destination,

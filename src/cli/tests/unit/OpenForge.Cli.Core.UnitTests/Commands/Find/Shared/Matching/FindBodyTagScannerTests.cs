@@ -7,11 +7,32 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Find.Shared.Matching;
 
 public sealed class FindBodyTagScannerTests
 {
+    [Trait("Boundary", "Processing"), Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Find shares one source mapper and one coordinate index across every tag in a document")]
+    public void ManyTagsShareOneLocationIndex()
+    {
+        var maps = 0;
+        var builds = 0;
+        var source = string.Join(" ", Enumerable.Range(0, 100).Select(index => $"#Tag{index}"));
+        var scanner = new FindBodyTagScanner(text =>
+        {
+            maps++;
+            return new Utf8SourceMap(text, indexBuilt: () => builds++);
+        });
+
+        var facts = scanner.Scan(new FindBodyTagInput(new MarkdownDocumentParser().Parse(source)));
+
+        Assert.Equal(100, facts.Occurrences.Count);
+        Assert.Equal(1, maps);
+        Assert.Equal(1, builds);
+    }
+
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Find body tags use whole Unicode token grammar and preserve authored locations")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]

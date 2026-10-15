@@ -28,7 +28,7 @@ Is Task 33 still worth doing, what exactly remains, and when should it run?
 
 ## What It Implies
 
-Nothing new for users. They can already remove one Extension-installed file and keep it removed. Closing the task removes a stale item from the "After beta" list in the [task index](../../../../working/cli-development/tasks/_tasks.md) and from the [beta follow-up backlog](../../../../working/cli-development/tasks/beta-follow-ups.md), where "Remove one managed file without the next update restoring it" is still unchecked.
+Nothing new for users. They can already remove one Extension-installed file and keep it removed. Closing the task removes a stale item from the "After beta" list in the [task index](../../../../working/cli-development/tasks/_tasks.md) and from the [beta follow-up backlog](../../../../working/cli-development/tasks/beta-follow-up-backlog.md), where "Remove one managed file without the next update restoring it" is still unchecked.
 
 ## State Today
 

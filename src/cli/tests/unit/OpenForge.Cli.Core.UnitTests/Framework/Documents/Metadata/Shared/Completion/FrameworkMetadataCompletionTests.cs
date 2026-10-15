@@ -4,12 +4,78 @@ using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models.Syntax;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Documents.Metadata.Shared.Completion;
 
 [Trait("Feature", "metadata-completion"), Trait("Evidence", "Unit")]
 public sealed class FrameworkMetadataCompletionTests
 {
+    [Fact(DisplayName = "Malformed metadata inspection performs no completion parse and agrees with completion")]
+    public void MalformedInspectionDoesNotComplete()
+    {
+        var parses = 0;
+        var completer = new FrameworkMetadataCompleter(text =>
+        {
+            parses++;
+            return new MarkdownDocumentParser().Parse(text);
+        });
+        foreach (var source in new[] { "---\nlegacy: value\n---\n# Note\n", "---\ntags: []\n---\n# Note\n", "---\nunclosed\n", "# Note\n" })
+        {
+            var document = new MarkdownDocumentParser().Parse(source);
+            var expected = new FrameworkMetadataCompleter().Complete(Input(source));
+            Assert.Equal(expected.State == FrameworkMetadataCompletionState.Malformed ? expected.Cause : null,
+                completer.ReadMalformedCause(document));
+        }
+        Assert.Equal(0, parses);
+    }
+
+    [Fact(DisplayName = "Completion parses identical fresh content once across validation passes and notices changed content")]
+    public void ReusesContentParsingAcrossFreshPasses()
+    {
+        const string source = "---\ndescription: Existing\ntags: [Guidance]\n---\n# Note\n";
+        var parses = 0;
+        var completer = new FrameworkMetadataCompleter(text =>
+        {
+            parses++;
+            return new MarkdownDocumentParser().Parse(text);
+        });
+
+        var first = completer.Complete(Input(source));
+        var second = completer.Complete(Input(source, path: ".agents/guidance/other.md"));
+        Assert.Equal(1, parses);
+        Assert.Same(first.Document, second.Document);
+
+        var changed = completer.Complete(Input(source.Replace("# Note", "# Changed", StringComparison.Ordinal)));
+        Assert.Equal(2, parses);
+        Assert.NotSame(first.Document, changed.Document);
+        Assert.Equal("Changed", Assert.Single(changed.Document?.Headings ?? []).VisibleText);
+    }
+
+    [Theory(DisplayName = "Completion retains its parsed output without requiring a second caller parse")]
+    [InlineData("---\ndescription: Existing\ntags: [Guidance]\n---\n# Note\n", 1)]
+    [InlineData("# Note\n", 2)]
+    public void RetainsParsedDocument(string source, int expectedParses)
+    {
+        var parses = 0;
+        MarkdownDocumentFacts? lastDocument = null;
+        var completer = new FrameworkMetadataCompleter(text =>
+        {
+            parses++;
+            lastDocument = new MarkdownDocumentParser().Parse(text);
+            return lastDocument;
+        });
+
+        var result = completer.Complete(Input(source));
+
+        Assert.Equal(expectedParses, parses);
+        Assert.NotNull(lastDocument);
+        var retained = Assert.IsType<MarkdownDocumentFacts>(result.Document);
+        Assert.Same(lastDocument, retained);
+        Assert.Equal(Encoding.UTF8.GetString(result.Bytes.AsSpan()), retained.Source);
+    }
+
     [Theory(DisplayName = "Completion derives visible root headings at every level before the filename")]
     [InlineData("# **Deploy**  [checklist](target.md) &amp; `verify`\n", "Deploy checklist & verify")]
     [InlineData("> # Quoted\n\n- ## Listed\n\n```md\n# Code\n```\n\n### First   root\n\n# Later\n", "First root")]

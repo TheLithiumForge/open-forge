@@ -1,16 +1,21 @@
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.Construction;
+using OpenForge.Cli.Core.Framework.Documents.Yaml;
+using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 
 internal sealed record MarkdownDocumentFacts
 {
+    private readonly Lazy<YamlDocumentFacts?> _frontmatterSyntax;
+
     internal MarkdownDocumentFacts(
         string source,
         MarkdownDocumentStructure structure,
         MarkdownInlineFacts inlineFacts,
-        MarkdownManagedHostFact? managedHost = null)
+        MarkdownManagedHostFact? managedHost = null,
+        Func<string, YamlDocumentFacts>? parseFrontmatter = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(structure);
@@ -22,6 +27,8 @@ internal sealed record MarkdownDocumentFacts
 
         Source = source;
         Frontmatter = structure.Frontmatter;
+        _frontmatterSyntax = new(() => Frontmatter.YamlSpan is { } span
+            ? (parseFrontmatter ?? new YamlDocumentParser().Parse)(source[span.Start..span.End]) : null);
         BodySpan = structure.BodySpan;
         Headings = structure.Headings;
         Sections = structure.Sections;
@@ -36,6 +43,8 @@ internal sealed record MarkdownDocumentFacts
     internal string Source { get; }
 
     internal MarkdownFrontmatterBoundary Frontmatter { get; }
+
+    internal YamlDocumentFacts? FrontmatterSyntax => _frontmatterSyntax.Value;
 
     internal MarkdownTextSpan? BodySpan { get; }
 

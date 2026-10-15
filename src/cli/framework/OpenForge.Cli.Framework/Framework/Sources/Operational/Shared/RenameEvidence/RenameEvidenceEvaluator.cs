@@ -6,7 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Mod
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 
-internal sealed class RenameEvidenceEvaluator
+internal sealed class RenameEvidenceEvaluator(Action<string, string>? contentComparisonStarted = null)
 {
     internal RenameEvidenceResult Evaluate(RenameEvidenceFacts facts, CancellationToken cancellationToken = default)
     {
@@ -15,7 +15,15 @@ internal sealed class RenameEvidenceEvaluator
         var physicalComparer = PhysicalIdentityTracker.PathComparer;
         var candidates = facts.Candidates.OrderBy(candidate => candidate.Path, StringComparer.Ordinal)
             .DistinctBy(candidate => candidate.Snapshot.PhysicalPath, physicalComparer).ToImmutableArray();
+        var oldByPath = facts.OldIdentities.ToLookup(old => old.Path, StringComparer.Ordinal);
+        candidates = candidates.Select(candidate => candidate with
+        {
+            IsUnchangedAtHead = facts.Git.Availability == RenameGitAvailability.Available
+                && oldByPath[candidate.Path].Any(old => old.Head == facts.Git.Head && old.Blob is not null
+                    && old.Content?.NormalizedHash == candidate.Content.NormalizedHash),
+        }).ToImmutableArray();
         facts = facts with { Candidates = candidates };
+        var weakFilter = new RenameWeakCandidateFilter(candidates, aliases);
         var resolutions = ImmutableArray.CreateBuilder<RenamePathResolution>();
         foreach (var missing in facts.MissingPaths.DistinctBy(missing => missing.Path).OrderBy(missing => missing.Path, StringComparer.Ordinal))
         {
@@ -23,16 +31,17 @@ internal sealed class RenameEvidenceEvaluator
             var strong = ImmutableArray.CreateBuilder<RenameEvidenceObservation>();
             foreach (var candidate in candidates)
             {
-                var observations = facts.OldIdentities.Where(old => old.Path == missing.Path)
+                cancellationToken.ThrowIfCancellationRequested();
+                var observations = oldByPath[missing.Path]
                     .SelectMany(old => ReadStrong(facts, missing, old, candidate, cancellationToken));
                 var strongest = observations.OrderBy(observation => Priority(observation.Basis)).FirstOrDefault();
                 if (strongest is not null) strong.Add(strongest);
             }
 
-            var weak = RenameWeakCandidateFilter.Read(weak: facts.WeakCandidates, candidates: candidates, aliases: aliases, oldPath: missing.Path);
+            var weak = weakFilter.Read(facts.WeakCandidates, missing.Path);
             var guidedPaths = weak.Select(observation => observation.Candidate.Path)
-                .Concat(candidates.Where(candidate => facts.OldIdentities.Any(old => old.Path == missing.Path
-                    && RenameMetadataIdentity.Matches(old.Metadata, candidate.Metadata) && RenameMetadataIdentity.IsDistinctLabel(old, candidate)))
+                .Concat(candidates.Where(candidate => oldByPath[missing.Path].Any(old =>
+                    RenameMetadataIdentity.Matches(old.Metadata, candidate.Metadata) && RenameMetadataIdentity.IsDistinctLabel(old, candidate)))
                     .Select(candidate => candidate.Path))
                 .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToImmutableArray();
             resolutions.Add(new RenamePathResolution(missing.Path, Resolve(strong.Count, guidedPaths.Length, facts.CandidateUniverseComplete), strong.ToImmutable(), weak, guidedPaths));
@@ -45,7 +54,7 @@ internal sealed class RenameEvidenceEvaluator
         return new RenameEvidenceResult(facts with { Candidates = candidates }, checkedMappings);
     }
 
-    private static IEnumerable<RenameEvidenceObservation> ReadStrong(
+    private IEnumerable<RenameEvidenceObservation> ReadStrong(
         RenameEvidenceFacts facts,
         RenameMissingPath missing,
         RenameRecordedIdentity old,
@@ -55,14 +64,16 @@ internal sealed class RenameEvidenceEvaluator
         // A timeout leaves committed successor identities unknown, including identities that contradict stale metadata.
         if (facts.Git.Availability == RenameGitAvailability.TimedOut) yield break;
 
-        if (facts.Git.Availability == RenameGitAvailability.Available && old.Head == facts.Git.Head && old.Blob is not null
+        if (!candidate.IsUnchangedAtHead && facts.Git.Availability == RenameGitAvailability.Available && old.Head == facts.Git.Head && old.Blob is not null
             && old.Content is { HasAuthoredContent: true } content && candidate.Content.HasAuthoredContent)
         {
-            if (content.Hash == candidate.Content.Hash)
+            contentComparisonStarted?.Invoke(old.Path, candidate.Path);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (content.NormalizedHash == candidate.Content.NormalizedHash)
             {
                 yield return Observation(RenameEvidenceBasis.CommittedContent, similarity: null, sameContent: true);
             }
-            else if (RenameContentComparer.CouldReachThreshold(content, candidate.Content))
+            else if (RenameContentComparer.CouldReachThreshold(content, candidate.Content, cancellationToken))
             {
                 var comparison = RenameContentComparer.Compare(content, candidate.Content, cancellationToken);
                 if (comparison.IsStrong)

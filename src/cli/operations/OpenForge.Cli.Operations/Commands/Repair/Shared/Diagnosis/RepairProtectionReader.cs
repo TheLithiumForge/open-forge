@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -14,8 +15,8 @@ namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
 internal sealed class RepairProtectionReader(PhysicalPathResolver paths)
 {
-    internal ValueTask<ReferenceProtectionRead> ReadAsync(CliWorkspace workspace, CancellationToken token)
-        => new ReferenceProtectionReader(paths).ReadAsync(workspace, token);
+    internal ValueTask<ReferenceProtectionRead> ReadAsync(CliWorkspace workspace, CancellationToken token, SourceCatalogue? catalogue = null)
+        => new ReferenceProtectionReader(paths).ReadAsync(workspace, token, catalogue);
 
     internal static bool Allows(string path, RoutedMetadataPolicyContext policy)
         => ReferenceProtectionReader.Allows(path, policy);

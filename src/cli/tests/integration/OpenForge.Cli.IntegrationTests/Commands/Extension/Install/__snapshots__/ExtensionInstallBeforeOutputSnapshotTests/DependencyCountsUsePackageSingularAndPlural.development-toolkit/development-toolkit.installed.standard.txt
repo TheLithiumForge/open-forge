@@ -16,6 +16,10 @@ Workspace: <workspace>
     created (development)
   .agents/skills/use-workflow/references/development/review.md
     created (development)
+  .agents/directives/planning/_planning.md
+    created (planning)
+  .agents/directives/planning/work-records.md
+    created (planning)
   .agents/memory/crystallized/decisions/_decisions.md
     created (planning)
   .agents/memory/emerging/analysis/_analysis.md
@@ -76,6 +80,8 @@ Workspace: <workspace>
     created (scenarios)
   .agents/templates/scenarios/user-flow.md
     created (scenarios)
+  .agents/directives/_directives.md
+    Entries updated
   .agents/memory/crystallized/_crystallized.md
     Entries updated
   .agents/memory/emerging/_emerging.md

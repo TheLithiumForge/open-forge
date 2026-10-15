@@ -256,6 +256,16 @@
   ],
   "effects": [
     {
+      "path": ".agents/directives/planning",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/skills/use-workflow",
       "kind": "directory",
       "action": "created",
@@ -346,6 +356,26 @@
       "after": null
     },
     {
+      "path": ".agents/directives/planning/_planning.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/directives/planning/work-records.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/memory/crystallized/decisions/_decisions.md",
       "kind": "file",
       "action": "created",
@@ -416,6 +446,16 @@
       "after": null
     },
     {
+      "path": ".agents/directives/_directives.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/memory/crystallized/_crystallized.md",
       "kind": "section",
       "action": "rewritten",
@@ -458,9 +498,9 @@
   ],
   "counts": {
     "packagesInstalled": 2,
-    "filesCreated": 9,
+    "filesCreated": 11,
     "filesReplaced": 0,
-    "sectionsUpdated": 4,
+    "sectionsUpdated": 5,
     "grantsSaved": 0,
     "infos": 10
   },
@@ -499,6 +539,7 @@
       "method": "explicit-ids"
     },
     "sections": [
+      ".agents/directives/_directives.md",
       ".agents/memory/crystallized/_crystallized.md",
       ".agents/memory/emerging/_emerging.md",
       ".agents/patterns/_patterns.md",
@@ -506,7 +547,7 @@
       ".agents/skills/use-workflow/references/_references.md"
     ],
     "entriesUnchanged": [
-      ".agents/directives/_directives.md",
+      ".agents/directives/planning/_planning.md",
       ".agents/loader.md",
       ".agents/memory/_memory.md",
       ".agents/memory/crystallized/decisions/_decisions.md",
@@ -526,6 +567,7 @@
     "recovery": {
       "state": "removed",
       "protectedPaths": [
+        ".agents/directives/_directives.md",
         ".agents/memory/crystallized/_crystallized.md",
         ".agents/memory/emerging/_emerging.md",
         ".agents/patterns/_patterns.md",

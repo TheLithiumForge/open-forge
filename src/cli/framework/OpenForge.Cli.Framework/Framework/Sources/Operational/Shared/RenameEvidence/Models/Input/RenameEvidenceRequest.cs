@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -16,6 +17,8 @@ internal sealed record RenameEvidenceRequest
     public ImmutableArray<RenameRecordedIdentity> RecordedIdentities { get; init; } = [];
     public ImmutableArray<RenameWeakCandidate> WeakCandidates { get; init; } = [];
     public ImmutableArray<FileExpectation> PolicyExpectations { get; init; } = [];
+    public IReadOnlyDictionary<string, MarkdownDocumentFacts> Documents { get; init; }
+        = ImmutableDictionary<string, MarkdownDocumentFacts>.Empty;
 }
 
 internal sealed record RenameEvidencePolicy

@@ -22,7 +22,6 @@ namespace OpenForge.Cli.Core.Commands.Context.Shared.Graph;
 
 internal sealed class ContextGraphBuilder
 {
-    private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly SourceAuthoredMetadataParser _metadataParser = new();
 
     internal async ValueTask<ContextGraph> BuildAsync(
@@ -31,13 +30,11 @@ internal sealed class ContextGraphBuilder
     {
         ArgumentNullException.ThrowIfNull(workspace);
         cancellationToken.ThrowIfCancellationRequested();
-        var catalogue = await new SourceCatalogueReader()
-            .ReadAsync(
-                new SourceCatalogueRequest(workspace, [SourceLogicalPath.AgentsRoot]),
-                cancellationToken)
-            .ConfigureAwait(false);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver())
+            .ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
+        var catalogue = session.Catalogue;
         cancellationToken.ThrowIfCancellationRequested();
-        var reader = new SourceDocumentReader(workspace);
+        var reader = session.DocumentReader;
         var selection = catalogue.SelectAll();
         var routeFacts = await new SourceRouteFactsResolver()
             .ResolveAsync(
@@ -83,14 +80,15 @@ internal sealed class ContextGraphBuilder
         return new ContextGraph(
             catalogue: catalogue,
             routeFacts: routeFacts,
-            workspaceEntry: await ReadWorkspaceEntryAsync(workspace, cancellationToken).ConfigureAwait(false),
+            workspaceEntry: await ReadWorkspaceEntryAsync(reader, cancellationToken).ConfigureAwait(false),
             sources: sources);
     }
 
     private async ValueTask<ContextGraphSource> ReadWorkspaceEntryAsync(
-        CliWorkspace workspace,
+        SourceDocumentReader reader,
         CancellationToken cancellationToken)
     {
+        var workspace = reader.Workspace;
         const string logicalPath = SourceLogicalPath.WorkspaceEntryPath;
         var lexicalPath = Path.Combine(workspace.LexicalRoot, logicalPath);
         var resolution = new PhysicalPathResolver().ResolveCandidate(
@@ -113,7 +111,7 @@ internal sealed class ContextGraphBuilder
         }
 
         var document = read.State == FileReadState.Complete && read.Value is not null
-            ? _markdownParser.Parse(read.Value)
+            ? reader.ParseDocument(read.Value)
             : null;
         return new ContextGraphSource(
             logicalSource: null,
@@ -144,7 +142,7 @@ internal sealed class ContextGraphBuilder
         var state = ReadState(result);
         var text = result.Read?.Value;
         var document = state == FileReadState.Complete && text is not null
-            ? _markdownParser.Parse(text)
+            ? reader.ParseDocument(text)
             : null;
         return new ContextGraphLayer
         {

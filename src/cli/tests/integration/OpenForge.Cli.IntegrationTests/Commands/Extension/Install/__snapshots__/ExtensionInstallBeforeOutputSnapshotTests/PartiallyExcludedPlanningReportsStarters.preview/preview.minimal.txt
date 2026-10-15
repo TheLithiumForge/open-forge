@@ -1,4 +1,5 @@
 Would install the planning Extension and 1 package it requires: workflows.
+  .agents/directives/_directives.md             Entries would be updated
   .agents/memory/crystallized/_crystallized.md  Entries would be updated
   .agents/memory/emerging/_emerging.md          Entries would be updated
   .agents/patterns/_patterns.md                 Entries would be updated
@@ -6,12 +7,13 @@ Would install the planning Extension and 1 package it requires: workflows.
   Planning's starter files would be skipped because Templates is left out.
   Workflow Support's starter files would be skipped because Templates is left
   out.
-  Would create 9 files under .agents/memory/crystallized/decisions,
-  .agents/memory/emerging/analysis, .agents/memory/emerging/ideas,
-  .agents/memory/working/checkpoints, .agents/patterns,
-  .agents/skills/use-workflow, .agents/skills/use-workflow/references,
+  Would create 11 files under .agents/directives/planning,
+  .agents/memory/crystallized/decisions, .agents/memory/emerging/analysis,
+  .agents/memory/emerging/ideas, .agents/memory/working/checkpoints,
+  .agents/patterns, .agents/skills/use-workflow,
+  .agents/skills/use-workflow/references,
   .agents/skills/use-workflow/references/planning
-  Would update the Entries section of 5 files
+  Would update the Entries section of 6 files
 To add its files, restore Templates and update the package:
   open-forge route init templates --framework --dry-run
   open-forge extension update planning --dry-run

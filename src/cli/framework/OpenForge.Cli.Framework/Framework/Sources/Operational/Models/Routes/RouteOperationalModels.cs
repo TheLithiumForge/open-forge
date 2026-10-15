@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Context;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.GeneratedNavigation;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
@@ -50,6 +51,7 @@ internal sealed record RouteStatusView
 
 internal sealed record RouteDoctorView
 {
+    internal SourceReadSession? Session { get; init; }
     public required OperationalViewState State { get; init; }
 
     public required RouteSourceInventoryState SourceInventory { get; init; }

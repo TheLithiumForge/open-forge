@@ -10,7 +10,7 @@ Installed
     Recorded source: embedded catalogue
     The installed files match their recorded sources.
   planning             0.4.0
-    15 files
+    17 files
     Recorded source: embedded catalogue
     The installed files match their recorded sources.
   project-documents    0.4.0

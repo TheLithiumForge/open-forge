@@ -59,7 +59,7 @@ internal sealed class RepairOperation
                 request.Workspace,
                 diagnosis.Observation.LocalReferences,
                 cancellationToken,
-                request.Relinks).ConfigureAwait(false);
+                request.Relinks, diagnosis.Observation.Maintenance).ConfigureAwait(false);
             catalogue = catalogue with
             {
                 Findings = [.. catalogue.Findings, .. libraryFindings],
@@ -200,6 +200,12 @@ internal sealed class RepairOperation
             }
         }
 
+        catalogue = catalogue with
+        {
+            Catalogue = null,
+            Documents = new Dictionary<string, OpenForge.Cli.Core.Framework.Documents.Markdown.Models.MarkdownDocumentFacts>(),
+        };
+        facts = new(request, facts.Coverage, catalogue, libraryProposals, facts.InitialFindings);
         var plan = libraryProposals.IsEmpty
             ? RepairPlanner.Build(request, catalogue.Proposals, promptRelinks)
             : RepairLibraryRecoveryPlanner.Build(new RepairLibraryPlanningInput

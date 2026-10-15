@@ -2,10 +2,12 @@ using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models.Syntax;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion.Models;
 using OpenForge.Cli.Core.Framework.Documents.Yaml;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.Parsing;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion;
 
@@ -14,9 +16,26 @@ namespace OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion;
 internal sealed class FrameworkMetadataCompleter
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
-    private readonly MarkdownDocumentParser _markdown = new();
-    private readonly YamlDocumentParser _yaml = new();
+    private readonly Func<string, MarkdownDocumentFacts> _parse;
+    private MarkdownDocumentCache? _documents;
     private readonly FrameworkDocumentMetadataParser _metadata = new();
+
+    internal FrameworkMetadataCompleter(Func<string, MarkdownDocumentFacts>? parse = null)
+    {
+        _parse = parse ?? new MarkdownDocumentParser().Parse;
+    }
+
+    private MarkdownDocumentFacts ParseDocument(string source)
+        => LazyInitializer.EnsureInitialized(ref _documents, static () => new()).Parse(_parse, source);
+
+    internal string? ReadMalformedCause(MarkdownDocumentFacts document)
+    {
+        if (document.Frontmatter.State == MarkdownFrontmatterState.Unavailable)
+            return "The frontmatter block is not closed.";
+        if (document.Frontmatter.YamlSpan is null) return null;
+        var syntax = document.FrontmatterSyntax ?? throw new InvalidOperationException("Complete frontmatter requires YAML syntax.");
+        return FrameworkMetadataCompletionValidator.ReadMalformedCause(_metadata.Read(syntax, FrameworkMetadataReadScope.RoutedSource), syntax);
+    }
 
     internal FrameworkMetadataCompletionResult Complete(FrameworkMetadataCompletionInput input)
     {
@@ -30,7 +49,8 @@ internal sealed class FrameworkMetadataCompleter
         string source;
         try { source = StrictUtf8.GetString(input.Bytes.AsSpan()); }
         catch (DecoderFallbackException) { return Failed(input, FrameworkMetadataCompletionState.Unsafe, "The file is not strict UTF-8."); }
-        var document = _markdown.Parse(source);
+        var document = input.Document is { } retained && string.Equals(retained.Source, source, StringComparison.Ordinal)
+            ? retained : ParseDocument(source);
         if (document.Frontmatter.State == MarkdownFrontmatterState.Unavailable)
             return Failed(input, FrameworkMetadataCompletionState.Malformed, "The frontmatter block is not closed.");
 
@@ -43,12 +63,12 @@ internal sealed class FrameworkMetadataCompleter
         if (document.Frontmatter.YamlSpan is { } yamlSpan)
         {
             var yaml = source[yamlSpan.Start..yamlSpan.End];
-            var syntax = _yaml.Parse(yaml);
+            var syntax = document.FrontmatterSyntax ?? throw new InvalidOperationException("Complete frontmatter requires YAML syntax.");
             before = _metadata.Read(syntax, FrameworkMetadataReadScope.RoutedSource);
             if (FrameworkMetadataCompletionValidator.ReadMalformedCause(before, syntax) is { } cause)
                 return Failed(input, FrameworkMetadataCompletionState.Malformed, cause);
             if (before.State == FrameworkDocumentMetadataState.Complete)
-                return FrameworkMetadataCompletionResult.Unchanged(input.Bytes);
+                return FrameworkMetadataCompletionResult.Unchanged(input.Bytes) with { Document = document };
 
             form = before.Syntax.AuthoredForm ?? input.Form;
             DeriveMissing();
@@ -86,10 +106,10 @@ internal sealed class FrameworkMetadataCompleter
         }
 
         var intended = FrameworkMetadataInsertionEditor.Insert(input.Bytes, source, insertion);
-        var afterDocument = _markdown.Parse(StrictUtf8.GetString(intended.AsSpan()));
+        var afterDocument = ParseDocument(StrictUtf8.GetString(intended.AsSpan()));
         if (afterDocument.Frontmatter.YamlSpan is not { } intendedYamlSpan)
             return Failed(input, FrameworkMetadataCompletionState.Unsafe, "The completed metadata has no safe YAML boundary.");
-        var intendedSyntax = _yaml.Parse(afterDocument.Source[intendedYamlSpan.Start..intendedYamlSpan.End]);
+        var intendedSyntax = afterDocument.FrontmatterSyntax ?? throw new InvalidOperationException("Completed frontmatter requires YAML syntax.");
         var after = _metadata.Read(intendedSyntax, FrameworkMetadataReadScope.RoutedSource);
         if (FrameworkMetadataCompletionValidator.ReadMalformedCause(after, intendedSyntax) is not null
             || after.State != FrameworkDocumentMetadataState.Complete || after.Metadata is not { } completed
@@ -109,6 +129,7 @@ internal sealed class FrameworkMetadataCompleter
             Form = form,
             Description = description,
             Tags = tags,
+            Document = afterDocument,
         };
 
         void DeriveMissing()

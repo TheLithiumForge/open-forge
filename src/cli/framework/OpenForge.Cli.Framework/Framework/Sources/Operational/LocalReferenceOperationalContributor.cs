@@ -1,8 +1,9 @@
-using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 using OpenForge.Cli.Core.Framework.Sources.References;
@@ -14,7 +15,8 @@ internal interface ILocalReferenceOperationalContributor
 {
     ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(
         CliWorkspace workspace,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken,
+        RouteDoctorView? routes = null);
 }
 
 internal sealed class LocalReferenceOperationalContributor(
@@ -22,23 +24,53 @@ internal sealed class LocalReferenceOperationalContributor(
     SourceLinkDestinationResolver destinationResolver,
     LocalReferenceCandidateReader candidateReader) : ILocalReferenceOperationalContributor
 {
-    private readonly MarkdownDocumentParser _markdownParser = new();
-
+    internal const int MaximumConcurrentSources = 8;
     internal async ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(
         CliWorkspace workspace,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        RouteDoctorView? routes = null)
     {
-        var inspection = await sourceInspector.ReadAsync(workspace, cancellationToken)
-            .ConfigureAwait(false);
-        var observations = new LocalReferenceReadAccumulator();
+        var inspection = routes is null
+            ? await sourceInspector.ReadAsync(workspace, cancellationToken).ConfigureAwait(false)
+            : new RouteSourceInspection
+            {
+                Session = routes.Session,
+                Catalogue = routes.Catalogue,
+                Routes = routes.Routes,
+                WorkspaceEntry = routes.WorkspaceEntry,
+                Sources = routes.Sources,
+                State = routes.State,
+            };
+        var resolver = inspection.Session is { } session
+            ? destinationResolver.CreateSession(session) : destinationResolver.CreateSession(inspection.Catalogue);
         foreach (var source in inspection.Sources)
         {
+            if (source.Document is { } document
+                && source.Layers.Any(layer => layer.Path == source.Source.Base.CanonicalPath && layer.Text == document.Source))
+                resolver.RetainSource(source.Source.Base, document);
+        }
+        var acquired = new LocalReferenceReadAccumulator[inspection.Sources.Count];
+        await Parallel.ForEachAsync(Enumerable.Range(0, acquired.Length), new ParallelOptions
+        {
+            MaxDegreeOfParallelism = MaximumConcurrentSources,
+            CancellationToken = CancellationToken.None,
+        }, async (index, token) =>
+        {
+            var sourceObservations = new LocalReferenceReadAccumulator();
             await ReadSourceAsync(
-                workspace,
                 inspection,
-                source,
-                observations,
+                inspection.Sources[index],
+                sourceObservations,
+                resolver,
                 cancellationToken).ConfigureAwait(false);
+            acquired[index] = sourceObservations;
+        }).ConfigureAwait(false);
+        var observations = new LocalReferenceReadAccumulator();
+        foreach (var source in acquired)
+        {
+            observations.References.AddRange(source.References);
+            observations.Sources.AddRange(source.Sources);
+            foreach (var document in source.Documents) observations.Documents[document.Key] = document.Value;
         }
 
         var candidates = candidateReader.Read(
@@ -50,19 +82,24 @@ internal sealed class LocalReferenceOperationalContributor(
             observations.References.ToArray(),
             ReadCandidateState(inspection.State),
             candidates,
-            LocalReferenceGraphReader.Read(observations.References));
+            LocalReferenceGraphReader.Read(observations.References))
+        {
+            Catalogue = inspection.Catalogue,
+            Documents = observations.Documents,
+        };
     }
 
     ValueTask<LocalReferenceDoctorView> ILocalReferenceOperationalContributor.ReadDoctorAsync(
         CliWorkspace workspace,
-        CancellationToken cancellationToken)
-        => ReadDoctorAsync(workspace, cancellationToken);
+        CancellationToken cancellationToken,
+        RouteDoctorView? routes)
+        => ReadDoctorAsync(workspace, cancellationToken, routes);
 
     private async ValueTask ReadSourceAsync(
-        CliWorkspace workspace,
         RouteSourceInspection inspection,
         RouteSourceObservation source,
         LocalReferenceReadAccumulator observations,
+        SourceLinkDestinationResolver resolver,
         CancellationToken cancellationToken)
     {
         var parsedLayers = new List<LocalReferenceParsedLayer>();
@@ -77,8 +114,9 @@ internal sealed class LocalReferenceOperationalContributor(
                 && source.Document is { } retainedDocument
                 && string.Equals(retainedDocument.Source, text, StringComparison.Ordinal)
                     ? retainedDocument
-                    : _markdownParser.Parse(text);
+                    : resolver.ParseDocument(text);
             var locations = new Utf8SourceMap(text);
+            observations.Documents[layer.Path] = document;
             parsedLayers.Add(new LocalReferenceParsedLayer(
                 layer.Path,
                 document,
@@ -89,10 +127,10 @@ internal sealed class LocalReferenceOperationalContributor(
             foreach (var reference in references)
             {
                 var link = reference.Fact;
-                var facts = await destinationResolver.ResolveAsync(
+                var facts = await resolver.ResolveAsync(
                         new SourceLinkDestinationInput
                         {
-                            Workspace = workspace,
+                            Workspace = inspection.Catalogue.Workspace,
                             Catalogue = inspection.Catalogue,
                             SourceCanonicalPath = layer.Path,
                             RawDestination = link.RawDestination,
@@ -148,5 +186,7 @@ internal sealed class LocalReferenceOperationalContributor(
         internal List<LocalReferenceObservation> References { get; } = [];
 
         internal List<LocalReferenceSourceObservation> Sources { get; } = [];
+
+        internal Dictionary<string, MarkdownDocumentFacts> Documents { get; } = new(StringComparer.Ordinal);
     }
 }

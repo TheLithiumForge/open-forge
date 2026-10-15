@@ -8,6 +8,10 @@ Workspace: <workspace>
     Would create (workflows)
   .agents/templates/workflows/workflow.md
     Would create (workflows)
+  .agents/directives/planning/_planning.md
+    Would create (planning)
+  .agents/directives/planning/work-records.md
+    Would create (planning)
   .agents/memory/crystallized/decisions/_decisions.md
     Would create (planning)
   .agents/memory/emerging/analysis/_analysis.md
@@ -38,6 +42,8 @@ Workspace: <workspace>
     Would create (planning)
   .agents/templates/planning/task.md
     Would create (planning)
+  .agents/directives/_directives.md
+    Entries would be updated
   .agents/memory/crystallized/_crystallized.md
     Entries would be updated
   .agents/memory/emerging/_emerging.md
@@ -53,7 +59,7 @@ Workspace: <workspace>
   Source: embedded catalogue (embedded)
   Dependency order: workflows, planning
   .agents/open-forge.lock.json  ownership record would be updated
-  Entries sections unchanged: .agents/directives/_directives.md,
+  Entries sections unchanged: .agents/directives/planning/_planning.md,
   .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md,
   .agents/memory/_memory.md, .agents/memory/archived/_archived.md,
   .agents/memory/crystallized/decisions/_decisions.md,

@@ -185,7 +185,7 @@ gate. These records establish no current vulnerability finding.
 
 Task 62's repository Doctor reports 12 blocked `reference.target-alias`
 findings caused by an automatic ID collision between the flat
-`.agents/memory/working/cli-development/tasks/beta-follow-ups.md` record and
+`.agents/memory/working/cli-development/tasks/beta-follow-up-backlog.md` record and
 the nested
 `.agents/memory/working/cli-development/tasks/beta-follow-ups/_beta-follow-ups.md`
 entrypoint. These findings concern maintainer-repository identity and

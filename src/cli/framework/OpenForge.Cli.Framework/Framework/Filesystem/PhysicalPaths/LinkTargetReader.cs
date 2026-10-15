@@ -10,26 +10,24 @@ internal static class LinkTargetReader
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         try
         {
+            var attributes = File.GetAttributes(path);
+            if ((attributes & FileAttributes.ReparsePoint) == 0)
+                return new PathComponent(PathComponentState.Ordinary, path, null, attributes, null);
+
             var target = ReadImmediateTarget(path);
             if (target is not null)
             {
                 return new PathComponent(PathComponentState.Link, path, target, null, null);
             }
 
-            var attributes = File.GetAttributes(path);
-            if ((attributes & FileAttributes.ReparsePoint) != 0)
-            {
-                return new PathComponent(
-                    PathComponentState.Unsupported,
-                    path,
-                    null,
-                    attributes,
-                    new FilesystemFailure(
-                        FilesystemFailureKind.Unsupported,
-                        "The reparse point does not expose an immediate managed link target."));
-            }
-
-            return new PathComponent(PathComponentState.Ordinary, path, null, attributes, null);
+            return new PathComponent(
+                PathComponentState.Unsupported,
+                path,
+                null,
+                attributes,
+                new FilesystemFailure(
+                    FilesystemFailureKind.Unsupported,
+                    "The reparse point does not expose an immediate managed link target."));
         }
         catch (FileNotFoundException)
         {

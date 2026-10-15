@@ -15,6 +15,16 @@
   "findings": [],
   "effects": [
     {
+      "path": ".agents/directives/planning",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/skills/use-workflow",
       "kind": "directory",
       "action": "created",
@@ -231,6 +241,26 @@
       "outcome": "planned",
       "reason": null,
       "owner": "development",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/directives/planning/_planning.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning",
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/directives/planning/work-records.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": "planning",
       "before": null,
       "after": null
     },
@@ -535,6 +565,16 @@
       "after": null
     },
     {
+      "path": ".agents/directives/_directives.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/memory/crystallized/_crystallized.md",
       "kind": "section",
       "action": "rewritten",
@@ -597,9 +637,9 @@
   ],
   "counts": {
     "packagesInstalled": 5,
-    "filesCreated": 38,
+    "filesCreated": 40,
     "filesReplaced": 0,
-    "sectionsUpdated": 6,
+    "sectionsUpdated": 7,
     "grantsSaved": 0
   },
   "limitations": [],
@@ -671,6 +711,7 @@
       "method": "explicit-ids"
     },
     "sections": [
+      ".agents/directives/_directives.md",
       ".agents/memory/crystallized/_crystallized.md",
       ".agents/memory/emerging/_emerging.md",
       ".agents/memory/working/_working.md",
@@ -680,7 +721,7 @@
       ".agents/templates/_templates.md"
     ],
     "entriesUnchanged": [
-      ".agents/directives/_directives.md",
+      ".agents/directives/planning/_planning.md",
       ".agents/guidance/_guidance.md",
       ".agents/loader.md",
       ".agents/maps/_maps.md",

@@ -16,6 +16,10 @@ Workspace: <workspace>
     Would create (development)
   .agents/skills/use-workflow/references/development/review.md
     Would create (development)
+  .agents/directives/planning/_planning.md
+    Would create (planning)
+  .agents/directives/planning/work-records.md
+    Would create (planning)
   .agents/memory/crystallized/decisions/_decisions.md
     Would create (planning)
   .agents/memory/emerging/analysis/_analysis.md
@@ -76,6 +80,8 @@ Workspace: <workspace>
     Would create (scenarios)
   .agents/templates/scenarios/user-flow.md
     Would create (scenarios)
+  .agents/directives/_directives.md
+    Entries would be updated
   .agents/memory/crystallized/_crystallized.md
     Entries would be updated
   .agents/memory/emerging/_emerging.md
@@ -92,7 +98,7 @@ Workspace: <workspace>
   Dependency order: workflows, development, planning, project-documents,
   scenarios, development-toolkit
   .agents/open-forge.lock.json  ownership record would be updated
-  Entries sections unchanged: .agents/directives/_directives.md,
+  Entries sections unchanged: .agents/directives/planning/_planning.md,
   .agents/guidance/_guidance.md, .agents/loader.md, .agents/maps/_maps.md,
   .agents/memory/_memory.md, .agents/memory/archived/_archived.md,
   .agents/memory/crystallized/decisions/_decisions.md,

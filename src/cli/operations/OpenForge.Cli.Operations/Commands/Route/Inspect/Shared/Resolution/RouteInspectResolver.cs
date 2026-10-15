@@ -80,8 +80,9 @@ internal sealed partial class RouteInspectResolver
 
             var reader = new SourceDocumentReader(request.Workspace);
             var catalogue = await _catalogueReader
-                .ReadAsync(
+                .ReadSessionAsync(
                     new SourceCatalogueRequest(request.Workspace, [SourceLogicalPath.AgentsRoot]),
+                    reader.PhysicalPaths,
                     cancellationToken)
                 .ConfigureAwait(false);
             if (catalogue.IsCancelled || cancellationToken.IsCancellationRequested)

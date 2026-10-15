@@ -11,6 +11,8 @@ Use when a source has stable maintenance obligations worth defining separately. 
 Keep only obligations and checks that affect maintenance. Replace {prompts}, then remove this guidance and unused optional sections.
 }
 
+The [Maintenance Contract Pattern](../../patterns/open-forge/maintenance-contract.md) shows the continuing shape.
+
 ## Source
 
 **Maintained source:** {Exact path or link.}

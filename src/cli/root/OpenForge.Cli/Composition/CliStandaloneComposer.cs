@@ -133,7 +133,8 @@ internal static class CliStandaloneComposer
         WorkspaceLockStoreRoot? lockStoreRoot,
         OperationalContributorCatalogue operationalContributors)
     {
-        var evidence = new RoutedMaintenanceRenameEvidenceAdapter(new RenameEvidenceReader(new PhysicalPathResolver(), new GitRenameEvidenceReader().ReadAsync));
+        var reader = new RenameEvidenceReader(new PhysicalPathResolver(), new GitRenameEvidenceReader().ReadAsync);
+        var evidence = new RoutedMaintenanceRenameEvidenceAdapter(reader);
         return CliReportBinding.Close(RepairBinding.CreateRequestBinding(
             symbols,
             RepairPresentation.CreateHelp(),
@@ -141,7 +142,8 @@ internal static class CliStandaloneComposer
                 RepairPromptAdapters.Create(interaction.Prompts, RepairPresentation.Rendering),
                 lockStoreRoot,
                 operationalContributors,
-                new OpenForge.Cli.Core.Commands.Repair.Models.Application.RepairRenameServices(evidence.ReadEvidenceAsync, evidence)).ExecuteAsync), RepairPresentation.Rendering);
+                new OpenForge.Cli.Core.Commands.Repair.Models.Application.RepairRenameServices(evidence.ReadEvidenceAsync, evidence)
+                { ReadReferences = evidence.ReadEvidenceAsync, DiagnosisReader = reader }).ExecuteAsync), RepairPresentation.Rendering);
     }
 
     private static ICliCommandBinding BuildFind(FindSymbols symbols)

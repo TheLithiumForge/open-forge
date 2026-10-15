@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
@@ -43,6 +44,7 @@ internal sealed record RouteSourceObservation
 
 internal sealed record RouteSourceInspection
 {
+    internal SourceReadSession? Session { get; init; }
     public required SourceCatalogue Catalogue { get; init; }
 
     public required SourceRouteFacts Routes { get; init; }

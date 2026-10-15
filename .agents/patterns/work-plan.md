@@ -6,14 +6,9 @@ open-forge:
 
 # Work Plan
 
-## When to use
-
-One file per slice, written **before** implementation, when the executing agent
-is strict rather than deliberative, or when the slice must be reviewable ahead of
-the work. Do not use it for exploratory work where the next step depends on what
-the last one found.
-
 ## Shape
+
+Schematic Markdown record. Angle-bracket placeholders stand in for the actual slice. Headings and order show the default shape. The content described in the linked rules is required when using this execution plan, including the Divergences section. IDs, name, paths, commands and evidence are illustrative. Preconditions, Steps, Acceptance and Divergences entries repeat as needed. Divergences is initially empty. Additional sections are optional.
 
 ```markdown
 ---
@@ -22,70 +17,48 @@ open-forge:
   tags: [Memory, Working, Task, Plan, Contextual]
 ---
 
-# <Slice ID> — <short name>
+# <Slice ID>: <short name>
 
 ## Goal
 
-One sentence. Observable from outside the code.
+<one externally observable outcome sentence>
 
 ## Depends on / Blocks
 
-Slice IDs only. No prose.
+<predecessor slice IDs> / <blocked slice IDs>
 
 ## References
 
-Exact `path:line` for every site to change, plus the decision or contract that
-authorizes it. A reference the executor must search for is a defect in the plan.
+<exact path:line for each change site> -> <authorizing decision or contract link>
 
 ## Preconditions
 
-- [ ] Verifiable before starting, with the command that verifies it.
+- [ ] <starting condition> -> <verifying command>
 
 ## Steps
 
-Numbered. Each step names the exact file, the exact change, and the command that
-proves it. One step is one reviewable edit plus its verification.
+1. <exact file>: <one reviewable edit> -> <verifying command>
 
 ## Expected result
 
-Observable before and after. Include the exact output shape when output changes.
+<observable before> -> <observable after, exact output shape when changed>
 
 ## Acceptance
 
-- [ ] Gates that must all hold before the slice is done.
+- [ ] <completion gate>
 
 ## Divergences observed
 
-Empty until implementation. Every entry: what the plan said, what was actually
-found, what changed, and whether a durable record needs updating.
+<!-- Initially empty. When observed: planned / found / changed / durable update. -->
 
 ## Rollback
 
-How to undo the slice if it is abandoned midway.
+<undo path for an abandoned partial slice>
 ```
 
-## Rules
+## Applicability And Sources
 
-- **Checkboxes are live state.** The executing agent ticks them as it goes. The
-  plan file is execution state, not an immutable spec.
-- **No judgement left in Steps.** If a step needs the executor to decide scope,
-  ownership, naming, or whether something is safe, that decision belongs in the
-  plan before execution, or the slice is not ready to delegate.
-- **Every step carries its verification.** A step whose result cannot be checked
-  is a step that will be reported done without being done.
-- **Divergences are mandatory, not optional.** The section exists because plans
-  are wrong in small ways and the difference between plan and reality is the most
-  perishable knowledge in the work. Recording it is what lets architecture be
-  rebuilt from the plans when someone forgets to update it directly.
-- **A plan is not authority.** It executes an already accepted decision. If a
-  step would change a public contract, dependency, or safety boundary that no
-  decision covers, stop and record it under Divergences.
+For one slice, planned before implementation, when the executor is strict or the work needs advance review. Exploratory work needs a different shape.
 
-## Boundaries
-
-This shape is for execution, not for deciding. The decision it executes lives in
-its own accepted record; the plan links to that record rather than restating its
-reasoning.
-
-Related: [Work Records](work-records.md) covers task outcome and state. This
-covers one slice of the doing.
+- [Work Plans Directive](../directives/work-planning/work-plans.md) binds readiness, verification, live state, divergence recording and the authority boundary.
+- [Work Records](work-records.md) shows the enclosing task's outcome and current state.

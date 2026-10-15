@@ -90,7 +90,7 @@ No completion grace has been consumed for Tasks 68 or 69.
 request. Its archived record preserves that earlier folding. Task 56 has no separate record: its
 outcome is the 2026-09-25 archive.
 
-Other records, such as the [beta follow-ups](../../working/cli-development/tasks/beta-follow-ups.md) and the
+Other records, such as the [beta follow-ups](../../working/cli-development/tasks/beta-follow-up-backlog.md) and the
 [candidate queue](../../working/cli-development/tasks/potential/_potential.md), are available on demand in
 [Open CLI Tasks](../../working/cli-development/tasks/_tasks.md).
 

@@ -1,6 +1,6 @@
 status=completed
 packages=2
-effects=20
+effects=24
 findings=10
 '.agents/templates/planning/_planning.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.
 '.agents/templates/planning/analysis.md' is excluded by workspace removal settings. Edit .agents/open-forge.json to restore it before installing this file.

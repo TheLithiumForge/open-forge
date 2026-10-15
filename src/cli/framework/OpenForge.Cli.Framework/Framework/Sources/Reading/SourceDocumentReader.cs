@@ -1,3 +1,6 @@
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.Parsing;
 using OpenForge.Cli.Core.Framework.Filesystem.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
@@ -6,33 +9,34 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Acquisition;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Reading;
 
 internal sealed class SourceDocumentReader
 {
-    private readonly PhysicalPathResolver _physicalPathResolver = new();
-    private readonly Dictionary<string, SourceLayerVerification> _verifications = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, FileReadResult<string>> _reads =
-        new(PhysicalIdentityTracker.PathComparer);
+    private readonly PhysicalPathResolver _physicalPathResolver;
+    internal SourceFileAcquisition Acquisition { get; } = new();
+    internal MarkdownDocumentCache Documents => Acquisition.Documents;
 
-    internal SourceDocumentReader(CliWorkspace workspace)
+    internal MarkdownDocumentFacts ParseDocument(string source)
+        => Acquisition.ParseDocument(source);
+
+    internal SourceDocumentReader(CliWorkspace workspace, PhysicalPathResolver? physicalPaths = null)
     {
         Workspace = workspace;
+        _physicalPathResolver = physicalPaths ?? new PhysicalPathResolver().CreateReadSession();
     }
 
     internal CliWorkspace Workspace { get; }
+
+    internal PhysicalPathResolver PhysicalPaths => _physicalPathResolver;
 
     internal SourceLayerVerification Verify(
         SourceLayer layer,
         CancellationToken cancellationToken)
     {
-        if (_verifications.TryGetValue(layer.CanonicalPath, out var cached))
-        {
-            return RebindVerification(cached, layer);
-        }
-
         var verification = cancellationToken.IsCancellationRequested
             ? new SourceLayerVerification(
                 layer,
@@ -40,7 +44,6 @@ internal sealed class SourceDocumentReader
                 null,
                 null)
             : FormVerification(layer, cancellationToken);
-        _verifications.Add(layer.CanonicalPath, verification);
         return verification;
     }
 
@@ -64,14 +67,8 @@ internal sealed class SourceDocumentReader
 
         var physicalPath = verification.CurrentPhysicalPath
             ?? throw new InvalidOperationException("A verified source layer requires its current physical path.");
-        if (!_reads.TryGetValue(physicalPath, out var rawRead))
-        {
-            rawRead = await StrictUtf8FileReader
-                .ReadAsync(physicalPath, layer.CanonicalPath, cancellationToken)
-                .ConfigureAwait(false);
-            rawRead = NormalizeRead(rawRead, layer.CanonicalPath);
-            _reads.Add(physicalPath, rawRead);
-        }
+        var rawRead = await Acquisition.ReadAsync(physicalPath, layer.CanonicalPath, cancellationToken).ConfigureAwait(false);
+        rawRead = NormalizeRead(rawRead, layer.CanonicalPath);
 
         return new SourceDocumentReadResult(
             layer,
@@ -136,22 +133,6 @@ internal sealed class SourceDocumentReader
             ? SourceLayerVerificationState.Verified
             : SourceLayerVerificationState.Changed;
         return new SourceLayerVerification(layer, state, currentPhysicalPath, null);
-    }
-
-    private static SourceLayerVerification RebindVerification(
-        SourceLayerVerification verification,
-        SourceLayer layer)
-    {
-        if (ReferenceEquals(verification.Layer, layer))
-        {
-            return verification;
-        }
-
-        return new SourceLayerVerification(
-            layer,
-            verification.State,
-            verification.CurrentPhysicalPath,
-            verification.Failure);
     }
 
     private static FileReadResult<string> RebindRead(

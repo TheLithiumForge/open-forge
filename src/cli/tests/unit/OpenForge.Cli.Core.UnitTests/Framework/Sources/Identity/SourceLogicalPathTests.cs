@@ -4,6 +4,34 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Identity;
 
 public sealed class SourceLogicalPathTests
 {
+    [Fact(DisplayName = "Canonical path validation preserves every UTF-16 code unit classification"),
+        Trait("Boundary", "Processing"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void CanonicalValidationPreservesCharacterRules()
+    {
+        for (var value = 0; value <= char.MaxValue; value++)
+        {
+            var character = (char)value;
+            var segment = $"before{character}after";
+            Assert.Equal(character is not ('/' or '\\') && !char.IsControl(character), SourceLogicalPath.IsCanonicalSegment(segment));
+            Assert.Equal(character != '\\' && !char.IsControl(character), SourceLogicalPath.IsCanonicalSource($".agents/{segment}/note.md"));
+        }
+    }
+
+    [Fact(DisplayName = "Repeated pure canonical path validation allocates no split strings or segment arrays"),
+        Trait("Boundary", "Processing"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    public void CanonicalValidationHasNoAllocationWork()
+    {
+        const string path = ".agents/memory/archived/cli-development/tasks/notes.md";
+        for (var index = 0; index < 100; index++) SourceLogicalPath.IsCanonicalSource(path);
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        var accepted = 0;
+        for (var index = 0; index < 10_000; index++)
+            if (SourceLogicalPath.IsCanonicalSource(path)) accepted++;
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+        Assert.Equal(10_000, accepted);
+        Assert.Equal(0, allocated);
+    }
+
     [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Neutral logical paths accept canonical slash-separated source paths"),
         InlineData(".agents/loader.md", true),

@@ -93,13 +93,47 @@ public sealed class RenameEvidenceEvaluatorTests
         Assert.All(Evaluate(facts).Resolutions, resolution => Assert.Equal(RenameResolution.Contradictory, resolution.Resolution));
     }
 
-    [Fact(DisplayName = "An existing recorded destination identity contradicts an automatic move")]
+    [Fact(DisplayName = "An unchanged committed destination is not a successor")]
     public void ExistingOldIdentity()
     {
         var facts = RenameEvidenceTestFacts.Facts([RenameEvidenceTestFacts.Candidate()], [RenameEvidenceTestFacts.Old(), RenameEvidenceTestFacts.Old(RenameEvidenceTestFacts.NewPath)])
             with
         { MissingPaths = [new(RenameEvidenceTestFacts.OldPath, FileExpectation.Missing(RenameEvidenceTestFacts.Absolute(RenameEvidenceTestFacts.OldPath)))] };
-        Assert.Equal(RenameResolution.Contradictory, Evaluate(facts).Resolutions[0].Resolution);
+        Assert.Equal(RenameResolution.NoCandidate, Evaluate(facts).Resolutions[0].Resolution);
+    }
+
+    [Theory(DisplayName = "Unchanged HEAD candidates cannot prove content succession even across checkout line endings")]
+    [InlineData(false), InlineData(true)]
+    public void UnchangedHeadCandidateIsExcluded(bool crlf)
+    {
+        var body = crlf ? RenameEvidenceTestFacts.Body.Replace("\n", "\r\n", StringComparison.Ordinal) : RenameEvidenceTestFacts.Body;
+        var facts = RenameEvidenceTestFacts.Facts([RenameEvidenceTestFacts.Candidate(body: body)],
+            [RenameEvidenceTestFacts.Old(), RenameEvidenceTestFacts.Old(RenameEvidenceTestFacts.NewPath)]) with
+        { MissingPaths = [new(RenameEvidenceTestFacts.OldPath, FileExpectation.Missing(RenameEvidenceTestFacts.Absolute(RenameEvidenceTestFacts.OldPath)))] };
+        Assert.Empty(Evaluate(facts).Resolutions[0].StrongEvidence);
+        Assert.Equal(RenameResolution.NoCandidate, Evaluate(facts).Resolutions[0].Resolution);
+    }
+
+    [Fact(DisplayName = "An unchanged duplicate does not defeat the one untracked strong successor")]
+    public void UnchangedDuplicateDoesNotCountAsStrong()
+    {
+        const string existing = ".agents/guidance/existing.md";
+        var facts = RenameEvidenceTestFacts.Facts([RenameEvidenceTestFacts.Candidate(), RenameEvidenceTestFacts.Candidate(existing)],
+            [RenameEvidenceTestFacts.Old(), RenameEvidenceTestFacts.Old(existing)]) with
+        { MissingPaths = [new(RenameEvidenceTestFacts.OldPath, FileExpectation.Missing(RenameEvidenceTestFacts.Absolute(RenameEvidenceTestFacts.OldPath)))] };
+        Assert.Equal(RenameEvidenceTestFacts.NewPath, Assert.Single(Evaluate(facts).Resolutions).Proven?.NewPath);
+    }
+
+    [Fact(DisplayName = "Unchanged candidates still count against recorded metadata uniqueness")]
+    public void MetadataUniverseIncludesUnchangedFiles()
+    {
+        const string existing = ".agents/guidance/existing.md";
+        var signature = RenameMetadataIdentity.Create("Detailed selection guidance", ["Guidance", "Specific"], []);
+        var facts = RenameEvidenceTestFacts.Facts(
+            [RenameEvidenceTestFacts.Candidate(metadata: signature), RenameEvidenceTestFacts.Candidate(existing, metadata: signature)],
+            [RenameEvidenceTestFacts.Old(body: null, metadata: signature), RenameEvidenceTestFacts.Old(existing)]) with
+        { MissingPaths = [new(RenameEvidenceTestFacts.OldPath, FileExpectation.Missing(RenameEvidenceTestFacts.Absolute(RenameEvidenceTestFacts.OldPath)))] };
+        Assert.Empty(Assert.Single(Evaluate(facts).Resolutions).StrongEvidence);
     }
 
     [Fact(DisplayName = "Physical aliases count once before selecting a successor")]

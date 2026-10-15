@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Models.Selection;
 using OpenForge.Cli.Core.Commands.References.Models.Source;
 using OpenForge.Cli.Core.Commands.References.Shared.Inspection;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.Parsing;
 using OpenForge.Cli.Core.Commands.References.Shared.Resolution;
 using OpenForge.Cli.Core.Commands.References.Shared.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -42,12 +43,7 @@ internal sealed class ReferencesOperation
         _resultBuilder = resultBuilder;
     }
 
-    internal ValueTask<ReferencesResult> ExecuteAsync(
-        ReferencesRequest request,
-        CancellationToken cancellationToken)
-        => ExecuteCoreAsync(request, cancellationToken);
-
-    private async ValueTask<ReferencesResult> ExecuteCoreAsync(
+    internal async ValueTask<ReferencesResult> ExecuteAsync(
         ReferencesRequest request,
         CancellationToken cancellationToken)
     {
@@ -65,6 +61,7 @@ internal sealed class ReferencesOperation
         SourceUniverseFilterResolution? filterResolution = null;
         var interrupted = false;
         var failed = false;
+        var operation = this;
 
         try
         {
@@ -72,6 +69,9 @@ internal sealed class ReferencesOperation
             sourceSession = await _sourceResolver
                 .ReadAsync(request.Workspace, cancellationToken)
                 .ConfigureAwait(false);
+            operation = new ReferencesOperation(_sourceResolver,
+                _layerInspector.CreateReadSession(sourceSession.DocumentReader.Documents),
+                _destinationResolver.CreateReadSession(sourceSession), _resultBuilder);
             if (sourceSession.Catalogue.IsCancelled)
             {
                 AddEvent(findings, ReferencesFindingCode.Interrupted, null);
@@ -160,7 +160,7 @@ internal sealed class ReferencesOperation
 
         if (sourceSession is not null && request.RequestsOutgoing && logicalSource is not null && !interrupted && !failed)
         {
-            var inspection = await InspectLayersAsync(
+            var inspection = await operation.InspectLayersAsync(
                 new ReferencesLayerScanInput(
                     sourceSession,
                     logicalSource,
@@ -202,7 +202,7 @@ internal sealed class ReferencesOperation
                         continue;
                     }
 
-                    var inspection = await _layerInspector.InspectAsync(
+                    var inspection = await operation._layerInspector.InspectAsync(
                         new ReferencesLayerInspectionInput(
                             sourceSession,
                             source,
@@ -241,7 +241,7 @@ internal sealed class ReferencesOperation
                             ReferencesDestinationFacts targetFacts;
                             try
                             {
-                                targetFacts = await ResolveAsync(
+                                targetFacts = await operation.ResolveAsync(
                                     sourceSession.Catalogue,
                                     source,
                                     layer,

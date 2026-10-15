@@ -70,13 +70,14 @@ internal sealed class FindFrontmatterReader
                 ?? throw new InvalidOperationException(
                     "Complete Framework document metadata facts require authored values.");
             var tags = new List<FindFrontmatterTagOccurrence>(metadata.Tags.Length);
+            var locations = new Utf8SourceMap(input.Document.Source);
             for (var index = 0; index < metadata.Tags.Length; index++)
             {
                 var span = metadataFacts.TagSpans[index];
                 var start = checked(yamlSpan.Start + span.Start);
                 tags.Add(new FindFrontmatterTagOccurrence(
                     metadata.Tags[index],
-                    MapLocation(input.Document.Source, start, span.Length)));
+                    locations.Map(start, span.Length)));
             }
 
             return Complete(metadata.Description, tags, metadataFacts.ApplyTo);
@@ -121,6 +122,4 @@ internal sealed class FindFrontmatterReader
             or FormatException;
     }
 
-    private static SourceLocation MapLocation(string source, int start, int length)
-        => new Utf8SourceMap(source).Map(start, length);
 }

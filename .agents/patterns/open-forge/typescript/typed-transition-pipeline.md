@@ -8,7 +8,7 @@ open-forge:
 
 ## Shape
 
-Keep stage transitions visible in one coordinator:
+Schematic coordinator fragments. Imports, result declarations, `assertNever` and stage implementations are omitted. Calls name directly imported symbols. Names, values and stage inventory are illustrative.
 
 ```ts
 const planResult: PlanResult = planMutation(request);
@@ -23,24 +23,16 @@ switch (planResult.state) {
 }
 ```
 
-`PlanState`, `planMutation`, `preflightPlan`, and `createBlockedResult` are direct imported symbols. Editor navigation reaches their definitions immediately.
-
-Each stage returns only its real choices:
-
 ```text
-plan        -> ready | blocked
-preflight   -> ready | blocked
-confirmation-> accepted | cancelled
-application -> complete | stopped
-verification-> passed | failed
-recovery    -> not-required | complete | incomplete
+plan         -> ready | blocked
+preflight    -> ready | blocked
+confirmation -> accepted | cancelled
+application  -> complete | stopped
+verification -> passed | failed
+recovery     -> not-required | complete | incomplete
 ```
 
-Exact state values live beside the contract that owns them as one enum or readonly const object. Result unions derive their discriminants from those values.
-
-## Behavior Dispatch
-
-Serializable discriminants describe data; they do not discover behavior. Dispatch through an exhaustive branch that calls direct references:
+Schematic effect dispatcher with the same omissions:
 
 ```ts
 switch (effect.kind) {
@@ -57,41 +49,26 @@ switch (effect.kind) {
 }
 ```
 
-Adding an effect kind must make every incomplete dispatcher fail type checking.
-
-Do not use:
-
-```text
-pipeline.run("apply")
-handlers[effect.kind](effect)
-container.resolve("filesystem")
-```
-
-A typed object containing actual function references may be useful at a deliberate composition boundary. It must use `satisfies` or an explicit declaration-side type, remain directly navigable, and not hide materially different stage choices behind one generic callback bag.
-
-## Lifecycle Values
-
-Use ordinary readonly data for immutable facts. Use a class or construction-gated value when a lifecycle transition must be protected, such as turning a raw plan into a preflighted plan.
-
-Do not simulate validation through:
+| Part                                                                | Status                                 |
+| ------------------------------------------------------------------- | -------------------------------------- |
+| Operation-local coordinator and direct references                   | Required                               |
+| Real typed choices at each meaningful stage                         | Required                               |
+| Exhaustive branches, missing variant fails type checking            | Required                               |
+| Exact state definitions beside owning contract                      | Required                               |
+| Immutable facts as readonly data                                    | Required                               |
+| Protected lifecycle transition as class or construction-gated value | Required when protection is needed     |
+| Function-reference object at deliberate composition boundary        | Optional, typed and directly navigable |
+| String-addressed behavior or boolean/assertion validation           | Invalid                                |
 
 ```text
-preflightPassed: true
-state: "ready" as ReadyState
+raw plan -> validating module -> preflighted value -> downstream consumer
+                                required input type
 ```
 
-The validating module creates the next-stage value without a workspace-owned type assertion. A downstream function accepts only that value.
+## Applicability And Sources
 
-## Placement
+For meaningful stages or serializable variants. Serializable discriminants describe state. They do not discover behavior.
 
-The coordinator stays with the operation it makes legible. Reusable state values and mechanical transitions move to their nearest demonstrated common scope. Do not create a universal pipeline engine merely because several operations use stages.
-
-## Review Checks
-
-- Each behavior is connected through a direct imported reference.
-- Every meaningful stage exposes its real typed choices.
-- Branches are exhaustive and fail compilation when a variant is missing.
-- String discriminants describe serializable state rather than resolve behavior.
-- Invalid lifecycle transitions cannot be created through a boolean or assertion.
-- A reader can navigate from coordinator to stage implementation in one editor action.
-- Generic composition does not conceal operation-specific authority or recovery.
+- [TypeScript Source Structure](../../../directives/open-forge/typescript/typescript-source-structure.md#typed-transitions) binds dispatch, navigation and lifecycle protection.
+- [Named Values](named-values.md) shows discriminant definitions.
+- [Nearest Shared Scope](../../software/source-locality/nearest-shared-scope.md) shows demonstrated shared transitions.

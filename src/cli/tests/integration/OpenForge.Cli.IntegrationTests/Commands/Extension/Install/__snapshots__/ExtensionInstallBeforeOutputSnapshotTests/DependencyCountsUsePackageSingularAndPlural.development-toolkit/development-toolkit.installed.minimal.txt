@@ -1,18 +1,19 @@
 Installed the development-toolkit Extension and 5 packages it requires: workflows, development, planning, project-documents, scenarios.
+  .agents/directives/_directives.md             Entries updated
   .agents/memory/crystallized/_crystallized.md  Entries updated
   .agents/memory/emerging/_emerging.md          Entries updated
   .agents/memory/working/_working.md            Entries updated
   .agents/patterns/_patterns.md                 Entries updated
   .agents/skills/_skills.md                     Entries updated
   .agents/templates/_templates.md               Entries updated
-  Created 38 files under .agents/memory/crystallized/decisions,
-  .agents/memory/crystallized/documents, .agents/memory/emerging/analysis,
-  .agents/memory/emerging/ideas, .agents/memory/working/checkpoints,
-  .agents/patterns, .agents/skills/use-workflow,
-  .agents/skills/use-workflow/references,
+  Created 40 files under .agents/directives/planning,
+  .agents/memory/crystallized/decisions, .agents/memory/crystallized/documents,
+  .agents/memory/emerging/analysis, .agents/memory/emerging/ideas,
+  .agents/memory/working/checkpoints, .agents/patterns,
+  .agents/skills/use-workflow, .agents/skills/use-workflow/references,
   .agents/skills/use-workflow/references/development,
   .agents/skills/use-workflow/references/planning,
   .agents/skills/use-workflow/references/project-documents,
   .agents/templates/documents, .agents/templates/planning,
   .agents/templates/scenarios, .agents/templates/workflows
-  Updated the Entries section of 7 files
+  Updated the Entries section of 8 files

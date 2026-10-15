@@ -73,7 +73,7 @@ Doctor and Repair use the same current Entries identity records and admitted can
 
 Every incomplete result starts with `Doctor could not finish <K> checks.`, using `1 check` for one unfinished check. If the count is unavailable, use `Doctor could not finish.` Append known finding counts without saying `No problems found.` Exit codes and the JSON shape remain unchanged.
 
-When Git times out, say `Git did not answer in time, so renamed files could not be proven. Run the command again.` Suppress missing-target findings until Git can establish the evidence, report incomplete reference coverage, and retry the complete Doctor request, including its workspace. A clean Doctor prints no Next.
+When Git times out, say `Rename evidence did not finish in time, so renamed files could not be proven. Run the command again.` Suppress missing-target findings until Git can establish the evidence, report incomplete reference coverage, and retry the complete Doctor request, including its workspace. A clean Doctor prints no Next.
 
 ## Purpose And Boundary
 

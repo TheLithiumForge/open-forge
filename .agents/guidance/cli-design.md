@@ -193,3 +193,22 @@ Grouping saves repetition but adds navigation. A single report with multiple
 detail levels saves duplicated presentation paths while creating a schema
 obligation. Use real journeys to choose among these tradeoffs, and update the
 project's contracts when an accepted choice changes behavior.
+
+## Operation Variation Review
+
+The [Composable CLI Operation Pattern](../patterns/open-forge/cli/composable-operation.md) shows the reusable result. Its [Directive](../directives/cli/composable-operation.md) defines required behavior. The product's Interface and Behavior Contracts own exact variation points.
+
+Before accepting a new operation, confirm that its deliberate variation points
+are named and owned by the product contract:
+
+| Variation point          | Review question                                                          |
+| ------------------------ | ------------------------------------------------------------------------ |
+| Command depth and groups | Is the path as shallow as the domain allows, and is a group substantive? |
+| Subject default          | Is the default finite, safe, deterministic, and explicit?                |
+| Interaction              | Does non-interactive use remain complete without prompting?              |
+| Modifier grammar         | Are roles, repetition, composition, and conflicts unambiguous?           |
+| Preview                  | Does preview share request, facts, planning, and preflight?              |
+| Authority                | Is every widened boundary explicit and no broader than named?            |
+| Results and streams      | Are status, process, structured output, and diagnostics locally owned?   |
+| Effects and recovery     | Does the local policy match the effect family and preserve facts?        |
+| Locality and testing     | Can readers test and review the operation without a hidden engine?       |

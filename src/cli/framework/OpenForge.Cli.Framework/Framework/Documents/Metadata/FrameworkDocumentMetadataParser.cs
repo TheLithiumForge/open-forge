@@ -13,7 +13,6 @@ namespace OpenForge.Cli.Core.Framework.Documents.Metadata;
 internal sealed class FrameworkDocumentMetadataParser
 {
     private const string OpenForgeRoot = "open-forge";
-    private readonly YamlDocumentParser _yamlParser = new();
 
     internal FrameworkDocumentMetadataFacts Parse(MarkdownDocumentFacts document, FrameworkMetadataReadScope scope)
     {
@@ -25,13 +24,12 @@ internal sealed class FrameworkDocumentMetadataParser
         }
 
         if (document.Frontmatter.State != MarkdownFrontmatterState.Complete
-            || document.Frontmatter.YamlSpan is not { } yamlSpan)
+            || document.FrontmatterSyntax is not { } syntax)
         {
             return Malformed();
         }
 
-        var yaml = document.Source[yamlSpan.Start..yamlSpan.End];
-        return Read(_yamlParser.Parse(yaml), scope);
+        return Read(syntax, scope);
     }
 
     internal FrameworkDocumentMetadataFacts Read(YamlDocumentFacts facts, FrameworkMetadataReadScope scope)

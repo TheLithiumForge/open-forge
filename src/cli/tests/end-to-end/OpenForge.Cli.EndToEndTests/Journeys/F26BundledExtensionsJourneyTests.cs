@@ -33,6 +33,8 @@ public sealed class F26BundledExtensionsJourneyTests
 
     private static readonly string[] PlanningPayloadPaths =
     [
+        ".agents/directives/planning/_planning.md",
+        ".agents/directives/planning/work-records.md",
         ".agents/memory/crystallized/decisions/_decisions.md",
         ".agents/memory/emerging/analysis/_analysis.md",
         ".agents/memory/emerging/ideas/_ideas.md",

@@ -7,6 +7,21 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Inventory;
 
 public sealed class SourceCatalogueTests
 {
+    [Trait("Boundary", "Processing"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Physical layer lookups reuse one catalogue index including overwrite layers")]
+    public void PhysicalLayerLookupReusesIndexedResults()
+    {
+        var catalogue = CreateCatalogue();
+        var source = catalogue.FindByPath(".agents/root/leaf.md") ?? throw new InvalidOperationException();
+        var first = catalogue.FindLayersByPhysicalPath(source.Base.PhysicalPath);
+        for (var index = 0; index < 100; index++)
+            Assert.Same(first, catalogue.FindLayersByPhysicalPath(source.Base.PhysicalPath));
+        Assert.Same(source.Base, Assert.Single(first).Layer);
+        var overwrite = source.Overwrite ?? throw new InvalidOperationException();
+        Assert.Same(overwrite, Assert.Single(catalogue.FindLayersByPhysicalPath(overwrite.PhysicalPath)).Layer);
+        Assert.Empty(catalogue.FindLayersByPhysicalPath(Physical("missing.md")));
+    }
+
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Neutral source catalogue orders candidates, sources, and issues independently by ordinal facts")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]

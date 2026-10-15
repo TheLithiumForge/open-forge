@@ -9,6 +9,45 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.References;
 
 public sealed class SourceLinkDestinationPhysicalMappingTests
 {
+    [Fact(DisplayName = "One reference session freshly resolves every missing physical target occurrence"),
+        Trait("Feature", "references"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
+    public async Task SessionBoundsPhysicalResolutionWork()
+    {
+        var workspace = SourceInventoryTestData.Workspace();
+        var catalogue = new SourceCatalogue(workspace, [], [], [], isCancelled: false);
+        var calls = 0;
+        var resolver = new SourceLinkDestinationResolver(
+            physicalPathResolver: (_, path) =>
+            {
+                calls++;
+                return PhysicalPathResolution.Classified(PhysicalPathState.Missing, path);
+            },
+            strictUtf8Reader: (_, _, _) => throw new InvalidOperationException(),
+            markdownParser: _ => throw new InvalidOperationException());
+        var session = resolver.CreateSession(catalogue);
+        for (var index = 0; index < 12; index++)
+        {
+            var facts = await session.ResolveAsync(new SourceLinkDestinationInput
+            {
+                Workspace = workspace,
+                Catalogue = catalogue,
+                SourceCanonicalPath = ".agents/source.md",
+                RawDestination = $"missing.md#heading-{index}",
+            }, TestContext.Current.CancellationToken);
+            Assert.Equal(SourceLinkTargetResolution.Missing, facts.Target.Resolution);
+            Assert.Equal($"heading-{index}", facts.Fragment);
+        }
+        Assert.Equal(12, calls);
+        await session.CreateSession(catalogue).ResolveAsync(new SourceLinkDestinationInput
+        {
+            Workspace = workspace,
+            Catalogue = catalogue,
+            SourceCanonicalPath = ".agents/source.md",
+            RawDestination = "missing.md",
+        }, TestContext.Current.CancellationToken);
+        Assert.Equal(13, calls);
+    }
+
     [Trait("Boundary", "Processing")]
     [Theory(DisplayName = "Returned noncontained physical states retain exact source-link facts before target I/O"),
         InlineData((int)PhysicalPathState.Dangling, (int)SourceLinkTargetResolution.PhysicalEscape, (int)SourceLinkDestinationFindingCode.TargetUnsafe,

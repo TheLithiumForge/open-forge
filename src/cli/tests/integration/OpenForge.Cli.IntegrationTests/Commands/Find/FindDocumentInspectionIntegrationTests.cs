@@ -179,7 +179,7 @@ public sealed class FindDocumentInspectionIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Find inspection maps invalid, changed, missing, and unavailable layers to typed incomplete facts")]
+    [Fact(DisplayName = "Find inspection preserves current failure facts and observes a released file lock")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Integration")]
     public async Task InvalidEncodingChangedMissingAndUnavailableLayersProduceTypedIncompleteFacts()
     {
@@ -260,7 +260,8 @@ public sealed class FindDocumentInspectionIntegrationTests
         AssertIncompleteInspection(invalidFacts, invalidSource, FindFindingCode.InvalidEncoding);
         AssertIncompleteInspection(changedFacts, changedSource, FindFindingCode.InspectionUnavailable);
         AssertIncompleteInspection(missingFacts, missingSource, FindFindingCode.InspectionUnavailable);
-        AssertIncompleteInspection(unavailableFacts, unavailableSource, FindFindingCode.InspectionUnavailable);
+        Assert.NotNull(unavailableFacts.Document);
+        Assert.Empty(unavailableFacts.Findings);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

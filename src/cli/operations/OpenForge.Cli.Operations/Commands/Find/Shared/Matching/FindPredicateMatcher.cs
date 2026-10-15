@@ -232,6 +232,7 @@ internal sealed class FindPredicateMatcher
 
         var evidence = new List<FindEvidenceCandidate>();
         var occurrence = 0;
+        Utf8SourceMap? locations = null;
         foreach (var heading in input.Document.Headings)
         {
             if (input.SectionSpan is not null
@@ -257,7 +258,7 @@ internal sealed class FindPredicateMatcher
                 heading.VisibleText,
                 input.Region,
                 input.Layer.Layer,
-                MapLocation(input.Document.Source, heading.Span),
+                (locations ??= new Utf8SourceMap(input.Document.Source)).Map(heading.Span.Start, heading.Span.Length),
                 new FindHeadingEvidence(
                     heading.Level,
                     heading.Form,
@@ -320,6 +321,4 @@ internal sealed class FindPredicateMatcher
         return location.ByteOffset >= containerStart && locationEnd <= containerEnd;
     }
 
-    private static SourceLocation MapLocation(string source, MarkdownTextSpan span)
-        => new Utf8SourceMap(source).Map(span.Start, span.Length);
 }

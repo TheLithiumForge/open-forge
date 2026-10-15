@@ -5,16 +5,20 @@ namespace OpenForge.Cli.Core.Framework.Sources.Locations;
 
 internal sealed class Utf8SourceMap
 {
-    private static readonly Encoding Utf8 = new UTF8Encoding(
-        encoderShouldEmitUTF8Identifier: false,
-        throwOnInvalidBytes: true);
     private readonly string _source;
+    private readonly Lazy<CoordinateIndex> _index;
 
-    internal Utf8SourceMap(string source)
+    internal Utf8SourceMap(string source, Action? indexBuilt = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ValidateUtf16(source);
         _source = source;
+        _index = new(() =>
+        {
+            var index = new CoordinateIndex(source);
+            indexBuilt?.Invoke();
+            return index;
+        });
     }
 
     internal SourceLocation Map(int start, int length)
@@ -38,10 +42,7 @@ internal sealed class Utf8SourceMap
         ValidateBoundary(start, nameof(start));
         ValidateBoundary(end, nameof(length));
 
-        var (line, column) = GetLineAndColumn(start);
-        var byteOffset = Utf8.GetByteCount(_source.AsSpan(0, start));
-        var byteLength = Utf8.GetByteCount(_source.AsSpan(start, length));
-        return new SourceLocation(line, column, byteOffset, byteLength);
+        return _index.Value.Map(start, end);
     }
 
     private static void ValidateUtf16(string source)
@@ -75,38 +76,45 @@ internal sealed class Utf8SourceMap
         }
     }
 
-    private (int Line, int Column) GetLineAndColumn(int start)
+    private sealed class CoordinateIndex
     {
-        var line = 1;
-        var column = 1;
-        var index = 0;
-        while (index < start)
+        private readonly string _source;
+        private readonly int[] _byteOffsets;
+        private readonly int[] _scalarOffsets;
+        private readonly int[] _lineStarts;
+
+        internal CoordinateIndex(string source)
         {
-            if (_source[index] == '\r')
+            _source = source;
+            _byteOffsets = new int[source.Length + 1];
+            _scalarOffsets = new int[source.Length + 1];
+            var lineStarts = new List<int> { 0 };
+            for (var index = 0; index < source.Length;)
             {
-                index++;
-                if (index < start && index < _source.Length && _source[index] == '\n')
+                var rune = Rune.GetRuneAt(source, index);
+                var end = index + rune.Utf16SequenceLength;
+                _byteOffsets[end] = checked(_byteOffsets[index] + rune.Utf8SequenceLength);
+                _scalarOffsets[end] = _scalarOffsets[index] + 1;
+                if (rune.Value == '\r') lineStarts.Add(end);
+                else if (rune.Value == '\n')
                 {
-                    index++;
+                    if (index > 0 && source[index - 1] == '\r') lineStarts[^1] = end;
+                    else lineStarts.Add(end);
                 }
-
-                line++;
-                column = 1;
-                continue;
+                index = end;
             }
-
-            if (_source[index] == '\n')
-            {
-                index++;
-                line++;
-                column = 1;
-                continue;
-            }
-
-            index += char.IsHighSurrogate(_source[index]) ? 2 : 1;
-            column++;
+            _lineStarts = lineStarts.ToArray();
         }
 
-        return (line, column);
+        internal SourceLocation Map(int start, int end)
+        {
+            var lookup = start;
+            if (start > 0 && start < _source.Length && _source[start] == '\n' && _source[start - 1] == '\r') lookup++;
+            var line = Array.BinarySearch(_lineStarts, lookup);
+            if (line < 0) line = ~line - 1;
+            var lineStart = Math.Min(start, _lineStarts[line]);
+            return new SourceLocation(line + 1, _scalarOffsets[start] - _scalarOffsets[lineStart] + 1,
+                _byteOffsets[start], _byteOffsets[end] - _byteOffsets[start]);
+        }
     }
 }

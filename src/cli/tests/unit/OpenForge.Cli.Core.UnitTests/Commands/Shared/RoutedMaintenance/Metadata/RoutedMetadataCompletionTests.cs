@@ -1,15 +1,79 @@
 using System.Text;
+using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata;
 using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion.Models;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;
+using OpenForge.Cli.Core.Commands.Shared.ReferenceMaintenance;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Shared.RoutedMaintenance.Metadata;
 
 [Trait("Feature", "metadata-completion"), Trait("Evidence", "Unit")]
 public sealed class RoutedMetadataCompletionTests
 {
+    [Fact(DisplayName = "Boolean reference membership allocates only its stateless protection check")]
+    public void MembershipDoesNotConstructMaintenancePolicy()
+    {
+        var policy = new RoutedMetadataCompletionPolicy();
+        var context = Context();
+        var path = Facts().CanonicalPath;
+        var direct = Allocated(() => policy.Protection(path, context) is RoutedMetadataEligibility.Eligible or RoutedMetadataEligibility.LibraryProjection);
+        var membership = Allocated(() => ReferenceProtectionReader.Allows(path, context));
+        Assert.Equal(direct, membership);
+
+        static long Allocated(Func<bool> check)
+        {
+            for (var index = 0; index < 100; index++) Assert.True(check());
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            var allowed = 0;
+            for (var index = 0; index < 1000; index++) if (check()) allowed++;
+            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+            Assert.Equal(1000, allowed);
+            return allocated;
+        }
+    }
+
+    [Fact(DisplayName = "Reference membership protection does not rebuild the ownership catalogue for each check")]
+    public void ProtectionAllocationsDoNotGrowWithOwnershipCatalogue()
+    {
+        var policy = new RoutedMetadataCompletionPolicy();
+        var path = Facts().CanonicalPath;
+        var small = WithPaths(8);
+        var large = WithPaths(1000);
+        Assert.Equal(RoutedMetadataEligibility.ManagedContent, policy.Protection(path, large));
+
+        var smallAllocation = Allocated(small);
+        var largeAllocation = Allocated(large);
+        Assert.True(largeAllocation <= smallAllocation + 8192,
+            $"Membership allocated {smallAllocation} bytes for 9 paths and {largeAllocation} bytes for 1001 paths.");
+
+        RoutedMetadataPolicyContext WithPaths(int count)
+        {
+            var ownership = Owned(framework: true);
+            var framework = ownership.Framework ?? throw new InvalidOperationException();
+            return Context() with
+            {
+                Ownership = ownership with
+                {
+                    Framework = framework with
+                    {
+                        Paths = Enumerable.Range(0, count).Select(index => $".agents/guidance/owned-{index}.md")
+                            .Append(path).ToImmutableArray(),
+                    },
+                },
+            };
+        }
+
+        long Allocated(RoutedMetadataPolicyContext context)
+        {
+            for (var index = 0; index < 8; index++) _ = ReferenceProtectionReader.Allows(path, context);
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            for (var index = 0; index < 100; index++) _ = ReferenceProtectionReader.Allows(path, context);
+            return GC.GetAllocatedBytesForCurrentThread() - before;
+        }
+    }
+
     [Theory(DisplayName = "Ordinary completion uses every exact recognized category and Memory state default")]
     [InlineData("directives", "", "LoadNow,Directive")]
     [InlineData("guidance", "", "Guidance")]

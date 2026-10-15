@@ -39,3 +39,25 @@ open-forge:
 - Apply the [Named Values](../../../patterns/open-forge/typescript/named-values.md) Pattern to protocol-significant or otherwise magic strings and numbers.
 - Apply the [Typed Transition Pipeline](../../../patterns/open-forge/typescript/typed-transition-pipeline.md) Pattern when behavior has meaningful stages or serializable variants.
 - Apply the [Contract Ownership](../../../patterns/software/contract-ownership.md) Pattern when semantic documentation, generated reference, and conformance evidence describe one contract; apply the TypeScript specialization when the exact source contract is TypeScript.
+
+### Module And Test Shape
+
+- Keep pure transformations as functions. Use a class when cohesive state, resource ownership, lifecycle or side effects become clearer through encapsulation. Choose the construct that makes the behavior easiest to read.
+- Export intentional named functions, classes, types and constants. Import directly from the owning module. Add a barrel only at a deliberate public or composition boundary.
+- When a module gains a second responsibility or reaches its applicable size boundary, split by behavior. Adjacency fits a subject expected to remain one production module with one test. A subject with, or expected to need, multiple test files starts with its nearest `__tests__/` directory. Name tests by the behavior they prove.
+- Keep the same-named module as the obvious entry or composition point. Split files name their behavior, not `helpers.ts`, `common.ts` or `utils.ts`. Keep test tiers visible in suffixes such as `*.test.ts`, `*.integration.test.ts` and `*.e2e.test.ts`. Do not add redundant tier directories beneath `__tests__/`.
+
+### Exact Contracts And Named Values
+
+- Export exact types and named values from focused source modules. Do not maintain handwritten declaration mirrors for documentation. Keep runtime validation beside the untrusted boundary it protects. The [TypeScript Contract Ownership Pattern](../../../patterns/open-forge/typescript/contract-ownership.md) shows this specialization of the [generic ownership rule](../../software/contract-ownership.md).
+- Give each semantic value set one runtime enum or readonly const object. Derive type unions from that runtime definition instead of restating members. Do not define an enum and const object repeating one concept's values. Build mappings from named keys and satisfy a complete typed record. Consumers use named values instead of raw protocol strings or policy numbers.
+- Always name schema and format versions, command and operation identifiers, result statuses, message levels, diagnostic and error codes, exit values, lifecycle and persistence states, wire-format discriminants, and policy-bearing retry, timeout, size and count limits.
+- Place value objects beside their contracts. CLI-wide concepts live at CLI scope, command or family diagnostics begin there, and domain states stay with their domain. Move definitions only to the nearest common ancestor of demonstrated consumers. Do not create a global constants catalogue. Ordinary one-off presentation copy, fixture content and self-explanatory local arithmetic are not automatically magic. Name them when repetition, domain meaning or change risk makes it useful.
+
+### Typed Transitions
+
+- Keep meaningful stage transitions visible in one operation-local coordinator through direct imported references. Each stage returns only its real typed choices. Serializable discriminants describe data and never discover behavior. Keep exact state values beside their contract as one enum or readonly const object and derive result-union discriminants from them.
+- Dispatch through exhaustive branches calling direct references. Adding a variant must fail type checking in every incomplete dispatcher. Do not use string-addressed stages, keyed handler lookup or container resolution to discover behavior.
+- A typed object of actual function references may serve a deliberate composition boundary. It uses `satisfies` or an explicit declaration-side type, remains directly navigable and does not hide materially different stage choices in a generic callback bag.
+- Use ordinary readonly data for immutable facts. Use a class or construction-gated value when a lifecycle transition must be protected. The validating module creates the next-stage value without a workspace-owned assertion and downstream functions accept only that value. Do not simulate validation with a boolean or assertion.
+- Promote reusable state values and mechanical transitions only to their nearest demonstrated common scope. Do not build a universal pipeline engine merely because operations have stages. Generic composition must not conceal operation-specific authority or recovery.

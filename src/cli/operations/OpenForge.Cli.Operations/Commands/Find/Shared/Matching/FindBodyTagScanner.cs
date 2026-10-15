@@ -10,8 +10,9 @@ using OpenForge.Cli.Core.Framework.Sources.Locations;
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Matching;
 
-internal sealed class FindBodyTagScanner
+internal sealed class FindBodyTagScanner(Func<string, Utf8SourceMap>? locationMap = null)
 {
+    private readonly Func<string, Utf8SourceMap> _locationMap = locationMap ?? (static source => new Utf8SourceMap(source));
     internal FindBodyTagFacts Scan(FindBodyTagInput input)
     {
         ArgumentNullException.ThrowIfNull(input);
@@ -30,16 +31,32 @@ internal sealed class FindBodyTagScanner
             .ToArray();
         var occurrences = new List<FindBodyTagOccurrence>();
         var seen = new HashSet<(int Start, int Length)>();
+        var source = document.Source;
+        Utf8SourceMap? locations = null;
 
         foreach (var visibleText in document.VisibleText)
         {
             foreach (var visibleRange in ReadVisibleRanges(visibleText.Span, excludedSpans))
             {
-                ScanRange(document.Source, visibleRange.Start, visibleRange.End, occurrences, seen);
+                ScanRange(visibleRange.Start, visibleRange.End);
             }
         }
 
         return new FindBodyTagFacts(FindBodyTagAvailability.Complete, occurrences);
+
+        void ScanRange(int start, int end)
+        {
+            for (var index = start; index < end; index++)
+            {
+                if (source[index] != '#' || IsEscaped(source, index) || !HasTokenBoundaryBefore(source, index)) continue;
+                if (!TryReadTagName(source, index + 1, end, out var nameEnd)
+                    || !HasTokenBoundaryAfter(source, nameEnd)
+                    || !seen.Add((index + 1, nameEnd - index - 1))) continue;
+                occurrences.Add(new FindBodyTagOccurrence(source[(index + 1)..nameEnd],
+                    (locations ??= _locationMap(source)).Map(index + 1, nameEnd - index - 1)));
+                index = nameEnd - 1;
+            }
+        }
     }
 
     private static bool TryReadGeneratedSpan(
@@ -82,36 +99,6 @@ internal sealed class FindBodyTagScanner
         if (start < visibleSpan.End)
         {
             yield return (start, visibleSpan.End);
-        }
-    }
-
-    private static void ScanRange(
-        string source,
-        int start,
-        int end,
-        ICollection<FindBodyTagOccurrence> occurrences,
-        ISet<(int Start, int Length)> seen)
-    {
-        for (var index = start; index < end; index++)
-        {
-            if (source[index] != '#'
-                || IsEscaped(source, index)
-                || !HasTokenBoundaryBefore(source, index))
-            {
-                continue;
-            }
-
-            if (!TryReadTagName(source, index + 1, end, out var nameEnd)
-                || !HasTokenBoundaryAfter(source, nameEnd)
-                || !seen.Add((index + 1, nameEnd - index - 1)))
-            {
-                continue;
-            }
-
-            occurrences.Add(new FindBodyTagOccurrence(
-                source[(index + 1)..nameEnd],
-                MapLocation(source, index + 1, nameEnd - index - 1)));
-            index = nameEnd - 1;
         }
     }
 
@@ -201,8 +188,5 @@ internal sealed class FindBodyTagScanner
         var status = Rune.DecodeLastFromUtf16(source.AsSpan(0, index + 1), out var rune, out _);
         return status == OperationStatus.Done && Rune.IsLetterOrDigit(rune);
     }
-
-    private static SourceLocation MapLocation(string source, int start, int length)
-        => new Utf8SourceMap(source).Map(start, length);
 
 }

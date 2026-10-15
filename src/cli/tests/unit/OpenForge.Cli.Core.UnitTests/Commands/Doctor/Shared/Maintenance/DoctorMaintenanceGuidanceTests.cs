@@ -114,7 +114,7 @@ public sealed class DoctorMaintenanceGuidanceTests
         Assert.Equal(DoctorCoverageState.Incomplete, report.Coverage);
         Assert.Empty(report.Findings);
         Assert.Single(report.Limitations);
-        Assert.Equal("Git did not answer in time, so renamed files could not be proven. Run the command again.",
+        Assert.Equal("Rename evidence did not finish in time, so renamed files could not be proven. Run the command again.",
             DoctorWording.IncompleteLine(report.Domain, report));
     }
 

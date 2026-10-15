@@ -49,7 +49,7 @@ internal static class RepairMaintenanceText
     internal static string IncompleteWork() => "Some files could not be checked.";
     internal static string CorrectMetadataReason() => "The malformed source needs an authored correction.";
 
-    internal static string GitTimedOut() => "Git did not answer in time, so renamed files could not be proven. Run the command again.";
+    internal static string GitTimedOut() => "Rename evidence did not finish in time, so renamed files could not be proven. Run the command again.";
 
     internal static string GitRetryReason() => "Retry the request to obtain the missing rename evidence.";
 }

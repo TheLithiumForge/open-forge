@@ -20,8 +20,9 @@ internal sealed class RouteListInventoryReader
         ValidateWorkspace(request, documentReader);
 
         var sourceCatalogue = await new SourceCatalogueReader()
-            .ReadAsync(
+            .ReadSessionAsync(
                 new SourceCatalogueRequest(request.Workspace, request.LogicalRoots),
+                documentReader.PhysicalPaths,
                 request.CancellationToken)
             .ConfigureAwait(false);
         var selection = sourceCatalogue.SelectAll();

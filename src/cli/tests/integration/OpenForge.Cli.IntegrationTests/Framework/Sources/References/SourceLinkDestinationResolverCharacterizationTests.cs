@@ -17,6 +17,35 @@ public sealed class SourceLinkDestinationResolverCharacterizationTests
     private const string SourcePath = ".agents/nested/source.md";
     private const string TargetPath = ".agents/target.md";
 
+    [Theory(DisplayName = "A reference session acquires every occurrence freshly and parses identical target content once"),
+        InlineData(0), InlineData(1), InlineData(2), Trait("Feature", "references"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
+    public async Task SessionBoundsFragmentWork(int retention)
+    {
+        using var workspace = CreateWorkspace();
+        var catalogue = await ReadCatalogueAsync(workspace.Workspace);
+        var parser = new MarkdownDocumentParser();
+        var reads = 0;
+        var parses = 0;
+        var physical = 0;
+        var resolver = new SourceLinkDestinationResolver(
+            physicalPathResolver: (selected, path) => { physical++; return ResolvePhysical(selected, path); },
+            strictUtf8Reader: (path, logical, token) => { reads++; return StrictUtf8FileReader.ReadAsync(path, logical, token); },
+            markdownParser: text => { parses++; return parser.Parse(text); }).CreateSession(catalogue);
+        var retained = parser.Parse(File.ReadAllText(workspace.Absolute(TargetPath)));
+        if (retention == 1) resolver.RetainDocument(retained);
+        if (retention == 2) resolver.RetainSource(Assert.IsType<SourceLogicalSource>(catalogue.FindByPath(TargetPath)).Base, retained);
+        for (var index = 0; index < 30; index++)
+        {
+            var fragment = index % 2 == 0 ? "details" : "absent";
+            var facts = await resolver.ResolveAsync(Input(workspace.Workspace, catalogue, $"../target.md#{fragment}"), TestContext.Current.CancellationToken);
+            Assert.Equal(fragment, facts.Fragment);
+            Assert.Equal(index % 2 == 0 ? SourceLinkTargetResolution.Complete : SourceLinkTargetResolution.FragmentMissing, facts.Target.Resolution);
+        }
+        Assert.Equal(30, physical);
+        Assert.Equal(30, reads);
+        Assert.Equal(retention == 0 ? 1 : 0, parses);
+    }
+
     [Trait("Boundary", "OS")]
     [Theory(DisplayName = "Full destination resolution and canonical matching retain distinct admission policies"),
         InlineData("", SourcePath, (int)SourceLinkTargetResolution.Malformed, true, null),

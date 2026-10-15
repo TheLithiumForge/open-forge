@@ -95,10 +95,12 @@ public sealed class F27RootFormJourneyTests
         Assert.Equal(noteBytes, File.ReadAllBytes(workspace.Combine(NotePath)));
         JourneyPayloadAssertions.AssertEntries(workspace, GuidancePath, UpdatedNoteEntry);
         JourneyPayloadAssertions.AssertCanonicalEntries(workspace, extensionSources,
-            GuidancePath, ".agents/templates/_templates.md", ".agents/patterns/_patterns.md", ".agents/skills/_skills.md",
+            GuidancePath, ".agents/directives/_directives.md", ".agents/templates/_templates.md", ".agents/patterns/_patterns.md", ".agents/skills/_skills.md",
             ".agents/memory/crystallized/_crystallized.md", ".agents/memory/emerging/_emerging.md", ".agents/memory/working/_working.md",
             ".agents/skills/use-workflow/references/_references.md");
         var loaderEntries = JourneyPayloadAssertions.Entries(File.ReadAllText(workspace.Combine(".agents/loader.md")));
+        JourneyPayloadAssertions.AssertEntries(workspace, ".agents/directives/_directives.md",
+            "- [Required work-record relationships without imposing a task schema](planning/_planning.md) - #Extension #Directive #Planning");
         JourneyPayloadAssertions.AssertEntries(workspace, ".agents/patterns/_patterns.md",
             "- [Keep task outcomes, planned steps, and current state predictable without duplicating project knowledge](work-records.md) - #Extension #Pattern #Planning #Task #Memory");
         JourneyPayloadAssertions.AssertEntries(workspace, ".agents/skills/use-workflow/references/_references.md",

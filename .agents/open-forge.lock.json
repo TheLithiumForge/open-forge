@@ -128,12 +128,14 @@
     },
     {
       "id": "planning",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "source": "embedded catalogue",
       "dependencies": [
         "workflows"
       ],
       "paths": [
+        ".agents/directives/planning/_planning.md",
+        ".agents/directives/planning/work-records.md",
         ".agents/memory/crystallized/decisions/_decisions.md",
         ".agents/memory/emerging/analysis/_analysis.md",
         ".agents/memory/emerging/ideas/_ideas.md",
@@ -175,7 +177,7 @@
     },
     {
       "id": "workflows",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "source": "embedded catalogue",
       "dependencies": [],
       "paths": [

@@ -19,6 +19,7 @@ using OpenForge.Cli.Core.Framework.Sources.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 
@@ -31,7 +32,8 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         plan = plan with { RenameEvidence = repairCatalogue.RenameEvidence };
         if (plan.IsBlocked || plan.Effects.Count == 0) return plan;
         var workspace = plan.Request.Workspace;
-        var catalogue = await new SourceCatalogueReader().ReadAsync(new(workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
+        var catalogue = repairCatalogue.Catalogue
+            ?? await new SourceCatalogueReader().ReadAsync(new(workspace, [SourceLogicalPath.AgentsRoot]), token).ConfigureAwait(false);
         var ownership = await WorkspaceOwnershipReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
         var settings = await WorkspaceSettingsReader.ReadAsync(paths, workspace, token).ConfigureAwait(false);
         if (ownership.State is not (WorkspaceOwnershipReadState.Absent or WorkspaceOwnershipReadState.Complete)
@@ -78,6 +80,7 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
             RootPaths = roots,
             SelectedSources = selectedSources,
             IntendedBytes = intended,
+            ObservedDocuments = repairCatalogue.Documents,
             Policy = policy,
         }, token).ConfigureAwait(false);
         if (intent.Limitations.Any(item => !item.Malformed || affected.Contains(item.Path, StringComparer.Ordinal)
@@ -87,7 +90,8 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         // Entries can be the only identity record for another unresolved occurrence.
         // Revalidation rebuilds this deferral from fresh authored references under the lease.
         regionPaths.RemoveWhere(path => ExposesFolder(path, deferredFolders));
-        var parser = new MarkdownDocumentParser();
+        var reader = new SourceDocumentReader(workspace);
+        foreach (var document in repairCatalogue.Documents.Values) reader.Documents.Retain(document);
         var documents = intent.Documents.ToDictionary(item => item.Key, item => item.Value, StringComparer.Ordinal);
         var regionSources = intent.Formation.Sources.Where(source => regionPaths.Contains(source.Identity.CanonicalBasePath)).ToArray();
         var metadataSources = regionSources.SelectMany(source => source.Base.Form == SourceDocumentForm.Loader
@@ -97,7 +101,13 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
         {
             var path = source.Identity.CanonicalBasePath;
             if (documents.ContainsKey(path)) continue;
-            try { documents[path] = parser.Parse(Encoding.UTF8.GetString(await File.ReadAllBytesAsync(source.Base.PhysicalPath, token).ConfigureAwait(false))); }
+            try
+            {
+                var read = await reader.ReadAsync(source.Base, token).ConfigureAwait(false);
+                token.ThrowIfCancellationRequested();
+                if (read.Read?.Value is not { } text) return Block(plan, $"The affected navigation input {path} could not be read.");
+                documents[path] = reader.ParseDocument(text);
+            }
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
             { return Block(plan, $"The affected navigation input {path} could not be read."); }
         }

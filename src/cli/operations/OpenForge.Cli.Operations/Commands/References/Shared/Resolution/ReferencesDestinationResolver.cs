@@ -1,11 +1,14 @@
+using OpenForge.Cli.Core.Commands.References.Shared.Documents;
 using OpenForge.Cli.Core.Commands.References.Models.Occurrence;
 using OpenForge.Cli.Core.Commands.References.Models.Resolution;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Commands.References.Models.Source;
-using OpenForge.Cli.Core.Commands.References.Shared.Documents;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.Parsing;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -25,6 +28,13 @@ internal sealed class ReferencesDestinationResolver
 {
     private readonly SourceLinkDestinationResolver _resolver;
 
+    internal ReferencesDestinationResolver(PhysicalPathResolver physicalPaths,
+        ReferencesStrictUtf8Reader strictUtf8Reader, ReferencesMarkdownParser markdownParser)
+    {
+        _resolver = new SourceLinkDestinationResolver(physicalPaths,
+            strictUtf8Reader.Invoke, markdownParser.Invoke);
+    }
+
     internal ReferencesDestinationResolver(
         ReferencesPhysicalPathResolver physicalPathResolver,
         ReferencesStrictUtf8Reader strictUtf8Reader,
@@ -39,6 +49,17 @@ internal sealed class ReferencesDestinationResolver
                 strictUtf8Reader(physicalPath, logicalPath, cancellationToken),
             source => markdownParser(source));
     }
+
+    private ReferencesDestinationResolver(SourceLinkDestinationResolver resolver)
+    {
+        _resolver = resolver;
+    }
+
+    internal ReferencesDestinationResolver CreateReadSession(MarkdownDocumentCache documents)
+        => new(_resolver.CreateSession(documents));
+
+    internal ReferencesDestinationResolver CreateReadSession(SourceReadSession session)
+        => new(_resolver.CreateSession(session));
 
     internal async ValueTask<ReferencesDestinationFacts> ResolveAsync(
         ReferencesDestinationInput input,

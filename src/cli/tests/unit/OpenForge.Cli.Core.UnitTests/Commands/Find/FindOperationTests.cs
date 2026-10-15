@@ -33,7 +33,7 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Find;
 public sealed class FindOperationTests
 {
     [Trait("Boundary", "Processing")]
-    [Theory(DisplayName = "Find operation reads one boundary, resolves the universe before layers, and invokes explicit boundaries once"),
+    [Theory(DisplayName = "Find operation resolves the universe before layers and parses identical layer text once"),
         InlineData("overwrite-path")]
     [Trait("Feature", "find-query"), Trait("Evidence", "Unit")]
     public async Task OperationReadsOneBoundaryAndFormsUniverseBeforeLayers(string selectorForm)
@@ -62,9 +62,10 @@ public sealed class FindOperationTests
             calls.Count(value => value.StartsWith("layer:", StringComparison.Ordinal)));
         Assert.Equal(
             selectorForm == "overwrite-path"
-                ? ["boundary", "physical", "layer:Base", "markdown", "frontmatter", "layer:Overwrite", "markdown", "frontmatter"]
+                ? ["boundary", "physical", "layer:Base", "markdown", "frontmatter", "layer:Overwrite", "frontmatter"]
                 : ["boundary", "physical", "layer:Base", "markdown", "frontmatter"],
             calls);
+        Assert.Equal(1, calls.Count(value => value == "markdown"));
         Assert.Empty(result.Findings);
     }
 

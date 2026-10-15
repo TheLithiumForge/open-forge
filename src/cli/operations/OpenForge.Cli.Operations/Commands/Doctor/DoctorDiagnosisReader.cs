@@ -31,9 +31,12 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
         var routes = await _contributors.Routes
             .ReadDoctorAsync(request.Workspace, sharing.Sharing, cancellationToken)
             .ConfigureAwait(false);
-        var references = await _contributors.LocalReferences
-            .ReadDoctorAsync(request.Workspace, cancellationToken)
-            .ConfigureAwait(false);
+        var referenceRead = _contributors.LocalReferences
+            .ReadDoctorAsync(request.Workspace, cancellationToken, routes)
+            .AsTask();
+        var maintenanceRead = _maintenance.ReadAsync(routes, referenceRead, sharing, cancellationToken).AsTask();
+        await Task.WhenAll(referenceRead, maintenanceRead).ConfigureAwait(false);
+        var references = await referenceRead.ConfigureAwait(false);
         var framework = await _contributors.FrameworkLifecycle
             .ReadDoctorAsync(request.Workspace, cancellationToken)
             .ConfigureAwait(false);
@@ -43,7 +46,7 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
         var libraries = await _contributors.Libraries.ReadDoctorAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
         var libraryResiduals = await LibraryResidualAttributionReader.ReadAsync(
             request.Workspace, libraries, recovery, cancellationToken).ConfigureAwait(false);
-        var maintenance = await _maintenance.ReadAsync(routes, references, sharing, cancellationToken).ConfigureAwait(false);
+        var maintenance = await maintenanceRead.ConfigureAwait(false);
         routes = DoctorMaintenanceRouteProjection.Read(routes, maintenance, sharing.Sharing);
         cancellationToken.ThrowIfCancellationRequested();
         var observation = new DoctorObservation(

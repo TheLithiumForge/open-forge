@@ -8,7 +8,7 @@ open-forge:
 
 ## Shape
 
-A canonical source template contains exactly one complete ordered managed block and only that block:
+Canonical source, with fixed heading and footer and illustrative body:
 
 ```md
 # Open Forge
@@ -18,38 +18,23 @@ managed instructions or imports
 **End of Open Forge managed section.**
 ```
 
-A workspace target has one of two valid shapes:
+| Part                             | Canonical source                    | Workspace target                                                                                         |
+| -------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Authored prefix                  | Absent                              | Optional, preserved byte-for-byte                                                                        |
+| Managed span                     | Required, exactly one ordered block | Zero candidates before append, or exactly one complete canonical or exact legacy pair before replacement |
+| Authored suffix                  | Absent                              | Optional, preserved byte-for-byte                                                                        |
+| Reinstallation result            | Same canonical bytes                | Same result, no change                                                                                   |
+| Ambiguous or incomplete boundary | Invalid                             | Invalid, no partial output                                                                               |
 
-1. no canonical or exact legacy boundary candidate, so installation appends the
-   canonical source block;
-2. exactly one complete canonical heading and footer pair or exact legacy
-   comment pair, so installation replaces that span with the canonical block.
+```text
+canonical Framework entry               required policy source
+  <- harness-native reference           bridge content only
+     harness bridge
+```
 
-An incomplete, reversed, duplicate, mixed, or otherwise ambiguous boundary is
-neither valid shape and blocks before writing. Text outside the managed block
-belongs to the workspace and remains byte-for-byte unchanged. Boundaries are
-recognized from root-level parsed Markdown blocks and typed source spans. A
-heading or footer inside fenced code, a quote, a nested list, or an inline
-example is content, not a delimiter. A heading without its named footer never
-extends the managed span to the user suffix or end-of-file.
+## Applicability And Sources
 
-### Entry Roles
+For canonical root instructions and harness bridges in a workspace-owned file. Delimiters are root-level parsed Markdown blocks. Nested examples are content. Names and order in the canonical block are fixed. Prefix, suffix and body content vary by file.
 
-- A canonical entry is authoritative for the Framework handoff carried by that file.
-- A harness bridge contains only harness-native references to the canonical Framework entries it exposes. It does not restate their policy.
-- Each harness-specific maintenance contract is authoritative for its external syntax and compatibility requirements.
-
-### Installation
-
-- Validate every canonical source template and existing target before applying the installation plan.
-- Treat incomplete, reversed, duplicate, mixed, or ambiguous boundary topology as an invalid target and stop before writing.
-- Keep source and dogfood blocks identical.
-- Reapplying the same source block produces no change.
-
-## Review Checks
-
-- One canonical policy source serves every bridge.
-- Source templates contain one managed block and no surrounding authored content.
-- Valid workspace content outside the block survives creation, replacement, and reinstallation.
-- Invalid or ambiguous boundary topology produces no partial output.
-- File-specific maintenance documents link to this pattern, their source, implementation, external contract when present, and verification.
+- [Deliberate Framework Change](../../directives/open-forge/framework/deliberate-framework-change.md#managed-root-entries) binds validation, preservation, entry roles and reinstallation.
+- [Payload Maintenance](../../memory/crystallized/documents/maintenance/payload/_payload.md) maps the file-specific source, implementation, external syntax and verification contracts.

@@ -64,6 +64,7 @@ internal sealed class RouteObservationReader
         var generated = _doctorGeneratedNavigationReader.Read(inspection, sharing);
         return new RouteDoctorView
         {
+            Session = inspection.Session,
             State = inspection.State,
             SourceInventory = ReadSourceInventory(inspection),
             Catalogue = inspection.Catalogue,

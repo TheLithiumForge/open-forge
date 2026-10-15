@@ -25,8 +25,8 @@ namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 
 internal sealed class RouteSourceInspector
 {
+    internal const int MaximumConcurrentSources = 8;
     private readonly FrameworkDocumentMetadataParser _frameworkMetadataParser = new();
-    private readonly MarkdownDocumentParser _markdownParser = new();
     private readonly PhysicalPathResolver _physicalPathResolver;
     private readonly SourceAuthoredMetadataParser _sourceMetadataParser = new();
     private readonly SourceReadSessionReader _sessionReader;
@@ -50,20 +50,24 @@ internal sealed class RouteSourceInspector
                 session.DocumentReader,
                 cancellationToken)
             .ConfigureAwait(false);
-        var sources = new List<RouteSourceObservation>(session.Catalogue.Sources.Count);
-        foreach (var source in session.Catalogue.Sources)
+        var sources = new RouteSourceObservation[session.Catalogue.Sources.Count];
+        await Parallel.ForEachAsync(Enumerable.Range(0, sources.Length), new ParallelOptions
         {
-            sources.Add(await ReadSourceAsync(source, session.DocumentReader, cancellationToken)
-                .ConfigureAwait(false));
-        }
+            MaxDegreeOfParallelism = MaximumConcurrentSources,
+        }, async (index, _) =>
+        {
+            sources[index] = await ReadSourceAsync(session.Catalogue.Sources[index], session.DocumentReader, cancellationToken)
+                .ConfigureAwait(false);
+        }).ConfigureAwait(false);
 
         var entry = await ReadWorkspaceEntryAsync(workspace, cancellationToken).ConfigureAwait(false);
         return new RouteSourceInspection
         {
+            Session = session,
             Catalogue = session.Catalogue,
             Routes = routes,
             WorkspaceEntry = entry.Layer,
-            Sources = sources.ToArray(),
+            Sources = sources,
             State = RouteSourceInspectionPolicy.ReadViewState(
                 session.Catalogue,
                 routes,
@@ -87,7 +91,7 @@ internal sealed class RouteSourceInspector
         var text = baseRead.Read?.State == FileReadState.Complete
             ? baseRead.Read.Value
             : null;
-        var document = text is null ? null : _markdownParser.Parse(text);
+        var document = text is null ? null : reader.ParseDocument(text);
         var locations = text is null ? null : new Utf8SourceMap(text);
         SourceAuthoredMetadataFacts authoredMetadata;
         FrameworkDocumentMetadataFacts frameworkMetadata;

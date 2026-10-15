@@ -11,15 +11,20 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Inventory;
 
-internal sealed class SourceCatalogueReader
+internal sealed class SourceCatalogueReader(PhysicalPathResolver? physicalPaths = null)
 {
-    private readonly PhysicalPathResolver _physicalPathResolver = new();
-
+    private readonly PhysicalPathResolver _physicalPaths = physicalPaths ?? new();
     internal ValueTask<SourceCatalogue> ReadAsync(
         SourceCatalogueRequest request,
         CancellationToken cancellationToken)
+        => ReadSessionAsync(request, _physicalPaths.CreateReadSession(), cancellationToken);
+
+    internal ValueTask<SourceCatalogue> ReadSessionAsync(
+        SourceCatalogueRequest request,
+        PhysicalPathResolver paths,
+        CancellationToken cancellationToken)
     {
-        var state = new ReadState(request.Workspace);
+        var state = new ReadState(request.Workspace, paths);
         if (cancellationToken.IsCancellationRequested)
         {
             return new ValueTask<SourceCatalogue>(state.FormCatalogue(isCancelled: true));
@@ -32,7 +37,7 @@ internal sealed class SourceCatalogueReader
                 return new ValueTask<SourceCatalogue>(state.FormCatalogue(isCancelled: true));
             }
 
-            var rootResolution = Resolve(request.Workspace, logicalRoot);
+            var rootResolution = Resolve(state, logicalRoot);
             if (rootResolution.State != PhysicalPathState.Contained)
             {
                 state.AddRootIssue(ReadRootIssue(logicalRoot, rootResolution));
@@ -59,7 +64,7 @@ internal sealed class SourceCatalogueReader
                 logicalRoot,
                 rootPhysicalPath,
                 [rootPhysicalPath]));
-            var interrupted = Traverse(state, request.Workspace, cancellationToken);
+            var interrupted = Traverse(state, cancellationToken);
             if (interrupted)
             {
                 return new ValueTask<SourceCatalogue>(state.FormCatalogue(isCancelled: true));
@@ -69,9 +74,8 @@ internal sealed class SourceCatalogueReader
         return new ValueTask<SourceCatalogue>(state.FormCatalogue(isCancelled: false));
     }
 
-    private bool Traverse(
+    private static bool Traverse(
         ReadState state,
-        CliWorkspace workspace,
         CancellationToken cancellationToken)
     {
         while (state.TryDequeueDirectory(out var directory))
@@ -130,7 +134,7 @@ internal sealed class SourceCatalogueReader
 
                 var canonicalPath = SourceLogicalPath.Combine(directory.CanonicalPath, name);
                 var recognized = SourceFormClassifier.TryClassify(canonicalPath, out var form);
-                var resolution = Resolve(workspace, canonicalPath);
+                var resolution = Resolve(state, canonicalPath);
                 if (resolution.State != PhysicalPathState.Contained)
                 {
                     state.AddUnsafeCandidate(
@@ -197,12 +201,12 @@ internal sealed class SourceCatalogueReader
         return cancellationToken.IsCancellationRequested;
     }
 
-    private PhysicalPathResolution Resolve(CliWorkspace workspace, string logicalPath)
+    private static PhysicalPathResolution Resolve(ReadState state, string logicalPath)
     {
-        return _physicalPathResolver.ResolveCandidate(
-            workspace.LexicalRoot,
-            workspace.PhysicalRoot,
-            SourceLogicalPath.ToLexicalPath(workspace.LexicalRoot, logicalPath));
+        return state.Paths.ResolveCandidate(
+            state.Workspace.LexicalRoot,
+            state.Workspace.PhysicalRoot,
+            SourceLogicalPath.ToLexicalPath(state.Workspace.LexicalRoot, logicalPath));
     }
 
     private static SourceCatalogueIssue ReadRootIssue(
@@ -244,12 +248,15 @@ internal sealed class SourceCatalogueReader
         private readonly HashSet<string> _processedDirectories = new(StringComparer.Ordinal);
         private readonly Queue<DirectoryBoundary> _directories = new();
 
-        internal ReadState(CliWorkspace workspace)
+        internal ReadState(CliWorkspace workspace, PhysicalPathResolver paths)
         {
             Workspace = workspace;
+            Paths = paths;
         }
 
         internal CliWorkspace Workspace { get; }
+
+        internal PhysicalPathResolver Paths { get; }
 
         internal List<SourceCatalogueIssue> Issues { get; } = [];
 

@@ -7,6 +7,8 @@ internal sealed record RenameContent
 {
     public required ImmutableArray<byte> Bytes { get; init; }
     public required string Hash { get; init; }
+    public required string NormalizedHash { get; init; }
+    public required int NormalizedByteLength { get; init; }
     public required MarkdownDocumentFacts Document { get; init; }
     public required bool HasAuthoredContent { get; init; }
     public required ImmutableArray<RenameContentLine> Lines { get; init; }

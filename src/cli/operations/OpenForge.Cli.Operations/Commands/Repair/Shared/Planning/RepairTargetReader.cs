@@ -1,6 +1,8 @@
 using OpenForge.Cli.Core.Commands.Repair.Models.Planning;
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
+using OpenForge.Cli.Core.Commands.Repair.Models.Request;
+using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
@@ -8,38 +10,113 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Mutation.Validation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
+using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Acquisition;
+using System.Collections.Concurrent;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 
-internal sealed class RepairTargetReader
+internal sealed class RepairTargetReader(SourceCatalogue? catalogue = null, Action? targetResolutionStarted = null,
+    SourceFileAcquisition? acquisition = null, Func<string, string, string>? formatPath = null)
 {
+    private readonly Func<string, string, string> _formatPath = formatPath ?? RepairDestinationFormatter.FormatPath;
+    private readonly ConcurrentDictionary<(string Folder, string Target), Lazy<string>> _spellings = new();
     private readonly PhysicalPathResolver _physicalPaths = new();
+    private SourceLinkDestinationResolver? _resolver;
 
     internal async ValueTask<SourceLinkDestinationFacts> ResolveAsync(
         CliWorkspace workspace, string sourcePath, RepairTargetSelection target, CancellationToken cancellationToken)
     {
-        var session = await new SourceReadSessionReader(_physicalPaths).ReadAsync(workspace, cancellationToken).ConfigureAwait(false);
-        var resolver = new SourceLinkDestinationResolver(
-            (selectedWorkspace, lexicalPath) => _physicalPaths.ResolveCandidate(
-                selectedWorkspace.LexicalRoot, selectedWorkspace.PhysicalRoot, lexicalPath),
-            StrictUtf8FileReader.ReadAsync, new MarkdownDocumentParser().Parse);
-        return await resolver.ResolveAsync(new SourceLinkDestinationInput
+        cancellationToken.ThrowIfCancellationRequested();
+        targetResolutionStarted?.Invoke();
+        var selectedCatalogue = catalogue;
+        if (selectedCatalogue is null)
+            selectedCatalogue = (await new SourceReadSessionReader(_physicalPaths).ReadAsync(workspace, cancellationToken).ConfigureAwait(false)).Catalogue;
+        SourceLinkDestinationResolver resolver;
+        lock (_physicalPaths)
+        {
+            resolver = _resolver ??= new SourceLinkDestinationResolver(
+                _physicalPaths,
+                StrictUtf8FileReader.ReadAsync, new MarkdownDocumentParser().Parse).CreateSession(acquisition ?? new SourceFileAcquisition());
+        }
+        var facts = await resolver.ResolveAsync(new SourceLinkDestinationInput
         {
             Workspace = workspace,
-            Catalogue = session.Catalogue,
+            Catalogue = selectedCatalogue,
             SourceCanonicalPath = sourcePath,
-            RawDestination = RepairDestinationFormatter.Format(sourcePath, target),
+            RawDestination = FormatDestination(sourcePath, target),
         }, cancellationToken).ConfigureAwait(false);
+        return facts;
+    }
+
+    private string FormatDestination(string source, RepairTargetSelection target)
+    {
+        // Only relative spelling is shared. Resolution, containment and file acquisition always run afresh.
+        if (!SourceLogicalPath.IsCanonicalSource(source) || !SourceLogicalPath.IsCanonicalSource(target.CanonicalTargetPath))
+            return RepairDestinationFormatter.AppendFragment(_formatPath(source, target.CanonicalTargetPath), target.TargetFragment);
+        var key = (Folder: SourceLogicalPath.ReadParent(source), Target: target.CanonicalTargetPath);
+        var spelling = _spellings.GetOrAdd(key, static (_, input) => new(() => input.Reader._formatPath(input.Source, input.Target)),
+            (Reader: this, Source: source, Target: target.CanonicalTargetPath));
+        try { return RepairDestinationFormatter.AppendFragment(spelling.Value, target.TargetFragment); }
+        catch
+        {
+            _spellings.TryRemove(key, out _);
+            throw;
+        }
+    }
+
+    internal async ValueTask<RepairProposal> ResolveCandidatesAsync(
+        CliWorkspace workspace, RepairProposal proposal, IReadOnlyList<RepairRelinkRequest> relinks, RoutedMetadataPolicyContext policy, CancellationToken cancellationToken)
+    {
+        var requested = relinks.SingleOrDefault(relink => relink.SourceCanonicalPath == proposal.SourceCanonicalPath
+            && relink.Line == proposal.Occurrence.Line && relink.Column == proposal.Occurrence.Column);
+        var candidates = new List<RepairCandidate>();
+        foreach (var candidate in proposal.Candidates?.Items ?? [])
+        {
+            var target = candidate.Target;
+            if (!RepairProtectionReader.Allows(Uri.UnescapeDataString(target.CanonicalTargetPath), policy)) continue;
+            if (requested is not null
+                && Uri.UnescapeDataString(requested.Target.CanonicalTargetPath) == Uri.UnescapeDataString(target.CanonicalTargetPath))
+            {
+                target = new RepairTargetSelection(requested.Target.CanonicalTargetPath, requested.Target.TargetFragment, candidate.Evidence) { RenameProof = candidate.Target.RenameProof };
+            }
+
+            var readTarget = target.RenameProof is { } proof && proof.NewPath != Uri.UnescapeDataString(target.CanonicalTargetPath)
+                && !File.Exists(Path.Combine(workspace.LexicalRoot, Uri.UnescapeDataString(target.CanonicalTargetPath).Replace('/', Path.DirectorySeparatorChar)))
+                ? new RepairTargetSelection(proof.NewPath, target.TargetFragment) : target;
+            var facts = await ResolveAsync(workspace, proposal.SourceCanonicalPath, readTarget, cancellationToken).ConfigureAwait(false);
+            if (facts.Target.Resolution == SourceLinkTargetResolution.Complete)
+            {
+                candidates.Add(new RepairCandidate(target, candidate.Evidence, candidate.RecommendedForReview) { Identity = candidate.Identity });
+            }
+        }
+
+        return new RepairProposal(proposal.Member, proposal.SourceCanonicalPath, proposal.Occurrence,
+            proposal.ExpectedDestination, new RepairCandidateSet(candidates))
+        {
+            MissingPath = proposal.MissingPath,
+            RenameResolution = proposal.RenameResolution,
+            RenameProof = proposal.RenameProof,
+            SourceMoveProof = proposal.SourceMoveProof,
+            RenameEvidenceTimedOut = proposal.RenameEvidenceTimedOut
+        };
     }
 
     internal async ValueTask<IReadOnlyList<FileExpectation>?> ReadAsync(RepairPlan plan, CancellationToken cancellationToken)
     {
         var expectations = new List<FileExpectation>();
-        var protection = await new RepairProtectionReader(_physicalPaths).ReadAsync(plan.Request.Workspace, cancellationToken).ConfigureAwait(false);
+        var selectedCatalogue = catalogue;
+        if (selectedCatalogue is null && plan.Selection.Selected.Count > 0)
+            selectedCatalogue = (await new SourceReadSessionReader(_physicalPaths).ReadAsync(plan.Request.Workspace, cancellationToken).ConfigureAwait(false)).Catalogue;
+        var protection = await new RepairProtectionReader(_physicalPaths).ReadAsync(plan.Request.Workspace, cancellationToken, selectedCatalogue).ConfigureAwait(false);
         if (protection.Policy is not { } policy) return null;
+        var reader = this;
+        if (catalogue is null && selectedCatalogue is not null)
+            reader = new RepairTargetReader(selectedCatalogue);
         foreach (var selected in plan.Selection.Selected)
         {
             var target = selected.Resolution.Target;
@@ -50,12 +127,12 @@ internal sealed class RepairTargetReader
             if (canonicalCreate is not null && target.RenameProof is { } proof)
             {
                 var current = new RepairTargetSelection(proof.NewPath, target.TargetFragment);
-                var currentFacts = await ResolveAsync(plan.Request.Workspace, selected.Proposal.SourceCanonicalPath, current, cancellationToken).ConfigureAwait(false);
+                var currentFacts = await reader.ResolveAsync(plan.Request.Workspace, selected.Proposal.SourceCanonicalPath, current, cancellationToken).ConfigureAwait(false);
                 if (currentFacts.Target.Resolution != SourceLinkTargetResolution.Complete) return null;
                 expectations.Add(proof.CandidateSnapshot.Expectation);
                 continue;
             }
-            var facts = await ResolveAsync(plan.Request.Workspace, selected.Proposal.SourceCanonicalPath, target, cancellationToken)
+            var facts = await reader.ResolveAsync(plan.Request.Workspace, selected.Proposal.SourceCanonicalPath, target, cancellationToken)
                 .ConfigureAwait(false);
             if (facts.Target.Resolution != SourceLinkTargetResolution.Complete || facts.Target.PhysicalPath is not { } physicalPath
                 || facts.Target.Path != Uri.UnescapeDataString(target.CanonicalTargetPath))

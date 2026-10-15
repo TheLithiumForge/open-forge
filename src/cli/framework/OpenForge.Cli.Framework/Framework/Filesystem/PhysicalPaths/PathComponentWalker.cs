@@ -6,10 +6,15 @@ namespace OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 internal sealed class PathComponentWalker
 {
     private readonly PhysicalIdentityTracker _identityTracker;
+    private readonly PathComponentReadSession? _readSession;
+    private readonly Func<string, PathComponent> _componentReader;
 
-    internal PathComponentWalker(PhysicalIdentityTracker identityTracker)
+    internal PathComponentWalker(PhysicalIdentityTracker identityTracker, PathComponentReadSession? readSession = null,
+        Func<string, PathComponent>? componentReader = null)
     {
         _identityTracker = identityTracker;
+        _readSession = readSession;
+        _componentReader = componentReader ?? LinkTargetReader.Read;
     }
 
     internal PhysicalPathResolution ResolveUnboundedAbsolute(string logicalPath, string absolutePath)
@@ -64,7 +69,9 @@ internal sealed class PathComponentWalker
                 return PhysicalPathResolution.Classified(PhysicalPathState.External, logicalPath, componentPath);
             }
 
-            var component = LinkTargetReader.Read(componentPath);
+            var component = _readSession is null
+                ? _componentReader(componentPath)
+                : _readSession.Read(componentPath, isAncestor: index < components.Count - 1);
             var classified = ClassifyComponent(logicalPath, component);
             if (classified is not null)
             {

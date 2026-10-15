@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models.Syntax;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Completion.Models;
 
@@ -21,6 +22,7 @@ internal sealed record FrameworkMetadataCompletionResult
     internal string? Description { get; init; }
     internal ImmutableArray<string>? Tags { get; init; }
     internal string? Cause { get; init; }
+    internal MarkdownDocumentFacts? Document { get; init; }
 
     internal static FrameworkMetadataCompletionResult Unchanged(ImmutableArray<byte> bytes)
         => new() { State = FrameworkMetadataCompletionState.NoOp, Bytes = bytes, Fields = [] };

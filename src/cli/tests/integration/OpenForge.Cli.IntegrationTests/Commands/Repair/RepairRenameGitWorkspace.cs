@@ -29,6 +29,7 @@ internal sealed class RepairRenameGitWorkspace : IDisposable
         File.WriteAllText(PathFor(".git/objects/info/alternates"), objects.Replace('\\', '/') + "\n");
         await GitAsync("update-ref", "HEAD", head.Value.Output.Trim());
         await GitAsync("checkout", "HEAD", "--", ".agents/guidance/cli-design.md");
+        Write(".agents/guidance/cli-design.md", "---\nopen-forge:\n  description: Guidance for clear command line operations\n  tags: [Guidance]\n---\n\n# CLI Design\n\nEach command owns one complete operation.\n");
         Write("AGENTS.md", "# Workspace\n\nRead `.agents/loader.md`.\n");
         Write(".agents/loader.md", GeneratedLoaderDocumentBuilder.Build("- [Guidance](guidance/_guidance.md) - #Guidance")
             .Replace("# Open Forge Loader", "# Open Forge Loader\n\n## Axioms\n\n- Preserve authored content.", StringComparison.Ordinal));

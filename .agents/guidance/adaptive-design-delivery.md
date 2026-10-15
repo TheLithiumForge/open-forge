@@ -86,3 +86,14 @@ At closeout, report the delivered result, changed paths, evidence, residual risk
 ## Tradeoffs
 
 Compact context improves speed and resumption but can omit a hidden dependency. Use explicit authority, consumers, and stop conditions to protect it. Persistent ownership reduces repeated reconstruction but can carry implementation bias, so use fresh review only where independent scrutiny is worth its cost.
+
+## Contract Maintenance
+
+For the [Contract Ownership Pattern](../patterns/software/contract-ownership.md), the development sequence is:
+
+1. Change or accept the semantic current truth.
+2. Change the exact implementation contract at its narrowest shared scope.
+3. Update focused conformance evidence and stable fixtures.
+4. Regenerate exact reader reference when one is required.
+
+The [Contract Ownership Directive](../directives/software/contract-ownership.md) defines the source boundaries.

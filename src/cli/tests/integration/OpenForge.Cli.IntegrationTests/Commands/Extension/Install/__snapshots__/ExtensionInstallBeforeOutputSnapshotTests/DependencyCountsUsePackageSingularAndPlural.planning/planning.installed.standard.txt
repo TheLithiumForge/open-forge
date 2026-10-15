@@ -8,6 +8,10 @@ Workspace: <workspace>
     created (workflows)
   .agents/templates/workflows/workflow.md
     created (workflows)
+  .agents/directives/planning/_planning.md
+    created (planning)
+  .agents/directives/planning/work-records.md
+    created (planning)
   .agents/memory/crystallized/decisions/_decisions.md
     created (planning)
   .agents/memory/emerging/analysis/_analysis.md
@@ -38,6 +42,7 @@ Workspace: <workspace>
     created (planning)
   .agents/templates/planning/task.md
     created (planning)
+  .agents/directives/_directives.md                             Entries updated
   .agents/memory/crystallized/_crystallized.md                  Entries updated
   .agents/memory/emerging/_emerging.md                          Entries updated
   .agents/memory/working/_working.md                            Entries updated

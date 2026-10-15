@@ -11,8 +11,9 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
-internal sealed class RepairRenameProposalReader(PhysicalPathResolver paths)
+internal sealed class RepairRenameProposalReader(PhysicalPathResolver paths, RepairTargetReader? targets = null, RenameWeakCandidateFilter? candidateFilter = null)
 {
+    private readonly RepairTargetReader _targets = targets ?? new();
     internal async ValueTask<RepairProposal?> ReadAsync(CliWorkspace workspace, LocalReferenceObservation reference,
         LocalReferenceDoctorView view, RenameEvidenceResult evidence, CancellationToken token)
     {
@@ -26,7 +27,7 @@ internal sealed class RepairRenameProposalReader(PhysicalPathResolver paths)
         if (currentPath is not null)
         {
             var currentTarget = new RepairTargetSelection(Encode(currentPath), reference.Facts.Fragment);
-            var facts = await new RepairTargetReader().ResolveAsync(workspace, reference.SourcePath, currentTarget, token).ConfigureAwait(false);
+            var facts = await _targets.ResolveAsync(workspace, reference.SourcePath, currentTarget, token).ConfigureAwait(false);
             var canonical = RenameCanonicalEntrypointEvidence.Read(evidence).FirstOrDefault(item => item.Proof.NewPath == currentPath);
             var finalPath = currentPath;
             if (canonical is not null && !evidence.Facts.Candidates.Any(candidate => SourceLogicalPath.ReadParent(candidate.Path) == SourceLogicalPath.ReadParent(currentPath)
@@ -57,7 +58,7 @@ internal sealed class RepairRenameProposalReader(PhysicalPathResolver paths)
                 RenameResolution = RenameResolution.Proven,
             };
         }
-        var candidates = RepairCandidateMapper.Read(reference, FilterWeak(view, reference, evidence)).Items.ToList();
+        var candidates = RepairCandidateMapper.Read(reference, FilterWeak(view, reference, evidence, candidateFilter)).Items.ToList();
         foreach (var path in (resolution?.GuidedCandidatePaths ?? [])
             .Concat(resolution?.StrongEvidence.Select(item => item.NewPath) ?? []).Distinct(StringComparer.Ordinal))
         {
@@ -80,14 +81,19 @@ internal sealed class RepairRenameProposalReader(PhysicalPathResolver paths)
         };
     }
 
-    internal static LocalReferenceDoctorView FilterWeak(LocalReferenceDoctorView view, LocalReferenceObservation reference, RenameEvidenceResult? evidence)
-        => view with
+    internal static LocalReferenceDoctorView FilterWeak(LocalReferenceDoctorView view, LocalReferenceObservation reference, RenameEvidenceResult? evidence,
+        RenameWeakCandidateFilter? candidateFilter = null)
+    {
+        if (evidence is not null && candidateFilter is null)
+            candidateFilter = new(evidence.Facts.Candidates, evidence.Facts.Candidates);
+        return view with
         {
             Candidates = view.Candidates.Where(candidate => candidate.SourcePath != reference.SourcePath || candidate.Destination != reference.Destination
                 || candidate.Candidate.Path != reference.SourcePath
                     && candidate.Bases.Any(basis => basis.Kind != LocalReferenceCandidateBasisKind.RouteNeighborhood)
-                    && (evidence is null || evidence.Facts.Candidates.Any(admitted => admitted.Path == candidate.Candidate.Path))).ToArray(),
+                    && (evidence is null || candidateFilter?.ContainsCandidate(candidate.Candidate.Path) == true)).ToArray(),
         };
+    }
 
     private static string Encode(string path)
         => path.Replace("%", "%25", StringComparison.Ordinal).Replace("#", "%23", StringComparison.Ordinal).Replace("?", "%3F", StringComparison.Ordinal);

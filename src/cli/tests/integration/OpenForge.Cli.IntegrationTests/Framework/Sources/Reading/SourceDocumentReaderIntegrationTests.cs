@@ -11,9 +11,9 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Reading;
 public sealed class SourceDocumentReaderIntegrationTests
 {
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Neutral document reader verifies a selected physical layer before its first body read")]
+    [Fact(DisplayName = "Neutral document reader rechecks a deleted leaf and refreshes changed bytes within one reader")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
-    public async Task VerificationAndRawReadsAreMemoizedAcrossOwnedFixtureMutation()
+    public async Task VerificationAndRawReadsRefreshAcrossOwnedFixtureMutation()
     {
         using var workspace = SourceDocumentReaderIntegrationWorkspace.Create();
         workspace.Write(".agents/root.md", "body");
@@ -34,15 +34,15 @@ public sealed class SourceDocumentReaderIntegrationTests
         var second = await reader.ReadAsync(layer, TestContext.Current.CancellationToken);
 
         Assert.Equal(SourceLayerVerificationState.Verified, verification.State);
-        Assert.Equal(SourceLayerVerificationState.Verified, cachedVerification.State);
-        Assert.Equal(layer.PhysicalPath, cachedVerification.CurrentPhysicalPath);
+        Assert.Equal(SourceLayerVerificationState.Missing, cachedVerification.State);
+        Assert.Null(cachedVerification.CurrentPhysicalPath);
         Assert.Null(cachedVerification.Failure);
         var firstRead = Assert.IsType<FileReadResult<string>>(first.Read);
         var secondRead = Assert.IsType<FileReadResult<string>>(second.Read);
         Assert.Equal(FileReadState.Complete, firstRead.State);
         Assert.Equal("body", firstRead.Value);
         Assert.Equal(FileReadState.Complete, secondRead.State);
-        Assert.Equal("body", secondRead.Value);
+        Assert.Equal("mutated", secondRead.Value);
         Assert.Equal(beforeSecondRead, workspace.SnapshotHashes());
     }
 
@@ -75,7 +75,7 @@ public sealed class SourceDocumentReaderIntegrationTests
         Assert.Equal(".agents/one.md", firstRead.LogicalPath);
         Assert.Equal(".agents/two.md", secondRead.LogicalPath);
         Assert.Equal("alias body", firstRead.Value);
-        Assert.Equal("alias body", secondRead.Value);
+        Assert.Equal("mutated alias body", secondRead.Value);
     }
 
     [Trait("Boundary", "OS")]
@@ -128,9 +128,9 @@ public sealed class SourceDocumentReaderIntegrationTests
     }
 
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Neutral document reader preserves strict UTF-8 failures and does not open an invalid body twice")]
+    [Fact(DisplayName = "Neutral document reader reports invalid UTF-8 and observes repaired bytes within the same reader")]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Integration")]
-    public async Task StrictUtf8AndMemoizedFailureRemainDeterministic()
+    public async Task StrictUtf8FailureRefreshesAfterRepair()
     {
         using var workspace = SourceDocumentReaderIntegrationWorkspace.Create();
         workspace.Write(".agents/invalid.md", [0xC3, 0x28]);
@@ -148,10 +148,11 @@ public sealed class SourceDocumentReaderIntegrationTests
         var firstRead = Assert.IsType<FileReadResult<string>>(first.Read);
         var secondRead = Assert.IsType<FileReadResult<string>>(second.Read);
         var firstFailure = Assert.IsType<FilesystemFailure>(firstRead.Failure);
-        var secondFailure = Assert.IsType<FilesystemFailure>(secondRead.Failure);
         Assert.Equal(FileReadState.InvalidEncoding, firstRead.State);
-        Assert.Equal(firstRead.State, secondRead.State);
-        Assert.Equal(firstFailure.Kind, secondFailure.Kind);
+        Assert.Equal(FilesystemFailureKind.InvalidEncoding, firstFailure.Kind);
+        Assert.Equal(FileReadState.Complete, secondRead.State);
+        Assert.Equal("now valid", secondRead.Value);
+        Assert.Null(secondRead.Failure);
         Assert.Equal(beforeSecondRead, workspace.SnapshotHashes());
     }
 

@@ -12,16 +12,20 @@ internal static class RenameContentReader
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
-    internal static RenameContent Read(ReadOnlySpan<byte> bytes)
+    internal static RenameContent Read(ReadOnlySpan<byte> bytes, MarkdownDocumentFacts? retainedDocument = null)
     {
         var text = StrictUtf8.GetString(bytes);
         if (text.Contains('\0')) throw new ArgumentException("Markdown content cannot contain NUL.", nameof(bytes));
-        var document = new MarkdownDocumentParser().Parse(text);
+        var document = retainedDocument is not null && string.Equals(retainedDocument.Source, text, StringComparison.Ordinal)
+            ? retainedDocument : new MarkdownDocumentParser().Parse(text);
         var authoredSpans = ReadAuthoredSpans(document);
+        var normalizedBytes = StrictUtf8.GetBytes(text.Replace("\r\n", "\n", StringComparison.Ordinal));
         return new RenameContent
         {
             Bytes = ImmutableArray.Create(bytes),
             Hash = FileExpectation.Hash(bytes),
+            NormalizedHash = FileExpectation.Hash(normalizedBytes),
+            NormalizedByteLength = normalizedBytes.Length,
             Document = document,
             HasAuthoredContent = authoredSpans.Any(span => !text.AsSpan(span.Start, span.Length).IsWhiteSpace()),
             Lines = bytes.Length <= RenameContentComparer.MaximumBytes ? ReadLines(document, authoredSpans) : default,
@@ -74,7 +78,8 @@ internal static class RenameContentReader
             if (start == 0 && !authoredText.IsEmpty && authoredText[0] == '\uFEFF') authoredText = authoredText[1..];
             var authoredStart = start == 0 && source[0] == '\uFEFF' ? 1 : start;
             var isAuthored = !authoredText.IsWhiteSpace() && authoredSpans.Any(span => authoredStart >= span.Start && end <= span.End);
-            lines.Add(new RenameContentLine(text, StrictUtf8.GetByteCount(text), isAuthored));
+            var normalized = text.Replace("\r\n", "\n", StringComparison.Ordinal);
+            lines.Add(new RenameContentLine(normalized, StrictUtf8.GetByteCount(normalized), isAuthored));
             start = end;
         }
 

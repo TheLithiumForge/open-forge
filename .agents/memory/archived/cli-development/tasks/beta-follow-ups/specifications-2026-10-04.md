@@ -13,7 +13,7 @@ Archived on 2026-10-04 from `.agents/memory/working/cli-development/tasks/beta-f
 ## Outcome and authority
 
 The maintainer selected analysis and specifications for three items in the
-[beta backlog](../../../../working/cli-development/tasks/beta-follow-ups.md): actionable errors, stale documentation
+[beta backlog](../../../../working/cli-development/tasks/beta-follow-up-backlog.md): actionable errors, stale documentation
 after the Core reduction, and rechecking Skill-resource navigation. This packet
 was approved for implementation on 2026-09-21. The [execution record](execution.md) owns live checkpoints. Task 39, Tasks 42/43 and Tasks 46/47 retain their
 existing identities. The installed Planning workflow was used for this analysis.

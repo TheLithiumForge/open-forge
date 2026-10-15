@@ -34,7 +34,7 @@ internal sealed class RouteSourceProjector
                 .ConfigureAwait(false);
         }
 
-        var source = BuildRouteSource(logicalSource, layerProjection, baseRead, overwriteRead);
+        var source = BuildRouteSource(logicalSource, layerProjection, baseRead, overwriteRead, reader);
         return new RouteSourceProjection(logicalSource, source, baseRead, overwriteRead);
     }
 
@@ -42,7 +42,8 @@ internal sealed class RouteSourceProjector
         SourceLogicalSource logicalSource,
         RouteSourceLayerProjection layerProjection,
         SourceDocumentReadResult baseRead,
-        SourceDocumentReadResult? overwriteRead)
+        SourceDocumentReadResult? overwriteRead,
+        SourceDocumentReader reader)
     {
         if (!CanFormRouteDocument(baseRead)
             || overwriteRead is not null && !CanFormRouteDocument(overwriteRead))
@@ -57,7 +58,8 @@ internal sealed class RouteSourceProjector
         var metadata = ReadMetadata(
             baseRead,
             baseDocument.Form,
-            hasOverwrite);
+            hasOverwrite,
+            reader);
         return new RouteSource(
             baseDocument,
             metadata,
@@ -106,7 +108,8 @@ internal sealed class RouteSourceProjector
     private static RouteSourceMetadata ReadMetadata(
         SourceDocumentReadResult baseRead,
         SourceDocumentForm form,
-        bool hasOverwrite)
+        bool hasOverwrite,
+        SourceDocumentReader reader)
     {
         var compatibility = form is SourceDocumentForm.IndexEntrypoint
             or SourceDocumentForm.UnderscoreIndexEntrypoint
@@ -124,7 +127,7 @@ internal sealed class RouteSourceProjector
 
         var body = file.Value
             ?? throw new InvalidOperationException("A complete Route document read requires a value.");
-        var document = new MarkdownDocumentParser().Parse(body);
+        var document = reader.ParseDocument(body);
         var facts = new SourceAuthoredMetadataParser().Parse(document, form);
         return new RouteMetadataParser().Parse(facts, compatibility, hasOverwrite);
     }

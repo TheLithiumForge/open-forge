@@ -36,3 +36,9 @@ open-forge:
 - Preserve authority and lifecycle boundaries. Locality keeps related material
   easy to find; it does not merge current, candidate, generated, or historical
   meaning.
+
+- Do not import a sibling's private support merely because its current implementation is convenient. Promote the shared behavior first, then let both consumers depend on it. Do not pre-create shared modules for hypothetical reuse.
+- For an accepted top-down neutral foundation, record the accepted outcomes that justify its shared scope and keep feature semantics and policy local.
+- Shared files retain capability-specific names. A capability-specific folder may replace `shared` when several focused files form one cohesive subsystem. Moving a module upward does not turn it into an unrelated utility collection.
+
+The [Evidence Tiers Pattern](../patterns/testing/evidence-tiers.md) also shows the test-locality boundary.

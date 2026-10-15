@@ -19,7 +19,7 @@ internal sealed class RepairBoundaryDiagnosisReader(DoctorDiagnosisReader diagno
                 RepairAuthoredReferenceBoundary.ReadRouteDocuments(read.Observation.Routes.Sources));
             var findings = new List<RepairFinding>();
             var catalogue = catalogueReader is null ? null : await catalogueReader.ReadAsync(request.Workspace,
-                read.Observation.LocalReferences, CancellationToken.None).ConfigureAwait(false);
+                read.Observation.LocalReferences, CancellationToken.None, maintenance: read.Observation.Maintenance).ConfigureAwait(false);
             findings.AddRange(catalogue is null ? RepairRemainingFindingReader.Read(scope.References) : RepairRemainingFindingReader.ReadCatalogue(catalogue));
             findings.AddRange(RepairAuthoredReferenceBoundary.IncompleteFindings(scope.IncompleteSources));
             findings.AddRange(RepairRemainingFindingReader.ReadLibrary(read.Result.Diagnosis));

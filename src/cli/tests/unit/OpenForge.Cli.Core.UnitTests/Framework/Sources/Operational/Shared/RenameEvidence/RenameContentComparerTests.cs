@@ -71,6 +71,54 @@ public sealed class RenameContentComparerTests
         Assert.Equal(0, Compare(Read("first\n"), Read("other\n")).Similarity);
     }
 
+    [Fact(DisplayName = "Line ending normalization preserves exact content proof and the final line")]
+    public void NormalizedLineEndings()
+    {
+        var comparison = Compare(Read("# Rules\r\n\r\nAuthored body\r\nfinal"), Read("# Rules\n\nAuthored body\nfinal"));
+        Assert.True(comparison.SameContent);
+        Assert.Equal(100, comparison.Similarity);
+        Assert.True(comparison.IsStrong);
+        Assert.False(Compare(Read("body\n"), Read("body")).SameContent);
+    }
+
+    [Fact(DisplayName = "Multiset upper bound rejects repeated common lines that cannot reach ninety")]
+    public void MultisetUpperBound()
+    {
+        var old = Read(string.Concat(Enumerable.Repeat("same\n", 100)));
+        var current = Read(string.Concat(Enumerable.Repeat("same\n", 89).Concat(Enumerable.Repeat("else\n", 11))));
+        Assert.False(RenameContentComparer.CouldReachThreshold(old, current, TestContext.Current.CancellationToken));
+        Assert.Equal(89, Compare(old, current).Similarity);
+        var boundary = Read(string.Concat(Enumerable.Repeat("same\n", 90).Concat(Enumerable.Repeat("else\n", 10))));
+        Assert.True(RenameContentComparer.CouldReachThreshold(old, boundary, TestContext.Current.CancellationToken));
+        Assert.Equal(90, Compare(old, boundary).Similarity);
+    }
+
+    [Fact(DisplayName = "Integer line comparison and the upper bound preserve weighted subsequence results")]
+    public void DifferentialWeightedSubsequences()
+    {
+        string[] alphabet = ["a\n", "longer\n", "é\n"];
+        List<string[]> sequences = [[]];
+        for (var length = 1; length <= 3; length++)
+            sequences.AddRange(sequences.Where(sequence => sequence.Length == length - 1)
+                .SelectMany(sequence => alphabet.Select(line => sequence.Append(line).ToArray())).ToArray());
+        foreach (var left in sequences)
+            foreach (var right in sequences)
+            {
+                var weights = new int[left.Length + 1, right.Length + 1];
+                for (var row = 1; row <= left.Length; row++)
+                    for (var column = 1; column <= right.Length; column++)
+                        weights[row, column] = left[row - 1] == right[column - 1]
+                            ? weights[row - 1, column - 1] + Encoding.UTF8.GetByteCount(left[row - 1])
+                            : Math.Max(weights[row - 1, column], weights[row, column - 1]);
+                var old = Read(string.Concat(left));
+                var current = Read(string.Concat(right).Replace("\n", "\r\n", StringComparison.Ordinal));
+                var total = Encoding.UTF8.GetByteCount(string.Concat(left)) + Encoding.UTF8.GetByteCount(string.Concat(right));
+                var expected = total == 0 ? 0 : 200 * weights[left.Length, right.Length] / total;
+                Assert.Equal(expected, Compare(old, current).Similarity);
+                if (expected >= 90) Assert.True(RenameContentComparer.CouldReachThreshold(old, current, TestContext.Current.CancellationToken));
+            }
+    }
+
     [Theory(DisplayName = "Beyond either comparison bound exact hashing remains available without a guessed score")]
     [InlineData(true), InlineData(false)]
     public void Bounds(bool bytes)

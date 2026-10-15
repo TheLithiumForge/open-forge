@@ -16,6 +16,7 @@ internal sealed record RoutedMaintenanceRequest
     public required ImmutableArray<SourceLogicalSource> SelectedSources { get; init; }
     public required RoutedMetadataPolicyContext Policy { get; init; }
     public IReadOnlyDictionary<string, ImmutableArray<byte>> IntendedBytes { get; init; } = new Dictionary<string, ImmutableArray<byte>>();
+    public IReadOnlyDictionary<string, MarkdownDocumentFacts> ObservedDocuments { get; init; } = new Dictionary<string, MarkdownDocumentFacts>();
 }
 
 internal sealed record RoutedMaintenanceMetadata(string Path, FrameworkMetadataCompletionResult Completion);

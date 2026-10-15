@@ -8,8 +8,7 @@ open-forge:
 
 ## Shape
 
-Use one switch expression that names every supported enum member and rejects the
-remaining runtime value space explicitly:
+Schematic mapping member. The containing type and enum declaration are omitted. Names, values and member order are illustrative. Every named mapping and the rejecting discard arm are required.
 
 ```csharp
 internal static string ReadMachineName(OperationState state)
@@ -25,18 +24,7 @@ internal static string ReadMachineName(OperationState state)
     };
 ```
 
-The discard arm is required because a C# enum can contain an unnamed value of
-its underlying numeric type. Listing every currently named member does not close
-that runtime value space and does not by itself provide compiler-enforced
-exhaustiveness.
-
-Keep the switch at the nearest scope that owns the mapping. Group multiple named
-members in one arm only when they intentionally share exactly the same meaning.
-
-## Evidence
-
-Test the semantic result for every named member and the rejection of an unnamed
-runtime value:
+Schematic xUnit members, with containing test class, imports and production declarations omitted:
 
 ```csharp
 [Theory]
@@ -60,19 +48,16 @@ public void UndefinedRuntimeStateIsRejected()
 }
 ```
 
-When the mapping is a closed public or persisted contract, add one focused
-coverage assertion that compares the explicitly specified named cases with
-`Enum.GetValues<TEnum>()`. Its purpose is to make a newly authored member require
-an intentional mapping decision; do not use broad inventory or hash snapshots as
-a substitute for semantic assertions.
+| Part                                                             | Status                                            |
+| ---------------------------------------------------------------- | ------------------------------------------------- |
+| Explicit arm for every supported named member                    | Required                                          |
+| Discard throwing `ArgumentOutOfRangeException`                   | Required for unnamed numeric values               |
+| Semantic assertion for every named mapping and one unnamed value | Required                                          |
+| Named-case coverage against `Enum.GetValues<TEnum>()`            | Required for a closed public or persisted mapping |
+| Shared arm for several named members                             | Optional only for identical meaning               |
 
-## Boundaries
+## Applicability And Sources
 
-- Use this Pattern for finite enum-to-value or enum-to-behavior mappings.
-- Do not claim that the compiler proves named-member completeness when the
-  discard arm handles the open numeric value space.
-- Do not suppress the compiler warning or introduce reflection-based dispatch,
-  a source generator, analyzer, or discriminated-union framework solely to make
-  this small boundary appear closed.
-- Use a stronger closed type only when the domain independently needs one, not
-  merely to replace this direct native C# shape.
+For finite enum-to-value or enum-to-behavior mappings. A C# enum includes unnamed numeric values, so the discard arm does not prove named-member completeness at compile time.
+
+[C# Callable Design](../../directives/csharp/design.md#enum-mapping-evidence) binds mapping placement, completeness evidence and the native-language boundary.

@@ -36,10 +36,7 @@ internal static class RepairOperationalContributorFactory
             new LocalReferenceOperationalContributor(
                 routeSourceInspector,
                 new SourceLinkDestinationResolver(
-                    (workspace, lexicalPath) => physicalPathResolver.ResolveCandidate(
-                        workspace.LexicalRoot,
-                        workspace.PhysicalRoot,
-                        lexicalPath),
+                    physicalPathResolver,
                     StrictUtf8FileReader.ReadAsync,
                     new MarkdownDocumentParser().Parse),
                 new LocalReferenceCandidateReader()),

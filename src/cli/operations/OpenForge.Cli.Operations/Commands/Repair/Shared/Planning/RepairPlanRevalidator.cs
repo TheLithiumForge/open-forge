@@ -28,7 +28,8 @@ internal sealed class RepairPlanRevalidator(
             return false;
         }
 
-        var catalogue = await catalogueReader.ReadAsync(plan.Request.Workspace, diagnosis.Observation.LocalReferences, cancellationToken, plan.Request.Relinks)
+        var catalogue = await catalogueReader.ReadAsync(plan.Request.Workspace, diagnosis.Observation.LocalReferences, cancellationToken,
+            plan.Request.Relinks, diagnosis.Observation.Maintenance)
             .ConfigureAwait(false);
         foreach (var proof in plan.Selection.Selected.SelectMany(selected => new[] { selected.Proposal.RenameProof, selected.Proposal.SourceMoveProof }).OfType<OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Observations.RenameEvidenceObservation>())
             if (plan.RenameEvidence is null || catalogue.RenameEvidence is null

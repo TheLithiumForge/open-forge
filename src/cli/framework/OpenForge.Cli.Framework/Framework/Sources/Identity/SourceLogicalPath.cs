@@ -30,22 +30,24 @@ internal static class SourceLogicalPath
             return false;
         }
 
-        return path.StartsWith($"{AgentsRoot}/", StringComparison.Ordinal)
-            && path[(AgentsRoot.Length + 1)..]
-                .Split('/', StringSplitOptions.None)
-                .All(IsCanonicalSegment);
+        if (!path.StartsWith($"{AgentsRoot}/", StringComparison.Ordinal)) return false;
+        var segments = path.AsSpan(AgentsRoot.Length + 1);
+        foreach (var range in segments.Split('/'))
+            if (!IsCanonicalSegment(segments[range])) return false;
+        return true;
     }
 
     internal static bool IsCanonicalSegment([NotNullWhen(true)] string? segment)
     {
-        if (string.IsNullOrEmpty(segment)
-            || segment is "." or ".."
-            || segment.IndexOfAny(['/', '\\']) >= 0)
-        {
-            return false;
-        }
+        return segment is not null && IsCanonicalSegment(segment.AsSpan());
+    }
 
-        return segment.All(character => !char.IsControl(character));
+    private static bool IsCanonicalSegment(ReadOnlySpan<char> segment)
+    {
+        if (segment.IsEmpty || segment.SequenceEqual(".") || segment.SequenceEqual("..")) return false;
+        foreach (var character in segment)
+            if (character is '/' or '\\' || char.IsControl(character)) return false;
+        return true;
     }
 
     internal static string ReadParent(string logicalPath)

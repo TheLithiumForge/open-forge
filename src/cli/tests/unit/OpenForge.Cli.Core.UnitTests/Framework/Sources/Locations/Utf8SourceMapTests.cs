@@ -5,6 +5,26 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Sources.Locations;
 
 public sealed class Utf8SourceMapTests
 {
+    [Trait("Boundary", "Processing"), Trait("Feature", "source-locations"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Repeated location queries build one coordinate index only when needed")]
+    public void RepeatedQueriesShareOneLazyIndex()
+    {
+        var builds = 0;
+        var source = string.Concat(Enumerable.Repeat("A\U0001F600\r\n", 1000));
+        var map = new Utf8SourceMap(source, indexBuilt: () => builds++);
+        Assert.Equal(0, builds);
+        for (var index = 0; index < 1000; index++)
+            Assert.Equal(new SourceLocation(index + 1, 2, index * 7 + 1, 4), map.Map(index * 5 + 1, 2));
+        Assert.Equal(1, builds);
+    }
+
+    [Trait("Boundary", "Processing"), Trait("Feature", "source-locations"), Trait("Evidence", "Unit")]
+    [Theory(DisplayName = "Indexed locations retain coordinates inside CRLF and at every newline boundary")]
+    [InlineData(1, 1, 2), InlineData(2, 2, 1), InlineData(3, 2, 1), InlineData(4, 2, 2)]
+    [InlineData(5, 3, 1), InlineData(6, 3, 2), InlineData(7, 4, 1)]
+    public void RetainsNewlineBoundaryCoordinates(int offset, int line, int column)
+        => Assert.Equal(new SourceLocation(line, column, offset, 0), new Utf8SourceMap("A\r\nB\rC\n").Map(offset, 0));
+
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Source locations use Unicode-scalar coordinates and UTF-8 bytes across line endings")]
     [Trait("Feature", "source-locations"), Trait("Evidence", "Unit")]

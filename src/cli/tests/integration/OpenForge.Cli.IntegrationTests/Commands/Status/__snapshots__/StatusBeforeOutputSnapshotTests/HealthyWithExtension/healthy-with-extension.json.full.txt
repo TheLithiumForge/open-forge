@@ -15,15 +15,15 @@
   "findings": [],
   "effects": [],
   "counts": {
-    "routedFiles": 56,
+    "routedFiles": 58,
     "startupFiles": 11,
-    "startupTokens": 6832,
+    "startupTokens": 6857,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 347,
-    "allTokens": 38604,
-    "startupShare": 17.697229525820197650472107451,
+    "allTokens": 39208,
+    "startupShare": 17.487199433778191533453634213,
     "rootCategories": 7,
-    "entriesSectionsCurrent": 25,
+    "entriesSectionsCurrent": 26,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
     "frameworkFilesCurrent": 19,
@@ -54,15 +54,15 @@
         },
         "current": {
           "files": 11,
-          "characters": 27327,
-          "bytes": 27327,
-          "tokens": 6832
+          "characters": 27425,
+          "bytes": 27425,
+          "tokens": 6857
         },
         "difference": {
           "files": 0,
-          "characters": 1056,
-          "bytes": 1056,
-          "tokens": 264
+          "characters": 1154,
+          "bytes": 1154,
+          "tokens": 289
         },
         "mayLoadAgain": {
           "files": 1,
@@ -72,12 +72,12 @@
         }
       },
       "allRouted": {
-        "files": 56,
-        "characters": 154414,
-        "bytes": 154414,
-        "tokens": 38604
+        "files": 58,
+        "characters": 156829,
+        "bytes": 156829,
+        "tokens": 39208
       },
-      "startupShare": 17.697229525820197650472107451,
+      "startupShare": 17.487199433778191533453634213,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
@@ -179,6 +179,10 @@
     "entriesSections": [
       {
         "path": ".agents/directives/_directives.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/directives/planning/_planning.md",
         "state": "current"
       },
       {
@@ -310,6 +314,14 @@
         "id": "planning",
         "version": "0.4.0",
         "files": [
+          {
+            "path": ".agents/directives/planning/_planning.md",
+            "state": "current"
+          },
+          {
+            "path": ".agents/directives/planning/work-records.md",
+            "state": "current"
+          },
           {
             "path": ".agents/memory/crystallized/decisions/_decisions.md",
             "state": "current"

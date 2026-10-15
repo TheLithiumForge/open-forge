@@ -5,10 +5,11 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Shared.ManagedHosts;
+using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
 
 namespace OpenForge.Cli.Core.Framework.Documents.Markdown;
 
-internal sealed class MarkdownDocumentParser
+internal sealed class MarkdownDocumentParser(Func<string, YamlDocumentFacts>? parseFrontmatter = null)
 {
     private readonly MarkdownFrontmatterParser _frontmatterParser = new();
 
@@ -28,7 +29,7 @@ internal sealed class MarkdownDocumentParser
                     [],
                     MarkdownGeneratedRegionFact.Unavailable("The Markdown body boundary is unavailable.")),
                 new MarkdownInlineFacts([], [], [], []),
-                MarkdownManagedHostFact.Invalid("The Markdown body boundary is unavailable."));
+                MarkdownManagedHostFact.Invalid("The Markdown body boundary is unavailable."), parseFrontmatter);
         }
 
         var bodyStart = frontmatter.BodyStart ?? throw new InvalidOperationException(
@@ -86,7 +87,7 @@ internal sealed class MarkdownDocumentParser
                 inlineFacts.OpaqueSpans,
                 inlineFacts.Links,
                 inlineFacts.Images),
-            MarkdownManagedHostReader.Read(source, document, parseStart));
+            MarkdownManagedHostReader.Read(source, document, parseStart), parseFrontmatter);
     }
 
     private static MarkdownHeadingFact CreateHeadingFact(HeadingBlock heading, int bodyStart)

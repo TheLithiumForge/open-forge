@@ -15,6 +15,14 @@
   "findings": [],
   "effects": [
     {
+      "path": ".agents/directives/planning",
+      "kind": "directory",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/skills/use-workflow",
       "kind": "directory",
       "action": "created",
@@ -87,6 +95,22 @@
       "owner": "workflows"
     },
     {
+      "path": ".agents/directives/planning/_planning.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
+      "path": ".agents/directives/planning/work-records.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": "planning"
+    },
+    {
       "path": ".agents/memory/crystallized/decisions/_decisions.md",
       "kind": "file",
       "action": "created",
@@ -143,6 +167,14 @@
       "owner": "planning"
     },
     {
+      "path": ".agents/directives/_directives.md",
+      "kind": "section",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/memory/crystallized/_crystallized.md",
       "kind": "section",
       "action": "rewritten",
@@ -177,9 +209,9 @@
   ],
   "counts": {
     "packagesInstalled": 2,
-    "filesCreated": 9,
+    "filesCreated": 11,
     "filesReplaced": 0,
-    "sectionsUpdated": 4,
+    "sectionsUpdated": 5,
     "grantsSaved": 0,
     "infos": 10
   },

@@ -161,7 +161,7 @@ internal sealed class RepairPostVerifier(DoctorDiagnosisReader diagnosisReader, 
         var coverage = RepairCoverageMapper.Read(read);
         var findings = ReadCoverageFindings(coverage).ToList();
         var catalogue = catalogueReader is null ? null : await catalogueReader.ReadAsync(plan.Request.Workspace,
-            read.Observation.LocalReferences, cancellationToken).ConfigureAwait(false);
+            read.Observation.LocalReferences, cancellationToken, maintenance: read.Observation.Maintenance).ConfigureAwait(false);
         var scope = RepairAuthoredReferenceBoundary.Filter(
             read.Observation.LocalReferences.References,
             RepairAuthoredReferenceBoundary.ReadRouteDocuments(read.Observation.Routes.Sources));

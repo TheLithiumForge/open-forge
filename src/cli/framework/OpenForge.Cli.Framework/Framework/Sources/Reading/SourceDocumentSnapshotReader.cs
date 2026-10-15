@@ -12,17 +12,23 @@ internal sealed class SourceDocumentSnapshotReader
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
 
-    internal async ValueTask<FileStateSnapshot> ReadAsync(
+    internal ValueTask<FileStateSnapshot> ReadAsync(
         CliWorkspace workspace,
         SourceDocumentReadResult read,
         CancellationToken cancellationToken)
+        => ReadAsync(workspace, read.Verification, cancellationToken);
+
+    internal async ValueTask<FileStateSnapshot> ReadAsync(
+        CliWorkspace workspace,
+        SourceLayerVerification verification,
+        CancellationToken cancellationToken)
     {
-        if (read.Verification.State != SourceLayerVerificationState.Verified
-            || read.Verification.CurrentPhysicalPath is not { } physicalPath)
+        if (verification.State != SourceLayerVerificationState.Verified
+            || verification.CurrentPhysicalPath is not { } physicalPath)
         {
             throw new ArgumentException(
                 "An exact source snapshot requires a verified current physical path.",
-                nameof(read));
+                nameof(verification));
         }
 
         var bytes = await File.ReadAllBytesAsync(physicalPath, cancellationToken)
@@ -31,7 +37,7 @@ internal sealed class SourceDocumentSnapshotReader
         return FileStateSnapshot.File(
             SourceLogicalPath.ToLexicalPath(
                 workspace.LexicalRoot,
-                read.Layer.CanonicalPath),
+                verification.Layer.CanonicalPath),
             physicalPath,
             bytes);
     }

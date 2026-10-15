@@ -1,7 +1,7 @@
 ---
 open-forge:
   description: Queue Task 81 to maintain this repository's own Patterns after the next beta release, moving required behavior back into Directives and keeping each Pattern as a visual shape
-  tags: [Memory, Working, Task, Pattern, Directive, Maintenance, Linking, Contextual, Queued]
+  tags: [Memory, Working, Task, Pattern, Directive, Maintenance, Linking, Contextual, Active]
 ---
 
 # Task 81: Own Patterns maintenance
@@ -12,10 +12,18 @@ This repository's own Patterns under `.agents/patterns/`, and the bundled Extens
 
 The maintainer asked on 2026-10-13 that “any maintenance for our own files regarding how the patterns … switch back to directives plus just the visual pattern” be scheduled as the next task after another beta deployment and release.
 
-Status: Task 81 “Own Patterns maintenance” (phase 1/3): queued, starts after the next beta release.
+Status: Task 81 “Own Patterns maintenance” (phase 2/3): Patterns reshaped, rules moved and independently reviewed on `feature/task81-own-patterns-maintenance`. Merge waits for the next integration window.
 
 ## Scope
 
 - `.agents/patterns/**` in this repository.
 - Bundled Extension Patterns, starting with `src/extensions/planning/content/.agents/patterns/`.
 - The Directives that receive required behavior moved out of those Patterns, and the links between them.
+
+## Progress, 2026-10-15
+
+Every own Pattern and the bundled Planning Work Records Pattern now lead with a labelled visual shape, brief applicability notes and links both ways. Required rules moved to the Directives that govern their scope, or to new on-demand scopes for CLI operations, software contracts and versioned configuration, work planning, and the Planning Extension's work records. Procedures moved to Guidance, and advice keeps its original strength. Named Values now links to the CLI's shared operation contract instead of calling its statuses unsettled.
+
+A source identity collision between `tasks/beta-follow-ups.md` and the `tasks/beta-follow-ups/` folder blocked managed Extension updates. The leaf is now `beta-follow-up-backlog.md` with every link updated, and this workspace carries Planning 0.4.0 through a managed update.
+
+An independent Astra high review found the CLI's pre-acceptance variation review weakened to advice and an illustrative schema folder name labelled as required. Both are corrected. The repository Markdown gate, embedded payload, Extension catalogue and Status classes (22 tests) and all 4,962 Unit tests pass, and repository Index is current.

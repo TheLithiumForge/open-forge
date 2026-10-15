@@ -20,7 +20,7 @@ Completed records and superseded analyses are in [Archived CLI Development](../.
 
 ## Entries
 
-- [Remaining beta product work and delivery verification after the CLI migration](beta-follow-ups.md) - #Memory #Working #Backlog #CLI #Beta #Contextual
+- [Remaining beta product work and delivery verification after the CLI migration](beta-follow-up-backlog.md) - #Memory #Working #Backlog #CLI #Beta #Contextual
 - [Remaining actionable-error family specifications under paused Task 39](beta-follow-ups/_beta-follow-ups.md) - #Memory #Working #Plan #CLI #Contextual
 - [Unsettled CLI and Framework follow-ups awaiting selection](potential/_potential.md) - #Memory #Working #CLI #Task #Potential #Contextual
 - [Open Task 34 to visually distinguish command names, paths, identifiers and arguments interpolated into user-facing sentences, and to establish it as an authoring rule](task34-interpolated-value-markup.md) - #Memory #Working #CLI #Task #Presentation #Wording #Accessibility #Contextual #Active
@@ -38,4 +38,5 @@ Completed records and superseded analyses are in [Archived CLI Development](../.
 - [Open Task 63 to decide whether and how a direct edit to a managed file can survive updates, since removedFiles already keeps such a file untouched as an undocumented side effect](task63-keeping-edits-through-updates.md) - #Memory #Working #Task #CLI #Update #Removal #Customization #Investigation #Contextual #Active
 - [Task 66 council review of the published documentation for overclaims and polish, and of the shipped Framework and Extension files for consistency, redundancy, order, and readability](task66-council-polish.md) - #Memory #Working #Task #Documentation #Framework #Extensions #Council #Writing #Contextual #Active
 - [Task 67 council redesign of the framework diagram's labels, so what loads when and where content comes from reads at a glance and stays accurate](task67-diagram-labels.md) - #Memory #Working #Task #Documentation #Diagram #Loading #Council #Writing #Contextual #Active
-- [Queue Task 81 to maintain this repository's own Patterns after the next beta release, moving required behavior back into Directives and keeping each Pattern as a visual shape](task81-own-patterns-maintenance.md) - #Memory #Working #Task #Pattern #Directive #Maintenance #Linking #Contextual #Queued
+- [Queue Task 81 to maintain this repository's own Patterns after the next beta release, moving required behavior back into Directives and keeping each Pattern as a visual shape](task81-own-patterns-maintenance.md) - #Memory #Working #Task #Pattern #Directive #Maintenance #Linking #Contextual #Active
+- [Open Task 82 to make every CLI operation finish in seconds on large workspaces, starting with Repair and Doctor diagnosis on this repository](task82-cli-in-seconds.md) - #Memory #Working #Task #CLI #Performance #Repair #Doctor #Index #Contextual #Active
