@@ -12,7 +12,7 @@ Every CLI operation finishes in seconds on a large workspace such as this reposi
 
 The maintainer agreed on 2026-10-15: “our cli operations should take seconds not tens of seconds.”
 
-Status: Task 82 “CLI operations finish in seconds” (phase 3/4): read commands run in about two to four seconds here, Doctor in about six and Repair in about eight, three rounds reviewed. Next is the maintainer's decision on the archived broken links.
+Status: Task 82 “CLI operations finish in seconds” (phase 3/4): read commands run in about two to four seconds here, Doctor in about six and Repair in about seven, three rounds released in beta14. Next is the maintainer's decision on the archived broken links.
 
 ## Starting point
 
@@ -66,3 +66,7 @@ Another project loaded the host during measurement, so both builds ran interleav
 | Doctor                   |    8.35 |    5.88 |
 
 An earlier pass with less load reached Repair 5.1, Index apply 4.6 and Doctor 3.4 seconds. Unit 4,998, Integration 3,326 and EndToEnd 376 pass, and all 120 output comparisons match.
+
+## Archived links, 2026-10-15
+
+Doctor in a clone of this repository reports 891 link findings, 864 of them in archived records. Across the workspace they are 737 links to missing files, 108 longer paths to the right file, which Repair rewrites automatically, 22 folder links it cannot check, 12 missing headings, 8 renamed targets and 4 absolute links. The folder links are recorded in the [beta follow-up backlog](beta-follow-up-backlog.md). The maintainer decides whether the archived links are repaired, excluded from diagnosis or left as they are.

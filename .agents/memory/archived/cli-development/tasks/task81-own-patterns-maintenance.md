@@ -1,18 +1,18 @@
 ---
 open-forge:
-  description: Queue Task 81 to maintain this repository's own Patterns after the next beta release, moving required behavior back into Directives and keeping each Pattern as a visual shape
-  tags: [Memory, Working, Task, Pattern, Directive, Maintenance, Linking, Contextual, Active]
+  description: "Historical record: this repository's own Patterns lead with a visual shape and their rules live in Directives, released in beta14"
+  tags: [Memory, Task, Pattern, Directive, Maintenance, Linking, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 81: Own Patterns maintenance
 
 ## Outcome
 
-This repository's own Patterns under `.agents/patterns/`, and the bundled Extension Patterns, follow the corrected shipped entrypoint from [Task 80](../../../archived/cli-development/tasks/task80-patterns-show-the-shape.md). Required behavior lives in Directives. Each Pattern keeps only its visual shape, with brief applicability notes and links to the related sources.
+This repository's own Patterns under `.agents/patterns/`, and the bundled Extension Patterns, follow the corrected shipped entrypoint from [Task 80](task80-patterns-show-the-shape.md). Required behavior lives in Directives. Each Pattern keeps only its visual shape, with brief applicability notes and links to the related sources.
 
 The maintainer asked on 2026-10-13 that “any maintenance for our own files regarding how the patterns … switch back to directives plus just the visual pattern” be scheduled as the next task after another beta deployment and release.
 
-Status: Task 81 “Own Patterns maintenance” (phase 2/3): Patterns reshaped, rules moved and independently reviewed on `feature/task81-own-patterns-maintenance`. Merge waits for the next integration window.
+Status: Task 81 “Own Patterns maintenance” (phase 3/3): released in beta14 with Task 82.
 
 ## Scope
 

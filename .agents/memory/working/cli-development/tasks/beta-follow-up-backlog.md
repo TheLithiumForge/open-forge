@@ -108,6 +108,30 @@ These were recorded as later work. They are not automatically beta blockers.
       C17-07 remains deferred in Task 45. Supply an example where removing a link
       cannot preserve authored meaning, then agree on the expected refusal or edit.
       Do not invent an unsafe case merely to fill coverage.
+- [ ] **Decide whether links to existing folders are valid.** Recorded on
+      2026-10-15 during Task 82. Doctor reports a link such as `../../src/cli/`
+      as `reference.destination-malformed`, "not a link Open Forge can check",
+      and Repair lists the same finding as a "Broken link". This repository's
+      Maps link to folders on purpose. Decide whether an existing folder is a
+      valid target, and give Repair's remaining findings Doctor's own title.
+- [ ] **Decide which line endings CLI-written JSON uses.** Recorded on
+      2026-10-15. On Windows the CLI writes `.agents/open-forge.lock.json` with
+      CRLF, because indented JSON uses the platform newline. A workspace without
+      `eol=lf` in `.gitattributes` would commit CRLF. Decide whether written JSON
+      always uses LF and whether rewritten settings keep their existing endings.
+- [ ] **Describe a note without a heading by more than its file name.**
+      Recorded on 2026-10-15. Index fills a missing description from the file
+      stem when a plain note has no heading. Decide whether its first sentence
+      would serve readers better.
+- [ ] **Check Route Remove when Git times out.** Recorded on 2026-10-15. A
+      Route Remove test flaked under heavy host load around a Git timeout.
+      Reproduce it and confirm the command reports the timeout and changes
+      nothing.
+- [ ] **Shorten the managed public test suite.** Recorded on 2026-10-15. The
+      beta14 Build's suite notices show the public suite against the managed
+      CLI taking 6 to 18 minutes per runner, 18.1 on osx-x64 against a 30-minute
+      stop, while the same tests against the native CLI take under 2. Decide
+      whether to reduce what the managed run repeats or keep it and the limit.
 
 ## Completed delivery verification
 

@@ -14,7 +14,7 @@ The maintainer asked on 2026-10-13:
 
 > "Make sure the patterns actually represent what I want - a visual representation easy to understand for people and agents of how something should be, basically throw a reviewer on some piece of code and show the pattern and it should be understandable. We already did a pass for that, just wanted to make sure of it. Also make sure you encourage linking and referencing to and from patterns to other core categories (we do not name them though)."
 
-The maintainer then narrowed the scope on 2026-10-13: the shipped `patterns.md` file is what matters most and must be correct. Maintenance of this repository's own Patterns moves to [Task 81](../../../working/cli-development/tasks/task81-own-patterns-maintenance.md), after the next beta deployment and release.
+The maintainer then narrowed the scope on 2026-10-13: the shipped `patterns.md` file is what matters most and must be correct. Maintenance of this repository's own Patterns moves to [Task 81](task81-own-patterns-maintenance.md), after the next beta deployment and release.
 
 Status: Task 80 “Patterns show the shape” (phase 3/3): released in beta13 with Tasks 78 and 79.
 
