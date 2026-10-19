@@ -506,32 +506,45 @@ public sealed class RouteListApplicationIntegrationTests
      Trait("Feature", "route-list"), Trait("Evidence", "Integration")]
     public async Task MidReadCancellationPresentsInterruptedResult()
     {
-        using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
-        WriteLoader(workspace, "- [Root](root/_root.md) - #Root");
-        WriteRoute(workspace, ".agents/root/_root.md", "Root route", "Root");
-        workspace.Write(".agents/root/z-slow.md", new byte[32 * 1024 * 1024]);
-        var before = workspace.SnapshotHashes();
-        using var cancellation = new CancellationTokenSource();
-        using var output = new StringWriter();
-        using var error = new StringWriter();
+        // A read the OS serves synchronously from its cache can finish before cancellation lands.
+        // That run proves nothing about the boundary, so the test tries again before failing.
+        const int Attempts = 3;
+        for (var attempt = 1; attempt <= Attempts; attempt++)
+        {
+            using var workspace = RouteListFilesystemIntegrationWorkspace.Create();
+            WriteLoader(workspace, "- [Root](root/_root.md) - #Root");
+            WriteRoute(workspace, ".agents/root/_root.md", "Root route", "Root");
+            workspace.Write(".agents/root/z-slow.md", new byte[32 * 1024 * 1024]);
+            var before = workspace.SnapshotHashes();
+            using var cancellation = new CancellationTokenSource();
+            using var output = new StringWriter();
+            using var error = new StringWriter();
 
-        var pending = CliHost.RunAsync(
-            ["route", "list", "root", "--depth=all", "--format", "json"],
-            workspace.Path,
-            new CliOutputWriters(output, error),
-            cancellation.Token);
-        Assert.False(pending.IsCompleted, "The real large-file read must establish a cancellable operation boundary.");
-        cancellation.Cancel();
-        var exitCode = await pending;
+            var pending = CliHost.RunAsync(
+                ["route", "list", "root", "--depth=all", "--format", "json"],
+                workspace.Path,
+                new CliOutputWriters(output, error),
+                cancellation.Token);
+            if (pending.IsCompleted && attempt < Attempts)
+            {
+                await pending;
+                continue;
+            }
 
-        Assert.Equal(130, exitCode);
-        Assert.Equal(string.Empty, error.ToString());
-        using var document = JsonDocument.Parse(output.ToString());
-        Assert.Equal("cancelled", document.RootElement.GetProperty("status").GetString());
-        Assert.Equal(
-            "route-list.interrupted",
-            document.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
-        Assert.Equal(before, workspace.SnapshotHashes());
+            Assert.False(pending.IsCompleted, "The real large-file read must establish a cancellable operation boundary.");
+            cancellation.Cancel();
+            var exitCode = await pending;
+
+            Assert.Equal(130, exitCode);
+            Assert.Equal(string.Empty, error.ToString());
+            using var document = JsonDocument.Parse(output.ToString());
+            Assert.Equal("cancelled", document.RootElement.GetProperty("status").GetString());
+            Assert.Equal(
+                "route-list.interrupted",
+                document.RootElement.GetProperty("findings")[0].GetProperty("code").GetString());
+            Assert.Equal(before, workspace.SnapshotHashes());
+            return;
+        }
     }
 
     private static void WriteLoader(
