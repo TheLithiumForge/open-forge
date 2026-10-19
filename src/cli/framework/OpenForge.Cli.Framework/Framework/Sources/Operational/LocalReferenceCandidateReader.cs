@@ -11,7 +11,7 @@ internal sealed class LocalReferenceCandidateReader
         IReadOnlyList<LocalReferenceSourceObservation> sources,
         SourceRouteTopology topology)
     {
-        var missing = references.Where(reference => reference.Facts.Target.Resolution == SourceLinkTargetResolution.Missing).ToArray();
+        var missing = references.Where(reference => !reference.Facts.IsFolder && reference.Facts.Target.Resolution == SourceLinkTargetResolution.Missing).ToArray();
         if (missing.Length == 0) return [];
         var requestedLabels = missing.Select(reference => reference.Label.Text).OfType<string>().ToHashSet(StringComparer.Ordinal);
         var byPath = new Dictionary<string, LocalReferenceSourceObservation>(StringComparer.Ordinal);

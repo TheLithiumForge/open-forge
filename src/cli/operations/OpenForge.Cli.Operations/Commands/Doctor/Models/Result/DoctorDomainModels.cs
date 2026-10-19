@@ -140,6 +140,8 @@ internal sealed record DoctorCoverageCounts
 
     public required long? LinksChecked { get; init; }
 
+    public long LinksIgnored { get; init; }
+
     public required long? LinksValid { get; init; }
 
     public required long? ExternalLinksNotChecked { get; init; }

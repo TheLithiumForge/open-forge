@@ -2,6 +2,14 @@ namespace OpenForge.Cli.OutputText.Doctor;
 
 internal static class DoctorMaintenanceText
 {
+    internal static string ProtectedLinkEdit(string source, string protectedPath, int? line, int? column)
+    {
+        if (line is { } number)
+            return string.Create(System.Globalization.CultureInfo.InvariantCulture,
+                $"Correct this link in {source} at line {number}, column {column} through the owner of {protectedPath}.");
+        return $"Correct this link in {source} through the owner of {protectedPath}.";
+    }
+
     internal static string GitTimeout()
         => "Rename evidence did not finish in time, so renamed files could not be proven. Run the command again.";
     internal static string RenameTitle() => "Linked file was renamed or moved";

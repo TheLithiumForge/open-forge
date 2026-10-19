@@ -48,13 +48,16 @@ public sealed class InstallFrontmatterIntegrationTests
             Assert.Equal(asset.Bytes.ToArray(), File.ReadAllBytes(workspace.Combine(asset.Path)));
     }
 
-    [Fact(DisplayName = "An existing missing frontmatter key retains Scoped without a settings effect"), Trait("Feature", "install-frontmatter"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "An existing missing frontmatter key retains Scoped while archive link scope is seeded"), Trait("Feature", "install-frontmatter"), Trait("Evidence", "Integration")]
     public async Task ExistingMissingKeyStaysScoped()
     {
         using var workspace = InstallOperationWorkspace.Create("install-frontmatter-legacy");
         var operation = InstallFrontmatterFixture.Operation(workspace);
         Assert.Equal(CliSemanticStatus.Complete, (await operation.ExecuteAsync(workspace.Request(), TestContext.Current.CancellationToken)).Status);
-        Assert.False(workspace.Exists(".agents/open-forge.json"));
+        var settings = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), workspace.Workspace, TestContext.Current.CancellationToken);
+        Assert.Null(settings.Document.DeclaredFrontmatter);
+        Assert.Equal(FrontmatterForm.Scoped, settings.Document.Frontmatter);
+        Assert.Equal([".agents/memory/archived"], settings.Document.IgnoreLinksFrom);
         var before = workspace.SnapshotHashes();
         var result = await operation.ExecuteAsync(workspace.Request(), TestContext.Current.CancellationToken);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);

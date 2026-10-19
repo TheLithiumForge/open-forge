@@ -14,13 +14,12 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
 
 namespace OpenForge.Cli.Core.Framework.GeneratedNavigation;
 
 internal sealed class GeneratedNavigationRegionPlanner
 {
-    private static readonly UTF8Encoding StrictUtf8 = new(false, true);
-
     internal GeneratedNavigationRegion Plan(
         GeneratedNavigationProjectionRequest request,
         GeneratedNavigationRegionInput input)
@@ -357,15 +356,9 @@ internal sealed class GeneratedNavigationRegionPlanner
             return false;
         }
 
-        if (segments.Any(segment => segment.Any(character => character is '?' or '#' or ':')))
-        {
-            cause = "A direct routed child destination contains an unsafe path character.";
-            return false;
-        }
-
         try
         {
-            destination = string.Join('/', segments.Select(EncodeSegment));
+            destination = SourceDestinationEncoder.EncodePath(relative);
             return true;
         }
         catch (EncoderFallbackException)
@@ -373,36 +366,6 @@ internal sealed class GeneratedNavigationRegionPlanner
             cause = "A direct routed child destination is not valid strict UTF-8.";
             return false;
         }
-    }
-
-    private static string EncodeSegment(string segment)
-    {
-        _ = StrictUtf8.GetByteCount(segment);
-        var builder = new StringBuilder(segment.Length);
-        foreach (var rune in segment.EnumerateRunes())
-        {
-            if (rune.Value < 128 && IsUnescapedPathCharacter((char)rune.Value))
-            {
-                builder.Append((char)rune.Value);
-                continue;
-            }
-
-            foreach (var value in StrictUtf8.GetBytes(rune.ToString()))
-            {
-                builder.Append('%');
-                builder.Append(value.ToString("X2", System.Globalization.CultureInfo.InvariantCulture));
-            }
-        }
-
-        return builder.ToString();
-    }
-
-    private static bool IsUnescapedPathCharacter(char value)
-    {
-        return value is >= 'A' and <= 'Z'
-            or >= 'a' and <= 'z'
-            or >= '0' and <= '9'
-            or '-' or '.' or '_' or '~';
     }
 
     private static string BuildExpectedBlock(MarkdownDocumentFacts document, IReadOnlyList<GeneratedNavigationEntry> entries)

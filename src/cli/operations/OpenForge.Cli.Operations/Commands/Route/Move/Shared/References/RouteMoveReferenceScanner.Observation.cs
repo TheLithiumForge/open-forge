@@ -64,7 +64,7 @@ internal sealed partial class RouteMoveReferenceScanner
         var meanings = await ReadMeaningsAsync(
             plan,
             sourceCatalogue,
-            expected.DestinationSourcePath,
+            expected,
             document,
             cancellationToken).ConfigureAwait(false);
         return MeaningsMatch(expected.Meanings, meanings)
@@ -75,13 +75,15 @@ internal sealed partial class RouteMoveReferenceScanner
     private async ValueTask<ImmutableArray<RouteMoveReferenceMeaning>> ReadMeaningsAsync(
         RouteMovePlan plan,
         SourceCatalogue sourceCatalogue,
-        string sourcePath,
+        RouteMoveReferenceDocumentPlan expected,
         RouteMoveReferenceDocument document,
         CancellationToken cancellationToken)
     {
         var values = new List<RouteMoveReferenceMeaning>();
+        var sourcePath = expected.DestinationSourcePath;
         foreach (var link in document.Facts.Links.Where(link => IsAuthoredLink(document, link)))
         {
+            if (expected.IgnoredDestinations.Contains(link.RawDestination, StringComparer.Ordinal)) continue;
             var facts = await _destinationResolver.ResolveAsync(
                 new SourceLinkDestinationInput
                 {

@@ -17,12 +17,17 @@ internal static class WorkspaceEntryDoctorInspector
     internal static DoctorDomainReport Inspect(
         CliWorkspace workspace,
         WorkspaceEntryDoctorView view,
-        RouteDoctorView routes)
+        RouteDoctorView routes,
+        IReadOnlyList<(string Key, string Path)>? missingLinkScopeEntries = null,
+        int? unrecognizedSettingsSchemaVersion = null)
     {
         var findings = routes.Catalogue.Issues
             .Where(issue => issue.Code != SourceCatalogueIssueCode.OrphanOverwrite)
             .SelectMany(CreateCatalogueFindings)
             .ToList();
+        findings.AddRange((missingLinkScopeEntries ?? []).Select(WorkspaceLinkScopeDoctorFindingFactory.Create));
+        if (unrecognizedSettingsSchemaVersion is { } version)
+            findings.Add(WorkspaceSettingsVersionDoctorFindingFactory.Create(version));
         WorkspacePathDoctorInspector.Inspect(view, findings);
         WorkspaceSourceDoctorInspector.Inspect(routes, findings);
         WorkspaceRouteDoctorInspector.Inspect(routes, findings);

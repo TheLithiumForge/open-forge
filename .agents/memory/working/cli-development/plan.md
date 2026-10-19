@@ -10,7 +10,7 @@ open-forge:
 
 The [project-control ledger](project-control.md#active-task-ledger) owns the queue and permanent Task identities. Each Task defines its remaining outcome and evidence.
 
-1. Finish [Task 82](tasks/task82-cli-in-seconds.md) once the maintainer decides how to treat the archived broken links. Its first three speed rounds shipped in beta14.
+1. Deliver [Task 83](tasks/task83-link-scope-and-folder-links.md), link scope settings and folder links, then close [Task 82](tasks/task82-cli-in-seconds.md) with a re-measurement on this repository.
 2. Keep Tasks 34 and 39 paused, and Task 48 frozen at A/B1. Its Extension scoping work remains required before 1.0. The [wave capsule](one-zero-polish-wave.md) retains resume boundaries.
 3. Retain Task 62's pending maintainer review, deferred documentation reviews and the broader [Local Planning review](../local-planning.md). Other unfinished work stays in the [Task index](tasks/_tasks.md) and [candidate queue](tasks/potential/_potential.md).
 

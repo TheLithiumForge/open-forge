@@ -90,15 +90,22 @@ internal static class LocalReferenceDoctorInspector
         RenameWeakCandidateFilter? candidateFilter)
     {
         var target = observation.Facts.Target;
-        if (target.Resolution == SourceLinkTargetResolution.Missing
-            && observation.Location is { } location
+        var generated = observation.Location is { } location
             && maintenance?.GeneratedEntries.TryGetValue(observation.SourcePath, out var entries) == true
-            && location.ByteOffset >= entries.ByteOffset && location.ByteOffset + location.ByteLength <= entries.ByteOffset + entries.ByteLength)
+            && location.ByteOffset >= entries.ByteOffset && location.ByteOffset + location.ByteLength <= entries.ByteOffset + entries.ByteLength;
+        if (target.Resolution == SourceLinkTargetResolution.Missing && generated)
             yield break;
         if (maintenance?.ReferenceProtectionPolicy is { } protection
             && DoctorReferenceProtectionFindingFactory.Read(observation, protection) is { } protectedFinding)
         {
             yield return protectedFinding;
+            yield break;
+        }
+        if (observation.Facts.IsFolder && target.Resolution is SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.Malformed)
+        {
+            var folderDescriptor = LocalReferenceDoctorDescriptorReader.Read(observation)
+                ?? throw new InvalidOperationException("An invalid folder reference requires a manual finding.");
+            yield return LocalReferenceDoctorFindingFactory.Create(observation, folderDescriptor);
             yield break;
         }
         if (observation.Facts.Finding?.Code == SourceLinkDestinationFindingCode.IdentityCollision)
@@ -141,11 +148,16 @@ internal static class LocalReferenceDoctorInspector
             yield return LocalReferenceDoctorFindingFactory.Create(observation, descriptor, candidates);
         }
 
+        // Index owns generated Entries rather than Repair's authored-link catalogue.
+        if (generated) yield break;
         foreach (var canonicalization in observation.Canonicalizations)
         {
-            yield return LocalReferenceDoctorCanonicalizationProjector.Project(
+            var finding = LocalReferenceDoctorCanonicalizationProjector.Project(
                 observation,
                 canonicalization);
+            yield return maintenance?.ReferenceProtectionPolicy is { } policy
+                ? DoctorReferenceProtectionFindingFactory.ProtectCanonicalization(observation, finding, policy)
+                : finding;
         }
     }
 }

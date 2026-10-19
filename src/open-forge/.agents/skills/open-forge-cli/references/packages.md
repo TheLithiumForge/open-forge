@@ -28,6 +28,10 @@ After the preset choice, first interactive Install asks `How should Open Forge w
 
 Install, Update, and Extension delivery use `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. Both root and scoped frontmatter are read in every workspace. The plan shows the selected form, such as `Frontmatter: root`, or a change such as `Frontmatter: scoped -> root`.
 
+When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `[".agents/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 2.
+
+An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
+
 Root keys are recommended. Choose the scoped form when other tools already use top-level frontmatter keys. The interactive plan starts with `Review changes`. Plan and result recap the setup, added routes, Git-ignored contents, left-out routes, and frontmatter form. Configure also reports changed row choices and retention of existing files.
 
 Install's headline describes the result, with the path on a separate `Workspace:` line. Explanations wrap at spaces to fit the terminal width.

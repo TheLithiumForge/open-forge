@@ -101,6 +101,17 @@ Authored settings also accept `frontmatter` as `root` or `scoped`. A missing key
 means scoped. It selects output without restricting readable forms, as defined
 by the [shared operation contract](../../documents/cli/shared-operation-contract.md#frontmatter-form).
 
+The optional `ignoreLinksFrom` and `ignoreLinksTo` lists use the same path entries
+and comparisons as `allowInstallPaths`. They are paths, not patterns. A file
+entry covers that file, and a folder entry covers its descendants. Missing lists
+mean no exclusions. The [shared operation contract](../../documents/cli/shared-operation-contract.md#link-scope)
+defines their effect. The new authored shape uses schema version 2 and its own
+schema directory. Published version 1 remains unchanged. Readers understand both
+versions and preserve existing declarations and unknown properties on rewrite.
+An older CLI ignores settings keys it does not know. A beta14 CLI therefore
+ignores both ignore lists. An unrecognized settings version remains readable;
+Doctor reports the version as information and continues using understood keys.
+
 Authored settings contain `allowInstallPaths` and the optional removal lists
 `removedCategories`, `removedFiles`, `removedDirectories`, `removedExtensions`
 and `removedLibraries`. CLI commands may update the settings for explicit grants

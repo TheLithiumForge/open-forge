@@ -68,6 +68,50 @@ Source-reference operands have no general path form outside `.agents`. A
 specific command may define a separate external-source operand with its own
 grammar.
 
+## Authored Local Destination Spellings
+
+Markdown links use containing-file-relative paths with `/` separators. A local
+path that resolves to the same target has two accepted spellings:
+
+1. Index form encodes each path segment as UTF-8, leaving only ASCII letters,
+   digits, `-`, `.`, `_` and `~` literal. All percent escapes use uppercase
+   hexadecimal digits. Index always writes this form.
+2. Literal form keeps Unicode, spaces and punctuation decoded, except `%`, `#`,
+   `?`, `<` and `>` remain `%25`, `%23`, `%3F`, `%3C` and `%3E`. A colon in the
+   first relative path segment remains `%3A` to avoid URI-scheme interpretation.
+   An ampersand opening a recognized CommonMark named entity or decimal or
+   hexadecimal character reference is `%26`. Determine this after the required
+   URL escapes. Ordinary ampersands and unrecognized or incomplete
+   references remain literal. For example, `entity&amp;.md` on disk has literal
+   form `entity%26amp;.md` and Index form `entity%26amp%3B.md`. `entity&#65;.md`
+   has literal form `entity&%2365;.md`: `%23` already prevents a numeric reference
+   from opening, so its ampersand needs no extra escape. These are filename characters, not
+   character references to decode while parsing Markdown.
+   The surrounding Markdown must be a valid
+   [CommonMark destination](https://spec.commonmark.org/0.31.2/#link-destination).
+   Enclose paths containing spaces in angle brackets, and use angle brackets
+   for other punctuation when needed by that syntax, such as unbalanced
+   parentheses. Those brackets are delimiters, not part of the path spelling.
+
+Compare the path spelling exactly after deriving the target's canonical relative
+path. Either whole form is accepted without an encoding finding. Do not mix
+optional escaping from the two forms. Unnecessary escapes such as `%68ash.md`
+for `hash.md`, lowercase escapes and other spellings outside both forms retain
+`reference.same-target-encoding`. An admitted Repair correction writes Index
+form. A heading correction also uses Index form for its path. Resolution decodes
+percent encoding once. Thus `literal%20.md` on disk is `literal%2520.md` in both
+forms, while `hash#name.md` is `hash%23name.md` in both. `café(one).md` and
+`caf%C3%A9%28one%29.md` are both accepted. `<old guide.md>` and `old%20guide.md`
+are both accepted.
+
+Source-reference operands and reported filesystem paths remain literal paths.
+These Markdown spelling rules do not change their grammar or identity.
+Backslash and control characters remain outside the supported local-path rules.
+Other punctuation keeps its literal value inside a valid Markdown destination.
+Markdown character references and backslash escapes in hand-written sources
+still follow CommonMark. Their decoded spans remain ineligible for automatic
+spelling edits when the original bytes do not match the parsed destination.
+
 ## Automatic Source IDs
 
 Every supported file under `.agents` receives an automatic ID derived from its

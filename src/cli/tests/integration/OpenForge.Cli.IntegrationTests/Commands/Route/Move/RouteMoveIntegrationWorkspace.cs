@@ -54,6 +54,8 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
     private readonly HashSet<string> symbolicLinkPaths = new(StringComparer.Ordinal);
     private readonly HashSet<string> leafOutputPaths = new(StringComparer.Ordinal);
     private bool _ownsCategoryDestination;
+    private string _categoryDestinationRoot = ".agents/archive/topics";
+    private string _categoryDestinationEntrypoint = "_topics.md";
     private static readonly string[] CategoryDestinationFiles =
     [
         "_topics.md", "child.md", "child.overwrite.md", "notes.md", "native/SKILL.md", "image.bin", "assets/settings.json",
@@ -300,13 +302,15 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
         WriteText("notes.md", "Notes.\n");
     }
 
-    internal void OwnCategoryDestination()
+    internal void OwnCategoryDestination(string root = ".agents/archive/topics", string entrypoint = "_topics.md")
     {
-        if (File.Exists(Absolute(".agents/archive/topics")) || Directory.Exists(Absolute(".agents/archive/topics")))
+        if (File.Exists(Absolute(root)) || Directory.Exists(Absolute(root)))
         {
             throw new InvalidOperationException("The owned category destination must be absent before application.");
         }
         _ = temporary.SnapshotHashes();
+        _categoryDestinationRoot = root;
+        _categoryDestinationEntrypoint = entrypoint;
         _ownsCategoryDestination = true;
     }
 
@@ -317,7 +321,7 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
             return;
         }
         _ = temporary.SnapshotHashes();
-        string[] directories = [".agents/archive/topics", ".agents/archive/topics/assets", ".agents/archive/topics/native"];
+        string[] directories = [_categoryDestinationRoot, $"{_categoryDestinationRoot}/assets", $"{_categoryDestinationRoot}/native"];
         foreach (var directory in directories)
         {
             var path = Absolute(directory);
@@ -326,9 +330,12 @@ internal sealed class RouteMoveIntegrationWorkspace : IDisposable
                 throw new InvalidOperationException("The owned category directory was replaced.");
             }
         }
-        foreach (var relative in CategoryDestinationFiles)
+        var files = CategoryDestinationFiles.Where(file => file != "_topics.md")
+            .Append(_categoryDestinationEntrypoint)
+            .Append(_categoryDestinationEntrypoint[..^3] + ".overwrite.md");
+        foreach (var relative in files)
         {
-            var path = Absolute(".agents/archive/topics/" + relative);
+            var path = Absolute($"{_categoryDestinationRoot}/{relative}");
             if (File.Exists(path))
             {
                 if ((File.GetAttributes(path) & (FileAttributes.Directory | FileAttributes.ReparsePoint | FileAttributes.Device)) != 0)

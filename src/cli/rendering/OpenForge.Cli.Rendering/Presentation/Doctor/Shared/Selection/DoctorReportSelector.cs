@@ -45,7 +45,7 @@ internal static class DoctorReportSelector
                     findings,
                     selection.Detail >= CliDetail.Full)).ToArray()
                 : null,
-            ChecksLine = selection.Detail == CliDetail.Minimal && result.Status == CliSemanticStatus.Complete
+            ChecksLine = selection.Detail == CliDetail.Minimal && (result.Status == CliSemanticStatus.Complete || coverageCounts.LinksIgnored > 0)
                 ? JoinFacts(DoctorWording.ChecksSummary(coverageCounts), DoctorWording.CoverageSummary(coverageCounts))
                 : null,
             CoverageLine = selection.Detail >= CliDetail.Standard
@@ -316,6 +316,7 @@ internal static class DoctorReportSelector
             new CliCount("warnings", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelWarnings(), warnings),
             new CliCount("infos", global::OpenForge.Cli.OutputText.Shared.SharedText.LabelInfos(), infos),
             new CliCount("linksChecked", global::OpenForge.Cli.OutputText.Doctor.DoctorText.LabelLinksChecked(), coverage.LinksChecked, reason),
+            .. coverage.LinksIgnored > 0 ? new[] { new CliCount("linksIgnored", global::OpenForge.Cli.OutputText.Doctor.DoctorText.LabelLinksIgnored(), coverage.LinksIgnored) } : [],
             new CliCount("linksValid", global::OpenForge.Cli.OutputText.Doctor.DoctorText.LabelLinksValid(), coverage.LinksValid, reason),
             new CliCount("externalLinksNotChecked", global::OpenForge.Cli.OutputText.Doctor.DoctorText.LabelExternalLinksNotChecked(), coverage.ExternalLinksNotChecked, reason),
             new CliCount("imageLinks", global::OpenForge.Cli.OutputText.Doctor.DoctorText.LabelImageLinks(), coverage.ImageLinks, reason),

@@ -5,6 +5,26 @@ namespace OpenForge.Cli.EndToEndTests;
 
 public sealed class PublishedDoctorInstallationProcessTests
 {
+    [Fact(DisplayName = "Install ignores a new archived note's broken outward link and reaches clean Doctor"), Trait("Feature", "doctor-link-scope"), Trait("Evidence", "EndToEnd")]
+    public async Task ArchivedOutwardLinkJourney()
+    {
+        var target = PublishedExecutableTarget.Discover();
+        using var workspace = PublishedExtensionInstallWorkspace.Create();
+        await InstallAsync(target, workspace, ["install", "--automatic", "--format=json"]);
+        var path = Path.Combine(workspace.WorkspacePath, ".agents", "memory", "archived", "note.md");
+        var note = OpenForge.Cli.TestSupport.OpenForgeDocumentSeed.Metadata("Archived note", ["Archived"], "# Note\n\n[Missing](missing.md)\n");
+        await File.WriteAllTextAsync(path, note, TestContext.Current.CancellationToken);
+        await InstallAsync(target, workspace, ["index", "--format=json"]);
+        var run = await DiagnoseAsync(target, workspace);
+        Assert.True(run.ExitCode == 0, run.StandardOutput);
+        using var document = JsonDocument.Parse(run.StandardOutput);
+        Assert.Equal("completed", document.RootElement.GetProperty("status").GetString());
+        Assert.DoesNotContain(document.RootElement.GetProperty("findings").EnumerateArray(), finding => finding.GetProperty("severity").GetString() is "warning" or "error");
+        Assert.Equal(note, await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken));
+        var text = await PublishedProcessTestSupport.RunAsync(target, workspace.WorkspacePath, ["doctor"], workspace.EnvironmentVariables);
+        Assert.Contains("links ignored", text.StandardOutput, StringComparison.Ordinal);
+    }
+
     [Fact(DisplayName = "Doctor completely checks a fresh Framework installation without false errors or writes"), Trait("Feature", "doctor-installation"), Trait("Evidence", "EndToEnd")]
     public async Task FreshFrameworkHasCompleteCoverage()
     {

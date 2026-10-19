@@ -4,6 +4,22 @@ namespace OpenForge.Cli.OutputText.Shared;
 
 internal static class SharedPhrases
 {
+    // @OpenForgeText shared.phrase.linked-folder-missing
+    internal static string LinkedFolderMissing(string destination)
+        => $"The linked folder was not found: {destination}.";
+
+    // @OpenForgeText shared.phrase.folder-has-no-headings
+    internal static string FolderHasNoHeadings(string destination)
+        => $"The linked folder has no headings: {destination}.";
+
+    // @OpenForgeText shared.phrase.remove-folder-heading-fragment
+    internal static string RemoveFolderHeadingFragment(string path, int? line, int? column)
+    {
+        if (line is { } number)
+            return string.Create(CultureInfo.InvariantCulture, $"Remove the heading fragment from this link in {path} at line {number}, column {column}.");
+        return $"Remove the heading fragment from this link in {path}.";
+    }
+
     // @OpenForgeText shared.phrase.from
     internal static string FormatFrom(string originText)
         => $" from {originText}";

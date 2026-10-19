@@ -103,6 +103,8 @@ internal sealed record SourceLinkDestinationFinding
 
 internal sealed record SourceLinkDestinationFacts
 {
+    public bool IsFolder { get; init; }
+
     public required string? Fragment { get; init; }
 
     public required SourceLinkTarget Target { get; init; }

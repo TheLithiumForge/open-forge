@@ -27,6 +27,7 @@ internal static class RouteMoveEffectPlanner
             .OrderByDescending(deletion => PathDepth(deletion.LogicalPath))
             .ThenBy(deletion => deletion.LogicalPath, StringComparer.Ordinal)];
         var files = BuildFileChanges(destination, references, navigation, out var documents);
+        if (RouteMoveLinkScopePlanner.Build(destination) is { } settingsChange) files = files.Add(settingsChange);
         return new RouteMovePlanProjectionInput
         {
             Destination = destination,
@@ -166,6 +167,7 @@ internal static class RouteMoveEffectPlanner
         var workspaceRoot = destination.Inventory.Subject.Request.Workspace.LexicalRoot;
         var snapshots = (documents ?? DocumentsByDestination(references, workspaceRoot))
             .ToDictionary(pair => pair.Key, pair => pair.Value.Snapshot, StringComparer.Ordinal);
+        if (destination.Inventory.Settings?.Snapshot is { } settings) snapshots[settings.LogicalPath] = settings;
         foreach (var edit in navigation.DocumentEdits)
         {
             snapshots[edit.DestinationLogicalPath] = edit.Snapshot;

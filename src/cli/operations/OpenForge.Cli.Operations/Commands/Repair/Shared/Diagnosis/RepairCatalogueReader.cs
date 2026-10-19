@@ -88,7 +88,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
                     proposalFindings[index] = RepairProtectionReader.Finding(reference.SourcePath, reference.DestinationLocation, reference.SourcePath, policy);
                 return;
             }
-            if (!snapshots.TryGetValue(reference.SourcePath, out var snapshot)) return;
+            if (reference.Facts.IsFolder || !snapshots.TryGetValue(reference.SourcePath, out var snapshot)) return;
             var referenceView = view with { Candidates = candidatesByOccurrence[(reference.SourcePath, reference.Destination)].ToArray() };
             if (reference.Facts.Target.Path is { } originalTarget && !RepairProtectionReader.Allows(originalTarget, policy))
             {
@@ -145,7 +145,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
             RenameEvidence = evidence,
             Documents = documents.Concat(evidence?.Facts.Candidates.Select(candidate => KeyValuePair.Create(candidate.Path, candidate.Content.Document)) ?? [])
                 .DistinctBy(item => item.Key).ToDictionary(item => item.Key, item => item.Value, StringComparer.Ordinal),
-            MissingTargetReferences = scope.References.Where(reference => reference.Kind == LocalReferenceKind.Link
+            MissingTargetReferences = scope.References.Where(reference => !reference.Facts.IsFolder && reference.Kind == LocalReferenceKind.Link
                 && reference.DestinationLocation is not null && reference.Facts.Target is { Resolution: SourceLinkTargetResolution.Missing, Path: not null }).ToArray(),
         };
     }

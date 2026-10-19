@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Presentation.Doctor.Shared.Selection;
+using OpenForge.Cli.Core.Presentation.Doctor.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Repair;
@@ -25,7 +26,7 @@ public sealed class DoctorRepairActionableAgreementIntegrationTests
     private const string New = ".agents/guidance/new.md";
     private const string Source = ".agents/guidance/source.md";
 
-    [Theory(DisplayName = "Doctor and Repair select the same protection lane and managing action for each authored link")]
+    [Theory(DisplayName = "Doctor and Repair preserve each protection boundary without inventing a link restoration action")]
     [InlineData("ordinary")]
     [InlineData("managed")]
     [InlineData("managed-skill")]
@@ -63,13 +64,18 @@ public sealed class DoctorRepairActionableAgreementIntegrationTests
         var reference = Assert.Single(doctor.Observation.LocalReferences.References, reference => reference.SourcePath == source && reference.Destination == destination);
         var finding = Assert.Single(doctor.Result.Diagnosis.Domains.SelectMany(domain => domain.Findings), finding => finding.Subject.Path == source
             && finding.Kind is DoctorFindingKind.ReferenceTargetMissing or DoctorFindingKind.ReferenceTargetRenamed);
-        Assert.Equal(RepairLane(repair, reference), finding.Resolution);
         if (protection is "managed" or "managed-skill" or "managed-target")
         {
-            Assert.Equal(DoctorResolutionLane.TargetedOperation, finding.Resolution);
-            Assert.Equal("open-forge update", Assert.Single(finding.Actions).Command);
+            var path = protection == "managed-target" ? Old : source;
+            Assert.Equal(DoctorResolutionLane.TargetedOperation, RepairLane(repair, reference));
+            Assert.Equal(DoctorResolutionLane.ManualDecision, finding.Resolution);
+            Assert.Equal(DoctorFindingKind.ReferenceTargetMissing, finding.Kind);
+            Assert.Equal(path, finding.ProtectedReferencePath);
+            Assert.Empty(finding.Actions);
+            Assert.EndsWith($"through the owner of {path}.", Assert.Single(DoctorWording.Actions(finding)).Command, StringComparison.Ordinal);
             Assert.Null(finding.Proposal);
         }
+        else Assert.Equal(RepairLane(repair, reference), finding.Resolution);
         Assert.Equal(before, Snapshot(workspace));
     }
 

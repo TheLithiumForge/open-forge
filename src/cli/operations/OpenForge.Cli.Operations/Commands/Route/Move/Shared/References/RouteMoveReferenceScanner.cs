@@ -12,6 +12,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Sources.References.Shared.Resolution;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
 
@@ -182,8 +184,13 @@ internal sealed partial class RouteMoveReferenceScanner(
         RouteMoveReferenceDocument document,
         CancellationToken cancellationToken)
     {
+        var settings = input.Request.Destination.Inventory.Settings?.Document ?? WorkspaceSettingsDocument.Empty;
+        if (WorkspaceLinkScope.IgnoresSource(settings, sourcePath))
+            return Complete(document, new Dictionary<(int Start, int Length), RouteMoveReferenceReplacement>(), [],
+                document.Facts.Links.Where(link => IsAuthoredLink(document, link)).Select(link => link.RawDestination));
         var replacements = new Dictionary<(int Start, int Length), RouteMoveReferenceReplacement>();
         var meanings = new List<RouteMoveReferenceMeaning>();
+        var ignored = new List<string>();
         foreach (var link in document.Facts.Links.Where(link => IsAuthoredLink(document, link)))
         {
             var projected = await InspectLinkAsync(
@@ -192,6 +199,7 @@ internal sealed partial class RouteMoveReferenceScanner(
                 intendedSourcePath,
                 link,
                 cancellationToken).ConfigureAwait(false);
+            if (projected.Ignored) ignored.Add(link.RawDestination);
             if (projected.Boundary is { } boundary)
             {
                 return new RouteMoveReferenceReplacementScanResult(scan: null, boundary);
@@ -208,7 +216,7 @@ internal sealed partial class RouteMoveReferenceScanner(
             }
         }
 
-        return Complete(document, replacements, meanings);
+        return Complete(document, replacements, meanings, ignored);
     }
 
     private async ValueTask<RouteMoveReferenceReplacementProjection> InspectLinkAsync(
@@ -220,6 +228,8 @@ internal sealed partial class RouteMoveReferenceScanner(
     {
         var facts = await ResolveLinkAsync(input, sourcePath, link, cancellationToken)
             .ConfigureAwait(false);
+        if (WorkspaceLinkScope.IgnoresTarget(input.Request.Destination.Inventory.Settings?.Document ?? WorkspaceSettingsDocument.Empty, facts.Target.Path))
+            return new RouteMoveReferenceReplacementProjection { Ignored = true };
         var boundary = IsProvenUnaffectedMissing(
             input,
             sourcePath,
@@ -260,12 +270,14 @@ internal sealed partial class RouteMoveReferenceScanner(
     private static RouteMoveReferenceReplacementScanResult Complete(
         RouteMoveReferenceDocument document,
         IDictionary<(int Start, int Length), RouteMoveReferenceReplacement> replacements,
-        IEnumerable<RouteMoveReferenceMeaning> meanings)
+        IEnumerable<RouteMoveReferenceMeaning> meanings,
+        IEnumerable<string> ignored)
         => new(
             new RouteMoveReferenceReplacementScan
             {
                 Replacements = [.. replacements.Values],
                 Meanings = [.. meanings],
+                IgnoredDestinations = [.. ignored.Distinct(StringComparer.Ordinal)],
                 OccurrenceCount = document.Facts.Links.Count(link => IsAuthoredLink(document, link)),
             },
             boundary: null);

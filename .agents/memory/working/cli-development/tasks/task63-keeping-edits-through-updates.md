@@ -19,7 +19,7 @@ whether this should be supported, so this Task decides first.
 
 - An ordinary update replaces an edited managed file with the current version.
   The old bytes survive only in the recovery bundle. See the
-  [update behavior contract](../../../../memory/crystallized/documents/cli/contracts/update/behavior.md).
+  [update behavior contract](../../../crystallized/documents/cli/contracts/update/behavior.md).
 - The documented way to keep a local change is an overwrite companion,
   `{name}.overwrite.md`, which updates never touch.
 - Listing the file's path under `removedFiles` in `.agents/open-forge.json` also

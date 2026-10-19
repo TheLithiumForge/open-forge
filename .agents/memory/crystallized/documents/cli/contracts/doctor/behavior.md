@@ -7,6 +7,11 @@ open-forge:
 
 # Doctor Behavior Contract
 
+An unrecognized authored settings version produces one informational
+`workspace.settings-version-unknown` finding. Continue using understood keys,
+including link exclusions, without changing settings, reducing coverage,
+offering a repair action or raising the result status solely for that fact.
+
 ## Status And Boundary
 
 This file is the accepted current Crystallized Behavior Contract for
@@ -434,6 +439,11 @@ never invokes the targeted operation and Repair never absorbs these findings.
 
 ## Domain 4: Local References
 
+Apply the [shared link scope](../../shared-operation-contract.md#link-scope)
+before candidate, cycle, repeated-link and finding formation. Retain ignored
+counts separately. Missing listed paths produce the warning finding and
+manual next action defined by the Interface, without changing link coverage.
+
 The local-reference stage inspects authored local reference occurrences within
 the accepted contained workspace boundary. It records source path and location,
 raw destination, target path or identity when available, fragment, target kind,
@@ -444,6 +454,11 @@ authority meaning.
 The stage realizes the complete reference catalogue:
 
 - `reference.target-valid` records a complete local resolution as information.
+  This includes existing contained folders with no fragment, whether or not the
+  destination ends in a slash. A trailing slash makes a missing folder explicit.
+  Missing folders retain manual-decision findings without candidate or rename
+  evidence. An existing folder with a fragment is destination-malformed and
+  requires removal of the fragment. File containment and link rules remain.
 - `reference.target-missing` retains the raw occurrence and forms guided
   evidence only when bounded candidates exist. It never creates a target.
 - `reference.fragment-missing` distinguishes a missing fragment from a missing

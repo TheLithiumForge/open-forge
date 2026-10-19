@@ -17,6 +17,10 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Shared.References;
@@ -27,6 +31,7 @@ internal sealed class RouteRemoveReferenceScanner(
     FileExpectationValidator expectationValidator)
 {
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
+    private const string AbsenceInterruptedCause = "Route Remove absence reference inspection was interrupted.";
     private readonly MarkdownDocumentParser _markdownParser = markdownParser;
     private readonly SourceLinkDestinationResolver _destinationResolver = destinationResolver;
     private readonly FileExpectationValidator _expectationValidator = expectationValidator;
@@ -42,7 +47,7 @@ internal sealed class RouteRemoveReferenceScanner(
         var removed = RemovedPaths(input.Request, inventory);
         foreach (var sourcePath in input.Catalogue.SelectedPaths)
         {
-            if (removed.Contains(sourcePath))
+            if (removed.Contains(sourcePath) || WorkspaceLinkScope.IgnoresSource(inventory.Settings.Document, sourcePath))
             {
                 continue;
             }
@@ -67,6 +72,7 @@ internal sealed class RouteRemoveReferenceScanner(
             {
                 occurrenceCount++;
                 var destination = await ResolveAsync(input, sourcePath, link, cancellationToken).ConfigureAwait(false);
+                if (WorkspaceLinkScope.IgnoresTarget(inventory.Settings.Document, destination.Target.Path)) continue;
                 if (!TargetsRemoved(destination, removed))
                 {
                     if (destination.Target.Kind != SourceLinkTargetKind.External
@@ -154,6 +160,21 @@ internal sealed class RouteRemoveReferenceScanner(
         ArgumentNullException.ThrowIfNull(scope);
         ArgumentNullException.ThrowIfNull(sourceCatalogue);
         ArgumentNullException.ThrowIfNull(catalogue);
+        WorkspaceSettingsDocument linkScope;
+        if (scope.LinkScope is { } retainedScope) linkScope = retainedScope;
+        else if (catalogue.SelectedPaths.Length == 0) linkScope = WorkspaceSettingsDocument.Empty;
+        else
+        {
+            try
+            {
+                var settings = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), scope.Request.Workspace, cancellationToken).ConfigureAwait(false);
+                linkScope = settings.Document;
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return AbsenceBoundary(RouteRemoveFindingCode.Interrupted, CliSemanticStatus.Interrupted, catalogue.SelectedPaths[0], AbsenceInterruptedCause);
+            }
+        }
         var occurrenceCount = 0;
         foreach (var sourcePath in catalogue.SelectedPaths)
         {
@@ -163,8 +184,9 @@ internal sealed class RouteRemoveReferenceScanner(
                     RouteRemoveFindingCode.Interrupted,
                     CliSemanticStatus.Interrupted,
                     sourcePath,
-                    "Route Remove absence reference inspection was interrupted.");
+                    AbsenceInterruptedCause);
             }
+            if (WorkspaceLinkScope.IgnoresSource(linkScope, sourcePath)) continue;
 
             var read = await ReadDocumentAsync(
                 scope.Request.Workspace,
@@ -190,6 +212,7 @@ internal sealed class RouteRemoveReferenceScanner(
                     sourcePath,
                     link,
                     cancellationToken).ConfigureAwait(false);
+                if (WorkspaceLinkScope.IgnoresTarget(linkScope, destination.Target.Path)) continue;
                 if (destination.Target.Kind == SourceLinkTargetKind.Local
                     && destination.Target.Path is { } targetPath
                     && scope.Contains(targetPath))
@@ -358,7 +381,6 @@ internal sealed class RouteRemoveReferenceScanner(
         RouteRemoveReferencePlanningRequest request,
         RouteRemoveCategoryInventory inventory)
         => inventory.Items
-            .Where(item => item.Kind != RouteRemoveItemKind.Directory)
             .Select(item => Path.GetRelativePath(
                     request.Subject.Request.Workspace.LexicalRoot,
                     item.SourcePath)

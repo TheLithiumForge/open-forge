@@ -28,6 +28,8 @@ internal static class DoctorDefinitions
             DoctorFindingKind.WorkspaceEntryCompatibilityCollision => "workspace.entry-compatibility-collision",
             DoctorFindingKind.WorkspaceSourceIdCollision => "workspace.source-id-collision",
             DoctorFindingKind.WorkspacePathInvalid => "workspace.path-invalid",
+            DoctorFindingKind.WorkspaceLinkIgnorePathMissing => "workspace.link-ignore-path-missing",
+            DoctorFindingKind.WorkspaceSettingsVersionUnknown => "workspace.settings-version-unknown",
             DoctorFindingKind.WorkspacePathContainment => "workspace.path-containment",
             DoctorFindingKind.WorkspacePhysicalAlias => "workspace.physical-alias",
             DoctorFindingKind.WorkspaceFrontmatterMalformed => "workspace.frontmatter-malformed",

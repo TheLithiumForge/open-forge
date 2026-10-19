@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 
@@ -54,7 +55,8 @@ internal static class LocalReferenceFactReader
         SourceLocation? destinationLocation,
         SourceLinkDestinationFacts facts)
     {
-        if (facts.Target is not { Kind: SourceLinkTargetKind.Local, Path: { } targetPath }
+        if (facts.IsFolder
+            || facts.Target is not { Kind: SourceLinkTargetKind.Local, Path: { } targetPath }
             || facts.Target.Resolution is not (SourceLinkTargetResolution.Complete
                 or SourceLinkTargetResolution.FragmentMissing))
         {
@@ -65,6 +67,9 @@ internal static class LocalReferenceFactReader
         {
             return [];
         }
+
+        if (facts.Target.Resolution == SourceLinkTargetResolution.FragmentMissing && facts.CanonicalFragment is null)
+            return [];
 
         var hash = destination.IndexOf('#');
         var authoredPath = hash < 0 ? destination : destination[..hash];
@@ -85,9 +90,11 @@ internal static class LocalReferenceFactReader
                 sourceDirectory.Length == 0 ? "." : sourceDirectory,
                 targetPath.Replace('/', Path.DirectorySeparatorChar))
             .Replace(Path.DirectorySeparatorChar, '/');
+        var encodedPath = SourceDestinationEncoder.EncodePath(canonicalPath);
         var findings = new List<LocalReferenceCanonicalization>();
         if (authoredPath.Length > 0
-            && !string.Equals(authoredPath, canonicalPath, StringComparison.Ordinal))
+            && !string.Equals(authoredPath, encodedPath, StringComparison.Ordinal)
+            && !string.Equals(authoredPath, SourceDestinationEncoder.EncodeLiteralPath(canonicalPath), StringComparison.Ordinal))
         {
             var kind = LocalReferenceCanonicalizationKind.Path;
             if (string.Equals(decodedPath, canonicalPath, StringComparison.Ordinal))
@@ -102,13 +109,13 @@ internal static class LocalReferenceFactReader
             findings.Add(new LocalReferenceCanonicalization(
                 kind: kind,
                 expected: destination,
-                intended: $"{canonicalPath}{suffix}",
+                intended: $"{encodedPath}{suffix}",
                 destinationLocation: destinationLocation));
         }
 
         if (facts.CanonicalFragment is { } fragment)
         {
-            var intendedPath = authoredPath.Length == 0 ? string.Empty : canonicalPath;
+            var intendedPath = authoredPath.Length == 0 ? string.Empty : encodedPath;
             findings.Add(new LocalReferenceCanonicalization(
                 kind: LocalReferenceCanonicalizationKind.Fragment,
                 expected: destination,

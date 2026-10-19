@@ -241,17 +241,21 @@ public sealed class GeneratedNavigationProjectorTests
     }
 
     [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Generated navigation encodes Markdown delimiter parentheses for parser round trips")]
+    [Theory(DisplayName = "Generated navigation safely encodes path punctuation for parser round trips"),
+        InlineData("child(paren).md", "child%28paren%29.md"),
+        InlineData("hash#name.md", "hash%23name.md"),
+        InlineData("query?name.md", "query%3Fname.md"),
+        InlineData("colon:name.md", "colon%3Aname.md")]
     [Trait("Feature", "generated-navigation"), Trait("Evidence", "Unit")]
-    public void DestinationsEncodeMarkdownDelimitersForAcceptedRoundTrip()
+    public void DestinationsEncodeMarkdownDelimitersForAcceptedRoundTrip(string filename, string encoded)
     {
         var parent = Source(
             ".agents/root/_root.md",
             "root",
             SourceDocumentForm.CanonicalEntrypoint);
         var child = Source(
-            ".agents/root/child(paren).md",
-            "root/child(paren)");
+            $".agents/root/{filename}",
+            "root/child");
         var topology = new SourceRouteTopology(
             [
                 Node(parent, SourceRouteParentState.None, [], [child.Identity.CanonicalBasePath]),
@@ -270,9 +274,9 @@ public sealed class GeneratedNavigationProjectorTests
             new MarkdownDocumentParser().Parse(
                 OpenForgeDocumentSeed.GeneratedEntries(entries: entry.Line)));
 
-        Assert.Equal("child%28paren%29.md", entry.Destination);
+        Assert.Equal(encoded, entry.Destination);
         Assert.Equal(
-            "- [Parentheses](child%28paren%29.md) - #Docs",
+            $"- [Parentheses]({encoded}) - #Docs",
             entry.Line);
         Assert.Equal(SourceGeneratedEntriesState.Complete, parsed.State);
         Assert.Equal(entry.Destination, Assert.Single(parsed.Entries).Destination);
@@ -1020,7 +1024,7 @@ public sealed class GeneratedNavigationProjectorTests
                 [Region(root, validDocument)],
                 [Metadata(child, "[Unsafe]", ["Docs"])])));
 
-        var unsafeDestination = Source(".agents/root/unsafe?.md", "root/unsafe?");
+        var unsafeDestination = Source(".agents/root/unsafe\ud800.md", "root/unsafe");
         var unsafeDestinationTopology = new SourceRouteTopology(
             [
                 Node(root, SourceRouteParentState.None, [], [unsafeDestination.Identity.CanonicalBasePath]),

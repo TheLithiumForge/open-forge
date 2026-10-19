@@ -243,13 +243,21 @@ internal static class RouteMoveDestinationProjector
         }
 
         var destinationRoot = SourceLogicalPath.ReadParent(destinationPath);
+        var rootLayers = subject.Layers.ToDictionary(layer => layer.Snapshot.LogicalPath,
+            layer => DestinationLayerPath(destinationPath, layer.Layer.Kind), StringComparer.Ordinal);
         return inventory.Items.Select(item => new RouteMoveDestinationItem
         {
             Item = item,
-            DestinationPath = item.RelativePath == "."
-                ? destinationRoot
-                : $"{destinationRoot}/{item.RelativePath}",
+            DestinationPath = CategoryDestinationPath(item, destinationRoot, rootLayers),
         }).ToImmutableArray();
+    }
+
+    private static string CategoryDestinationPath(
+        RouteMoveInventoryItem item, string destinationRoot, IReadOnlyDictionary<string, string> rootLayers)
+    {
+        if (rootLayers.TryGetValue(item.SourcePath, out var rootLayer)) return rootLayer;
+        if (item.RelativePath == ".") return destinationRoot;
+        return $"{destinationRoot}/{item.RelativePath}";
     }
 
     internal static string DestinationLayerPath(

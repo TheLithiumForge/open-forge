@@ -21,6 +21,23 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Remove;
 
 public sealed class RouteRemoveReferenceIntegrationTests
 {
+    [Theory(DisplayName = "Route Remove detaches direct folder links to a removed category and its nested folders"),
+        InlineData(""), InlineData("/")]
+    [Trait("Boundary", "Host"), Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]
+    public async Task CategoryFolderLinksAreDetached(string suffix)
+    {
+        using var workspace = RouteRemoveIntegrationWorkspace.Create("route-remove-folder-links");
+        workspace.WriteText("outside.md", $"Before [Topics](.agents/guidance/topics{suffix}), after [Assets](.agents/guidance/topics/assets{suffix}).\n");
+        var output = new StringWriter();
+        var error = new StringWriter();
+
+        var result = await workspace.RunAsync(["route", "remove", RouteRemoveIntegrationWorkspace.CategoryId, "--automatic"], output, error);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Equal("Before Topics, after Assets.\n", workspace.ReadText("outside.md"));
+        Assert.False(Directory.Exists(workspace.Combine(".agents/guidance/topics")));
+    }
+
     [Trait("Boundary", "Host")]
     [Fact(DisplayName = "Route Remove records every external detachment with an independent visible-label oracle"),
      Trait("Feature", "route-remove"), Trait("Evidence", "Integration")]

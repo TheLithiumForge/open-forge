@@ -9,6 +9,8 @@ open-forge:
 
 ## Status And Authority
 
+Remove honors the [shared link scope](../../../shared-operation-contract.md#link-scope). Ignored authored links remain written as they were. Entries naming the removed path or a descendant are dropped in the same settings effect that records removal intent.
+
 This is the accepted current Crystallized authority for the caller-visible
 Interface Contract for `route remove`. The command is implemented in the merged CLI;
 implementation and executable evidence are tracked in

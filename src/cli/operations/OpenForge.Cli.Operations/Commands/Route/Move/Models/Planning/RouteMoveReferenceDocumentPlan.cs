@@ -42,6 +42,7 @@ internal sealed record RouteMoveReferenceTargetMove
 
 internal sealed record RouteMoveReferenceReplacementProjection
 {
+    public bool Ignored { get; init; }
     public RouteMoveReferenceReplacement? Replacement { get; init; }
 
     public RouteMoveReferenceMeaning? Meaning { get; init; }
@@ -62,6 +63,8 @@ internal sealed record RouteMoveReferenceDocumentPlan
     public ImmutableArray<RouteMoveReferenceDocumentEdit> Edits { get; init; } = [];
 
     public ImmutableArray<RouteMoveReferenceMeaning> Meanings { get; init; } = [];
+
+    public ImmutableArray<string> IgnoredDestinations { get; init; } = [];
 }
 
 internal sealed record RouteMoveReferenceMeaning
@@ -97,6 +100,7 @@ internal sealed record RouteMoveReferenceDocumentInspection
 
 internal sealed record RouteMoveReferenceReplacementScan
 {
+    public ImmutableArray<string> IgnoredDestinations { get; init; } = [];
     public ImmutableArray<RouteMoveReferenceReplacement> Replacements { get; init; } = [];
 
     public ImmutableArray<RouteMoveReferenceMeaning> Meanings { get; init; } = [];

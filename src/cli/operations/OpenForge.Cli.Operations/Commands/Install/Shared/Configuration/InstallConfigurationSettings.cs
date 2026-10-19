@@ -4,12 +4,33 @@ using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Settings.Models.Mutation;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
+using OpenForge.Cli.Core.Framework.Settings;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Commands.Install.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Distribution.Shared.Sources;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 
 internal static class InstallConfigurationSettings
 {
     internal static PlannedFileChange? Plan(WorkspaceSettingsRead settings, InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
+    {
+        var change = PlanChoices(settings, configuration, frontmatter);
+        ReadOnlyMemory<byte> bytes = change?.IntendedBytes.ToArray() ?? settings.Snapshot?.Bytes.ToArray()
+            ?? throw new InvalidOperationException("Install settings require their observed bytes.");
+        var intended = WorkspaceSettingsCodec.Read(bytes.IsEmpty ? "{}"u8.ToArray() : bytes).Document
+            ?? throw new InvalidOperationException("Planned Install settings must decode.");
+        if (!FrameworkPayloadSelection.IncludesPath(WorkspaceSettingsDefinitions.MemoryArchivePath + "/_archived.md", intended)) return change;
+        var seeded = WorkspaceSettingsCodec.SeedArchiveLinkScope(bytes);
+        if (seeded is null) return change;
+        var snapshot = settings.Snapshot ?? throw new InvalidOperationException("Install settings require their observed snapshot.");
+        return snapshot.Kind == FileExpectationKind.Missing
+            ? PlannedFileChange.Create(snapshot.Expectation, seeded)
+            : PlannedFileChange.Replace(snapshot.Expectation, seeded);
+    }
+
+    private static PlannedFileChange? PlanChoices(WorkspaceSettingsRead settings, InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
     {
         if (configuration is null)
             return WorkspaceSettingsChangePlanner.PlanConfiguration(settings, new(), new(), frontmatter?.Persist == true ? frontmatter.Form : null);

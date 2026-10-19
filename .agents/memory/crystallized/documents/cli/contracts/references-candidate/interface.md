@@ -9,6 +9,8 @@ open-forge:
 
 ## Status And Authority
 
+References lists every authored link, including those covered by `ignoreLinksFrom` or `ignoreLinksTo`. The [shared link scope](../../shared-operation-contract.md#link-scope) affects diagnosis and maintenance, not this explicit query.
+
 This is the accepted current Crystallized Interface Contract for
 `open-forge references`. It owns the public purpose, exact grammar, direction
 selection, incoming scan universe, occurrence facts, overwrite evidence, human

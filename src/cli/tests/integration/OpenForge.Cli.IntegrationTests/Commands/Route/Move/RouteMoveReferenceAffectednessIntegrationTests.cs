@@ -10,6 +10,27 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Move;
 
 public sealed class RouteMoveReferenceAffectednessIntegrationTests
 {
+    [Theory(DisplayName = "Route Move maintains links to a moved category folder and its nested folders"),
+        InlineData(""), InlineData("/")]
+    [Trait("Boundary", "OS"), Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]
+    public async Task CategoryFolderLinksFollowMove(string suffix)
+    {
+        using var workspace = RouteMoveIntegrationWorkspace.Create("route-move-folder-links");
+        workspace.WriteText("README.md", workspace.ReadText("README.md")
+            + $"\n[Topics](.agents/guidance/topics{suffix})\n[Assets](.agents/guidance/topics/assets{suffix})\n");
+        workspace.OwnCategoryDestination();
+
+        var result = await ExecuteAsync(workspace, RouteMoveIntegrationWorkspace.CategoryId,
+            RouteMoveIntegrationWorkspace.CategoryDestination, RouteMoveMode.Apply);
+        TrackRecovery(workspace, result);
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(RouteMoveVerificationState.Verified, result.Verification);
+        Assert.Contains($"[Topics](.agents/archive/topics{suffix})", workspace.ReadText("README.md"), StringComparison.Ordinal);
+        Assert.Contains($"[Assets](.agents/archive/topics/assets{suffix})", workspace.ReadText("README.md"), StringComparison.Ordinal);
+        Assert.False(Directory.Exists(workspace.Absolute(".agents/guidance/topics")));
+    }
+
     [Trait("Boundary", "OS")]
     [Fact(DisplayName = "Route Move exempts a stationary unrelated missing link while rewriting and applying a leaf")]
     [Trait("Feature", "route-move"), Trait("Evidence", "IntegrationSafety")]

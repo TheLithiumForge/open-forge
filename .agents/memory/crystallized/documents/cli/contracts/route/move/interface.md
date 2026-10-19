@@ -53,6 +53,8 @@ Follow the [shared help template](../../shared/global-flags/interface.md#--help)
 
 ## Purpose And Operation Boundary
 
+Move honors the [shared link scope](../../../shared-operation-contract.md#link-scope). Ignored authored links retain their exact bytes, including inside moved files. Entries naming the moved path or a descendant follow the move in the same expected-state and recovery plan.
+
 `route move` moves one eligible ordinary unmanaged logical leaf or one eligible
 ordinary unmanaged category to one exact destination. It preserves the selected
 subject's authored meaning and complete relative layout, updates every affected

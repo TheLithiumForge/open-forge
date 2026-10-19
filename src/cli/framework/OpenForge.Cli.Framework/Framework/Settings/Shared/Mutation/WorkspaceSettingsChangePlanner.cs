@@ -9,7 +9,7 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 
 namespace OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 
-internal static class WorkspaceSettingsChangePlanner
+internal static partial class WorkspaceSettingsChangePlanner
 {
     internal static PlannedFileChange? PlanConfiguration(
         WorkspaceSettingsRead observation,

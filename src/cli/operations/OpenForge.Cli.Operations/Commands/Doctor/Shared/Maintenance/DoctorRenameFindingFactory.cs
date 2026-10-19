@@ -164,7 +164,7 @@ internal static class DoctorRenameFindingFactory
         if (string.IsNullOrEmpty(directory)) directory = ".";
         var relative = Path.GetRelativePath(directory, path.Replace('/', Path.DirectorySeparatorChar))
             .Replace(Path.DirectorySeparatorChar, '/');
-        relative = string.Join('/', relative.Split('/').Select(Uri.EscapeDataString));
+        relative = SourceDestinationEncoder.EncodePath(relative);
         return fragment is not null ? $"{relative}#{fragment}" : relative;
     }
 

@@ -63,9 +63,9 @@ public sealed class WorkspaceSettingsRemovalCodecTests
             new WorkspaceRemovalSelection { Directories = ["docs/obsolete"] });
 
         using var json = JsonDocument.Parse(Assert.IsType<byte[]>(written));
-        Assert.Equal("https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v1/open-forge.schema.json",
+        Assert.Equal("https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v2/open-forge.schema.json",
             json.RootElement.GetProperty("$schema").GetString());
-        Assert.Equal(1, json.RootElement.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(2, json.RootElement.GetProperty("schemaVersion").GetInt32());
         Assert.Equal(["docs/obsolete"], Strings(json, "removedDirectories"));
     }
 

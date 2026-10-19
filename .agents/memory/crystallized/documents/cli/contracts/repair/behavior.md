@@ -195,6 +195,11 @@ blocked findings in that closure without claiming workspace health.
 
 ## Proposal Formation
 
+Apply the [shared link scope](../../shared-operation-contract.md#link-scope)
+before proposal and explicit relink selection, and again during revalidation.
+Ignored links grant no edit authority. Ignoring a file's outward links does not
+protect its incoming links from a proven rename correction.
+
 Proposal formation consumes current typed Doctor findings and forms only the
 first-release catalogue admitted by the Interface.
 
@@ -258,6 +263,10 @@ by a selected Library write remains a strict blocking boundary; unrelated read
 or coverage uncertainty remains visible rather than silently masked.
 
 ### Guided proposals
+
+Folder targets never enter missing-file candidate or rename selection. A missing
+folder explicitly named with a trailing slash stays manual, and an existing
+folder with a fragment stays malformed. Neither admits an explicit file relink.
 
 For a missing local target on an authored local-reference occurrence, the
 resolver may form a guided proposal from bounded filename, title,

@@ -4,6 +4,19 @@ namespace OpenForge.Cli.OutputText.Doctor;
 
 internal static class DoctorText
 {
+    // @OpenForgeText doctor.title.settings-version-unknown
+    internal static string TitleSettingsVersionUnknown() => "Workspace settings version is not recognized";
+
+    // @OpenForgeText doctor.title.link-ignore-path-missing
+    internal static string TitleLinkIgnorePathMissing() => "Ignored link path is missing";
+
+    // @OpenForgeText doctor.label.links-ignored
+    internal static string LabelLinksIgnored() => "links ignored";
+
+    // @OpenForgeText doctor.count.links-ignored
+    internal static string LinksIgnored(long count)
+        => string.Create(CultureInfo.InvariantCulture, $"{count} {(count == 1 ? "link" : "links")} ignored");
+
     // @OpenForgeText doctor.help.syntax
     internal static string HelpSyntax()
         => "open-forge doctor [options]";

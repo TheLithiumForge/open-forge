@@ -108,7 +108,7 @@ These were recorded as later work. They are not automatically beta blockers.
       C17-07 remains deferred in Task 45. Supply an example where removing a link
       cannot preserve authored meaning, then agree on the expected refusal or edit.
       Do not invent an unsafe case merely to fill coverage.
-- [ ] **Decide whether links to existing folders are valid.** Recorded on
+- [ ] **Decide whether links to existing folders are valid.** Selected as [Task 83](task83-link-scope-and-folder-links.md). Recorded on
       2026-10-15 during Task 82. Doctor reports a link such as `../../src/cli/`
       as `reference.destination-malformed`, "not a link Open Forge can check",
       and Repair lists the same finding as a "Broken link". This repository's
@@ -132,6 +132,11 @@ These were recorded as later work. They are not automatically beta blockers.
       CLI taking 6 to 18 minutes per runner, 18.1 on osx-x64 against a 30-minute
       stop, while the same tests against the native CLI take under 2. Decide
       whether to reduce what the managed run repeats or keep it and the limit.
+- [ ] **Treat an unknown option as an option in every command.** Recorded on
+      2026-10-16. `open-forge index --bogus` answers "No source has the ID
+      --bogus." and suggests Route List, while `open-forge status --bogus`
+      answers "Unrecognized command or argument '--bogus'." Decide how commands
+      that take source references tell an unknown option from a source.
 
 ## Completed delivery verification
 

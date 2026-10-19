@@ -102,6 +102,15 @@ Get a quick summary of installation, startup and continuity context, generated n
 
 Diagnose workspace, routes, references, recovery, Framework files, and managed Extensions without changes. It has no command-specific flags. Use `--detail standard` for reasons or `--format json --detail full` for evidence. Run after routed changes and resolve or report findings within the task.
 
+Existing workspace folders are valid link targets, with or without a trailing
+slash. Folder links cannot have heading fragments. A missing folder named with
+a trailing slash requires a manual edit, and Repair never substitutes a file.
+Web URLs remain unchecked.
+
 Doctor and Repair use the same rename evidence and protected-source rules. Doctor gives one next step and none when clean. A Git timeout marks reference coverage incomplete without manual-removal advice and repeats the complete request, including its workspace.
 
 Continue with [route maintenance](routes.md) for edits or [Framework and packages](packages.md) for lifecycle changes.
+
+In `.agents/open-forge.json`, `ignoreLinksFrom` skips links written inside listed paths and `ignoreLinksTo` skips links whose resolved targets lie inside them. Entries are workspace-relative paths, not patterns. Files match exactly and folders cover descendants, using the same comparison as `allowInstallPaths`. Missing lists mean no exclusions. Doctor names ignored counts and stale entries. Context omits ignored link expansion edges. References lists every link.
+
+An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.

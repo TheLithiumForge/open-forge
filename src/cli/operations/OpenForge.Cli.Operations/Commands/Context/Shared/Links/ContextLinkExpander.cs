@@ -16,6 +16,8 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
+using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using static OpenForge.Cli.Core.Commands.Context.Shared.Links.ContextLinkResultFactory;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Links;
@@ -52,15 +54,15 @@ internal sealed class ContextLinkExpander
             return ContextLinkExpansionFormation.NotRequested(closure);
         }
 
+        var settings = await WorkspaceSettingsReader.ReadAsync(new PhysicalPathResolver(), request.Workspace, cancellationToken).ConfigureAwait(false);
+        var scope = new ContextLinkReadScope(request, graph, settings.Document);
         var startup = await ExpandSetAsync(
-            request,
-            graph,
+            scope,
             closure.StartupSources,
             captureEvidence: false,
             cancellationToken).ConfigureAwait(false);
         var combined = await ExpandSetAsync(
-            request,
-            graph,
+            scope,
             closure.CombinedSources,
             captureEvidence: true,
             cancellationToken).ConfigureAwait(false);
@@ -74,12 +76,13 @@ internal sealed class ContextLinkExpander
     }
 
     private async ValueTask<ContextLinkExpansionRun> ExpandSetAsync(
-        ContextRequest request,
-        ContextGraph graph,
+        ContextLinkReadScope scope,
         IReadOnlyList<ContextSelectedGraphSource> seeds,
         bool captureEvidence,
         CancellationToken cancellationToken)
     {
+        var request = scope.Request;
+        var graph = scope.Graph;
         var selected = new ContextSelectionAccumulator();
         foreach (var seed in seeds)
         {
@@ -117,7 +120,7 @@ internal sealed class ContextLinkExpander
 
             foreach (var layer in node.Source.Layers)
             {
-                if (layer.Document is not { } document)
+                if (layer.Document is not { } document || WorkspaceLinkScope.IgnoresSource(scope.Settings, layer.CanonicalPath))
                 {
                     continue;
                 }
@@ -154,6 +157,7 @@ internal sealed class ContextLinkExpander
                         _destinationResolver,
                         cancellationToken).ConfigureAwait(false);
                     var facts = destination.Facts;
+                    if (WorkspaceLinkScope.IgnoresTarget(scope.Settings, facts.Target.Path)) continue;
                     var finding = facts.Finding is null
                         ? null
                         : Finding(evidence, facts);

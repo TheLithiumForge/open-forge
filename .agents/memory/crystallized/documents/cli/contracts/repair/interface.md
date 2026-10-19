@@ -53,6 +53,32 @@ open-forge repair --relink ".agents/memory/crystallized/repair-note.md@7:8" "../
 
 ## Forgiving Maintenance
 
+Same-target path, case, encoding and heading corrections use Index form from the
+[Source References contract](../shared/source-references/interface.md#authored-local-destination-spellings).
+Both accepted forms need no encoding repair. A corrected heading keeps required path encoding.
+Repair applies every admitted automatic correction Doctor offers. A path-only
+correction with an unresolved heading is not admitted. Canonical Index-generated
+destinations need no repair.
+Angle-enclosed destinations retain their delimiters while Repair changes only
+the URL inside them. Decoded Markdown entities or escapes do not admit an
+automatic spelling edit without an exact literal destination span.
+
+Existing contained folder links require no repair. A missing folder explicitly
+named with a trailing slash has no replacement proposal or file candidate, even
+when a file's title or name matches. Folder fragments also require a manual edit.
+These manual findings use the exact messages:
+
+- `The linked folder was not found: <destination>.`
+- `The linked folder has no headings: <destination>.`
+
+Each finding has exactly one instruction in its action line. A missing folder uses
+`Update or remove this link in <source-path> at line <line>, column <column>.`
+A folder fragment uses
+`Remove the heading fragment from this link in <source-path> at line <line>, column <column>.`
+When only these manual folder findings remain, Next names that same edit instead
+of suggesting target selection or another Repair invocation. Protected containing
+sources retain their managing Update or protected-content advice.
+
 Task 79 extends the automatic catalogue with proven manual renames and moves. The [identity evidence model](../../technical-designs/forgiving-maintenance.md#rename-and-move-evidence) defines strong evidence and unique-candidate selection. Filename, title or independent literal-content guesses remain choices, even if only one candidate exists. Nearby-route evidence alone and the broken occurrence itself do not nominate a successor. No new flag or confirmation mode is added.
 
 `repair --automatic` selects every current proven rename or move and existing safe-exact repair. It also completes eligible metadata, missing chains and generated Entries in the affected old and new route closures in the same plan. This makes one command enough for that rename's navigation. Unrelated maintenance remains Index's next job. The shared planner is called directly, never through another public command. Labels and authored bytes outside selected destination spans or absent-field insertions remain exact.
@@ -183,6 +209,9 @@ a one-based line and one-based column:
 ```text
 <path>@<line>:<column>
 ```
+
+For an angle-enclosed destination, the column identifies the first URL character
+inside `<...>`. The expected destination omits those delimiters.
 
 For example:
 

@@ -27,7 +27,10 @@ internal static class DoctorResultBuilder
         {
             LibraryDoctorInspector.Inspect(
                 request.Workspace,
-                WorkspaceEntryDoctorInspector.Inspect(request.Workspace, observation.WorkspaceEntry, observation.Routes),
+                WorkspaceEntryDoctorInspector.Inspect(
+                    request.Workspace, observation.WorkspaceEntry, observation.Routes,
+                    missingLinkScopeEntries: observation.LocalReferences.MissingLinkScopeEntries,
+                    unrecognizedSettingsSchemaVersion: observation.LocalReferences.UnrecognizedSettingsSchemaVersion),
                 observation.Libraries,
                 observation.RecoveryResiduals,
                 observation.LibraryResiduals),
@@ -164,6 +167,7 @@ internal static class DoctorResultBuilder
             Checks = Enum.GetValues<DoctorDomainKind>().LongLength,
             ChecksComplete = domains.LongCount(domain => domain.Coverage == DoctorCoverageState.Complete),
             LinksChecked = references.Count,
+            LinksIgnored = observation.LocalReferences.IgnoredLinkCount,
             LinksValid = references.LongCount(reference => reference.Facts.Target.Resolution
                 == SourceLinkTargetResolution.Complete),
             ExternalLinksNotChecked = references.LongCount(reference => reference.Facts.Target.Resolution

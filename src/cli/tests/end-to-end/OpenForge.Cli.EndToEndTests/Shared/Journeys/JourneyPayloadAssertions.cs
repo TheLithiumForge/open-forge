@@ -81,7 +81,7 @@ internal static class JourneyPayloadAssertions
     internal static void AssertForm(PublishedJourneyWorkspace workspace, JourneyFrontmatterForm form)
     {
         using var settings = JsonDocument.Parse(File.ReadAllBytes(workspace.Combine(PublishedInstallWorkspace.SettingsPath)));
-        Assert.Equal(1, settings.RootElement.GetProperty("schemaVersion").GetInt32());
+        Assert.Equal(2, settings.RootElement.GetProperty("schemaVersion").GetInt32());
         Assert.Equal(JourneyFrontmatter.Flag(form), settings.RootElement.GetProperty("frontmatter").GetString());
     }
 

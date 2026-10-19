@@ -9,6 +9,10 @@ open-forge:
 
 ## Status And Authority
 
+Apply the [shared link scope](../../../shared-operation-contract.md#link-scope) before authored-reference projection. Retain ignored occurrences in the plan so post-move verification does not demand a new meaning from preserved links. Revalidate settings under the lease and include remapped entries in the complete effect and recovery plan.
+
+Remap each original ignore entry once. Exact base and overwrite layer destinations take precedence over a category folder-prefix mapping, including canonical entrypoint filename changes. Leaf moves use their layer destinations even when they have no category items. Compatibility entrypoint filenames remain unchanged within the new folder.
+
 This is the accepted current Crystallized authority for the technology-neutral
 Behavior Contract behind `route move`. The command is implemented in the
 merged native CLI. Its implementation and complete managed and Native AOT
@@ -51,6 +55,9 @@ The operation satisfies these invariants:
   recognized entrypoint. Every contained regular file and directory—including
   routed or unrouted Markdown, native or binary resources, support files, and
   overwrite companions—is part of one category plan.
+  Incoming links to the category folder or an inventoried nested folder follow
+  that folder's move, just as links to its files do. Rewrites preserve whether
+  the authored folder destination has a trailing slash.
 - Every category item passes complete containment, identity, ownership,
   lifecycle, collision, and recovery classification before the plan is complete.
 - Positive trusted unmanaged proof covers every selected logical source or

@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Shared.References;
 
@@ -31,6 +32,7 @@ internal sealed partial class RouteMoveReferenceScanner
                 IntendedText = intendedText,
                 Edits = ProjectEdits(map, replacements.Replacements),
                 Meanings = replacements.Meanings,
+                IgnoredDestinations = replacements.IgnoredDestinations,
             },
             Rewrites = ProjectRewrites(
                 input,
@@ -90,10 +92,11 @@ internal sealed partial class RouteMoveReferenceScanner
         }
 
         var expected = BuildDestination(
-            intendedSourcePath,
-            move.NewPath,
-            link.RawDestination,
-            IsAngleEnclosed(link));
+            sourcePath: intendedSourcePath,
+            targetPath: move.NewPath,
+            rawDestination: link.RawDestination,
+            angleEnclosed: IsAngleEnclosed(link),
+            folder: facts.IsFolder);
         var before = ReadDestinationLiteral(link);
         if (string.Equals(before, expected, StringComparison.Ordinal))
         {
@@ -174,7 +177,8 @@ internal sealed partial class RouteMoveReferenceScanner
         string sourcePath,
         string targetPath,
         string rawDestination,
-        bool angleEnclosed)
+        bool angleEnclosed,
+        bool folder)
     {
         var fragmentOffset = rawDestination.IndexOf('#');
         var fragment = fragmentOffset < 0 ? string.Empty : rawDestination[fragmentOffset..];
@@ -189,8 +193,9 @@ internal sealed partial class RouteMoveReferenceScanner
                 sourceDirectory,
                 targetPath.Replace('/', Path.DirectorySeparatorChar))
             .Replace(Path.DirectorySeparatorChar, '/');
-        var encoded = string.Join('/', relative.Split('/').Select(segment =>
-            segment is "." or ".." ? segment : Uri.EscapeDataString(segment)));
+        var encoded = SourceDestinationEncoder.EncodePath(relative);
+        var rawPath = fragmentOffset < 0 ? rawDestination : rawDestination[..fragmentOffset];
+        if (folder && Uri.UnescapeDataString(rawPath).EndsWith('/')) encoded += "/";
         var destination = encoded + fragment;
         return angleEnclosed ? $"<{destination}>" : destination;
     }

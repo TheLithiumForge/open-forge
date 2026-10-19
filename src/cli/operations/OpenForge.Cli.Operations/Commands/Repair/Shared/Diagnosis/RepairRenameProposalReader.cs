@@ -17,7 +17,7 @@ internal sealed class RepairRenameProposalReader(PhysicalPathResolver paths, Rep
     internal async ValueTask<RepairProposal?> ReadAsync(CliWorkspace workspace, LocalReferenceObservation reference,
         LocalReferenceDoctorView view, RenameEvidenceResult evidence, CancellationToken token)
     {
-        if (reference.Facts.Target.Resolution != SourceLinkTargetResolution.Missing || reference.DestinationLocation is null) return null;
+        if (reference.Facts.IsFolder || reference.Facts.Target.Resolution != SourceLinkTargetResolution.Missing || reference.DestinationLocation is null) return null;
         var resolution = reference.Facts.Target.Path is { } oldPath ? evidence.Find(oldPath) : null;
         var proof = resolution?.Proven;
         RenameSourceMoveTarget? move = null;

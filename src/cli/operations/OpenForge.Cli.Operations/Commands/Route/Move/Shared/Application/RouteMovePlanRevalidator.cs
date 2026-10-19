@@ -55,8 +55,9 @@ internal sealed class RouteMovePlanRevalidator(RouteMovePlanBuilder planBuilder)
     }
 
     private static bool Matches(RouteMovePlan expected, RouteMovePlan actual)
-        => RouteMoveSemanticPlanProjection.Create(expected).Matches(
-            RouteMoveSemanticPlanProjection.Create(actual));
+        => (expected.Projection.Destination.Inventory.Settings is not { } settings
+                || actual.Projection.Destination.Inventory.Settings is { } current && settings.MatchesObservation(current))
+            && RouteMoveSemanticPlanProjection.Create(expected).Matches(RouteMoveSemanticPlanProjection.Create(actual));
 
     private static RouteMovePlanRevalidation Interrupted()
         => new(

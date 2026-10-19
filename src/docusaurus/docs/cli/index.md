@@ -25,6 +25,19 @@ The first three only read files. Review the Index preview, then run
 lists that help agents find files. These are maintenance tools, not required
 steps before every task.
 
+Doctor accepts links to existing workspace folders, with or without a trailing
+slash. Remove heading fragments from folder links. A missing folder named with
+a trailing slash needs a manual edit, and Repair does not suggest a file for it.
+Web URLs stay unchecked.
+
+Index encodes local link paths, such as `old%20guide.md`.
+Doctor also accepts readable paths: `<old guide.md>` and `café(one).md`.
+Escape an entity-opening ampersand as `%26`: write `entity&amp;.md` as
+`entity%26amp;.md`. Keep `#`, `%` and `?` in names escaped.
+Repair writes Index's form when
+correcting other spellings. Command arguments use literal source paths.
+Images with invalid heading fragments need a manual edit.
+
 After renaming or moving files by hand, preview `open-forge repair --automatic --dry-run`. Repair fixes proven links and affected Entries. When Git retains the old file's committed content, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata. Follow Doctor's next step for any remaining choice or edit.
 
 Use `open-forge --help` for the installed command inventory and

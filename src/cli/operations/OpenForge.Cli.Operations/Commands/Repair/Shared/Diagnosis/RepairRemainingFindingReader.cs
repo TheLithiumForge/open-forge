@@ -36,11 +36,15 @@ internal static class RepairRemainingFindingReader
                 continue;
             }
 
-            var guided = resolution == SourceLinkTargetResolution.Missing && reference.Kind == LocalReferenceKind.Link;
+            var guided = !reference.Facts.IsFolder && resolution == SourceLinkTargetResolution.Missing && reference.Kind == LocalReferenceKind.Link;
             yield return new RepairFinding(
                 guided ? RepairFindingCode.GuidedFindingRemaining : RepairFindingCode.ManualFindingRemaining,
                 guided ? "A bounded guided local-reference finding remains." : "A local-reference finding remains for explicit review.",
-                reference.SourcePath, reference.DestinationLocation);
+                reference.SourcePath, reference.DestinationLocation)
+            {
+                FolderReference = reference.Facts.IsFolder
+                    ? new(reference.Destination, IsMissing: resolution == SourceLinkTargetResolution.Missing) : null,
+            };
         }
     }
 }

@@ -12,9 +12,10 @@ internal static class SourceGeneratedDestinationResolver
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(parentCanonicalPath);
         ArgumentNullException.ThrowIfNull(destination);
-        if (!SourceDestinationDecoder.TryDecode(destination, out var decoded, out _)
+        if (destination.Contains('?') || destination.Contains('#') || destination.Contains(':')
+            || !SourceDestinationDecoder.TryDecode(destination, out var decoded, out _)
             || decoded.Length == 0 || decoded.StartsWith("/", StringComparison.Ordinal)
-            || decoded.Contains('\\') || decoded.Contains('?') || decoded.Contains('#') || decoded.Contains(':'))
+            || decoded.Contains('\\'))
         {
             return null;
         }

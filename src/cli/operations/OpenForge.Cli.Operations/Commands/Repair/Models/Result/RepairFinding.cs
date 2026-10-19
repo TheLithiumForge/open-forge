@@ -57,6 +57,7 @@ internal sealed record RepairFinding
     internal RepairTargetSelection? Target { get; }
 
     internal RepairDiagnosisObservation? Observation { get; init; }
+    internal FolderReferenceFinding? FolderReference { get; init; }
     internal bool Protection { get; init; }
 
     internal RepairProtectionKind? ProtectionKind { get; init; }

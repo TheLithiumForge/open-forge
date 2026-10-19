@@ -57,7 +57,12 @@ public sealed class SourceGeneratedDestinationResolverCharacterizationTests
         InlineData(false, "", null),
         InlineData(false, "/leaf.md", null),
         InlineData(false, "leaf%09.md", null),
-        InlineData(false, "leaf%23fragment.md", null)]
+        InlineData(false, "leaf%23fragment.md", ".agents/root/leaf#fragment.md"),
+        InlineData(false, "leaf%3Fname.md", ".agents/root/leaf?name.md"),
+        InlineData(false, "leaf%3Aname.md", ".agents/root/leaf:name.md"),
+        InlineData(false, "leaf#fragment.md", null),
+        InlineData(false, "leaf?query.md", null),
+        InlineData(false, "leaf:name.md", null)]
     [Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void PathPolicyRemainsLocal(bool isLoader, string destination, string? expectedPath)
     {

@@ -15,6 +15,47 @@ The maintainer's [Task 79 decisions D1 to D5](../../../../archived/cli-developme
 
 ## Shared Capabilities
 
+Generated navigation and local-reference maintenance share one path-segment
+encoder. It preserves `/` and percent-encodes every non-unreserved UTF-8 byte
+with uppercase hexadecimal digits. Canonicalization compares authored bytes
+with that encoded spelling and the accepted minimally escaped literal spelling,
+as defined by the Source References contract. Resolution and source identity use
+the decoded path. Literal serialization delegates character-reference recognition
+to the Markdown capability's pinned Markdig scanner and entity lookup. It escapes
+recognized opening ampersands after reserved path characters, without reparsing
+documents or introducing another entity grammar. Ordinary ampersands stay literal.
+Navigation checks raw delimiters before decoding, so encoded
+filename punctuation remains a path component. Fragment corrections preserve the encoded path. An unresolved fragment
+prevents path-only automatic proposals. Protected local-reference findings retain
+their original finding identity and use manual ownership guidance without an
+exact proposal or an unsupported Update recommendation.
+Doctor excludes generated Entries and images from its same-target Repair offers,
+matching Repair's existing authored-reference boundary. Index owns Entries
+spelling through the generated navigation projection.
+The shared reference reader projects an angle-enclosed parser span onto the
+literal URL bytes, preserving its delimiters. It exposes no editable destination
+when decoded entities or escapes differ from the source span. Doctor and Repair
+therefore share the same exact-byte eligibility.
+Without that span, a noncanonical heading remains a manual fragment finding
+rather than an automatic proposal or a clean diagnosis.
+The fragment descriptor is suppressed only when a fragment canonicalization will
+emit its replacement finding. Images therefore retain manual fragment findings
+even with an editable destination span.
+
+Shared destination resolution retains a folder fact from fresh contained
+directory attributes, or from an explicit trailing slash on a missing target.
+Folders without fragments complete before target byte acquisition. Existing
+folder fragments produce a malformed destination with a precise manual message.
+Missing folders are excluded from file-candidate and rename proposal formation.
+Doctor and Repair carry that typed folder fact into their manual findings.
+Their folder messages state only the fact. Each finding's sole action names the
+source and location, asking for a manual link edit or removal of the heading
+fragment as defined by the Doctor and Repair interface contracts.
+Category Move reference maps and Remove target sets include inventoried directory
+coordinates as well as files, while file effect formation still excludes
+directories. Rewrites preserve the authored trailing-slash choice. Verification
+freshly resolves the resulting folder target through the ordinary resolver.
+
 Index and Repair use `Commands/Shared/RoutedMaintenance` for eligible metadata, missing chains and affected Entries. Route Init and Route Create share `Commands/Shared/RouteScaffolding` for entrypoint composition and intended membership. Init retains its explicit draft defaults and restoration rules.
 
 The Framework metadata completion API inserts absent fields using parsed source spans. Sources supplies read-only rename observations. Root composition runs bounded Git requests without staging, writing or network access. Doctor and Repair use the same current Entries records, protected-source policy and candidate evidence. Generated Navigation projects intended membership without applying effects. Existing expected-state, no-follow and recovery primitives guard every write.
@@ -165,6 +206,22 @@ All strong bases are combined before selection. Automatic repair requires exactl
 
 ## Repair and Doctor
 
+Link scope is owned by Framework Settings and uses `WorkspaceAllowList` path
+comparison over retained source and resolved target paths. The operational
+reference reader filters before candidate and graph formation and retains an
+ignored count. It keeps parsed documents for rename identity, including ignored
+sources. References does not consume this filter. Context and route scanners
+use the same policy. No exclusion causes a filesystem walk. Doctor uses the
+retained catalogue for known paths and point observations for remaining listed
+paths. Route settings changes join the existing expected-state and recovery
+plan, and fresh under-lease planning includes their original observation.
+Settings remapping transforms each original entry once, selecting an exact
+root-layer destination before a category folder-prefix destination. Leaf
+base/overwrite destinations come from the resolved subject layers. The
+operational reference reader retains an unrecognized settings version from its
+existing settings observation for Doctor's informational projection, without
+another settings read or filesystem walk.
+
 Repair's automatic catalogue adds proven missing-target relinks and proven source-move corrections to existing exact path, case, encoding, fragment and Library residual corrections. A proven rename needs no target-choice prompt. Interactive Repair still shows the complete plan and asks its existing final confirmation. `--automatic` retains its no-prompt application behavior. No new flag is added.
 
 A minimal proof row says `billing/rounding.md was renamed to billing/money-rounding.md, same content`. Cross-folder text uses `was moved to`. For near-identical content use `content is <S>% unchanged`. Metadata proof uses `recorded description and tags match`. Relative paths in these examples share a displayed route base. Full evidence carries canonical workspace paths.
@@ -199,7 +256,7 @@ Choose one result-level next action deterministically: existing safety or recove
 
 After an applied operation, use fresh observations to select Next. If nothing remains, print `Next: open-forge doctor`. Following printed actions in order must reach Doctor with complete coverage and no warning or error findings, assuming required reads become available and the user makes the named choices or edits. Informational ownership or recovery observations are separate from health. Deleted references and malformed authoring require explicit human edits. No command promises to decide their meaning. Tests must exercise the entire continuation, including those edits.
 
-Repair applies authored-link changes only to admitted user-owned Markdown sources and targets. Managed authored content, native Skill packages and resources, overwrites, excluded or private contents, and actual unsafe link or Library projection leaves remain protected during diagnosis, selection, planning and revalidation. Managed findings point to their managing Update. Native package findings name the file to edit. Library residual corrections retain their separate recovery authority.
+Repair applies authored-link changes only to admitted user-owned Markdown sources and targets. Managed authored content, native Skill packages and resources, overwrites, excluded or private contents, and actual unsafe link or Library projection leaves remain protected during diagnosis, selection, planning and revalidation. Repair's managed findings point to their managing Update. Doctor retains each protected local-reference finding's identity and names its owner for manual correction. Ownership alone does not establish that Update repairs a link. Lifecycle restoration findings remain independent. Native package findings name the file to edit. Library residual corrections retain their separate recovery authority.
 
 When Repair cannot ask, list each candidate once under its own link, with the strongest proof or readable reason and an indented, unwrapped relink command. Keep explicit workspace coordinates in every command, including sentence-embedded instructions. A partial application names verified effects before remaining choices or edits. An incomplete preview with independent safe work points to applying that plan before a malformed-file edit. A renamed navigation file is one row, and a newly created entrypoint has no duplicate Entries row.
 

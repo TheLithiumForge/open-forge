@@ -10,6 +10,10 @@ Use these commands for authorized edits to routes, metadata, generated navigatio
 
 Resolve a reported boundary before retrying. A suggested retry for a blocked Route request retains its targets and options, including metadata and Template choices. Route Init retries also keep the target and choices after an interrupted apply.
 
+Moving or removing a category also maintains direct links to its folder and
+nested folders. A missing folder link needs a manual edit, and Repair does not
+offer file replacements for it.
+
 ## Metadata And Conditions
 
 An `entrypoint` is the Markdown file that makes a folder routable. Use Route Init for missing entrypoints, Create for an ordinary routed file, and Update for an existing source.
@@ -90,6 +94,14 @@ Eligible Framework- and Extension-managed content can be removed, including edit
 
 ## `index [<source-reference>...]`
 
+Index encodes local link paths, such as `old%20guide.md`.
+Doctor also accepts readable paths: `<old guide.md>` and `café(one).md`.
+Escape an entity-opening ampersand as `%26`: write `entity&amp;.md` as
+`entity%26amp;.md`. Keep `#`, `%` and `?` in names escaped.
+Repair writes Index's form when
+correcting other spellings. Command arguments use literal source paths.
+Images with invalid heading fragments need a manual edit.
+
 Complete missing metadata and navigation after manual edits. You may create user-owned Markdown files directly inside routed folders without writing frontmatter or Entries. Index adds missing descriptions from the first heading, otherwise the file name, and the category's tags. It keeps bodies and supplied values. For deep notes below an existing root, it creates every missing entrypoint with metadata and direct-child Entries. Refine the prefilled values later if needed.
 
 An entrypoint selects its subtree and direct exposing parent. A leaf includes its missing chain and direct exposing parent. No operands selects the loader and every eligible rooted entrypoint region, including missing chains. Index removes old entries and adds new ones after renames or moves. When Git retains the old file's committed content, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata.
@@ -137,6 +149,10 @@ Interactive Repair explains possible targets and offers `Leave this link unchang
 Repair does not decide missing content or delete recovery artifacts. It maintains navigation only in the routes affected by selected corrections.
 
 Repair preserves managed Framework and Extension files, native Skill packages and resources, overwrites, excluded or private contents, and unsafe sources or targets. Follow their managing Update or exact edit action. Each candidate appears once under its link with its strongest reason and copyable command. Partial results state applied repairs and remaining choices or edits. Continuations retain the explicit workspace even inside prose. A Git timeout retries the complete request before manual link edits.
+
+Repair, Route Move and Route Remove preserve links covered by `ignoreLinksFrom` or `ignoreLinksTo` in `.agents/open-forge.json`. Incoming links into an `ignoreLinksFrom` path stay checked and repairable. Route Move remaps listed paths in the moved tree. Route Remove drops entries in the removed tree.
+
+An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
 
 ## `cleanup`
 

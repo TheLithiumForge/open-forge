@@ -3,11 +3,13 @@ using OpenForge.Cli.Core.Commands.Route.Remove.Models.Request;
 using OpenForge.Cli.Core.Commands.Route.Remove.Models.Result;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
+using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 
 namespace OpenForge.Cli.Core.Commands.Route.Remove.Models.Planning;
 
 internal sealed record RouteRemoveAbsenceScope
 {
+    internal WorkspaceSettingsDocument? LinkScope { get; init; }
     public required RouteRemoveRequest Request { get; init; }
 
     public required string Id { get; init; }
@@ -127,6 +129,7 @@ internal sealed record RouteRemoveAbsenceScope
             Source = source,
             Subject = new RouteRemoveSubject { Kind = subjectKind },
             Mode = RouteRemoveAbsenceScopeMode.PlannedSubject,
+            LinkScope = plan.Projection.Settings.Document,
             PhysicalPaths = physicalPaths,
         };
     }

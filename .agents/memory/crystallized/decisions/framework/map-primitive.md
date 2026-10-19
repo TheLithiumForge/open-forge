@@ -12,6 +12,14 @@ The Core primitive named Workspace answered one question: where does relevant lo
 
 ## Decision
 
+The maintainer accepted contained folder links in Task 83 on 2026-10-16.
+Maps deliberately point to useful modules and folders as well as individual
+files. The CLI therefore validates an existing folder by existence under the
+same containment rules as a file. A folder has no headings, and a missing folder
+needs an authored edit rather than a guessed file replacement. The
+[shared destination contract](../../documents/cli/shared-operation-contract.md#authored-local-destinations)
+defines that behavior.
+
 Map is the Core primitive for durable navigation to important local and external destinations. Its canonical root is `.agents/maps/`, its entrypoint is `_maps.md`, and its type tag is #Map.
 
 The ordinary term `workspace` continues to mean the environment Open Forge operates in. A Map points to destinations and explains their relevance. It does not replace Memory or the destination's current information.

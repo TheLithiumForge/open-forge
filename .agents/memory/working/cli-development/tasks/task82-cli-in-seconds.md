@@ -12,7 +12,7 @@ Every CLI operation finishes in seconds on a large workspace such as this reposi
 
 The maintainer agreed on 2026-10-15: “our cli operations should take seconds not tens of seconds.”
 
-Status: Task 82 “CLI operations finish in seconds” (phase 3/4): read commands run in about two to four seconds here, Doctor in about six and Repair in about seven, three rounds released in beta14. Next is the maintainer's decision on the archived broken links.
+Status: Task 82 “CLI operations finish in seconds” (phase 4/4): complete. With the archive's outward links ignored through [Task 83](task83-link-scope-and-folder-links.md), Repair takes about three seconds here and Doctor about four, and it ships with Task 83 in beta15.
 
 ## Starting point
 
@@ -69,4 +69,8 @@ An earlier pass with less load reached Repair 5.1, Index apply 4.6 and Doctor 3.
 
 ## Archived links, 2026-10-15
 
-Doctor in a clone of this repository reports 891 link findings, 864 of them in archived records. Across the workspace they are 737 links to missing files, 108 longer paths to the right file, which Repair rewrites automatically, 22 folder links it cannot check, 12 missing headings, 8 renamed targets and 4 absolute links. The folder links are recorded in the [beta follow-up backlog](beta-follow-up-backlog.md). The maintainer decides whether the archived links are repaired, excluded from diagnosis or left as they are.
+Doctor in a clone of this repository reports 891 link findings, 864 of them in archived records. Across the workspace they are 737 links to missing files, 108 longer paths to the right file, which Repair rewrites automatically, 22 folder links it cannot check, 12 missing headings, 8 renamed targets and 4 absolute links. The folder links are recorded in the [beta follow-up backlog](beta-follow-up-backlog.md). On 2026-10-16 the maintainer chose to stop checking links written inside the archive while still checking links into it. [Task 83](task83-link-scope-and-folder-links.md) adds that setting.
+
+## Final measurement, 2026-10-16
+
+With `.agents/memory/archived` in this repository's `ignoreLinksFrom`, Doctor ignores 6,406 archived links and checks 5,755 valid ones. On the Task 83 build, `repair --automatic --dry-run` took 2.8 to 3.0 seconds here, `index --dry-run` 3.4 to 5.3 and Doctor in a complete clone 3.1 to 7.2, typically about 4, while another project loaded the host. Two safe same-target repairs outside the archive were applied, and the three remaining findings point to Extension files this source repository does not install.

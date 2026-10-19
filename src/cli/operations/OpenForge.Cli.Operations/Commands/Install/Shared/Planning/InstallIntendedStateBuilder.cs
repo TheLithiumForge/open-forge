@@ -141,11 +141,12 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                 return Blocked(exception.Message, InstallFindingCode.TargetUnsafe);
             }
         }
-        else if (request.Frontmatter is { } frontmatter)
+        else
         {
-            var change = InstallConfigurationSettings.Plan(settingsRead, configuration: null, frontmatter);
-            configurationPlan = new(settingsRead, Ignore: null, change, IgnoreChange: null)
-            { Frontmatter = frontmatter, GitIgnoredRoutes = ownership.Document.Framework?.GitIgnoredRoutes ?? [] };
+            var change = InstallConfigurationSettings.Plan(settingsRead, configuration: null, request.Frontmatter);
+            if (change is not null || request.Frontmatter is not null)
+                configurationPlan = new(settingsRead, Ignore: null, change, IgnoreChange: null)
+                { Frontmatter = request.Frontmatter, GitIgnoredRoutes = ownership.Document.Framework?.GitIgnoredRoutes ?? [] };
         }
         var selectedPayloadAssets = payload.Assets
             .Where(asset => asset.Path.StartsWith(".agents/", StringComparison.Ordinal)

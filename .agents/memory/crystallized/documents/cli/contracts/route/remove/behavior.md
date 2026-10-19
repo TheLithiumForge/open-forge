@@ -9,6 +9,10 @@ open-forge:
 
 ## Status And Authority
 
+Apply the [shared link scope](../../../shared-operation-contract.md#link-scope) before detachment. Absence verification retains the original exclusion scope for preserved links even after the selected entries are dropped. Settings and ownership publication retain their existing expected-state and recovery boundaries.
+
+Drop matching base and overwrite ignore entries for a removed leaf. Category removal also drops explicitly listed root entrypoints and their overwrites, for canonical and compatibility forms, as well as folder and descendant entries.
+
 This is the accepted current Crystallized authority for the technology-neutral
 Behavior Contract behind `route remove`. The command is implemented in the
 merged native CLI; implementation and executable evidence are tracked in
@@ -51,6 +55,8 @@ The operation satisfies these invariants:
   recognized entrypoint. Every contained regular file and directory—including
   routed or unrouted Markdown, native or binary resources, support files, and
   overwrite companions—is part of one category plan.
+  Incoming links to the category folder or an inventoried nested folder are
+  detached under the same visible-label preservation rules as links to its files.
 - Every category item passes complete containment, identity, ownership,
   lifecycle, collision, reference, and recovery classification before the plan
   is complete.

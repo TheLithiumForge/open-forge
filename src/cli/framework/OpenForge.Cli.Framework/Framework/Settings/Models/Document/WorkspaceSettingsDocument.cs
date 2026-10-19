@@ -17,6 +17,12 @@ internal sealed record WorkspaceSettingsDocument(
 
     internal FrontmatterForm Frontmatter => DeclaredFrontmatter ?? FrontmatterForm.Scoped;
 
+    internal ImmutableArray<string> IgnoreLinksFrom { get; init; } = [];
+
+    internal ImmutableArray<string> IgnoreLinksTo { get; init; } = [];
+
+    internal bool HasIgnoreLinksFrom { get; init; }
+
     internal ImmutableArray<string> RemovedDirectories { get; init; } = [];
 
     internal ImmutableArray<string> RemovedExtensions { get; init; } = [];
@@ -31,7 +37,7 @@ internal sealed record WorkspaceSettingsDocument(
     /// another one is still read for the keys this release knows; the answer is
     /// reported, never enforced.
     /// </summary>
-    internal bool IsKnownSchemaVersion => SchemaVersion == WorkspaceSettingsDefinitions.SchemaVersion;
+    internal bool IsKnownSchemaVersion => SchemaVersion is 1 or WorkspaceSettingsDefinitions.SchemaVersion;
 }
 
 internal sealed record WorkspaceSettingsDecode(

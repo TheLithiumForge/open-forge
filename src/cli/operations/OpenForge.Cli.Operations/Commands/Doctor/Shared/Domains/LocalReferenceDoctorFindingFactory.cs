@@ -36,6 +36,8 @@ internal static class LocalReferenceDoctorFindingFactory
                     observation.DestinationLocation ?? observation.Location),
                 new DoctorStateEvidence(observedState ?? ReadState(observation.Facts.Target.Resolution)),
             }.Concat(additionalEvidence ?? []).ToArray());
+        if (observation.Facts.IsFolder && observation.Facts.Target.Resolution is SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.Malformed)
+            finding = finding with { FolderReference = new(observation.Destination, IsMissing: observation.Facts.Target.Resolution == SourceLinkTargetResolution.Missing) };
         return candidates is null
             ? finding
             : finding with { Candidates = candidates };

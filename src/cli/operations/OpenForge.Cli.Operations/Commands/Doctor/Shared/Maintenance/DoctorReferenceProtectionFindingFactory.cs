@@ -13,29 +13,31 @@ internal static class DoctorReferenceProtectionFindingFactory
     {
         if (reference.Facts.Target.Kind != SourceLinkTargetKind.Local
             || reference.Facts.Target.Resolution == SourceLinkTargetResolution.Complete && reference.Canonicalizations.Count == 0) return null;
+        var descriptor = LocalReferenceDoctorDescriptorReader.Read(reference);
+        if (descriptor is null) return null;
         var path = ProtectedPath(reference, policy);
         if (path is null) return null;
-        var protection = ReferenceProtectionReader.Read(path, policy);
-        var action = protection.Owner is { } owner ? DoctorMaintenanceReader.ManagingUpdate(owner) : DoctorMaintenanceGuidance.Manual(path);
-        var descriptor = LocalReferenceDoctorDescriptorReader.Read(reference);
-        return LocalReferenceDoctorFindingFactory.Create(reference,
-            DoctorDomainSupport.Warning(descriptor?.Kind ?? DoctorFindingKind.ReferenceTargetMissing,
-                "The reference correction crosses a protected content boundary.",
-                protection.Owner is null ? DoctorResolutionLane.ManualDecision : DoctorResolutionLane.TargetedOperation, action)) with
-        {
-            Maintenance = new()
-            {
-                Condition = DoctorMaintenanceCondition.ProtectedReference,
-                ProtectedPath = path,
-                ProtectedByNativePackage = protection.Protection == RoutedMetadataEligibility.NativePackage,
-            },
-        };
+        return Protect(LocalReferenceDoctorFindingFactory.Create(reference, descriptor), path);
     }
+
+    internal static DoctorFinding ProtectCanonicalization(LocalReferenceObservation reference, DoctorFinding finding, RoutedMetadataPolicyContext policy)
+        => ProtectedPath(reference, policy) is { } path
+            ? Protect(finding, path)
+            : finding;
+
+    private static DoctorFinding Protect(DoctorFinding finding, string path)
+        => finding with
+        {
+            ProtectedReferencePath = path,
+            Resolution = DoctorResolutionLane.ManualDecision,
+            Proposal = null,
+            Actions = [],
+        };
 
     private static string? ProtectedPath(LocalReferenceObservation reference, RoutedMetadataPolicyContext policy)
     {
         if (!ReferenceProtectionReader.Allows(reference.SourcePath, policy)) return reference.SourcePath;
-        if (reference.Facts.Target.Path is { } target && !ReferenceProtectionReader.Allows(target, policy)) return target;
+        if (!reference.Facts.IsFolder && reference.Facts.Target.Path is { } target && !ReferenceProtectionReader.Allows(target, policy)) return target;
         return null;
     }
 }

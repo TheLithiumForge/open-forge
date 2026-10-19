@@ -52,6 +52,8 @@ Follow the [shared help template](../shared/global-flags/interface.md#--help): c
 
 ## Purpose
 
+Explicit link expansion omits edges covered by the [shared link scope](../../shared-operation-contract.md#link-scope). Ignoring outward links does not prevent directly selecting or reading their source.
+
 `context` returns ordered Open Forge context from an exact workspace and zero or
 more explicit routes. It makes required and selected content easier to retrieve
 and read. It does not infer relevant routes, modify files, or create session

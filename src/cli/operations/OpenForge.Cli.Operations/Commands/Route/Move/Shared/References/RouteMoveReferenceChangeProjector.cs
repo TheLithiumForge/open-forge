@@ -19,10 +19,7 @@ internal static class RouteMoveReferenceChangeProjector
 
         foreach (var item in destination.Subject.Items)
         {
-            if (item.Kind != RouteMoveItemKind.Directory)
-            {
-                map[item.SourcePath] = item.DestinationPath;
-            }
+            map[item.SourcePath] = item.DestinationPath;
         }
 
         return map.ToImmutable();
@@ -42,6 +39,7 @@ internal static class RouteMoveReferenceChangeProjector
                 ToCanonical(workspace.LexicalRoot, item.SourcePath),
                 pair.Key,
                 StringComparison.Ordinal));
+            if (sourceItem.Kind == RouteMoveItemKind.Directory) continue;
             byte[] intendedBytes = bySource.TryGetValue(pair.Key, out var document)
                 ? Encoding.UTF8.GetBytes(document.IntendedText)
                 : [.. sourceItem.Snapshot.Bytes];

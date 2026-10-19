@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Commands.Route.Shared.Ownership;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
+using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 
 namespace OpenForge.Cli.Core.Commands.Route.Move.Models.Planning;
 
@@ -24,6 +25,7 @@ internal sealed record RouteMoveInventoryItem
 
 internal sealed record RouteMoveCategoryInventory
 {
+    public WorkspaceSettingsRead? Settings { get; init; }
     public required RouteMoveResolvedSubject Subject { get; init; }
 
     public required WorkspaceOwnershipRead Ownership { get; init; }

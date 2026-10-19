@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 
@@ -21,8 +22,7 @@ internal static class RepairDestinationFormatter
                 sourceDirectory.Length == 0 ? "." : sourceDirectory,
                 Uri.UnescapeDataString(canonicalTargetPath).Replace('/', Path.DirectorySeparatorChar))
             .Replace(Path.DirectorySeparatorChar, '/');
-        path = string.Join("/", path.Split('/').Select(Uri.EscapeDataString));
-        return path;
+        return SourceDestinationEncoder.EncodePath(path);
     }
 
     internal static string AppendFragment(string path, string? fragment)

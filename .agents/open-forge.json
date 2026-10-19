@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v2/open-forge.schema.json",
+  "schemaVersion": 2,
+  "ignoreLinksFrom": [".agents/memory/archived"]
+}

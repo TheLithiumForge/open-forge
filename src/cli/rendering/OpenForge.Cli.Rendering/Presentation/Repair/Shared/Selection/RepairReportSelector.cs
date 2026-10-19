@@ -648,9 +648,14 @@ internal static class RepairReportSelector
         if (choices.Count != 0) return choices.Select(choice => new CliNextAction(choice.Command, choice.Label)).ToArray();
         if (finding.Code != global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.ManualFindingRemaining
             || finding.Observation is not null || proposal is { IsSafeExact: true } || subject.Path is null || subject.Location is null) return [];
-        var text = global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ManualEdit(subject.Path, subject.Location.Line, subject.Location.Column);
+        var text = ManualFindingAction(finding, subject.Path, subject.Location.Line, subject.Location.Column);
         return [new(text, text) { Kind = CliNextActionKind.Sentence }];
     }
+
+    private static string ManualFindingAction(RepairFinding finding, string path, int line, int column)
+        => finding.FolderReference is { IsMissing: false }
+            ? global::OpenForge.Cli.OutputText.Shared.SharedPhrases.RemoveFolderHeadingFragment(path, line, column)
+            : global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ManualEdit(path, line, column);
 
     private static CliFindingTextChoice TextChoice(RepairResult result, RepairProposal proposal, RepairCandidate candidate)
     {
@@ -673,6 +678,7 @@ internal static class RepairReportSelector
 
         var proposal = Proposal(result, finding);
         if (finding.Protection) return ProtectionMessage(finding);
+        if (finding.FolderReference is { } folder) return Presentation.Shared.Wording.FolderReferenceWording.Message(folder.Destination, folder.IsMissing);
         var path = finding.SourceCanonicalPath ?? proposal?.SourceCanonicalPath ?? FailurePath(result, finding.Code.ToString());
         var occurrence = finding.OccurrenceView ?? proposal?.OccurrenceView;
         return finding.Code.ToString() switch
@@ -780,6 +786,7 @@ internal static class RepairReportSelector
             var manual = result.PostDiagnosis.Proposals.FirstOrDefault(proposal => proposal.MissingPath is not null);
             if (manual is not null)
                 return new(global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ManualEdit(manual.SourceCanonicalPath, manual.OccurrenceView.Line, manual.OccurrenceView.Column), global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.NoReplacementReason()) { Kind = CliNextActionKind.Sentence };
+            if (FolderManualAction(result) is { } folderAction) return folderAction;
         }
         if (result.Recovery.ResidualPath is null && result.Status == CliSemanticStatus.Incomplete
             && result.Findings.All(finding => finding.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention || finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.MetadataSkipped)
@@ -838,6 +845,7 @@ internal static class RepairReportSelector
                 return new(global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ManualEdit(manual.SourceCanonicalPath, manual.OccurrenceView.Line, manual.OccurrenceView.Column),
                     global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.NoReplacementReason())
                 { Kind = CliNextActionKind.Sentence };
+            if (result.Counts.Guided == 0 && FolderManualAction(result) is { } folderAction) return folderAction;
             return new CliNextAction(attention.Command, RepairWording.NextAttentionReason())
             {
                 Kind = attention.Kind,
@@ -846,6 +854,16 @@ internal static class RepairReportSelector
         }
 
         return result.Next;
+    }
+
+    private static CliNextAction? FolderManualAction(RepairResult result)
+    {
+        var finding = RemainingFindings(result).FirstOrDefault(finding => finding.FolderReference is not null
+            && finding.SourceCanonicalPath is not null && finding.OccurrenceView is not null);
+        if (finding?.SourceCanonicalPath is not { } path || finding.OccurrenceView is not { } location) return null;
+        return new(ManualFindingAction(finding, path, location.Line, location.Column),
+            global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.NoReplacementReason())
+        { Kind = CliNextActionKind.Sentence };
     }
 
     private static bool CannotAsk(RepairResult result)

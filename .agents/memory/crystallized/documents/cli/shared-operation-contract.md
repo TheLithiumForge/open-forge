@@ -42,7 +42,7 @@ the accepted Open Forge behavior.
 
 The authored settings file `.agents/open-forge.json` accepts `frontmatter` with
 the string value `root` or `scoped`. An absent key means scoped. Unsupported
-values are invalid settings. `schemaVersion` stays 1. This setting controls
+values are invalid settings. This setting controls
 output, not reading. Every workspace reads both forms under the [Markdown
 Syntax contract](../framework/markdown/syntax.md#frontmatter).
 
@@ -60,6 +60,33 @@ workspace's form before applying the existing comparison policy. Source
 inventory hashes continue to identify repository bytes. Rendering neither
 establishes ownership nor changes the fingerprint policy. Invalid settings
 retain each command's existing invalid or unavailable boundary.
+
+## Link Scope
+
+The optional authored `ignoreLinksFrom` and `ignoreLinksTo` lists in
+`.agents/open-forge.json` use the validation and path comparison of
+`allowInstallPaths`. A missing list means no exclusions. Entries name files or
+folders, not patterns. A folder covers descendants with a path-segment boundary.
+
+Diagnosis and maintenance omit a link when its source is covered by
+`ignoreLinksFrom` or its resolved workspace target is covered by `ignoreLinksTo`.
+The exclusion applies to findings, candidates, repairs, route rewrites and
+unlinking. It does not exclude the file from routing, indexing or explicit
+reading. Incoming links into `ignoreLinksFrom` remain checked and repairable,
+including when an ignored file moves. Context omits ignored expansion edges.
+References lists every link because it answers an explicit reference query.
+
+Route Move remaps list entries equal to or beneath the moved path. Route Remove
+drops entries equal to or beneath the removed path. Both preserve unknown
+settings. Each original entry is remapped once, with exact base and overwrite
+layer destinations taking precedence over the category folder mapping.
+Install adds `.agents/memory/archived` only when it installs that
+route and the `ignoreLinksFrom` key is absent. An existing key, including an
+empty list, stays unchanged. Update leaves authored settings unchanged.
+
+Matching uses already observed source and resolved target paths and performs no
+filesystem discovery. Doctor separately observes each listed path and gives an
+action for a path that no longer exists.
 
 ## Route Sharing
 
@@ -81,6 +108,30 @@ defines the pure projection boundary.
 ## Maintenance After Manual Edits
 
 [Index](contracts/index-candidate/interface.md) completes eligible missing metadata and rooted navigation. [Repair](contracts/repair/interface.md) repairs uniquely proven renames or moves and maintains affected routes in one plan. [Doctor](contracts/doctor/interface.md) shares their eligibility and identity evidence and gives one actionable continuation. Protection applies to link sources and targets through selection and revalidation. Partial reports name verified effects and remaining work. Continuation commands preserve explicit workspace coordinates, including inside prose. Git timeout retries precede manual edits for possibly renamed links. Exact wording and finite wire additions belong to the command contracts and [maintenance design](technical-designs/forgiving-maintenance.md).
+
+## Authored Local Destinations
+
+A contained local destination without a heading fragment is valid when its file
+or folder exists. A folder may be written with or without a trailing slash.
+The ordinary lexical and physical containment, symlink, junction and escape
+rules apply equally to files and folders. Identity, bytes and failed observations
+are acquired freshly under those rules. Web URLs remain unchecked.
+
+Authored local paths accept both Index's UTF-8 percent-encoded form and a readable
+literal form. The [Source References contract](contracts/shared/source-references/interface.md#authored-local-destination-spellings)
+defines both precisely, including required escapes and Markdown delimiters.
+Neither accepted form produces an encoding finding. Other equivalent spellings
+may receive a correction to Index form. Index-generated links are already
+accepted. Source-reference operands and reported filesystem paths remain literal.
+
+A trailing slash explicitly identifies a folder when the target is missing.
+That is a broken link, with no replacement proposal. An existing folder with a
+heading fragment is invalid because a folder has no headings. Doctor and Repair
+require a manual edit in both cases. Their contracts define the exact messages.
+Source-reference operands retain their command-specific source-kind rules.
+
+The resolver's missing-folder cause is `The local destination folder does not exist.`
+Its existing-folder fragment cause is `A folder has no headings. Remove the heading fragment.`
 
 ## Command And Group Shape
 

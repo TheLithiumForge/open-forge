@@ -115,6 +115,8 @@ internal static class DoctorWording
             DoctorFindingKind.WorkspaceEntryCompatibilityCollision => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleEntrypointNamesConflict(),
             DoctorFindingKind.WorkspaceSourceIdCollision => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleSourceIdsConflict(),
             DoctorFindingKind.WorkspacePathInvalid => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitlePathIsInvalid(),
+            DoctorFindingKind.WorkspaceLinkIgnorePathMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLinkIgnorePathMissing(),
+            DoctorFindingKind.WorkspaceSettingsVersionUnknown => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleSettingsVersionUnknown(),
             DoctorFindingKind.WorkspacePathContainment => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitlePathIsOutsideTheWorkspace(),
             DoctorFindingKind.WorkspacePhysicalAlias => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitlePathIdentityIsAmbiguous(),
             DoctorFindingKind.WorkspaceFrontmatterMalformed => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleFrontmatterIsInvalid(),
@@ -213,6 +215,7 @@ internal static class DoctorWording
     {
         ArgumentNullException.ThrowIfNull(finding);
         if (finding.Maintenance is { } maintenance) return DoctorMaintenanceWording.Message(finding, maintenance);
+        if (finding.FolderReference is { } folder) return Presentation.Shared.Wording.FolderReferenceWording.Message(folder.Destination, folder.IsMissing);
         var path = Path(finding);
         return finding.Kind switch
         {
@@ -228,6 +231,8 @@ internal static class DoctorWording
             DoctorFindingKind.WorkspaceEntryCompatibilityCollision => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatHasIncompatibleEntrypointFormsKeepOne($"{path}"),
             DoctorFindingKind.WorkspaceSourceIdCollision => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatDerivesAnIdThatIsAlsoDerivedByAnotherFile($"{path}", $"{Cause(finding, "use exact paths, or rename one")}"),
             DoctorFindingKind.WorkspacePathInvalid => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatIsNotAValidPathForASource($"{path}"),
+            DoctorFindingKind.WorkspaceLinkIgnorePathMissing => finding.Message,
+            DoctorFindingKind.WorkspaceSettingsVersionUnknown => finding.Message,
             DoctorFindingKind.WorkspacePathContainment => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatPointsOutsideTheWorkspace($"{path}"),
             DoctorFindingKind.WorkspacePhysicalAlias => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatHasAnAmbiguousPhysicalIdentity($"{path}", $"{Cause(finding, "the physical identity could not be distinguished")}"),
             DoctorFindingKind.WorkspaceFrontmatterMalformed => EnsureSentence(finding.Message),
@@ -324,7 +329,18 @@ internal static class DoctorWording
 
     internal static IReadOnlyList<CliNextAction> Actions(DoctorFinding finding)
     {
+        if (finding.ProtectedReferencePath is { } protectedPath)
+            return [Sentence(global::OpenForge.Cli.OutputText.Doctor.DoctorMaintenanceText.ProtectedLinkEdit(
+                Path(finding), protectedPath, finding.Subject.LocationView?.Line, finding.Subject.LocationView?.Column))];
         if (finding.Maintenance is { } maintenance) return DoctorMaintenanceWording.Actions(finding, maintenance);
+        if (finding.FolderReference is { } folder && finding.Subject.Path is { } path)
+        {
+            var location = finding.Subject.LocationView;
+            var action = folder.IsMissing
+                ? global::OpenForge.Cli.OutputText.Doctor.DoctorMaintenanceText.EditLink(path, location?.Line, location?.Column)
+                : global::OpenForge.Cli.OutputText.Shared.SharedPhrases.RemoveFolderHeadingFragment(path, location?.Line, location?.Column);
+            return [Sentence(action)];
+        }
         var actions = finding.Actions
             .Select(action => RenderAction(finding, action))
             .ToList();
@@ -353,7 +369,7 @@ internal static class DoctorWording
     internal static string CoverageSummary(DoctorCoverageCounts counts)
     {
         var parts = new List<string>();
-        if (counts.LinksValid is { } links && counts.RoutesChecked is { } routesChecked && counts.ExternalLinksNotChecked is not (> 0))
+        if (counts.LinksValid is { } links && counts.RoutesChecked is { } routesChecked && counts.ExternalLinksNotChecked is not (> 0) && counts.LinksIgnored == 0)
         {
             return global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatAndChecked($"{links}", $"{CliTextPlural(links, "link")}", $"{routesChecked}", $"{CliTextPlural(routesChecked, "route")}");
         }
@@ -372,6 +388,9 @@ internal static class DoctorWording
         {
             parts.Add(global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatChecked($"{routes}", $"{CliTextPlural(routes, "route")}"));
         }
+
+        if (counts.LinksIgnored > 0)
+            parts.Add(global::OpenForge.Cli.OutputText.Doctor.DoctorText.LinksIgnored(counts.LinksIgnored));
 
         return parts.Count == 0 ? string.Empty : string.Join(", ", parts) + ".";
     }

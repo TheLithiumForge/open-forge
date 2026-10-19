@@ -10,6 +10,10 @@ Use these commands for authorized edits to routes, metadata, generated navigatio
 
 Resolve a reported boundary before retrying. A suggested retry for a blocked Route request retains its targets and options, including metadata and Template choices. Route Init retries also keep the target and choices after an interrupted apply.
 
+Moving or removing a category also maintains direct links to its folder and
+nested folders. A missing folder link needs a manual edit, and Repair does not
+offer file replacements for it.
+
 ## Metadata And Conditions
 
 An `entrypoint` is the Markdown file that makes a folder routable. Use Route Init for missing entrypoints, Create for an ordinary routed file, and Update for an existing source.
@@ -89,6 +93,14 @@ Eligible Framework- and Extension-managed content can be removed, including edit
 - `--automatic`: apply the reviewed plan without confirmation.
 
 ## `index [<source-reference>...]`
+
+Index encodes local link paths, such as `old%20guide.md`.
+Doctor also accepts readable paths: `<old guide.md>` and `café(one).md`.
+Escape an entity-opening ampersand as `%26`: write `entity&amp;.md` as
+`entity%26amp;.md`. Keep `#`, `%` and `?` in names escaped.
+Repair writes Index's form when
+correcting other spellings. Command arguments use literal source paths.
+Images with invalid heading fragments need a manual edit.
 
 Complete missing metadata and navigation after manual edits. You may create user-owned Markdown files directly inside routed folders without writing frontmatter or Entries. Index adds missing descriptions from the first heading, otherwise the file name, and the category's tags. It keeps bodies and supplied values. For deep notes below an existing root, it creates every missing entrypoint with metadata and direct-child Entries. Refine the prefilled values later if needed.
 

@@ -38,6 +38,9 @@ internal sealed record WorkspaceSettingsRead(
             && Document.DeclaredFrontmatter == current.Document.DeclaredFrontmatter
             && Document.Frontmatter == current.Document.Frontmatter
             && Document.AllowInstallPaths.SequenceEqual(current.Document.AllowInstallPaths, StringComparer.Ordinal)
+            && Document.HasIgnoreLinksFrom == current.Document.HasIgnoreLinksFrom
+            && Document.IgnoreLinksFrom.SequenceEqual(current.Document.IgnoreLinksFrom, StringComparer.Ordinal)
+            && Document.IgnoreLinksTo.SequenceEqual(current.Document.IgnoreLinksTo, StringComparer.Ordinal)
             && Document.RemovedCategories.SequenceEqual(current.Document.RemovedCategories, StringComparer.Ordinal)
             && Document.RemovedFiles.SequenceEqual(current.Document.RemovedFiles, StringComparer.Ordinal)
             && Document.RemovedDirectories.SequenceEqual(current.Document.RemovedDirectories, StringComparer.Ordinal)

@@ -212,6 +212,8 @@ internal sealed class SourceLinkDestinationResolver
             };
         }
 
+        canonicalPath = canonicalPath.TrimEnd('/');
+        var explicitFolder = decodedPath.EndsWith('/');
         PhysicalPathResolution physical;
         try
         {
@@ -226,6 +228,7 @@ internal sealed class SourceLinkDestinationResolver
         {
             return new SourceLinkDestinationFacts
             {
+                IsFolder = explicitFolder,
                 Fragment = rawFragment,
                 Target = new SourceLinkTarget
                 {
@@ -240,7 +243,7 @@ internal sealed class SourceLinkDestinationResolver
                 Finding = new SourceLinkDestinationFinding
                 {
                     Code = SourceLinkDestinationFindingCode.TargetMissing,
-                    Cause = "The local destination path does not exist.",
+                    Cause = explicitFolder ? "The local destination folder does not exist." : "The local destination path does not exist.",
                     Candidates = [],
                 },
             };
@@ -329,7 +332,27 @@ internal sealed class SourceLinkDestinationResolver
 
         if ((attributes & FileAttributes.Directory) != 0)
         {
-            return Malformed(rawFragment, SourceLinkTargetResolution.Malformed, "A local destination must identify a file, not a directory.");
+            return new SourceLinkDestinationFacts
+            {
+                IsFolder = true,
+                Fragment = rawFragment,
+                Target = new SourceLinkTarget
+                {
+                    Kind = SourceLinkTargetKind.Local,
+                    Id = null,
+                    Path = canonicalPath,
+                    PhysicalPath = physicalTargetPath,
+                    Layer = null,
+                    Resolution = rawFragment is null ? SourceLinkTargetResolution.Complete : SourceLinkTargetResolution.Malformed,
+                    Network = null,
+                },
+                Finding = rawFragment is null ? null : new SourceLinkDestinationFinding
+                {
+                    Code = SourceLinkDestinationFindingCode.DestinationMalformed,
+                    Cause = "A folder has no headings. Remove the heading fragment.",
+                    Candidates = [],
+                },
+            };
         }
 
         var layerMatches = input.Catalogue.FindLayersByPhysicalPath(physicalTargetPath);
@@ -521,7 +544,7 @@ internal sealed class SourceLinkDestinationResolver
         return lexical switch
         {
             { State: SourceLinkLexicalPathState.Complete, CanonicalPath: { } canonicalPath } =>
-                string.Equals(canonicalPath, expectedCanonicalPath, StringComparison.Ordinal),
+                string.Equals(canonicalPath.TrimEnd('/'), expectedCanonicalPath, StringComparison.Ordinal),
             { State: SourceLinkLexicalPathState.SourceDirectoryMissing or SourceLinkLexicalPathState.Malformed or SourceLinkLexicalPathState.OutsideWorkspace } => false,
             _ => throw new ArgumentOutOfRangeException(nameof(lexical), lexical.State, UndefinedLexicalPathStateMessage),
         };

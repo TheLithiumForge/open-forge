@@ -53,6 +53,9 @@ internal static partial class WorkspaceSettingsCodec
                     ReadRemovedFiles(root))
                 {
                     DeclaredFrontmatter = ReadDeclaredFrontmatter(root),
+                    IgnoreLinksFrom = ReadStringArray(root, WorkspaceSettingsDefinitions.IgnoreLinksFromProperty),
+                    IgnoreLinksTo = ReadStringArray(root, WorkspaceSettingsDefinitions.IgnoreLinksToProperty),
+                    HasIgnoreLinksFrom = root.TryGetProperty(WorkspaceSettingsDefinitions.IgnoreLinksFromProperty, out _),
                     RemovedDirectories = ReadRemovedDirectories(root),
                     RemovedExtensions = ReadRemovedExtensions(root),
                     RemovedLibraries = ReadRemovedLibraries(root),

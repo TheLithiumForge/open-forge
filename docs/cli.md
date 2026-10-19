@@ -1040,6 +1040,19 @@ See [global options](#global-options) for shared flags.
 `doctor` diagnoses workspace, route, reference, lifecycle, Library, Extension,
 and recovery facts without changing them.
 
+Links to existing folders inside the workspace are valid, with or without a
+trailing slash. A folder has no heading fragments. A missing folder named with
+a trailing slash needs a manual link edit, and Repair never suggests a file in
+its place. Existing local files keep their normal checks. Web URLs stay unchecked.
+
+Index encodes local link paths, such as `old%20guide.md`.
+Doctor also accepts readable paths: `<old guide.md>` and `café(one).md`.
+Escape an entity-opening ampersand as `%26`: write `entity&amp;.md` as
+`entity%26amp;.md`. Keep `#`, `%` and `?` in names escaped.
+Repair writes Index's form when
+correcting other spellings. Command arguments use literal source paths.
+Images with invalid heading fragments need a manual edit.
+
 Use it when `status` or another command reports `blocked`, `incomplete`, or
 `completed-with-warnings`. Diagnosis can show the next repair boundary, but it does not
 apply a proposal.
@@ -1515,11 +1528,11 @@ are in `.agents/open-forge.json`. Framework and Extension records share the lock
 but remain independent command domains.
 
 The settings key `frontmatter` accepts `root` or `scoped`. A missing key means
-scoped, and unsupported values are invalid settings. `schemaVersion` stays 1:
+scoped, and unsupported values are invalid settings. New settings use `schemaVersion` 2:
 
 ```json
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "frontmatter": "root"
 }
 ```
@@ -1534,6 +1547,27 @@ conversions happen together.
 #### Next step
 
 Review changed files and retained recovery data, then preview [`cleanup`](#cleanup) when the result has been checked.
+
+### Choosing which links to check
+
+Add `ignoreLinksFrom` or `ignoreLinksTo` to `.agents/open-forge.json`:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v2/open-forge.schema.json",
+  "schemaVersion": 2,
+  "ignoreLinksFrom": [".agents/memory/archived"],
+  "ignoreLinksTo": []
+}
+```
+
+Entries name workspace-relative files or folders, not patterns. A file entry covers that file. A folder entry covers everything beneath it. Paths use the same case-insensitive comparison as `allowInstallPaths`.
+
+`ignoreLinksFrom` skips links written inside a listed path. Links into that path from elsewhere stay checked, and Repair can fix them when an archived file moves. `ignoreLinksTo` skips links whose resolved target lies inside a listed path. Doctor, Repair, Context link expansion, Route Move and Route Remove honor these settings. References still lists every link.
+
+Doctor shows how many links it ignored and notes listed paths that no longer exist. Route Move updates matching entries. Route Remove drops them. Both preserve ignored links as written. Install adds the archive entry when it installs Memory archive and the key is absent. An existing key, even `[]`, is your choice. Update leaves your settings unchanged. Add the entry by hand in an existing workspace.
+
+An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
 
 <a id="remove-and-keep-removed"></a>
 
@@ -1604,7 +1638,7 @@ need not survive. Deleting a file by hand does not infer an exclusion.
 
 ```json
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "removedCategories": ["skills"],
   "removedFiles": [".agents/patterns/_patterns.md", "AGENTS.md"],
   "removedDirectories": ["docs/obsolete"],

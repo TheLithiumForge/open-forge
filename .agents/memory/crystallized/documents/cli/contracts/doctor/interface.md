@@ -49,6 +49,57 @@ Follow the [shared help template](../shared/global-flags/interface.md#--help): c
 
 ## Forgiving Maintenance
 
+Local destinations accept both spellings defined by the
+[Source References contract](../shared/source-references/interface.md#authored-local-destination-spellings).
+Index-generated local destinations use its encoded form.
+They produce no spelling finding after Index, including in managed entrypoints.
+An automatic same-target correction is offered only when the full corrected
+destination resolves, including its fragment, and Repair admits the same edit.
+A missing heading never admits a path-only automatic correction.
+An automatic offer also requires an exact editable destination. Angle delimiters
+are preserved around the corrected URL. Decoded Markdown entities or escapes
+remain valid on target existence, without a spelling offer when their exact
+replacement bytes cannot be established.
+An invalid heading still produces a manual finding when that editable span is
+unavailable.
+Generated Entries spelling belongs to Index and is reported through generated
+navigation checks. Images retain their bounded observations without same-target
+Repair offers, as they are outside Repair's authored-link catalogue.
+An image with a noncanonical heading still has a manual `reference.fragment-missing`
+finding. Suppress a fragment finding only when an actual same-target replacement
+finding takes its place. For `![Guide](old%20guide.md#HEADING)` with `## Heading`,
+the message is `old%20guide.md has no heading #HEADING.` when a heading candidate
+exists, otherwise `old%20guide.md has no heading #HEADING. No possible target was found.`
+Its ordinary manual action is `Fix the link by hand.` Protected sources retain
+the ownership action below.
+
+A protected local-reference finding keeps its original severity, kind, code,
+title and link-fact or canonical-spelling message. It uses manual-decision
+resolution, no exact proposal, and one action:
+`Correct this link in <source-path> at line <line>, column <column> through the owner of <protected-path>.`
+Ownership alone does not turn a valid target into a missing one or prove that
+Update would correct the link. Framework and Extension lifecycle checks retain
+their own evidence-backed restoration guidance.
+
+Existing contained folder links, with or without a trailing slash, count as
+valid links. The following folder cases override the generic local-reference
+wording for ordinary editable sources. Both retain manual-decision resolution
+and propose no replacement. Protected containing sources retain the ownership
+guidance above.
+
+| Finding code and condition | Exact message |
+| --- | --- |
+| `reference.target-missing`, explicit folder destination | `The linked folder was not found: <destination>.` |
+| `reference.destination-malformed`, existing folder with a fragment | `The linked folder has no headings: <destination>.` |
+
+Each finding has exactly one instruction in its action line. A missing folder uses
+`Update or remove this link in <source-path> at line <line>, column <column>.`
+A folder fragment uses
+`Remove the heading fragment from this link in <source-path> at line <line>, column <column>.`
+A missing target is diagnosed
+before fragment validation, as for missing files. Existing local files retain
+their current existence and fragment rules. Web URLs remain unchecked.
+
 Doctor uses the shared completion eligibility and rename observations defined by [Forgiving Maintenance](../../technical-designs/forgiving-maintenance.md). It remains read-only with six diagnostic domains and no new syntax. These Task 79 rules replace contradictory manual advice for eligible missing metadata and Index advice for a gap that cannot be completed.
 
 | Finding code and condition                                                     | Exact text                                                                                                                                                                         | Lane and next                                |
@@ -255,6 +306,24 @@ framing, but not finding identity, order, evidence, or resolution.
 
 ## Local-Reference Boundary
 
+The [shared link scope](../../shared-operation-contract.md#link-scope) excludes
+ignored links from findings, candidates and checked counts. When any are
+ignored, the link count line includes `<N> link ignored` or `<N> links ignored`.
+Structured counts include `linksIgnored` only when it is positive, labelled `links ignored`.
+The finding title is `Ignored link path is missing`. Its action reason repeats
+the exact next action below.
+
+The additional finding `workspace.link-ignore-path-missing` is a warning,
+with manual next action. Its exact explanation is
+`<key> entry <path> no longer exists.` Its exact next action is
+`Remove or update <key> entry <path> in .agents/open-forge.json.`
+
+The informational `workspace.settings-version-unknown` finding has title
+`Workspace settings version is not recognized` and exact explanation
+`.agents/open-forge.json declares schemaVersion <version>, which this CLI does not recognize. This CLI uses the settings keys it knows.`
+It has no action, does not reduce coverage or raise the result status, and
+does not prevent understood settings keys from taking effect.
+
 The local-reference domain admits supported Markdown source files and local
 target paths that are both lexically and physically contained by the selected
 workspace. The normal Open Forge source universe is below `.agents`. A source or
@@ -296,6 +365,8 @@ establish an emission path or a current document gate.
 | `workspace.entry-compatibility-collision` | Canonical and compatibility entrypoint forms collide or cannot be assigned one identity.                                                                                        | `blocked-repair`; preserve one unambiguous route identity.                                                  |
 | `workspace.source-id-collision`           | Several current sources derive the same automatic source ID.                                                                                                                    | `manual-decision`; use exact paths for inspection and resolve the identity collision explicitly.            |
 | `workspace.path-invalid`                  | A discovered or referenced path is malformed for its declared source kind.                                                                                                      | `blocked-repair`; correct the path or retain the finding as manual evidence.                                |
+| `workspace.link-ignore-path-missing` | An authored link-scope entry names a path that no longer exists. | `manual-decision`; remove or update the entry in `.agents/open-forge.json`. |
+| `workspace.settings-version-unknown` | Authored settings declare an unrecognized schema version. | `informational`; continue with understood settings keys, without an action or elevated status. |
 | `workspace.path-containment`              | A path leaves the selected workspace or cannot prove containment.                                                                                                               | `blocked-repair`; no outside path is selected.                                                              |
 | `workspace.physical-alias`                | Distinct path spellings or physical identities alias one another in a way that makes source identity unsafe.                                                                    | `blocked-repair`; resolve the physical identity ambiguity.                                                  |
 | `workspace.frontmatter-malformed`         | Frontmatter cannot be parsed for the required source; affected source coverage is `incomplete` when safe facts remain and `blocked` when a safe boundary cannot be established. | `manual-decision`; correct authored metadata without inventing a value.                                     |
@@ -448,7 +519,7 @@ invalid. Malformed or duplicate `Axioms` headings are still diagnosed.
 | `reference.repeat`                       | The same authored target or occurrence is repeated.                                                                                                                                          | `informational`; repetition is evidence, not a repair instruction.                                                 |
 | `reference.same-target-path`             | The authored path spelling differs from the canonical path but resolves to the same target.                                                                                                  | `safe-exact`; Repair may canonicalize the destination.                                                             |
 | `reference.same-target-case`             | Case differs from the canonical target spelling while target identity is exact.                                                                                                              | `safe-exact`; Repair may canonicalize the exact target spelling.                                                   |
-| `reference.same-target-encoding`         | Percent or path encoding differs from the canonical same-target representation, and exact identity and resulting bytes are established.                                                      | `safe-exact`; Repair may canonicalize the exact encoding.                                                          |
+| `reference.same-target-encoding`         | Encoding matches neither accepted same-target spelling, and exact identity and resulting bytes are established.                                                      | `safe-exact`; Repair may canonicalize the exact encoding.                                                          |
 | `reference.same-target-fragment`         | A unique canonical fragment correction identifies the same target and intended fragment.                                                                                                     | `safe-exact`; Repair may apply the unique correction.                                                              |
 | `reference.candidate-filename`           | A missing target has a filename-based candidate.                                                                                                                                             | `guided-choice`; display evidence, never choose automatically.                                                     |
 | `reference.candidate-title`              | A missing target has a title-based candidate.                                                                                                                                                | `guided-choice`; display the authored title evidence.                                                              |
@@ -862,7 +933,7 @@ is not a finding.
 | reference.target-unsupported       | info     | informational   | Link target type is unsupported          | `<destination> is a kind of file Open Forge does not check.`                                       | none                                                        |
 | reference.same-target-path         | info     | safe-exact      | Equivalent link path is available        | `<destination> works but is not the canonical spelling: <canonical>.`                              | `open-forge repair --automatic`                             |
 | reference.same-target-case         | info     | safe-exact      | Equivalent link letter case is available | `<destination> differs from the file's name only by letter case: <canonical>.`                     | `open-forge repair --automatic`                             |
-| reference.same-target-encoding     | info     | safe-exact      | Equivalent link encoding is available    | `<destination> uses a different encoding than the canonical <canonical>.`                          | `open-forge repair --automatic`                             |
+| reference.same-target-encoding     | info     | safe-exact      | Equivalent link encoding is available    | `<destination> uses a different encoding than the canonical: <canonical>.`                          | `open-forge repair --automatic`                             |
 | reference.same-target-fragment     | info     | safe-exact      | Equivalent heading link is available     | `<#fragment> matches the heading <#canonical> apart from spelling.`                                | `open-forge repair --automatic`                             |
 
 Counts on this category: `linksChecked`, `linksValid`,

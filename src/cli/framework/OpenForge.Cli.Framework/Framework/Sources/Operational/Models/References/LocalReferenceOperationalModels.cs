@@ -136,6 +136,12 @@ internal sealed record LocalReferenceDoctorView(
 {
     internal SourceCatalogue? Catalogue { get; init; }
 
+    internal int IgnoredLinkCount { get; init; }
+
+    internal int? UnrecognizedSettingsSchemaVersion { get; init; }
+
+    internal IReadOnlyList<(string Key, string Path)> MissingLinkScopeEntries { get; init; } = [];
+
     internal IReadOnlyDictionary<string, MarkdownDocumentFacts> Documents { get; init; }
         = new Dictionary<string, MarkdownDocumentFacts>(StringComparer.Ordinal);
 }

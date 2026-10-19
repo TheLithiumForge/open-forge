@@ -9,7 +9,7 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/patterns/_patterns.md`](../../../../../../../src/open-forge/.agents/patterns/_patterns.md) is the canonical installed Patterns entrypoint. The repository [Patterns entrypoint](../../../../../../patterns/_patterns.md) is maintained separately. Task 80 updates only the shipped contract, and [Task 81](../../../../../../memory/archived/cli-development/tasks/task81-own-patterns-maintenance.md) retains the repository Pattern alignment.
+[`src/open-forge/.agents/patterns/_patterns.md`](../../../../../../../src/open-forge/.agents/patterns/_patterns.md) is the canonical installed Patterns entrypoint. The repository [Patterns entrypoint](../../../../../../patterns/_patterns.md) is maintained separately. Task 80 updates only the shipped contract, and [Task 81](../../../../../archived/cli-development/tasks/task81-own-patterns-maintenance.md) retains the repository Pattern alignment.
 
 The [current Patterns document](../../../framework/primitives/patterns.md) defines continuing structural reference, deliberate variation, scope, and relationships with other primitives. The [Core primitive model](../../../framework/primitives/model.md#roles) owns the comparative taxonomy.
 

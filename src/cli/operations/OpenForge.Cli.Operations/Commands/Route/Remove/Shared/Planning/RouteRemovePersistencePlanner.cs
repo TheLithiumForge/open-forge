@@ -193,7 +193,7 @@ internal static class RouteRemovePersistencePlanner
         PlannedFileChange? settingsChange;
         try
         {
-            settingsChange = WorkspaceSettingsChangePlanner.PlanRemovals(settings, removalSelection);
+            settingsChange = WorkspaceSettingsChangePlanner.PlanLinkScopeRemoval(settings, removalSelection, scope.Paths);
         }
         catch (InvalidOperationException exception)
         {

@@ -6,8 +6,19 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
 public sealed class InstallRemovedCategoriesIntegrationTests
 {
+    private static void AssertArchiveSettings(string before, string after)
+    {
+        using var original = JsonDocument.Parse(before);
+        using var current = JsonDocument.Parse(after);
+        Assert.Equal(original.RootElement.EnumerateObject().Select(property => property.Name).Append("ignoreLinksFrom"),
+            current.RootElement.EnumerateObject().Select(property => property.Name));
+        foreach (var property in original.RootElement.EnumerateObject())
+            Assert.True(JsonElement.DeepEquals(property.Value, current.RootElement.GetProperty(property.Name)));
+        Assert.Equal([".agents/memory/archived"], current.RootElement.GetProperty("ignoreLinksFrom").EnumerateArray().Select(value => value.GetString()));
+    }
+
     [Trait("Boundary", "OS")]
-    [Fact(DisplayName = "Install honors authored removed root categories without editing settings"), Trait("Evidence", "Integration")]
+    [Fact(DisplayName = "Install preserves authored root exclusions while seeding archive link scope"), Trait("Evidence", "Integration")]
     public async Task DoesNotReinstateRemovedRootCategory()
     {
         using var workspace = ExtensionInstallIntegrationWorkspace.Create("install-removed-categories");
@@ -18,7 +29,7 @@ public sealed class InstallRemovedCategoriesIntegrationTests
         Assert.Equal(0, run.ExitCode);
         Assert.False(Directory.Exists(workspace.Combine(".agents/skills")));
         Assert.True(File.Exists(workspace.Combine(".agents/loader.md")));
-        Assert.Equal(settings, workspace.ReadText(".agents/open-forge.json"));
+        AssertArchiveSettings(settings, workspace.ReadText(".agents/open-forge.json"));
         Assert.DoesNotContain("skills/_skills.md", workspace.ReadText(".agents/loader.md"), StringComparison.Ordinal);
         using var ownership = JsonDocument.Parse(workspace.ReadText(ExtensionInstallIntegrationWorkspace.OwnershipPath));
         Assert.DoesNotContain(ownership.RootElement.GetProperty("framework").GetProperty("paths").EnumerateArray(),
@@ -47,7 +58,7 @@ public sealed class InstallRemovedCategoriesIntegrationTests
         Assert.DoesNotContain("patterns/_patterns.md", workspace.ReadText(".agents/loader.md"), StringComparison.Ordinal);
         Assert.Equal(agentBytes, File.ReadAllBytes(workspace.Combine("AGENTS.md")));
         Assert.False(File.Exists(workspace.Combine("CLAUDE.md")));
-        Assert.Equal(settings, workspace.ReadText(".agents/open-forge.json"));
+        AssertArchiveSettings(settings, workspace.ReadText(".agents/open-forge.json"));
 
         var framework = workspace.ReadFrameworkOwnership();
         Assert.DoesNotContain(framework.GetProperty("paths").EnumerateArray(),

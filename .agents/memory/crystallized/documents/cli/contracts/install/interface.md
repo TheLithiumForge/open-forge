@@ -77,6 +77,8 @@ Behavior states the fresh wizard's Essentials choice, the unattended and preview
 
 ## Purpose And Boundary
 
+When Install includes Memory archive and `ignoreLinksFrom` is absent, it adds `.agents/memory/archived`. An existing key, even an empty list, remains the authored choice. See [Link Scope](../../shared-operation-contract.md#link-scope).
+
 `install` establishes management of the embedded Framework in one exact
 workspace. It establishes a safely absent Framework state or completes the
 bounded initial workspace adoption described below before verifying the

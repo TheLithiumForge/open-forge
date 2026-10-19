@@ -31,6 +31,8 @@ internal enum DoctorFindingKind
     WorkspaceEntryCompatibilityCollision,
     WorkspaceSourceIdCollision,
     WorkspacePathInvalid,
+    WorkspaceLinkIgnorePathMissing,
+    WorkspaceSettingsVersionUnknown,
     WorkspacePathContainment,
     WorkspacePhysicalAlias,
     WorkspaceFrontmatterMalformed,
@@ -132,6 +134,9 @@ internal enum DoctorFindingKind
 
 internal sealed record DoctorFinding
 {
+    internal Commands.Shared.Models.FolderReferenceFinding? FolderReference { get; init; }
+    internal string? ProtectedReferencePath { get; init; }
+
     public required DoctorFindingKind Kind { get; init; }
 
     public required DoctorFindingSeverity Severity { get; init; }

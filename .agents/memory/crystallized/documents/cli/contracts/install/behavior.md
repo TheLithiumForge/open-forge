@@ -118,6 +118,8 @@ the cancelled wizard. Text and JSON project the same next command.
 
 ## Configuration Planning
 
+Seed archive link scope only for an included Memory archive route and only when the authored key is absent. Compose it with other settings choices as one expected-state effect and recovery entry. Preserve existing declarations and unknown properties. [Link Scope](../../shared-operation-contract.md#link-scope) defines the shared meaning.
+
 Resolve setup selection through the existing Shell prompt contracts before
 planning or exact-no-op admission. Selection observes concrete settings,
 ordinary route presence and the Install-owned Git-ignore section. It does not

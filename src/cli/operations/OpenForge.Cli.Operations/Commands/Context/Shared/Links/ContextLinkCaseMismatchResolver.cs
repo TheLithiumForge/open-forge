@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Context.Shared.Links;
@@ -141,7 +142,7 @@ internal static class ContextLinkCaseMismatchResolver
             '/');
         var relative = Path.GetRelativePath(sourceDirectory ?? ".", actualPath)
             .Replace(Path.DirectorySeparatorChar, '/');
-        var encoded = string.Join('/', relative.Split('/').Select(Uri.EscapeDataString));
+        var encoded = SourceDestinationEncoder.EncodePath(relative);
         var fragmentIndex = originalDestination.IndexOf('#');
         return fragmentIndex < 0
             ? encoded

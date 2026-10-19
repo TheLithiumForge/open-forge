@@ -220,7 +220,7 @@ The same move works for everything your project keeps teaching you:
 
 **Scopes keep this growth cheap.** Put frontend conventions in a frontend scope and database rules in a database scope. A task selects the branches it needs, and a task that spans both follows both on purpose. Each scope holds only what helps there. There's no fixed limit on how many scopes you add or how deep they go. Active context follows the selected routes and their links, so adding knowledge doesn't mean every task reads more of it.
 
-You can also create plain Markdown notes inside routed folders. Preview `open-forge index --dry-run`, then run `open-forge index` to fill missing metadata and navigation files. After renames or moves, preview and apply `open-forge repair --automatic`. It repairs proven links and affected Entries. Follow Doctor for remaining choices or edits. See [manual edits](docs/cli.md#after-you-edit-files-by-hand).
+You can also create plain Markdown notes inside routed folders. Preview `open-forge index --dry-run`, then run `open-forge index` to fill missing metadata and navigation files. After renames or moves, preview and apply `open-forge repair --automatic`. It repairs proven links and affected Entries. Follow Doctor for remaining choices or edits. Links to existing workspace folders are valid too. See [manual edits](docs/cli.md#after-you-edit-files-by-hand).
 
 ## Why it works this way
 

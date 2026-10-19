@@ -16,7 +16,8 @@ internal static class LocalReferenceDoctorDescriptorReader
                 DoctorResolutionLane.BlockedRepair);
         }
 
-        if (observation.Fragment.State == LocalReferenceFragmentState.CanonicalCorrection)
+        if (observation.Fragment.State == LocalReferenceFragmentState.CanonicalCorrection
+            && observation.Canonicalizations.Any(correction => correction.Kind == LocalReferenceCanonicalizationKind.Fragment))
         {
             return null;
         }
@@ -27,11 +28,12 @@ internal static class LocalReferenceDoctorDescriptorReader
             SourceLinkTargetResolution.Missing => DoctorDomainSupport.Warning(
                 DoctorFindingKind.ReferenceTargetMissing,
                 observation.Facts.Finding?.Cause ?? "The local reference target is missing.",
-                DoctorResolutionLane.GuidedChoice),
+                observation.Facts.IsFolder ? DoctorResolutionLane.ManualDecision : DoctorResolutionLane.GuidedChoice),
             SourceLinkTargetResolution.FragmentMissing => DoctorDomainSupport.Warning(
                 DoctorFindingKind.ReferenceFragmentMissing,
                 observation.Facts.Finding?.Cause ?? "The local target fragment is missing.",
-                DoctorResolutionLane.GuidedChoice),
+                observation.Kind == LocalReferenceKind.Image || observation.DestinationLocation is null
+                    ? DoctorResolutionLane.ManualDecision : DoctorResolutionLane.GuidedChoice),
             SourceLinkTargetResolution.Malformed => DoctorDomainSupport.Warning(DoctorFindingKind.ReferenceDestinationMalformed, "The destination is malformed.", DoctorResolutionLane.ManualDecision),
             SourceLinkTargetResolution.Absolute => DoctorDomainSupport.Warning(
                 DoctorFindingKind.ReferenceDestinationAbsolute,

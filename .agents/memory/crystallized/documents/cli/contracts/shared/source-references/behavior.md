@@ -27,6 +27,15 @@ technology-neutral within those accepted choices.
 
 ## Reference Invariants
 
+Authored Markdown destinations use the [shared local-destination rules](../../../shared-operation-contract.md#authored-local-destinations),
+including contained folder targets. This does not widen source-reference operands
+to accept directories where their command requires a source file.
+Their [two accepted spellings](interface.md#authored-local-destination-spellings)
+are distinct from literal source paths and IDs. Generated navigation writes
+Index form, diagnosis accepts both forms, and admitted repairs use Index form.
+Generated destinations reject raw URI delimiters before decoding. Encoded filename
+punctuation, including `%23`, is part of the decoded path, not a fragment or query.
+
 - A source-reference request is classified by the public prefix rule in
   [Accepted Forms](interface.md#accepted-forms). The resolver never guesses
   whether a value is an ID or an exact path.

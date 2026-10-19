@@ -42,9 +42,13 @@ public sealed class DoctorMaintenanceGuidanceTests
         };
         var finding = DoctorReferenceProtectionFindingFactory.Read(reference, policy);
         Assert.NotNull(finding);
-        Assert.Equal(managed ? DoctorResolutionLane.TargetedOperation : DoctorResolutionLane.ManualDecision, finding.Resolution);
+        Assert.Equal(DoctorFindingKind.ReferenceTargetMissing, finding.Kind);
+        Assert.Equal(DoctorFindingSeverity.Warning, finding.Severity);
+        Assert.Equal(DoctorResolutionLane.ManualDecision, finding.Resolution);
+        Assert.Equal(path, finding.ProtectedReferencePath);
         Assert.Null(finding.Proposal);
-        Assert.Equal(managed ? "open-forge update" : null, Assert.Single(finding.Actions).Command);
+        Assert.Empty(finding.Actions);
+        Assert.EndsWith($"through the owner of {path}.", Assert.Single(DoctorWording.Actions(finding)).Command, StringComparison.Ordinal);
         Assert.DoesNotContain("Repair can update", DoctorWording.Message(finding), StringComparison.Ordinal);
         var healthy = reference with { Facts = reference.Facts with { Target = reference.Facts.Target with { Resolution = SourceLinkTargetResolution.Complete } } };
         Assert.Null(DoctorReferenceProtectionFindingFactory.Read(healthy, policy));

@@ -178,7 +178,7 @@ internal sealed class DoctorMaintenanceReader(RenameEvidenceReader renames, Func
             if (!requiresEvidence)
             {
                 var observedReferences = await referenceRead.ConfigureAwait(false);
-                requiresEvidence = observedReferences.References.Any(reference => reference.Facts.Target.Resolution == SourceLinkTargetResolution.Missing);
+                requiresEvidence = observedReferences.References.Any(reference => !reference.Facts.IsFolder && reference.Facts.Target.Resolution == SourceLinkTargetResolution.Missing);
             }
             if (requiresEvidence)
                 evidence = await renames.ReadAsync(new()
