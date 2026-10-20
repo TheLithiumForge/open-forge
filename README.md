@@ -1,32 +1,114 @@
 # Open Forge
 
-Open Forge is a small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work. It gives an agent a map to your rules and project knowledge, and a place to keep useful outcomes for the next task.
+Open Forge helps coding agents use the rules, docs and decisions your project already has. It's a small Markdown framework: you choose what agents read, when it applies, and which outcomes survive to the next session. The design comes from an idea I call **Adaptive Context Engineering (ACE)**. An agent doesn't need to know everything, but it does need to know where everything is.
 
-At its core, it's Markdown, rules, and links. Install it in your project, then ask your agent to work as usual. Add a rule when a correction keeps coming up, link to knowledge you already have, and keep useful outcomes for later. You can add optional Extensions when you need them.
+Start with one document you already have. Add rules, memory or reusable methods when they solve a problem you actually have. Your documents stay where they are, every part is optional, and so is the CLI.
 
 ## Get started
 
-With Node.js 22.18 or later, install the CLI and run it from your project:
+With Node.js 22.18 or later, install the CLI and preview the smallest setup from your project:
 
 ```sh
 npm install -g @thelithiumforge/open-forge@beta
 cd /path/to/your-project
-open-forge install
+open-forge install --preset minimal --dry-run
 ```
 
-For a first try, choose the recommended Essentials setup. Keep Root keys unless your workspace already declares another metadata form. The `Review changes` plan recaps what will be added, kept out of Git, or left out before you confirm. Inspect the new files and changes with `git status` and `git diff`. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation) explains other choices and how to change them later.
+The plan lists every file it would touch. Minimal writes the loader, a short guide for people in `.agents/README.md`, and a marked Open Forge section in `AGENTS.md` and `CLAUDE.md`. Your existing text in those files stays as it is. Apply the same selection:
 
-Already have `AGENTS.md` or `CLAUDE.md`? Install adds a marked Open Forge section and keeps your existing text, and the plan lists every file it touches before you approve it. To experiment without touching your checkout, [try it in a separate clone](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation#try-it-and-undo-a-trial).
+```sh
+open-forge install --preset minimal --automatic
+```
+
+Review the result with `git status` and `git diff`. Nothing is switched on yet.
+
+### Point agents at a document you already have
+
+Add one line under `## Entries` in `.agents/loader.md`, replacing the empty placeholder:
+
+```markdown
+- [Contribution rules to follow](../CONTRIBUTING.md) - #LoadNow
+```
+
+Use a file that exists in your repository. It stays where it is and needs no frontmatter. `#LoadNow` means agents read it before every task. Add `- applies to` and a pattern in backticks, such as `**/*.cs`, to limit it to matching work, or leave the tag off so agents open it only when its description fits the task. Rules you already wrote for other tools work the same way, such as `../.cursor/rules/testing.mdc` or `../.windsurfrules`.
 
 Now give your agent a normal task:
 
-- **Existing project:** ask the agent to explain how its tests run.
+> Explain how this project runs its tests. Follow `AGENTS.md`, and name the files you read.
 
-  > Explain how this project runs its tests. Follow `AGENTS.md`, and name the Open Forge files you read.
+Check the answer against your contribution guide. You can stop here.
 
-- **New project:** give the agent a first build request. For a concrete example, try the [greenfield demo](https://thelithiumforge.github.io/open-forge/docs/demos/greenfield).
+### Add a rule and an accepted fact
 
-That's enough to start. The [ten-minute guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/ten-minute-guide) walks through adding a rule, keeping a useful fact, and finding the context for your next task. You don't need to choose a workflow, install Extensions, or write a specification first. The [demos](demos/) give you a project to try it on.
+You don't need any Open Forge folders for this. Say your agent keeps calling export work done without running the tests. Create `docs/agent-rules.md`:
+
+```markdown
+# Export rules
+
+## Instructions
+
+- When changing CSV exports, run the export tests before reporting completion. Include the command and its result. If the tests cannot run, say why.
+```
+
+Once your team has settled that exports use UTF-8, write it down in `docs/export-format.md`:
+
+```markdown
+# Export format
+
+CSV exports use UTF-8.
+```
+
+Reading a file doesn't make it accepted, so record the authority you're giving it, outside the marked section in `AGENTS.md`:
+
+```markdown
+Use docs/export-format.md as the accepted source for CSV export encoding.
+```
+
+Then link both, limited to export work:
+
+```markdown
+- [Required behavior for export changes](../docs/agent-rules.md) - #LoadNow - applies to `src/export/**`
+- [Accepted CSV export encoding](../docs/export-format.md) - #LoadNow - applies to `src/export/**`
+```
+
+An export task now reads the rule and the format before it starts. Other tasks don't.
+
+### Give rules and knowledge their own folders
+
+When you want dedicated places for new rules and accepted knowledge, add only those parts:
+
+```sh
+open-forge install --configure --preset custom --route directives=add --route memory/crystallized=add --dry-run
+```
+
+Review the plan, then run the same command with `--automatic` instead of `--dry-run`. Directives hold rules agents must follow. Crystallized Memory holds accepted knowledge that stays current. Your linked documents stay linked.
+
+### Keep unfinished work across sessions
+
+Add Working Memory when work needs to survive a pause:
+
+```sh
+open-forge install --configure --preset custom --route memory/working=git-ignore --dry-run
+```
+
+`git-ignore` keeps the records on your machine and still shares the folder's catalogue. The saving policy, `.agents/memory/saving.md`, asks agents to write down the goal, where things stand, the next step and open questions before they pause. Delete that one file if you'd rather save by hand.
+
+## Choose how much to adopt
+
+| You need                                    | Start with                                         |
+| ------------------------------------------- | -------------------------------------------------- |
+| Agents that use your existing instructions  | Minimal and one document link                      |
+| Project rules and accepted facts            | Linked docs, or Directives and Crystallized Memory |
+| Work that continues across sessions         | Working Memory and its saving policy               |
+| The usual set for a new project             | Essentials                                         |
+| Every built-in folder                       | Full Core                                          |
+| A particular planning or development method | An [Extension](#extensions)                        |
+
+These are useful stopping points, not steps you must climb. Every folder is optional, and Custom lets you pick each one. Memory states need Memory, but they don't need each other. Extensions declare their own dependencies. To turn a part off, remove its line from the loader. Its files stay as notes, and updates keep it off.
+
+Running `open-forge install` with no options starts a short wizard that offers Essentials, Full Core, Custom and Minimal, with a line on each. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation) explains every choice and how to change it later. To experiment without touching your checkout, [try it in a separate clone](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation#try-it-and-undo-a-trial).
+
+Starting something new? The [greenfield demo](https://thelithiumforge.github.io/open-forge/docs/demos/greenfield) gives you a first build request, and the [ten-minute guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/ten-minute-guide) walks through adding a rule, keeping a useful fact, and finding the context for your next task. You don't need to choose a workflow, install Extensions, or write a specification first.
 
 <details>
 <summary>Other installation methods and setup details</summary>
@@ -56,7 +138,7 @@ Clone this repository and follow the [local setup guide](docs/development.md#lin
 
 ### Install the Framework
 
-Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory. Full Core includes every built-in folder, and Custom lets you select each one. Neither preset installs optional Extensions.
+Minimal installs only the loader, the guide for people and the marked host sections, with nothing switched on. Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory. Full Core includes every built-in folder, and Custom lets you select each one. No preset installs optional Extensions.
 
 Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools.
 
@@ -71,7 +153,7 @@ open-forge install --preset essentials --dry-run
 open-forge install --preset essentials
 ```
 
-The dry run previews that exact selection without asking setup questions. Use `full-core` for every built-in route, and `--frontmatter root` or `--frontmatter scoped` to choose the metadata form without its question. A fresh unattended Install uses root unless settings already declare a preference. An explicit preset or form on an installed workspace also needs `--configure`. For Custom rows and noninteractive configuration, see the [CLI reference](docs/cli.md#setup-choices).
+The dry run previews that exact selection without asking setup questions. Use `minimal` for the smallest setup and `full-core` for every built-in route, and `--frontmatter root` or `--frontmatter scoped` to choose the metadata form without its question. A fresh unattended Install uses root unless settings already declare a preference. An explicit preset or form on an installed workspace also needs `--configure`. For Custom rows and noninteractive configuration, see the [CLI reference](docs/cli.md#setup-choices).
 
 #### Manually, from a clone
 
@@ -83,7 +165,7 @@ cp -R open-forge/src/open-forge/.agents /path/to/your-project/
 cat open-forge/src/open-forge/AGENTS.md >> /path/to/your-project/AGENTS.md
 ```
 
-If your harness reads `CLAUDE.md`, append `open-forge/src/open-forge/CLAUDE.md` to your project's `CLAUDE.md` as well. If the project already has a `.agents/` folder, merge the two by hand instead of copying over it.
+If your harness reads `CLAUDE.md`, append `open-forge/src/open-forge/CLAUDE.md` to your project's `CLAUDE.md` as well. If the project already has a `.agents/` folder, merge the two by hand instead of copying over it. For the smallest setup, copy only `.agents/loader.md` and `.agents/README.md`, and replace the loader's `Entries` with `- none - No entries - #Empty` before you add your own links.
 
 ### After installing
 
@@ -91,7 +173,7 @@ Whichever route you took, review the result with `git status` and `git diff`, th
 
 If your agent tool does not read `AGENTS.md` on its own, ask it to read that file first. Then give your agent a real task. It starts at `AGENTS.md`, reads the loader and the entrypoints marked for startup, then opens only the routes relevant to the task and works within their rules. You don't need a spec up front. Start with the request and add detail as the work calls for it.
 
-Adding it to an existing codebase? Point a Map at the docs you already have, and record Decisions (from the Planning Extension) starting with your next change. Choices made before you adopted Open Forge don't need to become Decisions after the fact, but every change from now on can keep its reasons. The [new or existing project guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/greenfield-and-brownfield) covers both cases, and the [demos](demos/) let you try each one.
+Adding it to an existing codebase? Start with Minimal and link the documents you already have, as shown above. Record Decisions (from the Planning Extension) starting with your next change if you want their reasons kept. Choices made before you adopted Open Forge don't need to become Decisions after the fact, but every change from now on can keep its reasons. The [new or existing project guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/greenfield-and-brownfield) covers both cases, and the [demos](demos/) let you try each one.
 
 </details>
 
@@ -111,24 +193,25 @@ An agent doesn't need to know everything, but it does need to know where everyth
 
 I call this **Adaptive Context Engineering (ACE)**. It takes progressive disclosure and spec-driven development and applies them to the workspace itself. Start with what you want to achieve, add detail as the work unfolds, and keep what's worth knowing next time.
 
-Full Core supplies 19 Markdown files, including four supporting CLI guides that are opened when needed. Essentials installs fewer categories, and Custom follows your selection. Startup reads the installed entrypoints tagged to load and the files their rules require. The files work on their own. The optional CLI speeds up maintenance.
+Full Core supplies 21 Markdown files, including a guide for people, the saving policy, and four supporting CLI guides that are opened when needed. Essentials installs fewer categories, and Custom follows your selection. Startup reads the installed entrypoints tagged to load and the files their rules require. The files work on their own. The optional CLI speeds up maintenance.
 
 I built Open Forge to work beside your harness, the tool that runs your agent. Anything that reads `AGENTS.md` (or the `CLAUDE.md` bridge) can use it. Keep your hooks, custom agents, and tools. If you want to define them once for several harnesses, a translator such as [APM](https://github.com/microsoft/apm) can install them where each harness looks for them.
 
 ## What you get
 
-This is the Full Core inventory. Essentials omits Guidance, Maps, Templates, and Archived Memory, and Custom follows your selection. Neither preset installs optional Extensions.
+This is the Full Core inventory. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal keeps only `AGENTS.md`, `CLAUDE.md`, the loader and the guide for people. Custom follows your selection. No preset installs optional Extensions.
 
 ```text
 AGENTS.md                         <- tells the agent to read the loader first
 CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 .agents/
-  loader.md                       <- routing and loading rules, and the root routes
+  loader.md                       <- the reading steps and the list of what is on
+  README.md                       <- how to customize this setup, for people
   directives/_directives.md       <- required behavior
   guidance/_guidance.md           <- advice for recurring choices
   patterns/_patterns.md           <- reusable shapes for code, files, and documents
   skills/_skills.md               <- native SKILL.md capabilities
-  skills/open-forge-cli/SKILL.md  <- how to use the CLI, read at startup
+  skills/open-forge-cli/SKILL.md  <- how to use the CLI, read before CLI commands
   skills/open-forge-cli/references/
     discovery.md                  <- reading and discovery
     routes.md                     <- route maintenance
@@ -138,6 +221,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
   maps/_maps.md                   <- pointers to important local and external sources
   memory/
     _memory.md                    <- what is worth remembering
+    saving.md                     <- save progress before pausing, needs Working
     working/_working.md           <- temporary state for active work
     emerging/_emerging.md         <- useful, but not settled yet
     crystallized/_crystallized.md <- accepted knowledge that stays current
@@ -146,7 +230,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 
 Each installed entrypoint says what its category is for and the rules for using it, then lists what's inside under `Entries`. Apart from Memory state entrypoints and the `open-forge-cli` Skill, every selected category starts empty. The content comes from your work, or from Extensions you choose.
 
-In Full Core, startup reads `AGENTS.md`, the loader, every entrypoint above except Templates and Archived, and the CLI usage guide required by Skills. Other linked files open when selected, tagged to load, or explicitly required by a loaded rule. Essentials and Custom use the same loading rules for the routes present. Git-ignored Working records stay readable on your machine, but generated `Entries` leave them out.
+In Full Core, startup reads `AGENTS.md`, the loader, Directives, Memory, Crystallized, Emerging and Working Memory, and the saving policy. Guidance, Maps, Patterns, Skills, Templates and Archived Memory open when a task fits their description, and the CLI guide before any CLI command other than `context`. Other linked files open when selected, tagged to load, or explicitly required by a loaded rule. Essentials and Custom use the same loading rules for the routes present. Git-ignored Working records stay readable on your machine, but generated `Entries` leave them out.
 
 Read these files once now, and again after each update. They're short, and they become the instructions your agents are asked to follow.
 

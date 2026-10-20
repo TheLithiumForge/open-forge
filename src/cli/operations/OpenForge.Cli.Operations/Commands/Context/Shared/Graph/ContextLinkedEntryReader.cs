@@ -103,7 +103,8 @@ internal sealed class ContextLinkedEntryReader
             routeState: SourceRouteState.Unrouted,
             route: null,
             metadata: _metadataParser.Parse(document, SourceDocumentForm.Markdown),
-            generatedEntries: SourceGeneratedEntriesParser.Parse(document),
+            generatedEntries: SourceGeneratedEntriesParser.Parse(
+                SourceGeneratedDestinationResolver.IsMarkdown(linkedPath) ? document : reader.ParseDocument(string.Empty)),
             layers: [new ContextGraphLayer
             {
                 Kind = SourceLayerKind.Base,

@@ -16,8 +16,8 @@ Frontmatter: root
   .agents/memory/archived/_archived.md                   would be created
   .agents/memory/crystallized/_crystallized.md           would be created
   .agents/memory/emerging/_emerging.md                   would be created
+  .agents/memory/saving.md                               would be created
   .agents/memory/working/_working.md                     would be created
-  .agents/memory/working/saving.md                       would be created
   .agents/patterns/_patterns.md                          would be created
   .agents/skills/_skills.md                              would be created
   .agents/skills/open-forge-cli/SKILL.md                 would be created

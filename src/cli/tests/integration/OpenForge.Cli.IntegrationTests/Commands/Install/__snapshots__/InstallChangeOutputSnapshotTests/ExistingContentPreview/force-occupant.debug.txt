@@ -36,10 +36,10 @@ Frontmatter: root
     would be created; source: .agents/memory/crystallized/_crystallized.md
   .agents/memory/emerging/_emerging.md
     would be created; source: .agents/memory/emerging/_emerging.md
+  .agents/memory/saving.md
+    would be created; source: .agents/memory/saving.md
   .agents/memory/working/_working.md
     would be created; source: .agents/memory/working/_working.md
-  .agents/memory/working/saving.md
-    would be created; source: .agents/memory/working/saving.md
   .agents/patterns/_patterns.md
     would be created; source: .agents/patterns/_patterns.md
   .agents/skills/_skills.md

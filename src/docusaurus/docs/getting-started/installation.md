@@ -38,15 +38,16 @@ For individual managed-file removals or conflicts, read the [Install reference](
 
 ## Choose the installed routes
 
-The first interactive install offers three choices:
+The first interactive install offers four choices:
 
 | Choice     | What it supplies                                                                                                                  |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Essentials | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with private contents and a shared entrypoint |
 | Full Core  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                |
 | Custom     | One list of every built-in category and Memory state, where you mark each one to add, add and Git-ignore, or leave out            |
+| Minimal    | Only the loader, the guide for people and the managed sections in `AGENTS.md` and `CLAUDE.md`, with an empty `Entries` list    |
 
-Essentials omits Guidance, Maps, Templates, and Archived Memory. You can add them later. Full Core includes the base categories, not optional Extensions or an agent runtime.
+Essentials omits Guidance, Maps, Templates, and Archived Memory. You can add them later. Full Core includes the base categories, not optional Extensions or an agent runtime. Minimal suits an existing repository: link the documents you already have from the loader, then add folders with `--route` when you need them, such as `open-forge install --configure --preset custom --route directives=add`.
 
 Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools. Commit the entrypoint and `.agents/open-forge*.json` files to share the route and its settings. The same sharing policy applies to any Custom route marked `~`. Git-ignore controls ordinary sharing, not local access.
 
@@ -129,7 +130,7 @@ Clone the repository and follow the [local setup guide](/guides/development#link
 
 ## 2. Install the Framework
 
-Full Core supplies 19 Markdown files: `AGENTS.md`, the `CLAUDE.md` bridge, the loader, the Core and Memory entrypoints, the `open-forge-cli` Skill, and its four supporting guides. The guides are `discovery.md`, `routes.md`, `packages.md`, and `common.md` under `.agents/skills/open-forge-cli/references/`, opened when needed. Essentials selects fewer routes, and Custom follows your selection. Records such as Decisions and Checkpoints, and workflow recipes, come from optional [Extensions](#add-extensions-optional) or from you.
+Full Core supplies 21 Markdown files: `AGENTS.md`, the `CLAUDE.md` bridge, the loader, the guide for people in `.agents/README.md`, the Core and Memory entrypoints, the saving policy, the `open-forge-cli` Skill, and its four supporting guides. The guides are `discovery.md`, `routes.md`, `packages.md`, and `common.md` under `.agents/skills/open-forge-cli/references/`, opened when needed. Essentials selects fewer routes, and Custom follows your selection. Records such as Decisions and Checkpoints, and workflow recipes, come from optional [Extensions](#add-extensions-optional) or from you.
 
 The CLI records what it manages so it can update those files later. A manual copy supplies Full Core, which you can adapt by hand.
 

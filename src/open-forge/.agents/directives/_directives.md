@@ -10,8 +10,9 @@ Optional. Rule files here apply to the whole workspace, and subfolders narrow th
 
 ## Axioms
 
-- Put each file's rules under `## Instructions`, with when they apply and their exceptions, so they make sense on their own.
-- Tag each rule file #LoadNow. Limit it with `applyTo`, for example `**/*.cs`. A subfolder of rules needs a #LoadNow catalogue, limited the same way when it matches files.
+- Put each file's rules under a non-empty `## Instructions`. State each obligation with its conditions and meaningful exceptions, so it stays understandable without its examples.
+- Tag each rule file in this folder #LoadNow. Directives are mandatory within their scope. Limit a rule file with `applyTo` when it only matters for some files, for example `**/*.cs`.
+- A subfolder narrows its rules to that area, and its catalogue may stay on demand. Its rules apply once the task selects it. Tag the subfolder's catalogue #LoadNow, limited with `applyTo` when it matches files, when its rules must load automatically for matching work.
 
 ## Entries
 

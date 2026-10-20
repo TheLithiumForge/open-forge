@@ -354,10 +354,10 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 7,
-          "characters": 8835,
-          "bytes": 8835,
-          "tokens": 2209
+          "files": 8,
+          "characters": 15913,
+          "bytes": 15913,
+          "tokens": 3979
         },
         "current": {
           "files": null,
@@ -432,11 +432,11 @@
         "state": "current"
       },
       {
-        "path": ".agents/memory/working/_working.md",
+        "path": ".agents/memory/saving.md",
         "state": "current"
       },
       {
-        "path": ".agents/memory/working/saving.md",
+        "path": ".agents/memory/working/_working.md",
         "state": "current"
       },
       {

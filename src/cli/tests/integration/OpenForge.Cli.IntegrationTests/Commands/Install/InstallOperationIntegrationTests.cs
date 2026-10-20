@@ -131,7 +131,7 @@ public sealed class InstallOperationIntegrationTests
         Assert.Equal(
             "# Open Forge\n\n"
             + "Open Forge provides the working rules and context for this workspace.\n\n"
-            + "Before starting a task, read `.agents/loader.md` and follow its reading steps. If the `open-forge` CLI is installed, `open-forge context --for <file>` gathers the required reads in one call, and the loader says what else to read.\n\n"
+            + "Before starting or resuming a task, read `.agents/loader.md` and follow it throughout the task. If the `open-forge` CLI is available and allowed, `open-forge context --for <file>` gathers the required reads, with `--for` repeated for every working file. The loader says which other files to choose and how to continue with file tools when the CLI is unavailable.\n\n"
             + "**End of Open Forge managed section.**\n",
             agents);
         Assert.Equal(

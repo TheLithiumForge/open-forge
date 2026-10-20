@@ -109,7 +109,7 @@ public sealed class RouteInitCanonicalRestorationIntegrationTests
             Assert.False(workspace.Exists($".agents/skills/open-forge-cli/references/{name}.md")));
 
         var skills = workspace.ReadText(".agents/skills/_skills.md");
-        Assert.Contains("Read `open-forge-cli/SKILL.md` before running `open-forge` commands other than `context`.", skills, StringComparison.Ordinal);
+        Assert.Contains("read it before running `open-forge` commands other than `context`.", skills, StringComparison.Ordinal);
         Assert.DoesNotContain(new MarkdownDocumentParser().Parse(skills).Links,
             link => link.RawDestination.Contains("open-forge-cli/SKILL.md", StringComparison.Ordinal));
 

@@ -6,11 +6,13 @@ open-forge:
 
 # Skills
 
-Optional. Native capability packages, each entered through its `SKILL.md`. Your agent runtime controls how they are activated and run. Nothing else depends on this folder.
+Optional. Native capability packages, each entered through its `SKILL.md`. Nothing else depends on this folder.
 
 ## Axioms
 
-- Read the matching `SKILL.md` before using a capability. Read `open-forge-cli/SKILL.md` before running `open-forge` commands other than `context`.
+- Check these Entries when the work may benefit from a capability.
+- Read the matching `SKILL.md` before using a capability, and follow it for metadata, use, instructions and resource loading. Your agent runtime controls activation, invocation, installation and execution.
+- When `open-forge-cli/SKILL.md` is present, read it before running `open-forge` commands other than `context`. Use the CLI only when it is available. Otherwise read and maintain the files directly.
 
 ## Entries
 

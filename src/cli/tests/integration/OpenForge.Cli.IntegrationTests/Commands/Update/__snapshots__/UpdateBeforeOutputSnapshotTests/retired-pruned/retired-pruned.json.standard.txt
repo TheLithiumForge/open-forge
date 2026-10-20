@@ -69,10 +69,10 @@
         "path": ".agents/memory/emerging/_emerging.md"
       },
       {
-        "path": ".agents/memory/working/_working.md"
+        "path": ".agents/memory/saving.md"
       },
       {
-        "path": ".agents/memory/working/saving.md"
+        "path": ".agents/memory/working/_working.md"
       },
       {
         "path": ".agents/patterns/_patterns.md"

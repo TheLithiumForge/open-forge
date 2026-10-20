@@ -11,9 +11,9 @@ public sealed class PublishedUpdateAdoptionProcessTests
     private const string OwnershipPath = ".agents/open-forge.lock.json";
     private const string LoaderPath = ".agents/loader.md";
     private const string InstalledLoaderSentence =
-        "This file lists the context this workspace has chosen to use.";
+        "This workspace uses the context linked under `Entries`.";
     private const string SyntheticEarlierLoaderSentence =
-        "This file lists the context this synthetic earlier payload has chosen to use.";
+        "This synthetic earlier payload uses the context linked under `Entries`.";
     private const string SkillRoot = ".agents/skills/local-skill";
     private const string SkillPath = SkillRoot + "/SKILL.md";
     private const string ReferencePath = SkillRoot + "/references/guide.md";

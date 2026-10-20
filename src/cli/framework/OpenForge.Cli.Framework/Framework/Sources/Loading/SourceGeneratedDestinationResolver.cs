@@ -62,9 +62,12 @@ internal static class SourceGeneratedDestinationResolver
 
     /// <summary>
     /// Resolves an Entries destination that leaves `.agents/` but stays inside the workspace, such as
-    /// `../docs/architecture.md`. Returns the workspace-relative Markdown path, or null when the
-    /// destination stays inside `.agents/`, escapes the workspace, or is not a Markdown file.
+    /// `../docs/architecture.md` or `../.cursor/rules/testing.mdc`. Returns the workspace-relative path,
+    /// or null when the destination stays inside `.agents/` or escapes the workspace. Any text file may be
+    /// linked. Only Markdown files are read as catalogues.
     /// </summary>
+    internal static bool IsMarkdown(string path) => path.EndsWith(MarkdownExtension, StringComparison.OrdinalIgnoreCase);
+
     internal static string? ResolveLinked(
         string parentPath,
         bool isLoader,
@@ -107,8 +110,7 @@ internal static class SourceGeneratedDestinationResolver
         }
 
         if (segments.Count == 0
-            || segments[0] == SourceLogicalPath.AgentsRoot
-            || !segments[^1].EndsWith(MarkdownExtension, StringComparison.OrdinalIgnoreCase))
+            || segments[0] == SourceLogicalPath.AgentsRoot)
         {
             return null;
         }

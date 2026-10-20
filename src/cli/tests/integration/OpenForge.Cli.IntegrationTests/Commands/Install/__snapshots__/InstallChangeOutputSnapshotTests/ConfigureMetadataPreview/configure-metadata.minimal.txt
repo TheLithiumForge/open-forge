@@ -17,9 +17,9 @@ Frontmatter: root -> scoped
     metadata would move under open-forge:
   .agents/memory/emerging/_emerging.md
     metadata would move under open-forge:
-  .agents/memory/working/_working.md
+  .agents/memory/saving.md
     metadata would move under open-forge:
-  .agents/memory/working/saving.md
+  .agents/memory/working/_working.md
     metadata would move under open-forge:
   .agents/patterns/_patterns.md
     metadata would move under open-forge:

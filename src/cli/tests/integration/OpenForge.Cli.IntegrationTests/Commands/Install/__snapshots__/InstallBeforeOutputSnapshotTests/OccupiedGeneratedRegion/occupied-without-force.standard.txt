@@ -16,8 +16,8 @@ Frontmatter: scoped
   .agents/memory/archived/_archived.md                   created
   .agents/memory/crystallized/_crystallized.md           created
   .agents/memory/emerging/_emerging.md                   created
+  .agents/memory/saving.md                               created
   .agents/memory/working/_working.md                     created
-  .agents/memory/working/saving.md                       created
   .agents/patterns/_patterns.md                          created
   .agents/skills/_skills.md                              created
   .agents/skills/open-forge-cli/SKILL.md                 created

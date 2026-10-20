@@ -212,7 +212,7 @@
       "owner": null
     },
     {
-      "path": ".agents/memory/working/_working.md",
+      "path": ".agents/memory/saving.md",
       "kind": "file",
       "action": "created",
       "outcome": "not-started",
@@ -220,7 +220,7 @@
       "owner": null
     },
     {
-      "path": ".agents/memory/working/saving.md",
+      "path": ".agents/memory/working/_working.md",
       "kind": "file",
       "action": "created",
       "outcome": "not-started",

@@ -41,10 +41,10 @@ Frontmatter: root
     not started; source: .agents/memory/crystallized/_crystallized.md
   .agents/memory/emerging/_emerging.md
     not started; source: .agents/memory/emerging/_emerging.md
+  .agents/memory/saving.md
+    not started; source: .agents/memory/saving.md
   .agents/memory/working/_working.md
     not started; source: .agents/memory/working/_working.md
-  .agents/memory/working/saving.md
-    not started; source: .agents/memory/working/saving.md
   .agents/patterns/_patterns.md
     not started; source: .agents/patterns/_patterns.md
   .agents/skills/_skills.md

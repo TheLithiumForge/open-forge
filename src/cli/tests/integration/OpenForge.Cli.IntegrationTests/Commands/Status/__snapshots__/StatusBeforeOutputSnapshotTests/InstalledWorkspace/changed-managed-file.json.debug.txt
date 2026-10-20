@@ -46,12 +46,12 @@
   "effects": [],
   "counts": {
     "routedFiles": 20,
-    "startupFiles": 7,
-    "startupTokens": 2209,
-    "mayLoadAgainFiles": 0,
-    "mayLoadAgainTokens": 0,
-    "allTokens": 19072,
-    "startupShare": 11.581417298062554072831187898,
+    "startupFiles": 8,
+    "startupTokens": 3979,
+    "mayLoadAgainFiles": 1,
+    "mayLoadAgainTokens": 249,
+    "allTokens": 22944,
+    "startupShare": 17.338955718270571827057182706,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
@@ -78,16 +78,16 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 7,
-          "characters": 8835,
-          "bytes": 8835,
-          "tokens": 2209
+          "files": 8,
+          "characters": 15913,
+          "bytes": 15913,
+          "tokens": 3979
         },
         "current": {
-          "files": 7,
-          "characters": 8835,
-          "bytes": 8835,
-          "tokens": 2209
+          "files": 8,
+          "characters": 15913,
+          "bytes": 15913,
+          "tokens": 3979
         },
         "difference": {
           "files": 0,
@@ -96,20 +96,31 @@
           "tokens": 0
         },
         "mayLoadAgain": {
-          "files": 0,
-          "characters": 0,
-          "bytes": 0,
-          "tokens": 0
+          "files": 1,
+          "characters": 996,
+          "bytes": 996,
+          "tokens": 249
         }
       },
       "allRouted": {
         "files": 20,
-        "characters": 76285,
-        "bytes": 76286,
-        "tokens": 19072
+        "characters": 91775,
+        "bytes": 91776,
+        "tokens": 22944
       },
-      "startupShare": 11.581417298062554072831187898,
-      "mayLoadAgainSources": []
+      "startupShare": 17.338955718270571827057182706,
+      "mayLoadAgainSources": [
+        {
+          "sourceId": "memory/emerging",
+          "bytes": 996,
+          "layers": [
+            {
+              "path": ".agents/memory/emerging/_emerging.md",
+              "bytes": 996
+            }
+          ]
+        }
+      ]
     },
     "structure": {
       "rootCategories": {
@@ -156,11 +167,11 @@
         "state": "current"
       },
       {
-        "path": ".agents/memory/working/_working.md",
+        "path": ".agents/memory/saving.md",
         "state": "current"
       },
       {
-        "path": ".agents/memory/working/saving.md",
+        "path": ".agents/memory/working/_working.md",
         "state": "current"
       },
       {

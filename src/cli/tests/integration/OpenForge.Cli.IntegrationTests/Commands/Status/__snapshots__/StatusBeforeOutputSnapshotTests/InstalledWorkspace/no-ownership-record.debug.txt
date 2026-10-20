@@ -10,11 +10,14 @@ Workspace: <workspace>
          No ownership record exists, so Libraries cannot be listed from it.
          cause: The ownership lock is absent; no Library registrations are recorded.
 Startup context
-  Shipped by this CLI:  7 files, about 2.2k tokens
-  This workspace:       7 files, about 2.2k tokens
-All routed files: 20 files, about 19.1k tokens (startup is 12%)
+  Shipped by this CLI:   8 files, about 4.0k tokens
+  This workspace:        8 files, about 4.0k tokens
+  May load again later:  1 file, about 0.2k tokens
+All routed files: 20 files, about 22.9k tokens (startup is 17%)
 Routes: 7 root categories, 12 Entries sections current
 Framework files: unavailable
+Largest may-load-again sources
+  memory/emerging  996 B
 Entries sections
   .agents/directives/_directives.md             current
   .agents/guidance/_guidance.md                 current
@@ -29,4 +32,4 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-20 routed files, 7 startup files, 2209 startup tokens, 19063 all routed tokens, 11.586733288743754180273045599 startup share, 7 root categories, 12 current Entries sections, 3 infos.
+20 routed files, 8 startup files, 3979 startup tokens, 1 may-load-again files, 249 may-load-again tokens, 22935 all routed tokens, 17.345570682682769971986352885 startup share, 7 root categories, 12 current Entries sections, 3 infos.

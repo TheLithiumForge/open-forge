@@ -1,10 +1,11 @@
 Open Forge is installed and current.
 Workspace: <workspace>
 Startup context
-  Shipped by this CLI:  7 files, about 2.2k tokens
-  This workspace:       7 files, about 2.3k tokens
-Compared with shipped: about 0.1k more tokens
-All routed files: 60 files, about 36.3k tokens (startup is 6%)
+  Shipped by this CLI:   8 files, about 4.0k tokens
+  This workspace:        8 files, about 4.1k tokens
+  May load again later:  1 file, about 0.3k tokens
+Compared with shipped: about 0.2k more tokens
+All routed files: 60 files, about 40.1k tokens (startup is 10%)
 Routes: 7 root categories, 26 Entries sections current
 Framework files: 21 current
 Extensions: development 0.4.0 (4 files current)
@@ -13,6 +14,8 @@ Extensions: planning 0.4.0 (17 files current)
 Extensions: project-documents 0.4.0 (10 files current)
 Extensions: scenarios 0.4.0 (5 files current)
 Extensions: workflows 0.4.0 (4 files current)
+Largest may-load-again sources
+  memory/emerging  1.3 KiB
 Framework files
   .agents/README.md                                      current
   .agents/directives/_directives.md                      current
@@ -23,8 +26,8 @@ Framework files
   .agents/memory/archived/_archived.md                   current
   .agents/memory/crystallized/_crystallized.md           current
   .agents/memory/emerging/_emerging.md                   current
+  .agents/memory/saving.md                               current
   .agents/memory/working/_working.md                     current
-  .agents/memory/working/saving.md                       current
   .agents/patterns/_patterns.md                          current
   .agents/skills/_skills.md                              current
   .agents/skills/open-forge-cli/SKILL.md                 current
@@ -144,4 +147,4 @@ Extension workflows files
   .agents/templates/workflows/_workflows.md              current
   .agents/templates/workflows/workflow.md                current
 Recovery data: none
-60 routed files, 7 startup files, 2311 startup tokens, 36264 all routed tokens, 6.3726672963042114479135788001 startup share, 7 root categories, 26 current Entries sections, 21 current Framework files, 6 installed Extensions.
+60 routed files, 8 startup files, 4146 startup tokens, 1 may-load-again files, 322 may-load-again tokens, 40130 all routed tokens, 10.33030563550505239287805729 startup share, 7 root categories, 26 current Entries sections, 21 current Framework files, 6 installed Extensions.

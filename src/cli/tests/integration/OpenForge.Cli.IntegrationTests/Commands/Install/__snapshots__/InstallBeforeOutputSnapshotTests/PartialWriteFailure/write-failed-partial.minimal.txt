@@ -14,8 +14,8 @@ Frontmatter: root
   .agents/memory/archived/_archived.md                   not started
   .agents/memory/crystallized/_crystallized.md           not started
   .agents/memory/emerging/_emerging.md                   not started
+  .agents/memory/saving.md                               not started
   .agents/memory/working/_working.md                     not started
-  .agents/memory/working/saving.md                       not started
   .agents/patterns/_patterns.md                          not started
   .agents/skills/_skills.md                              not started
   .agents/skills/open-forge-cli/SKILL.md                 not started

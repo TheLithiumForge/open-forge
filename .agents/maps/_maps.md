@@ -6,11 +6,15 @@ open-forge:
 
 # Maps
 
-Optional. Curated pointers to local and external sources, saying what each holds and when to use it. Each destination keeps its own detail and authority. Nothing else depends on this folder.
+Optional. Curated pointers to local and external sources. Each destination keeps its own detail and authority. Nothing else depends on this folder.
 
 ## Axioms
 
-- Link each source relative to the Map, or by URL, and say when to read it.
+- Check these Entries when the work needs an important local or external source.
+- Each Map links to one or more destinations and says what they contain and when to use them. Local links are relative to the Map. External sources use their normal URL.
+- Keep Maps broad. Prefer modules, projects, repositories, systems or scopes over members and functions unless finer routing clearly helps.
+- Choose Map filenames, grouping and nesting depth to suit the workspace.
+- Maps do not replace Memory or the destination's current information.
 
 ## Entries
 

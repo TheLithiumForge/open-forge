@@ -81,7 +81,7 @@ The [Concepts](concepts/index.md) section covers each part in depth.
 
 ## What you actually install
 
-Full Core supplies 19 Markdown files, including four supporting CLI guides that are opened when needed. Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory. Custom follows your selection.
+Full Core supplies 21 Markdown files, including a guide for people, the saving policy, and four supporting CLI guides that are opened when needed. Essentials includes Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory. Custom follows your selection.
 
 Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools. [Installation](getting-started/installation.md#choose-the-installed-routes) covers the exact choices.
 
@@ -92,12 +92,13 @@ Essentials keeps new Working records out of ordinary Git commits and leaves `_wo
 AGENTS.md                         <- tells the agent to read the loader first
 CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
 .agents/
-  loader.md                       <- routing and loading rules, and the root routes
+  loader.md                       <- the reading steps and the list of what is on
+  README.md                       <- how to customize this setup, for people
   directives/_directives.md       <- required behavior
   guidance/_guidance.md           <- advice for recurring choices
   patterns/_patterns.md           <- reusable shapes for code, files, and documents
   skills/_skills.md               <- native SKILL.md capabilities
-  skills/open-forge-cli/SKILL.md  <- how to use the CLI, read at startup
+  skills/open-forge-cli/SKILL.md  <- how to use the CLI, read before CLI commands
   skills/open-forge-cli/references/
     discovery.md                  <- reading and discovery
     routes.md                     <- route maintenance
@@ -107,6 +108,7 @@ CLAUDE.md                         <- bridge for harnesses that read CLAUDE.md
   maps/_maps.md                   <- pointers to important local and external sources
   memory/
     _memory.md                    <- what is worth remembering
+    saving.md                     <- save progress before pausing, needs Working
     working/_working.md           <- temporary state for active work
     emerging/_emerging.md         <- useful, but not settled yet
     crystallized/_crystallized.md <- accepted knowledge that stays current

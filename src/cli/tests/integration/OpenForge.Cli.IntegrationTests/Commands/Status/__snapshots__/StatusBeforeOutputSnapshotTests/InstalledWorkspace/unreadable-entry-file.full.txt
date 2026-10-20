@@ -43,7 +43,7 @@ Workspace: <workspace>
          Inspect the reported operational facts before rerunning Status.
          cause: The current startup context measurement is unavailable.
 Startup context
-  Shipped by this CLI:   7 files, about 2.2k tokens
+  Shipped by this CLI:   8 files, about 4.0k tokens
   This workspace:        unavailable files, unavailable tokens
   May load again later:  unavailable files, unavailable tokens
 All routed files: unavailable files, unavailable tokens (startup is unavailable)
@@ -59,8 +59,8 @@ Framework files
   .agents/memory/archived/_archived.md                   current
   .agents/memory/crystallized/_crystallized.md           current
   .agents/memory/emerging/_emerging.md                   current
+  .agents/memory/saving.md                               current
   .agents/memory/working/_working.md                     current
-  .agents/memory/working/saving.md                       current
   .agents/patterns/_patterns.md                          current
   .agents/skills/_skills.md                              current
   .agents/skills/open-forge-cli/SKILL.md                 current

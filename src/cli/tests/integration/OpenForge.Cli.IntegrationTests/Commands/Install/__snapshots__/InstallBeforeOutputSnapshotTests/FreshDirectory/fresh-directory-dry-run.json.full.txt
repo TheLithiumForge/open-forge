@@ -245,7 +245,7 @@
       "after": null
     },
     {
-      "path": ".agents/memory/working/_working.md",
+      "path": ".agents/memory/saving.md",
       "kind": "file",
       "action": "created",
       "outcome": "planned",
@@ -255,7 +255,7 @@
       "after": null
     },
     {
-      "path": ".agents/memory/working/saving.md",
+      "path": ".agents/memory/working/_working.md",
       "kind": "file",
       "action": "created",
       "outcome": "planned",
@@ -483,12 +483,12 @@
         "sourceAssetPath": ".agents/memory/emerging/_emerging.md"
       },
       {
-        "path": ".agents/memory/working/_working.md",
-        "sourceAssetPath": ".agents/memory/working/_working.md"
+        "path": ".agents/memory/saving.md",
+        "sourceAssetPath": ".agents/memory/saving.md"
       },
       {
-        "path": ".agents/memory/working/saving.md",
-        "sourceAssetPath": ".agents/memory/working/saving.md"
+        "path": ".agents/memory/working/_working.md",
+        "sourceAssetPath": ".agents/memory/working/_working.md"
       },
       {
         "path": ".agents/patterns/_patterns.md",

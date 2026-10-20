@@ -1,33 +1,41 @@
 # Open Forge Loader
 
-This file lists the context this workspace has chosen to use. It adds to the project's other instructions and works with plain files. The `Entries` below are the switch: what is listed is on, and anything not listed is off.
+This workspace uses the context linked under `Entries`. Listing a file makes it available to Open Forge. Loading tags and task relevance decide when to read it. Unlisted files remain background notes. Existing project requirements and instructions loaded by your agent tool still apply. Everything works with plain files, and the CLI only makes it faster.
 
 ## Axioms
 
 ### Read before you work
 
-1. At the start or resume of a task, and after your context is restored, list your working files. These are the files you will investigate, review, create, change, rename or delete, including planned ones. A file you only read for background is not a working file.
-2. If the `open-forge` CLI is available and allowed, run `open-forge context` with `--for <file>` for each known working file, and read what it returns. That covers steps 3 and 4. Still do step 5 yourself. If the command is missing, fails or reports a link it cannot follow, do steps 3 to 5 with your own file tools.
-3. Read every entry below tagged #LoadNow or #KeepInMind, in listed order, then do the same inside each catalogue you read. These are required reads. Never skip one because its description looks unrelated. Read each file once per pass.
-4. Read and apply an entry with `applies to` patterns only when the same working file matches its patterns and those of every conditioned catalogue above it. Patterns are case-sensitive globs from the workspace root, such as `**/*.cs` or `docs/**`. While your working files are unknown, treat these entries as pending and resolve them before you touch a matching file.
-5. Open other entries when their description fits the task, and read any file that something you read requires. Before applying a file you reached through search, read the listed catalogues above it. Files under an entry that is not listed are background only.
+1. At task start or resume, and after context restoration, identify your working files. Include files you will investigate, review, create, change, rename or delete, including planned files and both paths of a rename. Background reading does not make a file a working file.
+2. If the `open-forge` CLI is available and allowed, run `open-forge context` with `--for <file>` repeated for every known working file. Read its output. This covers the required reads and conditions in steps 3 and 4. Always do step 5 yourself. If the command is missing, fails or cannot follow a link, complete steps 3 to 5 with your own file tools.
+3. Read entries tagged #LoadNow or #KeepInMind in listed order. Check step 4 before opening a conditioned entry. A catalogue lists a folder's context under `Entries`. In each catalogue you read, repeat this procedure for its Entries. Never skip a required read because its description seems unrelated. Read each file once per pass.
+4. Conditions filter reading and application. Within one `applies to` list, any pattern may match. One working file must match a pattern at every conditioned catalogue above the entry and at the entry itself. Patterns are case-sensitive globs from the workspace root. For example, `*.py` matches root files, `**/*.py` matches any depth, and `docs/**` matches a folder's contents. A leading `!` is literal. Conditions never select an unopened branch or grant edit permission. If working files are unknown, report required conditioned entries as pending and resolve them before matching work.
+5. Check the descriptions of other listed entries and open those that fit the task. Follow explicit required-read links. Before applying a listed source found through search or a direct link, read the catalogues above it first. Keep separately selected branches separate.
 
-Start again from step 1 when your working files or goal change. Reread #KeepInMind entries before you hand off or finish.
+Restart when the goal or working files change. Reread #KeepInMind entries before handoff or finish, only in active branches. During work, recheck them only when they may have changed. Use catalogues for navigation. Do not open ordinary file bodies just to discover routes or tagged files.
 
 ### Use what you read
 
-- Follow the rules you read within their stated scope: the `## Instructions` of rule files and the `## Axioms` of catalogues, which cover everything a catalogue lists. Narrower rules add to broader ones. When two rules conflict, say so instead of picking one.
-- The user's direction comes first, within platform and safety limits. Take routine, reversible steps inside the request without asking again, and ask before a choice that would significantly change the result, scope, risk or cost.
-- Reading, linking, saving or tagging a file does not make its content accepted, and gives no permission to edit it. Accepted means the user agreed, or a source the user named says so.
+- Follow the `## Axioms` of loaded catalogues and the `## Instructions` of rule files within their stated scope. Only this loader and recognized loaded catalogues define Axioms. Narrower rules add to broader rules and never outrank them. Report conflicts or instructions you cannot follow, and explain why.
+- Follow user direction within platform and safety limits. Take routine, reversible steps within the request without asking again. State assumptions that affect the result. Ask before an unresolved choice could significantly change the result, scope, risk, cost, external effects or ability to undo the work.
+- Match explanation and planning to the request. Unless deeper analysis is requested, begin with the current understanding, one recommendation, and at most one important open choice.
+- Use the fewest words that preserve meaning, readability, and logical progression in communication and authored content. Remove filler and repetition. Keep the context, conditions, and exceptions needed to understand and apply the result.
+- Reading, linking, saving or tagging content does not make it accepted or permit editing it. Acceptance comes from the user or an authority they declared for that question. Use declared external authorities for their assigned facts. #Contextual marks unaccepted context and #CurrentTruth marks accepted current state within its scope. Tags, repetition and agent confidence do not establish acceptance. Evidence can support a claim without establishing acceptance.
+- Let each source answer one clear question. Link to related sources instead of repeating their detail. A link does not change either source's authority, scope, loading rules or lifecycle.
+- Selected non-binding material may specialize broader material of the same kind within its accepted scope.
+- Investigate conflicting accepted sources before editing either. When accepted direction changes current state, update its defining source and preserve useful prior context.
+- #Evergreen means material must stay aligned with accepted current state. It creates no authority or loading behavior. Update affected #Evergreen sources you may edit before work depends on them and no later than closeout. Batch related updates when safe.
+- Keep each source aligned with what it represents now. Preserve useful prior context in an enabled Memory route or another existing project source. Report needed updates that are blocked or not authorized.
 
-### Change what is on
+### Change what is enabled
 
-- Add a line under `Entries` to turn something on. It can point to a catalogue or straight to a file anywhere in the workspace, such as `../docs/architecture.md`. A linked document needs no move and no new frontmatter, because its entry line carries the description, tags and conditions.
-- Remove a line to turn that part off. Its files stay as plain notes, and reading them for background does not bring back their rules. Turning a part off does not cancel accepted project requirements or instructions the host loads on its own. If another listed part depends on it, say so first. Nothing that is not listed creates a duty, and nothing should bring it back unless the user asks. Lines inside other catalogues follow the files in their folder, so to turn one of those off, delete or move its file. When the CLI manages updates, record the removal too. The CLI Skill explains how.
-- A listed file that is missing is an error to report. An empty `Entries` list is valid.
-- Tag an entry #LoadNow when it must always be read, and #KeepInMind when it must also be reread before a handoff. A required file inside a catalogue needs #LoadNow on that catalogue too. Every other tag is a search label.
-- New files inside `.agents/` start with frontmatter: `description`, `tags`, and optional `applyTo`, in the same form as the files around them. A folder's catalogue is named `_{folder-name}.md`. `open-forge index` keeps Entries in step with them.
-- To change a shipped file and keep updates, write your change in `{name}.overwrite.md` beside it. It is read right after its base and wins where they differ, for that file only.
+- Add a line under `Entries` to enable a file or catalogue. Links are relative to this file and may reach any text file in the workspace, such as `../docs/architecture.md` or `../.cursor/rules/testing.mdc`. Existing documents need no move or new frontmatter, because their entry supplies the description, tags and conditions. A linked Markdown catalogue, such as `../docs/_docs.md`, has its Entries followed too. A link without a loading tag is opened when its description fits the task.
+- Remove a loader entry to disable that branch while keeping its files as notes. Background reading does not reactivate its rules. Disabling it does not cancel accepted project requirements or instructions loaded independently by your agent tool. Removed choices stay removed until the user requests restoration.
+- Before disabling a part, remove or replace enabled dependents that need it, and report unresolved dependencies. Inside other catalogues, Entries follow the folder's files, so remove or move a file to keep its entry out. Record managed removals in the CLI's exclusions before updating.
+- Report missing listed files or required dependencies as errors. An empty `Entries` section is valid.
+- #LoadNow requires reading whenever its parent loads. #KeepInMind also requires the refreshes above. Both act only through catalogues you have read, so neither opens a branch nobody selected. Keep required catalogue chains unbroken. Use loading tags only when those reads are needed, and narrow specialized content before making it mandatory. Only these two tags control loading.
+- Before authoring workspace context, catalogues or metadata, read [the authoring instructions](README.md#instructions). New routed files use `description`, `tags` and optional `applyTo`. Native `SKILL.md` keeps its native metadata.
+- To keep local changes through updates, place them in `{name}.overwrite.md` beside the base file. Read it immediately after the base, with the same role, scope and loading conditions. It wins only for corresponding content in that source. Do not index or select it separately.
 
 ## Entries
 

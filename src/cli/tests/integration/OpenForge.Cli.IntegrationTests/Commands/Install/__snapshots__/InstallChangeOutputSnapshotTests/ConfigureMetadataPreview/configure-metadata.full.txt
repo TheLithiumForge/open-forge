@@ -21,12 +21,11 @@ Frontmatter: root -> scoped
   .agents/memory/emerging/_emerging.md
     metadata would move under open-forge:; source:
     .agents/memory/emerging/_emerging.md
+  .agents/memory/saving.md
+    metadata would move under open-forge:; source: .agents/memory/saving.md
   .agents/memory/working/_working.md
     metadata would move under open-forge:; source:
     .agents/memory/working/_working.md
-  .agents/memory/working/saving.md
-    metadata would move under open-forge:; source:
-    .agents/memory/working/saving.md
   .agents/patterns/_patterns.md
     metadata would move under open-forge:; source: .agents/patterns/_patterns.md
   .agents/skills/_skills.md

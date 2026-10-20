@@ -30,6 +30,9 @@ internal static class InstallConfigurationSettings
             : PlannedFileChange.Replace(snapshot.Expectation, seeded);
     }
 
+    private const string WorkingRoute = "memory/working";
+    private const string SavingPolicyPath = ".agents/memory/saving.md";
+
     private static PlannedFileChange? PlanChoices(WorkspaceSettingsRead settings, InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
     {
         if (configuration is null)
@@ -52,10 +55,18 @@ internal static class InstallConfigurationSettings
         // Every Memory state needs the Memory catalogue, and the catalogue is only useful with a state.
         var removedCategories = removed.Where(row => !row.Id.Contains('/')).Select(row => row.Id).ToList();
         if (!includesMemory) removedCategories.Add("memory");
+        // The saving policy sits in the shared Memory catalogue so it stays in Git while Working records are
+        // private. It only has a job when Working Memory is installed. Adding Working back brings the policy
+        // with it, while a policy the user removed on its own stays removed.
+        var removedFiles = new List<string>();
+        var workingWasRemoved = WorkspaceRemovals.IsPathRemoved(InstallConfigurationChoices.Entrypoint(WorkingRoute), settings.Document);
+        if (!included.Any(row => row.Id == WorkingRoute)) removedFiles.Add(SavingPolicyPath);
+        else if (workingWasRemoved) files.Add(SavingPolicyPath);
         var additions = new WorkspaceRemovalSelection
         {
             Categories = removedCategories.ToImmutableArray(),
             Directories = removed.Where(row => row.Id.Contains('/')).Select(row => InstallConfigurationChoices.Directory(row.Id)).ToImmutableArray(),
+            Files = includesMemory ? removedFiles.ToImmutableArray() : [],
         };
         var clear = new WorkspaceRemovalSelection
         {
