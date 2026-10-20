@@ -108,7 +108,7 @@ These were recorded as later work. They are not automatically beta blockers.
       C17-07 remains deferred in Task 45. Supply an example where removing a link
       cannot preserve authored meaning, then agree on the expected refusal or edit.
       Do not invent an unsafe case merely to fill coverage.
-- [ ] **Decide whether links to existing folders are valid.** Selected as [Task 83](task83-link-scope-and-folder-links.md). Recorded on
+- [ ] **Decide whether links to existing folders are valid.** Selected as [Task 83](../../../archived/cli-development/tasks/task83-link-scope-and-folder-links.md). Recorded on
       2026-10-15 during Task 82. Doctor reports a link such as `../../src/cli/`
       as `reference.destination-malformed`, "not a link Open Forge can check",
       and Repair lists the same finding as a "Broken link". This repository's

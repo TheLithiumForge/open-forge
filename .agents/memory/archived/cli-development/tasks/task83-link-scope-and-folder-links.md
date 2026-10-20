@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 83 to let a workspace ignore links from and to chosen paths, starting with the Memory archive, and to accept links to existing folders
-  tags: [Memory, Working, Task, CLI, Doctor, Repair, Links, Settings, Contextual, Active]
+  description: "Historical record: ignoreLinksFrom and ignoreLinksTo settings, valid folder links and forgiving link encodings agreed by Index, Doctor and Repair, released in beta15"
+  tags: [Memory, Task, CLI, Doctor, Repair, Links, Settings, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 83: Link scope and folder links
@@ -19,7 +19,7 @@ Install adds `.agents/memory/archived` to `ignoreLinksFrom` in new workspaces th
 
 The maintainer on 2026-10-16, about the archive: “Maybe we should not care about it's outward links. But if something from outside is referencing something in the arxhive we can care about that.” About folder links: “Those should obviously be valid links, like, they go somewhere to a usable path.” On the proposal: “Let's add boths an ignorelinksfrom and an ingnorelinksto. The rest is xorrect. Proceed.”
 
-Status: Task 83 “Link scope and folder links” (phase 3/3): implemented and reviewed three times with every finding fixed. Final gates and the beta15 release remain.
+Status: Task 83 “Link scope and folder links” (phase 3/3): released in beta15.
 
 ## Accepted behavior
 

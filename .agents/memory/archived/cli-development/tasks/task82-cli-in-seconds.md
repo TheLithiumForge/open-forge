@@ -1,7 +1,7 @@
 ---
 open-forge:
-  description: Open Task 82 to make every CLI operation finish in seconds on large workspaces, starting with Repair and Doctor diagnosis on this repository
-  tags: [Memory, Working, Task, CLI, Performance, Repair, Doctor, Index, Contextual, Active]
+  description: "Historical record: every CLI operation finishes in seconds on a large workspace, through one read session, fresh-fact caches and ignoring the archive's outward links, released in beta14 and beta15"
+  tags: [Memory, Task, CLI, Performance, Repair, Doctor, Index, Contextual, Complete, Archived, Historical]
 ---
 
 # Task 82: CLI operations finish in seconds
@@ -12,7 +12,7 @@ Every CLI operation finishes in seconds on a large workspace such as this reposi
 
 The maintainer agreed on 2026-10-15: “our cli operations should take seconds not tens of seconds.”
 
-Status: Task 82 “CLI operations finish in seconds” (phase 4/4): complete. With the archive's outward links ignored through [Task 83](task83-link-scope-and-folder-links.md), Repair takes about three seconds here and Doctor about four, and it ships with Task 83 in beta15.
+Status: Task 82 “CLI operations finish in seconds” (phase 4/4): complete. Three speed rounds shipped in beta14, and beta15 ignores the archive's outward links, bringing Repair here to about three seconds and Doctor to about four.
 
 ## Starting point
 
@@ -69,8 +69,12 @@ An earlier pass with less load reached Repair 5.1, Index apply 4.6 and Doctor 3.
 
 ## Archived links, 2026-10-15
 
-Doctor in a clone of this repository reports 891 link findings, 864 of them in archived records. Across the workspace they are 737 links to missing files, 108 longer paths to the right file, which Repair rewrites automatically, 22 folder links it cannot check, 12 missing headings, 8 renamed targets and 4 absolute links. The folder links are recorded in the [beta follow-up backlog](beta-follow-up-backlog.md). On 2026-10-16 the maintainer chose to stop checking links written inside the archive while still checking links into it. [Task 83](task83-link-scope-and-folder-links.md) adds that setting.
+Doctor in a clone of this repository reports 891 link findings, 864 of them in archived records. Across the workspace they are 737 links to missing files, 108 longer paths to the right file, which Repair rewrites automatically, 22 folder links it cannot check, 12 missing headings, 8 renamed targets and 4 absolute links. The folder links are recorded in the [beta follow-up backlog](../../../working/cli-development/tasks/beta-follow-up-backlog.md). On 2026-10-16 the maintainer chose to stop checking links written inside the archive while still checking links into it. [Task 83](task83-link-scope-and-folder-links.md) adds that setting.
 
 ## Final measurement, 2026-10-16
 
 With `.agents/memory/archived` in this repository's `ignoreLinksFrom`, Doctor ignores 6,406 archived links and checks 5,755 valid ones. On the Task 83 build, `repair --automatic --dry-run` took 2.8 to 3.0 seconds here, `index --dry-run` 3.4 to 5.3 and Doctor in a complete clone 3.1 to 7.2, typically about 4, while another project loaded the host. Two safe same-target repairs outside the archive were applied, and the three remaining findings point to Extension files this source repository does not install.
+
+## Beta 14 release, 2026-10-15
+
+[beta14 release](https://github.com/TheLithiumForge/open-forge/releases/tag/v0.9.0-beta.14) is published from `549a30087` after one squash of Tasks 81 and 82 into develop. [Release 38799175797](https://github.com/TheLithiumForge/open-forge/actions/runs/38799175797) reused the passing exact-commit [Build 38787579165](https://github.com/TheLithiumForge/open-forge/actions/runs/38787579165) and published all six platforms to GitHub and npm (`latest` and `beta`). The first [Build 38773787214](https://github.com/TheLithiumForge/open-forge/actions/runs/38773787214) failed on two platforms. A linux-arm64 journey's read-only snapshot raced the lock of Git's detached automatic maintenance, and the osx-x64 public suite passed its 20-minute stop without any long-running test. `18252f39c` turns automatic maintenance off in journey Git calls, stops a suite after 30 minutes and leaves a notice with each passing suite's time. `549a30087` returns the Task 81 record that commit had moved early. On the passing Build the managed public suite took 6 to 18 minutes per runner. npm served the last three platform packages about three minutes after the publish step, and `smoke:public` passed once all six resolved. Main is fast-forwarded to develop, which publishes the documentation site. The [beta13 receipt](task79-forgiving-maintenance.md#beta-13-release-2026-10-14) stays with Task 79.
