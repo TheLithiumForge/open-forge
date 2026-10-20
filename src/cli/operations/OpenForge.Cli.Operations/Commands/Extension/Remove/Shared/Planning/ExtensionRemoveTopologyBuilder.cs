@@ -125,7 +125,13 @@ internal sealed class ExtensionRemoveTopologyBuilder
             formation,
             regions,
             metadata,
-            sharing.Sharing));
+            sharing.Sharing)
+        {
+            PreserveLoaderMembership = true,
+            TurnedOnLoaderRoots = LoaderMembership.ReadTurnedOn(
+                formation.Topology.LoaderRootPaths,
+                path => catalogue.FindByPath(path) is not null),
+        });
         var unavailable = projection.Regions.FirstOrDefault(region =>
             region.State != GeneratedNavigationRegionState.Available);
         if (unavailable is not null)

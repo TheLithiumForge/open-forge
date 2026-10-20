@@ -6,7 +6,7 @@ internal static class InstallInputText
     internal static string InvalidFrontmatter(string value) => $"Invalid --frontmatter value: {value}. Use root or scoped.";
 
     // @OpenForgeText install.wording.invalid-preset-value
-    internal static string InvalidPreset(string value) => $"Invalid --preset value: {value}. Use essentials, full-core, or custom.";
+    internal static string InvalidPreset(string value) => $"Invalid --preset value: {value}. Use minimal, essentials, full-core, or custom.";
 
     // @OpenForgeText install.wording.invalid-route-value
     internal static string InvalidRoute(string value) => $"Invalid --route value: {value}.";

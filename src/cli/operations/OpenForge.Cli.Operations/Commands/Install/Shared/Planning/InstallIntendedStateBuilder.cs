@@ -25,11 +25,21 @@ using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Commands.Install.Shared.Planning;
 
 internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalPathResolver)
 {
+    // The Loader rewritten from the payload keeps the Entries list it has on disk. A fresh workspace has none.
+    private async ValueTask<string?> ReadObservedLoaderAsync(CliWorkspace workspace, CancellationToken cancellationToken)
+    {
+        var read = await _targetReader.ReadAsync(workspace, FrameworkPayloadAsset.LoaderPath, cancellationToken).ConfigureAwait(false);
+        return read.State == InstallTargetReadState.File && read.Snapshot is { } snapshot
+            ? StrictUtf8.GetString(snapshot.Bytes.AsSpan())
+            : null;
+    }
+
     private static readonly UTF8Encoding StrictUtf8 = new(
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
@@ -410,10 +420,18 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                 .DistinctBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
                 .OrderBy(source => source.Identity.CanonicalBasePath, StringComparer.Ordinal)
                 .ToArray();
+            var observedLoader = await ReadObservedLoaderAsync(request.Workspace, cancellationToken).ConfigureAwait(false);
             var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
                 formation,
                 ReadRegionInputs(regionSources, documents, parsedDocuments),
-                metadata));
+                metadata)
+            {
+                PreserveLoaderMembership = observedLoader is not null,
+                ObservedLoaderSource = observedLoader,
+                TurnedOnLoaderRoots = LoaderMembership.ReadTurnedOn(
+                    formation.Topology.LoaderRootPaths,
+                    path => catalogue.FindByPath(path) is not null),
+            });
             if (projection.Regions.Any(region =>
                     region.State != GeneratedNavigationRegionState.Available))
             {

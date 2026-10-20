@@ -5,8 +5,8 @@ Usage:
 
 Examples:
   open-forge install --preset essentials --dry-run
+  open-forge install --preset minimal --dry-run
   open-forge install
-  open-forge install --configure --preset essentials --dry-run
 
 Behavior:
   Install adds selected bundled defaults and Open Forge sections to AGENTS.md

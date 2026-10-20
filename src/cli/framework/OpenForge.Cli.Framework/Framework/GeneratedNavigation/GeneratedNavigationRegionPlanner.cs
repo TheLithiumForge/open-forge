@@ -53,7 +53,18 @@ internal sealed class GeneratedNavigationRegionPlanner
                 entryProjection.ReadCause());
         }
 
-        return BuildRegion(input.Source, document.ReadValue(), entryProjection.ReadValue());
+        return BuildRegion(input.Source, document.ReadValue(), entryProjection.ReadValue(), ReadObservedLoader(request, input.Source));
+    }
+
+    // When an operation rewrites the Loader from the payload, the user's authored links live in the
+    // Loader as it is on disk, so they are carried over from there.
+    private static MarkdownDocumentFacts? ReadObservedLoader(
+        GeneratedNavigationProjectionRequest request,
+        SourceLogicalSource source)
+    {
+        return source.Base.Form == SourceDocumentForm.Loader && request.ObservedLoaderSource is { } observed
+            ? new MarkdownDocumentParser().Parse(observed.Replace("\r\n", "\n", StringComparison.Ordinal))
+            : null;
     }
 
     internal GeneratedNavigationRegion PlanProjectedEntries(
@@ -69,7 +80,7 @@ internal sealed class GeneratedNavigationRegionPlanner
                 document.ReadCause());
         }
 
-        return BuildRegion(input.Source, document.ReadValue(), entries);
+        return BuildRegion(input.Source, document.ReadValue(), entries, observedLoader: null);
     }
 
     private static GeneratedNavigationProjectionStage<MarkdownDocumentFacts> ReadRegionDocument(
@@ -113,14 +124,16 @@ internal sealed class GeneratedNavigationRegionPlanner
     private static GeneratedNavigationRegion BuildRegion(
         SourceLogicalSource source,
         MarkdownDocumentFacts document,
-        IReadOnlyList<GeneratedNavigationEntry> entries)
+        IReadOnlyList<GeneratedNavigationEntry> entries,
+        MarkdownDocumentFacts? observedLoader)
     {
         try
         {
-            var expectedBody = BuildExpectedBlock(document, entries);
+            var linkSource = observedLoader ?? document;
+            var authoredLinks = linkSource.GeneratedRegion.EntriesBlock is { } linkBlock ? ReadAuthoredLinks(linkSource, linkBlock) : [];
+            var expectedBody = BuildExpectedBlock(document, entries, authoredLinks);
             var change = BuildGeneratedChange(document, expectedBody);
-            var authoredLinks = document.GeneratedRegion.EntriesBlock is { } block ? ReadAuthoredLinks(document, block).Count : 0;
-            return GeneratedNavigationRegion.Available(source, entries, change) with { AuthoredLinkCount = authoredLinks };
+            return GeneratedNavigationRegion.Available(source, entries, change) with { AuthoredLinkCount = authoredLinks.Count };
         }
         catch (ArgumentException exception)
         {
@@ -132,8 +145,8 @@ internal sealed class GeneratedNavigationRegionPlanner
     }
 
     // The Loader's Entries are the user's list of what is switched on. When membership is preserved,
-    // a root folder that exists on disk but is no longer listed stays off. An empty list keeps the
-    // structural roots so a fresh workspace is still filled in.
+    // a root folder that exists on disk but is no longer listed stays off, and an empty list stays empty.
+    // Only roots the operation itself turns on join the list.
     private static IReadOnlyList<string> ReadLoaderRootPaths(
         GeneratedNavigationProjectionRequest request,
         MarkdownDocumentFacts document)
@@ -144,17 +157,19 @@ internal sealed class GeneratedNavigationRegionPlanner
             return structural;
         }
 
-        var listed = SourceLoaderEntriesParser.Parse(document.Source).Destinations;
-        if (listed.Count == 0)
+        var listed = SourceLoaderEntriesParser.Parse(request.ObservedLoaderSource ?? document.Source);
+        if (listed.State != SourceLoaderEntriesParseState.Valid)
         {
             return structural;
         }
 
-        var listedRoots = listed
+        var listedRoots = listed.Destinations
             .Where(destination => destination.State == SourceLoaderDestinationParseState.Valid)
             .Select(destination => destination.CanonicalPath)
             .ToHashSet(StringComparer.Ordinal);
-        return structural.Where(listedRoots.Contains).ToArray();
+        return structural
+            .Where(path => listedRoots.Contains(path) || request.TurnedOnLoaderRoots.Contains(path))
+            .ToArray();
     }
 
     internal static bool IsRegionSource(SourceLogicalSource source)
@@ -398,13 +413,15 @@ internal sealed class GeneratedNavigationRegionPlanner
         }
     }
 
-    private static string BuildExpectedBlock(MarkdownDocumentFacts document, IReadOnlyList<GeneratedNavigationEntry> entries)
+    private static string BuildExpectedBlock(
+        MarkdownDocumentFacts document,
+        IReadOnlyList<GeneratedNavigationEntry> entries,
+        IReadOnlyList<string> authoredLinks)
     {
         var block = document.GeneratedRegion.EntriesBlock
             ?? throw new InvalidOperationException("A complete Entries section requires its block boundary.");
         var lineEnding = block.LineEnding;
         var generated = entries.Select(entry => entry.Line).ToArray();
-        var authoredLinks = ReadAuthoredLinks(document, block);
         string[] lines = generated.Length + authoredLinks.Count == 0
             ? [MarkdownEntriesSectionReader.EmptyEntry]
             : [.. generated, .. authoredLinks];

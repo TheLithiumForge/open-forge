@@ -29,6 +29,8 @@ internal static class InstallSetupText
     internal static string FullCore() => "Everything in Essentials, plus advice, pointers to sources, starter files and archived records. All contents, including notes for active work, are shared through Git.";
     // @OpenForgeText install.setup.custom
     internal static string Custom() => "Starts from your current choices, or Essentials in a new workspace, then shows one list to change.";
+    // @OpenForgeText install.setup.minimal
+    internal static string Minimal() => "Only the loader and the Open Forge sections in AGENTS.md and CLAUDE.md. Nothing is on until you list it, for example a link to a document you already have.";
     // @OpenForgeText install.setup.routequestion
     internal static string RouteQuestion() => "Choose what Open Forge sets up";
     // @OpenForgeText install.setup.retention
@@ -47,6 +49,8 @@ internal static class InstallSetupText
     internal static string FullCoreSummary() => "Every built-in folder, all shared through Git";
     // @OpenForgeText install.setup.customsummary
     internal static string CustomSummary() => "Choose each folder on the next screen";
+    // @OpenForgeText install.setup.minimalsummary
+    internal static string MinimalSummary() => "Just the loader. Link the documents you already have";
     // @OpenForgeText install.setup.addlegend
     internal static string AddLegend() => "add";
     // @OpenForgeText install.setup.gitignorelegend
@@ -95,6 +99,8 @@ internal static class InstallSetupText
     internal static string FullCoreLabel() => "Full Core";
     // @OpenForgeText install.setup.customlabel
     internal static string CustomLabel() => "Custom";
+    // @OpenForgeText install.setup.minimallabel
+    internal static string MinimalLabel() => "Minimal";
     // @OpenForgeText install.setup.recap
     internal static string Setup(string preset) => $"Setup: {preset}";
     // @OpenForgeText install.setup.addroutes

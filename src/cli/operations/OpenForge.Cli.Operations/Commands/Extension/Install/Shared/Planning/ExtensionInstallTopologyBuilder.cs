@@ -157,7 +157,13 @@ internal sealed class ExtensionInstallTopologyBuilder
             formation,
             regionInputs,
             metadata,
-            sharing.Sharing));
+            sharing.Sharing)
+        {
+            PreserveLoaderMembership = true,
+            TurnedOnLoaderRoots = LoaderMembership.ReadTurnedOn(
+                formation.Topology.LoaderRootPaths,
+                path => catalogue.FindByPath(path) is not null),
+        });
         var metadataByPath = metadata.ToDictionary(
             value => value.Source.Identity.CanonicalBasePath,
             value => value.Facts,

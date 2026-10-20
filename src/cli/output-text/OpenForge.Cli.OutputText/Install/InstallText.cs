@@ -93,7 +93,7 @@ internal static class InstallText
 
     // @OpenForgeText install.help.examples
     internal static string HelpExamples()
-        => "open-forge install --preset essentials --dry-run\nopen-forge install\nopen-forge install --configure --preset essentials --dry-run";
+        => "open-forge install --preset essentials --dry-run\nopen-forge install --preset minimal --dry-run\nopen-forge install";
 
     // @OpenForgeText install.help.notes
     internal static string HelpNotes()

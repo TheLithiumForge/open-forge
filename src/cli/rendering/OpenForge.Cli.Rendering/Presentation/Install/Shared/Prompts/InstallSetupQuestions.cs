@@ -46,8 +46,9 @@ internal static class InstallSetupQuestions
             new(InstallPreset.Essentials, Label: InstallSetupText.EssentialsLabel(), Description: InstallSetupText.Essentials(), Summary: InstallSetupText.EssentialsSummary()),
             new(InstallPreset.FullCore, Label: InstallSetupText.FullCoreLabel(), Description: InstallSetupText.FullCore(), Summary: InstallSetupText.FullCoreSummary()),
             new(InstallPreset.Custom, Label: InstallSetupText.CustomLabel(), Description: InstallSetupText.Custom(), Summary: InstallSetupText.CustomSummary()),
+            new(InstallPreset.Minimal, Label: InstallSetupText.MinimalLabel(), Description: InstallSetupText.Minimal(), Summary: InstallSetupText.MinimalSummary()),
         ];
-        if (initial == InstallPreset.Custom) choices = [choices[2], choices[0], choices[1]];
+        if (initial == InstallPreset.Custom) choices = [choices[2], choices[0], choices[1], choices[3]];
         return new(InstallSetupText.PresetQuestion(), choices);
     }
 

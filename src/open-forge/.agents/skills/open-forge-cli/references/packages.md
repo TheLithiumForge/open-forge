@@ -12,17 +12,17 @@ Read this reference for an authorized installation, configuration, update, remov
 
 Establish or configure the Framework bundled in the running CLI. Install does not fetch a newer payload or reconcile ordinary managed divergence. Use Update for that.
 
-| Flag                                       | Meaning                                                                                                                                             |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--configure`                              | Revisit an installed setup, restore eligible missing selected defaults, or convert unedited owned files to the selected frontmatter form            |
-| `--preset <essentials\|full-core\|custom>` | Select built-in routes. On an installed workspace, an explicit preset also requires `--configure`                                                   |
-| `--frontmatter <root\|scoped>`             | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
-| `--route <id>=<add\|remove\|git-ignore>`   | Override a Custom row. Requires `--preset custom`. Repeat for more rows                                                                             |
-| `--force`                                  | Permit eligible existing content to be replaced during initial management establishment. Does not update or adopt managed state                     |
-| `--automatic`                              | Suppress confirmation without adding force or choosing missing setup inputs                                                                         |
-| `--dry-run`                                | Preview selection, adoption, files, settings, and ignore changes                                                                                    |
+| Flag                                                | Meaning                                                                                                                                             |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--configure`                                       | Revisit an installed setup, restore eligible missing selected defaults, or convert unedited owned files to the selected frontmatter form            |
+| `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes. On an installed workspace, an explicit preset also requires `--configure`                                                   |
+| `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
+| `--route <id>=<add\|remove\|git-ignore>`            | Override a Custom or Minimal row. Requires `--preset custom` or `--preset minimal`. Repeat for more rows                                            |
+| `--force`                                           | Permit eligible existing content to be replaced during initial management establishment. Does not update or adopt managed state                     |
+| `--automatic`                                       | Suppress confirmation without adding force or choosing missing setup inputs                                                                         |
+| `--dry-run`                                         | Preview selection, adoption, files, settings, and ignore changes                                                                                    |
 
-First interactive Install offers the recommended Essentials, Full Core, or Custom. Configure offers the current choices. Ordinary repeated Install retains its quiet no-op or divergence behavior.
+First interactive Install offers the recommended Essentials, Full Core, Custom, or Minimal. Configure offers the current choices. Ordinary repeated Install retains its quiet no-op or divergence behavior.
 
 After the preset choice, first interactive Install asks `How should Open Forge write file metadata?` with root preselected. An explicit `--frontmatter` skips the question. A fresh Install keeps an explicit preference already in settings unless the flag overrides it. Without either, fresh unattended Install uses root. Interactive Configure offers the current form first. Ordinary repeated Install and Update retain the form and never ask.
 
@@ -41,8 +41,11 @@ Install's headline describes the result, with the path on a separate `Workspace:
 | `essentials` | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus the ordinary Working route with Install Git-ignore rules |
 | `full-core`  | Every built-in category and Memory state, with no Install-owned ignore entries                                                |
 | `custom`     | Current concrete choices, or Essentials on a fresh workspace, with explicit row overrides                                     |
+| `minimal`    | Only the loader, `.agents/README.md` and the managed host sections. Its `Entries` start empty. Add rows with `--route`        |
 
-Neither built-in preset installs optional Extensions. Essentials omits Guidance, Maps, Templates, and Archived Memory.
+No built-in preset installs optional Extensions. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal omits every category and Memory state. A Memory state added with `--route` brings the Memory catalogue with it.
+
+Install, Update, Configure, and Extension commands keep the loader's `Entries` as the user left them. A removed root line stays removed, links to documents outside `.agents/` stay, and an empty list stays empty. A root joins the list only when the command creates its catalogue or Configure adds a route that was left out.
 
 In line-mode Custom, type row edits such as `2+ 9~`, press Enter on an empty line to continue, or follow `Type cancel to stop without changes.` Existing tracked files stay tracked, and left-out defaults leave existing files routable.
 

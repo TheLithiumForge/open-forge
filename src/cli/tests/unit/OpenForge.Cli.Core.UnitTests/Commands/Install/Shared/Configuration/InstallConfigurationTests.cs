@@ -45,6 +45,28 @@ public sealed class InstallConfigurationTests
         Assert.NotNull(InstallBindingInputReader.Read(parse, symbols).SetupError);
     }
 
+    [Fact(DisplayName = "Minimal leaves out every route and accepts route additions"), Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
+    public void MinimalStartsEmptyAndTakesOverrides()
+    {
+        Assert.All(InstallConfigurationChoices.Defaults(InstallPreset.Minimal), row => Assert.Equal(InstallRouteAction.Remove, row.Action));
+        var symbols = InstallBinding.CreateSymbols();
+        var parse = symbols.InstallCommand.Parse(["--preset", "minimal", "--route", "directives=add", "--route", "memory/crystallized=add"]);
+        Assert.Empty(parse.Errors);
+        var input = InstallBindingInputReader.Read(parse, symbols);
+        Assert.Null(input.SetupError);
+        var setup = Assert.IsType<InstallSetupInput>(input.Setup);
+        Assert.Equal(InstallPreset.Minimal, setup.Preset);
+        Assert.Equal(["directives", "memory/crystallized"], setup.Overrides.Select(row => row.Id));
+    }
+
+    [Fact(DisplayName = "Each route switches on through its top-level Loader line"), Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Processing")]
+    public void RoutesMapToLoaderLines()
+    {
+        Assert.Equal(".agents/directives/_directives.md", InstallConfigurationChoices.LoaderRoot("directives"));
+        Assert.Equal(".agents/memory/_memory.md", InstallConfigurationChoices.LoaderRoot("memory/crystallized"));
+        Assert.Equal(".agents/memory/_memory.md", InstallConfigurationChoices.LoaderRoot("memory/working"));
+    }
+
     [Fact(DisplayName = "Identical route repeats produce one typed override"), Trait("Feature", "install-configuration"), Trait("Evidence", "Unit"), Trait("Boundary", "Input")]
     public void RepeatedSameRouteIsIdempotent()
     {

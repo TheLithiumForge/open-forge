@@ -10,5 +10,9 @@ Choose your Open Forge setup
   3. Custom      Choose each folder on the next screen
      Starts from your current choices, or Essentials in a new workspace, then
      shows one list to change.
+  4. Minimal     Just the loader. Link the documents you already have
+     Only the loader and the Open Forge sections in AGENTS.md and CLAUDE.md.
+     Nothing is on until you list it, for example a link to a document you
+     already have.
 
-Choose a number (1-3), or press Enter to cancel:
+Choose a number (1-4), or press Enter to cancel:

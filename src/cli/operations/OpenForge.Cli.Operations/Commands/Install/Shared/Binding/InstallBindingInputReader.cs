@@ -30,7 +30,7 @@ internal static class InstallBindingInputReader
         InstallInvalidOption? invalidOption = null;
         if (presetText is not null && preset is null)
         {
-            error = "Preset must be essentials, full-core, or custom.";
+            error = "Preset must be minimal, essentials, full-core, or custom.";
             invalidOption = new(InstallOptionKind.Preset, presetText);
         }
         foreach (var text in result.GetValue(symbols.Route) ?? [])
@@ -47,7 +47,8 @@ internal static class InstallBindingInputReader
                 error = "Repeated route values must agree.";
             overrides[parts[0]] = action;
         }
-        if (overrides.Count > 0 && preset != InstallPreset.Custom) error = "Route overrides require --preset custom.";
+        if (overrides.Count > 0 && preset is not (InstallPreset.Custom or InstallPreset.Minimal))
+            error = "Route overrides require --preset custom or --preset minimal.";
         var frontmatterFacts = CliOptionResultFactsReader.Read(result, symbols.Frontmatter);
         FrontmatterForm? frontmatter = null;
         if (frontmatterFacts.IsExplicit && frontmatterFacts.ValueCount != frontmatterFacts.IdentifierCount)

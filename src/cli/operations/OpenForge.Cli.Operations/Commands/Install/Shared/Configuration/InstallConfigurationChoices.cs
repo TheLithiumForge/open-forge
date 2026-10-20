@@ -14,6 +14,7 @@ internal static class InstallConfigurationChoices
         InstallPreset.Essentials => "essentials",
         InstallPreset.FullCore => "full-core",
         InstallPreset.Custom => "custom",
+        InstallPreset.Minimal => "minimal",
         _ => throw new ArgumentOutOfRangeException(nameof(preset)),
     };
 
@@ -30,6 +31,7 @@ internal static class InstallConfigurationChoices
         "essentials" => InstallPreset.Essentials,
         "full-core" => InstallPreset.FullCore,
         "custom" => InstallPreset.Custom,
+        "minimal" => InstallPreset.Minimal,
         _ => null,
     };
 
@@ -48,11 +50,15 @@ internal static class InstallConfigurationChoices
     internal static string Entrypoint(string id) => $"{Directory(id)}/_{id.Split('/')[^1]}.md";
     internal static bool Contains(string id, string path) => path.StartsWith($"{Directory(id)}/", StringComparison.Ordinal);
 
+    // The Loader line that switches a route on. A Memory state is reached through the Memory catalogue.
+    internal static string LoaderRoot(string id) => Entrypoint(id.Split('/')[0]);
+
     private static InstallRouteAction DefaultAction(string id, InstallPreset preset)
     {
         return preset switch
         {
             InstallPreset.FullCore => InstallRouteAction.Add,
+            InstallPreset.Minimal => InstallRouteAction.Remove,
             InstallPreset.Essentials or InstallPreset.Custom => id switch
             {
                 "guidance" or "maps" or "templates" or "memory/archived" => InstallRouteAction.Remove,

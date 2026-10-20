@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using OpenForge.Cli.Core.Framework.Documents.Shared.Entries;
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Routing;
 
@@ -17,7 +18,8 @@ internal static class SourceLoaderDeclarationParser
             return false;
         }
 
-        if (row.Tags.Count == 0)
+        // A linked document outside .agents/ is opened on demand when its line has no tags.
+        if (row.Tags.Count == 0 && !SourceGeneratedDestinationResolver.IsAuthoredLink(row.Destination))
         {
             cause = "A Loader declaration must contain one or more bare tags.";
             return false;

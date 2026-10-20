@@ -1,4 +1,4 @@
-Invalid --preset value: other. Use essentials, full-core, or custom.
+Invalid --preset value: other. Use minimal, essentials, full-core, or custom.
 Workspace: <workspace>
   No ownership record change was requested.
   No recovery bundle was required.

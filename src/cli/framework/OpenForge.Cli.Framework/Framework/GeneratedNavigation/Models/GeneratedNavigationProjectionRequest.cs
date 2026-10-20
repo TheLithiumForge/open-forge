@@ -93,6 +93,18 @@ internal sealed class GeneratedNavigationProjectionRequest
     /// </summary>
     internal bool PreserveLoaderMembership { get; init; }
 
+    /// <summary>
+    /// The Loader as it is on disk before an operation that rewrites it from the payload. Its Entries say
+    /// which roots stay listed. Null means the Loader region's own document already holds the current Entries.
+    /// </summary>
+    internal string? ObservedLoaderSource { get; init; }
+
+    /// <summary>
+    /// Roots the operation turns on while membership is preserved: roots it creates and roots the user
+    /// selected explicitly. Every other root keeps its current listing.
+    /// </summary>
+    internal IReadOnlySet<string> TurnedOnLoaderRoots { get; init; } = new HashSet<string>(StringComparer.Ordinal);
+
     internal SourceRouteTopology Topology => Formation.Topology;
 
     internal IReadOnlyList<SourceLogicalSource> Sources => Formation.Sources;

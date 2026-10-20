@@ -1166,6 +1166,14 @@ open-forge install --preset essentials --dry-run
 open-forge install --preset essentials --automatic
 ```
 
+To start small in an existing repository, install only the loader and link the documents you already have:
+
+```sh
+open-forge install --preset minimal --dry-run
+# Review the plan before applying it.
+open-forge install --preset minimal --automatic
+```
+
 To change several setup choices interactively:
 
 ```sh
@@ -1182,15 +1190,15 @@ open-forge install --configure --frontmatter root --automatic
 
 #### Options
 
-| Option                                     | What it does                                                                                                                                        |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--configure`                              | Revisit route choices or the frontmatter form in an installed workspace                                                                             |
-| `--preset <essentials\|full-core\|custom>` | Select built-in routes without the preset question                                                                                                  |
-| `--frontmatter <root\|scoped>`             | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
-| `--route <id>=<add\|remove\|git-ignore>`   | Override a Custom row. Repeat for different rows                                                                                                    |
-| `--force`                                  | Allow eligible initial replacements                                                                                                                 |
-| `--automatic`                              | Skip interaction and use supported automatic choices                                                                                                |
-| `--dry-run`                                | Preview the complete plan without writing files                                                                                                     |
+| Option                                              | What it does                                                                                                                                        |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--configure`                                       | Revisit route choices or the frontmatter form in an installed workspace                                                                             |
+| `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes without the preset question                                                                                                  |
+| `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
+| `--route <id>=<add\|remove\|git-ignore>`            | Override a Custom or Minimal row. Repeat for different rows                                                                                         |
+| `--force`                                           | Allow eligible initial replacements                                                                                                                 |
+| `--automatic`                                       | Skip interaction and use supported automatic choices                                                                                                |
+| `--dry-run`                                         | Preview the complete plan without writing files                                                                                                     |
 
 See [global options](#global-options) for shared flags.
 
@@ -1202,7 +1210,7 @@ and converts eligible owned files to the chosen frontmatter form.
 
 Install has no operands.
 
-First interactive Install offers Essentials, Full Core, or Custom before
+First interactive Install offers Essentials, Full Core, Custom, or Minimal before
 showing the selected plan and asking for confirmation. An explicit preset
 skips the preset question. `--dry-run` changes nothing and never
 asks setup questions. Naming the preset makes a preview use the intended
@@ -1236,11 +1244,23 @@ line. Explanations wrap at spaces to fit the terminal width.
 | `essentials` | Directives, Patterns, Skills, Emerging and Crystallized Memory, plus Working Memory with private contents and a shared entrypoint |
 | `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                |
 | `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                |
+| `minimal`    | Nothing but the loader, `.agents/README.md` and the managed sections in `AGENTS.md` and `CLAUDE.md`. Add rows with `--route`      |
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. Full Core
 includes the base categories, not optional Extensions or an agent runtime.
-Presets select supplied defaults. Existing content in an omitted route remains
-in place and routable.
+Minimal installs no category or Memory state, so its loader starts with an
+empty `Entries` list. Link an existing document there, or add rows with
+`--route`, such as `--route directives=add --route memory/crystallized=add`.
+A Memory state brings the Memory catalogue with it. Presets select supplied
+defaults. Existing content in an omitted route remains in place and routable.
+
+The loader's `Entries` are the workspace's list of what is on. Install,
+Update, Configure, and Extension commands keep that list as you left it: a
+root line you removed stays removed, links you added to documents outside
+`.agents/` stay in place, and an empty list stays empty. A root joins the
+list only when the command creates its catalogue, or when Configure adds a
+route that was left out. A loader that cannot be parsed is treated as listing
+every root.
 
 `--configure` revisits the setup choices in an installed workspace. An explicit
 `--preset` or `--frontmatter` on an already installed workspace requires
@@ -1272,8 +1292,9 @@ Custom offers three actions for each row. The wizard shows each as a mark:
 | `[~]` | `git-ignore` | Add the route, register its sharing policy, then ignore its contents while keeping its entrypoint eligible for Git                                   |
 | `[-]` | `remove`     | Omit supplied defaults and release only their Framework management, preserving existing files, authored notes, overwrite companions, and routability |
 
-Repeat `--route <id>=<action>` to override Custom rows. It requires
-`--preset custom`. Accepted IDs are:
+Repeat `--route <id>=<action>` to override rows. It requires
+`--preset custom` or `--preset minimal`. Minimal starts with every row left
+out, so its rows add only what you name. Accepted IDs are:
 
 ```text
 directives

@@ -46,6 +46,7 @@ internal static class InstallSetupRecapSelector
         InstallPreset.Essentials => InstallSetupText.EssentialsLabel(),
         InstallPreset.FullCore => InstallSetupText.FullCoreLabel(),
         InstallPreset.Custom => InstallSetupText.CustomLabel(),
+        InstallPreset.Minimal => InstallSetupText.MinimalLabel(),
         _ => throw new ArgumentOutOfRangeException(nameof(preset)),
     };
 

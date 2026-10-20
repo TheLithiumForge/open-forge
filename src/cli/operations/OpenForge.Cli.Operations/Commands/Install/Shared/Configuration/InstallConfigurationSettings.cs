@@ -49,9 +49,12 @@ internal static class InstallConfigurationSettings
             files.Add(".agents/memory/_memory.md");
             files.Add(".agents/memory");
         }
+        // Every Memory state needs the Memory catalogue, and the catalogue is only useful with a state.
+        var removedCategories = removed.Where(row => !row.Id.Contains('/')).Select(row => row.Id).ToList();
+        if (!includesMemory) removedCategories.Add("memory");
         var additions = new WorkspaceRemovalSelection
         {
-            Categories = removed.Where(row => !row.Id.Contains('/')).Select(row => row.Id).ToImmutableArray(),
+            Categories = removedCategories.ToImmutableArray(),
             Directories = removed.Where(row => row.Id.Contains('/')).Select(row => InstallConfigurationChoices.Directory(row.Id)).ToImmutableArray(),
         };
         var clear = new WorkspaceRemovalSelection
