@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Sources.Models.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
+using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes.Models;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational;
@@ -42,7 +43,7 @@ internal static class RouteDoctorFactReader
         RouteSourceInspection inspection)
     {
         return inspection.Sources
-            .Where(source => !IsValidNativeSkill(source))
+            .Where(source => !IsValidNativeSkill(source) && !IsHumanGuide(source.Source.Identity.CanonicalBasePath))
             .Select(source => new RouteMetadataObservation(
                 source.Source.Identity.CanonicalBasePath,
                 source.FrameworkMetadata))
@@ -65,8 +66,11 @@ internal static class RouteDoctorFactReader
                     source.Source.Identity.CanonicalBasePath)))
             .ToArray();
 
+        var turnedOffFolders = ReadTurnedOffRootFolders(inspection);
         foreach (var fact in inspection.Routes.RouteFacts.Where(fact =>
-                     fact.State == SourceRouteState.Unrouted))
+                     fact.State == SourceRouteState.Unrouted
+                     && !IsHumanGuide(fact.Identity.CanonicalBasePath)
+                     && !turnedOffFolders.Any(folder => fact.Identity.CanonicalBasePath.StartsWith(folder + "/", StringComparison.Ordinal))))
         {
             if (IsNativeSkillResourcePath(
                     fact.Identity.CanonicalBasePath,
@@ -117,6 +121,36 @@ internal static class RouteDoctorFactReader
             .ThenBy(observation => observation.AuthoredValue, StringComparer.Ordinal)
             .ToArray();
     }
+
+    // The Loader's Entries are the user's on and off switch. A complete category folder at the top of
+    // `.agents/` whose entrypoint the Loader does not list is turned off, not lost, so its files are not
+    // reported as unreachable. An empty list keeps the old behavior, as for a fresh workspace.
+    private static IReadOnlyList<string> ReadTurnedOffRootFolders(RouteSourceInspection inspection)
+    {
+        var loader = inspection.Sources.FirstOrDefault(source => source.Source.Base.Form == SourceDocumentForm.Loader);
+        if (loader?.GeneratedEntries.State != SourceGeneratedEntriesState.Complete
+            || loader.GeneratedEntries.Entries.Count == 0)
+        {
+            return [];
+        }
+
+        var listed = loader.GeneratedEntries.Entries
+            .Select(entry => SourceLoaderDestinationParser.Parse(entry.Destination))
+            .Where(destination => destination.State == SourceLoaderDestinationParseState.Valid)
+            .Select(destination => destination.CanonicalPath)
+            .ToHashSet(StringComparer.Ordinal);
+        return inspection.Sources
+            .Select(source => source.Source)
+            .Where(source => SourceFormClassifier.IsEntrypoint(source.Base.Form)
+                && SourceLogicalPath.ReadParent(SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath)) == SourceLogicalPath.AgentsRoot
+                && !listed.Contains(source.Identity.CanonicalBasePath))
+            .Select(source => SourceLogicalPath.ReadParent(source.Identity.CanonicalBasePath))
+            .ToArray();
+    }
+
+    // The guide for people is deliberately outside routing, so it is neither unreachable nor missing metadata.
+    private static bool IsHumanGuide(string canonicalPath)
+        => string.Equals(canonicalPath, SourceLogicalPath.HumanGuidePath, StringComparison.Ordinal);
 
     private static bool IsValidNativeSkill(RouteSourceObservation source)
     {

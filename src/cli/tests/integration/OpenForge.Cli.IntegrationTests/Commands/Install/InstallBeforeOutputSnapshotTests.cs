@@ -127,7 +127,7 @@ public sealed class InstallBeforeOutputSnapshotTests
         var asset = payload.Find(OccupiedPath)
             ?? throw new InvalidOperationException("The generated Install fixture target is unavailable.");
         var intended = Encoding.UTF8.GetString(asset.Bytes.AsSpan());
-        const string current = "- [Accepted knowledge that should remain current](crystallized/_crystallized.md)";
+        const string current = "- [Accepted knowledge that should stay current](crystallized/_crystallized.md)";
         Assert.Contains(current, intended, StringComparison.Ordinal);
         workspace.WriteText(OccupiedPath, intended.Replace(current, "- [Stale generated entry](stale.md)", StringComparison.Ordinal));
         return intended;

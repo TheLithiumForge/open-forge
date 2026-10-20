@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
@@ -38,6 +40,18 @@ internal static class SourceLoaderDestinationParser
         }
 
         var segments = decodedDestination.Split('/', StringSplitOptions.None);
+        if (segments.Contains("..")
+            && SourceGeneratedDestinationResolver.ResolveLinked(
+                SourceLogicalPath.LoaderPath,
+                isLoader: true,
+                attemptedDestination) is { } linkedPath)
+        {
+            return SourceLoaderDestinationParseResult.Linked(
+                attemptedDestination: attemptedDestination,
+                decodedDestination: decodedDestination,
+                workspacePath: linkedPath);
+        }
+
         if (segments.Any(segment => segment.Length == 0 || segment is "." or ".."))
         {
             return SourceLoaderDestinationParseResult.Unsafe(

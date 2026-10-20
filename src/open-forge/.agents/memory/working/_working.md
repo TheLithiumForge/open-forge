@@ -1,28 +1,18 @@
 ---
 open-forge:
-  description: Temporary memory that helps agents continue or resume active work
+  description: Work in progress and how to resume it
   tags: [LoadNow, Memory, Working, Contextual]
 ---
 
 # Working Memory
 
-## What temporary context is needed to continue or resume this work?
-
-Working Memory holds temporary context for continuing or resuming active work.
+Optional. Records of unfinished work, so another session can pick it up. Needs Memory.
 
 ## Axioms
 
-### Use And Status
-
-- Check `Entries` before deciding that no Working Memory applies.
-- Save the temporary context needed to resume unfinished work.
-- An explicitly accepted temporary choice may remain here when its source, scope, and expected expiration are clear.
-
-### Maintenance
-
-- Keep Working Memory small, current, and easy to replace.
-- When the active need ends, preserve useful results, then move, archive, consolidate, or prune the record.
+- At the start or resume of a task, read the record of that work if there is one, and check it against the current files.
+- Keep each record small: the goal, where it stands, the next step and open questions. When the work ends, move useful results to where they belong and retire the record.
 
 ## Entries
 
-- none - No entries - #Empty
+- [Save progress before pausing unfinished work](saving.md) - #LoadNow #Memory #Working #Policy

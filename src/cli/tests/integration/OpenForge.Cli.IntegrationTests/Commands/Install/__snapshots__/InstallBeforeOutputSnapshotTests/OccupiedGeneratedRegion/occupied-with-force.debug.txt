@@ -18,6 +18,8 @@ Frontmatter: scoped
   .agents/memory/working                                 created
   .agents/skills/open-forge-cli                          created
   .agents/skills/open-forge-cli/references               created
+  .agents/README.md
+    created; source: .agents/README.md
   .agents/directives/_directives.md
     created; source: .agents/directives/_directives.md
   .agents/guidance/_guidance.md
@@ -36,6 +38,8 @@ Frontmatter: scoped
     created; source: .agents/memory/emerging/_emerging.md
   .agents/memory/working/_working.md
     created; source: .agents/memory/working/_working.md
+  .agents/memory/working/saving.md
+    created; source: .agents/memory/working/saving.md
   .agents/patterns/_patterns.md
     created; source: .agents/patterns/_patterns.md
   .agents/skills/_skills.md
@@ -61,12 +65,12 @@ Frontmatter: scoped
     created as the ownership receipt
   .agents/memory/_memory.overwrite.md
     Migrated: content preserved
-  Created 17 files and 12 directories under .agents, and replaced 1 existing
+  Created 19 files and 12 directories under .agents, and replaced 1 existing
   file.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Migrated 1 source.
   Bundled Framework fingerprint:
-  <sha256> (19 assets).
+  <sha256> (21 assets).
   The ownership record was published and verified.
   The recovery bundle was removed.
   All written targets were verified.

@@ -5,7 +5,7 @@ description: Use the open-forge CLI to load workspace context, find sources, mai
 
 # Open Forge CLI
 
-Use the optional CLI to read and maintain Open Forge's Markdown, rules, and links. The Skills entrypoint requires this guide at startup. Loading it grants no installation or package-change authority.
+Use the optional CLI to read and maintain Open Forge's Markdown, rules, and links. Read this guide before running commands other than `context`. Reading it grants no installation or package-change authority.
 
 When authoring metadata, follow the workspace's frontmatter form described in the loader.
 
@@ -27,7 +27,7 @@ Check `open-forge --help` once for availability and groups. Use `open-forge <com
 Prefer one context request over separate reads for each entrypoint:
 
 ```sh
-open-forge context skills/open-forge-cli --for src/Order.cs --for web/order.ts
+open-forge context --for src/Order.cs --for web/order.ts
 ```
 
 Supply all known working files, including planned files. Reading a source for context does not make it a working file. Omit `--for` while files are unknown, but resolve pending `applyTo` conditions before relying on those rules. Each applicable source needs one supplied path that matches its complete inherited condition chain. A path filter does not select an unexposed scope or grant edit permission.

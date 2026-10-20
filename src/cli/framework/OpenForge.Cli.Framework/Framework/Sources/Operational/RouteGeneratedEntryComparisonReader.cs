@@ -25,7 +25,7 @@ internal static class RouteGeneratedEntryComparisonReader
         var matched = new HashSet<string>(StringComparer.Ordinal);
         var currentOrder = new List<string>();
         var comparisons = new List<RouteGeneratedEntryComparison>();
-        foreach (var entry in current.Entries)
+        foreach (var entry in current.Entries.Where(entry => !SourceGeneratedDestinationResolver.IsAuthoredLink(entry.Destination)))
         {
             var location = locations.Map(entry.Span.Start, entry.Span.Length);
             var resolved = SourceGeneratedDestinationResolver.Resolve(

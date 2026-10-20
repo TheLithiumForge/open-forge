@@ -77,6 +77,10 @@ internal sealed class ContextGraphBuilder
                 layers: layers));
         }
 
+        sources.AddRange(await new ContextLinkedEntryReader()
+            .ReadAsync(reader, sources, cancellationToken)
+            .ConfigureAwait(false));
+
         return new ContextGraph(
             catalogue: catalogue,
             routeFacts: routeFacts,

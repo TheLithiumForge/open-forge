@@ -188,7 +188,10 @@ internal sealed class IndexProjectionBuilder
         var projection = _projector.Project(new GeneratedNavigationProjectionRequest(
             assembly.Formation,
             regionInputs.Select(region => region.Navigation),
-            assembly.Metadata));
+            assembly.Metadata)
+        {
+            PreserveLoaderMembership = true,
+        });
         var countByPath = regionInputs.ToDictionary(
             region => region.Navigation.Source.Identity.CanonicalBasePath,
             region => region.BeforeEntryCount,

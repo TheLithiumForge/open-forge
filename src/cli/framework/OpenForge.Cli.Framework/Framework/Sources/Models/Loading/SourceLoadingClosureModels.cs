@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
@@ -59,6 +60,7 @@ internal enum SourceLoadingClosureIssueKind
     GeneratedEntriesUnavailable,
     VisibleMetadataUnavailable,
     ApplicabilityInvalid,
+    LinkedDestinationMissing,
 }
 
 internal sealed record SourceLoadingClosureIssue
@@ -76,7 +78,8 @@ internal sealed record SourceLoadingClosureIssue
                 or SourceLoadingClosureIssueKind.ContinuityChainUnavailable
                 or SourceLoadingClosureIssueKind.GeneratedEntriesUnavailable
                 or SourceLoadingClosureIssueKind.VisibleMetadataUnavailable => true,
-            SourceLoadingClosureIssueKind.ApplicabilityInvalid => true,
+            SourceLoadingClosureIssueKind.ApplicabilityInvalid
+                or SourceLoadingClosureIssueKind.LinkedDestinationMissing => true,
             _ => throw new ArgumentOutOfRangeException(
                 nameof(kind),
                 kind,
@@ -111,9 +114,22 @@ internal sealed record SourceLoadingClosureSource
 
     public required SourceGeneratedEntriesFacts GeneratedEntries { get; init; }
 
+    /// <summary>
+    /// True for an ordinary Markdown file outside `.agents/` reached through an Entries link. Its
+    /// parent is the linking catalogue, and the linking entry line supplies its loading tags and
+    /// conditions.
+    /// </summary>
+    public bool IsLinked { get; init; }
+
+    public ApplyToMetadataFacts LinkedApplyTo { get; init; } = ApplyToMetadataFacts.Absent;
+
     internal bool IsEntrypoint => SourceFormClassifier.IsEntrypoint(Form);
 
     internal bool IsLoader => Form == SourceDocumentForm.Loader;
+
+    internal bool IsCatalogue => IsEntrypoint || IsLoader || IsLinked && GeneratedEntries.State == SourceGeneratedEntriesState.Complete;
+
+    internal ApplyToMetadataFacts Condition => IsLinked ? LinkedApplyTo : Metadata.ApplyTo;
 }
 
 internal sealed record SourceLoadingClosureRequest
@@ -127,6 +143,12 @@ internal sealed record SourceLoadingClosureRequest
     public bool EvaluateApplicability { get; init; }
 
     public bool WorkingPathsSupplied { get; init; }
+
+    /// <summary>
+    /// True when the caller supplied linked sources outside `.agents/` and wants missing required
+    /// links reported. Callers that do not read linked files leave it false.
+    /// </summary>
+    public bool IncludeLinkedSources { get; init; }
 
     public IReadOnlyList<string> WorkingPaths { get; init; } = [];
 }

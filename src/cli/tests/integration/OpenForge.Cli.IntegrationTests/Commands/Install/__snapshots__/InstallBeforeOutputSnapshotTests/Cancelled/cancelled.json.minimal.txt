@@ -148,6 +148,14 @@
       "owner": null
     },
     {
+      "path": ".agents/README.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -213,6 +221,14 @@
     },
     {
       "path": ".agents/memory/working/_working.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "not-started",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/working/saving.md",
       "kind": "file",
       "action": "created",
       "outcome": "not-started",
@@ -330,7 +346,7 @@
     "automatic": false,
     "classification": "safe-absence",
     "footprint": {
-      "files": 17,
+      "files": 19,
       "directories": 13,
       "sections": 2
     },

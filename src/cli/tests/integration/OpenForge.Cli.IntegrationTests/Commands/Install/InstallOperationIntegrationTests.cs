@@ -26,7 +26,7 @@ public sealed class InstallOperationIntegrationTests
     private const string LifecyclePath = ".agents/open-forge.lifecycle.json";
     private const string OwnershipPath = InstallOperationWorkspace.OwnershipPath;
     private const string CurrentGeneratedEntry =
-        "- [Accepted knowledge that should remain current](crystallized/_crystallized.md)";
+        "- [Accepted knowledge that should stay current](crystallized/_crystallized.md)";
     private const string StaleGeneratedEntry = "- [Stale generated entry](stale.md)";
 
     private static IReadOnlyList<string> CompleteEmbeddedSourceAssetPaths { get; } =
@@ -131,9 +131,7 @@ public sealed class InstallOperationIntegrationTests
         Assert.Equal(
             "# Open Forge\n\n"
             + "Open Forge provides the working rules and context for this workspace.\n\n"
-            + "Before starting a task, read `.agents/loader.md`.\n"
-            + "Use it to select every relevant scope, including nested scopes.\n"
-            + "Follow the loaded rules throughout the task.\n\n"
+            + "Before starting a task, read `.agents/loader.md` and follow its reading steps. If the `open-forge` CLI is installed, `open-forge context --for <file>` gathers the required reads in one call, and the loader says what else to read.\n\n"
             + "**End of Open Forge managed section.**\n",
             agents);
         Assert.Equal(
@@ -157,7 +155,7 @@ public sealed class InstallOperationIntegrationTests
         Assert.Equal(1, Count(memory, "## Entries"));
         Assert.DoesNotContain("generated-index", memory, StringComparison.Ordinal);
         Assert.Contains(
-            "- [Accepted knowledge that should remain current](crystallized/_crystallized.md)",
+            "- [Accepted knowledge that should stay current](crystallized/_crystallized.md)",
             memory,
             StringComparison.Ordinal);
 

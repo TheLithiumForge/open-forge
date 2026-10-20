@@ -189,7 +189,8 @@ internal sealed class ContextProjectionBuilder
         if (document.Frontmatter.State == MarkdownFrontmatterState.Missing)
         {
             // An entry document is not a routed source, so it carries no route metadata by design.
-            if (!source.IsEntryDocument && layer.Kind != SourceLayerKind.Overwrite)
+            // A linked document takes its metadata from the Entries line that links it.
+            if (!source.IsEntryDocument && !source.IsLinked && layer.Kind != SourceLayerKind.Overwrite)
             {
                 state.Attention = true;
                 state.Findings.Add(Finding(

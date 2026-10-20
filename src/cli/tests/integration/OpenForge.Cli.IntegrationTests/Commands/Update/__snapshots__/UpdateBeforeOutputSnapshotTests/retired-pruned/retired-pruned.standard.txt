@@ -3,7 +3,7 @@ Workspace: <workspace>
   .agents/guidance/retired-framework.md
     deleted (no longer part of this release)
   .agents/open-forge.lock.json           ownership record updated
-  19 files unchanged
+  21 files unchanged
   Previous content is in the recovery bundle at <recovery-bundle>.
   Previous content remains available for review.
 Next: Review previous content in the recovery bundle at <recovery-bundle>.

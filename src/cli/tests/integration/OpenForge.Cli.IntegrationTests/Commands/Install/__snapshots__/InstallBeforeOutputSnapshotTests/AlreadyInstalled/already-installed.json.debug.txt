@@ -27,7 +27,7 @@
     "automatic": true,
     "classification": "trusted-exact",
     "footprint": {
-      "files": 17,
+      "files": 19,
       "directories": 0,
       "sections": 2
     },
@@ -35,7 +35,7 @@
     "effects": [],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 19
+      "assetCount": 21
     },
     "lifecycle": {
       "action": "preserve",

@@ -1,21 +1,16 @@
 ---
 open-forge:
-  description: Specialized capabilities provided through native SKILL.md packages
-  tags: [LoadNow, Core, Skill]
+  description: Capabilities to check before specialized work
+  tags: [Core, Skill]
 ---
 
 # Skills
 
-## Which specialized capability would help with this work?
-
-A Skill is a native capability package entered through `SKILL.md`. That file defines how to use the Skill and its supporting resources.
+Optional. Native capability packages, each entered through its `SKILL.md`. Your agent runtime controls how they are activated and run. Nothing else depends on this folder.
 
 ## Axioms
 
-- When `open-forge-cli/SKILL.md` is present, read it when this entrypoint loads so command options and context-loading advice are available from the start. Respect an intentional omission and use the loader's CLI summary instead. Use the CLI only when it is available; otherwise read and maintain the files directly.
-- Check `Entries` when the work may benefit from a Skill.
-- Follow the selected `SKILL.md` for metadata, use, instructions, and resource loading.
-- The active agent runtime controls Skill activation, invocation, installation, and execution.
+- Read the matching `SKILL.md` before using a capability. Read `open-forge-cli/SKILL.md` before running `open-forge` commands other than `context`.
 
 ## Entries
 

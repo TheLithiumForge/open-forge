@@ -51,7 +51,7 @@
     "filesCreated": 1,
     "filesDeleted": 0,
     "filesKept": 0,
-    "filesUnchanged": 17,
+    "filesUnchanged": 19,
     "sectionsUpdated": 1
   },
   "limitations": [],
@@ -63,6 +63,9 @@
     "previousContent": null,
     "lockPath": ".agents/open-forge.lock.json",
     "unchanged": [
+      {
+        "path": ".agents/README.md"
+      },
       {
         "path": ".agents/directives/_directives.md"
       },
@@ -83,6 +86,9 @@
       },
       {
         "path": ".agents/memory/working/_working.md"
+      },
+      {
+        "path": ".agents/memory/working/saving.md"
       },
       {
         "path": ".agents/patterns/_patterns.md"

@@ -114,7 +114,7 @@ internal sealed record IndexProjectedRegion
         Region = region;
         Source = source;
         BeforeEntryCount = beforeEntryCount;
-        ExpectedEntryCount = ReadExpectedEntryCount(region.State, region.Entries.Count);
+        ExpectedEntryCount = ReadExpectedEntryCount(region.State, region.Entries.Count + region.AuthoredLinkCount);
     }
 
     internal GeneratedNavigationRegion Region { get; }

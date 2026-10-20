@@ -5,6 +5,7 @@ internal enum SourceLoaderDestinationParseState
     Valid,
     Malformed,
     Unsafe,
+    Linked,
 }
 
 internal sealed class SourceLoaderDestinationParseResult
@@ -22,7 +23,7 @@ internal sealed class SourceLoaderDestinationParseResult
         }
 
         ArgumentNullException.ThrowIfNull(attemptedDestination);
-        if (state == SourceLoaderDestinationParseState.Valid)
+        if (state is SourceLoaderDestinationParseState.Valid or SourceLoaderDestinationParseState.Linked)
         {
             ArgumentException.ThrowIfNullOrEmpty(decodedDestination);
             ArgumentException.ThrowIfNullOrWhiteSpace(canonicalPath);
@@ -61,6 +62,10 @@ internal sealed class SourceLoaderDestinationParseResult
 
     internal string? DecodedDestination { get; }
 
+    /// <summary>
+    /// The `.agents/...` root path for a valid destination, or the workspace-relative path outside
+    /// `.agents/` for a linked destination.
+    /// </summary>
     internal string? CanonicalPath { get; }
 
     internal string? Cause { get; }
@@ -75,6 +80,19 @@ internal sealed class SourceLoaderDestinationParseResult
             attemptedDestination: attemptedDestination,
             decodedDestination: decodedDestination,
             canonicalPath: canonicalPath,
+            cause: null);
+    }
+
+    internal static SourceLoaderDestinationParseResult Linked(
+        string attemptedDestination,
+        string decodedDestination,
+        string workspacePath)
+    {
+        return new SourceLoaderDestinationParseResult(
+            state: SourceLoaderDestinationParseState.Linked,
+            attemptedDestination: attemptedDestination,
+            decodedDestination: decodedDestination,
+            canonicalPath: workspacePath,
             cause: null);
     }
 

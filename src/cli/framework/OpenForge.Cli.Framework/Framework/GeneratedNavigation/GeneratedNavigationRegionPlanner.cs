@@ -8,12 +8,14 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Documents.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.GeneratedNavigation.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Metadata;
 using OpenForge.Cli.Core.Framework.Sources.Models.Routing;
+using OpenForge.Cli.Core.Framework.Sources.Routing;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
 
 namespace OpenForge.Cli.Core.Framework.GeneratedNavigation;
@@ -33,7 +35,7 @@ internal sealed class GeneratedNavigationRegionPlanner
                 document.ReadCause());
         }
 
-        var childProjection = ReadChildren(request, input.Source);
+        var childProjection = ReadChildren(request, input.Source, document.ReadValue());
         if (!childProjection.IsComplete)
         {
             return GeneratedNavigationRegion.Unavailable(
@@ -117,7 +119,8 @@ internal sealed class GeneratedNavigationRegionPlanner
         {
             var expectedBody = BuildExpectedBlock(document, entries);
             var change = BuildGeneratedChange(document, expectedBody);
-            return GeneratedNavigationRegion.Available(source, entries, change);
+            var authoredLinks = document.GeneratedRegion.EntriesBlock is { } block ? ReadAuthoredLinks(document, block).Count : 0;
+            return GeneratedNavigationRegion.Available(source, entries, change) with { AuthoredLinkCount = authoredLinks };
         }
         catch (ArgumentException exception)
         {
@@ -128,6 +131,32 @@ internal sealed class GeneratedNavigationRegionPlanner
         }
     }
 
+    // The Loader's Entries are the user's list of what is switched on. When membership is preserved,
+    // a root folder that exists on disk but is no longer listed stays off. An empty list keeps the
+    // structural roots so a fresh workspace is still filled in.
+    private static IReadOnlyList<string> ReadLoaderRootPaths(
+        GeneratedNavigationProjectionRequest request,
+        MarkdownDocumentFacts document)
+    {
+        var structural = request.Topology.LoaderRootPaths;
+        if (!request.PreserveLoaderMembership)
+        {
+            return structural;
+        }
+
+        var listed = SourceLoaderEntriesParser.Parse(document.Source).Destinations;
+        if (listed.Count == 0)
+        {
+            return structural;
+        }
+
+        var listedRoots = listed
+            .Where(destination => destination.State == SourceLoaderDestinationParseState.Valid)
+            .Select(destination => destination.CanonicalPath)
+            .ToHashSet(StringComparer.Ordinal);
+        return structural.Where(listedRoots.Contains).ToArray();
+    }
+
     internal static bool IsRegionSource(SourceLogicalSource source)
     {
         return source.Base.Form == SourceDocumentForm.Loader
@@ -136,10 +165,11 @@ internal sealed class GeneratedNavigationRegionPlanner
 
     private static GeneratedNavigationProjectionStage<IReadOnlyList<SourceLogicalSource>> ReadChildren(
         GeneratedNavigationProjectionRequest request,
-        SourceLogicalSource parent)
+        SourceLogicalSource parent,
+        MarkdownDocumentFacts document)
     {
         IReadOnlyList<string>? childPaths = parent.Base.Form == SourceDocumentForm.Loader
-            ? request.Topology.LoaderRootPaths
+            ? ReadLoaderRootPaths(request, document)
             : request.Topology.FindByPath(parent.Identity.CanonicalBasePath)?.ChildPaths;
         if (childPaths is null)
         {
@@ -373,9 +403,11 @@ internal sealed class GeneratedNavigationRegionPlanner
         var block = document.GeneratedRegion.EntriesBlock
             ?? throw new InvalidOperationException("A complete Entries section requires its block boundary.");
         var lineEnding = block.LineEnding;
-        var lines = entries.Count == 0
+        var generated = entries.Select(entry => entry.Line).ToArray();
+        var authoredLinks = ReadAuthoredLinks(document, block);
+        string[] lines = generated.Length + authoredLinks.Count == 0
             ? [MarkdownEntriesSectionReader.EmptyEntry]
-            : entries.Select(entry => entry.Line).ToArray();
+            : [.. generated, .. authoredLinks];
         var list = string.Join(lineEnding, lines);
         if (block.Exists)
         {
@@ -387,6 +419,30 @@ internal sealed class GeneratedNavigationRegionPlanner
         var leadingBreaks = document.Source.AsSpan(content.Start, block.Span.Start - content.Start).Count('\n');
         var prefix = string.Concat(Enumerable.Repeat(lineEnding, Math.Max(0, 2 - leadingBreaks)));
         return $"{prefix}{list}{lineEnding}{lineEnding}";
+    }
+
+    // Index keeps authored link rows as written, after the generated rows and in their original order.
+    private static IReadOnlyList<string> ReadAuthoredLinks(
+        MarkdownDocumentFacts document,
+        MarkdownEntriesBlock block)
+    {
+        if (!block.Exists)
+        {
+            return [];
+        }
+
+        var authored = new List<string>();
+        var text = document.Source[block.Span.Start..block.Span.End].Replace("\r\n", "\n", StringComparison.Ordinal);
+        foreach (var line in text.Split('\n'))
+        {
+            if (MarkdownEntryRowParser.TryParse(line, out var row, out _)
+                && SourceGeneratedDestinationResolver.IsAuthoredLink(row.Destination))
+            {
+                authored.Add(line);
+            }
+        }
+
+        return authored;
     }
 
     private static GeneratedNavigationBoundedChange BuildGeneratedChange(MarkdownDocumentFacts document, string expectedBlock)

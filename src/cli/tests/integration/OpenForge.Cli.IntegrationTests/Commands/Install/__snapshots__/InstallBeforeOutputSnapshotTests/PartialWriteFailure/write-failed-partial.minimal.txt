@@ -1,4 +1,4 @@
-Install stopped after 16 of 34 changes.
+Install stopped after 17 of 36 changes.
 Workspace: <workspace>
   Error  .agents/memory/_memory.md  Write failed
          Writing .agents/memory/_memory.md failed: filesystem access was denied.
@@ -15,6 +15,7 @@ Frontmatter: root
   .agents/memory/crystallized/_crystallized.md           not started
   .agents/memory/emerging/_emerging.md                   not started
   .agents/memory/working/_working.md                     not started
+  .agents/memory/working/saving.md                       not started
   .agents/patterns/_patterns.md                          not started
   .agents/skills/_skills.md                              not started
   .agents/skills/open-forge-cli/SKILL.md                 not started
@@ -29,7 +30,7 @@ Frontmatter: root
   .agents/open-forge.lock.json                           not started
   .agents/memory/_memory.overwrite.md
     Planned migration: content preserved
-  16 files and directories were created.
+  17 files and directories were created.
   Planned migration for 1 source.
   Recovery data: <recovery-bundle>
 Next: open-forge doctor --workspace <workspace>

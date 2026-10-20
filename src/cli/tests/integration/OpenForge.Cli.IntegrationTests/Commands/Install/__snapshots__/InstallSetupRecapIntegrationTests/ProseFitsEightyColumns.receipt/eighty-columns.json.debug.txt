@@ -155,6 +155,16 @@
       "after": null
     },
     {
+      "path": ".agents/README.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -236,6 +246,16 @@
     },
     {
       "path": ".agents/memory/working/_working.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": null,
+      "owner": null,
+      "before": null,
+      "after": null
+    },
+    {
+      "path": ".agents/memory/working/saving.md",
       "kind": "file",
       "action": "created",
       "outcome": "done",
@@ -366,7 +386,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 17,
+    "filesCreated": 19,
     "directoriesCreated": 13,
     "sectionsAdded": 0,
     "filesReplaced": 0
@@ -378,7 +398,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 17,
+      "files": 19,
       "directories": 13,
       "sections": 2
     },
@@ -427,6 +447,10 @@
         "path": ".agents/skills/open-forge-cli/references"
       },
       {
+        "path": ".agents/README.md",
+        "sourceAssetPath": ".agents/README.md"
+      },
+      {
         "path": ".agents/directives/_directives.md",
         "sourceAssetPath": ".agents/directives/_directives.md"
       },
@@ -461,6 +485,10 @@
       {
         "path": ".agents/memory/working/_working.md",
         "sourceAssetPath": ".agents/memory/working/_working.md"
+      },
+      {
+        "path": ".agents/memory/working/saving.md",
+        "sourceAssetPath": ".agents/memory/working/saving.md"
       },
       {
         "path": ".agents/patterns/_patterns.md",
@@ -511,7 +539,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 19
+      "assetCount": 21
     },
     "lifecycle": {
       "action": "publish",

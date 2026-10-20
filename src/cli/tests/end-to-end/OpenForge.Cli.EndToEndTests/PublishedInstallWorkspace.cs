@@ -17,6 +17,7 @@ internal sealed class PublishedInstallWorkspace : IDisposable
 
     internal static IReadOnlyList<string> EmbeddedPayloadPaths { get; } =
     [
+        ".agents/README.md",
         ".agents/directives/_directives.md",
         ".agents/guidance/_guidance.md",
         ".agents/loader.md",
@@ -26,6 +27,7 @@ internal sealed class PublishedInstallWorkspace : IDisposable
         ".agents/memory/crystallized/_crystallized.md",
         ".agents/memory/emerging/_emerging.md",
         ".agents/memory/working/_working.md",
+        ".agents/memory/working/saving.md",
         ".agents/patterns/_patterns.md",
         ".agents/skills/_skills.md",
         ".agents/skills/open-forge-cli/SKILL.md",

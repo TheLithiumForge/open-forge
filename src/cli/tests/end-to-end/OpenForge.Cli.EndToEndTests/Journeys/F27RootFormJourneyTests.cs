@@ -118,7 +118,8 @@ public sealed class F27RootFormJourneyTests
             "- [Structured reasoning, investigation, or comparison that is useful but not accepted truth](analysis/_analysis.md) - #Extension #Memory #Analysis #Contextual #Candidate",
             "- [Future possibilities, experiments, open questions, and options to explore later](ideas/_ideas.md) - #Extension #Memory #Idea #Exploration #Contextual #Candidate");
         JourneyPayloadAssertions.AssertEntries(workspace, ".agents/memory/working/_working.md",
-            "- [Current state, current step, and next steps for one active workstream](checkpoints/_checkpoints.md) - #Extension #Memory #Working #Checkpoint #Contextual");
+            "- [Current state, current step, and next steps for one active workstream](checkpoints/_checkpoints.md) - #Extension #Memory #Working #Checkpoint #Contextual",
+            "- [Save progress before pausing unfinished work](saving.md) - #LoadNow #Memory #Working #Policy");
 
         var doctor = await JourneyPayloadAssertions.RunWithoutWritesAsync(workspace, "doctor");
         JourneyPayloadAssertions.AssertCompleted(doctor);

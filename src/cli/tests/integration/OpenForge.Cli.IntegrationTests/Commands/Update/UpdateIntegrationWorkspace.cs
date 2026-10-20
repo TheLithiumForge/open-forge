@@ -194,8 +194,8 @@ internal sealed class UpdateIntegrationWorkspace : IDisposable
 
     internal void MutateManagedContent()
         => ReplaceUniqueManagedText(
-            "It defines how to select context, follow applicable rules, and maintain the workspace.",
-            "It defines how to select context, follow applicable rules, and maintain one workspace.");
+            "This file lists the context this workspace has chosen to use.",
+            "This file lists the context one workspace has chosen to use.");
 
     internal string MutateManagedContentAgain()
         => ReplaceUniqueManagedText(

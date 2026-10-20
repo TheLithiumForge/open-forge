@@ -6,7 +6,7 @@ Workspace: <workspace>
   .agents/open-forge.lock.json   ownership record would be updated
   .agents/loader.md              unchanged (line endings differ)
   Previous content will be kept in a recovery bundle.
-  17 files unchanged
+  19 files unchanged
   .agents/guidance bundled Framework: id=framework; version=unavailable; fingerprint=<sha256>
   .agents/guidance/_guidance.md shipped SHA-256: <sha256>
   .agents/guidance/_guidance.md source asset: .agents/guidance/_guidance.md

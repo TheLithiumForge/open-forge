@@ -22,9 +22,7 @@ public sealed class F01InstallReadinessJourneyTests
     private const string ExpectedManagedRegion =
         ManagedStart + "\n\n"
         + "Open Forge provides the working rules and context for this workspace.\n\n"
-        + "Before starting a task, read `.agents/loader.md`.\n"
-        + "Use it to select every relevant scope, including nested scopes.\n"
-        + "Follow the loaded rules throughout the task.\n"
+        + "Before starting a task, read `.agents/loader.md` and follow its reading steps. If the `open-forge` CLI is installed, `open-forge context --for <file>` gathers the required reads in one call, and the loader says what else to read.\n"
         + "\n"
         + ManagedEnd + "\n";
     private const string ExpectedClaudeRegion =
@@ -38,14 +36,10 @@ public sealed class F01InstallReadinessJourneyTests
         AgentsPath,
         ".agents/loader.md",
         ".agents/directives/_directives.md",
-        ".agents/guidance/_guidance.md",
-        ".agents/maps/_maps.md",
         ".agents/memory/_memory.md",
         ".agents/memory/crystallized/_crystallized.md",
-        ".agents/memory/emerging/_emerging.md",
         ".agents/memory/working/_working.md",
-        ".agents/patterns/_patterns.md",
-        ".agents/skills/_skills.md",
+        ".agents/memory/working/saving.md",
     ];
 
     [Theory(DisplayName = "F01 carries a fresh install through readiness, context, diagnosis, and a no-op repeat"),

@@ -6,6 +6,7 @@ memory/emerging, memory/crystallized, memory/archived
 Git-ignored contents: none
 Leave out: none
 Frontmatter: scoped
+  .agents/README.md                                      created
   .agents/directives/_directives.md                      created
   .agents/guidance/_guidance.md                          created
   .agents/loader.md                                      created
@@ -16,6 +17,7 @@ Frontmatter: scoped
   .agents/memory/crystallized/_crystallized.md           created
   .agents/memory/emerging/_emerging.md                   created
   .agents/memory/working/_working.md                     created
+  .agents/memory/working/saving.md                       created
   .agents/patterns/_patterns.md                          created
   .agents/skills/_skills.md                              created
   .agents/skills/open-forge-cli/SKILL.md                 created
@@ -33,7 +35,7 @@ Frontmatter: scoped
     created as the ownership receipt
   .agents/memory/_memory.overwrite.md
     Migrated: content preserved
-  Created 17 files and 12 directories under .agents, and replaced 1 existing
+  Created 19 files and 12 directories under .agents, and replaced 1 existing
   file.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Migrated 1 source.

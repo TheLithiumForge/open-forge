@@ -111,6 +111,14 @@
       "owner": null
     },
     {
+      "path": ".agents/README.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/directives/_directives.md",
       "kind": "file",
       "action": "created",
@@ -184,6 +192,14 @@
     },
     {
       "path": ".agents/memory/working/_working.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/working/saving.md",
       "kind": "file",
       "action": "created",
       "outcome": "planned",
@@ -288,7 +304,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 17,
+    "filesCreated": 19,
     "directoriesCreated": 12,
     "sectionsAdded": 0,
     "filesReplaced": 1
@@ -300,7 +316,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 17,
+      "files": 19,
       "directories": 12,
       "sections": 2
     },

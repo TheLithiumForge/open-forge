@@ -8,6 +8,12 @@ internal static class SourceLogicalPath
     internal const string AgentsRoot = ".agents";
     internal const string LoaderPath = AgentsRoot + "/loader.md";
 
+    /// <summary>
+    /// The guide for people at the top of `.agents/`. It is never a routed source, so agents do not
+    /// read it at startup and maintenance commands neither index it nor ask it for frontmatter.
+    /// </summary>
+    internal const string HumanGuidePath = AgentsRoot + "/README.md";
+
     internal static bool IsCanonical([NotNullWhen(true)] string? path)
     {
         return IsCanonicalSource(path);

@@ -22,14 +22,10 @@ public sealed class F02NativeSkillJourneyTests
         "AGENTS.md",
         ".agents/loader.md",
         ".agents/directives/_directives.md",
-        ".agents/guidance/_guidance.md",
-        ".agents/maps/_maps.md",
         ".agents/memory/_memory.md",
         ".agents/memory/crystallized/_crystallized.md",
-        ".agents/memory/emerging/_emerging.md",
         ".agents/memory/working/_working.md",
-        ".agents/patterns/_patterns.md",
-        ".agents/skills/_skills.md",
+        ".agents/memory/working/saving.md",
     ];
 
     private const string NativeSkillText = """
@@ -215,8 +211,9 @@ public sealed class F02NativeSkillJourneyTests
                 .GetProperty("sources")
                 .EnumerateArray()
                 .ToArray();
+            // Skills is on demand, so selecting a Skill also returns its catalogue as the required ancestor.
             Assert.Equal(
-                ExpectedStartupSourcePaths.Append(NativeSkillPath).Order(StringComparer.Ordinal),
+                ExpectedStartupSourcePaths.Append(SkillsListPath).Append(NativeSkillPath).Order(StringComparer.Ordinal),
                 sources.Select(source => source.GetProperty("path").GetString()).Order(StringComparer.Ordinal));
 
             foreach (var source in sources)

@@ -46,8 +46,33 @@ internal sealed class SourceLoadingClosureGraph
         return direct ? target : null;
     }
 
+    /// <summary>
+    /// Returns the workspace-relative path an Entries destination links to outside `.agents/`, or null.
+    /// </summary>
+    internal static string? ReadLinkedPath(
+        SourceLoadingClosureSource parent,
+        string destination)
+        => SourceGeneratedDestinationResolver.ResolveLinked(parent.Path, parent.IsLoader, destination);
+
+    internal SourceLoadingClosureSource? FindLinked(string linkedPath)
+        => _sourcesByPath.TryGetValue(linkedPath, out var target) && target.IsLinked ? target : null;
+
     private static void ValidateSource(SourceLoadingClosureSource source)
     {
+        if (source.IsLinked)
+        {
+            if (source.Form != SourceDocumentForm.Markdown
+                || source.ParentPath is null
+                || source.Path.StartsWith($"{SourceLogicalPath.AgentsRoot}/", StringComparison.Ordinal))
+            {
+                throw new ArgumentException(
+                    "A linked source must be Markdown outside .agents/ with its linking catalogue as parent.",
+                    nameof(source));
+            }
+
+            return;
+        }
+
         _ = source.Form switch
         {
             SourceDocumentForm.Loader

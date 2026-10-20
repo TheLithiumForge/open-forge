@@ -20,6 +20,8 @@ Frontmatter: root
   .agents/memory/working                                 created
   .agents/skills/open-forge-cli                          created
   .agents/skills/open-forge-cli/references               created
+  .agents/README.md
+    created; source: .agents/README.md
   .agents/directives/_directives.md
     created; source: .agents/directives/_directives.md
   .agents/guidance/_guidance.md
@@ -38,6 +40,8 @@ Frontmatter: root
     created; source: .agents/memory/emerging/_emerging.md
   .agents/memory/working/_working.md
     created; source: .agents/memory/working/_working.md
+  .agents/memory/working/saving.md
+    created; source: .agents/memory/working/saving.md
   .agents/patterns/_patterns.md
     created; source: .agents/patterns/_patterns.md
   .agents/skills/_skills.md
@@ -61,11 +65,11 @@ Frontmatter: root
   .agents/open-forge.json                                created
   .agents/open-forge.lock.json
     created; records the files above
-  Created 17 files and 13 directories under .agents (listed in
+  Created 19 files and 13 directories under .agents (listed in
   .agents/open-forge.lock.json).
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Bundled Framework fingerprint:
-  <sha256> (19 assets).
+  <sha256> (21 assets).
   The ownership record was published and verified.
   No recovery bundle was required.
   All written targets were verified.

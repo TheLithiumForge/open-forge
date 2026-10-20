@@ -1,24 +1,17 @@
 ---
 open-forge:
-  description: Useful history that no longer controls current work
+  description: History that no longer guides current work
   tags: [Memory, Archived, Contextual, Historical]
 ---
 
 # Archived Memory
 
-## What useful history should remain available without governing current work?
-
-Archived Memory keeps useful history without making it current authority.
+Optional. History kept for reference, without letting it guide current work. Needs Memory.
 
 ## Axioms
 
-- Check `Entries` when current work may need archived context.
-- Before archiving, extract anything still current into the sources that define it. Retain the remaining material when its history is useful, or link to it when it belongs elsewhere.
-- Retain, consolidate, or transform history according to its future value. Archival need not preserve every detail.
-- Preserve useful information about where the material came from, why it was archived, and what replaced it.
-- Remove metadata from archived material that would keep its former behavioral role active or claim current authority.
-- Delete retained material only under user direction or accepted retention preferences.
-- Validate material against current conditions before restoring it to an explicit destination. Establish acceptance before treating it as current knowledge.
+- Before archiving, move anything still current to the file that defines it, and note why the material was archived and what replaced it. Remove loading tags from it.
+- Delete archived material only when the user asks. Before restoring something, check it against current conditions and get it accepted again.
 
 ## Entries
 

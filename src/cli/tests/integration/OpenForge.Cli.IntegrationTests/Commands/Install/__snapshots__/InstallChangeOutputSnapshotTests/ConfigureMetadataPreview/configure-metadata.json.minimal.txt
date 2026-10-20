@@ -87,6 +87,14 @@
       "owner": null
     },
     {
+      "path": ".agents/memory/working/saving.md",
+      "kind": "file",
+      "action": "replaced",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/patterns/_patterns.md",
       "kind": "file",
       "action": "replaced",
@@ -156,7 +164,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 15,
+      "files": 16,
       "directories": 0,
       "sections": 2
     },

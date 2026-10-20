@@ -1,4 +1,4 @@
-Install stopped after 16 of 34 changes.
+Install stopped after 17 of 36 changes.
 Workspace: <workspace>
   Error  .agents/memory/_memory.md  Write failed [install.write-failed]
          Writing .agents/memory/_memory.md failed: filesystem access was denied.
@@ -23,6 +23,8 @@ Frontmatter: root
   .agents/memory/working                                 created
   .agents/skills/open-forge-cli                          created
   .agents/skills/open-forge-cli/references               created
+  .agents/README.md
+    created; source: .agents/README.md
   .agents/directives/_directives.md
     created; source: .agents/directives/_directives.md
   .agents/guidance/_guidance.md
@@ -41,6 +43,8 @@ Frontmatter: root
     not started; source: .agents/memory/emerging/_emerging.md
   .agents/memory/working/_working.md
     not started; source: .agents/memory/working/_working.md
+  .agents/memory/working/saving.md
+    not started; source: .agents/memory/working/saving.md
   .agents/patterns/_patterns.md
     not started; source: .agents/patterns/_patterns.md
   .agents/skills/_skills.md
@@ -65,10 +69,10 @@ Frontmatter: root
   .agents/open-forge.lock.json                           not started
   .agents/memory/_memory.overwrite.md
     Planned migration: content preserved
-  16 files and directories were created.
+  17 files and directories were created.
   Planned migration for 1 source.
   Bundled Framework fingerprint:
-  <sha256> (19 assets).
+  <sha256> (21 assets).
   Ownership record publication did not start.
   The recovery bundle was retained at <recovery-bundle>.
   The final verification state is unknown.

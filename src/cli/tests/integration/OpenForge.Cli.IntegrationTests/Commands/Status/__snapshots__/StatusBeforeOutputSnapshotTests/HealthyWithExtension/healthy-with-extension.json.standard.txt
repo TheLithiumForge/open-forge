@@ -15,18 +15,18 @@
   "findings": [],
   "effects": [],
   "counts": {
-    "routedFiles": 58,
-    "startupFiles": 11,
-    "startupTokens": 6857,
-    "mayLoadAgainFiles": 1,
-    "mayLoadAgainTokens": 347,
-    "allTokens": 39878,
-    "startupShare": 17.192956060007648279450577696,
+    "routedFiles": 60,
+    "startupFiles": 7,
+    "startupTokens": 2311,
+    "mayLoadAgainFiles": 0,
+    "mayLoadAgainTokens": 0,
+    "allTokens": 36264,
+    "startupShare": 6.3726672963042114479135788001,
     "rootCategories": 7,
     "entriesSectionsCurrent": 26,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 19,
+    "frameworkFilesCurrent": 21,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 6,
@@ -47,37 +47,37 @@
     "context": {
       "startup": {
         "shipped": {
-          "files": 11,
-          "characters": 26271,
-          "bytes": 26271,
-          "tokens": 6568
+          "files": 7,
+          "characters": 8835,
+          "bytes": 8835,
+          "tokens": 2209
         },
         "current": {
-          "files": 11,
-          "characters": 27425,
-          "bytes": 27425,
-          "tokens": 6857
+          "files": 7,
+          "characters": 9244,
+          "bytes": 9244,
+          "tokens": 2311
         },
         "difference": {
           "files": 0,
-          "characters": 1154,
-          "bytes": 1154,
-          "tokens": 289
+          "characters": 409,
+          "bytes": 409,
+          "tokens": 102
         },
         "mayLoadAgain": {
-          "files": 1,
-          "characters": 1385,
-          "bytes": 1385,
-          "tokens": 347
+          "files": 0,
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
         }
       },
       "allRouted": {
-        "files": 58,
-        "characters": 159512,
-        "bytes": 159513,
-        "tokens": 39878
+        "files": 60,
+        "characters": 145056,
+        "bytes": 145057,
+        "tokens": 36264
       },
-      "startupShare": 17.192956060007648279450577696
+      "startupShare": 6.3726672963042114479135788001
     },
     "structure": {
       "rootCategories": {

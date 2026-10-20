@@ -24,6 +24,9 @@ Frontmatter: root -> scoped
   .agents/memory/working/_working.md
     metadata would move under open-forge:; source:
     .agents/memory/working/_working.md
+  .agents/memory/working/saving.md
+    metadata would move under open-forge:; source:
+    .agents/memory/working/saving.md
   .agents/patterns/_patterns.md
     metadata would move under open-forge:; source: .agents/patterns/_patterns.md
   .agents/skills/_skills.md
@@ -43,9 +46,9 @@ Frontmatter: root -> scoped
   .agents/templates/_templates.md
     metadata would move under open-forge:; source:
     .agents/templates/_templates.md
-  Would update 16 existing files.
+  Would update 17 existing files.
   Bundled Framework fingerprint:
-  <sha256> (19 assets).
+  <sha256> (21 assets).
   No ownership record change was requested.
   No recovery bundle was created.
   Verification was not requested.

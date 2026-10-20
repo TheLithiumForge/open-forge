@@ -124,6 +124,12 @@ internal sealed class SourceRouteFactsResolver
                         break;
                     }
 
+                    // A linked destination is ordinary project material outside `.agents/`, not a root route.
+                    if (destination.State == SourceLoaderDestinationParseState.Linked)
+                    {
+                        continue;
+                    }
+
                     if (destination.State == SourceLoaderDestinationParseState.Unsafe)
                     {
                         var cause = destination.Cause

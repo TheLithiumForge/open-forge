@@ -19,6 +19,8 @@ Frontmatter: root -> scoped
     metadata would move under open-forge:
   .agents/memory/working/_working.md
     metadata would move under open-forge:
+  .agents/memory/working/saving.md
+    metadata would move under open-forge:
   .agents/patterns/_patterns.md
     metadata would move under open-forge:
   .agents/skills/_skills.md
@@ -33,5 +35,5 @@ Frontmatter: root -> scoped
     metadata would move under open-forge:
   .agents/templates/_templates.md
     metadata would move under open-forge:
-  Would update 16 existing files.
+  Would update 17 existing files.
 No files were changed.

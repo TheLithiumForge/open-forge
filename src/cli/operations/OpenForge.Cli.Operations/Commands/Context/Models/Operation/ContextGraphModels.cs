@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
@@ -76,6 +77,18 @@ internal sealed class ContextGraphSource
     internal SourceGeneratedEntriesFacts GeneratedEntries { get; }
 
     internal IReadOnlyList<ContextGraphLayer> Layers { get; }
+
+    /// <summary>
+    /// The catalogue whose Entries line links this file from outside `.agents/`, or null for other sources.
+    /// </summary>
+    internal string? LinkedParentPath { get; init; }
+
+    /// <summary>
+    /// The `applies to` condition from the linking Entries line.
+    /// </summary>
+    internal ApplyToMetadataFacts LinkedApplyTo { get; init; } = ApplyToMetadataFacts.Absent;
+
+    internal bool IsLinked => LinkedParentPath is not null;
 
     internal bool IsLoader => Form == SourceDocumentForm.Loader;
 

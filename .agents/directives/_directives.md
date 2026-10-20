@@ -1,25 +1,17 @@
 ---
 open-forge:
-  description: Required instructions loaded through selected routes
+  description: Rules agents must follow in this workspace
   tags: [LoadNow, Core, Directive]
 ---
 
 # Directives
 
-## What behavior is required in this scope?
-
-Directives define required agent behavior within a scope.
+Optional. Rule files here apply to the whole workspace, and subfolders narrow them to an area. Nothing else depends on this folder.
 
 ## Axioms
 
-- Each Directive file in the same folder as an `entrypoint` must carry #LoadNow. Directives are mandatory within their scope.
-- Each Directive file keeps its instructions under a non-empty `## Instructions` heading.
-- State each obligation, its conditions, and meaningful exceptions in the instructions. Supporting examples or visuals illustrate those instructions. The obligation must remain understandable from the instructions themselves.
-- Directive files in this root `entrypoint`'s folder apply throughout the workspace.
-- A child entrypoint does not need #LoadNow. It loads only when selected.
-- Select a child entrypoint before loading its Directive files. Their Instructions apply only within that narrower scope.
-- Child Directives add to active parent Directives. A narrower scope does not create higher authority.
-- Report any conflict or instruction that cannot be followed, and explain why.
+- Put each file's rules under `## Instructions`, with when they apply and their exceptions, so they make sense on their own.
+- Tag each rule file #LoadNow. Limit it with `applyTo`, for example `**/*.cs`. A subfolder of rules needs a #LoadNow catalogue, limited the same way when it matches files.
 
 ## Entries
 

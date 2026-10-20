@@ -12,10 +12,13 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Route.Init.Framework;
 public sealed class RouteInitFrameworkOwnershipIntegrationTests
 {
     private const string CanonicalWorkingPath = ".agents/memory/working/_working.md";
-    private const string CompatibilityWorkingPath = ".agents/memory/working/index.md";
     private const string MemoryPath = ".agents/memory/_memory.md";
-    private const string CanonicalWorkingLink = "working/_working.md";
-    private const string CompatibilityWorkingLink = "working/index.md";
+
+    // The untracked-source fixtures need a shipped entrypoint whose Entries start empty.
+    private const string CanonicalUntrackedPath = ".agents/memory/emerging/_emerging.md";
+    private const string CompatibilityUntrackedPath = ".agents/memory/emerging/index.md";
+    private const string CanonicalUntrackedLink = "emerging/_emerging.md";
+    private const string CompatibilityUntrackedLink = "emerging/index.md";
     private const string EntriesRegion = "entries";
 
     [Trait("Boundary", "OS")]
@@ -192,7 +195,7 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
             entrypoint.Form);
         var segment = Assert.Single(result.Framework!.Segments, item => item.Path == target);
         Assert.Equal(RouteInitFrameworkSegmentRole.Managed, segment.Role);
-        Assert.Equal(CanonicalWorkingPath, segment.SourceAssetPath);
+        Assert.Equal(CanonicalUntrackedPath, segment.SourceAssetPath);
     }
 
     private static async ValueTask<string> PrepareUntrackedSourceAsync(
@@ -200,16 +203,16 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
         bool compatibility,
         bool staleEntries)
     {
-        var target = compatibility ? CompatibilityWorkingPath : CanonicalWorkingPath;
+        var target = compatibility ? CompatibilityUntrackedPath : CanonicalUntrackedPath;
         if (compatibility)
         {
-            workspace.WriteText(target, workspace.ReadText(CanonicalWorkingPath));
-            workspace.Delete(CanonicalWorkingPath);
+            workspace.WriteText(target, workspace.ReadText(CanonicalUntrackedPath));
+            workspace.Delete(CanonicalUntrackedPath);
             workspace.WriteText(
                 MemoryPath,
                 workspace.ReadText(MemoryPath).Replace(
-                    CanonicalWorkingLink,
-                    CompatibilityWorkingLink,
+                    CanonicalUntrackedLink,
+                    CompatibilityUntrackedLink,
                     StringComparison.Ordinal));
         }
 
@@ -228,8 +231,8 @@ public sealed class RouteInitFrameworkOwnershipIntegrationTests
         var current = read.Document.Framework ?? throw new InvalidOperationException("Expected Framework ownership.");
         var intended = current with
         {
-            Paths = [.. current.Paths.Where(path => path != CanonicalWorkingPath)],
-            Regions = [.. current.Regions.Where(region => region.Path != CanonicalWorkingPath)],
+            Paths = [.. current.Paths.Where(path => path != CanonicalUntrackedPath)],
+            Regions = [.. current.Regions.Where(region => region.Path != CanonicalUntrackedPath)],
         };
         var plan = new WorkspaceOwnershipStore().PlanFrameworkOwnership(read, intended);
         workspace.WriteBytes(RouteInitFrameworkIntegrationWorkspace.OwnershipPath,

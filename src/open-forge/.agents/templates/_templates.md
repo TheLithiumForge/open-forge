@@ -1,34 +1,17 @@
 ---
 open-forge:
-  description: Copy-ready files for starting independently maintained workspace content
+  description: Starting files to copy when creating something new
   tags: [Core, Template]
 ---
 
 # Templates
 
-## What starting content can be copied, adapted, and maintained independently?
-
-Templates are reusable starting files. Copy and adapt a Template, then maintain the result independently.
+Optional. Starting files to copy, adapt and then maintain on their own. Nothing else depends on this folder.
 
 ## Axioms
 
-### Selection And Use
-
-- Check `Entries` when copy-ready starting content would help with a new artifact.
-- Choose the most relevant Template. Keep only the sections and detail the destination needs, while preserving its required structure.
-- Replace metadata and placeholders so they describe the destination's ownership, scope, state, authority, and relationships.
-- Give copied content its own metadata in the workspace's chosen form. Native `SKILL.md` keeps its native metadata.
-- Remove the #Template tag unless the result is another Template. Remove package tags that do not describe the destination.
-- Rebase relative links for the destination.
-- Later Template changes do not update existing copies.
-- If the new artifact needs continuing guidance or requirements, link the source that defines them. The Template provides only starting content.
-
-### Catalogue Maintenance
-
-- State the need and primary question each Template answers in its description and source instructions.
-- Use focused prompts that request necessary content once, in a readable order. Mark optional sections clearly.
-- Treat generic Templates as fallbacks. Add a specialized Template only when it provides meaningfully different starting content.
-- Users may edit, replace, scope, or remove Templates.
+- When copy-ready starting content would help with a new file, check these Entries.
+- In the copy, keep only the sections it needs, replace placeholders and metadata, fix relative links, and remove the #Template tag unless it is another Template. Later Template changes do not update copies.
 
 ## Entries
 

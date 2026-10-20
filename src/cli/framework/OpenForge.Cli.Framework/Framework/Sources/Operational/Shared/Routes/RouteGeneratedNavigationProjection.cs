@@ -43,7 +43,10 @@ internal static class RouteGeneratedNavigationProjection
                         "A generated-navigation formation source requires one retained observation."));
         }).ToArray();
         return new GeneratedNavigationProjector().Project(
-            new GeneratedNavigationProjectionRequest(formation, regions, metadata, sharing));
+            new GeneratedNavigationProjectionRequest(formation, regions, metadata, sharing)
+            {
+                PreserveLoaderMembership = true,
+            });
     }
 
     internal static OperationalGeneratedNavigationState ReadUnavailableState(

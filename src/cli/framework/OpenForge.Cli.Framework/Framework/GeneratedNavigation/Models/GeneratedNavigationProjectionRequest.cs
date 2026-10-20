@@ -86,6 +86,13 @@ internal sealed class GeneratedNavigationProjectionRequest
 
     internal SourceSharing Sharing { get; }
 
+    /// <summary>
+    /// When true, the Loader's generated Entries keep only the roots its current Entries already list,
+    /// so a root the user removed stays removed. Maintenance and read-only freshness checks set it.
+    /// Operations that install a new root leave it false so the new root is added.
+    /// </summary>
+    internal bool PreserveLoaderMembership { get; init; }
+
     internal SourceRouteTopology Topology => Formation.Topology;
 
     internal IReadOnlyList<SourceLogicalSource> Sources => Formation.Sources;
