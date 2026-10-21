@@ -1,0 +1,6 @@
+Cannot show help: Unknown help topic 'unknown'. Available topics: concepts.
+  Error  unknown  Help input is invalid
+         Unknown help topic 'unknown'. Available topics: concepts.
+1 errors.
+  Choose a listed topic or read the command's options.
+Next: open-forge help --help

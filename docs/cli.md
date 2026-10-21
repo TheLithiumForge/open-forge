@@ -28,6 +28,7 @@ examples need no preview. Mutation examples show a preview before application.
 
 | Task                          | Commands                                                                                                                                                                                                                                 |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Learn Open Forge concepts     | [help](#help)                                                                                                                                                                                                                            |
 | Read and discover context     | [status](#status), [context](#context), [find](#find), [references](#references), [route list](#route-list), [route inspect](#route-inspect)                                                                                             |
 | Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                                                                                        |
 | Check and repair              | [index](#index), [doctor](#doctor), [repair](#repair), [cleanup](#cleanup)                                                                                                                                                               |
@@ -112,6 +113,29 @@ workspace. Commands that can change files offer `--dry-run` when a complete
 preview is useful. A dry run builds and reports the operation's plan without
 changing any files. Either way, the operation needs enough evidence to tell
 which files it may manage, and it reports a boundary rather than guessing.
+
+## help
+
+Read built-in explanations without a workspace:
+
+```sh
+open-forge help
+open-forge help concepts
+open-forge help concepts --format json
+```
+
+With no topic, Help lists the available topics. `concepts` is the only topic.
+It explains loading, rules, conditions, reuse and customization, then prints
+the shipped authoring reference. Text keeps the Markdown unchanged. JSON puts
+the topic name and complete Markdown in the shared result envelope.
+
+In a workspace, `.agents/authoring.md` and its `authoring.overwrite.md` are the
+version that applies. Read them with `open-forge context .agents/authoring.md`.
+Help reads no workspace files and changes nothing.
+
+An unknown topic is invalid input and lists the topics. A command name also
+suggests its options, so `open-forge help install` points to
+`open-forge install --help`. Use `open-forge help --help` for Help's own options.
 
 ## Global options
 

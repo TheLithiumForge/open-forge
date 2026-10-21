@@ -102,6 +102,7 @@ Direct commands keep their detailed files in one local scope:
 
 | Command      | Interface                                                             | Behavior                                                            | Technical Design                                                          |
 | ------------ | --------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `help`       | [`help Interface`](contracts/help/interface.md)                       | [`help Behavior`](contracts/help/behavior.md)                       | None                                                                      |
 | `find`       | [`find Interface`](contracts/find/interface.md)                       | [`find Behavior`](contracts/find/behavior.md)                       | [`find Technical Design`](contracts/find/technical-design.md)             |
 | `index`      | [`index Interface`](contracts/index-candidate/interface.md)           | [`index Behavior`](contracts/index-candidate/behavior.md)           | [`index Technical Design`](contracts/index-candidate/technical-design.md) |
 | `status`     | [`status Interface`](contracts/status/interface.md)                   | [`status Behavior`](contracts/status/behavior.md)                   | None; no Technical Design exists.                                         |

@@ -24,6 +24,8 @@ You may create or move user-owned Markdown files directly inside routed folders.
 
 Check `open-forge --help` once for availability and groups. Use `open-forge <command> --help` for the installed version's exact syntax. If unavailable, follow the loader and maintain the files directly.
 
+Use `open-forge help concepts` for built-in explanations and the shipped authoring reference. It needs no workspace. In a workspace, read the version that applies with `open-forge context .agents/authoring.md`.
+
 Prefer one context request over separate reads for each entrypoint:
 
 ```sh

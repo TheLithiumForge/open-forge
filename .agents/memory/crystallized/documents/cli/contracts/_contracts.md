@@ -62,6 +62,7 @@ active development records track execution without replacing these contracts.
 
 ## Entries
 
+- [Read built-in Open Forge topics without a workspace](help/_help.md) - #Memory #Crystallized #CLI #Command #Contract #Help #CurrentTruth
 - [Route the accepted current root cleanup contracts for lease-validated recovery-bundle and draft deletion](cleanup/_cleanup.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Mutation #Recovery #Safety #CurrentTruth
 - [Current Crystallized contract set for stateless ordered context resolution, projection, and explicit link expansion](context/_context.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #CurrentTruth
 - [Route the accepted current read-only Doctor Interface and Behavior contracts](doctor/_doctor.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Doctor #CurrentTruth

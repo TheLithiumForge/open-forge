@@ -1,0 +1,6 @@
+Cannot show help: Unknown help topic 'install'. Available topics: concepts. Run open-forge install --help.
+  Error  install  Help input is invalid [help.invalid-input]
+         Unknown help topic 'install'. Available topics: concepts. Run open-forge install --help.
+1 errors.
+  Choose a listed topic or read the command's options.
+Next: open-forge install --help

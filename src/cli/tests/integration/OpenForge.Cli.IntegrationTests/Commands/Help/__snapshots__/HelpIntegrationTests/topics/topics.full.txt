@@ -1,0 +1,4 @@
+Help topics:
+  concepts  How Open Forge works: what loads, rules, tags, reuse and the file formats
+
+Run open-forge help <topic> to read one. open-forge <command> --help shows a command's options.
