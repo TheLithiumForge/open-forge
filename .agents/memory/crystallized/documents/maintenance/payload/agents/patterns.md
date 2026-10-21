@@ -9,13 +9,13 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/patterns/_patterns.md`](../../../../../../../src/open-forge/.agents/patterns/_patterns.md) is the canonical installed Patterns entrypoint. The repository [Patterns entrypoint](../../../../../../patterns/_patterns.md) is maintained separately. Task 80 updates only the shipped contract, and [Task 81](../../../../../archived/cli-development/tasks/task81-own-patterns-maintenance.md) retains the repository Pattern alignment.
+[`src/open-forge/.agents/patterns/_patterns.md`](../../../../../../../src/open-forge/.agents/patterns/_patterns.md) is the canonical installed Patterns entrypoint. The repository [Patterns entrypoint](../../../../../../patterns/_patterns.md) keeps repository-specific wording and local Entries. Shared shape obligations stay aligned without requiring byte equality.
 
 The [current Patterns document](../../../framework/primitives/patterns.md) defines continuing structural reference, deliberate variation, scope, and relationships with other primitives. The [Core primitive model](../../../framework/primitives/model.md#roles) owns the comparative taxonomy.
 
 ## Contract
 
-- Frontmatter uses #LoadNow, #Core, and #Pattern so the category and its selection rule enter baseline context
+- Frontmatter uses #Core and #Pattern without a loading tag. The category is optional, has no dependents and stays on demand.
 - The entrypoint directs agents to check Patterns when creating, changing, or reviewing something with visible structure
 - Every routed Pattern defines one recognizable reusable shape and enough scope to judge relevance
 - A new Pattern requires an accepted shape that remains useful for future related work
@@ -32,6 +32,6 @@ The [current Patterns document](../../../framework/primitives/patterns.md) defin
 
 ## Verification
 
-- Core installation tests verify that the category installs, indexes, and remains baseline-loaded
-- Route tests verify arbitrary-depth child entrypoints and generated-region integrity
-- Embedded payload and frontmatter parity tests compare the actual shipped bytes. A reviewer example checks whether the shape, applicability, and variations are understandable with an artifact alone
+- Use the [payload integrity checks](../_payload.md#verification) for shipped bytes and frontmatter rendering.
+- Check the shipped loader leaves Patterns on demand. Compare shared obligations with repository Patterns while retaining its declared local wording differences.
+- Manually compare one Pattern with a real artifact. The shape, applicability, fixed parts and permitted variations must be understandable from those two sources. Resource parity does not prove that usability.

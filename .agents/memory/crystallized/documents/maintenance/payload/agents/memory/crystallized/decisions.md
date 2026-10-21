@@ -16,15 +16,16 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 ## Contract
 
 - Frontmatter uses #Extension, #Memory, #Decision, and #CurrentTruth to classify this optional Planning route
-- Decisions record important accepted choices and why they were made
+- Decisions record important accepted choices, why they were made and which applicable authority accepted them. Unaccepted proposals stay in candidate routes.
 - The source for the current behavior, record, route, code, or external state defines the result and may link back to the Decision for why
-- Alternatives, tradeoffs, constraints, and consequences remain only when they provide future explanatory value
+- Alternatives, tradeoffs, constraints and consequences remain only when they provide future explanatory value. Keep one choice or a tightly related group per record and split unrelated choices.
 - Overlapping Decisions are consolidated, reshaped, or linked when their reasoning agrees. Reasoning behind a replaced choice is archived or linked
 - Important disagreement or competing accepted reasoning is surfaced for discussion instead of being merged silently
-- Accepted changes update the current result and preserve useful rationale from the previous choice without leaving two competing current outcomes
+- Current-result updates follow the [loader](../../loader.md) and [Memory](../_memory.md) rules. Decisions preserve useful rationale without becoming a competing exact specification.
 - The repository-only knowledge-role helper stays in the user-owned overwrite. It never enters the canonical source, and installed wording remains understandable without it.
 
 ## Verification
 
-- Core-only installation verifies that the optional Decisions route is absent; Planning installation verifies that it installs, indexes, retains its full source classification, and reconciles through scopes
-- Verify that the repository-only overwrite remains adjacent and loadable
+- Use the [payload integrity checks](../../../_payload.md#verification) for the Planning Extension source and metadata rendering.
+- Compare the packaged and repository category rules outside Entries. Verify the repository-only overwrite remains adjacent and its helper does not enter the shipped source.
+- Review accepted authority, focused rationale and links to current results manually. Confirm Core alone has no Decisions category.

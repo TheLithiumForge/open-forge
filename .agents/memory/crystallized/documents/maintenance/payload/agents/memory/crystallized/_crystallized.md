@@ -15,17 +15,18 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Contract
 
-- Frontmatter preserves #LoadNow, #Memory, #Crystallized, and #CurrentTruth classification
-- Clear user direction, delegated authority, a requested action that clearly requires the choice, or a declared external authority establishes acceptance within scope. Tags, repetition, and agent confidence do not establish it.
-- The entrypoint keeps one current answer for each distinct question and scope by updating, splitting, merging, or reshaping existing material
-- Material that is no longer current is archived or linked with enough context to understand the change
-- Decisions and Documents retain their distinct roles within Crystallized Memory. Their optional Extension-provided routes remain linked through the maintenance `Entries`.
-- Recursive scope follows the Loader rules and does not force all accepted state into Memory
-- The installed parent contains no project-specific accepted records
+- Frontmatter preserves #LoadNow, #Memory, #Crystallized and #CurrentTruth. The state is optional and needs Memory.
+- Entries are checked before deciding no accepted knowledge applies. Only accepted current knowledge belongs here, within its scope and under the loader's acceptance rule. Tags, repetition and confidence do not establish acceptance.
+- Changed accepted direction updates, splits, merges or reshapes existing records rather than adding a competing current version.
+- Superseded material is archived or linked with enough context to understand the change.
+- Decisions and Documents are distinct optional Extension roles. Core does not ship their routes or force all accepted knowledge into Memory.
+- The installed state catalogue contains no project records and starts with empty Entries.
 
 ## Verification
 
-- Core installation closure tests verify the Crystallized route's creation, updating, indexing, and classification. Selected Extension installation tests verify the optional Decisions and Documents routes and their source classification.
+- Use the [payload integrity checks](../../../_payload.md#verification) for the Core state, optional Extension bytes and metadata rendering.
+- Compare shared source and repository rules outside Entries. Review acceptance and replacement behavior manually rather than claiming byte parity proves it.
+- Confirm optional Decisions and Documents remain Extension contributions and preserve their separate roles.
 
 ## Entries
 

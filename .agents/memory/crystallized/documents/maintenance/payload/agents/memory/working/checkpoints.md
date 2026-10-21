@@ -16,13 +16,15 @@ The [Working state contract](../../../../../framework/memory/working.md) defines
 ## Contract
 
 - Frontmatter uses #Extension, #Memory, #Working, #Checkpoint, and #Contextual to classify this optional Planning route
-- A Checkpoint records the current state, current step, and next steps for one active workstream and is updated as the work changes
+- Keep one Checkpoint for an active workstream when durable sources alone cannot support resumption. It records the current state, step and next steps, and changes with the work.
 - It carries #Active and #KeepInMind only while active and is refreshed after important state changes and context restoration
 - It records the current goal, state, and current step, accepted decisions, evidence, unresolved questions, next steps, and durable sources when they help the work resume
-- Before an actual transfer or explicitly planned resumption, the Checkpoint is updated. A Handoff is created only when that boundary needs a fixed snapshot while the Checkpoint may continue to change
+- Update the Checkpoint before an actual transfer or explicitly planned resumption. Seal a transfer snapshot only when that boundary needs fixed state while the Checkpoint may continue changing. The workspace chooses its transfer record, and the optional Observations and Handoffs package supplies Handoffs for this role.
 - Routine pauses and ordinary closeout do not require a Handoff
 - Closeout saves durable outcomes outside the Checkpoint. When its active need ends, the Checkpoint loses its active continuity status and is archived or pruned
 
 ## Verification
 
-- Core-only installation verifies that the optional Checkpoints route is absent; Planning installation verifies that it installs, indexes, retains its full source classification and active-status wording, supports recursive scope, and preserves user-owned legacy Sessions
+- Use the [payload integrity checks](../../../_payload.md#verification) for the Planning Extension source and metadata rendering.
+- Compare category rules with the repository counterpart outside Entries. Confirm Core alone has no Checkpoints category.
+- Manually trace an active record through context restoration, transfer and closeout. Verify active tags expire, durable results leave the record and a sealed snapshot is conditional.

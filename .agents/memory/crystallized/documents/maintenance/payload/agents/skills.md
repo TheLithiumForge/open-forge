@@ -17,7 +17,7 @@ The [current Skills document](../../../framework/primitives/skills.md) defines t
 
 ## Contract
 
-- Frontmatter uses #LoadNow, #Core, and #Skill so the category and its selection rule enter baseline context
+- Frontmatter uses #Core and #Skill without a loading tag. The category is optional, has no dependents and is checked before specialized work that may benefit from a capability.
 - The standard `route` exposes ordinary `.agents/skills/{skill-name}/SKILL.md` packages. A package the user owns is maintained like other user-owned Markdown: Index fills a missing native `name` and `description` in `SKILL.md` and the usual description and tags in other package Markdown, and Repair maintains its links. A managed package stays with its managing Update
 - Routed scopes beneath the Skills `root route` may expose direct native Skill packages through the same contract for generated `entries`
 - The selected `SKILL.md` defines its metadata, use, instructions, resource organization, and on-demand loading
@@ -26,14 +26,14 @@ The [current Skills document](../../../framework/primitives/skills.md) defines t
 - Open Forge does not impose an internal `Entries`, `References`, scripts, or assets schema on a Skill package
 - Loose Markdown files directly under the Skills `root route` or one of its scopes do not become native Skills
 - The installable source ships one Skill package, `open-forge-cli`, and other Skills arrive through Extensions or the workspace itself
-- The baseline-loaded Skills entrypoint explicitly requires reading `open-forge-cli/SKILL.md` when present. This makes usage instructions available at startup without changing native Skill metadata, generated #Skill entries, or runtime invocation policy. Intentional omissions remain respected; the loader's CLI summary stays available. Other Skills remain selected on demand.
-- The loader keeps its short CLI command list so harnesses that never activate native Skills still see the commands. The `open-forge-cli` Skill keeps startup instructions short and teaches every command and flag in task-specific resources loaded only when relevant. Shared flags are explained once. The guide defers to `open-forge <command> --help` for the installed version.
+- When present, `open-forge-cli/SKILL.md` must be read before CLI commands other than `context`. It is not a startup requirement. Intentional omission is respected, and unavailable CLI commands fall back to plain files.
+- The loader keeps the Context entry path and names Include. The CLI Skill and its task-specific resources carry command discovery, navigation, mutation and lifecycle details. Shared flags are explained once and exact installed syntax comes from command help. The [authoring reference](authoring.md) now defines workspace metadata formats.
 - Keep the CLI Skill and all its resources byte-aligned between the installable source and repository counterpart. Reference pages carry concise Open Forge metadata for retrieval and health checks. They need no entrypoint or blanket loading rule.
 
 ## Verification
 
-- Verify native package discovery at the Skills `root route` and within routed scopes beneath it, plus package-local resource structure, generated `entries`, and cross-root rejection.
-- Verify Index selection separately: it discovers recognized entrypoints in each eligible Skill package's immediate child directories and maintains their generated `Entries`. This selection does not automatically load resources or activate the Skill.
-- Core installation tests verify that the category installs, indexes, and remains baseline-loaded
-- Inspect the installed Skills entrypoint's conditional required-read path and its target. Verify default installation loads the usage Skill and a deliberately omitted Skill leaves no dangling required-read link. Verify `context skills/open-forge-cli` batches the tag-derived startup closure and this explicitly selected Skill without duplicate sources; plain `context` reports the tag-derived closure and does not interpret prose instructions.
-- When a command, flag, default, status meaning, or lifecycle behavior changes, review the CLI Skill and relevant resources against the command reference and current local help. Verify complete command and flag coverage, valid examples and links, and byte alignment of both package trees.
+- [IndexSkillPackageMetadataIntegrationTests](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Index/IndexSkillPackageMetadataIntegrationTests.cs) cover user-owned native and resource metadata. [IndexSkillCatalogueIntegrationTests](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Index/IndexSkillCatalogueIntegrationTests.cs) cover bounded resource catalogue maintenance.
+- [GeneratedNavigationSkillProjectionTests](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Framework/GeneratedNavigation/GeneratedNavigationSkillProjectionTests.cs) cover native package navigation. These checks do not activate a Skill or execute its resources.
+- Use the [payload integrity checks](../_payload.md#verification) for the category and packaged Skill. Compare both complete Skill trees directly where shared text is intended.
+- Check plain startup omits Skills, selecting the category exposes its packages and CLI use requires the guide only before commands other than Context. Deliberate omission leaves no unconditional required read.
+- When commands, flags, defaults or lifecycle behavior change, review the matching Skill resources against command definitions and help. Check examples, relative links and source-to-repository parity.

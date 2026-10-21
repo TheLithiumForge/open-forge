@@ -9,24 +9,25 @@ open-forge:
 
 ## Source
 
-[`src/open-forge/.agents/memory/working/_working.md`](../../../../../../../../../src/open-forge/.agents/memory/working/_working.md) is the canonical installed Working Memory `entrypoint`. The repository [Working `entrypoint`](../../../../../../../working/_working.md) dogfoods the same authored contract and adds repository working state through generated `Entries`.
+[`src/open-forge/.agents/memory/working/_working.md`](../../../../../../../../../src/open-forge/.agents/memory/working/_working.md) is the canonical installed Working Memory `entrypoint`. The repository [Working `entrypoint`](../../../../../../../working/_working.md) keeps the shared state rules and local Entries. It omits the saving-policy sentence because this repository has no saving-policy copy.
 
 The [Working state contract](../../../../../framework/memory/working.md) defines Working Memory through expected expiration. The [transition contract](../../../../../framework/memory/transitions.md) owns extraction and movement when active need ends.
 
 ## Contract
 
-- Frontmatter preserves #LoadNow, #Memory, #Working, and #Contextual classification
-- Working Memory does not establish acceptance by itself
-- An explicitly accepted temporary choice may remain in Working when its source, scope, and expected expiration are clear
-- Active material stays small, current, and easy to replace or reread
-- Useful results are saved before stale Working Memory is archived or cleared
-- Checkpoints and Handoffs retain their distinct active-state and transfer roles within Working Memory. Their routes are provided by optional Extensions and remain linked through the maintenance `Entries`.
-- Recursive scopes may add plans, history, backlogs, or other temporary roles without changing Working state semantics
-- The installed parent contains no workspace-specific active state
+- Frontmatter preserves #LoadNow, #Memory, #Working and #Contextual. Working is optional, needs Memory and holds unfinished-work records for a later session.
+- At task start or resume, check Entries and read any record for that work, then compare it with current files before relying on it.
+- Records stay small, current and replaceable, with the goal, present state, next step and open questions.
+- Working does not establish acceptance. An accepted temporary choice may remain when its source, scope and expected expiration are clear.
+- Useful results reach their defining sources before an expired record is moved, archived, consolidated or pruned.
+- The introduction points to [memory/saving.md](../saving.md) for automatic progress capture. The policy is outside Working so private records do not hide shared instructions. Its removal can leave Working records in place.
+- Checkpoints and Handoffs are optional Extension roles, not Core defaults or requirements for every pause. The state catalogue ships empty and contains no project-specific active state.
 
 ## Verification
 
-- Core installation and `route` tests verify Working loading and classification plus legacy user-owned Sessions preservation. Selected Extension installation tests verify the optional Checkpoints and Handoffs routes, indexing, classification, and recursive scope.
+- Use the [payload integrity checks](../../../_payload.md#verification) for Core and optional Extension bytes and metadata rendering.
+- Compare shared shipped and repository rules outside Entries, allowing the declared saving-policy sentence difference. Inspect the shipped saving-policy pointer and verify its shared location and optional removal behavior.
+- Manually trace start, resume and closeout with an ordinary Working record. Check that named record categories and sealed transfer snapshots remain optional.
 
 ## Entries
 

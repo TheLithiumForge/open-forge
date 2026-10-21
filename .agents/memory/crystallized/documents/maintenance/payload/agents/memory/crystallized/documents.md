@@ -16,8 +16,8 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 ## Contract
 
 - Frontmatter preserves #Extension, #Memory, #Document, and #CurrentTruth classification
-- Documents explain accepted current knowledge that needs one coherent view, or link to the system that contains it
-- A document that assigns a subject to another authoritative source follows that source for its detail
+- Check Entries when work needs accepted current knowledge. Documents explain the subject coherently without requiring readers to reconstruct it from past decisions. Link the Decision when its reasoning helps.
+- A document that assigns a subject to another authoritative source follows that source for its detail. Linking does not make the destination's content accepted.
 - A routed destination still defines its own detail. The containing document does not become a competing copy
 - Copy-ready creation sources belong in [Templates](../../../../../framework/primitives/templates.md), while Documents retain accepted current content
 - Existing current documents are reshaped when accepted meaning changes instead of accumulating parallel current views
@@ -26,4 +26,6 @@ The [Crystallized state contract](../../../../../framework/memory/crystallized.m
 
 ## Verification
 
-- Installation and `route` tests verify that Core alone does not provide Documents and that the Project Documents Extension supplies its loading, indexing, classification, and managed reconciliation through scopes
+- Use the [payload integrity checks](../../../_payload.md#verification) for the Project Documents Extension source and metadata rendering.
+- Compare category rules with the repository counterpart outside Entries. Confirm Core alone has no Documents category.
+- Manually follow one overview and its narrower Documents. Check summaries, back links and declared authoritative destinations without treating a link as acceptance.

@@ -16,17 +16,18 @@ The [current Directive contract](../../../framework/primitives/directives.md) de
 ## Contract
 
 - Frontmatter uses #LoadNow, #Core, and #Directive so the `root route` enters baseline context with its primitive type visible
-- The entrypoint keeps the one-pass model: select a Directive route, then load and follow every sibling Directive exposed through #LoadNow
-- Sibling Directives under the root apply across the workspace. A selected child entrypoint sets the narrower scope before its sibling Directives load
+- The category is optional and nothing else depends on it. When its loader row is enabled, #LoadNow reads its catalogue and applicable rule files in order.
+- Sibling Directives under the root apply across the workspace. A child catalogue narrows the scope. It may stay on demand, or carry #LoadNow and applicable file conditions when its rules must load automatically.
 - Child Directives add to active parent Directives and report conflicts instead of creating hidden precedence
 - Every sibling Directive carries #LoadNow and keeps its instructions under a non-empty level-2 `## Instructions` heading
 - Instructions state obligations, conditions, and meaningful exceptions. Supporting examples or visuals are illustrative, and obligations remain understandable from the instructions themselves
 - The entrypoint defines the reusable category rules. Each sibling Directive defines its own required behavior
-- Loader rules reach Directive files through inheritance. The entrypoint does not restate them, including the `applyTo` file condition
+- The category uses `applyTo` to limit file-specific rules and required child catalogues. The [loader](loader.md) defines matching through the full ancestor chain and conflict reporting.
 
-The [routed Markdown representation](../../../framework/markdown/routes.md) defines entrypoint and generated-region syntax. Directive-specific meaning remains in the source and current Directive contract rather than in shared Markdown rules.
+The [authoring reference](authoring.md) defines catalogue and Instructions formats. The [routed Markdown representation](../../../framework/markdown/routes.md) defines entrypoint and generated-region syntax. Directive-specific meaning remains in the source and current Directive contract rather than in shared Markdown rules.
 
 ## Verification
 
-- Directive validation requires sibling-file #LoadNow, non-empty Instructions, and active primitive classification. It accepts `applyTo` like any other routed source
-- Core installation tests verify that the root category installs, indexes, and remains baseline-loaded
+- Use the [payload integrity checks](../_payload.md#verification) for shipped bytes and frontmatter rendering.
+- [SourceLoadingClosureResolverTests](../../../../../../../src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Framework/Sources/Loading/SourceLoadingClosureResolverTests.cs) cover required loading and conditions. They do not validate the meaning of Directive prose.
+- Review the source for non-empty Instructions, #LoadNow rule files and the distinction between selected and automatically loaded child catalogues. Compare shared source and repository rules outside Entries.
