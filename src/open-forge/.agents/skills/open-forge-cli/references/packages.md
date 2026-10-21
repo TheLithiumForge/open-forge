@@ -28,7 +28,7 @@ After the preset choice, first interactive Install asks `How should Open Forge w
 
 Install, Update, and Extension delivery use `frontmatter` in `.agents/open-forge.json`. A missing value means scoped. Both root and scoped frontmatter are read in every workspace. The plan shows the selected form, such as `Frontmatter: root`, or a change such as `Frontmatter: scoped -> root`.
 
-When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `[".agents/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 2.
+When Install includes Memory archive and `ignoreLinksFrom` is absent from `.agents/open-forge.json`, it adds `[".agents/memory/archived"]`. An existing key, even `[]`, stays unchanged. Update leaves authored settings unchanged. Existing workspaces can add the archive entry by hand. New settings use schema version 3. Existing settings keep the version they declare.
 
 An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
 
@@ -36,12 +36,12 @@ Root keys are recommended. Choose the scoped form when other tools already use t
 
 Install's headline describes the result, with the path on a separate `Workspace:` line. Explanations wrap at spaces to fit the terminal width.
 
-| Preset       | Selected content                                                                                                                  |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `minimal`    | Directives and Crystallized Memory, with the Memory catalogue, plus the loader, `.agents/README.md` and the managed host sections |
-| `essentials` | Everything in Minimal, plus Patterns, Skills, Emerging Memory and the ordinary Working route with Install Git-ignore rules        |
-| `full-core`  | Every built-in category and Memory state, with no Install-owned ignore entries                                                    |
-| `custom`     | Current concrete choices, or Essentials on a fresh workspace, with explicit row overrides                                         |
+| Preset       | Selected content                                                                                                                                          |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `minimal`    | Directives and Crystallized Memory, with the Memory catalogue, plus the loader, `.agents/authoring.md`, `.agents/README.md` and the managed host sections |
+| `essentials` | Everything in Minimal, plus Patterns, Skills, Emerging Memory and the ordinary Working route with Install Git-ignore rules                                |
+| `full-core`  | Every built-in category and Memory state, with no Install-owned ignore entries                                                                            |
+| `custom`     | Current concrete choices, or Essentials on a fresh workspace, with explicit row overrides                                                                 |
 
 No built-in preset installs optional Extensions. Essentials omits Guidance, Maps, Templates, and Archived Memory. Minimal includes only Directives and Crystallized Memory. A Memory state added with `--route` brings the Memory catalogue with it.
 
